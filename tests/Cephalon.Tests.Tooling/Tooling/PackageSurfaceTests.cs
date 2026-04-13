@@ -138,6 +138,8 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Capabilities.ICapabilityRegistry),
             typeof(global::Cephalon.Abstractions.Data.DatabaseRoleDescriptor),
             typeof(global::Cephalon.Abstractions.Data.DatabaseRoleProbeDescriptor),
+            typeof(global::Cephalon.Abstractions.Data.DatabaseTopologyOperationalAction),
+            typeof(global::Cephalon.Abstractions.Data.DatabaseTopologyOperationalActionPlan),
             typeof(global::Cephalon.Abstractions.Data.DatabaseTopologyOperationalAdvisory),
             typeof(global::Cephalon.Abstractions.Data.DatabaseTopologyOperationalSnapshot),
             typeof(global::Cephalon.Abstractions.Data.DatabaseTopologyOperationalSummary),

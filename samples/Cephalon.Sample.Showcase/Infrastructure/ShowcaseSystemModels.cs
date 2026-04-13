@@ -160,12 +160,15 @@ internal sealed record ShowcaseDatabaseTopologyActionPlanSummary(
 internal sealed record ShowcaseDatabaseTopologyActionPlanRow(
     int Order,
     string Id,
+    string Category,
     string Tone,
     string Title,
     string Detail,
     string CompletionSignal,
     string ActionLabel,
-    string ActionPath);
+    string ActionPath,
+    IReadOnlyList<string> SourceRoleIds,
+    IReadOnlyList<string> SourceMigrationIds);
 
 internal sealed record ShowcaseDatabaseTopologyActionPlan(
     ShowcaseDatabaseTopologyActionPlanSummary Summary,

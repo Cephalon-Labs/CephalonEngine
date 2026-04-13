@@ -74,6 +74,17 @@ public sealed class DatabaseTopologyOperationalSnapshotTests
         Assert.Equal(1, snapshot.Summary.SucceededMigrationTargetCount);
         Assert.Equal(0, snapshot.Summary.PendingMigrationTargetCount);
         Assert.Equal(1, snapshot.Summary.ProductionReadyMigrationTargetCount);
+        Assert.Equal(1, snapshot.ActionPlan.TotalActionCount);
+        Assert.Equal(0, snapshot.ActionPlan.BlockingActionCount);
+        Assert.Equal(0, snapshot.ActionPlan.AttentionActionCount);
+        Assert.Equal(1, snapshot.ActionPlan.ReadyActionCount);
+        Assert.Contains(snapshot.ActionPlan.Actions, action =>
+            action.Id == "topology-ready-for-validation" &&
+            action.Category == "topology-posture" &&
+            action.Tone == "Success" &&
+            action.ActionPath == "/engine/snapshot" &&
+            action.SourceRoleIds.SequenceEqual(["write"]) &&
+            action.SourceMigrationIds.SequenceEqual(["write"]));
         Assert.Contains(snapshot.Advisories, advisory =>
             advisory.Id == "topology-aligned" &&
             advisory.Tone == "Success" &&
@@ -120,6 +131,13 @@ public sealed class DatabaseTopologyOperationalSnapshotTests
         Assert.Equal("Database topology is blocked", snapshot.Summary.Headline);
         Assert.Equal("/engine/database-roles", snapshot.Summary.ActionPath);
         Assert.Equal(1, snapshot.Summary.UnhealthyRoleCount);
+        Assert.Equal(1, snapshot.ActionPlan.TotalActionCount);
+        Assert.Equal(1, snapshot.ActionPlan.BlockingActionCount);
+        var action = Assert.Single(snapshot.ActionPlan.Actions);
+        Assert.Equal("restore-unhealthy-roles", action.Id);
+        Assert.Equal("role-health", action.Category);
+        Assert.Equal("Error", action.Tone);
+        Assert.Equal(["write"], action.SourceRoleIds);
         var advisory = Assert.Single(snapshot.Advisories, static item => item.Id == "role-health-attention");
         Assert.Equal("Error", advisory.Tone);
         Assert.Equal(["write"], advisory.SourceRoleIds);
@@ -150,6 +168,8 @@ public sealed class DatabaseTopologyOperationalSnapshotTests
         Assert.NotNull(snapshot.DatabaseTopology);
         Assert.Equal("Ready", snapshot.DatabaseTopology.Summary.Status);
         Assert.Equal(1, snapshot.DatabaseTopology.Summary.RoleCount);
+        Assert.Equal(1, snapshot.DatabaseTopology.ActionPlan.TotalActionCount);
+        Assert.Contains(snapshot.DatabaseTopology.ActionPlan.Actions, action => action.Id == "topology-ready-for-validation");
         Assert.Contains(snapshot.DatabaseTopology.Advisories, advisory => advisory.Id == "topology-aligned");
     }
 

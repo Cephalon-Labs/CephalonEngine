@@ -14,15 +14,18 @@ internal sealed class DatabaseTopologyOperationalSnapshotProvider(
 
     public DatabaseTopologyOperationalSnapshot CreateSnapshot()
     {
+        var generatedAtUtc = DateTimeOffset.UtcNow;
         var roles = databaseRoleCatalog.DatabaseRoles;
         var migrations = databaseMigrationCatalog.DatabaseMigrations;
         var advisories = BuildAdvisories(roles, migrations);
         var summary = BuildSummary(roles, migrations);
+        var actionPlan = BuildActionPlan(generatedAtUtc, roles, migrations);
 
         return new DatabaseTopologyOperationalSnapshot(
-            generatedAtUtc: DateTimeOffset.UtcNow,
+            generatedAtUtc: generatedAtUtc,
             summary: summary,
-            advisories: advisories);
+            advisories: advisories,
+            actionPlan: actionPlan);
     }
 
     private static DatabaseTopologyOperationalSummary BuildSummary(
@@ -281,5 +284,157 @@ internal sealed class DatabaseTopologyOperationalSnapshotProvider(
         }
 
         return advisories.ToArray();
+    }
+
+    private static DatabaseTopologyOperationalActionPlan BuildActionPlan(
+        DateTimeOffset generatedAtUtc,
+        IReadOnlyList<DatabaseRoleDescriptor> roles,
+        IReadOnlyList<DatabaseMigrationDescriptor> migrations)
+    {
+        ArgumentNullException.ThrowIfNull(roles);
+        ArgumentNullException.ThrowIfNull(migrations);
+
+        var actions = new List<DatabaseTopologyOperationalAction>();
+
+        if (roles.Count == 0)
+        {
+            actions.Add(new DatabaseTopologyOperationalAction(
+                id: "no-database-topology-configured",
+                category: "topology-posture",
+                tone: "Success",
+                title: "No database topology remediation is required",
+                detail: "The current runtime does not configure any engine-owned database roles, so there is no active database topology that needs operator remediation.",
+                completionSignal: "No additional topology action is required unless database roles are configured later.",
+                actionLabel: "Open databases",
+                actionPath: EngineDatabasesPath));
+
+            return new DatabaseTopologyOperationalActionPlan(generatedAtUtc, actions);
+        }
+
+        var unhealthyRoles = roles
+            .Where(static role => role.HealthState == HealthState.Unhealthy)
+            .Select(static role => role.Id)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static roleId => roleId, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        if (unhealthyRoles.Length > 0)
+        {
+            actions.Add(new DatabaseTopologyOperationalAction(
+                id: "restore-unhealthy-roles",
+                category: "role-health",
+                tone: "Error",
+                title: "Restore unhealthy database roles",
+                detail: $"Resolved role(s) {string.Join(", ", unhealthyRoles)} currently report Unhealthy. Recover connectivity and probe health before relying on migrations or topology validation.",
+                completionSignal: "Every resolved database role reports Healthy.",
+                actionLabel: "Open database roles",
+                actionPath: EngineDatabaseRolesPath,
+                sourceRoleIds: unhealthyRoles));
+        }
+        else
+        {
+            var degradedRoles = roles
+                .Where(static role => role.HealthState == HealthState.Degraded)
+                .Select(static role => role.Id)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(static roleId => roleId, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+            if (degradedRoles.Length > 0)
+            {
+                actions.Add(new DatabaseTopologyOperationalAction(
+                    id: "inspect-degraded-roles",
+                    category: "role-health",
+                    tone: "Warning",
+                    title: "Inspect degraded role probes",
+                    detail: $"Resolved role(s) {string.Join(", ", degradedRoles)} are degraded. Review runtime health and probe freshness before treating the environment as stable.",
+                    completionSignal: "Every resolved database role reports Healthy.",
+                    actionLabel: "Open database roles",
+                    actionPath: EngineDatabaseRolesPath,
+                    sourceRoleIds: degradedRoles));
+            }
+        }
+
+        var failedMigrations = migrations
+            .Where(static migration => migration.Status == DatabaseMigrationStatus.Failed)
+            .Select(static migration => migration.Id)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static migrationId => migrationId, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        if (failedMigrations.Length > 0)
+        {
+            actions.Add(new DatabaseTopologyOperationalAction(
+                id: "repair-failed-migrations",
+                category: "migration-state",
+                tone: "Error",
+                title: "Repair failed migration targets",
+                detail: $"Migration target(s) {string.Join(", ", failedMigrations)} failed. Resolve the failing target and re-run the published guidance before promoting the topology.",
+                completionSignal: "Every migration target reports Succeeded.",
+                actionLabel: "Open migration targets",
+                actionPath: EngineDatabaseMigrationsPath,
+                sourceMigrationIds: failedMigrations));
+        }
+        else
+        {
+            var pendingMigrations = migrations
+                .Where(static migration => migration.Status != DatabaseMigrationStatus.Succeeded)
+                .Select(static migration => migration.Id)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(static migrationId => migrationId, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+            if (pendingMigrations.Length > 0)
+            {
+                actions.Add(new DatabaseTopologyOperationalAction(
+                    id: "finish-pending-migrations",
+                    category: "migration-state",
+                    tone: "Warning",
+                    title: "Finish pending migration targets",
+                    detail: $"Migration target(s) {string.Join(", ", pendingMigrations)} are not yet succeeded. Use the published guidance to bring the topology fully current.",
+                    completionSignal: "Every migration target reports Succeeded.",
+                    actionLabel: "Open migration targets",
+                    actionPath: EngineDatabaseMigrationsPath,
+                    sourceMigrationIds: pendingMigrations));
+            }
+        }
+
+        var hasMigrationStateAttention = failedMigrations.Length > 0 ||
+            migrations.Any(static migration => migration.Status != DatabaseMigrationStatus.Succeeded);
+        if (!hasMigrationStateAttention && migrations.Count > 0)
+        {
+            var productionReadyTargets = migrations
+                .Where(static migration => migration.Commands.Any(static command => command.RecommendedForProduction))
+                .Select(static migration => migration.Id)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(static migrationId => migrationId, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+            if (productionReadyTargets.Length < migrations.Count)
+            {
+                actions.Add(new DatabaseTopologyOperationalAction(
+                    id: "review-manual-migration-paths",
+                    category: "migration-guidance",
+                    tone: "Warning",
+                    title: "Review manual-only migration paths",
+                    detail: $"{migrations.Count - productionReadyTargets.Length} migration target(s) still do not publish a production-ready bundle or script path. Review the published operator guidance before treating the topology as deploy-ready.",
+                    completionSignal: "Every migration target publishes production-recommended guidance.",
+                    actionLabel: "Open migration targets",
+                    actionPath: EngineDatabaseMigrationsPath,
+                    sourceMigrationIds: productionReadyTargets));
+            }
+        }
+
+        if (actions.Count == 0)
+        {
+            actions.Add(new DatabaseTopologyOperationalAction(
+                id: "topology-ready-for-validation",
+                category: "topology-posture",
+                tone: "Success",
+                title: "Topology is ready for operator validation",
+                detail: "Resolved roles are healthy, migration targets succeeded, and the engine-owned operator guidance is complete enough to use as the current topology hand-off.",
+                completionSignal: "No remediation is required unless the topology or deployment state changes.",
+                actionLabel: "Open runtime snapshot",
+                actionPath: EngineRuntimeSnapshotPath,
+                sourceRoleIds: roles.Select(static role => role.Id).ToArray(),
+                sourceMigrationIds: migrations.Select(static migration => migration.Id).ToArray()));
+        }
+
+        return new DatabaseTopologyOperationalActionPlan(generatedAtUtc, actions);
     }
 }

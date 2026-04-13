@@ -11,14 +11,17 @@ public sealed class DatabaseTopologyOperationalSnapshot
     /// <param name="generatedAtUtc">The UTC timestamp when the snapshot was created.</param>
     /// <param name="summary">The aggregate operator-facing topology summary.</param>
     /// <param name="advisories">The reusable operator-facing advisories derived from the current topology state.</param>
+    /// <param name="actionPlan">The ordered engine-owned operator action plan derived from the current topology state.</param>
     public DatabaseTopologyOperationalSnapshot(
         DateTimeOffset generatedAtUtc,
         DatabaseTopologyOperationalSummary summary,
-        IReadOnlyList<DatabaseTopologyOperationalAdvisory>? advisories = null)
+        IReadOnlyList<DatabaseTopologyOperationalAdvisory>? advisories = null,
+        DatabaseTopologyOperationalActionPlan? actionPlan = null)
     {
         Summary = summary ?? throw new ArgumentNullException(nameof(summary));
         GeneratedAtUtc = generatedAtUtc;
         Advisories = advisories?.ToArray() ?? [];
+        ActionPlan = actionPlan ?? new DatabaseTopologyOperationalActionPlan(generatedAtUtc);
     }
 
     /// <summary>
@@ -35,4 +38,9 @@ public sealed class DatabaseTopologyOperationalSnapshot
     /// Gets the reusable operator-facing advisories derived from the current topology state.
     /// </summary>
     public IReadOnlyList<DatabaseTopologyOperationalAdvisory> Advisories { get; }
+
+    /// <summary>
+    /// Gets the ordered engine-owned operator action plan derived from the current topology state.
+    /// </summary>
+    public DatabaseTopologyOperationalActionPlan ActionPlan { get; }
 }

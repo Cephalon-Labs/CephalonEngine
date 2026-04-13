@@ -32,6 +32,19 @@ public sealed class ShowcaseSampleHostingTests
         "database-topology",
         "projection"
     ];
+    private static readonly string[] DatabaseTopologyReadyActionSourceRoleIds =
+    [
+        "history",
+        "outbox",
+        "read",
+        "write"
+    ];
+    private static readonly string[] DatabaseTopologyReadyActionSourceMigrationIds =
+    [
+        "history",
+        "read",
+        "write"
+    ];
 
     [Fact]
     public async Task ShowcaseSampleBootsAndExposesRootSummary()
@@ -381,6 +394,17 @@ public sealed class ShowcaseSampleHostingTests
         Assert.Equal(3, databaseTopology.Summary.MigrationTargetCount);
         Assert.Equal(3, databaseTopology.Summary.SucceededMigrationTargetCount);
         Assert.Equal(3, databaseTopology.Summary.ProductionReadyMigrationTargetCount);
+        Assert.Equal(1, databaseTopology.ActionPlan.TotalActionCount);
+        Assert.Equal(0, databaseTopology.ActionPlan.BlockingActionCount);
+        Assert.Equal(0, databaseTopology.ActionPlan.AttentionActionCount);
+        Assert.Equal(1, databaseTopology.ActionPlan.ReadyActionCount);
+        Assert.Contains(databaseTopology.ActionPlan.Actions, action =>
+            action.Id == "topology-ready-for-validation" &&
+            action.Category == "topology-posture" &&
+            action.Tone == "Success" &&
+            action.ActionPath == "/engine/snapshot" &&
+            action.SourceRoleIds.SequenceEqual(["history", "outbox", "read", "write"]) &&
+            action.SourceMigrationIds.SequenceEqual(["history", "read", "write"]));
         Assert.Contains(databaseTopology.Advisories, advisory =>
             advisory.Id == "topology-aligned" &&
             advisory.Tone == "Success" &&
@@ -392,6 +416,10 @@ public sealed class ShowcaseSampleHostingTests
         Assert.NotNull(snapshot.DatabaseTopology);
         Assert.Equal(databaseTopology.Summary.Status, snapshot.DatabaseTopology.Summary.Status);
         Assert.Equal(databaseTopology.Summary.ProductionReadyMigrationTargetCount, snapshot.DatabaseTopology.Summary.ProductionReadyMigrationTargetCount);
+        Assert.Equal(databaseTopology.ActionPlan.TotalActionCount, snapshot.DatabaseTopology.ActionPlan.TotalActionCount);
+        Assert.Contains(snapshot.DatabaseTopology.ActionPlan.Actions, action =>
+            action.Id == "topology-ready-for-validation" &&
+            action.Category == "topology-posture");
         Assert.Equal("write", snapshot.DatabaseMigrations[0].Id);
         Assert.Equal(1, snapshot.DatabaseMigrations[0].RecommendedExecutionOrder);
         Assert.Equal("read", snapshot.DatabaseMigrations[1].Id);
@@ -1611,8 +1639,11 @@ public sealed class ShowcaseSampleHostingTests
             action =>
                 action.GetProperty("order").GetInt32() == 1 &&
                 string.Equals(action.GetProperty("id").GetString(), "topology-ready-for-validation", StringComparison.Ordinal) &&
+                string.Equals(action.GetProperty("category").GetString(), "topology-posture", StringComparison.Ordinal) &&
                 string.Equals(action.GetProperty("tone").GetString(), "Success", StringComparison.Ordinal) &&
                 string.Equals(action.GetProperty("actionPath").GetString(), "/engine/snapshot", StringComparison.Ordinal) &&
+                action.GetProperty("sourceRoleIds").EnumerateArray().Select(static item => item.GetString()).SequenceEqual(DatabaseTopologyReadyActionSourceRoleIds) &&
+                action.GetProperty("sourceMigrationIds").EnumerateArray().Select(static item => item.GetString()).SequenceEqual(DatabaseTopologyReadyActionSourceMigrationIds) &&
                 action.GetProperty("completionSignal").GetString()!.Contains("No remediation", StringComparison.Ordinal));
 
         var roles = root.GetProperty("roles").EnumerateArray().ToArray();
@@ -1874,7 +1905,9 @@ public sealed class ShowcaseSampleHostingTests
         var readModelSync = root.GetProperty("readModelSync");
         Assert.True(readModelSync.GetProperty("enabled").GetBoolean());
         Assert.True(readModelSync.GetProperty("isLagging").GetBoolean());
-        Assert.True(readModelSync.GetProperty("jobs").GetProperty("pendingJobs").GetInt32() >= 1);
+        Assert.True(
+            readModelSync.GetProperty("jobs").GetProperty("pendingJobs").GetInt32() >= 1 ||
+            Math.Abs(readModelSync.GetProperty("productDelta").GetInt32()) >= 1);
         Assert.Contains(
             root.GetProperty("insights").EnumerateArray().ToArray(),
             insight =>

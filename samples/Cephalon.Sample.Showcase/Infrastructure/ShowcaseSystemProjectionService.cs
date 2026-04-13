@@ -221,9 +221,7 @@ internal sealed class ShowcaseSystemProjectionService(
             readModelSync,
             databaseTopologyPath);
         var actionPlan = BuildDatabaseTopologyActionPlan(
-            roles,
-            migrations,
-            migrationPlaybook,
+            engineDatabaseTopology.ActionPlan,
             readModelSync,
             databaseTopologyPath);
         var insights = BuildDatabaseTopologyInsights(engineDatabaseTopology, readModelSync);
@@ -921,162 +919,84 @@ internal sealed class ShowcaseSystemProjectionService(
     }
 
     private static ShowcaseDatabaseTopologyActionPlan BuildDatabaseTopologyActionPlan(
-        IReadOnlyList<ShowcaseDatabaseTopologyRoleRow> roles,
-        IReadOnlyList<ShowcaseDatabaseTopologyMigrationRow> migrations,
-        ShowcaseDatabaseTopologyMigrationPlaybook migrationPlaybook,
+        DatabaseTopologyOperationalActionPlan engineActionPlan,
         ShowcaseReadModelSyncStatus readModelSync,
         string databaseTopologyPath)
     {
-        ArgumentNullException.ThrowIfNull(roles);
-        ArgumentNullException.ThrowIfNull(migrations);
-        ArgumentNullException.ThrowIfNull(migrationPlaybook);
+        ArgumentNullException.ThrowIfNull(engineActionPlan);
         ArgumentNullException.ThrowIfNull(readModelSync);
         ArgumentException.ThrowIfNullOrWhiteSpace(databaseTopologyPath);
 
-        var actions = new List<ShowcaseDatabaseTopologyActionPlanRow>();
-
-        var unhealthyRoles = roles
-            .Where(role => string.Equals(role.HealthState, nameof(HealthState.Unhealthy), StringComparison.OrdinalIgnoreCase))
-            .ToArray();
-        if (unhealthyRoles.Length > 0)
-        {
-            var roleIds = string.Join(", ", unhealthyRoles.Select(static role => role.Id));
-            actions.Add(new ShowcaseDatabaseTopologyActionPlanRow(
+        var actions = engineActionPlan.Actions
+            .Select(static action => new ShowcaseDatabaseTopologyActionPlanRow(
                 Order: 0,
-                Id: "restore-unhealthy-roles",
-                Tone: "Error",
-                Title: "Restore unhealthy database roles",
-                Detail: $"Resolved role(s) {roleIds} currently report Unhealthy. Recover connectivity and probe health before relying on migrations, runtime validation, or read-model output.",
-                CompletionSignal: "Every resolved database role reports Healthy.",
-                ActionLabel: "Open database roles",
-                ActionPath: "/engine/database-roles"));
-        }
-        else
-        {
-            var degradedRoles = roles
-                .Where(role => string.Equals(role.HealthState, nameof(HealthState.Degraded), StringComparison.OrdinalIgnoreCase))
-                .ToArray();
-            if (degradedRoles.Length > 0)
-            {
-                var roleIds = string.Join(", ", degradedRoles.Select(static role => role.Id));
-                actions.Add(new ShowcaseDatabaseTopologyActionPlanRow(
-                    Order: 0,
-                    Id: "inspect-degraded-roles",
-                    Tone: "Warning",
-                    Title: "Inspect degraded role probes",
-                    Detail: $"Resolved role(s) {roleIds} are degraded. Review probe metadata and runtime notes before treating the environment as stable.",
-                    CompletionSignal: "Every resolved database role reports Healthy.",
-                    ActionLabel: "Open database roles",
-                    ActionPath: "/engine/database-roles"));
-            }
-        }
-
-        var failedMigrations = migrations
-            .Where(migration => string.Equals(migration.Status, nameof(DatabaseMigrationStatus.Failed), StringComparison.OrdinalIgnoreCase))
-            .ToArray();
-        if (failedMigrations.Length > 0)
-        {
-            var migrationIds = string.Join(", ", failedMigrations.Select(static migration => migration.Id));
-            actions.Add(new ShowcaseDatabaseTopologyActionPlanRow(
-                Order: 0,
-                Id: "repair-failed-migrations",
-                Tone: "Error",
-                Title: "Repair failed migration targets",
-                Detail: $"Migration target(s) {migrationIds} failed. Resolve the failing target and re-run the published guidance before promoting the topology.",
-                CompletionSignal: "Every migration target reports Succeeded.",
-                ActionLabel: "Open migration targets",
-                ActionPath: "/engine/database-migrations"));
-        }
-        else
-        {
-            var pendingMigrations = migrations
-                .Where(migration => !string.Equals(migration.Status, nameof(DatabaseMigrationStatus.Succeeded), StringComparison.OrdinalIgnoreCase))
-                .ToArray();
-            if (pendingMigrations.Length > 0)
-            {
-                var migrationIds = string.Join(", ", pendingMigrations.Select(static migration => migration.Id));
-                actions.Add(new ShowcaseDatabaseTopologyActionPlanRow(
-                    Order: 0,
-                    Id: "finish-pending-migrations",
-                    Tone: "Warning",
-                    Title: "Finish pending migration targets",
-                    Detail: $"Migration target(s) {migrationIds} are not yet succeeded. Use the published guidance or startup apply path to bring the topology fully current.",
-                    CompletionSignal: "Every migration target reports Succeeded.",
-                    ActionLabel: "Open migration targets",
-                    ActionPath: "/engine/database-migrations"));
-            }
-        }
+                Id: action.Id,
+                Category: action.Category,
+                Tone: action.Tone,
+                Title: action.Title,
+                Detail: action.Detail,
+                CompletionSignal: action.CompletionSignal,
+                ActionLabel: action.ActionLabel,
+                ActionPath: action.ActionPath,
+                SourceRoleIds: action.SourceRoleIds,
+                SourceMigrationIds: action.SourceMigrationIds))
+            .ToList();
 
         var readModelDeltaMagnitude = GetReadModelDeltaMagnitude(readModelSync);
+        var sampleOnlyActions = new List<ShowcaseDatabaseTopologyActionPlanRow>();
         if (readModelSync.Jobs.FailedJobs > 0)
         {
-            actions.Add(new ShowcaseDatabaseTopologyActionPlanRow(
+            sampleOnlyActions.Add(new ShowcaseDatabaseTopologyActionPlanRow(
                 Order: 0,
                 Id: "repair-failed-read-model-jobs",
+                Category: "read-model-sync",
                 Tone: "Error",
                 Title: "Repair failed read-model jobs",
                 Detail: $"{readModelSync.Jobs.FailedJobs} projection job(s) are failed and {readModelSync.Jobs.PendingJobs} remain pending. Repair the backlog before trusting the read store as an operator surface.",
                 CompletionSignal: "Failed jobs return to 0 and the read-model backlog can drain normally.",
                 ActionLabel: "Open projection JSON",
-                ActionPath: databaseTopologyPath));
+                ActionPath: databaseTopologyPath,
+                SourceRoleIds: [],
+                SourceMigrationIds: []));
         }
         else if (!readModelSync.Enabled)
         {
-            actions.Add(new ShowcaseDatabaseTopologyActionPlanRow(
+            sampleOnlyActions.Add(new ShowcaseDatabaseTopologyActionPlanRow(
                 Order: 0,
                 Id: "re-enable-read-model-sync",
+                Category: "read-model-sync",
                 Tone: "Warning",
                 Title: "Re-enable read-model sync",
                 Detail: "The projection loop is disabled, so the sample cannot prove write/read alignment through the read store until synchronization is turned back on.",
                 CompletionSignal: "The projection loop is enabled and publishes live job state again.",
                 ActionLabel: "Open projection JSON",
-                ActionPath: databaseTopologyPath));
+                ActionPath: databaseTopologyPath,
+                SourceRoleIds: [],
+                SourceMigrationIds: []));
         }
         else if (readModelSync.Jobs.PendingJobs > 0 || readModelDeltaMagnitude > 0)
         {
-            actions.Add(new ShowcaseDatabaseTopologyActionPlanRow(
+            sampleOnlyActions.Add(new ShowcaseDatabaseTopologyActionPlanRow(
                 Order: 0,
                 Id: "wait-for-read-model-catch-up",
+                Category: "read-model-sync",
                 Tone: "Warning",
                 Title: "Let the read-model catch up",
                 Detail: $"Store delta magnitude is {readModelDeltaMagnitude} and {readModelSync.Jobs.PendingJobs} projection job(s) are still pending. Let the read side settle before treating the topology as current.",
                 CompletionSignal: "Pending jobs return to 0 and the store delta magnitude is 0.",
                 ActionLabel: "Open projection JSON",
-                ActionPath: databaseTopologyPath));
+                ActionPath: databaseTopologyPath,
+                SourceRoleIds: [],
+                SourceMigrationIds: []));
         }
 
-        var hasMigrationStateAttention =
-            failedMigrations.Length > 0 ||
-            migrations.Any(static migration =>
-                !string.Equals(migration.Status, nameof(DatabaseMigrationStatus.Succeeded), StringComparison.OrdinalIgnoreCase));
-        if (!hasMigrationStateAttention &&
-            migrationPlaybook.Summary.TargetCount > 0 &&
-            migrationPlaybook.Summary.ProductionReadyTargetCount < migrationPlaybook.Summary.TargetCount)
+        if (sampleOnlyActions.Count > 0 &&
+            actions.All(static action => string.Equals(action.Tone, "Success", StringComparison.OrdinalIgnoreCase)))
         {
-            var manualOnlyTargetCount = migrationPlaybook.Summary.TargetCount - migrationPlaybook.Summary.ProductionReadyTargetCount;
-            actions.Add(new ShowcaseDatabaseTopologyActionPlanRow(
-                Order: 0,
-                Id: "review-manual-migration-paths",
-                Tone: "Warning",
-                Title: "Review manual-only migration paths",
-                Detail: $"{manualOnlyTargetCount} migration target(s) still do not publish a production-ready runnable path. Review the playbook before treating the sample guidance as complete.",
-                CompletionSignal: "Every migration target publishes a recommended production path.",
-                ActionLabel: "Open migration targets",
-                ActionPath: "/engine/database-migrations"));
+            actions.Clear();
         }
 
-        if (actions.Count == 0)
-        {
-            actions.Add(new ShowcaseDatabaseTopologyActionPlanRow(
-                Order: 0,
-                Id: "topology-ready-for-validation",
-                Tone: "Success",
-                Title: "Topology is ready for operator validation",
-                Detail: "Resolved roles are healthy, migration targets succeeded, read-model sync is aligned, and the sample playbook is complete enough to use as the current operator hand-off.",
-                CompletionSignal: "No remediation is required unless the topology or deployment state changes.",
-                ActionLabel: "Open runtime snapshot",
-                ActionPath: "/engine/snapshot"));
-        }
+        actions.AddRange(sampleOnlyActions);
 
         var orderedActions = actions
             .Select((action, index) => action with { Order = index + 1 })
@@ -1367,9 +1287,19 @@ internal sealed class ShowcaseSystemProjectionService(
         {
             builder.AppendLine(CultureInfo.InvariantCulture, $"{action.Order}. {action.Title}");
             builder.AppendLine(CultureInfo.InvariantCulture, $"   - Tone: {action.Tone}");
+            builder.AppendLine(CultureInfo.InvariantCulture, $"   - Category: {action.Category}");
             builder.AppendLine(CultureInfo.InvariantCulture, $"   - Detail: {action.Detail}");
             builder.AppendLine(CultureInfo.InvariantCulture, $"   - Done when: {action.CompletionSignal}");
             builder.AppendLine(CultureInfo.InvariantCulture, $"   - Open: `{action.ActionPath}`");
+            if (action.SourceRoleIds.Count > 0)
+            {
+                builder.AppendLine(CultureInfo.InvariantCulture, $"   - Source roles: {string.Join(", ", action.SourceRoleIds)}");
+            }
+
+            if (action.SourceMigrationIds.Count > 0)
+            {
+                builder.AppendLine(CultureInfo.InvariantCulture, $"   - Source migrations: {string.Join(", ", action.SourceMigrationIds)}");
+            }
         }
 
         builder.AppendLine();

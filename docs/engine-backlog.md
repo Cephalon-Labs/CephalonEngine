@@ -1700,28 +1700,53 @@ Why:
 
 - the engine-owned role and migration catalogs kept the raw truth available, but operators and hosts still lacked one canonical engine-owned answer for whether the overall topology was ready, needed attention, or was blocked
 - the showcase sample was still re-aggregating readiness and insight logic locally from raw catalogs, which weakened the engine-first boundary and made the sample responsible for an answer that should belong to the engine
-- hosts and automation needed one stable posture route for summary plus advisories without depending on showcase-only projection logic
+- hosts and automation needed one stable posture route for summary, advisories, and ordered operator actions without depending on showcase-only projection logic
 
 Acceptance:
 
 - `Cephalon.Abstractions` exposes a host-agnostic operational snapshot contract for database-topology posture
-- `Cephalon.Engine` projects one summary plus advisory set from the database-role and database-migration catalogs and includes it in the runtime snapshot
+- `Cephalon.Engine` projects one summary, advisory set, and ordered operator action plan from the database-role and database-migration catalogs and includes it in the runtime snapshot
 - ASP.NET Core hosts expose `/engine/database-topology` as the canonical posture route
 - the showcase sample consumes the engine-owned posture for readiness and engine-level insights, while keeping only read-model drift/backlog follow-through local
 - docs, backlog, roadmap, project memory, and GitHub tracking all stay aligned with the new engine-first ownership line
 
 Delivered:
 
-- `Cephalon.Abstractions` now ships `DatabaseTopologyOperationalSummary`, `DatabaseTopologyOperationalAdvisory`, `DatabaseTopologyOperationalSnapshot`, and `IDatabaseTopologyOperationalSnapshotProvider` as the host-agnostic posture contract
-- `Cephalon.Engine` now computes engine-owned database-topology posture from the resolved role and migration catalogs, projects it into `snapshot.DatabaseTopology`, and keeps summary status plus action links explicit instead of trapping that answer in a sample
-- ASP.NET Core hosts now expose `/engine/database-topology` directly, so operators and tooling can read one canonical `Ready` / `Attention` / `Blocked` answer without rebuilding it from lower-level catalogs first
-- the showcase sample now uses the engine-owned posture as the baseline for readiness and advisory insights, keeps read-model drift/catch-up/disabled-sync logic as the only sample-specific follow-through, and now carries the engine route through browser config, operator links, and handoff source-route metadata
+- `Cephalon.Abstractions` now ships `DatabaseTopologyOperationalAction`, `DatabaseTopologyOperationalActionPlan`, `DatabaseTopologyOperationalSummary`, `DatabaseTopologyOperationalAdvisory`, `DatabaseTopologyOperationalSnapshot`, and `IDatabaseTopologyOperationalSnapshotProvider` as the host-agnostic posture contract
+- `Cephalon.Engine` now computes engine-owned database-topology posture from the resolved role and migration catalogs, projects it into `snapshot.DatabaseTopology`, and keeps summary status, advisories, remediation categories, source ids, and ordered action links explicit instead of trapping that answer in a sample
+- ASP.NET Core hosts now expose `/engine/database-topology` directly, so operators and tooling can read one canonical `Ready` / `Attention` / `Blocked` answer plus ordered next actions without rebuilding it from lower-level catalogs first
+- the showcase sample now uses the engine-owned posture as the baseline for readiness, advisory insights, and the engine portion of its ordered action plan, keeps read-model drift/catch-up/disabled-sync logic as the only sample-specific follow-through, and now carries the engine route through browser config, operator links, UI metadata, brief output, and handoff source-route metadata
 - composition, hosting, and package-surface coverage now prove the new posture contract, showcase consumption path, and exported package surface end to end
 
 Remaining follow-through inside `ENG-088`:
 
 - add an explicit engine-owned unknown or unprobed role-health posture only when provider packs can keep that semantics truthful across more than the current EF-backed baseline
-- add machine-actionable remediation categories only when operator automation needs something richer than headline, tone, and action link metadata
+### ENG-089 Database-topology action-plan showcase follow-through and contract truthfulness
+
+Status: done
+Estimate: 3
+
+Why:
+
+- the engine-owned database-topology action-plan contract had already landed in the shared abstractions and runtime snapshot, but the showcase sample still re-shaped the engine portion of the ordered action plan locally from raw role and migration state
+- the sample projection, UI, and brief output were still collapsing engine-owned action metadata instead of preserving stable categories plus source role and migration ids
+- package-surface and planning docs needed to stay truthful about the public action-plan types that now ship from `Cephalon.Abstractions`
+
+Acceptance:
+
+- the showcase sample consumes the engine-owned database-topology action plan as the baseline for ordered operator steps
+- showcase-specific read-model sync actions append to the same ordered plan without re-deriving engine-owned role or migration remediation logic
+- the sample projection, browser console, and operator brief preserve engine-owned action categories plus source role and migration ids
+- package-surface, composition, and hosting tests prove the action-plan contract and showcase follow-through
+- docs, roadmap, backlog, project memory, and GitHub tracking stay aligned with the shipped action-plan contract
+
+Delivered:
+
+- the showcase database-topology projection now maps `snapshot.DatabaseTopology.ActionPlan` directly into its ordered operator action plan and only appends read-model sync follow-through when the sample needs extra guidance
+- the projection, browser console, and Markdown brief now preserve engine-owned action categories plus source role and migration ids instead of collapsing those stable fields away
+- package-surface coverage now treats `DatabaseTopologyOperationalAction` plus `DatabaseTopologyOperationalActionPlan` as part of the documented `Cephalon.Abstractions` contract surface
+- composition and hosting coverage now assert engine-owned action-plan counts, categories, and source ids end to end through `/engine/database-topology`, `snapshot.DatabaseTopology`, and `/api/v1/showcase/system/database-topology`
+- database-topology, engine component docs, roadmap, backlog, and project memory now describe the action-plan contract truthfully instead of documenting only summary plus advisories
 
 ### ENG-069 Event-dispatch runtime operator-surface baseline
 
@@ -2024,4 +2049,5 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 
 - ENG-086 database-role probe freshness policy: the engine-owned database runtime contract now exposes `RoleProbeFreshnessSeconds`, `Cephalon.Data.EntityFramework` now caches live role probes with explicit live-versus-cache metadata and migration-state invalidation, and the showcase sample now surfaces probe source, age, and freshness timing directly through its database-topology operator projection — **Shipped** · targeted composition tests 7/7 + hosting tests 3/3
 - ENG-087 typed database-role probe contract and operator-surface follow-through: `Cephalon.Abstractions` now exposes `DatabaseRoleProbeDescriptor`, `DatabaseRoleRuntimeDescriptor` plus `DatabaseRoleDescriptor` now carry a typed `Probe` answer, `Cephalon.Data.EntityFramework` now projects stable cache/freshness/source timing through that shared contract while keeping metadata only for additive extras and compatibility, and the showcase sample now reads the typed probe surface directly in its projection/UI instead of parsing stable runtime-metadata keys locally — **Shipped** · targeted composition tests 25/25 + hosting tests 59/59 + package-surface tests 52/52
-- ENG-088 engine-owned database-topology operational summary and advisory surface: `Cephalon.Abstractions` now exposes `DatabaseTopologyOperationalSummary`, `DatabaseTopologyOperationalAdvisory`, `DatabaseTopologyOperationalSnapshot`, and `IDatabaseTopologyOperationalSnapshotProvider`, `Cephalon.Engine` now publishes `/engine/database-topology` plus `snapshot.DatabaseTopology` as the canonical posture answer over role health, migration status, and production-guidance completeness, and the showcase sample now consumes that engine-owned answer for readiness plus core advisories while keeping only read-model drift/backlog follow-through local — **Shipped** · targeted composition tests 3/3 + hosting tests 3/3 + package-surface tests 52/52
+- ENG-088 engine-owned database-topology operational summary and advisory surface: `Cephalon.Abstractions` now exposes `DatabaseTopologyOperationalAction`, `DatabaseTopologyOperationalActionPlan`, `DatabaseTopologyOperationalSummary`, `DatabaseTopologyOperationalAdvisory`, `DatabaseTopologyOperationalSnapshot`, and `IDatabaseTopologyOperationalSnapshotProvider`, `Cephalon.Engine` now publishes `/engine/database-topology` plus `snapshot.DatabaseTopology` as the canonical posture answer over role health, migration status, production-guidance completeness, and ordered operator actions, and the showcase sample now consumes that engine-owned answer for readiness plus core advisories while keeping only read-model drift/backlog follow-through local — **Shipped** · targeted composition tests 3/3 + hosting tests 3/3 + package-surface tests 52/52
+- ENG-089 database-topology action-plan showcase follow-through and contract truthfulness: the showcase sample now consumes the engine-owned action-plan contract as the baseline for ordered operator steps, preserves stable action categories plus source role and migration ids in its projection, browser console, and Markdown brief, and the docs/package-surface coverage now describe the shipped contract truthfully — **Shipped** · targeted composition tests 3/3 + hosting tests 3/3 + package-surface tests 52/52

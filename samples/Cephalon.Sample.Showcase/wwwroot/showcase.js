@@ -643,13 +643,21 @@ function renderDatabaseTopologyActionPlan(actionPlan) {
   ].join("");
 
   document.getElementById("databaseTopologyActionPlanList").innerHTML = actions.length
-    ? actions.map((action) => `
+    ? actions.map((action) => {
+      const engineActionMetadata = compactMetadata({
+        category: action.category,
+        sourceRoles: Array.isArray(action.sourceRoleIds) && action.sourceRoleIds.length ? action.sourceRoleIds.join(", ") : "",
+        sourceMigrations: Array.isArray(action.sourceMigrationIds) && action.sourceMigrationIds.length ? action.sourceMigrationIds.join(", ") : ""
+      });
+
+      return `
       <article class="action-plan-step ${tone(action.tone)}">
         <header>
           <div>
             <div class="meta-row">
               <span class="token">Action ${escapeHtml(String(action.order || "?"))}</span>
               <span class="label">Operator next step</span>
+              ${action.category ? `<span class="token">${escapeHtml(action.category)}</span>` : ""}
             </div>
             <strong>${escapeHtml(action.title || "Action")}</strong>
           </div>
@@ -657,10 +665,14 @@ function renderDatabaseTopologyActionPlan(actionPlan) {
         </header>
         <p>${escapeHtml(action.detail || "No action detail published.")}</p>
         ${action.completionSignal ? `<small class="action-plan-signal">Done when ${escapeHtml(action.completionSignal)}</small>` : ""}
+        ${renderMetadataSections([
+          ["Engine action metadata", engineActionMetadata]
+        ], "No engine action metadata published.")}
         <div class="insight-actions">
           ${action.actionPath ? linkButton(action.actionLabel || "Open", action.actionPath) : ""}
         </div>
-      </article>`).join("")
+      </article>`;
+    }).join("")
     : `<div class="empty-state">No operator actions published.</div>`;
 }
 
