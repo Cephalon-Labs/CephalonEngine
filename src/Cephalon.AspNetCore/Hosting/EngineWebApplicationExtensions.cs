@@ -28,6 +28,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Scalar.AspNetCore;
 using System.Globalization;
 using System.Reflection;
+using System.Text.Json;
 
 namespace Cephalon.AspNetCore.Hosting;
 
@@ -39,6 +40,8 @@ public static class EngineWebApplicationExtensions
     private const string OpenApiToggleScriptResourceName = "Cephalon.AspNetCore.Assets.openapi-toggle.js";
     private const string ScalarFaviconResourceName = "Cephalon.AspNetCore.Assets.docs-favicon.svg";
     private const string ScalarRoutePrefixToken = "__CEPHALON_SCALAR_ROUTE_PREFIX__";
+    private const string ScalarDocumentNamesToken = "__CEPHALON_SCALAR_DOCUMENT_NAMES__";
+    private const string ScalarDefaultDocumentNameToken = "__CEPHALON_SCALAR_DEFAULT_DOCUMENT_NAME__";
     private static readonly string DocumentationAssetVersion = typeof(EngineWebApplicationExtensions)
         .Assembly
         .ManifestModule
@@ -530,7 +533,10 @@ public static class EngineWebApplicationExtensions
             app.MapGet(
                     openApiToggleScriptRoute,
                     () => Results.Text(
-                        RenderOpenApiToggleScript(openApiEndpointOptions.ScalarRoutePrefix),
+                        RenderOpenApiToggleScript(
+                            openApiEndpointOptions.ScalarRoutePrefix,
+                            openApiDocumentNames,
+                            defaultOpenApiDocumentName),
                         "application/javascript"))
                 .DisableRateLimiting()
                 .ExcludeFromDescription();
@@ -823,14 +829,29 @@ public static class EngineWebApplicationExtensions
         return $"{scalarRoutePrefix}/{normalizedAssetPath}";
     }
 
-    private static string RenderOpenApiToggleScript(string scalarRoutePrefix)
+    private static string RenderOpenApiToggleScript(
+        string scalarRoutePrefix,
+        IReadOnlyList<string> documentNames,
+        string defaultDocumentName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(scalarRoutePrefix);
+        ArgumentNullException.ThrowIfNull(documentNames);
+        ArgumentException.ThrowIfNullOrWhiteSpace(defaultDocumentName);
 
-        return OpenApiToggleScriptTemplate.Value.Replace(
+        var rendered = OpenApiToggleScriptTemplate.Value.Replace(
             ScalarRoutePrefixToken,
             scalarRoutePrefix,
             StringComparison.Ordinal);
+        rendered = rendered.Replace(
+            ScalarDocumentNamesToken,
+            JsonSerializer.Serialize(documentNames),
+            StringComparison.Ordinal);
+        rendered = rendered.Replace(
+            ScalarDefaultDocumentNameToken,
+            JsonSerializer.Serialize(defaultDocumentName),
+            StringComparison.Ordinal);
+
+        return rendered;
     }
 
     private static HealthCheckOptions CreateHealthCheckOptions(Func<HealthCheckRegistration, bool> predicate)

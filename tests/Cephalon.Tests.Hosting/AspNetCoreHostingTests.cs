@@ -2,6 +2,7 @@ using System.Net.Http.Json;
 using System.Net.Http.Headers;
 using System.Net.WebSockets;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using Cephalon.Abstractions.AppModel;
@@ -56,6 +57,8 @@ namespace Cephalon.Tests.Hosting;
 
 public sealed class AspNetCoreHostingTests
 {
+    private static readonly string[] MultiDocumentNames = ["v1", "v2"];
+
     [Fact]
     public async Task MapCephalonServesHostedReferenceDocsWhenEnabled()
     {
@@ -700,12 +703,15 @@ public sealed class AspNetCoreHostingTests
         Assert.Contains("export default", scalarConfigPayload, StringComparison.Ordinal);
         Assert.Contains("replaceState", scalarConfigPayload, StringComparison.Ordinal);
         Assert.Contains("configuredScalarRoutePrefix", scalarConfigPayload, StringComparison.Ordinal);
+        Assert.Contains("configuredDocumentNames", scalarConfigPayload, StringComparison.Ordinal);
+        Assert.Contains("configuredDefaultDocumentName", scalarConfigPayload, StringComparison.Ordinal);
         Assert.Contains("scalarRoutePrefix", scalarConfigPayload, StringComparison.Ordinal);
         Assert.Contains("encodeURIComponent(documentName)", scalarConfigPayload, StringComparison.Ordinal);
         Assert.Contains("hashchange", scalarConfigPayload, StringComparison.Ordinal);
         Assert.Contains("hashSectionRoots", scalarConfigPayload, StringComparison.Ordinal);
+        Assert.Contains("cephalon-scalar-document-selector", scalarConfigPayload, StringComparison.Ordinal);
         Assert.Contains("isVersionDocumentName", scalarConfigPayload, StringComparison.Ordinal);
-        Assert.Contains("hashCarriesVersionDocument", scalarConfigPayload, StringComparison.Ordinal);
+        Assert.Contains("hashCarriesKnownDocument", scalarConfigPayload, StringComparison.Ordinal);
         Assert.Contains("no-store", scalarConfigResponse.Headers.CacheControl?.ToString(), StringComparison.OrdinalIgnoreCase);
 
         Assert.True(scalarFaviconResponse.IsSuccessStatusCode);
@@ -966,64 +972,111 @@ public sealed class AspNetCoreHostingTests
     }
 
     [Fact]
+    public void RenderOpenApiToggleScriptInjectsScalarDocumentSelectorFromEnabledVersions()
+    {
+        var renderMethod = typeof(EngineWebApplicationExtensions).GetMethod(
+            "RenderOpenApiToggleScript",
+            BindingFlags.Static | BindingFlags.NonPublic);
+
+        Assert.NotNull(renderMethod);
+
+        var payload = Assert.IsType<string>(renderMethod!.Invoke(null, ["/scalar", MultiDocumentNames, "v2"]));
+
+        Assert.Contains("configuredScalarRoutePrefix = \"/scalar\"", payload, StringComparison.Ordinal);
+        Assert.Contains("configuredDocumentNames = [\"v1\",\"v2\"]", payload, StringComparison.Ordinal);
+        Assert.Contains("configuredDefaultDocumentName = \"v2\"", payload, StringComparison.Ordinal);
+        Assert.Contains("cephalon-scalar-document-selector", payload, StringComparison.Ordinal);
+        Assert.Contains("navigateToSelectedDocument", payload, StringComparison.Ordinal);
+        Assert.Contains("scheduleSelectorRefresh", payload, StringComparison.Ordinal);
+        Assert.Contains("Version", payload, StringComparison.Ordinal);
+        Assert.DoesNotContain("__CEPHALON_SCALAR_DOCUMENT_NAMES__", payload, StringComparison.Ordinal);
+        Assert.DoesNotContain("__CEPHALON_SCALAR_DEFAULT_DOCUMENT_NAME__", payload, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task MapCephalonSupportsNamedOpenApiDocumentsAndScalarPages()
     {
-        var builder = WebApplication.CreateSlimBuilder();
-        builder.WebHost.UseTestServer();
-        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
-        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
-        builder.Configuration["OpenApi:EnabledVersions:0"] = "1";
-        builder.Configuration["OpenApi:EnabledVersions:1"] = "2";
-        builder.Configuration["OpenApi:DefaultVersion"] = "2";
-        builder.Configuration["OpenApi:Version"] = "2026.04";
-        builder.AddCephalon(cephalon =>
+        var contentRootPath = Path.Combine(
+            Path.GetTempPath(),
+            $"cephalon-scalar-openapi-test-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(contentRootPath);
+
+        try
         {
-            cephalon.AddModule(new PlatformTestModule());
-            cephalon.AddModule(new DiscoveryTestModule());
-        });
+            var builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions
+            {
+                ContentRootPath = contentRootPath,
+                EnvironmentName = "Production"
+            });
+            builder.WebHost.UseTestServer();
+            builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+            builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+            builder.Configuration[$"{EngineSettings.SectionName}:Transports:1"] = string.Empty;
+            builder.Configuration[$"{EngineSettings.SectionName}:Discovery:Assemblies:0"] = string.Empty;
+            builder.Configuration["OpenApi:EnabledVersions:0"] = "1";
+            builder.Configuration["OpenApi:EnabledVersions:1"] = "2";
+            builder.Configuration["OpenApi:DefaultVersion"] = "2";
+            builder.Configuration["OpenApi:Version"] = "2026.04";
+            builder.AddCephalon(_ => { });
 
-        await using var app = builder.Build();
-        app.MapGet("/api/openapi-documents/orders/{orderId}", (string orderId) => TypedResults.Ok(new { orderId }))
-            .WithName("GetOpenApiDocumentOrder")
-            .WithGroupName("v2");
-        app.MapCephalon();
+            await using var app = builder.Build();
+            app.MapGet("/api/openapi-documents/orders/{orderId}", (string orderId) => TypedResults.Ok(new { orderId }))
+                .WithName("GetOpenApiDocumentOrder")
+                .WithGroupName("v2");
+            app.MapCephalon();
 
-        await app.StartAsync();
-        var client = app.GetTestClient();
+            await app.StartAsync();
+            var client = app.GetTestClient();
 
-        var v1Response = await client.GetAsync("/openapi/v1.json");
-        var v2Response = await client.GetAsync("/openapi/v2.json");
-        var scalarRootRedirectResponse = await client.GetAsync("/scalar?culture=en");
-        var scalarRootResponse = await client.GetAsync("/scalar/?culture=en");
-        var scalarV2Response = await client.GetAsync("/scalar/v2");
+            var v1Response = await client.GetAsync("/openapi/v1.json");
+            var v2Response = await client.GetAsync("/openapi/v2.json");
+            var scalarConfigResponse = await client.GetAsync("/scalar/openapi-toggle.js");
+            var scalarRootRedirectResponse = await client.GetAsync("/scalar?culture=en");
+            var scalarRootResponse = await client.GetAsync("/scalar/?culture=en");
+            var scalarV2Response = await client.GetAsync("/scalar/v2");
 
-        Assert.True(v1Response.IsSuccessStatusCode);
-        Assert.True(v2Response.IsSuccessStatusCode);
-        Assert.Equal(HttpStatusCode.Redirect, scalarRootRedirectResponse.StatusCode);
-        Assert.NotNull(scalarRootRedirectResponse.Headers.Location);
-        Assert.Equal("/scalar/v2?culture=en", scalarRootRedirectResponse.Headers.Location!.OriginalString);
-        Assert.True(scalarRootResponse.IsSuccessStatusCode);
-        Assert.True(scalarV2Response.IsSuccessStatusCode);
+            Assert.True(v1Response.IsSuccessStatusCode);
+            Assert.True(v2Response.IsSuccessStatusCode);
+            Assert.True(scalarConfigResponse.IsSuccessStatusCode);
+            Assert.Equal(HttpStatusCode.Redirect, scalarRootRedirectResponse.StatusCode);
+            Assert.NotNull(scalarRootRedirectResponse.Headers.Location);
+            Assert.Equal("/scalar/v2?culture=en", scalarRootRedirectResponse.Headers.Location!.OriginalString);
+            Assert.True(scalarRootResponse.IsSuccessStatusCode);
+            Assert.True(scalarV2Response.IsSuccessStatusCode);
 
-        using var v1Document = JsonDocument.Parse(await v1Response.Content.ReadAsStringAsync());
-        using var v2Document = JsonDocument.Parse(await v2Response.Content.ReadAsStringAsync());
-        var v1Paths = v1Document.RootElement.GetProperty("paths");
-        var v2Paths = v2Document.RootElement.GetProperty("paths");
+            using var v1Document = JsonDocument.Parse(await v1Response.Content.ReadAsStringAsync());
+            using var v2Document = JsonDocument.Parse(await v2Response.Content.ReadAsStringAsync());
+            var v1Paths = v1Document.RootElement.GetProperty("paths");
+            var v2Paths = v2Document.RootElement.GetProperty("paths");
 
-        Assert.Equal("v1", v1Document.RootElement.GetProperty("info").GetProperty("version").GetString());
-        Assert.Equal("v2", v2Document.RootElement.GetProperty("info").GetProperty("version").GetString());
-        Assert.False(v1Paths.TryGetProperty("/api/openapi-documents/orders/{orderId}", out _));
-        Assert.True(v2Paths.TryGetProperty("/api/openapi-documents/orders/{orderId}", out var versionedPath));
-        Assert.True(versionedPath.TryGetProperty("get", out _));
+            Assert.Equal("v1", v1Document.RootElement.GetProperty("info").GetProperty("version").GetString());
+            Assert.Equal("v2", v2Document.RootElement.GetProperty("info").GetProperty("version").GetString());
+            Assert.False(v1Paths.TryGetProperty("/api/openapi-documents/orders/{orderId}", out _));
+            Assert.True(v2Paths.TryGetProperty("/api/openapi-documents/orders/{orderId}", out var versionedPath));
+            Assert.True(versionedPath.TryGetProperty("get", out _));
 
-        var scalarRootPayload = await scalarRootResponse.Content.ReadAsStringAsync();
-        var scalarV2Payload = await scalarV2Response.Content.ReadAsStringAsync();
-        Assert.Contains("Scalar", scalarRootPayload, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("\"title\":\"v1\"", scalarRootPayload, StringComparison.Ordinal);
-        Assert.Contains("openapi/v1.json", scalarRootPayload, StringComparison.Ordinal);
-        Assert.Contains("\"title\":\"v2\"", scalarRootPayload, StringComparison.Ordinal);
-        Assert.Contains("openapi/v2.json", scalarRootPayload, StringComparison.Ordinal);
-        Assert.Contains("Scalar", scalarV2Payload, StringComparison.OrdinalIgnoreCase);
+            var scalarConfigPayload = await scalarConfigResponse.Content.ReadAsStringAsync();
+            var scalarRootPayload = await scalarRootResponse.Content.ReadAsStringAsync();
+            var scalarV2Payload = await scalarV2Response.Content.ReadAsStringAsync();
+            Assert.Contains("configuredDocumentNames = [\"v1\",\"v2\"]", scalarConfigPayload, StringComparison.Ordinal);
+            Assert.Contains("configuredDefaultDocumentName = \"v2\"", scalarConfigPayload, StringComparison.Ordinal);
+            Assert.Contains("cephalon-scalar-document-selector", scalarConfigPayload, StringComparison.Ordinal);
+            Assert.Contains("navigateToSelectedDocument", scalarConfigPayload, StringComparison.Ordinal);
+            Assert.Contains("Version", scalarConfigPayload, StringComparison.Ordinal);
+            Assert.Contains("Scalar", scalarRootPayload, StringComparison.OrdinalIgnoreCase);
+            Assert.Contains("/scalar/openapi-toggle.js?v=", scalarRootPayload, StringComparison.Ordinal);
+            Assert.Contains("openapi/v2.json", scalarRootPayload, StringComparison.Ordinal);
+            Assert.Contains("Scalar", scalarV2Payload, StringComparison.OrdinalIgnoreCase);
+            Assert.Contains("/scalar/openapi-toggle.js?v=", scalarV2Payload, StringComparison.Ordinal);
+            Assert.Contains("openapi/v2.json", scalarV2Payload, StringComparison.Ordinal);
+        }
+        finally
+        {
+            if (Directory.Exists(contentRootPath))
+            {
+                Directory.Delete(contentRootPath, recursive: true);
+            }
+        }
     }
 
     [Fact]
