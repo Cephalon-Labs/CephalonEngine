@@ -2,7 +2,7 @@
 
 Decision baseline date: `April 13, 2026`
 
-Related issue: `ENG-058-T55` / GitHub issue `#313`
+Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`
 
 Cross-references: `docs/components/behaviors-http.md`, `docs/module-authoring.md`, `docs/architecture.md`, `docs/architecture-review-2026-04.md`, `docs/project-memory.md`
 
@@ -33,6 +33,8 @@ The current shipped model is already opinionated:
 - `RestBehaviorModuleBase` is the canonical authoring path for behavior-backed public REST
 - `BehaviorModuleBase` is the canonical path for behavior ownership without public REST
 - `Engine:Behaviors:AutoRegister` is an opt-in fallback, not the default behavior-ownership model
+- the current module-owned REST DSL now compiles into one normalized internal projection contract
+  before ASP.NET Core materializes route groups and endpoints
 
 That means Cephalon should not go back to a model where `[AppBehavior]` silently publishes a public
 REST boundary by default.
@@ -133,6 +135,13 @@ Different authoring styles should compile into the same normalized projection mo
 
 This is the missing abstraction that lets Cephalon support low-code authoring without leaking REST
 concerns directly into `IAppBehavior<TIn, TOut>`.
+
+Status update:
+
+- Step 1 of this direction is now shipped internally through the current `RestBehaviorModuleBase`
+  DSL, which compiles into a normalized projection contract plus a dedicated materializer
+- the remaining high-value follow-through is runtime-catalog truth plus fail-fast collision
+  validation before broader shorthand publication is considered
 
 ## Recommended long-term engine model
 
@@ -344,6 +353,11 @@ Cephalon should implement this in five steps.
 
 Add a normalized descriptor model and make the current module DSL compile into it internally.
 
+Status:
+
+- shipped through `ENG-058-T56`; the current module DSL now compiles into a normalized internal
+  projection model before route materialization
+
 ### Step 2: add resolved REST endpoint catalog and collision validation
 
 Add a runtime catalog and fail-fast duplicate-route validation over the normalized projection model
@@ -383,11 +397,10 @@ The following points are durable enough to keep outside thread-local context.
 
 ## Near-term follow-through candidates
 
-Recommended implementation sequence after this design slice:
+Recommended implementation sequence after the shipped normalization slice:
 
-1. introduce the normalized REST projection descriptor contract and refactor the current DSL to use it
-2. add a resolved REST endpoint runtime catalog plus fail-fast route-collision validation
-3. add diagnostics and source-generator support for future HTTP profile metadata
-4. add explicit input-binding descriptors and conflict validation
-5. add a generated or convention-backed low-code module path
-6. only then evaluate whether richer configuration-driven public-boundary overrides are worth the added complexity
+1. add a resolved REST endpoint runtime catalog plus fail-fast route-collision validation
+2. add diagnostics and source-generator support for future HTTP profile metadata
+3. add explicit input-binding descriptors and conflict validation
+4. add a generated or convention-backed low-code module path
+5. only then evaluate whether richer configuration-driven public-boundary overrides are worth the added complexity

@@ -117,12 +117,13 @@ Cephalon supports many choices. That is powerful, but it can also weaken the lea
 
 The more optionality the engine adds, the more important it becomes to preserve a very clear "recommended first path" for adopters.
 
-### 6. REST authoring needs one normalized projection layer before more shorthand is added
+### 6. REST authoring now needs runtime-catalog and collision-validation follow-through before more shorthand is added
 
-The current module-owned REST DSL is the right direction, but it is still the only strong public
-REST authoring path. If Cephalon adds lower-ceremony behavior-first shorthand without a normalized
-projection contract, it risks reintroducing duplicate routes, weaker ownership semantics, and
-host-specific leakage into behavior abstractions.
+The current module-owned REST DSL is the right direction, and it now compiles into a normalized
+internal projection contract. The remaining risk is adding lower-ceremony behavior-first shorthand
+before Cephalon also ships a first-class resolved REST runtime catalog plus fail-fast route
+collision validation. Without that follow-through, future shorthand could still reintroduce
+duplicate routes, weaker ownership semantics, and operator ambiguity.
 
 ## Main gaps
 
@@ -161,15 +162,14 @@ The repository had substantial planning content, but a durable rule set for keep
 
 `docs/planning-governance.md` now improves that, but the long-term value will come from applying it consistently.
 
-### 6. Public REST still lacks a normalized projection contract beneath the current DSL
+### 6. Public REST still lacks a resolved runtime catalog and collision validation over the new projection contract
 
-The current explicit DSL is good, but Cephalon still needs one normalized public REST projection
-layer if it wants to support configuration-backed route evolution, lower-ceremony authoring, or
-generated module surfaces without letting public REST drift back into behavior topology.
+The explicit DSL is good, and Cephalon now has the normalized internal public REST projection layer
+beneath it. The next gap is exposing that resolved projection truth through a first-class runtime
+catalog and enforcing fail-fast route-collision validation over the merged public REST surface.
 
-That same follow-through should include a first-class runtime catalog and fail-fast route-collision
-validation for resolved public REST projections, because shorthand or generated routes are only safe
-if operators and developers can see exactly which source won and why.
+That follow-through matters because shorthand or generated routes are only safe if operators and
+developers can see exactly which source won, which projections were suppressed, and why.
 
 ## Architecture recommendations
 
@@ -179,8 +179,8 @@ if operators and developers can see exactly which source won and why.
 - keep the showcase proving the database-topology and operator story, but promote only the reusable parts into engine contracts
 - keep docs, roadmap, backlog, and GitHub Project history synchronized for meaningful work
 - strengthen the "recommended first path" across ASP.NET Core, Entity Framework, Wolverine, and the showcase sample
-- define the normalized REST endpoint projection model before adding any new behavior-only REST shorthand
-- add route-collision validation plus a runtime REST endpoint catalog as part of that projection follow-through
+- keep the new normalized REST endpoint projection layer as the internal source of truth
+- add route-collision validation plus a runtime REST endpoint catalog before any new behavior-only REST shorthand
 
 ### Next 60 days
 

@@ -28,7 +28,8 @@ module-owned REST endpoints.
 - **REST behavior module base class** — `RestBehaviorModuleBase` so behavior-owning REST modules can
   expose public endpoints without implementing multiple author-facing interfaces directly
 - **REST behavior-module DSL** — `IRestBehaviorModuleBuilder` plus
-  `IRestBehaviorEndpointGroupBuilder` for one-place public REST and internal behavior ownership
+  `IRestBehaviorEndpointGroupBuilder` for one-place public REST and internal behavior ownership,
+  compiled internally into a normalized REST projection contract before Minimal API materialization
 - **OpenAPI enrichment** — module tag names and descriptions, module-major API-version defaults
   with explicit `.ApiVersion(...)` override support, best-effort XML comment
   summaries/descriptions for module-owned REST endpoints, and separation between public REST docs
@@ -161,6 +162,8 @@ Current helper behavior:
 - gives behavior-owning REST modules a dedicated base class instead of requiring authors to
   implement `IBehaviorOwnerModule` plus `IRestModule` manually
 - treats the REST DSL as the primary authoring path, so public routes also imply module ownership
+- compiles author-facing REST group and endpoint declarations into a reusable internal projection
+  model before the ASP.NET Core adapter materializes route groups and handlers
 - keeps `Internal<TBehavior>()` available for internal-only behaviors or behaviors that will be exposed
   through custom/manual endpoints
 - dispatches through `BehaviorDispatcher` using Minimal API handlers

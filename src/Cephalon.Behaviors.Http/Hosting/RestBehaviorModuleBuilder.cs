@@ -9,7 +9,7 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
     private static readonly Type AppBehaviorOpenGeneric = typeof(IAppBehavior<,>);
     private readonly Dictionary<string, RestBehaviorOwnershipDefinition> ownedBehaviors = new(StringComparer.OrdinalIgnoreCase);
     private readonly List<Action<IBehaviorModuleBuilder>> ownershipRegistrations = [];
-    private readonly List<RestBehaviorEndpointGroupDefinition> groups = [];
+    private readonly List<RestBehaviorRouteGroupState> groups = [];
 
     public IRestBehaviorModuleBuilder Internal<TBehavior>()
         where TBehavior : class
@@ -30,13 +30,15 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(prefix);
 
-        var definition = new RestBehaviorEndpointGroupDefinition(prefix.Trim());
-        groups.Add(definition);
-        return new RestBehaviorEndpointGroupBuilder(this, definition);
+        var state = new RestBehaviorRouteGroupState(prefix.Trim());
+        groups.Add(state);
+        return new RestBehaviorEndpointGroupBuilder(this, state);
     }
 
-    internal RestBehaviorModuleDefinition Build()
-        => new([.. ownershipRegistrations], [.. groups]);
+    internal RestBehaviorModuleProjection Build()
+        => new(
+            [.. ownershipRegistrations],
+            [.. groups.Select(static state => state.ToProjection())]);
 
     private void RegisterOwnedBehavior<TBehavior>(Action<IBehaviorTopologyBuilder>? configureTopology)
         where TBehavior : class
@@ -76,37 +78,37 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
 
     private sealed class RestBehaviorEndpointGroupBuilder(
         RestBehaviorModuleBuilder moduleBuilder,
-        RestBehaviorEndpointGroupDefinition definition)
+        RestBehaviorRouteGroupState state)
         : IRestBehaviorEndpointGroupBuilder
     {
         public IRestBehaviorEndpointGroupBuilder ApiVersion(int major)
         {
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(major);
-            definition.ApiVersionMajor = major;
-            definition.HasExplicitApiVersion = true;
+            state.ApiVersionMajor = major;
+            state.HasExplicitApiVersion = true;
             return this;
         }
 
         public IRestBehaviorEndpointGroupBuilder WithTagName(string tagName)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(tagName);
-            definition.TagName = tagName.Trim();
+            state.TagName = tagName.Trim();
             return this;
         }
 
         public IRestBehaviorEndpointGroupBuilder WithTagDescription(string? description)
         {
-            definition.TagDescription = string.IsNullOrWhiteSpace(description)
+            state.TagDescription = string.IsNullOrWhiteSpace(description)
                 ? null
                 : description.Trim();
-            definition.HasExplicitTagDescription = true;
+            state.HasExplicitTagDescription = true;
             return this;
         }
 
         public IRestBehaviorEndpointGroupBuilder Configure(Action<RouteGroupBuilder> configure)
         {
             ArgumentNullException.ThrowIfNull(configure);
-            definition.GroupConventions.Add(configure);
+            state.GroupConventions.Add(configure);
             return this;
         }
 
@@ -185,12 +187,43 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
             ArgumentException.ThrowIfNullOrWhiteSpace(pattern);
 
             moduleBuilder.RegisterOwnedBehavior<TBehavior>(configureTopology);
-            definition.Endpoints.Add(new RestBehaviorEndpointDefinition(
+            state.Endpoints.Add(RestBehaviorEndpointProjection.Create<TBehavior>(
                 method,
-                typeof(TBehavior),
-                pattern.Trim(),
+                pattern,
                 configureEndpoint));
             return this;
+        }
+    }
+
+    private sealed class RestBehaviorRouteGroupState(string prefix)
+    {
+        public string Prefix { get; } = prefix;
+
+        public string? TagName { get; set; }
+
+        public string? TagDescription { get; set; }
+
+        public bool HasExplicitTagDescription { get; set; }
+
+        public int? ApiVersionMajor { get; set; }
+
+        public bool HasExplicitApiVersion { get; set; }
+
+        public List<Action<RouteGroupBuilder>> GroupConventions { get; } = [];
+
+        public List<RestBehaviorEndpointProjection> Endpoints { get; } = [];
+
+        public RestBehaviorRouteGroupProjection ToProjection()
+        {
+            return new RestBehaviorRouteGroupProjection(
+                Prefix,
+                TagName,
+                TagDescription,
+                HasExplicitTagDescription,
+                ApiVersionMajor,
+                HasExplicitApiVersion,
+                [.. GroupConventions],
+                [.. Endpoints]);
         }
     }
 
@@ -223,42 +256,4 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
                 hasExplicitTopologyOverride);
         }
     }
-}
-
-internal sealed record RestBehaviorModuleDefinition(
-    IReadOnlyList<Action<IBehaviorModuleBuilder>> OwnershipRegistrations,
-    IReadOnlyList<RestBehaviorEndpointGroupDefinition> Groups);
-
-internal sealed class RestBehaviorEndpointGroupDefinition(string prefix)
-{
-    public string Prefix { get; } = prefix;
-
-    public string? TagName { get; set; }
-
-    public string? TagDescription { get; set; }
-
-    public bool HasExplicitTagDescription { get; set; }
-
-    public int? ApiVersionMajor { get; set; }
-
-    public bool HasExplicitApiVersion { get; set; }
-
-    public List<Action<RouteGroupBuilder>> GroupConventions { get; } = [];
-
-    public List<RestBehaviorEndpointDefinition> Endpoints { get; } = [];
-}
-
-internal sealed record RestBehaviorEndpointDefinition(
-    RestBehaviorHttpMethod Method,
-    Type BehaviorType,
-    string Pattern,
-    Action<RouteHandlerBuilder>? ConfigureEndpoint);
-
-internal enum RestBehaviorHttpMethod
-{
-    Get,
-    Post,
-    Put,
-    Patch,
-    Delete
 }
