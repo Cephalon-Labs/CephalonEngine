@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Reflection;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Behaviors.Http.Abstractions;
+using Microsoft.AspNetCore.Routing.Patterns;
 
 namespace Cephalon.Behaviors.Http.Hosting;
 
@@ -133,6 +134,7 @@ internal static class BehaviorRestProfileResolver
                 descriptor.Bindings,
                 behaviorType,
                 descriptor.Method,
+                normalizedPattern,
                 sourceIdentity,
                 descriptor.BehaviorId);
 
@@ -177,6 +179,7 @@ internal static class BehaviorRestProfileResolver
         IReadOnlyList<BehaviorRestBindingDescriptor>? bindings,
         Type behaviorType,
         BehaviorRestMethod method,
+        string relativePattern,
         string sourceIdentity,
         string behaviorId)
     {
@@ -184,6 +187,8 @@ internal static class BehaviorRestProfileResolver
         {
             return [];
         }
+
+        ArgumentException.ThrowIfNullOrWhiteSpace(relativePattern);
 
         var inputType = ResolveInputType(behaviorType);
         if (IsSimpleInputType(inputType))
@@ -199,6 +204,10 @@ internal static class BehaviorRestProfileResolver
                 $"REST profile metadata for behavior '{behaviorId}' from '{sourceIdentity}' cannot declare explicit input bindings because '{inputType.FullName ?? inputType.Name}' does not expose public input properties.");
         }
 
+        var routeParameters = RoutePatternFactory.Parse(relativePattern)
+            .Parameters
+            .Select(static parameter => parameter.Name)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
         var normalized = new Dictionary<string, BehaviorRestBindingDescriptor>(StringComparer.OrdinalIgnoreCase);
         foreach (var binding in bindings)
         {
@@ -233,14 +242,22 @@ internal static class BehaviorRestProfileResolver
                     $"REST profile metadata for behavior '{behaviorId}' from '{sourceIdentity}' declares multiple explicit bindings for input property '{property.Name}'.");
             }
 
+            var effectiveBindingName = string.IsNullOrWhiteSpace(binding.Name)
+                ? property.Name
+                : binding.Name.Trim();
+            if (binding.Source == BehaviorRestBindingSource.Route &&
+                !routeParameters.Contains(effectiveBindingName))
+            {
+                throw new InvalidOperationException(
+                    $"REST profile metadata for behavior '{behaviorId}' from '{sourceIdentity}' declares a route binding for input property '{property.Name}' using placeholder '{effectiveBindingName}', but route pattern '{relativePattern}' does not declare that placeholder.");
+            }
+
             normalized.Add(
                 property.Name,
                 new BehaviorRestBindingDescriptor(
                     property.Name,
                     binding.Source,
-                    string.IsNullOrWhiteSpace(binding.Name)
-                        ? property.Name
-                        : binding.Name.Trim()));
+                    effectiveBindingName));
         }
 
         return normalized.Values.ToArray();

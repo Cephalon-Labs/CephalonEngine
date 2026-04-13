@@ -184,6 +184,9 @@ Current `BehaviorRestProfileAttribute` behavior:
 - the optional `ApiVersionMajor` remains only a candidate endpoint version; the host still decides
   which OpenAPI documents are published through `OpenApi:EnabledVersions` or the legacy document
   allow-list settings
+- when `BehaviorRestBindingAttribute` uses `Route`, keep the declared binding name aligned with a
+  placeholder that actually exists in `BehaviorRestProfileAttribute.RelativePattern`; the build now
+  rejects route-binding placeholder mismatches before `MapProfile<TBehavior>()` is generated
 
 When a behavior needs to communicate expected branches without throwing exceptions for normal domain
 flow, prefer `Result<T>` over a transport-specific envelope:
@@ -335,6 +338,8 @@ Current helper behavior:
 - keeps the implicit route/query/body merge baseline for DSL-authored routes without explicit
   profile bindings, while profile-driven explicit bindings switch to descriptor-aware source
   resolution with deterministic route/body fallback
+- validates explicit binding metadata at build time and re-checks the same route-placeholder truth
+  during runtime fallback so low-ceremony profile authoring stays deterministic
 - uses the module display name for OpenAPI tags
 - lets the module override the published tag name and tag description through `.WithTagName(...)` and `.WithTagDescription(...)`
 - defaults the tag description from the module XML `<summary>` plus `<remarks>` when XML docs exist, falling back to `ModuleDescriptor.Description`

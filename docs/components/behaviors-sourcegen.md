@@ -12,7 +12,7 @@ conventions at build time and produce a compile-time-known registration hint fil
   - Emits `BehaviorAutoRegistration.g.cs` for zero-reflection DI/type registration plus pre-built topology descriptors when compile-time extraction succeeds
   - Emits source-generated metadata-only REST profile hints through `GetRestProfiles()` when behaviors declare valid `BehaviorRestProfileAttribute` metadata
   - Extracts compile-time topology from `ConfigureTopology(...)` for pattern, transports, feature flags, and literal `WithApiSurface(...)` overrides
-- Reports ABT0010–ABT0018 diagnostics on invalid behavior declarations and invalid metadata-only REST profile hints; detailed explicit-binding semantics still fail fast during module-owned profile consumption
+- Reports ABT0010–ABT0025 diagnostics on invalid behavior declarations, metadata-only REST profile hints, and explicit REST binding metadata before `GetRestProfiles()` is generated
 
 ## Diagnostic rules
 
@@ -27,6 +27,13 @@ conventions at build time and produce a compile-time-known registration hint fil
 | ABT0016 | Error | `[BehaviorRestProfile]` uses an empty relative pattern |
 | ABT0017 | Error | `[BehaviorRestProfile]` uses a non-positive `ApiVersionMajor` |
 | ABT0018 | Error | `[BehaviorRestProfile]` uses a relative pattern that does not start with `/` |
+| ABT0019 | Error | `[BehaviorRestBinding]` does not name a target input property |
+| ABT0020 | Error | `[BehaviorRestBinding]` does not select a supported binding source |
+| ABT0021 | Error | `[BehaviorRestBinding]` metadata is declared for a scalar input or an input without public readable properties |
+| ABT0022 | Error | `[BehaviorRestBinding]` targets an input property that does not exist |
+| ABT0023 | Error | `[BehaviorRestBinding]` declares the same input property more than once |
+| ABT0024 | Error | `[BehaviorRestBinding]` uses `Body` on a REST method that does not accept a request body |
+| ABT0025 | Error | `[BehaviorRestBinding]` uses a route placeholder that is not declared in `[BehaviorRestProfile(...)]` |
 
 ## Generated output
 
@@ -109,16 +116,18 @@ manual `MapBehaviorRestGroup(...)` wiring when they intentionally stay on the lo
 path.
 `BehaviorRestProfileAttribute` plus optional repeated `BehaviorRestBindingAttribute` declarations is
 now the shipped metadata-only bridge for future low-ceremony REST: the generator validates the core
-profile shape and emits `GetRestProfiles()` hints, including explicit binding descriptors when
-present, but that metadata still does not publish public REST routes by itself and does not
-override host OpenAPI document publication policy.
+profile shape plus explicit binding metadata and emits `GetRestProfiles()` hints, including
+explicit binding descriptors when present, but that metadata still does not publish public REST
+routes by itself and does not override host OpenAPI document publication policy.
 `Cephalon.Behaviors.Http` now consumes those hints through the explicit module-owned
 `MapProfile<TBehavior>()` shorthand on `IRestBehaviorEndpointGroupBuilder`, preferring the
 generated hints and falling back only to the explicitly targeted behavior type's attribute when
-generated hints are unavailable.
-Detailed binding semantics such as unknown input properties, scalar-input rejection, duplicate
-property bindings, route-placeholder mismatches, and body-binding verb restrictions still fail fast
-when `Cephalon.Behaviors.Http` normalizes the profile for module-owned REST consumption.
+generated hints are unavailable. Generated REST profile and binding hints now resolve their enum
+member names from the actual attribute arguments instead of assuming fixed numeric ordinals.
+The build now rejects unsupported binding sources, missing or duplicate input-property targets,
+scalar-input misuse, body-binding verb restrictions, and route-placeholder mismatches earlier, while
+`Cephalon.Behaviors.Http` still re-checks the same contract when the runtime falls back to direct
+attribute resolution for `MapProfile<TBehavior>()`.
 Likewise, explicit module ownership through `IBehaviorOwnerModule`, `BehaviorModuleBase`, or
 `RestBehaviorModuleBase` remains a runtime-composition concern rather than a source-generated
 topology concern: the generator still focuses on behavior shape and topology, while the engine owns
@@ -130,7 +139,7 @@ until another topology source selects one explicitly.
 
 ## Status
 
-> Status: ✅ Shipped — commit 8455b9a · 584/584 tests
+> Status: ✅ Shipped — targeted source-generator tests 26/26
 
 ## Related components
 

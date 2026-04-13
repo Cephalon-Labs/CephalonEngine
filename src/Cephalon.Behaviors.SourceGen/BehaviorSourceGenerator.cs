@@ -12,7 +12,7 @@ namespace Cephalon.Behaviors.SourceGen;
 /// Incremental source generator that validates classes decorated with
 /// <c>[AppBehavior]</c>, emits compile-time diagnostics for common authoring mistakes,
 /// and generates zero-reflection registration code with pre-built topology descriptors.
-/// Diagnostic IDs: ABT-010 through ABT-018.
+/// Diagnostic IDs: ABT-010 through ABT-025.
 /// </summary>
 [Generator]
 public sealed class BehaviorSourceGenerator : IIncrementalGenerator
@@ -123,6 +123,83 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         description: "Behavior-authored REST profile metadata should use the same leading-slash relative pattern shape as the module-owned REST DSL so future projection material stays unambiguous.",
         helpLinkUri: HelpLink);
 
+    /// <summary>ABT-019: [BehaviorRestBinding] target property name must not be empty.</summary>
+    public static readonly DiagnosticDescriptor Abt019RestBindingPropertyNameMustNotBeEmpty = new(
+        id: "ABT0019",
+        title: "REST binding target property name must not be empty",
+        messageFormat: "'{0}' declares [BehaviorRestBinding] without a target input property name",
+        category: "Cephalon.Behaviors",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true,
+        description: "Behavior-authored REST binding metadata must identify the input property that the owning module-owned REST projection should populate.",
+        helpLinkUri: HelpLink);
+
+    /// <summary>ABT-020: [BehaviorRestBinding] source must select a supported binding source.</summary>
+    public static readonly DiagnosticDescriptor Abt020RestBindingSourceMustBeSupported = new(
+        id: "ABT0020",
+        title: "REST binding source must be supported",
+        messageFormat: "'{0}' declares [BehaviorRestBinding] for input property '{1}' without a supported binding source",
+        category: "Cephalon.Behaviors",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true,
+        description: "Behavior-authored REST binding metadata must use one supported source such as route, query, header, or body.",
+        helpLinkUri: HelpLink);
+
+    /// <summary>ABT-021: Explicit REST bindings require an object input with public properties.</summary>
+    public static readonly DiagnosticDescriptor Abt021RestBindingsRequireObjectInput = new(
+        id: "ABT0021",
+        title: "REST bindings require an object input with public properties",
+        messageFormat: "'{0}' declares [BehaviorRestBinding] metadata, but input type '{1}' must expose public properties for explicit REST binding",
+        category: "Cephalon.Behaviors",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true,
+        description: "Explicit REST binding metadata can only target object inputs that expose public readable properties.",
+        helpLinkUri: HelpLink);
+
+    /// <summary>ABT-022: [BehaviorRestBinding] property must exist on the behavior input.</summary>
+    public static readonly DiagnosticDescriptor Abt022RestBindingPropertyMustExistOnInput = new(
+        id: "ABT0022",
+        title: "REST binding property must exist on the behavior input",
+        messageFormat: "'{0}' declares [BehaviorRestBinding] for input property '{1}', but '{2}' does not expose a matching public property",
+        category: "Cephalon.Behaviors",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true,
+        description: "Behavior-authored REST binding metadata must target a real public input property so module-owned REST projections remain deterministic.",
+        helpLinkUri: HelpLink);
+
+    /// <summary>ABT-023: [BehaviorRestBinding] must not target the same property twice.</summary>
+    public static readonly DiagnosticDescriptor Abt023RestBindingPropertyMustNotBeDuplicated = new(
+        id: "ABT0023",
+        title: "REST binding property must not be declared more than once",
+        messageFormat: "'{0}' declares more than one [BehaviorRestBinding] for input property '{1}'",
+        category: "Cephalon.Behaviors",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true,
+        description: "Each behavior input property may have at most one explicit REST binding descriptor.",
+        helpLinkUri: HelpLink);
+
+    /// <summary>ABT-024: GET/DELETE REST profiles must not bind from the request body.</summary>
+    public static readonly DiagnosticDescriptor Abt024RestBodyBindingMustUseBodyCapableMethod = new(
+        id: "ABT0024",
+        title: "REST body bindings require a body-capable method",
+        messageFormat: "'{0}' declares a body [BehaviorRestBinding] for input property '{1}', but REST method '{2}' does not accept a request body",
+        category: "Cephalon.Behaviors",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true,
+        description: "Body bindings are only valid for body-capable REST methods so the generated profile metadata matches the module-owned REST runtime contract.",
+        helpLinkUri: HelpLink);
+
+    /// <summary>ABT-025: Route bindings must target placeholders declared in the profile pattern.</summary>
+    public static readonly DiagnosticDescriptor Abt025RestRouteBindingMustMatchRoutePlaceholder = new(
+        id: "ABT0025",
+        title: "REST route bindings must match declared route placeholders",
+        messageFormat: "'{0}' declares a route [BehaviorRestBinding] for input property '{1}' using placeholder '{2}', but route pattern '{3}' does not declare that placeholder",
+        category: "Cephalon.Behaviors",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true,
+        description: "Explicit route bindings must name placeholders that are actually present in the profile route pattern so module-owned projections do not carry unreachable route intent.",
+        helpLinkUri: HelpLink);
+
     // ─────────────────────────────────────────────────────────────────────────
     // Initialization
     // ─────────────────────────────────────────────────────────────────────────
@@ -177,7 +254,8 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         var isAbstract = typeSymbol.IsAbstract;
         var isStatic = typeSymbol.IsStatic;
 
-        var implementsInterface = ImplementsIAppBehavior(typeSymbol);
+        var inputType = ResolveBehaviorInputType(typeSymbol);
+        var implementsInterface = inputType is not null;
         var hasRestTransportAttribute = DeclaresRestTransportAttribute(typeSymbol);
         var restProfile = ExtractRestProfile(typeSymbol);
 
@@ -199,6 +277,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             isAbstract: isAbstract,
             isStatic: isStatic,
             implementsInterface: implementsInterface,
+            inputType: inputType,
             location: location,
             topology: topology,
             restProfile: restProfile,
@@ -206,11 +285,31 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             hasConfigureTopologyRestTransport: hasConfigureTopologyRestTransport);
     }
 
-    private static bool ImplementsIAppBehavior(INamedTypeSymbol typeSymbol)
+    private static InputTypeInfo? ResolveBehaviorInputType(INamedTypeSymbol typeSymbol)
     {
-        return typeSymbol.AllInterfaces.Any(static i =>
+        var behaviorInterface = typeSymbol.AllInterfaces.FirstOrDefault(static i =>
             i.OriginalDefinition.ToDisplayString() ==
             "Cephalon.Abstractions.Behaviors.IAppBehavior<TIn, TOut>");
+        if (behaviorInterface is null)
+        {
+            return null;
+        }
+
+        var inputType = UnwrapNullable(behaviorInterface.TypeArguments[0]);
+        var publicProperties = inputType
+            .GetMembers()
+            .OfType<IPropertySymbol>()
+            .Where(static property =>
+                !property.IsStatic &&
+                property.GetMethod is not null &&
+                property.DeclaredAccessibility == Accessibility.Public)
+            .Select(static property => property.Name)
+            .ToImmutableDictionary(static property => property, static property => property, StringComparer.OrdinalIgnoreCase);
+
+        return new InputTypeInfo(
+            inputType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+            IsSimpleInputType(inputType),
+            publicProperties);
     }
 
     private static bool DeclaresRestTransportAttribute(INamedTypeSymbol typeSymbol)
@@ -262,10 +361,9 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                 continue;
             }
 
-            var methodValue = attribute.ConstructorArguments.Length > 0 &&
-                              attribute.ConstructorArguments[0].Value is not null
-                ? Convert.ToInt32(attribute.ConstructorArguments[0].Value, System.Globalization.CultureInfo.InvariantCulture)
-                : 0;
+            var methodName = attribute.ConstructorArguments.Length > 0
+                ? ResolveEnumMemberName(attribute.ConstructorArguments[0])
+                : null;
             var relativePattern = attribute.ConstructorArguments.Length > 1
                 ? attribute.ConstructorArguments[1].Value as string ?? string.Empty
                 : string.Empty;
@@ -287,7 +385,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             }
 
             return new RestProfileInfo(
-                methodValue,
+                methodName,
                 relativePattern,
                 hasApiVersionMajor,
                 apiVersionMajor,
@@ -314,10 +412,9 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             var propertyName = attribute.ConstructorArguments.Length > 0
                 ? attribute.ConstructorArguments[0].Value as string ?? string.Empty
                 : string.Empty;
-            var sourceValue = attribute.ConstructorArguments.Length > 1 &&
-                              attribute.ConstructorArguments[1].Value is not null
-                ? Convert.ToInt32(attribute.ConstructorArguments[1].Value, System.Globalization.CultureInfo.InvariantCulture)
-                : 0;
+            var sourceName = attribute.ConstructorArguments.Length > 1
+                ? ResolveEnumMemberName(attribute.ConstructorArguments[1])
+                : null;
             string? name = null;
 
             foreach (var namedArgument in attribute.NamedArguments)
@@ -331,7 +428,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                 break;
             }
 
-            bindings.Add(new RestBindingInfo(propertyName, sourceValue, name));
+            bindings.Add(new RestBindingInfo(propertyName, sourceName, name));
         }
 
         return bindings;
@@ -602,7 +699,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             return;
         }
 
-        if (!TryResolveRestProfileMethodName(info.RestProfile.MethodValue, out _))
+        if (!IsSupportedRestMethod(info.RestProfile.MethodName))
         {
             spc.ReportDiagnostic(Diagnostic.Create(
                 Abt015RestProfileMethodMustBeSpecified,
@@ -633,6 +730,14 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                 info.Location,
                 info.ShortName,
                 info.RestProfile.ApiVersionMajor));
+        }
+
+        foreach (var issue in ValidateRestBindingMetadata(info))
+        {
+            spc.ReportDiagnostic(Diagnostic.Create(
+                issue.Descriptor,
+                info.Location,
+                issue.MessageArguments));
         }
     }
 
@@ -778,14 +883,14 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             foreach (var info in behaviorsWithRestProfiles)
             {
                 if (info?.RestProfile is null ||
-                    !TryResolveRestProfileMethodName(info.RestProfile.MethodValue, out var methodName))
+                    !IsSupportedRestMethod(info.RestProfile.MethodName))
                 {
                     continue;
                 }
 
                 sb.Append("            new global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor(");
                 sb.Append($"\"{EscapeString(info.BehaviorId)}\", ");
-                sb.Append($"global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethod.{methodName}, ");
+                sb.Append($"global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethod.{info.RestProfile.MethodName}, ");
                 sb.Append($"\"{EscapeString(info.RestProfile.RelativePattern.Trim())}\", ");
                 sb.Append(info.RestProfile.HasApiVersionMajor
                     ? info.RestProfile.ApiVersionMajor.ToString(System.Globalization.CultureInfo.InvariantCulture)
@@ -796,7 +901,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                     sb.Append(string.Join(
                         ", ",
                         info.RestProfile.Bindings.Select(static binding =>
-                            $"new global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor(\"{EscapeString(binding.PropertyName)}\", global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource.{ResolveRestBindingSourceName(binding.SourceValue)}, {(string.IsNullOrWhiteSpace(binding.Name) ? "null" : $"\"{EscapeString(binding.Name!)}\"")})")));
+                            $"new global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor(\"{EscapeString(binding.PropertyName)}\", global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource.{binding.SourceName}, {(string.IsNullOrWhiteSpace(binding.Name) ? "null" : $"\"{EscapeString(binding.Name!)}\"")})")));
                     sb.Append(" }");
                 }
                 sb.AppendLine("),");
@@ -843,31 +948,252 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
     private static string EscapeString(string s) =>
         s.Replace("\\", "\\\\").Replace("\"", "\\\"");
 
-    private static bool TryResolveRestProfileMethodName(int methodValue, out string? methodName)
+    private static string? ResolveEnumMemberName(TypedConstant constant)
     {
-        methodName = methodValue switch
+        if (constant.Type is not INamedTypeSymbol { TypeKind: TypeKind.Enum } enumType ||
+            constant.Value is null)
         {
-            1 => "Get",
-            2 => "Post",
-            3 => "Put",
-            4 => "Patch",
-            5 => "Delete",
-            _ => null
-        };
+            return null;
+        }
 
-        return methodName is not null;
+        foreach (var member in enumType.GetMembers().OfType<IFieldSymbol>())
+        {
+            if (!member.HasConstantValue || member.ConstantValue is null)
+            {
+                continue;
+            }
+
+            if (Equals(member.ConstantValue, constant.Value))
+            {
+                return member.Name;
+            }
+        }
+
+        return null;
     }
 
-    private static string ResolveRestBindingSourceName(int sourceValue)
+    private static bool IsSupportedRestMethod(string? methodName)
     {
-        return sourceValue switch
+        return methodName is "Get" or "Post" or "Put" or "Patch" or "Delete";
+    }
+
+    private static bool MethodAcceptsBody(string? methodName)
+    {
+        return methodName is "Post" or "Put" or "Patch";
+    }
+
+    private static bool IsSupportedRestBindingSource(string? sourceName)
+    {
+        return sourceName is "Route" or "Query" or "Header" or "Body";
+    }
+
+    private static ImmutableArray<RestBindingValidationIssue> ValidateRestBindingMetadata(BehaviorInfo info)
+    {
+        if (info.RestProfile is null || info.RestProfile.Bindings.Count == 0)
         {
-            1 => "Route",
-            2 => "Query",
-            3 => "Header",
-            4 => "Body",
-            _ => "Unspecified"
-        };
+            return [];
+        }
+
+        if (info.InputType is null)
+        {
+            return [];
+        }
+
+        if (info.InputType.IsSimple || info.InputType.PublicProperties.Count == 0)
+        {
+            return
+            [
+                new RestBindingValidationIssue(
+                    Abt021RestBindingsRequireObjectInput,
+                    info.ShortName,
+                    info.InputType.DisplayName)
+            ];
+        }
+
+        var issues = ImmutableArray.CreateBuilder<RestBindingValidationIssue>();
+        var routeParameters = HasValidRoutePattern(info.RestProfile.RelativePattern)
+            ? ExtractRouteParameterNames(info.RestProfile.RelativePattern)
+            : null;
+        var supportsBody = MethodAcceptsBody(info.RestProfile.MethodName);
+        var hasSupportedMethod = IsSupportedRestMethod(info.RestProfile.MethodName);
+        var seenProperties = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var binding in info.RestProfile.Bindings)
+        {
+            if (string.IsNullOrWhiteSpace(binding.PropertyName))
+            {
+                issues.Add(new RestBindingValidationIssue(
+                    Abt019RestBindingPropertyNameMustNotBeEmpty,
+                    info.ShortName));
+                continue;
+            }
+
+            var propertyName = binding.PropertyName.Trim();
+            var propertyExists = info.InputType.PublicProperties.TryGetValue(propertyName, out var canonicalPropertyName);
+            var effectivePropertyName = propertyExists ? canonicalPropertyName! : propertyName;
+
+            if (!propertyExists)
+            {
+                issues.Add(new RestBindingValidationIssue(
+                    Abt022RestBindingPropertyMustExistOnInput,
+                    info.ShortName,
+                    propertyName,
+                    info.InputType.DisplayName));
+            }
+
+            if (propertyExists && !seenProperties.Add(canonicalPropertyName!))
+            {
+                issues.Add(new RestBindingValidationIssue(
+                    Abt023RestBindingPropertyMustNotBeDuplicated,
+                    info.ShortName,
+                    canonicalPropertyName!));
+            }
+
+            if (!IsSupportedRestBindingSource(binding.SourceName))
+            {
+                issues.Add(new RestBindingValidationIssue(
+                    Abt020RestBindingSourceMustBeSupported,
+                    info.ShortName,
+                    effectivePropertyName));
+                continue;
+            }
+
+            if (hasSupportedMethod &&
+                string.Equals(binding.SourceName, "Body", StringComparison.Ordinal) &&
+                !supportsBody)
+            {
+                issues.Add(new RestBindingValidationIssue(
+                    Abt024RestBodyBindingMustUseBodyCapableMethod,
+                    info.ShortName,
+                    effectivePropertyName,
+                    info.RestProfile.MethodName!));
+            }
+
+            if (routeParameters is not null &&
+                string.Equals(binding.SourceName, "Route", StringComparison.Ordinal))
+            {
+                var placeholderName = string.IsNullOrWhiteSpace(binding.Name)
+                    ? effectivePropertyName
+                    : binding.Name!.Trim();
+                if (!routeParameters.Contains(placeholderName))
+                {
+                    issues.Add(new RestBindingValidationIssue(
+                        Abt025RestRouteBindingMustMatchRoutePlaceholder,
+                        info.ShortName,
+                        effectivePropertyName,
+                        placeholderName,
+                        info.RestProfile.RelativePattern.Trim()));
+                }
+            }
+        }
+
+        return issues.ToImmutable();
+    }
+
+    private static bool HasValidRoutePattern(string pattern)
+    {
+        return !string.IsNullOrWhiteSpace(pattern) &&
+               pattern.Trim().StartsWith("/", StringComparison.Ordinal);
+    }
+
+    private static HashSet<string> ExtractRouteParameterNames(string pattern)
+    {
+        var parameters = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        if (string.IsNullOrWhiteSpace(pattern))
+        {
+            return parameters;
+        }
+
+        var current = pattern.Trim();
+        var index = 0;
+        while (index < current.Length)
+        {
+            var openBrace = current.IndexOf('{', index);
+            if (openBrace < 0)
+            {
+                break;
+            }
+
+            var closeBrace = current.IndexOf('}', openBrace + 1);
+            if (closeBrace < 0)
+            {
+                break;
+            }
+
+            var token = current.Substring(openBrace + 1, closeBrace - openBrace - 1);
+            var parameterName = NormalizeRouteParameterToken(token);
+            if (!string.IsNullOrWhiteSpace(parameterName))
+            {
+                parameters.Add(parameterName!);
+            }
+
+            index = closeBrace + 1;
+        }
+
+        return parameters;
+    }
+
+    private static string? NormalizeRouteParameterToken(string token)
+    {
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            return null;
+        }
+
+        var normalized = token.Trim();
+        if (normalized.StartsWith("**", StringComparison.Ordinal))
+        {
+            normalized = normalized.Substring(2);
+        }
+        else if (normalized.StartsWith("*", StringComparison.Ordinal))
+        {
+            normalized = normalized.Substring(1);
+        }
+
+        var separatorIndex = normalized.IndexOfAny([':', '=', '?']);
+        if (separatorIndex >= 0)
+        {
+            normalized = normalized.Substring(0, separatorIndex);
+        }
+
+        normalized = normalized.Trim();
+        return normalized.Length == 0 ? null : normalized;
+    }
+
+    private static ITypeSymbol UnwrapNullable(ITypeSymbol typeSymbol)
+    {
+        return typeSymbol is INamedTypeSymbol
+        {
+            OriginalDefinition.SpecialType: SpecialType.System_Nullable_T,
+            TypeArguments.Length: 1
+        } namedTypeSymbol
+            ? namedTypeSymbol.TypeArguments[0]
+            : typeSymbol;
+    }
+
+    private static bool IsSimpleInputType(ITypeSymbol inputType)
+    {
+        var type = UnwrapNullable(inputType);
+        return type.TypeKind == TypeKind.Enum ||
+               type.SpecialType is SpecialType.System_Boolean or
+                   SpecialType.System_Byte or
+                   SpecialType.System_SByte or
+                   SpecialType.System_Int16 or
+                   SpecialType.System_UInt16 or
+                   SpecialType.System_Int32 or
+                   SpecialType.System_UInt32 or
+                   SpecialType.System_Int64 or
+                   SpecialType.System_UInt64 or
+                   SpecialType.System_Single or
+                   SpecialType.System_Double or
+                   SpecialType.System_Char or
+                   SpecialType.System_String or
+                   SpecialType.System_Decimal or
+                   SpecialType.System_DateTime ||
+               string.Equals(type.ToDisplayString(), "System.Guid", StringComparison.Ordinal) ||
+               string.Equals(type.ToDisplayString(), "System.DateTimeOffset", StringComparison.Ordinal) ||
+               string.Equals(type.ToDisplayString(), "System.DateOnly", StringComparison.Ordinal) ||
+               string.Equals(type.ToDisplayString(), "System.TimeOnly", StringComparison.Ordinal);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -912,6 +1238,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             bool isAbstract,
             bool isStatic,
             bool implementsInterface,
+            InputTypeInfo? inputType,
             Location location,
             TopologyInfo? topology,
             RestProfileInfo? restProfile,
@@ -924,6 +1251,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             IsAbstract = isAbstract;
             IsStatic = isStatic;
             ImplementsInterface = implementsInterface;
+            InputType = inputType;
             Location = location;
             Topology = topology;
             RestProfile = restProfile;
@@ -937,6 +1265,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         public bool IsAbstract { get; }
         public bool IsStatic { get; }
         public bool ImplementsInterface { get; }
+        public InputTypeInfo? InputType { get; }
         public Location Location { get; }
         public TopologyInfo? Topology { get; }
         public RestProfileInfo? RestProfile { get; }
@@ -955,10 +1284,11 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         public bool HasValidRestProfile =>
             IsValid &&
             RestProfile is not null &&
-            TryResolveRestProfileMethodName(RestProfile.MethodValue, out _) &&
+            IsSupportedRestMethod(RestProfile.MethodName) &&
             !string.IsNullOrWhiteSpace(RestProfile.RelativePattern) &&
             RestProfile.RelativePattern.Trim().StartsWith("/", StringComparison.Ordinal) &&
             (!RestProfile.HasApiVersionMajor || RestProfile.ApiVersionMajor > 0) &&
+            ValidateRestBindingMetadata(this).IsDefaultOrEmpty &&
             !HasRestTransportAttribute &&
             !HasConfigureTopologyRestTransport;
     }
@@ -966,20 +1296,20 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
     private sealed class RestProfileInfo
     {
         public RestProfileInfo(
-            int methodValue,
+            string? methodName,
             string relativePattern,
             bool hasApiVersionMajor,
             int apiVersionMajor,
             IReadOnlyList<RestBindingInfo> bindings)
         {
-            MethodValue = methodValue;
+            MethodName = methodName;
             RelativePattern = relativePattern;
             HasApiVersionMajor = hasApiVersionMajor;
             ApiVersionMajor = apiVersionMajor;
             Bindings = bindings;
         }
 
-        public int MethodValue { get; }
+        public string? MethodName { get; }
         public string RelativePattern { get; }
         public bool HasApiVersionMajor { get; }
         public int ApiVersionMajor { get; }
@@ -988,15 +1318,44 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
 
     private sealed class RestBindingInfo
     {
-        public RestBindingInfo(string propertyName, int sourceValue, string? name)
+        public RestBindingInfo(string propertyName, string? sourceName, string? name)
         {
             PropertyName = propertyName;
-            SourceValue = sourceValue;
+            SourceName = sourceName;
             Name = name;
         }
 
         public string PropertyName { get; }
-        public int SourceValue { get; }
+        public string? SourceName { get; }
         public string? Name { get; }
+    }
+
+    private sealed class InputTypeInfo
+    {
+        public InputTypeInfo(
+            string displayName,
+            bool isSimple,
+            ImmutableDictionary<string, string> publicProperties)
+        {
+            DisplayName = displayName;
+            IsSimple = isSimple;
+            PublicProperties = publicProperties;
+        }
+
+        public string DisplayName { get; }
+        public bool IsSimple { get; }
+        public ImmutableDictionary<string, string> PublicProperties { get; }
+    }
+
+    private sealed class RestBindingValidationIssue
+    {
+        public RestBindingValidationIssue(DiagnosticDescriptor descriptor, params object?[] messageArguments)
+        {
+            Descriptor = descriptor;
+            MessageArguments = messageArguments;
+        }
+
+        public DiagnosticDescriptor Descriptor { get; }
+        public object?[] MessageArguments { get; }
     }
 }

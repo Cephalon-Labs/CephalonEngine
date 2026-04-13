@@ -1,3 +1,5 @@
+using System.Reflection;
+using System.Reflection.Emit;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Modules;
 using Cephalon.AspNetCore.Transports.Rest;
@@ -208,40 +210,105 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
-    public void RestBehaviorModuleBuilderRejectsProfileBindingsForUnknownInputProperty()
+    public void BehaviorRestProfileResolverRejectsProfileBindingsForUnknownInputPropertyFromAttributeFallback()
     {
-        var builder = new RestBehaviorModuleBuilder();
-        var group = builder.Group("/tests/profile-cart");
+        var behaviorType = CreateDynamicProfileBehaviorType(
+            "tests.profile.projection.unknown-binding.dynamic",
+            BehaviorRestMethod.Post,
+            "/{cartId}/items",
+            typeof(DynamicProfileBindingInput),
+            new DynamicProfileBindingDefinition("MissingProperty", BehaviorRestBindingSource.Query, "quantity"));
 
         var exception = Assert.Throws<InvalidOperationException>(() =>
-            group.MapProfile<ProfileProjectionUnknownBindingBehavior>());
+            BehaviorRestProfileResolver.Resolve(behaviorType));
 
         Assert.Contains("unknown input property", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
-    public void RestBehaviorModuleBuilderRejectsProfileBindingsForScalarInput()
+    public void BehaviorRestProfileResolverRejectsProfileBindingsForScalarInputFromAttributeFallback()
     {
-        var builder = new RestBehaviorModuleBuilder();
-        var group = builder.Group("/tests/profile-cart");
+        var behaviorType = CreateDynamicProfileBehaviorType(
+            "tests.profile.projection.scalar-binding.dynamic",
+            BehaviorRestMethod.Get,
+            "/{value}",
+            typeof(string),
+            new DynamicProfileBindingDefinition("Value", BehaviorRestBindingSource.Route, "value"));
 
         var exception = Assert.Throws<InvalidOperationException>(() =>
-            group.MapProfile<ProfileProjectionScalarBindingBehavior>());
+            BehaviorRestProfileResolver.Resolve(behaviorType));
 
         Assert.Contains("scalar input type", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
-    public void RestBehaviorModuleBuilderRejectsProfileBodyBindingsForGetEndpoints()
+    public void BehaviorRestProfileResolverRejectsProfileBodyBindingsForGetEndpointsFromAttributeFallback()
     {
-        var builder = new RestBehaviorModuleBuilder();
-        var group = builder.Group("/tests/profile-cart");
+        var behaviorType = CreateDynamicProfileBehaviorType(
+            "tests.profile.projection.get-body-binding.dynamic",
+            BehaviorRestMethod.Get,
+            "/{cartId}",
+            typeof(DynamicProfileBindingInput),
+            new DynamicProfileBindingDefinition(nameof(DynamicProfileBindingInput.Note), BehaviorRestBindingSource.Body, "note"));
 
         var exception = Assert.Throws<InvalidOperationException>(() =>
-            group.MapProfile<ProfileProjectionGetBodyBindingBehavior>());
+            BehaviorRestProfileResolver.Resolve(behaviorType));
 
         Assert.Contains("cannot bind input property", exception.Message, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("Get", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void BehaviorRestProfileResolverRejectsProfileBindingsWithoutSupportedSourceFromAttributeFallback()
+    {
+        var behaviorType = CreateDynamicProfileBehaviorType(
+            "tests.profile.projection.unsupported-source.dynamic",
+            BehaviorRestMethod.Post,
+            "/{cartId}",
+            typeof(DynamicProfileBindingInput),
+            new DynamicProfileBindingDefinition(
+                nameof(DynamicProfileBindingInput.CartId),
+                Enum.ToObject(typeof(BehaviorRestBindingSource), 999),
+                "cartId"));
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            BehaviorRestProfileResolver.Resolve(behaviorType));
+
+        Assert.Contains("supported binding source", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void BehaviorRestProfileResolverRejectsDuplicateProfileBindingsFromAttributeFallback()
+    {
+        var behaviorType = CreateDynamicProfileBehaviorType(
+            "tests.profile.projection.duplicate-binding.dynamic",
+            BehaviorRestMethod.Post,
+            "/{cartId}",
+            typeof(DynamicProfileBindingInput),
+            new DynamicProfileBindingDefinition(nameof(DynamicProfileBindingInput.CartId), BehaviorRestBindingSource.Route, "cartId"),
+            new DynamicProfileBindingDefinition(nameof(DynamicProfileBindingInput.CartId), BehaviorRestBindingSource.Query, "cartId"));
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            BehaviorRestProfileResolver.Resolve(behaviorType));
+
+        Assert.Contains("multiple explicit bindings", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void BehaviorRestProfileResolverRejectsProfileRouteBindingsWhenPlaceholderIsMissingFromPatternFromAttributeFallback()
+    {
+        var behaviorType = CreateDynamicProfileBehaviorType(
+            "tests.profile.projection.missing-route-placeholder.dynamic",
+            BehaviorRestMethod.Post,
+            "/{cartId}/items",
+            typeof(DynamicProfileBindingInput),
+            new DynamicProfileBindingDefinition(nameof(DynamicProfileBindingInput.CartId), BehaviorRestBindingSource.Route, "missingCartId"));
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            BehaviorRestProfileResolver.Resolve(behaviorType));
+
+        Assert.Contains("does not declare that placeholder", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("missingCartId", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -265,6 +332,69 @@ public sealed class BehaviorRestProjectionTests
                 Assert.Equal(typeof(ProjectionCartBehavior), registration.BehaviorType);
                 Assert.False(registration.HasExplicitTopologyOverride);
             });
+    }
+
+    private static Type CreateDynamicProfileBehaviorType(
+        string behaviorId,
+        BehaviorRestMethod method,
+        string relativePattern,
+        Type inputType,
+        params DynamicProfileBindingDefinition[] bindings)
+    {
+        var assemblyName = new AssemblyName($"Cephalon.Tests.Hosting.DynamicProfiles.{Guid.NewGuid():N}");
+        var assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
+        var moduleBuilder = assemblyBuilder.DefineDynamicModule(assemblyName.Name!);
+        var typeBuilder = moduleBuilder.DefineType(
+            $"DynamicProfileBehavior_{Guid.NewGuid():N}",
+            TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Sealed);
+
+        var behaviorInterface = typeof(IAppBehavior<,>).MakeGenericType(inputType, typeof(string));
+        typeBuilder.AddInterfaceImplementation(behaviorInterface);
+        typeBuilder.DefineDefaultConstructor(MethodAttributes.Public);
+
+        typeBuilder.SetCustomAttribute(new CustomAttributeBuilder(
+            typeof(AppBehaviorAttribute).GetConstructor([typeof(string)])!,
+            [behaviorId]));
+
+        typeBuilder.SetCustomAttribute(new CustomAttributeBuilder(
+            typeof(BehaviorRestProfileAttribute).GetConstructor([typeof(BehaviorRestMethod), typeof(string)])!,
+            [method, relativePattern],
+            [typeof(BehaviorRestProfileAttribute).GetProperty(nameof(BehaviorRestProfileAttribute.ApiVersionMajor))!],
+            [6]));
+
+        var bindingConstructor = typeof(BehaviorRestBindingAttribute).GetConstructor(
+            [typeof(string), typeof(BehaviorRestBindingSource)])!;
+        var bindingNameProperty = typeof(BehaviorRestBindingAttribute).GetProperty(nameof(BehaviorRestBindingAttribute.Name))!;
+        foreach (var binding in bindings)
+        {
+            if (binding.Name is null)
+            {
+                typeBuilder.SetCustomAttribute(new CustomAttributeBuilder(
+                    bindingConstructor,
+                    [binding.PropertyName, binding.SourceValue]));
+            }
+            else
+            {
+                typeBuilder.SetCustomAttribute(new CustomAttributeBuilder(
+                    bindingConstructor,
+                    [binding.PropertyName, binding.SourceValue],
+                    [bindingNameProperty],
+                    [binding.Name]));
+            }
+        }
+
+        var handleAsyncMethod = typeBuilder.DefineMethod(
+            nameof(IAppBehavior<object, string>.HandleAsync),
+            MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.Final | MethodAttributes.HideBySig | MethodAttributes.NewSlot,
+            typeof(Task<string>),
+            [inputType, typeof(IBehaviorContext), typeof(CancellationToken)]);
+        var il = handleAsyncMethod.GetILGenerator();
+        il.Emit(OpCodes.Ldstr, "ok");
+        il.Emit(OpCodes.Call, typeof(Task).GetMethod(nameof(Task.FromResult))!.MakeGenericMethod(typeof(string)));
+        il.Emit(OpCodes.Ret);
+        typeBuilder.DefineMethodOverride(handleAsyncMethod, behaviorInterface.GetMethod(nameof(IAppBehavior<object, string>.HandleAsync))!);
+
+        return typeBuilder.CreateType()!;
     }
 
     [AppBehavior("tests.cart.projection")]
@@ -338,48 +468,6 @@ public sealed class BehaviorRestProjectionTests
         }
     }
 
-    [AppBehavior("tests.profile.projection.unknown-binding")]
-    [BehaviorRestProfile(BehaviorRestMethod.Post, "/{cartId}/items", ApiVersionMajor = 6)]
-    [BehaviorRestBinding("MissingProperty", BehaviorRestBindingSource.Query, Name = "quantity")]
-    private sealed class ProfileProjectionUnknownBindingBehavior : IAppBehavior<ProfileProjectionBoundInput, ProjectionCartOutput>
-    {
-        public Task<ProjectionCartOutput> HandleAsync(
-            ProfileProjectionBoundInput input,
-            IBehaviorContext context,
-            CancellationToken ct = default)
-        {
-            return Task.FromResult(new ProjectionCartOutput(input.CartId));
-        }
-    }
-
-    [AppBehavior("tests.profile.projection.scalar-binding")]
-    [BehaviorRestProfile(BehaviorRestMethod.Get, "/{value}", ApiVersionMajor = 6)]
-    [BehaviorRestBinding("Value", BehaviorRestBindingSource.Route, Name = "value")]
-    private sealed class ProfileProjectionScalarBindingBehavior : IAppBehavior<string, string>
-    {
-        public Task<string> HandleAsync(
-            string input,
-            IBehaviorContext context,
-            CancellationToken ct = default)
-        {
-            return Task.FromResult(input);
-        }
-    }
-
-    [AppBehavior("tests.profile.projection.get-body-binding")]
-    [BehaviorRestProfile(BehaviorRestMethod.Get, "/{cartId}", ApiVersionMajor = 6)]
-    [BehaviorRestBinding(nameof(ProfileProjectionBoundInput.Note), BehaviorRestBindingSource.Body, Name = "note")]
-    private sealed class ProfileProjectionGetBodyBindingBehavior : IAppBehavior<ProfileProjectionBoundInput, ProjectionCartOutput>
-    {
-        public Task<ProjectionCartOutput> HandleAsync(
-            ProfileProjectionBoundInput input,
-            IBehaviorContext context,
-            CancellationToken ct = default)
-        {
-            return Task.FromResult(new ProjectionCartOutput(input.CartId));
-        }
-    }
-
     private sealed class ProjectionCountingRestModule : RestBehaviorModuleBase
     {
         public int ConfigureRestBehaviorsCallCount { get; private set; }
@@ -426,4 +514,20 @@ public sealed class BehaviorRestProjectionTests
         int Quantity,
         string? CorrelationId,
         string? Note);
+
+    private sealed record DynamicProfileBindingDefinition(
+        string PropertyName,
+        object SourceValue,
+        string? Name = null);
+}
+
+public sealed class DynamicProfileBindingInput
+{
+    public string CartId { get; init; } = string.Empty;
+
+    public int Quantity { get; init; }
+
+    public string? CorrelationId { get; init; }
+
+    public string? Note { get; init; }
 }

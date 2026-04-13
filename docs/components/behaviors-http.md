@@ -183,9 +183,10 @@ Current profile behavior:
 - valid profiles currently require a supported REST method, a non-empty leading-slash relative
   pattern such as `"/{cartId}"`, and a positive `ApiVersionMajor` when one is specified
 - explicit profile bindings currently support `route`, `query`, `header`, and `body` sources for
-  object inputs only; invalid property names, duplicate property bindings, route-placeholder
-  mismatches, and body bindings on `GET` or `DELETE` fail fast during module-owned profile
-  consumption
+  object inputs only; build-time diagnostics now reject invalid property names, duplicate property
+  bindings, unsupported sources, route-placeholder mismatches, and body bindings on `GET` or
+  `DELETE`, while module-owned profile consumption still re-checks the same contract when runtime
+  falls back to direct attribute metadata
 - when explicit bindings are present, they override the implicit merge baseline, while unbound
   route placeholders and request bodies can still fill remaining object properties
 - a JSON body that tries to overwrite a property reserved by an explicit non-body binding fails
@@ -272,6 +273,8 @@ Current helper behavior:
   descriptors
 - prefers source-generated profile hints and falls back only to the explicitly targeted behavior
   type instead of broad assembly reflection
+- keeps explicit route bindings honest by requiring the declared binding name to match a
+  placeholder present in the profile route template
 - lets explicit group `.ApiVersion(...)` override profile-declared candidate versions, while
   conflicting profile-declared versions in the same group fail fast until the module resolves them
 - keeps runtime publication on the same module-owned path with `sourceKind = module-dsl`, while

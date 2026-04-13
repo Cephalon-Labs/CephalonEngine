@@ -13,3 +13,10 @@ ABT0015 | Cephalon.Behaviors | Error | BehaviorRestProfile must select a support
 ABT0016 | Cephalon.Behaviors | Error | BehaviorRestProfile relative pattern must not be empty
 ABT0017 | Cephalon.Behaviors | Error | BehaviorRestProfile API version must be greater than zero when specified
 ABT0018 | Cephalon.Behaviors | Error | BehaviorRestProfile relative pattern must start with '/'
+ABT0019 | Cephalon.Behaviors | Error | BehaviorRestBinding target property name must not be empty
+ABT0020 | Cephalon.Behaviors | Error | BehaviorRestBinding source must be supported
+ABT0021 | Cephalon.Behaviors | Error | BehaviorRestBinding metadata requires an object input with public properties
+ABT0022 | Cephalon.Behaviors | Error | BehaviorRestBinding property must exist on the behavior input
+ABT0023 | Cephalon.Behaviors | Error | BehaviorRestBinding property must not be declared more than once
+ABT0024 | Cephalon.Behaviors | Error | BehaviorRestBinding body sources require a body-capable REST method
+ABT0025 | Cephalon.Behaviors | Error | BehaviorRestBinding route sources must match declared route placeholders

@@ -2,7 +2,7 @@
 
 Decision baseline date: `April 13, 2026`
 
-Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`
+Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`
 
 Cross-references: `docs/components/behaviors-http.md`, `docs/module-authoring.md`, `docs/architecture.md`, `docs/architecture-review-2026-04.md`, `docs/project-memory.md`
 
@@ -145,7 +145,7 @@ Status update:
   and fail-fast collision validation on the resolved public `HTTP method + route pattern`
 - Step 3 is now shipped through `BehaviorRestProfileAttribute`, `BehaviorRestMethod`,
   `BehaviorRestProfileDescriptor`, source-generated `GetRestProfiles()` hints, and
-  `ABT0015` through `ABT0018`, while still keeping those behavior-authored REST profiles
+  `ABT0015` through `ABT0025`, while still keeping those behavior-authored REST profiles
   metadata-only rather than publishing public REST directly from behaviors
 - Step 4 is now partially shipped through `IRestBehaviorEndpointGroupBuilder.MapProfile<TBehavior>()`,
   which consumes those generated hints through the same explicit module-owned DSL, prefers
@@ -159,6 +159,11 @@ Status update:
   consumes them through the same normalized projection pipeline, request composition now treats
   those descriptors as overrides instead of an exclusive mode, and `/engine/rest-endpoints`
   surfaces the resolved plan through additive `bindingDescriptors` metadata
+- the next hardening slice is now also shipped through `ENG-058-T64`: `Cephalon.Behaviors.SourceGen`
+  rejects invalid explicit binding metadata at build time through `ABT0019` through `ABT0025`,
+  generated `GetRestProfiles()` output no longer depends on hard-coded enum ordinals, and
+  `BehaviorRestProfileResolver` now fails fast when an explicit route binding names a placeholder
+  that the declared profile route pattern does not contain
 - broader configuration-driven projection overrides remain later work
 
 ## Recommended long-term engine model
@@ -324,11 +329,16 @@ Current rule:
 - explicit bindings currently require object inputs; scalar inputs still use the existing scalar
   REST binder path
 - route placeholders can still infer unbound route-bound properties when names match
+- explicit route bindings must name placeholders that actually exist in the declared
+  `BehaviorRestProfileAttribute` pattern
 - for `GET` and `DELETE`, explicit body bindings are rejected
 - for `POST`, `PUT`, and `PATCH`, explicit route/query/header/body bindings resolve first, and the
   JSON body can still fill remaining unbound object properties
 - body values that target a property already reserved by an explicit non-body binding fail fast
   instead of silently overwriting the explicit source
+- build-time diagnostics now reject invalid binding sources, missing or duplicate input-property
+  targets, scalar-input binding misuse, body bindings on non-body verbs, and route-placeholder
+  mismatches before `GetRestProfiles()` is generated
 - shorthand REST publication still requires an explicit HTTP method selection and does not infer a
   public verb only from behavior-id naming conventions
 - broader configuration-driven binding overrides remain later work
@@ -444,6 +454,9 @@ complexity.
 Status:
 
 - the explicit input-binding descriptor slice is now shipped through `ENG-058-T63`
+- the first compile-time and runtime hardening follow-through is now shipped through `ENG-058-T64`,
+  so invalid binding metadata is rejected at build time and runtime fallback still re-checks
+  route-placeholder truth before endpoint materialization
 - controlled configuration overrides remain later work once suppression visibility and shorthand
   publication rules are stronger
 

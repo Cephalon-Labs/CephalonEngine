@@ -135,13 +135,13 @@ public sealed class BehaviorSourceGeneratorTests
         """;
 
     private static (GeneratorDriverRunResult Result, ImmutableArray<Diagnostic> Diagnostics)
-        RunGenerator(string source)
+        RunGenerator(string source, string? attributeStubs = null)
     {
         var compilation = CSharpCompilation.Create(
             assemblyName: "TestAssembly",
             syntaxTrees:
             [
-                CSharpSyntaxTree.ParseText(AttributeStubs),
+                CSharpSyntaxTree.ParseText(attributeStubs ?? AttributeStubs),
                 CSharpSyntaxTree.ParseText(source)
             ],
             references:
@@ -363,6 +363,13 @@ public sealed class BehaviorSourceGeneratorTests
             BehaviorSourceGenerator.Abt016RestProfilePatternMustNotBeEmpty,
             BehaviorSourceGenerator.Abt017RestProfileVersionMustBePositive,
             BehaviorSourceGenerator.Abt018RestProfilePatternMustStartWithSlash,
+            BehaviorSourceGenerator.Abt019RestBindingPropertyNameMustNotBeEmpty,
+            BehaviorSourceGenerator.Abt020RestBindingSourceMustBeSupported,
+            BehaviorSourceGenerator.Abt021RestBindingsRequireObjectInput,
+            BehaviorSourceGenerator.Abt022RestBindingPropertyMustExistOnInput,
+            BehaviorSourceGenerator.Abt023RestBindingPropertyMustNotBeDuplicated,
+            BehaviorSourceGenerator.Abt024RestBodyBindingMustUseBodyCapableMethod,
+            BehaviorSourceGenerator.Abt025RestRouteBindingMustMatchRoutePlaceholder,
         };
 
         foreach (var descriptor in descriptors)
@@ -385,6 +392,13 @@ public sealed class BehaviorSourceGeneratorTests
         Assert.Equal("ABT0016", BehaviorSourceGenerator.Abt016RestProfilePatternMustNotBeEmpty.Id);
         Assert.Equal("ABT0017", BehaviorSourceGenerator.Abt017RestProfileVersionMustBePositive.Id);
         Assert.Equal("ABT0018", BehaviorSourceGenerator.Abt018RestProfilePatternMustStartWithSlash.Id);
+        Assert.Equal("ABT0019", BehaviorSourceGenerator.Abt019RestBindingPropertyNameMustNotBeEmpty.Id);
+        Assert.Equal("ABT0020", BehaviorSourceGenerator.Abt020RestBindingSourceMustBeSupported.Id);
+        Assert.Equal("ABT0021", BehaviorSourceGenerator.Abt021RestBindingsRequireObjectInput.Id);
+        Assert.Equal("ABT0022", BehaviorSourceGenerator.Abt022RestBindingPropertyMustExistOnInput.Id);
+        Assert.Equal("ABT0023", BehaviorSourceGenerator.Abt023RestBindingPropertyMustNotBeDuplicated.Id);
+        Assert.Equal("ABT0024", BehaviorSourceGenerator.Abt024RestBodyBindingMustUseBodyCapableMethod.Id);
+        Assert.Equal("ABT0025", BehaviorSourceGenerator.Abt025RestRouteBindingMustMatchRoutePlaceholder.Id);
     }
 
     [Fact]
@@ -531,6 +545,296 @@ public sealed class BehaviorSourceGeneratorTests
         var (_, diagnostics) = RunGenerator(source);
 
         Assert.Contains(diagnostics, d => d.Id == "ABT0018");
+    }
+
+    [Fact]
+    public void RestBindingWithoutPropertyNameEmitsAbt0019()
+    {
+        const string source = """
+            using Cephalon.Abstractions.Behaviors;
+            using Cephalon.Behaviors.Http.Abstractions;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            public sealed record LookupOrderInput(string OrderId);
+
+            [AppBehavior("orders.lookup")]
+            [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}")]
+            [BehaviorRestBinding("", BehaviorRestBindingSource.Route, Name = "orderId")]
+            public sealed class LookupOrderBehavior : IAppBehavior<LookupOrderInput, string>
+            {
+                public Task<string> HandleAsync(LookupOrderInput input, IBehaviorContext ctx, CancellationToken ct = default)
+                    => Task.FromResult("ok");
+            }
+            """;
+
+        var (_, diagnostics) = RunGenerator(source);
+
+        Assert.Contains(diagnostics, d => d.Id == "ABT0019");
+    }
+
+    [Fact]
+    public void RestBindingWithoutSupportedSourceEmitsAbt0020()
+    {
+        const string source = """
+            using Cephalon.Abstractions.Behaviors;
+            using Cephalon.Behaviors.Http.Abstractions;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            public sealed record LookupOrderInput(string OrderId);
+
+            [AppBehavior("orders.lookup")]
+            [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}")]
+            [BehaviorRestBinding(nameof(LookupOrderInput.OrderId), (BehaviorRestBindingSource)0, Name = "orderId")]
+            public sealed class LookupOrderBehavior : IAppBehavior<LookupOrderInput, string>
+            {
+                public Task<string> HandleAsync(LookupOrderInput input, IBehaviorContext ctx, CancellationToken ct = default)
+                    => Task.FromResult("ok");
+            }
+            """;
+
+        var (_, diagnostics) = RunGenerator(source);
+
+        Assert.Contains(diagnostics, d => d.Id == "ABT0020");
+    }
+
+    [Fact]
+    public void RestBindingsOnScalarInputEmitAbt0021()
+    {
+        const string source = """
+            using Cephalon.Abstractions.Behaviors;
+            using Cephalon.Behaviors.Http.Abstractions;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            [AppBehavior("orders.lookup")]
+            [BehaviorRestProfile(BehaviorRestMethod.Get, "/{value}")]
+            [BehaviorRestBinding("Value", BehaviorRestBindingSource.Route, Name = "value")]
+            public sealed class LookupOrderBehavior : IAppBehavior<string, string>
+            {
+                public Task<string> HandleAsync(string input, IBehaviorContext ctx, CancellationToken ct = default)
+                    => Task.FromResult("ok");
+            }
+            """;
+
+        var (_, diagnostics) = RunGenerator(source);
+
+        Assert.Contains(diagnostics, d => d.Id == "ABT0021");
+    }
+
+    [Fact]
+    public void RestBindingsOnInputWithoutPublicPropertiesEmitAbt0021()
+    {
+        const string source = """
+            using Cephalon.Abstractions.Behaviors;
+            using Cephalon.Behaviors.Http.Abstractions;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            public sealed class LookupOrderInput
+            {
+            }
+
+            [AppBehavior("orders.lookup")]
+            [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}")]
+            [BehaviorRestBinding("OrderId", BehaviorRestBindingSource.Route, Name = "orderId")]
+            public sealed class LookupOrderBehavior : IAppBehavior<LookupOrderInput, string>
+            {
+                public Task<string> HandleAsync(LookupOrderInput input, IBehaviorContext ctx, CancellationToken ct = default)
+                    => Task.FromResult("ok");
+            }
+            """;
+
+        var (_, diagnostics) = RunGenerator(source);
+
+        Assert.Contains(diagnostics, d => d.Id == "ABT0021");
+    }
+
+    [Fact]
+    public void RestBindingForUnknownInputPropertyEmitsAbt0022()
+    {
+        const string source = """
+            using Cephalon.Abstractions.Behaviors;
+            using Cephalon.Behaviors.Http.Abstractions;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            public sealed record LookupOrderInput(string OrderId);
+
+            [AppBehavior("orders.lookup")]
+            [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}")]
+            [BehaviorRestBinding("MissingProperty", BehaviorRestBindingSource.Query, Name = "orderId")]
+            public sealed class LookupOrderBehavior : IAppBehavior<LookupOrderInput, string>
+            {
+                public Task<string> HandleAsync(LookupOrderInput input, IBehaviorContext ctx, CancellationToken ct = default)
+                    => Task.FromResult("ok");
+            }
+            """;
+
+        var (_, diagnostics) = RunGenerator(source);
+
+        Assert.Contains(diagnostics, d => d.Id == "ABT0022");
+    }
+
+    [Fact]
+    public void DuplicateRestBindingsForTheSameInputPropertyEmitAbt0023()
+    {
+        const string source = """
+            using Cephalon.Abstractions.Behaviors;
+            using Cephalon.Behaviors.Http.Abstractions;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            public sealed record LookupOrderInput(string OrderId);
+
+            [AppBehavior("orders.lookup")]
+            [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}")]
+            [BehaviorRestBinding(nameof(LookupOrderInput.OrderId), BehaviorRestBindingSource.Route, Name = "orderId")]
+            [BehaviorRestBinding(nameof(LookupOrderInput.OrderId), BehaviorRestBindingSource.Query, Name = "orderId")]
+            public sealed class LookupOrderBehavior : IAppBehavior<LookupOrderInput, string>
+            {
+                public Task<string> HandleAsync(LookupOrderInput input, IBehaviorContext ctx, CancellationToken ct = default)
+                    => Task.FromResult("ok");
+            }
+            """;
+
+        var (_, diagnostics) = RunGenerator(source);
+
+        Assert.Contains(diagnostics, d => d.Id == "ABT0023");
+    }
+
+    [Fact]
+    public void RestBodyBindingForGetEndpointEmitsAbt0024()
+    {
+        const string source = """
+            using Cephalon.Abstractions.Behaviors;
+            using Cephalon.Behaviors.Http.Abstractions;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            public sealed record LookupOrderInput(string Note);
+
+            [AppBehavior("orders.lookup")]
+            [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}")]
+            [BehaviorRestBinding(nameof(LookupOrderInput.Note), BehaviorRestBindingSource.Body, Name = "note")]
+            public sealed class LookupOrderBehavior : IAppBehavior<LookupOrderInput, string>
+            {
+                public Task<string> HandleAsync(LookupOrderInput input, IBehaviorContext ctx, CancellationToken ct = default)
+                    => Task.FromResult("ok");
+            }
+            """;
+
+        var (_, diagnostics) = RunGenerator(source);
+
+        Assert.Contains(diagnostics, d => d.Id == "ABT0024");
+    }
+
+    [Fact]
+    public void RestRouteBindingWithoutMatchingPlaceholderEmitsAbt0025()
+    {
+        const string source = """
+            using Cephalon.Abstractions.Behaviors;
+            using Cephalon.Behaviors.Http.Abstractions;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            public sealed record LookupOrderInput(string OrderId);
+
+            [AppBehavior("orders.lookup")]
+            [BehaviorRestProfile(BehaviorRestMethod.Get, "/{differentOrderId}")]
+            [BehaviorRestBinding(nameof(LookupOrderInput.OrderId), BehaviorRestBindingSource.Route, Name = "orderId")]
+            public sealed class LookupOrderBehavior : IAppBehavior<LookupOrderInput, string>
+            {
+                public Task<string> HandleAsync(LookupOrderInput input, IBehaviorContext ctx, CancellationToken ct = default)
+                    => Task.FromResult("ok");
+            }
+            """;
+
+        var (_, diagnostics) = RunGenerator(source);
+
+        Assert.Contains(diagnostics, d => d.Id == "ABT0025");
+    }
+
+    [Fact]
+    public void RestProfileHintsUseResolvedEnumMemberNamesInsteadOfEnumOrdinals()
+    {
+        const string source = """
+            using Cephalon.Abstractions.Behaviors;
+            using Cephalon.Behaviors.Http.Abstractions;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            public sealed record LookupOrderInput(string OrderId, int Quantity);
+
+            [AppBehavior("orders.lookup")]
+            [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}")]
+            [BehaviorRestBinding(nameof(LookupOrderInput.OrderId), BehaviorRestBindingSource.Route, Name = "orderId")]
+            [BehaviorRestBinding(nameof(LookupOrderInput.Quantity), BehaviorRestBindingSource.Query, Name = "quantity")]
+            public sealed class LookupOrderBehavior : IAppBehavior<LookupOrderInput, string>
+            {
+                public Task<string> HandleAsync(LookupOrderInput input, IBehaviorContext ctx, CancellationToken ct = default)
+                    => Task.FromResult("ok");
+            }
+            """;
+
+        var reorderedStubs = AttributeStubs
+            .Replace(
+                """
+                        public enum BehaviorRestBindingSource
+                        {
+                            Unspecified = 0,
+                            Route = 1,
+                            Query = 2,
+                            Header = 3,
+                            Body = 4
+                        }
+                """,
+                """
+                        public enum BehaviorRestBindingSource
+                        {
+                            Unspecified = 0,
+                            Header = 40,
+                            Body = 30,
+                            Query = 20,
+                            Route = 10
+                        }
+                """,
+                StringComparison.Ordinal)
+            .Replace(
+                """
+                        public enum BehaviorRestMethod
+                        {
+                            Unspecified = 0,
+                            Get = 1,
+                            Post = 2,
+                            Put = 3,
+                            Patch = 4,
+                            Delete = 5
+                        }
+                """,
+                """
+                        public enum BehaviorRestMethod
+                        {
+                            Unspecified = 0,
+                            Delete = 50,
+                            Patch = 40,
+                            Put = 30,
+                            Post = 20,
+                            Get = 10
+                        }
+                """,
+                StringComparison.Ordinal);
+
+        var (result, diagnostics) = RunGenerator(source, reorderedStubs);
+
+        Assert.Empty(diagnostics);
+
+        var autoRegistration = GetGeneratedAutoRegistrationSource(result);
+        Assert.NotNull(autoRegistration);
+        Assert.Contains("BehaviorRestMethod.Get", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("BehaviorRestBindingSource.Route", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("BehaviorRestBindingSource.Query", autoRegistration, StringComparison.Ordinal);
     }
 
     [Fact]
