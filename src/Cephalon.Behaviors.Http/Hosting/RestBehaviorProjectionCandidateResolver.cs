@@ -366,8 +366,31 @@ internal static class RestBehaviorProjectionCandidateResolver
 
         if (overridePlaceholders.Count > originalPlaceholders.Count)
         {
-            throw new InvalidOperationException(
-                $"REST endpoint override rule '{overrideId}' cannot rewrite behavior '{endpointProjection.BehaviorId}' from pattern '{endpointProjection.Pattern}' to '{overridePattern}' because this slice does not yet allow placeholder additions. Additive route-shape overrides remain later work.");
+            if (!effectiveRouteBindingPlaceholders.SetEquals(overridePlaceholders))
+            {
+                throw new InvalidOperationException(
+                    $"REST endpoint override rule '{overrideId}' cannot rewrite behavior '{endpointProjection.BehaviorId}' from pattern '{endpointProjection.Pattern}' to '{overridePattern}' because adding placeholders requires an effective explicit route-binding plan that covers the full final placeholder set. Add matching route bindings through the effective profile or RestApi:Overrides:*:Bindings.");
+            }
+
+            var originalExplicitRouteBoundProperties = originalRouteBindings
+                .Select(static binding => binding.PropertyName.Trim())
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+            var effectiveRouteBoundProperties = effectiveRouteBindings
+                .Select(static binding => binding.PropertyName.Trim())
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+            var newlyRouteBoundProperties = effectiveRouteBoundProperties
+                .Except(originalExplicitRouteBoundProperties, StringComparer.OrdinalIgnoreCase)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+            var originalExplicitlyBoundProperties = endpointProjection.Bindings
+                .Select(static binding => binding.PropertyName.Trim())
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+            if (!originalExplicitlyBoundProperties.IsSupersetOf(newlyRouteBoundProperties))
+            {
+                throw new InvalidOperationException(
+                    $"REST endpoint override rule '{overrideId}' cannot rewrite behavior '{endpointProjection.BehaviorId}' from pattern '{endpointProjection.Pattern}' to '{overridePattern}' because adding placeholders requires every newly route-bound property to already be explicitly bound in the original projection. Promote only properties that the source profile already binds through route, query, header, or body before adding the placeholder.");
+            }
+
+            return;
         }
 
         var originalRouteBindingPlaceholders = originalRouteBindings

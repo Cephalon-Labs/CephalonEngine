@@ -379,7 +379,10 @@ Current helper behavior:
   the effective explicit route-binding plan covers the renamed placeholder set exactly, now also
   allows placeholder removals when the original projection already exposes explicit route-binding
   coverage for the original placeholder set and the effective explicit binding plan keeps every
-  affected original route-bound property explicitly bound, and still leaves explicit module
+  affected original route-bound property explicitly bound, now also allows placeholder additions
+  when the effective explicit route-binding plan covers the full final placeholder set and every
+  newly route-bound property was already explicitly bound in the original projection, and still
+  leaves explicit module
   DSL/manual routes plus shorthand groups with explicit `.ApiVersion(...)` authoritative for
   version selection
 
@@ -459,7 +462,10 @@ Current governance baseline:
 - placeholder removals can now also apply when the original projection already exposes explicit
   route-binding coverage for the original placeholder set and the effective explicit binding plan
   keeps every affected original route-bound property explicitly bound
-- placeholder additions plus broader binding-shape overrides remain later work
+- placeholder additions can now also apply when the effective explicit route-binding plan covers
+  the full final placeholder set and every newly route-bound property was already explicitly bound
+  in the original projection
+- broader implicit-property promotion plus broader binding-shape overrides remain later work
 
 Example:
 

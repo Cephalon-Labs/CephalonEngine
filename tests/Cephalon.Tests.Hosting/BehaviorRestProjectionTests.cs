@@ -626,6 +626,48 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverAllowsPlaceholderAdditionWhenNewlyRouteBoundPropertiesWereExplicitlyBound()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-binding-addition")
+            .MapProfile<ProfileProjectionBoundBehavior>();
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.profile-binding-addition",
+                "Profile Binding Addition Module",
+                "Exercises placeholder-addition override resolution when newly route-bound properties were already explicit.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "prefer-route-quantity",
+                    behaviorIds: ["tests.profile.projection.bound"],
+                    pattern: "/lookup/{cartId}/items/{quantity}",
+                    bindings:
+                    [
+                        new RestEndpointBindingDescriptor("CartId", RestEndpointBindingSource.Route, "cartId"),
+                        new RestEndpointBindingDescriptor("Quantity", RestEndpointBindingSource.Route, "quantity"),
+                        new RestEndpointBindingDescriptor("CorrelationId", RestEndpointBindingSource.Header, "X-Correlation-Id"),
+                        new RestEndpointBindingDescriptor("Note", RestEndpointBindingSource.Body, "note")
+                    ])
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Equal("prefer-route-quantity", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal("/lookup/{cartId}/items/{quantity}", candidate.Candidate.ProjectedEndpoint.Metadata["relativePattern"]);
+        Assert.Equal("/api/v6/tests/profile-binding-addition/lookup/{cartId}/items/{quantity}", candidate.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Equal(4, candidate.Candidate.ProjectedEndpoint.BindingDescriptors.Count);
+        Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "Quantity" &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "quantity");
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverAllowsPlaceholderRemovalWhenAffectedPropertiesStayExplicitlyBound()
     {
         var builder = new RestBehaviorModuleBuilder();
@@ -825,6 +867,41 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverRejectsPlaceholderAdditionWhenNewlyRouteBoundPropertiesWereNotExplicitOriginally()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-binding-addition-inference")
+            .MapProfile<ProfileProjectionBoundInferenceBehavior>();
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+                new ModuleDescriptor(
+                    "tests.rest.profile-binding-addition-inference",
+                    "Profile Binding Addition Inference Module",
+                    "Exercises fail-fast validation when placeholder addition would promote implicitly bound values into the route.",
+                    version: "1.0.0"),
+                new ApiRoutesOptions(),
+                builder.Build().Groups,
+                overrides:
+                [
+                    new RestEndpointOverrideOptions(
+                        id: "prefer-route-quantity",
+                        behaviorIds: ["tests.profile.projection.bound.inference"],
+                        pattern: "/lookup/{cartId}/items/{quantity}",
+                        bindings:
+                        [
+                            new RestEndpointBindingDescriptor("CartId", RestEndpointBindingSource.Route, "cartId"),
+                            new RestEndpointBindingDescriptor("Quantity", RestEndpointBindingSource.Route, "quantity"),
+                            new RestEndpointBindingDescriptor("CorrelationId", RestEndpointBindingSource.Header, "X-Correlation-Id"),
+                            new RestEndpointBindingDescriptor("Note", RestEndpointBindingSource.Body, "note")
+                        ])
+                ]));
+
+        Assert.Contains("newly route-bound property", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("original projection", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverRejectsPlaceholderRemovalWhenOriginalRouteCoverageReliesOnInference()
     {
         var builder = new RestBehaviorModuleBuilder();
@@ -917,13 +994,13 @@ public sealed class BehaviorRestProjectionTests
                         bindings:
                         [
                             new RestEndpointBindingDescriptor("CartId", RestEndpointBindingSource.Route, "cartId"),
-                            new RestEndpointBindingDescriptor("Quantity", RestEndpointBindingSource.Query, "quantity"),
                             new RestEndpointBindingDescriptor("CorrelationId", RestEndpointBindingSource.Header, "X-Correlation-Id"),
                             new RestEndpointBindingDescriptor("Note", RestEndpointBindingSource.Body, "note")
                         ])
                 ]));
 
-        Assert.Contains("placeholder additions", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("adding placeholders", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("explicit route-binding plan", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

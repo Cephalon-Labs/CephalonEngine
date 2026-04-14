@@ -376,11 +376,13 @@ Current helper behavior:
   effective explicit route-binding plan covers the renamed placeholder set exactly, now also allows
   placeholder removals when the original projection already exposes explicit route-binding coverage
   for the original placeholder set and the effective explicit binding plan keeps every affected
-  original route-bound property explicitly bound, still rejects placeholder additions, fails fast
-  when the effective method-plus-binding plan is invalid or when a rename or removal would rely on
-  inference or drop explicit binding coverage, and still leaves explicit `MapGet/MapPost/...`
-  routes, manual module-owned endpoints, and shorthand groups with explicit `.ApiVersion(...)`
-  authoritative for version selection
+  original route-bound property explicitly bound, and now also allows placeholder additions when
+  the effective explicit route-binding plan covers the full final placeholder set and every newly
+  route-bound property was already explicitly bound in the original projection; it still rejects
+  broader implicit-property promotion, fails fast when the effective method-plus-binding plan is
+  invalid or when a rename, removal, or addition would rely on inference or drop explicit binding
+  coverage, and still leaves explicit `MapGet/MapPost/...` routes, manual module-owned endpoints,
+  and shorthand groups with explicit `.ApiVersion(...)` authoritative for version selection
 - treats `behaviors.Internal<TBehavior>()` as the explicit internal-only or custom/manual-route path
 - validates that a module cannot map another module's explicitly owned behavior through the REST helper layer
 - keeps route shape in the ASP.NET Core adapter layer while behavior attributes remain host-agnostic
@@ -448,9 +450,11 @@ and remaining request-body fields available for deterministic fallback; placehol
 apply when the effective explicit route-binding plan covers the renamed placeholder set exactly;
 placeholder removals can now also apply when the source projection already exposed explicit
 route-binding coverage for the original placeholder set and the effective explicit binding plan
-keeps every affected original route-bound property explicitly bound; placeholder additions still
-fail fast; and invalid effective method-plus-binding combinations also fail fast during endpoint
-materialization.
+keeps every affected original route-bound property explicitly bound; placeholder additions can now
+also apply when the effective explicit route-binding plan covers the full final placeholder set and
+every newly route-bound property was already explicitly bound in the source projection; broader
+implicit-property promotion still fails fast; and invalid effective method-plus-binding
+combinations also fail fast during endpoint materialization.
 
 Example:
 
@@ -476,9 +480,11 @@ and `RestApi:Overrides:*:Pattern` can move it from `/{cartId}` to `/lookup/{cart
 placeholder set, to `/lookup/{id}` when `RestApi:Overrides:*:Bindings` also makes the effective
 route-binding plan explicit for `{id}`, or to `/lookup` when `Bindings` explicitly rebind the
 removed route-bound value and the source projection already exposed an explicit route binding for
-`{cartId}`; `Bindings` can also replace other explicit binding details such as moving `Quantity`
-from query key `quantity` to `qty` or `Note` from body key `note` to `memo`; the host still
-decides whether `v2` is actually published through
+`{cartId}`, or to `/lookup/{cartId}/items/{quantity}` when `Bindings` explicitly promote
+`Quantity` from its original explicit query/header/body binding into the route; `Bindings` can
+also replace other explicit binding details such as moving `Quantity` from query key `quantity` to
+`qty` or `Note` from body key `note` to `memo`; the host still decides whether `v2` is actually
+published through
 `OpenApi:EnabledVersions` or legacy document config. Keep that distinction in mind when a module
 can declare or inherit more candidate versions than one host chooses to publish.
 
