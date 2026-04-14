@@ -279,8 +279,13 @@ public sealed class CartModule : RestBehaviorModuleBase
 above selects behaviors whose ids start with `showcase.cart`. If a module wants a different
 selection rule, use `MapGeneratedProfiles("custom.prefix")` explicitly.
 
+If the module wants to start from the behavior-id prefix instead, use
+`behaviors.GroupFromBehaviorIdPrefix("showcase.cart").MapGeneratedProfiles();`. Cephalon derives
+the public route-group prefix as `/showcase/cart` and still keeps generated publication explicit
+and module-owned.
+
 When a project wants the same module-owned REST behavior without creating a dedicated module class,
-the host can register an inline module explicitly:
+the host can still register an inline module explicitly:
 
 ```csharp
 engine.AddRestBehaviorModule<GetCartBehavior>(
@@ -302,6 +307,25 @@ because Cephalon resolves generated REST profile hints from that marker assembly
 marker type per inline module; if a module needs richer lifecycle hooks, extra services, or more
 advanced manual endpoints, prefer a dedicated `RestBehaviorModuleBase` subclass instead.
 
+For the common generated-profile case where the route group should mirror the behavior-id prefix,
+the host can now use the lower-ceremony inline helper:
+
+```csharp
+engine.AddGeneratedRestBehaviorModule<GetCartBehavior>(
+    new ModuleDescriptor(
+        "showcase.cart",
+        "Cart Module",
+        "Publishes the cart public REST surface through the generated inline helper.",
+        version: "1.0.0"),
+    "showcase.cart",
+    group => group.WithTagName("Cart API"));
+```
+
+`AddGeneratedRestBehaviorModule<TMarker>(...)` still creates a real module, still maps through the
+same generated-profile projection and runtime-catalog pipeline, and still never publishes public
+REST from `[AppBehavior]` alone. Keep `AddRestBehaviorModule<TMarker>(...)` when the route group
+should not mirror the behavior-id prefix or when the inline module needs more than one group.
+
 Current helper behavior:
 
 - keeps REST route shape in the host-adapter layer instead of overloading behavior attributes with
@@ -311,6 +335,8 @@ Current helper behavior:
 - gives behavior-owning REST modules both a dedicated base class and a low-code
   `AddRestBehaviorModule<TMarker>(...)` host helper instead of forcing authors to implement
   `IBehaviorOwnerModule` plus `IRestModule` manually
+- adds `GroupFromBehaviorIdPrefix(...)` and `AddGeneratedRestBehaviorModule<TMarker>(...)` for the
+  common generated-profile path where the route-group prefix should mirror the behavior-id prefix
 - treats the REST DSL as the primary authoring path, so public routes also imply module ownership
 - compiles author-facing REST group and endpoint declarations into a reusable internal projection
   model before the ASP.NET Core adapter materializes route groups and handlers
@@ -326,6 +352,8 @@ Current helper behavior:
   low-code shorthands that publish every matching profiled behavior beneath one owned route group
 - derives the default generated-selection prefix from the route-group path by trimming slashes and
   replacing `/` separators with `.`, while still allowing an explicit behavior-id prefix override
+- derives the common generated route-group path from a dot-separated behavior-id prefix when
+  authors use `GroupFromBehaviorIdPrefix(...)` or `AddGeneratedRestBehaviorModule<TMarker>(...)`
 - prefers source-generated profile hints and falls back only to the explicitly targeted behavior
   type instead of broad assembly reflection
 - prefers source-generated `GetRestProfiles()` plus `GetRestProfileBehaviorTypes()` hints for

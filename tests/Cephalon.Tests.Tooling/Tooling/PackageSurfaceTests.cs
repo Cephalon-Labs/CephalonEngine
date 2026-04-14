@@ -840,7 +840,19 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
-    public void BehaviorsHttpAssemblyExposesInlineRestBehaviorModuleEngineBuilderMethod()
+    public void BehaviorsHttpRestBehaviorModuleBuilderExposesDerivedGeneratedGroupMethod()
+    {
+        var methods = typeof(global::Cephalon.Behaviors.Http.Hosting.IRestBehaviorModuleBuilder)
+            .GetMethods(BindingFlags.Instance | BindingFlags.Public);
+
+        Assert.Contains(methods, static method =>
+            method.Name == "GroupFromBehaviorIdPrefix" &&
+            method.GetParameters() is [{ ParameterType: { } parameterType }] &&
+            parameterType == typeof(string));
+    }
+
+    [Fact]
+    public void BehaviorsHttpAssemblyExposesInlineRestBehaviorModuleEngineBuilderMethods()
     {
         var methods = typeof(global::Cephalon.Behaviors.Http.Hosting.RestBehaviorEngineBuilderExtensions)
             .GetMethods(BindingFlags.Public | BindingFlags.Static);
@@ -858,6 +870,21 @@ public sealed class PackageSurfaceTests
             engineType == typeof(global::Cephalon.Engine.Composition.EngineBuilder) &&
             descriptorType == typeof(global::Cephalon.Abstractions.Modules.ModuleDescriptor) &&
             configureType == typeof(Action<global::Cephalon.Behaviors.Http.Hosting.IRestBehaviorModuleBuilder>));
+        Assert.Contains(methods, static method =>
+            method.Name == "AddGeneratedRestBehaviorModule" &&
+            method.IsGenericMethodDefinition &&
+            method.GetGenericArguments().Length == 1 &&
+            method.GetParameters() is
+            [
+                { ParameterType: { } engineType },
+                { ParameterType: { } descriptorType },
+                { ParameterType: { } prefixType },
+                { ParameterType: { } configureType }
+            ] &&
+            engineType == typeof(global::Cephalon.Engine.Composition.EngineBuilder) &&
+            descriptorType == typeof(global::Cephalon.Abstractions.Modules.ModuleDescriptor) &&
+            prefixType == typeof(string) &&
+            configureType == typeof(Action<global::Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder>));
     }
 
     [Fact]

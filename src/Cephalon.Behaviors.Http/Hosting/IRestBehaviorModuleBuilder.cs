@@ -38,4 +38,18 @@ public interface IRestBehaviorModuleBuilder
     /// <param name="prefix">The public route prefix relative to the host REST root.</param>
     /// <returns>A builder used to describe the group's public REST endpoints.</returns>
     IRestBehaviorEndpointGroupBuilder Group(string prefix);
+
+    /// <summary>
+    /// Creates a REST route group whose public path is derived from a dot-separated behavior-id prefix.
+    /// </summary>
+    /// <param name="behaviorIdPrefix">
+    /// The behavior-id prefix whose segments become the route-group path, such as
+    /// <c>showcase.cart</c> becoming <c>/showcase/cart</c>.
+    /// </param>
+    /// <returns>A builder used to describe the group's public REST endpoints.</returns>
+    /// <remarks>
+    /// Use this helper for the common generated-profile path where the public route group should
+    /// mirror the owning behavior-id prefix while remaining an explicit module-owned REST surface.
+    /// </remarks>
+    IRestBehaviorEndpointGroupBuilder GroupFromBehaviorIdPrefix(string behaviorIdPrefix);
 }

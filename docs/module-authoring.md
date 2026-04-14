@@ -333,8 +333,13 @@ above selects ids such as `showcase.cart.get` and `showcase.cart.add-item`. Use
 `MapGeneratedProfiles("custom.prefix")` when the module wants a different generated-selection
 prefix.
 
+When the module wants to start from the behavior-id prefix instead, use
+`behaviors.GroupFromBehaviorIdPrefix("showcase.cart").MapGeneratedProfiles();`. Cephalon derives
+the public group path as `/showcase/cart` and still keeps generated publication explicit and
+module-owned.
+
 When a project wants to stay explicit and module-owned without creating a dedicated module class,
-the host can register the same public REST surface inline:
+the host can still register the full group manually:
 
 ```csharp
 engine.AddRestBehaviorModule<GetCartBehavior>(
@@ -355,6 +360,25 @@ behaviors, especially when the inline module uses `MapGeneratedProfiles(...)`, b
 resolves generated REST profile hints from that marker assembly. Use one stable marker type per
 inline module. When a module needs richer lifecycle hooks, extra services, or advanced manual
 endpoints, prefer a dedicated `RestBehaviorModuleBase` subclass instead.
+
+For the common generated-profile case where the route path should mirror the behavior-id prefix,
+the host can now use the shorter helper:
+
+```csharp
+engine.AddGeneratedRestBehaviorModule<GetCartBehavior>(
+    new ModuleDescriptor(
+        "showcase.cart",
+        "Cart Module",
+        "Publishes the cart REST surface through the generated inline helper.",
+        version: "1.0.0"),
+    "showcase.cart",
+    group => group.WithTagName("Cart API"));
+```
+
+`AddGeneratedRestBehaviorModule<TMarker>(...)` still creates a real module, still maps through the
+same generated-profile projection and runtime-catalog pipeline, and still never publishes public
+REST from `[AppBehavior]` alone. Keep `AddRestBehaviorModule<TMarker>(...)` when the module needs a
+non-default route group, a mix of generated and manual endpoints, or more than one group.
 
 If the profile also needs an explicit binding plan, keep that detail on the behavior metadata
 instead of moving it into the module:
@@ -382,6 +406,9 @@ Current helper behavior:
 - treats `behaviors.Group(...).MapGet/MapPost/...` as the primary public REST DSL
 - adds `engine.AddRestBehaviorModule<TMarker>(...)` as the lowest-ceremony explicit
   module-registration path when a host wants module-owned REST without a dedicated module class
+- adds `behaviors.GroupFromBehaviorIdPrefix(...)` and
+  `engine.AddGeneratedRestBehaviorModule<TMarker>(...)` as the lower-ceremony generated-path
+  helpers when the route group should mirror the behavior-id prefix
 - adds `behaviors.Group(...).MapProfile<TBehavior>()` as the lower-ceremony module-owned shorthand
   when the behavior already carries `BehaviorRestProfileAttribute`
 - adds `behaviors.Group(...).MapGeneratedProfiles()` and `MapGeneratedProfiles(string)` as the

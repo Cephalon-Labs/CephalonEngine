@@ -56,6 +56,9 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
         return new RestBehaviorEndpointGroupBuilder(this, state);
     }
 
+    public IRestBehaviorEndpointGroupBuilder GroupFromBehaviorIdPrefix(string behaviorIdPrefix)
+        => Group(RestBehaviorAuthoringPathConventions.DeriveRouteGroupPrefixFromBehaviorIdPrefix(behaviorIdPrefix));
+
     internal RestBehaviorModuleProjection Build()
         => new(
             [.. ownershipRegistrations],

@@ -2,7 +2,7 @@
 
 Decision baseline date: `April 14, 2026`
 
-Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`, `ENG-058-T67` / GitHub issue `#332`, `ENG-058-T68` / GitHub issue `#333`, `ENG-058-T69` / GitHub issue `#334`, `ENG-058-T70` / GitHub issue `#335`, `ENG-058-T71` / GitHub issue `#336`, `ENG-058-T72` / GitHub issue `#337`, `ENG-058-T73` / GitHub issue `#338`, `ENG-058-T74` / GitHub issue `#339`, `ENG-058-T75` / GitHub issue `#340`, `ENG-058-T76` / GitHub issue `#341`, `ENG-058-T77` / GitHub issue `#342`, `ENG-058-T78` / GitHub issue `#343`, `ENG-058-T79` / GitHub issue `#344`, `ENG-058-T80` / GitHub issue `#345`, `ENG-058-T81` / GitHub issue `#346`, `ENG-058-T82` / GitHub issue `#347`, `ENG-058-T83` / GitHub issue `#348`
+Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`, `ENG-058-T67` / GitHub issue `#332`, `ENG-058-T68` / GitHub issue `#333`, `ENG-058-T69` / GitHub issue `#334`, `ENG-058-T70` / GitHub issue `#335`, `ENG-058-T71` / GitHub issue `#336`, `ENG-058-T72` / GitHub issue `#337`, `ENG-058-T73` / GitHub issue `#338`, `ENG-058-T74` / GitHub issue `#339`, `ENG-058-T75` / GitHub issue `#340`, `ENG-058-T76` / GitHub issue `#341`, `ENG-058-T77` / GitHub issue `#342`, `ENG-058-T78` / GitHub issue `#343`, `ENG-058-T79` / GitHub issue `#344`, `ENG-058-T80` / GitHub issue `#345`, `ENG-058-T81` / GitHub issue `#346`, `ENG-058-T82` / GitHub issue `#347`, `ENG-058-T83` / GitHub issue `#348`, `ENG-058-T84` / GitHub issue `#349`
 
 Cross-references: `docs/components/behaviors-http.md`, `docs/module-authoring.md`, `docs/architecture.md`, `docs/architecture-review-2026-04.md`, `docs/project-memory.md`
 
@@ -207,6 +207,14 @@ Status update:
   pipeline as the class-based DSL, uses `TMarker` both as the reusable helper's distinct module
   type identity and as the source assembly marker for `MapGeneratedProfiles(...)`, and still never
   publishes public REST from `[AppBehavior]` alone
+- the next low-code generated module-path follow-through is now shipped through `ENG-058-T84`:
+  `IRestBehaviorModuleBuilder.GroupFromBehaviorIdPrefix(...)` now derives a deterministic route
+  group such as `/showcase/cart` from `showcase.cart`, and
+  `RestBehaviorEngineBuilderExtensions.AddGeneratedRestBehaviorModule<TMarker>()` now wraps that
+  same derivation for the common inline generated-profile case so the engine no longer requires
+  authors to repeat both the route path and the behavior-id prefix manually while still using the
+  same module-owned projection/materialization/candidate/governance pipeline and still never
+  publishing public REST from `[AppBehavior]` alone
 - the next bounded shorthand route-group-prefix override follow-through is now shipped through
   `ENG-058-T82`: the typed override/runtime contracts plus ASP.NET Core config binding now support
   shorthand-only `RouteGroupPrefix`, that remap must stay beneath the active REST root, cannot
@@ -330,6 +338,9 @@ Current shipped follow-through:
 - `AddRestBehaviorModule<TMarker>()` is now the lowest-ceremony explicit module-registration path
   for straightforward hosts, but it still lands on this same layer instead of inventing a new
   publication source
+- `GroupFromBehaviorIdPrefix(...)` and `AddGeneratedRestBehaviorModule<TMarker>()` now cover the
+  common generated-profile case where route-group path and behavior-id prefix should mirror one
+  another, again without inventing a new publication source
 
 ### Layer 4: host- or app-level projection overrides
 
