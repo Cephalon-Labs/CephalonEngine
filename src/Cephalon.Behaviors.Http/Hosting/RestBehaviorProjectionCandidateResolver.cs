@@ -2,6 +2,7 @@ using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Transports;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.Transports.Rest;
+using Cephalon.Behaviors.Http.Abstractions;
 using Microsoft.AspNetCore.Routing.Patterns;
 
 namespace Cephalon.Behaviors.Http.Hosting;
@@ -258,10 +259,6 @@ internal static class RestBehaviorProjectionCandidateResolver
         if (!string.IsNullOrWhiteSpace(matchedOverride.Pattern) &&
             !string.Equals(matchedOverride.Pattern, endpointProjection.Pattern, StringComparison.Ordinal))
         {
-            ValidatePatternOverride(
-                matchedOverride.Id,
-                endpointProjection,
-                matchedOverride.Pattern);
             effectiveEndpointProjection = effectiveEndpointProjection.WithPattern(matchedOverride.Pattern);
             wasApplied = true;
             shouldRevalidateBindings = true;
@@ -301,6 +298,15 @@ internal static class RestBehaviorProjectionCandidateResolver
             effectiveEndpointProjection = effectiveEndpointProjection.WithBindings(normalizedBindings);
         }
 
+        if (!string.Equals(effectiveEndpointProjection.Pattern, endpointProjection.Pattern, StringComparison.Ordinal))
+        {
+            ValidatePatternOverride(
+                matchedOverride.Id,
+                endpointProjection,
+                effectiveEndpointProjection.Pattern,
+                effectiveEndpointProjection.Bindings);
+        }
+
         if (!group.HasExplicitApiVersion &&
             matchedOverride.ApiVersionMajor is int overrideApiVersionMajor &&
             overrideApiVersionMajor != defaultApiVersionMajor)
@@ -320,11 +326,13 @@ internal static class RestBehaviorProjectionCandidateResolver
     private static void ValidatePatternOverride(
         string overrideId,
         RestBehaviorEndpointProjection endpointProjection,
-        string overridePattern)
+        string overridePattern,
+        IReadOnlyList<BehaviorRestBindingDescriptor> effectiveBindings)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(overrideId);
         ArgumentNullException.ThrowIfNull(endpointProjection);
         ArgumentException.ThrowIfNullOrWhiteSpace(overridePattern);
+        ArgumentNullException.ThrowIfNull(effectiveBindings);
 
         var originalPlaceholders = ExtractRoutePlaceholders(endpointProjection.Pattern);
         var overridePlaceholders = ExtractRoutePlaceholders(overridePattern);
@@ -333,8 +341,25 @@ internal static class RestBehaviorProjectionCandidateResolver
             return;
         }
 
+        if (originalPlaceholders.Count != overridePlaceholders.Count)
+        {
+            throw new InvalidOperationException(
+                $"REST endpoint override rule '{overrideId}' cannot rewrite behavior '{endpointProjection.BehaviorId}' from pattern '{endpointProjection.Pattern}' to '{overridePattern}' because this slice allows only placeholder renames. Pattern overrides that add or remove placeholders remain later work.");
+        }
+
+        var routeBindingPlaceholders = effectiveBindings
+            .Where(static binding => binding.Source == BehaviorRestBindingSource.Route)
+            .Select(static binding => string.IsNullOrWhiteSpace(binding.Name)
+                ? binding.PropertyName
+                : binding.Name.Trim())
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        if (routeBindingPlaceholders.SetEquals(overridePlaceholders))
+        {
+            return;
+        }
+
         throw new InvalidOperationException(
-            $"REST endpoint override rule '{overrideId}' cannot rewrite behavior '{endpointProjection.BehaviorId}' from pattern '{endpointProjection.Pattern}' to '{overridePattern}' because this slice requires the same route-placeholder set. Pattern overrides that add, remove, or rename placeholders remain later work.");
+            $"REST endpoint override rule '{overrideId}' cannot rewrite behavior '{endpointProjection.BehaviorId}' from pattern '{endpointProjection.Pattern}' to '{overridePattern}' because renamed placeholders require an effective explicit route-binding plan that covers the full renamed placeholder set. Add matching route bindings through the effective profile or RestApi:Overrides:*:Bindings, or keep the same placeholder names.");
     }
 
     private static RestEndpointSuppressionOptions? ResolveSuppression(

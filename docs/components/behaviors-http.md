@@ -368,16 +368,17 @@ Current helper behavior:
   the suppressed candidate through `SuppressedBySuppressionId`, and intentionally leaves explicit
   module DSL or manual module-owned REST endpoints untouched
 - ASP.NET Core hosts can now also override the effective API major version, HTTP method, or
-  placeholder-preserving relative route pattern, or explicit binding plan for descriptor-backed
-  shorthand candidates through `RestApi:Overrides`, which now supports `ApiVersionMajor`,
-  `Method`, `Pattern`, and `Bindings`, records the applied rule id through `AppliedOverrideId`,
-  rewrites the shorthand candidate's `/v{major}` route segment and OpenAPI document name together
-  when version changes, keeps the mapped endpoint method aligned when method changes, keeps the
-  mapped endpoint route aligned when pattern changes, replaces the shorthand candidate's explicit
-  binding descriptors when `Bindings` are supplied while leaving unbound route placeholders and
-  remaining request-body fields available for deterministic fallback, and still leaves explicit
-  module DSL/manual routes plus shorthand groups with explicit `.ApiVersion(...)` authoritative for
-  version selection
+  constrained relative route pattern, or explicit binding plan for descriptor-backed shorthand
+  candidates through `RestApi:Overrides`, which now supports `ApiVersionMajor`, `Method`,
+  `Pattern`, and `Bindings`, records the applied rule id through `AppliedOverrideId`, rewrites the
+  shorthand candidate's `/v{major}` route segment and OpenAPI document name together when version
+  changes, keeps the mapped endpoint method aligned when method changes, keeps the mapped endpoint
+  route aligned when pattern changes, replaces the shorthand candidate's explicit binding
+  descriptors when `Bindings` are supplied while leaving unbound route placeholders and remaining
+  request-body fields available for deterministic fallback, now allows placeholder renames when
+  the effective explicit route-binding plan covers the renamed placeholder set exactly, and still
+  leaves explicit module DSL/manual routes plus shorthand groups with explicit `.ApiVersion(...)`
+  authoritative for version selection
 
 ## REST runtime catalog and collision guard
 
@@ -431,7 +432,7 @@ configuration rule hid the candidate instead of another candidate winning.
 Current governance baseline:
 
 - configure shorthand suppression through `RestApi:Suppressions`
-- configure shorthand API-version, HTTP-method, placeholder-preserving route-pattern, and explicit
+- configure shorthand API-version, HTTP-method, constrained route-pattern, and explicit
   binding-plan overrides through `RestApi:Overrides`
 - target one or more `Behaviors`, `Modules`, and optional `AuthoringStyles`
 - rules that omit both `Behaviors` and `Modules` now fail fast instead of suppressing every
@@ -445,12 +446,14 @@ Current governance baseline:
 - when more than one rule matches, Cephalon prefers the more specific rule:
   `behavior+module > behavior > module`, then narrower authoring-style scope, then rule id
 - shorthand groups that already declare `.ApiVersion(...)` explicitly remain authoritative over
-  host-level version rewrites, while shorthand method and placeholder-preserving pattern overrides
-  can still apply
+  host-level version rewrites, while shorthand method and constrained pattern overrides can still
+  apply
 - the current override slice rewrites only the effective API major version, HTTP method,
-  placeholder-preserving relative route pattern, and/or explicit binding plan, keeping the
-  `/v{major}` route segment, OpenAPI document name, mapped endpoint, and runtime catalogs aligned
-- placeholder-changing route-shape and broader binding-shape overrides remain later work
+  constrained relative route pattern, and/or explicit binding plan, keeping the `/v{major}` route
+  segment, OpenAPI document name, mapped endpoint, and runtime catalogs aligned
+- pattern rewrites preserve the placeholder set by default and can now also rename placeholders
+  when the effective explicit route-binding plan covers the renamed placeholder set exactly
+- placeholder additions or removals plus broader binding-shape overrides remain later work
 
 Example:
 
