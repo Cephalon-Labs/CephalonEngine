@@ -145,6 +145,44 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorModuleBuilderBuildMapsGeneratedProfilesIntoProjectionAndSeedsGroupVersion()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+
+        builder.Group("/tests/generated-projection")
+            .MapGeneratedProfiles("tests.generated.projection.publish");
+
+        var projection = builder.Build();
+
+        Assert.Equal(2, projection.OwnershipRegistrations.Count);
+
+        var routeGroup = Assert.Single(projection.Groups);
+        Assert.Equal("/tests/generated-projection", routeGroup.Prefix);
+        Assert.Equal(9, routeGroup.ApiVersionMajor);
+        Assert.False(routeGroup.HasExplicitApiVersion);
+        Assert.Equal("tests.generated.projection.publish.get", routeGroup.ProfileApiVersionSourceBehaviorId);
+
+        Assert.Collection(
+            routeGroup.Endpoints,
+            getEndpoint =>
+            {
+                Assert.Equal(RestBehaviorHttpMethod.Get, getEndpoint.Method);
+                Assert.Equal(typeof(GeneratedProjectionGetBehavior), getEndpoint.BehaviorType);
+                Assert.Equal("/{cartId}", getEndpoint.Pattern);
+                Assert.Empty(getEndpoint.Bindings);
+                Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, getEndpoint.AuthoringStyle);
+            },
+            postEndpoint =>
+            {
+                Assert.Equal(RestBehaviorHttpMethod.Post, postEndpoint.Method);
+                Assert.Equal(typeof(GeneratedProjectionPostBehavior), postEndpoint.BehaviorType);
+                Assert.Equal("/{cartId}/items", postEndpoint.Pattern);
+                Assert.Empty(postEndpoint.Bindings);
+                Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, postEndpoint.AuthoringStyle);
+            });
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverPublishesHigherPrecedenceDslCandidateAndSuppressesProfileCandidate()
     {
         var builder = new RestBehaviorModuleBuilder();
@@ -180,6 +218,85 @@ public sealed class BehaviorRestProjectionTests
         Assert.Equal("/api/v8/tests/profile-precedence/{cartId}", suppressed.Candidate.ProjectedEndpoint.RoutePattern);
         Assert.Equal(published.Candidate.Id, suppressed.Candidate.SuppressedByCandidateId);
         Assert.Contains("higher-precedence authoring style", suppressed.Candidate.SuppressionReason, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverPublishesHigherPrecedenceProfileCandidateAndSuppressesGeneratedCandidate()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        var group = builder.Group("/tests/generated-profile-precedence")
+            .ApiVersion(10);
+
+        group.MapGeneratedProfiles("tests.generated.projection.precedence");
+        group.MapProfile<GeneratedProjectionProfilePrecedenceBehavior>();
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.generated-profile-precedence",
+                "Generated Profile Precedence Module",
+                "Exercises precedence resolution between explicit profile and generated shorthand.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups);
+
+        Assert.Equal(2, candidates.Count);
+
+        var published = Assert.Single(candidates, static item =>
+            item.Candidate.Status == RestEndpointCandidateStatus.Published);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, published.Candidate.AuthoringStyle);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleProfilePrecedenceRank, published.Candidate.PrecedenceRank);
+        Assert.Equal("tests.generated.projection.precedence.lookup", published.Candidate.ProjectedEndpoint.BehaviorId);
+        Assert.Equal("/api/v10/tests/generated-profile-precedence/{cartId}", published.Candidate.ProjectedEndpoint.RoutePattern);
+
+        var suppressed = Assert.Single(candidates, static item =>
+            item.Candidate.Status == RestEndpointCandidateStatus.Suppressed);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, suppressed.Candidate.AuthoringStyle);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedPrecedenceRank, suppressed.Candidate.PrecedenceRank);
+        Assert.Equal("tests.generated.projection.precedence.lookup", suppressed.Candidate.ProjectedEndpoint.BehaviorId);
+        Assert.Equal("/api/v10/tests/generated-profile-precedence/{cartId}", suppressed.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Equal(published.Candidate.Id, suppressed.Candidate.SuppressedByCandidateId);
+        Assert.Contains("higher-precedence authoring style", suppressed.Candidate.SuppressionReason, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverPublishesHigherPrecedenceDslCandidateAndSuppressesGeneratedAndProfileCandidates()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        var group = builder.Group("/tests/generated-three-way-precedence")
+            .ApiVersion(11);
+
+        group.MapGeneratedProfiles("tests.generated.projection.threeway");
+        group.MapProfile<GeneratedProjectionThreeWayBehavior>();
+        group.MapGet<GeneratedProjectionThreeWayBehavior>("/explicit/{cartId}");
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.generated-three-way-precedence",
+                "Generated Three-Way Precedence Module",
+                "Exercises precedence resolution across explicit DSL, profile shorthand, and generated shorthand.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups);
+
+        Assert.Equal(3, candidates.Count);
+
+        var published = Assert.Single(candidates, static item =>
+            item.Candidate.Status == RestEndpointCandidateStatus.Published);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle, published.Candidate.AuthoringStyle);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleDslPrecedenceRank, published.Candidate.PrecedenceRank);
+        Assert.Equal("/api/v11/tests/generated-three-way-precedence/explicit/{cartId}", published.Candidate.ProjectedEndpoint.RoutePattern);
+
+        var suppressedProfile = Assert.Single(candidates, static item =>
+            item.Candidate.Status == RestEndpointCandidateStatus.Suppressed &&
+            string.Equals(item.Candidate.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleProfilePrecedenceRank, suppressedProfile.Candidate.PrecedenceRank);
+        Assert.Equal(published.Candidate.Id, suppressedProfile.Candidate.SuppressedByCandidateId);
+
+        var suppressedGenerated = Assert.Single(candidates, static item =>
+            item.Candidate.Status == RestEndpointCandidateStatus.Suppressed &&
+            string.Equals(item.Candidate.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedPrecedenceRank, suppressedGenerated.Candidate.PrecedenceRank);
+        Assert.Equal(published.Candidate.Id, suppressedGenerated.Candidate.SuppressedByCandidateId);
     }
 
     [Fact]
@@ -465,9 +582,74 @@ public sealed class BehaviorRestProjectionTests
 
     private sealed record ProjectionCartOutput(string CartId);
 
+    private sealed class GeneratedProjectionRestModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.generated-projection",
+            "Generated Projection Test Module",
+            "Provides module ownership context for generated REST projection tests.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+        }
+    }
+
     [AppBehavior("tests.profile.projection.get")]
     [BehaviorRestProfile(BehaviorRestMethod.Get, "/{cartId}", ApiVersionMajor = 3)]
     private sealed class ProfileProjectionGetBehavior : IAppBehavior<ProjectionCartInput, ProjectionCartOutput>
+    {
+        public Task<ProjectionCartOutput> HandleAsync(
+            ProjectionCartInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProjectionCartOutput(input.CartId));
+        }
+    }
+
+    [AppBehavior("tests.generated.projection.publish.get")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/{cartId}", ApiVersionMajor = 9)]
+    private sealed class GeneratedProjectionGetBehavior : IAppBehavior<ProjectionCartInput, ProjectionCartOutput>
+    {
+        public Task<ProjectionCartOutput> HandleAsync(
+            ProjectionCartInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProjectionCartOutput(input.CartId));
+        }
+    }
+
+    [AppBehavior("tests.generated.projection.publish.post")]
+    [BehaviorRestProfile(BehaviorRestMethod.Post, "/{cartId}/items", ApiVersionMajor = 9)]
+    private sealed class GeneratedProjectionPostBehavior : IAppBehavior<ProjectionCartInput, ProjectionCartOutput>
+    {
+        public Task<ProjectionCartOutput> HandleAsync(
+            ProjectionCartInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProjectionCartOutput(input.CartId));
+        }
+    }
+
+    [AppBehavior("tests.generated.projection.precedence.lookup")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/{cartId}", ApiVersionMajor = 10)]
+    private sealed class GeneratedProjectionProfilePrecedenceBehavior : IAppBehavior<ProjectionCartInput, ProjectionCartOutput>
+    {
+        public Task<ProjectionCartOutput> HandleAsync(
+            ProjectionCartInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProjectionCartOutput(input.CartId));
+        }
+    }
+
+    [AppBehavior("tests.generated.projection.threeway.lookup")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/{cartId}", ApiVersionMajor = 11)]
+    private sealed class GeneratedProjectionThreeWayBehavior : IAppBehavior<ProjectionCartInput, ProjectionCartOutput>
     {
         public Task<ProjectionCartOutput> HandleAsync(
             ProjectionCartInput input,

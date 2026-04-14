@@ -10,7 +10,10 @@ internal static class BehaviorRestProfileResolver
 {
     private static readonly IReadOnlyDictionary<string, BehaviorRestProfileDescriptor> EmptyProfiles =
         new Dictionary<string, BehaviorRestProfileDescriptor>(StringComparer.OrdinalIgnoreCase);
+    private static readonly IReadOnlyDictionary<string, Type> EmptyBehaviorTypes =
+        new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
     private static readonly ConcurrentDictionary<Assembly, IReadOnlyDictionary<string, BehaviorRestProfileDescriptor>> Cache = new();
+    private static readonly ConcurrentDictionary<Assembly, IReadOnlyDictionary<string, Type>> BehaviorTypeCache = new();
 
     internal static BehaviorRestProfileDescriptor Resolve<TBehavior>()
         where TBehavior : class
@@ -51,6 +54,90 @@ internal static class BehaviorRestProfileResolver
             behaviorType);
     }
 
+    internal static IReadOnlyList<ResolvedBehaviorRestProfile> ResolveGeneratedProfiles(
+        Assembly assembly,
+        string behaviorIdPrefix)
+    {
+        ArgumentNullException.ThrowIfNull(assembly);
+        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorIdPrefix);
+
+        var normalizedPrefix = behaviorIdPrefix.Trim();
+        var generatedProfiles = Cache.GetOrAdd(assembly, BuildGeneratedProfiles);
+        if (generatedProfiles.Count == 0)
+        {
+            return ScanAssemblyProfiles(assembly, normalizedPrefix);
+        }
+
+        var behaviorTypes = BehaviorTypeCache.GetOrAdd(assembly, BuildGeneratedProfileBehaviorTypes);
+        if (behaviorTypes.Count == 0)
+        {
+            throw new InvalidOperationException(
+                $"Assembly '{assembly.FullName}' exposes generated REST profile hints, but it does not expose generated behavior-type hints required by MapGeneratedProfiles(). Rebuild the assembly with the current Cephalon.Behaviors.SourceGen package or use explicit MapProfile<TBehavior>() mappings.");
+        }
+
+        var sourceIdentity = assembly.FullName ?? assembly.GetName().Name ?? assembly.ToString();
+        var matchedProfiles = generatedProfiles.Values
+            .Where(profile => BehaviorIdMatchesPrefix(profile.BehaviorId, normalizedPrefix))
+            .OrderBy(static profile => profile.BehaviorId, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        if (matchedProfiles.Length == 0)
+        {
+            return [];
+        }
+
+        var resolvedProfiles = new List<ResolvedBehaviorRestProfile>(matchedProfiles.Length);
+        foreach (var profile in matchedProfiles)
+        {
+            if (!behaviorTypes.TryGetValue(profile.BehaviorId, out var behaviorType))
+            {
+                throw new InvalidOperationException(
+                    $"Assembly '{assembly.FullName}' exposes a generated REST profile hint for behavior '{profile.BehaviorId}', but it is missing the matching generated behavior-type hint required by MapGeneratedProfiles().");
+            }
+
+            resolvedProfiles.Add(new ResolvedBehaviorRestProfile(
+                behaviorType,
+                Normalize(profile, sourceIdentity, behaviorType)));
+        }
+
+        return resolvedProfiles;
+    }
+
+    private static ResolvedBehaviorRestProfile[] ScanAssemblyProfiles(
+        Assembly assembly,
+        string behaviorIdPrefix)
+    {
+        ArgumentNullException.ThrowIfNull(assembly);
+        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorIdPrefix);
+
+        Type[] behaviorTypes;
+        try
+        {
+            behaviorTypes = assembly.DefinedTypes
+                .Select(static typeInfo => typeInfo.AsType())
+                .ToArray();
+        }
+        catch (ReflectionTypeLoadException exception)
+        {
+            behaviorTypes = exception.Types
+                .Where(static type => type is not null)
+                .Cast<Type>()
+                .ToArray();
+        }
+
+        return behaviorTypes
+            .Where(static behaviorType =>
+                behaviorType.IsClass &&
+                !behaviorType.IsAbstract &&
+                behaviorType.GetCustomAttribute<AppBehaviorAttribute>(inherit: false) is not null &&
+                behaviorType.GetCustomAttribute<BehaviorRestProfileAttribute>(inherit: false) is not null)
+            .Select(behaviorType => new ResolvedBehaviorRestProfile(
+                behaviorType,
+                Resolve(behaviorType)))
+            .Where(resolved => BehaviorIdMatchesPrefix(resolved.Profile.BehaviorId, behaviorIdPrefix))
+            .OrderBy(static resolved => resolved.Profile.BehaviorId, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+    }
+
     private static IReadOnlyDictionary<string, BehaviorRestProfileDescriptor> BuildGeneratedProfiles(Assembly assembly)
     {
         ArgumentNullException.ThrowIfNull(assembly);
@@ -82,6 +169,54 @@ internal static class BehaviorRestProfileResolver
             {
                 throw new InvalidOperationException(
                     $"Assembly '{assembly.FullName}' produced duplicate REST profile hints for behavior '{normalized.BehaviorId}'.");
+            }
+        }
+
+        return resolved;
+    }
+
+    private static IReadOnlyDictionary<string, Type> BuildGeneratedProfileBehaviorTypes(Assembly assembly)
+    {
+        ArgumentNullException.ThrowIfNull(assembly);
+
+        var marker = assembly.GetCustomAttribute<ContainsBehaviorsAttribute>();
+        var registrationType = marker?.RegistrationType;
+        if (registrationType is null)
+        {
+            return EmptyBehaviorTypes;
+        }
+
+        var method = registrationType.GetMethod(
+            "GetRestProfileBehaviorTypes",
+            BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic,
+            binder: null,
+            Type.EmptyTypes,
+            modifiers: null);
+        if (method?.Invoke(null, null) is not IReadOnlyList<(string Id, Type Type)> behaviorTypes ||
+            behaviorTypes.Count == 0)
+        {
+            return EmptyBehaviorTypes;
+        }
+
+        var resolved = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
+        foreach (var (id, behaviorType) in behaviorTypes)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                throw new InvalidOperationException(
+                    $"Assembly '{assembly.FullName}' produced a generated REST profile behavior-type hint with an empty behavior id.");
+            }
+
+            if (behaviorType is null)
+            {
+                throw new InvalidOperationException(
+                    $"Assembly '{assembly.FullName}' produced a generated REST profile behavior-type hint for behavior '{id}' without a concrete behavior type.");
+            }
+
+            if (!resolved.TryAdd(id.Trim(), behaviorType))
+            {
+                throw new InvalidOperationException(
+                    $"Assembly '{assembly.FullName}' produced duplicate generated REST profile behavior-type hints for behavior '{id}'.");
             }
         }
 
@@ -275,6 +410,15 @@ internal static class BehaviorRestProfileResolver
                 $"Cannot resolve a REST profile for '{behaviorType.FullName}' because it is missing [AppBehavior(id)].");
     }
 
+    private static bool BehaviorIdMatchesPrefix(string behaviorId, string behaviorIdPrefix)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorIdPrefix);
+
+        return behaviorId.Equals(behaviorIdPrefix, StringComparison.OrdinalIgnoreCase) ||
+               behaviorId.StartsWith($"{behaviorIdPrefix}.", StringComparison.OrdinalIgnoreCase);
+    }
+
     private static Type ResolveInputType(Type behaviorType)
     {
         ArgumentNullException.ThrowIfNull(behaviorType);
@@ -313,3 +457,7 @@ internal static class BehaviorRestProfileResolver
                type == typeof(TimeOnly);
     }
 }
+
+internal sealed record ResolvedBehaviorRestProfile(
+    Type BehaviorType,
+    BehaviorRestProfileDescriptor Profile);

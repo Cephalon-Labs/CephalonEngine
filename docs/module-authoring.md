@@ -168,7 +168,8 @@ Current `BehaviorRestProfileAttribute` behavior:
 - it is metadata only and does not publish a public REST route by itself
 - `Cephalon.Behaviors.SourceGen` validates the method, relative pattern, and optional API version
   at build time and emits `GetRestProfiles()` hints that now preserve explicit binding descriptors
-  when they are declared
+  when they are declared, plus `GetRestProfileBehaviorTypes()` hints for generated module-owned
+  shorthand
 - repeated `BehaviorRestBindingAttribute` declarations can describe explicit `route`, `query`,
   `header`, and `body` sources for object inputs when the module-owned shorthand needs deterministic
   input sourcing
@@ -177,6 +178,9 @@ Current `BehaviorRestProfileAttribute` behavior:
 - `IRestBehaviorEndpointGroupBuilder.MapProfile<TBehavior>()` is now the shipped low-ceremony
   module-owned shorthand that consumes those profile hints through the same normalized REST
   projection pipeline, including explicit binding descriptors
+- `IRestBehaviorEndpointGroupBuilder.MapGeneratedProfiles()` and
+  `MapGeneratedProfiles(string behaviorIdPrefix)` are now the shipped generated module-owned
+  shorthands when one module-owned route group wants to publish every matching profiled behavior
 - when explicit profile bindings are present, they override the implicit merge baseline while
   leaving unbound route placeholders and request-body fields free to fill the remaining object
   properties deterministically
@@ -305,6 +309,30 @@ public sealed class CartModule : RestBehaviorModuleBase
 }
 ```
 
+When a module wants the lowest-ceremony explicit publication path for one owned public prefix, it
+can opt into generated profile-backed mapping for all matching behaviors:
+
+```csharp
+public sealed class CartModule : RestBehaviorModuleBase
+{
+    public override ModuleDescriptor Descriptor => DescriptorInstance;
+
+    public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+    {
+        behaviors.Group("/showcase/cart")
+            .WithTagName("Cart API")
+            .MapGeneratedProfiles();
+
+        behaviors.Internal<RepriceCartBehavior>();
+    }
+}
+```
+
+`MapGeneratedProfiles()` derives the behavior-id prefix from the route-group path, so the example
+above selects ids such as `showcase.cart.get` and `showcase.cart.add-item`. Use
+`MapGeneratedProfiles("custom.prefix")` when the module wants a different generated-selection
+prefix.
+
 If the profile also needs an explicit binding plan, keep that detail on the behavior metadata
 instead of moving it into the module:
 
@@ -331,6 +359,9 @@ Current helper behavior:
 - treats `behaviors.Group(...).MapGet/MapPost/...` as the primary public REST DSL
 - adds `behaviors.Group(...).MapProfile<TBehavior>()` as the lower-ceremony module-owned shorthand
   when the behavior already carries `BehaviorRestProfileAttribute`
+- adds `behaviors.Group(...).MapGeneratedProfiles()` and `MapGeneratedProfiles(string)` as the
+  explicit low-code module-owned shorthand when a whole owned route group should publish every
+  matching profiled behavior
 - treats `behaviors.Internal<TBehavior>()` as the explicit internal-only or custom/manual-route path
 - validates that a module cannot map another module's explicitly owned behavior through the REST helper layer
 - keeps route shape in the ASP.NET Core adapter layer while behavior attributes remain host-agnostic
@@ -340,6 +371,8 @@ Current helper behavior:
   resolution with deterministic route/body fallback
 - validates explicit binding metadata at build time and re-checks the same route-placeholder truth
   during runtime fallback so low-ceremony profile authoring stays deterministic
+- derives the default generated-selection prefix from the route-group path by trimming slashes and
+  replacing `/` separators with `.`, while still allowing an explicit behavior-id prefix override
 - uses the module display name for OpenAPI tags
 - lets the module override the published tag name and tag description through `.WithTagName(...)` and `.WithTagDescription(...)`
 - defaults the tag description from the module XML `<summary>` plus `<remarks>` when XML docs exist, falling back to `ModuleDescriptor.Description`
@@ -351,16 +384,23 @@ Current helper behavior:
 - keeps profile-driven explicit binding plans visible through
   `RestEndpointRuntimeDescriptor.BindingDescriptors` and the matching `bindingDescriptors` JSON
   field on `/engine/rest-endpoints` and `snapshot.RestEndpoints`
+- prefers source-generated `GetRestProfiles()` plus `GetRestProfileBehaviorTypes()` hints for
+  generated shorthand and falls back only to a bounded scan of the explicit owning module assembly
+  when generated type hints are unavailable
 - prefixes the mapped REST route group with `/v{major}` for the resolved API major version, so ASP.NET Core hosts expose routes such as `/api/v1/showcase/cart/{cartId}`
 - uses the resolved API major version as the operation-name version segment, falling back to the owning module descriptor major version
 - flows XML comments from the module and behavior assemblies into ASP.NET Core OpenAPI metadata when XML docs are available
 - maps behavior `<summary>` to the operation header and behavior `<remarks>` to the operation description so Scalar/OpenAPI content stays non-duplicated
 - keeps runtime publication on the same module-owned route with `sourceKind = module-dsl`, while
   `/engine/rest-endpoints` distinguishes the shorthand path through
-  `metadata.authoringStyle = behavior-module-profile`
-- when the same behavior is mapped through both explicit module DSL and `MapProfile<TBehavior>()`,
-  the explicit DSL route now wins by default while the lower-precedence profile candidate remains
+  `metadata.authoringStyle = behavior-module-profile` or
+  `metadata.authoringStyle = behavior-module-generated`
+- when the same behavior is mapped through both explicit module DSL and shorthand publication, the
+  explicit DSL route now wins by default while the lower-precedence shorthand candidate remains
   visible through `/engine/rest-endpoint-candidates` and `snapshot.RestEndpointCandidates`
+- when the same behavior is mapped through both `MapProfile<TBehavior>()` and
+  `MapGeneratedProfiles(...)`, the explicit per-behavior `MapProfile<TBehavior>()` route wins by
+  default while the generated candidate remains visible through the same candidate catalog
 - keeps `MapAdditionalEndpoints(...)` as the advanced escape hatch for manual Minimal API work that
   falls outside the default behavior REST DSL; custom endpoints should still declare ownership first
   through `behaviors.Internal<TBehavior>()`, and those manual module-owned routes now still join the

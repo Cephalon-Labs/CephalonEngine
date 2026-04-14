@@ -2,7 +2,7 @@
 
 Decision baseline date: `April 14, 2026`
 
-Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`
+Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`, `ENG-058-T67` / GitHub issue `#332`
 
 Cross-references: `docs/components/behaviors-http.md`, `docs/module-authoring.md`, `docs/architecture.md`, `docs/architecture-review-2026-04.md`, `docs/project-memory.md`
 
@@ -175,6 +175,14 @@ Status update:
   operators can see both published and suppressed module-owned REST candidates, while explicit
   module DSL mappings now suppress lower-precedence profile shorthand for the same behavior by
   default and surface the winning candidate id plus suppression reason explicitly
+- the next low-code generated module-owned shorthand is now shipped through `ENG-058-T67`:
+  `IRestBehaviorEndpointGroupBuilder.MapGeneratedProfiles()` and
+  `MapGeneratedProfiles(string behaviorIdPrefix)` let an owning module opt into profile-backed
+  generated publication for one owned route group, prefer source-generated `GetRestProfiles()` plus
+  `GetRestProfileBehaviorTypes()` hints, fall back only to a bounded scan of the explicit owning
+  module assembly when generated type hints are unavailable, and keep runtime publication on the
+  same normalized projection and candidate-catalog path with
+  `metadata.authoringStyle = behavior-module-generated`
 - broader configuration-driven projection overrides remain later work
 
 ## Recommended long-term engine model
@@ -246,9 +254,9 @@ Cephalon should formalize the following precedence order.
 ### Ownership precedence
 
 1. explicit `MapAdditionalEndpoints(...)` manual routes
-2. explicit `RestBehaviorModuleBase.ConfigureRestBehaviors(...)` routes
-3. generated or convention-backed module projections
-4. behavior-authored HTTP profile defaults
+2. explicit `RestBehaviorModuleBase.ConfigureRestBehaviors(...)` DSL routes such as `MapGet/MapPost/...`
+3. explicit profile-consumption shorthand through `MapProfile<TBehavior>()`
+4. explicit generated module shorthand through `MapGeneratedProfiles(...)`
 5. pure convention defaults derived from behavior id and input shape
 
 The shipped runtime-catalog baseline now covers both the explicit module DSL and explicit manual
@@ -257,10 +265,11 @@ route still flows through the same operator-facing catalog and duplicate-route g
 Core materializes the final endpoints.
 
 The shipped precedence-visibility baseline now also makes that suppression decision observable for
-module-owned normalized behavior projections. When the same behavior is mapped through both the
-explicit module DSL and `MapProfile<TBehavior>()`, the explicit DSL route wins by default, the
-lower-precedence profile candidate is suppressed automatically, and the runtime keeps that decision
-visible through the candidate catalog instead of hiding it as silent startup behavior.
+module-owned normalized behavior projections. Within that behavior-projection path, the explicit
+module DSL wins over both `MapProfile<TBehavior>()` and `MapGeneratedProfiles(...)`, and
+`MapProfile<TBehavior>()` in turn wins over generated shorthand for the same behavior. The runtime
+keeps all three candidates visible through the candidate catalog instead of hiding the winning
+decision as silent startup behavior.
 
 ### Suppression rule
 
@@ -461,7 +470,7 @@ Status:
   and emits source-generated `GetRestProfiles()` hints without activating public REST routes from
   `[AppBehavior]`
 
-### Step 4: add explicit module-owned profile shorthand, then broader generated module projections
+### Step 4: ship explicit module-owned profile shorthand, then generated module projections
 
 Status:
 
@@ -469,11 +478,16 @@ Status:
   now lets an owning module consume `BehaviorRestProfileAttribute` hints without restating the HTTP
   method or relative pattern in module code, while still keeping public REST explicit and
   module-owned
+- now shipped through `ENG-058-T67`; `IRestBehaviorEndpointGroupBuilder.MapGeneratedProfiles()` and
+  `MapGeneratedProfiles(string behaviorIdPrefix)` let an owning module publish all matching
+  profile-backed behaviors beneath one owned route group without restating each behavior
+  individually, while still keeping public REST explicit, module-owned, and visible through the
+  same normalized projection plus candidate-catalog runtime surfaces
 
 Follow-through later:
 
-- allow low-code projects to opt into broader generated or convention-backed module projection
-  without abandoning module-owned public boundaries
+- allow low-code projects to opt into broader convention-backed module projection only when it can
+  preserve the same module-owned public-boundary model and operator truth
 
 ### Step 5: add explicit input-binding descriptors, then controlled configuration overrides
 
@@ -489,6 +503,8 @@ Status:
   route-placeholder truth before endpoint materialization
 - suppression visibility plus explicit-DSL-over-profile precedence is now shipped through
   `ENG-058-T66`
+- generated module shorthand plus explicit `DSL > MapProfile<TBehavior>() > MapGeneratedProfiles(...)`
+  precedence is now shipped through `ENG-058-T67`
 - controlled configuration overrides remain later work once suppression visibility and shorthand
   publication rules are stronger
 
@@ -501,8 +517,9 @@ The following points are durable enough to keep outside thread-local context.
   route activation
 - explicit module-owned REST mappings suppress lower-precedence implicit or convention projections
   for the same behavior by default
-- low-code REST authoring should stay opt-in and should prefer source-generated descriptor material
-  over broad runtime reflection
+- low-code REST authoring should stay opt-in, should prefer source-generated descriptor material
+  first, and should allow only bounded owner-assembly fallback when a module explicitly opts into
+  generated publication
 - `[AppBehavior]` plus auto-registration alone must still not publish a public REST boundary
 - the shipped public REST baseline now exposes resolved route truth through
   `IRestEndpointRuntimeCatalog`, `/engine/rest-endpoints`, `/engine/rest-endpoints/{restEndpointId}`,
@@ -517,11 +534,11 @@ The following points are durable enough to keep outside thread-local context.
 
 ## Near-term follow-through candidates
 
-Recommended implementation sequence after the shipped normalization, runtime-catalog, and
-manual-module follow-through slices:
+Recommended implementation sequence after the shipped normalization, runtime-catalog,
+precedence-visibility, and generated-module follow-through slices:
 
-1. add a generated or convention-backed low-code module path that consumes the shipped
-   `BehaviorRestProfileAttribute` plus `BehaviorRestBindingAttribute` hints without bypassing
-   module ownership
-2. only then evaluate whether richer configuration-driven public-boundary and binding overrides are
-   worth the added complexity
+1. add richer endpoint governance and configuration-override modeling only if runtime truth,
+   ownership, precedence, and candidate visibility stay explicit and introspectable
+2. only then evaluate whether any additional convention-backed publication sources are worth the
+   added complexity beyond the shipped `MapProfile<TBehavior>()` and `MapGeneratedProfiles(...)`
+   surfaces

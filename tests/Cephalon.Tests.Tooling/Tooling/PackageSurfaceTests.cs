@@ -813,6 +813,21 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void BehaviorsHttpRestBehaviorEndpointGroupBuilderExposesGeneratedProjectionMethods()
+    {
+        var methods = typeof(global::Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder)
+            .GetMethods(BindingFlags.Instance | BindingFlags.Public);
+
+        Assert.Contains(methods, static method =>
+            method.Name == "MapGeneratedProfiles" &&
+            method.GetParameters().Length == 0);
+        Assert.Contains(methods, static method =>
+            method.Name == "MapGeneratedProfiles" &&
+            method.GetParameters() is [{ ParameterType: { } parameterType }] &&
+            parameterType == typeof(string));
+    }
+
+    [Fact]
     public void BehaviorsPatternsAssemblyExposesOnlyTheDocumentedContractSurface()
     {
         AssertExportedTypes(

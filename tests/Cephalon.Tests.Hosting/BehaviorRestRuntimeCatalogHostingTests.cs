@@ -255,6 +255,143 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonExposesGeneratedModuleDslEndpointsInRuntimeCatalog()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "4";
+        builder.Configuration["OpenApi:DefaultVersion"] = "4";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new GeneratedRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(snapshot);
+
+        var endpoint = Assert.Single(endpoints, static candidate =>
+            string.Equals(candidate.BehaviorId, "tests.generated.runtime.lookup", StringComparison.Ordinal));
+        Assert.Equal("module-dsl", endpoint.SourceKind);
+        Assert.Equal("/api/v4/tests/generated/runtime/orders/{orderId}", endpoint.RoutePattern);
+        Assert.Equal("v4", endpoint.OpenApiDocumentName);
+        Assert.Equal(4, endpoint.ApiVersionMajor);
+        Assert.Contains("Generated Runtime API", endpoint.Tags);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, endpoint.Metadata["authoringStyle"]);
+        Assert.Equal("/api/v4/tests/generated/runtime", endpoint.Metadata["routeGroupPrefix"]);
+        Assert.Equal("/orders/{orderId}", endpoint.Metadata["relativePattern"]);
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.generated.runtime.lookup", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, candidate.AuthoringStyle);
+        Assert.Equal(endpoint.Id, candidate.ProjectedEndpoint.Id);
+
+        Assert.Contains(snapshot.RestEndpoints, item =>
+            string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal));
+        Assert.Contains(snapshot.RestEndpointCandidates, item =>
+            string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
+            item.Status == RestEndpointCandidateStatus.Published);
+
+        var payload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>("/api/v4/tests/generated/runtime/orders/ord-42");
+        Assert.NotNull(payload);
+        Assert.Equal("ord-42", payload.OrderId);
+    }
+
+    [Fact]
+    public async Task MapCephalonExposesRestEndpointCandidatesAndSuppressesGeneratedAndProfileMappingsWhenExplicitDslExists()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "12";
+        builder.Configuration["OpenApi:DefaultVersion"] = "12";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new GeneratedThreeWaySuppressionRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(snapshot);
+
+        var endpoint = Assert.Single(endpoints, static candidate =>
+            string.Equals(candidate.BehaviorId, "tests.rest.generated.threeway.lookup", StringComparison.Ordinal));
+        Assert.Equal("/api/v12/tests/generated/runtime/threeway/orders/explicit/{orderId}", endpoint.RoutePattern);
+        Assert.Equal("v12", endpoint.OpenApiDocumentName);
+        Assert.Equal(12, endpoint.ApiVersionMajor);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle, endpoint.Metadata["authoringStyle"]);
+
+        var behaviorCandidates = candidates
+            .Where(static candidate => string.Equals(candidate.ProjectedEndpoint.BehaviorId, "tests.rest.generated.threeway.lookup", StringComparison.Ordinal))
+            .ToArray();
+        Assert.Equal(3, behaviorCandidates.Length);
+
+        var published = Assert.Single(behaviorCandidates, static candidate =>
+            candidate.Status == RestEndpointCandidateStatus.Published);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle, published.AuthoringStyle);
+        Assert.Equal(endpoint.Id, published.ProjectedEndpoint.Id);
+
+        var suppressedProfile = Assert.Single(behaviorCandidates, static candidate =>
+            candidate.Status == RestEndpointCandidateStatus.Suppressed &&
+            string.Equals(candidate.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal(published.Id, suppressedProfile.SuppressedByCandidateId);
+
+        var suppressedGenerated = Assert.Single(behaviorCandidates, static candidate =>
+            candidate.Status == RestEndpointCandidateStatus.Suppressed &&
+            string.Equals(candidate.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal(published.Id, suppressedGenerated.SuppressedByCandidateId);
+
+        Assert.Contains(snapshot.RestEndpointCandidates, candidate =>
+            string.Equals(candidate.Id, suppressedProfile.Id, StringComparison.Ordinal) &&
+            candidate.Status == RestEndpointCandidateStatus.Suppressed);
+        Assert.Contains(snapshot.RestEndpointCandidates, candidate =>
+            string.Equals(candidate.Id, suppressedGenerated.Id, StringComparison.Ordinal) &&
+            candidate.Status == RestEndpointCandidateStatus.Suppressed);
+
+        var payload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>(
+            "/api/v12/tests/generated/runtime/threeway/orders/explicit/ord-42");
+        Assert.NotNull(payload);
+        Assert.Equal("ord-42", payload.OrderId);
+
+        var suppressedResponse = await client.GetAsync("/api/v12/tests/generated/runtime/threeway/orders/ord-42");
+        Assert.Equal(System.Net.HttpStatusCode.NotFound, suppressedResponse.StatusCode);
+    }
+
+    [Fact]
     public async Task MapCephalonExposesRestEndpointCandidatesAndSuppressesLowerPrecedenceProfileMappings()
     {
         var builder = WebApplication.CreateBuilder();
@@ -724,6 +861,42 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         }
     }
 
+    private sealed class GeneratedRuntimeCatalogModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.generated-runtime",
+            "Generated Runtime Module",
+            "Publishes generated module-owned REST endpoints for runtime catalog coverage.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Group("/tests/generated/runtime")
+                .WithTagName("Generated Runtime API")
+                .MapGeneratedProfiles();
+        }
+    }
+
+    private sealed class GeneratedThreeWaySuppressionRuntimeCatalogModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.generated-runtime.threeway",
+            "Generated Three-Way Runtime Module",
+            "Publishes explicit, profile, and generated routes for precedence visibility coverage.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            var group = behaviors.Group("/tests/generated/runtime/threeway/orders")
+                .ApiVersion(12)
+                .WithTagName("Generated Three-Way API");
+
+            group.MapGeneratedProfiles("tests.rest.generated.threeway");
+            group.MapProfile<GetGeneratedThreeWayRuntimeOrderBehavior>();
+            group.MapGet<GetGeneratedThreeWayRuntimeOrderBehavior>("/explicit/{orderId}");
+        }
+    }
+
     private sealed class ProfileMetadataOnlyRuntimeModule : RestBehaviorModuleBase
     {
         public override ModuleDescriptor Descriptor { get; } = new(
@@ -887,6 +1060,45 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         }
     }
 
+    [AppBehavior("tests.generated.runtime.lookup")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/orders/{orderId}", ApiVersionMajor = 4)]
+    private sealed class GetGeneratedRuntimeOrderBehavior : IAppBehavior<GeneratedRuntimeOrderInput, GeneratedRuntimeOrderOutput>
+    {
+        public Task<GeneratedRuntimeOrderOutput> HandleAsync(
+            GeneratedRuntimeOrderInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new GeneratedRuntimeOrderOutput(input.OrderId));
+        }
+    }
+
+    [AppBehavior("tests.generated.runtime.create")]
+    [BehaviorRestProfile(BehaviorRestMethod.Post, "/orders/{orderId}/items", ApiVersionMajor = 4)]
+    private sealed class CreateGeneratedRuntimeOrderItemBehavior : IAppBehavior<GeneratedRuntimeOrderItemInput, GeneratedRuntimeOrderOutput>
+    {
+        public Task<GeneratedRuntimeOrderOutput> HandleAsync(
+            GeneratedRuntimeOrderItemInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new GeneratedRuntimeOrderOutput(input.OrderId));
+        }
+    }
+
+    [AppBehavior("tests.rest.generated.threeway.lookup")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}", ApiVersionMajor = 6)]
+    private sealed class GetGeneratedThreeWayRuntimeOrderBehavior : IAppBehavior<GeneratedRuntimeOrderInput, GeneratedRuntimeOrderOutput>
+    {
+        public Task<GeneratedRuntimeOrderOutput> HandleAsync(
+            GeneratedRuntimeOrderInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new GeneratedRuntimeOrderOutput(input.OrderId));
+        }
+    }
+
     [AppBehavior("tests.rest.profile.metadata-only")]
     [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}", ApiVersionMajor = 4)]
     private sealed class GetProfileMetadataOnlyOrderBehavior : IAppBehavior<ProfileRuntimeOrderInput, ProfileRuntimeOrderOutput>
@@ -978,6 +1190,12 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     private sealed record ProfileRuntimeOrderInput(string OrderId);
 
     private sealed record ProfileRuntimeOrderOutput(string OrderId);
+
+    private sealed record GeneratedRuntimeOrderInput(string OrderId);
+
+    private sealed record GeneratedRuntimeOrderItemInput(string OrderId, string? ProductId);
+
+    private sealed record GeneratedRuntimeOrderOutput(string OrderId);
 
     private sealed record ProfileBindingRuntimeInput(
         string OrderId,

@@ -43,6 +43,39 @@ public interface IRestBehaviorEndpointGroupBuilder
     IRestBehaviorEndpointGroupBuilder Configure(Action<RouteGroupBuilder> configure);
 
     /// <summary>
+    /// Maps all generated REST profiles from the owning module assembly whose behavior ids match the
+    /// route-group prefix convention.
+    /// </summary>
+    /// <returns>The same group builder for fluent route composition.</returns>
+    /// <remarks>
+    /// <para>
+    /// This is an explicit module-owned low-code opt-in. It never publishes public REST from
+    /// <c>[AppBehavior]</c> alone.
+    /// </para>
+    /// <para>
+    /// Cephalon derives the behavior-id prefix from the group prefix by trimming leading and
+    /// trailing slashes and replacing remaining <c>/</c> separators with <c>.</c>. Use
+    /// <see cref="MapGeneratedProfiles(string)"/> when behavior ids do not follow that convention.
+    /// </para>
+    /// </remarks>
+    IRestBehaviorEndpointGroupBuilder MapGeneratedProfiles();
+
+    /// <summary>
+    /// Maps all generated REST profiles from the owning module assembly whose behavior ids match the
+    /// supplied behavior-id prefix.
+    /// </summary>
+    /// <param name="behaviorIdPrefix">
+    /// The behavior-id prefix used to select generated REST profiles from the owning module assembly.
+    /// </param>
+    /// <returns>The same group builder for fluent route composition.</returns>
+    /// <remarks>
+    /// This is an explicit module-owned low-code opt-in. It prefers source-generated REST profile
+    /// hints and keeps generated routes in the same normalized projection and precedence pipeline as
+    /// the rest of the REST DSL.
+    /// </remarks>
+    IRestBehaviorEndpointGroupBuilder MapGeneratedProfiles(string behaviorIdPrefix);
+
+    /// <summary>
     /// Maps a REST endpoint by consuming the metadata-only REST profile declared on the specified behavior.
     /// </summary>
     /// <typeparam name="TBehavior">The behavior type to expose through the owning module.</typeparam>

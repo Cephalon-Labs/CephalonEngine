@@ -1,3 +1,4 @@
+using System.Reflection;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.AspNetCore.Transports.Rest;
 using Cephalon.Behaviors.Http.Abstractions;
@@ -31,6 +32,12 @@ internal sealed record RestBehaviorEndpointProjection(
     Action<RouteHandlerBuilder>? ConfigureEndpoint,
     Action<BehaviorRestEndpointGroup, string, IReadOnlyList<BehaviorRestBindingDescriptor>, Action<RouteHandlerBuilder>?> Map)
 {
+    private static readonly MethodInfo CreateMapDelegateFactoryMethod =
+        typeof(RestBehaviorEndpointProjection).GetMethod(
+            nameof(CreateMapDelegateFactory),
+            BindingFlags.Static | BindingFlags.NonPublic)
+        ?? throw new InvalidOperationException("Required REST behavior projection factory was not found.");
+
     internal static RestBehaviorEndpointProjection Create<TBehavior>(
         RestBehaviorHttpMethod method,
         string pattern,
@@ -38,40 +45,70 @@ internal sealed record RestBehaviorEndpointProjection(
         string authoringStyle,
         IReadOnlyList<BehaviorRestBindingDescriptor>? bindings = null)
         where TBehavior : class
+        => Create(
+            typeof(TBehavior),
+            method,
+            pattern,
+            configureEndpoint,
+            authoringStyle,
+            bindings);
+
+    internal static RestBehaviorEndpointProjection Create(
+        Type behaviorType,
+        RestBehaviorHttpMethod method,
+        string pattern,
+        Action<RouteHandlerBuilder>? configureEndpoint,
+        string authoringStyle,
+        IReadOnlyList<BehaviorRestBindingDescriptor>? bindings = null)
     {
+        ArgumentNullException.ThrowIfNull(behaviorType);
         ArgumentException.ThrowIfNullOrWhiteSpace(pattern);
         ArgumentException.ThrowIfNullOrWhiteSpace(authoringStyle);
 
         return new RestBehaviorEndpointProjection(
             method,
-            ResolveBehaviorId(typeof(TBehavior)),
-            typeof(TBehavior),
+            ResolveBehaviorId(behaviorType),
+            behaviorType,
             pattern.Trim(),
             bindings ?? [],
             authoringStyle.Trim(),
             configureEndpoint,
-            CreateMapDelegate<TBehavior>(method));
+            CreateMapDelegate(behaviorType, method));
     }
 
     internal static RestBehaviorEndpointProjection Create<TBehavior>(
         BehaviorRestProfileDescriptor profile,
         Action<RouteHandlerBuilder>? configureEndpoint)
         where TBehavior : class
-    {
-        ArgumentNullException.ThrowIfNull(profile);
+        => Create(
+            typeof(TBehavior),
+            profile,
+            configureEndpoint,
+            RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle);
 
-        var behaviorId = ResolveBehaviorId(typeof(TBehavior));
+    internal static RestBehaviorEndpointProjection Create(
+        Type behaviorType,
+        BehaviorRestProfileDescriptor profile,
+        Action<RouteHandlerBuilder>? configureEndpoint,
+        string authoringStyle)
+    {
+        ArgumentNullException.ThrowIfNull(behaviorType);
+        ArgumentNullException.ThrowIfNull(profile);
+        ArgumentException.ThrowIfNullOrWhiteSpace(authoringStyle);
+
+        var behaviorId = ResolveBehaviorId(behaviorType);
         if (!string.Equals(behaviorId, profile.BehaviorId, StringComparison.OrdinalIgnoreCase))
         {
             throw new InvalidOperationException(
-                $"Resolved REST profile behavior id '{profile.BehaviorId}' does not match behavior type '{typeof(TBehavior).FullName}' with id '{behaviorId}'.");
+                $"Resolved REST profile behavior id '{profile.BehaviorId}' does not match behavior type '{behaviorType.FullName}' with id '{behaviorId}'.");
         }
 
-        return Create<TBehavior>(
+        return Create(
+            behaviorType,
             ConvertMethod(profile.Method),
             profile.RelativePattern,
             configureEndpoint,
-            RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle,
+            authoringStyle,
             profile.Bindings);
     }
 
@@ -81,6 +118,23 @@ internal sealed record RestBehaviorEndpointProjection(
         group.UseRuntimeAuthoringStyle(AuthoringStyle);
         Map(group, Pattern, Bindings, ConfigureEndpoint);
     }
+
+    private static Action<BehaviorRestEndpointGroup, string, IReadOnlyList<BehaviorRestBindingDescriptor>, Action<RouteHandlerBuilder>?> CreateMapDelegate(
+        Type behaviorType,
+        RestBehaviorHttpMethod method)
+    {
+        ArgumentNullException.ThrowIfNull(behaviorType);
+
+        var closedMethod = CreateMapDelegateFactoryMethod.MakeGenericMethod(behaviorType);
+        return (Action<BehaviorRestEndpointGroup, string, IReadOnlyList<BehaviorRestBindingDescriptor>, Action<RouteHandlerBuilder>?>)closedMethod.Invoke(
+            null,
+            [method])!;
+    }
+
+    private static Action<BehaviorRestEndpointGroup, string, IReadOnlyList<BehaviorRestBindingDescriptor>, Action<RouteHandlerBuilder>?> CreateMapDelegateFactory<TBehavior>(
+        RestBehaviorHttpMethod method)
+        where TBehavior : class
+        => CreateMapDelegate<TBehavior>(method);
 
     private static Action<BehaviorRestEndpointGroup, string, IReadOnlyList<BehaviorRestBindingDescriptor>, Action<RouteHandlerBuilder>?> CreateMapDelegate<TBehavior>(
         RestBehaviorHttpMethod method)

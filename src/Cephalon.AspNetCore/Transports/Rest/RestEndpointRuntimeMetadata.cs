@@ -12,8 +12,8 @@ internal static class RestEndpointRuntimeMetadata
     internal const string BehaviorModuleGeneratedAuthoringStyle = "behavior-module-generated";
     internal const string BehaviorModuleProfileAuthoringStyle = "behavior-module-profile";
     internal const int BehaviorModuleDslPrecedenceRank = 2;
-    internal const int BehaviorModuleGeneratedPrecedenceRank = 3;
-    internal const int BehaviorModuleProfilePrecedenceRank = 4;
+    internal const int BehaviorModuleProfilePrecedenceRank = 3;
+    internal const int BehaviorModuleGeneratedPrecedenceRank = 4;
 
     internal static int ResolvePrecedenceRank(string authoringStyle)
     {
@@ -22,8 +22,8 @@ internal static class RestEndpointRuntimeMetadata
         return authoringStyle.Trim() switch
         {
             BehaviorModuleDslAuthoringStyle => BehaviorModuleDslPrecedenceRank,
-            BehaviorModuleGeneratedAuthoringStyle => BehaviorModuleGeneratedPrecedenceRank,
             BehaviorModuleProfileAuthoringStyle => BehaviorModuleProfilePrecedenceRank,
+            BehaviorModuleGeneratedAuthoringStyle => BehaviorModuleGeneratedPrecedenceRank,
             _ => int.MaxValue
         };
     }

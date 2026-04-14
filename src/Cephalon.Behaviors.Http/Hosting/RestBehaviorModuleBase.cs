@@ -81,7 +81,7 @@ public abstract class RestBehaviorModuleBase : BehaviorModuleBase, IRestModule
             return projection;
         }
 
-        var builder = new RestBehaviorModuleBuilder();
+        var builder = new RestBehaviorModuleBuilder(GetType());
         ConfigureRestBehaviors(builder);
         projection = builder.Build();
         return projection;

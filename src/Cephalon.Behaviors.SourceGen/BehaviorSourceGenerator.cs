@@ -909,6 +909,27 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
 
             sb.AppendLine("        };");
             sb.AppendLine("    }");
+
+            sb.AppendLine();
+            sb.AppendLine("    /// <summary>Returns the behavior types that correspond to generated REST profile hints.</summary>");
+            sb.AppendLine("    internal static global::System.Collections.Generic.IReadOnlyList<(string Id, global::System.Type Type)> GetRestProfileBehaviorTypes()");
+            sb.AppendLine("    {");
+            sb.AppendLine("        return new (string, global::System.Type)[]");
+            sb.AppendLine("        {");
+
+            foreach (var info in behaviorsWithRestProfiles)
+            {
+                if (info?.RestProfile is null ||
+                    !IsSupportedRestMethod(info.RestProfile.MethodName))
+                {
+                    continue;
+                }
+
+                sb.AppendLine($"            (\"{EscapeString(info.BehaviorId)}\", typeof({info.TypeName})),");
+            }
+
+            sb.AppendLine("        };");
+            sb.AppendLine("    }");
         }
 
         // ── GetBehaviorIdsWithoutTopology method ──

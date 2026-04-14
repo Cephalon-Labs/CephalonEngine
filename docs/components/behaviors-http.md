@@ -175,7 +175,8 @@ Current profile behavior:
 - the owning module still chooses whether that behavior becomes public REST through
   `ConfigureRestBehaviors(...)`
 - `Cephalon.Behaviors.SourceGen` validates the core profile shape at build time and emits
-  `GetRestProfiles()` hints, including explicit binding descriptors when they are declared
+  `GetRestProfiles()` hints, including explicit binding descriptors when they are declared, and
+  `GetRestProfileBehaviorTypes()` hints for generated module-owned shorthand
 - `IRestBehaviorEndpointGroupBuilder.MapProfile<TBehavior>()` is now the shipped low-ceremony
   module-owned shorthand that consumes those hints through the existing REST projection pipeline
 - profile consumption prefers source-generated `GetRestProfiles()` hints first and falls back to
@@ -255,6 +256,29 @@ public sealed class CartModule : RestBehaviorModuleBase
 }
 ```
 
+When the module wants to publish every profiled behavior beneath one owned public prefix, it can
+opt into the generated shorthand explicitly:
+
+```csharp
+public sealed class CartModule : RestBehaviorModuleBase
+{
+    public override ModuleDescriptor Descriptor => DescriptorInstance;
+
+    public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+    {
+        behaviors.Group("/showcase/cart")
+            .WithTagName("Cart API")
+            .MapGeneratedProfiles();
+
+        behaviors.Internal<RepriceCartBehavior>();
+    }
+}
+```
+
+`MapGeneratedProfiles()` derives the behavior-id prefix from the route-group prefix, so the example
+above selects behaviors whose ids start with `showcase.cart`. If a module wants a different
+selection rule, use `MapGeneratedProfiles("custom.prefix")` explicitly.
+
 Current helper behavior:
 
 - keeps REST route shape in the host-adapter layer instead of overloading behavior attributes with
@@ -271,16 +295,24 @@ Current helper behavior:
 - adds `MapProfile<TBehavior>()` as an explicit module-owned shorthand that consumes the behavior
   profile's method, relative pattern, optional candidate API version, and any explicit binding
   descriptors
+- adds `MapGeneratedProfiles()` and `MapGeneratedProfiles(string)` as explicit module-owned
+  low-code shorthands that publish every matching profiled behavior beneath one owned route group
+- derives the default generated-selection prefix from the route-group path by trimming slashes and
+  replacing `/` separators with `.`, while still allowing an explicit behavior-id prefix override
 - prefers source-generated profile hints and falls back only to the explicitly targeted behavior
   type instead of broad assembly reflection
+- prefers source-generated `GetRestProfiles()` plus `GetRestProfileBehaviorTypes()` hints for
+  generated shorthand and falls back only to a bounded scan of the explicit owning module assembly
+  when generated type hints are unavailable
 - keeps explicit route bindings honest by requiring the declared binding name to match a
   placeholder present in the profile route template
 - lets explicit group `.ApiVersion(...)` override profile-declared candidate versions, while
   conflicting profile-declared versions in the same group fail fast until the module resolves them
 - keeps runtime publication on the same module-owned path with `sourceKind = module-dsl`, while
   `/engine/rest-endpoints` exposes `metadata.authoringStyle = behavior-module-profile` for the
-  shorthand path, `behavior-module-dsl` for the fully explicit path, and first-class
-  `BindingDescriptors` data for profile-driven explicit binding plans
+  profile shorthand path, `behavior-module-generated` for the generated shorthand path,
+  `behavior-module-dsl` for the fully explicit path, and first-class `BindingDescriptors` data for
+  profile-driven explicit binding plans
 - dispatches through `BehaviorDispatcher` using Minimal API handlers
 - lets behaviors return raw `TOutput` or transport-neutral `Result<TOutput>` values
 - uses the implicit route/query/body merge baseline only when no explicit profile bindings are
@@ -322,9 +354,12 @@ Current helper behavior:
 - keeps `MapAdditionalEndpoints(...)` as the advanced/manual Minimal API escape hatch for REST
   modules that need extra routes beyond the default behavior DSL, while still flowing those manual
   routes into `/engine/rest-endpoints` and the shared duplicate-route guard
-- if the same behavior is mapped through both explicit module DSL and `MapProfile<TBehavior>()`,
-  the explicit DSL route now wins by default and the lower-precedence profile candidate is
-  suppressed instead of publishing side by side
+- if the same behavior is mapped through both explicit module DSL and shorthand publication, the
+  explicit DSL route now wins by default and the lower-precedence shorthand candidate is suppressed
+  instead of publishing side by side
+- if the same behavior is mapped through both `MapProfile<TBehavior>()` and
+  `MapGeneratedProfiles(...)`, the explicit per-behavior `MapProfile<TBehavior>()` route wins by
+  default and the generated candidate is suppressed
 
 ## REST runtime catalog and collision guard
 
@@ -354,8 +389,8 @@ The same runtime answer now has a companion candidate catalog for precedence vis
 Candidate entries answer the projected endpoint shape, authoring style, precedence rank, published
 versus suppressed status, and when suppression occurs the winning candidate id plus an
 operator-facing suppression reason. Today that surface covers the normalized module-owned behavior
-projection path, including explicit module DSL mappings and `MapProfile<TBehavior>()` shorthand
-consumption.
+projection path, including explicit module DSL mappings, `MapProfile<TBehavior>()` shorthand
+consumption, and `MapGeneratedProfiles(...)` shorthand consumption.
 
 The host also now fails fast when two resolved public REST endpoints collide on the same
 `HTTP method + route pattern`.

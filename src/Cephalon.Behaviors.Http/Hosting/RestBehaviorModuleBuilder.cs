@@ -1,3 +1,4 @@
+using System.Reflection;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.AspNetCore.Transports.Rest;
 using Cephalon.Behaviors.Http.Abstractions;
@@ -9,9 +10,27 @@ namespace Cephalon.Behaviors.Http.Hosting;
 internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
 {
     private static readonly Type AppBehaviorOpenGeneric = typeof(IAppBehavior<,>);
+    private static readonly MethodInfo AddOwnedBehaviorMethod = typeof(IBehaviorModuleBuilder)
+        .GetMethods()
+        .Single(static method =>
+            method.Name == nameof(IBehaviorModuleBuilder.Add) &&
+            method.IsGenericMethodDefinition &&
+            method.GetParameters().Length == 0);
+    private static readonly MethodInfo AddOwnedBehaviorWithTopologyMethod = typeof(IBehaviorModuleBuilder)
+        .GetMethods()
+        .Single(static method =>
+            method.Name == nameof(IBehaviorModuleBuilder.Add) &&
+            method.IsGenericMethodDefinition &&
+            method.GetParameters().Length == 1);
     private readonly Dictionary<string, RestBehaviorOwnershipDefinition> ownedBehaviors = new(StringComparer.OrdinalIgnoreCase);
     private readonly List<Action<IBehaviorModuleBuilder>> ownershipRegistrations = [];
     private readonly List<RestBehaviorRouteGroupState> groups = [];
+    private readonly Type? ownerModuleType;
+
+    internal RestBehaviorModuleBuilder(Type? ownerModuleType = null)
+    {
+        this.ownerModuleType = ownerModuleType;
+    }
 
     public IRestBehaviorModuleBuilder Internal<TBehavior>()
         where TBehavior : class
@@ -44,8 +63,13 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
 
     private void RegisterOwnedBehavior<TBehavior>(Action<IBehaviorTopologyBuilder>? configureTopology)
         where TBehavior : class
+        => RegisterOwnedBehavior(typeof(TBehavior), configureTopology);
+
+    private void RegisterOwnedBehavior(Type behaviorType, Action<IBehaviorTopologyBuilder>? configureTopology)
     {
-        var ownership = RestBehaviorOwnershipDefinition.Create<TBehavior>(configureTopology is not null);
+        ArgumentNullException.ThrowIfNull(behaviorType);
+
+        var ownership = RestBehaviorOwnershipDefinition.Create(behaviorType, configureTopology is not null);
         if (ownedBehaviors.TryGetValue(ownership.BehaviorId, out var existing))
         {
             if (existing.BehaviorType != ownership.BehaviorType)
@@ -67,15 +91,34 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
         {
             if (configureTopology is null)
             {
-                builder.Add<TBehavior>();
+                AddOwnedBehavior(builder, behaviorType);
             }
             else
             {
-                builder.Add<TBehavior>(configureTopology);
+                AddOwnedBehavior(builder, behaviorType, configureTopology);
             }
         });
 
         ownedBehaviors.Add(ownership.BehaviorId, ownership);
+    }
+
+    private static void AddOwnedBehavior(
+        IBehaviorModuleBuilder builder,
+        Type behaviorType,
+        Action<IBehaviorTopologyBuilder>? configureTopology = null)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentNullException.ThrowIfNull(behaviorType);
+
+        var method = (configureTopology is null
+                ? AddOwnedBehaviorMethod
+                : AddOwnedBehaviorWithTopologyMethod)
+            .MakeGenericMethod(behaviorType);
+        _ = method.Invoke(
+            builder,
+            configureTopology is null
+                ? []
+                : [configureTopology]);
     }
 
     private sealed class RestBehaviorEndpointGroupBuilder(
@@ -113,6 +156,15 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
             ArgumentNullException.ThrowIfNull(configure);
             state.GroupConventions.Add(configure);
             return this;
+        }
+
+        public IRestBehaviorEndpointGroupBuilder MapGeneratedProfiles()
+            => AddGeneratedProfiles(behaviorIdPrefix: null);
+
+        public IRestBehaviorEndpointGroupBuilder MapGeneratedProfiles(string behaviorIdPrefix)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(behaviorIdPrefix);
+            return AddGeneratedProfiles(behaviorIdPrefix.Trim());
         }
 
         public IRestBehaviorEndpointGroupBuilder MapProfile<TBehavior>(
@@ -223,6 +275,43 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
             return this;
         }
 
+        private RestBehaviorEndpointGroupBuilder AddGeneratedProfiles(string? behaviorIdPrefix)
+        {
+            var owningModuleType = moduleBuilder.ownerModuleType
+                ?? throw new InvalidOperationException(
+                    "MapGeneratedProfiles() requires an owning RestBehaviorModuleBase context so Cephalon can resolve generated REST profiles from the module assembly.");
+            var effectiveBehaviorIdPrefix = string.IsNullOrWhiteSpace(behaviorIdPrefix)
+                ? DeriveBehaviorIdPrefixFromGroupPrefix(state.Prefix)
+                : behaviorIdPrefix.Trim();
+            if (string.IsNullOrWhiteSpace(effectiveBehaviorIdPrefix))
+            {
+                throw new InvalidOperationException(
+                    $"REST behavior-module group '{state.Prefix}' cannot derive a behavior-id prefix for MapGeneratedProfiles(). Supply MapGeneratedProfiles(\"prefix\") explicitly.");
+            }
+
+            var generatedProfiles = BehaviorRestProfileResolver.ResolveGeneratedProfiles(
+                owningModuleType.Assembly,
+                effectiveBehaviorIdPrefix);
+            if (generatedProfiles.Count == 0)
+            {
+                throw new InvalidOperationException(
+                    $"REST behavior-module group '{state.Prefix}' did not find any generated REST profiles in assembly '{owningModuleType.Assembly.FullName}' that match behavior-id prefix '{effectiveBehaviorIdPrefix}'.");
+            }
+
+            foreach (var generatedProfile in generatedProfiles)
+            {
+                SeedProfileApiVersion(generatedProfile.Profile);
+                moduleBuilder.RegisterOwnedBehavior(generatedProfile.BehaviorType, configureTopology: null);
+                state.Endpoints.Add(RestBehaviorEndpointProjection.Create(
+                    generatedProfile.BehaviorType,
+                    generatedProfile.Profile,
+                    configureEndpoint: null,
+                    RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle));
+            }
+
+            return this;
+        }
+
         private void SeedProfileApiVersion(BehaviorRestProfileDescriptor profile)
         {
             ArgumentNullException.ThrowIfNull(profile);
@@ -246,6 +335,17 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
 
             throw new InvalidOperationException(
                 $"REST behavior-module group '{state.Prefix}' resolved conflicting profile API major versions ({state.ApiVersionMajor.Value} from '{state.ProfileApiVersionSourceBehaviorId}' and {profile.ApiVersionMajor.Value} from '{profile.BehaviorId}'). Set ApiVersion(...) explicitly or split the profiled behaviors into separate groups.");
+        }
+
+        private static string DeriveBehaviorIdPrefixFromGroupPrefix(string prefix)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(prefix);
+
+            return string.Join(
+                ".",
+                prefix.Trim()
+                    .Trim('/')
+                    .Split('/', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
         }
     }
 
@@ -289,10 +389,10 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
         Type BehaviorType,
         bool HasExplicitTopologyOverride)
     {
-        internal static RestBehaviorOwnershipDefinition Create<TBehavior>(bool hasExplicitTopologyOverride)
-            where TBehavior : class
+        internal static RestBehaviorOwnershipDefinition Create(Type behaviorType, bool hasExplicitTopologyOverride)
         {
-            var behaviorType = typeof(TBehavior);
+            ArgumentNullException.ThrowIfNull(behaviorType);
+
             var attribute = behaviorType.GetCustomAttributes(typeof(AppBehaviorAttribute), inherit: false)
                 .OfType<AppBehaviorAttribute>()
                 .SingleOrDefault()
