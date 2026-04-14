@@ -503,8 +503,10 @@ Candidate entries answer the original shorthand projection shape through
 `RestEndpointCandidateRuntimeDescriptor.OriginalProjection`, the final effective mapped answer
 through `ProjectedEndpoint`, authoring style, precedence rank, published versus suppressed status,
 and when suppression occurs the winning candidate id plus an operator-facing suppression reason.
-Today that surface covers the normalized module-owned behavior projection path, including explicit
-module DSL mappings, `MapProfile<TBehavior>()` shorthand consumption, and
+Candidate ids now resolve from that original shorthand projection before host-level overrides are
+applied, while `ProjectedEndpoint.Id` continues to identify the final effective mapped endpoint
+shape. Today that surface covers the normalized module-owned behavior projection path, including
+explicit module DSL mappings, `MapProfile<TBehavior>()` shorthand consumption, and
 `MapGeneratedProfiles(...)` shorthand consumption.
 
 Publication-group entries now answer that same runtime truth one behavior at a time: the ordered
@@ -522,11 +524,11 @@ Current governance baseline:
 - configure shorthand suppression through `RestApi:Suppressions`
 - configure shorthand API-version, HTTP-method, bounded route-group-prefix, constrained
   route-pattern, and explicit binding-plan overrides through `RestApi:Overrides`
-- target one or more `Behaviors`, `Modules`, and optional `AuthoringStyles`, then optionally
-  refine that match with `ApiVersionMajors`, `Methods`, `RelativePatterns`, and
+- target one or more `CandidateIds`, `Behaviors`, `Modules`, and optional `AuthoringStyles`, then
+  optionally refine that match with `ApiVersionMajors`, `Methods`, `RelativePatterns`, and
   `RouteGroupPrefixes`
-- rules that omit both `Behaviors` and `Modules` now fail fast instead of suppressing every
-  shorthand candidate implicitly
+- rules that omit all of `CandidateIds`, `Behaviors`, and `Modules` now fail fast instead of
+  suppressing every shorthand candidate implicitly
 - override rules must define at least one override action, require a positive `ApiVersionMajor`
   when that action is present, accept only `GET`, `POST`, `PUT`, `PATCH`, or `DELETE` for
   `Method`, require `Pattern` to be a valid relative ASP.NET Core route pattern, require
@@ -535,12 +537,15 @@ Current governance baseline:
   effective HTTP method
 - omit `AuthoringStyles` to suppress both shorthand styles by default:
   `behavior-module-profile` and `behavior-module-generated`
-- the optional selector refiners match the original shorthand candidate shape before override
-  actions are applied, so governance can pick one of several shorthand candidates that share the
-  same behavior/module identity without relying on final rewritten route shape
-- when more than one rule matches, Cephalon prefers the more specific rule by populated target
-  dimensions first, then by behavior-targeted scope, narrower authoring-style scope, fewer total
-  selector values, and finally stable rule id ordering
+- exact `CandidateIds` reuse the stable ids published by `GET /engine/rest-endpoint-candidates`
+- the optional selector refiners and exact candidate ids all match the original shorthand
+  candidate shape before override actions are applied, so governance can pick one of several
+  shorthand candidates that share the same behavior/module identity without relying on final
+  rewritten route shape
+- when more than one rule matches, Cephalon prefers candidate-targeted rules first, then fewer
+  targeted candidate ids, then the more specific rule by populated target dimensions, behavior-
+  targeted scope, narrower authoring-style scope, fewer total selector values, and finally stable
+  rule id ordering
 - shorthand groups that already declare `.ApiVersion(...)` explicitly remain authoritative over
   host-level version rewrites, while shorthand method and constrained pattern overrides can still
   apply

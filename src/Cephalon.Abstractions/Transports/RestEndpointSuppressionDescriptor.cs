@@ -9,6 +9,7 @@ public sealed class RestEndpointSuppressionDescriptor
     /// Creates a REST endpoint suppression descriptor.
     /// </summary>
     /// <param name="id">The stable suppression identifier.</param>
+    /// <param name="candidateIds">The original shorthand candidate identifiers targeted by the suppression rule.</param>
     /// <param name="behaviorIds">The behavior identifiers targeted by the suppression rule.</param>
     /// <param name="sourceModuleIds">The source-module identifiers targeted by the suppression rule.</param>
     /// <param name="authoringStyles">The normalized shorthand authoring styles targeted by the suppression rule.</param>
@@ -18,6 +19,7 @@ public sealed class RestEndpointSuppressionDescriptor
     /// <param name="routeGroupPrefixes">The published route-group prefixes targeted by the suppression rule.</param>
     public RestEndpointSuppressionDescriptor(
         string id,
+        IReadOnlyList<string>? candidateIds = null,
         IReadOnlyList<string>? behaviorIds = null,
         IReadOnlyList<string>? sourceModuleIds = null,
         IReadOnlyList<string>? authoringStyles = null,
@@ -32,6 +34,7 @@ public sealed class RestEndpointSuppressionDescriptor
         }
 
         Id = id.Trim();
+        CandidateIds = NormalizeList(candidateIds);
         BehaviorIds = NormalizeList(behaviorIds);
         SourceModuleIds = NormalizeList(sourceModuleIds);
         AuthoringStyles = NormalizeList(authoringStyles);
@@ -45,6 +48,11 @@ public sealed class RestEndpointSuppressionDescriptor
     /// Gets the stable suppression identifier.
     /// </summary>
     public string Id { get; }
+
+    /// <summary>
+    /// Gets the original shorthand candidate identifiers targeted by this suppression rule.
+    /// </summary>
+    public IReadOnlyList<string> CandidateIds { get; }
 
     /// <summary>
     /// Gets the behavior identifiers targeted by this suppression rule.

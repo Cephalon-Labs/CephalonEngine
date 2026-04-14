@@ -19,6 +19,7 @@ internal sealed class AspNetCoreRestEndpointOverrideRuntimeCatalog : IRestEndpoi
         overrides = options.Overrides
             .Select(static item => new RestEndpointOverrideDescriptor(
                 item.Id,
+                item.CandidateIds,
                 item.BehaviorIds,
                 item.SourceModuleIds,
                 item.AuthoringStyles,

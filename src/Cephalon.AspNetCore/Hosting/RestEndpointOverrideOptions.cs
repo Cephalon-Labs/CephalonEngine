@@ -23,6 +23,9 @@ public sealed class RestEndpointOverrideOptions
     /// Initializes a new instance of the <see cref="RestEndpointOverrideOptions" /> class.
     /// </summary>
     /// <param name="id">The stable override identifier.</param>
+    /// <param name="candidateIds">
+    /// The original shorthand candidate identifiers targeted by the override rule.
+    /// </param>
     /// <param name="behaviorIds">The behavior identifiers targeted by the override rule.</param>
     /// <param name="sourceModuleIds">The source-module identifiers targeted by the override rule.</param>
     /// <param name="authoringStyles">
@@ -73,6 +76,7 @@ public sealed class RestEndpointOverrideOptions
     /// </param>
     public RestEndpointOverrideOptions(
         string id,
+        IReadOnlyList<string>? candidateIds = null,
         IReadOnlyList<string>? behaviorIds = null,
         IReadOnlyList<string>? sourceModuleIds = null,
         IReadOnlyList<string>? authoringStyles = null,
@@ -91,6 +95,7 @@ public sealed class RestEndpointOverrideOptions
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
 
         Id = id.Trim();
+        CandidateIds = NormalizeList(candidateIds);
         BehaviorIds = NormalizeList(behaviorIds);
         SourceModuleIds = NormalizeList(sourceModuleIds);
         AuthoringStyles = NormalizeAuthoringStyles(authoringStyles);
@@ -117,11 +122,11 @@ public sealed class RestEndpointOverrideOptions
         RemovedBindingProperties = NormalizeList(removedBindingProperties);
         BindingMode = NormalizeBindingMode(bindingMode, RemovedBindingProperties.Count > 0);
 
-        if (BehaviorIds.Count == 0 && SourceModuleIds.Count == 0)
+        if (CandidateIds.Count == 0 && BehaviorIds.Count == 0 && SourceModuleIds.Count == 0)
         {
             throw new ArgumentException(
-                "REST endpoint override rules must target at least one behavior id or source module id.",
-                nameof(behaviorIds));
+                "REST endpoint override rules must target at least one candidate id, behavior id, or source module id.",
+                nameof(candidateIds));
         }
 
         if (apiVersionMajor.HasValue && apiVersionMajor <= 0)
@@ -162,6 +167,11 @@ public sealed class RestEndpointOverrideOptions
     /// Gets the stable override identifier.
     /// </summary>
     public string Id { get; }
+
+    /// <summary>
+    /// Gets the original shorthand candidate identifiers targeted by this override rule.
+    /// </summary>
+    public IReadOnlyList<string> CandidateIds { get; }
 
     /// <summary>
     /// Gets the behavior identifiers targeted by this override rule.
@@ -237,6 +247,7 @@ public sealed class RestEndpointOverrideOptions
     /// Gets a value indicating whether any targeting values or override actions were explicitly supplied.
     /// </summary>
     public bool HasValues =>
+        CandidateIds.Count > 0 ||
         BehaviorIds.Count > 0 ||
         SourceModuleIds.Count > 0 ||
         ApiVersionMajors.Count > 0 ||

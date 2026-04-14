@@ -66,6 +66,7 @@ public sealed class RestApiGovernanceOptions
             .GetChildren()
             .Select(static child => new RestEndpointSuppressionOptions(
                 id: child.Key,
+                candidateIds: ReadStringArray(child.GetSection("CandidateIds")),
                 behaviorIds: ReadStringArray(child.GetSection("Behaviors")),
                 sourceModuleIds: ReadStringArray(child.GetSection("Modules")),
                 authoringStyles: ReadStringArray(child.GetSection("AuthoringStyles")),
@@ -79,6 +80,7 @@ public sealed class RestApiGovernanceOptions
             .GetChildren()
             .Select(child => new RestEndpointOverrideOptions(
                 id: child.Key,
+                candidateIds: ReadStringArray(child.GetSection("CandidateIds")),
                 behaviorIds: ReadStringArray(child.GetSection("Behaviors")),
                 sourceModuleIds: ReadStringArray(child.GetSection("Modules")),
                 authoringStyles: ReadStringArray(child.GetSection("AuthoringStyles")),

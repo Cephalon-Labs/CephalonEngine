@@ -599,6 +599,159 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverKeepsCandidateIdsStableWhenOverridesRewriteEffectiveShape()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-candidate-id-stability")
+            .MapProfile<ProfileProjectionBoundBehavior>();
+
+        var moduleDescriptor = new ModuleDescriptor(
+            "tests.rest.profile-candidate-id-stability",
+            "Profile Candidate Id Stability Module",
+            "Exercises stable candidate ids across shorthand override rewrites.",
+            version: "1.0.0");
+        var baselineCandidate = Assert.Single(
+            RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+                moduleDescriptor,
+                new ApiRoutesOptions(),
+                builder.Build().Groups));
+        var rewrittenCandidate = Assert.Single(
+            RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+                moduleDescriptor,
+                new ApiRoutesOptions(),
+                builder.Build().Groups,
+                overrides:
+                [
+                    new RestEndpointOverrideOptions(
+                        id: "rewrite-route",
+                        behaviorIds: ["tests.profile.projection.bound"],
+                        pattern: "/lookup/{cartId}/items")
+                ]));
+
+        Assert.Equal(baselineCandidate.Candidate.Id, rewrittenCandidate.Candidate.Id);
+        Assert.Equal(
+            BuildBehaviorProjectionCandidateId(
+                "tests.rest.profile-candidate-id-stability",
+                "tests.profile.projection.bound",
+                RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle,
+                "POST",
+                "/api/v6/tests/profile-candidate-id-stability/{cartId}/items"),
+            rewrittenCandidate.Candidate.Id);
+        Assert.Equal("/api/v6/tests/profile-candidate-id-stability/{cartId}/items", rewrittenCandidate.Candidate.OriginalProjection.RoutePattern);
+        Assert.Equal("/api/v6/tests/profile-candidate-id-stability/lookup/{cartId}/items", rewrittenCandidate.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Equal("rewrite-route", rewrittenCandidate.Candidate.AppliedOverrideId);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverAppliesOverrideCandidateIdsOnlyToTheMatchingCandidate()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-candidate-selector/primary")
+            .MapProfile<ProfileProjectionBoundBehavior>();
+        builder.Group("/tests/profile-candidate-selector/secondary")
+            .MapProfile<ProfileProjectionBoundBehavior>();
+
+        var moduleDescriptor = new ModuleDescriptor(
+            "tests.rest.profile-candidate-selector",
+            "Profile Candidate Selector Module",
+            "Exercises exact candidate-id override targeting across multiple shorthand candidates for one behavior.",
+            version: "1.0.0");
+        var baselineCandidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            moduleDescriptor,
+            new ApiRoutesOptions(),
+            builder.Build().Groups);
+        var secondaryCandidateId = Assert.Single(
+            baselineCandidates,
+            static item => string.Equals(
+                item.Candidate.ProjectedEndpoint.RoutePattern,
+                "/api/v6/tests/profile-candidate-selector/secondary/{cartId}/items",
+                StringComparison.Ordinal)).Candidate.Id;
+
+        var rewrittenCandidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            moduleDescriptor,
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "rewrite-secondary-only",
+                    candidateIds: [secondaryCandidateId],
+                    pattern: "/lookup/{cartId}/items")
+            ]);
+
+        var primary = Assert.Single(rewrittenCandidates, static item =>
+            string.Equals(
+                item.Candidate.OriginalProjection.RoutePattern,
+                "/api/v6/tests/profile-candidate-selector/primary/{cartId}/items",
+                StringComparison.Ordinal));
+        var secondary = Assert.Single(rewrittenCandidates, static item =>
+            string.Equals(
+                item.Candidate.OriginalProjection.RoutePattern,
+                "/api/v6/tests/profile-candidate-selector/secondary/{cartId}/items",
+                StringComparison.Ordinal));
+
+        Assert.Null(primary.Candidate.AppliedOverrideId);
+        Assert.Equal("/api/v6/tests/profile-candidate-selector/primary/{cartId}/items", primary.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Equal(secondaryCandidateId, secondary.Candidate.Id);
+        Assert.Equal("rewrite-secondary-only", secondary.Candidate.AppliedOverrideId);
+        Assert.Equal("/api/v6/tests/profile-candidate-selector/secondary/lookup/{cartId}/items", secondary.Candidate.ProjectedEndpoint.RoutePattern);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverPrefersCandidateIdSuppressionRulesOverBroaderRules()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-candidate-specificity/primary")
+            .MapProfile<ProfileProjectionBoundBehavior>();
+        builder.Group("/tests/profile-candidate-specificity/secondary")
+            .MapProfile<ProfileProjectionBoundBehavior>();
+
+        var moduleDescriptor = new ModuleDescriptor(
+            "tests.rest.profile-candidate-specificity",
+            "Profile Candidate Specificity Module",
+            "Exercises candidate-id suppression specificity across multiple shorthand candidates for one behavior.",
+            version: "1.0.0");
+        var baselineCandidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            moduleDescriptor,
+            new ApiRoutesOptions(),
+            builder.Build().Groups);
+        var secondaryCandidateId = Assert.Single(
+            baselineCandidates,
+            static item => string.Equals(
+                item.Candidate.ProjectedEndpoint.RoutePattern,
+                "/api/v6/tests/profile-candidate-specificity/secondary/{cartId}/items",
+                StringComparison.Ordinal)).Candidate.Id;
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            moduleDescriptor,
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            suppressions:
+            [
+                new RestEndpointSuppressionOptions(
+                    id: "all-candidates",
+                    behaviorIds: ["tests.profile.projection.bound"]),
+                new RestEndpointSuppressionOptions(
+                    id: "secondary-only",
+                    candidateIds: [secondaryCandidateId])
+            ]);
+
+        var primary = Assert.Single(candidates, static item =>
+            string.Equals(
+                item.Candidate.ProjectedEndpoint.RoutePattern,
+                "/api/v6/tests/profile-candidate-specificity/primary/{cartId}/items",
+                StringComparison.Ordinal));
+        var secondary = Assert.Single(candidates, static item =>
+            string.Equals(
+                item.Candidate.ProjectedEndpoint.RoutePattern,
+                "/api/v6/tests/profile-candidate-specificity/secondary/{cartId}/items",
+                StringComparison.Ordinal));
+
+        Assert.Equal("all-candidates", primary.Candidate.SuppressedBySuppressionId);
+        Assert.Equal("secondary-only", secondary.Candidate.SuppressedBySuppressionId);
+    }
+
+    [Fact]
     public void RestEndpointSuppressionOptionsRejectRulesWithoutBehaviorOrModuleTargets()
     {
         var exception = Assert.Throws<ArgumentException>(() =>
@@ -606,7 +759,7 @@ public sealed class BehaviorRestProjectionTests
                 id: "invalid",
                 authoringStyles: [RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle]));
 
-        Assert.Contains("behavior id or source module id", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("candidate id, behavior id, or source module id", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -1775,7 +1928,7 @@ public sealed class BehaviorRestProjectionTests
                 id: "invalid",
                 apiVersionMajor: 6));
 
-        Assert.Contains("behavior id or source module id", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("candidate id, behavior id, or source module id", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -2150,6 +2303,17 @@ public sealed class BehaviorRestProjectionTests
         typeBuilder.DefineMethodOverride(handleAsyncMethod, behaviorInterface.GetMethod(nameof(IAppBehavior<object, string>.HandleAsync))!);
 
         return typeBuilder.CreateType()!;
+    }
+
+    private static string BuildBehaviorProjectionCandidateId(
+        string sourceModuleId,
+        string behaviorId,
+        string authoringStyle,
+        string method,
+        string routePattern)
+    {
+        return RestEndpointRuntimeDescriptorFactory.BuildEndpointId(
+            $"{sourceModuleId}:{behaviorId}:{authoringStyle}:{method}:{routePattern}");
     }
 
     [AppBehavior("tests.cart.projection")]

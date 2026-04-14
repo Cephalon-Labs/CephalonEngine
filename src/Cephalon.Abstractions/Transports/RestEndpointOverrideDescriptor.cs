@@ -9,6 +9,7 @@ public sealed class RestEndpointOverrideDescriptor
     /// Creates a REST endpoint override descriptor.
     /// </summary>
     /// <param name="id">The stable override identifier.</param>
+    /// <param name="candidateIds">The original shorthand candidate identifiers targeted by the override rule.</param>
     /// <param name="behaviorIds">The behavior identifiers targeted by the override rule.</param>
     /// <param name="sourceModuleIds">The source-module identifiers targeted by the override rule.</param>
     /// <param name="authoringStyles">The normalized shorthand authoring styles targeted by the override rule.</param>
@@ -32,6 +33,7 @@ public sealed class RestEndpointOverrideDescriptor
     /// </param>
     public RestEndpointOverrideDescriptor(
         string id,
+        IReadOnlyList<string>? candidateIds = null,
         IReadOnlyList<string>? behaviorIds = null,
         IReadOnlyList<string>? sourceModuleIds = null,
         IReadOnlyList<string>? authoringStyles = null,
@@ -61,6 +63,7 @@ public sealed class RestEndpointOverrideDescriptor
         }
 
         Id = id.Trim();
+        CandidateIds = NormalizeList(candidateIds);
         BehaviorIds = NormalizeList(behaviorIds);
         SourceModuleIds = NormalizeList(sourceModuleIds);
         AuthoringStyles = NormalizeList(authoringStyles);
@@ -104,6 +107,11 @@ public sealed class RestEndpointOverrideDescriptor
     /// Gets the stable override identifier.
     /// </summary>
     public string Id { get; }
+
+    /// <summary>
+    /// Gets the original shorthand candidate identifiers targeted by this override rule.
+    /// </summary>
+    public IReadOnlyList<string> CandidateIds { get; }
 
     /// <summary>
     /// Gets the behavior identifiers targeted by this override rule.

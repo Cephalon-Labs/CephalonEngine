@@ -22,6 +22,9 @@ public sealed class RestEndpointSuppressionOptions
     /// Initializes a new instance of the <see cref="RestEndpointSuppressionOptions" /> class.
     /// </summary>
     /// <param name="id">The stable suppression identifier.</param>
+    /// <param name="candidateIds">
+    /// The original shorthand candidate identifiers targeted by the suppression rule.
+    /// </param>
     /// <param name="behaviorIds">The behavior identifiers targeted by the suppression rule.</param>
     /// <param name="sourceModuleIds">The source-module identifiers targeted by the suppression rule.</param>
     /// <param name="authoringStyles">
@@ -46,6 +49,7 @@ public sealed class RestEndpointSuppressionOptions
     /// </param>
     public RestEndpointSuppressionOptions(
         string id,
+        IReadOnlyList<string>? candidateIds = null,
         IReadOnlyList<string>? behaviorIds = null,
         IReadOnlyList<string>? sourceModuleIds = null,
         IReadOnlyList<string>? authoringStyles = null,
@@ -57,6 +61,7 @@ public sealed class RestEndpointSuppressionOptions
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
 
         Id = id.Trim();
+        CandidateIds = NormalizeList(candidateIds);
         BehaviorIds = NormalizeList(behaviorIds);
         SourceModuleIds = NormalizeList(sourceModuleIds);
         AuthoringStyles = NormalizeAuthoringStyles(authoringStyles);
@@ -77,11 +82,11 @@ public sealed class RestEndpointSuppressionOptions
             nameof(routeGroupPrefixes),
             "REST endpoint suppression route-group prefix");
 
-        if (BehaviorIds.Count == 0 && SourceModuleIds.Count == 0)
+        if (CandidateIds.Count == 0 && BehaviorIds.Count == 0 && SourceModuleIds.Count == 0)
         {
             throw new ArgumentException(
-                "REST endpoint suppression rules must target at least one behavior id or source module id.",
-                nameof(behaviorIds));
+                "REST endpoint suppression rules must target at least one candidate id, behavior id, or source module id.",
+                nameof(candidateIds));
         }
     }
 
@@ -89,6 +94,11 @@ public sealed class RestEndpointSuppressionOptions
     /// Gets the stable suppression identifier.
     /// </summary>
     public string Id { get; }
+
+    /// <summary>
+    /// Gets the original shorthand candidate identifiers targeted by this suppression rule.
+    /// </summary>
+    public IReadOnlyList<string> CandidateIds { get; }
 
     /// <summary>
     /// Gets the behavior identifiers targeted by this suppression rule.
@@ -129,6 +139,7 @@ public sealed class RestEndpointSuppressionOptions
     /// Gets a value indicating whether any targeting values were explicitly supplied.
     /// </summary>
     public bool HasValues =>
+        CandidateIds.Count > 0 ||
         BehaviorIds.Count > 0 ||
         SourceModuleIds.Count > 0 ||
         ApiVersionMajors.Count > 0 ||

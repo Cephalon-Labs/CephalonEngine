@@ -19,6 +19,7 @@ internal sealed class AspNetCoreRestEndpointSuppressionRuntimeCatalog : IRestEnd
         suppressions = options.Suppressions
             .Select(static suppression => new RestEndpointSuppressionDescriptor(
                 suppression.Id,
+                suppression.CandidateIds,
                 suppression.BehaviorIds,
                 suppression.SourceModuleIds,
                 suppression.AuthoringStyles,

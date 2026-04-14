@@ -215,6 +215,13 @@ Status update:
   authors to repeat both the route path and the behavior-id prefix manually while still using the
   same module-owned projection/materialization/candidate/governance pipeline and still never
   publishing public REST from `[AppBehavior]` alone
+- the next stable shorthand candidate-id governance follow-through is now shipped through
+  `ENG-058-T85`: shorthand candidate ids now resolve from the original shorthand projection before
+  host-level overrides are applied, `RestApi:Suppressions` and `RestApi:Overrides` now also accept
+  exact `CandidateIds`, runtime suppression/override catalogs plus the snapshot now surface those
+  configured candidate ids directly, and selector specificity now prefers candidate-targeted rules
+  before broader behavior/module selector matches while `ProjectedEndpoint` continues to answer the
+  final effective mapped route shape
 - the next bounded shorthand route-group-prefix override follow-through is now shipped through
   `ENG-058-T82`: the typed override/runtime contracts plus ASP.NET Core config binding now support
   shorthand-only `RouteGroupPrefix`, that remap must stay beneath the active REST root, cannot
@@ -767,10 +774,14 @@ The following points are durable enough to keep outside thread-local context.
   constrained relative `Pattern`, and constrained explicit `Bindings` rewrites with either default
   full replacement or typed `MergeExplicit` property upserts; neither surface rewrites explicit
   module DSL or manual routes
-- both rule families can now also refine `Behaviors`/`Modules` targeting with `ApiVersionMajors`,
-  `Methods`, `RelativePatterns`, and `RouteGroupPrefixes`, and those selector refiners match the
-  original shorthand candidate shape before override actions are applied so suppression and
+- both rule families can now target exact original-shape shorthand candidates through
+  `CandidateIds`, can also refine `Behaviors`/`Modules` targeting with `ApiVersionMajors`,
+  `Methods`, `RelativePatterns`, and `RouteGroupPrefixes`, and all of those selectors match the
+  original shorthand candidate identity before override actions are applied so suppression and
   override decisions do not depend on already-rewritten final route shape
+- `/engine/rest-endpoint-candidates` now publishes that same original-shape candidate identity
+  through `RestEndpointCandidateRuntimeDescriptor.Id`, while `ProjectedEndpoint.Id` remains the
+  effective mapped endpoint identity after override actions are applied
 - within that constrained pattern slice, placeholder-preserving rewrites stay the default and
   placeholder renames now also work when the effective explicit route-binding plan covers the
   renamed placeholder set exactly, placeholder removals now also work when the original
@@ -795,9 +806,9 @@ Recommended implementation sequence after the shipped normalization, runtime-cat
 precedence-visibility, and generated-module follow-through slices:
 
 1. extend the shipped suppression-plus-override governance baseline from the current
-   selector-targeting-plus-version-plus-method-plus-pattern-plus-binding model toward broader
-   configuration-override modeling only if runtime truth, ownership, precedence, and candidate
-   visibility stay explicit and introspectable
+   candidate-id-plus-selector-targeting-plus-version-plus-method-plus-pattern-plus-binding model
+   toward broader configuration-override modeling only if runtime truth, ownership, precedence,
+   and candidate visibility stay explicit and introspectable
 2. only then evaluate whether any additional convention-backed publication sources are worth the
    added complexity beyond the shipped `MapProfile<TBehavior>()` and `MapGeneratedProfiles(...)`
    surfaces
