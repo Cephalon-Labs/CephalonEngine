@@ -2,7 +2,7 @@
 
 Decision baseline date: `April 14, 2026`
 
-Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`, `ENG-058-T67` / GitHub issue `#332`, `ENG-058-T68` / GitHub issue `#333`, `ENG-058-T69` / GitHub issue `#334`, `ENG-058-T70` / GitHub issue `#335`, `ENG-058-T71` / GitHub issue `#336`, `ENG-058-T72` / GitHub issue `#337`, `ENG-058-T73` / GitHub issue `#338`, `ENG-058-T74` / GitHub issue `#339`, `ENG-058-T75` / GitHub issue `#340`, `ENG-058-T76` / GitHub issue `#341`, `ENG-058-T77` / GitHub issue `#342`, `ENG-058-T78` / GitHub issue `#343`, `ENG-058-T79` / GitHub issue `#344`, `ENG-058-T80` / GitHub issue `#345`, `ENG-058-T81` / GitHub issue `#346`
+Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`, `ENG-058-T67` / GitHub issue `#332`, `ENG-058-T68` / GitHub issue `#333`, `ENG-058-T69` / GitHub issue `#334`, `ENG-058-T70` / GitHub issue `#335`, `ENG-058-T71` / GitHub issue `#336`, `ENG-058-T72` / GitHub issue `#337`, `ENG-058-T73` / GitHub issue `#338`, `ENG-058-T74` / GitHub issue `#339`, `ENG-058-T75` / GitHub issue `#340`, `ENG-058-T76` / GitHub issue `#341`, `ENG-058-T77` / GitHub issue `#342`, `ENG-058-T78` / GitHub issue `#343`, `ENG-058-T79` / GitHub issue `#344`, `ENG-058-T80` / GitHub issue `#345`, `ENG-058-T81` / GitHub issue `#346`, `ENG-058-T82` / GitHub issue `#347`
 
 Cross-references: `docs/components/behaviors-http.md`, `docs/module-authoring.md`, `docs/architecture.md`, `docs/architecture-review-2026-04.md`, `docs/project-memory.md`
 
@@ -207,6 +207,13 @@ Status update:
   pipeline as the class-based DSL, uses `TMarker` both as the reusable helper's distinct module
   type identity and as the source assembly marker for `MapGeneratedProfiles(...)`, and still never
   publishes public REST from `[AppBehavior]` alone
+- the next bounded shorthand route-group-prefix override follow-through is now shipped through
+  `ENG-058-T82`: the typed override/runtime contracts plus ASP.NET Core config binding now support
+  shorthand-only `RouteGroupPrefix`, that remap must stay beneath the active REST root, cannot
+  declare route placeholders, cannot silently change effective API-version truth, and now causes
+  the ASP.NET Core materializer to split effective shorthand route groups when only some
+  candidates in one authored group are remapped so actual HTTP routes, runtime catalogs, and
+  snapshots all report the same published answer
 - the next low-code generated module-owned shorthand is now shipped through `ENG-058-T67`:
   `IRestBehaviorEndpointGroupBuilder.MapGeneratedProfiles()` and
   `MapGeneratedProfiles(string behaviorIdPrefix)` let an owning module opt into profile-backed
@@ -222,12 +229,13 @@ Status update:
   candidates now distinguish governance suppression through
   `RestEndpointCandidateRuntimeDescriptor.SuppressedBySuppressionId`
 - the first constrained shorthand-override slices are now shipped through `ENG-058-T69`,
-  `ENG-058-T70`, `ENG-058-T71`, `ENG-058-T72`, `ENG-058-T73`, `ENG-058-T74`, `ENG-058-T75`, and
-  `ENG-058-T76`:
+  `ENG-058-T70`, `ENG-058-T71`, `ENG-058-T72`, `ENG-058-T73`, `ENG-058-T74`, `ENG-058-T75`,
+  `ENG-058-T76`, and `ENG-058-T82`:
   ASP.NET Core hosts can retarget
   descriptor-backed shorthand candidates through `RestApi:Overrides` when they need a different
-  effective `ApiVersionMajor`, HTTP `Method`, constrained relative `Pattern`, and/or explicit
-  binding plan; the runtime now exposes those configured rules through
+  effective `ApiVersionMajor`, HTTP `Method`, bounded published `RouteGroupPrefix`, constrained
+  relative `Pattern`, and/or explicit binding plan; the runtime now exposes those configured rules
+  through
   `IRestEndpointOverrideRuntimeCatalog`, `/engine/rest-endpoint-overrides`, and
   `snapshot.RestEndpointOverrides`; candidates now surface the governing rule through
   `RestEndpointCandidateRuntimeDescriptor.AppliedOverrideId`; the normalized materializer now maps
@@ -334,12 +342,12 @@ Current shipped baseline:
 - they apply only to descriptor-backed shorthand candidates such as `MapProfile<TBehavior>()` and
   `MapGeneratedProfiles(...)`
 - suppression runs before precedence resolution rather than silently rewriting candidates
-- override currently supports `ApiVersionMajor`, `Method`, relative `Pattern`, and explicit
-  `Bindings`
+- override currently supports `ApiVersionMajor`, `Method`, bounded published `RouteGroupPrefix`,
+  relative `Pattern`, and explicit `Bindings`
 - both rule families fail fast when a rule omits both `Behaviors` and `Modules`
 - override rules also fail fast when they omit all override actions, use a non-positive
-  `ApiVersionMajor`, declare an unsupported HTTP method, or declare an invalid relative route
-  pattern
+  `ApiVersionMajor`, declare an unsupported HTTP method, declare an invalid relative route
+  pattern, or declare an invalid `RouteGroupPrefix`
 - both rule families can refine `Behaviors`/`Modules` targeting with `ApiVersionMajors`,
   `Methods`, `RelativePatterns`, and `RouteGroupPrefixes`, and those selector refiners match the
   original shorthand candidate shape before override actions are applied
@@ -350,10 +358,13 @@ Current shipped baseline:
 - shorthand groups that declare `.ApiVersion(...)` explicitly stay authoritative over host version
   rewrites, while shorthand method and constrained pattern overrides can still apply to those same
   groups
-- the current override slice can rewrite the effective API major version, HTTP method,
-  constrained relative route pattern, and/or explicit binding plan while keeping the `/api/v{major}`
-  route segment, OpenAPI document name, mapped endpoint, and runtime catalogs aligned to the same
-  effective projection
+- the current override slice can rewrite the effective API major version, HTTP method, bounded
+  published route-group prefix, constrained relative route pattern, and/or explicit binding plan
+  while keeping the `/api/v{major}` route segment, published group boundary, OpenAPI document
+  name, mapped endpoint, and runtime catalogs aligned to the same effective projection
+- `RouteGroupPrefix` rewrites stay beneath the active REST root, cannot declare placeholders,
+  cannot silently change effective API-version truth, and now make ASP.NET Core split effective
+  shorthand groups when only some candidates in one authored group are remapped
 - `OpenApi:EnabledVersions` and legacy document config still decide which documents are actually
   published
 - pattern rewrites preserve the placeholder set by default and can now also rename placeholders
@@ -544,9 +555,10 @@ That allow-list remains authoritative and must stay separate from endpoint autho
 The shipped configuration-driven override surface is still intentionally narrow: `RestApi:Overrides`
 can target the original shorthand candidate shape through `ApiVersionMajors`, `Methods`,
 `RelativePatterns`, and `RouteGroupPrefixes`, then change the effective shorthand candidate
-`ApiVersionMajor`, HTTP `Method`, relative `Pattern`, and/or explicit `Bindings`, but the current
-route-pattern slice is still constrained enough to keep binding semantics truthful. Cephalon
-therefore keeps the route-version segment and document name
+`ApiVersionMajor`, HTTP `Method`, bounded published `RouteGroupPrefix`, relative `Pattern`,
+and/or explicit `Bindings`, but the current route-pattern slice is still constrained enough to
+keep binding semantics truthful. Cephalon therefore keeps the route-version segment and document
+name
 together for version rewrites, allows route-pattern rewrites when they preserve the same
 placeholder set or when the effective explicit route-binding plan covers a renamed placeholder set
 exactly, lets binding overrides either replace the shorthand candidate's explicit binding plan or
@@ -558,9 +570,13 @@ binding plan keeps every affected original route-bound property explicitly bound
 route-pattern rewrites that add placeholders when the effective explicit route-binding plan covers
 the full final placeholder set and every newly route-bound property was either already explicitly
 bound in the original projection or, for `POST`/`PUT`/`PATCH`, already part of the original
-deterministic remaining-body fallback surface, and does not yet support route rewrites that
-promote other implicit properties into placeholders or broader host-level binding rewrites that
-would silently change how one shorthand endpoint reads its input.
+deterministic remaining-body fallback surface, allows `RouteGroupPrefix` rewrites only when the
+published group stays beneath the active REST root, contains no placeholders, and does not
+silently change effective API-version truth, now makes ASP.NET Core materialize split effective
+route groups when one authored shorthand group fans out to more than one published group, and
+does not yet support route rewrites that promote other implicit properties into placeholders or
+broader host-level binding rewrites that would silently change how one shorthand endpoint reads
+its input.
 
 If the same behavior needs multiple public API versions simultaneously, model that as multiple
 explicit projections or versioned modules. Do not hide multi-version public contracts behind one
@@ -666,11 +682,12 @@ Status:
   `RestApi:Suppressions` while the runtime keeps both the configured suppression-rule catalog and
   the candidate-level `SuppressedBySuppressionId` truth visible
 - the next controlled-governance follow-through is now shipped through `ENG-058-T69`,
-  `ENG-058-T70`, `ENG-058-T71`, `ENG-058-T72`, `ENG-058-T73`, `ENG-058-T74`, and `ENG-058-T75`,
-  so ASP.NET Core hosts can
+  `ENG-058-T70`, `ENG-058-T71`, `ENG-058-T72`, `ENG-058-T73`, `ENG-058-T74`, `ENG-058-T75`, and
+  `ENG-058-T82`, so ASP.NET Core hosts can
   retarget descriptor-backed shorthand candidates through `RestApi:Overrides` when they need a
-  different effective `ApiVersionMajor`, HTTP `Method`, constrained relative `Pattern`, or explicit
-  binding plan, while the runtime keeps both the configured override-rule catalog and the
+  different effective `ApiVersionMajor`, HTTP `Method`, bounded published `RouteGroupPrefix`,
+  constrained relative `Pattern`, or explicit binding plan, while the runtime keeps both the
+  configured override-rule catalog and the
   candidate-level `AppliedOverrideId` truth visible
 - the next selector-targeting follow-through is now shipped through `ENG-058-T77`, so both
   `RestApi:Suppressions` and `RestApi:Overrides` can refine that same descriptor-backed shorthand
@@ -720,9 +737,10 @@ The following points are durable enough to keep outside thread-local context.
   `/engine/rest-endpoint-overrides/{overrideId}`, and `snapshot.RestEndpointOverrides`
 - the shipped `RestApi:Suppressions` baseline is intentionally limited to suppression of
   descriptor-backed shorthand candidates, and the shipped `RestApi:Overrides` baseline is
-  intentionally limited to shorthand `ApiVersionMajor`, `Method`, constrained relative `Pattern`,
-  and constrained explicit `Bindings` rewrites with either default full replacement or typed
-  `MergeExplicit` property upserts; neither surface rewrites explicit module DSL or manual routes
+  intentionally limited to shorthand `ApiVersionMajor`, `Method`, bounded `RouteGroupPrefix`,
+  constrained relative `Pattern`, and constrained explicit `Bindings` rewrites with either default
+  full replacement or typed `MergeExplicit` property upserts; neither surface rewrites explicit
+  module DSL or manual routes
 - both rule families can now also refine `Behaviors`/`Modules` targeting with `ApiVersionMajors`,
   `Methods`, `RelativePatterns`, and `RouteGroupPrefixes`, and those selector refiners match the
   original shorthand candidate shape before override actions are applied so suppression and
@@ -735,8 +753,11 @@ The following points are durable enough to keep outside thread-local context.
   explicitly bound, placeholder additions now also work when the effective explicit route-binding
   plan covers the full final placeholder set and every newly route-bound property was either
   already explicitly bound in the original projection or, for `POST`/`PUT`/`PATCH`, already part
-  of the original deterministic remaining-body fallback surface, and broader implicit-property
-  promotion remains later work
+  of the original deterministic remaining-body fallback surface, bounded `RouteGroupPrefix`
+  rewrites now also stay below the active REST root with no placeholders and no silent
+  API-version drift, ASP.NET Core now materializes split effective groups when only some shorthand
+  candidates in one authored group are remapped, and broader implicit-property promotion remains
+  later work
 - future shorthand or convention REST publication must compose through the shared projection,
   runtime-catalog, and collision-validation pipeline instead of bypassing it
 - future agentic, AI, or multi-platform expansion should not outrun core engine contract quality,

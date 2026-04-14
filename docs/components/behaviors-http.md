@@ -339,8 +339,8 @@ Current helper behavior:
 - lets explicit group `.ApiVersion(...)` override profile-declared candidate versions, while
   conflicting profile-declared versions in the same group fail fast until the module resolves them
 - keeps that explicit group `.ApiVersion(...)` authoritative for host-level version rewrites even
-  when the same shorthand candidate later matches `RestApi:Overrides`, while shorthand method
-  overrides can still apply
+  when the same shorthand candidate later matches `RestApi:Overrides`, while shorthand method,
+  bounded route-group-prefix, and constrained pattern overrides can still apply
 - keeps runtime publication on the same module-owned path with `sourceKind = module-dsl`, while
   `/engine/rest-endpoints` exposes `metadata.authoringStyle = behavior-module-profile` for the
   profile shorthand path, `behavior-module-generated` for the generated shorthand path,
@@ -398,13 +398,14 @@ Current helper behavior:
   the suppressed candidate through `SuppressedBySuppressionId`, and intentionally leaves explicit
   module DSL or manual module-owned REST endpoints untouched
 - ASP.NET Core hosts can now also override the effective API major version, HTTP method, or
-  constrained relative route pattern, or explicit binding plan for descriptor-backed shorthand
-  candidates through `RestApi:Overrides`, which now supports `ApiVersionMajor`, `Method`,
-  `Pattern`, `Bindings`, and typed `BindingMode`, records the applied rule id through
-  `AppliedOverrideId`, rewrites the
+  bounded published route-group prefix, constrained relative route pattern, or explicit binding
+  plan for descriptor-backed shorthand candidates through `RestApi:Overrides`, which now supports
+  `ApiVersionMajor`, `Method`, `RouteGroupPrefix`, `Pattern`, `Bindings`, and typed
+  `BindingMode`, records the applied rule id through `AppliedOverrideId`, rewrites the
   shorthand candidate's `/v{major}` route segment and OpenAPI document name together when version
-  changes, keeps the mapped endpoint method aligned when method changes, keeps the mapped endpoint
-  route aligned when pattern changes, applies explicit binding overrides in either default
+  changes, keeps the mapped endpoint method aligned when method changes, keeps the published
+  route-group boundary aligned when `RouteGroupPrefix` changes, keeps the mapped endpoint route
+  aligned when pattern changes, applies explicit binding overrides in either default
   `ReplaceExplicit` mode or `MergeExplicit` property-patch mode while leaving unbound route
   placeholders and remaining request-body fields available for deterministic fallback, now allows
   placeholder renames when the effective explicit route-binding plan covers the renamed placeholder
@@ -414,9 +415,11 @@ Current helper behavior:
   placeholder additions when the effective explicit route-binding plan covers the full final
   placeholder set and every newly route-bound property was either already explicitly bound in the
   original projection or, for `POST`/`PUT`/`PATCH`, already part of the original deterministic
-  remaining-body fallback surface, and still leaves explicit module
-  DSL/manual routes plus shorthand groups with explicit `.ApiVersion(...)` authoritative for
-  version selection
+  remaining-body fallback surface, keeps `RouteGroupPrefix` bounded beneath the active REST root
+  with no placeholders and no implicit API-version drift, now splits effective shorthand route
+  groups during materialization when only some candidates in one authored group are remapped, and
+  still leaves explicit module DSL/manual routes plus shorthand groups with explicit
+  `.ApiVersion(...)` authoritative for version selection
 
 ## REST runtime catalog and collision guard
 
@@ -486,8 +489,8 @@ configuration rule hid the candidate instead of another candidate winning.
 Current governance baseline:
 
 - configure shorthand suppression through `RestApi:Suppressions`
-- configure shorthand API-version, HTTP-method, constrained route-pattern, and explicit
-  binding-plan overrides through `RestApi:Overrides`
+- configure shorthand API-version, HTTP-method, bounded route-group-prefix, constrained
+  route-pattern, and explicit binding-plan overrides through `RestApi:Overrides`
 - target one or more `Behaviors`, `Modules`, and optional `AuthoringStyles`, then optionally
   refine that match with `ApiVersionMajors`, `Methods`, `RelativePatterns`, and
   `RouteGroupPrefixes`
@@ -495,8 +498,10 @@ Current governance baseline:
   shorthand candidate implicitly
 - override rules must define at least one override action, require a positive `ApiVersionMajor`
   when that action is present, accept only `GET`, `POST`, `PUT`, `PATCH`, or `DELETE` for
-  `Method`, require `Pattern` to be a valid relative ASP.NET Core route pattern, and fail fast if
-  the effective binding plan becomes invalid for the effective HTTP method
+  `Method`, require `Pattern` to be a valid relative ASP.NET Core route pattern, require
+  `RouteGroupPrefix` to stay beneath the active REST root without placeholders or silent effective
+  API-version changes, and fail fast if the effective binding plan becomes invalid for the
+  effective HTTP method
 - omit `AuthoringStyles` to suppress both shorthand styles by default:
   `behavior-module-profile` and `behavior-module-generated`
 - the optional selector refiners match the original shorthand candidate shape before override
@@ -553,6 +558,7 @@ Override example:
         "RouteGroupPrefixes": [ "/api/v1/showcase/cart" ],
         "ApiVersionMajor": 2,
         "Method": "DELETE",
+        "RouteGroupPrefix": "/api/v2/showcase/cart-admin",
         "Pattern": "/lookup/{cartId}",
         "Bindings": [
           {

@@ -128,15 +128,16 @@ internal static class RestBehaviorProjectionCandidateResolver
             moduleDescriptor.Id,
             endpointProjection,
             defaultApiVersionMajor,
+            apiRoutesOptions.RestPrefix,
             originalRouteGroupPrefix,
             group,
             overrides);
         var effectiveEndpointProjection = appliedOverride?.EffectiveEndpointProjection ?? endpointProjection;
         var effectiveApiVersionMajor = appliedOverride?.EffectiveApiVersionMajor ?? defaultApiVersionMajor;
-        var resolvedRouteGroupPrefix = ResolveRouteGroupPrefix(group.Prefix, effectiveApiVersionMajor);
-        var publishedRouteGroupPrefix = RestEndpointRuntimeDescriptorFactory.CombinePaths(
-            apiRoutesOptions.RestPrefix,
-            resolvedRouteGroupPrefix);
+        var publishedRouteGroupPrefix = appliedOverride?.EffectiveRouteGroupPrefix ??
+                                        RestEndpointRuntimeDescriptorFactory.CombinePaths(
+                                            apiRoutesOptions.RestPrefix,
+                                            ResolveRouteGroupPrefix(group.Prefix, effectiveApiVersionMajor));
         var openApiDocumentName = ResolveOpenApiDocumentName(effectiveApiVersionMajor);
         var method = effectiveEndpointProjection.Method.ToString().ToUpperInvariant();
         var routePattern = RestEndpointRuntimeDescriptorFactory.CombinePaths(
@@ -239,12 +240,14 @@ internal static class RestBehaviorProjectionCandidateResolver
         string sourceModuleId,
         RestBehaviorEndpointProjection endpointProjection,
         int? defaultApiVersionMajor,
+        string restPrefix,
         string originalRouteGroupPrefix,
         RestBehaviorRouteGroupProjection group,
         IReadOnlyList<RestEndpointOverrideOptions>? overrides)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sourceModuleId);
         ArgumentNullException.ThrowIfNull(endpointProjection);
+        ArgumentNullException.ThrowIfNull(restPrefix);
         ArgumentException.ThrowIfNullOrWhiteSpace(originalRouteGroupPrefix);
         ArgumentNullException.ThrowIfNull(group);
 
@@ -273,6 +276,7 @@ internal static class RestBehaviorProjectionCandidateResolver
 
         var effectiveEndpointProjection = endpointProjection;
         var effectiveApiVersionMajor = defaultApiVersionMajor;
+        string? effectiveRouteGroupPrefix = null;
         var wasApplied = false;
         var shouldRevalidateBindings = false;
 
@@ -341,12 +345,82 @@ internal static class RestBehaviorProjectionCandidateResolver
             wasApplied = true;
         }
 
+        if (!string.IsNullOrWhiteSpace(matchedOverride.RouteGroupPrefix))
+        {
+            ValidateRouteGroupPrefixOverride(
+                matchedOverride.Id,
+                endpointProjection.BehaviorId,
+                restPrefix,
+                matchedOverride.RouteGroupPrefix,
+                effectiveApiVersionMajor);
+
+            if (!string.Equals(matchedOverride.RouteGroupPrefix, originalRouteGroupPrefix, StringComparison.Ordinal))
+            {
+                effectiveRouteGroupPrefix = matchedOverride.RouteGroupPrefix;
+                wasApplied = true;
+            }
+        }
+
         return wasApplied
             ? new AppliedRestEndpointOverride(
                 matchedOverride.Id,
                 effectiveEndpointProjection,
-                effectiveApiVersionMajor)
+                effectiveApiVersionMajor,
+                effectiveRouteGroupPrefix)
             : null;
+    }
+
+    private static void ValidateRouteGroupPrefixOverride(
+        string overrideId,
+        string behaviorId,
+        string restPrefix,
+        string overrideRouteGroupPrefix,
+        int? effectiveApiVersionMajor)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(overrideId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
+        ArgumentNullException.ThrowIfNull(restPrefix);
+        ArgumentException.ThrowIfNullOrWhiteSpace(overrideRouteGroupPrefix);
+
+        if (ExtractRoutePlaceholders(overrideRouteGroupPrefix).Count > 0)
+        {
+            throw new InvalidOperationException(
+                $"REST endpoint override rule '{overrideId}' cannot rewrite behavior '{behaviorId}' to route-group prefix '{overrideRouteGroupPrefix}' because shorthand RouteGroupPrefix overrides cannot declare route placeholders. Keep placeholder changes in the relative Pattern plus explicit Bindings instead.");
+        }
+
+        var restSegments = SplitPathSegments(restPrefix);
+        var overrideSegments = SplitPathSegments(overrideRouteGroupPrefix);
+        if (overrideSegments.Length < restSegments.Length ||
+            !overrideSegments.Take(restSegments.Length)
+                .SequenceEqual(restSegments, StringComparer.OrdinalIgnoreCase))
+        {
+            var displayRestPrefix = string.IsNullOrWhiteSpace(restPrefix) ? "/" : restPrefix;
+            throw new InvalidOperationException(
+                $"REST endpoint override rule '{overrideId}' cannot rewrite behavior '{behaviorId}' to route-group prefix '{overrideRouteGroupPrefix}' because shorthand RouteGroupPrefix overrides must stay beneath the active REST root prefix '{displayRestPrefix}'.");
+        }
+
+        var remainingSegments = overrideSegments.Skip(restSegments.Length).ToArray();
+        if (effectiveApiVersionMajor.HasValue)
+        {
+            var expectedVersionSegment = $"v{effectiveApiVersionMajor.Value}";
+            if (remainingSegments.Length == 0 ||
+                !string.Equals(remainingSegments[0], expectedVersionSegment, StringComparison.OrdinalIgnoreCase))
+            {
+                var expectedRouteGroupPrefix = RestEndpointRuntimeDescriptorFactory.CombinePaths(
+                    restPrefix,
+                    $"/{expectedVersionSegment}");
+                throw new InvalidOperationException(
+                    $"REST endpoint override rule '{overrideId}' cannot rewrite behavior '{behaviorId}' to route-group prefix '{overrideRouteGroupPrefix}' because the effective API major version is '{expectedVersionSegment}'. Keep RouteGroupPrefix beneath '{expectedRouteGroupPrefix}' or change ApiVersionMajor explicitly.");
+            }
+
+            return;
+        }
+
+        if (remainingSegments.Length > 0 && IsApiVersionSegment(remainingSegments[0]))
+        {
+            throw new InvalidOperationException(
+                $"REST endpoint override rule '{overrideId}' cannot rewrite behavior '{behaviorId}' to route-group prefix '{overrideRouteGroupPrefix}' because RouteGroupPrefix cannot implicitly introduce a version segment when the shorthand candidate does not already resolve one. Set ApiVersionMajor explicitly or keep the prefix versionless.");
+        }
     }
 
     private static void ValidatePatternOverride(
@@ -841,6 +915,25 @@ internal static class RestBehaviorProjectionCandidateResolver
         }
     }
 
+    private static string[] SplitPathSegments(string path)
+    {
+        return string.IsNullOrWhiteSpace(path)
+            ? []
+            : path.Trim()
+                .Trim('/')
+                .Split('/', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+    }
+
+    private static bool IsApiVersionSegment(string segment)
+    {
+        if (string.IsNullOrWhiteSpace(segment) || segment.Length <= 1 || segment[0] is not ('v' or 'V'))
+        {
+            return false;
+        }
+
+        return int.TryParse(segment[1..], out var parsedMajor) && parsedMajor > 0;
+    }
+
     private static int? ResolveModuleMajorVersion(string? moduleVersion)
     {
         return Version.TryParse(moduleVersion, out var parsedVersion)
@@ -906,4 +999,5 @@ internal sealed record ResolvedRestBehaviorEndpointProjectionCandidate(
 internal sealed record AppliedRestEndpointOverride(
     string Id,
     RestBehaviorEndpointProjection EffectiveEndpointProjection,
-    int? EffectiveApiVersionMajor);
+    int? EffectiveApiVersionMajor,
+    string? EffectiveRouteGroupPrefix);

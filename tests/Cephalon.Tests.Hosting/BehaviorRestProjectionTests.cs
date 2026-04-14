@@ -558,6 +558,47 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverMatchesSuppressionSelectorsAgainstOriginalRouteGroupPrefixBeforeRouteGroupPrefixOverrides()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-selector-prefix-ordering")
+            .MapProfile<ProfileProjectionBoundBehavior>();
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.profile-selector-prefix-ordering",
+                "Profile Selector Prefix Ordering Module",
+                "Exercises suppression selector matching against the original route-group prefix before route-group overrides are applied.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            suppressions:
+            [
+                new RestEndpointSuppressionOptions(
+                    id: "hide-original-group",
+                    behaviorIds: ["tests.profile.projection.bound"],
+                    routeGroupPrefixes: ["/api/v6/tests/profile-selector-prefix-ordering"])
+            ],
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "remap-group",
+                    behaviorIds: ["tests.profile.projection.bound"],
+                    routeGroupPrefixes: ["/api/v6/tests/profile-selector-prefix-ordering"],
+                    routeGroupPrefix: "/api/v6/tests/profile-selector-prefix-ordering/remapped")
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Suppressed, candidate.Candidate.Status);
+        Assert.Equal("hide-original-group", candidate.Candidate.SuppressedBySuppressionId);
+        Assert.Equal("remap-group", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal("/api/v6/tests/profile-selector-prefix-ordering", candidate.Candidate.OriginalProjection.RouteGroupPrefix);
+        Assert.Equal("/api/v6/tests/profile-selector-prefix-ordering/{cartId}/items", candidate.Candidate.OriginalProjection.RoutePattern);
+        Assert.Equal("/api/v6/tests/profile-selector-prefix-ordering/remapped", candidate.Candidate.ProjectedEndpoint.Metadata["routeGroupPrefix"]);
+        Assert.Equal("/api/v6/tests/profile-selector-prefix-ordering/remapped/{cartId}/items", candidate.Candidate.ProjectedEndpoint.RoutePattern);
+    }
+
+    [Fact]
     public void RestEndpointSuppressionOptionsRejectRulesWithoutBehaviorOrModuleTargets()
     {
         var exception = Assert.Throws<ArgumentException>(() =>
@@ -673,6 +714,126 @@ public sealed class BehaviorRestProjectionTests
         Assert.Equal("/api/v10/tests/generated-pattern-override/lookup/{cartId}", candidate.Candidate.ProjectedEndpoint.RoutePattern);
         Assert.Equal("v10", candidate.Candidate.ProjectedEndpoint.OpenApiDocumentName);
         Assert.Equal(10, candidate.Candidate.ProjectedEndpoint.ApiVersionMajor);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverAppliesRouteGroupPrefixOverrideToShorthandCandidates()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        builder.Group("/tests/generated-group-prefix-override")
+            .MapGeneratedProfiles("tests.generated.projection.precedence");
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.generated-group-prefix-override",
+                "Generated Group Prefix Override Module",
+                "Exercises shorthand route-group-prefix override resolution.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "prefer-remapped-group",
+                    behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                    routeGroupPrefix: "/api/v10/tests/generated-group-prefix-remapped")
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Equal("prefer-remapped-group", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal("/api/v10/tests/generated-group-prefix-remapped", candidate.Candidate.ProjectedEndpoint.Metadata["routeGroupPrefix"]);
+        Assert.Equal("/api/v10/tests/generated-group-prefix-remapped/{cartId}", candidate.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Equal("v10", candidate.Candidate.ProjectedEndpoint.OpenApiDocumentName);
+        Assert.Equal(10, candidate.Candidate.ProjectedEndpoint.ApiVersionMajor);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverAppliesRouteGroupPrefixOverrideAfterApiVersionRewrite()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        builder.Group("/tests/generated-group-prefix-version-override")
+            .MapGeneratedProfiles("tests.generated.projection.precedence");
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.generated-group-prefix-version-override",
+                "Generated Group Prefix Version Override Module",
+                "Exercises shorthand route-group-prefix override resolution after API-version rewrites.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "prefer-v6-remapped-group",
+                    behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                    apiVersionMajor: 6,
+                    routeGroupPrefix: "/api/v6/tests/generated-group-prefix-version-remapped")
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Equal("prefer-v6-remapped-group", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal("/api/v6/tests/generated-group-prefix-version-remapped", candidate.Candidate.ProjectedEndpoint.Metadata["routeGroupPrefix"]);
+        Assert.Equal("/api/v6/tests/generated-group-prefix-version-remapped/{cartId}", candidate.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Equal("v6", candidate.Candidate.ProjectedEndpoint.OpenApiDocumentName);
+        Assert.Equal(6, candidate.Candidate.ProjectedEndpoint.ApiVersionMajor);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverRejectsRouteGroupPrefixOverridesThatImplicitlyChangeVersion()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        builder.Group("/tests/generated-group-prefix-version-mismatch")
+            .MapGeneratedProfiles("tests.generated.projection.precedence");
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+                new ModuleDescriptor(
+                    "tests.rest.generated-group-prefix-version-mismatch",
+                    "Generated Group Prefix Version Mismatch Module",
+                    "Exercises fail-fast validation when RouteGroupPrefix tries to change version truth directly.",
+                    version: "1.0.0"),
+                new ApiRoutesOptions(),
+                builder.Build().Groups,
+                overrides:
+                [
+                    new RestEndpointOverrideOptions(
+                        id: "prefer-v6-group-without-version-rewrite",
+                        behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                        routeGroupPrefix: "/api/v6/tests/generated-group-prefix-version-mismatch")
+                ]));
+
+        Assert.Contains("effective API major version", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("ApiVersionMajor", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverRejectsRouteGroupPrefixOverridesWithRoutePlaceholders()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        builder.Group("/tests/generated-group-prefix-placeholder")
+            .MapGeneratedProfiles("tests.generated.projection.precedence");
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+                new ModuleDescriptor(
+                    "tests.rest.generated-group-prefix-placeholder",
+                    "Generated Group Prefix Placeholder Module",
+                    "Exercises fail-fast validation when RouteGroupPrefix tries to add placeholders.",
+                    version: "1.0.0"),
+                new ApiRoutesOptions(),
+                builder.Build().Groups,
+                overrides:
+                [
+                    new RestEndpointOverrideOptions(
+                        id: "prefer-placeholder-group",
+                        behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                        routeGroupPrefix: "/api/v10/tests/generated-group-prefix/{tenantId}")
+                ]));
+
+        Assert.Contains("RouteGroupPrefix overrides cannot declare route placeholders", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -1553,6 +1714,17 @@ public sealed class BehaviorRestProjectionTests
                 behaviorIds: ["tests.generated.projection.precedence.lookup"]));
 
         Assert.Contains("override action", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void RestEndpointOverrideOptionsTreatRouteGroupPrefixAsAnOverrideAction()
+    {
+        var options = new RestEndpointOverrideOptions(
+            id: "group-only",
+            behaviorIds: ["tests.generated.projection.precedence.lookup"],
+            routeGroupPrefix: "/api/v10/tests/generated-group-prefix-remapped");
+
+        Assert.Equal("/api/v10/tests/generated-group-prefix-remapped", options.RouteGroupPrefix);
     }
 
     [Fact]

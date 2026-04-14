@@ -89,6 +89,7 @@ public sealed class RestApiGovernanceOptions
                 apiVersionMajor: ReadPositiveInt(child, "ApiVersionMajor"),
                 method: child["Method"]?.Trim(),
                 pattern: child["Pattern"]?.Trim(),
+                routeGroupPrefix: child["RouteGroupPrefix"]?.Trim(),
                 bindings: ReadBindings(child.GetSection("Bindings")),
                 bindingMode: ReadBindingMode(child)))
             .ToArray();

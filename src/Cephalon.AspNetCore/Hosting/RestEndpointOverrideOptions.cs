@@ -54,6 +54,10 @@ public sealed class RestEndpointOverrideOptions
     /// <param name="pattern">
     /// The effective relative route pattern applied when the rule matches a shorthand candidate.
     /// </param>
+    /// <param name="routeGroupPrefix">
+    /// The effective published route-group prefix applied when the rule matches a shorthand
+    /// candidate.
+    /// </param>
     /// <param name="bindings">
     /// The effective explicit request-binding plan applied when the rule matches a shorthand
     /// candidate.
@@ -74,6 +78,7 @@ public sealed class RestEndpointOverrideOptions
         int? apiVersionMajor = null,
         string? method = null,
         string? pattern = null,
+        string? routeGroupPrefix = null,
         IReadOnlyList<RestEndpointBindingDescriptor>? bindings = null,
         RestEndpointOverrideBindingMode bindingMode = RestEndpointOverrideBindingMode.Unspecified)
     {
@@ -101,6 +106,7 @@ public sealed class RestEndpointOverrideOptions
             "REST endpoint override target route-group prefix");
         Method = NormalizeMethod(method);
         Pattern = NormalizePattern(pattern);
+        RouteGroupPrefix = NormalizeRouteGroupPrefix(routeGroupPrefix);
         Bindings = NormalizeBindings(bindings);
         BindingMode = NormalizeBindingMode(bindingMode);
 
@@ -121,10 +127,10 @@ public sealed class RestEndpointOverrideOptions
 
         ApiVersionMajor = apiVersionMajor;
 
-        if (!ApiVersionMajor.HasValue && Method is null && Pattern is null && Bindings.Count == 0)
+        if (!ApiVersionMajor.HasValue && Method is null && Pattern is null && RouteGroupPrefix is null && Bindings.Count == 0)
         {
             throw new ArgumentException(
-                "REST endpoint override rules must define at least one override action such as ApiVersionMajor, Method, Pattern, or Bindings.",
+                "REST endpoint override rules must define at least one override action such as ApiVersionMajor, Method, Pattern, RouteGroupPrefix, or Bindings.",
                 nameof(apiVersionMajor));
         }
 
@@ -192,6 +198,11 @@ public sealed class RestEndpointOverrideOptions
     public string? Pattern { get; }
 
     /// <summary>
+    /// Gets the effective published route-group prefix applied when this override rule matches.
+    /// </summary>
+    public string? RouteGroupPrefix { get; }
+
+    /// <summary>
     /// Gets the effective explicit request-binding plan applied when this override rule matches.
     /// </summary>
     public IReadOnlyList<RestEndpointBindingDescriptor> Bindings { get; }
@@ -214,6 +225,7 @@ public sealed class RestEndpointOverrideOptions
         ApiVersionMajor.HasValue ||
         Method is not null ||
         Pattern is not null ||
+        RouteGroupPrefix is not null ||
         Bindings.Count > 0;
 
     private static string[] NormalizeList(IReadOnlyList<string>? values)
@@ -327,6 +339,19 @@ public sealed class RestEndpointOverrideOptions
         }
 
         return NormalizeSupportedRoutePattern(pattern, nameof(pattern), "REST endpoint override pattern");
+    }
+
+    private static string? NormalizeRouteGroupPrefix(string? routeGroupPrefix)
+    {
+        if (string.IsNullOrWhiteSpace(routeGroupPrefix))
+        {
+            return null;
+        }
+
+        return NormalizeSupportedRoutePattern(
+            routeGroupPrefix,
+            nameof(routeGroupPrefix),
+            "REST endpoint override route-group prefix");
     }
 
     private static string NormalizeSupportedRoutePattern(string pattern, string paramName, string errorPrefix)

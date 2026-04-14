@@ -391,12 +391,13 @@ Current helper behavior:
   without taking away module ownership, while explicit `MapGet/MapPost/...` routes and manual
   module-owned endpoints remain authoritative
 - lets ASP.NET Core hosts move shorthand candidates to another effective API major version,
-  HTTP method, constrained relative route pattern, or explicit binding plan through
+  HTTP method, bounded published route-group prefix, constrained relative route pattern, or
+  explicit binding plan through
   `RestApi:Overrides` without taking away module ownership; the suppression/override surfaces can
   both now refine `Behaviors`/`Modules` targeting with `ApiVersionMajors`, `Methods`,
   `RelativePatterns`, and `RouteGroupPrefixes`, those selector refiners match the original
   shorthand candidate shape before override actions are applied, and the override surface itself
-  now supports `ApiVersionMajor`, `Method`, `Pattern`, `Bindings`, and typed `BindingMode`, keeps the `/v{major}` route segment,
+  now supports `ApiVersionMajor`, `Method`, `RouteGroupPrefix`, `Pattern`, `Bindings`, and typed `BindingMode`, keeps the `/v{major}` route segment,
   OpenAPI document name, endpoint method, effective route, and effective binding plan aligned with
   the same projection truth, defaults `Bindings` to full explicit-plan replacement but also allows
   `BindingMode = MergeExplicit` to patch only the changed explicit bindings by property name while
@@ -435,8 +436,8 @@ Current helper behavior:
   set explicitly, and fails fast when profiled behaviors in the same group disagree on that
   candidate version
 - keeps that explicit group `.ApiVersion(...)` authoritative for host-level version rewrites even
-  when an ASP.NET Core host later applies `RestApi:Overrides`, while shorthand method and
-  constrained pattern overrides can still apply
+  when an ASP.NET Core host later applies `RestApi:Overrides`, while shorthand method, bounded
+  route-group-prefix, and constrained pattern overrides can still apply
 - keeps profile-driven explicit binding plans visible through
   `RestEndpointRuntimeDescriptor.BindingDescriptors` and the matching `bindingDescriptors` JSON
   field on `/engine/rest-endpoints` and `snapshot.RestEndpoints`
@@ -478,13 +479,15 @@ stable rule id ordering, and intentionally suppresses only descriptor-backed sho
 rather than rewriting explicit module DSL/manual routes.
 
 When a host wants to keep shorthand publication but retarget selected shorthand endpoints to a
-different effective API major version, HTTP method, constrained relative route pattern, or explicit
-binding plan, use `RestApi:Overrides`. That host-level governance surface targets the same
+different effective API major version, HTTP method, bounded published route-group prefix,
+constrained relative route pattern, or explicit binding plan, use `RestApi:Overrides`. That
+host-level governance surface targets the same
 descriptor-backed shorthand candidates, also requires `Behaviors` or `Modules`, can refine that
 target further with `ApiVersionMajors`, `Methods`, `RelativePatterns`, and `RouteGroupPrefixes`,
 matches those selector refiners against the original shorthand candidate shape before override
 actions are applied, now supports a positive `ApiVersionMajor`, a supported HTTP `Method`, a valid
-relative `Pattern`, and/or explicit `Bindings`, records the applied rule through
+bounded `RouteGroupPrefix`, a valid relative `Pattern`, and/or explicit `Bindings`, records the
+applied rule through
 `AppliedOverrideId` in `/engine/rest-endpoint-candidates`, keeps the original shorthand source
 shape visible there through `OriginalProjection` while `ProjectedEndpoint` carries the final
 effective mapped answer, keeps the grouped behavior-level publication story visible through
@@ -502,9 +505,15 @@ effective explicit binding plan keeps every affected original route-bound proper
 placeholder additions can now also apply when the effective explicit route-binding plan covers the
 full final placeholder set and every newly route-bound property was either already explicitly bound
 in the source projection or, for `POST`/`PUT`/`PATCH`, already part of the original deterministic
-remaining-body fallback surface; broader implicit-property promotion beyond that constrained
-body-fallback path still fails fast; and invalid effective method-plus-binding combinations also
-fail fast during endpoint materialization.
+remaining-body fallback surface. `RouteGroupPrefix` can now move the published shorthand group to a
+different path such as `/api/v1/showcase/cart-admin`, but only when that group stays beneath the
+active REST root, contains no placeholders, and does not silently change effective API-version
+truth; when only some candidates in one authored shorthand group are remapped, ASP.NET Core now
+splits materialization by the effective group prefix so actual HTTP routes match
+`OriginalProjection`/`ProjectedEndpoint` runtime truth. Broader implicit-property promotion beyond
+that constrained body-fallback path still fails fast; invalid effective method-plus-binding
+combinations also fail fast during endpoint materialization; and explicit module DSL/manual routes
+still stay authoritative.
 
 Example:
 
@@ -526,7 +535,9 @@ When a host needs more than the default `v1` document, prefer `OpenApi:EnabledVe
 That published-document allow-list remains separate from shorthand candidate version selection. In
 other words, `RestApi:Overrides:*:ApiVersionMajor` can move a shorthand endpoint from `v1` to
 `v2`, `RestApi:Overrides:*:Method` can move the same shorthand endpoint from `GET` to `DELETE`,
-and `RestApi:Overrides:*:Pattern` can move it from `/{cartId}` to `/lookup/{cartId}` with the same
+`RestApi:Overrides:*:RouteGroupPrefix` can move the published shorthand group from
+`/api/v1/showcase/cart` to `/api/v1/showcase/cart-admin` without changing the endpoint's relative
+pattern, while `RestApi:Overrides:*:Pattern` can move it from `/{cartId}` to `/lookup/{cartId}` with the same
 placeholder set, to `/lookup/{id}` when `RestApi:Overrides:*:Bindings` also makes the effective
 route-binding plan explicit for `{id}`, or to `/lookup` when `Bindings` explicitly rebind the
 removed route-bound value and the source projection already exposed an explicit route binding for
@@ -537,7 +548,9 @@ affected explicit properties such as moving `Quantity` from query key `quantity`
 placeholder `quantity`, changing `Quantity` from query key `quantity` to `qty`, or changing `Note`
 from body key `note` to `memo`, while `ApiVersionMajors`, `Methods`,
 `RelativePatterns`, and `RouteGroupPrefixes` let the same rule target only the original shorthand
-shape it means to govern; the host still decides whether `v2` is actually
+shape it means to govern. Keep `RouteGroupPrefix` bounded under the active REST root with no
+placeholders and no silent API-version drift, and remember that the host still decides whether `v2`
+is actually
 published through
 `OpenApi:EnabledVersions` or legacy document config. Keep that distinction in mind when a module
 can declare or inherit more candidate versions than one host chooses to publish.

@@ -664,6 +664,201 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonAppliesRestRouteGroupPrefixOverridesAndExposesOverrideCatalog()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "4";
+        builder.Configuration["OpenApi:DefaultVersion"] = "4";
+        builder.Configuration["RestApi:Overrides:prefer-remapped-group:Behaviors:0"] = "tests.generated.runtimeoverride.lookup";
+        builder.Configuration["RestApi:Overrides:prefer-remapped-group:RouteGroupPrefix"] = "/api/v4/tests/generated/runtime/override/remapped";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new GeneratedVersionOverrideRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(overrides);
+        Assert.NotNull(snapshot);
+
+        var endpoint = Assert.Single(endpoints, static candidate =>
+            string.Equals(candidate.BehaviorId, "tests.generated.runtimeoverride.lookup", StringComparison.Ordinal));
+        Assert.Equal("GET", endpoint.Method);
+        Assert.Equal("/api/v4/tests/generated/runtime/override/remapped/orders/{orderId}", endpoint.RoutePattern);
+        Assert.Equal("/api/v4/tests/generated/runtime/override/remapped", endpoint.Metadata["routeGroupPrefix"]);
+        Assert.Equal("/orders/{orderId}", endpoint.Metadata["relativePattern"]);
+        Assert.Equal("v4", endpoint.OpenApiDocumentName);
+        Assert.Equal(4, endpoint.ApiVersionMajor);
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.generated.runtimeoverride.lookup", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+        Assert.Equal("prefer-remapped-group", candidate.AppliedOverrideId);
+        Assert.Equal("/api/v4/tests/generated/runtime/override", candidate.OriginalProjection.RouteGroupPrefix);
+        Assert.Equal("/api/v4/tests/generated/runtime/override/orders/{orderId}", candidate.OriginalProjection.RoutePattern);
+        Assert.Equal(endpoint.Id, candidate.ProjectedEndpoint.Id);
+
+        var rule = Assert.Single(overrides, static item => string.Equals(item.Id, "prefer-remapped-group", StringComparison.Ordinal));
+        Assert.Equal("/api/v4/tests/generated/runtime/override/remapped", rule.RouteGroupPrefix);
+        Assert.Null(rule.ApiVersionMajor);
+        Assert.Null(rule.Method);
+        Assert.Null(rule.Pattern);
+
+        Assert.Contains(snapshot.RestEndpointOverrides, item =>
+            string.Equals(item.Id, "prefer-remapped-group", StringComparison.Ordinal) &&
+            string.Equals(item.RouteGroupPrefix, "/api/v4/tests/generated/runtime/override/remapped", StringComparison.Ordinal));
+        Assert.Contains(snapshot.RestEndpointCandidates, item =>
+            string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
+            string.Equals(item.AppliedOverrideId, "prefer-remapped-group", StringComparison.Ordinal) &&
+            string.Equals(item.OriginalProjection.RouteGroupPrefix, "/api/v4/tests/generated/runtime/override", StringComparison.Ordinal));
+
+        var oldResponse = await client.GetAsync("/api/v4/tests/generated/runtime/override/orders/ord-42");
+        Assert.Equal(System.Net.HttpStatusCode.NotFound, oldResponse.StatusCode);
+
+        var payload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>("/api/v4/tests/generated/runtime/override/remapped/orders/ord-42");
+        Assert.NotNull(payload);
+        Assert.Equal("ord-42", payload.OrderId);
+    }
+
+    [Fact]
+    public async Task MapCephalonAppliesRestRouteGroupPrefixOverridesAfterApiVersionRewrite()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.Configuration["RestApi:Overrides:prefer-v6-remapped-group:Behaviors:0"] = "tests.generated.runtimeoverride.lookup";
+        builder.Configuration["RestApi:Overrides:prefer-v6-remapped-group:ApiVersionMajor"] = "6";
+        builder.Configuration["RestApi:Overrides:prefer-v6-remapped-group:RouteGroupPrefix"] = "/api/v6/tests/generated/runtime/override/remapped";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new GeneratedVersionOverrideRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(overrides);
+
+        var endpoint = Assert.Single(endpoints, static candidate =>
+            string.Equals(candidate.BehaviorId, "tests.generated.runtimeoverride.lookup", StringComparison.Ordinal));
+        Assert.Equal("/api/v6/tests/generated/runtime/override/remapped/orders/{orderId}", endpoint.RoutePattern);
+        Assert.Equal("/api/v6/tests/generated/runtime/override/remapped", endpoint.Metadata["routeGroupPrefix"]);
+        Assert.Equal("v6", endpoint.OpenApiDocumentName);
+        Assert.Equal(6, endpoint.ApiVersionMajor);
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.generated.runtimeoverride.lookup", StringComparison.Ordinal));
+        Assert.Equal("prefer-v6-remapped-group", candidate.AppliedOverrideId);
+        Assert.Equal(4, candidate.OriginalProjection.ApiVersionMajor);
+        Assert.Equal("/api/v4/tests/generated/runtime/override", candidate.OriginalProjection.RouteGroupPrefix);
+        Assert.Equal(endpoint.Id, candidate.ProjectedEndpoint.Id);
+
+        var rule = Assert.Single(overrides, static item => string.Equals(item.Id, "prefer-v6-remapped-group", StringComparison.Ordinal));
+        Assert.Equal(6, rule.ApiVersionMajor);
+        Assert.Equal("/api/v6/tests/generated/runtime/override/remapped", rule.RouteGroupPrefix);
+
+        var payload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>("/api/v6/tests/generated/runtime/override/remapped/orders/ord-42");
+        Assert.NotNull(payload);
+        Assert.Equal("ord-42", payload.OrderId);
+    }
+
+    [Fact]
+    public async Task MapCephalonSplitsRouteGroupMaterializationWhenRouteGroupPrefixOverrideTargetsOneCandidate()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "4";
+        builder.Configuration["OpenApi:DefaultVersion"] = "4";
+        builder.Configuration["RestApi:Overrides:details-remapped-group:Behaviors:0"] = "tests.rest.profile.split.details";
+        builder.Configuration["RestApi:Overrides:details-remapped-group:RouteGroupPrefix"] = "/api/v4/tests/profile/runtime/split/remapped";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new SplitProfileVersionOverrideRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+
+        var summaryEndpoint = Assert.Single(endpoints, static candidate =>
+            string.Equals(candidate.BehaviorId, "tests.rest.profile.split.summary", StringComparison.Ordinal));
+        Assert.Equal("/api/v4/tests/profile/runtime/split/orders/{orderId}", summaryEndpoint.RoutePattern);
+        Assert.Equal("/api/v4/tests/profile/runtime/split", summaryEndpoint.Metadata["routeGroupPrefix"]);
+
+        var detailsEndpoint = Assert.Single(endpoints, static candidate =>
+            string.Equals(candidate.BehaviorId, "tests.rest.profile.split.details", StringComparison.Ordinal));
+        Assert.Equal("/api/v4/tests/profile/runtime/split/remapped/orders/{orderId}/details", detailsEndpoint.RoutePattern);
+        Assert.Equal("/api/v4/tests/profile/runtime/split/remapped", detailsEndpoint.Metadata["routeGroupPrefix"]);
+
+        var detailsCandidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.profile.split.details", StringComparison.Ordinal));
+        Assert.Equal("details-remapped-group", detailsCandidate.AppliedOverrideId);
+        Assert.Equal("/api/v4/tests/profile/runtime/split", detailsCandidate.OriginalProjection.RouteGroupPrefix);
+
+        var summaryResponse = await client.GetFromJsonAsync<ProfileRuntimeOrderOutput>("/api/v4/tests/profile/runtime/split/orders/ord-42");
+        Assert.NotNull(summaryResponse);
+        Assert.Equal("ord-42", summaryResponse.OrderId);
+
+        var oldDetailsResponse = await client.GetAsync("/api/v4/tests/profile/runtime/split/orders/ord-42/details");
+        Assert.Equal(System.Net.HttpStatusCode.NotFound, oldDetailsResponse.StatusCode);
+
+        var remappedDetailsResponse = await client.GetFromJsonAsync<ProfileRuntimeOrderOutput>("/api/v4/tests/profile/runtime/split/remapped/orders/ord-42/details");
+        Assert.NotNull(remappedDetailsResponse);
+        Assert.Equal("ord-42-details", remappedDetailsResponse.OrderId);
+    }
+
+    [Fact]
     public async Task MapCephalonSplitsProfileDrivenGroupWhenApiVersionOverrideTargetsOnlyOneCandidate()
     {
         var builder = WebApplication.CreateBuilder();
@@ -887,6 +1082,67 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(System.Net.HttpStatusCode.NotFound, oldResponse.StatusCode);
 
         var payload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>("/api/v8/tests/generated/runtime/explicit-override/lookup/ord-52");
+        Assert.NotNull(payload);
+        Assert.Equal("ord-52", payload.OrderId);
+    }
+
+    [Fact]
+    public async Task MapCephalonKeepsExplicitGroupApiVersionAuthoritativeWhileApplyingRestRouteGroupPrefixOverride()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "8";
+        builder.Configuration["OpenApi:DefaultVersion"] = "8";
+        builder.Configuration["RestApi:Overrides:prefer-remapped-v6:Behaviors:0"] = "tests.generated.runtimeexplicitoverride.lookup";
+        builder.Configuration["RestApi:Overrides:prefer-remapped-v6:ApiVersionMajor"] = "6";
+        builder.Configuration["RestApi:Overrides:prefer-remapped-v6:RouteGroupPrefix"] = "/api/v8/tests/generated/runtime/explicit-override/remapped";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ExplicitVersionOverrideRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(overrides);
+
+        var endpoint = Assert.Single(endpoints, static candidate =>
+            string.Equals(candidate.BehaviorId, "tests.generated.runtimeexplicitoverride.lookup", StringComparison.Ordinal));
+        Assert.Equal("GET", endpoint.Method);
+        Assert.Equal("/api/v8/tests/generated/runtime/explicit-override/remapped/orders/{orderId}", endpoint.RoutePattern);
+        Assert.Equal("/api/v8/tests/generated/runtime/explicit-override/remapped", endpoint.Metadata["routeGroupPrefix"]);
+        Assert.Equal(8, endpoint.ApiVersionMajor);
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.generated.runtimeexplicitoverride.lookup", StringComparison.Ordinal));
+        Assert.Equal("prefer-remapped-v6", candidate.AppliedOverrideId);
+        Assert.Equal(8, candidate.ProjectedEndpoint.ApiVersionMajor);
+        Assert.Equal("/api/v8/tests/generated/runtime/explicit-override", candidate.OriginalProjection.RouteGroupPrefix);
+
+        var rule = Assert.Single(overrides, static item => string.Equals(item.Id, "prefer-remapped-v6", StringComparison.Ordinal));
+        Assert.Equal(6, rule.ApiVersionMajor);
+        Assert.Equal("/api/v8/tests/generated/runtime/explicit-override/remapped", rule.RouteGroupPrefix);
+
+        var oldResponse = await client.GetAsync("/api/v8/tests/generated/runtime/explicit-override/orders/ord-52");
+        Assert.Equal(System.Net.HttpStatusCode.NotFound, oldResponse.StatusCode);
+
+        var payload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>("/api/v8/tests/generated/runtime/explicit-override/remapped/orders/ord-52");
         Assert.NotNull(payload);
         Assert.Equal("ord-52", payload.OrderId);
     }
