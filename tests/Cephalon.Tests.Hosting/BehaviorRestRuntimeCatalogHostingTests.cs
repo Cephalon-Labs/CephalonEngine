@@ -316,6 +316,177 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonAppliesRestApiVersionOverridesAndExposesOverrideCatalog()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.Configuration["RestApi:Overrides:prefer-v6:Behaviors:0"] = "tests.generated.runtimeoverride.lookup";
+        builder.Configuration["RestApi:Overrides:prefer-v6:ApiVersionMajor"] = "6";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new GeneratedVersionOverrideRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(overrides);
+        Assert.NotNull(snapshot);
+
+        var endpoint = Assert.Single(endpoints, static candidate =>
+            string.Equals(candidate.BehaviorId, "tests.generated.runtimeoverride.lookup", StringComparison.Ordinal));
+        Assert.Equal("/api/v6/tests/generated/runtime/override/orders/{orderId}", endpoint.RoutePattern);
+        Assert.Equal("v6", endpoint.OpenApiDocumentName);
+        Assert.Equal(6, endpoint.ApiVersionMajor);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, endpoint.Metadata["authoringStyle"]);
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.generated.runtimeoverride.lookup", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+        Assert.Equal("prefer-v6", candidate.AppliedOverrideId);
+        Assert.Equal(endpoint.Id, candidate.ProjectedEndpoint.Id);
+
+        var rule = Assert.Single(overrides);
+        Assert.Equal("prefer-v6", rule.Id);
+        Assert.Equal(6, rule.ApiVersionMajor);
+        Assert.Contains("tests.generated.runtimeoverride.lookup", rule.BehaviorIds);
+
+        Assert.Contains(snapshot.RestEndpointOverrides, item =>
+            string.Equals(item.Id, "prefer-v6", StringComparison.Ordinal));
+        Assert.Contains(snapshot.RestEndpointCandidates, item =>
+            string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
+            string.Equals(item.AppliedOverrideId, "prefer-v6", StringComparison.Ordinal));
+
+        var payload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>("/api/v6/tests/generated/runtime/override/orders/ord-42");
+        Assert.NotNull(payload);
+        Assert.Equal("ord-42", payload.OrderId);
+    }
+
+    [Fact]
+    public async Task MapCephalonSplitsProfileDrivenGroupWhenApiVersionOverrideTargetsOnlyOneCandidate()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "4";
+        builder.Configuration["OpenApi:EnabledVersions:1"] = "6";
+        builder.Configuration["OpenApi:DefaultVersion"] = "4";
+        builder.Configuration["RestApi:Overrides:details-v6:Behaviors:0"] = "tests.rest.profile.split.details";
+        builder.Configuration["RestApi:Overrides:details-v6:ApiVersionMajor"] = "6";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new SplitProfileVersionOverrideRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.Equal(2, endpoints.Length);
+
+        var summaryEndpoint = Assert.Single(endpoints, static candidate =>
+            string.Equals(candidate.BehaviorId, "tests.rest.profile.split.summary", StringComparison.Ordinal));
+        Assert.Equal("/api/v4/tests/profile/runtime/split/orders/{orderId}", summaryEndpoint.RoutePattern);
+        Assert.Equal(4, summaryEndpoint.ApiVersionMajor);
+
+        var detailsEndpoint = Assert.Single(endpoints, static candidate =>
+            string.Equals(candidate.BehaviorId, "tests.rest.profile.split.details", StringComparison.Ordinal));
+        Assert.Equal("/api/v6/tests/profile/runtime/split/orders/{orderId}/details", detailsEndpoint.RoutePattern);
+        Assert.Equal(6, detailsEndpoint.ApiVersionMajor);
+
+        var detailsCandidate = Assert.Single(candidates, static candidate =>
+            string.Equals(candidate.ProjectedEndpoint.BehaviorId, "tests.rest.profile.split.details", StringComparison.Ordinal));
+        Assert.Equal("details-v6", detailsCandidate.AppliedOverrideId);
+
+        var summaryPayload = await client.GetFromJsonAsync<ProfileRuntimeOrderOutput>("/api/v4/tests/profile/runtime/split/orders/ord-11");
+        Assert.NotNull(summaryPayload);
+        Assert.Equal("ord-11", summaryPayload.OrderId);
+
+        var detailsPayload = await client.GetFromJsonAsync<ProfileRuntimeOrderOutput>("/api/v6/tests/profile/runtime/split/orders/ord-11/details");
+        Assert.NotNull(detailsPayload);
+        Assert.Equal("ord-11-details", detailsPayload.OrderId);
+    }
+
+    [Fact]
+    public async Task MapCephalonKeepsExplicitGroupApiVersionAuthoritativeOverRestApiVersionOverride()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "8";
+        builder.Configuration["OpenApi:DefaultVersion"] = "8";
+        builder.Configuration["RestApi:Overrides:prefer-v6:Behaviors:0"] = "tests.generated.runtimeexplicitoverride.lookup";
+        builder.Configuration["RestApi:Overrides:prefer-v6:ApiVersionMajor"] = "6";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ExplicitVersionOverrideRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+
+        var endpoint = Assert.Single(endpoints, static candidate =>
+            string.Equals(candidate.BehaviorId, "tests.generated.runtimeexplicitoverride.lookup", StringComparison.Ordinal));
+        Assert.Equal("/api/v8/tests/generated/runtime/explicit-override/orders/{orderId}", endpoint.RoutePattern);
+        Assert.Equal(8, endpoint.ApiVersionMajor);
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.generated.runtimeexplicitoverride.lookup", StringComparison.Ordinal));
+        Assert.Null(candidate.AppliedOverrideId);
+
+        var payload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>("/api/v8/tests/generated/runtime/explicit-override/orders/ord-52");
+        Assert.NotNull(payload);
+        Assert.Equal("ord-52", payload.OrderId);
+    }
+
+    [Fact]
     public async Task MapCephalonSuppressesGeneratedCandidatesThroughRestApiGovernanceAndExposesSuppressionCatalog()
     {
         var builder = WebApplication.CreateBuilder();
@@ -464,6 +635,29 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             }));
 
         Assert.Contains("behavior id or source module id", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void AddCephalonRejectsRestApiOverrideRulesWithoutApiVersionMajor()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["RestApi:Overrides:invalid:Behaviors:0"] = "tests.generated.runtimeoverride.lookup";
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            builder.AddCephalon(engine =>
+            {
+                engine.AddModule(new GeneratedVersionOverrideRuntimeCatalogModule());
+                engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+                {
+                    behaviors.AddHttpBehaviorBindings();
+                });
+            }));
+
+        Assert.Contains("positive API major version", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -1028,6 +1222,39 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         }
     }
 
+    private sealed class GeneratedVersionOverrideRuntimeCatalogModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.generated-runtime.override",
+            "Generated Runtime Override Module",
+            "Publishes generated shorthand so REST governance can override the effective API version.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Group("/tests/generated/runtime/override")
+                .WithTagName("Generated Override API")
+                .MapGeneratedProfiles("tests.generated.runtimeoverride");
+        }
+    }
+
+    private sealed class ExplicitVersionOverrideRuntimeCatalogModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.generated-runtime.explicit-override",
+            "Generated Runtime Explicit Override Module",
+            "Publishes generated shorthand beneath an explicitly versioned group.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Group("/tests/generated/runtime/explicit-override")
+                .ApiVersion(8)
+                .WithTagName("Generated Explicit Override API")
+                .MapGeneratedProfiles("tests.generated.runtimeexplicitoverride");
+        }
+    }
+
     private sealed class GeneratedThreeWaySuppressionRuntimeCatalogModule : RestBehaviorModuleBase
     {
         public override ModuleDescriptor Descriptor { get; } = new(
@@ -1063,6 +1290,24 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
 
             group.MapGeneratedProfiles("tests.rest.generated.threeway");
             group.MapProfile<GetGeneratedThreeWayRuntimeOrderBehavior>();
+        }
+    }
+
+    private sealed class SplitProfileVersionOverrideRuntimeCatalogModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.profile-runtime.split",
+            "Profile Split Override Module",
+            "Publishes multiple profile-driven shorthand endpoints beneath one group so governance can split their effective versions.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            var group = behaviors.Group("/tests/profile/runtime/split")
+                .WithTagName("Profile Split Override API");
+
+            group.MapProfile<GetSplitProfileRuntimeOrderBehavior>();
+            group.MapProfile<GetSplitProfileRuntimeOrderDetailsBehavior>();
         }
     }
 
@@ -1242,6 +1487,32 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         }
     }
 
+    [AppBehavior("tests.generated.runtimeoverride.lookup")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/orders/{orderId}", ApiVersionMajor = 4)]
+    private sealed class GetGeneratedVersionOverrideRuntimeOrderBehavior : IAppBehavior<GeneratedRuntimeOrderInput, GeneratedRuntimeOrderOutput>
+    {
+        public Task<GeneratedRuntimeOrderOutput> HandleAsync(
+            GeneratedRuntimeOrderInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new GeneratedRuntimeOrderOutput(input.OrderId));
+        }
+    }
+
+    [AppBehavior("tests.generated.runtimeexplicitoverride.lookup")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/orders/{orderId}", ApiVersionMajor = 4)]
+    private sealed class GetGeneratedExplicitOverrideRuntimeOrderBehavior : IAppBehavior<GeneratedRuntimeOrderInput, GeneratedRuntimeOrderOutput>
+    {
+        public Task<GeneratedRuntimeOrderOutput> HandleAsync(
+            GeneratedRuntimeOrderInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new GeneratedRuntimeOrderOutput(input.OrderId));
+        }
+    }
+
     [AppBehavior("tests.generated.runtime.create")]
     [BehaviorRestProfile(BehaviorRestMethod.Post, "/orders/{orderId}/items", ApiVersionMajor = 4)]
     private sealed class CreateGeneratedRuntimeOrderItemBehavior : IAppBehavior<GeneratedRuntimeOrderItemInput, GeneratedRuntimeOrderOutput>
@@ -1278,6 +1549,32 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             CancellationToken ct = default)
         {
             return Task.FromResult(new ProfileRuntimeOrderOutput(input.OrderId));
+        }
+    }
+
+    [AppBehavior("tests.rest.profile.split.summary")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/orders/{orderId}", ApiVersionMajor = 4)]
+    private sealed class GetSplitProfileRuntimeOrderBehavior : IAppBehavior<ProfileRuntimeOrderInput, ProfileRuntimeOrderOutput>
+    {
+        public Task<ProfileRuntimeOrderOutput> HandleAsync(
+            ProfileRuntimeOrderInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProfileRuntimeOrderOutput(input.OrderId));
+        }
+    }
+
+    [AppBehavior("tests.rest.profile.split.details")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/orders/{orderId}/details", ApiVersionMajor = 4)]
+    private sealed class GetSplitProfileRuntimeOrderDetailsBehavior : IAppBehavior<ProfileRuntimeOrderInput, ProfileRuntimeOrderOutput>
+    {
+        public Task<ProfileRuntimeOrderOutput> HandleAsync(
+            ProfileRuntimeOrderInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProfileRuntimeOrderOutput($"{input.OrderId}-details"));
         }
     }
 

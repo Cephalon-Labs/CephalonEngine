@@ -438,6 +438,125 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverAppliesApiVersionOverrideToShorthandCandidates()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        builder.Group("/tests/generated-override")
+            .MapGeneratedProfiles("tests.generated.projection.precedence");
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.generated-override",
+                "Generated Override Module",
+                "Exercises shorthand API-version override resolution.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "prefer-v6",
+                    behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                    apiVersionMajor: 6)
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Equal("prefer-v6", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal("/api/v6/tests/generated-override/{cartId}", candidate.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Equal("v6", candidate.Candidate.ProjectedEndpoint.OpenApiDocumentName);
+        Assert.Equal(6, candidate.Candidate.ProjectedEndpoint.ApiVersionMajor);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverKeepsExplicitGroupApiVersionAuthoritativeOverHostOverride()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        builder.Group("/tests/generated-override-explicit")
+            .ApiVersion(8)
+            .MapGeneratedProfiles("tests.generated.projection.precedence");
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.generated-override-explicit",
+                "Generated Override Explicit Module",
+                "Exercises explicit group-version precedence over host overrides.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "prefer-v6",
+                    behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                    apiVersionMajor: 6)
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Null(candidate.Candidate.AppliedOverrideId);
+        Assert.Equal("/api/v8/tests/generated-override-explicit/{cartId}", candidate.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Equal("v8", candidate.Candidate.ProjectedEndpoint.OpenApiDocumentName);
+        Assert.Equal(8, candidate.Candidate.ProjectedEndpoint.ApiVersionMajor);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverPrefersTheMostSpecificApiVersionOverrideWhenMultipleRulesMatch()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        builder.Group("/tests/generated-specific-override")
+            .MapGeneratedProfiles("tests.generated.projection.precedence");
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.generated-specific-override",
+                "Generated Specific Override Module",
+                "Exercises deterministic API-version override precedence.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "module-rule",
+                    sourceModuleIds: ["tests.rest.generated-specific-override"],
+                    apiVersionMajor: 7),
+                new RestEndpointOverrideOptions(
+                    id: "behavior-module-rule",
+                    behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                    sourceModuleIds: ["tests.rest.generated-specific-override"],
+                    apiVersionMajor: 6)
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal("behavior-module-rule", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal(6, candidate.Candidate.ProjectedEndpoint.ApiVersionMajor);
+        Assert.Equal("/api/v6/tests/generated-specific-override/{cartId}", candidate.Candidate.ProjectedEndpoint.RoutePattern);
+    }
+
+    [Fact]
+    public void RestEndpointOverrideOptionsRejectRulesWithoutBehaviorOrModuleTargets()
+    {
+        var exception = Assert.Throws<ArgumentException>(() =>
+            new RestEndpointOverrideOptions(
+                id: "invalid",
+                apiVersionMajor: 6));
+
+        Assert.Contains("behavior id or source module id", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void RestEndpointOverrideOptionsRejectRulesWithoutApiVersionMajor()
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new RestEndpointOverrideOptions(
+                id: "invalid",
+                behaviorIds: ["tests.generated.projection.precedence.lookup"]));
+
+        Assert.Contains("positive API major version", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void RestBehaviorModuleBuilderRejectsProfileMappingsWithoutRestProfileMetadata()
     {
         var builder = new RestBehaviorModuleBuilder();

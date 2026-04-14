@@ -11,7 +11,8 @@ internal static class RestBehaviorProjectionCandidateResolver
         ModuleDescriptor moduleDescriptor,
         ApiRoutesOptions apiRoutesOptions,
         IReadOnlyList<RestBehaviorRouteGroupProjection> groups,
-        IReadOnlyList<RestEndpointSuppressionOptions>? suppressions = null)
+        IReadOnlyList<RestEndpointSuppressionOptions>? suppressions = null,
+        IReadOnlyList<RestEndpointOverrideOptions>? overrides = null)
     {
         ArgumentNullException.ThrowIfNull(moduleDescriptor);
         ArgumentNullException.ThrowIfNull(apiRoutesOptions);
@@ -24,7 +25,8 @@ internal static class RestBehaviorProjectionCandidateResolver
                 moduleVersionMajor,
                 apiRoutesOptions,
                 group,
-                groupIndex))
+                groupIndex,
+                overrides))
             .ToArray();
 
         if (candidates.Length == 0)
@@ -67,7 +69,8 @@ internal static class RestBehaviorProjectionCandidateResolver
         int? moduleVersionMajor,
         ApiRoutesOptions apiRoutesOptions,
         RestBehaviorRouteGroupProjection group,
-        int groupIndex)
+        int groupIndex,
+        IReadOnlyList<RestEndpointOverrideOptions>? overrides)
     {
         ArgumentNullException.ThrowIfNull(moduleDescriptor);
         ArgumentNullException.ThrowIfNull(apiRoutesOptions);
@@ -78,15 +81,10 @@ internal static class RestBehaviorProjectionCandidateResolver
             return [];
         }
 
-        var effectiveApiVersionMajor = group.ApiVersionMajor ?? moduleVersionMajor;
-        var resolvedRouteGroupPrefix = ResolveRouteGroupPrefix(group.Prefix, effectiveApiVersionMajor);
-        var publishedRouteGroupPrefix = RestEndpointRuntimeDescriptorFactory.CombinePaths(
-            apiRoutesOptions.RestPrefix,
-            resolvedRouteGroupPrefix);
-        var openApiDocumentName = ResolveOpenApiDocumentName(effectiveApiVersionMajor);
         var tagName = string.IsNullOrWhiteSpace(group.TagName)
             ? moduleDescriptor.DisplayName
             : group.TagName.Trim();
+        var defaultApiVersionMajor = group.ApiVersionMajor ?? moduleVersionMajor;
 
         return group.Endpoints
             .Select(endpoint => CreateCandidate(
@@ -94,9 +92,10 @@ internal static class RestBehaviorProjectionCandidateResolver
                 groupIndex,
                 endpoint,
                 tagName,
-                openApiDocumentName,
-                effectiveApiVersionMajor,
-                publishedRouteGroupPrefix))
+                defaultApiVersionMajor,
+                apiRoutesOptions,
+                group,
+                overrides))
             .ToArray();
     }
 
@@ -105,16 +104,29 @@ internal static class RestBehaviorProjectionCandidateResolver
         int groupIndex,
         RestBehaviorEndpointProjection endpointProjection,
         string tagName,
-        string openApiDocumentName,
-        int? apiVersionMajor,
-        string publishedRouteGroupPrefix)
+        int? defaultApiVersionMajor,
+        ApiRoutesOptions apiRoutesOptions,
+        RestBehaviorRouteGroupProjection group,
+        IReadOnlyList<RestEndpointOverrideOptions>? overrides)
     {
         ArgumentNullException.ThrowIfNull(moduleDescriptor);
         ArgumentNullException.ThrowIfNull(endpointProjection);
         ArgumentException.ThrowIfNullOrWhiteSpace(tagName);
-        ArgumentException.ThrowIfNullOrWhiteSpace(openApiDocumentName);
-        ArgumentException.ThrowIfNullOrWhiteSpace(publishedRouteGroupPrefix);
+        ArgumentNullException.ThrowIfNull(apiRoutesOptions);
+        ArgumentNullException.ThrowIfNull(group);
 
+        var appliedOverride = ResolveOverride(
+            moduleDescriptor.Id,
+            endpointProjection.BehaviorId,
+            endpointProjection.AuthoringStyle,
+            group.HasExplicitApiVersion,
+            overrides);
+        var effectiveApiVersionMajor = appliedOverride?.ApiVersionMajor ?? defaultApiVersionMajor;
+        var resolvedRouteGroupPrefix = ResolveRouteGroupPrefix(group.Prefix, effectiveApiVersionMajor);
+        var publishedRouteGroupPrefix = RestEndpointRuntimeDescriptorFactory.CombinePaths(
+            apiRoutesOptions.RestPrefix,
+            resolvedRouteGroupPrefix);
+        var openApiDocumentName = ResolveOpenApiDocumentName(effectiveApiVersionMajor);
         var method = endpointProjection.Method.ToString().ToUpperInvariant();
         var routePattern = RestEndpointRuntimeDescriptorFactory.CombinePaths(
             publishedRouteGroupPrefix,
@@ -130,7 +142,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             behaviorId: endpointProjection.BehaviorId,
             endpointName: null,
             openApiDocumentName: openApiDocumentName,
-            apiVersionMajor: apiVersionMajor,
+            apiVersionMajor: effectiveApiVersionMajor,
             tags: [tagName],
             summary: null,
             description: null,
@@ -151,7 +163,8 @@ internal static class RestBehaviorProjectionCandidateResolver
                 projectedEndpoint,
                 endpointProjection.AuthoringStyle,
                 precedenceRank,
-                RestEndpointCandidateStatus.Published));
+                RestEndpointCandidateStatus.Published,
+                appliedOverrideId: appliedOverride?.Id));
     }
 
     private static ResolvedRestBehaviorEndpointProjectionCandidate ResolvePublication(
@@ -175,6 +188,7 @@ internal static class RestBehaviorProjectionCandidateResolver
                     candidate.Candidate.PrecedenceRank,
                     RestEndpointCandidateStatus.Suppressed,
                     suppressedBySuppressionId: suppression.Id,
+                    appliedOverrideId: candidate.Candidate.AppliedOverrideId,
                     suppressionReason: $"Suppressed by REST endpoint suppression rule '{suppression.Id}'.")
             };
         }
@@ -196,8 +210,35 @@ internal static class RestBehaviorProjectionCandidateResolver
                 candidate.Candidate.PrecedenceRank,
                 RestEndpointCandidateStatus.Suppressed,
                 suppressedByCandidateId: winningCandidate.Id,
+                appliedOverrideId: candidate.Candidate.AppliedOverrideId,
                 suppressionReason: $"Suppressed because behavior '{behaviorId}' is also mapped by higher-precedence authoring style '{winningCandidate.AuthoringStyle}'.")
         };
+    }
+
+    private static RestEndpointOverrideOptions? ResolveOverride(
+        string sourceModuleId,
+        string behaviorId,
+        string authoringStyle,
+        bool hasExplicitApiVersion,
+        IReadOnlyList<RestEndpointOverrideOptions>? overrides)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(sourceModuleId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(authoringStyle);
+
+        if (hasExplicitApiVersion || overrides is null || overrides.Count == 0)
+        {
+            return null;
+        }
+
+        return overrides
+            .Where(overrideOptions => MatchesOverride(sourceModuleId, behaviorId, authoringStyle, overrideOptions))
+            .OrderByDescending(static overrideOptions => CountTargetDimensions(overrideOptions))
+            .ThenByDescending(static overrideOptions => overrideOptions.BehaviorIds.Count > 0)
+            .ThenBy(static overrideOptions => overrideOptions.AuthoringStyles.Count)
+            .ThenBy(static overrideOptions => overrideOptions.BehaviorIds.Count + overrideOptions.SourceModuleIds.Count)
+            .ThenBy(static overrideOptions => overrideOptions.Id, StringComparer.OrdinalIgnoreCase)
+            .FirstOrDefault();
     }
 
     private static RestEndpointSuppressionOptions? ResolveSuppression(
@@ -256,6 +297,37 @@ internal static class RestBehaviorProjectionCandidateResolver
         return true;
     }
 
+    private static bool MatchesOverride(
+        string sourceModuleId,
+        string behaviorId,
+        string authoringStyle,
+        RestEndpointOverrideOptions overrideOptions)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(sourceModuleId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(authoringStyle);
+        ArgumentNullException.ThrowIfNull(overrideOptions);
+
+        if (!overrideOptions.AuthoringStyles.Contains(authoringStyle, StringComparer.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        if (overrideOptions.SourceModuleIds.Count > 0 &&
+            !overrideOptions.SourceModuleIds.Contains(sourceModuleId, StringComparer.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        if (overrideOptions.BehaviorIds.Count > 0 &&
+            !overrideOptions.BehaviorIds.Contains(behaviorId, StringComparer.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     private static int CountTargetDimensions(RestEndpointSuppressionOptions suppression)
     {
         ArgumentNullException.ThrowIfNull(suppression);
@@ -267,6 +339,24 @@ internal static class RestBehaviorProjectionCandidateResolver
         }
 
         if (suppression.SourceModuleIds.Count > 0)
+        {
+            count++;
+        }
+
+        return count;
+    }
+
+    private static int CountTargetDimensions(RestEndpointOverrideOptions overrideOptions)
+    {
+        ArgumentNullException.ThrowIfNull(overrideOptions);
+
+        var count = 0;
+        if (overrideOptions.BehaviorIds.Count > 0)
+        {
+            count++;
+        }
+
+        if (overrideOptions.SourceModuleIds.Count > 0)
         {
             count++;
         }

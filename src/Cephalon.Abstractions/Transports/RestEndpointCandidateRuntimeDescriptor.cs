@@ -23,6 +23,9 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
     /// <param name="suppressedBySuppressionId">
     /// The host-level suppression identifier when this candidate was suppressed by REST governance.
     /// </param>
+    /// <param name="appliedOverrideId">
+    /// The host-level override identifier when this candidate shape was rewritten by REST governance.
+    /// </param>
     /// <param name="suppressionReason">The operator-facing suppression reason when one is available.</param>
     public RestEndpointCandidateRuntimeDescriptor(
         string id,
@@ -32,6 +35,7 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
         RestEndpointCandidateStatus status,
         string? suppressedByCandidateId = null,
         string? suppressedBySuppressionId = null,
+        string? appliedOverrideId = null,
         string? suppressionReason = null)
     {
         if (string.IsNullOrWhiteSpace(id))
@@ -88,6 +92,9 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
         SuppressedBySuppressionId = string.IsNullOrWhiteSpace(suppressedBySuppressionId)
             ? null
             : suppressedBySuppressionId.Trim();
+        AppliedOverrideId = string.IsNullOrWhiteSpace(appliedOverrideId)
+            ? null
+            : appliedOverrideId.Trim();
         SuppressionReason = string.IsNullOrWhiteSpace(suppressionReason)
             ? null
             : suppressionReason.Trim();
@@ -127,6 +134,11 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
     /// Gets the host-level suppression identifier when this candidate was suppressed by REST governance.
     /// </summary>
     public string? SuppressedBySuppressionId { get; }
+
+    /// <summary>
+    /// Gets the host-level override identifier when this candidate shape was rewritten by REST governance.
+    /// </summary>
+    public string? AppliedOverrideId { get; }
 
     /// <summary>
     /// Gets the operator-facing suppression reason when one is available.

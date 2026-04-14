@@ -154,6 +154,15 @@ public static class EngineWebApplicationExtensions
                 return candidate is null ? Results.NotFound() : Results.Ok(candidate);
             })
             .WithName("GetCephalonRestEndpointCandidate");
+        engineGroup.MapGet("/rest-endpoint-overrides", ([FromServices] IRestEndpointOverrideRuntimeCatalog catalog) => TypedResults.Ok(catalog.OverrideRules))
+            .WithName("GetCephalonRestEndpointOverrides");
+        engineGroup.MapGet("/rest-endpoint-overrides/{overrideId}", (string overrideId, [FromServices] IRestEndpointOverrideRuntimeCatalog catalog) =>
+            {
+                var restEndpointOverride = catalog.GetById(overrideId);
+
+                return restEndpointOverride is null ? Results.NotFound() : Results.Ok(restEndpointOverride);
+            })
+            .WithName("GetCephalonRestEndpointOverride");
         engineGroup.MapGet("/rest-endpoint-suppressions", ([FromServices] IRestEndpointSuppressionRuntimeCatalog catalog) => TypedResults.Ok(catalog.Suppressions))
             .WithName("GetCephalonRestEndpointSuppressions");
         engineGroup.MapGet("/rest-endpoint-suppressions/{suppressionId}", (string suppressionId, [FromServices] IRestEndpointSuppressionRuntimeCatalog catalog) =>

@@ -308,6 +308,8 @@ Current helper behavior:
   placeholder present in the profile route template
 - lets explicit group `.ApiVersion(...)` override profile-declared candidate versions, while
   conflicting profile-declared versions in the same group fail fast until the module resolves them
+- keeps that explicit group `.ApiVersion(...)` authoritative even when the host config supplies a
+  shorthand-only `RestApi:Overrides:*:ApiVersionMajor` rule for the same candidate
 - keeps runtime publication on the same module-owned path with `sourceKind = module-dsl`, while
   `/engine/rest-endpoints` exposes `metadata.authoringStyle = behavior-module-profile` for the
   profile shorthand path, `behavior-module-generated` for the generated shorthand path,
@@ -364,6 +366,12 @@ Current helper behavior:
   `RestApi:Suppressions`, which runs before precedence resolution, records the governing rule id on
   the suppressed candidate through `SuppressedBySuppressionId`, and intentionally leaves explicit
   module DSL or manual module-owned REST endpoints untouched
+- ASP.NET Core hosts can now also override the effective API major version for descriptor-backed
+  shorthand candidates through `RestApi:Overrides`, which currently supports only
+  `ApiVersionMajor`, records the applied rule id through `AppliedOverrideId`, rewrites the
+  shorthand candidate's `/v{major}` route segment and OpenAPI document name together, and still
+  leaves explicit module DSL/manual routes plus shorthand groups with explicit `.ApiVersion(...)`
+  untouched
 
 ## REST runtime catalog and collision guard
 
@@ -397,6 +405,13 @@ The host now also publishes the configured shorthand-suppression rules themselve
 - `GET /engine/rest-endpoint-suppressions/{suppressionId}`
 - `RuntimeIntrospectionSnapshot.RestEndpointSuppressions`
 
+The host now also publishes the configured shorthand-override rules themselves through:
+
+- `IRestEndpointOverrideRuntimeCatalog`
+- `GET /engine/rest-endpoint-overrides`
+- `GET /engine/rest-endpoint-overrides/{overrideId}`
+- `RuntimeIntrospectionSnapshot.RestEndpointOverrides`
+
 Candidate entries answer the projected endpoint shape, authoring style, precedence rank, published
 versus suppressed status, and when suppression occurs the winning candidate id plus an
 operator-facing suppression reason. Today that surface covers the normalized module-owned behavior
@@ -410,15 +425,20 @@ configuration rule hid the candidate instead of another candidate winning.
 Current governance baseline:
 
 - configure shorthand suppression through `RestApi:Suppressions`
+- configure shorthand API-version override through `RestApi:Overrides`
 - target one or more `Behaviors`, `Modules`, and optional `AuthoringStyles`
 - rules that omit both `Behaviors` and `Modules` now fail fast instead of suppressing every
   shorthand candidate implicitly
+- override rules also require a positive `ApiVersionMajor`
 - omit `AuthoringStyles` to suppress both shorthand styles by default:
   `behavior-module-profile` and `behavior-module-generated`
 - when more than one rule matches, Cephalon prefers the more specific rule:
   `behavior+module > behavior > module`, then narrower authoring-style scope, then rule id
-- keep the baseline suppression-only for now; route-shape, method, binding, and document overrides
-  remain later work
+- shorthand groups that already declare `.ApiVersion(...)` explicitly remain authoritative over
+  host-level `RestApi:Overrides`
+- the current override slice rewrites only the effective API major version, keeping the `/v{major}`
+  route segment and OpenAPI document name aligned
+- route-shape, method, and binding overrides remain later work
 
 Example:
 
@@ -429,6 +449,22 @@ Example:
       "prefer-generated-cart": {
         "Behaviors": [ "showcase.cart.get" ],
         "AuthoringStyles": [ "behavior-module-profile" ]
+      }
+    }
+  }
+}
+```
+
+Version-override example:
+
+```json
+{
+  "RestApi": {
+    "Overrides": {
+      "cart-v2-profile": {
+        "Behaviors": [ "showcase.cart.get" ],
+        "AuthoringStyles": [ "behavior-module-profile" ],
+        "ApiVersionMajor": 2
       }
     }
   }

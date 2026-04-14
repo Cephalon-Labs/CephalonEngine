@@ -27,7 +27,8 @@ internal static class RestBehaviorProjectionMaterializer
             module.Descriptor,
             ApiRoutesOptions.FromConfiguration(configuration),
             projection.Groups,
-            governanceOptions.Suppressions);
+            governanceOptions.Suppressions,
+            governanceOptions.Overrides);
 
         foreach (var candidate in candidates)
         {
@@ -36,18 +37,17 @@ internal static class RestBehaviorProjectionMaterializer
 
         for (var groupIndex = 0; groupIndex < projection.Groups.Count; groupIndex++)
         {
-            var publishedEndpointProjections = candidates
+            var publishedCandidates = candidates
                 .Where(candidate =>
                     candidate.GroupIndex == groupIndex &&
                     candidate.Candidate.Status == RestEndpointCandidateStatus.Published)
-                .Select(static candidate => candidate.EndpointProjection)
                 .ToArray();
-            if (publishedEndpointProjections.Length == 0)
+            if (publishedCandidates.Length == 0)
             {
                 continue;
             }
 
-            MapGroup(endpoints, module, projection.Groups[groupIndex], publishedEndpointProjections);
+            MapGroup(endpoints, module, projection.Groups[groupIndex], publishedCandidates);
         }
     }
 
@@ -55,39 +55,44 @@ internal static class RestBehaviorProjectionMaterializer
         IEndpointRouteBuilder endpoints,
         IModule module,
         RestBehaviorRouteGroupProjection projection,
-        IReadOnlyList<RestBehaviorEndpointProjection> publishedEndpointProjections)
+        IReadOnlyList<ResolvedRestBehaviorEndpointProjectionCandidate> publishedCandidates)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
         ArgumentNullException.ThrowIfNull(module);
         ArgumentNullException.ThrowIfNull(projection);
-        ArgumentNullException.ThrowIfNull(publishedEndpointProjections);
+        ArgumentNullException.ThrowIfNull(publishedCandidates);
 
-        var group = endpoints.MapBehaviorRestGroup(module, projection.Prefix);
-        group.UseRuntimeSourceKind(RestEndpointRuntimeMetadata.ModuleDslSourceKind);
-        group.UseRuntimeAuthoringStyle(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle);
-        if (!string.IsNullOrWhiteSpace(projection.TagName))
+        foreach (var versionGroup in publishedCandidates
+                     .GroupBy(static candidate => candidate.Candidate.ProjectedEndpoint.ApiVersionMajor)
+                     .OrderBy(static group => group.Key ?? int.MinValue))
         {
-            group.WithTagName(projection.TagName);
-        }
+            var group = endpoints.MapBehaviorRestGroup(module, projection.Prefix);
+            group.UseRuntimeSourceKind(RestEndpointRuntimeMetadata.ModuleDslSourceKind);
+            group.UseRuntimeAuthoringStyle(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle);
+            if (!string.IsNullOrWhiteSpace(projection.TagName))
+            {
+                group.WithTagName(projection.TagName);
+            }
 
-        if (projection.HasExplicitTagDescription)
-        {
-            group.WithTagDescription(projection.TagDescription);
-        }
+            if (projection.HasExplicitTagDescription)
+            {
+                group.WithTagDescription(projection.TagDescription);
+            }
 
-        if (projection.ApiVersionMajor.HasValue)
-        {
-            group.ApiVersion(projection.ApiVersionMajor.Value);
-        }
+            if (versionGroup.Key.HasValue)
+            {
+                group.ApiVersion(versionGroup.Key.Value);
+            }
 
-        foreach (var convention in projection.GroupConventions)
-        {
-            convention(group.Routes);
-        }
+            foreach (var convention in projection.GroupConventions)
+            {
+                convention(group.Routes);
+            }
 
-        foreach (var endpointProjection in publishedEndpointProjections)
-        {
-            endpointProjection.Apply(group);
+            foreach (var endpointProjection in versionGroup.Select(static candidate => candidate.EndpointProjection))
+            {
+                endpointProjection.Apply(group);
+            }
         }
     }
 }

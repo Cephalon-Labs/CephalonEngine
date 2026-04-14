@@ -101,6 +101,8 @@ public static class EngineWebApplicationBuilderExtensions
             serviceProvider.GetRequiredService<AspNetCoreRestEndpointCandidateRuntimeCatalog>());
         var restApiGovernanceOptions = RestApiGovernanceOptions.FromConfiguration(builder.Configuration);
         builder.Services.TryAddSingleton(restApiGovernanceOptions);
+        builder.Services.TryAddSingleton<IRestEndpointOverrideRuntimeCatalog>(_ =>
+            new AspNetCoreRestEndpointOverrideRuntimeCatalog(restApiGovernanceOptions));
         builder.Services.TryAddSingleton<IRestEndpointSuppressionRuntimeCatalog>(_ =>
             new AspNetCoreRestEndpointSuppressionRuntimeCatalog(restApiGovernanceOptions));
         builder.Services.TryAddSingleton<AspNetCoreRestEndpointRuntimeCatalog>();
