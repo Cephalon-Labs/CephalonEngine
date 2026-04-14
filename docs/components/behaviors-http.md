@@ -413,6 +413,14 @@ The same runtime answer now has a companion candidate catalog for precedence vis
 - `GET /engine/rest-endpoint-candidates/{candidateId}`
 - `RuntimeIntrospectionSnapshot.RestEndpointCandidates`
 
+The same host now also publishes the grouped publication answer for those same behavior-backed
+candidates:
+
+- `IRestEndpointPublicationGroupRuntimeCatalog`
+- `GET /engine/rest-endpoint-publication-groups`
+- `GET /engine/rest-endpoint-publication-groups/{behaviorId}`
+- `RuntimeIntrospectionSnapshot.RestEndpointPublicationGroups`
+
 The host now also publishes the configured shorthand-suppression rules themselves through:
 
 - `IRestEndpointSuppressionRuntimeCatalog`
@@ -434,6 +442,12 @@ and when suppression occurs the winning candidate id plus an operator-facing sup
 Today that surface covers the normalized module-owned behavior projection path, including explicit
 module DSL mappings, `MapProfile<TBehavior>()` shorthand consumption, and
 `MapGeneratedProfiles(...)` shorthand consumption.
+
+Publication-group entries now answer that same runtime truth one behavior at a time: the ordered
+candidate set, the published candidate ids that survived with the winning precedence rank, the
+precedence-suppressed candidate ids, and the governance-suppressed candidate ids. That grouped
+surface keeps multi-source shorthand stories readable even when one behavior has explicit DSL,
+profile shorthand, generated shorthand, or selector-scoped governance interacting at once.
 
 When suppression comes from host governance instead of precedence, the runtime now uses
 `SuppressedBySuppressionId` rather than `SuppressedByCandidateId` so operators can see that a

@@ -118,6 +118,11 @@ public sealed record RuntimeIntrospectionSnapshot(
     public IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> RestEndpointCandidates { get; init; } = [];
 
     /// <summary>
+    /// Gets the grouped module-owned REST publication answers visible to the runtime at the time the snapshot was created.
+    /// </summary>
+    public IReadOnlyList<RestEndpointPublicationGroupDescriptor> RestEndpointPublicationGroups { get; init; } = [];
+
+    /// <summary>
     /// Gets the host-level REST endpoint override rules visible to the runtime at the time the snapshot was created.
     /// </summary>
     public IReadOnlyList<RestEndpointOverrideDescriptor> RestEndpointOverrides { get; init; } = [];

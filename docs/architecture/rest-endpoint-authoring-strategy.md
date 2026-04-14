@@ -2,7 +2,7 @@
 
 Decision baseline date: `April 14, 2026`
 
-Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`, `ENG-058-T67` / GitHub issue `#332`, `ENG-058-T68` / GitHub issue `#333`, `ENG-058-T69` / GitHub issue `#334`, `ENG-058-T70` / GitHub issue `#335`, `ENG-058-T71` / GitHub issue `#336`, `ENG-058-T72` / GitHub issue `#337`, `ENG-058-T73` / GitHub issue `#338`, `ENG-058-T74` / GitHub issue `#339`, `ENG-058-T75` / GitHub issue `#340`, `ENG-058-T76` / GitHub issue `#341`, `ENG-058-T77` / GitHub issue `#342`, `ENG-058-T78` / GitHub issue `#343`, `ENG-058-T79` / GitHub issue `#344`
+Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`, `ENG-058-T67` / GitHub issue `#332`, `ENG-058-T68` / GitHub issue `#333`, `ENG-058-T69` / GitHub issue `#334`, `ENG-058-T70` / GitHub issue `#335`, `ENG-058-T71` / GitHub issue `#336`, `ENG-058-T72` / GitHub issue `#337`, `ENG-058-T73` / GitHub issue `#338`, `ENG-058-T74` / GitHub issue `#339`, `ENG-058-T75` / GitHub issue `#340`, `ENG-058-T76` / GitHub issue `#341`, `ENG-058-T77` / GitHub issue `#342`, `ENG-058-T78` / GitHub issue `#343`, `ENG-058-T79` / GitHub issue `#344`, `ENG-058-T80` / GitHub issue `#345`
 
 Cross-references: `docs/components/behaviors-http.md`, `docs/module-authoring.md`, `docs/architecture.md`, `docs/architecture-review-2026-04.md`, `docs/project-memory.md`
 
@@ -190,6 +190,15 @@ Status update:
   `ReplaceExplicit` behavior remains the default when `BindingMode` is omitted, and the runtime now
   keeps that merge-versus-replace governance truth visible through `/engine/rest-endpoint-overrides`
   plus `snapshot.RestEndpointOverrides`
+- the next grouped publication-visibility follow-through is now shipped through `ENG-058-T80`:
+  `Cephalon.Abstractions` now also exposes `IRestEndpointPublicationGroupRuntimeCatalog` plus
+  `RestEndpointPublicationGroupDescriptor`, `Cephalon.AspNetCore` now publishes
+  `/engine/rest-endpoint-publication-groups`,
+  `/engine/rest-endpoint-publication-groups/{behaviorId}`, and
+  `snapshot.RestEndpointPublicationGroups`, and the host now groups the existing candidate-level
+  truth per behavior so operators can inspect published candidates, precedence-suppressed
+  candidates, governance-suppressed candidates, the winning precedence rank when one exists, and
+  the ordered candidate set without manually joining several runtime surfaces
 - the next low-code generated module-owned shorthand is now shipped through `ENG-058-T67`:
   `IRestBehaviorEndpointGroupBuilder.MapGeneratedProfiles()` and
   `MapGeneratedProfiles(string behaviorIdPrefix)` let an owning module opt into profile-backed
@@ -407,6 +416,10 @@ Recommended runtime surface:
 - `/engine/rest-endpoint-candidates`
 - `/engine/rest-endpoint-candidates/{candidateId}`
 - `snapshot.RestEndpointCandidates`
+- `IRestEndpointPublicationGroupRuntimeCatalog`
+- `/engine/rest-endpoint-publication-groups`
+- `/engine/rest-endpoint-publication-groups/{behaviorId}`
+- `snapshot.RestEndpointPublicationGroups`
 - fail-fast startup validation on duplicate resolved public `HTTP method + route pattern`
 
 The shipped baseline now answers at least:
@@ -433,9 +446,12 @@ projections:
 - the winning candidate id when suppression occurs
 - an operator-facing suppression reason
 - the projected endpoint shape each candidate would publish if it won
+- the grouped published-versus-suppressed answer per behavior, including published candidate ids,
+  precedence-suppressed candidate ids, governance-suppressed candidate ids, the winning precedence
+  rank when one exists, and the ordered candidate set
 
 Broader generated or convention-backed low-code projections should extend that same candidate
-surface instead of inventing a second precedence-answer model.
+surface plus grouped publication answer instead of inventing a second precedence-answer model.
 
 This keeps shorthand authoring compatible with Cephalon's broader requirement that runtime policy,
 composition, and public surface decisions stay introspectable.
@@ -670,9 +686,17 @@ The following points are durable enough to keep outside thread-local context.
 - the shipped precedence-visibility baseline now also exposes candidate publication truth through
   `IRestEndpointCandidateRuntimeCatalog`, `/engine/rest-endpoint-candidates`,
   `/engine/rest-endpoint-candidates/{candidateId}`, and `snapshot.RestEndpointCandidates`
+- the shipped precedence-visibility baseline now also exposes grouped publication truth through
+  `IRestEndpointPublicationGroupRuntimeCatalog`, `/engine/rest-endpoint-publication-groups`,
+  `/engine/rest-endpoint-publication-groups/{behaviorId}`, and
+  `snapshot.RestEndpointPublicationGroups`
 - those candidate entries now keep the original shorthand source shape visible through
   `RestEndpointCandidateRuntimeDescriptor.OriginalProjection` while `ProjectedEndpoint` continues
   to answer the final effective mapped route, version, method, and binding shape
+- those grouped publication entries now keep the behavior-level published-versus-suppressed story
+  visible through published candidate ids, precedence-suppressed candidate ids,
+  governance-suppressed candidate ids, the winning precedence rank when one exists, and the
+  ordered candidate set
 - the shipped governance baseline now also exposes configured suppression-rule truth through
   `IRestEndpointSuppressionRuntimeCatalog`, `/engine/rest-endpoint-suppressions`,
   `/engine/rest-endpoint-suppressions/{suppressionId}`, and `snapshot.RestEndpointSuppressions`

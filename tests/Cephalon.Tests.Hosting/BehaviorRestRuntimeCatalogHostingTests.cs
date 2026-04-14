@@ -1553,6 +1553,182 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonExposesRestEndpointPublicationGroupsForThreeWayPrecedence()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "12";
+        builder.Configuration["OpenApi:DefaultVersion"] = "12";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new GeneratedThreeWaySuppressionRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var groups = await client.GetFromJsonAsync<RestEndpointPublicationGroupDescriptor[]>("/engine/rest-endpoint-publication-groups");
+        var groupByBehavior = await client.GetFromJsonAsync<RestEndpointPublicationGroupDescriptor>(
+            "/engine/rest-endpoint-publication-groups/tests.rest.generated.threeway.lookup");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(candidates);
+        Assert.NotNull(groups);
+        Assert.NotNull(groupByBehavior);
+        Assert.NotNull(snapshot);
+
+        var behaviorCandidates = candidates
+            .Where(static candidate => string.Equals(candidate.ProjectedEndpoint.BehaviorId, "tests.rest.generated.threeway.lookup", StringComparison.Ordinal))
+            .ToArray();
+        var published = Assert.Single(behaviorCandidates, static candidate => candidate.Status == RestEndpointCandidateStatus.Published);
+        var suppressed = behaviorCandidates
+            .Where(static candidate => candidate.Status == RestEndpointCandidateStatus.Suppressed)
+            .ToArray();
+
+        var group = Assert.Single(groups, static item =>
+            string.Equals(item.BehaviorId, "tests.rest.generated.threeway.lookup", StringComparison.Ordinal));
+        Assert.Equal(2, group.WinningPrecedenceRank);
+        Assert.Single(group.PublishedCandidateIds);
+        Assert.Equal(published.Id, group.PublishedCandidateIds[0]);
+        Assert.Equal(2, group.PrecedenceSuppressedCandidateIds.Count);
+        Assert.Empty(group.GovernanceSuppressedCandidateIds);
+        Assert.Equal(3, group.Candidates.Count);
+        Assert.Equal(group.BehaviorId, groupByBehavior.BehaviorId);
+        Assert.Equal(group.PublishedCandidateIds, groupByBehavior.PublishedCandidateIds);
+        Assert.Equal(group.PrecedenceSuppressedCandidateIds, groupByBehavior.PrecedenceSuppressedCandidateIds);
+        Assert.Contains(suppressed, candidate =>
+            group.PrecedenceSuppressedCandidateIds.Contains(candidate.Id, StringComparer.Ordinal));
+        Assert.Contains(snapshot.RestEndpointPublicationGroups, item =>
+            string.Equals(item.BehaviorId, group.BehaviorId, StringComparison.Ordinal) &&
+            item.PublishedCandidateIds.Count == 1 &&
+            string.Equals(item.PublishedCandidateIds[0], published.Id, StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task MapCephalonExposesRestEndpointPublicationGroupsForGovernanceSuppression()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.Configuration["RestApi:Suppressions:prefer-generated:Behaviors:0"] = "tests.rest.generated.threeway.lookup";
+        builder.Configuration["RestApi:Suppressions:prefer-generated:AuthoringStyles:0"] = RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle;
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new GeneratedProfileGovernanceRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var groups = await client.GetFromJsonAsync<RestEndpointPublicationGroupDescriptor[]>("/engine/rest-endpoint-publication-groups");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(candidates);
+        Assert.NotNull(groups);
+        Assert.NotNull(snapshot);
+
+        var behaviorCandidates = candidates
+            .Where(static candidate => string.Equals(candidate.ProjectedEndpoint.BehaviorId, "tests.rest.generated.threeway.lookup", StringComparison.Ordinal))
+            .ToArray();
+        var published = Assert.Single(behaviorCandidates, static candidate => candidate.Status == RestEndpointCandidateStatus.Published);
+        var governanceSuppressed = Assert.Single(behaviorCandidates, static candidate =>
+            candidate.Status == RestEndpointCandidateStatus.Suppressed &&
+            string.Equals(candidate.SuppressedBySuppressionId, "prefer-generated", StringComparison.Ordinal));
+
+        var group = Assert.Single(groups, static item =>
+            string.Equals(item.BehaviorId, "tests.rest.generated.threeway.lookup", StringComparison.Ordinal));
+        Assert.Equal(4, group.WinningPrecedenceRank);
+        Assert.Single(group.PublishedCandidateIds);
+        Assert.Equal(published.Id, group.PublishedCandidateIds[0]);
+        Assert.Empty(group.PrecedenceSuppressedCandidateIds);
+        Assert.Single(group.GovernanceSuppressedCandidateIds);
+        Assert.Equal(governanceSuppressed.Id, group.GovernanceSuppressedCandidateIds[0]);
+        Assert.Equal(2, group.Candidates.Count);
+        Assert.Contains(snapshot.RestEndpointPublicationGroups, item =>
+            string.Equals(item.BehaviorId, group.BehaviorId, StringComparison.Ordinal) &&
+            item.GovernanceSuppressedCandidateIds.Count == 1 &&
+            string.Equals(item.GovernanceSuppressedCandidateIds[0], governanceSuppressed.Id, StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task MapCephalonExposesRestEndpointPublicationGroupsWhenSameRankCandidatesRemainPublished()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:EnabledVersions:1"] = "7";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileSelectorRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var groups = await client.GetFromJsonAsync<RestEndpointPublicationGroupDescriptor[]>("/engine/rest-endpoint-publication-groups");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(candidates);
+        Assert.NotNull(groups);
+        Assert.NotNull(snapshot);
+
+        var behaviorCandidates = candidates
+            .Where(static candidate => string.Equals(candidate.ProjectedEndpoint.BehaviorId, "tests.rest.profile.selector.bindings", StringComparison.Ordinal))
+            .ToArray();
+        Assert.Equal(2, behaviorCandidates.Length);
+        Assert.All(behaviorCandidates, static candidate => Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status));
+
+        var group = Assert.Single(groups, static item =>
+            string.Equals(item.BehaviorId, "tests.rest.profile.selector.bindings", StringComparison.Ordinal));
+        Assert.Equal(3, group.WinningPrecedenceRank);
+        Assert.Equal(2, group.PublishedCandidateIds.Count);
+        Assert.Empty(group.PrecedenceSuppressedCandidateIds);
+        Assert.Empty(group.GovernanceSuppressedCandidateIds);
+        Assert.Equal(2, group.Candidates.Count);
+        Assert.All(
+            behaviorCandidates,
+            candidate => Assert.Contains(candidate.Id, group.PublishedCandidateIds, StringComparer.Ordinal));
+        Assert.Contains(snapshot.RestEndpointPublicationGroups, item =>
+            string.Equals(item.BehaviorId, group.BehaviorId, StringComparison.Ordinal) &&
+            item.PublishedCandidateIds.Count == 2);
+    }
+
+    [Fact]
     public async Task MapCephalonExposesRestEndpointCandidatesAndSuppressesLowerPrecedenceProfileMappings()
     {
         var builder = WebApplication.CreateBuilder();

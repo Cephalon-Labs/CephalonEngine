@@ -428,10 +428,12 @@ Current helper behavior:
   `metadata.authoringStyle = behavior-module-generated`
 - when the same behavior is mapped through both explicit module DSL and shorthand publication, the
   explicit DSL route now wins by default while the lower-precedence shorthand candidate remains
-  visible through `/engine/rest-endpoint-candidates` and `snapshot.RestEndpointCandidates`
+  visible through `/engine/rest-endpoint-candidates`, `snapshot.RestEndpointCandidates`,
+  `/engine/rest-endpoint-publication-groups`, and `snapshot.RestEndpointPublicationGroups`
 - when the same behavior is mapped through both `MapProfile<TBehavior>()` and
   `MapGeneratedProfiles(...)`, the explicit per-behavior `MapProfile<TBehavior>()` route wins by
-  default while the generated candidate remains visible through the same candidate catalog
+  default while the generated candidate remains visible through the same candidate and grouped
+  publication catalogs
 - keeps `MapAdditionalEndpoints(...)` as the advanced escape hatch for manual Minimal API work that
   falls outside the default behavior REST DSL; custom endpoints should still declare ownership first
   through `behaviors.Internal<TBehavior>()`, and those manual module-owned routes now still join the
@@ -458,8 +460,10 @@ actions are applied, now supports a positive `ApiVersionMajor`, a supported HTTP
 relative `Pattern`, and/or explicit `Bindings`, records the applied rule through
 `AppliedOverrideId` in `/engine/rest-endpoint-candidates`, keeps the original shorthand source
 shape visible there through `OriginalProjection` while `ProjectedEndpoint` carries the final
-effective mapped answer, and intentionally leaves explicit module DSL/manual routes plus shorthand
-groups with explicit `.ApiVersion(...)` authoritative for version selection. When `Bindings` are supplied, the override
+effective mapped answer, keeps the grouped behavior-level publication story visible through
+`/engine/rest-endpoint-publication-groups`, and intentionally leaves explicit module DSL/manual
+routes plus shorthand groups with explicit `.ApiVersion(...)` authoritative for version selection.
+When `Bindings` are supplied, the override
 uses default `ReplaceExplicit` mode unless `BindingMode = MergeExplicit` is set explicitly. Replace
 mode swaps the shorthand candidate's full explicit binding plan, while merge mode upserts only the
 named explicit bindings by property name and keeps untouched explicit bindings intact; both modes

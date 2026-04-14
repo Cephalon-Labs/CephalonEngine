@@ -57,14 +57,12 @@
 - `Technologies/ITechnologyRuntimeCatalog.cs`
 - `Transports/IRestEndpointCandidateRuntimeCatalog.cs`
 - `Transports/IRestEndpointCandidateRuntimeRegistry.cs`
+- `Transports/IRestEndpointPublicationGroupRuntimeCatalog.cs`
 - `Transports/RestEndpointCandidateProjectionDescriptor.cs`
 - `Transports/RestEndpointCandidateRuntimeDescriptor.cs`
 - `Transports/RestEndpointCandidateStatus.cs`
-- `Transports/IRestEndpointCandidateRuntimeCatalog.cs`
+- `Transports/RestEndpointPublicationGroupDescriptor.cs`
 - `Transports/IRestEndpointRuntimeCatalog.cs`
-- `Transports/RestEndpointCandidateProjectionDescriptor.cs`
-- `Transports/RestEndpointCandidateRuntimeDescriptor.cs`
-- `Transports/RestEndpointCandidateStatus.cs`
 - `Transports/RestEndpointRuntimeDescriptor.cs`
 - `Transports/RestEndpointBindingDescriptor.cs`
 - `Transports/RestEndpointBindingSource.cs`
@@ -153,10 +151,12 @@ through one host-agnostic transport contract. That keeps the runtime answer tran
 of behavior-package-owned and avoids treating `metadata` dictionaries as the canonical binding-plan
 surface. The same namespace now also owns `IRestEndpointCandidateRuntimeCatalog`,
 `IRestEndpointCandidateRuntimeRegistry`, `RestEndpointCandidateProjectionDescriptor`,
-`RestEndpointCandidateRuntimeDescriptor`, and `RestEndpointCandidateStatus` so hosts can surface
-publication-versus-suppression truth for module-owned REST candidates without inventing an
-ASP.NET Core-specific precedence contract, and so operator tooling can compare the original
-shorthand projection shape with the final effective projected endpoint explicitly.
+`RestEndpointCandidateRuntimeDescriptor`, `RestEndpointCandidateStatus`,
+`IRestEndpointPublicationGroupRuntimeCatalog`, and `RestEndpointPublicationGroupDescriptor` so
+hosts can surface both candidate-level and grouped publication truth for module-owned REST
+candidates without inventing an ASP.NET Core-specific precedence contract, and so operator tooling
+can compare the original shorthand projection shape with the final effective projected endpoint
+explicitly while also seeing the grouped published-versus-suppressed answer per behavior.
 
 ## Related docs
 

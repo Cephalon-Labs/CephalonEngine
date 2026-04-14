@@ -34,6 +34,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
         var eventDispatchRuntimeCatalog = serviceProvider.GetService(typeof(IEventDispatchRuntimeCatalog)) as IEventDispatchRuntimeCatalog;
         var rateLimitingRuntimeCatalog = serviceProvider.GetService(typeof(IRateLimitingRuntimeCatalog)) as IRateLimitingRuntimeCatalog;
         var restEndpointCandidateRuntimeCatalog = serviceProvider.GetService(typeof(IRestEndpointCandidateRuntimeCatalog)) as IRestEndpointCandidateRuntimeCatalog;
+        var restEndpointPublicationGroupRuntimeCatalog = serviceProvider.GetService(typeof(IRestEndpointPublicationGroupRuntimeCatalog)) as IRestEndpointPublicationGroupRuntimeCatalog;
         var restEndpointOverrideRuntimeCatalog = serviceProvider.GetService(typeof(IRestEndpointOverrideRuntimeCatalog)) as IRestEndpointOverrideRuntimeCatalog;
         var restEndpointRuntimeCatalog = serviceProvider.GetService(typeof(IRestEndpointRuntimeCatalog)) as IRestEndpointRuntimeCatalog;
         var restEndpointSuppressionRuntimeCatalog = serviceProvider.GetService(typeof(IRestEndpointSuppressionRuntimeCatalog)) as IRestEndpointSuppressionRuntimeCatalog;
@@ -62,6 +63,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
             RateLimitingPolicies = rateLimitingRuntimeCatalog?.Policies ?? [],
             RestEndpoints = restEndpointRuntimeCatalog?.Endpoints ?? [],
             RestEndpointCandidates = restEndpointCandidateRuntimeCatalog?.Candidates ?? [],
+            RestEndpointPublicationGroups = restEndpointPublicationGroupRuntimeCatalog?.Groups ?? [],
             RestEndpointOverrides = restEndpointOverrideRuntimeCatalog?.OverrideRules ?? [],
             RestEndpointSuppressions = restEndpointSuppressionRuntimeCatalog?.Suppressions ?? [],
             BehaviorResiliencePolicies = behaviorResilienceRuntimeCatalog?.Policies ?? [],
