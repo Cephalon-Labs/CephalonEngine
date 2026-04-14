@@ -501,6 +501,38 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverAppliesPatternOverrideToShorthandCandidates()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        builder.Group("/tests/generated-pattern-override")
+            .MapGeneratedProfiles("tests.generated.projection.precedence");
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.generated-pattern-override",
+                "Generated Pattern Override Module",
+                "Exercises shorthand route-pattern override resolution.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "prefer-lookup-path",
+                    behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                    pattern: "/lookup/{cartId}")
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Equal("prefer-lookup-path", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal("/lookup/{cartId}", candidate.Candidate.ProjectedEndpoint.Metadata["relativePattern"]);
+        Assert.Equal("/api/v10/tests/generated-pattern-override/lookup/{cartId}", candidate.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Equal("v10", candidate.Candidate.ProjectedEndpoint.OpenApiDocumentName);
+        Assert.Equal(10, candidate.Candidate.ProjectedEndpoint.ApiVersionMajor);
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverKeepsExplicitGroupApiVersionAuthoritativeOverHostOverride()
     {
         var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
@@ -564,6 +596,67 @@ public sealed class BehaviorRestProjectionTests
         Assert.Equal("/api/v8/tests/generated-method-override-explicit/{cartId}", candidate.Candidate.ProjectedEndpoint.RoutePattern);
         Assert.Equal("v8", candidate.Candidate.ProjectedEndpoint.OpenApiDocumentName);
         Assert.Equal(8, candidate.Candidate.ProjectedEndpoint.ApiVersionMajor);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverLetsPatternOverrideApplyWhileKeepingExplicitGroupApiVersionAuthoritative()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        builder.Group("/tests/generated-pattern-override-explicit")
+            .ApiVersion(8)
+            .MapGeneratedProfiles("tests.generated.projection.precedence");
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.generated-pattern-override-explicit",
+                "Generated Pattern Override Explicit Module",
+                "Exercises pattern override resolution when the owning group already chose its API version explicitly.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "prefer-lookup-v6",
+                    behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                    apiVersionMajor: 6,
+                    pattern: "/lookup/{cartId}")
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Equal("prefer-lookup-v6", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal("/lookup/{cartId}", candidate.Candidate.ProjectedEndpoint.Metadata["relativePattern"]);
+        Assert.Equal("/api/v8/tests/generated-pattern-override-explicit/lookup/{cartId}", candidate.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Equal("v8", candidate.Candidate.ProjectedEndpoint.OpenApiDocumentName);
+        Assert.Equal(8, candidate.Candidate.ProjectedEndpoint.ApiVersionMajor);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverRejectsPatternOverridesThatChangeRoutePlaceholderSet()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        builder.Group("/tests/generated-pattern-override-invalid")
+            .MapGeneratedProfiles("tests.generated.projection.precedence");
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+                new ModuleDescriptor(
+                    "tests.rest.generated-pattern-override-invalid",
+                    "Generated Pattern Override Invalid Module",
+                    "Exercises fail-fast validation for placeholder-changing pattern overrides.",
+                    version: "1.0.0"),
+                new ApiRoutesOptions(),
+                builder.Build().Groups,
+                overrides:
+                [
+                    new RestEndpointOverrideOptions(
+                        id: "prefer-renamed-placeholder",
+                        behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                        pattern: "/lookup/{id}")
+                ]));
+
+        Assert.Contains("same route-placeholder set", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -632,6 +725,18 @@ public sealed class BehaviorRestProjectionTests
                 method: "HEAD"));
 
         Assert.Contains("supported methods", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void RestEndpointOverrideOptionsRejectPatternsWithoutLeadingSlash()
+    {
+        var exception = Assert.Throws<ArgumentException>(() =>
+            new RestEndpointOverrideOptions(
+                id: "invalid",
+                behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                pattern: "lookup/{cartId}"));
+
+        Assert.Contains("start with '/'", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

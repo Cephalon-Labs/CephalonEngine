@@ -367,13 +367,14 @@ Current helper behavior:
   `RestApi:Suppressions`, which runs before precedence resolution, records the governing rule id on
   the suppressed candidate through `SuppressedBySuppressionId`, and intentionally leaves explicit
   module DSL or manual module-owned REST endpoints untouched
-- ASP.NET Core hosts can now also override the effective API major version or HTTP method for
-  descriptor-backed shorthand candidates through `RestApi:Overrides`, which now supports
-  `ApiVersionMajor` and `Method`, records the applied rule id through `AppliedOverrideId`,
-  rewrites the shorthand candidate's `/v{major}` route segment and OpenAPI document name together
-  when version changes, keeps the mapped endpoint method aligned when method changes, and still
-  leaves explicit module DSL/manual routes plus shorthand groups with explicit `.ApiVersion(...)`
-  authoritative for version selection
+- ASP.NET Core hosts can now also override the effective API major version, HTTP method, or
+  placeholder-preserving relative route pattern for descriptor-backed shorthand candidates through
+  `RestApi:Overrides`, which now supports `ApiVersionMajor`, `Method`, and `Pattern`, records the
+  applied rule id through `AppliedOverrideId`, rewrites the shorthand candidate's `/v{major}`
+  route segment and OpenAPI document name together when version changes, keeps the mapped endpoint
+  method aligned when method changes, keeps the mapped endpoint route aligned when pattern
+  changes, and still leaves explicit module DSL/manual routes plus shorthand groups with explicit
+  `.ApiVersion(...)` authoritative for version selection
 
 ## REST runtime catalog and collision guard
 
@@ -427,23 +428,25 @@ configuration rule hid the candidate instead of another candidate winning.
 Current governance baseline:
 
 - configure shorthand suppression through `RestApi:Suppressions`
-- configure shorthand API-version and HTTP-method overrides through `RestApi:Overrides`
+- configure shorthand API-version, HTTP-method, and placeholder-preserving route-pattern overrides
+  through `RestApi:Overrides`
 - target one or more `Behaviors`, `Modules`, and optional `AuthoringStyles`
 - rules that omit both `Behaviors` and `Modules` now fail fast instead of suppressing every
   shorthand candidate implicitly
 - override rules must define at least one override action, require a positive `ApiVersionMajor`
-  when that action is present, and accept only `GET`, `POST`, `PUT`, `PATCH`, or `DELETE` for
-  `Method`
+  when that action is present, accept only `GET`, `POST`, `PUT`, `PATCH`, or `DELETE` for
+  `Method`, and require `Pattern` to be a valid relative ASP.NET Core route pattern
 - omit `AuthoringStyles` to suppress both shorthand styles by default:
   `behavior-module-profile` and `behavior-module-generated`
 - when more than one rule matches, Cephalon prefers the more specific rule:
   `behavior+module > behavior > module`, then narrower authoring-style scope, then rule id
 - shorthand groups that already declare `.ApiVersion(...)` explicitly remain authoritative over
-  host-level version rewrites, while shorthand method overrides can still apply
-- the current override slice rewrites only the effective API major version and/or HTTP method,
-  keeping the `/v{major}` route segment, OpenAPI document name, mapped endpoint, and runtime
-  catalogs aligned
-- route-shape and binding overrides remain later work
+  host-level version rewrites, while shorthand method and placeholder-preserving pattern overrides
+  can still apply
+- the current override slice rewrites only the effective API major version, HTTP method, and/or
+  placeholder-preserving relative route pattern, keeping the `/v{major}` route segment, OpenAPI
+  document name, mapped endpoint, and runtime catalogs aligned
+- placeholder-changing route-shape and binding overrides remain later work
 
 Example:
 
@@ -460,7 +463,7 @@ Example:
 }
 ```
 
-Version-override example:
+Override example:
 
 ```json
 {
@@ -470,7 +473,8 @@ Version-override example:
         "Behaviors": [ "showcase.cart.get" ],
         "AuthoringStyles": [ "behavior-module-profile" ],
         "ApiVersionMajor": 2,
-        "Method": "DELETE"
+        "Method": "DELETE",
+        "Pattern": "/lookup/{cartId}"
       }
     }
   }

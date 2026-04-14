@@ -78,7 +78,8 @@ public sealed class RestApiGovernanceOptions
                 sourceModuleIds: ReadStringArray(child.GetSection("Modules")),
                 authoringStyles: ReadStringArray(child.GetSection("AuthoringStyles")),
                 apiVersionMajor: ReadPositiveInt(child, "ApiVersionMajor"),
-                method: child["Method"]?.Trim()))
+                method: child["Method"]?.Trim(),
+                pattern: child["Pattern"]?.Trim()))
             .ToArray();
 
         return new RestApiGovernanceOptions(suppressions, overrides);

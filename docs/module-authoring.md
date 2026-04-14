@@ -365,10 +365,11 @@ Current helper behavior:
 - lets ASP.NET Core hosts suppress those shorthand candidates through `RestApi:Suppressions`
   without taking away module ownership, while explicit `MapGet/MapPost/...` routes and manual
   module-owned endpoints remain authoritative
-- lets ASP.NET Core hosts move shorthand candidates to another effective API major version through
-  `RestApi:Overrides` without taking away module ownership; that override surface now supports
-  `ApiVersionMajor` and `Method`, keeps the `/v{major}` route segment, OpenAPI document name, and
-  mapped endpoint method aligned with the same effective projection, and still leaves explicit
+- lets ASP.NET Core hosts move shorthand candidates to another effective API major version,
+  HTTP method, or placeholder-preserving relative route pattern through `RestApi:Overrides`
+  without taking away module ownership; that override surface now supports `ApiVersionMajor`,
+  `Method`, and `Pattern`, keeps the `/v{major}` route segment, OpenAPI document name, endpoint
+  method, and effective route aligned with the same projection truth, and still leaves explicit
   `MapGet/MapPost/...` routes, manual module-owned endpoints, and shorthand groups with explicit
   `.ApiVersion(...)` authoritative for version selection
 - treats `behaviors.Internal<TBehavior>()` as the explicit internal-only or custom/manual-route path
@@ -391,8 +392,8 @@ Current helper behavior:
   set explicitly, and fails fast when profiled behaviors in the same group disagree on that
   candidate version
 - keeps that explicit group `.ApiVersion(...)` authoritative for host-level version rewrites even
-  when an ASP.NET Core host later applies `RestApi:Overrides`, while shorthand method overrides
-  can still apply
+  when an ASP.NET Core host later applies `RestApi:Overrides`, while shorthand method and
+  placeholder-preserving pattern overrides can still apply
 - keeps profile-driven explicit binding plans visible through
   `RestEndpointRuntimeDescriptor.BindingDescriptors` and the matching `bindingDescriptors` JSON
   field on `/engine/rest-endpoints` and `snapshot.RestEndpoints`
@@ -426,12 +427,13 @@ matching rule deterministically, and intentionally suppresses only descriptor-ba
 candidates rather than rewriting explicit module DSL/manual routes.
 
 When a host wants to keep shorthand publication but retarget selected shorthand endpoints to a
-different effective API major version, use `RestApi:Overrides`. That host-level governance surface
-targets the same descriptor-backed shorthand candidates, also requires `Behaviors` or `Modules`,
-now supports a positive `ApiVersionMajor` and/or a supported HTTP `Method`, records the applied
-rule through `AppliedOverrideId` in `/engine/rest-endpoint-candidates`, and intentionally leaves
-explicit module DSL/manual routes plus shorthand groups with explicit `.ApiVersion(...)`
-authoritative for version selection.
+different effective API major version, HTTP method, or placeholder-preserving relative route
+pattern, use `RestApi:Overrides`. That host-level governance surface targets the same
+descriptor-backed shorthand candidates, also requires `Behaviors` or `Modules`, now supports a
+positive `ApiVersionMajor`, a supported HTTP `Method`, and/or a valid relative `Pattern`,
+records the applied rule through `AppliedOverrideId` in `/engine/rest-endpoint-candidates`, and
+intentionally leaves explicit module DSL/manual routes plus shorthand groups with explicit
+`.ApiVersion(...)` authoritative for version selection.
 
 Example:
 
@@ -451,11 +453,12 @@ Example:
 When a host needs more than the default `v1` document, prefer `OpenApi:EnabledVersions` plus `OpenApi:DefaultVersion`. Behaviors and modules still declare candidate document versions through `.ApiVersion(...)` or module-major defaults, but the host treats `EnabledVersions` as the allow-list for what actually gets published. For example, if modules carry `v1`, `v2`, and `v3` endpoint metadata while the host enables only `[2, 3]`, Cephalon registers only `/openapi/v2.json` plus `/openapi/v3.json`, redirects `/scalar` to the resolved default enabled document such as `/scalar/v3`, and injects only those enabled documents into Scalar's version selector. `/scalar/` still remains available for multi-document selection, and Cephalon normalizes hash-based Scalar selections such as `/scalar/#v2/` back into pinned versioned links. Hosts can also move the docs and REST entry points with `OpenApi:RoutePattern`, `OpenApi:Scalar:RoutePrefix`, and the canonical `ApiRoutes:Prefixes:*` settings. Legacy `OpenApi:Documents` and `OpenApi:DefaultDocument` settings remain available when a host deliberately wants custom named documents instead of `v{major}` API-version documents, and those settings follow the same published-document allow-list semantics.
 
 That published-document allow-list remains separate from shorthand candidate version selection. In
-other words, `RestApi:Overrides:*:ApiVersionMajor` can move a shorthand endpoint from `v1` to `v2`,
-and `RestApi:Overrides:*:Method` can move the same shorthand endpoint from `GET` to `DELETE`, but
-the host still decides whether `v2` is actually published through `OpenApi:EnabledVersions` or
-legacy document config. Keep that distinction in mind when a module can declare or inherit more
-candidate versions than one host chooses to publish.
+other words, `RestApi:Overrides:*:ApiVersionMajor` can move a shorthand endpoint from `v1` to
+`v2`, `RestApi:Overrides:*:Method` can move the same shorthand endpoint from `GET` to `DELETE`,
+and `RestApi:Overrides:*:Pattern` can move it from `/{cartId}` to `/lookup/{cartId}` as long as
+the placeholder set stays the same, but the host still decides whether `v2` is actually published
+through `OpenApi:EnabledVersions` or legacy document config. Keep that distinction in mind when a
+module can declare or inherit more candidate versions than one host chooses to publish.
 
 That published-document allow-list is separate from the generic behavior adapter route segment. JSON-RPC, GraphQL, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket routes keep using `ApiRoutes:DefaultBehaviorDocumentName` or the raw configured `OpenApi:DefaultVersion`, because those adapter endpoints are not part of the published REST OpenAPI surface. If a host wants those generic adapter routes pinned to a different segment than the docs default, set `ApiRoutes:DefaultBehaviorDocumentName` explicitly.
 

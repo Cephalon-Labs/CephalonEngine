@@ -23,7 +23,8 @@ internal sealed class AspNetCoreRestEndpointOverrideRuntimeCatalog : IRestEndpoi
                 item.SourceModuleIds,
                 item.AuthoringStyles,
                 item.ApiVersionMajor,
-                item.Method))
+                item.Method,
+                item.Pattern))
             .OrderBy(static item => item.Id, Comparer)
             .ToArray();
 

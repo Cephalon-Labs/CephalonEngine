@@ -2,6 +2,7 @@ using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Transports;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.Transports.Rest;
+using Microsoft.AspNetCore.Routing.Patterns;
 
 namespace Cephalon.Behaviors.Http.Hosting;
 
@@ -253,12 +254,23 @@ internal static class RestBehaviorProjectionCandidateResolver
         var effectiveApiVersionMajor = defaultApiVersionMajor;
         var wasApplied = false;
 
+        if (!string.IsNullOrWhiteSpace(matchedOverride.Pattern) &&
+            !string.Equals(matchedOverride.Pattern, endpointProjection.Pattern, StringComparison.Ordinal))
+        {
+            ValidatePatternOverride(
+                matchedOverride.Id,
+                endpointProjection,
+                matchedOverride.Pattern);
+            effectiveEndpointProjection = effectiveEndpointProjection.WithPattern(matchedOverride.Pattern);
+            wasApplied = true;
+        }
+
         if (!string.IsNullOrWhiteSpace(matchedOverride.Method))
         {
             var overrideMethod = RestBehaviorHttpMethodParser.Parse(matchedOverride.Method);
-            if (overrideMethod != endpointProjection.Method)
+            if (overrideMethod != effectiveEndpointProjection.Method)
             {
-                effectiveEndpointProjection = endpointProjection.WithMethod(overrideMethod);
+                effectiveEndpointProjection = effectiveEndpointProjection.WithMethod(overrideMethod);
                 wasApplied = true;
             }
         }
@@ -277,6 +289,26 @@ internal static class RestBehaviorProjectionCandidateResolver
                 effectiveEndpointProjection,
                 effectiveApiVersionMajor)
             : null;
+    }
+
+    private static void ValidatePatternOverride(
+        string overrideId,
+        RestBehaviorEndpointProjection endpointProjection,
+        string overridePattern)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(overrideId);
+        ArgumentNullException.ThrowIfNull(endpointProjection);
+        ArgumentException.ThrowIfNullOrWhiteSpace(overridePattern);
+
+        var originalPlaceholders = ExtractRoutePlaceholders(endpointProjection.Pattern);
+        var overridePlaceholders = ExtractRoutePlaceholders(overridePattern);
+        if (originalPlaceholders.SetEquals(overridePlaceholders))
+        {
+            return;
+        }
+
+        throw new InvalidOperationException(
+            $"REST endpoint override rule '{overrideId}' cannot rewrite behavior '{endpointProjection.BehaviorId}' from pattern '{endpointProjection.Pattern}' to '{overridePattern}' because this slice requires the same route-placeholder set. Pattern overrides that add, remove, or rename placeholders remain later work.");
     }
 
     private static RestEndpointSuppressionOptions? ResolveSuppression(
@@ -400,6 +432,26 @@ internal static class RestBehaviorProjectionCandidateResolver
         }
 
         return count;
+    }
+
+    private static HashSet<string> ExtractRoutePlaceholders(string pattern)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(pattern);
+
+        try
+        {
+            return RoutePatternFactory.Parse(pattern)
+                .Parameters
+                .Select(static parameter => parameter.Name)
+                .Where(static name => !string.IsNullOrWhiteSpace(name))
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException(
+                $"REST behavior route pattern '{pattern}' is not a valid ASP.NET Core route pattern.",
+                ex);
+        }
     }
 
     private static int? ResolveModuleMajorVersion(string? moduleVersion)

@@ -1,4 +1,5 @@
 using Cephalon.AspNetCore.Transports.Rest;
+using Microsoft.AspNetCore.Routing.Patterns;
 
 namespace Cephalon.AspNetCore.Hosting;
 
@@ -33,13 +34,17 @@ public sealed class RestEndpointOverrideOptions
     /// <param name="method">
     /// The effective HTTP method applied when the rule matches a shorthand candidate.
     /// </param>
+    /// <param name="pattern">
+    /// The effective relative route pattern applied when the rule matches a shorthand candidate.
+    /// </param>
     public RestEndpointOverrideOptions(
         string id,
         IReadOnlyList<string>? behaviorIds = null,
         IReadOnlyList<string>? sourceModuleIds = null,
         IReadOnlyList<string>? authoringStyles = null,
         int? apiVersionMajor = null,
-        string? method = null)
+        string? method = null,
+        string? pattern = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
 
@@ -48,6 +53,7 @@ public sealed class RestEndpointOverrideOptions
         SourceModuleIds = NormalizeList(sourceModuleIds);
         AuthoringStyles = NormalizeAuthoringStyles(authoringStyles);
         Method = NormalizeMethod(method);
+        Pattern = NormalizePattern(pattern);
 
         if (BehaviorIds.Count == 0 && SourceModuleIds.Count == 0)
         {
@@ -66,10 +72,10 @@ public sealed class RestEndpointOverrideOptions
 
         ApiVersionMajor = apiVersionMajor;
 
-        if (!ApiVersionMajor.HasValue && Method is null)
+        if (!ApiVersionMajor.HasValue && Method is null && Pattern is null)
         {
             throw new ArgumentException(
-                "REST endpoint override rules must define at least one override action such as ApiVersionMajor or Method.",
+                "REST endpoint override rules must define at least one override action such as ApiVersionMajor, Method, or Pattern.",
                 nameof(apiVersionMajor));
         }
     }
@@ -105,13 +111,19 @@ public sealed class RestEndpointOverrideOptions
     public string? Method { get; }
 
     /// <summary>
+    /// Gets the effective relative route pattern applied when this override rule matches.
+    /// </summary>
+    public string? Pattern { get; }
+
+    /// <summary>
     /// Gets a value indicating whether any targeting values or override actions were explicitly supplied.
     /// </summary>
     public bool HasValues =>
         BehaviorIds.Count > 0 ||
         SourceModuleIds.Count > 0 ||
         ApiVersionMajor.HasValue ||
-        Method is not null;
+        Method is not null ||
+        Pattern is not null;
 
     private static string[] NormalizeList(IReadOnlyList<string>? values)
     {
@@ -161,5 +173,35 @@ public sealed class RestEndpointOverrideOptions
                 $"REST endpoint override method '{method}' is not supported. Supported methods: GET, POST, PUT, PATCH, DELETE.",
                 nameof(method))
         };
+    }
+
+    private static string? NormalizePattern(string? pattern)
+    {
+        if (string.IsNullOrWhiteSpace(pattern))
+        {
+            return null;
+        }
+
+        var normalized = pattern.Trim();
+        if (!normalized.StartsWith('/'))
+        {
+            throw new ArgumentException(
+                "REST endpoint override patterns must start with '/'.",
+                nameof(pattern));
+        }
+
+        try
+        {
+            _ = RoutePatternFactory.Parse(normalized);
+        }
+        catch (Exception ex)
+        {
+            throw new ArgumentException(
+                $"REST endpoint override pattern '{pattern}' is not a valid ASP.NET Core route pattern.",
+                nameof(pattern),
+                ex);
+        }
+
+        return normalized;
     }
 }

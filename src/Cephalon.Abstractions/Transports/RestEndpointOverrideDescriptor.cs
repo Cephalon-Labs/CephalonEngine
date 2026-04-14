@@ -14,13 +14,15 @@ public sealed class RestEndpointOverrideDescriptor
     /// <param name="authoringStyles">The normalized shorthand authoring styles targeted by the override rule.</param>
     /// <param name="apiVersionMajor">The effective API major version applied when the rule matches.</param>
     /// <param name="method">The effective HTTP method applied when the rule matches.</param>
+    /// <param name="pattern">The effective relative route pattern applied when the rule matches.</param>
     public RestEndpointOverrideDescriptor(
         string id,
         IReadOnlyList<string>? behaviorIds = null,
         IReadOnlyList<string>? sourceModuleIds = null,
         IReadOnlyList<string>? authoringStyles = null,
         int? apiVersionMajor = null,
-        string? method = null)
+        string? method = null,
+        string? pattern = null)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -41,11 +43,12 @@ public sealed class RestEndpointOverrideDescriptor
         AuthoringStyles = NormalizeList(authoringStyles);
         ApiVersionMajor = apiVersionMajor;
         Method = NormalizeMethod(method);
+        Pattern = NormalizePattern(pattern);
 
-        if (!ApiVersionMajor.HasValue && Method is null)
+        if (!ApiVersionMajor.HasValue && Method is null && Pattern is null)
         {
             throw new ArgumentException(
-                "REST endpoint override descriptors require at least one override action such as ApiVersionMajor or Method.",
+                "REST endpoint override descriptors require at least one override action such as ApiVersionMajor, Method, or Pattern.",
                 nameof(apiVersionMajor));
         }
     }
@@ -80,6 +83,11 @@ public sealed class RestEndpointOverrideDescriptor
     /// </summary>
     public string? Method { get; }
 
+    /// <summary>
+    /// Gets the effective relative route pattern applied when this override rule matches.
+    /// </summary>
+    public string? Pattern { get; }
+
     private static string[] NormalizeList(IReadOnlyList<string>? values)
     {
         return values?
@@ -108,5 +116,23 @@ public sealed class RestEndpointOverrideDescriptor
                 $"REST endpoint override method '{method}' is not supported. Supported methods: GET, POST, PUT, PATCH, DELETE.",
                 nameof(method))
         };
+    }
+
+    private static string? NormalizePattern(string? pattern)
+    {
+        if (string.IsNullOrWhiteSpace(pattern))
+        {
+            return null;
+        }
+
+        var normalized = pattern.Trim();
+        if (!normalized.StartsWith('/'))
+        {
+            throw new ArgumentException(
+                "REST endpoint override patterns must start with '/'.",
+                nameof(pattern));
+        }
+
+        return normalized;
     }
 }

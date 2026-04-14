@@ -127,6 +127,24 @@ internal sealed record RestBehaviorEndpointProjection(
                 CreateMapDelegate(BehaviorType, method));
     }
 
+    internal RestBehaviorEndpointProjection WithPattern(string pattern)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(pattern);
+
+        var normalizedPattern = pattern.Trim();
+        return string.Equals(normalizedPattern, Pattern, StringComparison.Ordinal)
+            ? this
+            : new RestBehaviorEndpointProjection(
+                Method,
+                BehaviorId,
+                BehaviorType,
+                normalizedPattern,
+                Bindings,
+                AuthoringStyle,
+                ConfigureEndpoint,
+                Map);
+    }
+
     internal void Apply(BehaviorRestEndpointGroup group)
     {
         ArgumentNullException.ThrowIfNull(group);
