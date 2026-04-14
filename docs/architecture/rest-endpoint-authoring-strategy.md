@@ -213,6 +213,14 @@ Status update:
   method-plus-binding plans, rename attempts that still rely on inference, removal attempts that
   rely on inferred original route coverage or drop explicit binding coverage, or addition attempts
   that would promote any other implicit property into the public route now fail fast
+- the selector-expansion follow-through is now shipped through `ENG-058-T77`: both
+  `RestApi:Suppressions` and `RestApi:Overrides` can refine `Behaviors`/`Modules` targeting with
+  `ApiVersionMajors`, `Methods`, `RelativePatterns`, and `RouteGroupPrefixes`; those selectors
+  match the original shorthand candidate shape before override actions are applied, suppression now
+  preserves that same original-shape contract even when an override later rewrites the final
+  published endpoint, rule specificity now also considers populated selector dimensions plus
+  narrower selector sets, and the runtime suppression/override catalogs now expose the selector
+  arrays directly
 - broader configuration-driven projection overrides that promote implicit properties into route
   placeholders beyond that constrained body-fallback path, or rewrite binding shape beyond that
   constrained explicit-binding replacement model, remain later work
@@ -292,8 +300,12 @@ Current shipped baseline:
 - override rules also fail fast when they omit all override actions, use a non-positive
   `ApiVersionMajor`, declare an unsupported HTTP method, or declare an invalid relative route
   pattern
-- when more than one rule matches, the host prefers the more specific rule deterministically before
-  falling back to stable rule-id ordering
+- both rule families can refine `Behaviors`/`Modules` targeting with `ApiVersionMajors`,
+  `Methods`, `RelativePatterns`, and `RouteGroupPrefixes`, and those selector refiners match the
+  original shorthand candidate shape before override actions are applied
+- when more than one rule matches, the host prefers the more specific rule deterministically by
+  populated target dimensions first, then by behavior-targeted scope, narrower authoring-style
+  scope, fewer total selector values, and finally stable rule-id ordering
 - neither surface overrides explicit module DSL or manual module-owned REST endpoints
 - shorthand groups that declare `.ApiVersion(...)` explicitly stay authoritative over host version
   rewrites, while shorthand method and constrained pattern overrides can still apply to those same
@@ -480,8 +492,10 @@ The host still decides which documents are published through:
 That allow-list remains authoritative and must stay separate from endpoint authoring metadata.
 
 The shipped configuration-driven override surface is still intentionally narrow: `RestApi:Overrides`
-can change the effective shorthand candidate `ApiVersionMajor`, HTTP `Method`, relative `Pattern`,
-and/or explicit `Bindings`, but the current route-pattern slice is still constrained enough to keep
+can target the original shorthand candidate shape through `ApiVersionMajors`, `Methods`,
+`RelativePatterns`, and `RouteGroupPrefixes`, then change the effective shorthand candidate
+`ApiVersionMajor`, HTTP `Method`, relative `Pattern`, and/or explicit `Bindings`, but the current
+route-pattern slice is still constrained enough to keep
 binding semantics truthful. Cephalon therefore keeps the route-version segment and document name
 together for version rewrites, allows route-pattern rewrites when they preserve the same
 placeholder set or when the effective explicit route-binding plan covers a renamed placeholder set
@@ -607,10 +621,14 @@ Status:
   different effective `ApiVersionMajor`, HTTP `Method`, constrained relative `Pattern`, or explicit
   binding plan, while the runtime keeps both the configured override-rule catalog and the
   candidate-level `AppliedOverrideId` truth visible
+- the next selector-targeting follow-through is now shipped through `ENG-058-T77`, so both
+  `RestApi:Suppressions` and `RestApi:Overrides` can refine that same descriptor-backed shorthand
+  scope with `ApiVersionMajors`, `Methods`, `RelativePatterns`, and `RouteGroupPrefixes` while the
+  runtime keeps both the configured rule catalogs and the original-shape targeting truth visible
 - controlled configuration overrides that promote implicit properties into route placeholders
   beyond the shipped constrained remaining-body-fallback path, or rewrite input binding beyond
   constrained explicit-binding replacement, remain later work now that the
-  version-plus-method-plus-pattern-plus-binding-plus-placeholder-rename-plus-placeholder-removal-plus-placeholder-addition-plus-implicit-body-fallback-promotion
+  version-plus-method-plus-pattern-plus-binding-plus-placeholder-rename-plus-placeholder-removal-plus-placeholder-addition-plus-implicit-body-fallback-promotion-plus-selector-targeting
   override baseline is shipped
 
 ## What should be stored as project memory
@@ -643,6 +661,10 @@ The following points are durable enough to keep outside thread-local context.
   intentionally limited to shorthand `ApiVersionMajor`, `Method`, constrained relative `Pattern`,
   and constrained explicit `Bindings` rewrites; neither surface rewrites explicit module DSL or
   manual routes
+- both rule families can now also refine `Behaviors`/`Modules` targeting with `ApiVersionMajors`,
+  `Methods`, `RelativePatterns`, and `RouteGroupPrefixes`, and those selector refiners match the
+  original shorthand candidate shape before override actions are applied so suppression and
+  override decisions do not depend on already-rewritten final route shape
 - within that constrained pattern slice, placeholder-preserving rewrites stay the default and
   placeholder renames now also work when the effective explicit route-binding plan covers the
   renamed placeholder set exactly, placeholder removals now also work when the original
@@ -663,7 +685,8 @@ The following points are durable enough to keep outside thread-local context.
 Recommended implementation sequence after the shipped normalization, runtime-catalog,
 precedence-visibility, and generated-module follow-through slices:
 
-1. extend the shipped suppression-plus-version-override governance baseline toward broader
+1. extend the shipped suppression-plus-override governance baseline from the current
+   selector-targeting-plus-version-plus-method-plus-pattern-plus-binding model toward broader
    configuration-override modeling only if runtime truth, ownership, precedence, and candidate
    visibility stay explicit and introspectable
 2. only then evaluate whether any additional convention-backed publication sources are worth the

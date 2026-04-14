@@ -12,6 +12,10 @@ public sealed class RestEndpointOverrideDescriptor
     /// <param name="behaviorIds">The behavior identifiers targeted by the override rule.</param>
     /// <param name="sourceModuleIds">The source-module identifiers targeted by the override rule.</param>
     /// <param name="authoringStyles">The normalized shorthand authoring styles targeted by the override rule.</param>
+    /// <param name="apiVersionMajors">The effective API major versions targeted by the override rule.</param>
+    /// <param name="methods">The effective HTTP methods targeted by the override rule.</param>
+    /// <param name="relativePatterns">The shorthand relative route patterns targeted by the override rule.</param>
+    /// <param name="routeGroupPrefixes">The published route-group prefixes targeted by the override rule.</param>
     /// <param name="apiVersionMajor">The effective API major version applied when the rule matches.</param>
     /// <param name="method">The effective HTTP method applied when the rule matches.</param>
     /// <param name="pattern">The effective relative route pattern applied when the rule matches.</param>
@@ -21,6 +25,10 @@ public sealed class RestEndpointOverrideDescriptor
         IReadOnlyList<string>? behaviorIds = null,
         IReadOnlyList<string>? sourceModuleIds = null,
         IReadOnlyList<string>? authoringStyles = null,
+        IReadOnlyList<int>? apiVersionMajors = null,
+        IReadOnlyList<string>? methods = null,
+        IReadOnlyList<string>? relativePatterns = null,
+        IReadOnlyList<string>? routeGroupPrefixes = null,
         int? apiVersionMajor = null,
         string? method = null,
         string? pattern = null,
@@ -43,6 +51,10 @@ public sealed class RestEndpointOverrideDescriptor
         BehaviorIds = NormalizeList(behaviorIds);
         SourceModuleIds = NormalizeList(sourceModuleIds);
         AuthoringStyles = NormalizeList(authoringStyles);
+        ApiVersionMajors = NormalizeIntList(apiVersionMajors);
+        Methods = NormalizeList(methods);
+        RelativePatterns = NormalizeList(relativePatterns);
+        RouteGroupPrefixes = NormalizeList(routeGroupPrefixes);
         ApiVersionMajor = apiVersionMajor;
         Method = NormalizeMethod(method);
         Pattern = NormalizePattern(pattern);
@@ -75,6 +87,26 @@ public sealed class RestEndpointOverrideDescriptor
     /// Gets the normalized shorthand authoring styles targeted by this override rule.
     /// </summary>
     public IReadOnlyList<string> AuthoringStyles { get; }
+
+    /// <summary>
+    /// Gets the effective API major versions targeted by this override rule.
+    /// </summary>
+    public IReadOnlyList<int> ApiVersionMajors { get; }
+
+    /// <summary>
+    /// Gets the effective HTTP methods targeted by this override rule.
+    /// </summary>
+    public IReadOnlyList<string> Methods { get; }
+
+    /// <summary>
+    /// Gets the shorthand relative route patterns targeted by this override rule.
+    /// </summary>
+    public IReadOnlyList<string> RelativePatterns { get; }
+
+    /// <summary>
+    /// Gets the published route-group prefixes targeted by this override rule.
+    /// </summary>
+    public IReadOnlyList<string> RouteGroupPrefixes { get; }
 
     /// <summary>
     /// Gets the effective API major version applied when this override rule matches.
@@ -153,6 +185,14 @@ public sealed class RestEndpointOverrideDescriptor
                 binding.PropertyName,
                 binding.Source,
                 binding.Name))
+            .ToArray() ?? [];
+    }
+
+    private static int[] NormalizeIntList(IReadOnlyList<int>? values)
+    {
+        return values?
+            .Distinct()
+            .OrderBy(static value => value)
             .ToArray() ?? [];
     }
 }

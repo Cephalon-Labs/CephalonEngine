@@ -367,8 +367,11 @@ Current helper behavior:
   module-owned endpoints remain authoritative
 - lets ASP.NET Core hosts move shorthand candidates to another effective API major version,
   HTTP method, constrained relative route pattern, or explicit binding plan through
-  `RestApi:Overrides` without taking away module ownership; that override surface now supports
-  `ApiVersionMajor`, `Method`, `Pattern`, and `Bindings`, keeps the `/v{major}` route segment,
+  `RestApi:Overrides` without taking away module ownership; the suppression/override surfaces can
+  both now refine `Behaviors`/`Modules` targeting with `ApiVersionMajors`, `Methods`,
+  `RelativePatterns`, and `RouteGroupPrefixes`, those selector refiners match the original
+  shorthand candidate shape before override actions are applied, and the override surface itself
+  now supports `ApiVersionMajor`, `Method`, `Pattern`, and `Bindings`, keeps the `/v{major}` route segment,
   OpenAPI document name, endpoint method, effective route, and effective binding plan aligned with
   the same projection truth, replaces the shorthand candidate's explicit binding descriptors when
   `Bindings` are supplied while still letting unbound route placeholders and remaining request-body
@@ -435,19 +438,26 @@ Current helper behavior:
 
 When a host wants to suppress shorthand publication without removing the module-owned route group,
 use `RestApi:Suppressions`. That host-level governance surface can target `Behaviors`, `Modules`,
-and optional `AuthoringStyles`, defaults to both shorthand styles when `AuthoringStyles` is
-omitted, fails fast when both `Behaviors` and `Modules` are missing, prefers the more specific
-matching rule deterministically, and intentionally suppresses only descriptor-backed shorthand
-candidates rather than rewriting explicit module DSL/manual routes.
+and optional `AuthoringStyles`, can refine that target further with `ApiVersionMajors`, `Methods`,
+`RelativePatterns`, and `RouteGroupPrefixes`, matches those selector refiners against the original
+shorthand candidate shape before override actions are applied, defaults to both shorthand styles
+when `AuthoringStyles` is omitted, fails fast when both `Behaviors` and `Modules` are missing,
+prefers the more specific matching rule deterministically by populated target dimensions first,
+then by behavior-targeted scope, narrower authoring-style scope, fewer total selector values, and
+stable rule id ordering, and intentionally suppresses only descriptor-backed shorthand candidates
+rather than rewriting explicit module DSL/manual routes.
 
 When a host wants to keep shorthand publication but retarget selected shorthand endpoints to a
 different effective API major version, HTTP method, constrained relative route pattern, or explicit
 binding plan, use `RestApi:Overrides`. That host-level governance surface targets the same
-descriptor-backed shorthand candidates, also requires `Behaviors` or `Modules`, now supports a
-positive `ApiVersionMajor`, a supported HTTP `Method`, a valid relative `Pattern`, and/or explicit
-`Bindings`, records the applied rule through `AppliedOverrideId` in `/engine/rest-endpoint-candidates`,
-and intentionally leaves explicit module DSL/manual routes plus shorthand groups with explicit
-`.ApiVersion(...)` authoritative for version selection. When `Bindings` are supplied, the override
+descriptor-backed shorthand candidates, also requires `Behaviors` or `Modules`, can refine that
+target further with `ApiVersionMajors`, `Methods`, `RelativePatterns`, and `RouteGroupPrefixes`,
+matches those selector refiners against the original shorthand candidate shape before override
+actions are applied, now supports a positive `ApiVersionMajor`, a supported HTTP `Method`, a valid
+relative `Pattern`, and/or explicit `Bindings`, records the applied rule through
+`AppliedOverrideId` in `/engine/rest-endpoint-candidates`, and intentionally leaves explicit
+module DSL/manual routes plus shorthand groups with explicit `.ApiVersion(...)` authoritative for
+version selection. When `Bindings` are supplied, the override
 replaces the shorthand candidate's explicit binding plan while leaving unbound route placeholders
 and remaining request-body fields available for deterministic fallback; placeholder renames can now
 apply when the effective explicit route-binding plan covers the renamed placeholder set exactly;
@@ -488,7 +498,9 @@ removed route-bound value and the source projection already exposed an explicit 
 `{cartId}`, or to `/lookup/{cartId}/items/{quantity}` when `Bindings` explicitly promote
 `Quantity` from its original explicit query/header/body binding into the route; `Bindings` can
 also replace other explicit binding details such as moving `Quantity` from query key `quantity` to
-`qty` or `Note` from body key `note` to `memo`; the host still decides whether `v2` is actually
+`qty` or `Note` from body key `note` to `memo`, while `ApiVersionMajors`, `Methods`,
+`RelativePatterns`, and `RouteGroupPrefixes` let the same rule target only the original shorthand
+shape it means to govern; the host still decides whether `v2` is actually
 published through
 `OpenApi:EnabledVersions` or legacy document config. Keep that distinction in mind when a module
 can declare or inherit more candidate versions than one host chooses to publish.

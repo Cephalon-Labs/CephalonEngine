@@ -68,7 +68,11 @@ public sealed class RestApiGovernanceOptions
                 id: child.Key,
                 behaviorIds: ReadStringArray(child.GetSection("Behaviors")),
                 sourceModuleIds: ReadStringArray(child.GetSection("Modules")),
-                authoringStyles: ReadStringArray(child.GetSection("AuthoringStyles"))))
+                authoringStyles: ReadStringArray(child.GetSection("AuthoringStyles")),
+                apiVersionMajors: ReadPositiveIntArray(child.GetSection("ApiVersionMajors")),
+                methods: ReadStringArray(child.GetSection("Methods")),
+                relativePatterns: ReadStringArray(child.GetSection("RelativePatterns")),
+                routeGroupPrefixes: ReadStringArray(child.GetSection("RouteGroupPrefixes"))))
             .ToArray();
         var overrides = configuration.GetSection(sectionPath)
             .GetSection("Overrides")
@@ -78,6 +82,10 @@ public sealed class RestApiGovernanceOptions
                 behaviorIds: ReadStringArray(child.GetSection("Behaviors")),
                 sourceModuleIds: ReadStringArray(child.GetSection("Modules")),
                 authoringStyles: ReadStringArray(child.GetSection("AuthoringStyles")),
+                apiVersionMajors: ReadPositiveIntArray(child.GetSection("ApiVersionMajors")),
+                methods: ReadStringArray(child.GetSection("Methods")),
+                relativePatterns: ReadStringArray(child.GetSection("RelativePatterns")),
+                routeGroupPrefixes: ReadStringArray(child.GetSection("RouteGroupPrefixes")),
                 apiVersionMajor: ReadPositiveInt(child, "ApiVersionMajor"),
                 method: child["Method"]?.Trim(),
                 pattern: child["Pattern"]?.Trim(),
@@ -116,6 +124,33 @@ public sealed class RestApiGovernanceOptions
         }
 
         return parsedValue;
+    }
+
+    private static int[] ReadPositiveIntArray(IConfiguration section)
+    {
+        ArgumentNullException.ThrowIfNull(section);
+
+        return section.GetChildren()
+            .Select(child =>
+            {
+                var rawValue = child.Value?.Trim();
+                if (string.IsNullOrWhiteSpace(rawValue))
+                {
+                    throw new InvalidOperationException(
+                        $"REST API governance value '{child.Path}' must be a positive integer.");
+                }
+
+                if (!int.TryParse(rawValue, out var parsedValue) || parsedValue <= 0)
+                {
+                    throw new InvalidOperationException(
+                        $"REST API governance value '{child.Path}' must be a positive integer.");
+                }
+
+                return parsedValue;
+            })
+            .Distinct()
+            .OrderBy(static value => value)
+            .ToArray();
     }
 
     private static RestEndpointBindingDescriptor[] ReadBindings(IConfiguration section)

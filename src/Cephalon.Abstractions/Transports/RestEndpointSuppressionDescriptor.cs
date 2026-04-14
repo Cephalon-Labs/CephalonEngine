@@ -12,11 +12,19 @@ public sealed class RestEndpointSuppressionDescriptor
     /// <param name="behaviorIds">The behavior identifiers targeted by the suppression rule.</param>
     /// <param name="sourceModuleIds">The source-module identifiers targeted by the suppression rule.</param>
     /// <param name="authoringStyles">The normalized shorthand authoring styles targeted by the suppression rule.</param>
+    /// <param name="apiVersionMajors">The effective API major versions targeted by the suppression rule.</param>
+    /// <param name="methods">The effective HTTP methods targeted by the suppression rule.</param>
+    /// <param name="relativePatterns">The shorthand relative route patterns targeted by the suppression rule.</param>
+    /// <param name="routeGroupPrefixes">The published route-group prefixes targeted by the suppression rule.</param>
     public RestEndpointSuppressionDescriptor(
         string id,
         IReadOnlyList<string>? behaviorIds = null,
         IReadOnlyList<string>? sourceModuleIds = null,
-        IReadOnlyList<string>? authoringStyles = null)
+        IReadOnlyList<string>? authoringStyles = null,
+        IReadOnlyList<int>? apiVersionMajors = null,
+        IReadOnlyList<string>? methods = null,
+        IReadOnlyList<string>? relativePatterns = null,
+        IReadOnlyList<string>? routeGroupPrefixes = null)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -27,6 +35,10 @@ public sealed class RestEndpointSuppressionDescriptor
         BehaviorIds = NormalizeList(behaviorIds);
         SourceModuleIds = NormalizeList(sourceModuleIds);
         AuthoringStyles = NormalizeList(authoringStyles);
+        ApiVersionMajors = NormalizeIntList(apiVersionMajors);
+        Methods = NormalizeList(methods);
+        RelativePatterns = NormalizeList(relativePatterns);
+        RouteGroupPrefixes = NormalizeList(routeGroupPrefixes);
     }
 
     /// <summary>
@@ -49,6 +61,26 @@ public sealed class RestEndpointSuppressionDescriptor
     /// </summary>
     public IReadOnlyList<string> AuthoringStyles { get; }
 
+    /// <summary>
+    /// Gets the effective API major versions targeted by this suppression rule.
+    /// </summary>
+    public IReadOnlyList<int> ApiVersionMajors { get; }
+
+    /// <summary>
+    /// Gets the effective HTTP methods targeted by this suppression rule.
+    /// </summary>
+    public IReadOnlyList<string> Methods { get; }
+
+    /// <summary>
+    /// Gets the shorthand relative route patterns targeted by this suppression rule.
+    /// </summary>
+    public IReadOnlyList<string> RelativePatterns { get; }
+
+    /// <summary>
+    /// Gets the published route-group prefixes targeted by this suppression rule.
+    /// </summary>
+    public IReadOnlyList<string> RouteGroupPrefixes { get; }
+
     private static string[] NormalizeList(IReadOnlyList<string>? values)
     {
         return values?
@@ -56,6 +88,14 @@ public sealed class RestEndpointSuppressionDescriptor
             .Select(static value => value.Trim())
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .OrderBy(static value => value, StringComparer.OrdinalIgnoreCase)
+            .ToArray() ?? [];
+    }
+
+    private static int[] NormalizeIntList(IReadOnlyList<int>? values)
+    {
+        return values?
+            .Distinct()
+            .OrderBy(static value => value)
             .ToArray() ?? [];
     }
 }

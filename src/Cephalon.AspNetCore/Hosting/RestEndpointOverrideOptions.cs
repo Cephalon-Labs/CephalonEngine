@@ -29,6 +29,22 @@ public sealed class RestEndpointOverrideOptions
     /// The shorthand authoring styles targeted by the override rule. When omitted, the rule
     /// targets both <c>behavior-module-profile</c> and <c>behavior-module-generated</c>.
     /// </param>
+    /// <param name="apiVersionMajors">
+    /// The effective API major versions targeted by the override rule before any override actions
+    /// are applied.
+    /// </param>
+    /// <param name="methods">
+    /// The effective HTTP methods targeted by the override rule before any override actions are
+    /// applied.
+    /// </param>
+    /// <param name="relativePatterns">
+    /// The shorthand relative route patterns targeted by the override rule before any override
+    /// actions are applied.
+    /// </param>
+    /// <param name="routeGroupPrefixes">
+    /// The published route-group prefixes targeted by the override rule before any override actions
+    /// are applied.
+    /// </param>
     /// <param name="apiVersionMajor">
     /// The effective API major version applied when the rule matches a shorthand candidate.
     /// </param>
@@ -47,6 +63,10 @@ public sealed class RestEndpointOverrideOptions
         IReadOnlyList<string>? behaviorIds = null,
         IReadOnlyList<string>? sourceModuleIds = null,
         IReadOnlyList<string>? authoringStyles = null,
+        IReadOnlyList<int>? apiVersionMajors = null,
+        IReadOnlyList<string>? methods = null,
+        IReadOnlyList<string>? relativePatterns = null,
+        IReadOnlyList<string>? routeGroupPrefixes = null,
         int? apiVersionMajor = null,
         string? method = null,
         string? pattern = null,
@@ -58,6 +78,22 @@ public sealed class RestEndpointOverrideOptions
         BehaviorIds = NormalizeList(behaviorIds);
         SourceModuleIds = NormalizeList(sourceModuleIds);
         AuthoringStyles = NormalizeAuthoringStyles(authoringStyles);
+        ApiVersionMajors = NormalizePositiveIntegers(
+            apiVersionMajors,
+            nameof(apiVersionMajors),
+            "REST endpoint override API major selectors must be positive integers.");
+        Methods = NormalizeMethods(
+            methods,
+            nameof(methods),
+            "REST endpoint override target method");
+        RelativePatterns = NormalizeRoutePatterns(
+            relativePatterns,
+            nameof(relativePatterns),
+            "REST endpoint override target relative pattern");
+        RouteGroupPrefixes = NormalizeRoutePatterns(
+            routeGroupPrefixes,
+            nameof(routeGroupPrefixes),
+            "REST endpoint override target route-group prefix");
         Method = NormalizeMethod(method);
         Pattern = NormalizePattern(pattern);
         Bindings = NormalizeBindings(bindings);
@@ -108,6 +144,26 @@ public sealed class RestEndpointOverrideOptions
     public IReadOnlyList<string> AuthoringStyles { get; }
 
     /// <summary>
+    /// Gets the effective API major versions targeted by this override rule before override actions are applied.
+    /// </summary>
+    public IReadOnlyList<int> ApiVersionMajors { get; }
+
+    /// <summary>
+    /// Gets the effective HTTP methods targeted by this override rule before override actions are applied.
+    /// </summary>
+    public IReadOnlyList<string> Methods { get; }
+
+    /// <summary>
+    /// Gets the shorthand relative route patterns targeted by this override rule before override actions are applied.
+    /// </summary>
+    public IReadOnlyList<string> RelativePatterns { get; }
+
+    /// <summary>
+    /// Gets the published route-group prefixes targeted by this override rule before override actions are applied.
+    /// </summary>
+    public IReadOnlyList<string> RouteGroupPrefixes { get; }
+
+    /// <summary>
     /// Gets the effective API major version applied when this override rule matches.
     /// </summary>
     public int? ApiVersionMajor { get; }
@@ -133,6 +189,10 @@ public sealed class RestEndpointOverrideOptions
     public bool HasValues =>
         BehaviorIds.Count > 0 ||
         SourceModuleIds.Count > 0 ||
+        ApiVersionMajors.Count > 0 ||
+        Methods.Count > 0 ||
+        RelativePatterns.Count > 0 ||
+        RouteGroupPrefixes.Count > 0 ||
         ApiVersionMajor.HasValue ||
         Method is not null ||
         Pattern is not null ||
@@ -168,6 +228,54 @@ public sealed class RestEndpointOverrideOptions
         return normalized;
     }
 
+    private static int[] NormalizePositiveIntegers(
+        IReadOnlyList<int>? values,
+        string paramName,
+        string errorMessage)
+    {
+        if (values is null)
+        {
+            return [];
+        }
+
+        var normalized = values
+            .Distinct()
+            .OrderBy(static value => value)
+            .ToArray();
+        if (normalized.Any(static value => value <= 0))
+        {
+            throw new ArgumentOutOfRangeException(paramName, errorMessage);
+        }
+
+        return normalized;
+    }
+
+    private static string[] NormalizeMethods(
+        IReadOnlyList<string>? values,
+        string paramName,
+        string errorPrefix)
+    {
+        return values?
+            .Where(static value => !string.IsNullOrWhiteSpace(value))
+            .Select(value => NormalizeSupportedMethod(value, paramName, errorPrefix))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static value => value, StringComparer.OrdinalIgnoreCase)
+            .ToArray() ?? [];
+    }
+
+    private static string[] NormalizeRoutePatterns(
+        IReadOnlyList<string>? values,
+        string paramName,
+        string errorPrefix)
+    {
+        return values?
+            .Where(static value => !string.IsNullOrWhiteSpace(value))
+            .Select(value => NormalizeSupportedRoutePattern(value, paramName, errorPrefix))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static value => value, StringComparer.OrdinalIgnoreCase)
+            .ToArray() ?? [];
+    }
+
     private static string? NormalizeMethod(string? method)
     {
         if (string.IsNullOrWhiteSpace(method))
@@ -175,6 +283,11 @@ public sealed class RestEndpointOverrideOptions
             return null;
         }
 
+        return NormalizeSupportedMethod(method, nameof(method), "REST endpoint override method");
+    }
+
+    private static string NormalizeSupportedMethod(string method, string paramName, string errorPrefix)
+    {
         return method.Trim().ToUpperInvariant() switch
         {
             "GET" => "GET",
@@ -183,8 +296,8 @@ public sealed class RestEndpointOverrideOptions
             "PATCH" => "PATCH",
             "DELETE" => "DELETE",
             _ => throw new ArgumentException(
-                $"REST endpoint override method '{method}' is not supported. Supported methods: GET, POST, PUT, PATCH, DELETE.",
-                nameof(method))
+                $"{errorPrefix} '{method}' is not supported. Supported methods: GET, POST, PUT, PATCH, DELETE.",
+                paramName)
         };
     }
 
@@ -195,12 +308,17 @@ public sealed class RestEndpointOverrideOptions
             return null;
         }
 
+        return NormalizeSupportedRoutePattern(pattern, nameof(pattern), "REST endpoint override pattern");
+    }
+
+    private static string NormalizeSupportedRoutePattern(string pattern, string paramName, string errorPrefix)
+    {
         var normalized = pattern.Trim();
         if (!normalized.StartsWith('/'))
         {
             throw new ArgumentException(
-                "REST endpoint override patterns must start with '/'.",
-                nameof(pattern));
+                $"{errorPrefix}s must start with '/'.",
+                paramName);
         }
 
         try
@@ -210,8 +328,8 @@ public sealed class RestEndpointOverrideOptions
         catch (Exception ex)
         {
             throw new ArgumentException(
-                $"REST endpoint override pattern '{pattern}' is not a valid ASP.NET Core route pattern.",
-                nameof(pattern),
+                $"{errorPrefix} '{pattern}' is not a valid ASP.NET Core route pattern.",
+                paramName,
                 ex);
         }
 

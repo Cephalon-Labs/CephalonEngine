@@ -441,7 +441,9 @@ Current governance baseline:
 - configure shorthand suppression through `RestApi:Suppressions`
 - configure shorthand API-version, HTTP-method, constrained route-pattern, and explicit
   binding-plan overrides through `RestApi:Overrides`
-- target one or more `Behaviors`, `Modules`, and optional `AuthoringStyles`
+- target one or more `Behaviors`, `Modules`, and optional `AuthoringStyles`, then optionally
+  refine that match with `ApiVersionMajors`, `Methods`, `RelativePatterns`, and
+  `RouteGroupPrefixes`
 - rules that omit both `Behaviors` and `Modules` now fail fast instead of suppressing every
   shorthand candidate implicitly
 - override rules must define at least one override action, require a positive `ApiVersionMajor`
@@ -450,8 +452,12 @@ Current governance baseline:
   the effective binding plan becomes invalid for the effective HTTP method
 - omit `AuthoringStyles` to suppress both shorthand styles by default:
   `behavior-module-profile` and `behavior-module-generated`
-- when more than one rule matches, Cephalon prefers the more specific rule:
-  `behavior+module > behavior > module`, then narrower authoring-style scope, then rule id
+- the optional selector refiners match the original shorthand candidate shape before override
+  actions are applied, so governance can pick one of several shorthand candidates that share the
+  same behavior/module identity without relying on final rewritten route shape
+- when more than one rule matches, Cephalon prefers the more specific rule by populated target
+  dimensions first, then by behavior-targeted scope, narrower authoring-style scope, fewer total
+  selector values, and finally stable rule id ordering
 - shorthand groups that already declare `.ApiVersion(...)` explicitly remain authoritative over
   host-level version rewrites, while shorthand method and constrained pattern overrides can still
   apply
@@ -494,6 +500,10 @@ Override example:
       "cart-v2-profile": {
         "Behaviors": [ "showcase.cart.get" ],
         "AuthoringStyles": [ "behavior-module-profile" ],
+        "ApiVersionMajors": [ 1 ],
+        "Methods": [ "GET" ],
+        "RelativePatterns": [ "/{cartId}" ],
+        "RouteGroupPrefixes": [ "/api/v1/showcase/cart" ],
         "ApiVersionMajor": 2,
         "Method": "DELETE",
         "Pattern": "/lookup/{cartId}",

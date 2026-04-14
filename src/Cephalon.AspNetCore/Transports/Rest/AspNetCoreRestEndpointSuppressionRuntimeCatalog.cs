@@ -21,7 +21,11 @@ internal sealed class AspNetCoreRestEndpointSuppressionRuntimeCatalog : IRestEnd
                 suppression.Id,
                 suppression.BehaviorIds,
                 suppression.SourceModuleIds,
-                suppression.AuthoringStyles))
+                suppression.AuthoringStyles,
+                suppression.ApiVersionMajors,
+                suppression.Methods,
+                suppression.RelativePatterns,
+                suppression.RouteGroupPrefixes))
             .OrderBy(static suppression => suppression.Id, Comparer)
             .ToArray();
 
