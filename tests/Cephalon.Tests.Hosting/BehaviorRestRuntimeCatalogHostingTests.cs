@@ -953,6 +953,44 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public void MapCephalonRejectsPlaceholderRemovalWhenOriginalRouteCoverageReliesOnInference()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Behaviors:0"] = "tests.rest.profile.bindings.inference";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Pattern"] = "/lookup";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:0:PropertyName"] = "OrderId";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:0:Source"] = "Query";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:0:Name"] = "orderId";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:1:PropertyName"] = "Quantity";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:1:Source"] = "Query";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:1:Name"] = "quantity";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:2:PropertyName"] = "CorrelationId";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:2:Source"] = "Header";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:2:Name"] = "X-Correlation-Id";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:3:PropertyName"] = "Note";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:3:Source"] = "Body";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:3:Name"] = "note";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileBindingInferenceRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        using var app = builder.Build();
+        var exception = Assert.Throws<InvalidOperationException>(() => app.MapCephalon());
+
+        Assert.Contains("original projection", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("explicit route-binding plan", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public async Task MapCephalonExposesRestEndpointCandidatesAndSuppressesGeneratedAndProfileMappingsWhenExplicitDslExists()
     {
         var builder = WebApplication.CreateBuilder();
@@ -1402,6 +1440,102 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(8, payload.Quantity);
         Assert.Equal("corr-88", payload.CorrelationId);
         Assert.Equal("renamed placeholder", payload.Note);
+        Assert.Equal("body-fallback", payload.Ignored);
+    }
+
+    [Fact]
+    public async Task MapCephalonAllowsPlaceholderRemovalWhenAffectedPropertiesStayExplicitlyBound()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Behaviors:0"] = "tests.rest.profile.bindings";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Pattern"] = "/lookup";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:0:PropertyName"] = "OrderId";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:0:Source"] = "Query";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:0:Name"] = "orderId";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:1:PropertyName"] = "Quantity";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:1:Source"] = "Query";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:1:Name"] = "quantity";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:2:PropertyName"] = "CorrelationId";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:2:Source"] = "Header";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:2:Name"] = "X-Correlation-Id";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:3:PropertyName"] = "Note";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:3:Source"] = "Body";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:3:Name"] = "note";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileBindingRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(overrides);
+
+        var endpoint = Assert.Single(endpoints, static item =>
+            string.Equals(item.BehaviorId, "tests.rest.profile.bindings", StringComparison.Ordinal));
+        Assert.Equal("/api/v6/tests/profile-runtime/bindings/orders/lookup", endpoint.RoutePattern);
+        Assert.Equal(4, endpoint.BindingDescriptors.Count);
+        Assert.DoesNotContain(endpoint.BindingDescriptors, static binding =>
+            binding.Source == RestEndpointBindingSource.Route);
+        Assert.Contains(endpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "OrderId" &&
+            binding.Source == RestEndpointBindingSource.Query &&
+            binding.Name == "orderId");
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.profile.bindings", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+        Assert.Equal("prefer-query-identity", candidate.AppliedOverrideId);
+        Assert.Equal(endpoint.Id, candidate.ProjectedEndpoint.Id);
+        Assert.Equal("/api/v6/tests/profile-runtime/bindings/orders/lookup", candidate.ProjectedEndpoint.RoutePattern);
+
+        var rule = Assert.Single(overrides, static item =>
+            string.Equals(item.Id, "prefer-query-identity", StringComparison.Ordinal));
+        Assert.Equal("/lookup", rule.Pattern);
+        Assert.Equal(4, rule.Bindings.Count);
+        Assert.Contains(rule.Bindings, static binding =>
+            binding.PropertyName == "OrderId" &&
+            binding.Source == RestEndpointBindingSource.Query &&
+            binding.Name == "orderId");
+
+        using var request = new HttpRequestMessage(
+            HttpMethod.Post,
+            "/api/v6/tests/profile-runtime/bindings/orders/lookup?orderId=ord-74&quantity=5");
+        request.Headers.Add("X-Correlation-Id", "corr-74");
+        request.Content = JsonContent.Create(new
+        {
+            note = "removed placeholder",
+            ignored = "body-fallback"
+        });
+
+        var response = await client.SendAsync(request);
+        response.EnsureSuccessStatusCode();
+
+        var payload = await response.Content.ReadFromJsonAsync<ProfileBindingRuntimeOutput>();
+        Assert.NotNull(payload);
+        Assert.Equal("ord-74", payload.OrderId);
+        Assert.Equal(5, payload.Quantity);
+        Assert.Equal("corr-74", payload.CorrelationId);
+        Assert.Equal("removed placeholder", payload.Note);
         Assert.Equal("body-fallback", payload.Ignored);
     }
 

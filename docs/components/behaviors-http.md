@@ -376,9 +376,12 @@ Current helper behavior:
   route aligned when pattern changes, replaces the shorthand candidate's explicit binding
   descriptors when `Bindings` are supplied while leaving unbound route placeholders and remaining
   request-body fields available for deterministic fallback, now allows placeholder renames when
-  the effective explicit route-binding plan covers the renamed placeholder set exactly, and still
-  leaves explicit module DSL/manual routes plus shorthand groups with explicit `.ApiVersion(...)`
-  authoritative for version selection
+  the effective explicit route-binding plan covers the renamed placeholder set exactly, now also
+  allows placeholder removals when the original projection already exposes explicit route-binding
+  coverage for the original placeholder set and the effective explicit binding plan keeps every
+  affected original route-bound property explicitly bound, and still leaves explicit module
+  DSL/manual routes plus shorthand groups with explicit `.ApiVersion(...)` authoritative for
+  version selection
 
 ## REST runtime catalog and collision guard
 
@@ -453,7 +456,10 @@ Current governance baseline:
   segment, OpenAPI document name, mapped endpoint, and runtime catalogs aligned
 - pattern rewrites preserve the placeholder set by default and can now also rename placeholders
   when the effective explicit route-binding plan covers the renamed placeholder set exactly
-- placeholder additions or removals plus broader binding-shape overrides remain later work
+- placeholder removals can now also apply when the original projection already exposes explicit
+  route-binding coverage for the original placeholder set and the effective explicit binding plan
+  keeps every affected original route-bound property explicitly bound
+- placeholder additions plus broader binding-shape overrides remain later work
 
 Example:
 

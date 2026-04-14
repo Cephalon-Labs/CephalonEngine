@@ -341,25 +341,63 @@ internal static class RestBehaviorProjectionCandidateResolver
             return;
         }
 
-        if (originalPlaceholders.Count != overridePlaceholders.Count)
-        {
-            throw new InvalidOperationException(
-                $"REST endpoint override rule '{overrideId}' cannot rewrite behavior '{endpointProjection.BehaviorId}' from pattern '{endpointProjection.Pattern}' to '{overridePattern}' because this slice allows only placeholder renames. Pattern overrides that add or remove placeholders remain later work.");
-        }
-
-        var routeBindingPlaceholders = effectiveBindings
+        var originalRouteBindings = endpointProjection.Bindings
             .Where(static binding => binding.Source == BehaviorRestBindingSource.Route)
+            .ToArray();
+        var effectiveRouteBindings = effectiveBindings
+            .Where(static binding => binding.Source == BehaviorRestBindingSource.Route)
+            .ToArray();
+        var effectiveRouteBindingPlaceholders = effectiveRouteBindings
             .Select(static binding => string.IsNullOrWhiteSpace(binding.Name)
                 ? binding.PropertyName
                 : binding.Name.Trim())
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
-        if (routeBindingPlaceholders.SetEquals(overridePlaceholders))
+
+        if (originalPlaceholders.Count == overridePlaceholders.Count)
         {
-            return;
+            if (effectiveRouteBindingPlaceholders.SetEquals(overridePlaceholders))
+            {
+                return;
+            }
+
+            throw new InvalidOperationException(
+                $"REST endpoint override rule '{overrideId}' cannot rewrite behavior '{endpointProjection.BehaviorId}' from pattern '{endpointProjection.Pattern}' to '{overridePattern}' because renamed placeholders require an effective explicit route-binding plan that covers the full renamed placeholder set. Add matching route bindings through the effective profile or RestApi:Overrides:*:Bindings, or keep the same placeholder names.");
         }
 
-        throw new InvalidOperationException(
-            $"REST endpoint override rule '{overrideId}' cannot rewrite behavior '{endpointProjection.BehaviorId}' from pattern '{endpointProjection.Pattern}' to '{overridePattern}' because renamed placeholders require an effective explicit route-binding plan that covers the full renamed placeholder set. Add matching route bindings through the effective profile or RestApi:Overrides:*:Bindings, or keep the same placeholder names.");
+        if (overridePlaceholders.Count > originalPlaceholders.Count)
+        {
+            throw new InvalidOperationException(
+                $"REST endpoint override rule '{overrideId}' cannot rewrite behavior '{endpointProjection.BehaviorId}' from pattern '{endpointProjection.Pattern}' to '{overridePattern}' because this slice does not yet allow placeholder additions. Additive route-shape overrides remain later work.");
+        }
+
+        var originalRouteBindingPlaceholders = originalRouteBindings
+            .Select(static binding => string.IsNullOrWhiteSpace(binding.Name)
+                ? binding.PropertyName
+                : binding.Name.Trim())
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        if (!originalRouteBindingPlaceholders.SetEquals(originalPlaceholders))
+        {
+            throw new InvalidOperationException(
+                $"REST endpoint override rule '{overrideId}' cannot rewrite behavior '{endpointProjection.BehaviorId}' from pattern '{endpointProjection.Pattern}' to '{overridePattern}' because removing placeholders requires the original projection to already expose an explicit route-binding plan that covers the full original placeholder set. Add matching route bindings to the source profile before removing placeholders.");
+        }
+
+        if (!effectiveRouteBindingPlaceholders.SetEquals(overridePlaceholders))
+        {
+            throw new InvalidOperationException(
+                $"REST endpoint override rule '{overrideId}' cannot rewrite behavior '{endpointProjection.BehaviorId}' from pattern '{endpointProjection.Pattern}' to '{overridePattern}' because removing placeholders requires an effective explicit route-binding plan that covers the full remaining placeholder set. Add matching route bindings through the effective profile or RestApi:Overrides:*:Bindings.");
+        }
+
+        var originalRouteBoundProperties = originalRouteBindings
+            .Select(static binding => binding.PropertyName.Trim())
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var effectiveExplicitlyBoundProperties = effectiveBindings
+            .Select(static binding => binding.PropertyName.Trim())
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        if (!effectiveExplicitlyBoundProperties.IsSupersetOf(originalRouteBoundProperties))
+        {
+            throw new InvalidOperationException(
+                $"REST endpoint override rule '{overrideId}' cannot rewrite behavior '{endpointProjection.BehaviorId}' from pattern '{endpointProjection.Pattern}' to '{overridePattern}' because removing placeholders requires every affected original route-bound property to remain explicitly bound in the effective plan. Rebind those properties through route, query, header, or body before removing the placeholder.");
+        }
     }
 
     private static RestEndpointSuppressionOptions? ResolveSuppression(

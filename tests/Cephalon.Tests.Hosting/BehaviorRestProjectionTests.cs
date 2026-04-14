@@ -626,6 +626,50 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverAllowsPlaceholderRemovalWhenAffectedPropertiesStayExplicitlyBound()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-binding-removal")
+            .MapProfile<ProfileProjectionBoundBehavior>();
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.profile-binding-removal",
+                "Profile Binding Removal Module",
+                "Exercises placeholder-removal override resolution when both route and affected property coverage stay explicit.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "prefer-query-identity",
+                    behaviorIds: ["tests.profile.projection.bound"],
+                    pattern: "/lookup/items",
+                    bindings:
+                    [
+                        new RestEndpointBindingDescriptor("CartId", RestEndpointBindingSource.Query, "cartId"),
+                        new RestEndpointBindingDescriptor("Quantity", RestEndpointBindingSource.Query, "quantity"),
+                        new RestEndpointBindingDescriptor("CorrelationId", RestEndpointBindingSource.Header, "X-Correlation-Id"),
+                        new RestEndpointBindingDescriptor("Note", RestEndpointBindingSource.Body, "note")
+                    ])
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Equal("prefer-query-identity", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal("/lookup/items", candidate.Candidate.ProjectedEndpoint.Metadata["relativePattern"]);
+        Assert.Equal("/api/v6/tests/profile-binding-removal/lookup/items", candidate.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Equal(4, candidate.Candidate.ProjectedEndpoint.BindingDescriptors.Count);
+        Assert.DoesNotContain(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.Source == RestEndpointBindingSource.Route);
+        Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "CartId" &&
+            binding.Source == RestEndpointBindingSource.Query &&
+            binding.Name == "cartId");
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverRejectsMethodOverrideWhenEffectiveBindingsNoLongerMatchRestContract()
     {
         var builder = new RestBehaviorModuleBuilder();
@@ -781,7 +825,42 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
-    public void RestBehaviorProjectionCandidateResolverRejectsPatternOverridesThatAddOrRemovePlaceholders()
+    public void RestBehaviorProjectionCandidateResolverRejectsPlaceholderRemovalWhenOriginalRouteCoverageReliesOnInference()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-binding-removal-inference")
+            .MapProfile<ProfileProjectionBoundInferenceBehavior>();
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+                new ModuleDescriptor(
+                    "tests.rest.profile-binding-removal-inference",
+                    "Profile Binding Removal Inference Module",
+                    "Exercises fail-fast validation when placeholder removal would rewrite an inference-backed route.",
+                    version: "1.0.0"),
+                new ApiRoutesOptions(),
+                builder.Build().Groups,
+                overrides:
+                [
+                    new RestEndpointOverrideOptions(
+                        id: "prefer-query-identity",
+                        behaviorIds: ["tests.profile.projection.bound.inference"],
+                        pattern: "/lookup/items",
+                        bindings:
+                        [
+                            new RestEndpointBindingDescriptor("CartId", RestEndpointBindingSource.Query, "cartId"),
+                            new RestEndpointBindingDescriptor("Quantity", RestEndpointBindingSource.Query, "quantity"),
+                            new RestEndpointBindingDescriptor("CorrelationId", RestEndpointBindingSource.Header, "X-Correlation-Id"),
+                            new RestEndpointBindingDescriptor("Note", RestEndpointBindingSource.Body, "note")
+                        ])
+                ]));
+
+        Assert.Contains("original projection", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("explicit route-binding plan", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverRejectsPlaceholderRemovalWhenAffectedPropertiesAreNoLongerExplicitlyBound()
     {
         var builder = new RestBehaviorModuleBuilder();
         builder.Group("/tests/profile-binding-placeholder-shape")
@@ -810,7 +889,41 @@ public sealed class BehaviorRestProjectionTests
                         ])
                 ]));
 
-        Assert.Contains("add or remove placeholders", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("affected original route-bound property", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverRejectsPatternOverridesThatAddPlaceholders()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-binding-placeholder-addition")
+            .MapProfile<ProfileProjectionBoundBehavior>();
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+                new ModuleDescriptor(
+                    "tests.rest.profile-binding-placeholder-addition",
+                    "Profile Binding Placeholder Addition Module",
+                    "Exercises fail-fast validation for placeholder additions.",
+                    version: "1.0.0"),
+                new ApiRoutesOptions(),
+                builder.Build().Groups,
+                overrides:
+                [
+                    new RestEndpointOverrideOptions(
+                        id: "prefer-added-placeholder",
+                        behaviorIds: ["tests.profile.projection.bound"],
+                        pattern: "/lookup/{cartId}/{tenantId}/items",
+                        bindings:
+                        [
+                            new RestEndpointBindingDescriptor("CartId", RestEndpointBindingSource.Route, "cartId"),
+                            new RestEndpointBindingDescriptor("Quantity", RestEndpointBindingSource.Query, "quantity"),
+                            new RestEndpointBindingDescriptor("CorrelationId", RestEndpointBindingSource.Header, "X-Correlation-Id"),
+                            new RestEndpointBindingDescriptor("Note", RestEndpointBindingSource.Body, "note")
+                        ])
+                ]));
+
+        Assert.Contains("placeholder additions", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -1274,6 +1387,22 @@ public sealed class BehaviorRestProjectionTests
     [BehaviorRestBinding(nameof(ProfileProjectionBoundInput.CorrelationId), BehaviorRestBindingSource.Header, Name = "X-Correlation-Id")]
     [BehaviorRestBinding(nameof(ProfileProjectionBoundInput.Note), BehaviorRestBindingSource.Body, Name = "note")]
     private sealed class ProfileProjectionBoundBehavior : IAppBehavior<ProfileProjectionBoundInput, ProjectionCartOutput>
+    {
+        public Task<ProjectionCartOutput> HandleAsync(
+            ProfileProjectionBoundInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProjectionCartOutput(input.CartId));
+        }
+    }
+
+    [AppBehavior("tests.profile.projection.bound.inference")]
+    [BehaviorRestProfile(BehaviorRestMethod.Post, "/{cartId}/items", ApiVersionMajor = 6)]
+    [BehaviorRestBinding(nameof(ProfileProjectionBoundInput.Quantity), BehaviorRestBindingSource.Query, Name = "quantity")]
+    [BehaviorRestBinding(nameof(ProfileProjectionBoundInput.CorrelationId), BehaviorRestBindingSource.Header, Name = "X-Correlation-Id")]
+    [BehaviorRestBinding(nameof(ProfileProjectionBoundInput.Note), BehaviorRestBindingSource.Body, Name = "note")]
+    private sealed class ProfileProjectionBoundInferenceBehavior : IAppBehavior<ProfileProjectionBoundInput, ProjectionCartOutput>
     {
         public Task<ProjectionCartOutput> HandleAsync(
             ProfileProjectionBoundInput input,

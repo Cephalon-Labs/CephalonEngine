@@ -373,11 +373,14 @@ Current helper behavior:
   the same projection truth, replaces the shorthand candidate's explicit binding descriptors when
   `Bindings` are supplied while still letting unbound route placeholders and remaining request-body
   fields fill object properties deterministically, now allows placeholder renames when the
-  effective explicit route-binding plan covers the renamed placeholder set exactly, still rejects
-  placeholder additions or removals, fails fast when the effective method-plus-binding plan is
-  invalid or when a rename would rely on inference instead of explicit route coverage, and still
-  leaves explicit `MapGet/MapPost/...` routes, manual module-owned endpoints, and shorthand groups
-  with explicit `.ApiVersion(...)` authoritative for version selection
+  effective explicit route-binding plan covers the renamed placeholder set exactly, now also allows
+  placeholder removals when the original projection already exposes explicit route-binding coverage
+  for the original placeholder set and the effective explicit binding plan keeps every affected
+  original route-bound property explicitly bound, still rejects placeholder additions, fails fast
+  when the effective method-plus-binding plan is invalid or when a rename or removal would rely on
+  inference or drop explicit binding coverage, and still leaves explicit `MapGet/MapPost/...`
+  routes, manual module-owned endpoints, and shorthand groups with explicit `.ApiVersion(...)`
+  authoritative for version selection
 - treats `behaviors.Internal<TBehavior>()` as the explicit internal-only or custom/manual-route path
 - validates that a module cannot map another module's explicitly owned behavior through the REST helper layer
 - keeps route shape in the ASP.NET Core adapter layer while behavior attributes remain host-agnostic
@@ -443,8 +446,11 @@ and intentionally leaves explicit module DSL/manual routes plus shorthand groups
 replaces the shorthand candidate's explicit binding plan while leaving unbound route placeholders
 and remaining request-body fields available for deterministic fallback; placeholder renames can now
 apply when the effective explicit route-binding plan covers the renamed placeholder set exactly;
-placeholder additions or removals still fail fast; and invalid effective method-plus-binding
-combinations also fail fast during endpoint materialization.
+placeholder removals can now also apply when the source projection already exposed explicit
+route-binding coverage for the original placeholder set and the effective explicit binding plan
+keeps every affected original route-bound property explicitly bound; placeholder additions still
+fail fast; and invalid effective method-plus-binding combinations also fail fast during endpoint
+materialization.
 
 Example:
 
@@ -467,10 +473,12 @@ That published-document allow-list remains separate from shorthand candidate ver
 other words, `RestApi:Overrides:*:ApiVersionMajor` can move a shorthand endpoint from `v1` to
 `v2`, `RestApi:Overrides:*:Method` can move the same shorthand endpoint from `GET` to `DELETE`,
 and `RestApi:Overrides:*:Pattern` can move it from `/{cartId}` to `/lookup/{cartId}` with the same
-placeholder set or to `/lookup/{id}` when `RestApi:Overrides:*:Bindings` also makes the effective
-route-binding plan explicit for `{id}`; `Bindings` can also replace other explicit binding details
-such as moving `Quantity` from query key `quantity` to `qty` or `Note` from body key `note` to
-`memo`; the host still decides whether `v2` is actually published through
+placeholder set, to `/lookup/{id}` when `RestApi:Overrides:*:Bindings` also makes the effective
+route-binding plan explicit for `{id}`, or to `/lookup` when `Bindings` explicitly rebind the
+removed route-bound value and the source projection already exposed an explicit route binding for
+`{cartId}`; `Bindings` can also replace other explicit binding details such as moving `Quantity`
+from query key `quantity` to `qty` or `Note` from body key `note` to `memo`; the host still
+decides whether `v2` is actually published through
 `OpenApi:EnabledVersions` or legacy document config. Keep that distinction in mind when a module
 can declare or inherit more candidate versions than one host chooses to publish.
 
