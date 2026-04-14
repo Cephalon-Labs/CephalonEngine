@@ -316,6 +316,136 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task AddRestBehaviorModuleLetsHostsPublishProfileDrivenEndpointsWithoutDedicatedModuleType()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "3";
+        builder.Configuration["OpenApi:DefaultVersion"] = "3";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddRestBehaviorModule<GetProfileRuntimeOrderBehavior>(
+                new ModuleDescriptor(
+                    "tests.rest.inline-profile-runtime",
+                    "Inline Profile Runtime Module",
+                    "Publishes profile-driven REST endpoints through inline module authoring.",
+                    version: "1.0.0"),
+                behaviors => behaviors.Group("/tests/inline/profile-runtime/orders")
+                    .WithTagName("Inline Profile Runtime API")
+                    .MapProfile<GetProfileRuntimeOrderBehavior>());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(snapshot);
+
+        var endpoint = Assert.Single(endpoints, static candidate =>
+            string.Equals(candidate.SourceModuleId, "tests.rest.inline-profile-runtime", StringComparison.Ordinal));
+        Assert.Equal("module-dsl", endpoint.SourceKind);
+        Assert.Equal("tests.rest.profile.lookup", endpoint.BehaviorId);
+        Assert.Equal("/api/v3/tests/inline/profile-runtime/orders/{orderId}", endpoint.RoutePattern);
+        Assert.Equal("v3", endpoint.OpenApiDocumentName);
+        Assert.Equal(3, endpoint.ApiVersionMajor);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, endpoint.Metadata["authoringStyle"]);
+        Assert.Equal("/api/v3/tests/inline/profile-runtime/orders", endpoint.Metadata["routeGroupPrefix"]);
+        Assert.Equal("/{orderId}", endpoint.Metadata["relativePattern"]);
+        Assert.Contains("Inline Profile Runtime API", endpoint.Tags);
+        Assert.Contains(snapshot.RestEndpoints, item =>
+            string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal));
+
+        var payload = await client.GetFromJsonAsync<ProfileRuntimeOrderOutput>("/api/v3/tests/inline/profile-runtime/orders/ord-inline");
+        Assert.NotNull(payload);
+        Assert.Equal("ord-inline", payload.OrderId);
+    }
+
+    [Fact]
+    public async Task AddRestBehaviorModuleLetsHostsPublishGeneratedEndpointsWithoutDedicatedModuleType()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "4";
+        builder.Configuration["OpenApi:DefaultVersion"] = "4";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddRestBehaviorModule<GetGeneratedRuntimeOrderBehavior>(
+                new ModuleDescriptor(
+                    "tests.rest.inline-generated-runtime",
+                    "Inline Generated Runtime Module",
+                    "Publishes generated REST endpoints through inline module authoring.",
+                    version: "1.0.0"),
+                behaviors => behaviors.Group("/tests/inline/generated-runtime")
+                    .WithTagName("Inline Generated Runtime API")
+                    .MapGeneratedProfiles("tests.generated.runtime"));
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(snapshot);
+
+        var moduleEndpoints = endpoints
+            .Where(static candidate =>
+                string.Equals(candidate.SourceModuleId, "tests.rest.inline-generated-runtime", StringComparison.Ordinal))
+            .OrderBy(static candidate => candidate.Method, StringComparer.Ordinal)
+            .ToArray();
+        Assert.Equal(2, moduleEndpoints.Length);
+
+        var getEndpoint = Assert.Single(moduleEndpoints, static endpoint => endpoint.Method == "GET");
+        Assert.Equal("tests.generated.runtime.lookup", getEndpoint.BehaviorId);
+        Assert.Equal("/api/v4/tests/inline/generated-runtime/orders/{orderId}", getEndpoint.RoutePattern);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, getEndpoint.Metadata["authoringStyle"]);
+        Assert.Contains("Inline Generated Runtime API", getEndpoint.Tags);
+
+        var postEndpoint = Assert.Single(moduleEndpoints, static endpoint => endpoint.Method == "POST");
+        Assert.Equal("tests.generated.runtime.create", postEndpoint.BehaviorId);
+        Assert.Equal("/api/v4/tests/inline/generated-runtime/orders/{orderId}/items", postEndpoint.RoutePattern);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, postEndpoint.Metadata["authoringStyle"]);
+
+        Assert.Equal(2, candidates.Count(static candidate =>
+            string.Equals(candidate.ProjectedEndpoint.SourceModuleId, "tests.rest.inline-generated-runtime", StringComparison.Ordinal) &&
+            candidate.Status == RestEndpointCandidateStatus.Published &&
+            string.Equals(candidate.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, StringComparison.Ordinal)));
+        Assert.Contains(snapshot.RestEndpoints, item =>
+            string.Equals(item.SourceModuleId, "tests.rest.inline-generated-runtime", StringComparison.Ordinal) &&
+            string.Equals(item.BehaviorId, "tests.generated.runtime.lookup", StringComparison.Ordinal));
+
+        var payload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>("/api/v4/tests/inline/generated-runtime/orders/ord-inline");
+        Assert.NotNull(payload);
+        Assert.Equal("ord-inline", payload.OrderId);
+    }
+
+    [Fact]
     public async Task MapCephalonAppliesRestApiVersionOverridesAndExposesOverrideCatalog()
     {
         var builder = WebApplication.CreateBuilder();

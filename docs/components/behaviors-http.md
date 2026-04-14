@@ -279,19 +279,46 @@ public sealed class CartModule : RestBehaviorModuleBase
 above selects behaviors whose ids start with `showcase.cart`. If a module wants a different
 selection rule, use `MapGeneratedProfiles("custom.prefix")` explicitly.
 
+When a project wants the same module-owned REST behavior without creating a dedicated module class,
+the host can register an inline module explicitly:
+
+```csharp
+engine.AddRestBehaviorModule<GetCartBehavior>(
+    new ModuleDescriptor(
+        "showcase.cart",
+        "Cart Module",
+        "Publishes the cart public REST surface without a dedicated module class.",
+        version: "1.0.0"),
+    behaviors => behaviors.Group("/showcase/cart")
+        .WithTagName("Cart API")
+        .MapGeneratedProfiles("showcase.cart"));
+```
+
+`AddRestBehaviorModule<TMarker>(...)` remains module-owned: it materializes a real Cephalon module,
+feeds the same `RestBehaviorModuleBuilder` projection pipeline, and still never publishes public
+REST from `[AppBehavior]` alone. The marker type should come from the same behavior assembly that
+owns the published behaviors, especially when the inline module uses `MapGeneratedProfiles(...)`,
+because Cephalon resolves generated REST profile hints from that marker assembly. Use one stable
+marker type per inline module; if a module needs richer lifecycle hooks, extra services, or more
+advanced manual endpoints, prefer a dedicated `RestBehaviorModuleBase` subclass instead.
+
 Current helper behavior:
 
 - keeps REST route shape in the host-adapter layer instead of overloading behavior attributes with
   HTTP-specific concerns
 - lets behaviors carry candidate REST projection metadata without turning that metadata into a
   public route by itself
-- gives behavior-owning REST modules a dedicated base class instead of requiring authors to
-  implement `IBehaviorOwnerModule` plus `IRestModule` manually
+- gives behavior-owning REST modules both a dedicated base class and a low-code
+  `AddRestBehaviorModule<TMarker>(...)` host helper instead of forcing authors to implement
+  `IBehaviorOwnerModule` plus `IRestModule` manually
 - treats the REST DSL as the primary authoring path, so public routes also imply module ownership
 - compiles author-facing REST group and endpoint declarations into a reusable internal projection
   model before the ASP.NET Core adapter materializes route groups and handlers
 - keeps `Internal<TBehavior>()` available for internal-only behaviors or behaviors that will be exposed
   through custom/manual endpoints
+- lets straightforward hosts register an explicit module-owned REST surface inline without creating
+  a dedicated module class, while still reusing the same normalized projection and runtime-catalog
+  path
 - adds `MapProfile<TBehavior>()` as an explicit module-owned shorthand that consumes the behavior
   profile's method, relative pattern, optional candidate API version, and any explicit binding
   descriptors
@@ -304,6 +331,9 @@ Current helper behavior:
 - prefers source-generated `GetRestProfiles()` plus `GetRestProfileBehaviorTypes()` hints for
   generated shorthand and falls back only to a bounded scan of the explicit owning module assembly
   when generated type hints are unavailable
+- lets the inline helper point generated-profile discovery at the correct behavior assembly through
+  its `TMarker` type instead of assuming the reusable helper implementation assembly owns those
+  behaviors
 - keeps explicit route bindings honest by requiring the declared binding name to match a
   placeholder present in the profile route template
 - lets explicit group `.ApiVersion(...)` override profile-declared candidate versions, while

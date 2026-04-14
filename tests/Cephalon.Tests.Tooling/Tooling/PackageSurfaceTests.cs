@@ -820,6 +820,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Behaviors.Http.Hosting.HttpBehaviorBindingExtensions),
             typeof(global::Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder),
             typeof(global::Cephalon.Behaviors.Http.Hosting.IRestBehaviorModuleBuilder),
+            typeof(global::Cephalon.Behaviors.Http.Hosting.RestBehaviorEngineBuilderExtensions),
             typeof(global::Cephalon.Behaviors.Http.Hosting.RestBehaviorModuleBase));
     }
 
@@ -836,6 +837,27 @@ public sealed class PackageSurfaceTests
             method.Name == "MapGeneratedProfiles" &&
             method.GetParameters() is [{ ParameterType: { } parameterType }] &&
             parameterType == typeof(string));
+    }
+
+    [Fact]
+    public void BehaviorsHttpAssemblyExposesInlineRestBehaviorModuleEngineBuilderMethod()
+    {
+        var methods = typeof(global::Cephalon.Behaviors.Http.Hosting.RestBehaviorEngineBuilderExtensions)
+            .GetMethods(BindingFlags.Public | BindingFlags.Static);
+
+        Assert.Contains(methods, static method =>
+            method.Name == "AddRestBehaviorModule" &&
+            method.IsGenericMethodDefinition &&
+            method.GetGenericArguments().Length == 1 &&
+            method.GetParameters() is
+            [
+                { ParameterType: { } engineType },
+                { ParameterType: { } descriptorType },
+                { ParameterType: { } configureType }
+            ] &&
+            engineType == typeof(global::Cephalon.Engine.Composition.EngineBuilder) &&
+            descriptorType == typeof(global::Cephalon.Abstractions.Modules.ModuleDescriptor) &&
+            configureType == typeof(Action<global::Cephalon.Behaviors.Http.Hosting.IRestBehaviorModuleBuilder>));
     }
 
     [Fact]

@@ -2,7 +2,7 @@
 
 Decision baseline date: `April 14, 2026`
 
-Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`, `ENG-058-T67` / GitHub issue `#332`, `ENG-058-T68` / GitHub issue `#333`, `ENG-058-T69` / GitHub issue `#334`, `ENG-058-T70` / GitHub issue `#335`, `ENG-058-T71` / GitHub issue `#336`, `ENG-058-T72` / GitHub issue `#337`, `ENG-058-T73` / GitHub issue `#338`, `ENG-058-T74` / GitHub issue `#339`, `ENG-058-T75` / GitHub issue `#340`, `ENG-058-T76` / GitHub issue `#341`, `ENG-058-T77` / GitHub issue `#342`, `ENG-058-T78` / GitHub issue `#343`, `ENG-058-T79` / GitHub issue `#344`, `ENG-058-T80` / GitHub issue `#345`
+Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`, `ENG-058-T67` / GitHub issue `#332`, `ENG-058-T68` / GitHub issue `#333`, `ENG-058-T69` / GitHub issue `#334`, `ENG-058-T70` / GitHub issue `#335`, `ENG-058-T71` / GitHub issue `#336`, `ENG-058-T72` / GitHub issue `#337`, `ENG-058-T73` / GitHub issue `#338`, `ENG-058-T74` / GitHub issue `#339`, `ENG-058-T75` / GitHub issue `#340`, `ENG-058-T76` / GitHub issue `#341`, `ENG-058-T77` / GitHub issue `#342`, `ENG-058-T78` / GitHub issue `#343`, `ENG-058-T79` / GitHub issue `#344`, `ENG-058-T80` / GitHub issue `#345`, `ENG-058-T81` / GitHub issue `#346`
 
 Cross-references: `docs/components/behaviors-http.md`, `docs/module-authoring.md`, `docs/architecture.md`, `docs/architecture-review-2026-04.md`, `docs/project-memory.md`
 
@@ -199,6 +199,14 @@ Status update:
   truth per behavior so operators can inspect published candidates, precedence-suppressed
   candidates, governance-suppressed candidates, the winning precedence rank when one exists, and
   the ordered candidate set without manually joining several runtime surfaces
+- the next low-code inline module-owned authoring follow-through is now shipped through
+  `ENG-058-T81`: `Cephalon.Behaviors.Http` now exposes
+  `RestBehaviorEngineBuilderExtensions.AddRestBehaviorModule<TMarker>()`, which lets a host
+  register a real module-owned REST surface without a dedicated `RestBehaviorModuleBase`
+  subclass, still drives the same normalized projection/materialization/candidate/governance
+  pipeline as the class-based DSL, uses `TMarker` both as the reusable helper's distinct module
+  type identity and as the source assembly marker for `MapGeneratedProfiles(...)`, and still never
+  publishes public REST from `[AppBehavior]` alone
 - the next low-code generated module-owned shorthand is now shipped through `ENG-058-T67`:
   `IRestBehaviorEndpointGroupBuilder.MapGeneratedProfiles()` and
   `MapGeneratedProfiles(string behaviorIdPrefix)` let an owning module opt into profile-backed
@@ -298,6 +306,13 @@ shape, and public contract explicit in one place.
 
 For lower-ceremony systems, Cephalon can later add a generated or convention-backed module path
 that still materializes into module-owned projections at runtime.
+
+Current shipped follow-through:
+
+- `RestBehaviorModuleBase` remains the class-based path for dedicated module types
+- `AddRestBehaviorModule<TMarker>()` is now the lowest-ceremony explicit module-registration path
+  for straightforward hosts, but it still lands on this same layer instead of inventing a new
+  publication source
 
 ### Layer 4: host- or app-level projection overrides
 

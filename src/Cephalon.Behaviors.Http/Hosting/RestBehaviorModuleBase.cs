@@ -28,6 +28,21 @@ public abstract class RestBehaviorModuleBase : BehaviorModuleBase, IRestModule
     private bool ownershipRegistered;
 
     /// <summary>
+    /// Gets the marker type used to resolve generated REST profile metadata for the current module.
+    /// </summary>
+    /// <returns>
+    /// The marker type whose assembly Cephalon should treat as the source for generated REST
+    /// profile hints when <c>MapGeneratedProfiles(...)</c> is used.
+    /// </returns>
+    /// <remarks>
+    /// Most modules should use the default implementation, which points at the concrete module
+    /// type itself. Low-code wrappers can override this to point at a stable marker type from the
+    /// behavior assembly when the module instance is implemented by a reusable helper type.
+    /// </remarks>
+    protected virtual Type GetRestBehaviorProfileSourceType()
+        => GetType();
+
+    /// <summary>
     /// Declares the module-owned behaviors and their public REST surface in one place.
     /// </summary>
     /// <param name="behaviors">The REST behavior-module builder.</param>
@@ -81,7 +96,7 @@ public abstract class RestBehaviorModuleBase : BehaviorModuleBase, IRestModule
             return projection;
         }
 
-        var builder = new RestBehaviorModuleBuilder(GetType());
+        var builder = new RestBehaviorModuleBuilder(GetRestBehaviorProfileSourceType());
         ConfigureRestBehaviors(builder);
         projection = builder.Build();
         return projection;

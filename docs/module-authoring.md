@@ -333,6 +333,29 @@ above selects ids such as `showcase.cart.get` and `showcase.cart.add-item`. Use
 `MapGeneratedProfiles("custom.prefix")` when the module wants a different generated-selection
 prefix.
 
+When a project wants to stay explicit and module-owned without creating a dedicated module class,
+the host can register the same public REST surface inline:
+
+```csharp
+engine.AddRestBehaviorModule<GetCartBehavior>(
+    new ModuleDescriptor(
+        "showcase.cart",
+        "Cart Module",
+        "Publishes the cart REST surface without a dedicated module class.",
+        version: "1.0.0"),
+    behaviors => behaviors.Group("/showcase/cart")
+        .WithTagName("Cart API")
+        .MapGeneratedProfiles("showcase.cart"));
+```
+
+`AddRestBehaviorModule<TMarker>(...)` still creates a real module and still drives the same
+normalized `RestBehaviorModuleBuilder` pipeline. It is a low-code authoring helper, not a return
+to behavior-owned REST. Use a marker type from the same behavior assembly that owns the published
+behaviors, especially when the inline module uses `MapGeneratedProfiles(...)`, because Cephalon
+resolves generated REST profile hints from that marker assembly. Use one stable marker type per
+inline module. When a module needs richer lifecycle hooks, extra services, or advanced manual
+endpoints, prefer a dedicated `RestBehaviorModuleBase` subclass instead.
+
 If the profile also needs an explicit binding plan, keep that detail on the behavior metadata
 instead of moving it into the module:
 
@@ -357,6 +380,8 @@ Current helper behavior:
 - keeps one module as the owner of both internal-only and REST-exposed behaviors without making
   authors declare the same public behavior twice
 - treats `behaviors.Group(...).MapGet/MapPost/...` as the primary public REST DSL
+- adds `engine.AddRestBehaviorModule<TMarker>(...)` as the lowest-ceremony explicit
+  module-registration path when a host wants module-owned REST without a dedicated module class
 - adds `behaviors.Group(...).MapProfile<TBehavior>()` as the lower-ceremony module-owned shorthand
   when the behavior already carries `BehaviorRestProfileAttribute`
 - adds `behaviors.Group(...).MapGeneratedProfiles()` and `MapGeneratedProfiles(string)` as the
@@ -418,6 +443,8 @@ Current helper behavior:
 - prefers source-generated `GetRestProfiles()` plus `GetRestProfileBehaviorTypes()` hints for
   generated shorthand and falls back only to a bounded scan of the explicit owning module assembly
   when generated type hints are unavailable
+- lets the inline helper keep generated-profile discovery truthful by using the supplied marker
+  type as the source assembly for `MapGeneratedProfiles(...)`
 - prefixes the mapped REST route group with `/v{major}` for the resolved API major version, so ASP.NET Core hosts expose routes such as `/api/v1/showcase/cart/{cartId}`
 - uses the resolved API major version as the operation-name version segment, falling back to the owning module descriptor major version
 - flows XML comments from the module and behavior assemblies into ASP.NET Core OpenAPI metadata when XML docs are available
