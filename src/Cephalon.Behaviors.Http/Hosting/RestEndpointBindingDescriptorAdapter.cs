@@ -23,6 +23,24 @@ internal static class RestEndpointBindingDescriptorAdapter
             .ToArray();
     }
 
+    internal static BehaviorRestBindingDescriptor[] ToBehaviorDescriptors(
+        IReadOnlyList<RestEndpointBindingDescriptor> bindings)
+    {
+        ArgumentNullException.ThrowIfNull(bindings);
+
+        if (bindings.Count == 0)
+        {
+            return [];
+        }
+
+        return bindings
+            .Select(static binding => new BehaviorRestBindingDescriptor(
+                binding.PropertyName,
+                ToBehaviorSource(binding.Source),
+                binding.Name))
+            .ToArray();
+    }
+
     internal static RestEndpointBindingSource ToRuntimeSource(BehaviorRestBindingSource source)
     {
         return source switch
@@ -33,6 +51,19 @@ internal static class RestEndpointBindingDescriptorAdapter
             BehaviorRestBindingSource.Body => RestEndpointBindingSource.Body,
             _ => throw new InvalidOperationException(
                 $"Unsupported behavior REST binding source '{source}'.")
+        };
+    }
+
+    internal static BehaviorRestBindingSource ToBehaviorSource(RestEndpointBindingSource source)
+    {
+        return source switch
+        {
+            RestEndpointBindingSource.Route => BehaviorRestBindingSource.Route,
+            RestEndpointBindingSource.Query => BehaviorRestBindingSource.Query,
+            RestEndpointBindingSource.Header => BehaviorRestBindingSource.Header,
+            RestEndpointBindingSource.Body => BehaviorRestBindingSource.Body,
+            _ => throw new InvalidOperationException(
+                $"Unsupported REST endpoint binding source '{source}'.")
         };
     }
 }

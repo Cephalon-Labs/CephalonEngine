@@ -1196,6 +1196,122 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonAppliesRestBindingOverridesAndExposesOverrideCatalog()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.Configuration["RestApi:Overrides:prefer-short-bindings:Behaviors:0"] = "tests.rest.profile.bindings";
+        builder.Configuration["RestApi:Overrides:prefer-short-bindings:Bindings:0:PropertyName"] = "Quantity";
+        builder.Configuration["RestApi:Overrides:prefer-short-bindings:Bindings:0:Source"] = "Query";
+        builder.Configuration["RestApi:Overrides:prefer-short-bindings:Bindings:0:Name"] = "qty";
+        builder.Configuration["RestApi:Overrides:prefer-short-bindings:Bindings:1:PropertyName"] = "CorrelationId";
+        builder.Configuration["RestApi:Overrides:prefer-short-bindings:Bindings:1:Source"] = "Header";
+        builder.Configuration["RestApi:Overrides:prefer-short-bindings:Bindings:1:Name"] = "X-Trace-Id";
+        builder.Configuration["RestApi:Overrides:prefer-short-bindings:Bindings:2:PropertyName"] = "Note";
+        builder.Configuration["RestApi:Overrides:prefer-short-bindings:Bindings:2:Source"] = "Body";
+        builder.Configuration["RestApi:Overrides:prefer-short-bindings:Bindings:2:Name"] = "memo";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileBindingRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(overrides);
+        Assert.NotNull(snapshot);
+
+        var endpoint = Assert.Single(endpoints, static candidate =>
+            string.Equals(candidate.BehaviorId, "tests.rest.profile.bindings", StringComparison.Ordinal));
+        Assert.Equal("/api/v6/tests/profile-runtime/bindings/orders/{orderId}", endpoint.RoutePattern);
+        Assert.Equal(3, endpoint.BindingDescriptors.Count);
+        Assert.DoesNotContain(endpoint.BindingDescriptors, static binding =>
+            string.Equals(binding.PropertyName, "OrderId", StringComparison.Ordinal));
+        Assert.Contains(endpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "Quantity" &&
+            binding.Source == RestEndpointBindingSource.Query &&
+            binding.Name == "qty");
+        Assert.Contains(endpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "CorrelationId" &&
+            binding.Source == RestEndpointBindingSource.Header &&
+            binding.Name == "X-Trace-Id");
+        Assert.Contains(endpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "Note" &&
+            binding.Source == RestEndpointBindingSource.Body &&
+            binding.Name == "memo");
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.profile.bindings", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+        Assert.Equal("prefer-short-bindings", candidate.AppliedOverrideId);
+        Assert.Equal(3, candidate.ProjectedEndpoint.BindingDescriptors.Count);
+        Assert.Equal(endpoint.Id, candidate.ProjectedEndpoint.Id);
+
+        var rule = Assert.Single(overrides, static item =>
+            string.Equals(item.Id, "prefer-short-bindings", StringComparison.Ordinal));
+        Assert.Equal(3, rule.Bindings.Count);
+        Assert.Contains(rule.Bindings, static binding =>
+            binding.PropertyName == "Quantity" &&
+            binding.Source == RestEndpointBindingSource.Query &&
+            binding.Name == "qty");
+        Assert.Contains(rule.Bindings, static binding =>
+            binding.PropertyName == "CorrelationId" &&
+            binding.Source == RestEndpointBindingSource.Header &&
+            binding.Name == "X-Trace-Id");
+        Assert.Contains(rule.Bindings, static binding =>
+            binding.PropertyName == "Note" &&
+            binding.Source == RestEndpointBindingSource.Body &&
+            binding.Name == "memo");
+
+        Assert.Contains(snapshot.RestEndpointOverrides, static item =>
+            string.Equals(item.Id, "prefer-short-bindings", StringComparison.Ordinal) &&
+            item.Bindings.Count == 3);
+        Assert.Contains(snapshot.RestEndpointCandidates, item =>
+            string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
+            string.Equals(item.AppliedOverrideId, "prefer-short-bindings", StringComparison.Ordinal));
+
+        using var request = new HttpRequestMessage(
+            HttpMethod.Post,
+            "/api/v6/tests/profile-runtime/bindings/orders/ord-64?qty=7");
+        request.Headers.Add("X-Trace-Id", "trace-64");
+        request.Content = JsonContent.Create(new
+        {
+            memo = "override memo",
+            ignored = "body-fallback"
+        });
+
+        var response = await client.SendAsync(request);
+        response.EnsureSuccessStatusCode();
+
+        var payload = await response.Content.ReadFromJsonAsync<ProfileBindingRuntimeOutput>();
+        Assert.NotNull(payload);
+        Assert.Equal("ord-64", payload.OrderId);
+        Assert.Equal(7, payload.Quantity);
+        Assert.Equal("trace-64", payload.CorrelationId);
+        Assert.Equal("override memo", payload.Note);
+        Assert.Equal("body-fallback", payload.Ignored);
+    }
+
+    [Fact]
     public async Task MapCephalonRejectsBodyConflictsWithExplicitProfileBindings()
     {
         var builder = WebApplication.CreateBuilder();
@@ -1282,6 +1398,35 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(8, payload.Quantity);
         Assert.Equal("corr-77", payload.CorrelationId);
         Assert.Equal("route inference", payload.Note);
+    }
+
+    [Fact]
+    public void MapCephalonRejectsMethodOverridesThatLeaveInvalidBindingPlans()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.Configuration["RestApi:Overrides:prefer-get:Behaviors:0"] = "tests.rest.profile.bindings";
+        builder.Configuration["RestApi:Overrides:prefer-get:Method"] = "GET";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileBindingRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        var app = builder.Build();
+
+        var exception = Assert.Throws<InvalidOperationException>(() => app.MapCephalon());
+
+        Assert.Contains("prefer-get", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("does not accept a request body", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

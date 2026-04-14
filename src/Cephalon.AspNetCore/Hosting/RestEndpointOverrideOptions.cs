@@ -1,3 +1,4 @@
+using Cephalon.Abstractions.Transports;
 using Cephalon.AspNetCore.Transports.Rest;
 using Microsoft.AspNetCore.Routing.Patterns;
 
@@ -37,6 +38,10 @@ public sealed class RestEndpointOverrideOptions
     /// <param name="pattern">
     /// The effective relative route pattern applied when the rule matches a shorthand candidate.
     /// </param>
+    /// <param name="bindings">
+    /// The effective explicit request-binding plan applied when the rule matches a shorthand
+    /// candidate.
+    /// </param>
     public RestEndpointOverrideOptions(
         string id,
         IReadOnlyList<string>? behaviorIds = null,
@@ -44,7 +49,8 @@ public sealed class RestEndpointOverrideOptions
         IReadOnlyList<string>? authoringStyles = null,
         int? apiVersionMajor = null,
         string? method = null,
-        string? pattern = null)
+        string? pattern = null,
+        IReadOnlyList<RestEndpointBindingDescriptor>? bindings = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
 
@@ -54,6 +60,7 @@ public sealed class RestEndpointOverrideOptions
         AuthoringStyles = NormalizeAuthoringStyles(authoringStyles);
         Method = NormalizeMethod(method);
         Pattern = NormalizePattern(pattern);
+        Bindings = NormalizeBindings(bindings);
 
         if (BehaviorIds.Count == 0 && SourceModuleIds.Count == 0)
         {
@@ -72,10 +79,10 @@ public sealed class RestEndpointOverrideOptions
 
         ApiVersionMajor = apiVersionMajor;
 
-        if (!ApiVersionMajor.HasValue && Method is null && Pattern is null)
+        if (!ApiVersionMajor.HasValue && Method is null && Pattern is null && Bindings.Count == 0)
         {
             throw new ArgumentException(
-                "REST endpoint override rules must define at least one override action such as ApiVersionMajor, Method, or Pattern.",
+                "REST endpoint override rules must define at least one override action such as ApiVersionMajor, Method, Pattern, or Bindings.",
                 nameof(apiVersionMajor));
         }
     }
@@ -116,6 +123,11 @@ public sealed class RestEndpointOverrideOptions
     public string? Pattern { get; }
 
     /// <summary>
+    /// Gets the effective explicit request-binding plan applied when this override rule matches.
+    /// </summary>
+    public IReadOnlyList<RestEndpointBindingDescriptor> Bindings { get; }
+
+    /// <summary>
     /// Gets a value indicating whether any targeting values or override actions were explicitly supplied.
     /// </summary>
     public bool HasValues =>
@@ -123,7 +135,8 @@ public sealed class RestEndpointOverrideOptions
         SourceModuleIds.Count > 0 ||
         ApiVersionMajor.HasValue ||
         Method is not null ||
-        Pattern is not null;
+        Pattern is not null ||
+        Bindings.Count > 0;
 
     private static string[] NormalizeList(IReadOnlyList<string>? values)
     {
@@ -203,5 +216,17 @@ public sealed class RestEndpointOverrideOptions
         }
 
         return normalized;
+    }
+
+    private static RestEndpointBindingDescriptor[] NormalizeBindings(
+        IReadOnlyList<RestEndpointBindingDescriptor>? bindings)
+    {
+        return bindings?
+            .Where(static binding => binding is not null)
+            .Select(static binding => new RestEndpointBindingDescriptor(
+                binding.PropertyName,
+                binding.Source,
+                binding.Name))
+            .ToArray() ?? [];
     }
 }

@@ -15,6 +15,7 @@ public sealed class RestEndpointOverrideDescriptor
     /// <param name="apiVersionMajor">The effective API major version applied when the rule matches.</param>
     /// <param name="method">The effective HTTP method applied when the rule matches.</param>
     /// <param name="pattern">The effective relative route pattern applied when the rule matches.</param>
+    /// <param name="bindings">The effective explicit request-binding plan applied when the rule matches.</param>
     public RestEndpointOverrideDescriptor(
         string id,
         IReadOnlyList<string>? behaviorIds = null,
@@ -22,7 +23,8 @@ public sealed class RestEndpointOverrideDescriptor
         IReadOnlyList<string>? authoringStyles = null,
         int? apiVersionMajor = null,
         string? method = null,
-        string? pattern = null)
+        string? pattern = null,
+        IReadOnlyList<RestEndpointBindingDescriptor>? bindings = null)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -44,11 +46,12 @@ public sealed class RestEndpointOverrideDescriptor
         ApiVersionMajor = apiVersionMajor;
         Method = NormalizeMethod(method);
         Pattern = NormalizePattern(pattern);
+        Bindings = NormalizeBindings(bindings);
 
-        if (!ApiVersionMajor.HasValue && Method is null && Pattern is null)
+        if (!ApiVersionMajor.HasValue && Method is null && Pattern is null && Bindings.Count == 0)
         {
             throw new ArgumentException(
-                "REST endpoint override descriptors require at least one override action such as ApiVersionMajor, Method, or Pattern.",
+                "REST endpoint override descriptors require at least one override action such as ApiVersionMajor, Method, Pattern, or Bindings.",
                 nameof(apiVersionMajor));
         }
     }
@@ -87,6 +90,11 @@ public sealed class RestEndpointOverrideDescriptor
     /// Gets the effective relative route pattern applied when this override rule matches.
     /// </summary>
     public string? Pattern { get; }
+
+    /// <summary>
+    /// Gets the effective explicit request-binding plan applied when this override rule matches.
+    /// </summary>
+    public IReadOnlyList<RestEndpointBindingDescriptor> Bindings { get; }
 
     private static string[] NormalizeList(IReadOnlyList<string>? values)
     {
@@ -134,5 +142,17 @@ public sealed class RestEndpointOverrideDescriptor
         }
 
         return normalized;
+    }
+
+    private static RestEndpointBindingDescriptor[] NormalizeBindings(
+        IReadOnlyList<RestEndpointBindingDescriptor>? bindings)
+    {
+        return bindings?
+            .Where(static binding => binding is not null)
+            .Select(static binding => new RestEndpointBindingDescriptor(
+                binding.PropertyName,
+                binding.Source,
+                binding.Name))
+            .ToArray() ?? [];
     }
 }

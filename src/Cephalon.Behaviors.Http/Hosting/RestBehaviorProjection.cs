@@ -145,6 +145,23 @@ internal sealed record RestBehaviorEndpointProjection(
                 Map);
     }
 
+    internal RestBehaviorEndpointProjection WithBindings(IReadOnlyList<BehaviorRestBindingDescriptor> bindings)
+    {
+        ArgumentNullException.ThrowIfNull(bindings);
+
+        return Bindings.SequenceEqual(bindings)
+            ? this
+            : new RestBehaviorEndpointProjection(
+                Method,
+                BehaviorId,
+                BehaviorType,
+                Pattern,
+                bindings.ToArray(),
+                AuthoringStyle,
+                ConfigureEndpoint,
+                Map);
+    }
+
     internal void Apply(BehaviorRestEndpointGroup group)
     {
         ArgumentNullException.ThrowIfNull(group);

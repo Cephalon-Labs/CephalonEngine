@@ -253,6 +253,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         var effectiveEndpointProjection = endpointProjection;
         var effectiveApiVersionMajor = defaultApiVersionMajor;
         var wasApplied = false;
+        var shouldRevalidateBindings = false;
 
         if (!string.IsNullOrWhiteSpace(matchedOverride.Pattern) &&
             !string.Equals(matchedOverride.Pattern, endpointProjection.Pattern, StringComparison.Ordinal))
@@ -263,6 +264,7 @@ internal static class RestBehaviorProjectionCandidateResolver
                 matchedOverride.Pattern);
             effectiveEndpointProjection = effectiveEndpointProjection.WithPattern(matchedOverride.Pattern);
             wasApplied = true;
+            shouldRevalidateBindings = true;
         }
 
         if (!string.IsNullOrWhiteSpace(matchedOverride.Method))
@@ -272,7 +274,31 @@ internal static class RestBehaviorProjectionCandidateResolver
             {
                 effectiveEndpointProjection = effectiveEndpointProjection.WithMethod(overrideMethod);
                 wasApplied = true;
+                shouldRevalidateBindings = true;
             }
+        }
+
+        if (matchedOverride.Bindings.Count > 0)
+        {
+            var overrideBindings = RestEndpointBindingDescriptorAdapter.ToBehaviorDescriptors(matchedOverride.Bindings);
+            if (!effectiveEndpointProjection.Bindings.SequenceEqual(overrideBindings))
+            {
+                effectiveEndpointProjection = effectiveEndpointProjection.WithBindings(overrideBindings);
+                wasApplied = true;
+            }
+
+            shouldRevalidateBindings = true;
+        }
+
+        if (shouldRevalidateBindings)
+        {
+            var normalizedBindings = BehaviorRestBindingPlanNormalizer.Normalize(
+                $"REST endpoint override rule '{matchedOverride.Id}' for behavior '{endpointProjection.BehaviorId}'",
+                effectiveEndpointProjection.BehaviorType,
+                effectiveEndpointProjection.Method,
+                effectiveEndpointProjection.Pattern,
+                effectiveEndpointProjection.Bindings);
+            effectiveEndpointProjection = effectiveEndpointProjection.WithBindings(normalizedBindings);
         }
 
         if (!group.HasExplicitApiVersion &&

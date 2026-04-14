@@ -366,12 +366,16 @@ Current helper behavior:
   without taking away module ownership, while explicit `MapGet/MapPost/...` routes and manual
   module-owned endpoints remain authoritative
 - lets ASP.NET Core hosts move shorthand candidates to another effective API major version,
-  HTTP method, or placeholder-preserving relative route pattern through `RestApi:Overrides`
-  without taking away module ownership; that override surface now supports `ApiVersionMajor`,
-  `Method`, and `Pattern`, keeps the `/v{major}` route segment, OpenAPI document name, endpoint
-  method, and effective route aligned with the same projection truth, and still leaves explicit
-  `MapGet/MapPost/...` routes, manual module-owned endpoints, and shorthand groups with explicit
-  `.ApiVersion(...)` authoritative for version selection
+  HTTP method, placeholder-preserving relative route pattern, or explicit binding plan through
+  `RestApi:Overrides` without taking away module ownership; that override surface now supports
+  `ApiVersionMajor`, `Method`, `Pattern`, and `Bindings`, keeps the `/v{major}` route segment,
+  OpenAPI document name, endpoint method, effective route, and effective binding plan aligned with
+  the same projection truth, replaces the shorthand candidate's explicit binding descriptors when
+  `Bindings` are supplied while still letting unbound route placeholders and remaining request-body
+  fields fill object properties deterministically, fails fast when the effective method-plus-binding
+  plan is invalid, and still leaves explicit `MapGet/MapPost/...` routes, manual module-owned
+  endpoints, and shorthand groups with explicit `.ApiVersion(...)` authoritative for version
+  selection
 - treats `behaviors.Internal<TBehavior>()` as the explicit internal-only or custom/manual-route path
 - validates that a module cannot map another module's explicitly owned behavior through the REST helper layer
 - keeps route shape in the ASP.NET Core adapter layer while behavior attributes remain host-agnostic
@@ -427,13 +431,16 @@ matching rule deterministically, and intentionally suppresses only descriptor-ba
 candidates rather than rewriting explicit module DSL/manual routes.
 
 When a host wants to keep shorthand publication but retarget selected shorthand endpoints to a
-different effective API major version, HTTP method, or placeholder-preserving relative route
-pattern, use `RestApi:Overrides`. That host-level governance surface targets the same
+different effective API major version, HTTP method, placeholder-preserving relative route
+pattern, or explicit binding plan, use `RestApi:Overrides`. That host-level governance surface targets the same
 descriptor-backed shorthand candidates, also requires `Behaviors` or `Modules`, now supports a
-positive `ApiVersionMajor`, a supported HTTP `Method`, and/or a valid relative `Pattern`,
-records the applied rule through `AppliedOverrideId` in `/engine/rest-endpoint-candidates`, and
-intentionally leaves explicit module DSL/manual routes plus shorthand groups with explicit
-`.ApiVersion(...)` authoritative for version selection.
+positive `ApiVersionMajor`, a supported HTTP `Method`, a valid relative `Pattern`, and/or explicit
+`Bindings`, records the applied rule through `AppliedOverrideId` in `/engine/rest-endpoint-candidates`,
+and intentionally leaves explicit module DSL/manual routes plus shorthand groups with explicit
+`.ApiVersion(...)` authoritative for version selection. When `Bindings` are supplied, the override
+replaces the shorthand candidate's explicit binding plan while leaving unbound route placeholders
+and remaining request-body fields available for deterministic fallback; invalid effective
+method-plus-binding combinations fail fast during endpoint materialization.
 
 Example:
 
@@ -456,9 +463,11 @@ That published-document allow-list remains separate from shorthand candidate ver
 other words, `RestApi:Overrides:*:ApiVersionMajor` can move a shorthand endpoint from `v1` to
 `v2`, `RestApi:Overrides:*:Method` can move the same shorthand endpoint from `GET` to `DELETE`,
 and `RestApi:Overrides:*:Pattern` can move it from `/{cartId}` to `/lookup/{cartId}` as long as
-the placeholder set stays the same, but the host still decides whether `v2` is actually published
-through `OpenApi:EnabledVersions` or legacy document config. Keep that distinction in mind when a
-module can declare or inherit more candidate versions than one host chooses to publish.
+the placeholder set stays the same, while `RestApi:Overrides:*:Bindings` can replace an explicit
+binding plan such as moving `Quantity` from query key `quantity` to `qty` or `Note` from body key
+`note` to `memo`; the host still decides whether `v2` is actually published through
+`OpenApi:EnabledVersions` or legacy document config. Keep that distinction in mind when a module
+can declare or inherit more candidate versions than one host chooses to publish.
 
 That published-document allow-list is separate from the generic behavior adapter route segment. JSON-RPC, GraphQL, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket routes keep using `ApiRoutes:DefaultBehaviorDocumentName` or the raw configured `OpenApi:DefaultVersion`, because those adapter endpoints are not part of the published REST OpenAPI surface. If a host wants those generic adapter routes pinned to a different segment than the docs default, set `ApiRoutes:DefaultBehaviorDocumentName` explicitly.
 

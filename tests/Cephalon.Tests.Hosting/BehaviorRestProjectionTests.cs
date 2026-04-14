@@ -533,6 +533,85 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverAppliesBindingOverrideToShorthandCandidates()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-binding-override")
+            .MapProfile<ProfileProjectionBoundBehavior>();
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.profile-binding-override",
+                "Profile Binding Override Module",
+                "Exercises shorthand binding-plan override resolution.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "prefer-short-bindings",
+                    behaviorIds: ["tests.profile.projection.bound"],
+                    bindings:
+                    [
+                        new RestEndpointBindingDescriptor("Quantity", RestEndpointBindingSource.Query, "qty"),
+                        new RestEndpointBindingDescriptor("CorrelationId", RestEndpointBindingSource.Header, "X-Trace-Id"),
+                        new RestEndpointBindingDescriptor("Note", RestEndpointBindingSource.Body, "memo")
+                    ])
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Equal("prefer-short-bindings", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal("/api/v6/tests/profile-binding-override/{cartId}/items", candidate.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Equal("v6", candidate.Candidate.ProjectedEndpoint.OpenApiDocumentName);
+        Assert.Equal(6, candidate.Candidate.ProjectedEndpoint.ApiVersionMajor);
+        Assert.Equal(3, candidate.Candidate.ProjectedEndpoint.BindingDescriptors.Count);
+        Assert.DoesNotContain(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            string.Equals(binding.PropertyName, "CartId", StringComparison.Ordinal));
+        Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "Quantity" &&
+            binding.Source == RestEndpointBindingSource.Query &&
+            binding.Name == "qty");
+        Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "CorrelationId" &&
+            binding.Source == RestEndpointBindingSource.Header &&
+            binding.Name == "X-Trace-Id");
+        Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "Note" &&
+            binding.Source == RestEndpointBindingSource.Body &&
+            binding.Name == "memo");
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverRejectsMethodOverrideWhenEffectiveBindingsNoLongerMatchRestContract()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-binding-invalid-method")
+            .MapProfile<ProfileProjectionBoundBehavior>();
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+                new ModuleDescriptor(
+                    "tests.rest.profile-binding-invalid-method",
+                    "Profile Binding Invalid Method Module",
+                    "Exercises fail-fast validation when a shorthand method override leaves an invalid binding plan.",
+                    version: "1.0.0"),
+                new ApiRoutesOptions(),
+                builder.Build().Groups,
+                overrides:
+                [
+                    new RestEndpointOverrideOptions(
+                        id: "prefer-get",
+                        behaviorIds: ["tests.profile.projection.bound"],
+                        method: "GET")
+                ]));
+
+        Assert.Contains("prefer-get", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("does not accept a request body", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverKeepsExplicitGroupApiVersionAuthoritativeOverHostOverride()
     {
         var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));

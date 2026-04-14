@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Configuration;
+using Cephalon.Abstractions.Transports;
 
 namespace Cephalon.AspNetCore.Hosting;
 
@@ -79,7 +80,8 @@ public sealed class RestApiGovernanceOptions
                 authoringStyles: ReadStringArray(child.GetSection("AuthoringStyles")),
                 apiVersionMajor: ReadPositiveInt(child, "ApiVersionMajor"),
                 method: child["Method"]?.Trim(),
-                pattern: child["Pattern"]?.Trim()))
+                pattern: child["Pattern"]?.Trim(),
+                bindings: ReadBindings(child.GetSection("Bindings"))))
             .ToArray();
 
         return new RestApiGovernanceOptions(suppressions, overrides);
@@ -111,6 +113,41 @@ public sealed class RestApiGovernanceOptions
         {
             throw new InvalidOperationException(
                 $"REST API governance value '{section.Path}:{key}' must be a positive integer.");
+        }
+
+        return parsedValue;
+    }
+
+    private static RestEndpointBindingDescriptor[] ReadBindings(IConfiguration section)
+    {
+        ArgumentNullException.ThrowIfNull(section);
+
+        return section.GetChildren()
+            .Select(child => new RestEndpointBindingDescriptor(
+                propertyName: child["PropertyName"]?.Trim()
+                    ?? throw new InvalidOperationException(
+                        $"REST API governance value '{child.Path}:PropertyName' is required."),
+                source: ReadBindingSource(child),
+                name: child["Name"]?.Trim()))
+            .ToArray();
+    }
+
+    private static RestEndpointBindingSource ReadBindingSource(IConfigurationSection section)
+    {
+        ArgumentNullException.ThrowIfNull(section);
+
+        var rawValue = section["Source"]?.Trim();
+        if (string.IsNullOrWhiteSpace(rawValue))
+        {
+            throw new InvalidOperationException(
+                $"REST API governance value '{section.Path}:Source' is required.");
+        }
+
+        if (!Enum.TryParse<RestEndpointBindingSource>(rawValue, ignoreCase: true, out var parsedValue) ||
+            parsedValue == RestEndpointBindingSource.Unspecified)
+        {
+            throw new InvalidOperationException(
+                $"REST API governance value '{section.Path}:Source' must be one of Route, Query, Header, or Body.");
         }
 
         return parsedValue;
