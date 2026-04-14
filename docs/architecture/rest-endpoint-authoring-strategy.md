@@ -222,6 +222,12 @@ Status update:
   configured candidate ids directly, and selector specificity now prefers candidate-targeted rules
   before broader behavior/module selector matches while `ProjectedEndpoint` continues to answer the
   final effective mapped route shape
+- the next shorthand projected-endpoint metadata alignment follow-through is now shipped through
+  `ENG-058-T86`: shorthand candidates now project the same endpoint name, summary, and description
+  metadata that the final behavior-backed runtime endpoint exposes, using the same
+  operation-name/documentation conventions during candidate resolution so
+  `/engine/rest-endpoint-candidates` and `/engine/rest-endpoints` stay aligned for operator-facing
+  metadata truth
 - the next bounded shorthand route-group-prefix override follow-through is now shipped through
   `ENG-058-T82`: the typed override/runtime contracts plus ASP.NET Core config binding now support
   shorthand-only `RouteGroupPrefix`, that remap must stay beneath the active REST root, cannot
@@ -757,7 +763,8 @@ The following points are durable enough to keep outside thread-local context.
   `snapshot.RestEndpointPublicationGroups`
 - those candidate entries now keep the original shorthand source shape visible through
   `RestEndpointCandidateRuntimeDescriptor.OriginalProjection` while `ProjectedEndpoint` continues
-  to answer the final effective mapped route, version, method, and binding shape
+  to answer the final effective mapped route, version, method, binding, endpoint-name, summary,
+  and description shape
 - those grouped publication entries now keep the behavior-level published-versus-suppressed story
   visible through published candidate ids, precedence-suppressed candidate ids,
   governance-suppressed candidate ids, the winning precedence rank when one exists, and the
@@ -782,6 +789,10 @@ The following points are durable enough to keep outside thread-local context.
 - `/engine/rest-endpoint-candidates` now publishes that same original-shape candidate identity
   through `RestEndpointCandidateRuntimeDescriptor.Id`, while `ProjectedEndpoint.Id` remains the
   effective mapped endpoint identity after override actions are applied
+- shorthand candidate projected endpoints now also keep endpoint names plus summary/description
+  metadata aligned with the final behavior-backed runtime endpoint conventions, including XML-
+  derived summaries/descriptions when those docs exist and module-description fallback when they do
+  not
 - within that constrained pattern slice, placeholder-preserving rewrites stay the default and
   placeholder renames now also work when the effective explicit route-binding plan covers the
   renamed placeholder set exactly, placeholder removals now also work when the original

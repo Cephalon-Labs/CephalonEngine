@@ -157,6 +157,14 @@ internal static class RestBehaviorProjectionCandidateResolver
             publishedRouteGroupPrefix,
             effectiveEndpointProjection.Pattern);
         var runtimeBindings = RestEndpointBindingDescriptorAdapter.ToRuntimeDescriptors(effectiveEndpointProjection.Bindings);
+        var operationName = RestBehaviorEndpointMetadataConventions.BuildOperationName(
+            moduleDescriptor.Id,
+            effectiveApiVersionMajor ?? ResolveModuleMajorVersion(moduleDescriptor.Version),
+            effectiveEndpointProjection.BehaviorId);
+        var documentation = RestBehaviorEndpointMetadataConventions.ResolveOperationDocumentation(
+            effectiveEndpointProjection.BehaviorType,
+            moduleDescriptor,
+            effectiveEndpointProjection.BehaviorId);
         var projectedEndpoint = RestEndpointRuntimeDescriptorFactory.CreateBehaviorDescriptor(
             sourceKind: RestEndpointRuntimeMetadata.ModuleDslSourceKind,
             method: method,
@@ -165,12 +173,12 @@ internal static class RestBehaviorProjectionCandidateResolver
             sourceModuleVersion: moduleDescriptor.Version,
             sourceModuleVersionMajor: ResolveModuleMajorVersion(moduleDescriptor.Version),
             behaviorId: effectiveEndpointProjection.BehaviorId,
-            endpointName: null,
+            endpointName: operationName,
             openApiDocumentName: openApiDocumentName,
             apiVersionMajor: effectiveApiVersionMajor,
             tags: [tagName],
-            summary: null,
-            description: null,
+            summary: documentation.Summary,
+            description: documentation.Description,
             authoringStyle: effectiveEndpointProjection.AuthoringStyle,
             behaviorType: effectiveEndpointProjection.BehaviorType.FullName ?? effectiveEndpointProjection.BehaviorType.Name,
             routeGroupPrefix: publishedRouteGroupPrefix,

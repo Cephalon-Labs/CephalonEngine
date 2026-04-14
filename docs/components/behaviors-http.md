@@ -505,8 +505,11 @@ through `ProjectedEndpoint`, authoring style, precedence rank, published versus 
 and when suppression occurs the winning candidate id plus an operator-facing suppression reason.
 Candidate ids now resolve from that original shorthand projection before host-level overrides are
 applied, while `ProjectedEndpoint.Id` continues to identify the final effective mapped endpoint
-shape. Today that surface covers the normalized module-owned behavior projection path, including
-explicit module DSL mappings, `MapProfile<TBehavior>()` shorthand consumption, and
+shape. Projected shorthand endpoints now also keep endpoint names plus summary/description metadata
+aligned with the final published runtime endpoint conventions, including XML-derived behavior docs
+when they exist and module-description fallback when they do not. Today that surface covers the
+normalized module-owned behavior projection path, including explicit module DSL mappings,
+`MapProfile<TBehavior>()` shorthand consumption, and
 `MapGeneratedProfiles(...)` shorthand consumption.
 
 Publication-group entries now answer that same runtime truth one behavior at a time: the ordered

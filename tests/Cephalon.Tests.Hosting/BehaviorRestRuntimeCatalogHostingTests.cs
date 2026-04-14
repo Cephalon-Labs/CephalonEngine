@@ -193,20 +193,30 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         var client = app.GetTestClient();
 
         var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
 
         Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
 
         var endpoint = Assert.Single(endpoints, static candidate =>
             string.Equals(candidate.BehaviorId, "tests.rest.profile.lookup", StringComparison.Ordinal));
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.profile.lookup", StringComparison.Ordinal));
         Assert.Equal("module-dsl", endpoint.SourceKind);
         Assert.Equal("/api/v3/tests/profile-runtime/orders/{orderId}", endpoint.RoutePattern);
+        Assert.Equal("tests_rest_profile_runtime.v3.tests_rest_profile_lookup", endpoint.EndpointName);
         Assert.Equal("v3", endpoint.OpenApiDocumentName);
         Assert.Equal(3, endpoint.ApiVersionMajor);
         Assert.Contains("Profile Runtime API", endpoint.Tags);
+        Assert.Equal("tests.rest.profile.lookup", endpoint.Summary);
+        Assert.Equal("Publishes profile-driven REST endpoints for runtime catalog coverage.", endpoint.Description);
         Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, endpoint.Metadata["authoringStyle"]);
         Assert.Equal("/api/v3/tests/profile-runtime/orders", endpoint.Metadata["routeGroupPrefix"]);
         Assert.Equal("/{orderId}", endpoint.Metadata["relativePattern"]);
         Assert.Empty(endpoint.BindingDescriptors);
+        Assert.Equal(endpoint.EndpointName, candidate.ProjectedEndpoint.EndpointName);
+        Assert.Equal(endpoint.Summary, candidate.ProjectedEndpoint.Summary);
+        Assert.Equal(endpoint.Description, candidate.ProjectedEndpoint.Description);
 
         var payload = await client.GetFromJsonAsync<ProfileRuntimeOrderOutput>("/api/v3/tests/profile-runtime/orders/ord-42");
         Assert.NotNull(payload);

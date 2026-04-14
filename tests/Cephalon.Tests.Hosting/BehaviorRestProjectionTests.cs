@@ -599,6 +599,33 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverProjectsOperationMetadataForShorthandCandidates()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-runtime/orders")
+            .WithTagName("Profile Runtime API")
+            .MapProfile<ProfileProjectionGetBehavior>();
+
+        var candidate = Assert.Single(
+            RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+                new ModuleDescriptor(
+                    "tests.rest.profile-runtime",
+                    "Profile Runtime Module",
+                    "Publishes profile-driven REST endpoints for runtime catalog coverage.",
+                    version: "1.0.0"),
+                new ApiRoutesOptions(),
+                builder.Build().Groups));
+
+        Assert.Equal(
+            "tests_rest_profile_runtime.v3.tests_profile_projection_get",
+            candidate.Candidate.ProjectedEndpoint.EndpointName);
+        Assert.Equal("tests.profile.projection.get", candidate.Candidate.ProjectedEndpoint.Summary);
+        Assert.Equal(
+            "Publishes profile-driven REST endpoints for runtime catalog coverage.",
+            candidate.Candidate.ProjectedEndpoint.Description);
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverKeepsCandidateIdsStableWhenOverridesRewriteEffectiveShape()
     {
         var builder = new RestBehaviorModuleBuilder();

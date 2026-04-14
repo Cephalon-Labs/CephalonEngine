@@ -963,17 +963,15 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
                     $"Behavior type '{behaviorType.FullName}' does not implement IAppBehavior<TInput, TOutput>.");
             var typeArguments = contractInterface.GetGenericArguments();
             var behaviorId = GetBehaviorId(behaviorType);
-            var xmlSummary = BehaviorXmlDocumentation.GetSummary(behaviorType);
-            var summary = xmlSummary
-                ?? behaviorId;
-            var description = BehaviorXmlDocumentation.GetDescription(behaviorType);
-            if (string.IsNullOrWhiteSpace(description) && string.IsNullOrWhiteSpace(xmlSummary))
-            {
-                description = moduleDescriptor.Description;
-            }
-
             var operationVersionMajor = apiVersionMajor ?? moduleVersionMajor;
-            var operationName = BuildOperationName(moduleDescriptor.Id, operationVersionMajor, behaviorId);
+            var operationName = RestBehaviorEndpointMetadataConventions.BuildOperationName(
+                moduleDescriptor.Id,
+                operationVersionMajor,
+                behaviorId);
+            var documentation = RestBehaviorEndpointMetadataConventions.ResolveOperationDocumentation(
+                behaviorType,
+                moduleDescriptor,
+                behaviorId);
             var outputType = typeArguments[1];
             var returnsBehaviorResult = TryResolveBehaviorResultPayloadType(outputType, out var responseType);
             var normalizedBindings = BehaviorRestBindingPlanNormalizer.NormalizeForInputType(
@@ -995,8 +993,8 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
                 behaviorId,
                 operationName,
                 tagName,
-                summary,
-                description,
+                documentation.Summary,
+                documentation.Description,
                 openApiDocumentName,
                 operationVersionMajor,
                 typeArguments[0],
@@ -1017,20 +1015,6 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             return behaviorType.GetCustomAttribute<AppBehaviorAttribute>(inherit: false)?.Id
                 ?? throw new InvalidOperationException(
                     $"Behavior type '{behaviorType.FullName}' is missing [AppBehavior].");
-        }
-
-        private static string BuildOperationName(string moduleId, int? moduleVersionMajor, string behaviorId)
-        {
-            var versionSegment = moduleVersionMajor.HasValue
-                ? $"v{moduleVersionMajor.Value}"
-                : "v0";
-            return $"{NormalizeSegment(moduleId)}.{versionSegment}.{NormalizeSegment(behaviorId)}";
-        }
-
-        private static string NormalizeSegment(string value)
-        {
-            return string.Concat(value.Select(static ch =>
-                char.IsLetterOrDigit(ch) ? ch : '_'));
         }
 
         private static bool TryResolveBehaviorResultPayloadType(Type outputType, out Type responseType)
