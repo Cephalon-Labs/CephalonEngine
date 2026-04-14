@@ -1026,6 +1026,38 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public void MapCephalonRejectsImplicitBodyFallbackPromotionWhenOriginalProjectionDidNotAcceptBody()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Behaviors:0"] = "tests.rest.profile.bindings.get";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Pattern"] = "/lookup/{orderId}/{ignored}";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:0:PropertyName"] = "OrderId";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:0:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:0:Name"] = "orderId";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:1:PropertyName"] = "Ignored";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:1:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:1:Name"] = "ignored";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileBindingGetRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        using var app = builder.Build();
+        var exception = Assert.Throws<InvalidOperationException>(() => app.MapCephalon());
+
+        Assert.Contains("remaining-body fallback", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("newly route-bound property", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void MapCephalonRejectsPlaceholderRemovalWhenOriginalRouteCoverageReliesOnInference()
     {
         var builder = WebApplication.CreateBuilder();
@@ -1155,6 +1187,102 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("corr-75", payload.CorrelationId);
         Assert.Equal("route quantity", payload.Note);
         Assert.Equal("body-fallback", payload.Ignored);
+    }
+
+    [Fact]
+    public async Task MapCephalonAllowsImplicitBodyFallbackPromotionIntoAddedPlaceholder()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Behaviors:0"] = "tests.rest.profile.bindings";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Pattern"] = "/lookup/{orderId}/items/{ignored}";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:0:PropertyName"] = "OrderId";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:0:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:0:Name"] = "orderId";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:1:PropertyName"] = "Quantity";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:1:Source"] = "Query";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:1:Name"] = "quantity";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:2:PropertyName"] = "CorrelationId";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:2:Source"] = "Header";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:2:Name"] = "X-Correlation-Id";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:3:PropertyName"] = "Note";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:3:Source"] = "Body";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:3:Name"] = "note";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:4:PropertyName"] = "Ignored";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:4:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:4:Name"] = "ignored";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileBindingRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(overrides);
+
+        var endpoint = Assert.Single(endpoints, static item =>
+            string.Equals(item.BehaviorId, "tests.rest.profile.bindings", StringComparison.Ordinal));
+        Assert.Equal("/api/v6/tests/profile-runtime/bindings/orders/lookup/{orderId}/items/{ignored}", endpoint.RoutePattern);
+        Assert.Equal(5, endpoint.BindingDescriptors.Count);
+        Assert.Contains(endpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "Ignored" &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "ignored");
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.profile.bindings", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+        Assert.Equal("prefer-route-ignored", candidate.AppliedOverrideId);
+        Assert.Equal(endpoint.Id, candidate.ProjectedEndpoint.Id);
+        Assert.Equal("/api/v6/tests/profile-runtime/bindings/orders/lookup/{orderId}/items/{ignored}", candidate.ProjectedEndpoint.RoutePattern);
+
+        var rule = Assert.Single(overrides, static item =>
+            string.Equals(item.Id, "prefer-route-ignored", StringComparison.Ordinal));
+        Assert.Equal("/lookup/{orderId}/items/{ignored}", rule.Pattern);
+        Assert.Equal(5, rule.Bindings.Count);
+        Assert.Contains(rule.Bindings, static binding =>
+            binding.PropertyName == "Ignored" &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "ignored");
+
+        using var request = new HttpRequestMessage(
+            HttpMethod.Post,
+            "/api/v6/tests/profile-runtime/bindings/orders/lookup/ord-76/items/route-fallback?quantity=6");
+        request.Headers.Add("X-Correlation-Id", "corr-76");
+        request.Content = JsonContent.Create(new
+        {
+            note = "promoted from fallback"
+        });
+
+        var response = await client.SendAsync(request);
+        response.EnsureSuccessStatusCode();
+
+        var payload = await response.Content.ReadFromJsonAsync<ProfileBindingRuntimeOutput>();
+        Assert.NotNull(payload);
+        Assert.Equal("ord-76", payload.OrderId);
+        Assert.Equal(6, payload.Quantity);
+        Assert.Equal("corr-76", payload.CorrelationId);
+        Assert.Equal("promoted from fallback", payload.Note);
+        Assert.Equal("route-fallback", payload.Ignored);
     }
 
     [Fact]
@@ -2189,6 +2317,22 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         }
     }
 
+    private sealed class ProfileBindingGetRuntimeCatalogModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.profile-runtime.bindings.get",
+            "Profile Runtime Binding GET Module",
+            "Publishes a GET profile so implicit body-fallback promotion remains rejected.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Group("/tests/profile-runtime/get/orders")
+                .WithTagName("Profile Runtime Binding GET API")
+                .MapProfile<GetProfileBindingRuntimeOrderBehavior>();
+        }
+    }
+
     private sealed class ProfileSuppressionRuntimeCatalogModule : RestBehaviorModuleBase
     {
         public override ModuleDescriptor Descriptor { get; } = new(
@@ -2465,6 +2609,22 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         }
     }
 
+    [AppBehavior("tests.rest.profile.bindings.get")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}", ApiVersionMajor = 6)]
+    [BehaviorRestBinding(nameof(ProfileBindingGetRuntimeInput.OrderId), BehaviorRestBindingSource.Route, Name = "orderId")]
+    private sealed class GetProfileBindingRuntimeOrderBehavior : IAppBehavior<ProfileBindingGetRuntimeInput, ProfileBindingGetRuntimeOutput>
+    {
+        public Task<ProfileBindingGetRuntimeOutput> HandleAsync(
+            ProfileBindingGetRuntimeInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProfileBindingGetRuntimeOutput(
+                input.OrderId,
+                input.Ignored));
+        }
+    }
+
     private sealed record GetCatalogCartInput(string CartId);
 
     private sealed record GetCatalogCartOutput(string CartId);
@@ -2520,4 +2680,12 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         int Quantity,
         string? CorrelationId,
         string? Note);
+
+    private sealed record ProfileBindingGetRuntimeInput(
+        string OrderId,
+        string? Ignored = null);
+
+    private sealed record ProfileBindingGetRuntimeOutput(
+        string OrderId,
+        string? Ignored);
 }

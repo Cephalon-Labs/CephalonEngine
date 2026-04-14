@@ -378,11 +378,14 @@ Current helper behavior:
   for the original placeholder set and the effective explicit binding plan keeps every affected
   original route-bound property explicitly bound, and now also allows placeholder additions when
   the effective explicit route-binding plan covers the full final placeholder set and every newly
-  route-bound property was already explicitly bound in the original projection; it still rejects
-  broader implicit-property promotion, fails fast when the effective method-plus-binding plan is
-  invalid or when a rename, removal, or addition would rely on inference or drop explicit binding
-  coverage, and still leaves explicit `MapGet/MapPost/...` routes, manual module-owned endpoints,
-  and shorthand groups with explicit `.ApiVersion(...)` authoritative for version selection
+  route-bound property was either already explicitly bound in the original projection or, for
+  `POST`/`PUT`/`PATCH`, already part of the original deterministic remaining-body fallback surface;
+  it still rejects broader implicit-property promotion outside that constrained body-fallback path,
+  fails fast when the effective method-plus-binding plan is invalid or when a rename, removal, or
+  addition would rely on inference, drop explicit binding coverage, or promote another implicit
+  property into the public route, and still leaves explicit `MapGet/MapPost/...` routes, manual
+  module-owned endpoints, and shorthand groups with explicit `.ApiVersion(...)` authoritative for
+  version selection
 - treats `behaviors.Internal<TBehavior>()` as the explicit internal-only or custom/manual-route path
 - validates that a module cannot map another module's explicitly owned behavior through the REST helper layer
 - keeps route shape in the ASP.NET Core adapter layer while behavior attributes remain host-agnostic
@@ -452,9 +455,11 @@ placeholder removals can now also apply when the source projection already expos
 route-binding coverage for the original placeholder set and the effective explicit binding plan
 keeps every affected original route-bound property explicitly bound; placeholder additions can now
 also apply when the effective explicit route-binding plan covers the full final placeholder set and
-every newly route-bound property was already explicitly bound in the source projection; broader
-implicit-property promotion still fails fast; and invalid effective method-plus-binding
-combinations also fail fast during endpoint materialization.
+every newly route-bound property was either already explicitly bound in the source projection or,
+for `POST`/`PUT`/`PATCH`, already part of the original deterministic remaining-body fallback
+surface; broader implicit-property promotion beyond that constrained body-fallback path still fails
+fast; and invalid effective method-plus-binding combinations also fail fast during endpoint
+materialization.
 
 Example:
 

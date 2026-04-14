@@ -668,6 +668,49 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverAllowsPlaceholderAdditionWhenNewlyRouteBoundPropertiesWereImplicitBodyFallbackEligible()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-binding-addition-implicit")
+            .MapProfile<ProfileProjectionBoundBehavior>();
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.profile-binding-addition-implicit",
+                "Profile Binding Addition Implicit Module",
+                "Exercises placeholder-addition override resolution when newly route-bound properties came from implicit body fallback.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "prefer-route-ignored",
+                    behaviorIds: ["tests.profile.projection.bound"],
+                    pattern: "/lookup/{cartId}/items/{ignored}",
+                    bindings:
+                    [
+                        new RestEndpointBindingDescriptor("CartId", RestEndpointBindingSource.Route, "cartId"),
+                        new RestEndpointBindingDescriptor("Quantity", RestEndpointBindingSource.Query, "quantity"),
+                        new RestEndpointBindingDescriptor("CorrelationId", RestEndpointBindingSource.Header, "X-Correlation-Id"),
+                        new RestEndpointBindingDescriptor("Note", RestEndpointBindingSource.Body, "note"),
+                        new RestEndpointBindingDescriptor("Ignored", RestEndpointBindingSource.Route, "ignored")
+                    ])
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Equal("prefer-route-ignored", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal("/lookup/{cartId}/items/{ignored}", candidate.Candidate.ProjectedEndpoint.Metadata["relativePattern"]);
+        Assert.Equal("/api/v6/tests/profile-binding-addition-implicit/lookup/{cartId}/items/{ignored}", candidate.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Equal(5, candidate.Candidate.ProjectedEndpoint.BindingDescriptors.Count);
+        Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "Ignored" &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "ignored");
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverAllowsPlaceholderRemovalWhenAffectedPropertiesStayExplicitlyBound()
     {
         var builder = new RestBehaviorModuleBuilder();
@@ -899,6 +942,39 @@ public sealed class BehaviorRestProjectionTests
 
         Assert.Contains("newly route-bound property", exception.Message, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("original projection", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverRejectsPlaceholderAdditionWhenNewlyRouteBoundPropertiesWereNotImplicitBodyFallbackEligible()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-binding-addition-get")
+            .MapProfile<ProfileProjectionBoundGetBehavior>();
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+                new ModuleDescriptor(
+                    "tests.rest.profile-binding-addition-get",
+                    "Profile Binding Addition GET Module",
+                    "Exercises fail-fast validation when placeholder addition tries to promote a property that was not body-fallback eligible.",
+                    version: "1.0.0"),
+                new ApiRoutesOptions(),
+                builder.Build().Groups,
+                overrides:
+                [
+                    new RestEndpointOverrideOptions(
+                        id: "prefer-route-ignored",
+                        behaviorIds: ["tests.profile.projection.bound.get"],
+                        pattern: "/lookup/{cartId}/{ignored}",
+                        bindings:
+                        [
+                            new RestEndpointBindingDescriptor("CartId", RestEndpointBindingSource.Route, "cartId"),
+                            new RestEndpointBindingDescriptor("Ignored", RestEndpointBindingSource.Route, "ignored")
+                        ])
+                ]));
+
+        Assert.Contains("remaining-body fallback", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("newly route-bound property", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -1490,6 +1566,20 @@ public sealed class BehaviorRestProjectionTests
         }
     }
 
+    [AppBehavior("tests.profile.projection.bound.get")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/{cartId}", ApiVersionMajor = 6)]
+    [BehaviorRestBinding(nameof(ProfileProjectionBoundInput.CartId), BehaviorRestBindingSource.Route, Name = "cartId")]
+    private sealed class ProfileProjectionBoundGetBehavior : IAppBehavior<ProfileProjectionBoundInput, ProjectionCartOutput>
+    {
+        public Task<ProjectionCartOutput> HandleAsync(
+            ProfileProjectionBoundInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProjectionCartOutput(input.CartId));
+        }
+    }
+
     private sealed class ProjectionCountingRestModule : RestBehaviorModuleBase
     {
         public int ConfigureRestBehaviorsCallCount { get; private set; }
@@ -1535,7 +1625,8 @@ public sealed class BehaviorRestProjectionTests
         string CartId,
         int Quantity,
         string? CorrelationId,
-        string? Note);
+        string? Note,
+        string? Ignored = null);
 
     private sealed record DynamicProfileBindingDefinition(
         string PropertyName,

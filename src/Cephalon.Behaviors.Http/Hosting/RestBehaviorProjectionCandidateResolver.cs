@@ -1,3 +1,5 @@
+using System.Reflection;
+using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Transports;
 using Cephalon.AspNetCore.Hosting;
@@ -384,10 +386,18 @@ internal static class RestBehaviorProjectionCandidateResolver
             var originalExplicitlyBoundProperties = endpointProjection.Bindings
                 .Select(static binding => binding.PropertyName.Trim())
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
-            if (!originalExplicitlyBoundProperties.IsSupersetOf(newlyRouteBoundProperties))
+            var originalImplicitBodyFallbackEligibleProperties = ResolveImplicitBodyFallbackEligibleProperties(
+                endpointProjection,
+                originalExplicitlyBoundProperties,
+                originalPlaceholders);
+            var originallyPromotableProperties = new HashSet<string>(
+                originalExplicitlyBoundProperties,
+                StringComparer.OrdinalIgnoreCase);
+            originallyPromotableProperties.UnionWith(originalImplicitBodyFallbackEligibleProperties);
+            if (!originallyPromotableProperties.IsSupersetOf(newlyRouteBoundProperties))
             {
                 throw new InvalidOperationException(
-                    $"REST endpoint override rule '{overrideId}' cannot rewrite behavior '{endpointProjection.BehaviorId}' from pattern '{endpointProjection.Pattern}' to '{overridePattern}' because adding placeholders requires every newly route-bound property to already be explicitly bound in the original projection. Promote only properties that the source profile already binds through route, query, header, or body before adding the placeholder.");
+                    $"REST endpoint override rule '{overrideId}' cannot rewrite behavior '{endpointProjection.BehaviorId}' from pattern '{endpointProjection.Pattern}' to '{overridePattern}' because adding placeholders requires every newly route-bound property to already be explicitly bound in the original projection or be eligible for deterministic implicit remaining-body fallback there. Promote only properties that the source profile already binds explicitly or could already read through remaining-body fallback before adding the placeholder.");
             }
 
             return;
@@ -421,6 +431,69 @@ internal static class RestBehaviorProjectionCandidateResolver
             throw new InvalidOperationException(
                 $"REST endpoint override rule '{overrideId}' cannot rewrite behavior '{endpointProjection.BehaviorId}' from pattern '{endpointProjection.Pattern}' to '{overridePattern}' because removing placeholders requires every affected original route-bound property to remain explicitly bound in the effective plan. Rebind those properties through route, query, header, or body before removing the placeholder.");
         }
+    }
+
+    private static HashSet<string> ResolveImplicitBodyFallbackEligibleProperties(
+        RestBehaviorEndpointProjection endpointProjection,
+        HashSet<string> originalExplicitlyBoundProperties,
+        HashSet<string> originalPlaceholders)
+    {
+        ArgumentNullException.ThrowIfNull(endpointProjection);
+        ArgumentNullException.ThrowIfNull(originalExplicitlyBoundProperties);
+        ArgumentNullException.ThrowIfNull(originalPlaceholders);
+
+        if (endpointProjection.Method is not (RestBehaviorHttpMethod.Post or RestBehaviorHttpMethod.Put or RestBehaviorHttpMethod.Patch))
+        {
+            return [];
+        }
+
+        return ResolveBehaviorInputProperties(endpointProjection.BehaviorType)
+            .Where(propertyName => !originalExplicitlyBoundProperties.Contains(propertyName))
+            .Where(propertyName => !originalPlaceholders.Contains(propertyName))
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static HashSet<string> ResolveBehaviorInputProperties(Type behaviorType)
+    {
+        ArgumentNullException.ThrowIfNull(behaviorType);
+
+        var contractInterface = behaviorType.GetInterfaces()
+            .FirstOrDefault(static candidate =>
+                candidate.IsGenericType &&
+                candidate.GetGenericTypeDefinition() == typeof(IAppBehavior<,>));
+        if (contractInterface is null)
+        {
+            return [];
+        }
+
+        var inputType = Nullable.GetUnderlyingType(contractInterface.GetGenericArguments()[0]) ??
+                        contractInterface.GetGenericArguments()[0];
+        if (IsSimpleInputType(inputType))
+        {
+            return [];
+        }
+
+        return inputType.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+            .Where(static property => property.CanRead)
+            .Select(static property => property.Name.Trim())
+            .Where(static propertyName => !string.IsNullOrWhiteSpace(propertyName))
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static bool IsSimpleInputType(Type inputType)
+    {
+        ArgumentNullException.ThrowIfNull(inputType);
+
+        var type = Nullable.GetUnderlyingType(inputType) ?? inputType;
+        return type.IsPrimitive ||
+               type.IsEnum ||
+               type == typeof(string) ||
+               type == typeof(decimal) ||
+               type == typeof(Guid) ||
+               type == typeof(DateTime) ||
+               type == typeof(DateTimeOffset) ||
+               type == typeof(DateOnly) ||
+               type == typeof(TimeOnly);
     }
 
     private static RestEndpointSuppressionOptions? ResolveSuppression(

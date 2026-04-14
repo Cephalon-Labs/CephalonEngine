@@ -381,8 +381,9 @@ Current helper behavior:
   coverage for the original placeholder set and the effective explicit binding plan keeps every
   affected original route-bound property explicitly bound, now also allows placeholder additions
   when the effective explicit route-binding plan covers the full final placeholder set and every
-  newly route-bound property was already explicitly bound in the original projection, and still
-  leaves explicit module
+  newly route-bound property was either already explicitly bound in the original projection or, for
+  `POST`/`PUT`/`PATCH`, already part of the original deterministic remaining-body fallback surface,
+  and still leaves explicit module
   DSL/manual routes plus shorthand groups with explicit `.ApiVersion(...)` authoritative for
   version selection
 
@@ -463,9 +464,11 @@ Current governance baseline:
   route-binding coverage for the original placeholder set and the effective explicit binding plan
   keeps every affected original route-bound property explicitly bound
 - placeholder additions can now also apply when the effective explicit route-binding plan covers
-  the full final placeholder set and every newly route-bound property was already explicitly bound
-  in the original projection
-- broader implicit-property promotion plus broader binding-shape overrides remain later work
+  the full final placeholder set and every newly route-bound property was either already explicitly
+  bound in the original projection or, for `POST`/`PUT`/`PATCH`, already part of the original
+  deterministic remaining-body fallback surface
+- broader implicit-property promotion beyond that constrained body-fallback path plus broader
+  binding-shape overrides remain later work
 
 Example:
 

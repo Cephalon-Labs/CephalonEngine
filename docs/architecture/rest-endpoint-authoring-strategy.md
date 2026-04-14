@@ -2,7 +2,7 @@
 
 Decision baseline date: `April 14, 2026`
 
-Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`, `ENG-058-T67` / GitHub issue `#332`, `ENG-058-T68` / GitHub issue `#333`, `ENG-058-T69` / GitHub issue `#334`, `ENG-058-T70` / GitHub issue `#335`, `ENG-058-T71` / GitHub issue `#336`, `ENG-058-T72` / GitHub issue `#337`, `ENG-058-T73` / GitHub issue `#338`, `ENG-058-T74` / GitHub issue `#339`, `ENG-058-T75` / GitHub issue `#340`
+Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`, `ENG-058-T67` / GitHub issue `#332`, `ENG-058-T68` / GitHub issue `#333`, `ENG-058-T69` / GitHub issue `#334`, `ENG-058-T70` / GitHub issue `#335`, `ENG-058-T71` / GitHub issue `#336`, `ENG-058-T72` / GitHub issue `#337`, `ENG-058-T73` / GitHub issue `#338`, `ENG-058-T74` / GitHub issue `#339`, `ENG-058-T75` / GitHub issue `#340`, `ENG-058-T76` / GitHub issue `#341`
 
 Cross-references: `docs/components/behaviors-http.md`, `docs/module-authoring.md`, `docs/architecture.md`, `docs/architecture-review-2026-04.md`, `docs/project-memory.md`
 
@@ -190,7 +190,8 @@ Status update:
   candidates now distinguish governance suppression through
   `RestEndpointCandidateRuntimeDescriptor.SuppressedBySuppressionId`
 - the first constrained shorthand-override slices are now shipped through `ENG-058-T69`,
-  `ENG-058-T70`, `ENG-058-T71`, `ENG-058-T72`, `ENG-058-T73`, `ENG-058-T74`, and `ENG-058-T75`:
+  `ENG-058-T70`, `ENG-058-T71`, `ENG-058-T72`, `ENG-058-T73`, `ENG-058-T74`, `ENG-058-T75`, and
+  `ENG-058-T76`:
   ASP.NET Core hosts can retarget
   descriptor-backed shorthand candidates through `RestApi:Overrides` when they need a different
   effective `ApiVersionMajor`, HTTP `Method`, constrained relative `Pattern`, and/or explicit
@@ -206,14 +207,15 @@ Status update:
   already exposes explicit route-binding coverage for the original placeholder set and the
   effective explicit binding plan keeps every affected original route-bound property explicitly
   bound; placeholder additions can now also apply when the effective explicit route-binding plan
-  covers the full final placeholder set and every newly route-bound property was already explicitly
-  bound in the original projection; and invalid effective method-plus-binding plans, rename
-  attempts that still rely on inference, removal attempts that rely on inferred original route
-  coverage or drop explicit binding coverage, or addition attempts that would promote implicitly
-  bound properties into the public route now fail fast
+  covers the full final placeholder set and every newly route-bound property was either already
+  explicitly bound in the original projection or, for `POST`/`PUT`/`PATCH`, already part of the
+  original deterministic remaining-body fallback surface; and invalid effective
+  method-plus-binding plans, rename attempts that still rely on inference, removal attempts that
+  rely on inferred original route coverage or drop explicit binding coverage, or addition attempts
+  that would promote any other implicit property into the public route now fail fast
 - broader configuration-driven projection overrides that promote implicit properties into route
-  placeholders or rewrite binding shape beyond that constrained explicit-binding replacement model
-  remain later work
+  placeholders beyond that constrained body-fallback path, or rewrite binding shape beyond that
+  constrained explicit-binding replacement model, remain later work
 
 ## Recommended long-term engine model
 
@@ -308,9 +310,11 @@ Current shipped baseline:
   route-binding coverage for the original placeholder set and the effective explicit binding plan
   keeps every affected original route-bound property explicitly bound
 - placeholder additions can now also apply when the effective explicit route-binding plan covers
-  the full final placeholder set and every newly route-bound property was already explicitly bound
-  in the original projection
-- broader implicit-property promotion plus broader input-binding rewrites remain later work
+  the full final placeholder set and every newly route-bound property was either already explicitly
+  bound in the original projection or, for `POST`/`PUT`/`PATCH`, already part of the original
+  deterministic remaining-body fallback surface
+- broader implicit-property promotion beyond that constrained body-fallback path plus broader
+  input-binding rewrites remain later work
 
 ## Precedence and suppression rules
 
@@ -487,10 +491,11 @@ allows route-pattern rewrites that remove placeholders when the original project
 exposes explicit route-binding coverage for the original placeholder set and the effective explicit
 binding plan keeps every affected original route-bound property explicitly bound, allows
 route-pattern rewrites that add placeholders when the effective explicit route-binding plan covers
-the full final placeholder set and every newly route-bound property was already explicitly bound in
-the original projection, and does not yet support route rewrites that promote implicit properties
-into placeholders or broader host-level binding rewrites that would silently change how one
-shorthand endpoint reads its input.
+the full final placeholder set and every newly route-bound property was either already explicitly
+bound in the original projection or, for `POST`/`PUT`/`PATCH`, already part of the original
+deterministic remaining-body fallback surface, and does not yet support route rewrites that
+promote other implicit properties into placeholders or broader host-level binding rewrites that
+would silently change how one shorthand endpoint reads its input.
 
 If the same behavior needs multiple public API versions simultaneously, model that as multiple
 explicit projections or versioned modules. Do not hide multi-version public contracts behind one
@@ -602,9 +607,10 @@ Status:
   different effective `ApiVersionMajor`, HTTP `Method`, constrained relative `Pattern`, or explicit
   binding plan, while the runtime keeps both the configured override-rule catalog and the
   candidate-level `AppliedOverrideId` truth visible
-- controlled configuration overrides that promote implicit properties into route placeholders or
-  rewrite input binding beyond constrained explicit-binding replacement remain later work now that
-  the version-plus-method-plus-pattern-plus-binding-plus-placeholder-rename-plus-placeholder-removal-plus-placeholder-addition
+- controlled configuration overrides that promote implicit properties into route placeholders
+  beyond the shipped constrained remaining-body-fallback path, or rewrite input binding beyond
+  constrained explicit-binding replacement, remain later work now that the
+  version-plus-method-plus-pattern-plus-binding-plus-placeholder-rename-plus-placeholder-removal-plus-placeholder-addition-plus-implicit-body-fallback-promotion
   override baseline is shipped
 
 ## What should be stored as project memory
@@ -643,8 +649,10 @@ The following points are durable enough to keep outside thread-local context.
   projection already exposes explicit route-binding coverage for the original placeholder set and
   the effective explicit binding plan keeps every affected original route-bound property
   explicitly bound, placeholder additions now also work when the effective explicit route-binding
-  plan covers the full final placeholder set and every newly route-bound property was already
-  explicitly bound in the original projection, and implicit-property promotion remains later work
+  plan covers the full final placeholder set and every newly route-bound property was either
+  already explicitly bound in the original projection or, for `POST`/`PUT`/`PATCH`, already part
+  of the original deterministic remaining-body fallback surface, and broader implicit-property
+  promotion remains later work
 - future shorthand or convention REST publication must compose through the shared projection,
   runtime-catalog, and collision-validation pipeline instead of bypassing it
 - future agentic, AI, or multi-platform expansion should not outrun core engine contract quality,
