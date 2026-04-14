@@ -21,9 +21,14 @@ public sealed class RestEndpointOverrideDescriptor
     /// <param name="pattern">The effective relative route pattern applied when the rule matches.</param>
     /// <param name="routeGroupPrefix">The effective published route-group prefix applied when the rule matches.</param>
     /// <param name="bindings">The effective explicit request-binding plan applied when the rule matches.</param>
+    /// <param name="removedBindingProperties">
+    /// The explicit shorthand binding properties removed from the source binding plan when the rule
+    /// matches.
+    /// </param>
     /// <param name="bindingMode">
-    /// The mode used to apply <paramref name="bindings" /> to the shorthand candidate's explicit
-    /// binding plan.
+    /// The mode used to apply <paramref name="bindings" /> and
+    /// <paramref name="removedBindingProperties" /> to the shorthand candidate's explicit binding
+    /// plan.
     /// </param>
     public RestEndpointOverrideDescriptor(
         string id,
@@ -39,6 +44,7 @@ public sealed class RestEndpointOverrideDescriptor
         string? pattern = null,
         string? routeGroupPrefix = null,
         IReadOnlyList<RestEndpointBindingDescriptor>? bindings = null,
+        IReadOnlyList<string>? removedBindingProperties = null,
         RestEndpointOverrideBindingMode bindingMode = RestEndpointOverrideBindingMode.Unspecified)
     {
         if (string.IsNullOrWhiteSpace(id))
@@ -67,21 +73,31 @@ public sealed class RestEndpointOverrideDescriptor
         Pattern = NormalizePattern(pattern);
         RouteGroupPrefix = NormalizeRouteGroupPrefix(routeGroupPrefix);
         Bindings = NormalizeBindings(bindings);
-        BindingMode = NormalizeBindingMode(bindingMode);
+        RemovedBindingProperties = NormalizeList(removedBindingProperties);
+        BindingMode = NormalizeBindingMode(bindingMode, RemovedBindingProperties.Count > 0);
 
-        if (!ApiVersionMajor.HasValue && Method is null && Pattern is null && RouteGroupPrefix is null && Bindings.Count == 0)
+        if (!ApiVersionMajor.HasValue &&
+            Method is null &&
+            Pattern is null &&
+            RouteGroupPrefix is null &&
+            Bindings.Count == 0 &&
+            RemovedBindingProperties.Count == 0)
         {
             throw new ArgumentException(
-                "REST endpoint override descriptors require at least one override action such as ApiVersionMajor, Method, Pattern, RouteGroupPrefix, or Bindings.",
+                "REST endpoint override descriptors require at least one override action such as ApiVersionMajor, Method, Pattern, RouteGroupPrefix, Bindings, or RemovedBindingProperties.",
                 nameof(apiVersionMajor));
         }
 
-        if (Bindings.Count == 0 && BindingMode == RestEndpointOverrideBindingMode.MergeExplicit)
+        if (Bindings.Count == 0 &&
+            RemovedBindingProperties.Count == 0 &&
+            BindingMode == RestEndpointOverrideBindingMode.MergeExplicit)
         {
             throw new ArgumentException(
-                "REST endpoint override descriptors cannot use MergeExplicit binding mode without configured Bindings.",
+                "REST endpoint override descriptors cannot use MergeExplicit binding mode without configured Bindings or RemovedBindingProperties.",
                 nameof(bindingMode));
         }
+
+        ValidateRemovedBindingProperties(Bindings, RemovedBindingProperties);
     }
 
     /// <summary>
@@ -150,7 +166,12 @@ public sealed class RestEndpointOverrideDescriptor
     public IReadOnlyList<RestEndpointBindingDescriptor> Bindings { get; }
 
     /// <summary>
-    /// Gets how <see cref="Bindings" /> apply to the shorthand candidate's explicit binding plan.
+    /// Gets the explicit shorthand binding properties removed from the source binding plan when this override rule matches.
+    /// </summary>
+    public IReadOnlyList<string> RemovedBindingProperties { get; }
+
+    /// <summary>
+    /// Gets how <see cref="Bindings" /> and <see cref="RemovedBindingProperties" /> apply to the shorthand candidate's explicit binding plan.
     /// </summary>
     public RestEndpointOverrideBindingMode BindingMode { get; }
 
@@ -232,6 +253,30 @@ public sealed class RestEndpointOverrideDescriptor
             .ToArray() ?? [];
     }
 
+    private static void ValidateRemovedBindingProperties(
+        IReadOnlyList<RestEndpointBindingDescriptor> bindings,
+        IReadOnlyList<string> removedBindingProperties)
+    {
+        ArgumentNullException.ThrowIfNull(bindings);
+        ArgumentNullException.ThrowIfNull(removedBindingProperties);
+
+        if (bindings.Count == 0 || removedBindingProperties.Count == 0)
+        {
+            return;
+        }
+
+        var bindingProperties = bindings
+            .Select(static binding => binding.PropertyName.Trim())
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var duplicateProperty = removedBindingProperties.FirstOrDefault(bindingProperties.Contains);
+        if (duplicateProperty is not null)
+        {
+            throw new ArgumentException(
+                $"REST endpoint override descriptors cannot both remove and override explicit binding property '{duplicateProperty}' in the same rule.",
+                nameof(removedBindingProperties));
+        }
+    }
+
     private static int[] NormalizeIntList(IReadOnlyList<int>? values)
     {
         return values?
@@ -240,11 +285,18 @@ public sealed class RestEndpointOverrideDescriptor
             .ToArray() ?? [];
     }
 
-    private static RestEndpointOverrideBindingMode NormalizeBindingMode(RestEndpointOverrideBindingMode bindingMode)
+    private static RestEndpointOverrideBindingMode NormalizeBindingMode(
+        RestEndpointOverrideBindingMode bindingMode,
+        bool hasRemovedBindingProperties)
     {
         return bindingMode switch
         {
-            RestEndpointOverrideBindingMode.Unspecified => RestEndpointOverrideBindingMode.ReplaceExplicit,
+            RestEndpointOverrideBindingMode.Unspecified => hasRemovedBindingProperties
+                ? RestEndpointOverrideBindingMode.MergeExplicit
+                : RestEndpointOverrideBindingMode.ReplaceExplicit,
+            RestEndpointOverrideBindingMode.ReplaceExplicit when hasRemovedBindingProperties => throw new ArgumentException(
+                "REST endpoint override descriptors cannot use ReplaceExplicit binding mode with RemovedBindingProperties. Use MergeExplicit when removing shorthand bindings.",
+                nameof(bindingMode)),
             RestEndpointOverrideBindingMode.ReplaceExplicit => RestEndpointOverrideBindingMode.ReplaceExplicit,
             RestEndpointOverrideBindingMode.MergeExplicit => RestEndpointOverrideBindingMode.MergeExplicit,
             _ => throw new ArgumentOutOfRangeException(

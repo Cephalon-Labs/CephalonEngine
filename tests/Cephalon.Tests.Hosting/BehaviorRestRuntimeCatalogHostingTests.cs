@@ -2502,6 +2502,103 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonAppliesMergeBindingRemovalsAndExposesRemovedPropertiesInOverrideCatalog()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.Configuration["RestApi:Overrides:withdraw-query-quantity:Behaviors:0"] = "tests.rest.profile.bindings";
+        builder.Configuration["RestApi:Overrides:withdraw-query-quantity:RemovedBindingProperties:0"] = "Quantity";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileBindingRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(overrides);
+        Assert.NotNull(snapshot);
+
+        var endpoint = Assert.Single(endpoints, static candidate =>
+            string.Equals(candidate.BehaviorId, "tests.rest.profile.bindings", StringComparison.Ordinal));
+        Assert.Equal("/api/v6/tests/profile-runtime/bindings/orders/{orderId}", endpoint.RoutePattern);
+        Assert.Equal(3, endpoint.BindingDescriptors.Count);
+        Assert.DoesNotContain(endpoint.BindingDescriptors, static binding =>
+            string.Equals(binding.PropertyName, nameof(ProfileBindingRuntimeInput.Quantity), StringComparison.Ordinal));
+        Assert.Contains(endpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "OrderId" &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "orderId");
+        Assert.Contains(endpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "CorrelationId" &&
+            binding.Source == RestEndpointBindingSource.Header &&
+            binding.Name == "X-Correlation-Id");
+        Assert.Contains(endpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "Note" &&
+            binding.Source == RestEndpointBindingSource.Body &&
+            binding.Name == "note");
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.profile.bindings", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+        Assert.Equal("withdraw-query-quantity", candidate.AppliedOverrideId);
+        Assert.Equal(endpoint.Id, candidate.ProjectedEndpoint.Id);
+
+        var rule = Assert.Single(overrides, static item =>
+            string.Equals(item.Id, "withdraw-query-quantity", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointOverrideBindingMode.MergeExplicit, rule.BindingMode);
+        Assert.Empty(rule.Bindings);
+        Assert.Single(rule.RemovedBindingProperties);
+        Assert.Contains(nameof(ProfileBindingRuntimeInput.Quantity), rule.RemovedBindingProperties);
+
+        Assert.Contains(snapshot.RestEndpointOverrides, static item =>
+            string.Equals(item.Id, "withdraw-query-quantity", StringComparison.Ordinal) &&
+            item.BindingMode == RestEndpointOverrideBindingMode.MergeExplicit &&
+            item.RemovedBindingProperties.Contains(nameof(ProfileBindingRuntimeInput.Quantity), StringComparer.Ordinal));
+
+        using var request = new HttpRequestMessage(
+            HttpMethod.Post,
+            "/api/v6/tests/profile-runtime/bindings/orders/ord-66");
+        request.Headers.Add("X-Correlation-Id", "corr-66");
+        request.Content = JsonContent.Create(new
+        {
+            quantity = 11,
+            note = "quantity from body",
+            ignored = "body-fallback"
+        });
+
+        var response = await client.SendAsync(request);
+        response.EnsureSuccessStatusCode();
+
+        var payload = await response.Content.ReadFromJsonAsync<ProfileBindingRuntimeOutput>();
+        Assert.NotNull(payload);
+        Assert.Equal("ord-66", payload.OrderId);
+        Assert.Equal(11, payload.Quantity);
+        Assert.Equal("corr-66", payload.CorrelationId);
+        Assert.Equal("quantity from body", payload.Note);
+        Assert.Equal("body-fallback", payload.Ignored);
+    }
+
+    [Fact]
     public async Task MapCephalonAllowsPlaceholderRenameWhenOverrideBindingsCoverTheRenamedRouteSet()
     {
         var builder = WebApplication.CreateBuilder();

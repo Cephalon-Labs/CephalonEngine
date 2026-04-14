@@ -31,6 +31,7 @@ internal sealed class AspNetCoreRestEndpointOverrideRuntimeCatalog : IRestEndpoi
                 item.Pattern,
                 item.RouteGroupPrefix,
                 item.Bindings,
+                item.RemovedBindingProperties,
                 item.BindingMode))
             .OrderBy(static item => item.Id, Comparer)
             .ToArray();

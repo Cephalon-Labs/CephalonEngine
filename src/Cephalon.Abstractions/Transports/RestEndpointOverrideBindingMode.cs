@@ -16,7 +16,8 @@ public enum RestEndpointOverrideBindingMode
     ReplaceExplicit = 1,
 
     /// <summary>
-    /// Merges the configured descriptors into the shorthand candidate's explicit binding plan by property name.
+    /// Merges configured binding descriptors into the shorthand candidate's explicit binding plan
+    /// by property name and can also remove selected explicit bindings.
     /// </summary>
     MergeExplicit = 2
 }

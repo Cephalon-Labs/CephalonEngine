@@ -2,7 +2,7 @@
 
 Decision baseline date: `April 14, 2026`
 
-Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`, `ENG-058-T67` / GitHub issue `#332`, `ENG-058-T68` / GitHub issue `#333`, `ENG-058-T69` / GitHub issue `#334`, `ENG-058-T70` / GitHub issue `#335`, `ENG-058-T71` / GitHub issue `#336`, `ENG-058-T72` / GitHub issue `#337`, `ENG-058-T73` / GitHub issue `#338`, `ENG-058-T74` / GitHub issue `#339`, `ENG-058-T75` / GitHub issue `#340`, `ENG-058-T76` / GitHub issue `#341`, `ENG-058-T77` / GitHub issue `#342`, `ENG-058-T78` / GitHub issue `#343`, `ENG-058-T79` / GitHub issue `#344`, `ENG-058-T80` / GitHub issue `#345`, `ENG-058-T81` / GitHub issue `#346`, `ENG-058-T82` / GitHub issue `#347`
+Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`, `ENG-058-T67` / GitHub issue `#332`, `ENG-058-T68` / GitHub issue `#333`, `ENG-058-T69` / GitHub issue `#334`, `ENG-058-T70` / GitHub issue `#335`, `ENG-058-T71` / GitHub issue `#336`, `ENG-058-T72` / GitHub issue `#337`, `ENG-058-T73` / GitHub issue `#338`, `ENG-058-T74` / GitHub issue `#339`, `ENG-058-T75` / GitHub issue `#340`, `ENG-058-T76` / GitHub issue `#341`, `ENG-058-T77` / GitHub issue `#342`, `ENG-058-T78` / GitHub issue `#343`, `ENG-058-T79` / GitHub issue `#344`, `ENG-058-T80` / GitHub issue `#345`, `ENG-058-T81` / GitHub issue `#346`, `ENG-058-T82` / GitHub issue `#347`, `ENG-058-T83` / GitHub issue `#348`
 
 Cross-references: `docs/components/behaviors-http.md`, `docs/module-authoring.md`, `docs/architecture.md`, `docs/architecture-review-2026-04.md`, `docs/project-memory.md`
 
@@ -214,6 +214,14 @@ Status update:
   the ASP.NET Core materializer to split effective shorthand route groups when only some
   candidates in one authored group are remapped so actual HTTP routes, runtime catalogs, and
   snapshots all report the same published answer
+- the next shorthand explicit-binding withdrawal follow-through is now shipped through
+  `ENG-058-T83`: the typed override/runtime contracts plus ASP.NET Core config binding now also
+  support `RemovedBindingProperties`, `MergeExplicit` now covers both property-by-property explicit
+  binding upserts and explicit-binding withdrawals, removal-only rules normalize to merge mode
+  automatically, `ReplaceExplicit` cannot pair with removals, a merge rule cannot both remove and
+  override the same property, removal targets must already exist in the source shorthand explicit
+  binding plan, and `/engine/rest-endpoint-overrides` plus `snapshot.RestEndpointOverrides` now
+  keep both the typed binding mode and removed-property list visible
 - the next low-code generated module-owned shorthand is now shipped through `ENG-058-T67`:
   `IRestBehaviorEndpointGroupBuilder.MapGeneratedProfiles()` and
   `MapGeneratedProfiles(string behaviorIdPrefix)` let an owning module opt into profile-backed
@@ -230,7 +238,7 @@ Status update:
   `RestEndpointCandidateRuntimeDescriptor.SuppressedBySuppressionId`
 - the first constrained shorthand-override slices are now shipped through `ENG-058-T69`,
   `ENG-058-T70`, `ENG-058-T71`, `ENG-058-T72`, `ENG-058-T73`, `ENG-058-T74`, `ENG-058-T75`,
-  `ENG-058-T76`, and `ENG-058-T82`:
+  `ENG-058-T76`, `ENG-058-T82`, and `ENG-058-T83`:
   ASP.NET Core hosts can retarget
   descriptor-backed shorthand candidates through `RestApi:Overrides` when they need a different
   effective `ApiVersionMajor`, HTTP `Method`, bounded published `RouteGroupPrefix`, constrained
@@ -241,9 +249,10 @@ Status update:
   `RestEndpointCandidateRuntimeDescriptor.AppliedOverrideId`; the normalized materializer now maps
   the same effective projection shape that the runtime catalogs report; explicit binding-plan
   overrides now default to replacing the shorthand candidate's explicit descriptors, but can also
-  merge explicit binding patches by property name through `BindingMode = MergeExplicit` while still
-  leaving unbound route placeholders and remaining request-body fields available for deterministic
-  fallback; placeholder renames can now also apply when the effective explicit route-binding plan
+  merge explicit binding upserts and withdrawals by property name through
+  `BindingMode = MergeExplicit` plus `RemovedBindingProperties` while still leaving unbound route
+  placeholders and remaining request-body fields available for deterministic fallback; placeholder
+  renames can now also apply when the effective explicit route-binding plan
   covers the renamed placeholder set exactly; placeholder removals can now also apply when the
   original projection already exposes explicit route-binding coverage for the original placeholder
   set and the effective explicit binding plan keeps every affected original route-bound property
@@ -264,7 +273,7 @@ Status update:
   arrays directly
 - broader configuration-driven projection overrides that promote implicit properties into route
   placeholders beyond that constrained body-fallback path, or rewrite binding shape beyond that
-  constrained explicit-binding replace-plus-merge-explicit model, remain later work
+  constrained explicit-binding upsert-plus-withdraw model, remain later work
 
 ## Recommended long-term engine model
 
@@ -343,7 +352,7 @@ Current shipped baseline:
   `MapGeneratedProfiles(...)`
 - suppression runs before precedence resolution rather than silently rewriting candidates
 - override currently supports `ApiVersionMajor`, `Method`, bounded published `RouteGroupPrefix`,
-  relative `Pattern`, and explicit `Bindings`
+  relative `Pattern`, explicit `Bindings`, `RemovedBindingProperties`, and typed `BindingMode`
 - both rule families fail fast when a rule omits both `Behaviors` and `Modules`
 - override rules also fail fast when they omit all override actions, use a non-positive
   `ApiVersionMajor`, declare an unsupported HTTP method, declare an invalid relative route
@@ -376,8 +385,13 @@ Current shipped baseline:
   the full final placeholder set and every newly route-bound property was either already explicitly
   bound in the original projection or, for `POST`/`PUT`/`PATCH`, already part of the original
   deterministic remaining-body fallback surface
+- `BindingMode = MergeExplicit` can now upsert changed explicit bindings and withdraw selected
+  original explicit bindings through `RemovedBindingProperties`, while failing fast if a removal
+  targets a property the source shorthand never bound explicitly or if one merge rule both removes
+  and overrides the same property
 - broader implicit-property promotion beyond that constrained body-fallback path plus broader
-  input-binding rewrites remain later work
+  input-binding rewrites beyond the current replace-plus-merge-explicit upsert-plus-withdraw model
+  remain later work
 
 ## Precedence and suppression rules
 
@@ -522,11 +536,12 @@ Current rule:
 - shorthand REST publication still requires an explicit HTTP method selection and does not infer a
   public verb only from behavior-id naming conventions
 - the shipped constrained host-level binding override baseline now supports both full explicit-plan
-  replacement and typed `MergeExplicit` property-by-property binding patches, still leaves unbound
-  route placeholders and remaining request-body fields available for deterministic fallback, and
-  still fails fast when the effective method-plus-binding plan is invalid
-- broader configuration-driven binding overrides beyond that replace-plus-merge-explicit model
-  remain later work
+  replacement and typed `MergeExplicit` property-by-property binding patches plus withdrawals,
+  still leaves unbound route placeholders and remaining request-body fields available for
+  deterministic fallback, and still fails fast when the effective method-plus-binding plan is
+  invalid
+- broader configuration-driven binding overrides beyond that explicit-binding upsert-plus-withdraw
+  model remain later work
 
 ## OpenAPI version direction
 
@@ -556,15 +571,15 @@ The shipped configuration-driven override surface is still intentionally narrow:
 can target the original shorthand candidate shape through `ApiVersionMajors`, `Methods`,
 `RelativePatterns`, and `RouteGroupPrefixes`, then change the effective shorthand candidate
 `ApiVersionMajor`, HTTP `Method`, bounded published `RouteGroupPrefix`, relative `Pattern`,
-and/or explicit `Bindings`, but the current route-pattern slice is still constrained enough to
-keep binding semantics truthful. Cephalon therefore keeps the route-version segment and document
-name
+and/or explicit `Bindings` plus `RemovedBindingProperties`, but the current route-pattern slice is
+still constrained enough to keep binding semantics truthful. Cephalon therefore keeps the
+route-version segment and document name
 together for version rewrites, allows route-pattern rewrites when they preserve the same
 placeholder set or when the effective explicit route-binding plan covers a renamed placeholder set
 exactly, lets binding overrides either replace the shorthand candidate's explicit binding plan or
-merge explicit binding patches into it by property name while preserving deterministic fallback for
-unbound route placeholders and remaining request-body fields, allows route-pattern rewrites that
-remove placeholders when the original projection already
+merge explicit binding upserts and withdrawals into it by property name while preserving
+deterministic fallback for unbound route placeholders and remaining request-body fields, allows
+route-pattern rewrites that remove placeholders when the original projection already
 exposes explicit route-binding coverage for the original placeholder set and the effective explicit
 binding plan keeps every affected original route-bound property explicitly bound, allows
 route-pattern rewrites that add placeholders when the effective explicit route-binding plan covers
@@ -575,8 +590,8 @@ published group stays beneath the active REST root, contains no placeholders, an
 silently change effective API-version truth, now makes ASP.NET Core materialize split effective
 route groups when one authored shorthand group fans out to more than one published group, and
 does not yet support route rewrites that promote other implicit properties into placeholders or
-broader host-level binding rewrites that would silently change how one shorthand endpoint reads
-its input.
+broader host-level binding rewrites beyond the current replace-plus-merge-explicit
+upsert-plus-withdraw model that would silently change how one shorthand endpoint reads its input.
 
 If the same behavior needs multiple public API versions simultaneously, model that as multiple
 explicit projections or versioned modules. Do not hide multi-version public contracts behind one

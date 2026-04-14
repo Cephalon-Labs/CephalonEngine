@@ -400,14 +400,16 @@ Current helper behavior:
 - ASP.NET Core hosts can now also override the effective API major version, HTTP method, or
   bounded published route-group prefix, constrained relative route pattern, or explicit binding
   plan for descriptor-backed shorthand candidates through `RestApi:Overrides`, which now supports
-  `ApiVersionMajor`, `Method`, `RouteGroupPrefix`, `Pattern`, `Bindings`, and typed
-  `BindingMode`, records the applied rule id through `AppliedOverrideId`, rewrites the
+  `ApiVersionMajor`, `Method`, `RouteGroupPrefix`, `Pattern`, `Bindings`,
+  `RemovedBindingProperties`, and typed `BindingMode`, records the applied rule id through
+  `AppliedOverrideId`, rewrites the
   shorthand candidate's `/v{major}` route segment and OpenAPI document name together when version
   changes, keeps the mapped endpoint method aligned when method changes, keeps the published
   route-group boundary aligned when `RouteGroupPrefix` changes, keeps the mapped endpoint route
   aligned when pattern changes, applies explicit binding overrides in either default
-  `ReplaceExplicit` mode or `MergeExplicit` property-patch mode while leaving unbound route
-  placeholders and remaining request-body fields available for deterministic fallback, now allows
+  `ReplaceExplicit` mode or `MergeExplicit` property-patch-and-withdraw mode while leaving
+  unbound route placeholders and remaining request-body fields available for deterministic
+  fallback, now allows
   placeholder renames when the effective explicit route-binding plan covers the renamed placeholder
   set exactly, now also allows placeholder removals when the original projection already exposes
   explicit route-binding coverage for the original placeholder set and the effective explicit
@@ -417,8 +419,9 @@ Current helper behavior:
   original projection or, for `POST`/`PUT`/`PATCH`, already part of the original deterministic
   remaining-body fallback surface, keeps `RouteGroupPrefix` bounded beneath the active REST root
   with no placeholders and no implicit API-version drift, now splits effective shorthand route
-  groups during materialization when only some candidates in one authored group are remapped, and
-  still leaves explicit module DSL/manual routes plus shorthand groups with explicit
+  groups during materialization when only some candidates in one authored group are remapped,
+  requires merge-time removals to target properties the source shorthand already bound explicitly,
+  and still leaves explicit module DSL/manual routes plus shorthand groups with explicit
   `.ApiVersion(...)` authoritative for version selection
 
 ## REST runtime catalog and collision guard
@@ -525,8 +528,13 @@ Current governance baseline:
   the full final placeholder set and every newly route-bound property was either already explicitly
   bound in the original projection or, for `POST`/`PUT`/`PATCH`, already part of the original
   deterministic remaining-body fallback surface
+- `BindingMode = MergeExplicit` can now upsert changed explicit bindings and withdraw selected
+  original explicit bindings through `RemovedBindingProperties`, while failing fast if a removal
+  targets a property the source shorthand never bound explicitly or if one merge rule both removes
+  and overrides the same property
 - broader implicit-property promotion beyond that constrained body-fallback path plus broader
-  binding-shape overrides beyond the current replace-plus-merge-explicit model remain later work
+  binding-shape overrides beyond the current replace-plus-merge-explicit upsert-plus-withdraw
+  model remain later work
 
 Example:
 
@@ -560,12 +568,8 @@ Override example:
         "Method": "DELETE",
         "RouteGroupPrefix": "/api/v2/showcase/cart-admin",
         "Pattern": "/lookup/{cartId}",
+        "RemovedBindingProperties": [ "Quantity" ],
         "Bindings": [
-          {
-            "PropertyName": "Quantity",
-            "Source": "Query",
-            "Name": "qty"
-          },
           {
             "PropertyName": "CorrelationId",
             "Source": "Header",
@@ -576,7 +580,8 @@ Override example:
             "Source": "Body",
             "Name": "memo"
           }
-        ]
+        ],
+        "BindingMode": "MergeExplicit"
       }
     }
   }

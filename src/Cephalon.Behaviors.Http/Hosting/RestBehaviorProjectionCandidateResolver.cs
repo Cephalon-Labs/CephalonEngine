@@ -299,14 +299,15 @@ internal static class RestBehaviorProjectionCandidateResolver
             }
         }
 
-        if (matchedOverride.Bindings.Count > 0)
+        if (matchedOverride.Bindings.Count > 0 || matchedOverride.RemovedBindingProperties.Count > 0)
         {
             var overrideBindings = RestEndpointBindingDescriptorAdapter.ToBehaviorDescriptors(matchedOverride.Bindings);
             IReadOnlyList<BehaviorRestBindingDescriptor> effectiveBindings = matchedOverride.BindingMode == RestEndpointOverrideBindingMode.MergeExplicit
                 ? MergeBindings(
                     matchedOverride.Id,
                     effectiveEndpointProjection.Bindings,
-                    overrideBindings)
+                    overrideBindings,
+                    matchedOverride.RemovedBindingProperties)
                 : overrideBindings;
             if (!effectiveEndpointProjection.Bindings.SequenceEqual(effectiveBindings))
             {
@@ -554,11 +555,13 @@ internal static class RestBehaviorProjectionCandidateResolver
     private static List<BehaviorRestBindingDescriptor> MergeBindings(
         string overrideId,
         IReadOnlyList<BehaviorRestBindingDescriptor> originalBindings,
-        IReadOnlyList<BehaviorRestBindingDescriptor> overrideBindings)
+        IReadOnlyList<BehaviorRestBindingDescriptor> overrideBindings,
+        IReadOnlyList<string> removedBindingProperties)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(overrideId);
         ArgumentNullException.ThrowIfNull(originalBindings);
         ArgumentNullException.ThrowIfNull(overrideBindings);
+        ArgumentNullException.ThrowIfNull(removedBindingProperties);
 
         var merged = originalBindings
             .Where(static binding => binding is not null)
@@ -570,7 +573,26 @@ internal static class RestBehaviorProjectionCandidateResolver
         var indexesByProperty = merged
             .Select((binding, index) => new KeyValuePair<string, int>(binding.PropertyName.Trim(), index))
             .ToDictionary(static pair => pair.Key, static pair => pair.Value, StringComparer.OrdinalIgnoreCase);
+        var removalSet = removedBindingProperties
+            .Where(static propertyName => !string.IsNullOrWhiteSpace(propertyName))
+            .Select(static propertyName => propertyName.Trim())
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
         var seenOverrideProperties = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var propertyName in removedBindingProperties)
+        {
+            if (string.IsNullOrWhiteSpace(propertyName))
+            {
+                continue;
+            }
+
+            var normalizedPropertyName = propertyName.Trim();
+            if (!indexesByProperty.ContainsKey(normalizedPropertyName))
+            {
+                throw new InvalidOperationException(
+                    $"REST endpoint override rule '{overrideId}' cannot remove explicit binding property '{normalizedPropertyName}' because the source shorthand candidate does not explicitly bind that property.");
+            }
+        }
 
         foreach (var binding in overrideBindings)
         {
@@ -586,6 +608,31 @@ internal static class RestBehaviorProjectionCandidateResolver
                     $"REST endpoint override rule '{overrideId}' cannot merge more than one explicit binding override for property '{propertyName}'.");
             }
 
+            if (removalSet.Contains(propertyName))
+            {
+                throw new InvalidOperationException(
+                    $"REST endpoint override rule '{overrideId}' cannot both remove and override explicit binding property '{propertyName}' in the same merge rule.");
+            }
+        }
+
+        if (removalSet.Count > 0)
+        {
+            merged = merged
+                .Where(binding => !removalSet.Contains(binding.PropertyName.Trim()))
+                .ToList();
+            indexesByProperty = merged
+                .Select((binding, index) => new KeyValuePair<string, int>(binding.PropertyName.Trim(), index))
+                .ToDictionary(static pair => pair.Key, static pair => pair.Value, StringComparer.OrdinalIgnoreCase);
+        }
+
+        foreach (var binding in overrideBindings)
+        {
+            if (binding is null)
+            {
+                continue;
+            }
+
+            var propertyName = binding.PropertyName.Trim();
             var clonedBinding = new BehaviorRestBindingDescriptor(
                 binding.PropertyName,
                 binding.Source,

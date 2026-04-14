@@ -1229,6 +1229,79 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverAllowsMergeBindingRemovalsWithoutRestatingRemainingBindings()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-binding-removal-withdraw")
+            .MapProfile<ProfileProjectionBoundBehavior>();
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.profile-binding-removal-withdraw",
+                "Profile Binding Removal Withdraw Module",
+                "Exercises merge-mode binding withdrawal when the host removes one explicit shorthand binding without restating the rest of the plan.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "withdraw-query-quantity",
+                    behaviorIds: ["tests.profile.projection.bound"],
+                    removedBindingProperties: [nameof(ProfileProjectionBoundInput.Quantity)])
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Equal("withdraw-query-quantity", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal("/api/v6/tests/profile-binding-removal-withdraw/{cartId}/items", candidate.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Equal(3, candidate.Candidate.ProjectedEndpoint.BindingDescriptors.Count);
+        Assert.DoesNotContain(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            string.Equals(binding.PropertyName, nameof(ProfileProjectionBoundInput.Quantity), StringComparison.Ordinal));
+        Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "CartId" &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "cartId");
+        Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "CorrelationId" &&
+            binding.Source == RestEndpointBindingSource.Header &&
+            binding.Name == "X-Correlation-Id");
+        Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "Note" &&
+            binding.Source == RestEndpointBindingSource.Body &&
+            binding.Name == "note");
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverRejectsMergeBindingRemovalForPropertyNotExplicitlyBound()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-binding-removal-invalid")
+            .MapProfile<ProfileProjectionBoundBehavior>();
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+                new ModuleDescriptor(
+                    "tests.rest.profile-binding-removal-invalid",
+                    "Profile Binding Removal Invalid Module",
+                    "Exercises fail-fast validation when a merge removal targets a property the source shorthand never bound explicitly.",
+                    version: "1.0.0"),
+                new ApiRoutesOptions(),
+                builder.Build().Groups,
+                overrides:
+                [
+                    new RestEndpointOverrideOptions(
+                        id: "withdraw-ignored",
+                        behaviorIds: ["tests.profile.projection.bound"],
+                        removedBindingProperties: [nameof(ProfileProjectionBoundInput.Ignored)])
+                ]));
+
+        Assert.Contains("withdraw-ignored", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("does not explicitly bind", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(nameof(ProfileProjectionBoundInput.Ignored), exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverRejectsMethodOverrideWhenEffectiveBindingsNoLongerMatchRestContract()
     {
         var builder = new RestBehaviorModuleBuilder();
@@ -1776,6 +1849,52 @@ public sealed class BehaviorRestProjectionTests
 
         Assert.Contains("MergeExplicit", exception.Message, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("Bindings", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void RestEndpointOverrideOptionsTreatRemovedBindingPropertiesAsAnOverrideActionAndNormalizeToMerge()
+    {
+        var options = new RestEndpointOverrideOptions(
+            id: "remove-only",
+            behaviorIds: ["tests.generated.projection.precedence.lookup"],
+            removedBindingProperties: ["Quantity"]);
+
+        Assert.Equal(RestEndpointOverrideBindingMode.MergeExplicit, options.BindingMode);
+        Assert.Single(options.RemovedBindingProperties);
+        Assert.Contains("Quantity", options.RemovedBindingProperties);
+        Assert.True(options.HasValues);
+    }
+
+    [Fact]
+    public void RestEndpointOverrideOptionsRejectReplaceBindingModeWithRemovedBindingProperties()
+    {
+        var exception = Assert.Throws<ArgumentException>(() =>
+            new RestEndpointOverrideOptions(
+                id: "invalid",
+                behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                removedBindingProperties: ["Quantity"],
+                bindingMode: RestEndpointOverrideBindingMode.ReplaceExplicit));
+
+        Assert.Contains("ReplaceExplicit", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("RemovedBindingProperties", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void RestEndpointOverrideOptionsRejectRulesThatRemoveAndOverrideSameProperty()
+    {
+        var exception = Assert.Throws<ArgumentException>(() =>
+            new RestEndpointOverrideOptions(
+                id: "invalid",
+                behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                bindings:
+                [
+                    new RestEndpointBindingDescriptor("Quantity", RestEndpointBindingSource.Query, "quantity")
+                ],
+                removedBindingProperties: ["Quantity"],
+                bindingMode: RestEndpointOverrideBindingMode.MergeExplicit));
+
+        Assert.Contains("remove and override", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Quantity", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
