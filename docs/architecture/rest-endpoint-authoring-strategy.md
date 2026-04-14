@@ -2,7 +2,7 @@
 
 Decision baseline date: `April 14, 2026`
 
-Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`, `ENG-058-T67` / GitHub issue `#332`
+Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`, `ENG-058-T67` / GitHub issue `#332`, `ENG-058-T68` / GitHub issue `#333`
 
 Cross-references: `docs/components/behaviors-http.md`, `docs/module-authoring.md`, `docs/architecture.md`, `docs/architecture-review-2026-04.md`, `docs/project-memory.md`
 
@@ -183,7 +183,14 @@ Status update:
   module assembly when generated type hints are unavailable, and keep runtime publication on the
   same normalized projection and candidate-catalog path with
   `metadata.authoringStyle = behavior-module-generated`
-- broader configuration-driven projection overrides remain later work
+- the first host-governance slice is now shipped through `ENG-058-T68`: ASP.NET Core hosts can
+  suppress descriptor-backed shorthand candidates through `RestApi:Suppressions`, the runtime now
+  exposes those configured rules through `IRestEndpointSuppressionRuntimeCatalog`,
+  `/engine/rest-endpoint-suppressions`, and `snapshot.RestEndpointSuppressions`, and suppressed
+  candidates now distinguish governance suppression through
+  `RestEndpointCandidateRuntimeDescriptor.SuppressedBySuppressionId`
+- broader configuration-driven projection overrides that rewrite route shape, method, binding, or
+  document membership remain later work
 
 ## Recommended long-term engine model
 
@@ -246,6 +253,18 @@ The safe long-term rule is:
 - explicit code must opt in if it wants host configuration to replace route shape or binding rules
 
 That preserves deterministic ownership and avoids operator-side route surprises.
+
+Current shipped baseline:
+
+- `RestApi:Suppressions` is the first ASP.NET Core host-governance surface
+- it applies only to descriptor-backed shorthand candidates such as `MapProfile<TBehavior>()` and
+  `MapGeneratedProfiles(...)`
+- it suppresses candidates before precedence resolution rather than silently rewriting them
+- it fails fast when a rule omits both `Behaviors` and `Modules`
+- when more than one rule matches, it prefers the more specific rule deterministically before
+  falling back to stable rule-id ordering
+- it does not override explicit module DSL or manual module-owned REST endpoints
+- it does not yet rewrite route shape, method, input binding, or OpenAPI document membership
 
 ## Precedence and suppression rules
 
@@ -505,8 +524,12 @@ Status:
   `ENG-058-T66`
 - generated module shorthand plus explicit `DSL > MapProfile<TBehavior>() > MapGeneratedProfiles(...)`
   precedence is now shipped through `ENG-058-T67`
-- controlled configuration overrides remain later work once suppression visibility and shorthand
-  publication rules are stronger
+- the first controlled-governance follow-through is now shipped through `ENG-058-T68`, so
+  ASP.NET Core hosts can suppress descriptor-backed shorthand candidates through
+  `RestApi:Suppressions` while the runtime keeps both the configured suppression-rule catalog and
+  the candidate-level `SuppressedBySuppressionId` truth visible
+- controlled configuration overrides that rewrite the published route shape remain later work once
+  the suppression baseline proves out strongly enough
 
 ## What should be stored as project memory
 
@@ -527,6 +550,11 @@ The following points are durable enough to keep outside thread-local context.
 - the shipped precedence-visibility baseline now also exposes candidate publication truth through
   `IRestEndpointCandidateRuntimeCatalog`, `/engine/rest-endpoint-candidates`,
   `/engine/rest-endpoint-candidates/{candidateId}`, and `snapshot.RestEndpointCandidates`
+- the shipped governance baseline now also exposes configured suppression-rule truth through
+  `IRestEndpointSuppressionRuntimeCatalog`, `/engine/rest-endpoint-suppressions`,
+  `/engine/rest-endpoint-suppressions/{suppressionId}`, and `snapshot.RestEndpointSuppressions`
+- the shipped `RestApi:Suppressions` baseline is intentionally limited to suppression of
+  descriptor-backed shorthand candidates; it does not rewrite explicit module DSL or manual routes
 - future shorthand or convention REST publication must compose through the shared projection,
   runtime-catalog, and collision-validation pipeline instead of bypassing it
 - future agentic, AI, or multi-platform expansion should not outrun core engine contract quality,
@@ -537,8 +565,9 @@ The following points are durable enough to keep outside thread-local context.
 Recommended implementation sequence after the shipped normalization, runtime-catalog,
 precedence-visibility, and generated-module follow-through slices:
 
-1. add richer endpoint governance and configuration-override modeling only if runtime truth,
-   ownership, precedence, and candidate visibility stay explicit and introspectable
+1. extend the shipped suppression-only governance baseline toward richer configuration-override
+   modeling only if runtime truth, ownership, precedence, and candidate visibility stay explicit
+   and introspectable
 2. only then evaluate whether any additional convention-backed publication sources are worth the
    added complexity beyond the shipped `MapProfile<TBehavior>()` and `MapGeneratedProfiles(...)`
    surfaces

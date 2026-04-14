@@ -99,6 +99,10 @@ public static class EngineWebApplicationBuilderExtensions
             serviceProvider.GetRequiredService<AspNetCoreRestEndpointCandidateRuntimeCatalog>());
         builder.Services.TryAddSingleton<IRestEndpointCandidateRuntimeRegistry>(serviceProvider =>
             serviceProvider.GetRequiredService<AspNetCoreRestEndpointCandidateRuntimeCatalog>());
+        var restApiGovernanceOptions = RestApiGovernanceOptions.FromConfiguration(builder.Configuration);
+        builder.Services.TryAddSingleton(restApiGovernanceOptions);
+        builder.Services.TryAddSingleton<IRestEndpointSuppressionRuntimeCatalog>(_ =>
+            new AspNetCoreRestEndpointSuppressionRuntimeCatalog(restApiGovernanceOptions));
         builder.Services.TryAddSingleton<AspNetCoreRestEndpointRuntimeCatalog>();
         builder.Services.TryAddSingleton<IRestEndpointRuntimeCatalog>(serviceProvider =>
             serviceProvider.GetRequiredService<AspNetCoreRestEndpointRuntimeCatalog>());

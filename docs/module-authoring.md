@@ -362,6 +362,9 @@ Current helper behavior:
 - adds `behaviors.Group(...).MapGeneratedProfiles()` and `MapGeneratedProfiles(string)` as the
   explicit low-code module-owned shorthand when a whole owned route group should publish every
   matching profiled behavior
+- lets ASP.NET Core hosts suppress those shorthand candidates through `RestApi:Suppressions`
+  without taking away module ownership, while explicit `MapGet/MapPost/...` routes and manual
+  module-owned endpoints remain authoritative
 - treats `behaviors.Internal<TBehavior>()` as the explicit internal-only or custom/manual-route path
 - validates that a module cannot map another module's explicitly owned behavior through the REST helper layer
 - keeps route shape in the ASP.NET Core adapter layer while behavior attributes remain host-agnostic
@@ -405,6 +408,28 @@ Current helper behavior:
   falls outside the default behavior REST DSL; custom endpoints should still declare ownership first
   through `behaviors.Internal<TBehavior>()`, and those manual module-owned routes now still join the
   shared `/engine/rest-endpoints` runtime catalog plus duplicate-route validation baseline
+
+When a host wants to suppress shorthand publication without removing the module-owned route group,
+use `RestApi:Suppressions`. That host-level governance surface can target `Behaviors`, `Modules`,
+and optional `AuthoringStyles`, defaults to both shorthand styles when `AuthoringStyles` is
+omitted, fails fast when both `Behaviors` and `Modules` are missing, prefers the more specific
+matching rule deterministically, and intentionally suppresses only descriptor-backed shorthand
+candidates rather than rewriting explicit module DSL/manual routes.
+
+Example:
+
+```json
+{
+  "RestApi": {
+    "Suppressions": {
+      "hide-generated-cart": {
+        "Modules": [ "showcase.cart" ],
+        "AuthoringStyles": [ "behavior-module-generated" ]
+      }
+    }
+  }
+}
+```
 
 When a host needs more than the default `v1` document, prefer `OpenApi:EnabledVersions` plus `OpenApi:DefaultVersion`. Behaviors and modules still declare candidate document versions through `.ApiVersion(...)` or module-major defaults, but the host treats `EnabledVersions` as the allow-list for what actually gets published. For example, if modules carry `v1`, `v2`, and `v3` endpoint metadata while the host enables only `[2, 3]`, Cephalon registers only `/openapi/v2.json` plus `/openapi/v3.json`, redirects `/scalar` to the resolved default enabled document such as `/scalar/v3`, and injects only those enabled documents into Scalar's version selector. `/scalar/` still remains available for multi-document selection, and Cephalon normalizes hash-based Scalar selections such as `/scalar/#v2/` back into pinned versioned links. Hosts can also move the docs and REST entry points with `OpenApi:RoutePattern`, `OpenApi:Scalar:RoutePrefix`, and the canonical `ApiRoutes:Prefixes:*` settings. Legacy `OpenApi:Documents` and `OpenApi:DefaultDocument` settings remain available when a host deliberately wants custom named documents instead of `v{major}` API-version documents, and those settings follow the same published-document allow-list semantics.
 

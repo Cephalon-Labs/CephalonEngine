@@ -300,6 +300,144 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverLetsGeneratedCandidatePublishWhenProfileCandidateIsSuppressedByGovernance()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        var group = builder.Group("/tests/generated-profile-governance")
+            .ApiVersion(10);
+
+        group.MapGeneratedProfiles("tests.generated.projection.precedence");
+        group.MapProfile<GeneratedProjectionProfilePrecedenceBehavior>();
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.generated-profile-governance",
+                "Generated Profile Governance Module",
+                "Exercises governance-driven suppression between explicit profile and generated shorthand.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            [
+                new RestEndpointSuppressionOptions(
+                    id: "prefer-generated",
+                    behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                    authoringStyles: [RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle])
+            ]);
+
+        Assert.Equal(2, candidates.Count);
+
+        var published = Assert.Single(candidates, static item =>
+            item.Candidate.Status == RestEndpointCandidateStatus.Published);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, published.Candidate.AuthoringStyle);
+        Assert.Equal("tests.generated.projection.precedence.lookup", published.Candidate.ProjectedEndpoint.BehaviorId);
+        Assert.Null(published.Candidate.SuppressedByCandidateId);
+        Assert.Null(published.Candidate.SuppressedBySuppressionId);
+
+        var suppressed = Assert.Single(candidates, static item =>
+            item.Candidate.Status == RestEndpointCandidateStatus.Suppressed);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, suppressed.Candidate.AuthoringStyle);
+        Assert.Equal("prefer-generated", suppressed.Candidate.SuppressedBySuppressionId);
+        Assert.Null(suppressed.Candidate.SuppressedByCandidateId);
+        Assert.Contains("prefer-generated", suppressed.Candidate.SuppressionReason, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverDefaultsGovernanceSuppressionToShorthandAuthoringStylesOnly()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        var group = builder.Group("/tests/generated-three-way-governance")
+            .ApiVersion(11);
+
+        group.MapGeneratedProfiles("tests.generated.projection.threeway");
+        group.MapProfile<GeneratedProjectionThreeWayBehavior>();
+        group.MapGet<GeneratedProjectionThreeWayBehavior>("/explicit/{cartId}");
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.generated-three-way-governance",
+                "Generated Three-Way Governance Module",
+                "Exercises default shorthand-only governance suppression.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            [
+                new RestEndpointSuppressionOptions(
+                    id: "hide-shorthand",
+                    behaviorIds: ["tests.generated.projection.threeway.lookup"])
+            ]);
+
+        Assert.Equal(3, candidates.Count);
+
+        var published = Assert.Single(candidates, static item =>
+            item.Candidate.Status == RestEndpointCandidateStatus.Published);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle, published.Candidate.AuthoringStyle);
+        Assert.Null(published.Candidate.SuppressedBySuppressionId);
+
+        var suppressedProfile = Assert.Single(candidates, static item =>
+            item.Candidate.Status == RestEndpointCandidateStatus.Suppressed &&
+            string.Equals(item.Candidate.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal("hide-shorthand", suppressedProfile.Candidate.SuppressedBySuppressionId);
+        Assert.Null(suppressedProfile.Candidate.SuppressedByCandidateId);
+
+        var suppressedGenerated = Assert.Single(candidates, static item =>
+            item.Candidate.Status == RestEndpointCandidateStatus.Suppressed &&
+            string.Equals(item.Candidate.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal("hide-shorthand", suppressedGenerated.Candidate.SuppressedBySuppressionId);
+        Assert.Null(suppressedGenerated.Candidate.SuppressedByCandidateId);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverPrefersTheMostSpecificGovernanceRuleWhenMultipleRulesMatch()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        var group = builder.Group("/tests/generated-specific-governance")
+            .ApiVersion(12);
+
+        group.MapGeneratedProfiles("tests.generated.projection.precedence");
+        group.MapProfile<GeneratedProjectionProfilePrecedenceBehavior>();
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.generated-specific-governance",
+                "Generated Specific Governance Module",
+                "Exercises deterministic governance precedence across multiple matching rules.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            [
+                new RestEndpointSuppressionOptions(
+                    id: "module-rule",
+                    sourceModuleIds: ["tests.rest.generated-specific-governance"],
+                    authoringStyles: [RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle]),
+                new RestEndpointSuppressionOptions(
+                    id: "behavior-module-rule",
+                    behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                    sourceModuleIds: ["tests.rest.generated-specific-governance"],
+                    authoringStyles: [RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle])
+            ]);
+
+        var published = Assert.Single(candidates, static item =>
+            item.Candidate.Status == RestEndpointCandidateStatus.Published);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, published.Candidate.AuthoringStyle);
+
+        var suppressed = Assert.Single(candidates, static item =>
+            item.Candidate.Status == RestEndpointCandidateStatus.Suppressed);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, suppressed.Candidate.AuthoringStyle);
+        Assert.Equal("behavior-module-rule", suppressed.Candidate.SuppressedBySuppressionId);
+    }
+
+    [Fact]
+    public void RestEndpointSuppressionOptionsRejectRulesWithoutBehaviorOrModuleTargets()
+    {
+        var exception = Assert.Throws<ArgumentException>(() =>
+            new RestEndpointSuppressionOptions(
+                id: "invalid",
+                authoringStyles: [RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle]));
+
+        Assert.Contains("behavior id or source module id", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void RestBehaviorModuleBuilderRejectsProfileMappingsWithoutRestProfileMetadata()
     {
         var builder = new RestBehaviorModuleBuilder();

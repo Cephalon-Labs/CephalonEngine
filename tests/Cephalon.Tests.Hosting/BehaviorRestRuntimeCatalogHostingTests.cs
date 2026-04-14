@@ -316,6 +316,157 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonSuppressesGeneratedCandidatesThroughRestApiGovernanceAndExposesSuppressionCatalog()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "4";
+        builder.Configuration["OpenApi:DefaultVersion"] = "4";
+        builder.Configuration["RestApi:Suppressions:hide-generated-runtime:Modules:0"] = "tests.rest.generated-runtime";
+        builder.Configuration["RestApi:Suppressions:hide-generated-runtime:AuthoringStyles:0"] = RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle;
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new GeneratedRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var suppressions = await client.GetFromJsonAsync<RestEndpointSuppressionDescriptor[]>("/engine/rest-endpoint-suppressions");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(suppressions);
+        Assert.NotNull(snapshot);
+        Assert.Empty(endpoints);
+        Assert.Equal(2, candidates.Length);
+
+        Assert.All(
+            candidates,
+            candidate =>
+            {
+                Assert.Equal(RestEndpointCandidateStatus.Suppressed, candidate.Status);
+                Assert.Equal("hide-generated-runtime", candidate.SuppressedBySuppressionId);
+                Assert.Null(candidate.SuppressedByCandidateId);
+            });
+
+        var suppression = Assert.Single(suppressions);
+        Assert.Equal("hide-generated-runtime", suppression.Id);
+        Assert.Contains("tests.rest.generated-runtime", suppression.SourceModuleIds);
+        Assert.Contains(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, suppression.AuthoringStyles);
+
+        Assert.Contains(snapshot.RestEndpointSuppressions, item =>
+            string.Equals(item.Id, suppression.Id, StringComparison.Ordinal));
+        Assert.All(
+            snapshot.RestEndpointCandidates,
+            candidate => Assert.Equal("hide-generated-runtime", candidate.SuppressedBySuppressionId));
+
+        var response = await client.GetAsync("/api/v4/tests/generated/runtime/orders/ord-42");
+        Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task MapCephalonLetsGeneratedCandidatePublishWhenProfileCandidateIsSuppressedByRestApiGovernance()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.Configuration["RestApi:Suppressions:prefer-generated:Behaviors:0"] = "tests.rest.generated.threeway.lookup";
+        builder.Configuration["RestApi:Suppressions:prefer-generated:AuthoringStyles:0"] = RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle;
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new GeneratedProfileGovernanceRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var suppressions = await client.GetFromJsonAsync<RestEndpointSuppressionDescriptor[]>("/engine/rest-endpoint-suppressions");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(suppressions);
+        Assert.NotNull(snapshot);
+
+        var endpoint = Assert.Single(endpoints);
+        Assert.Equal("tests.rest.generated.threeway.lookup", endpoint.BehaviorId);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, endpoint.Metadata["authoringStyle"]);
+        Assert.Equal("/api/v6/tests/generated/runtime/governed/orders/{orderId}", endpoint.RoutePattern);
+
+        var published = Assert.Single(candidates, static candidate =>
+            candidate.Status == RestEndpointCandidateStatus.Published);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, published.AuthoringStyle);
+        Assert.Null(published.SuppressedBySuppressionId);
+
+        var suppressed = Assert.Single(candidates, static candidate =>
+            candidate.Status == RestEndpointCandidateStatus.Suppressed);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, suppressed.AuthoringStyle);
+        Assert.Equal("prefer-generated", suppressed.SuppressedBySuppressionId);
+        Assert.Null(suppressed.SuppressedByCandidateId);
+
+        var suppression = Assert.Single(suppressions);
+        Assert.Equal("prefer-generated", suppression.Id);
+        Assert.Contains("tests.rest.generated.threeway.lookup", suppression.BehaviorIds);
+        Assert.Contains(RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, suppression.AuthoringStyles);
+        Assert.Contains(snapshot.RestEndpointSuppressions, item =>
+            string.Equals(item.Id, "prefer-generated", StringComparison.Ordinal));
+
+        var payload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>("/api/v6/tests/generated/runtime/governed/orders/ord-99");
+        Assert.NotNull(payload);
+        Assert.Equal("ord-99", payload.OrderId);
+    }
+
+    [Fact]
+    public void AddCephalonRejectsRestApiSuppressionRulesWithoutBehaviorOrModuleTargets()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["RestApi:Suppressions:invalid:AuthoringStyles:0"] = RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle;
+
+        var exception = Assert.Throws<ArgumentException>(() =>
+            builder.AddCephalon(engine =>
+            {
+                engine.AddModule(new GeneratedRuntimeCatalogModule());
+                engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+                {
+                    behaviors.AddHttpBehaviorBindings();
+                });
+            }));
+
+        Assert.Contains("behavior id or source module id", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public async Task MapCephalonExposesRestEndpointCandidatesAndSuppressesGeneratedAndProfileMappingsWhenExplicitDslExists()
     {
         var builder = WebApplication.CreateBuilder();
@@ -894,6 +1045,24 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             group.MapGeneratedProfiles("tests.rest.generated.threeway");
             group.MapProfile<GetGeneratedThreeWayRuntimeOrderBehavior>();
             group.MapGet<GetGeneratedThreeWayRuntimeOrderBehavior>("/explicit/{orderId}");
+        }
+    }
+
+    private sealed class GeneratedProfileGovernanceRuntimeCatalogModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.generated-runtime.governance",
+            "Generated Profile Governance Runtime Module",
+            "Publishes generated and profile shorthand so REST governance can suppress the profile candidate.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            var group = behaviors.Group("/tests/generated/runtime/governed/orders")
+                .WithTagName("Generated Governance API");
+
+            group.MapGeneratedProfiles("tests.rest.generated.threeway");
+            group.MapProfile<GetGeneratedThreeWayRuntimeOrderBehavior>();
         }
     }
 

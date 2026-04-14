@@ -21,10 +21,13 @@ internal static class RestBehaviorProjectionMaterializer
 
         var configuration = endpoints.ServiceProvider.GetRequiredService<IConfiguration>();
         var candidateRegistry = endpoints.ServiceProvider.GetService<IRestEndpointCandidateRuntimeRegistry>();
+        var governanceOptions = endpoints.ServiceProvider.GetService<RestApiGovernanceOptions>()
+            ?? RestApiGovernanceOptions.FromConfiguration(configuration);
         var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
             module.Descriptor,
             ApiRoutesOptions.FromConfiguration(configuration),
-            projection.Groups);
+            projection.Groups,
+            governanceOptions.Suppressions);
 
         foreach (var candidate in candidates)
         {

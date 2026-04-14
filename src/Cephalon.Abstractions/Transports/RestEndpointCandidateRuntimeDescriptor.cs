@@ -20,6 +20,9 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
     /// <param name="suppressedByCandidateId">
     /// The winning candidate identifier when this candidate was suppressed.
     /// </param>
+    /// <param name="suppressedBySuppressionId">
+    /// The host-level suppression identifier when this candidate was suppressed by REST governance.
+    /// </param>
     /// <param name="suppressionReason">The operator-facing suppression reason when one is available.</param>
     public RestEndpointCandidateRuntimeDescriptor(
         string id,
@@ -28,6 +31,7 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
         int precedenceRank,
         RestEndpointCandidateStatus status,
         string? suppressedByCandidateId = null,
+        string? suppressedBySuppressionId = null,
         string? suppressionReason = null)
     {
         if (string.IsNullOrWhiteSpace(id))
@@ -56,11 +60,21 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
         }
 
         if (status == RestEndpointCandidateStatus.Published &&
-            (!string.IsNullOrWhiteSpace(suppressedByCandidateId) || !string.IsNullOrWhiteSpace(suppressionReason)))
+            (!string.IsNullOrWhiteSpace(suppressedByCandidateId) ||
+            !string.IsNullOrWhiteSpace(suppressedBySuppressionId) ||
+            !string.IsNullOrWhiteSpace(suppressionReason)))
         {
             throw new ArgumentException(
                 "Published candidates cannot declare suppression metadata.",
                 nameof(status));
+        }
+
+        if (!string.IsNullOrWhiteSpace(suppressedByCandidateId) &&
+            !string.IsNullOrWhiteSpace(suppressedBySuppressionId))
+        {
+            throw new ArgumentException(
+                "A suppressed candidate cannot declare both precedence and governance suppression ids.",
+                nameof(suppressedByCandidateId));
         }
 
         Id = id.Trim();
@@ -71,6 +85,9 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
         SuppressedByCandidateId = string.IsNullOrWhiteSpace(suppressedByCandidateId)
             ? null
             : suppressedByCandidateId.Trim();
+        SuppressedBySuppressionId = string.IsNullOrWhiteSpace(suppressedBySuppressionId)
+            ? null
+            : suppressedBySuppressionId.Trim();
         SuppressionReason = string.IsNullOrWhiteSpace(suppressionReason)
             ? null
             : suppressionReason.Trim();
@@ -105,6 +122,11 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
     /// Gets the winning candidate identifier when this candidate was suppressed.
     /// </summary>
     public string? SuppressedByCandidateId { get; }
+
+    /// <summary>
+    /// Gets the host-level suppression identifier when this candidate was suppressed by REST governance.
+    /// </summary>
+    public string? SuppressedBySuppressionId { get; }
 
     /// <summary>
     /// Gets the operator-facing suppression reason when one is available.

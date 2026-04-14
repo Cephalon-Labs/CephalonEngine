@@ -360,6 +360,10 @@ Current helper behavior:
 - if the same behavior is mapped through both `MapProfile<TBehavior>()` and
   `MapGeneratedProfiles(...)`, the explicit per-behavior `MapProfile<TBehavior>()` route wins by
   default and the generated candidate is suppressed
+- ASP.NET Core hosts can now also suppress descriptor-backed shorthand candidates through
+  `RestApi:Suppressions`, which runs before precedence resolution, records the governing rule id on
+  the suppressed candidate through `SuppressedBySuppressionId`, and intentionally leaves explicit
+  module DSL or manual module-owned REST endpoints untouched
 
 ## REST runtime catalog and collision guard
 
@@ -386,11 +390,50 @@ The same runtime answer now has a companion candidate catalog for precedence vis
 - `GET /engine/rest-endpoint-candidates/{candidateId}`
 - `RuntimeIntrospectionSnapshot.RestEndpointCandidates`
 
+The host now also publishes the configured shorthand-suppression rules themselves through:
+
+- `IRestEndpointSuppressionRuntimeCatalog`
+- `GET /engine/rest-endpoint-suppressions`
+- `GET /engine/rest-endpoint-suppressions/{suppressionId}`
+- `RuntimeIntrospectionSnapshot.RestEndpointSuppressions`
+
 Candidate entries answer the projected endpoint shape, authoring style, precedence rank, published
 versus suppressed status, and when suppression occurs the winning candidate id plus an
 operator-facing suppression reason. Today that surface covers the normalized module-owned behavior
 projection path, including explicit module DSL mappings, `MapProfile<TBehavior>()` shorthand
 consumption, and `MapGeneratedProfiles(...)` shorthand consumption.
+
+When suppression comes from host governance instead of precedence, the runtime now uses
+`SuppressedBySuppressionId` rather than `SuppressedByCandidateId` so operators can see that a
+configuration rule hid the candidate instead of another candidate winning.
+
+Current governance baseline:
+
+- configure shorthand suppression through `RestApi:Suppressions`
+- target one or more `Behaviors`, `Modules`, and optional `AuthoringStyles`
+- rules that omit both `Behaviors` and `Modules` now fail fast instead of suppressing every
+  shorthand candidate implicitly
+- omit `AuthoringStyles` to suppress both shorthand styles by default:
+  `behavior-module-profile` and `behavior-module-generated`
+- when more than one rule matches, Cephalon prefers the more specific rule:
+  `behavior+module > behavior > module`, then narrower authoring-style scope, then rule id
+- keep the baseline suppression-only for now; route-shape, method, binding, and document overrides
+  remain later work
+
+Example:
+
+```json
+{
+  "RestApi": {
+    "Suppressions": {
+      "prefer-generated-cart": {
+        "Behaviors": [ "showcase.cart.get" ],
+        "AuthoringStyles": [ "behavior-module-profile" ]
+      }
+    }
+  }
+}
+```
 
 The host also now fails fast when two resolved public REST endpoints collide on the same
 `HTTP method + route pattern`.

@@ -154,6 +154,15 @@ public static class EngineWebApplicationExtensions
                 return candidate is null ? Results.NotFound() : Results.Ok(candidate);
             })
             .WithName("GetCephalonRestEndpointCandidate");
+        engineGroup.MapGet("/rest-endpoint-suppressions", ([FromServices] IRestEndpointSuppressionRuntimeCatalog catalog) => TypedResults.Ok(catalog.Suppressions))
+            .WithName("GetCephalonRestEndpointSuppressions");
+        engineGroup.MapGet("/rest-endpoint-suppressions/{suppressionId}", (string suppressionId, [FromServices] IRestEndpointSuppressionRuntimeCatalog catalog) =>
+            {
+                var suppression = catalog.GetById(suppressionId);
+
+                return suppression is null ? Results.NotFound() : Results.Ok(suppression);
+            })
+            .WithName("GetCephalonRestEndpointSuppression");
         engineGroup.MapGet("/databases", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Databases))
             .WithName("GetCephalonDatabases");
         engineGroup.MapGet("/database-topology", ([FromServices] IDatabaseTopologyOperationalSnapshotProvider provider) =>

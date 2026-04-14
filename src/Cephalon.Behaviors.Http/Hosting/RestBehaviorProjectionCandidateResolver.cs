@@ -10,7 +10,8 @@ internal static class RestBehaviorProjectionCandidateResolver
     internal static IReadOnlyList<ResolvedRestBehaviorEndpointProjectionCandidate> ResolveCandidates(
         ModuleDescriptor moduleDescriptor,
         ApiRoutesOptions apiRoutesOptions,
-        IReadOnlyList<RestBehaviorRouteGroupProjection> groups)
+        IReadOnlyList<RestBehaviorRouteGroupProjection> groups,
+        IReadOnlyList<RestEndpointSuppressionOptions>? suppressions = null)
     {
         ArgumentNullException.ThrowIfNull(moduleDescriptor);
         ArgumentNullException.ThrowIfNull(apiRoutesOptions);
@@ -31,7 +32,13 @@ internal static class RestBehaviorProjectionCandidateResolver
             return [];
         }
 
+        var suppressionByCandidateId = candidates.ToDictionary(
+            static candidate => candidate.Candidate.Id,
+            candidate => ResolveSuppression(candidate.Candidate, suppressions),
+            StringComparer.OrdinalIgnoreCase);
+
         var winnersByBehavior = candidates
+            .Where(candidate => suppressionByCandidateId[candidate.Candidate.Id] is null)
             .GroupBy(
                 static candidate => candidate.Candidate.ProjectedEndpoint.BehaviorId ?? string.Empty,
                 StringComparer.OrdinalIgnoreCase)
@@ -48,7 +55,7 @@ internal static class RestBehaviorProjectionCandidateResolver
                 StringComparer.OrdinalIgnoreCase);
 
         return candidates
-            .Select(candidate => ResolvePublication(candidate, winnersByBehavior))
+            .Select(candidate => ResolvePublication(candidate, suppressionByCandidateId, winnersByBehavior))
             .OrderBy(static candidate => candidate.Candidate.ProjectedEndpoint.RoutePattern, StringComparer.OrdinalIgnoreCase)
             .ThenBy(static candidate => candidate.Candidate.ProjectedEndpoint.Method, StringComparer.OrdinalIgnoreCase)
             .ThenBy(static candidate => candidate.Candidate.Id, StringComparer.OrdinalIgnoreCase)
@@ -149,10 +156,28 @@ internal static class RestBehaviorProjectionCandidateResolver
 
     private static ResolvedRestBehaviorEndpointProjectionCandidate ResolvePublication(
         ResolvedRestBehaviorEndpointProjectionCandidate candidate,
+        Dictionary<string, RestEndpointSuppressionOptions?> suppressionByCandidateId,
         Dictionary<string, ResolvedRestBehaviorEndpointProjectionCandidate[]> winnersByBehavior)
     {
         ArgumentNullException.ThrowIfNull(candidate);
+        ArgumentNullException.ThrowIfNull(suppressionByCandidateId);
         ArgumentNullException.ThrowIfNull(winnersByBehavior);
+
+        var suppression = suppressionByCandidateId[candidate.Candidate.Id];
+        if (suppression is not null)
+        {
+            return candidate with
+            {
+                Candidate = new RestEndpointCandidateRuntimeDescriptor(
+                    candidate.Candidate.Id,
+                    candidate.Candidate.ProjectedEndpoint,
+                    candidate.Candidate.AuthoringStyle,
+                    candidate.Candidate.PrecedenceRank,
+                    RestEndpointCandidateStatus.Suppressed,
+                    suppressedBySuppressionId: suppression.Id,
+                    suppressionReason: $"Suppressed by REST endpoint suppression rule '{suppression.Id}'.")
+            };
+        }
 
         var behaviorId = candidate.Candidate.ProjectedEndpoint.BehaviorId ?? string.Empty;
         var winners = winnersByBehavior[behaviorId];
@@ -173,6 +198,80 @@ internal static class RestBehaviorProjectionCandidateResolver
                 suppressedByCandidateId: winningCandidate.Id,
                 suppressionReason: $"Suppressed because behavior '{behaviorId}' is also mapped by higher-precedence authoring style '{winningCandidate.AuthoringStyle}'.")
         };
+    }
+
+    private static RestEndpointSuppressionOptions? ResolveSuppression(
+        RestEndpointCandidateRuntimeDescriptor candidate,
+        IReadOnlyList<RestEndpointSuppressionOptions>? suppressions)
+    {
+        ArgumentNullException.ThrowIfNull(candidate);
+
+        if (suppressions is null || suppressions.Count == 0)
+        {
+            return null;
+        }
+
+        return suppressions
+            .Where(suppression => MatchesSuppression(candidate, suppression))
+            .OrderByDescending(static suppression => CountTargetDimensions(suppression))
+            .ThenByDescending(static suppression => suppression.BehaviorIds.Count > 0)
+            .ThenBy(static suppression => suppression.AuthoringStyles.Count)
+            .ThenBy(static suppression => suppression.BehaviorIds.Count + suppression.SourceModuleIds.Count)
+            .ThenBy(static suppression => suppression.Id, StringComparer.OrdinalIgnoreCase)
+            .FirstOrDefault();
+    }
+
+    private static bool MatchesSuppression(
+        RestEndpointCandidateRuntimeDescriptor candidate,
+        RestEndpointSuppressionOptions suppression)
+    {
+        ArgumentNullException.ThrowIfNull(candidate);
+        ArgumentNullException.ThrowIfNull(suppression);
+
+        if (!suppression.AuthoringStyles.Contains(candidate.AuthoringStyle, StringComparer.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        if (suppression.SourceModuleIds.Count > 0)
+        {
+            var sourceModuleId = candidate.ProjectedEndpoint.SourceModuleId;
+            if (string.IsNullOrWhiteSpace(sourceModuleId) ||
+                !suppression.SourceModuleIds.Contains(sourceModuleId, StringComparer.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+        }
+
+        if (suppression.BehaviorIds.Count > 0)
+        {
+            var behaviorId = candidate.ProjectedEndpoint.BehaviorId;
+            if (string.IsNullOrWhiteSpace(behaviorId) ||
+                !suppression.BehaviorIds.Contains(behaviorId, StringComparer.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static int CountTargetDimensions(RestEndpointSuppressionOptions suppression)
+    {
+        ArgumentNullException.ThrowIfNull(suppression);
+
+        var count = 0;
+        if (suppression.BehaviorIds.Count > 0)
+        {
+            count++;
+        }
+
+        if (suppression.SourceModuleIds.Count > 0)
+        {
+            count++;
+        }
+
+        return count;
     }
 
     private static int? ResolveModuleMajorVersion(string? moduleVersion)

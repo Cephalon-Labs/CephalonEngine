@@ -118,6 +118,11 @@ public sealed record RuntimeIntrospectionSnapshot(
     public IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> RestEndpointCandidates { get; init; } = [];
 
     /// <summary>
+    /// Gets the host-level REST endpoint suppression rules visible to the runtime at the time the snapshot was created.
+    /// </summary>
+    public IReadOnlyList<RestEndpointSuppressionDescriptor> RestEndpointSuppressions { get; init; } = [];
+
+    /// <summary>
     /// Gets the effective behavior-execution resilience policies visible to the runtime at the time the snapshot was created.
     /// </summary>
     public IReadOnlyList<BehaviorResilienceRuntimeDescriptor> BehaviorResiliencePolicies { get; init; } = [];
