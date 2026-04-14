@@ -358,6 +358,9 @@ Current helper behavior:
 - keeps runtime publication on the same module-owned route with `sourceKind = module-dsl`, while
   `/engine/rest-endpoints` distinguishes the shorthand path through
   `metadata.authoringStyle = behavior-module-profile`
+- when the same behavior is mapped through both explicit module DSL and `MapProfile<TBehavior>()`,
+  the explicit DSL route now wins by default while the lower-precedence profile candidate remains
+  visible through `/engine/rest-endpoint-candidates` and `snapshot.RestEndpointCandidates`
 - keeps `MapAdditionalEndpoints(...)` as the advanced escape hatch for manual Minimal API work that
   falls outside the default behavior REST DSL; custom endpoints should still declare ownership first
   through `behaviors.Internal<TBehavior>()`, and those manual module-owned routes now still join the

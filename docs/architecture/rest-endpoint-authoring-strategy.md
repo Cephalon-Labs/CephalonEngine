@@ -1,8 +1,8 @@
 # Cephalon REST Endpoint Authoring Strategy
 
-Decision baseline date: `April 13, 2026`
+Decision baseline date: `April 14, 2026`
 
-Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`
+Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`
 
 Cross-references: `docs/components/behaviors-http.md`, `docs/module-authoring.md`, `docs/architecture.md`, `docs/architecture-review-2026-04.md`, `docs/project-memory.md`
 
@@ -169,6 +169,12 @@ Status update:
   `RestEndpointRuntimeDescriptor.BindingDescriptors`, `RestEndpointBindingDescriptor`, and
   `RestEndpointBindingSource`, while the ASP.NET Core host no longer duplicates that plan inside
   `metadata.bindingDescriptors`
+- the next precedence-visibility follow-through is now shipped through `ENG-058-T66`: the runtime
+  now exposes `IRestEndpointCandidateRuntimeCatalog`, `GET /engine/rest-endpoint-candidates`,
+  `GET /engine/rest-endpoint-candidates/{candidateId}`, and `snapshot.RestEndpointCandidates`, so
+  operators can see both published and suppressed module-owned REST candidates, while explicit
+  module DSL mappings now suppress lower-precedence profile shorthand for the same behavior by
+  default and surface the winning candidate id plus suppression reason explicitly
 - broader configuration-driven projection overrides remain later work
 
 ## Recommended long-term engine model
@@ -250,6 +256,12 @@ module-owned REST paths. That means precedence affects publication, but the winn
 route still flows through the same operator-facing catalog and duplicate-route guard once ASP.NET
 Core materializes the final endpoints.
 
+The shipped precedence-visibility baseline now also makes that suppression decision observable for
+module-owned normalized behavior projections. When the same behavior is mapped through both the
+explicit module DSL and `MapProfile<TBehavior>()`, the explicit DSL route wins by default, the
+lower-precedence profile candidate is suppressed automatically, and the runtime keeps that decision
+visible through the candidate catalog instead of hiding it as silent startup behavior.
+
 ### Suppression rule
 
 If any higher-precedence layer maps a behavior into public REST, lower-precedence public REST
@@ -285,6 +297,10 @@ Recommended runtime surface:
 - `/engine/rest-endpoints`
 - `/engine/rest-endpoints/{restEndpointId}`
 - `snapshot.RestEndpoints`
+- `IRestEndpointCandidateRuntimeCatalog`
+- `/engine/rest-endpoint-candidates`
+- `/engine/rest-endpoint-candidates/{candidateId}`
+- `snapshot.RestEndpointCandidates`
 - fail-fast startup validation on duplicate resolved public `HTTP method + route pattern`
 
 The shipped baseline now answers at least:
@@ -301,8 +317,17 @@ That answer now covers both projection-backed module DSL routes and explicit man
 REST routes published through `IRestModule`, legacy `IEndpointModule`, or
 `RestBehaviorModuleBase.MapAdditionalEndpoints(...)`.
 
-Future slices should add suppression visibility when generated, shorthand, or convention-backed
-routes can lose to higher-precedence projections without becoming active.
+The same shipped baseline now also answers precedence visibility for module-owned shorthand
+projections:
+
+- published versus suppressed candidate status
+- candidate authoring style and precedence rank
+- the winning candidate id when suppression occurs
+- an operator-facing suppression reason
+- the projected endpoint shape each candidate would publish if it won
+
+Broader generated or convention-backed low-code projections should extend that same candidate
+surface instead of inventing a second precedence-answer model.
 
 This keeps shorthand authoring compatible with Cephalon's broader requirement that runtime policy,
 composition, and public surface decisions stay introspectable.
@@ -462,6 +487,8 @@ Status:
 - the first compile-time and runtime hardening follow-through is now shipped through `ENG-058-T64`,
   so invalid binding metadata is rejected at build time and runtime fallback still re-checks
   route-placeholder truth before endpoint materialization
+- suppression visibility plus explicit-DSL-over-profile precedence is now shipped through
+  `ENG-058-T66`
 - controlled configuration overrides remain later work once suppression visibility and shorthand
   publication rules are stronger
 
@@ -480,6 +507,9 @@ The following points are durable enough to keep outside thread-local context.
 - the shipped public REST baseline now exposes resolved route truth through
   `IRestEndpointRuntimeCatalog`, `/engine/rest-endpoints`, `/engine/rest-endpoints/{restEndpointId}`,
   and `snapshot.RestEndpoints`
+- the shipped precedence-visibility baseline now also exposes candidate publication truth through
+  `IRestEndpointCandidateRuntimeCatalog`, `/engine/rest-endpoint-candidates`,
+  `/engine/rest-endpoint-candidates/{candidateId}`, and `snapshot.RestEndpointCandidates`
 - future shorthand or convention REST publication must compose through the shared projection,
   runtime-catalog, and collision-validation pipeline instead of bypassing it
 - future agentic, AI, or multi-platform expansion should not outrun core engine contract quality,
@@ -490,10 +520,8 @@ The following points are durable enough to keep outside thread-local context.
 Recommended implementation sequence after the shipped normalization, runtime-catalog, and
 manual-module follow-through slices:
 
-1. add suppression visibility once non-module-generated projections can be compiled but not
-   activated
-2. add a generated or convention-backed low-code module path that consumes the shipped
+1. add a generated or convention-backed low-code module path that consumes the shipped
    `BehaviorRestProfileAttribute` plus `BehaviorRestBindingAttribute` hints without bypassing
    module ownership
-3. only then evaluate whether richer configuration-driven public-boundary and binding overrides are
+2. only then evaluate whether richer configuration-driven public-boundary and binding overrides are
    worth the added complexity

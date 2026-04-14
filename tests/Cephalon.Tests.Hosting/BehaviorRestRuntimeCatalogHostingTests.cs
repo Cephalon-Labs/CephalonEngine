@@ -255,6 +255,87 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonExposesRestEndpointCandidatesAndSuppressesLowerPrecedenceProfileMappings()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "8";
+        builder.Configuration["OpenApi:DefaultVersion"] = "8";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileSuppressionRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(snapshot);
+
+        var endpoint = Assert.Single(endpoints, static candidate =>
+            string.Equals(candidate.BehaviorId, "tests.rest.profile.suppression", StringComparison.Ordinal));
+        Assert.Equal("/api/v8/tests/profile-runtime/precedence/orders/explicit/{orderId}", endpoint.RoutePattern);
+        Assert.Equal("v8", endpoint.OpenApiDocumentName);
+        Assert.Equal(8, endpoint.ApiVersionMajor);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle, endpoint.Metadata["authoringStyle"]);
+
+        var behaviorCandidates = candidates
+            .Where(static candidate => string.Equals(candidate.ProjectedEndpoint.BehaviorId, "tests.rest.profile.suppression", StringComparison.Ordinal))
+            .ToArray();
+        Assert.Equal(2, behaviorCandidates.Length);
+
+        var published = Assert.Single(behaviorCandidates, static candidate =>
+            candidate.Status == RestEndpointCandidateStatus.Published);
+        Assert.Equal(endpoint.Id, published.ProjectedEndpoint.Id);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle, published.AuthoringStyle);
+        Assert.Equal("/api/v8/tests/profile-runtime/precedence/orders/explicit/{orderId}", published.ProjectedEndpoint.RoutePattern);
+
+        var suppressed = Assert.Single(behaviorCandidates, static candidate =>
+            candidate.Status == RestEndpointCandidateStatus.Suppressed);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, suppressed.AuthoringStyle);
+        Assert.Equal("/api/v8/tests/profile-runtime/precedence/orders/{orderId}", suppressed.ProjectedEndpoint.RoutePattern);
+        Assert.Equal(published.Id, suppressed.SuppressedByCandidateId);
+        Assert.Contains("higher-precedence authoring style", suppressed.SuppressionReason, StringComparison.OrdinalIgnoreCase);
+
+        var candidateById = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor>(
+            $"/engine/rest-endpoint-candidates/{suppressed.Id}");
+        Assert.NotNull(candidateById);
+        Assert.Equal(suppressed.Id, candidateById.Id);
+
+        var snapshotPublished = Assert.Single(snapshot.RestEndpointCandidates, candidate =>
+            string.Equals(candidate.Id, published.Id, StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, snapshotPublished.Status);
+
+        var snapshotSuppressed = Assert.Single(snapshot.RestEndpointCandidates, candidate =>
+            string.Equals(candidate.Id, suppressed.Id, StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Suppressed, snapshotSuppressed.Status);
+        Assert.Equal(published.Id, snapshotSuppressed.SuppressedByCandidateId);
+
+        var payload = await client.GetFromJsonAsync<ProfileRuntimeOrderOutput>(
+            "/api/v8/tests/profile-runtime/precedence/orders/explicit/ord-42");
+        Assert.NotNull(payload);
+        Assert.Equal("ord-42", payload.OrderId);
+
+        var suppressedResponse = await client.GetAsync("/api/v8/tests/profile-runtime/precedence/orders/ord-42");
+        Assert.Equal(System.Net.HttpStatusCode.NotFound, suppressedResponse.StatusCode);
+    }
+
+    [Fact]
     public async Task MapCephalonAppliesExplicitProfileBindingsAndExposesThemInRuntimeCatalog()
     {
         var builder = WebApplication.CreateBuilder();
@@ -689,6 +770,25 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         }
     }
 
+    private sealed class ProfileSuppressionRuntimeCatalogModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.profile-runtime.suppression",
+            "Profile Runtime Suppression Module",
+            "Publishes both explicit and profile-backed routes for precedence visibility coverage.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            var group = behaviors.Group("/tests/profile-runtime/precedence/orders")
+                .ApiVersion(8)
+                .WithTagName("Profile Precedence API");
+
+            group.MapProfile<GetProfileSuppressionOrderBehavior>();
+            group.MapGet<GetProfileSuppressionOrderBehavior>("/explicit/{orderId}");
+        }
+    }
+
     [AppBehavior("tests.rest.runtime-catalog.get")]
     private sealed class GetCatalogCartBehavior : IAppBehavior<GetCatalogCartInput, GetCatalogCartOutput>
     {
@@ -790,6 +890,19 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     [AppBehavior("tests.rest.profile.metadata-only")]
     [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}", ApiVersionMajor = 4)]
     private sealed class GetProfileMetadataOnlyOrderBehavior : IAppBehavior<ProfileRuntimeOrderInput, ProfileRuntimeOrderOutput>
+    {
+        public Task<ProfileRuntimeOrderOutput> HandleAsync(
+            ProfileRuntimeOrderInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProfileRuntimeOrderOutput(input.OrderId));
+        }
+    }
+
+    [AppBehavior("tests.rest.profile.suppression")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}", ApiVersionMajor = 6)]
+    private sealed class GetProfileSuppressionOrderBehavior : IAppBehavior<ProfileRuntimeOrderInput, ProfileRuntimeOrderOutput>
     {
         public Task<ProfileRuntimeOrderOutput> HandleAsync(
             ProfileRuntimeOrderInput input,

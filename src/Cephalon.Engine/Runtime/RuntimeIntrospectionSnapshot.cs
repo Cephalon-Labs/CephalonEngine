@@ -113,6 +113,11 @@ public sealed record RuntimeIntrospectionSnapshot(
     public IReadOnlyList<RestEndpointRuntimeDescriptor> RestEndpoints { get; init; } = [];
 
     /// <summary>
+    /// Gets the module-owned REST endpoint candidates visible to the runtime at the time the snapshot was created.
+    /// </summary>
+    public IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> RestEndpointCandidates { get; init; } = [];
+
+    /// <summary>
     /// Gets the effective behavior-execution resilience policies visible to the runtime at the time the snapshot was created.
     /// </summary>
     public IReadOnlyList<BehaviorResilienceRuntimeDescriptor> BehaviorResiliencePolicies { get; init; } = [];

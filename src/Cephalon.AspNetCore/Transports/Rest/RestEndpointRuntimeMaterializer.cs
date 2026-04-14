@@ -78,6 +78,31 @@ internal static class RestEndpointRuntimeMaterializer
             ? BuildManualEndpointId(moduleMetadata.ModuleId, endpointName, method, routePattern)
             : BuildBehaviorEndpointId(moduleMetadata.ModuleId, behaviorMetadata.BehaviorId, method, routePattern);
 
+        if (behaviorMetadata is not null)
+        {
+            return RestEndpointRuntimeDescriptorFactory.CreateBehaviorDescriptor(
+                sourceKind: sourceKind,
+                method: method,
+                routePattern: routePattern,
+                sourceModuleId: moduleMetadata.ModuleId,
+                sourceModuleVersion: moduleMetadata.Version,
+                sourceModuleVersionMajor: moduleMetadata.MajorVersion,
+                behaviorId: behaviorMetadata.BehaviorId,
+                endpointName: endpointName,
+                openApiDocumentName: openApiDocumentName,
+                apiVersionMajor: apiVersionMajor,
+                tags: tags,
+                summary: summary,
+                description: description,
+                authoringStyle: behaviorMetadata.AuthoringStyle,
+                behaviorType: behaviorMetadata.BehaviorType,
+                routeGroupPrefix: RestEndpointRuntimeDescriptorFactory.CombinePaths(
+                    apiRoutesOptions.RestPrefix,
+                    behaviorMetadata.RouteGroupPrefix),
+                relativePattern: behaviorMetadata.RelativePattern,
+                bindingDescriptors: behaviorMetadata.BindingDescriptors);
+        }
+
         return new RestEndpointRuntimeDescriptor(
             id: endpointId,
             transportId: "rest-api",
@@ -87,14 +112,13 @@ internal static class RestEndpointRuntimeMaterializer
             sourceModuleId: moduleMetadata.ModuleId,
             sourceModuleVersion: moduleMetadata.Version,
             sourceModuleVersionMajor: moduleMetadata.MajorVersion,
-            behaviorId: behaviorMetadata?.BehaviorId,
+            behaviorId: null,
             endpointName: endpointName,
             openApiDocumentName: openApiDocumentName,
             apiVersionMajor: apiVersionMajor,
             tags: tags,
             summary: summary,
             description: description,
-            bindingDescriptors: behaviorMetadata?.BindingDescriptors,
             metadata: CreateMetadata(endpoint, moduleMetadata, behaviorMetadata, method, routePattern, apiRoutesOptions));
     }
 
@@ -154,7 +178,7 @@ internal static class RestEndpointRuntimeMaterializer
         {
             metadata["authoringStyle"] = behaviorMetadata.AuthoringStyle;
             metadata["behaviorType"] = behaviorMetadata.BehaviorType;
-            metadata["routeGroupPrefix"] = CombinePaths(apiRoutesOptions.RestPrefix, behaviorMetadata.RouteGroupPrefix);
+            metadata["routeGroupPrefix"] = RestEndpointRuntimeDescriptorFactory.CombinePaths(apiRoutesOptions.RestPrefix, behaviorMetadata.RouteGroupPrefix);
             metadata["relativePattern"] = behaviorMetadata.RelativePattern;
             metadata["sourceId"] = $"{behaviorMetadata.BehaviorId}:{normalizedMethod}:{behaviorMetadata.RelativePattern}";
             return metadata;
@@ -212,7 +236,7 @@ internal static class RestEndpointRuntimeMaterializer
         string method,
         string routePattern)
     {
-        return BuildEndpointId($"{moduleId}:{behaviorId}:{method}:{routePattern}");
+        return RestEndpointRuntimeDescriptorFactory.BuildEndpointId($"{moduleId}:{behaviorId}:{method}:{routePattern}");
     }
 
     private static string BuildManualEndpointId(
@@ -224,34 +248,7 @@ internal static class RestEndpointRuntimeMaterializer
         var identity = string.IsNullOrWhiteSpace(endpointName)
             ? $"{moduleId}:{method}:{routePattern}"
             : $"{moduleId}:{endpointName}:{method}:{routePattern}";
-        return BuildEndpointId(identity);
-    }
-
-    private static string BuildEndpointId(string value)
-    {
-        var normalized = string.Concat(value.Select(static ch =>
-            char.IsLetterOrDigit(ch) ? char.ToLowerInvariant(ch) : '_'));
-
-        return string.IsNullOrWhiteSpace(normalized)
-            ? "rest_endpoint"
-            : normalized;
-    }
-
-    private static string CombinePaths(params string?[] segments)
-    {
-        var normalizedSegments = segments
-            .Where(static segment => !string.IsNullOrWhiteSpace(segment))
-            .Select(static segment => segment!.Trim())
-            .Select(static segment => segment.Trim('/'))
-            .Where(static segment => segment.Length > 0)
-            .ToArray();
-
-        if (normalizedSegments.Length == 0)
-        {
-            return "/";
-        }
-
-        return "/" + string.Join("/", normalizedSegments);
+        return RestEndpointRuntimeDescriptorFactory.BuildEndpointId(identity);
     }
 
     internal static RestModuleEndpointMetadata CreateModuleMetadata(IModule module)

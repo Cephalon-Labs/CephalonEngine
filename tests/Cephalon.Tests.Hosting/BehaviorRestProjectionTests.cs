@@ -2,6 +2,8 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Modules;
+using Cephalon.Abstractions.Transports;
+using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.Transports.Rest;
 using Cephalon.Behaviors.Http.Abstractions;
 using Cephalon.Behaviors.Http.Hosting;
@@ -140,6 +142,44 @@ public sealed class BehaviorRestProjectionTests
         Assert.Equal(7, routeGroup.ApiVersionMajor);
         Assert.True(routeGroup.HasExplicitApiVersion);
         Assert.Null(routeGroup.ProfileApiVersionSourceBehaviorId);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverPublishesHigherPrecedenceDslCandidateAndSuppressesProfileCandidate()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        var group = builder.Group("/tests/profile-precedence")
+            .ApiVersion(8);
+
+        group.MapProfile<ProfileProjectionGetBehavior>();
+        group.MapGet<ProfileProjectionGetBehavior>("/explicit/{cartId}");
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.profile-precedence",
+                "Profile Precedence Module",
+                "Exercises precedence resolution between module DSL and profile shorthand.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups);
+
+        Assert.Equal(2, candidates.Count);
+
+        var published = Assert.Single(candidates, static item =>
+            item.Candidate.Status == RestEndpointCandidateStatus.Published);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle, published.Candidate.AuthoringStyle);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleDslPrecedenceRank, published.Candidate.PrecedenceRank);
+        Assert.Equal("tests.profile.projection.get", published.Candidate.ProjectedEndpoint.BehaviorId);
+        Assert.Equal("/api/v8/tests/profile-precedence/explicit/{cartId}", published.Candidate.ProjectedEndpoint.RoutePattern);
+
+        var suppressed = Assert.Single(candidates, static item =>
+            item.Candidate.Status == RestEndpointCandidateStatus.Suppressed);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, suppressed.Candidate.AuthoringStyle);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleProfilePrecedenceRank, suppressed.Candidate.PrecedenceRank);
+        Assert.Equal("tests.profile.projection.get", suppressed.Candidate.ProjectedEndpoint.BehaviorId);
+        Assert.Equal("/api/v8/tests/profile-precedence/{cartId}", suppressed.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Equal(published.Candidate.Id, suppressed.Candidate.SuppressedByCandidateId);
+        Assert.Contains("higher-precedence authoring style", suppressed.Candidate.SuppressionReason, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

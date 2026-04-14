@@ -322,6 +322,9 @@ Current helper behavior:
 - keeps `MapAdditionalEndpoints(...)` as the advanced/manual Minimal API escape hatch for REST
   modules that need extra routes beyond the default behavior DSL, while still flowing those manual
   routes into `/engine/rest-endpoints` and the shared duplicate-route guard
+- if the same behavior is mapped through both explicit module DSL and `MapProfile<TBehavior>()`,
+  the explicit DSL route now wins by default and the lower-precedence profile candidate is
+  suppressed instead of publishing side by side
 
 ## REST runtime catalog and collision guard
 
@@ -340,6 +343,19 @@ version when known, behavior id when the route dispatches through a Cephalon beh
 OpenAPI document name, resolved API major version, tags, first-class request-binding descriptors
 when an explicit profile-driven plan exists, and additive metadata such as the route group prefix
 plus relative pattern.
+
+The same runtime answer now has a companion candidate catalog for precedence visibility:
+
+- `IRestEndpointCandidateRuntimeCatalog`
+- `GET /engine/rest-endpoint-candidates`
+- `GET /engine/rest-endpoint-candidates/{candidateId}`
+- `RuntimeIntrospectionSnapshot.RestEndpointCandidates`
+
+Candidate entries answer the projected endpoint shape, authoring style, precedence rank, published
+versus suppressed status, and when suppression occurs the winning candidate id plus an
+operator-facing suppression reason. Today that surface covers the normalized module-owned behavior
+projection path, including explicit module DSL mappings and `MapProfile<TBehavior>()` shorthand
+consumption.
 
 The host also now fails fast when two resolved public REST endpoints collide on the same
 `HTTP method + route pattern`.

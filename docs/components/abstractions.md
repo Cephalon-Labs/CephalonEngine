@@ -55,7 +55,14 @@
 - `Patterns/IStranglerFigRouter.cs`
 - `Patterns/StranglerFigRouteDescriptor.cs`
 - `Technologies/ITechnologyRuntimeCatalog.cs`
+- `Transports/IRestEndpointCandidateRuntimeCatalog.cs`
+- `Transports/IRestEndpointCandidateRuntimeRegistry.cs`
+- `Transports/RestEndpointCandidateRuntimeDescriptor.cs`
+- `Transports/RestEndpointCandidateStatus.cs`
+- `Transports/IRestEndpointCandidateRuntimeCatalog.cs`
 - `Transports/IRestEndpointRuntimeCatalog.cs`
+- `Transports/RestEndpointCandidateRuntimeDescriptor.cs`
+- `Transports/RestEndpointCandidateStatus.cs`
 - `Transports/RestEndpointRuntimeDescriptor.cs`
 - `Transports/RestEndpointBindingDescriptor.cs`
 - `Transports/RestEndpointBindingSource.cs`
@@ -141,7 +148,10 @@ namespace owns `IRestEndpointRuntimeCatalog`, `RestEndpointRuntimeDescriptor`,
 companion packages can read resolved public REST route truth plus explicit request-binding plans
 through one host-agnostic transport contract. That keeps the runtime answer transport-owned instead
 of behavior-package-owned and avoids treating `metadata` dictionaries as the canonical binding-plan
-surface.
+surface. The same namespace now also owns `IRestEndpointCandidateRuntimeCatalog`,
+`IRestEndpointCandidateRuntimeRegistry`, `RestEndpointCandidateRuntimeDescriptor`, and
+`RestEndpointCandidateStatus` so hosts can surface publication-versus-suppression truth for
+module-owned REST candidates without inventing an ASP.NET Core-specific precedence contract.
 
 ## Related docs
 

@@ -1,6 +1,10 @@
 using Cephalon.Abstractions.Modules;
+using Cephalon.Abstractions.Transports;
+using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.Transports.Rest;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Behaviors.Http.Hosting;
 
@@ -15,20 +19,45 @@ internal static class RestBehaviorProjectionMaterializer
         ArgumentNullException.ThrowIfNull(module);
         ArgumentNullException.ThrowIfNull(projection);
 
-        foreach (var groupProjection in projection.Groups)
+        var configuration = endpoints.ServiceProvider.GetRequiredService<IConfiguration>();
+        var candidateRegistry = endpoints.ServiceProvider.GetService<IRestEndpointCandidateRuntimeRegistry>();
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            module.Descriptor,
+            ApiRoutesOptions.FromConfiguration(configuration),
+            projection.Groups);
+
+        foreach (var candidate in candidates)
         {
-            MapGroup(endpoints, module, groupProjection);
+            candidateRegistry?.Register(candidate.Candidate);
+        }
+
+        for (var groupIndex = 0; groupIndex < projection.Groups.Count; groupIndex++)
+        {
+            var publishedEndpointProjections = candidates
+                .Where(candidate =>
+                    candidate.GroupIndex == groupIndex &&
+                    candidate.Candidate.Status == RestEndpointCandidateStatus.Published)
+                .Select(static candidate => candidate.EndpointProjection)
+                .ToArray();
+            if (publishedEndpointProjections.Length == 0)
+            {
+                continue;
+            }
+
+            MapGroup(endpoints, module, projection.Groups[groupIndex], publishedEndpointProjections);
         }
     }
 
     internal static void MapGroup(
         IEndpointRouteBuilder endpoints,
         IModule module,
-        RestBehaviorRouteGroupProjection projection)
+        RestBehaviorRouteGroupProjection projection,
+        IReadOnlyList<RestBehaviorEndpointProjection> publishedEndpointProjections)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
         ArgumentNullException.ThrowIfNull(module);
         ArgumentNullException.ThrowIfNull(projection);
+        ArgumentNullException.ThrowIfNull(publishedEndpointProjections);
 
         var group = endpoints.MapBehaviorRestGroup(module, projection.Prefix);
         group.UseRuntimeSourceKind(RestEndpointRuntimeMetadata.ModuleDslSourceKind);
@@ -53,7 +82,7 @@ internal static class RestBehaviorProjectionMaterializer
             convention(group.Routes);
         }
 
-        foreach (var endpointProjection in projection.Endpoints)
+        foreach (var endpointProjection in publishedEndpointProjections)
         {
             endpointProjection.Apply(group);
         }

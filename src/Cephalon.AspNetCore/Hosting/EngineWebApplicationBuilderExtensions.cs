@@ -94,6 +94,11 @@ public static class EngineWebApplicationBuilderExtensions
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ITransportRouteMapper, ServerSentEventsTransportRouteMapper>());
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ITransportRouteMapper, WebSocketTransportRouteMapper>());
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, EngineHostedService>());
+        builder.Services.TryAddSingleton<AspNetCoreRestEndpointCandidateRuntimeCatalog>();
+        builder.Services.TryAddSingleton<IRestEndpointCandidateRuntimeCatalog>(serviceProvider =>
+            serviceProvider.GetRequiredService<AspNetCoreRestEndpointCandidateRuntimeCatalog>());
+        builder.Services.TryAddSingleton<IRestEndpointCandidateRuntimeRegistry>(serviceProvider =>
+            serviceProvider.GetRequiredService<AspNetCoreRestEndpointCandidateRuntimeCatalog>());
         builder.Services.TryAddSingleton<AspNetCoreRestEndpointRuntimeCatalog>();
         builder.Services.TryAddSingleton<IRestEndpointRuntimeCatalog>(serviceProvider =>
             serviceProvider.GetRequiredService<AspNetCoreRestEndpointRuntimeCatalog>());

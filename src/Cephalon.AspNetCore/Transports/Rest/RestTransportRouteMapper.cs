@@ -20,6 +20,9 @@ internal sealed class RestTransportRouteMapper : ITransportRouteMapper
 
     public void MapRoutes(WebApplication app, IRuntime runtime)
     {
+        var candidateRegistry = app.Services.GetService(typeof(IRestEndpointCandidateRuntimeRegistry)) as IRestEndpointCandidateRuntimeRegistry;
+        candidateRegistry?.Clear();
+
         var registry = app.Services.GetService(typeof(IRestEndpointRuntimeRegistry)) as IRestEndpointRuntimeRegistry;
         registry?.Clear();
 
