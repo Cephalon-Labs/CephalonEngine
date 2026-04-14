@@ -189,13 +189,15 @@ Status update:
   `/engine/rest-endpoint-suppressions`, and `snapshot.RestEndpointSuppressions`, and suppressed
   candidates now distinguish governance suppression through
   `RestEndpointCandidateRuntimeDescriptor.SuppressedBySuppressionId`
-- the first constrained shorthand-override slice is now shipped through `ENG-058-T69`: ASP.NET
-  Core hosts can retarget descriptor-backed shorthand candidates through `RestApi:Overrides` when
-  they need a different effective `ApiVersionMajor`, the runtime now exposes those configured rules
-  through `IRestEndpointOverrideRuntimeCatalog`, `/engine/rest-endpoint-overrides`, and
-  `snapshot.RestEndpointOverrides`, and candidates now surface the governing rule through
-  `RestEndpointCandidateRuntimeDescriptor.AppliedOverrideId`
-- broader configuration-driven projection overrides that rewrite route shape, method, or binding
+- the first constrained shorthand-override slices are now shipped through `ENG-058-T69` and
+  `ENG-058-T70`: ASP.NET Core hosts can retarget descriptor-backed shorthand candidates through
+  `RestApi:Overrides` when they need a different effective `ApiVersionMajor` or HTTP `Method`, the
+  runtime now exposes those configured rules through `IRestEndpointOverrideRuntimeCatalog`,
+  `/engine/rest-endpoint-overrides`, and `snapshot.RestEndpointOverrides`, candidates now surface
+  the governing rule through `RestEndpointCandidateRuntimeDescriptor.AppliedOverrideId`, and the
+  normalized materializer now maps the same effective projection shape that the runtime catalogs
+  report
+- broader configuration-driven projection overrides that rewrite route template or binding shape
   remain later work
 
 ## Recommended long-term engine model
@@ -267,16 +269,18 @@ Current shipped baseline:
 - they apply only to descriptor-backed shorthand candidates such as `MapProfile<TBehavior>()` and
   `MapGeneratedProfiles(...)`
 - suppression runs before precedence resolution rather than silently rewriting candidates
-- override currently supports only `ApiVersionMajor`
+- override currently supports `ApiVersionMajor` and `Method`
 - both rule families fail fast when a rule omits both `Behaviors` and `Modules`
-- override rules also fail fast when `ApiVersionMajor` is missing or non-positive
+- override rules also fail fast when they omit all override actions, use a non-positive
+  `ApiVersionMajor`, or declare an unsupported HTTP method
 - when more than one rule matches, the host prefers the more specific rule deterministically before
   falling back to stable rule-id ordering
 - neither surface overrides explicit module DSL or manual module-owned REST endpoints
-- shorthand groups that declare `.ApiVersion(...)` explicitly also stay authoritative over host
-  overrides
-- the current override slice rewrites only the effective API major version, keeping the
-  `/api/v{major}` route segment and OpenAPI document name aligned
+- shorthand groups that declare `.ApiVersion(...)` explicitly stay authoritative over host version
+  rewrites, while shorthand method overrides can still apply to those same groups
+- the current override slice can rewrite the effective API major version and/or HTTP method while
+  keeping the `/api/v{major}` route segment, OpenAPI document name, mapped endpoint, and runtime
+  catalogs aligned to the same effective projection
 - `OpenApi:EnabledVersions` and legacy document config still decide which documents are actually
   published
 - route-shape, method, and input-binding rewrites remain later work
@@ -440,10 +444,12 @@ The host still decides which documents are published through:
 
 That allow-list remains authoritative and must stay separate from endpoint authoring metadata.
 
-The first shipped configuration-driven override is intentionally narrow: `RestApi:Overrides` can
-change the effective shorthand candidate `ApiVersionMajor`, but it changes both the route-version
-segment and document name together. Cephalon does not currently support a doc-only version rewrite
-that leaves the public route on another major-version segment.
+The shipped configuration-driven override surface is still intentionally narrow: `RestApi:Overrides`
+can change the effective shorthand candidate `ApiVersionMajor` and/or HTTP `Method`, but it still
+keeps the route-version segment and document name together and does not yet support route-template
+or binding rewrites. Cephalon therefore does not currently support a doc-only version rewrite that
+leaves the public route on another major-version segment, nor a host-level binding rewrite that
+silently changes how one shorthand endpoint reads its input.
 
 If the same behavior needs multiple public API versions simultaneously, model that as multiple
 explicit projections or versioned modules. Do not hide multi-version public contracts behind one
@@ -548,14 +554,13 @@ Status:
   ASP.NET Core hosts can suppress descriptor-backed shorthand candidates through
   `RestApi:Suppressions` while the runtime keeps both the configured suppression-rule catalog and
   the candidate-level `SuppressedBySuppressionId` truth visible
-- the next controlled-governance follow-through is now shipped through `ENG-058-T69`, so
-  ASP.NET Core hosts can retarget descriptor-backed shorthand candidates through
-  `RestApi:Overrides` when they need a different effective `ApiVersionMajor`, while the runtime
-  keeps both the configured override-rule catalog and the candidate-level `AppliedOverrideId`
-  truth visible
-- controlled configuration overrides that rewrite the published route shape, HTTP method, or input
-  binding remain later work once the constrained version-override baseline proves out strongly
-  enough
+- the next controlled-governance follow-through is now shipped through `ENG-058-T69` and
+  `ENG-058-T70`, so ASP.NET Core hosts can retarget descriptor-backed shorthand candidates
+  through `RestApi:Overrides` when they need a different effective `ApiVersionMajor` or HTTP
+  `Method`, while the runtime keeps both the configured override-rule catalog and the
+  candidate-level `AppliedOverrideId` truth visible
+- controlled configuration overrides that rewrite the published route shape or input binding
+  remain later work now that the constrained version-plus-method override baseline is shipped
 
 ## What should be stored as project memory
 
@@ -584,8 +589,8 @@ The following points are durable enough to keep outside thread-local context.
   `/engine/rest-endpoint-overrides/{overrideId}`, and `snapshot.RestEndpointOverrides`
 - the shipped `RestApi:Suppressions` baseline is intentionally limited to suppression of
   descriptor-backed shorthand candidates, and the shipped `RestApi:Overrides` baseline is
-  intentionally limited to shorthand `ApiVersionMajor` rewrites; neither surface rewrites explicit
-  module DSL or manual routes
+  intentionally limited to shorthand `ApiVersionMajor` and `Method` rewrites; neither surface
+  rewrites explicit module DSL or manual routes
 - future shorthand or convention REST publication must compose through the shared projection,
   runtime-catalog, and collision-validation pipeline instead of bypassing it
 - future agentic, AI, or multi-platform expansion should not outrun core engine contract quality,

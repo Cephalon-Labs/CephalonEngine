@@ -117,21 +117,22 @@ internal static class RestBehaviorProjectionCandidateResolver
 
         var appliedOverride = ResolveOverride(
             moduleDescriptor.Id,
-            endpointProjection.BehaviorId,
-            endpointProjection.AuthoringStyle,
-            group.HasExplicitApiVersion,
+            endpointProjection,
+            defaultApiVersionMajor,
+            group,
             overrides);
-        var effectiveApiVersionMajor = appliedOverride?.ApiVersionMajor ?? defaultApiVersionMajor;
+        var effectiveEndpointProjection = appliedOverride?.EffectiveEndpointProjection ?? endpointProjection;
+        var effectiveApiVersionMajor = appliedOverride?.EffectiveApiVersionMajor ?? defaultApiVersionMajor;
         var resolvedRouteGroupPrefix = ResolveRouteGroupPrefix(group.Prefix, effectiveApiVersionMajor);
         var publishedRouteGroupPrefix = RestEndpointRuntimeDescriptorFactory.CombinePaths(
             apiRoutesOptions.RestPrefix,
             resolvedRouteGroupPrefix);
         var openApiDocumentName = ResolveOpenApiDocumentName(effectiveApiVersionMajor);
-        var method = endpointProjection.Method.ToString().ToUpperInvariant();
+        var method = effectiveEndpointProjection.Method.ToString().ToUpperInvariant();
         var routePattern = RestEndpointRuntimeDescriptorFactory.CombinePaths(
             publishedRouteGroupPrefix,
-            endpointProjection.Pattern);
-        var runtimeBindings = RestEndpointBindingDescriptorAdapter.ToRuntimeDescriptors(endpointProjection.Bindings);
+            effectiveEndpointProjection.Pattern);
+        var runtimeBindings = RestEndpointBindingDescriptorAdapter.ToRuntimeDescriptors(effectiveEndpointProjection.Bindings);
         var projectedEndpoint = RestEndpointRuntimeDescriptorFactory.CreateBehaviorDescriptor(
             sourceKind: RestEndpointRuntimeMetadata.ModuleDslSourceKind,
             method: method,
@@ -139,29 +140,29 @@ internal static class RestBehaviorProjectionCandidateResolver
             sourceModuleId: moduleDescriptor.Id,
             sourceModuleVersion: moduleDescriptor.Version,
             sourceModuleVersionMajor: ResolveModuleMajorVersion(moduleDescriptor.Version),
-            behaviorId: endpointProjection.BehaviorId,
+            behaviorId: effectiveEndpointProjection.BehaviorId,
             endpointName: null,
             openApiDocumentName: openApiDocumentName,
             apiVersionMajor: effectiveApiVersionMajor,
             tags: [tagName],
             summary: null,
             description: null,
-            authoringStyle: endpointProjection.AuthoringStyle,
-            behaviorType: endpointProjection.BehaviorType.FullName ?? endpointProjection.BehaviorType.Name,
+            authoringStyle: effectiveEndpointProjection.AuthoringStyle,
+            behaviorType: effectiveEndpointProjection.BehaviorType.FullName ?? effectiveEndpointProjection.BehaviorType.Name,
             routeGroupPrefix: publishedRouteGroupPrefix,
-            relativePattern: endpointProjection.Pattern,
+            relativePattern: effectiveEndpointProjection.Pattern,
             bindingDescriptors: runtimeBindings);
         var candidateId = RestEndpointRuntimeDescriptorFactory.BuildEndpointId(
-            $"{moduleDescriptor.Id}:{endpointProjection.BehaviorId}:{endpointProjection.AuthoringStyle}:{method}:{routePattern}");
-        var precedenceRank = RestEndpointRuntimeMetadata.ResolvePrecedenceRank(endpointProjection.AuthoringStyle);
+            $"{moduleDescriptor.Id}:{effectiveEndpointProjection.BehaviorId}:{effectiveEndpointProjection.AuthoringStyle}:{method}:{routePattern}");
+        var precedenceRank = RestEndpointRuntimeMetadata.ResolvePrecedenceRank(effectiveEndpointProjection.AuthoringStyle);
 
         return new ResolvedRestBehaviorEndpointProjectionCandidate(
             groupIndex,
-            endpointProjection,
+            effectiveEndpointProjection,
             new RestEndpointCandidateRuntimeDescriptor(
                 candidateId,
                 projectedEndpoint,
-                endpointProjection.AuthoringStyle,
+                effectiveEndpointProjection.AuthoringStyle,
                 precedenceRank,
                 RestEndpointCandidateStatus.Published,
                 appliedOverrideId: appliedOverride?.Id));
@@ -215,30 +216,67 @@ internal static class RestBehaviorProjectionCandidateResolver
         };
     }
 
-    private static RestEndpointOverrideOptions? ResolveOverride(
+    private static AppliedRestEndpointOverride? ResolveOverride(
         string sourceModuleId,
-        string behaviorId,
-        string authoringStyle,
-        bool hasExplicitApiVersion,
+        RestBehaviorEndpointProjection endpointProjection,
+        int? defaultApiVersionMajor,
+        RestBehaviorRouteGroupProjection group,
         IReadOnlyList<RestEndpointOverrideOptions>? overrides)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sourceModuleId);
-        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
-        ArgumentException.ThrowIfNullOrWhiteSpace(authoringStyle);
+        ArgumentNullException.ThrowIfNull(endpointProjection);
+        ArgumentNullException.ThrowIfNull(group);
 
-        if (hasExplicitApiVersion || overrides is null || overrides.Count == 0)
+        if (overrides is null || overrides.Count == 0)
         {
             return null;
         }
 
-        return overrides
-            .Where(overrideOptions => MatchesOverride(sourceModuleId, behaviorId, authoringStyle, overrideOptions))
+        var matchedOverride = overrides
+            .Where(overrideOptions => MatchesOverride(
+                sourceModuleId,
+                endpointProjection.BehaviorId,
+                endpointProjection.AuthoringStyle,
+                overrideOptions))
             .OrderByDescending(static overrideOptions => CountTargetDimensions(overrideOptions))
             .ThenByDescending(static overrideOptions => overrideOptions.BehaviorIds.Count > 0)
             .ThenBy(static overrideOptions => overrideOptions.AuthoringStyles.Count)
             .ThenBy(static overrideOptions => overrideOptions.BehaviorIds.Count + overrideOptions.SourceModuleIds.Count)
             .ThenBy(static overrideOptions => overrideOptions.Id, StringComparer.OrdinalIgnoreCase)
             .FirstOrDefault();
+        if (matchedOverride is null)
+        {
+            return null;
+        }
+
+        var effectiveEndpointProjection = endpointProjection;
+        var effectiveApiVersionMajor = defaultApiVersionMajor;
+        var wasApplied = false;
+
+        if (!string.IsNullOrWhiteSpace(matchedOverride.Method))
+        {
+            var overrideMethod = RestBehaviorHttpMethodParser.Parse(matchedOverride.Method);
+            if (overrideMethod != endpointProjection.Method)
+            {
+                effectiveEndpointProjection = endpointProjection.WithMethod(overrideMethod);
+                wasApplied = true;
+            }
+        }
+
+        if (!group.HasExplicitApiVersion &&
+            matchedOverride.ApiVersionMajor is int overrideApiVersionMajor &&
+            overrideApiVersionMajor != defaultApiVersionMajor)
+        {
+            effectiveApiVersionMajor = overrideApiVersionMajor;
+            wasApplied = true;
+        }
+
+        return wasApplied
+            ? new AppliedRestEndpointOverride(
+                matchedOverride.Id,
+                effectiveEndpointProjection,
+                effectiveApiVersionMajor)
+            : null;
     }
 
     private static RestEndpointSuppressionOptions? ResolveSuppression(
@@ -401,5 +439,10 @@ internal static class RestBehaviorProjectionCandidateResolver
 
 internal sealed record ResolvedRestBehaviorEndpointProjectionCandidate(
     int GroupIndex,
-    RestBehaviorEndpointProjection EndpointProjection,
+    RestBehaviorEndpointProjection EffectiveEndpointProjection,
     RestEndpointCandidateRuntimeDescriptor Candidate);
+
+internal sealed record AppliedRestEndpointOverride(
+    string Id,
+    RestBehaviorEndpointProjection EffectiveEndpointProjection,
+    int? EffectiveApiVersionMajor);

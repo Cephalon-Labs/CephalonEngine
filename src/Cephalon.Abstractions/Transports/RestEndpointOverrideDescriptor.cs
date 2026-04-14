@@ -13,19 +13,21 @@ public sealed class RestEndpointOverrideDescriptor
     /// <param name="sourceModuleIds">The source-module identifiers targeted by the override rule.</param>
     /// <param name="authoringStyles">The normalized shorthand authoring styles targeted by the override rule.</param>
     /// <param name="apiVersionMajor">The effective API major version applied when the rule matches.</param>
+    /// <param name="method">The effective HTTP method applied when the rule matches.</param>
     public RestEndpointOverrideDescriptor(
         string id,
         IReadOnlyList<string>? behaviorIds = null,
         IReadOnlyList<string>? sourceModuleIds = null,
         IReadOnlyList<string>? authoringStyles = null,
-        int? apiVersionMajor = null)
+        int? apiVersionMajor = null,
+        string? method = null)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
             throw new ArgumentException("A non-empty override id is required.", nameof(id));
         }
 
-        if (apiVersionMajor is not > 0)
+        if (apiVersionMajor.HasValue && apiVersionMajor <= 0)
         {
             throw new ArgumentOutOfRangeException(
                 nameof(apiVersionMajor),
@@ -38,6 +40,14 @@ public sealed class RestEndpointOverrideDescriptor
         SourceModuleIds = NormalizeList(sourceModuleIds);
         AuthoringStyles = NormalizeList(authoringStyles);
         ApiVersionMajor = apiVersionMajor;
+        Method = NormalizeMethod(method);
+
+        if (!ApiVersionMajor.HasValue && Method is null)
+        {
+            throw new ArgumentException(
+                "REST endpoint override descriptors require at least one override action such as ApiVersionMajor or Method.",
+                nameof(apiVersionMajor));
+        }
     }
 
     /// <summary>
@@ -65,6 +75,11 @@ public sealed class RestEndpointOverrideDescriptor
     /// </summary>
     public int? ApiVersionMajor { get; }
 
+    /// <summary>
+    /// Gets the effective HTTP method applied when this override rule matches.
+    /// </summary>
+    public string? Method { get; }
+
     private static string[] NormalizeList(IReadOnlyList<string>? values)
     {
         return values?
@@ -73,5 +88,25 @@ public sealed class RestEndpointOverrideDescriptor
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .OrderBy(static value => value, StringComparer.OrdinalIgnoreCase)
             .ToArray() ?? [];
+    }
+
+    private static string? NormalizeMethod(string? method)
+    {
+        if (string.IsNullOrWhiteSpace(method))
+        {
+            return null;
+        }
+
+        return method.Trim().ToUpperInvariant() switch
+        {
+            "GET" => "GET",
+            "POST" => "POST",
+            "PUT" => "PUT",
+            "PATCH" => "PATCH",
+            "DELETE" => "DELETE",
+            _ => throw new ArgumentException(
+                $"REST endpoint override method '{method}' is not supported. Supported methods: GET, POST, PUT, PATCH, DELETE.",
+                nameof(method))
+        };
     }
 }

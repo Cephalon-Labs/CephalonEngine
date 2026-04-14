@@ -30,12 +30,16 @@ public sealed class RestEndpointOverrideOptions
     /// <param name="apiVersionMajor">
     /// The effective API major version applied when the rule matches a shorthand candidate.
     /// </param>
+    /// <param name="method">
+    /// The effective HTTP method applied when the rule matches a shorthand candidate.
+    /// </param>
     public RestEndpointOverrideOptions(
         string id,
         IReadOnlyList<string>? behaviorIds = null,
         IReadOnlyList<string>? sourceModuleIds = null,
         IReadOnlyList<string>? authoringStyles = null,
-        int? apiVersionMajor = null)
+        int? apiVersionMajor = null,
+        string? method = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
 
@@ -43,7 +47,7 @@ public sealed class RestEndpointOverrideOptions
         BehaviorIds = NormalizeList(behaviorIds);
         SourceModuleIds = NormalizeList(sourceModuleIds);
         AuthoringStyles = NormalizeAuthoringStyles(authoringStyles);
-        ApiVersionMajor = apiVersionMajor;
+        Method = NormalizeMethod(method);
 
         if (BehaviorIds.Count == 0 && SourceModuleIds.Count == 0)
         {
@@ -52,12 +56,21 @@ public sealed class RestEndpointOverrideOptions
                 nameof(behaviorIds));
         }
 
-        if (ApiVersionMajor is not > 0)
+        if (apiVersionMajor.HasValue && apiVersionMajor <= 0)
         {
             throw new ArgumentOutOfRangeException(
                 nameof(apiVersionMajor),
                 apiVersionMajor,
                 "REST endpoint override rules must define a positive API major version.");
+        }
+
+        ApiVersionMajor = apiVersionMajor;
+
+        if (!ApiVersionMajor.HasValue && Method is null)
+        {
+            throw new ArgumentException(
+                "REST endpoint override rules must define at least one override action such as ApiVersionMajor or Method.",
+                nameof(apiVersionMajor));
         }
     }
 
@@ -87,12 +100,18 @@ public sealed class RestEndpointOverrideOptions
     public int? ApiVersionMajor { get; }
 
     /// <summary>
+    /// Gets the effective HTTP method applied when this override rule matches.
+    /// </summary>
+    public string? Method { get; }
+
+    /// <summary>
     /// Gets a value indicating whether any targeting values or override actions were explicitly supplied.
     /// </summary>
     public bool HasValues =>
         BehaviorIds.Count > 0 ||
         SourceModuleIds.Count > 0 ||
-        ApiVersionMajor.HasValue;
+        ApiVersionMajor.HasValue ||
+        Method is not null;
 
     private static string[] NormalizeList(IReadOnlyList<string>? values)
     {
@@ -122,5 +141,25 @@ public sealed class RestEndpointOverrideOptions
         }
 
         return normalized;
+    }
+
+    private static string? NormalizeMethod(string? method)
+    {
+        if (string.IsNullOrWhiteSpace(method))
+        {
+            return null;
+        }
+
+        return method.Trim().ToUpperInvariant() switch
+        {
+            "GET" => "GET",
+            "POST" => "POST",
+            "PUT" => "PUT",
+            "PATCH" => "PATCH",
+            "DELETE" => "DELETE",
+            _ => throw new ArgumentException(
+                $"REST endpoint override method '{method}' is not supported. Supported methods: GET, POST, PUT, PATCH, DELETE.",
+                nameof(method))
+        };
     }
 }

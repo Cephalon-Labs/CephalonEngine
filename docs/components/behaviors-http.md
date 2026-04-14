@@ -308,8 +308,9 @@ Current helper behavior:
   placeholder present in the profile route template
 - lets explicit group `.ApiVersion(...)` override profile-declared candidate versions, while
   conflicting profile-declared versions in the same group fail fast until the module resolves them
-- keeps that explicit group `.ApiVersion(...)` authoritative even when the host config supplies a
-  shorthand-only `RestApi:Overrides:*:ApiVersionMajor` rule for the same candidate
+- keeps that explicit group `.ApiVersion(...)` authoritative for host-level version rewrites even
+  when the same shorthand candidate later matches `RestApi:Overrides`, while shorthand method
+  overrides can still apply
 - keeps runtime publication on the same module-owned path with `sourceKind = module-dsl`, while
   `/engine/rest-endpoints` exposes `metadata.authoringStyle = behavior-module-profile` for the
   profile shorthand path, `behavior-module-generated` for the generated shorthand path,
@@ -366,12 +367,13 @@ Current helper behavior:
   `RestApi:Suppressions`, which runs before precedence resolution, records the governing rule id on
   the suppressed candidate through `SuppressedBySuppressionId`, and intentionally leaves explicit
   module DSL or manual module-owned REST endpoints untouched
-- ASP.NET Core hosts can now also override the effective API major version for descriptor-backed
-  shorthand candidates through `RestApi:Overrides`, which currently supports only
-  `ApiVersionMajor`, records the applied rule id through `AppliedOverrideId`, rewrites the
-  shorthand candidate's `/v{major}` route segment and OpenAPI document name together, and still
+- ASP.NET Core hosts can now also override the effective API major version or HTTP method for
+  descriptor-backed shorthand candidates through `RestApi:Overrides`, which now supports
+  `ApiVersionMajor` and `Method`, records the applied rule id through `AppliedOverrideId`,
+  rewrites the shorthand candidate's `/v{major}` route segment and OpenAPI document name together
+  when version changes, keeps the mapped endpoint method aligned when method changes, and still
   leaves explicit module DSL/manual routes plus shorthand groups with explicit `.ApiVersion(...)`
-  untouched
+  authoritative for version selection
 
 ## REST runtime catalog and collision guard
 
@@ -425,20 +427,23 @@ configuration rule hid the candidate instead of another candidate winning.
 Current governance baseline:
 
 - configure shorthand suppression through `RestApi:Suppressions`
-- configure shorthand API-version override through `RestApi:Overrides`
+- configure shorthand API-version and HTTP-method overrides through `RestApi:Overrides`
 - target one or more `Behaviors`, `Modules`, and optional `AuthoringStyles`
 - rules that omit both `Behaviors` and `Modules` now fail fast instead of suppressing every
   shorthand candidate implicitly
-- override rules also require a positive `ApiVersionMajor`
+- override rules must define at least one override action, require a positive `ApiVersionMajor`
+  when that action is present, and accept only `GET`, `POST`, `PUT`, `PATCH`, or `DELETE` for
+  `Method`
 - omit `AuthoringStyles` to suppress both shorthand styles by default:
   `behavior-module-profile` and `behavior-module-generated`
 - when more than one rule matches, Cephalon prefers the more specific rule:
   `behavior+module > behavior > module`, then narrower authoring-style scope, then rule id
 - shorthand groups that already declare `.ApiVersion(...)` explicitly remain authoritative over
-  host-level `RestApi:Overrides`
-- the current override slice rewrites only the effective API major version, keeping the `/v{major}`
-  route segment and OpenAPI document name aligned
-- route-shape, method, and binding overrides remain later work
+  host-level version rewrites, while shorthand method overrides can still apply
+- the current override slice rewrites only the effective API major version and/or HTTP method,
+  keeping the `/v{major}` route segment, OpenAPI document name, mapped endpoint, and runtime
+  catalogs aligned
+- route-shape and binding overrides remain later work
 
 Example:
 
@@ -464,7 +469,8 @@ Version-override example:
       "cart-v2-profile": {
         "Behaviors": [ "showcase.cart.get" ],
         "AuthoringStyles": [ "behavior-module-profile" ],
-        "ApiVersionMajor": 2
+        "ApiVersionMajor": 2,
+        "Method": "DELETE"
       }
     }
   }

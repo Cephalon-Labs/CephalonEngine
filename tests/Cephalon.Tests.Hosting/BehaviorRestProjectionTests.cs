@@ -469,6 +469,38 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverAppliesMethodOverrideToShorthandCandidates()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        builder.Group("/tests/generated-method-override")
+            .MapGeneratedProfiles("tests.generated.projection.precedence");
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.generated-method-override",
+                "Generated Method Override Module",
+                "Exercises shorthand HTTP-method override resolution.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "prefer-delete",
+                    behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                    method: "DELETE")
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Equal("prefer-delete", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal("DELETE", candidate.Candidate.ProjectedEndpoint.Method);
+        Assert.Equal("/api/v10/tests/generated-method-override/{cartId}", candidate.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Equal("v10", candidate.Candidate.ProjectedEndpoint.OpenApiDocumentName);
+        Assert.Equal(10, candidate.Candidate.ProjectedEndpoint.ApiVersionMajor);
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverKeepsExplicitGroupApiVersionAuthoritativeOverHostOverride()
     {
         var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
@@ -496,6 +528,40 @@ public sealed class BehaviorRestProjectionTests
         Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
         Assert.Null(candidate.Candidate.AppliedOverrideId);
         Assert.Equal("/api/v8/tests/generated-override-explicit/{cartId}", candidate.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Equal("v8", candidate.Candidate.ProjectedEndpoint.OpenApiDocumentName);
+        Assert.Equal(8, candidate.Candidate.ProjectedEndpoint.ApiVersionMajor);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverLetsMethodOverrideApplyWhileKeepingExplicitGroupApiVersionAuthoritative()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        builder.Group("/tests/generated-method-override-explicit")
+            .ApiVersion(8)
+            .MapGeneratedProfiles("tests.generated.projection.precedence");
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.generated-method-override-explicit",
+                "Generated Method Override Explicit Module",
+                "Exercises method override resolution when the owning group already chose its API version explicitly.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "prefer-delete-v6",
+                    behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                    apiVersionMajor: 6,
+                    method: "DELETE")
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Equal("prefer-delete-v6", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal("DELETE", candidate.Candidate.ProjectedEndpoint.Method);
+        Assert.Equal("/api/v8/tests/generated-method-override-explicit/{cartId}", candidate.Candidate.ProjectedEndpoint.RoutePattern);
         Assert.Equal("v8", candidate.Candidate.ProjectedEndpoint.OpenApiDocumentName);
         Assert.Equal(8, candidate.Candidate.ProjectedEndpoint.ApiVersionMajor);
     }
@@ -546,14 +612,26 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
-    public void RestEndpointOverrideOptionsRejectRulesWithoutApiVersionMajor()
+    public void RestEndpointOverrideOptionsRejectRulesWithoutOverrideActions()
     {
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+        var exception = Assert.Throws<ArgumentException>(() =>
             new RestEndpointOverrideOptions(
                 id: "invalid",
                 behaviorIds: ["tests.generated.projection.precedence.lookup"]));
 
-        Assert.Contains("positive API major version", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("override action", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void RestEndpointOverrideOptionsRejectUnsupportedHttpMethod()
+    {
+        var exception = Assert.Throws<ArgumentException>(() =>
+            new RestEndpointOverrideOptions(
+                id: "invalid",
+                behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                method: "HEAD"));
+
+        Assert.Contains("supported methods", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

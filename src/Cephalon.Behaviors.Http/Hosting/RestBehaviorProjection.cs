@@ -112,6 +112,21 @@ internal sealed record RestBehaviorEndpointProjection(
             profile.Bindings);
     }
 
+    internal RestBehaviorEndpointProjection WithMethod(RestBehaviorHttpMethod method)
+    {
+        return method == Method
+            ? this
+            : new RestBehaviorEndpointProjection(
+                method,
+                BehaviorId,
+                BehaviorType,
+                Pattern,
+                Bindings,
+                AuthoringStyle,
+                ConfigureEndpoint,
+                CreateMapDelegate(BehaviorType, method));
+    }
+
     internal void Apply(BehaviorRestEndpointGroup group)
     {
         ArgumentNullException.ThrowIfNull(group);
@@ -189,4 +204,23 @@ internal enum RestBehaviorHttpMethod
     Put,
     Patch,
     Delete
+}
+
+internal static class RestBehaviorHttpMethodParser
+{
+    internal static RestBehaviorHttpMethod Parse(string method)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(method);
+
+        return method.Trim().ToUpperInvariant() switch
+        {
+            "GET" => RestBehaviorHttpMethod.Get,
+            "POST" => RestBehaviorHttpMethod.Post,
+            "PUT" => RestBehaviorHttpMethod.Put,
+            "PATCH" => RestBehaviorHttpMethod.Patch,
+            "DELETE" => RestBehaviorHttpMethod.Delete,
+            _ => throw new InvalidOperationException(
+                $"Unsupported REST behavior HTTP method '{method}'.")
+        };
+    }
 }

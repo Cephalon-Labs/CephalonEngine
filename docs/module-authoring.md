@@ -366,10 +366,11 @@ Current helper behavior:
   without taking away module ownership, while explicit `MapGet/MapPost/...` routes and manual
   module-owned endpoints remain authoritative
 - lets ASP.NET Core hosts move shorthand candidates to another effective API major version through
-  `RestApi:Overrides` without taking away module ownership; that override surface is currently
-  limited to `ApiVersionMajor`, keeps the `/v{major}` route segment and OpenAPI document name
-  aligned, and still leaves explicit `MapGet/MapPost/...` routes, manual module-owned endpoints,
-  and shorthand groups with explicit `.ApiVersion(...)` authoritative
+  `RestApi:Overrides` without taking away module ownership; that override surface now supports
+  `ApiVersionMajor` and `Method`, keeps the `/v{major}` route segment, OpenAPI document name, and
+  mapped endpoint method aligned with the same effective projection, and still leaves explicit
+  `MapGet/MapPost/...` routes, manual module-owned endpoints, and shorthand groups with explicit
+  `.ApiVersion(...)` authoritative for version selection
 - treats `behaviors.Internal<TBehavior>()` as the explicit internal-only or custom/manual-route path
 - validates that a module cannot map another module's explicitly owned behavior through the REST helper layer
 - keeps route shape in the ASP.NET Core adapter layer while behavior attributes remain host-agnostic
@@ -389,8 +390,9 @@ Current helper behavior:
 - lets profile-declared candidate API versions seed the group only when `.ApiVersion(...)` was not
   set explicitly, and fails fast when profiled behaviors in the same group disagree on that
   candidate version
-- keeps that explicit group `.ApiVersion(...)` authoritative even when an ASP.NET Core host later
-  applies shorthand-only `RestApi:Overrides:*:ApiVersionMajor` governance
+- keeps that explicit group `.ApiVersion(...)` authoritative for host-level version rewrites even
+  when an ASP.NET Core host later applies `RestApi:Overrides`, while shorthand method overrides
+  can still apply
 - keeps profile-driven explicit binding plans visible through
   `RestEndpointRuntimeDescriptor.BindingDescriptors` and the matching `bindingDescriptors` JSON
   field on `/engine/rest-endpoints` and `snapshot.RestEndpoints`
@@ -426,9 +428,10 @@ candidates rather than rewriting explicit module DSL/manual routes.
 When a host wants to keep shorthand publication but retarget selected shorthand endpoints to a
 different effective API major version, use `RestApi:Overrides`. That host-level governance surface
 targets the same descriptor-backed shorthand candidates, also requires `Behaviors` or `Modules`,
-currently supports only a positive `ApiVersionMajor`, records the applied rule through
-`AppliedOverrideId` in `/engine/rest-endpoint-candidates`, and intentionally leaves explicit module
-DSL/manual routes plus shorthand groups with explicit `.ApiVersion(...)` untouched.
+now supports a positive `ApiVersionMajor` and/or a supported HTTP `Method`, records the applied
+rule through `AppliedOverrideId` in `/engine/rest-endpoint-candidates`, and intentionally leaves
+explicit module DSL/manual routes plus shorthand groups with explicit `.ApiVersion(...)`
+authoritative for version selection.
 
 Example:
 
@@ -449,7 +452,8 @@ When a host needs more than the default `v1` document, prefer `OpenApi:EnabledVe
 
 That published-document allow-list remains separate from shorthand candidate version selection. In
 other words, `RestApi:Overrides:*:ApiVersionMajor` can move a shorthand endpoint from `v1` to `v2`,
-but the host still decides whether `v2` is actually published through `OpenApi:EnabledVersions` or
+and `RestApi:Overrides:*:Method` can move the same shorthand endpoint from `GET` to `DELETE`, but
+the host still decides whether `v2` is actually published through `OpenApi:EnabledVersions` or
 legacy document config. Keep that distinction in mind when a module can declare or inherit more
 candidate versions than one host chooses to publish.
 
