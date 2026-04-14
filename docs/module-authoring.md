@@ -371,11 +371,12 @@ Current helper behavior:
   both now refine `Behaviors`/`Modules` targeting with `ApiVersionMajors`, `Methods`,
   `RelativePatterns`, and `RouteGroupPrefixes`, those selector refiners match the original
   shorthand candidate shape before override actions are applied, and the override surface itself
-  now supports `ApiVersionMajor`, `Method`, `Pattern`, and `Bindings`, keeps the `/v{major}` route segment,
+  now supports `ApiVersionMajor`, `Method`, `Pattern`, `Bindings`, and typed `BindingMode`, keeps the `/v{major}` route segment,
   OpenAPI document name, endpoint method, effective route, and effective binding plan aligned with
-  the same projection truth, replaces the shorthand candidate's explicit binding descriptors when
-  `Bindings` are supplied while still letting unbound route placeholders and remaining request-body
-  fields fill object properties deterministically, now allows placeholder renames when the
+  the same projection truth, defaults `Bindings` to full explicit-plan replacement but also allows
+  `BindingMode = MergeExplicit` to patch only the changed explicit bindings by property name while
+  still letting unbound route placeholders and remaining request-body fields fill object properties
+  deterministically, now allows placeholder renames when the
   effective explicit route-binding plan covers the renamed placeholder set exactly, now also allows
   placeholder removals when the original projection already exposes explicit route-binding coverage
   for the original placeholder set and the effective explicit binding plan keeps every affected
@@ -459,18 +460,20 @@ relative `Pattern`, and/or explicit `Bindings`, records the applied rule through
 shape visible there through `OriginalProjection` while `ProjectedEndpoint` carries the final
 effective mapped answer, and intentionally leaves explicit module DSL/manual routes plus shorthand
 groups with explicit `.ApiVersion(...)` authoritative for version selection. When `Bindings` are supplied, the override
-replaces the shorthand candidate's explicit binding plan while leaving unbound route placeholders
-and remaining request-body fields available for deterministic fallback; placeholder renames can now
-apply when the effective explicit route-binding plan covers the renamed placeholder set exactly;
-placeholder removals can now also apply when the source projection already exposed explicit
-route-binding coverage for the original placeholder set and the effective explicit binding plan
-keeps every affected original route-bound property explicitly bound; placeholder additions can now
-also apply when the effective explicit route-binding plan covers the full final placeholder set and
-every newly route-bound property was either already explicitly bound in the source projection or,
-for `POST`/`PUT`/`PATCH`, already part of the original deterministic remaining-body fallback
-surface; broader implicit-property promotion beyond that constrained body-fallback path still fails
-fast; and invalid effective method-plus-binding combinations also fail fast during endpoint
-materialization.
+uses default `ReplaceExplicit` mode unless `BindingMode = MergeExplicit` is set explicitly. Replace
+mode swaps the shorthand candidate's full explicit binding plan, while merge mode upserts only the
+named explicit bindings by property name and keeps untouched explicit bindings intact; both modes
+still leave unbound route placeholders and remaining request-body fields available for deterministic
+fallback. Placeholder renames can now apply when the effective explicit route-binding plan covers
+the renamed placeholder set exactly; placeholder removals can now also apply when the source
+projection already exposed explicit route-binding coverage for the original placeholder set and the
+effective explicit binding plan keeps every affected original route-bound property explicitly bound;
+placeholder additions can now also apply when the effective explicit route-binding plan covers the
+full final placeholder set and every newly route-bound property was either already explicitly bound
+in the source projection or, for `POST`/`PUT`/`PATCH`, already part of the original deterministic
+remaining-body fallback surface; broader implicit-property promotion beyond that constrained
+body-fallback path still fails fast; and invalid effective method-plus-binding combinations also
+fail fast during endpoint materialization.
 
 Example:
 
@@ -498,8 +501,10 @@ route-binding plan explicit for `{id}`, or to `/lookup` when `Bindings` explicit
 removed route-bound value and the source projection already exposed an explicit route binding for
 `{cartId}`, or to `/lookup/{cartId}/items/{quantity}` when `Bindings` explicitly promote
 `Quantity` from its original explicit query/header/body binding into the route; `Bindings` can
-also replace other explicit binding details such as moving `Quantity` from query key `quantity` to
-`qty` or `Note` from body key `note` to `memo`, while `ApiVersionMajors`, `Methods`,
+either replace the whole explicit plan or, with `BindingMode = MergeExplicit`, patch only the
+affected explicit properties such as moving `Quantity` from query key `quantity` to route
+placeholder `quantity`, changing `Quantity` from query key `quantity` to `qty`, or changing `Note`
+from body key `note` to `memo`, while `ApiVersionMajors`, `Methods`,
 `RelativePatterns`, and `RouteGroupPrefixes` let the same rule target only the original shorthand
 shape it means to govern; the host still decides whether `v2` is actually
 published through

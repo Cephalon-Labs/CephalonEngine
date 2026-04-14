@@ -370,20 +370,21 @@ Current helper behavior:
 - ASP.NET Core hosts can now also override the effective API major version, HTTP method, or
   constrained relative route pattern, or explicit binding plan for descriptor-backed shorthand
   candidates through `RestApi:Overrides`, which now supports `ApiVersionMajor`, `Method`,
-  `Pattern`, and `Bindings`, records the applied rule id through `AppliedOverrideId`, rewrites the
+  `Pattern`, `Bindings`, and typed `BindingMode`, records the applied rule id through
+  `AppliedOverrideId`, rewrites the
   shorthand candidate's `/v{major}` route segment and OpenAPI document name together when version
   changes, keeps the mapped endpoint method aligned when method changes, keeps the mapped endpoint
-  route aligned when pattern changes, replaces the shorthand candidate's explicit binding
-  descriptors when `Bindings` are supplied while leaving unbound route placeholders and remaining
-  request-body fields available for deterministic fallback, now allows placeholder renames when
-  the effective explicit route-binding plan covers the renamed placeholder set exactly, now also
-  allows placeholder removals when the original projection already exposes explicit route-binding
-  coverage for the original placeholder set and the effective explicit binding plan keeps every
-  affected original route-bound property explicitly bound, now also allows placeholder additions
-  when the effective explicit route-binding plan covers the full final placeholder set and every
-  newly route-bound property was either already explicitly bound in the original projection or, for
-  `POST`/`PUT`/`PATCH`, already part of the original deterministic remaining-body fallback surface,
-  and still leaves explicit module
+  route aligned when pattern changes, applies explicit binding overrides in either default
+  `ReplaceExplicit` mode or `MergeExplicit` property-patch mode while leaving unbound route
+  placeholders and remaining request-body fields available for deterministic fallback, now allows
+  placeholder renames when the effective explicit route-binding plan covers the renamed placeholder
+  set exactly, now also allows placeholder removals when the original projection already exposes
+  explicit route-binding coverage for the original placeholder set and the effective explicit
+  binding plan keeps every affected original route-bound property explicitly bound, now also allows
+  placeholder additions when the effective explicit route-binding plan covers the full final
+  placeholder set and every newly route-bound property was either already explicitly bound in the
+  original projection or, for `POST`/`PUT`/`PATCH`, already part of the original deterministic
+  remaining-body fallback surface, and still leaves explicit module
   DSL/manual routes plus shorthand groups with explicit `.ApiVersion(...)` authoritative for
   version selection
 
@@ -476,7 +477,7 @@ Current governance baseline:
   bound in the original projection or, for `POST`/`PUT`/`PATCH`, already part of the original
   deterministic remaining-body fallback surface
 - broader implicit-property promotion beyond that constrained body-fallback path plus broader
-  binding-shape overrides remain later work
+  binding-shape overrides beyond the current replace-plus-merge-explicit model remain later work
 
 Example:
 

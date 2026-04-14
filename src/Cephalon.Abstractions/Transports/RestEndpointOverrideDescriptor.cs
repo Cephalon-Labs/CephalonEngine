@@ -20,6 +20,10 @@ public sealed class RestEndpointOverrideDescriptor
     /// <param name="method">The effective HTTP method applied when the rule matches.</param>
     /// <param name="pattern">The effective relative route pattern applied when the rule matches.</param>
     /// <param name="bindings">The effective explicit request-binding plan applied when the rule matches.</param>
+    /// <param name="bindingMode">
+    /// The mode used to apply <paramref name="bindings" /> to the shorthand candidate's explicit
+    /// binding plan.
+    /// </param>
     public RestEndpointOverrideDescriptor(
         string id,
         IReadOnlyList<string>? behaviorIds = null,
@@ -32,7 +36,8 @@ public sealed class RestEndpointOverrideDescriptor
         int? apiVersionMajor = null,
         string? method = null,
         string? pattern = null,
-        IReadOnlyList<RestEndpointBindingDescriptor>? bindings = null)
+        IReadOnlyList<RestEndpointBindingDescriptor>? bindings = null,
+        RestEndpointOverrideBindingMode bindingMode = RestEndpointOverrideBindingMode.Unspecified)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -59,12 +64,20 @@ public sealed class RestEndpointOverrideDescriptor
         Method = NormalizeMethod(method);
         Pattern = NormalizePattern(pattern);
         Bindings = NormalizeBindings(bindings);
+        BindingMode = NormalizeBindingMode(bindingMode);
 
         if (!ApiVersionMajor.HasValue && Method is null && Pattern is null && Bindings.Count == 0)
         {
             throw new ArgumentException(
                 "REST endpoint override descriptors require at least one override action such as ApiVersionMajor, Method, Pattern, or Bindings.",
                 nameof(apiVersionMajor));
+        }
+
+        if (Bindings.Count == 0 && BindingMode == RestEndpointOverrideBindingMode.MergeExplicit)
+        {
+            throw new ArgumentException(
+                "REST endpoint override descriptors cannot use MergeExplicit binding mode without configured Bindings.",
+                nameof(bindingMode));
         }
     }
 
@@ -127,6 +140,11 @@ public sealed class RestEndpointOverrideDescriptor
     /// Gets the effective explicit request-binding plan applied when this override rule matches.
     /// </summary>
     public IReadOnlyList<RestEndpointBindingDescriptor> Bindings { get; }
+
+    /// <summary>
+    /// Gets how <see cref="Bindings" /> apply to the shorthand candidate's explicit binding plan.
+    /// </summary>
+    public RestEndpointOverrideBindingMode BindingMode { get; }
 
     private static string[] NormalizeList(IReadOnlyList<string>? values)
     {
@@ -194,5 +212,19 @@ public sealed class RestEndpointOverrideDescriptor
             .Distinct()
             .OrderBy(static value => value)
             .ToArray() ?? [];
+    }
+
+    private static RestEndpointOverrideBindingMode NormalizeBindingMode(RestEndpointOverrideBindingMode bindingMode)
+    {
+        return bindingMode switch
+        {
+            RestEndpointOverrideBindingMode.Unspecified => RestEndpointOverrideBindingMode.ReplaceExplicit,
+            RestEndpointOverrideBindingMode.ReplaceExplicit => RestEndpointOverrideBindingMode.ReplaceExplicit,
+            RestEndpointOverrideBindingMode.MergeExplicit => RestEndpointOverrideBindingMode.MergeExplicit,
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(bindingMode),
+                bindingMode,
+                "REST endpoint override binding mode must be ReplaceExplicit or MergeExplicit.")
+        };
     }
 }

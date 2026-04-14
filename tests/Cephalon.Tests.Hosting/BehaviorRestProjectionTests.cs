@@ -780,6 +780,58 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverAllowsMergeBindingOverridesForPlaceholderRename()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-binding-rename-merge")
+            .MapProfile<ProfileProjectionBoundBehavior>();
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.profile-binding-rename-merge",
+                "Profile Binding Rename Merge Module",
+                "Exercises placeholder-renaming override resolution when merge-mode binding patches keep the untouched explicit plan.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "prefer-renamed-placeholder-merge",
+                    behaviorIds: ["tests.profile.projection.bound"],
+                    pattern: "/lookup/{id}/items",
+                    bindings:
+                    [
+                        new RestEndpointBindingDescriptor("CartId", RestEndpointBindingSource.Route, "id")
+                    ],
+                    bindingMode: RestEndpointOverrideBindingMode.MergeExplicit)
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Equal("prefer-renamed-placeholder-merge", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal("/lookup/{id}/items", candidate.Candidate.ProjectedEndpoint.Metadata["relativePattern"]);
+        Assert.Equal("/api/v6/tests/profile-binding-rename-merge/lookup/{id}/items", candidate.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Equal(4, candidate.Candidate.ProjectedEndpoint.BindingDescriptors.Count);
+        Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "CartId" &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "id");
+        Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "Quantity" &&
+            binding.Source == RestEndpointBindingSource.Query &&
+            binding.Name == "quantity");
+        Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "CorrelationId" &&
+            binding.Source == RestEndpointBindingSource.Header &&
+            binding.Name == "X-Correlation-Id");
+        Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "Note" &&
+            binding.Source == RestEndpointBindingSource.Body &&
+            binding.Name == "note");
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverAllowsPlaceholderAdditionWhenNewlyRouteBoundPropertiesWereExplicitlyBound()
     {
         var builder = new RestBehaviorModuleBuilder();
@@ -819,6 +871,58 @@ public sealed class BehaviorRestProjectionTests
             binding.PropertyName == "Quantity" &&
             binding.Source == RestEndpointBindingSource.Route &&
             binding.Name == "quantity");
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverAllowsMergeBindingOverridesForPlaceholderAddition()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-binding-addition-merge")
+            .MapProfile<ProfileProjectionBoundBehavior>();
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.profile-binding-addition-merge",
+                "Profile Binding Addition Merge Module",
+                "Exercises placeholder-addition override resolution when merge-mode binding patches promote one explicit property into the route.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "prefer-route-quantity-merge",
+                    behaviorIds: ["tests.profile.projection.bound"],
+                    pattern: "/lookup/{cartId}/items/{quantity}",
+                    bindings:
+                    [
+                        new RestEndpointBindingDescriptor("Quantity", RestEndpointBindingSource.Route, "quantity")
+                    ],
+                    bindingMode: RestEndpointOverrideBindingMode.MergeExplicit)
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Equal("prefer-route-quantity-merge", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal("/lookup/{cartId}/items/{quantity}", candidate.Candidate.ProjectedEndpoint.Metadata["relativePattern"]);
+        Assert.Equal("/api/v6/tests/profile-binding-addition-merge/lookup/{cartId}/items/{quantity}", candidate.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Equal(4, candidate.Candidate.ProjectedEndpoint.BindingDescriptors.Count);
+        Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "CartId" &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "cartId");
+        Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "Quantity" &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "quantity");
+        Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "CorrelationId" &&
+            binding.Source == RestEndpointBindingSource.Header &&
+            binding.Name == "X-Correlation-Id");
+        Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "Note" &&
+            binding.Source == RestEndpointBindingSource.Body &&
+            binding.Name == "note");
     }
 
     [Fact]
@@ -906,6 +1010,61 @@ public sealed class BehaviorRestProjectionTests
             binding.PropertyName == "CartId" &&
             binding.Source == RestEndpointBindingSource.Query &&
             binding.Name == "cartId");
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverAllowsMergeBindingOverridesForPlaceholderRemoval()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-binding-removal-merge")
+            .MapProfile<ProfileProjectionBoundBehavior>();
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.profile-binding-removal-merge",
+                "Profile Binding Removal Merge Module",
+                "Exercises placeholder-removal override resolution when merge-mode binding patches keep untouched explicit bindings intact.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "prefer-query-identity-merge",
+                    behaviorIds: ["tests.profile.projection.bound"],
+                    pattern: "/lookup/items",
+                    bindings:
+                    [
+                        new RestEndpointBindingDescriptor("CartId", RestEndpointBindingSource.Query, "cartId"),
+                        new RestEndpointBindingDescriptor("Quantity", RestEndpointBindingSource.Query, "quantity")
+                    ],
+                    bindingMode: RestEndpointOverrideBindingMode.MergeExplicit)
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Equal("prefer-query-identity-merge", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal("/lookup/items", candidate.Candidate.ProjectedEndpoint.Metadata["relativePattern"]);
+        Assert.Equal("/api/v6/tests/profile-binding-removal-merge/lookup/items", candidate.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Equal(4, candidate.Candidate.ProjectedEndpoint.BindingDescriptors.Count);
+        Assert.DoesNotContain(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.Source == RestEndpointBindingSource.Route);
+        Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "CartId" &&
+            binding.Source == RestEndpointBindingSource.Query &&
+            binding.Name == "cartId");
+        Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "Quantity" &&
+            binding.Source == RestEndpointBindingSource.Query &&
+            binding.Name == "quantity");
+        Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "CorrelationId" &&
+            binding.Source == RestEndpointBindingSource.Header &&
+            binding.Name == "X-Correlation-Id");
+        Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "Note" &&
+            binding.Source == RestEndpointBindingSource.Body &&
+            binding.Name == "note");
     }
 
     [Fact]
@@ -1431,6 +1590,20 @@ public sealed class BehaviorRestProjectionTests
                 pattern: "lookup/{cartId}"));
 
         Assert.Contains("start with '/'", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void RestEndpointOverrideOptionsRejectMergeBindingModeWithoutBindings()
+    {
+        var exception = Assert.Throws<ArgumentException>(() =>
+            new RestEndpointOverrideOptions(
+                id: "invalid",
+                behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                pattern: "/lookup/{cartId}",
+                bindingMode: RestEndpointOverrideBindingMode.MergeExplicit));
+
+        Assert.Contains("MergeExplicit", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Bindings", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

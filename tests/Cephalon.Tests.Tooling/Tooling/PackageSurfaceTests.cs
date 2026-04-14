@@ -252,6 +252,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Tenancy.TenantResolutionResult),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointBindingDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointBindingSource),
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideBindingMode),
             typeof(global::Cephalon.Abstractions.Transports.IRestEndpointCandidateRuntimeCatalog),
             typeof(global::Cephalon.Abstractions.Transports.IRestEndpointCandidateRuntimeRegistry),
             typeof(global::Cephalon.Abstractions.Transports.IRestEndpointOverrideRuntimeCatalog),

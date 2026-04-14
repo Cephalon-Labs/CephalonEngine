@@ -68,6 +68,7 @@
 - `Transports/RestEndpointRuntimeDescriptor.cs`
 - `Transports/RestEndpointBindingDescriptor.cs`
 - `Transports/RestEndpointBindingSource.cs`
+- `Transports/RestEndpointOverrideBindingMode.cs`
 - `Transports/TransportDescriptor.cs`
 
 ## Source structure

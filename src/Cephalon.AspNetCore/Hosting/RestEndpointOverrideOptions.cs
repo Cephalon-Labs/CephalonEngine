@@ -58,6 +58,10 @@ public sealed class RestEndpointOverrideOptions
     /// The effective explicit request-binding plan applied when the rule matches a shorthand
     /// candidate.
     /// </param>
+    /// <param name="bindingMode">
+    /// The mode used to apply <paramref name="bindings" /> to the shorthand candidate's explicit
+    /// binding plan.
+    /// </param>
     public RestEndpointOverrideOptions(
         string id,
         IReadOnlyList<string>? behaviorIds = null,
@@ -70,7 +74,8 @@ public sealed class RestEndpointOverrideOptions
         int? apiVersionMajor = null,
         string? method = null,
         string? pattern = null,
-        IReadOnlyList<RestEndpointBindingDescriptor>? bindings = null)
+        IReadOnlyList<RestEndpointBindingDescriptor>? bindings = null,
+        RestEndpointOverrideBindingMode bindingMode = RestEndpointOverrideBindingMode.Unspecified)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
 
@@ -97,6 +102,7 @@ public sealed class RestEndpointOverrideOptions
         Method = NormalizeMethod(method);
         Pattern = NormalizePattern(pattern);
         Bindings = NormalizeBindings(bindings);
+        BindingMode = NormalizeBindingMode(bindingMode);
 
         if (BehaviorIds.Count == 0 && SourceModuleIds.Count == 0)
         {
@@ -120,6 +126,13 @@ public sealed class RestEndpointOverrideOptions
             throw new ArgumentException(
                 "REST endpoint override rules must define at least one override action such as ApiVersionMajor, Method, Pattern, or Bindings.",
                 nameof(apiVersionMajor));
+        }
+
+        if (Bindings.Count == 0 && BindingMode == RestEndpointOverrideBindingMode.MergeExplicit)
+        {
+            throw new ArgumentException(
+                "REST endpoint override rules cannot use MergeExplicit binding mode without configured Bindings.",
+                nameof(bindingMode));
         }
     }
 
@@ -182,6 +195,11 @@ public sealed class RestEndpointOverrideOptions
     /// Gets the effective explicit request-binding plan applied when this override rule matches.
     /// </summary>
     public IReadOnlyList<RestEndpointBindingDescriptor> Bindings { get; }
+
+    /// <summary>
+    /// Gets how <see cref="Bindings" /> apply to the shorthand candidate's explicit binding plan.
+    /// </summary>
+    public RestEndpointOverrideBindingMode BindingMode { get; }
 
     /// <summary>
     /// Gets a value indicating whether any targeting values or override actions were explicitly supplied.
@@ -346,5 +364,19 @@ public sealed class RestEndpointOverrideOptions
                 binding.Source,
                 binding.Name))
             .ToArray() ?? [];
+    }
+
+    private static RestEndpointOverrideBindingMode NormalizeBindingMode(RestEndpointOverrideBindingMode bindingMode)
+    {
+        return bindingMode switch
+        {
+            RestEndpointOverrideBindingMode.Unspecified => RestEndpointOverrideBindingMode.ReplaceExplicit,
+            RestEndpointOverrideBindingMode.ReplaceExplicit => RestEndpointOverrideBindingMode.ReplaceExplicit,
+            RestEndpointOverrideBindingMode.MergeExplicit => RestEndpointOverrideBindingMode.MergeExplicit,
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(bindingMode),
+                bindingMode,
+                "REST endpoint override binding mode must be ReplaceExplicit or MergeExplicit.")
+        };
     }
 }

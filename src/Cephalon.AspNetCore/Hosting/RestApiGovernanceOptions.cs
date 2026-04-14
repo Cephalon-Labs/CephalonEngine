@@ -89,7 +89,8 @@ public sealed class RestApiGovernanceOptions
                 apiVersionMajor: ReadPositiveInt(child, "ApiVersionMajor"),
                 method: child["Method"]?.Trim(),
                 pattern: child["Pattern"]?.Trim(),
-                bindings: ReadBindings(child.GetSection("Bindings"))))
+                bindings: ReadBindings(child.GetSection("Bindings")),
+                bindingMode: ReadBindingMode(child)))
             .ToArray();
 
         return new RestApiGovernanceOptions(suppressions, overrides);
@@ -186,5 +187,24 @@ public sealed class RestApiGovernanceOptions
         }
 
         return parsedValue;
+    }
+
+    private static RestEndpointOverrideBindingMode ReadBindingMode(IConfigurationSection section)
+    {
+        ArgumentNullException.ThrowIfNull(section);
+
+        var rawValue = section["BindingMode"]?.Trim();
+        if (string.IsNullOrWhiteSpace(rawValue))
+        {
+            return RestEndpointOverrideBindingMode.Unspecified;
+        }
+
+        return rawValue.ToUpperInvariant() switch
+        {
+            "REPLACEEXPLICIT" or "REPLACE-EXPLICIT" => RestEndpointOverrideBindingMode.ReplaceExplicit,
+            "MERGEEXPLICIT" or "MERGE-EXPLICIT" => RestEndpointOverrideBindingMode.MergeExplicit,
+            _ => throw new InvalidOperationException(
+                $"REST API governance value '{section.Path}:BindingMode' must be ReplaceExplicit or MergeExplicit.")
+        };
     }
 }

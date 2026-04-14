@@ -2,7 +2,7 @@
 
 Decision baseline date: `April 14, 2026`
 
-Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`, `ENG-058-T67` / GitHub issue `#332`, `ENG-058-T68` / GitHub issue `#333`, `ENG-058-T69` / GitHub issue `#334`, `ENG-058-T70` / GitHub issue `#335`, `ENG-058-T71` / GitHub issue `#336`, `ENG-058-T72` / GitHub issue `#337`, `ENG-058-T73` / GitHub issue `#338`, `ENG-058-T74` / GitHub issue `#339`, `ENG-058-T75` / GitHub issue `#340`, `ENG-058-T76` / GitHub issue `#341`
+Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`, `ENG-058-T67` / GitHub issue `#332`, `ENG-058-T68` / GitHub issue `#333`, `ENG-058-T69` / GitHub issue `#334`, `ENG-058-T70` / GitHub issue `#335`, `ENG-058-T71` / GitHub issue `#336`, `ENG-058-T72` / GitHub issue `#337`, `ENG-058-T73` / GitHub issue `#338`, `ENG-058-T74` / GitHub issue `#339`, `ENG-058-T75` / GitHub issue `#340`, `ENG-058-T76` / GitHub issue `#341`, `ENG-058-T77` / GitHub issue `#342`, `ENG-058-T78` / GitHub issue `#343`, `ENG-058-T79` / GitHub issue `#344`
 
 Cross-references: `docs/components/behaviors-http.md`, `docs/module-authoring.md`, `docs/architecture.md`, `docs/architecture-review-2026-04.md`, `docs/project-memory.md`
 
@@ -182,6 +182,14 @@ Status update:
   shorthand route, method, version, route-group prefix, relative pattern, and binding plan against
   the final effective `ProjectedEndpoint` shape without inferring that source truth back out of the
   mapped endpoint
+- the next shorthand binding-governance follow-through is now shipped through `ENG-058-T79`:
+  `Cephalon.Abstractions` now also exposes typed
+  `RestEndpointOverrideBindingMode` through the override runtime contract, `RestApi:Overrides`
+  can now declare `BindingMode = MergeExplicit` when a host wants to upsert only selected explicit
+  bindings by property name instead of restating the whole explicit plan, the existing
+  `ReplaceExplicit` behavior remains the default when `BindingMode` is omitted, and the runtime now
+  keeps that merge-versus-replace governance truth visible through `/engine/rest-endpoint-overrides`
+  plus `snapshot.RestEndpointOverrides`
 - the next low-code generated module-owned shorthand is now shipped through `ENG-058-T67`:
   `IRestBehaviorEndpointGroupBuilder.MapGeneratedProfiles()` and
   `MapGeneratedProfiles(string behaviorIdPrefix)` let an owning module opt into profile-backed
@@ -207,16 +215,17 @@ Status update:
   `snapshot.RestEndpointOverrides`; candidates now surface the governing rule through
   `RestEndpointCandidateRuntimeDescriptor.AppliedOverrideId`; the normalized materializer now maps
   the same effective projection shape that the runtime catalogs report; explicit binding-plan
-  overrides replace the shorthand candidate's explicit descriptors while still leaving unbound route
-  placeholders and remaining request-body fields available for deterministic fallback; placeholder
-  renames can now also apply when the effective explicit route-binding plan covers the renamed
-  placeholder set exactly; placeholder removals can now also apply when the original projection
-  already exposes explicit route-binding coverage for the original placeholder set and the
-  effective explicit binding plan keeps every affected original route-bound property explicitly
-  bound; placeholder additions can now also apply when the effective explicit route-binding plan
-  covers the full final placeholder set and every newly route-bound property was either already
-  explicitly bound in the original projection or, for `POST`/`PUT`/`PATCH`, already part of the
-  original deterministic remaining-body fallback surface; and invalid effective
+  overrides now default to replacing the shorthand candidate's explicit descriptors, but can also
+  merge explicit binding patches by property name through `BindingMode = MergeExplicit` while still
+  leaving unbound route placeholders and remaining request-body fields available for deterministic
+  fallback; placeholder renames can now also apply when the effective explicit route-binding plan
+  covers the renamed placeholder set exactly; placeholder removals can now also apply when the
+  original projection already exposes explicit route-binding coverage for the original placeholder
+  set and the effective explicit binding plan keeps every affected original route-bound property
+  explicitly bound; placeholder additions can now also apply when the effective explicit
+  route-binding plan covers the full final placeholder set and every newly route-bound property was
+  either already explicitly bound in the original projection or, for `POST`/`PUT`/`PATCH`, already
+  part of the original deterministic remaining-body fallback surface; and invalid effective
   method-plus-binding plans, rename attempts that still rely on inference, removal attempts that
   rely on inferred original route coverage or drop explicit binding coverage, or addition attempts
   that would promote any other implicit property into the public route now fail fast
@@ -230,7 +239,7 @@ Status update:
   arrays directly
 - broader configuration-driven projection overrides that promote implicit properties into route
   placeholders beyond that constrained body-fallback path, or rewrite binding shape beyond that
-  constrained explicit-binding replacement model, remain later work
+  constrained explicit-binding replace-plus-merge-explicit model, remain later work
 
 ## Recommended long-term engine model
 
@@ -470,11 +479,12 @@ Current rule:
   mismatches before `GetRestProfiles()` is generated
 - shorthand REST publication still requires an explicit HTTP method selection and does not infer a
   public verb only from behavior-id naming conventions
-- the shipped constrained host-level binding override baseline replaces the shorthand candidate's
-  explicit binding plan only, leaves unbound route placeholders and remaining request-body fields
-  available for deterministic fallback, and fails fast when the effective method-plus-binding plan
-  is invalid
-- broader configuration-driven binding overrides remain later work
+- the shipped constrained host-level binding override baseline now supports both full explicit-plan
+  replacement and typed `MergeExplicit` property-by-property binding patches, still leaves unbound
+  route placeholders and remaining request-body fields available for deterministic fallback, and
+  still fails fast when the effective method-plus-binding plan is invalid
+- broader configuration-driven binding overrides beyond that replace-plus-merge-explicit model
+  remain later work
 
 ## OpenAPI version direction
 
@@ -504,13 +514,14 @@ The shipped configuration-driven override surface is still intentionally narrow:
 can target the original shorthand candidate shape through `ApiVersionMajors`, `Methods`,
 `RelativePatterns`, and `RouteGroupPrefixes`, then change the effective shorthand candidate
 `ApiVersionMajor`, HTTP `Method`, relative `Pattern`, and/or explicit `Bindings`, but the current
-route-pattern slice is still constrained enough to keep
-binding semantics truthful. Cephalon therefore keeps the route-version segment and document name
+route-pattern slice is still constrained enough to keep binding semantics truthful. Cephalon
+therefore keeps the route-version segment and document name
 together for version rewrites, allows route-pattern rewrites when they preserve the same
 placeholder set or when the effective explicit route-binding plan covers a renamed placeholder set
-exactly, lets binding overrides replace only the shorthand candidate's explicit binding plan while
-preserving deterministic fallback for unbound route placeholders and remaining request-body fields,
-allows route-pattern rewrites that remove placeholders when the original projection already
+exactly, lets binding overrides either replace the shorthand candidate's explicit binding plan or
+merge explicit binding patches into it by property name while preserving deterministic fallback for
+unbound route placeholders and remaining request-body fields, allows route-pattern rewrites that
+remove placeholders when the original projection already
 exposes explicit route-binding coverage for the original placeholder set and the effective explicit
 binding plan keeps every affected original route-bound property explicitly bound, allows
 route-pattern rewrites that add placeholders when the effective explicit route-binding plan covers
@@ -671,8 +682,8 @@ The following points are durable enough to keep outside thread-local context.
 - the shipped `RestApi:Suppressions` baseline is intentionally limited to suppression of
   descriptor-backed shorthand candidates, and the shipped `RestApi:Overrides` baseline is
   intentionally limited to shorthand `ApiVersionMajor`, `Method`, constrained relative `Pattern`,
-  and constrained explicit `Bindings` rewrites; neither surface rewrites explicit module DSL or
-  manual routes
+  and constrained explicit `Bindings` rewrites with either default full replacement or typed
+  `MergeExplicit` property upserts; neither surface rewrites explicit module DSL or manual routes
 - both rule families can now also refine `Behaviors`/`Modules` targeting with `ApiVersionMajors`,
   `Methods`, `RelativePatterns`, and `RouteGroupPrefixes`, and those selector refiners match the
   original shorthand candidate shape before override actions are applied so suppression and

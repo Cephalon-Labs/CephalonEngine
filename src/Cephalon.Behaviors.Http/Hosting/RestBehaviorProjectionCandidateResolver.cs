@@ -298,9 +298,15 @@ internal static class RestBehaviorProjectionCandidateResolver
         if (matchedOverride.Bindings.Count > 0)
         {
             var overrideBindings = RestEndpointBindingDescriptorAdapter.ToBehaviorDescriptors(matchedOverride.Bindings);
-            if (!effectiveEndpointProjection.Bindings.SequenceEqual(overrideBindings))
+            IReadOnlyList<BehaviorRestBindingDescriptor> effectiveBindings = matchedOverride.BindingMode == RestEndpointOverrideBindingMode.MergeExplicit
+                ? MergeBindings(
+                    matchedOverride.Id,
+                    effectiveEndpointProjection.Bindings,
+                    overrideBindings)
+                : overrideBindings;
+            if (!effectiveEndpointProjection.Bindings.SequenceEqual(effectiveBindings))
             {
-                effectiveEndpointProjection = effectiveEndpointProjection.WithBindings(overrideBindings);
+                effectiveEndpointProjection = effectiveEndpointProjection.WithBindings(effectiveBindings);
                 wasApplied = true;
             }
 
@@ -469,6 +475,59 @@ internal static class RestBehaviorProjectionCandidateResolver
             .Where(propertyName => !originalExplicitlyBoundProperties.Contains(propertyName))
             .Where(propertyName => !originalPlaceholders.Contains(propertyName))
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static List<BehaviorRestBindingDescriptor> MergeBindings(
+        string overrideId,
+        IReadOnlyList<BehaviorRestBindingDescriptor> originalBindings,
+        IReadOnlyList<BehaviorRestBindingDescriptor> overrideBindings)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(overrideId);
+        ArgumentNullException.ThrowIfNull(originalBindings);
+        ArgumentNullException.ThrowIfNull(overrideBindings);
+
+        var merged = originalBindings
+            .Where(static binding => binding is not null)
+            .Select(static binding => new BehaviorRestBindingDescriptor(
+                binding.PropertyName,
+                binding.Source,
+                binding.Name))
+            .ToList();
+        var indexesByProperty = merged
+            .Select((binding, index) => new KeyValuePair<string, int>(binding.PropertyName.Trim(), index))
+            .ToDictionary(static pair => pair.Key, static pair => pair.Value, StringComparer.OrdinalIgnoreCase);
+        var seenOverrideProperties = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var binding in overrideBindings)
+        {
+            if (binding is null)
+            {
+                continue;
+            }
+
+            var propertyName = binding.PropertyName.Trim();
+            if (!seenOverrideProperties.Add(propertyName))
+            {
+                throw new InvalidOperationException(
+                    $"REST endpoint override rule '{overrideId}' cannot merge more than one explicit binding override for property '{propertyName}'.");
+            }
+
+            var clonedBinding = new BehaviorRestBindingDescriptor(
+                binding.PropertyName,
+                binding.Source,
+                binding.Name);
+            if (indexesByProperty.TryGetValue(propertyName, out var index))
+            {
+                merged[index] = clonedBinding;
+            }
+            else
+            {
+                indexesByProperty[propertyName] = merged.Count;
+                merged.Add(clonedBinding);
+            }
+        }
+
+        return merged;
     }
 
     private static HashSet<string> ResolveBehaviorInputProperties(Type behaviorType)
