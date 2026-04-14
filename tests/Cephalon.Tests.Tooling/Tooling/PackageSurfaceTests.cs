@@ -258,6 +258,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Transports.IRestEndpointSuppressionRuntimeCatalog),
             typeof(global::Cephalon.Abstractions.Transports.IRestEndpointRuntimeCatalog),
             typeof(global::Cephalon.Abstractions.Transports.IRestEndpointRuntimeRegistry),
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateProjectionDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateRuntimeDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateStatus),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideDescriptor),

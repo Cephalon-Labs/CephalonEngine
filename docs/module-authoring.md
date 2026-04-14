@@ -455,9 +455,10 @@ target further with `ApiVersionMajors`, `Methods`, `RelativePatterns`, and `Rout
 matches those selector refiners against the original shorthand candidate shape before override
 actions are applied, now supports a positive `ApiVersionMajor`, a supported HTTP `Method`, a valid
 relative `Pattern`, and/or explicit `Bindings`, records the applied rule through
-`AppliedOverrideId` in `/engine/rest-endpoint-candidates`, and intentionally leaves explicit
-module DSL/manual routes plus shorthand groups with explicit `.ApiVersion(...)` authoritative for
-version selection. When `Bindings` are supplied, the override
+`AppliedOverrideId` in `/engine/rest-endpoint-candidates`, keeps the original shorthand source
+shape visible there through `OriginalProjection` while `ProjectedEndpoint` carries the final
+effective mapped answer, and intentionally leaves explicit module DSL/manual routes plus shorthand
+groups with explicit `.ApiVersion(...)` authoritative for version selection. When `Bindings` are supplied, the override
 replaces the shorthand candidate's explicit binding plan while leaving unbound route placeholders
 and remaining request-body fields available for deterministic fallback; placeholder renames can now
 apply when the effective explicit route-binding plan covers the renamed placeholder set exactly;

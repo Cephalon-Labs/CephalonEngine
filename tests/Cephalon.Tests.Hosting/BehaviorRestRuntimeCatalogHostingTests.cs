@@ -363,6 +363,12 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.generated.runtimeoverride.lookup", StringComparison.Ordinal));
         Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
         Assert.Equal("prefer-v6", candidate.AppliedOverrideId);
+        Assert.Equal(4, candidate.OriginalProjection.ApiVersionMajor);
+        Assert.Equal("v4", candidate.OriginalProjection.OpenApiDocumentName);
+        Assert.Equal("GET", candidate.OriginalProjection.Method);
+        Assert.Equal("/api/v4/tests/generated/runtime/override", candidate.OriginalProjection.RouteGroupPrefix);
+        Assert.Equal("/orders/{orderId}", candidate.OriginalProjection.RelativePattern);
+        Assert.Equal("/api/v4/tests/generated/runtime/override/orders/{orderId}", candidate.OriginalProjection.RoutePattern);
         Assert.Equal(endpoint.Id, candidate.ProjectedEndpoint.Id);
 
         var rule = Assert.Single(overrides);
@@ -374,7 +380,9 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             string.Equals(item.Id, "prefer-v6", StringComparison.Ordinal));
         Assert.Contains(snapshot.RestEndpointCandidates, item =>
             string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
-            string.Equals(item.AppliedOverrideId, "prefer-v6", StringComparison.Ordinal));
+            string.Equals(item.AppliedOverrideId, "prefer-v6", StringComparison.Ordinal) &&
+            item.OriginalProjection.ApiVersionMajor == 4 &&
+            string.Equals(item.OriginalProjection.RoutePattern, "/api/v4/tests/generated/runtime/override/orders/{orderId}", StringComparison.Ordinal));
 
         var payload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>("/api/v6/tests/generated/runtime/override/orders/ord-42");
         Assert.NotNull(payload);
@@ -944,6 +952,11 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
 
         Assert.Null(primaryCandidate.AppliedOverrideId);
         Assert.Equal("secondary-only", secondaryCandidate.AppliedOverrideId);
+        Assert.Equal("POST", secondaryCandidate.OriginalProjection.Method);
+        Assert.Equal(7, secondaryCandidate.OriginalProjection.ApiVersionMajor);
+        Assert.Equal("/api/v7/tests/profile-runtime/selectors/secondary/orders", secondaryCandidate.OriginalProjection.RouteGroupPrefix);
+        Assert.Equal("/{orderId}/items", secondaryCandidate.OriginalProjection.RelativePattern);
+        Assert.Equal("/api/v7/tests/profile-runtime/selectors/secondary/orders/{orderId}/items", secondaryCandidate.OriginalProjection.RoutePattern);
 
         var rule = Assert.Single(overrides, static item => string.Equals(item.Id, "secondary-only", StringComparison.Ordinal));
         Assert.Contains("tests.rest.profile.selector.bindings", rule.BehaviorIds);
@@ -1882,6 +1895,17 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.profile.bindings", StringComparison.Ordinal));
         Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
         Assert.Equal("prefer-renamed-placeholder", candidate.AppliedOverrideId);
+        Assert.Equal(6, candidate.OriginalProjection.ApiVersionMajor);
+        Assert.Equal("v6", candidate.OriginalProjection.OpenApiDocumentName);
+        Assert.Equal("POST", candidate.OriginalProjection.Method);
+        Assert.Equal("/api/v6/tests/profile-runtime/bindings/orders", candidate.OriginalProjection.RouteGroupPrefix);
+        Assert.Equal("/{orderId}", candidate.OriginalProjection.RelativePattern);
+        Assert.Equal("/api/v6/tests/profile-runtime/bindings/orders/{orderId}", candidate.OriginalProjection.RoutePattern);
+        Assert.Equal(4, candidate.OriginalProjection.BindingDescriptors.Count);
+        Assert.Contains(candidate.OriginalProjection.BindingDescriptors, static binding =>
+            binding.PropertyName == "OrderId" &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "orderId");
         Assert.Equal(endpoint.Id, candidate.ProjectedEndpoint.Id);
         Assert.Equal("/api/v6/tests/profile-runtime/bindings/orders/lookup/{id}", candidate.ProjectedEndpoint.RoutePattern);
 

@@ -175,6 +175,13 @@ Status update:
   operators can see both published and suppressed module-owned REST candidates, while explicit
   module DSL mappings now suppress lower-precedence profile shorthand for the same behavior by
   default and surface the winning candidate id plus suppression reason explicitly
+- the next original-versus-effective shorthand visibility follow-through is now shipped through
+  `ENG-058-T78`: the runtime now also exposes
+  `RestEndpointCandidateProjectionDescriptor` plus
+  `RestEndpointCandidateRuntimeDescriptor.OriginalProjection` so operators can compare the original
+  shorthand route, method, version, route-group prefix, relative pattern, and binding plan against
+  the final effective `ProjectedEndpoint` shape without inferring that source truth back out of the
+  mapped endpoint
 - the next low-code generated module-owned shorthand is now shipped through `ENG-058-T67`:
   `IRestBehaviorEndpointGroupBuilder.MapGeneratedProfiles()` and
   `MapGeneratedProfiles(string behaviorIdPrefix)` let an owning module opt into profile-backed
@@ -402,6 +409,8 @@ The shipped baseline now answers at least:
 - final route pattern
 - candidate OpenAPI document or API version
 - additive metadata such as the route-group prefix, relative pattern, and authoring style
+- for shorthand candidate entries, both the original source projection and the final effective
+  mapped endpoint shape
 
 That answer now covers both projection-backed module DSL routes and explicit manual module-owned
 REST routes published through `IRestModule`, legacy `IEndpointModule`, or
@@ -650,6 +659,9 @@ The following points are durable enough to keep outside thread-local context.
 - the shipped precedence-visibility baseline now also exposes candidate publication truth through
   `IRestEndpointCandidateRuntimeCatalog`, `/engine/rest-endpoint-candidates`,
   `/engine/rest-endpoint-candidates/{candidateId}`, and `snapshot.RestEndpointCandidates`
+- those candidate entries now keep the original shorthand source shape visible through
+  `RestEndpointCandidateRuntimeDescriptor.OriginalProjection` while `ProjectedEndpoint` continues
+  to answer the final effective mapped route, version, method, and binding shape
 - the shipped governance baseline now also exposes configured suppression-rule truth through
   `IRestEndpointSuppressionRuntimeCatalog`, `/engine/rest-endpoint-suppressions`,
   `/engine/rest-endpoint-suppressions/{suppressionId}`, and `snapshot.RestEndpointSuppressions`

@@ -548,6 +548,11 @@ public sealed class BehaviorRestProjectionTests
         Assert.Equal(RestEndpointCandidateStatus.Suppressed, candidate.Candidate.Status);
         Assert.Equal("hide-original-shape", candidate.Candidate.SuppressedBySuppressionId);
         Assert.Equal("rewrite-route", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal(6, candidate.Candidate.OriginalProjection.ApiVersionMajor);
+        Assert.Equal("POST", candidate.Candidate.OriginalProjection.Method);
+        Assert.Equal("/api/v6/tests/profile-selector-ordering", candidate.Candidate.OriginalProjection.RouteGroupPrefix);
+        Assert.Equal("/{cartId}/items", candidate.Candidate.OriginalProjection.RelativePattern);
+        Assert.Equal("/api/v6/tests/profile-selector-ordering/{cartId}/items", candidate.Candidate.OriginalProjection.RoutePattern);
         Assert.Equal("/lookup/{cartId}/items", candidate.Candidate.ProjectedEndpoint.Metadata["relativePattern"]);
         Assert.Equal("/api/v6/tests/profile-selector-ordering/lookup/{cartId}/items", candidate.Candidate.ProjectedEndpoint.RoutePattern);
     }
@@ -754,6 +759,17 @@ public sealed class BehaviorRestProjectionTests
         var candidate = Assert.Single(candidates);
         Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
         Assert.Equal("prefer-renamed-placeholder", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal(6, candidate.Candidate.OriginalProjection.ApiVersionMajor);
+        Assert.Equal("v6", candidate.Candidate.OriginalProjection.OpenApiDocumentName);
+        Assert.Equal("POST", candidate.Candidate.OriginalProjection.Method);
+        Assert.Equal("/api/v6/tests/profile-binding-rename", candidate.Candidate.OriginalProjection.RouteGroupPrefix);
+        Assert.Equal("/{cartId}/items", candidate.Candidate.OriginalProjection.RelativePattern);
+        Assert.Equal("/api/v6/tests/profile-binding-rename/{cartId}/items", candidate.Candidate.OriginalProjection.RoutePattern);
+        Assert.Equal(4, candidate.Candidate.OriginalProjection.BindingDescriptors.Count);
+        Assert.Contains(candidate.Candidate.OriginalProjection.BindingDescriptors, static binding =>
+            binding.PropertyName == "CartId" &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "cartId");
         Assert.Equal("/lookup/{id}/items", candidate.Candidate.ProjectedEndpoint.Metadata["relativePattern"]);
         Assert.Equal("/api/v6/tests/profile-binding-rename/lookup/{id}/items", candidate.Candidate.ProjectedEndpoint.RoutePattern);
         Assert.Equal(4, candidate.Candidate.ProjectedEndpoint.BindingDescriptors.Count);

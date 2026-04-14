@@ -426,11 +426,13 @@ The host now also publishes the configured shorthand-override rules themselves t
 - `GET /engine/rest-endpoint-overrides/{overrideId}`
 - `RuntimeIntrospectionSnapshot.RestEndpointOverrides`
 
-Candidate entries answer the projected endpoint shape, authoring style, precedence rank, published
-versus suppressed status, and when suppression occurs the winning candidate id plus an
-operator-facing suppression reason. Today that surface covers the normalized module-owned behavior
-projection path, including explicit module DSL mappings, `MapProfile<TBehavior>()` shorthand
-consumption, and `MapGeneratedProfiles(...)` shorthand consumption.
+Candidate entries answer the original shorthand projection shape through
+`RestEndpointCandidateRuntimeDescriptor.OriginalProjection`, the final effective mapped answer
+through `ProjectedEndpoint`, authoring style, precedence rank, published versus suppressed status,
+and when suppression occurs the winning candidate id plus an operator-facing suppression reason.
+Today that surface covers the normalized module-owned behavior projection path, including explicit
+module DSL mappings, `MapProfile<TBehavior>()` shorthand consumption, and
+`MapGeneratedProfiles(...)` shorthand consumption.
 
 When suppression comes from host governance instead of precedence, the runtime now uses
 `SuppressedBySuppressionId` rather than `SuppressedByCandidateId` so operators can see that a

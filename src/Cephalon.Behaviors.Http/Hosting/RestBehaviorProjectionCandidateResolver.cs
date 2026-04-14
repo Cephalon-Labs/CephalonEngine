@@ -142,12 +142,13 @@ internal static class RestBehaviorProjectionCandidateResolver
         var routePattern = RestEndpointRuntimeDescriptorFactory.CombinePaths(
             publishedRouteGroupPrefix,
             effectiveEndpointProjection.Pattern);
-        var runtimeBindings = RestEndpointBindingDescriptorAdapter.ToRuntimeDescriptors(effectiveEndpointProjection.Bindings);
-        var originalTarget = new RestBehaviorEndpointProjectionCandidateTarget(
+        var originalProjection = CreateCandidateProjectionDescriptor(
             defaultApiVersionMajor,
             endpointProjection.Method.ToString().ToUpperInvariant(),
+            originalRouteGroupPrefix,
             endpointProjection.Pattern,
-            originalRouteGroupPrefix);
+            RestEndpointBindingDescriptorAdapter.ToRuntimeDescriptors(endpointProjection.Bindings));
+        var runtimeBindings = RestEndpointBindingDescriptorAdapter.ToRuntimeDescriptors(effectiveEndpointProjection.Bindings);
         var projectedEndpoint = RestEndpointRuntimeDescriptorFactory.CreateBehaviorDescriptor(
             sourceKind: RestEndpointRuntimeMetadata.ModuleDslSourceKind,
             method: method,
@@ -174,10 +175,10 @@ internal static class RestBehaviorProjectionCandidateResolver
         return new ResolvedRestBehaviorEndpointProjectionCandidate(
             groupIndex,
             effectiveEndpointProjection,
-            originalTarget,
             new RestEndpointCandidateRuntimeDescriptor(
                 candidateId,
                 projectedEndpoint,
+                originalProjection,
                 effectiveEndpointProjection.AuthoringStyle,
                 precedenceRank,
                 RestEndpointCandidateStatus.Published,
@@ -201,6 +202,7 @@ internal static class RestBehaviorProjectionCandidateResolver
                 Candidate = new RestEndpointCandidateRuntimeDescriptor(
                     candidate.Candidate.Id,
                     candidate.Candidate.ProjectedEndpoint,
+                    candidate.Candidate.OriginalProjection,
                     candidate.Candidate.AuthoringStyle,
                     candidate.Candidate.PrecedenceRank,
                     RestEndpointCandidateStatus.Suppressed,
@@ -223,6 +225,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             Candidate = new RestEndpointCandidateRuntimeDescriptor(
                 candidate.Candidate.Id,
                 candidate.Candidate.ProjectedEndpoint,
+                candidate.Candidate.OriginalProjection,
                 candidate.Candidate.AuthoringStyle,
                 candidate.Candidate.PrecedenceRank,
                 RestEndpointCandidateStatus.Suppressed,
@@ -566,7 +569,7 @@ internal static class RestBehaviorProjectionCandidateResolver
 
         if (suppression.ApiVersionMajors.Count > 0)
         {
-            var apiVersionMajor = candidate.OriginalTarget.ApiVersionMajor;
+            var apiVersionMajor = candidate.Candidate.OriginalProjection.ApiVersionMajor;
             if (!apiVersionMajor.HasValue || !suppression.ApiVersionMajors.Contains(apiVersionMajor.Value))
             {
                 return false;
@@ -574,14 +577,14 @@ internal static class RestBehaviorProjectionCandidateResolver
         }
 
         if (suppression.Methods.Count > 0 &&
-            !suppression.Methods.Contains(candidate.OriginalTarget.Method, StringComparer.OrdinalIgnoreCase))
+            !suppression.Methods.Contains(candidate.Candidate.OriginalProjection.Method, StringComparer.OrdinalIgnoreCase))
         {
             return false;
         }
 
         if (suppression.RelativePatterns.Count > 0)
         {
-            var relativePattern = candidate.OriginalTarget.RelativePattern;
+            var relativePattern = candidate.Candidate.OriginalProjection.RelativePattern;
             if (string.IsNullOrWhiteSpace(relativePattern) ||
                 !suppression.RelativePatterns.Contains(relativePattern, StringComparer.OrdinalIgnoreCase))
             {
@@ -591,7 +594,7 @@ internal static class RestBehaviorProjectionCandidateResolver
 
         if (suppression.RouteGroupPrefixes.Count > 0)
         {
-            var routeGroupPrefix = candidate.OriginalTarget.RouteGroupPrefix;
+            var routeGroupPrefix = candidate.Candidate.OriginalProjection.RouteGroupPrefix;
             if (string.IsNullOrWhiteSpace(routeGroupPrefix) ||
                 !suppression.RouteGroupPrefixes.Contains(routeGroupPrefix, StringComparer.OrdinalIgnoreCase))
             {
@@ -812,19 +815,34 @@ internal static class RestBehaviorProjectionCandidateResolver
             ? $"v{apiVersionMajor.Value}"
             : "v1";
     }
+
+    private static RestEndpointCandidateProjectionDescriptor CreateCandidateProjectionDescriptor(
+        int? apiVersionMajor,
+        string method,
+        string routeGroupPrefix,
+        string relativePattern,
+        IReadOnlyList<RestEndpointBindingDescriptor> bindingDescriptors)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(method);
+        ArgumentException.ThrowIfNullOrWhiteSpace(routeGroupPrefix);
+        ArgumentException.ThrowIfNullOrWhiteSpace(relativePattern);
+        ArgumentNullException.ThrowIfNull(bindingDescriptors);
+
+        return new RestEndpointCandidateProjectionDescriptor(
+            method,
+            RestEndpointRuntimeDescriptorFactory.CombinePaths(routeGroupPrefix, relativePattern),
+            routeGroupPrefix,
+            relativePattern,
+            apiVersionMajor,
+            ResolveOpenApiDocumentName(apiVersionMajor),
+            bindingDescriptors);
+    }
 }
 
 internal sealed record ResolvedRestBehaviorEndpointProjectionCandidate(
     int GroupIndex,
     RestBehaviorEndpointProjection EffectiveEndpointProjection,
-    RestBehaviorEndpointProjectionCandidateTarget OriginalTarget,
     RestEndpointCandidateRuntimeDescriptor Candidate);
-
-internal sealed record RestBehaviorEndpointProjectionCandidateTarget(
-    int? ApiVersionMajor,
-    string Method,
-    string RelativePattern,
-    string RouteGroupPrefix);
 
 internal sealed record AppliedRestEndpointOverride(
     string Id,

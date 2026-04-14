@@ -57,10 +57,12 @@
 - `Technologies/ITechnologyRuntimeCatalog.cs`
 - `Transports/IRestEndpointCandidateRuntimeCatalog.cs`
 - `Transports/IRestEndpointCandidateRuntimeRegistry.cs`
+- `Transports/RestEndpointCandidateProjectionDescriptor.cs`
 - `Transports/RestEndpointCandidateRuntimeDescriptor.cs`
 - `Transports/RestEndpointCandidateStatus.cs`
 - `Transports/IRestEndpointCandidateRuntimeCatalog.cs`
 - `Transports/IRestEndpointRuntimeCatalog.cs`
+- `Transports/RestEndpointCandidateProjectionDescriptor.cs`
 - `Transports/RestEndpointCandidateRuntimeDescriptor.cs`
 - `Transports/RestEndpointCandidateStatus.cs`
 - `Transports/RestEndpointRuntimeDescriptor.cs`
@@ -149,9 +151,11 @@ companion packages can read resolved public REST route truth plus explicit reque
 through one host-agnostic transport contract. That keeps the runtime answer transport-owned instead
 of behavior-package-owned and avoids treating `metadata` dictionaries as the canonical binding-plan
 surface. The same namespace now also owns `IRestEndpointCandidateRuntimeCatalog`,
-`IRestEndpointCandidateRuntimeRegistry`, `RestEndpointCandidateRuntimeDescriptor`, and
-`RestEndpointCandidateStatus` so hosts can surface publication-versus-suppression truth for
-module-owned REST candidates without inventing an ASP.NET Core-specific precedence contract.
+`IRestEndpointCandidateRuntimeRegistry`, `RestEndpointCandidateProjectionDescriptor`,
+`RestEndpointCandidateRuntimeDescriptor`, and `RestEndpointCandidateStatus` so hosts can surface
+publication-versus-suppression truth for module-owned REST candidates without inventing an
+ASP.NET Core-specific precedence contract, and so operator tooling can compare the original
+shorthand projection shape with the final effective projected endpoint explicitly.
 
 ## Related docs
 

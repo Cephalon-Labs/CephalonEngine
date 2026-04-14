@@ -12,6 +12,9 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
     /// <param name="projectedEndpoint">
     /// The resolved endpoint shape the candidate would publish when it wins precedence.
     /// </param>
+    /// <param name="originalProjection">
+    /// The original projection shape contributed by the source authoring path before host-level overrides are applied.
+    /// </param>
     /// <param name="authoringStyle">The normalized authoring style such as <c>behavior-module-dsl</c>.</param>
     /// <param name="precedenceRank">
     /// The precedence rank used during publication resolution. Lower values win.
@@ -30,6 +33,7 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
     public RestEndpointCandidateRuntimeDescriptor(
         string id,
         RestEndpointRuntimeDescriptor projectedEndpoint,
+        RestEndpointCandidateProjectionDescriptor originalProjection,
         string authoringStyle,
         int precedenceRank,
         RestEndpointCandidateStatus status,
@@ -44,6 +48,7 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
         }
 
         ArgumentNullException.ThrowIfNull(projectedEndpoint);
+        ArgumentNullException.ThrowIfNull(originalProjection);
 
         if (string.IsNullOrWhiteSpace(authoringStyle))
         {
@@ -83,6 +88,7 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
 
         Id = id.Trim();
         ProjectedEndpoint = projectedEndpoint;
+        OriginalProjection = originalProjection;
         AuthoringStyle = authoringStyle.Trim();
         PrecedenceRank = precedenceRank;
         Status = status;
@@ -109,6 +115,11 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
     /// Gets the resolved endpoint shape the candidate would publish when it wins precedence.
     /// </summary>
     public RestEndpointRuntimeDescriptor ProjectedEndpoint { get; }
+
+    /// <summary>
+    /// Gets the original projection shape contributed by the source authoring path before host-level overrides are applied.
+    /// </summary>
+    public RestEndpointCandidateProjectionDescriptor OriginalProjection { get; }
 
     /// <summary>
     /// Gets the normalized authoring style used to produce the candidate.
