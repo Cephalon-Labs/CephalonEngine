@@ -33,11 +33,6 @@ internal static class RestBehaviorProjectionMaterializer
             governanceOptions.Suppressions,
             governanceOptions.Overrides);
 
-        foreach (var candidate in candidates)
-        {
-            candidateRegistry?.Register(candidate.Candidate);
-        }
-
         for (var groupIndex = 0; groupIndex < projection.Groups.Count; groupIndex++)
         {
             var publishedCandidates = candidates
@@ -52,6 +47,8 @@ internal static class RestBehaviorProjectionMaterializer
 
             MapGroup(endpoints, module, projection.Groups[groupIndex], publishedCandidates, apiRoutesOptions);
         }
+
+        RegisterCandidates(candidateRegistry, endpoints, candidates);
     }
 
     internal static void MapGroup(
@@ -123,6 +120,149 @@ internal static class RestBehaviorProjectionMaterializer
         });
 
         return capture;
+    }
+
+    private static void RegisterCandidates(
+        IRestEndpointCandidateRuntimeRegistry? candidateRegistry,
+        IEndpointRouteBuilder endpoints,
+        IReadOnlyList<ResolvedRestBehaviorEndpointProjectionCandidate> candidates)
+    {
+        ArgumentNullException.ThrowIfNull(endpoints);
+        ArgumentNullException.ThrowIfNull(candidates);
+
+        if (candidateRegistry is null || candidates.Count == 0)
+        {
+            return;
+        }
+
+        var publishedCandidateStates = ResolvePublishedCandidateStates(endpoints, candidates);
+        foreach (var candidate in candidates)
+        {
+            candidateRegistry.Register(CreateRegisteredCandidateDescriptor(candidate, publishedCandidateStates));
+        }
+    }
+
+    private static Dictionary<string, MaterializedPublishedCandidateState> ResolvePublishedCandidateStates(
+        IEndpointRouteBuilder endpoints,
+        IReadOnlyList<ResolvedRestBehaviorEndpointProjectionCandidate> candidates)
+    {
+        ArgumentNullException.ThrowIfNull(endpoints);
+        ArgumentNullException.ThrowIfNull(candidates);
+
+        var publishedCandidates = candidates
+            .Where(static candidate => candidate.Candidate.Status == RestEndpointCandidateStatus.Published)
+            .ToArray();
+        if (publishedCandidates.Length == 0)
+        {
+            return new Dictionary<string, MaterializedPublishedCandidateState>(StringComparer.OrdinalIgnoreCase);
+        }
+
+        var publishedCandidateIds = publishedCandidates
+            .Select(static candidate => candidate.Candidate.Id)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var states = new Dictionary<string, MaterializedPublishedCandidateState>(StringComparer.OrdinalIgnoreCase);
+        var matchingEndpoints = endpoints.DataSources
+            .SelectMany(static dataSource => dataSource.Endpoints)
+            .OfType<RouteEndpoint>()
+            .Where(endpoint =>
+            {
+                var metadata = endpoint.Metadata.GetMetadata<RestBehaviorEndpointMetadata>();
+                return !string.IsNullOrWhiteSpace(metadata?.CandidateId) &&
+                       publishedCandidateIds.Contains(metadata.CandidateId);
+            })
+            .GroupBy(
+                endpoint => endpoint.Metadata.GetMetadata<RestBehaviorEndpointMetadata>()!.CandidateId!,
+                StringComparer.OrdinalIgnoreCase);
+
+        foreach (var group in matchingEndpoints)
+        {
+            var materializedEndpoints = group.ToArray();
+            if (materializedEndpoints.Length != 1)
+            {
+                throw new InvalidOperationException(
+                    $"REST behavior candidate '{group.Key}' materialized {materializedEndpoints.Length} endpoints while runtime candidate reconciliation expected exactly one.");
+            }
+
+            states[group.Key] = CreateMaterializedPublishedCandidateState(materializedEndpoints[0]);
+        }
+
+        foreach (var candidate in publishedCandidates)
+        {
+            if (!states.ContainsKey(candidate.Candidate.Id))
+            {
+                throw new InvalidOperationException(
+                    $"Published REST behavior candidate '{candidate.Candidate.Id}' did not produce a materialized endpoint for runtime candidate reconciliation.");
+            }
+        }
+
+        return states;
+    }
+
+    private static MaterializedPublishedCandidateState CreateMaterializedPublishedCandidateState(RouteEndpoint endpoint)
+    {
+        ArgumentNullException.ThrowIfNull(endpoint);
+
+        var sourceRequiredCapabilityKey = endpoint.Metadata.GetMetadata<RestEndpointSourceCapabilityMetadata>()?.RequiredCapabilityKey;
+        var effectiveRequiredCapabilityKey = RestEndpointRuntimeMetadata.ResolveEffectiveRequiredCapabilityKey(
+            endpoint.Metadata.OfType<RestEndpointCapabilityMetadata>());
+        return new MaterializedPublishedCandidateState(sourceRequiredCapabilityKey, effectiveRequiredCapabilityKey);
+    }
+
+    private static RestEndpointCandidateRuntimeDescriptor CreateRegisteredCandidateDescriptor(
+        ResolvedRestBehaviorEndpointProjectionCandidate candidate,
+        IReadOnlyDictionary<string, MaterializedPublishedCandidateState> publishedCandidateStates)
+    {
+        ArgumentNullException.ThrowIfNull(candidate);
+        ArgumentNullException.ThrowIfNull(publishedCandidateStates);
+
+        var appliedOverrideId = ResolveRegisteredAppliedOverrideId(candidate, publishedCandidateStates);
+        return new RestEndpointCandidateRuntimeDescriptor(
+            candidate.Candidate.Id,
+            candidate.Candidate.ProjectedEndpoint,
+            candidate.Candidate.OriginalProjection,
+            candidate.Candidate.AuthoringStyle,
+            candidate.Candidate.PrecedenceRank,
+            candidate.Candidate.Status,
+            suppressedByCandidateId: candidate.Candidate.SuppressedByCandidateId,
+            suppressedBySuppressionId: candidate.Candidate.SuppressedBySuppressionId,
+            appliedOverrideId: appliedOverrideId,
+            matchedSuppressionIds: candidate.Candidate.MatchedSuppressionIds,
+            matchedOverrideIds: candidate.Candidate.MatchedOverrideIds,
+            suppressionReason: candidate.Candidate.SuppressionReason);
+    }
+
+    private static string? ResolveRegisteredAppliedOverrideId(
+        ResolvedRestBehaviorEndpointProjectionCandidate candidate,
+        IReadOnlyDictionary<string, MaterializedPublishedCandidateState> publishedCandidateStates)
+    {
+        ArgumentNullException.ThrowIfNull(candidate);
+        ArgumentNullException.ThrowIfNull(publishedCandidateStates);
+
+        if (string.IsNullOrWhiteSpace(candidate.Candidate.AppliedOverrideId) ||
+            candidate.Candidate.Status != RestEndpointCandidateStatus.Published)
+        {
+            return candidate.Candidate.AppliedOverrideId;
+        }
+
+        if (HasStructuralOverride(candidate.Candidate) ||
+            candidate.AppliedMetadataOverride is not null ||
+            candidate.AppliedCapabilityOverride is null)
+        {
+            return candidate.Candidate.AppliedOverrideId;
+        }
+
+        if (!publishedCandidateStates.TryGetValue(candidate.Candidate.Id, out var publishedCandidateState))
+        {
+            throw new InvalidOperationException(
+                $"Published REST behavior candidate '{candidate.Candidate.Id}' is missing the materialized endpoint state required for runtime candidate reconciliation.");
+        }
+
+        return string.Equals(
+                publishedCandidateState.SourceRequiredCapabilityKey,
+                publishedCandidateState.EffectiveRequiredCapabilityKey,
+                StringComparison.Ordinal)
+            ? null
+            : candidate.Candidate.AppliedOverrideId;
     }
 
     private static void ApplyRequiredCapabilityOverride(
@@ -317,4 +457,8 @@ internal static class RestBehaviorProjectionMaterializer
     {
         internal string? RequiredCapabilityKey { get; set; }
     }
+
+    private sealed record MaterializedPublishedCandidateState(
+        string? SourceRequiredCapabilityKey,
+        string? EffectiveRequiredCapabilityKey);
 }

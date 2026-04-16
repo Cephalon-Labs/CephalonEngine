@@ -1087,9 +1087,11 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         var client = app.GetTestClient();
 
         var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
         var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
 
         Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
         Assert.NotNull(snapshot);
 
         var endpoint = Assert.Single(endpoints, static item =>
@@ -1105,7 +1107,116 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             item.OriginalRequiredCapabilityKey is null &&
             item.AppliedOverrideId is null);
 
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.profile.runtimeclear.noop.capability", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+        Assert.Null(candidate.AppliedOverrideId);
+        Assert.Null(candidate.ProjectedEndpoint.RequiredCapabilityKey);
+        Assert.Contains("clear-public-capability-noop", candidate.MatchedOverrideIds);
+
+        Assert.Contains(snapshot.RestEndpointCandidates, item =>
+            string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
+            item.ProjectedEndpoint.RequiredCapabilityKey is null &&
+            item.AppliedOverrideId is null);
+
+        var routeEndpoint = Assert.Single(
+            ((IEndpointRouteBuilder)app).DataSources
+                .SelectMany(static dataSource => dataSource.Endpoints)
+                .OfType<RouteEndpoint>(),
+            static item => string.Equals(item.RoutePattern.RawText, "/api/v4/tests/profile/runtime/clear/noop/capability/orders/{orderId}", StringComparison.Ordinal));
+        Assert.Null(routeEndpoint.Metadata.GetMetadata<RestEndpointSourceCapabilityMetadata>()?.RequiredCapabilityKey);
+        Assert.Null(routeEndpoint.Metadata.GetMetadata<RestEndpointAppliedOverrideMetadata>()?.OverrideId);
+
         var response = await client.GetAsync("/api/v4/tests/profile/runtime/clear/noop/capability/orders/ord-42");
+        response.EnsureSuccessStatusCode();
+        var payload = await response.Content.ReadFromJsonAsync<GeneratedRuntimeOrderOutput>();
+        Assert.NotNull(payload);
+        Assert.Equal("ord-42", payload.OrderId);
+    }
+
+    [Fact]
+    public async Task MapCephalonDoesNotExposeAppliedOverrideIdForNoOpCapabilityRewriteOnPublishedCandidate()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "4";
+        builder.Configuration["OpenApi:DefaultVersion"] = "4";
+        builder.Configuration["Engine:Trust:Capabilities:restricted.original"] = "Allowed";
+        builder.Configuration["RestApi:Overrides:prefer-public-capability-same-key:Behaviors:0"] = "tests.profile.runtimeoverride.capability";
+        builder.Configuration["RestApi:Overrides:prefer-public-capability-same-key:RequiredCapabilityKey"] = "restricted.original";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileCapabilityOverrideRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(overrides);
+        Assert.NotNull(snapshot);
+
+        var endpoint = Assert.Single(endpoints, static item =>
+            string.Equals(item.BehaviorId, "tests.profile.runtimeoverride.capability", StringComparison.Ordinal));
+        Assert.Equal("/api/v4/tests/profile/runtime/override/capability/orders/{orderId}", endpoint.RoutePattern);
+        Assert.Equal("restricted.original", endpoint.RequiredCapabilityKey);
+        Assert.Equal("restricted.original", endpoint.OriginalRequiredCapabilityKey);
+        Assert.Null(endpoint.AppliedOverrideId);
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.profile.runtimeoverride.capability", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+        Assert.Null(candidate.AppliedOverrideId);
+        Assert.Equal("restricted.original", candidate.ProjectedEndpoint.RequiredCapabilityKey);
+        Assert.Contains("prefer-public-capability-same-key", candidate.MatchedOverrideIds);
+
+        var rule = Assert.Single(overrides, static item =>
+            string.Equals(item.Id, "prefer-public-capability-same-key", StringComparison.Ordinal));
+        Assert.Equal("restricted.original", rule.RequiredCapabilityKey);
+
+        Assert.Contains(snapshot.RestEndpointOverrides, item =>
+            string.Equals(item.Id, "prefer-public-capability-same-key", StringComparison.Ordinal) &&
+            string.Equals(item.RequiredCapabilityKey, "restricted.original", StringComparison.Ordinal));
+        Assert.Contains(snapshot.RestEndpointCandidates, item =>
+            string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
+            string.Equals(item.ProjectedEndpoint.RequiredCapabilityKey, "restricted.original", StringComparison.Ordinal) &&
+            item.AppliedOverrideId is null);
+        Assert.Contains(snapshot.RestEndpoints, item =>
+            string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal) &&
+            string.Equals(item.RequiredCapabilityKey, "restricted.original", StringComparison.Ordinal) &&
+            string.Equals(item.OriginalRequiredCapabilityKey, "restricted.original", StringComparison.Ordinal) &&
+            item.AppliedOverrideId is null);
+
+        var routeEndpoint = Assert.Single(
+            ((IEndpointRouteBuilder)app).DataSources
+                .SelectMany(static dataSource => dataSource.Endpoints)
+                .OfType<RouteEndpoint>(),
+            static item => string.Equals(item.RoutePattern.RawText, "/api/v4/tests/profile/runtime/override/capability/orders/{orderId}", StringComparison.Ordinal));
+        Assert.Equal(
+            "restricted.original",
+            routeEndpoint.Metadata.GetMetadata<RestEndpointSourceCapabilityMetadata>()?.RequiredCapabilityKey);
+        Assert.Equal(
+            "restricted.original",
+            routeEndpoint.Metadata.OfType<RestEndpointCapabilityMetadata>().LastOrDefault()?.CapabilityKey);
+        Assert.Null(routeEndpoint.Metadata.GetMetadata<RestEndpointAppliedOverrideMetadata>()?.OverrideId);
+
+        var response = await client.GetAsync("/api/v4/tests/profile/runtime/override/capability/orders/ord-42");
         response.EnsureSuccessStatusCode();
         var payload = await response.Content.ReadFromJsonAsync<GeneratedRuntimeOrderOutput>();
         Assert.NotNull(payload);
