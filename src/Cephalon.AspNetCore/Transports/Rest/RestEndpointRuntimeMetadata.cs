@@ -11,6 +11,8 @@ internal static class RestEndpointRuntimeMetadata
     internal const string BehaviorModuleDslAuthoringStyle = "behavior-module-dsl";
     internal const string BehaviorModuleGeneratedAuthoringStyle = "behavior-module-generated";
     internal const string BehaviorModuleProfileAuthoringStyle = "behavior-module-profile";
+    internal const string BindingFallbackModeMetadataKey = "bindingFallbackMode";
+    internal const string PreserveSourceImplicitFallbackMode = "preserve-source-implicit-fallback";
     internal const int BehaviorModuleDslPrecedenceRank = 2;
     internal const int BehaviorModuleProfilePrecedenceRank = 3;
     internal const int BehaviorModuleGeneratedPrecedenceRank = 4;
@@ -49,4 +51,5 @@ internal sealed record RestBehaviorEndpointMetadata(
     int? ApiVersionMajor,
     string RouteGroupPrefix,
     string RelativePattern,
-    IReadOnlyList<RestEndpointBindingDescriptor>? BindingDescriptors);
+    IReadOnlyList<RestEndpointBindingDescriptor>? BindingDescriptors,
+    bool PreserveImplicitQueryFallback);

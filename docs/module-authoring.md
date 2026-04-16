@@ -187,6 +187,8 @@ Current `BehaviorRestProfileAttribute` behavior:
 - when a shorthand profile has no explicit binding plan, bounded placeholder additions can also
   promote from the original implicit query-fallback surface; once explicit bindings are present,
   the stricter explicit-binding rules still apply
+- when a host adds only partial explicit bindings to that kind of shorthand profile, the remaining
+  unbound query properties now continue to follow the original implicit query-fallback surface
 - a JSON body that tries to overwrite a property reserved by an explicit non-body binding fails fast
 - the optional `ApiVersionMajor` remains only a candidate endpoint version; the host still decides
   which OpenAPI documents are published through `OpenApi:EnabledVersions` or the legacy document
@@ -446,7 +448,10 @@ Current helper behavior:
   rename, removal, or addition would rely on inference, drop explicit binding coverage, or promote
   another implicit property into the public route, and still leaves explicit `MapGet/MapPost/...`
   routes, manual module-owned endpoints, and shorthand groups with explicit `.ApiVersion(...)`
-  authoritative for version selection; when more than one suppression or override rule matches the same shorthand
+  authoritative for version selection; when the source shorthand had no explicit binding plan,
+  partial explicit overrides now also preserve the remaining implicit query-fallback surface and
+  mark that runtime truth as `bindingFallbackMode = preserve-source-implicit-fallback`; when more
+  than one suppression or override rule matches the same shorthand
   candidate, `/engine/rest-endpoint-candidates` now keeps the full specificity-ordered match trace
   visible through `MatchedSuppressionIds` and `MatchedOverrideIds` before one rule wins
 - treats `behaviors.Internal<TBehavior>()` as the explicit internal-only or custom/manual-route path

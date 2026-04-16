@@ -41,13 +41,19 @@ internal static class BehaviorRequestJsonComposer
     public static async Task<JsonElement> ComposeAsync<TInput>(
         HttpContext context,
         bool acceptsBody,
-        IReadOnlyList<BehaviorRestBindingDescriptor>? bindings = null)
+        IReadOnlyList<BehaviorRestBindingDescriptor>? bindings = null,
+        bool preserveImplicitQueryFallback = false)
     {
         ArgumentNullException.ThrowIfNull(context);
 
         if (bindings is { Count: > 0 })
         {
-            return await ComposeExplicitAsync<TInput>(context, acceptsBody, bindings).ConfigureAwait(false);
+            return await ComposeExplicitAsync<TInput>(
+                    context,
+                    acceptsBody,
+                    bindings,
+                    preserveImplicitQueryFallback)
+                .ConfigureAwait(false);
         }
 
         if (IsSimpleInputType(typeof(TInput)))
@@ -81,7 +87,8 @@ internal static class BehaviorRequestJsonComposer
     private static async Task<JsonElement> ComposeExplicitAsync<TInput>(
         HttpContext context,
         bool acceptsBody,
-        IReadOnlyList<BehaviorRestBindingDescriptor> bindings)
+        IReadOnlyList<BehaviorRestBindingDescriptor> bindings,
+        bool preserveImplicitQueryFallback)
     {
         ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(bindings);
@@ -208,6 +215,16 @@ internal static class BehaviorRequestJsonComposer
             }
         }
 
+        if (preserveImplicitQueryFallback)
+        {
+            MergeImplicitQueryFallback(
+                payload,
+                context.Request.Query,
+                inputProperties,
+                explicitProperties,
+                inferredRouteProperties);
+        }
+
         return JsonSerializer.SerializeToElement(payload);
     }
 
@@ -312,6 +329,34 @@ internal static class BehaviorRequestJsonComposer
 
                 payload[pair.Key] = values;
             }
+        }
+    }
+
+    private static void MergeImplicitQueryFallback(
+        JsonObject payload,
+        IQueryCollection query,
+        Dictionary<string, string> inputProperties,
+        HashSet<string> explicitProperties,
+        HashSet<string> inferredRouteProperties)
+    {
+        ArgumentNullException.ThrowIfNull(payload);
+        ArgumentNullException.ThrowIfNull(query);
+        ArgumentNullException.ThrowIfNull(inputProperties);
+        ArgumentNullException.ThrowIfNull(explicitProperties);
+        ArgumentNullException.ThrowIfNull(inferredRouteProperties);
+
+        var lockedQueryProperties = new HashSet<string>(explicitProperties, StringComparer.OrdinalIgnoreCase);
+        lockedQueryProperties.UnionWith(inferredRouteProperties);
+
+        foreach (var pair in query)
+        {
+            if (!TryResolveInputProperty(inputProperties, pair.Key, out var propertyName) ||
+                lockedQueryProperties.Contains(propertyName))
+            {
+                continue;
+            }
+
+            payload[propertyName] = CreateMultiValueNode(pair.Value);
         }
     }
 

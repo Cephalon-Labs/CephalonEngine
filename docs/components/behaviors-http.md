@@ -194,6 +194,9 @@ Current profile behavior:
   query-plus-route merge baseline, and bounded placeholder additions can promote from that original
   implicit query-fallback surface; once explicit bindings exist, the stricter explicit-binding path
   remains in force
+- when a host adds only partial explicit bindings to a shorthand candidate that originally had no
+  explicit binding plan, the remaining unbound query properties now continue to follow that
+  original implicit query-fallback surface instead of disappearing silently
 - a JSON body that tries to overwrite a property reserved by an explicit non-body binding fails
   fast instead of silently winning or losing
 - profile API-version metadata is still only a candidate endpoint version; host publication remains
@@ -455,8 +458,12 @@ Current helper behavior:
   the active REST root with no placeholders and no implicit API-version drift, materialization now
   splits effective shorthand route groups when only some candidates in one authored group are
   remapped, merge-time removals must still target properties the source shorthand already bound
-  explicitly, and explicit module DSL/manual routes plus shorthand groups with explicit
-  `.ApiVersion(...)` remain authoritative for version selection
+  explicitly, no-explicit-plan shorthand candidates now also preserve their remaining implicit
+  query-fallback surface when a host adds only partial explicit bindings, runtime metadata now
+  marks that preserved mode as
+  `bindingFallbackMode = preserve-source-implicit-fallback`, and explicit module DSL/manual routes
+  plus shorthand groups with explicit `.ApiVersion(...)` remain authoritative for version
+  selection
 
 ## REST runtime catalog and collision guard
 

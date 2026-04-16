@@ -2105,6 +2105,78 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonPreservesImplicitQueryFallbackWhenPartialExplicitBindingsOverrideImplicitSourceProfile()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.Configuration["RestApi:Overrides:prefer-route-order:Behaviors:0"] = "tests.rest.profile.bindings.query.partial";
+        builder.Configuration["RestApi:Overrides:prefer-route-order:Pattern"] = "/lookup/{orderId}";
+        builder.Configuration["RestApi:Overrides:prefer-route-order:Bindings:0:PropertyName"] = "OrderId";
+        builder.Configuration["RestApi:Overrides:prefer-route-order:Bindings:0:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:prefer-route-order:Bindings:0:Name"] = "orderId";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileBindingPartialQueryFallbackRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(snapshot);
+
+        var endpoint = Assert.Single(endpoints, static item =>
+            string.Equals(item.BehaviorId, "tests.rest.profile.bindings.query.partial", StringComparison.Ordinal));
+        Assert.Equal("/api/v6/tests/profile-runtime/query-partial/orders/lookup/{orderId}", endpoint.RoutePattern);
+        Assert.Equal("preserve-source-implicit-fallback", endpoint.Metadata["bindingFallbackMode"]);
+        Assert.Single(endpoint.BindingDescriptors);
+        Assert.Contains(endpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "OrderId" &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "orderId");
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.profile.bindings.query.partial", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+        Assert.Equal("prefer-route-order", candidate.AppliedOverrideId);
+        Assert.Empty(candidate.OriginalProjection.BindingDescriptors);
+        Assert.Equal(endpoint.Id, candidate.ProjectedEndpoint.Id);
+        Assert.Equal("preserve-source-implicit-fallback", candidate.ProjectedEndpoint.Metadata["bindingFallbackMode"]);
+
+        var response = await client.GetAsync("/api/v6/tests/profile-runtime/query-partial/orders/lookup/ord-90?quantity=4");
+        response.EnsureSuccessStatusCode();
+
+        var payload = await response.Content.ReadFromJsonAsync<ProfileBindingQueryFallbackPartialRuntimeOutput>();
+        Assert.NotNull(payload);
+        Assert.Equal("ord-90", payload.OrderId);
+        Assert.Equal(4, payload.Quantity);
+
+        Assert.Contains(snapshot.RestEndpoints, static item =>
+            string.Equals(item.BehaviorId, "tests.rest.profile.bindings.query.partial", StringComparison.Ordinal) &&
+            string.Equals(item.Metadata["bindingFallbackMode"], "preserve-source-implicit-fallback", StringComparison.Ordinal));
+        Assert.Contains(snapshot.RestEndpointCandidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.profile.bindings.query.partial", StringComparison.Ordinal) &&
+            string.Equals(item.ProjectedEndpoint.Metadata["bindingFallbackMode"], "preserve-source-implicit-fallback", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public void MapCephalonRejectsPlaceholderRemovalWhenOriginalRouteCoverageReliesOnInference()
     {
         var builder = WebApplication.CreateBuilder();
@@ -3784,6 +3856,22 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         }
     }
 
+    private sealed class ProfileBindingPartialQueryFallbackRuntimeCatalogModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.profile-runtime.bindings.query.partial",
+            "Profile Runtime Partial Query Fallback Module",
+            "Publishes a shorthand GET profile with no explicit binding plan so partial explicit overrides can preserve the remaining implicit query fallback surface.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Group("/tests/profile-runtime/query-partial/orders")
+                .WithTagName("Profile Runtime Partial Query API")
+                .MapProfile<GetProfileBindingPartialQueryFallbackRuntimeOrderBehavior>();
+        }
+    }
+
     private static string BuildBehaviorProjectionCandidateId(
         string sourceModuleId,
         string behaviorId,
@@ -4124,6 +4212,21 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         }
     }
 
+    [AppBehavior("tests.rest.profile.bindings.query.partial")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/lookup", ApiVersionMajor = 6)]
+    private sealed class GetProfileBindingPartialQueryFallbackRuntimeOrderBehavior : IAppBehavior<ProfileBindingQueryFallbackPartialRuntimeInput, ProfileBindingQueryFallbackPartialRuntimeOutput>
+    {
+        public Task<ProfileBindingQueryFallbackPartialRuntimeOutput> HandleAsync(
+            ProfileBindingQueryFallbackPartialRuntimeInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProfileBindingQueryFallbackPartialRuntimeOutput(
+                input.OrderId,
+                input.Quantity));
+        }
+    }
+
     [AppBehavior("tests.rest.profile.selector.bindings")]
     [BehaviorRestProfile(BehaviorRestMethod.Post, "/{orderId}/items", ApiVersionMajor = 6)]
     [BehaviorRestBinding(nameof(ProfileBindingRuntimeInput.OrderId), BehaviorRestBindingSource.Route, Name = "orderId")]
@@ -4209,4 +4312,12 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     private sealed record ProfileBindingGetRuntimeOutput(
         string OrderId,
         string? Ignored);
+
+    private sealed record ProfileBindingQueryFallbackPartialRuntimeInput(
+        string OrderId,
+        int Quantity);
+
+    private sealed record ProfileBindingQueryFallbackPartialRuntimeOutput(
+        string OrderId,
+        int Quantity);
 }

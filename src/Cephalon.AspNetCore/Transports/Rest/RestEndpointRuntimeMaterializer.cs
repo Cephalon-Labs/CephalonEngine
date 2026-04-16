@@ -100,7 +100,8 @@ internal static class RestEndpointRuntimeMaterializer
                     apiRoutesOptions.RestPrefix,
                     behaviorMetadata.RouteGroupPrefix),
                 relativePattern: behaviorMetadata.RelativePattern,
-                bindingDescriptors: behaviorMetadata.BindingDescriptors);
+                bindingDescriptors: behaviorMetadata.BindingDescriptors,
+                preserveImplicitQueryFallback: behaviorMetadata.PreserveImplicitQueryFallback);
         }
 
         return new RestEndpointRuntimeDescriptor(

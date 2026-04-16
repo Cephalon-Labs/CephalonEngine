@@ -1359,6 +1359,47 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverPreservesImplicitQueryFallbackMetadataWhenPartialExplicitBindingsTargetImplicitSourceProfile()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-binding-partial-query")
+            .MapProfile<ProfileProjectionQueryFallbackBehavior>();
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.profile-binding-partial-query",
+                "Profile Binding Partial Query Module",
+                "Exercises partial explicit override resolution when the source shorthand candidate relied on implicit query fallback.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "prefer-route-cart",
+                    behaviorIds: ["tests.profile.projection.query.get"],
+                    pattern: "/lookup/{cartId}",
+                    bindings:
+                    [
+                        new RestEndpointBindingDescriptor("CartId", RestEndpointBindingSource.Route, "cartId")
+                    ])
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Equal("prefer-route-cart", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal("/lookup/{cartId}", candidate.Candidate.ProjectedEndpoint.Metadata["relativePattern"]);
+        Assert.Equal("/api/v6/tests/profile-binding-partial-query/lookup/{cartId}", candidate.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Empty(candidate.Candidate.OriginalProjection.BindingDescriptors);
+        Assert.Equal("preserve-source-implicit-fallback", candidate.Candidate.ProjectedEndpoint.Metadata["bindingFallbackMode"]);
+        Assert.Single(candidate.Candidate.ProjectedEndpoint.BindingDescriptors);
+        Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "CartId" &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "cartId");
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverAllowsPlaceholderRemovalWhenAffectedPropertiesStayExplicitlyBound()
     {
         var builder = new RestBehaviorModuleBuilder();

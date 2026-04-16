@@ -188,7 +188,8 @@ internal static class RestBehaviorProjectionCandidateResolver
             behaviorType: effectiveEndpointProjection.BehaviorType.FullName ?? effectiveEndpointProjection.BehaviorType.Name,
             routeGroupPrefix: publishedRouteGroupPrefix,
             relativePattern: effectiveEndpointProjection.Pattern,
-            bindingDescriptors: runtimeBindings);
+            bindingDescriptors: runtimeBindings,
+            preserveImplicitQueryFallback: effectiveEndpointProjection.PreserveImplicitQueryFallback);
         var precedenceRank = RestEndpointRuntimeMetadata.ResolvePrecedenceRank(effectiveEndpointProjection.AuthoringStyle);
 
         return new ResolvedRestBehaviorEndpointProjectionCandidate(
@@ -348,6 +349,10 @@ internal static class RestBehaviorProjectionCandidateResolver
                 effectiveEndpointProjection.Bindings);
             effectiveEndpointProjection = effectiveEndpointProjection.WithBindings(normalizedBindings);
         }
+
+        effectiveEndpointProjection = effectiveEndpointProjection.WithPreserveImplicitQueryFallback(
+            endpointProjection.Bindings.Count == 0 &&
+            effectiveEndpointProjection.Bindings.Count > 0);
 
         if (!string.Equals(effectiveEndpointProjection.Pattern, endpointProjection.Pattern, StringComparison.Ordinal))
         {

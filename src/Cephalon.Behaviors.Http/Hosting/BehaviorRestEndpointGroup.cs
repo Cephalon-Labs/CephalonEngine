@@ -177,14 +177,15 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         string pattern,
         Action<RouteHandlerBuilder>? configure = null)
         where TBehavior : class
-        => MapBehaviorGet<TBehavior>(pattern, [], configure);
+        => MapBehaviorGet<TBehavior>(pattern, [], preserveImplicitQueryFallback: false, configure);
 
     internal RouteHandlerBuilder MapBehaviorGet<TBehavior>(
         string pattern,
         IReadOnlyList<BehaviorRestBindingDescriptor> bindings,
+        bool preserveImplicitQueryFallback,
         Action<RouteHandlerBuilder>? configure = null)
         where TBehavior : class
-        => MapBehaviorCore<TBehavior>(MapGetCoreMethod, RestBehaviorHttpMethod.Get, pattern, bindings, configure);
+        => MapBehaviorCore<TBehavior>(MapGetCoreMethod, RestBehaviorHttpMethod.Get, pattern, bindings, preserveImplicitQueryFallback, configure);
 
     /// <summary>
     /// Maps a REST <c>POST</c> endpoint that dispatches into the specified behavior.
@@ -200,14 +201,15 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         string pattern,
         Action<RouteHandlerBuilder>? configure = null)
         where TBehavior : class
-        => MapBehaviorPost<TBehavior>(pattern, [], configure);
+        => MapBehaviorPost<TBehavior>(pattern, [], preserveImplicitQueryFallback: false, configure);
 
     internal RouteHandlerBuilder MapBehaviorPost<TBehavior>(
         string pattern,
         IReadOnlyList<BehaviorRestBindingDescriptor> bindings,
+        bool preserveImplicitQueryFallback,
         Action<RouteHandlerBuilder>? configure = null)
         where TBehavior : class
-        => MapBehaviorCore<TBehavior>(MapPostCoreMethod, RestBehaviorHttpMethod.Post, pattern, bindings, configure);
+        => MapBehaviorCore<TBehavior>(MapPostCoreMethod, RestBehaviorHttpMethod.Post, pattern, bindings, preserveImplicitQueryFallback, configure);
 
     /// <summary>
     /// Maps a REST <c>PUT</c> endpoint that dispatches into the specified behavior.
@@ -223,14 +225,15 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         string pattern,
         Action<RouteHandlerBuilder>? configure = null)
         where TBehavior : class
-        => MapBehaviorPut<TBehavior>(pattern, [], configure);
+        => MapBehaviorPut<TBehavior>(pattern, [], preserveImplicitQueryFallback: false, configure);
 
     internal RouteHandlerBuilder MapBehaviorPut<TBehavior>(
         string pattern,
         IReadOnlyList<BehaviorRestBindingDescriptor> bindings,
+        bool preserveImplicitQueryFallback,
         Action<RouteHandlerBuilder>? configure = null)
         where TBehavior : class
-        => MapBehaviorCore<TBehavior>(MapPutCoreMethod, RestBehaviorHttpMethod.Put, pattern, bindings, configure);
+        => MapBehaviorCore<TBehavior>(MapPutCoreMethod, RestBehaviorHttpMethod.Put, pattern, bindings, preserveImplicitQueryFallback, configure);
 
     /// <summary>
     /// Maps a REST <c>PATCH</c> endpoint that dispatches into the specified behavior.
@@ -246,14 +249,15 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         string pattern,
         Action<RouteHandlerBuilder>? configure = null)
         where TBehavior : class
-        => MapBehaviorPatch<TBehavior>(pattern, [], configure);
+        => MapBehaviorPatch<TBehavior>(pattern, [], preserveImplicitQueryFallback: false, configure);
 
     internal RouteHandlerBuilder MapBehaviorPatch<TBehavior>(
         string pattern,
         IReadOnlyList<BehaviorRestBindingDescriptor> bindings,
+        bool preserveImplicitQueryFallback,
         Action<RouteHandlerBuilder>? configure = null)
         where TBehavior : class
-        => MapBehaviorCore<TBehavior>(MapPatchCoreMethod, RestBehaviorHttpMethod.Patch, pattern, bindings, configure);
+        => MapBehaviorCore<TBehavior>(MapPatchCoreMethod, RestBehaviorHttpMethod.Patch, pattern, bindings, preserveImplicitQueryFallback, configure);
 
     /// <summary>
     /// Maps a REST <c>DELETE</c> endpoint that dispatches into the specified behavior.
@@ -269,14 +273,15 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         string pattern,
         Action<RouteHandlerBuilder>? configure = null)
         where TBehavior : class
-        => MapBehaviorDelete<TBehavior>(pattern, [], configure);
+        => MapBehaviorDelete<TBehavior>(pattern, [], preserveImplicitQueryFallback: false, configure);
 
     internal RouteHandlerBuilder MapBehaviorDelete<TBehavior>(
         string pattern,
         IReadOnlyList<BehaviorRestBindingDescriptor> bindings,
+        bool preserveImplicitQueryFallback,
         Action<RouteHandlerBuilder>? configure = null)
         where TBehavior : class
-        => MapBehaviorCore<TBehavior>(MapDeleteCoreMethod, RestBehaviorHttpMethod.Delete, pattern, bindings, configure);
+        => MapBehaviorCore<TBehavior>(MapDeleteCoreMethod, RestBehaviorHttpMethod.Delete, pattern, bindings, preserveImplicitQueryFallback, configure);
 
     /// <inheritdoc />
     public void Add(Action<EndpointBuilder> convention)
@@ -343,6 +348,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         RestBehaviorHttpMethod method,
         string pattern,
         IReadOnlyList<BehaviorRestBindingDescriptor> bindings,
+        bool preserveImplicitQueryFallback,
         Action<RouteHandlerBuilder>? configure)
         where TBehavior : class
     {
@@ -359,6 +365,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             method,
             pattern,
             bindings,
+            preserveImplicitQueryFallback,
             endpoints.ServiceProvider);
         var closedMethod = coreMethod.MakeGenericMethod(typeof(TBehavior), contract.InputType, contract.OutputType);
         var builder = (RouteHandlerBuilder)closedMethod.Invoke(null, [this, pattern, contract])!;
@@ -396,10 +403,11 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         where TBehavior : class, IAppBehavior<TInput, TOutput>
     {
         var bindings = contract.Bindings;
+        var preserveImplicitQueryFallback = contract.PreserveImplicitQueryFallback;
         var builder = group.Routes.MapGet(
             pattern,
             (HttpContext context, BehaviorDispatcher dispatcher) =>
-                InvokeWithoutBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher, bindings));
+                InvokeWithoutBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher, bindings, preserveImplicitQueryFallback));
         return ApplyEndpointConventions<TBehavior, TInput, TOutput>(
                 builder,
                 group,
@@ -417,10 +425,11 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         where TBehavior : class, IAppBehavior<TInput, TOutput>
     {
         var bindings = contract.Bindings;
+        var preserveImplicitQueryFallback = contract.PreserveImplicitQueryFallback;
         var builder = group.Routes.MapPost(
             pattern,
             (HttpContext context, BehaviorDispatcher dispatcher) =>
-                InvokeWithBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher, bindings));
+                InvokeWithBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher, bindings, preserveImplicitQueryFallback));
         return ApplyEndpointConventions<TBehavior, TInput, TOutput>(
                 builder,
                 group,
@@ -438,10 +447,11 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         where TBehavior : class, IAppBehavior<TInput, TOutput>
     {
         var bindings = contract.Bindings;
+        var preserveImplicitQueryFallback = contract.PreserveImplicitQueryFallback;
         var builder = group.Routes.MapPut(
             pattern,
             (HttpContext context, BehaviorDispatcher dispatcher) =>
-                InvokeWithBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher, bindings));
+                InvokeWithBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher, bindings, preserveImplicitQueryFallback));
         return ApplyEndpointConventions<TBehavior, TInput, TOutput>(
                 builder,
                 group,
@@ -459,11 +469,12 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         where TBehavior : class, IAppBehavior<TInput, TOutput>
     {
         var bindings = contract.Bindings;
+        var preserveImplicitQueryFallback = contract.PreserveImplicitQueryFallback;
         var builder = group.Routes.MapMethods(
             pattern,
             ["PATCH"],
             (HttpContext context, BehaviorDispatcher dispatcher) =>
-                InvokeWithBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher, bindings));
+                InvokeWithBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher, bindings, preserveImplicitQueryFallback));
         return ApplyEndpointConventions<TBehavior, TInput, TOutput>(
                 builder,
                 group,
@@ -481,10 +492,11 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         where TBehavior : class, IAppBehavior<TInput, TOutput>
     {
         var bindings = contract.Bindings;
+        var preserveImplicitQueryFallback = contract.PreserveImplicitQueryFallback;
         var builder = group.Routes.MapDelete(
             pattern,
             (HttpContext context, BehaviorDispatcher dispatcher) =>
-                InvokeWithoutBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher, bindings));
+                InvokeWithoutBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher, bindings, preserveImplicitQueryFallback));
         return ApplyEndpointConventions<TBehavior, TInput, TOutput>(
                 builder,
                 group,
@@ -533,7 +545,8 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             normalizedPattern,
             contract.Bindings.Count == 0
                 ? null
-                : RestEndpointBindingDescriptorAdapter.ToRuntimeDescriptors(contract.Bindings)));
+                : RestEndpointBindingDescriptorAdapter.ToRuntimeDescriptors(contract.Bindings),
+            contract.PreserveImplicitQueryFallback));
 
         ApplyResponseConventions(builder, contract);
 
@@ -661,26 +674,39 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
     private static async Task<IResult> InvokeWithoutBodyAsync<TBehavior, TInput, TOutput>(
         HttpContext context,
         BehaviorDispatcher dispatcher,
-        IReadOnlyList<BehaviorRestBindingDescriptor> bindings)
+        IReadOnlyList<BehaviorRestBindingDescriptor> bindings,
+        bool preserveImplicitQueryFallback)
         where TBehavior : class, IAppBehavior<TInput, TOutput>
     {
-        return await InvokeAsync<TBehavior, TInput, TOutput>(context, dispatcher, acceptsBody: false, bindings).ConfigureAwait(false);
+        return await InvokeAsync<TBehavior, TInput, TOutput>(
+            context,
+            dispatcher,
+            acceptsBody: false,
+            bindings,
+            preserveImplicitQueryFallback).ConfigureAwait(false);
     }
 
     private static async Task<IResult> InvokeWithBodyAsync<TBehavior, TInput, TOutput>(
         HttpContext context,
         BehaviorDispatcher dispatcher,
-        IReadOnlyList<BehaviorRestBindingDescriptor> bindings)
+        IReadOnlyList<BehaviorRestBindingDescriptor> bindings,
+        bool preserveImplicitQueryFallback)
         where TBehavior : class, IAppBehavior<TInput, TOutput>
     {
-        return await InvokeAsync<TBehavior, TInput, TOutput>(context, dispatcher, acceptsBody: true, bindings).ConfigureAwait(false);
+        return await InvokeAsync<TBehavior, TInput, TOutput>(
+            context,
+            dispatcher,
+            acceptsBody: true,
+            bindings,
+            preserveImplicitQueryFallback).ConfigureAwait(false);
     }
 
     private static async Task<IResult> InvokeAsync<TBehavior, TInput, TOutput>(
         HttpContext context,
         BehaviorDispatcher dispatcher,
         bool acceptsBody,
-        IReadOnlyList<BehaviorRestBindingDescriptor> bindings)
+        IReadOnlyList<BehaviorRestBindingDescriptor> bindings,
+        bool preserveImplicitQueryFallback)
         where TBehavior : class, IAppBehavior<TInput, TOutput>
     {
         var behaviorId = BehaviorRestEndpointContract.GetBehaviorId(typeof(TBehavior));
@@ -690,7 +716,8 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             var input = await BehaviorRequestJsonComposer.ComposeAsync<TInput>(
                     context,
                     acceptsBody,
-                    bindings)
+                    bindings,
+                    preserveImplicitQueryFallback)
                 .ConfigureAwait(false);
             var behaviorContext = DefaultBehaviorContext.From(context, behaviorId, "rest-api");
             var result = await dispatcher.DispatchAsync(
@@ -933,7 +960,8 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         bool ReturnsBehaviorResult,
         bool UseResultModelEnvelope,
         IReadOnlySet<int> DocumentedStatusCodes,
-        IReadOnlyList<BehaviorRestBindingDescriptor> Bindings)
+        IReadOnlyList<BehaviorRestBindingDescriptor> Bindings,
+        bool PreserveImplicitQueryFallback)
     {
         internal static BehaviorRestEndpointContract Create(
             Type behaviorType,
@@ -945,6 +973,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             RestBehaviorHttpMethod method,
             string pattern,
             IReadOnlyList<BehaviorRestBindingDescriptor> bindings,
+            bool preserveImplicitQueryFallback,
             IServiceProvider services)
         {
             ArgumentNullException.ThrowIfNull(behaviorType);
@@ -1003,7 +1032,8 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
                 returnsBehaviorResult,
                 useResultModelEnvelope,
                 documentedStatusCodes,
-                normalizedBindings);
+                normalizedBindings,
+                preserveImplicitQueryFallback);
         }
 
         internal bool ShouldDocumentStatus(int statusCode) => DocumentedStatusCodes.Contains(statusCode);

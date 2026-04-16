@@ -22,7 +22,8 @@ internal static class RestEndpointRuntimeDescriptorFactory
         string behaviorType,
         string routeGroupPrefix,
         string relativePattern,
-        IReadOnlyList<RestEndpointBindingDescriptor>? bindingDescriptors = null)
+        IReadOnlyList<RestEndpointBindingDescriptor>? bindingDescriptors = null,
+        bool preserveImplicitQueryFallback = false)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sourceKind);
         ArgumentException.ThrowIfNullOrWhiteSpace(method);
@@ -58,7 +59,8 @@ internal static class RestEndpointRuntimeDescriptorFactory
                 authoringStyle,
                 behaviorType,
                 routeGroupPrefix,
-                relativePattern));
+                relativePattern,
+                preserveImplicitQueryFallback));
     }
 
     internal static string BuildBehaviorEndpointId(
@@ -105,9 +107,10 @@ internal static class RestEndpointRuntimeDescriptorFactory
         string authoringStyle,
         string behaviorType,
         string routeGroupPrefix,
-        string relativePattern)
+        string relativePattern,
+        bool preserveImplicitQueryFallback)
     {
-        return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["method"] = method,
             ["authoringStyle"] = authoringStyle,
@@ -116,5 +119,13 @@ internal static class RestEndpointRuntimeDescriptorFactory
             ["relativePattern"] = relativePattern,
             ["sourceId"] = $"{behaviorId}:{method}:{relativePattern}"
         };
+
+        if (preserveImplicitQueryFallback)
+        {
+            metadata[RestEndpointRuntimeMetadata.BindingFallbackModeMetadataKey] =
+                RestEndpointRuntimeMetadata.PreserveSourceImplicitFallbackMode;
+        }
+
+        return metadata;
     }
 }
