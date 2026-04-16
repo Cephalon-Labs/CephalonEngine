@@ -66,6 +66,10 @@ public sealed class RestEndpointRuntimeDescriptor
     /// The host-level shorthand override identifier when runtime governance actually changes the
     /// published endpoint answer.
     /// </param>
+    /// <param name="matchedOverrideIds">
+    /// The ordered shorthand override identifiers that matched this endpoint's originating
+    /// candidate before one winner was selected.
+    /// </param>
     public RestEndpointRuntimeDescriptor(
         string id,
         string transportId,
@@ -93,7 +97,8 @@ public sealed class RestEndpointRuntimeDescriptor
         string? sourceId = null,
         string? requiredCapabilityKey = null,
         string? originalRequiredCapabilityKey = null,
-        string? appliedOverrideId = null)
+        string? appliedOverrideId = null,
+        IReadOnlyList<string>? matchedOverrideIds = null)
     {
         Id = NormalizeRequired(id, nameof(id));
         TransportId = NormalizeRequired(transportId, nameof(transportId));
@@ -118,6 +123,7 @@ public sealed class RestEndpointRuntimeDescriptor
         RequiredCapabilityKey = NormalizeOptional(requiredCapabilityKey);
         OriginalRequiredCapabilityKey = NormalizeOptional(originalRequiredCapabilityKey);
         AppliedOverrideId = NormalizeOptional(appliedOverrideId);
+        MatchedOverrideIds = NormalizeOrderedList(matchedOverrideIds);
         CandidateId = NormalizeOptional(candidateId);
         BindingDescriptors = NormalizeBindingDescriptors(bindingDescriptors);
         BindingFallbackMode = NormalizeBindingFallbackMode(bindingFallbackMode);
@@ -257,6 +263,12 @@ public sealed class RestEndpointRuntimeDescriptor
     public string? AppliedOverrideId { get; }
 
     /// <summary>
+    /// Gets the ordered shorthand override identifiers that matched this endpoint's originating
+    /// candidate before one winner was selected.
+    /// </summary>
+    public IReadOnlyList<string> MatchedOverrideIds { get; }
+
+    /// <summary>
     /// Gets the stable originating candidate identifier when this endpoint was published from the
     /// module-owned behavior projection pipeline.
     /// </summary>
@@ -336,5 +348,31 @@ public sealed class RestEndpointRuntimeDescriptor
         }
 
         return value.Value;
+    }
+
+    private static string[] NormalizeOrderedList(IReadOnlyList<string>? values)
+    {
+        if (values is null || values.Count == 0)
+        {
+            return [];
+        }
+
+        var normalized = new List<string>(values.Count);
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var value in values)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                continue;
+            }
+
+            var trimmed = value.Trim();
+            if (seen.Add(trimmed))
+            {
+                normalized.Add(trimmed);
+            }
+        }
+
+        return normalized.ToArray();
     }
 }

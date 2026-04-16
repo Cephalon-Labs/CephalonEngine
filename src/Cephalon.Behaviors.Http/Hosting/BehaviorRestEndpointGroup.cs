@@ -40,6 +40,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
     private readonly string? moduleRemarks;
     private readonly string routePrefix;
     private string? runtimeCandidateId;
+    private string[] runtimeMatchedOverrideIds = [];
     private string runtimeAuthoringStyle = RestEndpointRuntimeMetadata.BehaviorHelperAuthoringStyle;
     private string runtimeSourceKind = RestEndpointRuntimeMetadata.ManualSourceKind;
     private RouteGroupBuilder? routes;
@@ -117,6 +118,15 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         runtimeCandidateId = string.IsNullOrWhiteSpace(candidateId)
             ? null
             : candidateId.Trim();
+    }
+
+    internal void UseRuntimeMatchedOverrideIds(IReadOnlyList<string>? matchedOverrideIds)
+    {
+        runtimeMatchedOverrideIds = matchedOverrideIds?
+            .Where(static value => !string.IsNullOrWhiteSpace(value))
+            .Select(static value => value.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray() ?? [];
     }
 
     /// <summary>
@@ -555,7 +565,8 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             contract.Bindings.Count == 0
                 ? null
                 : RestEndpointBindingDescriptorAdapter.ToRuntimeDescriptors(contract.Bindings),
-            contract.PreserveImplicitQueryFallback));
+            contract.PreserveImplicitQueryFallback,
+            group.runtimeMatchedOverrideIds));
 
         ApplyResponseConventions(builder, contract);
 

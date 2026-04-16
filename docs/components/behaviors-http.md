@@ -547,7 +547,10 @@ published runtime endpoint conventions, including XML-derived behavior docs when
 module-description fallback when they do not, and published candidate registration now reconciles
 capability-only no-op matches against the actual mapped endpoint so `MatchedOverrideIds` can still
 show the winning rule without forcing `AppliedOverrideId` to pretend a same-key rewrite or no-op
-clear changed the published boundary. When more than one suppression
+clear changed the published boundary. The final published `/engine/rest-endpoints` plus
+`snapshot.RestEndpoints` answer now also keeps that same ordered `MatchedOverrideIds` set visible
+directly, so operators no longer need a candidate join to see matched shorthand override rules on a
+live endpoint. When more than one suppression
 or override rule matches the same shorthand candidate, that same runtime entry now also keeps the
 full ordered match set visible through `MatchedSuppressionIds` and `MatchedOverrideIds` before
 `SuppressedBySuppressionId` or `AppliedOverrideId` identifies the selected winner. Today that
@@ -628,6 +631,9 @@ Current governance baseline:
   `AppliedOverrideId`, so operators can read the source-versus-effective capability story directly
   from `/engine/rest-endpoints` when shorthand governance rewrites or clears a boundary; endpoint-
   level capability-only no-op clears now leave `AppliedOverrideId = null`
+- published endpoints now also expose ordered `MatchedOverrideIds`, so the final runtime answer can
+  keep shorthand override matches visible, including capability-only no-op matches that still leave
+  `AppliedOverrideId = null`
 - `/engine/rest-endpoint-candidates` plus `RuntimeIntrospectionSnapshot.RestEndpointCandidates` now
   follow that same no-op capability-governance truth for published candidates: capability-only clear
   matches against an already-empty boundary and same-key capability rewrites keep

@@ -85,4 +85,5 @@ internal sealed record RestBehaviorEndpointMetadata(
     string RelativePattern,
     string? CandidateId,
     IReadOnlyList<RestEndpointBindingDescriptor>? BindingDescriptors,
-    bool PreserveImplicitQueryFallback);
+    bool PreserveImplicitQueryFallback,
+    IReadOnlyList<string>? MatchedOverrideIds);

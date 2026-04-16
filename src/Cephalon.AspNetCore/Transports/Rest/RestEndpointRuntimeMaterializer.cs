@@ -112,7 +112,8 @@ internal static class RestEndpointRuntimeMaterializer
                 preserveImplicitQueryFallback: behaviorMetadata.PreserveImplicitQueryFallback,
                 requiredCapabilityKey: requiredCapabilityKey,
                 originalRequiredCapabilityKey: originalRequiredCapabilityKey,
-                appliedOverrideId: appliedOverrideId);
+                appliedOverrideId: appliedOverrideId,
+                matchedOverrideIds: behaviorMetadata.MatchedOverrideIds);
         }
 
         return new RestEndpointRuntimeDescriptor(

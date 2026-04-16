@@ -204,7 +204,8 @@ internal static class RestBehaviorProjectionCandidateResolver
             preserveImplicitQueryFallback: effectiveEndpointProjection.PreserveImplicitQueryFallback,
             requiredCapabilityKey: appliedCapabilityOverride?.ClearRequiredCapability == true
                 ? null
-                : appliedCapabilityOverride?.RequiredCapabilityKey);
+                : appliedCapabilityOverride?.RequiredCapabilityKey,
+            matchedOverrideIds: overrideDecision.MatchedOverrideIds);
         var precedenceRank = RestEndpointRuntimeMetadata.ResolvePrecedenceRank(effectiveEndpointProjection.AuthoringStyle);
 
         return new ResolvedRestBehaviorEndpointProjectionCandidate(

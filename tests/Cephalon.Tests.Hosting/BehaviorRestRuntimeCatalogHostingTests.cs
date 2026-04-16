@@ -686,6 +686,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("/api/v6/tests/generated/runtime/override/orders/{orderId}", endpoint.RoutePattern);
         Assert.Equal("v6", endpoint.OpenApiDocumentName);
         Assert.Equal(6, endpoint.ApiVersionMajor);
+        Assert.Equal(["prefer-v6"], endpoint.MatchedOverrideIds);
         Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, endpoint.Metadata["authoringStyle"]);
 
         var candidate = Assert.Single(candidates, static item =>
@@ -712,6 +713,10 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             string.Equals(item.AppliedOverrideId, "prefer-v6", StringComparison.Ordinal) &&
             item.OriginalProjection.ApiVersionMajor == 4 &&
             string.Equals(item.OriginalProjection.RoutePattern, "/api/v4/tests/generated/runtime/override/orders/{orderId}", StringComparison.Ordinal));
+        Assert.Contains(snapshot.RestEndpoints, item =>
+            string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal) &&
+            string.Equals(item.AppliedOverrideId, "prefer-v6", StringComparison.Ordinal) &&
+            item.MatchedOverrideIds.SequenceEqual(["prefer-v6"]));
 
         var payload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>("/api/v6/tests/generated/runtime/override/orders/ord-42");
         Assert.NotNull(payload);
@@ -845,6 +850,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
         Assert.Equal("prefer-public-docs", candidate.AppliedOverrideId);
         Assert.Equal(endpoint.Id, candidate.ProjectedEndpoint.Id);
+        Assert.Equal(["prefer-public-docs"], endpoint.MatchedOverrideIds);
         Assert.Equal(endpoint.EndpointName, candidate.ProjectedEndpoint.EndpointName);
         Assert.Equal(endpoint.Summary, candidate.ProjectedEndpoint.Summary);
         Assert.Equal(endpoint.Description, candidate.ProjectedEndpoint.Description);
@@ -868,6 +874,9 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             string.Equals(item.AppliedOverrideId, "prefer-public-docs", StringComparison.Ordinal) &&
             string.Equals(item.ProjectedEndpoint.EndpointName, "tests.generated.runtimeoverride.public.lookup", StringComparison.Ordinal) &&
             string.Equals(item.ProjectedEndpoint.Summary, "Gets a generated runtime order through host-governed endpoint metadata.", StringComparison.Ordinal));
+        Assert.Contains(snapshot.RestEndpoints, item =>
+            string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal) &&
+            item.MatchedOverrideIds.SequenceEqual(["prefer-public-docs"]));
 
         var routeEndpoint = Assert.Single(
             ((IEndpointRouteBuilder)app).DataSources
@@ -1100,12 +1109,14 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Null(endpoint.RequiredCapabilityKey);
         Assert.Null(endpoint.OriginalRequiredCapabilityKey);
         Assert.Null(endpoint.AppliedOverrideId);
+        Assert.Contains("clear-public-capability-noop", endpoint.MatchedOverrideIds);
 
         Assert.Contains(snapshot.RestEndpoints, item =>
             string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal) &&
             item.RequiredCapabilityKey is null &&
             item.OriginalRequiredCapabilityKey is null &&
-            item.AppliedOverrideId is null);
+            item.AppliedOverrideId is null &&
+            item.MatchedOverrideIds.Contains("clear-public-capability-noop"));
 
         var candidate = Assert.Single(candidates, static item =>
             string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.profile.runtimeclear.noop.capability", StringComparison.Ordinal));
@@ -1178,6 +1189,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("restricted.original", endpoint.RequiredCapabilityKey);
         Assert.Equal("restricted.original", endpoint.OriginalRequiredCapabilityKey);
         Assert.Null(endpoint.AppliedOverrideId);
+        Assert.Contains("prefer-public-capability-same-key", endpoint.MatchedOverrideIds);
 
         var candidate = Assert.Single(candidates, static item =>
             string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.profile.runtimeoverride.capability", StringComparison.Ordinal));
@@ -1201,7 +1213,8 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal) &&
             string.Equals(item.RequiredCapabilityKey, "restricted.original", StringComparison.Ordinal) &&
             string.Equals(item.OriginalRequiredCapabilityKey, "restricted.original", StringComparison.Ordinal) &&
-            item.AppliedOverrideId is null);
+            item.AppliedOverrideId is null &&
+            item.MatchedOverrideIds.Contains("prefer-public-capability-same-key"));
 
         var routeEndpoint = Assert.Single(
             ((IEndpointRouteBuilder)app).DataSources

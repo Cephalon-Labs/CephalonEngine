@@ -991,6 +991,8 @@ public sealed class PackageSurfaceTests
             .GetProperty("OriginalRequiredCapabilityKey", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor)
             .GetProperty("AppliedOverrideId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor)
+            .GetProperty("MatchedOverrideIds", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]
