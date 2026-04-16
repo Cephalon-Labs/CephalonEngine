@@ -923,8 +923,12 @@ public sealed class PackageSurfaceTests
     {
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideDescriptor)
             .GetProperty("RequiredCapabilityKey", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideDescriptor)
+            .GetProperty("ClearRequiredCapability", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions)
             .GetProperty("RequiredCapabilityKey", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions)
+            .GetProperty("ClearRequiredCapability", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

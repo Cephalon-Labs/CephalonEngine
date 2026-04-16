@@ -2,7 +2,7 @@
 
 Decision baseline date: `April 14, 2026`
 
-Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`, `ENG-058-T67` / GitHub issue `#332`, `ENG-058-T68` / GitHub issue `#333`, `ENG-058-T69` / GitHub issue `#334`, `ENG-058-T70` / GitHub issue `#335`, `ENG-058-T71` / GitHub issue `#336`, `ENG-058-T72` / GitHub issue `#337`, `ENG-058-T73` / GitHub issue `#338`, `ENG-058-T74` / GitHub issue `#339`, `ENG-058-T75` / GitHub issue `#340`, `ENG-058-T76` / GitHub issue `#341`, `ENG-058-T77` / GitHub issue `#342`, `ENG-058-T78` / GitHub issue `#343`, `ENG-058-T79` / GitHub issue `#344`, `ENG-058-T80` / GitHub issue `#345`, `ENG-058-T81` / GitHub issue `#346`, `ENG-058-T82` / GitHub issue `#347`, `ENG-058-T83` / GitHub issue `#348`, `ENG-058-T84` / GitHub issue `#349`, `ENG-058-T85` / GitHub issue `#350`, `ENG-058-T86` / GitHub issue `#351`, `ENG-058-T87` / GitHub issue `#352`, `ENG-058-T88` / GitHub issue `#353`, `ENG-058-T89` / GitHub issue `#354`, `ENG-058-T90` / GitHub issue `#355`, `ENG-058-T91` / GitHub issue `#356`, `ENG-058-T92` / GitHub issue `#357`, `ENG-058-T93` / GitHub issue `#358`, `ENG-058-T94` / GitHub issue `#359`, `ENG-058-T95` / GitHub issue `#360`, `ENG-058-T96` / GitHub issue `#361`, `ENG-058-T97` / GitHub issue `#362`, `ENG-058-T98` / GitHub issue `#363`
+Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`, `ENG-058-T67` / GitHub issue `#332`, `ENG-058-T68` / GitHub issue `#333`, `ENG-058-T69` / GitHub issue `#334`, `ENG-058-T70` / GitHub issue `#335`, `ENG-058-T71` / GitHub issue `#336`, `ENG-058-T72` / GitHub issue `#337`, `ENG-058-T73` / GitHub issue `#338`, `ENG-058-T74` / GitHub issue `#339`, `ENG-058-T75` / GitHub issue `#340`, `ENG-058-T76` / GitHub issue `#341`, `ENG-058-T77` / GitHub issue `#342`, `ENG-058-T78` / GitHub issue `#343`, `ENG-058-T79` / GitHub issue `#344`, `ENG-058-T80` / GitHub issue `#345`, `ENG-058-T81` / GitHub issue `#346`, `ENG-058-T82` / GitHub issue `#347`, `ENG-058-T83` / GitHub issue `#348`, `ENG-058-T84` / GitHub issue `#349`, `ENG-058-T85` / GitHub issue `#350`, `ENG-058-T86` / GitHub issue `#351`, `ENG-058-T87` / GitHub issue `#352`, `ENG-058-T88` / GitHub issue `#353`, `ENG-058-T89` / GitHub issue `#354`, `ENG-058-T90` / GitHub issue `#355`, `ENG-058-T91` / GitHub issue `#356`, `ENG-058-T92` / GitHub issue `#357`, `ENG-058-T93` / GitHub issue `#358`, `ENG-058-T94` / GitHub issue `#359`, `ENG-058-T95` / GitHub issue `#360`, `ENG-058-T96` / GitHub issue `#361`, `ENG-058-T97` / GitHub issue `#362`, `ENG-058-T98` / GitHub issue `#363`, `ENG-058-T99` / GitHub issue `#364`
 
 Cross-references: `docs/components/behaviors-http.md`, `docs/module-authoring.md`, `docs/architecture.md`, `docs/architecture-review-2026-04.md`, `docs/project-memory.md`
 
@@ -613,6 +613,7 @@ The shipped configuration-driven override surface is still intentionally narrow:
 can target the original shorthand candidate shape through `ApiVersionMajors`, `Methods`,
 `RelativePatterns`, and `RouteGroupPrefixes`, then change the effective shorthand candidate
 `ApiVersionMajor`, HTTP `Method`, bounded published `RouteGroupPrefix`, relative `Pattern`,
+`RequiredCapabilityKey`, `ClearRequiredCapability`, `EndpointName`, `Summary`, `Description`,
 and/or explicit `Bindings` plus `RemovedBindingProperties`, but the current route-pattern slice is
 still constrained enough to keep binding semantics truthful. Cephalon therefore keeps the
 route-version segment and document name
@@ -636,6 +637,13 @@ to more than one published group, and does not yet support route rewrites that p
 implicit properties into placeholders or broader host-level binding rewrites beyond the current
 replace-plus-merge-explicit
 upsert-plus-withdraw model that would silently change how one shorthand endpoint reads its input.
+
+Within that bounded capability-governance slice, `ClearRequiredCapability = true` is the explicit
+host answer for removing an inherited shorthand capability boundary. It is mutually exclusive with
+`RequiredCapabilityKey`, remains visible through `/engine/rest-endpoint-overrides`, and must drive
+the same `null` effective capability boundary across the shorthand candidate projection, the
+materialized ASP.NET Core endpoint metadata, `/engine/rest-endpoints`, and `snapshot.RestEndpoints`
+rather than leaving the earlier shorthand guard in place invisibly.
 
 If the same behavior needs multiple public API versions simultaneously, model that as multiple
 explicit projections or versioned modules. Do not hide multi-version public contracts behind one
@@ -817,6 +825,14 @@ Status:
   and `RequireCapability(...)` now treats the last declared capability boundary as authoritative so
   a later host override can supersede an earlier shorthand `configureEndpoint` guard instead of
   stacking both boundaries
+- the next shorthand capability-boundary clear follow-through is now shipped through
+  `ENG-058-T99`, so `RestApi:Overrides` can now also declare
+  `ClearRequiredCapability = true` for descriptor-backed shorthand candidates, that action stays
+  visible through `/engine/rest-endpoint-overrides` plus `snapshot.RestEndpointOverrides`,
+  shorthand candidate projections plus actual ASP.NET Core endpoint metadata plus
+  `/engine/rest-endpoints` now all agree on `RequiredCapabilityKey = null` when that clear wins,
+  and hosts now fail fast if one override rule tries to both set `RequiredCapabilityKey` and clear
+  it in the same action
 - controlled configuration overrides that promote implicit properties into route placeholders
   beyond the shipped constrained remaining-body-fallback-plus-bounded-query-fallback path, or
   rewrite input binding beyond constrained explicit-binding replacement, remain later work now that the
@@ -866,9 +882,10 @@ The following points are durable enough to keep outside thread-local context.
 - the shipped `RestApi:Suppressions` baseline is intentionally limited to suppression of
   descriptor-backed shorthand candidates, and the shipped `RestApi:Overrides` baseline is
   intentionally limited to shorthand `ApiVersionMajor`, `Method`, bounded `RouteGroupPrefix`,
-  constrained relative `Pattern`, and constrained explicit `Bindings` rewrites with either default
-  full replacement or typed `MergeExplicit` property upserts; neither surface rewrites explicit
-  module DSL or manual routes
+  constrained relative `Pattern`, `RequiredCapabilityKey`, `ClearRequiredCapability`,
+  `EndpointName`, `Summary`, `Description`, and constrained explicit `Bindings` rewrites with
+  either default full replacement or typed `MergeExplicit` property upserts plus
+  `RemovedBindingProperties`; neither surface rewrites explicit module DSL or manual routes
 - both rule families can now target exact original-shape shorthand candidates through
   `CandidateIds`, can also refine `Behaviors`/`Modules` targeting with `ApiVersionMajors`,
   `Methods`, `RelativePatterns`, and `RouteGroupPrefixes`, and all of those selectors match the
@@ -881,6 +898,13 @@ The following points are durable enough to keep outside thread-local context.
   metadata aligned with the final behavior-backed runtime endpoint conventions, including XML-
   derived summaries/descriptions when those docs exist and module-description fallback when they do
   not
+- when REST governance rewrites shorthand `RequiredCapabilityKey` or clears it through
+  `ClearRequiredCapability`, the same effective answer must drive
+  `ProjectedEndpoint.RequiredCapabilityKey`, actual ASP.NET Core endpoint metadata,
+  `/engine/rest-endpoints`, and `snapshot.RestEndpoints`; `RequireCapability(...)` and
+  `ClearRequiredCapability()` now both follow last-declaration-wins so a host can intentionally
+  replace or remove an earlier shorthand capability boundary without leaving stacked or hidden
+  guards behind
 - within that constrained pattern slice, placeholder-preserving rewrites stay the default and
   placeholder renames now also work when the effective explicit route-binding plan covers the
   renamed placeholder set exactly, placeholder removals now also work when the original

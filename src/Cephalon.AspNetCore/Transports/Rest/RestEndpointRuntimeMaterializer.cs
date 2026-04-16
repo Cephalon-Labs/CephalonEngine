@@ -69,9 +69,12 @@ internal static class RestEndpointRuntimeMaterializer
             ?? behaviorMetadata?.Summary;
         var description = endpoint.Metadata.OfType<IEndpointDescriptionMetadata>().LastOrDefault()?.Description
             ?? behaviorMetadata?.Description;
-        var requiredCapabilityKey = endpoint.Metadata
+        var requiredCapabilityMetadata = endpoint.Metadata
             .OfType<RestEndpointCapabilityMetadata>()
-            .LastOrDefault()?.CapabilityKey;
+            .LastOrDefault();
+        var requiredCapabilityKey = requiredCapabilityMetadata?.ClearsExisting == true
+            ? null
+            : requiredCapabilityMetadata?.CapabilityKey;
         var sourceKind = behaviorMetadata?.SourceKind
             ?? RestEndpointRuntimeMetadata.ManualSourceKind;
         var tags = behaviorMetadata is null

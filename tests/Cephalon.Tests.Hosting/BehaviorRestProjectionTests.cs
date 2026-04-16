@@ -1012,6 +1012,38 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverAppliesClearRequiredCapabilityOverrideToShorthandCandidates()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        builder.Group("/tests/generated-capability-clear")
+            .MapGeneratedProfiles("tests.generated.projection.precedence");
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.generated-capability-clear",
+                "Generated Capability Clear Module",
+                "Exercises shorthand capability-boundary clearing through host governance.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "clear-public-capability",
+                    behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                    clearRequiredCapability: true)
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Equal("clear-public-capability", candidate.Candidate.AppliedOverrideId);
+        Assert.Null(candidate.Candidate.ProjectedEndpoint.RequiredCapabilityKey);
+        Assert.NotNull(candidate.AppliedCapabilityOverride);
+        Assert.True(candidate.AppliedCapabilityOverride.ClearRequiredCapability);
+        Assert.Null(candidate.AppliedCapabilityOverride.RequiredCapabilityKey);
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverAppliesRouteGroupPrefixOverrideAfterApiVersionRewrite()
     {
         var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
@@ -2192,6 +2224,31 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestEndpointOverrideOptionsTreatClearRequiredCapabilityAsOverrideAction()
+    {
+        var options = new RestEndpointOverrideOptions(
+            id: "capability-clear-only",
+            behaviorIds: ["tests.generated.projection.precedence.lookup"],
+            clearRequiredCapability: true);
+
+        Assert.True(options.ClearRequiredCapability);
+        Assert.True(options.HasValues);
+    }
+
+    [Fact]
+    public void RestEndpointOverrideOptionsRejectSettingAndClearingRequiredCapabilityInSameRule()
+    {
+        var exception = Assert.Throws<ArgumentException>(() =>
+            new RestEndpointOverrideOptions(
+                id: "invalid-capability-rule",
+                behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                requiredCapabilityKey: "restricted.override",
+                clearRequiredCapability: true));
+
+        Assert.Contains("cannot both set RequiredCapabilityKey and ClearRequiredCapability", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void RestEndpointOverrideOptionsRejectUnsupportedHttpMethod()
     {
         var exception = Assert.Throws<ArgumentException>(() =>
@@ -2742,7 +2799,8 @@ public sealed class BehaviorRestProjectionTests
                 appliedOverrideId: "capability-only"),
             AppliedCapabilityOverride: new AppliedRestEndpointCapabilityOverride(
                 "capability-only",
-                "restricted.override"));
+                "restricted.override",
+                ClearRequiredCapability: false));
 
         RestBehaviorProjectionMaterializer.MapGroup(
             apiGroup,
@@ -2761,6 +2819,104 @@ public sealed class BehaviorRestProjectionTests
         Assert.Equal(
             "restricted.override",
             endpoint.Metadata.OfType<RestEndpointCapabilityMetadata>().LastOrDefault()?.CapabilityKey);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionMaterializerClearsRequiredCapabilityOverridesOnPublishedRouteMetadata()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        using var app = builder.Build();
+        var apiGroup = app.MapGroup("/api");
+        var module = new ProjectionCountingRestModule();
+        var endpointProjection = RestBehaviorEndpointProjection.Create<ProjectionCartBehavior>(
+            RestBehaviorHttpMethod.Get,
+            "/{cartId}",
+            configureEndpoint: static route => route.RequireCapability("restricted.original"),
+            authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle);
+        var projection = new RestBehaviorRouteGroupProjection(
+            Prefix: "/tests/typed-capability-clear/orders",
+            TagName: "Typed Capability Clear API",
+            TagDescription: null,
+            HasExplicitTagDescription: false,
+            ApiVersionMajor: 6,
+            HasExplicitApiVersion: true,
+            ProfileApiVersionSourceBehaviorId: null,
+            GroupConventions: [],
+            Endpoints: [endpointProjection]);
+        var projectedEndpoint = new RestEndpointRuntimeDescriptor(
+            id: "typed-capability-clear-with-override",
+            transportId: "rest-api",
+            sourceKind: RestEndpointRuntimeMetadata.ModuleDslSourceKind,
+            method: "GET",
+            routePattern: "/api/v6/tests/typed-capability-clear/orders/{cartId}",
+            sourceModuleId: module.Descriptor.Id,
+            sourceModuleVersion: module.Descriptor.Version,
+            sourceModuleVersionMajor: 1,
+            behaviorId: "tests.cart.projection",
+            endpointName: "tests.typed.capability.clear.lookup",
+            openApiDocumentName: "v6",
+            apiVersionMajor: 6,
+            tags: ["Typed Capability Clear API"],
+            summary: "Gets a projection cart through cleared capability governance.",
+            description: "Publishes explicit capability-clear overrides after shorthand materialization.",
+            metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase),
+            authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle,
+            routeGroupPrefix: "/api/v6/tests/typed-capability-clear/orders",
+            relativePattern: "/{cartId}",
+            behaviorType: typeof(ProjectionCartBehavior).FullName,
+            sourceId: "tests.cart.projection:GET:/{cartId}",
+            requiredCapabilityKey: null);
+        var originalProjection = new RestEndpointCandidateProjectionDescriptor(
+            method: "GET",
+            routePattern: "/api/v6/tests/typed-capability-clear/orders/{cartId}",
+            routeGroupPrefix: "/api/v6/tests/typed-capability-clear/orders",
+            relativePattern: "/{cartId}",
+            apiVersionMajor: 6,
+            openApiDocumentName: "v6");
+        var candidate = new ResolvedRestBehaviorEndpointProjectionCandidate(
+            GroupIndex: 0,
+            EffectiveEndpointProjection: endpointProjection,
+            Candidate: new RestEndpointCandidateRuntimeDescriptor(
+                id: "typed-capability-clear-candidate",
+                projectedEndpoint: projectedEndpoint,
+                originalProjection: originalProjection,
+                authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle,
+                precedenceRank: RestEndpointRuntimeMetadata.ResolvePrecedenceRank(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle),
+                status: RestEndpointCandidateStatus.Published,
+                appliedOverrideId: "capability-clear-only"),
+            AppliedCapabilityOverride: new AppliedRestEndpointCapabilityOverride(
+                "capability-clear-only",
+                RequiredCapabilityKey: null,
+                ClearRequiredCapability: true));
+
+        RestBehaviorProjectionMaterializer.MapGroup(
+            apiGroup,
+            module,
+            projection,
+            [candidate],
+            new ApiRoutesOptions());
+
+        var dataSources = ((IEndpointRouteBuilder)app).DataSources;
+        var endpoint = Assert.Single(
+            dataSources
+                .SelectMany(static dataSource => dataSource.Endpoints)
+                .OfType<RouteEndpoint>(),
+            static item => string.Equals(item.RoutePattern.RawText, "/api/v6/tests/typed-capability-clear/orders/{cartId}", StringComparison.Ordinal));
+
+        var capabilityMetadata = endpoint.Metadata.OfType<RestEndpointCapabilityMetadata>().LastOrDefault();
+        Assert.NotNull(capabilityMetadata);
+        Assert.True(capabilityMetadata.ClearsExisting);
+        Assert.Null(capabilityMetadata.CapabilityKey);
     }
 
     private static Type CreateDynamicProfileBehaviorType(

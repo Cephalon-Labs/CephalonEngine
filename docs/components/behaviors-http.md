@@ -449,7 +449,7 @@ Current helper behavior:
   boundary, or explicit binding
   plan for descriptor-backed shorthand candidates through `RestApi:Overrides`, which now supports
   `ApiVersionMajor`, `Method`, `RouteGroupPrefix`, `Pattern`, `RequiredCapabilityKey`,
-  `Bindings`, `RemovedBindingProperties`, typed `BindingMode`, and shorthand endpoint metadata
+  `ClearRequiredCapability`, `Bindings`, `RemovedBindingProperties`, typed `BindingMode`, and shorthand endpoint metadata
   `EndpointName`, `Summary`, and `Description`, records the applied rule id through
   `AppliedOverrideId` when the selected rule materially changes the effective answer, rewrites the
   shorthand candidate's `/v{major}` route segment and OpenAPI document name together when version
@@ -569,7 +569,7 @@ Current governance baseline:
 
 - configure shorthand suppression through `RestApi:Suppressions`
 - configure shorthand API-version, HTTP-method, bounded route-group-prefix, constrained
-  route-pattern, explicit binding-plan, and endpoint-metadata overrides through
+  route-pattern, capability-boundary set-or-clear, explicit binding-plan, and endpoint-metadata overrides through
   `RestApi:Overrides`
 - target one or more `CandidateIds`, `Behaviors`, `Modules`, and optional `AuthoringStyles`, then
   optionally refine that match with `ApiVersionMajors`, `Methods`, `RelativePatterns`, and
@@ -580,7 +580,8 @@ Current governance baseline:
   when that action is present, accept only `GET`, `POST`, `PUT`, `PATCH`, or `DELETE` for
   `Method`, require `Pattern` to be a valid relative ASP.NET Core route pattern, require
   `RouteGroupPrefix` to stay beneath the active REST root without placeholders or silent effective
-  API-version changes, and fail fast if the effective binding plan becomes invalid for the
+  API-version changes, reject any rule that sets both `RequiredCapabilityKey` and
+  `ClearRequiredCapability`, and fail fast if the effective binding plan becomes invalid for the
   effective HTTP method
 - omit `AuthoringStyles` to suppress both shorthand styles by default:
   `behavior-module-profile` and `behavior-module-generated`
@@ -598,8 +599,9 @@ Current governance baseline:
   host-level version rewrites, while shorthand method and constrained pattern overrides can still
   apply
 - the current override slice rewrites only the effective API major version, HTTP method,
-  constrained relative route pattern, and/or explicit binding plan, keeping the `/v{major}` route
-  segment, OpenAPI document name, mapped endpoint, and runtime catalogs aligned
+  constrained relative route pattern, required capability boundary, capability-boundary clear,
+  endpoint metadata, and/or explicit binding plan, keeping the `/v{major}` route segment,
+  OpenAPI document name, mapped endpoint, and runtime catalogs aligned
 - pattern rewrites preserve the placeholder set by default and can now also rename placeholders
   when the effective explicit route-binding plan covers the renamed placeholder set exactly
 - placeholder removals can now also apply when the original projection already exposes explicit
@@ -614,6 +616,11 @@ Current governance baseline:
   original explicit bindings through `RemovedBindingProperties`, while failing fast if a removal
   targets a property the source shorthand never bound explicitly or if one merge rule both removes
   and overrides the same property
+- `ClearRequiredCapability = true` is now the explicit host answer for removing an inherited
+  shorthand capability boundary; when that action wins, shorthand candidate projections, actual
+  ASP.NET Core endpoint metadata, `/engine/rest-endpoints`, and `snapshot.RestEndpoints` all keep
+  `RequiredCapabilityKey = null`, and `RequireCapability(...)` plus `ClearRequiredCapability()`
+  both follow last-declaration-wins semantics so the earlier shorthand guard does not linger
 - broader implicit-property promotion beyond that constrained body-fallback-plus-bounded-query-
   fallback path plus broader binding-shape overrides beyond the current
   replace-plus-merge-explicit upsert-plus-withdraw model remain later work

@@ -970,6 +970,88 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonClearsRequiredCapabilityOverridesAndExposesOverrideCatalog()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "4";
+        builder.Configuration["OpenApi:DefaultVersion"] = "4";
+        builder.Configuration["Engine:Trust:Capabilities:restricted.original"] = "Denied";
+        builder.Configuration["RestApi:Overrides:clear-public-capability:Behaviors:0"] = "tests.profile.runtimeclear.capability";
+        builder.Configuration["RestApi:Overrides:clear-public-capability:ClearRequiredCapability"] = "true";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileCapabilityClearRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(overrides);
+        Assert.NotNull(snapshot);
+
+        var endpoint = Assert.Single(endpoints, static item =>
+            string.Equals(item.BehaviorId, "tests.profile.runtimeclear.capability", StringComparison.Ordinal));
+        Assert.Equal("/api/v4/tests/profile/runtime/clear/capability/orders/{orderId}", endpoint.RoutePattern);
+        Assert.Null(endpoint.RequiredCapabilityKey);
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.profile.runtimeclear.capability", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+        Assert.Equal("clear-public-capability", candidate.AppliedOverrideId);
+        Assert.Null(candidate.ProjectedEndpoint.RequiredCapabilityKey);
+
+        var rule = Assert.Single(overrides, static item => string.Equals(item.Id, "clear-public-capability", StringComparison.Ordinal));
+        Assert.True(rule.ClearRequiredCapability);
+        Assert.Null(rule.RequiredCapabilityKey);
+
+        Assert.Contains(snapshot.RestEndpointOverrides, item =>
+            string.Equals(item.Id, "clear-public-capability", StringComparison.Ordinal) &&
+            item.ClearRequiredCapability &&
+            item.RequiredCapabilityKey is null);
+        Assert.Contains(snapshot.RestEndpointCandidates, item =>
+            string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
+            string.Equals(item.AppliedOverrideId, "clear-public-capability", StringComparison.Ordinal) &&
+            item.ProjectedEndpoint.RequiredCapabilityKey is null);
+        Assert.Contains(snapshot.RestEndpoints, item =>
+            string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal) &&
+            item.RequiredCapabilityKey is null);
+
+        var routeEndpoint = Assert.Single(
+            ((IEndpointRouteBuilder)app).DataSources
+                .SelectMany(static dataSource => dataSource.Endpoints)
+                .OfType<RouteEndpoint>(),
+            static item => string.Equals(item.RoutePattern.RawText, "/api/v4/tests/profile/runtime/clear/capability/orders/{orderId}", StringComparison.Ordinal));
+        var capabilityMetadata = routeEndpoint.Metadata.OfType<RestEndpointCapabilityMetadata>().LastOrDefault();
+        Assert.NotNull(capabilityMetadata);
+        Assert.True(capabilityMetadata.ClearsExisting);
+        Assert.Null(capabilityMetadata.CapabilityKey);
+
+        var response = await client.GetAsync("/api/v4/tests/profile/runtime/clear/capability/orders/ord-42");
+        response.EnsureSuccessStatusCode();
+        var payload = await response.Content.ReadFromJsonAsync<GeneratedRuntimeOrderOutput>();
+        Assert.NotNull(payload);
+        Assert.Equal("ord-42", payload.OrderId);
+    }
+
+    [Fact]
     public async Task MapCephalonAppliesRestPatternOverridesAndExposesOverrideCatalog()
     {
         var builder = WebApplication.CreateBuilder();
@@ -3956,6 +4038,23 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         }
     }
 
+    private sealed class ProfileCapabilityClearRuntimeCatalogModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.profile-runtime.clear.capability",
+            "Profile Runtime Capability Clear Module",
+            "Publishes a profile-backed route whose REST capability boundary is cleared by a host override.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Group("/tests/profile/runtime/clear/capability/orders")
+                .WithTagName("Profile Capability Clear API")
+                .MapProfile<GetProfileCapabilityClearRuntimeOrderBehavior>(builder =>
+                    builder.RequireCapability("restricted.original"));
+        }
+    }
+
     private sealed class ExplicitVersionOverrideRuntimeCatalogModule : RestBehaviorModuleBase
     {
         public override ModuleDescriptor Descriptor { get; } = new(
@@ -4302,6 +4401,19 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     [AppBehavior("tests.profile.runtimeoverride.capability")]
     [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}", ApiVersionMajor = 4)]
     private sealed class GetProfileCapabilityOverrideRuntimeOrderBehavior : IAppBehavior<GeneratedRuntimeOrderInput, GeneratedRuntimeOrderOutput>
+    {
+        public Task<GeneratedRuntimeOrderOutput> HandleAsync(
+            GeneratedRuntimeOrderInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new GeneratedRuntimeOrderOutput(input.OrderId));
+        }
+    }
+
+    [AppBehavior("tests.profile.runtimeclear.capability")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}", ApiVersionMajor = 4)]
+    private sealed class GetProfileCapabilityClearRuntimeOrderBehavior : IAppBehavior<GeneratedRuntimeOrderInput, GeneratedRuntimeOrderOutput>
     {
         public Task<GeneratedRuntimeOrderOutput> HandleAsync(
             GeneratedRuntimeOrderInput input,

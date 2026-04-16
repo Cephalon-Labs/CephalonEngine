@@ -32,7 +32,7 @@ internal static class RestEndpointRuntimeMetadata
     }
 }
 
-internal sealed record RestEndpointCapabilityMetadata(string CapabilityKey);
+internal sealed record RestEndpointCapabilityMetadata(string? CapabilityKey, bool ClearsExisting = false);
 
 internal sealed class RestEndpointCapabilityRegistration;
 

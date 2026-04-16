@@ -27,6 +27,10 @@ public sealed class RestEndpointOverrideDescriptor
     /// <param name="requiredCapabilityKey">
     /// The required Cephalon capability key enforced at the REST boundary when the rule matches.
     /// </param>
+    /// <param name="clearRequiredCapability">
+    /// <see langword="true" /> when the rule removes any previously declared Cephalon capability
+    /// boundary from the matched shorthand candidate.
+    /// </param>
     /// <param name="bindings">The effective explicit request-binding plan applied when the rule matches.</param>
     /// <param name="removedBindingProperties">
     /// The explicit shorthand binding properties removed from the source binding plan when the rule
@@ -55,6 +59,7 @@ public sealed class RestEndpointOverrideDescriptor
         string? summary = null,
         string? description = null,
         string? requiredCapabilityKey = null,
+        bool clearRequiredCapability = false,
         IReadOnlyList<RestEndpointBindingDescriptor>? bindings = null,
         IReadOnlyList<string>? removedBindingProperties = null,
         RestEndpointOverrideBindingMode bindingMode = RestEndpointOverrideBindingMode.Unspecified)
@@ -89,9 +94,17 @@ public sealed class RestEndpointOverrideDescriptor
         Summary = NormalizeNonEmptyValue(summary);
         Description = NormalizeNonEmptyValue(description);
         RequiredCapabilityKey = NormalizeNonEmptyValue(requiredCapabilityKey);
+        ClearRequiredCapability = clearRequiredCapability;
         Bindings = NormalizeBindings(bindings);
         RemovedBindingProperties = NormalizeList(removedBindingProperties);
         BindingMode = NormalizeBindingMode(bindingMode, RemovedBindingProperties.Count > 0);
+
+        if (ClearRequiredCapability && RequiredCapabilityKey is not null)
+        {
+            throw new ArgumentException(
+                "REST endpoint override descriptors cannot both set RequiredCapabilityKey and ClearRequiredCapability in the same rule.",
+                nameof(clearRequiredCapability));
+        }
 
         if (!ApiVersionMajor.HasValue &&
             Method is null &&
@@ -101,11 +114,12 @@ public sealed class RestEndpointOverrideDescriptor
             Summary is null &&
             Description is null &&
             RequiredCapabilityKey is null &&
+            !ClearRequiredCapability &&
             Bindings.Count == 0 &&
             RemovedBindingProperties.Count == 0)
         {
             throw new ArgumentException(
-                "REST endpoint override descriptors require at least one override action such as ApiVersionMajor, Method, Pattern, RouteGroupPrefix, EndpointName, Summary, Description, RequiredCapabilityKey, Bindings, or RemovedBindingProperties.",
+                "REST endpoint override descriptors require at least one override action such as ApiVersionMajor, Method, Pattern, RouteGroupPrefix, EndpointName, Summary, Description, RequiredCapabilityKey, ClearRequiredCapability, Bindings, or RemovedBindingProperties.",
                 nameof(apiVersionMajor));
         }
 
@@ -205,6 +219,12 @@ public sealed class RestEndpointOverrideDescriptor
     /// Gets the required Cephalon capability key enforced at the REST boundary when this override rule matches.
     /// </summary>
     public string? RequiredCapabilityKey { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether this override rule clears any previously declared Cephalon
+    /// capability boundary from the matched shorthand candidate.
+    /// </summary>
+    public bool ClearRequiredCapability { get; }
 
     /// <summary>
     /// Gets the effective explicit request-binding plan applied when this override rule matches.

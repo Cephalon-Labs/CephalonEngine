@@ -202,7 +202,9 @@ internal static class RestBehaviorProjectionCandidateResolver
             relativePattern: effectiveEndpointProjection.Pattern,
             bindingDescriptors: runtimeBindings,
             preserveImplicitQueryFallback: effectiveEndpointProjection.PreserveImplicitQueryFallback,
-            requiredCapabilityKey: appliedCapabilityOverride?.RequiredCapabilityKey);
+            requiredCapabilityKey: appliedCapabilityOverride?.ClearRequiredCapability == true
+                ? null
+                : appliedCapabilityOverride?.RequiredCapabilityKey);
         var precedenceRank = RestEndpointRuntimeMetadata.ResolvePrecedenceRank(effectiveEndpointProjection.AuthoringStyle);
 
         return new ResolvedRestBehaviorEndpointProjectionCandidate(
@@ -1082,9 +1084,15 @@ internal static class RestBehaviorProjectionCandidateResolver
         }
 
         var requiredCapabilityKey = NormalizeOverrideMetadataValue(selectedOverride.RequiredCapabilityKey);
-        return requiredCapabilityKey is null
-            ? null
-            : new AppliedRestEndpointCapabilityOverride(selectedOverride.Id, requiredCapabilityKey);
+        if (requiredCapabilityKey is null && !selectedOverride.ClearRequiredCapability)
+        {
+            return null;
+        }
+
+        return new AppliedRestEndpointCapabilityOverride(
+            selectedOverride.Id,
+            requiredCapabilityKey,
+            selectedOverride.ClearRequiredCapability);
     }
 
     private static int CountTargetValues(RestEndpointSuppressionOptions suppression)
@@ -1258,7 +1266,8 @@ internal sealed record AppliedRestEndpointMetadataOverride(
 
 internal sealed record AppliedRestEndpointCapabilityOverride(
     string OverrideId,
-    string RequiredCapabilityKey);
+    string? RequiredCapabilityKey,
+    bool ClearRequiredCapability);
 
 internal sealed record ResolvedRestEndpointOverrideDecision(
     IReadOnlyList<string> MatchedOverrideIds,

@@ -96,6 +96,7 @@ public sealed class RestApiGovernanceOptions
                 summary: child["Summary"]?.Trim(),
                 description: child["Description"]?.Trim(),
                 requiredCapabilityKey: child["RequiredCapabilityKey"]?.Trim(),
+                clearRequiredCapability: ReadBoolean(child, "ClearRequiredCapability"),
                 bindings: ReadBindings(child.GetSection("Bindings")),
                 removedBindingProperties: ReadStringArray(child.GetSection("RemovedBindingProperties")),
                 bindingMode: ReadBindingMode(child)))
@@ -160,6 +161,26 @@ public sealed class RestApiGovernanceOptions
             .Distinct()
             .OrderBy(static value => value)
             .ToArray();
+    }
+
+    private static bool ReadBoolean(IConfigurationSection section, string key)
+    {
+        ArgumentNullException.ThrowIfNull(section);
+        ArgumentException.ThrowIfNullOrWhiteSpace(key);
+
+        var rawValue = section[key]?.Trim();
+        if (string.IsNullOrWhiteSpace(rawValue))
+        {
+            return false;
+        }
+
+        if (!bool.TryParse(rawValue, out var parsedValue))
+        {
+            throw new InvalidOperationException(
+                $"REST API governance value '{section.Path}:{key}' must be true or false.");
+        }
+
+        return parsedValue;
     }
 
     private static RestEndpointBindingDescriptor[] ReadBindings(IConfiguration section)

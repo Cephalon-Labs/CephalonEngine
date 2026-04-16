@@ -45,9 +45,16 @@ public static class RestEndpointConventionBuilderExtensions
                 return await next(context);
             }
 
-            var effectiveCapabilityKey = endpoint?.Metadata
+            var effectiveCapabilityMetadata = endpoint?.Metadata
                 .OfType<RestEndpointCapabilityMetadata>()
-                .LastOrDefault()?.CapabilityKey ?? normalizedCapabilityKey;
+                .LastOrDefault();
+            if (effectiveCapabilityMetadata?.ClearsExisting == true ||
+                string.IsNullOrWhiteSpace(effectiveCapabilityMetadata?.CapabilityKey))
+            {
+                return await next(context);
+            }
+
+            var effectiveCapabilityKey = effectiveCapabilityMetadata.CapabilityKey;
             var evaluator = context.HttpContext.RequestServices.GetRequiredService<CapabilityPolicyEvaluator>();
             var decision = evaluator.TryGetDecision(effectiveCapabilityKey, out var resolvedDecision)
                 ? resolvedDecision
@@ -72,6 +79,24 @@ public static class RestEndpointConventionBuilderExtensions
             return await next(context);
         });
 
+        return builder;
+    }
+
+    /// <summary>
+    /// Clears any previously declared Cephalon capability decision from a REST endpoint.
+    /// </summary>
+    /// <param name="builder">The route handler builder to update.</param>
+    /// <returns>The same route handler builder for further convention chaining.</returns>
+    /// <remarks>
+    /// This uses the same last-declaration-wins model as <see cref="RequireCapability(RouteHandlerBuilder, string)" />.
+    /// A later clear declaration suppresses earlier capability requirements for the same route.
+    /// </remarks>
+    public static RouteHandlerBuilder ClearRequiredCapability(this RouteHandlerBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        builder.WithMetadata(new RestEndpointCapabilityMetadata(null, ClearsExisting: true));
+        builder.WithMetadata(new RestEndpointCapabilityRegistration());
         return builder;
     }
 }

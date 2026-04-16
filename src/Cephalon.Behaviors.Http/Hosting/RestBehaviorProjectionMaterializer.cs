@@ -118,7 +118,13 @@ internal static class RestBehaviorProjectionMaterializer
             return;
         }
 
-        builder.RequireCapability(capabilityOverride.RequiredCapabilityKey);
+        if (capabilityOverride.ClearRequiredCapability)
+        {
+            builder.ClearRequiredCapability();
+            return;
+        }
+
+        builder.RequireCapability(capabilityOverride.RequiredCapabilityKey!);
     }
 
     private static void ApplyEndpointMetadataOverride(
