@@ -95,6 +95,7 @@ public sealed class RestApiGovernanceOptions
                 endpointName: child["EndpointName"]?.Trim(),
                 summary: child["Summary"]?.Trim(),
                 description: child["Description"]?.Trim(),
+                requiredCapabilityKey: child["RequiredCapabilityKey"]?.Trim(),
                 bindings: ReadBindings(child.GetSection("Bindings")),
                 removedBindingProperties: ReadStringArray(child.GetSection("RemovedBindingProperties")),
                 bindingMode: ReadBindingMode(child)))

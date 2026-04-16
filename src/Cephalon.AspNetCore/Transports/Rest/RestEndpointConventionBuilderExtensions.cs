@@ -29,14 +29,30 @@ public static class RestEndpointConventionBuilderExtensions
         ArgumentException.ThrowIfNullOrWhiteSpace(capabilityKey);
 
         var normalizedCapabilityKey = capabilityKey.Trim();
+        var registration = new RestEndpointCapabilityRegistration();
+
+        builder.WithMetadata(new RestEndpointCapabilityMetadata(normalizedCapabilityKey));
+        builder.WithMetadata(registration);
 
         builder.AddEndpointFilter(async (context, next) =>
         {
+            var endpoint = context.HttpContext.GetEndpoint();
+            if (endpoint is not null &&
+                !ReferenceEquals(
+                    endpoint.Metadata.OfType<RestEndpointCapabilityRegistration>().LastOrDefault(),
+                    registration))
+            {
+                return await next(context);
+            }
+
+            var effectiveCapabilityKey = endpoint?.Metadata
+                .OfType<RestEndpointCapabilityMetadata>()
+                .LastOrDefault()?.CapabilityKey ?? normalizedCapabilityKey;
             var evaluator = context.HttpContext.RequestServices.GetRequiredService<CapabilityPolicyEvaluator>();
-            var decision = evaluator.TryGetDecision(normalizedCapabilityKey, out var resolvedDecision)
+            var decision = evaluator.TryGetDecision(effectiveCapabilityKey, out var resolvedDecision)
                 ? resolvedDecision
                 : throw new InvalidOperationException(
-                    $"Capability policy decision for '{normalizedCapabilityKey}' was not available.");
+                    $"Capability policy decision for '{effectiveCapabilityKey}' was not available.");
 
             if (!decision.IsAllowed)
             {

@@ -70,6 +70,9 @@ public sealed class RestEndpointOverrideOptions
     /// <param name="description">
     /// The effective OpenAPI description applied when the rule matches a shorthand candidate.
     /// </param>
+    /// <param name="requiredCapabilityKey">
+    /// The required Cephalon capability key enforced at the REST boundary when the rule matches a shorthand candidate.
+    /// </param>
     /// <param name="bindings">
     /// The effective explicit request-binding plan applied when the rule matches a shorthand
     /// candidate.
@@ -100,6 +103,7 @@ public sealed class RestEndpointOverrideOptions
         string? endpointName = null,
         string? summary = null,
         string? description = null,
+        string? requiredCapabilityKey = null,
         IReadOnlyList<RestEndpointBindingDescriptor>? bindings = null,
         IReadOnlyList<string>? removedBindingProperties = null,
         RestEndpointOverrideBindingMode bindingMode = RestEndpointOverrideBindingMode.Unspecified)
@@ -133,6 +137,7 @@ public sealed class RestEndpointOverrideOptions
         EndpointName = NormalizeNonEmptyValue(endpointName);
         Summary = NormalizeNonEmptyValue(summary);
         Description = NormalizeNonEmptyValue(description);
+        RequiredCapabilityKey = NormalizeNonEmptyValue(requiredCapabilityKey);
         Bindings = NormalizeBindings(bindings);
         RemovedBindingProperties = NormalizeList(removedBindingProperties);
         BindingMode = NormalizeBindingMode(bindingMode, RemovedBindingProperties.Count > 0);
@@ -161,11 +166,12 @@ public sealed class RestEndpointOverrideOptions
             EndpointName is null &&
             Summary is null &&
             Description is null &&
+            RequiredCapabilityKey is null &&
             Bindings.Count == 0 &&
             RemovedBindingProperties.Count == 0)
         {
             throw new ArgumentException(
-                "REST endpoint override rules must define at least one override action such as ApiVersionMajor, Method, Pattern, RouteGroupPrefix, EndpointName, Summary, Description, Bindings, or RemovedBindingProperties.",
+                "REST endpoint override rules must define at least one override action such as ApiVersionMajor, Method, Pattern, RouteGroupPrefix, EndpointName, Summary, Description, RequiredCapabilityKey, Bindings, or RemovedBindingProperties.",
                 nameof(apiVersionMajor));
         }
 
@@ -262,6 +268,11 @@ public sealed class RestEndpointOverrideOptions
     public string? Description { get; }
 
     /// <summary>
+    /// Gets the required Cephalon capability key enforced at the REST boundary when this override rule matches.
+    /// </summary>
+    public string? RequiredCapabilityKey { get; }
+
+    /// <summary>
     /// Gets the effective explicit request-binding plan applied when this override rule matches.
     /// </summary>
     public IReadOnlyList<RestEndpointBindingDescriptor> Bindings { get; }
@@ -294,6 +305,7 @@ public sealed class RestEndpointOverrideOptions
         EndpointName is not null ||
         Summary is not null ||
         Description is not null ||
+        RequiredCapabilityKey is not null ||
         Bindings.Count > 0 ||
         RemovedBindingProperties.Count > 0;
 

@@ -55,6 +55,9 @@ public sealed class RestEndpointRuntimeDescriptor
     /// The stable source identity for the published endpoint when the runtime can classify the
     /// authored source shape behind that publication.
     /// </param>
+    /// <param name="requiredCapabilityKey">
+    /// The required Cephalon capability key enforced at the REST boundary when one is available.
+    /// </param>
     public RestEndpointRuntimeDescriptor(
         string id,
         string transportId,
@@ -79,7 +82,8 @@ public sealed class RestEndpointRuntimeDescriptor
         string? routeGroupPrefix = null,
         string? relativePattern = null,
         string? behaviorType = null,
-        string? sourceId = null)
+        string? sourceId = null,
+        string? requiredCapabilityKey = null)
     {
         Id = NormalizeRequired(id, nameof(id));
         TransportId = NormalizeRequired(transportId, nameof(transportId));
@@ -101,6 +105,7 @@ public sealed class RestEndpointRuntimeDescriptor
         RelativePattern = NormalizeOptional(relativePattern);
         BehaviorType = NormalizeOptional(behaviorType);
         SourceId = NormalizeOptional(sourceId);
+        RequiredCapabilityKey = NormalizeOptional(requiredCapabilityKey);
         CandidateId = NormalizeOptional(candidateId);
         BindingDescriptors = NormalizeBindingDescriptors(bindingDescriptors);
         BindingFallbackMode = NormalizeBindingFallbackMode(bindingFallbackMode);
@@ -218,6 +223,12 @@ public sealed class RestEndpointRuntimeDescriptor
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? SourceId { get; }
+
+    /// <summary>
+    /// Gets the required Cephalon capability key enforced at the REST boundary when one is available.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? RequiredCapabilityKey { get; }
 
     /// <summary>
     /// Gets the stable originating candidate identifier when this endpoint was published from the

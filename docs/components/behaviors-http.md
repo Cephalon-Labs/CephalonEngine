@@ -445,17 +445,19 @@ Current helper behavior:
   the suppressed candidate through `SuppressedBySuppressionId`, and intentionally leaves explicit
   module DSL or manual module-owned REST endpoints untouched
 - ASP.NET Core hosts can now also override the effective API major version, HTTP method, or
-  bounded published route-group prefix, constrained relative route pattern, or explicit binding
+  bounded published route-group prefix, constrained relative route pattern, required capability
+  boundary, or explicit binding
   plan for descriptor-backed shorthand candidates through `RestApi:Overrides`, which now supports
-  `ApiVersionMajor`, `Method`, `RouteGroupPrefix`, `Pattern`, `Bindings`,
-  `RemovedBindingProperties`, typed `BindingMode`, and shorthand endpoint metadata
+  `ApiVersionMajor`, `Method`, `RouteGroupPrefix`, `Pattern`, `RequiredCapabilityKey`,
+  `Bindings`, `RemovedBindingProperties`, typed `BindingMode`, and shorthand endpoint metadata
   `EndpointName`, `Summary`, and `Description`, records the applied rule id through
   `AppliedOverrideId` when the selected rule materially changes the effective answer, rewrites the
   shorthand candidate's `/v{major}` route segment and OpenAPI document name together when version
   changes, keeps the mapped endpoint method aligned when method changes, keeps the published
   route-group boundary aligned when `RouteGroupPrefix` changes, keeps the mapped endpoint route
   aligned when pattern changes, keeps actual ASP.NET Core endpoint metadata plus
-  `/engine/rest-endpoints` aligned when endpoint metadata changes, applies explicit binding
+  `/engine/rest-endpoints` aligned when capability-boundary or endpoint-metadata values change,
+  applies explicit binding
   overrides in either default
   `ReplaceExplicit` mode or `MergeExplicit` property-patch-and-withdraw mode while leaving
   unbound route placeholders and remaining request-body fields available for deterministic

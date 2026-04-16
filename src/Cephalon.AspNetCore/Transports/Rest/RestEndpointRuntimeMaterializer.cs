@@ -69,6 +69,9 @@ internal static class RestEndpointRuntimeMaterializer
             ?? behaviorMetadata?.Summary;
         var description = endpoint.Metadata.OfType<IEndpointDescriptionMetadata>().LastOrDefault()?.Description
             ?? behaviorMetadata?.Description;
+        var requiredCapabilityKey = endpoint.Metadata
+            .OfType<RestEndpointCapabilityMetadata>()
+            .LastOrDefault()?.CapabilityKey;
         var sourceKind = behaviorMetadata?.SourceKind
             ?? RestEndpointRuntimeMetadata.ManualSourceKind;
         var tags = behaviorMetadata is null
@@ -102,7 +105,8 @@ internal static class RestEndpointRuntimeMaterializer
                     behaviorMetadata.RouteGroupPrefix),
                 relativePattern: behaviorMetadata.RelativePattern,
                 bindingDescriptors: behaviorMetadata.BindingDescriptors,
-                preserveImplicitQueryFallback: behaviorMetadata.PreserveImplicitQueryFallback);
+                preserveImplicitQueryFallback: behaviorMetadata.PreserveImplicitQueryFallback,
+                requiredCapabilityKey: requiredCapabilityKey);
         }
 
         return new RestEndpointRuntimeDescriptor(
@@ -122,12 +126,20 @@ internal static class RestEndpointRuntimeMaterializer
             summary: summary,
             description: description,
             authoringStyle: RestEndpointRuntimeMetadata.MinimalApiAuthoringStyle,
-            metadata: CreateMetadata(endpoint, moduleMetadata, behaviorMetadata, method, routePattern, apiRoutesOptions),
+            metadata: CreateMetadata(
+                endpoint,
+                moduleMetadata,
+                behaviorMetadata,
+                method,
+                routePattern,
+                apiRoutesOptions,
+                requiredCapabilityKey),
             routeGroupPrefix: behaviorMetadata?.RouteGroupPrefix is null
                 ? null
                 : RestEndpointRuntimeDescriptorFactory.CombinePaths(apiRoutesOptions.RestPrefix, behaviorMetadata.RouteGroupPrefix),
             relativePattern: behaviorMetadata?.RelativePattern,
-            sourceId: $"{moduleMetadata.ModuleId}:{method.Trim().ToUpperInvariant()}:{routePattern}");
+            sourceId: $"{moduleMetadata.ModuleId}:{method.Trim().ToUpperInvariant()}:{routePattern}",
+            requiredCapabilityKey: requiredCapabilityKey);
     }
 
     private static string[] ResolveHttpMethods(RouteEndpoint endpoint)
@@ -168,7 +180,8 @@ internal static class RestEndpointRuntimeMaterializer
         RestBehaviorEndpointMetadata? behaviorMetadata,
         string method,
         string routePattern,
-        ApiRoutesOptions apiRoutesOptions)
+        ApiRoutesOptions apiRoutesOptions,
+        string? requiredCapabilityKey)
     {
         ArgumentNullException.ThrowIfNull(endpoint);
         ArgumentNullException.ThrowIfNull(moduleMetadata);
@@ -189,11 +202,21 @@ internal static class RestEndpointRuntimeMaterializer
             metadata["routeGroupPrefix"] = RestEndpointRuntimeDescriptorFactory.CombinePaths(apiRoutesOptions.RestPrefix, behaviorMetadata.RouteGroupPrefix);
             metadata["relativePattern"] = behaviorMetadata.RelativePattern;
             metadata["sourceId"] = $"{behaviorMetadata.BehaviorId}:{normalizedMethod}:{behaviorMetadata.RelativePattern}";
+            if (!string.IsNullOrWhiteSpace(requiredCapabilityKey))
+            {
+                metadata[RestEndpointRuntimeMetadata.RequiredCapabilityKeyMetadataKey] = requiredCapabilityKey.Trim();
+            }
+
             return metadata;
         }
 
         metadata["authoringStyle"] = RestEndpointRuntimeMetadata.MinimalApiAuthoringStyle;
         metadata["sourceId"] = $"{moduleMetadata.ModuleId}:{normalizedMethod}:{routePattern}";
+        if (!string.IsNullOrWhiteSpace(requiredCapabilityKey))
+        {
+            metadata[RestEndpointRuntimeMetadata.RequiredCapabilityKeyMetadataKey] = requiredCapabilityKey.Trim();
+        }
+
         if (!string.IsNullOrWhiteSpace(endpoint.DisplayName))
         {
             metadata["endpointDisplayName"] = endpoint.DisplayName!;

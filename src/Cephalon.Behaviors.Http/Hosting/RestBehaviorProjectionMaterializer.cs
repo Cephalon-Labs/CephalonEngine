@@ -101,9 +101,24 @@ internal static class RestBehaviorProjectionMaterializer
             {
                 group.UseRuntimeCandidateId(candidate.Candidate.Id);
                 var builder = candidate.EffectiveEndpointProjection.Apply(group);
+                ApplyRequiredCapabilityOverride(builder, candidate.AppliedCapabilityOverride);
                 ApplyEndpointMetadataOverride(builder, candidate.AppliedMetadataOverride);
             }
         }
+    }
+
+    private static void ApplyRequiredCapabilityOverride(
+        RouteHandlerBuilder builder,
+        AppliedRestEndpointCapabilityOverride? capabilityOverride)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        if (capabilityOverride is null)
+        {
+            return;
+        }
+
+        builder.RequireCapability(capabilityOverride.RequiredCapabilityKey);
     }
 
     private static void ApplyEndpointMetadataOverride(

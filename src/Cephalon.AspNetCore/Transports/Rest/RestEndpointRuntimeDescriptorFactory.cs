@@ -24,7 +24,8 @@ internal static class RestEndpointRuntimeDescriptorFactory
         string routeGroupPrefix,
         string relativePattern,
         IReadOnlyList<RestEndpointBindingDescriptor>? bindingDescriptors = null,
-        bool preserveImplicitQueryFallback = false)
+        bool preserveImplicitQueryFallback = false,
+        string? requiredCapabilityKey = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sourceKind);
         ArgumentException.ThrowIfNullOrWhiteSpace(method);
@@ -68,11 +69,13 @@ internal static class RestEndpointRuntimeDescriptorFactory
                 behaviorType,
                 routeGroupPrefix,
                 relativePattern,
-                bindingFallbackMode),
+                bindingFallbackMode,
+                requiredCapabilityKey),
             routeGroupPrefix: routeGroupPrefix,
             relativePattern: relativePattern,
             behaviorType: behaviorType,
-            sourceId: sourceId);
+            sourceId: sourceId,
+            requiredCapabilityKey: requiredCapabilityKey);
     }
 
     internal static string BuildBehaviorEndpointId(
@@ -120,7 +123,8 @@ internal static class RestEndpointRuntimeDescriptorFactory
         string behaviorType,
         string routeGroupPrefix,
         string relativePattern,
-        RestEndpointBindingFallbackMode? bindingFallbackMode)
+        RestEndpointBindingFallbackMode? bindingFallbackMode,
+        string? requiredCapabilityKey)
     {
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -136,6 +140,11 @@ internal static class RestEndpointRuntimeDescriptorFactory
         {
             metadata[RestEndpointRuntimeMetadata.BindingFallbackModeMetadataKey] =
                 RestEndpointRuntimeMetadata.PreserveSourceImplicitFallbackMode;
+        }
+
+        if (!string.IsNullOrWhiteSpace(requiredCapabilityKey))
+        {
+            metadata[RestEndpointRuntimeMetadata.RequiredCapabilityKeyMetadataKey] = requiredCapabilityKey.Trim();
         }
 
         return metadata;

@@ -13,6 +13,7 @@ internal static class RestEndpointRuntimeMetadata
     internal const string BehaviorModuleProfileAuthoringStyle = "behavior-module-profile";
     internal const string BindingFallbackModeMetadataKey = "bindingFallbackMode";
     internal const string PreserveSourceImplicitFallbackMode = "preserve-source-implicit-fallback";
+    internal const string RequiredCapabilityKeyMetadataKey = "requiredCapabilityKey";
     internal const int BehaviorModuleDslPrecedenceRank = 2;
     internal const int BehaviorModuleProfilePrecedenceRank = 3;
     internal const int BehaviorModuleGeneratedPrecedenceRank = 4;
@@ -30,6 +31,10 @@ internal static class RestEndpointRuntimeMetadata
         };
     }
 }
+
+internal sealed record RestEndpointCapabilityMetadata(string CapabilityKey);
+
+internal sealed class RestEndpointCapabilityRegistration;
 
 internal sealed record RestModuleEndpointMetadata(
     string ModuleId,

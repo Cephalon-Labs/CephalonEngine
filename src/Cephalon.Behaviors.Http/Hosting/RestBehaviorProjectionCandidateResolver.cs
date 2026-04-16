@@ -177,6 +177,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             operationName,
             documentation.Summary,
             documentation.Description);
+        var appliedCapabilityOverride = CreateAppliedRequiredCapabilityOverride(selectedOverride);
         var endpointName = NormalizeOverrideMetadataValue(selectedOverride?.EndpointName) ?? operationName;
         var summary = NormalizeOverrideMetadataValue(selectedOverride?.Summary) ?? documentation.Summary;
         var description = NormalizeOverrideMetadataValue(selectedOverride?.Description) ?? documentation.Description;
@@ -200,7 +201,8 @@ internal static class RestBehaviorProjectionCandidateResolver
             routeGroupPrefix: publishedRouteGroupPrefix,
             relativePattern: effectiveEndpointProjection.Pattern,
             bindingDescriptors: runtimeBindings,
-            preserveImplicitQueryFallback: effectiveEndpointProjection.PreserveImplicitQueryFallback);
+            preserveImplicitQueryFallback: effectiveEndpointProjection.PreserveImplicitQueryFallback,
+            requiredCapabilityKey: appliedCapabilityOverride?.RequiredCapabilityKey);
         var precedenceRank = RestEndpointRuntimeMetadata.ResolvePrecedenceRank(effectiveEndpointProjection.AuthoringStyle);
 
         return new ResolvedRestBehaviorEndpointProjectionCandidate(
@@ -213,8 +215,9 @@ internal static class RestBehaviorProjectionCandidateResolver
                 effectiveEndpointProjection.AuthoringStyle,
                 precedenceRank,
                 RestEndpointCandidateStatus.Published,
-                appliedOverrideId: appliedOverride?.Id ?? appliedMetadataOverride?.OverrideId,
+                appliedOverrideId: appliedOverride?.Id ?? appliedCapabilityOverride?.OverrideId ?? appliedMetadataOverride?.OverrideId,
                 matchedOverrideIds: overrideDecision.MatchedOverrideIds),
+            appliedCapabilityOverride,
             appliedMetadataOverride);
     }
 
@@ -1070,6 +1073,20 @@ internal static class RestBehaviorProjectionCandidateResolver
             descriptionChanged ? description : null);
     }
 
+    private static AppliedRestEndpointCapabilityOverride? CreateAppliedRequiredCapabilityOverride(
+        RestEndpointOverrideOptions? selectedOverride)
+    {
+        if (selectedOverride is null)
+        {
+            return null;
+        }
+
+        var requiredCapabilityKey = NormalizeOverrideMetadataValue(selectedOverride.RequiredCapabilityKey);
+        return requiredCapabilityKey is null
+            ? null
+            : new AppliedRestEndpointCapabilityOverride(selectedOverride.Id, requiredCapabilityKey);
+    }
+
     private static int CountTargetValues(RestEndpointSuppressionOptions suppression)
     {
         ArgumentNullException.ThrowIfNull(suppression);
@@ -1224,6 +1241,7 @@ internal sealed record ResolvedRestBehaviorEndpointProjectionCandidate(
     int GroupIndex,
     RestBehaviorEndpointProjection EffectiveEndpointProjection,
     RestEndpointCandidateRuntimeDescriptor Candidate,
+    AppliedRestEndpointCapabilityOverride? AppliedCapabilityOverride = null,
     AppliedRestEndpointMetadataOverride? AppliedMetadataOverride = null);
 
 internal sealed record AppliedRestEndpointOverride(
@@ -1237,6 +1255,10 @@ internal sealed record AppliedRestEndpointMetadataOverride(
     string? EndpointName,
     string? Summary,
     string? Description);
+
+internal sealed record AppliedRestEndpointCapabilityOverride(
+    string OverrideId,
+    string RequiredCapabilityKey);
 
 internal sealed record ResolvedRestEndpointOverrideDecision(
     IReadOnlyList<string> MatchedOverrideIds,

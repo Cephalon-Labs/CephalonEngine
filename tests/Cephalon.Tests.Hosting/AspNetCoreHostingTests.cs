@@ -2795,11 +2795,16 @@ note: visible
 
         var secretResponse = await client.GetAsync("/api/restricted/secret");
         var secretPayload = await secretResponse.Content.ReadAsStringAsync();
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
         var capabilities = await client.GetFromJsonAsync<CapabilityManifest[]>("/engine/capabilities");
         var trust = await client.GetFromJsonAsync<TrustSnapshot>("/engine/trust-policy");
 
         Assert.Equal(HttpStatusCode.Forbidden, secretResponse.StatusCode);
         Assert.Contains("Capability access denied", secretPayload, StringComparison.OrdinalIgnoreCase);
+        Assert.NotNull(endpoints);
+        Assert.Contains(endpoints, endpoint =>
+            string.Equals(endpoint.RoutePattern, "/api/restricted/secret", StringComparison.Ordinal) &&
+            string.Equals(endpoint.RequiredCapabilityKey, "restricted.secret", StringComparison.Ordinal));
         Assert.NotNull(capabilities);
         Assert.DoesNotContain(capabilities, capability => capability.Key == "restricted.secret");
         Assert.NotNull(trust);
