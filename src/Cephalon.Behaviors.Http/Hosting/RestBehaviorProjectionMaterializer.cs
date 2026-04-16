@@ -101,10 +101,28 @@ internal static class RestBehaviorProjectionMaterializer
             {
                 group.UseRuntimeCandidateId(candidate.Candidate.Id);
                 var builder = candidate.EffectiveEndpointProjection.Apply(group);
+                var sourceCapabilityCapture = CaptureSourceCapability(builder);
                 ApplyRequiredCapabilityOverride(builder, candidate.AppliedCapabilityOverride);
                 ApplyEndpointMetadataOverride(builder, candidate.AppliedMetadataOverride);
+                ApplyPublishedOverrideProvenance(builder, candidate, sourceCapabilityCapture);
             }
         }
+    }
+
+    private static CapturedEndpointCapabilityState CaptureSourceCapability(RouteHandlerBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        var capture = new CapturedEndpointCapabilityState();
+        builder.Add(endpointBuilder =>
+        {
+            var sourceRequiredCapabilityKey = RestEndpointRuntimeMetadata.ResolveEffectiveRequiredCapabilityKey(
+                endpointBuilder.Metadata.OfType<RestEndpointCapabilityMetadata>());
+            capture.RequiredCapabilityKey = sourceRequiredCapabilityKey;
+            endpointBuilder.Metadata.Add(new RestEndpointSourceCapabilityMetadata(sourceRequiredCapabilityKey));
+        });
+
+        return capture;
     }
 
     private static void ApplyRequiredCapabilityOverride(
@@ -152,6 +170,88 @@ internal static class RestBehaviorProjectionMaterializer
         {
             builder.WithDescription(metadataOverride.Description);
         }
+    }
+
+    private static void ApplyPublishedOverrideProvenance(
+        RouteHandlerBuilder builder,
+        ResolvedRestBehaviorEndpointProjectionCandidate candidate,
+        CapturedEndpointCapabilityState sourceCapabilityCapture)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentNullException.ThrowIfNull(candidate);
+        ArgumentNullException.ThrowIfNull(sourceCapabilityCapture);
+
+        if (string.IsNullOrWhiteSpace(candidate.Candidate.AppliedOverrideId))
+        {
+            return;
+        }
+
+        if (HasStructuralOverride(candidate.Candidate) || candidate.AppliedMetadataOverride is not null)
+        {
+            builder.WithMetadata(new RestEndpointAppliedOverrideMetadata(candidate.Candidate.AppliedOverrideId));
+            return;
+        }
+
+        if (candidate.AppliedCapabilityOverride is null)
+        {
+            return;
+        }
+
+        builder.Add(endpointBuilder =>
+        {
+            var effectiveRequiredCapabilityKey = RestEndpointRuntimeMetadata.ResolveEffectiveRequiredCapabilityKey(
+                endpointBuilder.Metadata.OfType<RestEndpointCapabilityMetadata>());
+            if (!string.Equals(
+                    sourceCapabilityCapture.RequiredCapabilityKey,
+                    effectiveRequiredCapabilityKey,
+                    StringComparison.Ordinal))
+            {
+                endpointBuilder.Metadata.Add(new RestEndpointAppliedOverrideMetadata(candidate.Candidate.AppliedOverrideId));
+            }
+        });
+    }
+
+    private static bool HasStructuralOverride(RestEndpointCandidateRuntimeDescriptor candidate)
+    {
+        ArgumentNullException.ThrowIfNull(candidate);
+
+        var originalProjection = candidate.OriginalProjection;
+        var projectedEndpoint = candidate.ProjectedEndpoint;
+        return !string.Equals(originalProjection.Method, projectedEndpoint.Method, StringComparison.Ordinal) ||
+               !string.Equals(originalProjection.RoutePattern, projectedEndpoint.RoutePattern, StringComparison.Ordinal) ||
+               !string.Equals(originalProjection.RouteGroupPrefix, projectedEndpoint.RouteGroupPrefix, StringComparison.Ordinal) ||
+               !string.Equals(originalProjection.RelativePattern, projectedEndpoint.RelativePattern, StringComparison.Ordinal) ||
+               originalProjection.ApiVersionMajor != projectedEndpoint.ApiVersionMajor ||
+               !string.Equals(originalProjection.OpenApiDocumentName, projectedEndpoint.OpenApiDocumentName, StringComparison.Ordinal) ||
+               originalProjection.BindingFallbackMode != projectedEndpoint.BindingFallbackMode ||
+               !BindingDescriptorsMatch(originalProjection.BindingDescriptors, projectedEndpoint.BindingDescriptors);
+    }
+
+    private static bool BindingDescriptorsMatch(
+        IReadOnlyList<RestEndpointBindingDescriptor> originalBindings,
+        IReadOnlyList<RestEndpointBindingDescriptor> projectedBindings)
+    {
+        ArgumentNullException.ThrowIfNull(originalBindings);
+        ArgumentNullException.ThrowIfNull(projectedBindings);
+
+        if (originalBindings.Count != projectedBindings.Count)
+        {
+            return false;
+        }
+
+        for (var index = 0; index < originalBindings.Count; index++)
+        {
+            var original = originalBindings[index];
+            var projected = projectedBindings[index];
+            if (!string.Equals(original.PropertyName, projected.PropertyName, StringComparison.Ordinal) ||
+                original.Source != projected.Source ||
+                !string.Equals(original.Name, projected.Name, StringComparison.Ordinal))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private static string ResolvePublishedRouteGroupPrefix(RestEndpointCandidateRuntimeDescriptor candidate)
@@ -211,5 +311,10 @@ internal static class RestBehaviorProjectionMaterializer
         return normalized.Length > 1
             ? normalized.TrimEnd('/')
             : normalized;
+    }
+
+    private sealed class CapturedEndpointCapabilityState
+    {
+        internal string? RequiredCapabilityKey { get; set; }
     }
 }

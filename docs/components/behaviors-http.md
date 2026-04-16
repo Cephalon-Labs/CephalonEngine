@@ -621,6 +621,10 @@ Current governance baseline:
   ASP.NET Core endpoint metadata, `/engine/rest-endpoints`, and `snapshot.RestEndpoints` all keep
   `RequiredCapabilityKey = null`, and `RequireCapability(...)` plus `ClearRequiredCapability()`
   both follow last-declaration-wins semantics so the earlier shorthand guard does not linger
+- published endpoints now also expose nullable `OriginalRequiredCapabilityKey` plus
+  `AppliedOverrideId`, so operators can read the source-versus-effective capability story directly
+  from `/engine/rest-endpoints` when shorthand governance rewrites or clears a boundary; endpoint-
+  level capability-only no-op clears now leave `AppliedOverrideId = null`
 - broader implicit-property promotion beyond that constrained body-fallback-plus-bounded-query-
   fallback path plus broader binding-shape overrides beyond the current
   replace-plus-merge-explicit upsert-plus-withdraw model remain later work

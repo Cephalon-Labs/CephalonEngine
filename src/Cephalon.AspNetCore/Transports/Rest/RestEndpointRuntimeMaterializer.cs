@@ -69,12 +69,13 @@ internal static class RestEndpointRuntimeMaterializer
             ?? behaviorMetadata?.Summary;
         var description = endpoint.Metadata.OfType<IEndpointDescriptionMetadata>().LastOrDefault()?.Description
             ?? behaviorMetadata?.Description;
-        var requiredCapabilityMetadata = endpoint.Metadata
+        var capabilityMetadata = endpoint.Metadata
             .OfType<RestEndpointCapabilityMetadata>()
-            .LastOrDefault();
-        var requiredCapabilityKey = requiredCapabilityMetadata?.ClearsExisting == true
-            ? null
-            : requiredCapabilityMetadata?.CapabilityKey;
+            .ToArray();
+        var requiredCapabilityKey = RestEndpointRuntimeMetadata.ResolveEffectiveRequiredCapabilityKey(capabilityMetadata);
+        var originalRequiredCapabilityKey = endpoint.Metadata.GetMetadata<RestEndpointSourceCapabilityMetadata>()?.RequiredCapabilityKey
+            ?? RestEndpointRuntimeMetadata.ResolveLastDeclaredRequiredCapabilityKey(capabilityMetadata);
+        var appliedOverrideId = endpoint.Metadata.GetMetadata<RestEndpointAppliedOverrideMetadata>()?.OverrideId;
         var sourceKind = behaviorMetadata?.SourceKind
             ?? RestEndpointRuntimeMetadata.ManualSourceKind;
         var tags = behaviorMetadata is null
@@ -109,7 +110,9 @@ internal static class RestEndpointRuntimeMaterializer
                 relativePattern: behaviorMetadata.RelativePattern,
                 bindingDescriptors: behaviorMetadata.BindingDescriptors,
                 preserveImplicitQueryFallback: behaviorMetadata.PreserveImplicitQueryFallback,
-                requiredCapabilityKey: requiredCapabilityKey);
+                requiredCapabilityKey: requiredCapabilityKey,
+                originalRequiredCapabilityKey: originalRequiredCapabilityKey,
+                appliedOverrideId: appliedOverrideId);
         }
 
         return new RestEndpointRuntimeDescriptor(
@@ -142,7 +145,9 @@ internal static class RestEndpointRuntimeMaterializer
                 : RestEndpointRuntimeDescriptorFactory.CombinePaths(apiRoutesOptions.RestPrefix, behaviorMetadata.RouteGroupPrefix),
             relativePattern: behaviorMetadata?.RelativePattern,
             sourceId: $"{moduleMetadata.ModuleId}:{method.Trim().ToUpperInvariant()}:{routePattern}",
-            requiredCapabilityKey: requiredCapabilityKey);
+            requiredCapabilityKey: requiredCapabilityKey,
+            originalRequiredCapabilityKey: originalRequiredCapabilityKey,
+            appliedOverrideId: appliedOverrideId);
     }
 
     private static string[] ResolveHttpMethods(RouteEndpoint endpoint)

@@ -25,7 +25,9 @@ internal static class RestEndpointRuntimeDescriptorFactory
         string relativePattern,
         IReadOnlyList<RestEndpointBindingDescriptor>? bindingDescriptors = null,
         bool preserveImplicitQueryFallback = false,
-        string? requiredCapabilityKey = null)
+        string? requiredCapabilityKey = null,
+        string? originalRequiredCapabilityKey = null,
+        string? appliedOverrideId = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sourceKind);
         ArgumentException.ThrowIfNullOrWhiteSpace(method);
@@ -75,7 +77,9 @@ internal static class RestEndpointRuntimeDescriptorFactory
             relativePattern: relativePattern,
             behaviorType: behaviorType,
             sourceId: sourceId,
-            requiredCapabilityKey: requiredCapabilityKey);
+            requiredCapabilityKey: requiredCapabilityKey,
+            originalRequiredCapabilityKey: originalRequiredCapabilityKey,
+            appliedOverrideId: appliedOverrideId);
     }
 
     internal static string BuildBehaviorEndpointId(

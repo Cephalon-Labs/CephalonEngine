@@ -30,11 +30,38 @@ internal static class RestEndpointRuntimeMetadata
             _ => int.MaxValue
         };
     }
+
+    internal static string? ResolveEffectiveRequiredCapabilityKey(
+        IEnumerable<RestEndpointCapabilityMetadata> metadata)
+    {
+        ArgumentNullException.ThrowIfNull(metadata);
+
+        var requiredCapabilityMetadata = metadata.LastOrDefault();
+        return requiredCapabilityMetadata?.ClearsExisting == true
+            ? null
+            : requiredCapabilityMetadata?.CapabilityKey;
+    }
+
+    internal static string? ResolveLastDeclaredRequiredCapabilityKey(
+        IEnumerable<RestEndpointCapabilityMetadata> metadata)
+    {
+        ArgumentNullException.ThrowIfNull(metadata);
+
+        return metadata
+            .LastOrDefault(static item =>
+                !item.ClearsExisting &&
+                !string.IsNullOrWhiteSpace(item.CapabilityKey))
+            ?.CapabilityKey;
+    }
 }
 
 internal sealed record RestEndpointCapabilityMetadata(string? CapabilityKey, bool ClearsExisting = false);
 
 internal sealed class RestEndpointCapabilityRegistration;
+
+internal sealed record RestEndpointSourceCapabilityMetadata(string? RequiredCapabilityKey);
+
+internal sealed record RestEndpointAppliedOverrideMetadata(string OverrideId);
 
 internal sealed record RestModuleEndpointMetadata(
     string ModuleId,

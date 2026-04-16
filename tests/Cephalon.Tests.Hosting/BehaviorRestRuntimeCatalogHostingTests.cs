@@ -932,6 +932,8 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             string.Equals(item.BehaviorId, "tests.profile.runtimeoverride.capability", StringComparison.Ordinal));
         Assert.Equal("/api/v4/tests/profile/runtime/override/capability/orders/{orderId}", endpoint.RoutePattern);
         Assert.Equal("restricted.override", endpoint.RequiredCapabilityKey);
+        Assert.Equal("restricted.original", endpoint.OriginalRequiredCapabilityKey);
+        Assert.Equal("prefer-public-capability", endpoint.AppliedOverrideId);
 
         var candidate = Assert.Single(candidates, static item =>
             string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.profile.runtimeoverride.capability", StringComparison.Ordinal));
@@ -951,7 +953,9 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             string.Equals(item.ProjectedEndpoint.RequiredCapabilityKey, "restricted.override", StringComparison.Ordinal));
         Assert.Contains(snapshot.RestEndpoints, item =>
             string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal) &&
-            string.Equals(item.RequiredCapabilityKey, "restricted.override", StringComparison.Ordinal));
+            string.Equals(item.RequiredCapabilityKey, "restricted.override", StringComparison.Ordinal) &&
+            string.Equals(item.OriginalRequiredCapabilityKey, "restricted.original", StringComparison.Ordinal) &&
+            string.Equals(item.AppliedOverrideId, "prefer-public-capability", StringComparison.Ordinal));
 
         var routeEndpoint = Assert.Single(
             ((IEndpointRouteBuilder)app).DataSources
@@ -1011,6 +1015,8 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             string.Equals(item.BehaviorId, "tests.profile.runtimeclear.capability", StringComparison.Ordinal));
         Assert.Equal("/api/v4/tests/profile/runtime/clear/capability/orders/{orderId}", endpoint.RoutePattern);
         Assert.Null(endpoint.RequiredCapabilityKey);
+        Assert.Equal("restricted.original", endpoint.OriginalRequiredCapabilityKey);
+        Assert.Equal("clear-public-capability", endpoint.AppliedOverrideId);
 
         var candidate = Assert.Single(candidates, static item =>
             string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.profile.runtimeclear.capability", StringComparison.Ordinal));
@@ -1032,7 +1038,9 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             item.ProjectedEndpoint.RequiredCapabilityKey is null);
         Assert.Contains(snapshot.RestEndpoints, item =>
             string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal) &&
-            item.RequiredCapabilityKey is null);
+            item.RequiredCapabilityKey is null &&
+            string.Equals(item.OriginalRequiredCapabilityKey, "restricted.original", StringComparison.Ordinal) &&
+            string.Equals(item.AppliedOverrideId, "clear-public-capability", StringComparison.Ordinal));
 
         var routeEndpoint = Assert.Single(
             ((IEndpointRouteBuilder)app).DataSources
@@ -1045,6 +1053,59 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Null(capabilityMetadata.CapabilityKey);
 
         var response = await client.GetAsync("/api/v4/tests/profile/runtime/clear/capability/orders/ord-42");
+        response.EnsureSuccessStatusCode();
+        var payload = await response.Content.ReadFromJsonAsync<GeneratedRuntimeOrderOutput>();
+        Assert.NotNull(payload);
+        Assert.Equal("ord-42", payload.OrderId);
+    }
+
+    [Fact]
+    public async Task MapCephalonDoesNotExposeAppliedOverrideIdForNoOpCapabilityClearOnPublishedEndpoint()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "4";
+        builder.Configuration["OpenApi:DefaultVersion"] = "4";
+        builder.Configuration["RestApi:Overrides:clear-public-capability-noop:Behaviors:0"] = "tests.profile.runtimeclear.noop.capability";
+        builder.Configuration["RestApi:Overrides:clear-public-capability-noop:ClearRequiredCapability"] = "true";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileCapabilityClearNoOpRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(snapshot);
+
+        var endpoint = Assert.Single(endpoints, static item =>
+            string.Equals(item.BehaviorId, "tests.profile.runtimeclear.noop.capability", StringComparison.Ordinal));
+        Assert.Equal("/api/v4/tests/profile/runtime/clear/noop/capability/orders/{orderId}", endpoint.RoutePattern);
+        Assert.Null(endpoint.RequiredCapabilityKey);
+        Assert.Null(endpoint.OriginalRequiredCapabilityKey);
+        Assert.Null(endpoint.AppliedOverrideId);
+
+        Assert.Contains(snapshot.RestEndpoints, item =>
+            string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal) &&
+            item.RequiredCapabilityKey is null &&
+            item.OriginalRequiredCapabilityKey is null &&
+            item.AppliedOverrideId is null);
+
+        var response = await client.GetAsync("/api/v4/tests/profile/runtime/clear/noop/capability/orders/ord-42");
         response.EnsureSuccessStatusCode();
         var payload = await response.Content.ReadFromJsonAsync<GeneratedRuntimeOrderOutput>();
         Assert.NotNull(payload);
@@ -4055,6 +4116,22 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         }
     }
 
+    private sealed class ProfileCapabilityClearNoOpRuntimeCatalogModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.profile-runtime.clear.noop.capability",
+            "Profile Runtime Capability Clear No-Op Module",
+            "Publishes a profile-backed route whose host clear rule leaves the capability boundary unchanged.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Group("/tests/profile/runtime/clear/noop/capability/orders")
+                .WithTagName("Profile Capability Clear No-Op API")
+                .MapProfile<GetProfileCapabilityClearNoOpRuntimeOrderBehavior>();
+        }
+    }
+
     private sealed class ExplicitVersionOverrideRuntimeCatalogModule : RestBehaviorModuleBase
     {
         public override ModuleDescriptor Descriptor { get; } = new(
@@ -4414,6 +4491,19 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     [AppBehavior("tests.profile.runtimeclear.capability")]
     [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}", ApiVersionMajor = 4)]
     private sealed class GetProfileCapabilityClearRuntimeOrderBehavior : IAppBehavior<GeneratedRuntimeOrderInput, GeneratedRuntimeOrderOutput>
+    {
+        public Task<GeneratedRuntimeOrderOutput> HandleAsync(
+            GeneratedRuntimeOrderInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new GeneratedRuntimeOrderOutput(input.OrderId));
+        }
+    }
+
+    [AppBehavior("tests.profile.runtimeclear.noop.capability")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}", ApiVersionMajor = 4)]
+    private sealed class GetProfileCapabilityClearNoOpRuntimeOrderBehavior : IAppBehavior<GeneratedRuntimeOrderInput, GeneratedRuntimeOrderOutput>
     {
         public Task<GeneratedRuntimeOrderOutput> HandleAsync(
             GeneratedRuntimeOrderInput input,

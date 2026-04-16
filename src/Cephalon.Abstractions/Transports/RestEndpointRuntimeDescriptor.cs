@@ -58,6 +58,14 @@ public sealed class RestEndpointRuntimeDescriptor
     /// <param name="requiredCapabilityKey">
     /// The required Cephalon capability key enforced at the REST boundary when one is available.
     /// </param>
+    /// <param name="originalRequiredCapabilityKey">
+    /// The original required Cephalon capability key before later endpoint-governance rewrites when
+    /// the runtime can classify that source answer.
+    /// </param>
+    /// <param name="appliedOverrideId">
+    /// The host-level shorthand override identifier when runtime governance actually changes the
+    /// published endpoint answer.
+    /// </param>
     public RestEndpointRuntimeDescriptor(
         string id,
         string transportId,
@@ -83,7 +91,9 @@ public sealed class RestEndpointRuntimeDescriptor
         string? relativePattern = null,
         string? behaviorType = null,
         string? sourceId = null,
-        string? requiredCapabilityKey = null)
+        string? requiredCapabilityKey = null,
+        string? originalRequiredCapabilityKey = null,
+        string? appliedOverrideId = null)
     {
         Id = NormalizeRequired(id, nameof(id));
         TransportId = NormalizeRequired(transportId, nameof(transportId));
@@ -106,6 +116,8 @@ public sealed class RestEndpointRuntimeDescriptor
         BehaviorType = NormalizeOptional(behaviorType);
         SourceId = NormalizeOptional(sourceId);
         RequiredCapabilityKey = NormalizeOptional(requiredCapabilityKey);
+        OriginalRequiredCapabilityKey = NormalizeOptional(originalRequiredCapabilityKey);
+        AppliedOverrideId = NormalizeOptional(appliedOverrideId);
         CandidateId = NormalizeOptional(candidateId);
         BindingDescriptors = NormalizeBindingDescriptors(bindingDescriptors);
         BindingFallbackMode = NormalizeBindingFallbackMode(bindingFallbackMode);
@@ -229,6 +241,20 @@ public sealed class RestEndpointRuntimeDescriptor
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? RequiredCapabilityKey { get; }
+
+    /// <summary>
+    /// Gets the original required Cephalon capability key before later endpoint-governance rewrites
+    /// when the runtime can classify that source answer.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? OriginalRequiredCapabilityKey { get; }
+
+    /// <summary>
+    /// Gets the host-level shorthand override identifier when runtime governance actually changes
+    /// the published endpoint answer.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? AppliedOverrideId { get; }
 
     /// <summary>
     /// Gets the stable originating candidate identifier when this endpoint was published from the
