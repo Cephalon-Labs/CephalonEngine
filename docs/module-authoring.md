@@ -442,7 +442,9 @@ Current helper behavior:
   addition would rely on inference, drop explicit binding coverage, or promote another implicit
   property into the public route, and still leaves explicit `MapGet/MapPost/...` routes, manual
   module-owned endpoints, and shorthand groups with explicit `.ApiVersion(...)` authoritative for
-  version selection
+  version selection; when more than one suppression or override rule matches the same shorthand
+  candidate, `/engine/rest-endpoint-candidates` now keeps the full specificity-ordered match trace
+  visible through `MatchedSuppressionIds` and `MatchedOverrideIds` before one rule wins
 - treats `behaviors.Internal<TBehavior>()` as the explicit internal-only or custom/manual-route path
 - validates that a module cannot map another module's explicitly owned behavior through the REST helper layer
 - keeps route shape in the ASP.NET Core adapter layer while behavior attributes remain host-agnostic
@@ -503,7 +505,9 @@ when `AuthoringStyles` is omitted, fails fast when both `Behaviors` and `Modules
 prefers the more specific matching rule deterministically by populated target dimensions first,
 then by behavior-targeted scope, narrower authoring-style scope, fewer total selector values, and
 stable rule id ordering, and intentionally suppresses only descriptor-backed shorthand candidates
-rather than rewriting explicit module DSL/manual routes.
+rather than rewriting explicit module DSL/manual routes. When more than one suppression rule
+matches, the suppressed candidate keeps the full ordered match set visible through
+`MatchedSuppressionIds` while `SuppressedBySuppressionId` keeps identifying the winning rule.
 
 When a host wants to keep shorthand publication but retarget selected shorthand endpoints to a
 different effective API major version, HTTP method, bounded published route-group prefix,
@@ -518,8 +522,10 @@ applied rule through
 `AppliedOverrideId` in `/engine/rest-endpoint-candidates`, keeps the original shorthand source
 shape visible there through `OriginalProjection` while `ProjectedEndpoint` carries the final
 effective mapped answer, keeps the grouped behavior-level publication story visible through
-`/engine/rest-endpoint-publication-groups`, and intentionally leaves explicit module DSL/manual
-routes plus shorthand groups with explicit `.ApiVersion(...)` authoritative for version selection.
+`/engine/rest-endpoint-publication-groups`, now also keeps every matching override rule visible
+through `MatchedOverrideIds` in specificity order before one winner is selected, and intentionally
+leaves explicit module DSL/manual routes plus shorthand groups with explicit `.ApiVersion(...)`
+authoritative for version selection.
 When `Bindings` are supplied, the override
 uses default `ReplaceExplicit` mode unless `BindingMode = MergeExplicit` is set explicitly. Replace
 mode swaps the shorthand candidate's full explicit binding plan, while merge mode upserts only the

@@ -32,6 +32,12 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
     /// <param name="appliedOverrideId">
     /// The host-level override identifier when this candidate shape was rewritten by REST governance.
     /// </param>
+    /// <param name="matchedSuppressionIds">
+    /// The ordered suppression-rule identifiers that matched this candidate before one winner was selected.
+    /// </param>
+    /// <param name="matchedOverrideIds">
+    /// The ordered override-rule identifiers that matched this candidate before one winner was selected.
+    /// </param>
     /// <param name="suppressionReason">The operator-facing suppression reason when one is available.</param>
     public RestEndpointCandidateRuntimeDescriptor(
         string id,
@@ -43,6 +49,8 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
         string? suppressedByCandidateId = null,
         string? suppressedBySuppressionId = null,
         string? appliedOverrideId = null,
+        IReadOnlyList<string>? matchedSuppressionIds = null,
+        IReadOnlyList<string>? matchedOverrideIds = null,
         string? suppressionReason = null)
     {
         if (string.IsNullOrWhiteSpace(id))
@@ -71,9 +79,13 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
             throw new ArgumentException("A supported candidate status is required.", nameof(status));
         }
 
+        var normalizedMatchedSuppressionIds = NormalizeOrderedList(matchedSuppressionIds);
+        var normalizedMatchedOverrideIds = NormalizeOrderedList(matchedOverrideIds);
+
         if (status == RestEndpointCandidateStatus.Published &&
             (!string.IsNullOrWhiteSpace(suppressedByCandidateId) ||
             !string.IsNullOrWhiteSpace(suppressedBySuppressionId) ||
+            normalizedMatchedSuppressionIds.Length > 0 ||
             !string.IsNullOrWhiteSpace(suppressionReason)))
         {
             throw new ArgumentException(
@@ -87,6 +99,31 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
             throw new ArgumentException(
                 "A suppressed candidate cannot declare both precedence and governance suppression ids.",
                 nameof(suppressedByCandidateId));
+        }
+
+        if (normalizedMatchedSuppressionIds.Length > 0 &&
+            string.IsNullOrWhiteSpace(suppressedBySuppressionId))
+        {
+            throw new ArgumentException(
+                "Matched suppression ids can only be declared for candidates suppressed by REST governance.",
+                nameof(matchedSuppressionIds));
+        }
+
+        if (!string.IsNullOrWhiteSpace(suppressedBySuppressionId) &&
+            !normalizedMatchedSuppressionIds.Contains(suppressedBySuppressionId.Trim(), StringComparer.OrdinalIgnoreCase))
+        {
+            throw new ArgumentException(
+                "The selected suppression id must appear in the matched suppression id list when that list is provided.",
+                nameof(matchedSuppressionIds));
+        }
+
+        if (!string.IsNullOrWhiteSpace(appliedOverrideId) &&
+            normalizedMatchedOverrideIds.Length > 0 &&
+            !normalizedMatchedOverrideIds.Contains(appliedOverrideId.Trim(), StringComparer.OrdinalIgnoreCase))
+        {
+            throw new ArgumentException(
+                "The applied override id must appear in the matched override id list when that list is provided.",
+                nameof(matchedOverrideIds));
         }
 
         Id = id.Trim();
@@ -104,6 +141,8 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
         AppliedOverrideId = string.IsNullOrWhiteSpace(appliedOverrideId)
             ? null
             : appliedOverrideId.Trim();
+        MatchedSuppressionIds = normalizedMatchedSuppressionIds;
+        MatchedOverrideIds = normalizedMatchedOverrideIds;
         SuppressionReason = string.IsNullOrWhiteSpace(suppressionReason)
             ? null
             : suppressionReason.Trim();
@@ -156,7 +195,43 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
     public string? AppliedOverrideId { get; }
 
     /// <summary>
+    /// Gets the ordered suppression-rule identifiers that matched this candidate before one winner was selected.
+    /// </summary>
+    public IReadOnlyList<string> MatchedSuppressionIds { get; }
+
+    /// <summary>
+    /// Gets the ordered override-rule identifiers that matched this candidate before one winner was selected.
+    /// </summary>
+    public IReadOnlyList<string> MatchedOverrideIds { get; }
+
+    /// <summary>
     /// Gets the operator-facing suppression reason when one is available.
     /// </summary>
     public string? SuppressionReason { get; }
+
+    private static string[] NormalizeOrderedList(IReadOnlyList<string>? values)
+    {
+        if (values is null || values.Count == 0)
+        {
+            return [];
+        }
+
+        var normalized = new List<string>(values.Count);
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var value in values)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                continue;
+            }
+
+            var trimmed = value.Trim();
+            if (seen.Add(trimmed))
+            {
+                normalized.Add(trimmed);
+            }
+        }
+
+        return normalized.ToArray();
+    }
 }

@@ -228,6 +228,12 @@ Status update:
   operation-name/documentation conventions during candidate resolution so
   `/engine/rest-endpoint-candidates` and `/engine/rest-endpoints` stay aligned for operator-facing
   metadata truth
+- the next shorthand governance-match visibility follow-through is now shipped through
+  `ENG-058-T87`: shorthand candidates now also keep the full ordered suppression-rule and
+  override-rule match sets visible through `MatchedSuppressionIds` and `MatchedOverrideIds` before
+  `SuppressedBySuppressionId` or `AppliedOverrideId` identifies the selected winner, so
+  overlapping host governance stays operator-visible without changing the existing specificity
+  model
 - the next bounded shorthand route-group-prefix override follow-through is now shipped through
   `ENG-058-T82`: the typed override/runtime contracts plus ASP.NET Core config binding now support
   shorthand-only `RouteGroupPrefix`, that remap must stay beneath the active REST root, cannot
@@ -256,7 +262,9 @@ Status update:
   exposes those configured rules through `IRestEndpointSuppressionRuntimeCatalog`,
   `/engine/rest-endpoint-suppressions`, and `snapshot.RestEndpointSuppressions`, and suppressed
   candidates now distinguish governance suppression through
-  `RestEndpointCandidateRuntimeDescriptor.SuppressedBySuppressionId`
+  `RestEndpointCandidateRuntimeDescriptor.SuppressedBySuppressionId` while
+  `RestEndpointCandidateRuntimeDescriptor.MatchedSuppressionIds` keeps every matching rule visible
+  in specificity order
 - the first constrained shorthand-override slices are now shipped through `ENG-058-T69`,
   `ENG-058-T70`, `ENG-058-T71`, `ENG-058-T72`, `ENG-058-T73`, `ENG-058-T74`, `ENG-058-T75`,
   `ENG-058-T76`, `ENG-058-T82`, and `ENG-058-T83`:
@@ -267,8 +275,10 @@ Status update:
   through
   `IRestEndpointOverrideRuntimeCatalog`, `/engine/rest-endpoint-overrides`, and
   `snapshot.RestEndpointOverrides`; candidates now surface the governing rule through
-  `RestEndpointCandidateRuntimeDescriptor.AppliedOverrideId`; the normalized materializer now maps
-  the same effective projection shape that the runtime catalogs report; explicit binding-plan
+  `RestEndpointCandidateRuntimeDescriptor.AppliedOverrideId` while
+  `RestEndpointCandidateRuntimeDescriptor.MatchedOverrideIds` keeps every matching rule visible in
+  specificity order; the normalized materializer now maps the same effective projection shape that
+  the runtime catalogs report; explicit binding-plan
   overrides now default to replacing the shorthand candidate's explicit descriptors, but can also
   merge explicit binding upserts and withdrawals by property name through
   `BindingMode = MergeExplicit` plus `RemovedBindingProperties` while still leaving unbound route
@@ -510,6 +520,8 @@ projections:
 - the winning candidate id when suppression occurs
 - an operator-facing suppression reason
 - the projected endpoint shape each candidate would publish if it won
+- the full ordered suppression-rule and override-rule match sets when overlapping governance rules
+  target the same shorthand candidate
 - the grouped published-versus-suppressed answer per behavior, including published candidate ids,
   precedence-suppressed candidate ids, governance-suppressed candidate ids, the winning precedence
   rank when one exists, and the ordered candidate set
@@ -719,7 +731,7 @@ Status:
 - the first controlled-governance follow-through is now shipped through `ENG-058-T68`, so
   ASP.NET Core hosts can suppress descriptor-backed shorthand candidates through
   `RestApi:Suppressions` while the runtime keeps both the configured suppression-rule catalog and
-  the candidate-level `SuppressedBySuppressionId` truth visible
+  the candidate-level `SuppressedBySuppressionId` plus `MatchedSuppressionIds` truth visible
 - the next controlled-governance follow-through is now shipped through `ENG-058-T69`,
   `ENG-058-T70`, `ENG-058-T71`, `ENG-058-T72`, `ENG-058-T73`, `ENG-058-T74`, `ENG-058-T75`, and
   `ENG-058-T82`, so ASP.NET Core hosts can
@@ -727,7 +739,11 @@ Status:
   different effective `ApiVersionMajor`, HTTP `Method`, bounded published `RouteGroupPrefix`,
   constrained relative `Pattern`, or explicit binding plan, while the runtime keeps both the
   configured override-rule catalog and the
-  candidate-level `AppliedOverrideId` truth visible
+  candidate-level `AppliedOverrideId` plus `MatchedOverrideIds` truth visible
+- the next governance-overlap visibility follow-through is now shipped through `ENG-058-T87`, so
+  overlapping shorthand suppression/override matches now stay visible in runtime truth through the
+  ordered `MatchedSuppressionIds` and `MatchedOverrideIds` lists before one rule wins by the
+  existing specificity model
 - the next selector-targeting follow-through is now shipped through `ENG-058-T77`, so both
   `RestApi:Suppressions` and `RestApi:Overrides` can refine that same descriptor-backed shorthand
   scope with `ApiVersionMajors`, `Methods`, `RelativePatterns`, and `RouteGroupPrefixes` while the
@@ -765,6 +781,9 @@ The following points are durable enough to keep outside thread-local context.
   `RestEndpointCandidateRuntimeDescriptor.OriginalProjection` while `ProjectedEndpoint` continues
   to answer the final effective mapped route, version, method, binding, endpoint-name, summary,
   and description shape
+- those candidate entries now also keep overlapping host-governance matches visible through
+  `RestEndpointCandidateRuntimeDescriptor.MatchedSuppressionIds` and
+  `RestEndpointCandidateRuntimeDescriptor.MatchedOverrideIds` before one winning rule is selected
 - those grouped publication entries now keep the behavior-level published-versus-suppressed story
   visible through published candidate ids, precedence-suppressed candidate ids,
   governance-suppressed candidate ids, the winning precedence rank when one exists, and the

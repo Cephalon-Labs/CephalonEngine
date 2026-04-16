@@ -424,6 +424,10 @@ public sealed class BehaviorRestProjectionTests
             item.Candidate.Status == RestEndpointCandidateStatus.Suppressed);
         Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, suppressed.Candidate.AuthoringStyle);
         Assert.Equal("behavior-module-rule", suppressed.Candidate.SuppressedBySuppressionId);
+        Assert.Equal(
+            ["behavior-module-rule", "module-rule"],
+            suppressed.Candidate.MatchedSuppressionIds);
+        Assert.Empty(suppressed.Candidate.MatchedOverrideIds);
     }
 
     [Fact]
@@ -1836,6 +1840,10 @@ public sealed class BehaviorRestProjectionTests
 
         var candidate = Assert.Single(candidates);
         Assert.Equal("behavior-module-rule", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal(
+            ["behavior-module-rule", "module-rule"],
+            candidate.Candidate.MatchedOverrideIds);
+        Assert.Empty(candidate.Candidate.MatchedSuppressionIds);
         Assert.Equal(6, candidate.Candidate.ProjectedEndpoint.ApiVersionMajor);
         Assert.Equal("/api/v6/tests/generated-specific-override/{cartId}", candidate.Candidate.ProjectedEndpoint.RoutePattern);
     }
@@ -1938,6 +1946,7 @@ public sealed class BehaviorRestProjectionTests
                 "/api/v6/tests/profile-selector-override-specificity/primary/lookup/general/{cartId}/items",
                 StringComparison.Ordinal));
         Assert.Equal("all-candidates", primary.Candidate.AppliedOverrideId);
+        Assert.Equal(["all-candidates"], primary.Candidate.MatchedOverrideIds);
 
         var secondary = Assert.Single(candidates, static item =>
             string.Equals(
@@ -1945,6 +1954,9 @@ public sealed class BehaviorRestProjectionTests
                 "/api/v6/tests/profile-selector-override-specificity/secondary/lookup/secondary/{cartId}/items",
                 StringComparison.Ordinal));
         Assert.Equal("secondary-only", secondary.Candidate.AppliedOverrideId);
+        Assert.Equal(
+            ["secondary-only", "all-candidates"],
+            secondary.Candidate.MatchedOverrideIds);
     }
 
     [Fact]

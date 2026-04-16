@@ -507,8 +507,12 @@ Candidate ids now resolve from that original shorthand projection before host-le
 applied, while `ProjectedEndpoint.Id` continues to identify the final effective mapped endpoint
 shape. Projected shorthand endpoints now also keep endpoint names plus summary/description metadata
 aligned with the final published runtime endpoint conventions, including XML-derived behavior docs
-when they exist and module-description fallback when they do not. Today that surface covers the
-normalized module-owned behavior projection path, including explicit module DSL mappings,
+when they exist and module-description fallback when they do not. When more than one suppression
+or override rule matches the same shorthand candidate, that same runtime entry now also keeps the
+full ordered match set visible through `MatchedSuppressionIds` and `MatchedOverrideIds` before
+`SuppressedBySuppressionId` or `AppliedOverrideId` identifies the selected winner. Today that
+surface covers the normalized module-owned behavior projection path, including explicit module DSL
+mappings,
 `MapProfile<TBehavior>()` shorthand consumption, and
 `MapGeneratedProfiles(...)` shorthand consumption.
 
@@ -520,7 +524,9 @@ profile shorthand, generated shorthand, or selector-scoped governance interactin
 
 When suppression comes from host governance instead of precedence, the runtime now uses
 `SuppressedBySuppressionId` rather than `SuppressedByCandidateId` so operators can see that a
-configuration rule hid the candidate instead of another candidate winning.
+configuration rule hid the candidate instead of another candidate winning. When more than one
+suppression rule matched, the runtime also keeps the full specificity-ordered match set visible
+through `MatchedSuppressionIds`.
 
 Current governance baseline:
 
@@ -548,7 +554,8 @@ Current governance baseline:
 - when more than one rule matches, Cephalon prefers candidate-targeted rules first, then fewer
   targeted candidate ids, then the more specific rule by populated target dimensions, behavior-
   targeted scope, narrower authoring-style scope, fewer total selector values, and finally stable
-  rule id ordering
+  rule id ordering; shorthand candidates keep the full ordered match trace visible through
+  `MatchedSuppressionIds` and `MatchedOverrideIds` before one winning rule is selected
 - shorthand groups that already declare `.ApiVersion(...)` explicitly remain authoritative over
   host-level version rewrites, while shorthand method and constrained pattern overrides can still
   apply

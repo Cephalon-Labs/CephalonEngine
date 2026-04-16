@@ -38,9 +38,13 @@ internal static class RestBehaviorProjectionCandidateResolver
             return [];
         }
 
-        var suppressionByCandidateId = candidates.ToDictionary(
+        var matchedSuppressionsByCandidateId = candidates.ToDictionary(
             static candidate => candidate.Candidate.Id,
-            candidate => ResolveSuppression(candidate, suppressions),
+            candidate => ResolveMatchingSuppressions(candidate, suppressions),
+            StringComparer.OrdinalIgnoreCase);
+        var suppressionByCandidateId = matchedSuppressionsByCandidateId.ToDictionary(
+            static pair => pair.Key,
+            static pair => pair.Value.FirstOrDefault(),
             StringComparer.OrdinalIgnoreCase);
 
         var winnersByBehavior = candidates
@@ -61,7 +65,7 @@ internal static class RestBehaviorProjectionCandidateResolver
                 StringComparer.OrdinalIgnoreCase);
 
         return candidates
-            .Select(candidate => ResolvePublication(candidate, suppressionByCandidateId, winnersByBehavior))
+            .Select(candidate => ResolvePublication(candidate, matchedSuppressionsByCandidateId, winnersByBehavior))
             .OrderBy(static candidate => candidate.Candidate.ProjectedEndpoint.RoutePattern, StringComparer.OrdinalIgnoreCase)
             .ThenBy(static candidate => candidate.Candidate.ProjectedEndpoint.Method, StringComparer.OrdinalIgnoreCase)
             .ThenBy(static candidate => candidate.Candidate.Id, StringComparer.OrdinalIgnoreCase)
@@ -136,7 +140,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             endpointProjection.AuthoringStyle,
             originalProjection.Method,
             originalProjection.RoutePattern);
-        var appliedOverride = ResolveOverride(
+        var overrideDecision = ResolveOverrideDecision(
             moduleDescriptor.Id,
             candidateId,
             endpointProjection,
@@ -145,6 +149,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             originalRouteGroupPrefix,
             group,
             overrides);
+        var appliedOverride = overrideDecision.AppliedOverride;
         var effectiveEndpointProjection = appliedOverride?.EffectiveEndpointProjection ?? endpointProjection;
         var effectiveApiVersionMajor = appliedOverride?.EffectiveApiVersionMajor ?? defaultApiVersionMajor;
         var publishedRouteGroupPrefix = appliedOverride?.EffectiveRouteGroupPrefix ??
@@ -196,19 +201,21 @@ internal static class RestBehaviorProjectionCandidateResolver
                 effectiveEndpointProjection.AuthoringStyle,
                 precedenceRank,
                 RestEndpointCandidateStatus.Published,
-                appliedOverrideId: appliedOverride?.Id));
+                appliedOverrideId: appliedOverride?.Id,
+                matchedOverrideIds: overrideDecision.MatchedOverrideIds));
     }
 
     private static ResolvedRestBehaviorEndpointProjectionCandidate ResolvePublication(
         ResolvedRestBehaviorEndpointProjectionCandidate candidate,
-        Dictionary<string, RestEndpointSuppressionOptions?> suppressionByCandidateId,
+        Dictionary<string, RestEndpointSuppressionOptions[]> matchedSuppressionsByCandidateId,
         Dictionary<string, ResolvedRestBehaviorEndpointProjectionCandidate[]> winnersByBehavior)
     {
         ArgumentNullException.ThrowIfNull(candidate);
-        ArgumentNullException.ThrowIfNull(suppressionByCandidateId);
+        ArgumentNullException.ThrowIfNull(matchedSuppressionsByCandidateId);
         ArgumentNullException.ThrowIfNull(winnersByBehavior);
 
-        var suppression = suppressionByCandidateId[candidate.Candidate.Id];
+        var matchedSuppressions = matchedSuppressionsByCandidateId[candidate.Candidate.Id];
+        var suppression = matchedSuppressions.FirstOrDefault();
         if (suppression is not null)
         {
             return candidate with
@@ -222,6 +229,8 @@ internal static class RestBehaviorProjectionCandidateResolver
                     RestEndpointCandidateStatus.Suppressed,
                     suppressedBySuppressionId: suppression.Id,
                     appliedOverrideId: candidate.Candidate.AppliedOverrideId,
+                    matchedSuppressionIds: matchedSuppressions.Select(static item => item.Id).ToArray(),
+                    matchedOverrideIds: candidate.Candidate.MatchedOverrideIds,
                     suppressionReason: $"Suppressed by REST endpoint suppression rule '{suppression.Id}'.")
             };
         }
@@ -245,11 +254,12 @@ internal static class RestBehaviorProjectionCandidateResolver
                 RestEndpointCandidateStatus.Suppressed,
                 suppressedByCandidateId: winningCandidate.Id,
                 appliedOverrideId: candidate.Candidate.AppliedOverrideId,
+                matchedOverrideIds: candidate.Candidate.MatchedOverrideIds,
                 suppressionReason: $"Suppressed because behavior '{behaviorId}' is also mapped by higher-precedence authoring style '{winningCandidate.AuthoringStyle}'.")
         };
     }
 
-    private static AppliedRestEndpointOverride? ResolveOverride(
+    private static ResolvedRestEndpointOverrideDecision ResolveOverrideDecision(
         string sourceModuleId,
         string originalCandidateId,
         RestBehaviorEndpointProjection endpointProjection,
@@ -268,28 +278,20 @@ internal static class RestBehaviorProjectionCandidateResolver
 
         if (overrides is null || overrides.Count == 0)
         {
-            return null;
+            return new ResolvedRestEndpointOverrideDecision([], null);
         }
 
-        var matchedOverride = overrides
-            .Where(overrideOptions => MatchesOverride(
-                sourceModuleId,
-                originalCandidateId,
-                endpointProjection,
-                defaultApiVersionMajor,
-                originalRouteGroupPrefix,
-                overrideOptions))
-            .OrderByDescending(static overrideOptions => overrideOptions.CandidateIds.Count > 0)
-            .ThenBy(static overrideOptions => overrideOptions.CandidateIds.Count == 0 ? int.MaxValue : overrideOptions.CandidateIds.Count)
-            .ThenByDescending(static overrideOptions => CountTargetDimensions(overrideOptions))
-            .ThenByDescending(static overrideOptions => overrideOptions.BehaviorIds.Count > 0)
-            .ThenBy(static overrideOptions => overrideOptions.AuthoringStyles.Count)
-            .ThenBy(static overrideOptions => CountTargetValues(overrideOptions))
-            .ThenBy(static overrideOptions => overrideOptions.Id, StringComparer.OrdinalIgnoreCase)
-            .FirstOrDefault();
+        var matchedOverrides = ResolveMatchingOverrides(
+            sourceModuleId,
+            originalCandidateId,
+            endpointProjection,
+            defaultApiVersionMajor,
+            originalRouteGroupPrefix,
+            overrides);
+        var matchedOverride = matchedOverrides.FirstOrDefault();
         if (matchedOverride is null)
         {
-            return null;
+            return new ResolvedRestEndpointOverrideDecision([], null);
         }
 
         var effectiveEndpointProjection = endpointProjection;
@@ -380,13 +382,51 @@ internal static class RestBehaviorProjectionCandidateResolver
             }
         }
 
-        return wasApplied
-            ? new AppliedRestEndpointOverride(
-                matchedOverride.Id,
-                effectiveEndpointProjection,
-                effectiveApiVersionMajor,
-                effectiveRouteGroupPrefix)
-            : null;
+        return new ResolvedRestEndpointOverrideDecision(
+            matchedOverrides.Select(static overrideOptions => overrideOptions.Id).ToArray(),
+            wasApplied
+                ? new AppliedRestEndpointOverride(
+                    matchedOverride.Id,
+                    effectiveEndpointProjection,
+                    effectiveApiVersionMajor,
+                    effectiveRouteGroupPrefix)
+                : null);
+    }
+
+    private static RestEndpointOverrideOptions[] ResolveMatchingOverrides(
+        string sourceModuleId,
+        string originalCandidateId,
+        RestBehaviorEndpointProjection endpointProjection,
+        int? defaultApiVersionMajor,
+        string originalRouteGroupPrefix,
+        IReadOnlyList<RestEndpointOverrideOptions>? overrides)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(sourceModuleId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(originalCandidateId);
+        ArgumentNullException.ThrowIfNull(endpointProjection);
+        ArgumentException.ThrowIfNullOrWhiteSpace(originalRouteGroupPrefix);
+
+        if (overrides is null || overrides.Count == 0)
+        {
+            return [];
+        }
+
+        return overrides
+            .Where(overrideOptions => MatchesOverride(
+                sourceModuleId,
+                originalCandidateId,
+                endpointProjection,
+                defaultApiVersionMajor,
+                originalRouteGroupPrefix,
+                overrideOptions))
+            .OrderByDescending(static overrideOptions => overrideOptions.CandidateIds.Count > 0)
+            .ThenBy(static overrideOptions => overrideOptions.CandidateIds.Count == 0 ? int.MaxValue : overrideOptions.CandidateIds.Count)
+            .ThenByDescending(static overrideOptions => CountTargetDimensions(overrideOptions))
+            .ThenByDescending(static overrideOptions => overrideOptions.BehaviorIds.Count > 0)
+            .ThenBy(static overrideOptions => overrideOptions.AuthoringStyles.Count)
+            .ThenBy(static overrideOptions => CountTargetValues(overrideOptions))
+            .ThenBy(static overrideOptions => overrideOptions.Id, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
     }
 
     private static void ValidateRouteGroupPrefixOverride(
@@ -712,7 +752,7 @@ internal static class RestBehaviorProjectionCandidateResolver
                type == typeof(TimeOnly);
     }
 
-    private static RestEndpointSuppressionOptions? ResolveSuppression(
+    private static RestEndpointSuppressionOptions[] ResolveMatchingSuppressions(
         ResolvedRestBehaviorEndpointProjectionCandidate candidate,
         IReadOnlyList<RestEndpointSuppressionOptions>? suppressions)
     {
@@ -720,7 +760,7 @@ internal static class RestBehaviorProjectionCandidateResolver
 
         if (suppressions is null || suppressions.Count == 0)
         {
-            return null;
+            return [];
         }
 
         return suppressions
@@ -732,7 +772,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             .ThenBy(static suppression => suppression.AuthoringStyles.Count)
             .ThenBy(static suppression => CountTargetValues(suppression))
             .ThenBy(static suppression => suppression.Id, StringComparer.OrdinalIgnoreCase)
-            .FirstOrDefault();
+            .ToArray();
     }
 
     private static bool MatchesSuppression(
@@ -1111,3 +1151,7 @@ internal sealed record AppliedRestEndpointOverride(
     RestBehaviorEndpointProjection EffectiveEndpointProjection,
     int? EffectiveApiVersionMajor,
     string? EffectiveRouteGroupPrefix);
+
+internal sealed record ResolvedRestEndpointOverrideDecision(
+    IReadOnlyList<string> MatchedOverrideIds,
+    AppliedRestEndpointOverride? AppliedOverride);

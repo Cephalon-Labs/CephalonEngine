@@ -1457,6 +1457,20 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Configuration["RestApi:Overrides:secondary-only:RelativePatterns:0"] = "/{orderId}/items";
         builder.Configuration["RestApi:Overrides:secondary-only:RouteGroupPrefixes:0"] = "/api/v7/tests/profile-runtime/selectors/secondary/orders";
         builder.Configuration["RestApi:Overrides:secondary-only:Pattern"] = "/lookup/{orderId}/items";
+        builder.Configuration["RestApi:Overrides:all-candidates:Behaviors:0"] = "tests.rest.profile.selector.bindings";
+        builder.Configuration["RestApi:Overrides:all-candidates:Pattern"] = "/lookup/general/{orderId}/items";
+        builder.Configuration["RestApi:Overrides:all-candidates:Bindings:0:PropertyName"] = "OrderId";
+        builder.Configuration["RestApi:Overrides:all-candidates:Bindings:0:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:all-candidates:Bindings:0:Name"] = "orderId";
+        builder.Configuration["RestApi:Overrides:all-candidates:Bindings:1:PropertyName"] = "Quantity";
+        builder.Configuration["RestApi:Overrides:all-candidates:Bindings:1:Source"] = "Query";
+        builder.Configuration["RestApi:Overrides:all-candidates:Bindings:1:Name"] = "quantity";
+        builder.Configuration["RestApi:Overrides:all-candidates:Bindings:2:PropertyName"] = "CorrelationId";
+        builder.Configuration["RestApi:Overrides:all-candidates:Bindings:2:Source"] = "Header";
+        builder.Configuration["RestApi:Overrides:all-candidates:Bindings:2:Name"] = "X-Correlation-Id";
+        builder.Configuration["RestApi:Overrides:all-candidates:Bindings:3:PropertyName"] = "Note";
+        builder.Configuration["RestApi:Overrides:all-candidates:Bindings:3:Source"] = "Body";
+        builder.Configuration["RestApi:Overrides:all-candidates:Bindings:3:Name"] = "note";
         builder.AddCephalon(engine =>
         {
             engine.AddModule(new ProfileSelectorRuntimeCatalogModule());
@@ -1485,7 +1499,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         var primaryEndpoint = Assert.Single(endpoints, static item =>
             string.Equals(
                 item.RoutePattern,
-                "/api/v6/tests/profile-runtime/selectors/primary/orders/{orderId}/items",
+                "/api/v6/tests/profile-runtime/selectors/primary/orders/lookup/general/{orderId}/items",
                 StringComparison.Ordinal));
         var secondaryEndpoint = Assert.Single(endpoints, static item =>
             string.Equals(
@@ -1497,12 +1511,16 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("tests.rest.profile.selector.bindings", secondaryEndpoint.BehaviorId);
 
         var primaryCandidate = Assert.Single(candidates, static item =>
-            string.Equals(item.ProjectedEndpoint.RoutePattern, "/api/v6/tests/profile-runtime/selectors/primary/orders/{orderId}/items", StringComparison.Ordinal));
+            string.Equals(item.ProjectedEndpoint.RoutePattern, "/api/v6/tests/profile-runtime/selectors/primary/orders/lookup/general/{orderId}/items", StringComparison.Ordinal));
         var secondaryCandidate = Assert.Single(candidates, static item =>
             string.Equals(item.ProjectedEndpoint.RoutePattern, "/api/v7/tests/profile-runtime/selectors/secondary/orders/lookup/{orderId}/items", StringComparison.Ordinal));
 
-        Assert.Null(primaryCandidate.AppliedOverrideId);
+        Assert.Equal("all-candidates", primaryCandidate.AppliedOverrideId);
+        Assert.Equal(["all-candidates"], primaryCandidate.MatchedOverrideIds);
         Assert.Equal("secondary-only", secondaryCandidate.AppliedOverrideId);
+        Assert.Equal(
+            ["secondary-only", "all-candidates"],
+            secondaryCandidate.MatchedOverrideIds);
         Assert.Equal("POST", secondaryCandidate.OriginalProjection.Method);
         Assert.Equal(7, secondaryCandidate.OriginalProjection.ApiVersionMajor);
         Assert.Equal("/api/v7/tests/profile-runtime/selectors/secondary/orders", secondaryCandidate.OriginalProjection.RouteGroupPrefix);
@@ -1519,7 +1537,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
 
         using var primaryRequest = new HttpRequestMessage(
             HttpMethod.Post,
-            "/api/v6/tests/profile-runtime/selectors/primary/orders/ord-91/items?quantity=2");
+            "/api/v6/tests/profile-runtime/selectors/primary/orders/lookup/general/ord-91/items?quantity=2");
         primaryRequest.Headers.Add("X-Correlation-Id", "corr-91");
         primaryRequest.Content = JsonContent.Create(new
         {
@@ -1558,6 +1576,8 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Configuration["RestApi:Suppressions:hide-secondary-only:Methods:0"] = "POST";
         builder.Configuration["RestApi:Suppressions:hide-secondary-only:RelativePatterns:0"] = "/{orderId}/items";
         builder.Configuration["RestApi:Suppressions:hide-secondary-only:RouteGroupPrefixes:0"] = "/api/v7/tests/profile-runtime/selectors/secondary/orders";
+        builder.Configuration["RestApi:Suppressions:hide-secondary-group:Behaviors:0"] = "tests.rest.profile.selector.bindings";
+        builder.Configuration["RestApi:Suppressions:hide-secondary-group:RouteGroupPrefixes:0"] = "/api/v7/tests/profile-runtime/selectors/secondary/orders";
         builder.AddCephalon(engine =>
         {
             engine.AddModule(new ProfileSelectorRuntimeCatalogModule());
@@ -1586,10 +1606,14 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
 
         var published = Assert.Single(candidates, static item => item.Status == RestEndpointCandidateStatus.Published);
         Assert.Equal("/api/v6/tests/profile-runtime/selectors/primary/orders/{orderId}/items", published.ProjectedEndpoint.RoutePattern);
+        Assert.Empty(published.MatchedSuppressionIds);
 
         var suppressed = Assert.Single(candidates, static item => item.Status == RestEndpointCandidateStatus.Suppressed);
         Assert.Equal("/api/v7/tests/profile-runtime/selectors/secondary/orders/{orderId}/items", suppressed.ProjectedEndpoint.RoutePattern);
         Assert.Equal("hide-secondary-only", suppressed.SuppressedBySuppressionId);
+        Assert.Equal(
+            ["hide-secondary-only", "hide-secondary-group"],
+            suppressed.MatchedSuppressionIds);
 
         var rule = Assert.Single(suppressions, static item => string.Equals(item.Id, "hide-secondary-only", StringComparison.Ordinal));
         Assert.Contains("tests.rest.profile.selector.bindings", rule.BehaviorIds);
