@@ -152,12 +152,13 @@ public REST route truth plus explicit request-binding plans and preserved shorth
 through one host-agnostic transport contract. That keeps the runtime answer transport-owned instead
 of behavior-package-owned and avoids treating `metadata` dictionaries as the canonical binding-plan
 or binding-fallback surface. `RestEndpointRuntimeDescriptor` now also carries first-class
-`AuthoringStyle`, `RouteGroupPrefix`, `RelativePattern`, nullable `BehaviorType`, and nullable
-`CandidateId`, so published endpoints do not need `metadata.authoringStyle`,
-`metadata.routeGroupPrefix`, `metadata.relativePattern`, or `metadata.behaviorType` as the
-canonical authored-route answer and published behavior-backed endpoints can still point back to the
-originating shorthand candidate without consumers reverse-engineering that join from route text or
-endpoint ids. The same namespace now also owns
+`AuthoringStyle`, `RouteGroupPrefix`, `RelativePattern`, nullable `BehaviorType`, nullable
+`SourceId`, and nullable `CandidateId`, so published endpoints do not need
+`metadata.authoringStyle`, `metadata.routeGroupPrefix`, `metadata.relativePattern`,
+`metadata.behaviorType`, or `metadata.sourceId` as the canonical authored-route answer and
+published behavior-backed endpoints can still point back to the originating shorthand candidate
+without consumers reverse-engineering that join from route text or endpoint ids. The same
+namespace now also owns
 `IRestEndpointCandidateRuntimeCatalog`,
 `IRestEndpointCandidateRuntimeRegistry`, `RestEndpointCandidateProjectionDescriptor`,
 `RestEndpointCandidateRuntimeDescriptor`, `RestEndpointCandidateStatus`,
@@ -168,8 +169,9 @@ can compare the original shorthand projection shape with the final effective pro
 explicitly while also seeing the grouped published-versus-suppressed answer per behavior. The same
 candidate/runtime descriptor family now also keeps preserved shorthand fallback truth visible
 through typed `BindingFallbackMode` properties, while additive
-`metadata.bindingFallbackMode`, `metadata.authoringStyle`, `metadata.routeGroupPrefix`, and
-`metadata.relativePattern`, and `metadata.behaviorType` remain compatibility-only metadata.
+`metadata.bindingFallbackMode`, `metadata.authoringStyle`, `metadata.routeGroupPrefix`,
+`metadata.relativePattern`, `metadata.behaviorType`, and `metadata.sourceId` remain
+compatibility-only metadata.
 
 ## Related docs
 

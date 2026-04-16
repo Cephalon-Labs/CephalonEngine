@@ -927,6 +927,13 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void RestEndpointRuntimeContractsExposeSourceId()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor)
+            .GetProperty("SourceId", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
     public void RestEndpointRuntimeContractsExposeAuthoringStyle()
     {
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor)

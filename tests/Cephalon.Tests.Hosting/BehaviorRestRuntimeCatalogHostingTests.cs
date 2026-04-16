@@ -61,6 +61,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("/api/v2/tests/runtime-catalog/cart", getEndpoint.RouteGroupPrefix);
         Assert.Equal("/{cartId}", getEndpoint.RelativePattern);
         Assert.Contains("GetCatalogCartBehavior", getEndpoint.BehaviorType, StringComparison.Ordinal);
+        Assert.Equal("tests.rest.runtime-catalog.get:GET:/{cartId}", getEndpoint.SourceId);
         Assert.Contains("Runtime Catalog API", getEndpoint.Tags);
         Assert.Equal("v2", getEndpoint.OpenApiDocumentName);
         Assert.Equal(2, getEndpoint.ApiVersionMajor);
@@ -68,6 +69,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(getEndpoint.RouteGroupPrefix, getEndpoint.Metadata["routeGroupPrefix"]);
         Assert.Equal(getEndpoint.RelativePattern, getEndpoint.Metadata["relativePattern"]);
         Assert.Equal(getEndpoint.BehaviorType, getEndpoint.Metadata["behaviorType"]);
+        Assert.Equal(getEndpoint.SourceId, getEndpoint.Metadata["sourceId"]);
         Assert.Empty(getEndpoint.BindingDescriptors);
 
         var endpointById = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor>($"/engine/rest-endpoints/{getEndpoint.Id}");
@@ -150,9 +152,10 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("Publishes a legacy Minimal API route into the runtime catalog.", manualEndpoint.Description);
         Assert.Equal(RestEndpointRuntimeMetadata.MinimalApiAuthoringStyle, manualEndpoint.AuthoringStyle);
         Assert.Null(manualEndpoint.BehaviorType);
+        Assert.Equal("tests.rest.manual-runtime:GET:/api/tests/manual-runtime/orders/{orderId}", manualEndpoint.SourceId);
         Assert.Null(manualEndpoint.CandidateId);
         Assert.Equal(RestEndpointRuntimeMetadata.MinimalApiAuthoringStyle, manualEndpoint.Metadata["authoringStyle"]);
-        Assert.Equal("tests.rest.manual-runtime:GET:/api/tests/manual-runtime/orders/{orderId}", manualEndpoint.Metadata["sourceId"]);
+        Assert.Equal(manualEndpoint.SourceId, manualEndpoint.Metadata["sourceId"]);
         Assert.Empty(manualEndpoint.BindingDescriptors);
 
         var behaviorHelperEndpoint = Assert.Single(endpoints, static endpoint =>
@@ -167,9 +170,11 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("/api/v3/tests/manual-helper/orders", behaviorHelperEndpoint.RouteGroupPrefix);
         Assert.Equal("/{orderId}", behaviorHelperEndpoint.RelativePattern);
         Assert.Contains("GetManualHelperOrderBehavior", behaviorHelperEndpoint.BehaviorType, StringComparison.Ordinal);
+        Assert.Equal("tests.rest.manual-helper.get:GET:/{orderId}", behaviorHelperEndpoint.SourceId);
         Assert.Null(behaviorHelperEndpoint.CandidateId);
         Assert.Equal(RestEndpointRuntimeMetadata.BehaviorHelperAuthoringStyle, behaviorHelperEndpoint.Metadata["authoringStyle"]);
         Assert.Equal(behaviorHelperEndpoint.BehaviorType, behaviorHelperEndpoint.Metadata["behaviorType"]);
+        Assert.Equal(behaviorHelperEndpoint.SourceId, behaviorHelperEndpoint.Metadata["sourceId"]);
         Assert.Empty(behaviorHelperEndpoint.BindingDescriptors);
 
         Assert.NotNull(snapshot);
@@ -224,6 +229,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("/api/v3/tests/profile-runtime/orders", endpoint.RouteGroupPrefix);
         Assert.Equal("/{orderId}", endpoint.RelativePattern);
         Assert.Contains("GetProfileRuntimeOrderBehavior", endpoint.BehaviorType, StringComparison.Ordinal);
+        Assert.Equal("tests.rest.profile.lookup:GET:/{orderId}", endpoint.SourceId);
         Assert.Equal(candidate.Id, endpoint.CandidateId);
         Assert.Empty(endpoint.BindingDescriptors);
         Assert.Equal(endpoint.EndpointName, candidate.ProjectedEndpoint.EndpointName);
@@ -233,6 +239,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(endpoint.RouteGroupPrefix, candidate.ProjectedEndpoint.RouteGroupPrefix);
         Assert.Equal(endpoint.RelativePattern, candidate.ProjectedEndpoint.RelativePattern);
         Assert.Equal(endpoint.BehaviorType, candidate.ProjectedEndpoint.BehaviorType);
+        Assert.Equal(endpoint.SourceId, candidate.ProjectedEndpoint.SourceId);
         Assert.Equal(candidate.Id, candidate.ProjectedEndpoint.CandidateId);
 
         var payload = await client.GetFromJsonAsync<ProfileRuntimeOrderOutput>("/api/v3/tests/profile-runtime/orders/ord-42");

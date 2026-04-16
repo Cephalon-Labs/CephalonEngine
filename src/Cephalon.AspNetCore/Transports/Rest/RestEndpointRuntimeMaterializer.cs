@@ -126,7 +126,8 @@ internal static class RestEndpointRuntimeMaterializer
             routeGroupPrefix: behaviorMetadata?.RouteGroupPrefix is null
                 ? null
                 : RestEndpointRuntimeDescriptorFactory.CombinePaths(apiRoutesOptions.RestPrefix, behaviorMetadata.RouteGroupPrefix),
-            relativePattern: behaviorMetadata?.RelativePattern);
+            relativePattern: behaviorMetadata?.RelativePattern,
+            sourceId: $"{moduleMetadata.ModuleId}:{method.Trim().ToUpperInvariant()}:{routePattern}");
     }
 
     private static string[] ResolveHttpMethods(RouteEndpoint endpoint)

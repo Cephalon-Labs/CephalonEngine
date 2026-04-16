@@ -37,6 +37,7 @@ internal static class RestEndpointRuntimeDescriptorFactory
         ArgumentException.ThrowIfNullOrWhiteSpace(relativePattern);
 
         var normalizedMethod = method.Trim().ToUpperInvariant();
+        var sourceId = $"{behaviorId}:{normalizedMethod}:{relativePattern}";
         RestEndpointBindingFallbackMode? bindingFallbackMode = preserveImplicitQueryFallback
             ? RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback
             : null;
@@ -70,7 +71,8 @@ internal static class RestEndpointRuntimeDescriptorFactory
                 bindingFallbackMode),
             routeGroupPrefix: routeGroupPrefix,
             relativePattern: relativePattern,
-            behaviorType: behaviorType);
+            behaviorType: behaviorType,
+            sourceId: sourceId);
     }
 
     internal static string BuildBehaviorEndpointId(

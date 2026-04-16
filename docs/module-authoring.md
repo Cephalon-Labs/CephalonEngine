@@ -496,11 +496,12 @@ Current helper behavior:
   `behavior-module-generated`, exposes first-class `RestEndpointRuntimeDescriptor.RouteGroupPrefix`
   plus `RelativePattern` for the resolved published group boundary, exposes first-class nullable
   `RestEndpointRuntimeDescriptor.BehaviorType` for the concrete behavior implementation identity,
-  keeps additive `metadata.authoringStyle`, `metadata.routeGroupPrefix`,
-  `metadata.relativePattern`, and `metadata.behaviorType` only for compatibility, and published
-  behavior-backed endpoints now also expose `RestEndpointRuntimeDescriptor.CandidateId` so
-  operators can jump directly from the final published endpoint to
-  `/engine/rest-endpoint-candidates/{candidateId}`
+  exposes first-class nullable `RestEndpointRuntimeDescriptor.SourceId` for published source
+  identity, keeps additive `metadata.authoringStyle`, `metadata.routeGroupPrefix`,
+  `metadata.relativePattern`, `metadata.behaviorType`, and `metadata.sourceId` only for
+  compatibility, and published behavior-backed endpoints now also expose
+  `RestEndpointRuntimeDescriptor.CandidateId` so operators can jump directly from the final
+  published endpoint to `/engine/rest-endpoint-candidates/{candidateId}`
 - when the same behavior is mapped through both explicit module DSL and shorthand publication, the
   explicit DSL route now wins by default while the lower-precedence shorthand candidate remains
   visible through `/engine/rest-endpoint-candidates`, `snapshot.RestEndpointCandidates`,

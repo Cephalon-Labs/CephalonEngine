@@ -51,6 +51,10 @@ public sealed class RestEndpointRuntimeDescriptor
     /// The concrete behavior implementation type name when the endpoint dispatches through a
     /// Cephalon behavior and the runtime can classify that implementation identity.
     /// </param>
+    /// <param name="sourceId">
+    /// The stable source identity for the published endpoint when the runtime can classify the
+    /// authored source shape behind that publication.
+    /// </param>
     public RestEndpointRuntimeDescriptor(
         string id,
         string transportId,
@@ -74,7 +78,8 @@ public sealed class RestEndpointRuntimeDescriptor
         string? authoringStyle = null,
         string? routeGroupPrefix = null,
         string? relativePattern = null,
-        string? behaviorType = null)
+        string? behaviorType = null,
+        string? sourceId = null)
     {
         Id = NormalizeRequired(id, nameof(id));
         TransportId = NormalizeRequired(transportId, nameof(transportId));
@@ -95,6 +100,7 @@ public sealed class RestEndpointRuntimeDescriptor
         RouteGroupPrefix = NormalizeOptional(routeGroupPrefix);
         RelativePattern = NormalizeOptional(relativePattern);
         BehaviorType = NormalizeOptional(behaviorType);
+        SourceId = NormalizeOptional(sourceId);
         CandidateId = NormalizeOptional(candidateId);
         BindingDescriptors = NormalizeBindingDescriptors(bindingDescriptors);
         BindingFallbackMode = NormalizeBindingFallbackMode(bindingFallbackMode);
@@ -205,6 +211,13 @@ public sealed class RestEndpointRuntimeDescriptor
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? BehaviorType { get; }
+
+    /// <summary>
+    /// Gets the stable source identity for the published endpoint when the runtime can classify the
+    /// authored source shape behind that publication.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? SourceId { get; }
 
     /// <summary>
     /// Gets the stable originating candidate identifier when this endpoint was published from the
