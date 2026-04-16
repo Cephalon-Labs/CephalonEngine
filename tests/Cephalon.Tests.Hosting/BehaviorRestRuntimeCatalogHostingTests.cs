@@ -11,6 +11,7 @@ using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Engine.Runtime;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.TestHost;
 
@@ -785,6 +786,105 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         var deleteResponse = await client.DeleteAsync("/api/v4/tests/generated/runtime/override/orders/ord-42");
         deleteResponse.EnsureSuccessStatusCode();
         var payload = await deleteResponse.Content.ReadFromJsonAsync<GeneratedRuntimeOrderOutput>();
+        Assert.NotNull(payload);
+        Assert.Equal("ord-42", payload.OrderId);
+    }
+
+    [Fact]
+    public async Task MapCephalonAppliesEndpointMetadataOverridesAndExposesOverrideCatalog()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "4";
+        builder.Configuration["OpenApi:DefaultVersion"] = "4";
+        builder.Configuration["RestApi:Overrides:prefer-public-docs:Behaviors:0"] = "tests.generated.runtimeoverride.lookup";
+        builder.Configuration["RestApi:Overrides:prefer-public-docs:EndpointName"] = "tests.generated.runtimeoverride.public.lookup";
+        builder.Configuration["RestApi:Overrides:prefer-public-docs:Summary"] = "Gets a generated runtime order through host-governed endpoint metadata.";
+        builder.Configuration["RestApi:Overrides:prefer-public-docs:Description"] = "Publishes shorthand endpoint metadata overrides into runtime catalogs and ASP.NET Core endpoint metadata.";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new GeneratedVersionOverrideRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(overrides);
+        Assert.NotNull(snapshot);
+
+        var endpoint = Assert.Single(endpoints, static candidate =>
+            string.Equals(candidate.BehaviorId, "tests.generated.runtimeoverride.lookup", StringComparison.Ordinal));
+        Assert.Equal("/api/v4/tests/generated/runtime/override/orders/{orderId}", endpoint.RoutePattern);
+        Assert.Equal("tests.generated.runtimeoverride.public.lookup", endpoint.EndpointName);
+        Assert.Equal(
+            "Gets a generated runtime order through host-governed endpoint metadata.",
+            endpoint.Summary);
+        Assert.Equal(
+            "Publishes shorthand endpoint metadata overrides into runtime catalogs and ASP.NET Core endpoint metadata.",
+            endpoint.Description);
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.generated.runtimeoverride.lookup", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+        Assert.Equal("prefer-public-docs", candidate.AppliedOverrideId);
+        Assert.Equal(endpoint.Id, candidate.ProjectedEndpoint.Id);
+        Assert.Equal(endpoint.EndpointName, candidate.ProjectedEndpoint.EndpointName);
+        Assert.Equal(endpoint.Summary, candidate.ProjectedEndpoint.Summary);
+        Assert.Equal(endpoint.Description, candidate.ProjectedEndpoint.Description);
+
+        var rule = Assert.Single(overrides, static item => string.Equals(item.Id, "prefer-public-docs", StringComparison.Ordinal));
+        Assert.Equal("tests.generated.runtimeoverride.public.lookup", rule.EndpointName);
+        Assert.Equal(
+            "Gets a generated runtime order through host-governed endpoint metadata.",
+            rule.Summary);
+        Assert.Equal(
+            "Publishes shorthand endpoint metadata overrides into runtime catalogs and ASP.NET Core endpoint metadata.",
+            rule.Description);
+
+        Assert.Contains(snapshot.RestEndpointOverrides, item =>
+            string.Equals(item.Id, "prefer-public-docs", StringComparison.Ordinal) &&
+            string.Equals(item.EndpointName, "tests.generated.runtimeoverride.public.lookup", StringComparison.Ordinal) &&
+            string.Equals(item.Summary, "Gets a generated runtime order through host-governed endpoint metadata.", StringComparison.Ordinal) &&
+            string.Equals(item.Description, "Publishes shorthand endpoint metadata overrides into runtime catalogs and ASP.NET Core endpoint metadata.", StringComparison.Ordinal));
+        Assert.Contains(snapshot.RestEndpointCandidates, item =>
+            string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
+            string.Equals(item.AppliedOverrideId, "prefer-public-docs", StringComparison.Ordinal) &&
+            string.Equals(item.ProjectedEndpoint.EndpointName, "tests.generated.runtimeoverride.public.lookup", StringComparison.Ordinal) &&
+            string.Equals(item.ProjectedEndpoint.Summary, "Gets a generated runtime order through host-governed endpoint metadata.", StringComparison.Ordinal));
+
+        var routeEndpoint = Assert.Single(
+            ((IEndpointRouteBuilder)app).DataSources
+                .SelectMany(static dataSource => dataSource.Endpoints)
+                .OfType<RouteEndpoint>(),
+            static item => string.Equals(item.RoutePattern.RawText, "/api/v4/tests/generated/runtime/override/orders/{orderId}", StringComparison.Ordinal));
+        Assert.Equal(
+            "tests.generated.runtimeoverride.public.lookup",
+            routeEndpoint.Metadata.GetMetadata<EndpointNameMetadata>()?.EndpointName);
+        Assert.Equal(
+            "Gets a generated runtime order through host-governed endpoint metadata.",
+            routeEndpoint.Metadata.OfType<IEndpointSummaryMetadata>().LastOrDefault()?.Summary);
+        Assert.Equal(
+            "Publishes shorthand endpoint metadata overrides into runtime catalogs and ASP.NET Core endpoint metadata.",
+            routeEndpoint.Metadata.OfType<IEndpointDescriptionMetadata>().LastOrDefault()?.Description);
+
+        var payload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>("/api/v4/tests/generated/runtime/override/orders/ord-42");
         Assert.NotNull(payload);
         Assert.Equal("ord-42", payload.OrderId);
     }

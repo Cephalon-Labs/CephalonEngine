@@ -59,16 +59,16 @@ internal static class RestEndpointRuntimeMaterializer
 
         var routePattern = NormalizeRoutePattern(endpoint);
         var behaviorMetadata = endpoint.Metadata.GetMetadata<RestBehaviorEndpointMetadata>();
-        var endpointName = behaviorMetadata?.OperationName
-            ?? endpoint.Metadata.GetMetadata<EndpointNameMetadata>()?.EndpointName;
+        var endpointName = endpoint.Metadata.GetMetadata<EndpointNameMetadata>()?.EndpointName
+            ?? behaviorMetadata?.OperationName;
         var openApiDocumentName = behaviorMetadata?.OpenApiDocumentName
             ?? endpoint.Metadata.GetMetadata<IEndpointGroupNameMetadata>()?.EndpointGroupName;
         var apiVersionMajor = behaviorMetadata?.ApiVersionMajor
             ?? TryParseApiVersionMajor(openApiDocumentName);
-        var summary = behaviorMetadata?.Summary
-            ?? endpoint.Metadata.OfType<IEndpointSummaryMetadata>().LastOrDefault()?.Summary;
-        var description = behaviorMetadata?.Description
-            ?? endpoint.Metadata.OfType<IEndpointDescriptionMetadata>().LastOrDefault()?.Description;
+        var summary = endpoint.Metadata.OfType<IEndpointSummaryMetadata>().LastOrDefault()?.Summary
+            ?? behaviorMetadata?.Summary;
+        var description = endpoint.Metadata.OfType<IEndpointDescriptionMetadata>().LastOrDefault()?.Description
+            ?? behaviorMetadata?.Description;
         var sourceKind = behaviorMetadata?.SourceKind
             ?? RestEndpointRuntimeMetadata.ManualSourceKind;
         var tags = behaviorMetadata is null

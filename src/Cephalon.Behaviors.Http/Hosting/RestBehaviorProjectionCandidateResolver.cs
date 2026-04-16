@@ -150,6 +150,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             originalRouteGroupPrefix,
             group,
             overrides);
+        var selectedOverride = overrideDecision.SelectedOverride;
         var appliedOverride = overrideDecision.AppliedOverride;
         var effectiveEndpointProjection = appliedOverride?.EffectiveEndpointProjection ?? endpointProjection;
         var effectiveApiVersionMajor = appliedOverride?.EffectiveApiVersionMajor ?? defaultApiVersionMajor;
@@ -171,6 +172,14 @@ internal static class RestBehaviorProjectionCandidateResolver
             effectiveEndpointProjection.BehaviorType,
             moduleDescriptor,
             effectiveEndpointProjection.BehaviorId);
+        var appliedMetadataOverride = CreateAppliedEndpointMetadataOverride(
+            selectedOverride,
+            operationName,
+            documentation.Summary,
+            documentation.Description);
+        var endpointName = NormalizeOverrideMetadataValue(selectedOverride?.EndpointName) ?? operationName;
+        var summary = NormalizeOverrideMetadataValue(selectedOverride?.Summary) ?? documentation.Summary;
+        var description = NormalizeOverrideMetadataValue(selectedOverride?.Description) ?? documentation.Description;
         var projectedEndpoint = RestEndpointRuntimeDescriptorFactory.CreateBehaviorDescriptor(
             sourceKind: RestEndpointRuntimeMetadata.ModuleDslSourceKind,
             method: method,
@@ -179,12 +188,12 @@ internal static class RestBehaviorProjectionCandidateResolver
             sourceModuleVersion: moduleDescriptor.Version,
             sourceModuleVersionMajor: ResolveModuleMajorVersion(moduleDescriptor.Version),
             behaviorId: effectiveEndpointProjection.BehaviorId,
-            endpointName: operationName,
+            endpointName: endpointName,
             openApiDocumentName: openApiDocumentName,
             apiVersionMajor: effectiveApiVersionMajor,
             tags: [tagName],
-            summary: documentation.Summary,
-            description: documentation.Description,
+            summary: summary,
+            description: description,
             candidateId: candidateId,
             authoringStyle: effectiveEndpointProjection.AuthoringStyle,
             behaviorType: effectiveEndpointProjection.BehaviorType.FullName ?? effectiveEndpointProjection.BehaviorType.Name,
@@ -204,8 +213,9 @@ internal static class RestBehaviorProjectionCandidateResolver
                 effectiveEndpointProjection.AuthoringStyle,
                 precedenceRank,
                 RestEndpointCandidateStatus.Published,
-                appliedOverrideId: appliedOverride?.Id,
-                matchedOverrideIds: overrideDecision.MatchedOverrideIds));
+                appliedOverrideId: appliedOverride?.Id ?? appliedMetadataOverride?.OverrideId,
+                matchedOverrideIds: overrideDecision.MatchedOverrideIds),
+            appliedMetadataOverride);
     }
 
     private static ResolvedRestBehaviorEndpointProjectionCandidate ResolvePublication(
@@ -281,7 +291,7 @@ internal static class RestBehaviorProjectionCandidateResolver
 
         if (overrides is null || overrides.Count == 0)
         {
-            return new ResolvedRestEndpointOverrideDecision([], null);
+            return new ResolvedRestEndpointOverrideDecision([], null, null);
         }
 
         var matchedOverrides = ResolveMatchingOverrides(
@@ -294,7 +304,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         var matchedOverride = matchedOverrides.FirstOrDefault();
         if (matchedOverride is null)
         {
-            return new ResolvedRestEndpointOverrideDecision([], null);
+            return new ResolvedRestEndpointOverrideDecision([], null, null);
         }
 
         var effectiveEndpointProjection = endpointProjection;
@@ -391,6 +401,7 @@ internal static class RestBehaviorProjectionCandidateResolver
 
         return new ResolvedRestEndpointOverrideDecision(
             matchedOverrides.Select(static overrideOptions => overrideOptions.Id).ToArray(),
+            matchedOverride,
             wasApplied
                 ? new AppliedRestEndpointOverride(
                     matchedOverride.Id,
@@ -1022,6 +1033,43 @@ internal static class RestBehaviorProjectionCandidateResolver
         return count;
     }
 
+    private static AppliedRestEndpointMetadataOverride? CreateAppliedEndpointMetadataOverride(
+        RestEndpointOverrideOptions? selectedOverride,
+        string? defaultEndpointName,
+        string? defaultSummary,
+        string? defaultDescription)
+    {
+        if (selectedOverride is null)
+        {
+            return null;
+        }
+
+        var endpointName = NormalizeOverrideMetadataValue(selectedOverride.EndpointName);
+        var summary = NormalizeOverrideMetadataValue(selectedOverride.Summary);
+        var description = NormalizeOverrideMetadataValue(selectedOverride.Description);
+        if (endpointName is null && summary is null && description is null)
+        {
+            return null;
+        }
+
+        var endpointNameChanged = endpointName is not null &&
+                                  !string.Equals(endpointName, defaultEndpointName, StringComparison.Ordinal);
+        var summaryChanged = summary is not null &&
+                             !string.Equals(summary, defaultSummary, StringComparison.Ordinal);
+        var descriptionChanged = description is not null &&
+                                 !string.Equals(description, defaultDescription, StringComparison.Ordinal);
+        if (!endpointNameChanged && !summaryChanged && !descriptionChanged)
+        {
+            return null;
+        }
+
+        return new AppliedRestEndpointMetadataOverride(
+            selectedOverride.Id,
+            endpointNameChanged ? endpointName : null,
+            summaryChanged ? summary : null,
+            descriptionChanged ? description : null);
+    }
+
     private static int CountTargetValues(RestEndpointSuppressionOptions suppression)
     {
         ArgumentNullException.ThrowIfNull(suppression);
@@ -1046,6 +1094,13 @@ internal static class RestBehaviorProjectionCandidateResolver
                overrideOptions.Methods.Count +
                overrideOptions.RelativePatterns.Count +
                overrideOptions.RouteGroupPrefixes.Count;
+    }
+
+    private static string? NormalizeOverrideMetadataValue(string? value)
+    {
+        return string.IsNullOrWhiteSpace(value)
+            ? null
+            : value.Trim();
     }
 
     private static HashSet<string> ExtractRoutePlaceholders(string pattern)
@@ -1168,7 +1223,8 @@ internal static class RestBehaviorProjectionCandidateResolver
 internal sealed record ResolvedRestBehaviorEndpointProjectionCandidate(
     int GroupIndex,
     RestBehaviorEndpointProjection EffectiveEndpointProjection,
-    RestEndpointCandidateRuntimeDescriptor Candidate);
+    RestEndpointCandidateRuntimeDescriptor Candidate,
+    AppliedRestEndpointMetadataOverride? AppliedMetadataOverride = null);
 
 internal sealed record AppliedRestEndpointOverride(
     string Id,
@@ -1176,6 +1232,13 @@ internal sealed record AppliedRestEndpointOverride(
     int? EffectiveApiVersionMajor,
     string? EffectiveRouteGroupPrefix);
 
+internal sealed record AppliedRestEndpointMetadataOverride(
+    string OverrideId,
+    string? EndpointName,
+    string? Summary,
+    string? Description);
+
 internal sealed record ResolvedRestEndpointOverrideDecision(
     IReadOnlyList<string> MatchedOverrideIds,
+    RestEndpointOverrideOptions? SelectedOverride,
     AppliedRestEndpointOverride? AppliedOverride);

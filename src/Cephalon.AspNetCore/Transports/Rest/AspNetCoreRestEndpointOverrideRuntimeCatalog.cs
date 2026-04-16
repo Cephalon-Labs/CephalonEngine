@@ -31,6 +31,9 @@ internal sealed class AspNetCoreRestEndpointOverrideRuntimeCatalog : IRestEndpoi
                 item.Method,
                 item.Pattern,
                 item.RouteGroupPrefix,
+                item.EndpointName,
+                item.Summary,
+                item.Description,
                 item.Bindings,
                 item.RemovedBindingProperties,
                 item.BindingMode))

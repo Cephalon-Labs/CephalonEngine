@@ -31,7 +31,7 @@ internal sealed record RestBehaviorEndpointProjection(
     bool PreserveImplicitQueryFallback,
     string AuthoringStyle,
     Action<RouteHandlerBuilder>? ConfigureEndpoint,
-    Action<BehaviorRestEndpointGroup, string, IReadOnlyList<BehaviorRestBindingDescriptor>, bool, Action<RouteHandlerBuilder>?> Map)
+    Func<BehaviorRestEndpointGroup, string, IReadOnlyList<BehaviorRestBindingDescriptor>, bool, Action<RouteHandlerBuilder>?, RouteHandlerBuilder> Map)
 {
     private static readonly MethodInfo CreateMapDelegateFactoryMethod =
         typeof(RestBehaviorEndpointProjection).GetMethod(
@@ -186,31 +186,31 @@ internal sealed record RestBehaviorEndpointProjection(
                 Map);
     }
 
-    internal void Apply(BehaviorRestEndpointGroup group)
+    internal RouteHandlerBuilder Apply(BehaviorRestEndpointGroup group)
     {
         ArgumentNullException.ThrowIfNull(group);
         group.UseRuntimeAuthoringStyle(AuthoringStyle);
-        Map(group, Pattern, Bindings, PreserveImplicitQueryFallback, ConfigureEndpoint);
+        return Map(group, Pattern, Bindings, PreserveImplicitQueryFallback, ConfigureEndpoint);
     }
 
-    private static Action<BehaviorRestEndpointGroup, string, IReadOnlyList<BehaviorRestBindingDescriptor>, bool, Action<RouteHandlerBuilder>?> CreateMapDelegate(
+    private static Func<BehaviorRestEndpointGroup, string, IReadOnlyList<BehaviorRestBindingDescriptor>, bool, Action<RouteHandlerBuilder>?, RouteHandlerBuilder> CreateMapDelegate(
         Type behaviorType,
         RestBehaviorHttpMethod method)
     {
         ArgumentNullException.ThrowIfNull(behaviorType);
 
         var closedMethod = CreateMapDelegateFactoryMethod.MakeGenericMethod(behaviorType);
-        return (Action<BehaviorRestEndpointGroup, string, IReadOnlyList<BehaviorRestBindingDescriptor>, bool, Action<RouteHandlerBuilder>?>)closedMethod.Invoke(
+        return (Func<BehaviorRestEndpointGroup, string, IReadOnlyList<BehaviorRestBindingDescriptor>, bool, Action<RouteHandlerBuilder>?, RouteHandlerBuilder>)closedMethod.Invoke(
             null,
             [method])!;
     }
 
-    private static Action<BehaviorRestEndpointGroup, string, IReadOnlyList<BehaviorRestBindingDescriptor>, bool, Action<RouteHandlerBuilder>?> CreateMapDelegateFactory<TBehavior>(
+    private static Func<BehaviorRestEndpointGroup, string, IReadOnlyList<BehaviorRestBindingDescriptor>, bool, Action<RouteHandlerBuilder>?, RouteHandlerBuilder> CreateMapDelegateFactory<TBehavior>(
         RestBehaviorHttpMethod method)
         where TBehavior : class
         => CreateMapDelegate<TBehavior>(method);
 
-    private static Action<BehaviorRestEndpointGroup, string, IReadOnlyList<BehaviorRestBindingDescriptor>, bool, Action<RouteHandlerBuilder>?> CreateMapDelegate<TBehavior>(
+    private static Func<BehaviorRestEndpointGroup, string, IReadOnlyList<BehaviorRestBindingDescriptor>, bool, Action<RouteHandlerBuilder>?, RouteHandlerBuilder> CreateMapDelegate<TBehavior>(
         RestBehaviorHttpMethod method)
         where TBehavior : class
     {

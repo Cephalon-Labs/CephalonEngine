@@ -2,6 +2,8 @@ using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Transports;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.Transports.Rest;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -98,8 +100,36 @@ internal static class RestBehaviorProjectionMaterializer
             foreach (var candidate in routeGroup)
             {
                 group.UseRuntimeCandidateId(candidate.Candidate.Id);
-                candidate.EffectiveEndpointProjection.Apply(group);
+                var builder = candidate.EffectiveEndpointProjection.Apply(group);
+                ApplyEndpointMetadataOverride(builder, candidate.AppliedMetadataOverride);
             }
+        }
+    }
+
+    private static void ApplyEndpointMetadataOverride(
+        RouteHandlerBuilder builder,
+        AppliedRestEndpointMetadataOverride? metadataOverride)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        if (metadataOverride is null)
+        {
+            return;
+        }
+
+        if (!string.IsNullOrWhiteSpace(metadataOverride.EndpointName))
+        {
+            builder.WithName(metadataOverride.EndpointName);
+        }
+
+        if (!string.IsNullOrWhiteSpace(metadataOverride.Summary))
+        {
+            builder.WithSummary(metadataOverride.Summary);
+        }
+
+        if (!string.IsNullOrWhiteSpace(metadataOverride.Description))
+        {
+            builder.WithDescription(metadataOverride.Description);
         }
     }
 

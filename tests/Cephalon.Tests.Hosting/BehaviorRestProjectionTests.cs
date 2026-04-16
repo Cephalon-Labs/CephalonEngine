@@ -9,6 +9,7 @@ using Cephalon.Behaviors.Hosting;
 using Cephalon.Behaviors.Http.Abstractions;
 using Cephalon.Behaviors.Http.Hosting;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.Routing;
 
 namespace Cephalon.Tests.Hosting;
@@ -932,6 +933,51 @@ public sealed class BehaviorRestProjectionTests
         Assert.Equal("/api/v10/tests/generated-group-prefix-remapped/{cartId}", candidate.Candidate.ProjectedEndpoint.RoutePattern);
         Assert.Equal("v10", candidate.Candidate.ProjectedEndpoint.OpenApiDocumentName);
         Assert.Equal(10, candidate.Candidate.ProjectedEndpoint.ApiVersionMajor);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverAppliesEndpointMetadataOverridesToShorthandCandidates()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        builder.Group("/tests/generated-metadata-override")
+            .MapGeneratedProfiles("tests.generated.projection.precedence");
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.generated-metadata-override",
+                "Generated Metadata Override Module",
+                "Exercises shorthand endpoint-metadata override resolution.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "prefer-public-docs",
+                    behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                    endpointName: "tests.generated.metadata.lookup",
+                    summary: "Gets a generated projection cart through host-governed metadata.",
+                    description: "Publishes shorthand endpoint metadata overrides through the normalized candidate pipeline.")
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Equal("prefer-public-docs", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal("tests.generated.metadata.lookup", candidate.Candidate.ProjectedEndpoint.EndpointName);
+        Assert.Equal(
+            "Gets a generated projection cart through host-governed metadata.",
+            candidate.Candidate.ProjectedEndpoint.Summary);
+        Assert.Equal(
+            "Publishes shorthand endpoint metadata overrides through the normalized candidate pipeline.",
+            candidate.Candidate.ProjectedEndpoint.Description);
+        Assert.NotNull(candidate.AppliedMetadataOverride);
+        Assert.Equal("tests.generated.metadata.lookup", candidate.AppliedMetadataOverride.EndpointName);
+        Assert.Equal(
+            "Gets a generated projection cart through host-governed metadata.",
+            candidate.AppliedMetadataOverride.Summary);
+        Assert.Equal(
+            "Publishes shorthand endpoint metadata overrides through the normalized candidate pipeline.",
+            candidate.AppliedMetadataOverride.Description);
     }
 
     [Fact]
@@ -2085,6 +2131,24 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestEndpointOverrideOptionsTreatEndpointMetadataAsOverrideActions()
+    {
+        var options = new RestEndpointOverrideOptions(
+            id: "metadata-only",
+            behaviorIds: ["tests.generated.projection.precedence.lookup"],
+            endpointName: "tests.generated.metadata.lookup",
+            summary: "Gets a generated projection cart through host-governed metadata.",
+            description: "Publishes shorthand endpoint metadata overrides through the normalized candidate pipeline.");
+
+        Assert.Equal("tests.generated.metadata.lookup", options.EndpointName);
+        Assert.Equal("Gets a generated projection cart through host-governed metadata.", options.Summary);
+        Assert.Equal(
+            "Publishes shorthand endpoint metadata overrides through the normalized candidate pipeline.",
+            options.Description);
+        Assert.True(options.HasValues);
+    }
+
+    [Fact]
     public void RestEndpointOverrideOptionsRejectUnsupportedHttpMethod()
     {
         var exception = Assert.Throws<ArgumentException>(() =>
@@ -2457,6 +2521,107 @@ public sealed class BehaviorRestProjectionTests
             static item => string.Equals(item.RoutePattern.RawText, "/api/v6/tests/typed-prefix/orders/{cartId}", StringComparison.Ordinal));
 
         Assert.Equal("/api/v6/tests/typed-prefix/orders/{cartId}", endpoint.RoutePattern.RawText);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionMaterializerAppliesEndpointMetadataOverridesToPublishedRouteMetadata()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        using var app = builder.Build();
+        var apiGroup = app.MapGroup("/api");
+        var module = new ProjectionCountingRestModule();
+        var endpointProjection = RestBehaviorEndpointProjection.Create<ProjectionCartBehavior>(
+            RestBehaviorHttpMethod.Get,
+            "/{cartId}",
+            configureEndpoint: null,
+            authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle);
+        var projection = new RestBehaviorRouteGroupProjection(
+            Prefix: "/tests/typed-metadata/orders",
+            TagName: "Typed Metadata API",
+            TagDescription: null,
+            HasExplicitTagDescription: false,
+            ApiVersionMajor: 6,
+            HasExplicitApiVersion: true,
+            ProfileApiVersionSourceBehaviorId: null,
+            GroupConventions: [],
+            Endpoints: [endpointProjection]);
+        var projectedEndpoint = new RestEndpointRuntimeDescriptor(
+            id: "typed-metadata-with-override",
+            transportId: "rest-api",
+            sourceKind: RestEndpointRuntimeMetadata.ModuleDslSourceKind,
+            method: "GET",
+            routePattern: "/api/v6/tests/typed-metadata/orders/{cartId}",
+            sourceModuleId: module.Descriptor.Id,
+            sourceModuleVersion: module.Descriptor.Version,
+            sourceModuleVersionMajor: 1,
+            behaviorId: "tests.cart.projection",
+            endpointName: "tests.typed.metadata.lookup",
+            openApiDocumentName: "v6",
+            apiVersionMajor: 6,
+            tags: ["Typed Metadata API"],
+            summary: "Gets a projection cart through overridden endpoint metadata.",
+            description: "Publishes explicit endpoint metadata overrides after shorthand materialization.",
+            metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase),
+            authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle,
+            routeGroupPrefix: "/api/v6/tests/typed-metadata/orders",
+            relativePattern: "/{cartId}",
+            behaviorType: typeof(ProjectionCartBehavior).FullName,
+            sourceId: "tests.cart.projection:GET:/{cartId}");
+        var originalProjection = new RestEndpointCandidateProjectionDescriptor(
+            method: "GET",
+            routePattern: "/api/v6/tests/typed-metadata/orders/{cartId}",
+            routeGroupPrefix: "/api/v6/tests/typed-metadata/orders",
+            relativePattern: "/{cartId}",
+            apiVersionMajor: 6,
+            openApiDocumentName: "v6");
+        var candidate = new ResolvedRestBehaviorEndpointProjectionCandidate(
+            GroupIndex: 0,
+            EffectiveEndpointProjection: endpointProjection,
+            Candidate: new RestEndpointCandidateRuntimeDescriptor(
+                id: "typed-metadata-candidate",
+                projectedEndpoint: projectedEndpoint,
+                originalProjection: originalProjection,
+                authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle,
+                precedenceRank: RestEndpointRuntimeMetadata.ResolvePrecedenceRank(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle),
+                status: RestEndpointCandidateStatus.Published,
+                appliedOverrideId: "metadata-only"),
+            AppliedMetadataOverride: new AppliedRestEndpointMetadataOverride(
+                "metadata-only",
+                "tests.typed.metadata.lookup",
+                "Gets a projection cart through overridden endpoint metadata.",
+                "Publishes explicit endpoint metadata overrides after shorthand materialization."));
+
+        RestBehaviorProjectionMaterializer.MapGroup(
+            apiGroup,
+            module,
+            projection,
+            [candidate],
+            new ApiRoutesOptions());
+
+        var dataSources = ((IEndpointRouteBuilder)app).DataSources;
+        var endpoint = Assert.Single(
+            dataSources
+                .SelectMany(static dataSource => dataSource.Endpoints)
+                .OfType<RouteEndpoint>(),
+            static item => string.Equals(item.RoutePattern.RawText, "/api/v6/tests/typed-metadata/orders/{cartId}", StringComparison.Ordinal));
+
+        Assert.Equal("tests.typed.metadata.lookup", endpoint.Metadata.GetMetadata<EndpointNameMetadata>()?.EndpointName);
+        Assert.Equal(
+            "Gets a projection cart through overridden endpoint metadata.",
+            endpoint.Metadata.OfType<IEndpointSummaryMetadata>().LastOrDefault()?.Summary);
+        Assert.Equal(
+            "Publishes explicit endpoint metadata overrides after shorthand materialization.",
+            endpoint.Metadata.OfType<IEndpointDescriptionMetadata>().LastOrDefault()?.Description);
     }
 
     private static Type CreateDynamicProfileBehaviorType(

@@ -92,6 +92,9 @@ public sealed class RestApiGovernanceOptions
                 method: child["Method"]?.Trim(),
                 pattern: child["Pattern"]?.Trim(),
                 routeGroupPrefix: child["RouteGroupPrefix"]?.Trim(),
+                endpointName: child["EndpointName"]?.Trim(),
+                summary: child["Summary"]?.Trim(),
+                description: child["Description"]?.Trim(),
                 bindings: ReadBindings(child.GetSection("Bindings")),
                 removedBindingProperties: ReadStringArray(child.GetSection("RemovedBindingProperties")),
                 bindingMode: ReadBindingMode(child)))

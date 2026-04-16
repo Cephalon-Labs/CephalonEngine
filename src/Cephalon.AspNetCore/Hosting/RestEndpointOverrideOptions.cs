@@ -61,6 +61,15 @@ public sealed class RestEndpointOverrideOptions
     /// The effective published route-group prefix applied when the rule matches a shorthand
     /// candidate.
     /// </param>
+    /// <param name="endpointName">
+    /// The effective endpoint name applied when the rule matches a shorthand candidate.
+    /// </param>
+    /// <param name="summary">
+    /// The effective OpenAPI summary applied when the rule matches a shorthand candidate.
+    /// </param>
+    /// <param name="description">
+    /// The effective OpenAPI description applied when the rule matches a shorthand candidate.
+    /// </param>
     /// <param name="bindings">
     /// The effective explicit request-binding plan applied when the rule matches a shorthand
     /// candidate.
@@ -88,6 +97,9 @@ public sealed class RestEndpointOverrideOptions
         string? method = null,
         string? pattern = null,
         string? routeGroupPrefix = null,
+        string? endpointName = null,
+        string? summary = null,
+        string? description = null,
         IReadOnlyList<RestEndpointBindingDescriptor>? bindings = null,
         IReadOnlyList<string>? removedBindingProperties = null,
         RestEndpointOverrideBindingMode bindingMode = RestEndpointOverrideBindingMode.Unspecified)
@@ -118,6 +130,9 @@ public sealed class RestEndpointOverrideOptions
         Method = NormalizeMethod(method);
         Pattern = NormalizePattern(pattern);
         RouteGroupPrefix = NormalizeRouteGroupPrefix(routeGroupPrefix);
+        EndpointName = NormalizeNonEmptyValue(endpointName);
+        Summary = NormalizeNonEmptyValue(summary);
+        Description = NormalizeNonEmptyValue(description);
         Bindings = NormalizeBindings(bindings);
         RemovedBindingProperties = NormalizeList(removedBindingProperties);
         BindingMode = NormalizeBindingMode(bindingMode, RemovedBindingProperties.Count > 0);
@@ -143,11 +158,14 @@ public sealed class RestEndpointOverrideOptions
             Method is null &&
             Pattern is null &&
             RouteGroupPrefix is null &&
+            EndpointName is null &&
+            Summary is null &&
+            Description is null &&
             Bindings.Count == 0 &&
             RemovedBindingProperties.Count == 0)
         {
             throw new ArgumentException(
-                "REST endpoint override rules must define at least one override action such as ApiVersionMajor, Method, Pattern, RouteGroupPrefix, Bindings, or RemovedBindingProperties.",
+                "REST endpoint override rules must define at least one override action such as ApiVersionMajor, Method, Pattern, RouteGroupPrefix, EndpointName, Summary, Description, Bindings, or RemovedBindingProperties.",
                 nameof(apiVersionMajor));
         }
 
@@ -229,6 +247,21 @@ public sealed class RestEndpointOverrideOptions
     public string? RouteGroupPrefix { get; }
 
     /// <summary>
+    /// Gets the effective endpoint name applied when this override rule matches.
+    /// </summary>
+    public string? EndpointName { get; }
+
+    /// <summary>
+    /// Gets the effective OpenAPI summary applied when this override rule matches.
+    /// </summary>
+    public string? Summary { get; }
+
+    /// <summary>
+    /// Gets the effective OpenAPI description applied when this override rule matches.
+    /// </summary>
+    public string? Description { get; }
+
+    /// <summary>
     /// Gets the effective explicit request-binding plan applied when this override rule matches.
     /// </summary>
     public IReadOnlyList<RestEndpointBindingDescriptor> Bindings { get; }
@@ -258,6 +291,9 @@ public sealed class RestEndpointOverrideOptions
         Method is not null ||
         Pattern is not null ||
         RouteGroupPrefix is not null ||
+        EndpointName is not null ||
+        Summary is not null ||
+        Description is not null ||
         Bindings.Count > 0 ||
         RemovedBindingProperties.Count > 0;
 
@@ -385,6 +421,13 @@ public sealed class RestEndpointOverrideOptions
             routeGroupPrefix,
             nameof(routeGroupPrefix),
             "REST endpoint override route-group prefix");
+    }
+
+    private static string? NormalizeNonEmptyValue(string? value)
+    {
+        return string.IsNullOrWhiteSpace(value)
+            ? null
+            : value.Trim();
     }
 
     private static string NormalizeSupportedRoutePattern(string pattern, string paramName, string errorPrefix)

@@ -448,12 +448,15 @@ Current helper behavior:
   bounded published route-group prefix, constrained relative route pattern, or explicit binding
   plan for descriptor-backed shorthand candidates through `RestApi:Overrides`, which now supports
   `ApiVersionMajor`, `Method`, `RouteGroupPrefix`, `Pattern`, `Bindings`,
-  `RemovedBindingProperties`, and typed `BindingMode`, records the applied rule id through
-  `AppliedOverrideId`, rewrites the
+  `RemovedBindingProperties`, typed `BindingMode`, and shorthand endpoint metadata
+  `EndpointName`, `Summary`, and `Description`, records the applied rule id through
+  `AppliedOverrideId` when the selected rule materially changes the effective answer, rewrites the
   shorthand candidate's `/v{major}` route segment and OpenAPI document name together when version
   changes, keeps the mapped endpoint method aligned when method changes, keeps the published
   route-group boundary aligned when `RouteGroupPrefix` changes, keeps the mapped endpoint route
-  aligned when pattern changes, applies explicit binding overrides in either default
+  aligned when pattern changes, keeps actual ASP.NET Core endpoint metadata plus
+  `/engine/rest-endpoints` aligned when endpoint metadata changes, applies explicit binding
+  overrides in either default
   `ReplaceExplicit` mode or `MergeExplicit` property-patch-and-withdraw mode while leaving
   unbound route placeholders and remaining request-body fields available for deterministic
   fallback, now allows
@@ -564,7 +567,8 @@ Current governance baseline:
 
 - configure shorthand suppression through `RestApi:Suppressions`
 - configure shorthand API-version, HTTP-method, bounded route-group-prefix, constrained
-  route-pattern, and explicit binding-plan overrides through `RestApi:Overrides`
+  route-pattern, explicit binding-plan, and endpoint-metadata overrides through
+  `RestApi:Overrides`
 - target one or more `CandidateIds`, `Behaviors`, `Modules`, and optional `AuthoringStyles`, then
   optionally refine that match with `ApiVersionMajors`, `Methods`, `RelativePatterns`, and
   `RouteGroupPrefixes`
