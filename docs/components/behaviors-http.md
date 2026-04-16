@@ -197,6 +197,12 @@ Current profile behavior:
 - when a host adds only partial explicit bindings to a shorthand candidate that originally had no
   explicit binding plan, the remaining unbound query properties now continue to follow that
   original implicit query-fallback surface instead of disappearing silently
+- the canonical runtime answer for that preserved fallback mode now lives on the typed transport
+  contracts through `RestEndpointCandidateProjectionDescriptor.BindingFallbackMode` and
+  `RestEndpointRuntimeDescriptor.BindingFallbackMode` using
+  `RestEndpointBindingFallbackMode`; additive
+  `metadata.bindingFallbackMode = preserve-source-implicit-fallback` remains compatibility-only
+  metadata
 - a JSON body that tries to overwrite a property reserved by an explicit non-body binding fails
   fast instead of silently winning or losing
 - profile API-version metadata is still only a candidate endpoint version; host publication remains
@@ -459,11 +465,12 @@ Current helper behavior:
   splits effective shorthand route groups when only some candidates in one authored group are
   remapped, merge-time removals must still target properties the source shorthand already bound
   explicitly, no-explicit-plan shorthand candidates now also preserve their remaining implicit
-  query-fallback surface when a host adds only partial explicit bindings, runtime metadata now
-  marks that preserved mode as
-  `bindingFallbackMode = preserve-source-implicit-fallback`, and explicit module DSL/manual routes
-  plus shorthand groups with explicit `.ApiVersion(...)` remain authoritative for version
-  selection
+  query-fallback surface when a host adds only partial explicit bindings, the typed runtime and
+  projection descriptors now keep that preserved mode visible through `BindingFallbackMode` values
+  backed by `RestEndpointBindingFallbackMode`, additive
+  `metadata.bindingFallbackMode = preserve-source-implicit-fallback` remains compatibility-only
+  metadata, and explicit module DSL/manual routes plus shorthand groups with explicit
+  `.ApiVersion(...)` remain authoritative for version selection
 
 ## REST runtime catalog and collision guard
 

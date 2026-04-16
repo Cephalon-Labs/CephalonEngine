@@ -2145,6 +2145,9 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         var endpoint = Assert.Single(endpoints, static item =>
             string.Equals(item.BehaviorId, "tests.rest.profile.bindings.query.partial", StringComparison.Ordinal));
         Assert.Equal("/api/v6/tests/profile-runtime/query-partial/orders/lookup/{orderId}", endpoint.RoutePattern);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback,
+            endpoint.BindingFallbackMode);
         Assert.Equal("preserve-source-implicit-fallback", endpoint.Metadata["bindingFallbackMode"]);
         Assert.Single(endpoint.BindingDescriptors);
         Assert.Contains(endpoint.BindingDescriptors, static binding =>
@@ -2157,7 +2160,11 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
         Assert.Equal("prefer-route-order", candidate.AppliedOverrideId);
         Assert.Empty(candidate.OriginalProjection.BindingDescriptors);
+        Assert.Null(candidate.OriginalProjection.BindingFallbackMode);
         Assert.Equal(endpoint.Id, candidate.ProjectedEndpoint.Id);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback,
+            candidate.ProjectedEndpoint.BindingFallbackMode);
         Assert.Equal("preserve-source-implicit-fallback", candidate.ProjectedEndpoint.Metadata["bindingFallbackMode"]);
 
         var response = await client.GetAsync("/api/v6/tests/profile-runtime/query-partial/orders/lookup/ord-90?quantity=4");
@@ -2170,9 +2177,11 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
 
         Assert.Contains(snapshot.RestEndpoints, static item =>
             string.Equals(item.BehaviorId, "tests.rest.profile.bindings.query.partial", StringComparison.Ordinal) &&
+            item.BindingFallbackMode == RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback &&
             string.Equals(item.Metadata["bindingFallbackMode"], "preserve-source-implicit-fallback", StringComparison.Ordinal));
         Assert.Contains(snapshot.RestEndpointCandidates, static item =>
             string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.profile.bindings.query.partial", StringComparison.Ordinal) &&
+            item.ProjectedEndpoint.BindingFallbackMode == RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback &&
             string.Equals(item.ProjectedEndpoint.Metadata["bindingFallbackMode"], "preserve-source-implicit-fallback", StringComparison.Ordinal));
     }
 

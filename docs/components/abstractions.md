@@ -65,6 +65,7 @@
 - `Transports/IRestEndpointRuntimeCatalog.cs`
 - `Transports/RestEndpointRuntimeDescriptor.cs`
 - `Transports/RestEndpointBindingDescriptor.cs`
+- `Transports/RestEndpointBindingFallbackMode.cs`
 - `Transports/RestEndpointBindingSource.cs`
 - `Transports/RestEndpointOverrideBindingMode.cs`
 - `Transports/TransportDescriptor.cs`
@@ -145,18 +146,22 @@ without leaking ASP.NET Core proxy behavior, YARP, or cloud traffic-manager type
 
 The same transport-first rule also now covers the published REST runtime answer. The `Transports`
 namespace owns `IRestEndpointRuntimeCatalog`, `RestEndpointRuntimeDescriptor`,
-`RestEndpointBindingDescriptor`, and `RestEndpointBindingSource` so hosts, operator tooling, and
-companion packages can read resolved public REST route truth plus explicit request-binding plans
+`RestEndpointBindingDescriptor`, `RestEndpointBindingFallbackMode`, and
+`RestEndpointBindingSource` so hosts, operator tooling, and companion packages can read resolved
+public REST route truth plus explicit request-binding plans and preserved shorthand fallback truth
 through one host-agnostic transport contract. That keeps the runtime answer transport-owned instead
 of behavior-package-owned and avoids treating `metadata` dictionaries as the canonical binding-plan
-surface. The same namespace now also owns `IRestEndpointCandidateRuntimeCatalog`,
+or binding-fallback surface. The same namespace now also owns `IRestEndpointCandidateRuntimeCatalog`,
 `IRestEndpointCandidateRuntimeRegistry`, `RestEndpointCandidateProjectionDescriptor`,
 `RestEndpointCandidateRuntimeDescriptor`, `RestEndpointCandidateStatus`,
 `IRestEndpointPublicationGroupRuntimeCatalog`, and `RestEndpointPublicationGroupDescriptor` so
 hosts can surface both candidate-level and grouped publication truth for module-owned REST
 candidates without inventing an ASP.NET Core-specific precedence contract, and so operator tooling
 can compare the original shorthand projection shape with the final effective projected endpoint
-explicitly while also seeing the grouped published-versus-suppressed answer per behavior.
+explicitly while also seeing the grouped published-versus-suppressed answer per behavior. The same
+candidate/runtime descriptor family now also keeps preserved shorthand fallback truth visible
+through typed `BindingFallbackMode` properties, while additive
+`metadata.bindingFallbackMode` remains compatibility-only metadata.
 
 ## Related docs
 

@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Cephalon.Abstractions.Transports;
 
 /// <summary>
@@ -15,6 +17,10 @@ public sealed class RestEndpointCandidateProjectionDescriptor
     /// <param name="apiVersionMajor">The projected public API major version when one is available.</param>
     /// <param name="openApiDocumentName">The projected OpenAPI document name when one is available.</param>
     /// <param name="bindingDescriptors">The projected request-binding descriptors when the projection exposes an explicit binding plan.</param>
+    /// <param name="bindingFallbackMode">
+    /// The projected request-binding fallback mode when the projection preserves source shorthand fallback behavior
+    /// beyond the explicit binding plan.
+    /// </param>
     public RestEndpointCandidateProjectionDescriptor(
         string method,
         string routePattern,
@@ -22,7 +28,8 @@ public sealed class RestEndpointCandidateProjectionDescriptor
         string relativePattern,
         int? apiVersionMajor = null,
         string? openApiDocumentName = null,
-        IReadOnlyList<RestEndpointBindingDescriptor>? bindingDescriptors = null)
+        IReadOnlyList<RestEndpointBindingDescriptor>? bindingDescriptors = null,
+        RestEndpointBindingFallbackMode? bindingFallbackMode = null)
     {
         Method = NormalizeRequired(method, nameof(method)).ToUpperInvariant();
         RoutePattern = NormalizeRequired(routePattern, nameof(routePattern));
@@ -31,6 +38,7 @@ public sealed class RestEndpointCandidateProjectionDescriptor
         ApiVersionMajor = apiVersionMajor;
         OpenApiDocumentName = NormalizeOptional(openApiDocumentName);
         BindingDescriptors = NormalizeBindingDescriptors(bindingDescriptors);
+        BindingFallbackMode = NormalizeBindingFallbackMode(bindingFallbackMode);
     }
 
     /// <summary>
@@ -68,6 +76,13 @@ public sealed class RestEndpointCandidateProjectionDescriptor
     /// </summary>
     public IReadOnlyList<RestEndpointBindingDescriptor> BindingDescriptors { get; }
 
+    /// <summary>
+    /// Gets the projected request-binding fallback mode when the projection preserves source shorthand
+    /// fallback behavior beyond the explicit binding plan.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public RestEndpointBindingFallbackMode? BindingFallbackMode { get; }
+
     private static string NormalizeRequired(string value, string paramName)
     {
         if (string.IsNullOrWhiteSpace(value))
@@ -95,5 +110,24 @@ public sealed class RestEndpointCandidateProjectionDescriptor
                 value.Source,
                 value.Name))
             .ToArray() ?? [];
+    }
+
+    private static RestEndpointBindingFallbackMode? NormalizeBindingFallbackMode(
+        RestEndpointBindingFallbackMode? value)
+    {
+        if (!value.HasValue)
+        {
+            return null;
+        }
+
+        if (!Enum.IsDefined(value.Value))
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(value),
+                value,
+                "A supported REST endpoint binding fallback mode is required.");
+        }
+
+        return value.Value;
     }
 }

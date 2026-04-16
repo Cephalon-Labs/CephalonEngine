@@ -2,7 +2,7 @@
 
 Decision baseline date: `April 14, 2026`
 
-Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`, `ENG-058-T67` / GitHub issue `#332`, `ENG-058-T68` / GitHub issue `#333`, `ENG-058-T69` / GitHub issue `#334`, `ENG-058-T70` / GitHub issue `#335`, `ENG-058-T71` / GitHub issue `#336`, `ENG-058-T72` / GitHub issue `#337`, `ENG-058-T73` / GitHub issue `#338`, `ENG-058-T74` / GitHub issue `#339`, `ENG-058-T75` / GitHub issue `#340`, `ENG-058-T76` / GitHub issue `#341`, `ENG-058-T77` / GitHub issue `#342`, `ENG-058-T78` / GitHub issue `#343`, `ENG-058-T79` / GitHub issue `#344`, `ENG-058-T80` / GitHub issue `#345`, `ENG-058-T81` / GitHub issue `#346`, `ENG-058-T82` / GitHub issue `#347`, `ENG-058-T83` / GitHub issue `#348`, `ENG-058-T84` / GitHub issue `#349`, `ENG-058-T85` / GitHub issue `#350`, `ENG-058-T86` / GitHub issue `#351`, `ENG-058-T87` / GitHub issue `#352`, `ENG-058-T88` / GitHub issue `#353`, `ENG-058-T89` / GitHub issue `#354`
+Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`, `ENG-058-T67` / GitHub issue `#332`, `ENG-058-T68` / GitHub issue `#333`, `ENG-058-T69` / GitHub issue `#334`, `ENG-058-T70` / GitHub issue `#335`, `ENG-058-T71` / GitHub issue `#336`, `ENG-058-T72` / GitHub issue `#337`, `ENG-058-T73` / GitHub issue `#338`, `ENG-058-T74` / GitHub issue `#339`, `ENG-058-T75` / GitHub issue `#340`, `ENG-058-T76` / GitHub issue `#341`, `ENG-058-T77` / GitHub issue `#342`, `ENG-058-T78` / GitHub issue `#343`, `ENG-058-T79` / GitHub issue `#344`, `ENG-058-T80` / GitHub issue `#345`, `ENG-058-T81` / GitHub issue `#346`, `ENG-058-T82` / GitHub issue `#347`, `ENG-058-T83` / GitHub issue `#348`, `ENG-058-T84` / GitHub issue `#349`, `ENG-058-T85` / GitHub issue `#350`, `ENG-058-T86` / GitHub issue `#351`, `ENG-058-T87` / GitHub issue `#352`, `ENG-058-T88` / GitHub issue `#353`, `ENG-058-T89` / GitHub issue `#354`, `ENG-058-T90` / GitHub issue `#355`
 
 Cross-references: `docs/components/behaviors-http.md`, `docs/module-authoring.md`, `docs/architecture.md`, `docs/architecture-review-2026-04.md`, `docs/project-memory.md`
 
@@ -763,6 +763,14 @@ Status:
   bindings without losing the remaining implicit query-fallback surface for unbound properties, and
   runtime truth now keeps that preserved mode visible through
   `metadata.bindingFallbackMode = preserve-source-implicit-fallback`
+- the next typed binding-fallback runtime-contract follow-through is now shipped through
+  `ENG-058-T90`, so that preserved shorthand fallback answer no longer lives only in additive
+  metadata: `Cephalon.Abstractions` now exposes `RestEndpointBindingFallbackMode` plus typed
+  `BindingFallbackMode` properties on both `RestEndpointCandidateProjectionDescriptor` and
+  `RestEndpointRuntimeDescriptor`, runtime JSON now serializes that typed answer directly on the
+  original shorthand projection and the effective published endpoint, and
+  `metadata.bindingFallbackMode = preserve-source-implicit-fallback` remains compatibility-only
+  metadata
 - controlled configuration overrides that promote implicit properties into route placeholders
   beyond the shipped constrained remaining-body-fallback-plus-bounded-query-fallback path, or
   rewrite input binding beyond constrained explicit-binding replacement, remain later work now that the
@@ -841,9 +849,12 @@ The following points are durable enough to keep outside thread-local context.
   silent API-version drift, ASP.NET Core now materializes split effective groups when only some
   shorthand candidates in one authored group are remapped, no-explicit-plan shorthand candidates
   now also preserve their remaining implicit query-fallback surface when hosts add only partial
-  explicit bindings, `metadata.bindingFallbackMode = preserve-source-implicit-fallback` keeps that
-  preserved mode visible on both candidate and published endpoint runtime surfaces, and broader
-  implicit-property promotion beyond that bounded query-fallback slice remains later work
+  explicit bindings, typed `BindingFallbackMode` values backed by
+  `RestEndpointBindingFallbackMode` now keep that preserved mode visible on both candidate and
+  published endpoint runtime surfaces, additive
+  `metadata.bindingFallbackMode = preserve-source-implicit-fallback` remains compatibility-only
+  metadata, and broader implicit-property promotion beyond that bounded query-fallback slice
+  remains later work
 - future shorthand or convention REST publication must compose through the shared projection,
   runtime-catalog, and collision-validation pipeline instead of bypassing it
 - future agentic, AI, or multi-platform expansion should not outrun core engine contract quality,

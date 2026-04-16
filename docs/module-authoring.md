@@ -450,8 +450,10 @@ Current helper behavior:
   routes, manual module-owned endpoints, and shorthand groups with explicit `.ApiVersion(...)`
   authoritative for version selection; when the source shorthand had no explicit binding plan,
   partial explicit overrides now also preserve the remaining implicit query-fallback surface and
-  mark that runtime truth as `bindingFallbackMode = preserve-source-implicit-fallback`; when more
-  than one suppression or override rule matches the same shorthand
+  publish that runtime truth through typed `BindingFallbackMode` values backed by
+  `RestEndpointBindingFallbackMode`, while additive
+  `metadata.bindingFallbackMode = preserve-source-implicit-fallback` remains compatibility-only
+  metadata; when more than one suppression or override rule matches the same shorthand
   candidate, `/engine/rest-endpoint-candidates` now keeps the full specificity-ordered match trace
   visible through `MatchedSuppressionIds` and `MatchedOverrideIds` before one rule wins
 - treats `behaviors.Internal<TBehavior>()` as the explicit internal-only or custom/manual-route path

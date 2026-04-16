@@ -133,7 +133,8 @@ internal static class RestBehaviorProjectionCandidateResolver
             endpointProjection.Method.ToString().ToUpperInvariant(),
             originalRouteGroupPrefix,
             endpointProjection.Pattern,
-            RestEndpointBindingDescriptorAdapter.ToRuntimeDescriptors(endpointProjection.Bindings));
+            RestEndpointBindingDescriptorAdapter.ToRuntimeDescriptors(endpointProjection.Bindings),
+            endpointProjection.PreserveImplicitQueryFallback);
         var candidateId = BuildCandidateId(
             moduleDescriptor.Id,
             endpointProjection.BehaviorId,
@@ -1141,7 +1142,8 @@ internal static class RestBehaviorProjectionCandidateResolver
         string method,
         string routeGroupPrefix,
         string relativePattern,
-        IReadOnlyList<RestEndpointBindingDescriptor> bindingDescriptors)
+        IReadOnlyList<RestEndpointBindingDescriptor> bindingDescriptors,
+        bool preserveImplicitQueryFallback)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(method);
         ArgumentException.ThrowIfNullOrWhiteSpace(routeGroupPrefix);
@@ -1155,7 +1157,10 @@ internal static class RestBehaviorProjectionCandidateResolver
             relativePattern,
             apiVersionMajor,
             ResolveOpenApiDocumentName(apiVersionMajor),
-            bindingDescriptors);
+            bindingDescriptors,
+            preserveImplicitQueryFallback
+                ? RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback
+                : null);
     }
 }
 

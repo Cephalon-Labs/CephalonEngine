@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Cephalon.Abstractions.Transports;
 
 /// <summary>
@@ -24,6 +26,10 @@ public sealed class RestEndpointRuntimeDescriptor
     /// <param name="summary">The resolved endpoint summary when one is available.</param>
     /// <param name="description">The resolved endpoint description when one is available.</param>
     /// <param name="bindingDescriptors">The resolved request-binding descriptors when the endpoint exposes an explicit binding plan.</param>
+    /// <param name="bindingFallbackMode">
+    /// The resolved request-binding fallback mode when the endpoint preserves source shorthand fallback behavior beyond
+    /// the explicit binding plan.
+    /// </param>
     /// <param name="metadata">Optional additive metadata.</param>
     public RestEndpointRuntimeDescriptor(
         string id,
@@ -42,6 +48,7 @@ public sealed class RestEndpointRuntimeDescriptor
         string? summary = null,
         string? description = null,
         IReadOnlyList<RestEndpointBindingDescriptor>? bindingDescriptors = null,
+        RestEndpointBindingFallbackMode? bindingFallbackMode = null,
         IReadOnlyDictionary<string, string>? metadata = null)
     {
         Id = NormalizeRequired(id, nameof(id));
@@ -60,6 +67,7 @@ public sealed class RestEndpointRuntimeDescriptor
         Summary = NormalizeOptional(summary);
         Description = NormalizeOptional(description);
         BindingDescriptors = NormalizeBindingDescriptors(bindingDescriptors);
+        BindingFallbackMode = NormalizeBindingFallbackMode(bindingFallbackMode);
         Metadata = metadata is null
             ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             : new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase);
@@ -146,6 +154,13 @@ public sealed class RestEndpointRuntimeDescriptor
     public IReadOnlyList<RestEndpointBindingDescriptor> BindingDescriptors { get; }
 
     /// <summary>
+    /// Gets the resolved request-binding fallback mode when the endpoint preserves source shorthand
+    /// fallback behavior beyond the explicit binding plan.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public RestEndpointBindingFallbackMode? BindingFallbackMode { get; }
+
+    /// <summary>
     /// Gets optional additive metadata.
     /// </summary>
     public IReadOnlyDictionary<string, string> Metadata { get; }
@@ -187,5 +202,24 @@ public sealed class RestEndpointRuntimeDescriptor
                 value.Source,
                 value.Name))
             .ToArray() ?? [];
+    }
+
+    private static RestEndpointBindingFallbackMode? NormalizeBindingFallbackMode(
+        RestEndpointBindingFallbackMode? value)
+    {
+        if (!value.HasValue)
+        {
+            return null;
+        }
+
+        if (!Enum.IsDefined(value.Value))
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(value),
+                value,
+                "A supported REST endpoint binding fallback mode is required.");
+        }
+
+        return value.Value;
     }
 }

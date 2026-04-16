@@ -1391,6 +1391,10 @@ public sealed class BehaviorRestProjectionTests
         Assert.Equal("/lookup/{cartId}", candidate.Candidate.ProjectedEndpoint.Metadata["relativePattern"]);
         Assert.Equal("/api/v6/tests/profile-binding-partial-query/lookup/{cartId}", candidate.Candidate.ProjectedEndpoint.RoutePattern);
         Assert.Empty(candidate.Candidate.OriginalProjection.BindingDescriptors);
+        Assert.Null(candidate.Candidate.OriginalProjection.BindingFallbackMode);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback,
+            candidate.Candidate.ProjectedEndpoint.BindingFallbackMode);
         Assert.Equal("preserve-source-implicit-fallback", candidate.Candidate.ProjectedEndpoint.Metadata["bindingFallbackMode"]);
         Assert.Single(candidate.Candidate.ProjectedEndpoint.BindingDescriptors);
         Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>

@@ -250,6 +250,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Tenancy.TenantContext),
             typeof(global::Cephalon.Abstractions.Tenancy.TenantResolutionRequest),
             typeof(global::Cephalon.Abstractions.Tenancy.TenantResolutionResult),
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointBindingFallbackMode),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointBindingDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointBindingSource),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideBindingMode),
@@ -898,6 +899,15 @@ public sealed class PackageSurfaceTests
             .GetProperty("CandidateIds", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions)
             .GetProperty("CandidateIds", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void RestEndpointRuntimeContractsExposeBindingFallbackMode()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor)
+            .GetProperty("BindingFallbackMode", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateProjectionDescriptor)
+            .GetProperty("BindingFallbackMode", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

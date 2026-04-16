@@ -36,6 +36,9 @@ internal static class RestEndpointRuntimeDescriptorFactory
         ArgumentException.ThrowIfNullOrWhiteSpace(relativePattern);
 
         var normalizedMethod = method.Trim().ToUpperInvariant();
+        RestEndpointBindingFallbackMode? bindingFallbackMode = preserveImplicitQueryFallback
+            ? RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback
+            : null;
         return new RestEndpointRuntimeDescriptor(
             id: BuildBehaviorEndpointId(sourceModuleId, behaviorId, normalizedMethod, routePattern),
             transportId: "rest-api",
@@ -53,6 +56,7 @@ internal static class RestEndpointRuntimeDescriptorFactory
             summary: summary,
             description: description,
             bindingDescriptors: bindingDescriptors,
+            bindingFallbackMode: bindingFallbackMode,
             metadata: CreateBehaviorMetadata(
                 normalizedMethod,
                 behaviorId,
@@ -60,7 +64,7 @@ internal static class RestEndpointRuntimeDescriptorFactory
                 behaviorType,
                 routeGroupPrefix,
                 relativePattern,
-                preserveImplicitQueryFallback));
+                bindingFallbackMode));
     }
 
     internal static string BuildBehaviorEndpointId(
@@ -108,7 +112,7 @@ internal static class RestEndpointRuntimeDescriptorFactory
         string behaviorType,
         string routeGroupPrefix,
         string relativePattern,
-        bool preserveImplicitQueryFallback)
+        RestEndpointBindingFallbackMode? bindingFallbackMode)
     {
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -120,7 +124,7 @@ internal static class RestEndpointRuntimeDescriptorFactory
             ["sourceId"] = $"{behaviorId}:{method}:{relativePattern}"
         };
 
-        if (preserveImplicitQueryFallback)
+        if (bindingFallbackMode == RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback)
         {
             metadata[RestEndpointRuntimeMetadata.BindingFallbackModeMetadataKey] =
                 RestEndpointRuntimeMetadata.PreserveSourceImplicitFallbackMode;
