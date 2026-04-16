@@ -151,7 +151,10 @@ namespace owns `IRestEndpointRuntimeCatalog`, `RestEndpointRuntimeDescriptor`,
 public REST route truth plus explicit request-binding plans and preserved shorthand fallback truth
 through one host-agnostic transport contract. That keeps the runtime answer transport-owned instead
 of behavior-package-owned and avoids treating `metadata` dictionaries as the canonical binding-plan
-or binding-fallback surface. The same namespace now also owns `IRestEndpointCandidateRuntimeCatalog`,
+or binding-fallback surface. `RestEndpointRuntimeDescriptor` now also carries nullable
+`CandidateId` so published behavior-backed endpoints can point back to the originating shorthand
+candidate without consumers reverse-engineering that join from route text or endpoint ids. The same
+namespace now also owns `IRestEndpointCandidateRuntimeCatalog`,
 `IRestEndpointCandidateRuntimeRegistry`, `RestEndpointCandidateProjectionDescriptor`,
 `RestEndpointCandidateRuntimeDescriptor`, `RestEndpointCandidateStatus`,
 `IRestEndpointPublicationGroupRuntimeCatalog`, and `RestEndpointPublicationGroupDescriptor` so

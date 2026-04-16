@@ -95,9 +95,10 @@ internal static class RestBehaviorProjectionMaterializer
                 convention(group.Routes);
             }
 
-            foreach (var endpointProjection in routeGroup.Select(static candidate => candidate.EffectiveEndpointProjection))
+            foreach (var candidate in routeGroup)
             {
-                endpointProjection.Apply(group);
+                group.UseRuntimeCandidateId(candidate.Candidate.Id);
+                candidate.EffectiveEndpointProjection.Apply(group);
             }
         }
     }

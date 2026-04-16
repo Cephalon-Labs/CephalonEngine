@@ -39,6 +39,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
     private readonly string? moduleSummary;
     private readonly string? moduleRemarks;
     private readonly string routePrefix;
+    private string? runtimeCandidateId;
     private string runtimeAuthoringStyle = RestEndpointRuntimeMetadata.BehaviorHelperAuthoringStyle;
     private string runtimeSourceKind = RestEndpointRuntimeMetadata.ManualSourceKind;
     private RouteGroupBuilder? routes;
@@ -109,6 +110,13 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(authoringStyle);
         runtimeAuthoringStyle = authoringStyle.Trim();
+    }
+
+    internal void UseRuntimeCandidateId(string? candidateId)
+    {
+        runtimeCandidateId = string.IsNullOrWhiteSpace(candidateId)
+            ? null
+            : candidateId.Trim();
     }
 
     /// <summary>
@@ -543,6 +551,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             contract.ApiVersionMajor,
             group.ResolvedRoutePrefix,
             normalizedPattern,
+            group.runtimeCandidateId,
             contract.Bindings.Count == 0
                 ? null
                 : RestEndpointBindingDescriptorAdapter.ToRuntimeDescriptors(contract.Bindings),

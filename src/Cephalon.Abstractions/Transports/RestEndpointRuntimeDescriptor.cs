@@ -25,6 +25,10 @@ public sealed class RestEndpointRuntimeDescriptor
     /// <param name="tags">The resolved OpenAPI tags when any are published.</param>
     /// <param name="summary">The resolved endpoint summary when one is available.</param>
     /// <param name="description">The resolved endpoint description when one is available.</param>
+    /// <param name="candidateId">
+    /// The stable originating candidate identifier when this endpoint was published from the
+    /// module-owned behavior projection pipeline.
+    /// </param>
     /// <param name="bindingDescriptors">The resolved request-binding descriptors when the endpoint exposes an explicit binding plan.</param>
     /// <param name="bindingFallbackMode">
     /// The resolved request-binding fallback mode when the endpoint preserves source shorthand fallback behavior beyond
@@ -47,6 +51,7 @@ public sealed class RestEndpointRuntimeDescriptor
         IReadOnlyList<string>? tags = null,
         string? summary = null,
         string? description = null,
+        string? candidateId = null,
         IReadOnlyList<RestEndpointBindingDescriptor>? bindingDescriptors = null,
         RestEndpointBindingFallbackMode? bindingFallbackMode = null,
         IReadOnlyDictionary<string, string>? metadata = null)
@@ -66,6 +71,7 @@ public sealed class RestEndpointRuntimeDescriptor
         Tags = NormalizeTags(tags);
         Summary = NormalizeOptional(summary);
         Description = NormalizeOptional(description);
+        CandidateId = NormalizeOptional(candidateId);
         BindingDescriptors = NormalizeBindingDescriptors(bindingDescriptors);
         BindingFallbackMode = NormalizeBindingFallbackMode(bindingFallbackMode);
         Metadata = metadata is null
@@ -147,6 +153,13 @@ public sealed class RestEndpointRuntimeDescriptor
     /// Gets the resolved endpoint description when one is available.
     /// </summary>
     public string? Description { get; }
+
+    /// <summary>
+    /// Gets the stable originating candidate identifier when this endpoint was published from the
+    /// module-owned behavior projection pipeline.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? CandidateId { get; }
 
     /// <summary>
     /// Gets the resolved request-binding descriptors when the endpoint exposes an explicit binding plan.

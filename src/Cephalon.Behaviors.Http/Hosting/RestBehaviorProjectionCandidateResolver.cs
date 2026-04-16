@@ -185,6 +185,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             tags: [tagName],
             summary: documentation.Summary,
             description: documentation.Description,
+            candidateId: candidateId,
             authoringStyle: effectiveEndpointProjection.AuthoringStyle,
             behaviorType: effectiveEndpointProjection.BehaviorType.FullName ?? effectiveEndpointProjection.BehaviorType.Name,
             routeGroupPrefix: publishedRouteGroupPrefix,

@@ -18,6 +18,7 @@ internal static class RestEndpointRuntimeDescriptorFactory
         IReadOnlyList<string>? tags,
         string? summary,
         string? description,
+        string? candidateId,
         string authoringStyle,
         string behaviorType,
         string routeGroupPrefix,
@@ -55,6 +56,7 @@ internal static class RestEndpointRuntimeDescriptorFactory
             tags: tags,
             summary: summary,
             description: description,
+            candidateId: candidateId,
             bindingDescriptors: bindingDescriptors,
             bindingFallbackMode: bindingFallbackMode,
             metadata: CreateBehaviorMetadata(

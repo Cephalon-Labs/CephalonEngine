@@ -487,8 +487,8 @@ Each catalog entry now carries the resolved public route shape rather than only 
 DSL input, including the final `HTTP method`, final route pattern, source kind, owning module id and
 version when known, behavior id when the route dispatches through a Cephalon behavior, published
 OpenAPI document name, resolved API major version, tags, first-class request-binding descriptors
-when an explicit profile-driven plan exists, and additive metadata such as the route group prefix
-plus relative pattern.
+when an explicit profile-driven plan exists, and nullable `CandidateId` when the published endpoint
+comes from the module-owned behavior projection pipeline instead of a manual route.
 
 The same runtime answer now has a companion candidate catalog for precedence visibility:
 
@@ -525,9 +525,11 @@ through `ProjectedEndpoint`, authoring style, precedence rank, published versus 
 and when suppression occurs the winning candidate id plus an operator-facing suppression reason.
 Candidate ids now resolve from that original shorthand projection before host-level overrides are
 applied, while `ProjectedEndpoint.Id` continues to identify the final effective mapped endpoint
-shape. Projected shorthand endpoints now also keep endpoint names plus summary/description metadata
-aligned with the final published runtime endpoint conventions, including XML-derived behavior docs
-when they exist and module-description fallback when they do not. When more than one suppression
+shape, and published behavior-backed endpoints now also keep that same join visible directly through
+`RestEndpointRuntimeDescriptor.CandidateId`. Projected shorthand endpoints now also keep endpoint
+names plus summary/description metadata aligned with the final published runtime endpoint
+conventions, including XML-derived behavior docs when they exist and module-description fallback
+when they do not. When more than one suppression
 or override rule matches the same shorthand candidate, that same runtime entry now also keeps the
 full ordered match set visible through `MatchedSuppressionIds` and `MatchedOverrideIds` before
 `SuppressedBySuppressionId` or `AppliedOverrideId` identifies the selected winner. Today that

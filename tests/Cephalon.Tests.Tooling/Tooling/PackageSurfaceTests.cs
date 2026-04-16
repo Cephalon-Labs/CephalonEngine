@@ -911,6 +911,13 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void RestEndpointRuntimeContractsExposeCandidateId()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor)
+            .GetProperty("CandidateId", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
     public void BehaviorsPatternsAssemblyExposesOnlyTheDocumentedContractSurface()
     {
         AssertExportedTypes(

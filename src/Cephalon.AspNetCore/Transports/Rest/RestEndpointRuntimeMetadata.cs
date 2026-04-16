@@ -51,5 +51,6 @@ internal sealed record RestBehaviorEndpointMetadata(
     int? ApiVersionMajor,
     string RouteGroupPrefix,
     string RelativePattern,
+    string? CandidateId,
     IReadOnlyList<RestEndpointBindingDescriptor>? BindingDescriptors,
     bool PreserveImplicitQueryFallback);
