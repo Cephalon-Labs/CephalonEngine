@@ -190,6 +190,10 @@ Current profile behavior:
   falls back to direct attribute metadata
 - when explicit bindings are present, they override the implicit merge baseline, while unbound
   route placeholders and request bodies can still fill remaining object properties
+- when no explicit binding plan is present, shorthand candidates still use the implicit
+  query-plus-route merge baseline, and bounded placeholder additions can promote from that original
+  implicit query-fallback surface; once explicit bindings exist, the stricter explicit-binding path
+  remains in force
 - a JSON body that tries to overwrite a property reserved by an explicit non-body binding fails
   fast instead of silently winning or losing
 - profile API-version metadata is still only a candidate endpoint version; host publication remains
@@ -444,13 +448,15 @@ Current helper behavior:
   binding plan keeps every affected original route-bound property explicitly bound, now also allows
   placeholder additions when the effective explicit route-binding plan covers the full final
   placeholder set and every newly route-bound property was either already explicitly bound in the
-  original projection or, for `POST`/`PUT`/`PATCH`, already part of the original deterministic
-  remaining-body fallback surface, keeps `RouteGroupPrefix` bounded beneath the active REST root
-  with no placeholders and no implicit API-version drift, now splits effective shorthand route
-  groups during materialization when only some candidates in one authored group are remapped,
-  requires merge-time removals to target properties the source shorthand already bound explicitly,
-  and still leaves explicit module DSL/manual routes plus shorthand groups with explicit
-  `.ApiVersion(...)` authoritative for version selection
+  original projection, for `POST`/`PUT`/`PATCH` already part of the original deterministic
+  remaining-body fallback surface, or for shorthand candidates with no explicit binding plan
+  already part of the original implicit query-fallback surface; shorthand candidates with explicit
+  bindings remain on the stricter explicit-binding path, `RouteGroupPrefix` stays bounded beneath
+  the active REST root with no placeholders and no implicit API-version drift, materialization now
+  splits effective shorthand route groups when only some candidates in one authored group are
+  remapped, merge-time removals must still target properties the source shorthand already bound
+  explicitly, and explicit module DSL/manual routes plus shorthand groups with explicit
+  `.ApiVersion(...)` remain authoritative for version selection
 
 ## REST runtime catalog and collision guard
 
@@ -569,15 +575,16 @@ Current governance baseline:
   keeps every affected original route-bound property explicitly bound
 - placeholder additions can now also apply when the effective explicit route-binding plan covers
   the full final placeholder set and every newly route-bound property was either already explicitly
-  bound in the original projection or, for `POST`/`PUT`/`PATCH`, already part of the original
-  deterministic remaining-body fallback surface
+  bound in the original projection, for `POST`/`PUT`/`PATCH` already part of the original
+  deterministic remaining-body fallback surface, or for shorthand candidates with no explicit
+  binding plan already part of the original implicit query-fallback surface
 - `BindingMode = MergeExplicit` can now upsert changed explicit bindings and withdraw selected
   original explicit bindings through `RemovedBindingProperties`, while failing fast if a removal
   targets a property the source shorthand never bound explicitly or if one merge rule both removes
   and overrides the same property
-- broader implicit-property promotion beyond that constrained body-fallback path plus broader
-  binding-shape overrides beyond the current replace-plus-merge-explicit upsert-plus-withdraw
-  model remain later work
+- broader implicit-property promotion beyond that constrained body-fallback-plus-bounded-query-
+  fallback path plus broader binding-shape overrides beyond the current
+  replace-plus-merge-explicit upsert-plus-withdraw model remain later work
 
 Example:
 

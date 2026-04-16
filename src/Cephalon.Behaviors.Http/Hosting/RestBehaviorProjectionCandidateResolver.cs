@@ -543,18 +543,18 @@ internal static class RestBehaviorProjectionCandidateResolver
             var originalExplicitlyBoundProperties = endpointProjection.Bindings
                 .Select(static binding => binding.PropertyName.Trim())
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
-            var originalImplicitBodyFallbackEligibleProperties = ResolveImplicitBodyFallbackEligibleProperties(
+            var originalImplicitFallbackEligibleProperties = ResolveImplicitFallbackEligibleProperties(
                 endpointProjection,
                 originalExplicitlyBoundProperties,
                 originalPlaceholders);
             var originallyPromotableProperties = new HashSet<string>(
                 originalExplicitlyBoundProperties,
                 StringComparer.OrdinalIgnoreCase);
-            originallyPromotableProperties.UnionWith(originalImplicitBodyFallbackEligibleProperties);
+            originallyPromotableProperties.UnionWith(originalImplicitFallbackEligibleProperties);
             if (!originallyPromotableProperties.IsSupersetOf(newlyRouteBoundProperties))
             {
                 throw new InvalidOperationException(
-                    $"REST endpoint override rule '{overrideId}' cannot rewrite behavior '{endpointProjection.BehaviorId}' from pattern '{endpointProjection.Pattern}' to '{overridePattern}' because adding placeholders requires every newly route-bound property to already be explicitly bound in the original projection or be eligible for deterministic implicit remaining-body fallback there. Promote only properties that the source profile already binds explicitly or could already read through remaining-body fallback before adding the placeholder.");
+                    $"REST endpoint override rule '{overrideId}' cannot rewrite behavior '{endpointProjection.BehaviorId}' from pattern '{endpointProjection.Pattern}' to '{overridePattern}' because adding placeholders requires every newly route-bound property to already be explicitly bound in the original projection or be eligible for the source shorthand candidate's deterministic implicit fallback surface. Promote only properties that the source profile already binds explicitly or could already read through that fallback surface before adding the placeholder.");
             }
 
             return;
@@ -590,7 +590,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         }
     }
 
-    private static HashSet<string> ResolveImplicitBodyFallbackEligibleProperties(
+    private static HashSet<string> ResolveImplicitFallbackEligibleProperties(
         RestBehaviorEndpointProjection endpointProjection,
         HashSet<string> originalExplicitlyBoundProperties,
         HashSet<string> originalPlaceholders)
@@ -599,12 +599,25 @@ internal static class RestBehaviorProjectionCandidateResolver
         ArgumentNullException.ThrowIfNull(originalExplicitlyBoundProperties);
         ArgumentNullException.ThrowIfNull(originalPlaceholders);
 
+        var inputProperties = ResolveBehaviorInputProperties(endpointProjection.BehaviorType);
+        if (inputProperties.Count == 0)
+        {
+            return [];
+        }
+
+        if (endpointProjection.Bindings.Count == 0)
+        {
+            return inputProperties
+                .Where(propertyName => !originalPlaceholders.Contains(propertyName))
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        }
+
         if (endpointProjection.Method is not (RestBehaviorHttpMethod.Post or RestBehaviorHttpMethod.Put or RestBehaviorHttpMethod.Patch))
         {
             return [];
         }
 
-        return ResolveBehaviorInputProperties(endpointProjection.BehaviorType)
+        return inputProperties
             .Where(propertyName => !originalExplicitlyBoundProperties.Contains(propertyName))
             .Where(propertyName => !originalPlaceholders.Contains(propertyName))
             .ToHashSet(StringComparer.OrdinalIgnoreCase);

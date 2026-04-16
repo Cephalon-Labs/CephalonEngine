@@ -1314,6 +1314,51 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverAllowsPlaceholderAdditionWhenNewlyRouteBoundPropertiesWereImplicitQueryFallbackEligible()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-binding-addition-query")
+            .MapProfile<ProfileProjectionQueryFallbackBehavior>();
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.profile-binding-addition-query",
+                "Profile Binding Addition Query Module",
+                "Exercises placeholder-addition override resolution when newly route-bound properties came from implicit query fallback.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "prefer-route-query",
+                    behaviorIds: ["tests.profile.projection.query.get"],
+                    pattern: "/lookup/{cartId}/{ignored}",
+                    bindings:
+                    [
+                        new RestEndpointBindingDescriptor("CartId", RestEndpointBindingSource.Route, "cartId"),
+                        new RestEndpointBindingDescriptor("Ignored", RestEndpointBindingSource.Route, "ignored")
+                    ])
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Equal("prefer-route-query", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal("/lookup/{cartId}/{ignored}", candidate.Candidate.ProjectedEndpoint.Metadata["relativePattern"]);
+        Assert.Equal("/api/v6/tests/profile-binding-addition-query/lookup/{cartId}/{ignored}", candidate.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Empty(candidate.Candidate.OriginalProjection.BindingDescriptors);
+        Assert.Equal(2, candidate.Candidate.ProjectedEndpoint.BindingDescriptors.Count);
+        Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "CartId" &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "cartId");
+        Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "Ignored" &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "ignored");
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverAllowsPlaceholderRemovalWhenAffectedPropertiesStayExplicitlyBound()
     {
         var builder = new RestBehaviorModuleBuilder();
@@ -1704,7 +1749,7 @@ public sealed class BehaviorRestProjectionTests
                         ])
                 ]));
 
-        Assert.Contains("remaining-body fallback", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("deterministic implicit fallback surface", exception.Message, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("newly route-bound property", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
@@ -2511,6 +2556,19 @@ public sealed class BehaviorRestProjectionTests
     [BehaviorRestProfile(BehaviorRestMethod.Get, "/{cartId}", ApiVersionMajor = 6)]
     [BehaviorRestBinding(nameof(ProfileProjectionBoundInput.CartId), BehaviorRestBindingSource.Route, Name = "cartId")]
     private sealed class ProfileProjectionBoundGetBehavior : IAppBehavior<ProfileProjectionBoundInput, ProjectionCartOutput>
+    {
+        public Task<ProjectionCartOutput> HandleAsync(
+            ProfileProjectionBoundInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProjectionCartOutput(input.CartId));
+        }
+    }
+
+    [AppBehavior("tests.profile.projection.query.get")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/lookup", ApiVersionMajor = 6)]
+    private sealed class ProfileProjectionQueryFallbackBehavior : IAppBehavior<ProfileProjectionBoundInput, ProjectionCartOutput>
     {
         public Task<ProjectionCartOutput> HandleAsync(
             ProfileProjectionBoundInput input,

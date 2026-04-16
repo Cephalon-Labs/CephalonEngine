@@ -184,6 +184,9 @@ Current `BehaviorRestProfileAttribute` behavior:
 - when explicit profile bindings are present, they override the implicit merge baseline while
   leaving unbound route placeholders and request-body fields free to fill the remaining object
   properties deterministically
+- when a shorthand profile has no explicit binding plan, bounded placeholder additions can also
+  promote from the original implicit query-fallback surface; once explicit bindings are present,
+  the stricter explicit-binding rules still apply
 - a JSON body that tries to overwrite a property reserved by an explicit non-body binding fails fast
 - the optional `ApiVersionMajor` remains only a candidate endpoint version; the host still decides
   which OpenAPI documents are published through `OpenApi:EnabledVersions` or the legacy document
@@ -435,14 +438,15 @@ Current helper behavior:
   for the original placeholder set and the effective explicit binding plan keeps every affected
   original route-bound property explicitly bound, and now also allows placeholder additions when
   the effective explicit route-binding plan covers the full final placeholder set and every newly
-  route-bound property was either already explicitly bound in the original projection or, for
-  `POST`/`PUT`/`PATCH`, already part of the original deterministic remaining-body fallback surface;
-  it still rejects broader implicit-property promotion outside that constrained body-fallback path,
-  fails fast when the effective method-plus-binding plan is invalid or when a rename, removal, or
-  addition would rely on inference, drop explicit binding coverage, or promote another implicit
-  property into the public route, and still leaves explicit `MapGet/MapPost/...` routes, manual
-  module-owned endpoints, and shorthand groups with explicit `.ApiVersion(...)` authoritative for
-  version selection; when more than one suppression or override rule matches the same shorthand
+  route-bound property was either already explicitly bound in the original projection, for
+  `POST`/`PUT`/`PATCH` already part of the original deterministic remaining-body fallback surface,
+  or for shorthand candidates with no explicit binding plan already part of the original implicit
+  query-fallback surface; it still rejects broader implicit-property promotion beyond that bounded
+  query-fallback slice, fails fast when the effective method-plus-binding plan is invalid or when a
+  rename, removal, or addition would rely on inference, drop explicit binding coverage, or promote
+  another implicit property into the public route, and still leaves explicit `MapGet/MapPost/...`
+  routes, manual module-owned endpoints, and shorthand groups with explicit `.ApiVersion(...)`
+  authoritative for version selection; when more than one suppression or override rule matches the same shorthand
   candidate, `/engine/rest-endpoint-candidates` now keeps the full specificity-ordered match trace
   visible through `MatchedSuppressionIds` and `MatchedOverrideIds` before one rule wins
 - treats `behaviors.Internal<TBehavior>()` as the explicit internal-only or custom/manual-route path
@@ -537,16 +541,18 @@ projection already exposed explicit route-binding coverage for the original plac
 effective explicit binding plan keeps every affected original route-bound property explicitly bound;
 placeholder additions can now also apply when the effective explicit route-binding plan covers the
 full final placeholder set and every newly route-bound property was either already explicitly bound
-in the source projection or, for `POST`/`PUT`/`PATCH`, already part of the original deterministic
-remaining-body fallback surface. `RouteGroupPrefix` can now move the published shorthand group to a
-different path such as `/api/v1/showcase/cart-admin`, but only when that group stays beneath the
-active REST root, contains no placeholders, and does not silently change effective API-version
-truth; when only some candidates in one authored shorthand group are remapped, ASP.NET Core now
-splits materialization by the effective group prefix so actual HTTP routes match
+in the source projection, for `POST`/`PUT`/`PATCH` already part of the original deterministic
+remaining-body fallback surface, or for shorthand candidates with no explicit binding plan already
+part of the original implicit query-fallback surface. Explicit-binding shorthand candidates still
+stay on the stricter explicit-binding path. `RouteGroupPrefix` can now move the published shorthand
+group to a different path such as `/api/v1/showcase/cart-admin`, but only when that group stays
+beneath the active REST root, contains no placeholders, and does not silently change effective
+API-version truth; when only some candidates in one authored shorthand group are remapped,
+ASP.NET Core now splits materialization by the effective group prefix so actual HTTP routes match
 `OriginalProjection`/`ProjectedEndpoint` runtime truth. Broader implicit-property promotion beyond
-that constrained body-fallback path still fails fast; invalid effective method-plus-binding
-combinations also fail fast during endpoint materialization; and explicit module DSL/manual routes
-still stay authoritative.
+that constrained body-fallback-plus-bounded-query-fallback path still fails fast; invalid effective
+method-plus-binding combinations also fail fast during endpoint materialization; and explicit module
+DSL/manual routes still stay authoritative.
 
 Example:
 

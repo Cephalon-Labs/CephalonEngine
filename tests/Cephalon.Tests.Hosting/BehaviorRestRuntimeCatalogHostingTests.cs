@@ -2004,8 +2004,104 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         using var app = builder.Build();
         var exception = Assert.Throws<InvalidOperationException>(() => app.MapCephalon());
 
-        Assert.Contains("remaining-body fallback", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("deterministic implicit fallback surface", exception.Message, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("newly route-bound property", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task MapCephalonAllowsImplicitQueryFallbackPromotionIntoAddedPlaceholderWhenOriginalProfileHadNoExplicitBindings()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.Configuration["RestApi:Overrides:prefer-route-query:Behaviors:0"] = "tests.rest.profile.bindings.query";
+        builder.Configuration["RestApi:Overrides:prefer-route-query:Pattern"] = "/lookup/{orderId}/{ignored}";
+        builder.Configuration["RestApi:Overrides:prefer-route-query:Bindings:0:PropertyName"] = "OrderId";
+        builder.Configuration["RestApi:Overrides:prefer-route-query:Bindings:0:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:prefer-route-query:Bindings:0:Name"] = "orderId";
+        builder.Configuration["RestApi:Overrides:prefer-route-query:Bindings:1:PropertyName"] = "Ignored";
+        builder.Configuration["RestApi:Overrides:prefer-route-query:Bindings:1:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:prefer-route-query:Bindings:1:Name"] = "ignored";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileBindingQueryFallbackRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(overrides);
+
+        var endpoint = Assert.Single(endpoints, static item =>
+            string.Equals(item.BehaviorId, "tests.rest.profile.bindings.query", StringComparison.Ordinal));
+        Assert.Equal("/api/v6/tests/profile-runtime/query/orders/lookup/{orderId}/{ignored}", endpoint.RoutePattern);
+        Assert.Equal("v6", endpoint.OpenApiDocumentName);
+        Assert.Equal(6, endpoint.ApiVersionMajor);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, endpoint.Metadata["authoringStyle"]);
+        Assert.Equal("/api/v6/tests/profile-runtime/query/orders", endpoint.Metadata["routeGroupPrefix"]);
+        Assert.Equal("/lookup/{orderId}/{ignored}", endpoint.Metadata["relativePattern"]);
+        Assert.Equal(2, endpoint.BindingDescriptors.Count);
+        Assert.Contains(endpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "OrderId" &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "orderId");
+        Assert.Contains(endpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "Ignored" &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "ignored");
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.profile.bindings.query", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+        Assert.Equal("prefer-route-query", candidate.AppliedOverrideId);
+        Assert.Equal(endpoint.Id, candidate.ProjectedEndpoint.Id);
+        Assert.Empty(candidate.OriginalProjection.BindingDescriptors);
+        Assert.Equal("/api/v6/tests/profile-runtime/query/orders/lookup/{orderId}/{ignored}", candidate.ProjectedEndpoint.RoutePattern);
+
+        var rule = Assert.Single(overrides, static item =>
+            string.Equals(item.Id, "prefer-route-query", StringComparison.Ordinal));
+        Assert.Equal("/lookup/{orderId}/{ignored}", rule.Pattern);
+        Assert.Equal(2, rule.Bindings.Count);
+        Assert.Contains(rule.Bindings, static binding =>
+            binding.PropertyName == "Ignored" &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "ignored");
+
+        var response = await client.GetAsync("/api/v6/tests/profile-runtime/query/orders/lookup/ord-79/route-query");
+        response.EnsureSuccessStatusCode();
+
+        var payload = await response.Content.ReadFromJsonAsync<ProfileBindingGetRuntimeOutput>();
+        Assert.NotNull(payload);
+        Assert.Equal("ord-79", payload.OrderId);
+        Assert.Equal("route-query", payload.Ignored);
+
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+        Assert.NotNull(snapshot);
+
+        var snapshotEndpoint = Assert.Single(snapshot.RestEndpoints, static item =>
+            string.Equals(item.BehaviorId, "tests.rest.profile.bindings.query", StringComparison.Ordinal));
+        Assert.Equal(endpoint.Id, snapshotEndpoint.Id);
+
+        var snapshotCandidate = Assert.Single(snapshot.RestEndpointCandidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.profile.bindings.query", StringComparison.Ordinal));
+        Assert.Equal(candidate.Id, snapshotCandidate.Id);
     }
 
     [Fact]
@@ -3672,6 +3768,22 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         }
     }
 
+    private sealed class ProfileBindingQueryFallbackRuntimeCatalogModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.profile-runtime.bindings.query",
+            "Profile Runtime Binding Query Fallback Module",
+            "Publishes a shorthand GET profile with no explicit binding plan so bounded implicit query-fallback promotion remains visible.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Group("/tests/profile-runtime/query/orders")
+                .WithTagName("Profile Runtime Binding Query API")
+                .MapProfile<GetProfileBindingQueryFallbackRuntimeOrderBehavior>();
+        }
+    }
+
     private static string BuildBehaviorProjectionCandidateId(
         string sourceModuleId,
         string behaviorId,
@@ -3985,6 +4097,21 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}", ApiVersionMajor = 6)]
     [BehaviorRestBinding(nameof(ProfileBindingGetRuntimeInput.OrderId), BehaviorRestBindingSource.Route, Name = "orderId")]
     private sealed class GetProfileBindingRuntimeOrderBehavior : IAppBehavior<ProfileBindingGetRuntimeInput, ProfileBindingGetRuntimeOutput>
+    {
+        public Task<ProfileBindingGetRuntimeOutput> HandleAsync(
+            ProfileBindingGetRuntimeInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProfileBindingGetRuntimeOutput(
+                input.OrderId,
+                input.Ignored));
+        }
+    }
+
+    [AppBehavior("tests.rest.profile.bindings.query")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/lookup", ApiVersionMajor = 6)]
+    private sealed class GetProfileBindingQueryFallbackRuntimeOrderBehavior : IAppBehavior<ProfileBindingGetRuntimeInput, ProfileBindingGetRuntimeOutput>
     {
         public Task<ProfileBindingGetRuntimeOutput> HandleAsync(
             ProfileBindingGetRuntimeInput input,
