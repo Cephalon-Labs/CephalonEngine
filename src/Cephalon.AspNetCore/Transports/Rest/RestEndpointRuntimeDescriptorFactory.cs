@@ -56,6 +56,7 @@ internal static class RestEndpointRuntimeDescriptorFactory
             tags: tags,
             summary: summary,
             description: description,
+            authoringStyle: authoringStyle,
             candidateId: candidateId,
             bindingDescriptors: bindingDescriptors,
             bindingFallbackMode: bindingFallbackMode,

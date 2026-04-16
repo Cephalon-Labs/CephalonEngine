@@ -151,10 +151,12 @@ namespace owns `IRestEndpointRuntimeCatalog`, `RestEndpointRuntimeDescriptor`,
 public REST route truth plus explicit request-binding plans and preserved shorthand fallback truth
 through one host-agnostic transport contract. That keeps the runtime answer transport-owned instead
 of behavior-package-owned and avoids treating `metadata` dictionaries as the canonical binding-plan
-or binding-fallback surface. `RestEndpointRuntimeDescriptor` now also carries nullable
-`CandidateId` so published behavior-backed endpoints can point back to the originating shorthand
-candidate without consumers reverse-engineering that join from route text or endpoint ids. The same
-namespace now also owns `IRestEndpointCandidateRuntimeCatalog`,
+or binding-fallback surface. `RestEndpointRuntimeDescriptor` now also carries first-class
+`AuthoringStyle` plus nullable `CandidateId`, so published endpoints do not need
+`metadata.authoringStyle` as the canonical authorship answer and published behavior-backed
+endpoints can still point back to the originating shorthand candidate without consumers
+reverse-engineering that join from route text or endpoint ids. The same namespace now also owns
+`IRestEndpointCandidateRuntimeCatalog`,
 `IRestEndpointCandidateRuntimeRegistry`, `RestEndpointCandidateProjectionDescriptor`,
 `RestEndpointCandidateRuntimeDescriptor`, `RestEndpointCandidateStatus`,
 `IRestEndpointPublicationGroupRuntimeCatalog`, and `RestEndpointPublicationGroupDescriptor` so
@@ -164,7 +166,7 @@ can compare the original shorthand projection shape with the final effective pro
 explicitly while also seeing the grouped published-versus-suppressed answer per behavior. The same
 candidate/runtime descriptor family now also keeps preserved shorthand fallback truth visible
 through typed `BindingFallbackMode` properties, while additive
-`metadata.bindingFallbackMode` remains compatibility-only metadata.
+`metadata.bindingFallbackMode` and `metadata.authoringStyle` remain compatibility-only metadata.
 
 ## Related docs
 

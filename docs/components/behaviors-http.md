@@ -383,10 +383,11 @@ Current helper behavior:
   when the same shorthand candidate later matches `RestApi:Overrides`, while shorthand method,
   bounded route-group-prefix, and constrained pattern overrides can still apply
 - keeps runtime publication on the same module-owned path with `sourceKind = module-dsl`, while
-  `/engine/rest-endpoints` exposes `metadata.authoringStyle = behavior-module-profile` for the
+  `/engine/rest-endpoints` exposes first-class `AuthoringStyle = behavior-module-profile` for the
   profile shorthand path, `behavior-module-generated` for the generated shorthand path,
-  `behavior-module-dsl` for the fully explicit path, and first-class `BindingDescriptors` data for
-  profile-driven explicit binding plans
+  `behavior-module-dsl` for the fully explicit path, keeps additive `metadata.authoringStyle` only
+  for compatibility, and publishes first-class `BindingDescriptors` data for profile-driven
+  explicit binding plans
 - dispatches through `BehaviorDispatcher` using Minimal API handlers
 - lets behaviors return raw `TOutput` or transport-neutral `Result<TOutput>` values
 - uses the implicit route/query/body merge baseline only when no explicit profile bindings are
@@ -487,8 +488,9 @@ Each catalog entry now carries the resolved public route shape rather than only 
 DSL input, including the final `HTTP method`, final route pattern, source kind, owning module id and
 version when known, behavior id when the route dispatches through a Cephalon behavior, published
 OpenAPI document name, resolved API major version, tags, first-class request-binding descriptors
-when an explicit profile-driven plan exists, and nullable `CandidateId` when the published endpoint
-comes from the module-owned behavior projection pipeline instead of a manual route.
+when an explicit profile-driven plan exists, first-class `AuthoringStyle`, and nullable
+`CandidateId` when the published endpoint comes from the module-owned behavior projection pipeline
+instead of a manual route.
 
 The same runtime answer now has a companion candidate catalog for precedence visibility:
 
@@ -526,10 +528,12 @@ and when suppression occurs the winning candidate id plus an operator-facing sup
 Candidate ids now resolve from that original shorthand projection before host-level overrides are
 applied, while `ProjectedEndpoint.Id` continues to identify the final effective mapped endpoint
 shape, and published behavior-backed endpoints now also keep that same join visible directly through
-`RestEndpointRuntimeDescriptor.CandidateId`. Projected shorthand endpoints now also keep endpoint
-names plus summary/description metadata aligned with the final published runtime endpoint
-conventions, including XML-derived behavior docs when they exist and module-description fallback
-when they do not. When more than one suppression
+`RestEndpointRuntimeDescriptor.CandidateId`, while published endpoints of every authoring path now
+also expose first-class `RestEndpointRuntimeDescriptor.AuthoringStyle` so consumers no longer have
+to parse `metadata.authoringStyle` to recover published-endpoint authorship. Projected shorthand
+endpoints now also keep endpoint names plus summary/description metadata aligned with the final
+published runtime endpoint conventions, including XML-derived behavior docs when they exist and
+module-description fallback when they do not. When more than one suppression
 or override rule matches the same shorthand candidate, that same runtime entry now also keeps the
 full ordered match set visible through `MatchedSuppressionIds` and `MatchedOverrideIds` before
 `SuppressedBySuppressionId` or `AppliedOverrideId` identifies the selected winner. Today that

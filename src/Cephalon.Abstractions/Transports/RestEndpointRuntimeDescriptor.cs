@@ -35,6 +35,10 @@ public sealed class RestEndpointRuntimeDescriptor
     /// the explicit binding plan.
     /// </param>
     /// <param name="metadata">Optional additive metadata.</param>
+    /// <param name="authoringStyle">
+    /// The normalized authoring style such as <c>behavior-module-profile</c> or <c>minimal-api</c>
+    /// when the runtime can classify how the endpoint was published.
+    /// </param>
     public RestEndpointRuntimeDescriptor(
         string id,
         string transportId,
@@ -54,7 +58,8 @@ public sealed class RestEndpointRuntimeDescriptor
         string? candidateId = null,
         IReadOnlyList<RestEndpointBindingDescriptor>? bindingDescriptors = null,
         RestEndpointBindingFallbackMode? bindingFallbackMode = null,
-        IReadOnlyDictionary<string, string>? metadata = null)
+        IReadOnlyDictionary<string, string>? metadata = null,
+        string? authoringStyle = null)
     {
         Id = NormalizeRequired(id, nameof(id));
         TransportId = NormalizeRequired(transportId, nameof(transportId));
@@ -71,6 +76,7 @@ public sealed class RestEndpointRuntimeDescriptor
         Tags = NormalizeTags(tags);
         Summary = NormalizeOptional(summary);
         Description = NormalizeOptional(description);
+        AuthoringStyle = NormalizeOptional(authoringStyle);
         CandidateId = NormalizeOptional(candidateId);
         BindingDescriptors = NormalizeBindingDescriptors(bindingDescriptors);
         BindingFallbackMode = NormalizeBindingFallbackMode(bindingFallbackMode);
@@ -153,6 +159,13 @@ public sealed class RestEndpointRuntimeDescriptor
     /// Gets the resolved endpoint description when one is available.
     /// </summary>
     public string? Description { get; }
+
+    /// <summary>
+    /// Gets the normalized authoring style such as <c>behavior-module-profile</c> or
+    /// <c>minimal-api</c> when the runtime can classify how the endpoint was published.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? AuthoringStyle { get; }
 
     /// <summary>
     /// Gets the stable originating candidate identifier when this endpoint was published from the

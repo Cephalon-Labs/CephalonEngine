@@ -121,6 +121,7 @@ internal static class RestEndpointRuntimeMaterializer
             tags: tags,
             summary: summary,
             description: description,
+            authoringStyle: RestEndpointRuntimeMetadata.MinimalApiAuthoringStyle,
             metadata: CreateMetadata(endpoint, moduleMetadata, behaviorMetadata, method, routePattern, apiRoutesOptions));
     }
 

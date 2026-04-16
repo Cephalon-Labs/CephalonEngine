@@ -491,11 +491,12 @@ Current helper behavior:
 - flows XML comments from the module and behavior assemblies into ASP.NET Core OpenAPI metadata when XML docs are available
 - maps behavior `<summary>` to the operation header and behavior `<remarks>` to the operation description so Scalar/OpenAPI content stays non-duplicated
 - keeps runtime publication on the same module-owned route with `sourceKind = module-dsl`, while
-  `/engine/rest-endpoints` distinguishes the shorthand path through
-  `metadata.authoringStyle = behavior-module-profile` or
-  `metadata.authoringStyle = behavior-module-generated`, and published behavior-backed endpoints
-  now also expose `RestEndpointRuntimeDescriptor.CandidateId` so operators can jump directly from
-  the final published endpoint to `/engine/rest-endpoint-candidates/{candidateId}`
+  `/engine/rest-endpoints` now distinguishes the shorthand path through first-class
+  `RestEndpointRuntimeDescriptor.AuthoringStyle = behavior-module-profile` or
+  `behavior-module-generated`, keeps additive `metadata.authoringStyle` only for compatibility, and
+  published behavior-backed endpoints now also expose `RestEndpointRuntimeDescriptor.CandidateId`
+  so operators can jump directly from the final published endpoint to
+  `/engine/rest-endpoint-candidates/{candidateId}`
 - when the same behavior is mapped through both explicit module DSL and shorthand publication, the
   explicit DSL route now wins by default while the lower-precedence shorthand candidate remains
   visible through `/engine/rest-endpoint-candidates`, `snapshot.RestEndpointCandidates`,
