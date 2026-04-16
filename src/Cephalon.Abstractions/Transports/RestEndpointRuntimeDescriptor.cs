@@ -47,6 +47,10 @@ public sealed class RestEndpointRuntimeDescriptor
     /// The resolved route pattern relative to the grouped publication boundary when the runtime can
     /// classify that source shape.
     /// </param>
+    /// <param name="behaviorType">
+    /// The concrete behavior implementation type name when the endpoint dispatches through a
+    /// Cephalon behavior and the runtime can classify that implementation identity.
+    /// </param>
     public RestEndpointRuntimeDescriptor(
         string id,
         string transportId,
@@ -69,7 +73,8 @@ public sealed class RestEndpointRuntimeDescriptor
         IReadOnlyDictionary<string, string>? metadata = null,
         string? authoringStyle = null,
         string? routeGroupPrefix = null,
-        string? relativePattern = null)
+        string? relativePattern = null,
+        string? behaviorType = null)
     {
         Id = NormalizeRequired(id, nameof(id));
         TransportId = NormalizeRequired(transportId, nameof(transportId));
@@ -89,6 +94,7 @@ public sealed class RestEndpointRuntimeDescriptor
         AuthoringStyle = NormalizeOptional(authoringStyle);
         RouteGroupPrefix = NormalizeOptional(routeGroupPrefix);
         RelativePattern = NormalizeOptional(relativePattern);
+        BehaviorType = NormalizeOptional(behaviorType);
         CandidateId = NormalizeOptional(candidateId);
         BindingDescriptors = NormalizeBindingDescriptors(bindingDescriptors);
         BindingFallbackMode = NormalizeBindingFallbackMode(bindingFallbackMode);
@@ -192,6 +198,13 @@ public sealed class RestEndpointRuntimeDescriptor
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? RelativePattern { get; }
+
+    /// <summary>
+    /// Gets the concrete behavior implementation type name when the endpoint dispatches through a
+    /// Cephalon behavior and the runtime can classify that implementation identity.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? BehaviorType { get; }
 
     /// <summary>
     /// Gets the stable originating candidate identifier when this endpoint was published from the

@@ -920,6 +920,13 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void RestEndpointRuntimeContractsExposeBehaviorType()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor)
+            .GetProperty("BehaviorType", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
     public void RestEndpointRuntimeContractsExposeAuthoringStyle()
     {
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor)

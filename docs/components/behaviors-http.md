@@ -386,10 +386,11 @@ Current helper behavior:
   `/engine/rest-endpoints` exposes first-class `AuthoringStyle = behavior-module-profile` for the
   profile shorthand path, `behavior-module-generated` for the generated shorthand path,
   `behavior-module-dsl` for the fully explicit path, exposes first-class `RouteGroupPrefix` plus
-  `RelativePattern` for the resolved published group boundary, keeps additive
-  `metadata.authoringStyle`, `metadata.routeGroupPrefix`, and `metadata.relativePattern` only for
-  compatibility, and publishes first-class `BindingDescriptors` data for profile-driven explicit
-  binding plans
+  `RelativePattern` for the resolved published group boundary, exposes first-class nullable
+  `BehaviorType` for the concrete behavior implementation identity, keeps additive
+  `metadata.authoringStyle`, `metadata.routeGroupPrefix`, `metadata.relativePattern`, and
+  `metadata.behaviorType` only for compatibility, and publishes first-class `BindingDescriptors`
+  data for profile-driven explicit binding plans
 - dispatches through `BehaviorDispatcher` using Minimal API handlers
 - lets behaviors return raw `TOutput` or transport-neutral `Result<TOutput>` values
 - uses the implicit route/query/body merge baseline only when no explicit profile bindings are
@@ -491,8 +492,9 @@ DSL input, including the final `HTTP method`, final route pattern, source kind, 
 version when known, behavior id when the route dispatches through a Cephalon behavior, published
 OpenAPI document name, resolved API major version, tags, first-class request-binding descriptors
 when an explicit profile-driven plan exists, first-class `AuthoringStyle`, first-class
-`RouteGroupPrefix` plus `RelativePattern`, and nullable `CandidateId` when the published endpoint
-comes from the module-owned behavior projection pipeline instead of a manual route.
+`RouteGroupPrefix` plus `RelativePattern`, first-class nullable `BehaviorType`, and nullable
+`CandidateId` when the published endpoint comes from the module-owned behavior projection pipeline
+instead of a manual route.
 
 The same runtime answer now has a companion candidate catalog for precedence visibility:
 

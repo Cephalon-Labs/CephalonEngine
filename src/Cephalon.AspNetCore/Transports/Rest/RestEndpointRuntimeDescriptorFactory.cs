@@ -69,7 +69,8 @@ internal static class RestEndpointRuntimeDescriptorFactory
                 relativePattern,
                 bindingFallbackMode),
             routeGroupPrefix: routeGroupPrefix,
-            relativePattern: relativePattern);
+            relativePattern: relativePattern,
+            behaviorType: behaviorType);
     }
 
     internal static string BuildBehaviorEndpointId(
