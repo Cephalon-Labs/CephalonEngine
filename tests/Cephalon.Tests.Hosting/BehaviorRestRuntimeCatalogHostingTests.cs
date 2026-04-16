@@ -58,12 +58,14 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("tests.rest.runtime-catalog.get", getEndpoint.BehaviorId);
         Assert.Equal("/api/v2/tests/runtime-catalog/cart/{cartId}", getEndpoint.RoutePattern);
         Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle, getEndpoint.AuthoringStyle);
-        Assert.Equal("/api/v2/tests/runtime-catalog/cart", getEndpoint.Metadata["routeGroupPrefix"]);
-        Assert.Equal("/{cartId}", getEndpoint.Metadata["relativePattern"]);
+        Assert.Equal("/api/v2/tests/runtime-catalog/cart", getEndpoint.RouteGroupPrefix);
+        Assert.Equal("/{cartId}", getEndpoint.RelativePattern);
         Assert.Contains("Runtime Catalog API", getEndpoint.Tags);
         Assert.Equal("v2", getEndpoint.OpenApiDocumentName);
         Assert.Equal(2, getEndpoint.ApiVersionMajor);
         Assert.Equal("GET", getEndpoint.Metadata["method"]);
+        Assert.Equal(getEndpoint.RouteGroupPrefix, getEndpoint.Metadata["routeGroupPrefix"]);
+        Assert.Equal(getEndpoint.RelativePattern, getEndpoint.Metadata["relativePattern"]);
         Assert.Contains("GetCatalogCartBehavior", getEndpoint.Metadata["behaviorType"], StringComparison.Ordinal);
         Assert.Empty(getEndpoint.BindingDescriptors);
 
@@ -160,9 +162,9 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(3, behaviorHelperEndpoint.ApiVersionMajor);
         Assert.Contains("Manual Helper API", behaviorHelperEndpoint.Tags);
         Assert.Equal(RestEndpointRuntimeMetadata.BehaviorHelperAuthoringStyle, behaviorHelperEndpoint.AuthoringStyle);
+        Assert.Equal("/api/v3/tests/manual-helper/orders", behaviorHelperEndpoint.RouteGroupPrefix);
+        Assert.Equal("/{orderId}", behaviorHelperEndpoint.RelativePattern);
         Assert.Null(behaviorHelperEndpoint.CandidateId);
-        Assert.Equal("/api/v3/tests/manual-helper/orders", behaviorHelperEndpoint.Metadata["routeGroupPrefix"]);
-        Assert.Equal("/{orderId}", behaviorHelperEndpoint.Metadata["relativePattern"]);
         Assert.Equal(RestEndpointRuntimeMetadata.BehaviorHelperAuthoringStyle, behaviorHelperEndpoint.Metadata["authoringStyle"]);
         Assert.Contains("GetManualHelperOrderBehavior", behaviorHelperEndpoint.Metadata["behaviorType"], StringComparison.Ordinal);
         Assert.Empty(behaviorHelperEndpoint.BindingDescriptors);
@@ -216,14 +218,16 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("tests.rest.profile.lookup", endpoint.Summary);
         Assert.Equal("Publishes profile-driven REST endpoints for runtime catalog coverage.", endpoint.Description);
         Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, endpoint.AuthoringStyle);
+        Assert.Equal("/api/v3/tests/profile-runtime/orders", endpoint.RouteGroupPrefix);
+        Assert.Equal("/{orderId}", endpoint.RelativePattern);
         Assert.Equal(candidate.Id, endpoint.CandidateId);
-        Assert.Equal("/api/v3/tests/profile-runtime/orders", endpoint.Metadata["routeGroupPrefix"]);
-        Assert.Equal("/{orderId}", endpoint.Metadata["relativePattern"]);
         Assert.Empty(endpoint.BindingDescriptors);
         Assert.Equal(endpoint.EndpointName, candidate.ProjectedEndpoint.EndpointName);
         Assert.Equal(endpoint.Summary, candidate.ProjectedEndpoint.Summary);
         Assert.Equal(endpoint.Description, candidate.ProjectedEndpoint.Description);
         Assert.Equal(endpoint.AuthoringStyle, candidate.ProjectedEndpoint.AuthoringStyle);
+        Assert.Equal(endpoint.RouteGroupPrefix, candidate.ProjectedEndpoint.RouteGroupPrefix);
+        Assert.Equal(endpoint.RelativePattern, candidate.ProjectedEndpoint.RelativePattern);
         Assert.Equal(candidate.Id, candidate.ProjectedEndpoint.CandidateId);
 
         var payload = await client.GetFromJsonAsync<ProfileRuntimeOrderOutput>("/api/v3/tests/profile-runtime/orders/ord-42");
@@ -313,8 +317,8 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(4, endpoint.ApiVersionMajor);
         Assert.Contains("Generated Runtime API", endpoint.Tags);
         Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, endpoint.AuthoringStyle);
-        Assert.Equal("/api/v4/tests/generated/runtime", endpoint.Metadata["routeGroupPrefix"]);
-        Assert.Equal("/orders/{orderId}", endpoint.Metadata["relativePattern"]);
+        Assert.Equal("/api/v4/tests/generated/runtime", endpoint.RouteGroupPrefix);
+        Assert.Equal("/orders/{orderId}", endpoint.RelativePattern);
 
         var candidate = Assert.Single(candidates, static item =>
             string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.generated.runtime.lookup", StringComparison.Ordinal));
@@ -323,11 +327,15 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, candidate.AuthoringStyle);
         Assert.Equal(endpoint.Id, candidate.ProjectedEndpoint.Id);
         Assert.Equal(endpoint.AuthoringStyle, candidate.ProjectedEndpoint.AuthoringStyle);
+        Assert.Equal(endpoint.RouteGroupPrefix, candidate.ProjectedEndpoint.RouteGroupPrefix);
+        Assert.Equal(endpoint.RelativePattern, candidate.ProjectedEndpoint.RelativePattern);
         Assert.Equal(candidate.Id, candidate.ProjectedEndpoint.CandidateId);
 
         Assert.Contains(snapshot.RestEndpoints, item =>
             string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal) &&
             string.Equals(item.AuthoringStyle, endpoint.AuthoringStyle, StringComparison.Ordinal) &&
+            string.Equals(item.RouteGroupPrefix, endpoint.RouteGroupPrefix, StringComparison.Ordinal) &&
+            string.Equals(item.RelativePattern, endpoint.RelativePattern, StringComparison.Ordinal) &&
             string.Equals(item.CandidateId, candidate.Id, StringComparison.Ordinal));
         Assert.Contains(snapshot.RestEndpointCandidates, item =>
             string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
@@ -385,8 +393,8 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("v3", endpoint.OpenApiDocumentName);
         Assert.Equal(3, endpoint.ApiVersionMajor);
         Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, endpoint.Metadata["authoringStyle"]);
-        Assert.Equal("/api/v3/tests/inline/profile-runtime/orders", endpoint.Metadata["routeGroupPrefix"]);
-        Assert.Equal("/{orderId}", endpoint.Metadata["relativePattern"]);
+        Assert.Equal("/api/v3/tests/inline/profile-runtime/orders", endpoint.RouteGroupPrefix);
+        Assert.Equal("/{orderId}", endpoint.RelativePattern);
         Assert.Contains("Inline Profile Runtime API", endpoint.Tags);
         Assert.Contains(snapshot.RestEndpoints, item =>
             string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal));
@@ -516,13 +524,13 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
 
         var getEndpoint = Assert.Single(moduleEndpoints, static endpoint => endpoint.Method == "GET");
         Assert.Equal("/api/v4/tests/generated/runtime/orders/{orderId}", getEndpoint.RoutePattern);
-        Assert.Equal("/api/v4/tests/generated/runtime", getEndpoint.Metadata["routeGroupPrefix"]);
+        Assert.Equal("/api/v4/tests/generated/runtime", getEndpoint.RouteGroupPrefix);
         Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, getEndpoint.Metadata["authoringStyle"]);
         Assert.Contains("Derived Generated Runtime API", getEndpoint.Tags);
 
         var postEndpoint = Assert.Single(moduleEndpoints, static endpoint => endpoint.Method == "POST");
         Assert.Equal("/api/v4/tests/generated/runtime/orders/{orderId}/items", postEndpoint.RoutePattern);
-        Assert.Equal("/api/v4/tests/generated/runtime", postEndpoint.Metadata["routeGroupPrefix"]);
+        Assert.Equal("/api/v4/tests/generated/runtime", postEndpoint.RouteGroupPrefix);
 
         Assert.Contains(snapshot.RestEndpoints, item =>
             string.Equals(item.SourceModuleId, "tests.rest.derived-generated-runtime", StringComparison.Ordinal) &&
@@ -586,7 +594,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("/api/v5/tests/generated/runtime/orders/{orderId}", getEndpoint.RoutePattern);
         Assert.Equal("v5", getEndpoint.OpenApiDocumentName);
         Assert.Equal(5, getEndpoint.ApiVersionMajor);
-        Assert.Equal("/api/v5/tests/generated/runtime", getEndpoint.Metadata["routeGroupPrefix"]);
+        Assert.Equal("/api/v5/tests/generated/runtime", getEndpoint.RouteGroupPrefix);
         Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, getEndpoint.Metadata["authoringStyle"]);
         Assert.Contains("Inline Derived Generated Runtime API", getEndpoint.Tags);
 
@@ -810,7 +818,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             string.Equals(candidate.BehaviorId, "tests.generated.runtimeoverride.lookup", StringComparison.Ordinal));
         Assert.Equal("GET", endpoint.Method);
         Assert.Equal("/api/v4/tests/generated/runtime/override/lookup/{orderId}", endpoint.RoutePattern);
-        Assert.Equal("/lookup/{orderId}", endpoint.Metadata["relativePattern"]);
+        Assert.Equal("/lookup/{orderId}", endpoint.RelativePattern);
         Assert.Equal("v4", endpoint.OpenApiDocumentName);
         Assert.Equal(4, endpoint.ApiVersionMajor);
 
@@ -818,7 +826,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.generated.runtimeoverride.lookup", StringComparison.Ordinal));
         Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
         Assert.Equal("prefer-lookup-path", candidate.AppliedOverrideId);
-        Assert.Equal("/lookup/{orderId}", candidate.ProjectedEndpoint.Metadata["relativePattern"]);
+        Assert.Equal("/lookup/{orderId}", candidate.ProjectedEndpoint.RelativePattern);
         Assert.Equal(endpoint.Id, candidate.ProjectedEndpoint.Id);
 
         var rule = Assert.Single(overrides, static item => string.Equals(item.Id, "prefer-lookup-path", StringComparison.Ordinal));
@@ -883,8 +891,8 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("GET", endpoint.Method);
         Assert.Equal("/api/v4/tests/generated/runtime/override/remapped/orders/{orderId}", endpoint.RoutePattern);
         Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, endpoint.AuthoringStyle);
-        Assert.Equal("/api/v4/tests/generated/runtime/override/remapped", endpoint.Metadata["routeGroupPrefix"]);
-        Assert.Equal("/orders/{orderId}", endpoint.Metadata["relativePattern"]);
+        Assert.Equal("/api/v4/tests/generated/runtime/override/remapped", endpoint.RouteGroupPrefix);
+        Assert.Equal("/orders/{orderId}", endpoint.RelativePattern);
         Assert.Equal("v4", endpoint.OpenApiDocumentName);
         Assert.Equal(4, endpoint.ApiVersionMajor);
 
@@ -897,6 +905,8 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("/api/v4/tests/generated/runtime/override/orders/{orderId}", candidate.OriginalProjection.RoutePattern);
         Assert.Equal(endpoint.Id, candidate.ProjectedEndpoint.Id);
         Assert.Equal(endpoint.AuthoringStyle, candidate.ProjectedEndpoint.AuthoringStyle);
+        Assert.Equal(endpoint.RouteGroupPrefix, candidate.ProjectedEndpoint.RouteGroupPrefix);
+        Assert.Equal(endpoint.RelativePattern, candidate.ProjectedEndpoint.RelativePattern);
         Assert.Equal(candidate.Id, candidate.ProjectedEndpoint.CandidateId);
 
         var rule = Assert.Single(overrides, static item => string.Equals(item.Id, "prefer-remapped-group", StringComparison.Ordinal));
@@ -915,6 +925,8 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Contains(snapshot.RestEndpoints, item =>
             string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal) &&
             string.Equals(item.AuthoringStyle, endpoint.AuthoringStyle, StringComparison.Ordinal) &&
+            string.Equals(item.RouteGroupPrefix, endpoint.RouteGroupPrefix, StringComparison.Ordinal) &&
+            string.Equals(item.RelativePattern, endpoint.RelativePattern, StringComparison.Ordinal) &&
             string.Equals(item.CandidateId, candidate.Id, StringComparison.Ordinal));
 
         var oldResponse = await client.GetAsync("/api/v4/tests/generated/runtime/override/orders/ord-42");
@@ -964,7 +976,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         var endpoint = Assert.Single(endpoints, static candidate =>
             string.Equals(candidate.BehaviorId, "tests.generated.runtimeoverride.lookup", StringComparison.Ordinal));
         Assert.Equal("/api/v6/tests/generated/runtime/override/remapped/orders/{orderId}", endpoint.RoutePattern);
-        Assert.Equal("/api/v6/tests/generated/runtime/override/remapped", endpoint.Metadata["routeGroupPrefix"]);
+        Assert.Equal("/api/v6/tests/generated/runtime/override/remapped", endpoint.RouteGroupPrefix);
         Assert.Equal("v6", endpoint.OpenApiDocumentName);
         Assert.Equal(6, endpoint.ApiVersionMajor);
 
@@ -1020,12 +1032,12 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         var summaryEndpoint = Assert.Single(endpoints, static candidate =>
             string.Equals(candidate.BehaviorId, "tests.rest.profile.split.summary", StringComparison.Ordinal));
         Assert.Equal("/api/v4/tests/profile/runtime/split/orders/{orderId}", summaryEndpoint.RoutePattern);
-        Assert.Equal("/api/v4/tests/profile/runtime/split", summaryEndpoint.Metadata["routeGroupPrefix"]);
+        Assert.Equal("/api/v4/tests/profile/runtime/split", summaryEndpoint.RouteGroupPrefix);
 
         var detailsEndpoint = Assert.Single(endpoints, static candidate =>
             string.Equals(candidate.BehaviorId, "tests.rest.profile.split.details", StringComparison.Ordinal));
         Assert.Equal("/api/v4/tests/profile/runtime/split/remapped/orders/{orderId}/details", detailsEndpoint.RoutePattern);
-        Assert.Equal("/api/v4/tests/profile/runtime/split/remapped", detailsEndpoint.Metadata["routeGroupPrefix"]);
+        Assert.Equal("/api/v4/tests/profile/runtime/split/remapped", detailsEndpoint.RouteGroupPrefix);
 
         var detailsCandidate = Assert.Single(candidates, static item =>
             string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.profile.split.details", StringComparison.Ordinal));
@@ -1251,13 +1263,13 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             string.Equals(candidate.BehaviorId, "tests.generated.runtimeexplicitoverride.lookup", StringComparison.Ordinal));
         Assert.Equal("GET", endpoint.Method);
         Assert.Equal("/api/v8/tests/generated/runtime/explicit-override/lookup/{orderId}", endpoint.RoutePattern);
-        Assert.Equal("/lookup/{orderId}", endpoint.Metadata["relativePattern"]);
+        Assert.Equal("/lookup/{orderId}", endpoint.RelativePattern);
         Assert.Equal(8, endpoint.ApiVersionMajor);
 
         var candidate = Assert.Single(candidates, static item =>
             string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.generated.runtimeexplicitoverride.lookup", StringComparison.Ordinal));
         Assert.Equal("prefer-lookup-v6", candidate.AppliedOverrideId);
-        Assert.Equal("/lookup/{orderId}", candidate.ProjectedEndpoint.Metadata["relativePattern"]);
+        Assert.Equal("/lookup/{orderId}", candidate.ProjectedEndpoint.RelativePattern);
         Assert.Equal(8, candidate.ProjectedEndpoint.ApiVersionMajor);
 
         var rule = Assert.Single(overrides, static item => string.Equals(item.Id, "prefer-lookup-v6", StringComparison.Ordinal));
@@ -1312,7 +1324,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             string.Equals(candidate.BehaviorId, "tests.generated.runtimeexplicitoverride.lookup", StringComparison.Ordinal));
         Assert.Equal("GET", endpoint.Method);
         Assert.Equal("/api/v8/tests/generated/runtime/explicit-override/remapped/orders/{orderId}", endpoint.RoutePattern);
-        Assert.Equal("/api/v8/tests/generated/runtime/explicit-override/remapped", endpoint.Metadata["routeGroupPrefix"]);
+        Assert.Equal("/api/v8/tests/generated/runtime/explicit-override/remapped", endpoint.RouteGroupPrefix);
         Assert.Equal(8, endpoint.ApiVersionMajor);
 
         var candidate = Assert.Single(candidates, static item =>
@@ -2076,8 +2088,8 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("v6", endpoint.OpenApiDocumentName);
         Assert.Equal(6, endpoint.ApiVersionMajor);
         Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, endpoint.Metadata["authoringStyle"]);
-        Assert.Equal("/api/v6/tests/profile-runtime/query/orders", endpoint.Metadata["routeGroupPrefix"]);
-        Assert.Equal("/lookup/{orderId}/{ignored}", endpoint.Metadata["relativePattern"]);
+        Assert.Equal("/api/v6/tests/profile-runtime/query/orders", endpoint.RouteGroupPrefix);
+        Assert.Equal("/lookup/{orderId}/{ignored}", endpoint.RelativePattern);
         Assert.Equal(2, endpoint.BindingDescriptors.Count);
         Assert.Contains(endpoint.BindingDescriptors, static binding =>
             binding.PropertyName == "OrderId" &&

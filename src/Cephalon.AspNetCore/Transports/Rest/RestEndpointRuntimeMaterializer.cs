@@ -122,7 +122,11 @@ internal static class RestEndpointRuntimeMaterializer
             summary: summary,
             description: description,
             authoringStyle: RestEndpointRuntimeMetadata.MinimalApiAuthoringStyle,
-            metadata: CreateMetadata(endpoint, moduleMetadata, behaviorMetadata, method, routePattern, apiRoutesOptions));
+            metadata: CreateMetadata(endpoint, moduleMetadata, behaviorMetadata, method, routePattern, apiRoutesOptions),
+            routeGroupPrefix: behaviorMetadata?.RouteGroupPrefix is null
+                ? null
+                : RestEndpointRuntimeDescriptorFactory.CombinePaths(apiRoutesOptions.RestPrefix, behaviorMetadata.RouteGroupPrefix),
+            relativePattern: behaviorMetadata?.RelativePattern);
     }
 
     private static string[] ResolveHttpMethods(RouteEndpoint endpoint)

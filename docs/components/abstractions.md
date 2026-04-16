@@ -152,8 +152,9 @@ public REST route truth plus explicit request-binding plans and preserved shorth
 through one host-agnostic transport contract. That keeps the runtime answer transport-owned instead
 of behavior-package-owned and avoids treating `metadata` dictionaries as the canonical binding-plan
 or binding-fallback surface. `RestEndpointRuntimeDescriptor` now also carries first-class
-`AuthoringStyle` plus nullable `CandidateId`, so published endpoints do not need
-`metadata.authoringStyle` as the canonical authorship answer and published behavior-backed
+`AuthoringStyle`, `RouteGroupPrefix`, `RelativePattern`, and nullable `CandidateId`, so published
+endpoints do not need `metadata.authoringStyle`, `metadata.routeGroupPrefix`, or
+`metadata.relativePattern` as the canonical authored-route answer and published behavior-backed
 endpoints can still point back to the originating shorthand candidate without consumers
 reverse-engineering that join from route text or endpoint ids. The same namespace now also owns
 `IRestEndpointCandidateRuntimeCatalog`,
@@ -166,7 +167,8 @@ can compare the original shorthand projection shape with the final effective pro
 explicitly while also seeing the grouped published-versus-suppressed answer per behavior. The same
 candidate/runtime descriptor family now also keeps preserved shorthand fallback truth visible
 through typed `BindingFallbackMode` properties, while additive
-`metadata.bindingFallbackMode` and `metadata.authoringStyle` remain compatibility-only metadata.
+`metadata.bindingFallbackMode`, `metadata.authoringStyle`, `metadata.routeGroupPrefix`, and
+`metadata.relativePattern` remain compatibility-only metadata.
 
 ## Related docs
 

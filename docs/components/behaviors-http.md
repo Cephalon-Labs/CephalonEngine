@@ -385,9 +385,11 @@ Current helper behavior:
 - keeps runtime publication on the same module-owned path with `sourceKind = module-dsl`, while
   `/engine/rest-endpoints` exposes first-class `AuthoringStyle = behavior-module-profile` for the
   profile shorthand path, `behavior-module-generated` for the generated shorthand path,
-  `behavior-module-dsl` for the fully explicit path, keeps additive `metadata.authoringStyle` only
-  for compatibility, and publishes first-class `BindingDescriptors` data for profile-driven
-  explicit binding plans
+  `behavior-module-dsl` for the fully explicit path, exposes first-class `RouteGroupPrefix` plus
+  `RelativePattern` for the resolved published group boundary, keeps additive
+  `metadata.authoringStyle`, `metadata.routeGroupPrefix`, and `metadata.relativePattern` only for
+  compatibility, and publishes first-class `BindingDescriptors` data for profile-driven explicit
+  binding plans
 - dispatches through `BehaviorDispatcher` using Minimal API handlers
 - lets behaviors return raw `TOutput` or transport-neutral `Result<TOutput>` values
 - uses the implicit route/query/body merge baseline only when no explicit profile bindings are
@@ -488,9 +490,9 @@ Each catalog entry now carries the resolved public route shape rather than only 
 DSL input, including the final `HTTP method`, final route pattern, source kind, owning module id and
 version when known, behavior id when the route dispatches through a Cephalon behavior, published
 OpenAPI document name, resolved API major version, tags, first-class request-binding descriptors
-when an explicit profile-driven plan exists, first-class `AuthoringStyle`, and nullable
-`CandidateId` when the published endpoint comes from the module-owned behavior projection pipeline
-instead of a manual route.
+when an explicit profile-driven plan exists, first-class `AuthoringStyle`, first-class
+`RouteGroupPrefix` plus `RelativePattern`, and nullable `CandidateId` when the published endpoint
+comes from the module-owned behavior projection pipeline instead of a manual route.
 
 The same runtime answer now has a companion candidate catalog for precedence visibility:
 

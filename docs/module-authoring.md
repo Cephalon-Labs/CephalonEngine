@@ -493,10 +493,12 @@ Current helper behavior:
 - keeps runtime publication on the same module-owned route with `sourceKind = module-dsl`, while
   `/engine/rest-endpoints` now distinguishes the shorthand path through first-class
   `RestEndpointRuntimeDescriptor.AuthoringStyle = behavior-module-profile` or
-  `behavior-module-generated`, keeps additive `metadata.authoringStyle` only for compatibility, and
-  published behavior-backed endpoints now also expose `RestEndpointRuntimeDescriptor.CandidateId`
-  so operators can jump directly from the final published endpoint to
-  `/engine/rest-endpoint-candidates/{candidateId}`
+  `behavior-module-generated`, exposes first-class `RestEndpointRuntimeDescriptor.RouteGroupPrefix`
+  plus `RelativePattern` for the resolved published group boundary, keeps additive
+  `metadata.authoringStyle`, `metadata.routeGroupPrefix`, and `metadata.relativePattern` only for
+  compatibility, and published behavior-backed endpoints now also expose
+  `RestEndpointRuntimeDescriptor.CandidateId` so operators can jump directly from the final
+  published endpoint to `/engine/rest-endpoint-candidates/{candidateId}`
 - when the same behavior is mapped through both explicit module DSL and shorthand publication, the
   explicit DSL route now wins by default while the lower-precedence shorthand candidate remains
   visible through `/engine/rest-endpoint-candidates`, `snapshot.RestEndpointCandidates`,

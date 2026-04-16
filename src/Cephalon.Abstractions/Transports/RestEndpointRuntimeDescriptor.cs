@@ -39,6 +39,14 @@ public sealed class RestEndpointRuntimeDescriptor
     /// The normalized authoring style such as <c>behavior-module-profile</c> or <c>minimal-api</c>
     /// when the runtime can classify how the endpoint was published.
     /// </param>
+    /// <param name="routeGroupPrefix">
+    /// The resolved route-group prefix including the host REST prefix when the runtime can classify
+    /// the grouped publication boundary that produced the endpoint.
+    /// </param>
+    /// <param name="relativePattern">
+    /// The resolved route pattern relative to the grouped publication boundary when the runtime can
+    /// classify that source shape.
+    /// </param>
     public RestEndpointRuntimeDescriptor(
         string id,
         string transportId,
@@ -59,7 +67,9 @@ public sealed class RestEndpointRuntimeDescriptor
         IReadOnlyList<RestEndpointBindingDescriptor>? bindingDescriptors = null,
         RestEndpointBindingFallbackMode? bindingFallbackMode = null,
         IReadOnlyDictionary<string, string>? metadata = null,
-        string? authoringStyle = null)
+        string? authoringStyle = null,
+        string? routeGroupPrefix = null,
+        string? relativePattern = null)
     {
         Id = NormalizeRequired(id, nameof(id));
         TransportId = NormalizeRequired(transportId, nameof(transportId));
@@ -77,6 +87,8 @@ public sealed class RestEndpointRuntimeDescriptor
         Summary = NormalizeOptional(summary);
         Description = NormalizeOptional(description);
         AuthoringStyle = NormalizeOptional(authoringStyle);
+        RouteGroupPrefix = NormalizeOptional(routeGroupPrefix);
+        RelativePattern = NormalizeOptional(relativePattern);
         CandidateId = NormalizeOptional(candidateId);
         BindingDescriptors = NormalizeBindingDescriptors(bindingDescriptors);
         BindingFallbackMode = NormalizeBindingFallbackMode(bindingFallbackMode);
@@ -166,6 +178,20 @@ public sealed class RestEndpointRuntimeDescriptor
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? AuthoringStyle { get; }
+
+    /// <summary>
+    /// Gets the resolved route-group prefix including the host REST prefix when the runtime can
+    /// classify the grouped publication boundary that produced the endpoint.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? RouteGroupPrefix { get; }
+
+    /// <summary>
+    /// Gets the resolved route pattern relative to the grouped publication boundary when the
+    /// runtime can classify that source shape.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? RelativePattern { get; }
 
     /// <summary>
     /// Gets the stable originating candidate identifier when this endpoint was published from the
