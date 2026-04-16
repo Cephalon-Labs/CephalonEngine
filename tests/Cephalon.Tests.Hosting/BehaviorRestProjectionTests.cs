@@ -5,9 +5,11 @@ using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Transports;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.Transports.Rest;
+using Cephalon.Behaviors.Hosting;
 using Cephalon.Behaviors.Http.Abstractions;
 using Cephalon.Behaviors.Http.Hosting;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
 
 namespace Cephalon.Tests.Hosting;
 
@@ -2369,6 +2371,92 @@ public sealed class BehaviorRestProjectionTests
                 Assert.Equal(typeof(ProjectionCartBehavior), registration.BehaviorType);
                 Assert.False(registration.HasExplicitTopologyOverride);
             });
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionMaterializerUsesTypedProjectedRouteGroupPrefixWhenCompatibilityMetadataIsAbsent()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        using var app = builder.Build();
+        var apiGroup = app.MapGroup("/api");
+        var module = new ProjectionCountingRestModule();
+        var endpointProjection = RestBehaviorEndpointProjection.Create<ProjectionCartBehavior>(
+            RestBehaviorHttpMethod.Get,
+            "/{cartId}",
+            configureEndpoint: null,
+            authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle);
+        var projection = new RestBehaviorRouteGroupProjection(
+            Prefix: "/tests/original-orders",
+            TagName: "Typed Prefix API",
+            TagDescription: null,
+            HasExplicitTagDescription: false,
+            ApiVersionMajor: 6,
+            HasExplicitApiVersion: true,
+            ProfileApiVersionSourceBehaviorId: null,
+            GroupConventions: [],
+            Endpoints: [endpointProjection]);
+        var projectedEndpoint = new RestEndpointRuntimeDescriptor(
+            id: "typed-prefix-without-compatibility-metadata",
+            transportId: "rest-api",
+            sourceKind: RestEndpointRuntimeMetadata.ModuleDslSourceKind,
+            method: "GET",
+            routePattern: "/api/v6/tests/typed-prefix/orders/{cartId}",
+            sourceModuleId: module.Descriptor.Id,
+            sourceModuleVersion: module.Descriptor.Version,
+            sourceModuleVersionMajor: 1,
+            behaviorId: "tests.cart.projection",
+            openApiDocumentName: "v6",
+            apiVersionMajor: 6,
+            tags: ["Typed Prefix API"],
+            metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase),
+            authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle,
+            routeGroupPrefix: "/api/v6/tests/typed-prefix/orders",
+            relativePattern: "/{cartId}",
+            behaviorType: typeof(ProjectionCartBehavior).FullName,
+            sourceId: "tests.cart.projection:GET:/{cartId}");
+        var originalProjection = new RestEndpointCandidateProjectionDescriptor(
+            method: "GET",
+            routePattern: "/api/v6/tests/original-orders/{cartId}",
+            routeGroupPrefix: "/api/v6/tests/original-orders",
+            relativePattern: "/{cartId}",
+            apiVersionMajor: 6,
+            openApiDocumentName: "v6");
+        var candidate = new ResolvedRestBehaviorEndpointProjectionCandidate(
+            GroupIndex: 0,
+            EffectiveEndpointProjection: endpointProjection,
+            Candidate: new RestEndpointCandidateRuntimeDescriptor(
+                id: "typed-prefix-candidate",
+                projectedEndpoint: projectedEndpoint,
+                originalProjection: originalProjection,
+                authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle,
+                precedenceRank: RestEndpointRuntimeMetadata.ResolvePrecedenceRank(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle),
+                status: RestEndpointCandidateStatus.Published));
+
+        RestBehaviorProjectionMaterializer.MapGroup(
+            apiGroup,
+            module,
+            projection,
+            [candidate],
+            new ApiRoutesOptions());
+
+        var dataSources = ((IEndpointRouteBuilder)app).DataSources;
+        var endpoint = Assert.Single(
+            dataSources
+                .SelectMany(static dataSource => dataSource.Endpoints)
+                .OfType<RouteEndpoint>(),
+            static item => string.Equals(item.RoutePattern.RawText, "/api/v6/tests/typed-prefix/orders/{cartId}", StringComparison.Ordinal));
+
+        Assert.Equal("/api/v6/tests/typed-prefix/orders/{cartId}", endpoint.RoutePattern.RawText);
     }
 
     private static Type CreateDynamicProfileBehaviorType(

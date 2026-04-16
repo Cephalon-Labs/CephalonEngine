@@ -107,14 +107,13 @@ internal static class RestBehaviorProjectionMaterializer
     {
         ArgumentNullException.ThrowIfNull(candidate);
 
-        if (candidate.ProjectedEndpoint.Metadata.TryGetValue("routeGroupPrefix", out var routeGroupPrefix) &&
-            !string.IsNullOrWhiteSpace(routeGroupPrefix))
+        if (!string.IsNullOrWhiteSpace(candidate.ProjectedEndpoint.RouteGroupPrefix))
         {
-            return routeGroupPrefix.Trim();
+            return candidate.ProjectedEndpoint.RouteGroupPrefix.Trim();
         }
 
         throw new InvalidOperationException(
-            $"REST endpoint candidate '{candidate.Id}' is missing the projected route-group prefix metadata required for endpoint materialization.");
+            $"REST endpoint candidate '{candidate.Id}' is missing the projected route-group prefix required for endpoint materialization.");
     }
 
     private static string ResolveMaterializationGroupPrefix(

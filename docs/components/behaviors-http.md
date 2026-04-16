@@ -390,8 +390,9 @@ Current helper behavior:
   `BehaviorType` for the concrete behavior implementation identity, exposes first-class nullable
   `SourceId` for published source identity, keeps additive `metadata.authoringStyle`,
   `metadata.routeGroupPrefix`, `metadata.relativePattern`, `metadata.behaviorType`, and
-  `metadata.sourceId` only for compatibility, and publishes first-class `BindingDescriptors` data
-  for profile-driven explicit binding plans
+  `metadata.sourceId` only for compatibility, now lets shorthand ASP.NET Core materialization read
+  `ProjectedEndpoint.RouteGroupPrefix` directly instead of parsing compatibility metadata, and
+  publishes first-class `BindingDescriptors` data for profile-driven explicit binding plans
 - dispatches through `BehaviorDispatcher` using Minimal API handlers
 - lets behaviors return raw `TOutput` or transport-neutral `Result<TOutput>` values
 - uses the implicit route/query/body merge baseline only when no explicit profile bindings are
