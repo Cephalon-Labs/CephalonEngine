@@ -190,6 +190,9 @@ Current `BehaviorRestProfileAttribute` behavior:
   future enum-member renames can stay source-compatible by preserving those wire names
 - runtime profile fallback now also points unsupported or missing method guidance at those same
   canonical wire names, so build-time validation and runtime troubleshooting stay aligned
+- the remaining runtime method guards now stay aligned too: non-body method body-binding rejections
+  and unsupported REST method parser failures now also point at canonical `get`, `post`, `put`,
+  `patch`, and `delete` wire names instead of mixing in enum/member-name wording
 - the owning module still decides whether the behavior becomes public REST through
   `ConfigureRestBehaviors(...)`
 - `IRestBehaviorEndpointGroupBuilder.MapProfile<TBehavior>()` is now the shipped low-ceremony

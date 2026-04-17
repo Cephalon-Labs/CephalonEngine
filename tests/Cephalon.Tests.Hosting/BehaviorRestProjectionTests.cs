@@ -3893,7 +3893,32 @@ public sealed class BehaviorRestProjectionTests
             BehaviorRestProfileResolver.Resolve(behaviorType));
 
         Assert.Contains("cannot bind input property", exception.Message, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("Get", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(BehaviorRestMethod.Get.GetWireName(), exception.Message, StringComparison.Ordinal);
+        Assert.Contains(BehaviorRestMethod.Delete.GetWireName(), exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void BehaviorRestBindingPlanNormalizerRejectsBodyBindingsForGetUsingCanonicalWireName()
+    {
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            BehaviorRestBindingPlanNormalizer.NormalizeForInputType(
+                "tests.binding-normalizer",
+                typeof(DynamicProfileBindingInput),
+                RestBehaviorHttpMethod.Get,
+                "/{cartId}",
+                [
+                    new BehaviorRestBindingDescriptor(
+                        nameof(DynamicProfileBindingInput.Note),
+                        BehaviorRestBindingSource.Body,
+                        "note")
+                ]));
+
+        Assert.Contains("does not accept a request body", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(BehaviorRestMethod.Get.GetWireName(), exception.Message, StringComparison.Ordinal);
+        Assert.Contains(BehaviorRestMethod.Post.GetWireName(), exception.Message, StringComparison.Ordinal);
+        Assert.Contains(BehaviorRestMethod.Put.GetWireName(), exception.Message, StringComparison.Ordinal);
+        Assert.Contains(BehaviorRestMethod.Patch.GetWireName(), exception.Message, StringComparison.Ordinal);
+        Assert.Contains(BehaviorRestMethod.Delete.GetWireName(), exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -3940,6 +3965,20 @@ public sealed class BehaviorRestProjectionTests
         Assert.Contains(BehaviorRestBindingSource.Query.GetWireName(), exception.Message, StringComparison.Ordinal);
         Assert.Contains(BehaviorRestBindingSource.Header.GetWireName(), exception.Message, StringComparison.Ordinal);
         Assert.Contains(BehaviorRestBindingSource.Body.GetWireName(), exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void RestBehaviorHttpMethodParserRejectsUnsupportedMethodsUsingCanonicalWireNames()
+    {
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            RestBehaviorHttpMethodParser.Parse("TRACE"));
+
+        Assert.Contains("Unsupported REST behavior HTTP method", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(BehaviorRestMethod.Get.GetWireName(), exception.Message, StringComparison.Ordinal);
+        Assert.Contains(BehaviorRestMethod.Post.GetWireName(), exception.Message, StringComparison.Ordinal);
+        Assert.Contains(BehaviorRestMethod.Put.GetWireName(), exception.Message, StringComparison.Ordinal);
+        Assert.Contains(BehaviorRestMethod.Patch.GetWireName(), exception.Message, StringComparison.Ordinal);
+        Assert.Contains(BehaviorRestMethod.Delete.GetWireName(), exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]

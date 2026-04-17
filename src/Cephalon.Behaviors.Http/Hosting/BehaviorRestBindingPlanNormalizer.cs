@@ -115,7 +115,7 @@ internal static class BehaviorRestBindingPlanNormalizer
             if (binding.Source == BehaviorRestBindingSource.Body && !acceptsBody)
             {
                 throw new InvalidOperationException(
-                    $"{sourceLabel} declares a body binding for input property '{propertyName}', but REST method '{method}' does not accept a request body.");
+                    $"{sourceLabel} declares a body binding for input property '{propertyName}', but REST method '{BehaviorRestWireNameDiagnostics.GetWireName(method)}' does not accept a request body. {BehaviorRestWireNameDiagnostics.DescribeMethodSupport()}");
             }
 
             normalized.Add(new BehaviorRestBindingDescriptor(propertyName, binding.Source, sourceName));

@@ -202,6 +202,9 @@ Current profile behavior:
 - runtime profile normalization and fallback conversion now echo those same canonical method wire
   names in their exception guidance, so operator/developer troubleshooting does not have to switch
   between generic runtime wording and the stable JSON/source-generation vocabulary
+- the remaining method-shaped runtime guards now stay on that same vocabulary too: non-body method
+  body-binding rejections and unsupported REST method parser failures now also point at canonical
+  `get` / `post` / `put` / `patch` / `delete` wire names
 - explicit profile bindings currently support `route`, `query`, `header`, and `body` sources for
   object inputs only; build-time diagnostics now reject invalid property names, duplicate property
   bindings, unsupported sources, route-placeholder mismatches, and body bindings on `GET` or

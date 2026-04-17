@@ -180,6 +180,10 @@ Status update:
   conversion now echo those same canonical `get` / `post` / `put` / `patch` / `delete` and
   `route` / `query` / `header` / `body` wire names in their exception guidance, so operator and
   developer troubleshooting no longer diverges from the JSON/source-generation contract
+- the next method-guidance completion follow-through is now also shipped through `ENG-058-T144`:
+  non-body method body-binding rejections and unsupported REST method parser failures now also
+  echo the canonical `get` / `post` / `put` / `patch` / `delete` vocabulary, so the remaining
+  runtime method-validation paths no longer drift back to enum/member-name wording
 - the next profile-route authoring-safety follow-through is now also shipped through
   `ENG-058-T117`: `Cephalon.Behaviors.SourceGen` now rejects malformed
   `BehaviorRestProfileAttribute.RelativePattern` placeholder syntax earlier through `ABT0026`, and

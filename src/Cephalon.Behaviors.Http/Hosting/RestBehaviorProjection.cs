@@ -230,7 +230,8 @@ internal sealed record RestBehaviorEndpointProjection(
                 group.MapBehaviorPatch<TBehavior>(pattern, bindings, preserveImplicitQueryFallback, configureEndpoint),
             RestBehaviorHttpMethod.Delete => static (group, pattern, bindings, preserveImplicitQueryFallback, configureEndpoint) =>
                 group.MapBehaviorDelete<TBehavior>(pattern, bindings, preserveImplicitQueryFallback, configureEndpoint),
-            _ => throw new InvalidOperationException($"Unsupported REST behavior HTTP method '{method}'.")
+            _ => throw new InvalidOperationException(
+                $"Unsupported REST behavior HTTP method '{method}'. {BehaviorRestWireNameDiagnostics.DescribeMethodSupport()}")
         };
     }
 
@@ -284,7 +285,7 @@ internal static class RestBehaviorHttpMethodParser
             "PATCH" => RestBehaviorHttpMethod.Patch,
             "DELETE" => RestBehaviorHttpMethod.Delete,
             _ => throw new InvalidOperationException(
-                $"Unsupported REST behavior HTTP method '{method}'.")
+                $"Unsupported REST behavior HTTP method '{method}'. {BehaviorRestWireNameDiagnostics.DescribeMethodSupport()}")
         };
     }
 }

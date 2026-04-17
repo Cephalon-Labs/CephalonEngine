@@ -399,7 +399,7 @@ internal static class BehaviorRestProfileResolver
                 binding.Source == BehaviorRestBindingSource.Body)
             {
                 throw new InvalidOperationException(
-                    $"REST profile metadata for behavior '{behaviorId}' from '{sourceIdentity}' cannot bind input property '{property.Name}' from the body for {method} endpoints.");
+                    $"REST profile metadata for behavior '{behaviorId}' from '{sourceIdentity}' cannot bind input property '{property.Name}' from the body for '{BehaviorRestWireNameDiagnostics.GetWireName(method)}' endpoints. {BehaviorRestWireNameDiagnostics.DescribeMethodSupport()}");
             }
 
             if (normalized.ContainsKey(property.Name))
