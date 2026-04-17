@@ -910,12 +910,24 @@ public sealed class PackageSurfaceTests
             .GetProperty("Summary", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideDescriptor)
             .GetProperty("Description", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideDescriptor)
+            .GetProperty("ClearEndpointName", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideDescriptor)
+            .GetProperty("ClearSummary", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideDescriptor)
+            .GetProperty("ClearDescription", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions)
             .GetProperty("EndpointName", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions)
             .GetProperty("Summary", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions)
             .GetProperty("Description", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions)
+            .GetProperty("ClearEndpointName", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions)
+            .GetProperty("ClearSummary", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions)
+            .GetProperty("ClearDescription", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

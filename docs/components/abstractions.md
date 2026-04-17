@@ -68,6 +68,8 @@
 - `Transports/RestEndpointBindingFallbackMode.cs`
 - `Transports/RestEndpointBindingSource.cs`
 - `Transports/RestEndpointOverrideBindingMode.cs`
+- `Transports/IRestEndpointOverrideRuntimeCatalog.cs`
+- `Transports/RestEndpointOverrideDescriptor.cs`
 - `Transports/TransportDescriptor.cs`
 
 ## Source structure
@@ -169,10 +171,15 @@ hosts can surface both candidate-level and grouped publication truth for module-
 candidates without inventing an ASP.NET Core-specific precedence contract, and so operator tooling
 can compare the original shorthand projection shape with the final effective projected endpoint
 explicitly while also seeing the grouped published-versus-suppressed answer per behavior. The same
-candidate/runtime descriptor family now also keeps original shorthand endpoint metadata visible on
-`ProjectedEndpoint` through `OriginalEndpointName`, `OriginalSummary`, and
-`OriginalDescription`, keeps preserved shorthand fallback truth visible through typed
-`BindingFallbackMode` properties, while additive
+transport namespace now also owns `IRestEndpointOverrideRuntimeCatalog` plus
+`RestEndpointOverrideDescriptor`, including the shorthand endpoint-metadata clear actions
+`ClearEndpointName`, `ClearSummary`, and `ClearDescription`, so hosts can publish set-or-clear
+governance truth without inventing ASP.NET Core-specific override DTOs. The same candidate/runtime
+descriptor family now also keeps original shorthand endpoint metadata visible on `ProjectedEndpoint`
+through `OriginalEndpointName`, `OriginalSummary`, and `OriginalDescription`, keeps preserved
+shorthand fallback truth visible through typed `BindingFallbackMode` properties, and keeps that
+original metadata visible even when a host-level override intentionally clears the effective
+endpoint metadata, while additive
 `metadata.bindingFallbackMode`, `metadata.authoringStyle`, `metadata.routeGroupPrefix`,
 `metadata.relativePattern`, `metadata.behaviorType`, and `metadata.sourceId` remain
 compatibility-only metadata.

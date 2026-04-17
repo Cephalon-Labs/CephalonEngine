@@ -981,6 +981,46 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverAppliesEndpointMetadataClearOverridesToShorthandCandidates()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        builder.Group("/tests/generated-metadata-clear")
+            .MapGeneratedProfiles("tests.generated.projection.precedence");
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.generated-metadata-clear",
+                "Generated Metadata Clear Module",
+                "Exercises shorthand endpoint-metadata clear resolution.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "clear-public-docs",
+                    behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                    clearEndpointName: true,
+                    clearSummary: true,
+                    clearDescription: true)
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Equal("clear-public-docs", candidate.Candidate.AppliedOverrideId);
+        Assert.Null(candidate.Candidate.ProjectedEndpoint.EndpointName);
+        Assert.Null(candidate.Candidate.ProjectedEndpoint.Summary);
+        Assert.Null(candidate.Candidate.ProjectedEndpoint.Description);
+        Assert.NotNull(candidate.AppliedMetadataOverride);
+        Assert.True(candidate.AppliedMetadataOverride.ClearEndpointName);
+        Assert.True(candidate.AppliedMetadataOverride.ClearSummary);
+        Assert.True(candidate.AppliedMetadataOverride.ClearDescription);
+        Assert.Null(candidate.AppliedMetadataOverride.EndpointName);
+        Assert.Null(candidate.AppliedMetadataOverride.Summary);
+        Assert.Null(candidate.AppliedMetadataOverride.Description);
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverAppliesRequiredCapabilityOverrideToShorthandCandidates()
     {
         var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
@@ -2212,6 +2252,61 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestEndpointOverrideOptionsTreatEndpointMetadataClearsAsOverrideActions()
+    {
+        var options = new RestEndpointOverrideOptions(
+            id: "metadata-clear-only",
+            behaviorIds: ["tests.generated.projection.precedence.lookup"],
+            clearEndpointName: true,
+            clearSummary: true,
+            clearDescription: true);
+
+        Assert.True(options.ClearEndpointName);
+        Assert.True(options.ClearSummary);
+        Assert.True(options.ClearDescription);
+        Assert.True(options.HasValues);
+    }
+
+    [Fact]
+    public void RestEndpointOverrideOptionsRejectSettingAndClearingEndpointNameInSameRule()
+    {
+        var exception = Assert.Throws<ArgumentException>(() =>
+            new RestEndpointOverrideOptions(
+                id: "invalid-endpoint-name-rule",
+                behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                endpointName: "tests.generated.metadata.lookup",
+                clearEndpointName: true));
+
+        Assert.Contains("cannot both set EndpointName and ClearEndpointName", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void RestEndpointOverrideOptionsRejectSettingAndClearingSummaryInSameRule()
+    {
+        var exception = Assert.Throws<ArgumentException>(() =>
+            new RestEndpointOverrideOptions(
+                id: "invalid-summary-rule",
+                behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                summary: "Gets a generated projection cart through host-governed metadata.",
+                clearSummary: true));
+
+        Assert.Contains("cannot both set Summary and ClearSummary", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void RestEndpointOverrideOptionsRejectSettingAndClearingDescriptionInSameRule()
+    {
+        var exception = Assert.Throws<ArgumentException>(() =>
+            new RestEndpointOverrideOptions(
+                id: "invalid-description-rule",
+                behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                description: "Publishes shorthand endpoint metadata overrides through the normalized candidate pipeline.",
+                clearDescription: true));
+
+        Assert.Contains("cannot both set Description and ClearDescription", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void RestEndpointOverrideOptionsTreatRequiredCapabilityKeyAsOverrideAction()
     {
         var options = new RestEndpointOverrideOptions(
@@ -2699,7 +2794,10 @@ public sealed class BehaviorRestProjectionTests
                 "metadata-only",
                 "tests.typed.metadata.lookup",
                 "Gets a projection cart through overridden endpoint metadata.",
-                "Publishes explicit endpoint metadata overrides after shorthand materialization."));
+                "Publishes explicit endpoint metadata overrides after shorthand materialization.",
+                ClearEndpointName: false,
+                ClearSummary: false,
+                ClearDescription: false));
 
         RestBehaviorProjectionMaterializer.MapGroup(
             apiGroup,
@@ -2722,6 +2820,106 @@ public sealed class BehaviorRestProjectionTests
         Assert.Equal(
             "Publishes explicit endpoint metadata overrides after shorthand materialization.",
             endpoint.Metadata.OfType<IEndpointDescriptionMetadata>().LastOrDefault()?.Description);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionMaterializerClearsEndpointMetadataOnPublishedRouteMetadata()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        using var app = builder.Build();
+        var apiGroup = app.MapGroup("/api");
+        var module = new ProjectionCountingRestModule();
+        var endpointProjection = RestBehaviorEndpointProjection.Create<ProjectionCartBehavior>(
+            RestBehaviorHttpMethod.Get,
+            "/{cartId}",
+            configureEndpoint: null,
+            authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle);
+        var projection = new RestBehaviorRouteGroupProjection(
+            Prefix: "/tests/typed-metadata-clear/orders",
+            TagName: "Typed Metadata Clear API",
+            TagDescription: null,
+            HasExplicitTagDescription: false,
+            ApiVersionMajor: 6,
+            HasExplicitApiVersion: true,
+            ProfileApiVersionSourceBehaviorId: null,
+            GroupConventions: [],
+            Endpoints: [endpointProjection]);
+        var projectedEndpoint = new RestEndpointRuntimeDescriptor(
+            id: "typed-metadata-clear-candidate",
+            transportId: "rest-api",
+            sourceKind: RestEndpointRuntimeMetadata.ModuleDslSourceKind,
+            method: "GET",
+            routePattern: "/api/v6/tests/typed-metadata-clear/orders/{cartId}",
+            sourceModuleId: module.Descriptor.Id,
+            sourceModuleVersion: module.Descriptor.Version,
+            sourceModuleVersionMajor: 1,
+            behaviorId: "tests.cart.projection",
+            endpointName: null,
+            openApiDocumentName: "v6",
+            apiVersionMajor: 6,
+            tags: ["Typed Metadata Clear API"],
+            summary: null,
+            description: null,
+            metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase),
+            authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle,
+            routeGroupPrefix: "/api/v6/tests/typed-metadata-clear/orders",
+            relativePattern: "/{cartId}",
+            behaviorType: typeof(ProjectionCartBehavior).FullName,
+            sourceId: "tests.cart.projection:GET:/{cartId}");
+        var originalProjection = new RestEndpointCandidateProjectionDescriptor(
+            method: "GET",
+            routePattern: "/api/v6/tests/typed-metadata-clear/orders/{cartId}",
+            routeGroupPrefix: "/api/v6/tests/typed-metadata-clear/orders",
+            relativePattern: "/{cartId}",
+            apiVersionMajor: 6,
+            openApiDocumentName: "v6");
+        var candidate = new ResolvedRestBehaviorEndpointProjectionCandidate(
+            GroupIndex: 0,
+            EffectiveEndpointProjection: endpointProjection,
+            Candidate: new RestEndpointCandidateRuntimeDescriptor(
+                id: "typed-metadata-clear-candidate",
+                projectedEndpoint: projectedEndpoint,
+                originalProjection: originalProjection,
+                authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle,
+                precedenceRank: RestEndpointRuntimeMetadata.ResolvePrecedenceRank(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle),
+                status: RestEndpointCandidateStatus.Published,
+                appliedOverrideId: "metadata-clear-only"),
+            AppliedMetadataOverride: new AppliedRestEndpointMetadataOverride(
+                "metadata-clear-only",
+                EndpointName: null,
+                Summary: null,
+                Description: null,
+                ClearEndpointName: true,
+                ClearSummary: true,
+                ClearDescription: true));
+
+        RestBehaviorProjectionMaterializer.MapGroup(
+            apiGroup,
+            module,
+            projection,
+            [candidate],
+            new ApiRoutesOptions());
+
+        var dataSources = ((IEndpointRouteBuilder)app).DataSources;
+        var endpoint = Assert.Single(
+            dataSources
+                .SelectMany(static dataSource => dataSource.Endpoints)
+                .OfType<RouteEndpoint>(),
+            static item => string.Equals(item.RoutePattern.RawText, "/api/v6/tests/typed-metadata-clear/orders/{cartId}", StringComparison.Ordinal));
+
+        Assert.Null(endpoint.Metadata.GetMetadata<EndpointNameMetadata>()?.EndpointName);
+        Assert.Null(endpoint.Metadata.OfType<IEndpointSummaryMetadata>().LastOrDefault()?.Summary);
+        Assert.Null(endpoint.Metadata.OfType<IEndpointDescriptionMetadata>().LastOrDefault()?.Description);
     }
 
     [Fact]

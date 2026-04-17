@@ -449,14 +449,16 @@ Current helper behavior:
   boundary, or explicit binding
   plan for descriptor-backed shorthand candidates through `RestApi:Overrides`, which now supports
   `ApiVersionMajor`, `Method`, `RouteGroupPrefix`, `Pattern`, `RequiredCapabilityKey`,
-  `ClearRequiredCapability`, `Bindings`, `RemovedBindingProperties`, typed `BindingMode`, and shorthand endpoint metadata
-  `EndpointName`, `Summary`, and `Description`, records the applied rule id through
+  `ClearRequiredCapability`, `Bindings`, `RemovedBindingProperties`, typed `BindingMode`,
+  shorthand endpoint metadata `EndpointName`, `Summary`, and `Description`, plus metadata clears
+  `ClearEndpointName`, `ClearSummary`, and `ClearDescription`, records the applied rule id through
   `AppliedOverrideId` when the selected rule materially changes the effective answer, rewrites the
   shorthand candidate's `/v{major}` route segment and OpenAPI document name together when version
   changes, keeps the mapped endpoint method aligned when method changes, keeps the published
   route-group boundary aligned when `RouteGroupPrefix` changes, keeps the mapped endpoint route
   aligned when pattern changes, keeps actual ASP.NET Core endpoint metadata plus
-  `/engine/rest-endpoints` aligned when capability-boundary or endpoint-metadata values change,
+  `/engine/rest-endpoints` aligned when capability-boundary or endpoint-metadata values change or
+  clear,
   applies explicit binding
   overrides in either default
   `ReplaceExplicit` mode or `MergeExplicit` property-patch-and-withdraw mode while leaving
@@ -507,7 +509,10 @@ route. That published `OriginalProjection` keeps the original shorthand method, 
 document-version, and binding-plan truth visible directly on the final runtime endpoint, while the
 original-metadata trio keeps the original shorthand endpoint name plus summary/description visible
 beside the final effective endpoint metadata, so operators no longer need a candidate-catalog join
-or behavior-doc fallback just to compare original-versus-effective publication.
+or behavior-doc fallback just to compare original-versus-effective publication. When a host
+override clears one of those endpoint-metadata fields, the effective ASP.NET Core endpoint metadata
+and runtime-catalog answer now stay intentionally empty while the original-metadata trio still
+preserves the source shorthand lineage.
 
 The same runtime answer now has a companion candidate catalog for precedence visibility:
 
@@ -583,7 +588,8 @@ Current governance baseline:
 
 - configure shorthand suppression through `RestApi:Suppressions`
 - configure shorthand API-version, HTTP-method, bounded route-group-prefix, constrained
-  route-pattern, capability-boundary set-or-clear, explicit binding-plan, and endpoint-metadata overrides through
+  route-pattern, capability-boundary set-or-clear, explicit binding-plan, and endpoint-metadata
+  set-or-clear overrides through
   `RestApi:Overrides`
 - target one or more `CandidateIds`, `Behaviors`, `Modules`, and optional `AuthoringStyles`, then
   optionally refine that match with `ApiVersionMajors`, `Methods`, `RelativePatterns`, and
@@ -614,7 +620,8 @@ Current governance baseline:
   apply
 - the current override slice rewrites only the effective API major version, HTTP method,
   constrained relative route pattern, required capability boundary, capability-boundary clear,
-  endpoint metadata, and/or explicit binding plan, keeping the `/v{major}` route segment,
+  endpoint metadata set-or-clear actions, and/or explicit binding plan, keeping the `/v{major}`
+  route segment,
   OpenAPI document name, mapped endpoint, and runtime catalogs aligned
 - pattern rewrites preserve the placeholder set by default and can now also rename placeholders
   when the effective explicit route-binding plan covers the renamed placeholder set exactly

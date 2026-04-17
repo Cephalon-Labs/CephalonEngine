@@ -38,7 +38,10 @@ internal sealed class AspNetCoreRestEndpointOverrideRuntimeCatalog : IRestEndpoi
                 item.ClearRequiredCapability,
                 item.Bindings,
                 item.RemovedBindingProperties,
-                item.BindingMode))
+                item.BindingMode,
+                item.ClearEndpointName,
+                item.ClearSummary,
+                item.ClearDescription))
             .OrderBy(static item => item.Id, Comparer)
             .ToArray();
 

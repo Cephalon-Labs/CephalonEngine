@@ -959,6 +959,113 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonAppliesEndpointMetadataClearOverridesAndExposesOverrideCatalog()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "4";
+        builder.Configuration["OpenApi:DefaultVersion"] = "4";
+        builder.Configuration["RestApi:Overrides:clear-public-docs:Behaviors:0"] = "tests.generated.runtimeoverride.lookup";
+        builder.Configuration["RestApi:Overrides:clear-public-docs:ClearEndpointName"] = "true";
+        builder.Configuration["RestApi:Overrides:clear-public-docs:ClearSummary"] = "true";
+        builder.Configuration["RestApi:Overrides:clear-public-docs:ClearDescription"] = "true";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new GeneratedVersionOverrideRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(overrides);
+        Assert.NotNull(snapshot);
+
+        var endpoint = Assert.Single(endpoints, static item =>
+            string.Equals(item.BehaviorId, "tests.generated.runtimeoverride.lookup", StringComparison.Ordinal));
+        Assert.Equal("/api/v4/tests/generated/runtime/override/orders/{orderId}", endpoint.RoutePattern);
+        Assert.Null(endpoint.EndpointName);
+        Assert.Null(endpoint.Summary);
+        Assert.Null(endpoint.Description);
+        Assert.Equal(
+            "tests_rest_generated_runtime_override.v4.tests_generated_runtimeoverride_lookup",
+            endpoint.OriginalEndpointName);
+        Assert.Equal("tests.generated.runtimeoverride.lookup", endpoint.OriginalSummary);
+        Assert.Equal(
+            "Publishes generated shorthand so REST governance can override the effective API version.",
+            endpoint.OriginalDescription);
+        Assert.Equal("clear-public-docs", endpoint.AppliedOverrideId);
+        Assert.Equal(["clear-public-docs"], endpoint.MatchedOverrideIds);
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.generated.runtimeoverride.lookup", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+        Assert.Equal("clear-public-docs", candidate.AppliedOverrideId);
+        Assert.Null(candidate.ProjectedEndpoint.EndpointName);
+        Assert.Null(candidate.ProjectedEndpoint.Summary);
+        Assert.Null(candidate.ProjectedEndpoint.Description);
+        Assert.Equal(endpoint.OriginalEndpointName, candidate.ProjectedEndpoint.OriginalEndpointName);
+        Assert.Equal(endpoint.OriginalSummary, candidate.ProjectedEndpoint.OriginalSummary);
+        Assert.Equal(endpoint.OriginalDescription, candidate.ProjectedEndpoint.OriginalDescription);
+
+        var rule = Assert.Single(overrides, static item => string.Equals(item.Id, "clear-public-docs", StringComparison.Ordinal));
+        Assert.True(rule.ClearEndpointName);
+        Assert.True(rule.ClearSummary);
+        Assert.True(rule.ClearDescription);
+        Assert.Null(rule.EndpointName);
+        Assert.Null(rule.Summary);
+        Assert.Null(rule.Description);
+
+        Assert.Contains(snapshot.RestEndpointOverrides, item =>
+            string.Equals(item.Id, "clear-public-docs", StringComparison.Ordinal) &&
+            item.ClearEndpointName &&
+            item.ClearSummary &&
+            item.ClearDescription);
+        Assert.Contains(snapshot.RestEndpointCandidates, item =>
+            string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
+            string.Equals(item.AppliedOverrideId, "clear-public-docs", StringComparison.Ordinal) &&
+            item.ProjectedEndpoint.EndpointName is null &&
+            item.ProjectedEndpoint.Summary is null &&
+            item.ProjectedEndpoint.Description is null);
+        Assert.Contains(snapshot.RestEndpoints, item =>
+            string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal) &&
+            item.EndpointName is null &&
+            item.Summary is null &&
+            item.Description is null &&
+            string.Equals(item.OriginalEndpointName, endpoint.OriginalEndpointName, StringComparison.Ordinal) &&
+            item.MatchedOverrideIds.SequenceEqual(["clear-public-docs"]));
+
+        var routeEndpoint = Assert.Single(
+            ((IEndpointRouteBuilder)app).DataSources
+                .SelectMany(static dataSource => dataSource.Endpoints)
+                .OfType<RouteEndpoint>(),
+            static item => string.Equals(item.RoutePattern.RawText, "/api/v4/tests/generated/runtime/override/orders/{orderId}", StringComparison.Ordinal));
+        Assert.Null(routeEndpoint.Metadata.GetMetadata<EndpointNameMetadata>()?.EndpointName);
+        Assert.Null(routeEndpoint.Metadata.OfType<IEndpointSummaryMetadata>().LastOrDefault()?.Summary);
+        Assert.Null(routeEndpoint.Metadata.OfType<IEndpointDescriptionMetadata>().LastOrDefault()?.Description);
+
+        var payload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>("/api/v4/tests/generated/runtime/override/orders/ord-42");
+        Assert.NotNull(payload);
+        Assert.Equal("ord-42", payload.OrderId);
+    }
+
+    [Fact]
     public async Task MapCephalonAppliesRequiredCapabilityOverridesAndExposesOverrideCatalog()
     {
         var builder = WebApplication.CreateBuilder();

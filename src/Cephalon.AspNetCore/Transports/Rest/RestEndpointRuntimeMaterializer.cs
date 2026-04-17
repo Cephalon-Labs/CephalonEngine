@@ -59,16 +59,29 @@ internal static class RestEndpointRuntimeMaterializer
 
         var routePattern = NormalizeRoutePattern(endpoint);
         var behaviorMetadata = endpoint.Metadata.GetMetadata<RestBehaviorEndpointMetadata>();
-        var endpointName = endpoint.Metadata.GetMetadata<EndpointNameMetadata>()?.EndpointName
-            ?? behaviorMetadata?.OperationName;
+        var clearedMetadata = endpoint.Metadata.GetMetadata<RestEndpointClearedMetadataState>();
+        var endpointName = endpoint.Metadata.GetMetadata<EndpointNameMetadata>()?.EndpointName;
+        if (endpointName is null && clearedMetadata?.ClearEndpointName != true)
+        {
+            endpointName = behaviorMetadata?.OperationName;
+        }
+
         var openApiDocumentName = behaviorMetadata?.OpenApiDocumentName
             ?? endpoint.Metadata.GetMetadata<IEndpointGroupNameMetadata>()?.EndpointGroupName;
         var apiVersionMajor = behaviorMetadata?.ApiVersionMajor
             ?? TryParseApiVersionMajor(openApiDocumentName);
-        var summary = endpoint.Metadata.OfType<IEndpointSummaryMetadata>().LastOrDefault()?.Summary
-            ?? behaviorMetadata?.Summary;
-        var description = endpoint.Metadata.OfType<IEndpointDescriptionMetadata>().LastOrDefault()?.Description
-            ?? behaviorMetadata?.Description;
+        var summary = endpoint.Metadata.OfType<IEndpointSummaryMetadata>().LastOrDefault()?.Summary;
+        if (summary is null && clearedMetadata?.ClearSummary != true)
+        {
+            summary = behaviorMetadata?.Summary;
+        }
+
+        var description = endpoint.Metadata.OfType<IEndpointDescriptionMetadata>().LastOrDefault()?.Description;
+        if (description is null && clearedMetadata?.ClearDescription != true)
+        {
+            description = behaviorMetadata?.Description;
+        }
+
         var capabilityMetadata = endpoint.Metadata
             .OfType<RestEndpointCapabilityMetadata>()
             .ToArray();

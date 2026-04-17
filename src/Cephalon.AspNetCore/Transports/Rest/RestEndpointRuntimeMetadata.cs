@@ -63,6 +63,11 @@ internal sealed record RestEndpointSourceCapabilityMetadata(string? RequiredCapa
 
 internal sealed record RestEndpointAppliedOverrideMetadata(string OverrideId);
 
+internal sealed record RestEndpointClearedMetadataState(
+    bool ClearEndpointName,
+    bool ClearSummary,
+    bool ClearDescription);
+
 internal sealed record RestModuleEndpointMetadata(
     string ModuleId,
     string DisplayName,

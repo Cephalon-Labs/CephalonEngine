@@ -4,6 +4,7 @@ using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.Transports.Rest;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -302,6 +303,35 @@ internal static class RestBehaviorProjectionMaterializer
             return;
         }
 
+        if (metadataOverride.ClearEndpointName ||
+            metadataOverride.ClearSummary ||
+            metadataOverride.ClearDescription)
+        {
+            builder.Add(endpointBuilder =>
+            {
+                if (metadataOverride.ClearEndpointName)
+                {
+                    RemoveMetadata<EndpointNameMetadata>(endpointBuilder.Metadata);
+                }
+
+                if (metadataOverride.ClearSummary)
+                {
+                    RemoveMetadata<IEndpointSummaryMetadata>(endpointBuilder.Metadata);
+                }
+
+                if (metadataOverride.ClearDescription)
+                {
+                    RemoveMetadata<IEndpointDescriptionMetadata>(endpointBuilder.Metadata);
+                }
+
+                RemoveMetadata<RestEndpointClearedMetadataState>(endpointBuilder.Metadata);
+                endpointBuilder.Metadata.Add(new RestEndpointClearedMetadataState(
+                    metadataOverride.ClearEndpointName,
+                    metadataOverride.ClearSummary,
+                    metadataOverride.ClearDescription));
+            });
+        }
+
         if (!string.IsNullOrWhiteSpace(metadataOverride.EndpointName))
         {
             builder.WithName(metadataOverride.EndpointName);
@@ -315,6 +345,19 @@ internal static class RestBehaviorProjectionMaterializer
         if (!string.IsNullOrWhiteSpace(metadataOverride.Description))
         {
             builder.WithDescription(metadataOverride.Description);
+        }
+    }
+
+    private static void RemoveMetadata<TMetadata>(IList<object> metadata)
+    {
+        ArgumentNullException.ThrowIfNull(metadata);
+
+        for (var index = metadata.Count - 1; index >= 0; index--)
+        {
+            if (metadata[index] is TMetadata)
+            {
+                metadata.RemoveAt(index);
+            }
         }
     }
 

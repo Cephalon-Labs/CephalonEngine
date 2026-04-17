@@ -530,13 +530,16 @@ matches, the suppressed candidate keeps the full ordered match set visible throu
 
 When a host wants to keep shorthand publication but retarget selected shorthand endpoints to a
 different effective API major version, HTTP method, bounded published route-group prefix,
-constrained relative route pattern, or explicit binding plan, use `RestApi:Overrides`. That
+constrained relative route pattern, endpoint metadata, or explicit binding plan, use
+`RestApi:Overrides`. That
 host-level governance surface targets the same
 descriptor-backed shorthand candidates, also requires `Behaviors` or `Modules`, can refine that
 target further with `ApiVersionMajors`, `Methods`, `RelativePatterns`, and `RouteGroupPrefixes`,
 matches those selector refiners against the original shorthand candidate shape before override
 actions are applied, now supports a positive `ApiVersionMajor`, a supported HTTP `Method`, a valid
-bounded `RouteGroupPrefix`, a valid relative `Pattern`, and/or explicit `Bindings`, records the
+bounded `RouteGroupPrefix`, a valid relative `Pattern`, endpoint-metadata set actions
+`EndpointName`, `Summary`, and `Description`, endpoint-metadata clear actions
+`ClearEndpointName`, `ClearSummary`, and `ClearDescription`, and/or explicit `Bindings`, records the
 applied rule through
 `AppliedOverrideId` in `/engine/rest-endpoint-candidates`, keeps the original shorthand source
 shape visible there through `OriginalProjection` while `ProjectedEndpoint` carries the final
@@ -569,7 +572,9 @@ ASP.NET Core now splits materialization by the effective group prefix so actual 
 `OriginalProjection`/`ProjectedEndpoint` runtime truth, while published shorthand endpoints now
 also expose `OriginalEndpointName`, `OriginalSummary`, and `OriginalDescription` directly so the
 final runtime answer keeps source-versus-effective endpoint metadata visible beside route/version
-truth. Broader implicit-property promotion beyond
+truth even when a host-level override intentionally clears the effective endpoint metadata. A
+single override rule cannot both set and clear the same endpoint-metadata field. Broader
+implicit-property promotion beyond
 that constrained body-fallback-plus-bounded-query-fallback path still fails fast; invalid effective
 method-plus-binding combinations also fail fast during endpoint materialization; and explicit module
 DSL/manual routes still stay authoritative.

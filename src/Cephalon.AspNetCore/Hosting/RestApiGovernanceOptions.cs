@@ -99,7 +99,10 @@ public sealed class RestApiGovernanceOptions
                 clearRequiredCapability: ReadBoolean(child, "ClearRequiredCapability"),
                 bindings: ReadBindings(child.GetSection("Bindings")),
                 removedBindingProperties: ReadStringArray(child.GetSection("RemovedBindingProperties")),
-                bindingMode: ReadBindingMode(child)))
+                bindingMode: ReadBindingMode(child),
+                clearEndpointName: ReadBoolean(child, "ClearEndpointName"),
+                clearSummary: ReadBoolean(child, "ClearSummary"),
+                clearDescription: ReadBoolean(child, "ClearDescription")))
             .ToArray();
 
         return new RestApiGovernanceOptions(suppressions, overrides);

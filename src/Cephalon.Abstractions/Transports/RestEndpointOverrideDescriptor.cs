@@ -41,6 +41,18 @@ public sealed class RestEndpointOverrideDescriptor
     /// <paramref name="removedBindingProperties" /> to the shorthand candidate's explicit binding
     /// plan.
     /// </param>
+    /// <param name="clearEndpointName">
+    /// <see langword="true" /> when the rule removes any previously declared shorthand endpoint
+    /// name from the matched candidate.
+    /// </param>
+    /// <param name="clearSummary">
+    /// <see langword="true" /> when the rule removes any previously declared shorthand endpoint
+    /// summary from the matched candidate.
+    /// </param>
+    /// <param name="clearDescription">
+    /// <see langword="true" /> when the rule removes any previously declared shorthand endpoint
+    /// description from the matched candidate.
+    /// </param>
     public RestEndpointOverrideDescriptor(
         string id,
         IReadOnlyList<string>? candidateIds = null,
@@ -62,7 +74,10 @@ public sealed class RestEndpointOverrideDescriptor
         bool clearRequiredCapability = false,
         IReadOnlyList<RestEndpointBindingDescriptor>? bindings = null,
         IReadOnlyList<string>? removedBindingProperties = null,
-        RestEndpointOverrideBindingMode bindingMode = RestEndpointOverrideBindingMode.Unspecified)
+        RestEndpointOverrideBindingMode bindingMode = RestEndpointOverrideBindingMode.Unspecified,
+        bool clearEndpointName = false,
+        bool clearSummary = false,
+        bool clearDescription = false)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -95,6 +110,9 @@ public sealed class RestEndpointOverrideDescriptor
         Description = NormalizeNonEmptyValue(description);
         RequiredCapabilityKey = NormalizeNonEmptyValue(requiredCapabilityKey);
         ClearRequiredCapability = clearRequiredCapability;
+        ClearEndpointName = clearEndpointName;
+        ClearSummary = clearSummary;
+        ClearDescription = clearDescription;
         Bindings = NormalizeBindings(bindings);
         RemovedBindingProperties = NormalizeList(removedBindingProperties);
         BindingMode = NormalizeBindingMode(bindingMode, RemovedBindingProperties.Count > 0);
@@ -106,6 +124,27 @@ public sealed class RestEndpointOverrideDescriptor
                 nameof(clearRequiredCapability));
         }
 
+        if (ClearEndpointName && EndpointName is not null)
+        {
+            throw new ArgumentException(
+                "REST endpoint override descriptors cannot both set EndpointName and ClearEndpointName in the same rule.",
+                nameof(clearEndpointName));
+        }
+
+        if (ClearSummary && Summary is not null)
+        {
+            throw new ArgumentException(
+                "REST endpoint override descriptors cannot both set Summary and ClearSummary in the same rule.",
+                nameof(clearSummary));
+        }
+
+        if (ClearDescription && Description is not null)
+        {
+            throw new ArgumentException(
+                "REST endpoint override descriptors cannot both set Description and ClearDescription in the same rule.",
+                nameof(clearDescription));
+        }
+
         if (!ApiVersionMajor.HasValue &&
             Method is null &&
             Pattern is null &&
@@ -113,13 +152,16 @@ public sealed class RestEndpointOverrideDescriptor
             EndpointName is null &&
             Summary is null &&
             Description is null &&
+            !ClearEndpointName &&
+            !ClearSummary &&
+            !ClearDescription &&
             RequiredCapabilityKey is null &&
             !ClearRequiredCapability &&
             Bindings.Count == 0 &&
             RemovedBindingProperties.Count == 0)
         {
             throw new ArgumentException(
-                "REST endpoint override descriptors require at least one override action such as ApiVersionMajor, Method, Pattern, RouteGroupPrefix, EndpointName, Summary, Description, RequiredCapabilityKey, ClearRequiredCapability, Bindings, or RemovedBindingProperties.",
+                "REST endpoint override descriptors require at least one override action such as ApiVersionMajor, Method, Pattern, RouteGroupPrefix, EndpointName, Summary, Description, ClearEndpointName, ClearSummary, ClearDescription, RequiredCapabilityKey, ClearRequiredCapability, Bindings, or RemovedBindingProperties.",
                 nameof(apiVersionMajor));
         }
 
@@ -214,6 +256,24 @@ public sealed class RestEndpointOverrideDescriptor
     /// Gets the effective OpenAPI description applied when this override rule matches.
     /// </summary>
     public string? Description { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether this override rule clears any previously declared endpoint
+    /// name from the matched shorthand candidate.
+    /// </summary>
+    public bool ClearEndpointName { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether this override rule clears any previously declared endpoint
+    /// summary from the matched shorthand candidate.
+    /// </summary>
+    public bool ClearSummary { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether this override rule clears any previously declared endpoint
+    /// description from the matched shorthand candidate.
+    /// </summary>
+    public bool ClearDescription { get; }
 
     /// <summary>
     /// Gets the required Cephalon capability key enforced at the REST boundary when this override rule matches.

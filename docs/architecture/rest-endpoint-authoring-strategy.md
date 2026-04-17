@@ -2,7 +2,7 @@
 
 Decision baseline date: `April 14, 2026`
 
-Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`, `ENG-058-T67` / GitHub issue `#332`, `ENG-058-T68` / GitHub issue `#333`, `ENG-058-T69` / GitHub issue `#334`, `ENG-058-T70` / GitHub issue `#335`, `ENG-058-T71` / GitHub issue `#336`, `ENG-058-T72` / GitHub issue `#337`, `ENG-058-T73` / GitHub issue `#338`, `ENG-058-T74` / GitHub issue `#339`, `ENG-058-T75` / GitHub issue `#340`, `ENG-058-T76` / GitHub issue `#341`, `ENG-058-T77` / GitHub issue `#342`, `ENG-058-T78` / GitHub issue `#343`, `ENG-058-T79` / GitHub issue `#344`, `ENG-058-T80` / GitHub issue `#345`, `ENG-058-T81` / GitHub issue `#346`, `ENG-058-T82` / GitHub issue `#347`, `ENG-058-T83` / GitHub issue `#348`, `ENG-058-T84` / GitHub issue `#349`, `ENG-058-T85` / GitHub issue `#350`, `ENG-058-T86` / GitHub issue `#351`, `ENG-058-T87` / GitHub issue `#352`, `ENG-058-T88` / GitHub issue `#353`, `ENG-058-T89` / GitHub issue `#354`, `ENG-058-T90` / GitHub issue `#355`, `ENG-058-T91` / GitHub issue `#356`, `ENG-058-T92` / GitHub issue `#357`, `ENG-058-T93` / GitHub issue `#358`, `ENG-058-T94` / GitHub issue `#359`, `ENG-058-T95` / GitHub issue `#360`, `ENG-058-T96` / GitHub issue `#361`, `ENG-058-T97` / GitHub issue `#362`, `ENG-058-T98` / GitHub issue `#363`, `ENG-058-T99` / GitHub issue `#364`, `ENG-058-T100` / GitHub issue `#365`, `ENG-058-T101` / GitHub issue `#367`, `ENG-058-T102` / GitHub issue `#368`, `ENG-058-T103` / GitHub issue `#369`, `ENG-058-T104` / GitHub issue `#370`
+Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`, `ENG-058-T67` / GitHub issue `#332`, `ENG-058-T68` / GitHub issue `#333`, `ENG-058-T69` / GitHub issue `#334`, `ENG-058-T70` / GitHub issue `#335`, `ENG-058-T71` / GitHub issue `#336`, `ENG-058-T72` / GitHub issue `#337`, `ENG-058-T73` / GitHub issue `#338`, `ENG-058-T74` / GitHub issue `#339`, `ENG-058-T75` / GitHub issue `#340`, `ENG-058-T76` / GitHub issue `#341`, `ENG-058-T77` / GitHub issue `#342`, `ENG-058-T78` / GitHub issue `#343`, `ENG-058-T79` / GitHub issue `#344`, `ENG-058-T80` / GitHub issue `#345`, `ENG-058-T81` / GitHub issue `#346`, `ENG-058-T82` / GitHub issue `#347`, `ENG-058-T83` / GitHub issue `#348`, `ENG-058-T84` / GitHub issue `#349`, `ENG-058-T85` / GitHub issue `#350`, `ENG-058-T86` / GitHub issue `#351`, `ENG-058-T87` / GitHub issue `#352`, `ENG-058-T88` / GitHub issue `#353`, `ENG-058-T89` / GitHub issue `#354`, `ENG-058-T90` / GitHub issue `#355`, `ENG-058-T91` / GitHub issue `#356`, `ENG-058-T92` / GitHub issue `#357`, `ENG-058-T93` / GitHub issue `#358`, `ENG-058-T94` / GitHub issue `#359`, `ENG-058-T95` / GitHub issue `#360`, `ENG-058-T96` / GitHub issue `#361`, `ENG-058-T97` / GitHub issue `#362`, `ENG-058-T98` / GitHub issue `#363`, `ENG-058-T99` / GitHub issue `#364`, `ENG-058-T100` / GitHub issue `#365`, `ENG-058-T101` / GitHub issue `#367`, `ENG-058-T102` / GitHub issue `#368`, `ENG-058-T103` / GitHub issue `#369`, `ENG-058-T104` / GitHub issue `#370`, `ENG-058-T105` / GitHub issue `#371`
 
 Cross-references: `docs/components/behaviors-http.md`, `docs/module-authoring.md`, `docs/architecture.md`, `docs/architecture-review-2026-04.md`, `docs/project-memory.md`
 
@@ -617,8 +617,9 @@ can target the original shorthand candidate shape through `ApiVersionMajors`, `M
 `RelativePatterns`, and `RouteGroupPrefixes`, then change the effective shorthand candidate
 `ApiVersionMajor`, HTTP `Method`, bounded published `RouteGroupPrefix`, relative `Pattern`,
 `RequiredCapabilityKey`, `ClearRequiredCapability`, `EndpointName`, `Summary`, `Description`,
-and/or explicit `Bindings` plus `RemovedBindingProperties`, but the current route-pattern slice is
-still constrained enough to keep binding semantics truthful. Cephalon therefore keeps the
+`ClearEndpointName`, `ClearSummary`, `ClearDescription`, and/or explicit `Bindings` plus
+`RemovedBindingProperties`, but the current route-pattern slice is still constrained enough to keep
+binding semantics truthful. Cephalon therefore keeps the
 route-version segment and document name
 together for version rewrites, allows route-pattern rewrites when they preserve the same
 placeholder set or when the effective explicit route-binding plan covers a renamed placeholder set
@@ -636,7 +637,8 @@ binding plan already part of the original implicit query-fallback surface, allow
 `RouteGroupPrefix` rewrites only when the published group stays beneath the active REST root,
 contains no placeholders, and does not silently change effective API-version truth, now makes
 ASP.NET Core materialize split effective route groups when one authored shorthand group fans out
-to more than one published group, and does not yet support route rewrites that promote other
+to more than one published group, rejects any one rule that tries to both set and clear the same
+endpoint-metadata field, and does not yet support route rewrites that promote other
 implicit properties into placeholders or broader host-level binding rewrites beyond the current
 replace-plus-merge-explicit
 upsert-plus-withdraw model that would silently change how one shorthand endpoint reads its input.
@@ -863,6 +865,14 @@ Status:
   carries that pre-override endpoint-metadata truth onto the final published endpoint surface, and
   `/engine/rest-endpoints` plus `snapshot.RestEndpoints` can now compare original-versus-effective
   endpoint metadata directly while manual and behavior-helper endpoints keep that trio `null`
+- the next shorthand endpoint-metadata clear-governance follow-through is now shipped through
+  `ENG-058-T105`, so `RestEndpointOverrideDescriptor` plus `RestEndpointOverrideOptions` now also
+  expose `ClearEndpointName`, `ClearSummary`, and `ClearDescription`, hosts now fail fast when one
+  rule tries to both set and clear the same endpoint-metadata field, shorthand candidate
+  projections plus actual ASP.NET Core endpoint metadata plus `/engine/rest-endpoints` now all
+  agree on `null` when an endpoint-metadata clear wins, and the original shorthand endpoint-
+  metadata lineage still stays visible through `OriginalEndpointName`, `OriginalSummary`, and
+  `OriginalDescription`
 - controlled configuration overrides that promote implicit properties into route placeholders
   beyond the shipped constrained remaining-body-fallback-plus-bounded-query-fallback path, or
   rewrite input binding beyond constrained explicit-binding replacement, remain later work now that the
@@ -915,8 +925,9 @@ The following points are durable enough to keep outside thread-local context.
   descriptor-backed shorthand candidates, and the shipped `RestApi:Overrides` baseline is
   intentionally limited to shorthand `ApiVersionMajor`, `Method`, bounded `RouteGroupPrefix`,
   constrained relative `Pattern`, `RequiredCapabilityKey`, `ClearRequiredCapability`,
-  `EndpointName`, `Summary`, `Description`, and constrained explicit `Bindings` rewrites with
-  either default full replacement or typed `MergeExplicit` property upserts plus
+  `EndpointName`, `Summary`, `Description`, `ClearEndpointName`, `ClearSummary`,
+  `ClearDescription`, and constrained explicit `Bindings` rewrites with either default full
+  replacement or typed `MergeExplicit` property upserts plus
   `RemovedBindingProperties`; neither surface rewrites explicit module DSL or manual routes
 - both rule families can now target exact original-shape shorthand candidates through
   `CandidateIds`, can also refine `Behaviors`/`Modules` targeting with `ApiVersionMajors`,
@@ -930,6 +941,12 @@ The following points are durable enough to keep outside thread-local context.
   metadata aligned with the final behavior-backed runtime endpoint conventions, including XML-
   derived summaries/descriptions when those docs exist and module-description fallback when they do
   not
+- when REST governance rewrites or clears shorthand `EndpointName`, `Summary`, or `Description`,
+  the same effective answer must drive `ProjectedEndpoint`, actual ASP.NET Core endpoint metadata,
+  `/engine/rest-endpoints`, and `snapshot.RestEndpoints`; metadata-only no-op matches should not
+  pretend they changed the published answer, and `OriginalEndpointName`,
+  `OriginalSummary`, and `OriginalDescription` should remain available so operators can still see
+  the source shorthand metadata after a clear wins
 - when REST governance rewrites shorthand `RequiredCapabilityKey` or clears it through
   `ClearRequiredCapability`, the same effective answer must drive
   `ProjectedEndpoint.RequiredCapabilityKey`, actual ASP.NET Core endpoint metadata,

@@ -186,9 +186,18 @@ internal static class RestBehaviorProjectionCandidateResolver
             documentation.Summary,
             documentation.Description);
         var appliedCapabilityOverride = CreateAppliedRequiredCapabilityOverride(selectedOverride);
-        var endpointName = NormalizeOverrideMetadataValue(selectedOverride?.EndpointName) ?? operationName;
-        var summary = NormalizeOverrideMetadataValue(selectedOverride?.Summary) ?? documentation.Summary;
-        var description = NormalizeOverrideMetadataValue(selectedOverride?.Description) ?? documentation.Description;
+        var endpointName = ResolveEffectiveMetadataValue(
+            selectedOverride?.EndpointName,
+            selectedOverride?.ClearEndpointName == true,
+            operationName);
+        var summary = ResolveEffectiveMetadataValue(
+            selectedOverride?.Summary,
+            selectedOverride?.ClearSummary == true,
+            documentation.Summary);
+        var description = ResolveEffectiveMetadataValue(
+            selectedOverride?.Description,
+            selectedOverride?.ClearDescription == true,
+            documentation.Description);
         var projectedEndpoint = RestEndpointRuntimeDescriptorFactory.CreateBehaviorDescriptor(
             sourceKind: RestEndpointRuntimeMetadata.ModuleDslSourceKind,
             method: method,
@@ -1065,17 +1074,28 @@ internal static class RestBehaviorProjectionCandidateResolver
         var endpointName = NormalizeOverrideMetadataValue(selectedOverride.EndpointName);
         var summary = NormalizeOverrideMetadataValue(selectedOverride.Summary);
         var description = NormalizeOverrideMetadataValue(selectedOverride.Description);
-        if (endpointName is null && summary is null && description is null)
+        if (endpointName is null &&
+            summary is null &&
+            description is null &&
+            !selectedOverride.ClearEndpointName &&
+            !selectedOverride.ClearSummary &&
+            !selectedOverride.ClearDescription)
         {
             return null;
         }
 
-        var endpointNameChanged = endpointName is not null &&
-                                  !string.Equals(endpointName, defaultEndpointName, StringComparison.Ordinal);
-        var summaryChanged = summary is not null &&
-                             !string.Equals(summary, defaultSummary, StringComparison.Ordinal);
-        var descriptionChanged = description is not null &&
-                                 !string.Equals(description, defaultDescription, StringComparison.Ordinal);
+        var endpointNameChanged = selectedOverride.ClearEndpointName
+            ? defaultEndpointName is not null
+            : endpointName is not null &&
+              !string.Equals(endpointName, defaultEndpointName, StringComparison.Ordinal);
+        var summaryChanged = selectedOverride.ClearSummary
+            ? defaultSummary is not null
+            : summary is not null &&
+              !string.Equals(summary, defaultSummary, StringComparison.Ordinal);
+        var descriptionChanged = selectedOverride.ClearDescription
+            ? defaultDescription is not null
+            : description is not null &&
+              !string.Equals(description, defaultDescription, StringComparison.Ordinal);
         if (!endpointNameChanged && !summaryChanged && !descriptionChanged)
         {
             return null;
@@ -1085,7 +1105,10 @@ internal static class RestBehaviorProjectionCandidateResolver
             selectedOverride.Id,
             endpointNameChanged ? endpointName : null,
             summaryChanged ? summary : null,
-            descriptionChanged ? description : null);
+            descriptionChanged ? description : null,
+            endpointNameChanged && selectedOverride.ClearEndpointName,
+            summaryChanged && selectedOverride.ClearSummary,
+            descriptionChanged && selectedOverride.ClearDescription);
     }
 
     private static AppliedRestEndpointCapabilityOverride? CreateAppliedRequiredCapabilityOverride(
@@ -1139,6 +1162,19 @@ internal static class RestBehaviorProjectionCandidateResolver
         return string.IsNullOrWhiteSpace(value)
             ? null
             : value.Trim();
+    }
+
+    private static string? ResolveEffectiveMetadataValue(
+        string? overrideValue,
+        bool clearValue,
+        string? defaultValue)
+    {
+        if (clearValue)
+        {
+            return null;
+        }
+
+        return NormalizeOverrideMetadataValue(overrideValue) ?? defaultValue;
     }
 
     private static HashSet<string> ExtractRoutePlaceholders(string pattern)
@@ -1275,7 +1311,10 @@ internal sealed record AppliedRestEndpointMetadataOverride(
     string OverrideId,
     string? EndpointName,
     string? Summary,
-    string? Description);
+    string? Description,
+    bool ClearEndpointName,
+    bool ClearSummary,
+    bool ClearDescription);
 
 internal sealed record AppliedRestEndpointCapabilityOverride(
     string OverrideId,
