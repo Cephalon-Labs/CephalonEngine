@@ -154,6 +154,15 @@ public static class EngineWebApplicationExtensions
                 return candidate is null ? Results.NotFound() : Results.Ok(candidate);
             })
             .WithName("GetCephalonRestEndpointCandidate");
+        engineGroup.MapGet("/rest-endpoint-authoring-policies", ([FromServices] IRestEndpointAuthoringPolicyRuntimeCatalog catalog) => TypedResults.Ok(catalog.Policies))
+            .WithName("GetCephalonRestEndpointAuthoringPolicies");
+        engineGroup.MapGet("/rest-endpoint-authoring-policies/{behaviorId}", (string behaviorId, [FromServices] IRestEndpointAuthoringPolicyRuntimeCatalog catalog) =>
+            {
+                var policy = catalog.GetByBehaviorId(behaviorId);
+
+                return policy is null ? Results.NotFound() : Results.Ok(policy);
+            })
+            .WithName("GetCephalonRestEndpointAuthoringPolicy");
         engineGroup.MapGet("/rest-endpoint-publication-groups", ([FromServices] IRestEndpointPublicationGroupRuntimeCatalog catalog) => TypedResults.Ok(catalog.Groups))
             .WithName("GetCephalonRestEndpointPublicationGroups");
         engineGroup.MapGet("/rest-endpoint-publication-groups/{behaviorId}", (string behaviorId, [FromServices] IRestEndpointPublicationGroupRuntimeCatalog catalog) =>

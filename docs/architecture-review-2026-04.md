@@ -285,6 +285,21 @@ in which decisive basis or action bucket?" from `/engine/rest-endpoint-suppressi
 `/engine/rest-endpoint-overrides` without always rejoining the full candidate or publication-group
 catalog first.
 
+That next rule-centric authoring-policy visibility gap is now addressed through `ENG-058-T152`:
+`Cephalon.Abstractions` now also exposes `IRestEndpointAuthoringPolicyRuntimeCatalog`,
+`RestEndpointAuthoringPolicyDescriptor`, and
+`RestEndpointAuthoringPolicySuppressionSummaryDescriptor`, while `Cephalon.AspNetCore` now
+publishes `/engine/rest-endpoint-authoring-policies`,
+`/engine/rest-endpoint-authoring-policies/{behaviorId}`, and
+`snapshot.RestEndpointAuthoringPolicies`. That surface keeps explicitly configured-but-unmatched
+policies visible and separates authoring-policy-retained, published, precedence-suppressed,
+governance-suppressed, and authoring-policy-suppressed candidate buckets without forcing
+operators back through grouped publication joins first.
+
+The remaining gap is now narrower still: keep low-code shorthand growth, broader governance, and
+future projection sources on the same explicit ownership and runtime-truth model without
+reintroducing hidden rule layers or burying config-only policy truth inside one grouped answer.
+
 That next inline generated-module ergonomics gap is now addressed through `ENG-058-T127`:
 `RestBehaviorEngineBuilderExtensions.AddGeneratedRestBehaviorModule<TMarker>(descriptor,
 configureGroup?)` now derives the generated behavior-id prefix from `ModuleDescriptor.Id` for the

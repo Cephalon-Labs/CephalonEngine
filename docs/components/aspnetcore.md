@@ -13,6 +13,7 @@
 - `/engine/rate-limiting` when ASP.NET Core rate-limiting enforcement is active
 - `/engine/rest-endpoint-candidates` when the module-owned REST candidate catalog is active
 - `/engine/rest-endpoint-publication-groups` when grouped module-owned REST publication visibility and authoring-policy state are active
+- `/engine/rest-endpoint-authoring-policies` when behavior-level REST authoring-policy runtime answers are active
 - `/engine/rest-endpoint-suppressions` for REST shorthand-governance visibility
 - `/engine/rest-endpoint-overrides` for REST shorthand override-governance visibility
 - `/engine/database-roles` when the engine-owned database-role catalog is active
@@ -76,6 +77,17 @@ override `SelectionBasisSummaries`, `SelectedActionKindSummaries`, and
 `AppliedActionKindSummaries`, so the same ASP.NET Core runtime surface can answer why a grouped
 host rule won and which override dimensions only stayed declared versus materially applied without
 forcing operators back into `/engine/rest-endpoint-candidates`.
+
+The same host now also publishes `/engine/rest-endpoint-authoring-policies` plus
+`/engine/rest-endpoint-authoring-policies/{behaviorId}` and the matching
+`snapshot.RestEndpointAuthoringPolicies` answer so operator tooling can read one behavior-level
+authoring-policy answer without reopening grouped publication data first. That rule-centric
+surface keeps explicitly configured `RestApi:AuthoringPolicies:{behaviorId}` entries visible even
+when no current candidates match, carries the same default-versus-configured policy intent, and
+separates `CandidateIds`, `RetainedCandidateIds`, `PublishedCandidateIds`,
+`PrecedenceSuppressedCandidateIds`, `GovernanceSuppressedCandidateIds`, and grouped
+`SuppressionSummaries` so authoring-policy suppression stays distinct from later precedence or
+host-governance outcomes.
 
 The rule catalogs themselves now mirror that same truth directly: `/engine/rest-endpoint-suppressions`
 and `snapshot.RestEndpointSuppressions` surface per-rule `MatchedCandidateIds`,

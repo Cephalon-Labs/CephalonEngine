@@ -284,6 +284,16 @@ Status update:
   `disallowed-authoring-style`, `not-allowed-authoring-style`, and
   `preferred-authoring-style-selected` suppression outcomes without forcing operators to re-join
   the candidate catalog manually
+- the next rule-centric authoring-policy runtime-answer follow-through is now shipped through
+  `ENG-058-T152`: `Cephalon.Abstractions` now also exposes
+  `IRestEndpointAuthoringPolicyRuntimeCatalog`, `RestEndpointAuthoringPolicyDescriptor`, and
+  `RestEndpointAuthoringPolicySuppressionSummaryDescriptor`; `Cephalon.AspNetCore` now publishes
+  `/engine/rest-endpoint-authoring-policies`,
+  `/engine/rest-endpoint-authoring-policies/{behaviorId}`, and
+  `snapshot.RestEndpointAuthoringPolicies`; and that top-level behavior answer keeps explicit
+  default-versus-configured policy intent, explicitly configured-but-unmatched policies, and
+  separate retained-versus-published-versus-precedence/governance-suppressed buckets visible
+  without reopening grouped publication answers
 - the next publication-group host-governance rule-summary follow-through is now shipped through
   `ENG-058-T147`: grouped publication answers now also expose typed
   `GovernanceSuppressionSummaries` and `GovernanceOverrideSummaries` at both the behavior-group
@@ -1189,6 +1199,14 @@ The following points are durable enough to keep outside thread-local context.
   `disallowed-authoring-style`, `not-allowed-authoring-style`, and
   `preferred-authoring-style-selected` suppression breakdown directly from publication-group and
   snapshot payloads instead of reconstructing that answer candidate by candidate
+- the shipped REST authoring-policy runtime baseline now also exposes
+  `IRestEndpointAuthoringPolicyRuntimeCatalog`, `/engine/rest-endpoint-authoring-policies`,
+  `/engine/rest-endpoint-authoring-policies/{behaviorId}`, and
+  `snapshot.RestEndpointAuthoringPolicies`, so one behavior-level policy answer can keep explicit
+  default-versus-configured policy intent, explicitly configured-but-unmatched policies, and
+  separate `CandidateIds`, `RetainedCandidateIds`, `PublishedCandidateIds`,
+  `PrecedenceSuppressedCandidateIds`, `GovernanceSuppressedCandidateIds`, and grouped
+  `SuppressionSummaries` visible without reopening grouped publication answers
 - those grouped publication entries now also expose typed `GovernanceSuppressionSummaries` and
   `GovernanceOverrideSummaries` at both the grouped behavior level and inside each
   `AuthoringStyleSummaries` entry, so publication-group and snapshot payloads can answer which
@@ -1333,16 +1351,13 @@ The following points are durable enough to keep outside thread-local context.
 ## Near-term follow-through candidates
 
 Recommended implementation sequence after the shipped normalization, runtime-catalog,
-precedence-visibility, and generated-module follow-through slices:
+precedence-visibility, generated-module, and rule-centric authoring-policy follow-through slices:
 
-1. keep authoring-policy suppression truth explicit as future shorthand or generated publication
-   sources are added, preserving the separate runtime buckets for governance suppression,
-   authoring-policy suppression, and candidate-precedence publication
-2. extend low-code module-owned shorthand only when the projected publication source still keeps
+1. extend low-code module-owned shorthand only when the projected publication source still keeps
    module ownership, candidate identity, and grouped runtime truth readable
-3. extend the shipped suppression-plus-override governance baseline further only if those stronger
+2. extend the shipped suppression-plus-override governance baseline further only if those stronger
    contracts keep the runtime truth model understandable instead of introducing hidden rule layers
-4. only then evaluate whether any additional convention-backed publication sources are worth the
+3. only then evaluate whether any additional convention-backed publication sources are worth the
    added complexity beyond the shipped `MapProfile<TBehavior>()` and `MapGeneratedProfiles(...)`
    surfaces
 

@@ -657,6 +657,20 @@ candidates:
 - `GET /engine/rest-endpoint-publication-groups/{behaviorId}`
 - `RuntimeIntrospectionSnapshot.RestEndpointPublicationGroups`
 
+The same host now also publishes the rule-centric behavior-level authoring-policy answer:
+
+- `IRestEndpointAuthoringPolicyRuntimeCatalog`
+- `GET /engine/rest-endpoint-authoring-policies`
+- `GET /engine/rest-endpoint-authoring-policies/{behaviorId}`
+- `RuntimeIntrospectionSnapshot.RestEndpointAuthoringPolicies`
+
+That policy surface complements grouped publication answers by keeping explicitly configured
+`RestApi:AuthoringPolicies:{behaviorId}` entries visible even when no current shorthand candidate
+matches one behavior boundary, while also separating `CandidateIds`, `RetainedCandidateIds`,
+`PublishedCandidateIds`, `PrecedenceSuppressedCandidateIds`,
+`GovernanceSuppressedCandidateIds`, and grouped `SuppressionSummaries` in one behavior-level
+runtime answer.
+
 Those same candidates now also drive the inverse per-rule runtime answer for host governance:
 `/engine/rest-endpoint-suppressions` now shows `MatchedCandidateIds`,
 `SuppressedCandidateIds`, `SkippedCandidateIds`, `SelectionBases`, and
