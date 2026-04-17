@@ -451,34 +451,9 @@ internal static class RestBehaviorProjectionMaterializer
                !string.Equals(originalProjection.OpenApiDocumentName, projectedEndpoint.OpenApiDocumentName, StringComparison.Ordinal) ||
                !string.Equals(originalProjection.TagName, ResolveProjectedTagName(projectedEndpoint), StringComparison.Ordinal) ||
                originalProjection.BindingFallbackMode != projectedEndpoint.BindingFallbackMode ||
-               !BindingDescriptorsMatch(originalProjection.BindingDescriptors, projectedEndpoint.BindingDescriptors);
-    }
-
-    private static bool BindingDescriptorsMatch(
-        IReadOnlyList<RestEndpointBindingDescriptor> originalBindings,
-        IReadOnlyList<RestEndpointBindingDescriptor> projectedBindings)
-    {
-        ArgumentNullException.ThrowIfNull(originalBindings);
-        ArgumentNullException.ThrowIfNull(projectedBindings);
-
-        if (originalBindings.Count != projectedBindings.Count)
-        {
-            return false;
-        }
-
-        for (var index = 0; index < originalBindings.Count; index++)
-        {
-            var original = originalBindings[index];
-            var projected = projectedBindings[index];
-            if (!string.Equals(original.PropertyName, projected.PropertyName, StringComparison.Ordinal) ||
-                original.Source != projected.Source ||
-                !string.Equals(original.Name, projected.Name, StringComparison.Ordinal))
-            {
-                return false;
-            }
-        }
-
-        return true;
+               !RestBehaviorBindingDescriptorSetComparer.Equivalent(
+                   originalProjection.BindingDescriptors,
+                   projectedEndpoint.BindingDescriptors);
     }
 
     private static string ResolvePublishedRouteGroupPrefix(RestEndpointCandidateRuntimeDescriptor candidate)

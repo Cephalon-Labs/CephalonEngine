@@ -904,8 +904,8 @@ Status:
   metadata lineage still stays visible through `OriginalEndpointName`, `OriginalSummary`, and
   `OriginalDescription`
 - the next shorthand metadata-and-document truthfulness follow-through is now shipped through
-  `ENG-058-T106`, `ENG-058-T107`, `ENG-058-T108`, `ENG-058-T109`, `ENG-058-T110`, and
-  `ENG-058-T111`: same-value endpoint-metadata, tag, and document-name rewrites plus reorder-only
+  `ENG-058-T106`, `ENG-058-T107`, `ENG-058-T108`, `ENG-058-T109`, `ENG-058-T110`,
+  `ENG-058-T111`, and `ENG-058-T112`: same-value endpoint-metadata, tag, and document-name rewrites plus reorder-only
   equivalent binding-set rewrites now keep `MatchedOverrideIds` visible while leaving
   `AppliedOverrideId = null`, tag rewrites preserve `OriginalProjection.TagName` while
   splitting effective materialized groups, document-name governance now adds
@@ -917,7 +917,10 @@ Status:
   route/query/body baseline, keeps that reset truthful through the override, candidate, endpoint,
   and snapshot catalogs, fails fast when the effective route would only remain satisfiable through
   removed explicit placeholder aliases, and keeps source explicit binding order authoritative when
-  a matched override only restates the same normalized binding set in another order
+  a matched override only restates the same normalized binding set in another order; that same
+  semantic binding-set comparison now also drives projection reuse and post-materialization
+  structural override reconciliation so future shorthand paths cannot regress into order-sensitive
+  endpoint provenance
 - controlled configuration overrides that promote implicit properties into route placeholders
   beyond the shipped constrained remaining-body-fallback-plus-bounded-query-fallback path, or
   rewrite input binding beyond constrained explicit-binding replacement, remain later work now that

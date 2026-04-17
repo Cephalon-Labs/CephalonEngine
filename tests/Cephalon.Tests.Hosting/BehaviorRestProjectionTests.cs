@@ -1575,6 +1575,59 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorEndpointProjectionWithBindingsPreservesProjectionWhenEquivalentBindingSetReorders()
+    {
+        var projection = RestBehaviorEndpointProjection.Create<ProfileProjectionBoundBehavior>(
+            RestBehaviorHttpMethod.Post,
+            "/{cartId}/items",
+            configureEndpoint: null,
+            authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle,
+            bindings:
+            [
+                new BehaviorRestBindingDescriptor(nameof(ProfileProjectionBoundInput.CartId), BehaviorRestBindingSource.Route, "cartId"),
+                new BehaviorRestBindingDescriptor(nameof(ProfileProjectionBoundInput.Quantity), BehaviorRestBindingSource.Query, "quantity"),
+                new BehaviorRestBindingDescriptor(nameof(ProfileProjectionBoundInput.CorrelationId), BehaviorRestBindingSource.Header, "X-Correlation-Id"),
+                new BehaviorRestBindingDescriptor(nameof(ProfileProjectionBoundInput.Note), BehaviorRestBindingSource.Body, "note")
+            ]);
+
+        var reboundProjection = projection.WithBindings(
+            [
+                new BehaviorRestBindingDescriptor(nameof(ProfileProjectionBoundInput.CorrelationId), BehaviorRestBindingSource.Header, "X-Correlation-Id"),
+                new BehaviorRestBindingDescriptor(nameof(ProfileProjectionBoundInput.Note), BehaviorRestBindingSource.Body, "note"),
+                new BehaviorRestBindingDescriptor(nameof(ProfileProjectionBoundInput.CartId), BehaviorRestBindingSource.Route, "cartId"),
+                new BehaviorRestBindingDescriptor(nameof(ProfileProjectionBoundInput.Quantity), BehaviorRestBindingSource.Query, "quantity")
+            ]);
+
+        Assert.Same(projection, reboundProjection);
+        Assert.Collection(
+            reboundProjection.Bindings,
+            cartId =>
+            {
+                Assert.Equal(nameof(ProfileProjectionBoundInput.CartId), cartId.PropertyName);
+                Assert.Equal(BehaviorRestBindingSource.Route, cartId.Source);
+                Assert.Equal("cartId", cartId.Name);
+            },
+            quantity =>
+            {
+                Assert.Equal(nameof(ProfileProjectionBoundInput.Quantity), quantity.PropertyName);
+                Assert.Equal(BehaviorRestBindingSource.Query, quantity.Source);
+                Assert.Equal("quantity", quantity.Name);
+            },
+            correlationId =>
+            {
+                Assert.Equal(nameof(ProfileProjectionBoundInput.CorrelationId), correlationId.PropertyName);
+                Assert.Equal(BehaviorRestBindingSource.Header, correlationId.Source);
+                Assert.Equal("X-Correlation-Id", correlationId.Name);
+            },
+            note =>
+            {
+                Assert.Equal(nameof(ProfileProjectionBoundInput.Note), note.PropertyName);
+                Assert.Equal(BehaviorRestBindingSource.Body, note.Source);
+                Assert.Equal("note", note.Name);
+            });
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverRejectsClearBindingsOverrideWhenRoutePlaceholdersNeedExplicitAliases()
     {
         var builder = new RestBehaviorModuleBuilder();
@@ -4321,6 +4374,122 @@ public sealed class BehaviorRestProjectionTests
         Assert.Equal("tests_rest_projection_module.v6.tests_cart_projection", endpoint.Metadata.GetMetadata<EndpointNameMetadata>()?.EndpointName);
         Assert.Equal("tests.cart.projection", endpoint.Metadata.OfType<IEndpointSummaryMetadata>().LastOrDefault()?.Summary);
         Assert.Null(endpoint.Metadata.OfType<IEndpointDescriptionMetadata>().LastOrDefault()?.Description);
+        Assert.Null(endpoint.Metadata.GetMetadata<RestEndpointAppliedOverrideMetadata>()?.OverrideId);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionMaterializerDoesNotMarkNoOpBindingReorderAsAppliedEndpointOverride()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        var originalBindings = new[]
+        {
+            new BehaviorRestBindingDescriptor(nameof(ProfileProjectionBoundInput.CartId), BehaviorRestBindingSource.Route, "cartId"),
+            new BehaviorRestBindingDescriptor(nameof(ProfileProjectionBoundInput.Quantity), BehaviorRestBindingSource.Query, "quantity"),
+            new BehaviorRestBindingDescriptor(nameof(ProfileProjectionBoundInput.CorrelationId), BehaviorRestBindingSource.Header, "X-Correlation-Id"),
+            new BehaviorRestBindingDescriptor(nameof(ProfileProjectionBoundInput.Note), BehaviorRestBindingSource.Body, "note")
+        };
+        var reorderedBindings = new[]
+        {
+            new RestEndpointBindingDescriptor(nameof(ProfileProjectionBoundInput.CorrelationId), RestEndpointBindingSource.Header, "X-Correlation-Id"),
+            new RestEndpointBindingDescriptor(nameof(ProfileProjectionBoundInput.Note), RestEndpointBindingSource.Body, "note"),
+            new RestEndpointBindingDescriptor(nameof(ProfileProjectionBoundInput.CartId), RestEndpointBindingSource.Route, "cartId"),
+            new RestEndpointBindingDescriptor(nameof(ProfileProjectionBoundInput.Quantity), RestEndpointBindingSource.Query, "quantity")
+        };
+
+        using var app = builder.Build();
+        var apiGroup = app.MapGroup("/api");
+        var module = new ProjectionCountingRestModule();
+        var endpointProjection = RestBehaviorEndpointProjection.Create<ProfileProjectionBoundBehavior>(
+            RestBehaviorHttpMethod.Post,
+            "/{cartId}/items",
+            configureEndpoint: null,
+            authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle,
+            bindings: originalBindings);
+        var projection = new RestBehaviorRouteGroupProjection(
+            Prefix: "/tests/typed-binding-order-noop/orders",
+            TagName: "Typed Binding Order No-Op API",
+            TagDescription: null,
+            HasExplicitTagDescription: false,
+            ApiVersionMajor: 6,
+            HasExplicitApiVersion: true,
+            ProfileApiVersionSourceBehaviorId: null,
+            GroupConventions: [],
+            Endpoints: [endpointProjection]);
+        var projectedEndpoint = new RestEndpointRuntimeDescriptor(
+            id: "typed-binding-order-noop",
+            transportId: "rest-api",
+            sourceKind: RestEndpointRuntimeMetadata.ModuleDslSourceKind,
+            method: "POST",
+            routePattern: "/api/v6/tests/typed-binding-order-noop/orders/{cartId}/items",
+            sourceModuleId: module.Descriptor.Id,
+            sourceModuleVersion: module.Descriptor.Version,
+            sourceModuleVersionMajor: 1,
+            behaviorId: "tests.profile.projection.bound",
+            endpointName: "tests_rest_projection_module.v6.tests_profile_projection_bound",
+            openApiDocumentName: "v6",
+            apiVersionMajor: 6,
+            tags: ["Typed Binding Order No-Op API"],
+            summary: "tests.profile.projection.bound",
+            description: null,
+            metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase),
+            authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle,
+            routeGroupPrefix: "/api/v6/tests/typed-binding-order-noop/orders",
+            relativePattern: "/{cartId}/items",
+            behaviorType: typeof(ProfileProjectionBoundBehavior).FullName,
+            sourceId: "tests.profile.projection.bound:POST:/{cartId}/items",
+            bindingDescriptors: reorderedBindings);
+        var originalProjection = new RestEndpointCandidateProjectionDescriptor(
+            method: "POST",
+            routePattern: "/api/v6/tests/typed-binding-order-noop/orders/{cartId}/items",
+            routeGroupPrefix: "/api/v6/tests/typed-binding-order-noop/orders",
+            relativePattern: "/{cartId}/items",
+            apiVersionMajor: 6,
+            openApiDocumentName: "v6",
+            bindingDescriptors:
+            [
+                new RestEndpointBindingDescriptor(nameof(ProfileProjectionBoundInput.CartId), RestEndpointBindingSource.Route, "cartId"),
+                new RestEndpointBindingDescriptor(nameof(ProfileProjectionBoundInput.Quantity), RestEndpointBindingSource.Query, "quantity"),
+                new RestEndpointBindingDescriptor(nameof(ProfileProjectionBoundInput.CorrelationId), RestEndpointBindingSource.Header, "X-Correlation-Id"),
+                new RestEndpointBindingDescriptor(nameof(ProfileProjectionBoundInput.Note), RestEndpointBindingSource.Body, "note")
+            ],
+            tagName: projectedEndpoint.Tags.Single());
+        var candidate = new ResolvedRestBehaviorEndpointProjectionCandidate(
+            GroupIndex: 0,
+            EffectiveEndpointProjection: endpointProjection,
+            Candidate: new RestEndpointCandidateRuntimeDescriptor(
+                id: "typed-binding-order-noop-candidate",
+                projectedEndpoint: projectedEndpoint,
+                originalProjection: originalProjection,
+                authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle,
+                precedenceRank: RestEndpointRuntimeMetadata.ResolvePrecedenceRank(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle),
+                status: RestEndpointCandidateStatus.Published,
+                appliedOverrideId: "binding-order-noop",
+                matchedOverrideIds: ["binding-order-noop"]));
+
+        RestBehaviorProjectionMaterializer.MapGroup(
+            apiGroup,
+            module,
+            projection,
+            [candidate],
+            new ApiRoutesOptions());
+
+        var dataSources = ((IEndpointRouteBuilder)app).DataSources;
+        var endpoint = Assert.Single(
+            dataSources
+                .SelectMany(static dataSource => dataSource.Endpoints)
+                .OfType<RouteEndpoint>(),
+            static item => string.Equals(item.RoutePattern.RawText, "/api/v6/tests/typed-binding-order-noop/orders/{cartId}/items", StringComparison.Ordinal));
+
         Assert.Null(endpoint.Metadata.GetMetadata<RestEndpointAppliedOverrideMetadata>()?.OverrideId);
     }
 

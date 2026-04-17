@@ -158,7 +158,7 @@ internal sealed record RestBehaviorEndpointProjection(
     {
         ArgumentNullException.ThrowIfNull(bindings);
 
-        return Bindings.SequenceEqual(bindings)
+        return RestBehaviorBindingDescriptorSetComparer.Equivalent(Bindings, bindings)
             ? this
             : new RestBehaviorEndpointProjection(
                 Method,

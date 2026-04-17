@@ -427,7 +427,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             : endpointProjection.PreserveImplicitQueryFallback;
         if (shouldRevalidateBindings && normalizedBindings is not null)
         {
-            var bindingPlanChanged = !BindingDescriptorsEquivalent(endpointProjection.Bindings, normalizedBindings) ||
+            var bindingPlanChanged = !RestBehaviorBindingDescriptorSetComparer.Equivalent(endpointProjection.Bindings, normalizedBindings) ||
                                      endpointProjection.PreserveImplicitQueryFallback != preserveImplicitQueryFallback;
             effectiveEndpointProjection = bindingPlanChanged
                 ? effectiveEndpointProjection.WithBindings(normalizedBindings)
@@ -792,60 +792,6 @@ internal static class RestBehaviorProjectionCandidateResolver
             .Where(propertyName => !originalExplicitlyBoundProperties.Contains(propertyName))
             .Where(propertyName => !originalPlaceholders.Contains(propertyName))
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
-    }
-
-    private static bool BindingDescriptorsEquivalent(
-        IReadOnlyList<BehaviorRestBindingDescriptor> left,
-        IReadOnlyList<BehaviorRestBindingDescriptor> right)
-    {
-        ArgumentNullException.ThrowIfNull(left);
-        ArgumentNullException.ThrowIfNull(right);
-
-        if (left.Count != right.Count)
-        {
-            return false;
-        }
-
-        if (left.Count == 0)
-        {
-            return true;
-        }
-
-        var leftByProperty = left
-            .Where(static binding => binding is not null)
-            .ToDictionary(
-                static binding => binding.PropertyName.Trim(),
-                static binding => binding,
-                StringComparer.OrdinalIgnoreCase);
-        if (leftByProperty.Count != left.Count)
-        {
-            return false;
-        }
-
-        foreach (var binding in right)
-        {
-            if (binding is null)
-            {
-                return false;
-            }
-
-            var propertyName = binding.PropertyName.Trim();
-            if (!leftByProperty.TryGetValue(propertyName, out var leftBinding))
-            {
-                return false;
-            }
-
-            if (leftBinding.Source != binding.Source ||
-                !string.Equals(
-                    NormalizeBindingName(leftBinding.Name),
-                    NormalizeBindingName(binding.Name),
-                    StringComparison.Ordinal))
-            {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     private static List<BehaviorRestBindingDescriptor> MergeBindings(
@@ -1404,13 +1350,6 @@ internal static class RestBehaviorProjectionCandidateResolver
                overrideOptions.RouteGroupPrefixes.Count +
                overrideOptions.OpenApiDocumentNames.Count +
                overrideOptions.TagNames.Count;
-    }
-
-    private static string? NormalizeBindingName(string? value)
-    {
-        return string.IsNullOrWhiteSpace(value)
-            ? null
-            : value.Trim();
     }
 
     private static string? NormalizeOverrideMetadataValue(string? value)
