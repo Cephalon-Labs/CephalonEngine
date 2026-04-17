@@ -12,7 +12,7 @@ namespace Cephalon.Behaviors.SourceGen;
 /// Incremental source generator that validates classes decorated with
 /// <c>[AppBehavior]</c>, emits compile-time diagnostics for common authoring mistakes,
 /// and generates zero-reflection registration code with pre-built topology descriptors.
-/// Diagnostic IDs: ABT-010 through ABT-025.
+/// Diagnostic IDs: ABT-010 through ABT-026.
 /// </summary>
 [Generator]
 public sealed class BehaviorSourceGenerator : IIncrementalGenerator
@@ -198,6 +198,17 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true,
         description: "Explicit route bindings must name placeholders that are actually present in the profile route pattern so module-owned projections do not carry unreachable route intent.",
+        helpLinkUri: HelpLink);
+
+    /// <summary>ABT-026: REST profile patterns must use valid route placeholder syntax.</summary>
+    public static readonly DiagnosticDescriptor Abt026RestProfilePatternMustUseValidPlaceholderSyntax = new(
+        id: "ABT0026",
+        title: "REST profile route pattern must use valid placeholder syntax",
+        messageFormat: "'{0}' declares [BehaviorRestProfile] with relative pattern '{1}', but the route pattern contains invalid placeholder syntax: {2}",
+        category: "Cephalon.Behaviors",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true,
+        description: "Behavior-authored REST profile metadata must use balanced route-parameter placeholder syntax so module-owned shorthand stays build-time safe before runtime route parsing runs.",
         helpLinkUri: HelpLink);
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -722,6 +733,15 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                 info.ShortName,
                 info.RestProfile.RelativePattern));
         }
+        else if (!TryValidateRoutePatternSyntax(info.RestProfile.RelativePattern, out var routePatternError))
+        {
+            spc.ReportDiagnostic(Diagnostic.Create(
+                Abt026RestProfilePatternMustUseValidPlaceholderSyntax,
+                info.Location,
+                info.ShortName,
+                info.RestProfile.RelativePattern,
+                routePatternError));
+        }
 
         if (info.RestProfile.HasApiVersionMajor && info.RestProfile.ApiVersionMajor <= 0)
         {
@@ -1114,7 +1134,78 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
     private static bool HasValidRoutePattern(string pattern)
     {
         return !string.IsNullOrWhiteSpace(pattern) &&
-               pattern.Trim().StartsWith("/", StringComparison.Ordinal);
+               pattern.Trim().StartsWith("/", StringComparison.Ordinal) &&
+               TryValidateRoutePatternSyntax(pattern, out _);
+    }
+
+    private static bool TryValidateRoutePatternSyntax(string pattern, out string? error)
+    {
+        error = null;
+        if (string.IsNullOrWhiteSpace(pattern))
+        {
+            return true;
+        }
+
+        var current = pattern.Trim();
+        var insideParameter = false;
+        var parameterStartIndex = -1;
+        for (var index = 0; index < current.Length; index++)
+        {
+            var currentCharacter = current[index];
+            if (currentCharacter == '{')
+            {
+                if (!insideParameter)
+                {
+                    if (index + 1 < current.Length && current[index + 1] == '{')
+                    {
+                        index++;
+                        continue;
+                    }
+
+                    insideParameter = true;
+                    parameterStartIndex = index + 1;
+                    continue;
+                }
+
+                error = "nested '{' characters are not allowed inside a route parameter";
+                return false;
+            }
+
+            if (currentCharacter != '}')
+            {
+                continue;
+            }
+
+            if (!insideParameter)
+            {
+                if (index + 1 < current.Length && current[index + 1] == '}')
+                {
+                    index++;
+                    continue;
+                }
+
+                error = "encountered '}' without a matching '{'";
+                return false;
+            }
+
+            var token = current.Substring(parameterStartIndex, index - parameterStartIndex);
+            if (string.IsNullOrWhiteSpace(NormalizeRouteParameterToken(token)))
+            {
+                error = "route parameters must declare a non-empty placeholder name";
+                return false;
+            }
+
+            insideParameter = false;
+            parameterStartIndex = -1;
+        }
+
+        if (insideParameter)
+        {
+            error = "route parameter placeholders must end with '}'";
+            return false;
+        }
+
+        return true;
     }
 
     private static HashSet<string> ExtractRouteParameterNames(string pattern)
@@ -1308,6 +1399,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             IsSupportedRestMethod(RestProfile.MethodName) &&
             !string.IsNullOrWhiteSpace(RestProfile.RelativePattern) &&
             RestProfile.RelativePattern.Trim().StartsWith("/", StringComparison.Ordinal) &&
+            TryValidateRoutePatternSyntax(RestProfile.RelativePattern, out _) &&
             (!RestProfile.HasApiVersionMajor || RestProfile.ApiVersionMajor > 0) &&
             ValidateRestBindingMetadata(this).IsDefaultOrEmpty &&
             !HasRestTransportAttribute &&

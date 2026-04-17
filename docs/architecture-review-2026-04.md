@@ -189,12 +189,18 @@ follow-through is now addressed through `ENG-058-T116`: `Cephalon.Abstractions` 
 wire-name helpers for `RestEndpointBindingFallbackMode`, ASP.NET Core compatibility metadata now
 derives `bindingFallbackMode` values from that one public source of truth, and the public XML/docs
 wording now describes both preserved implicit-query and remaining-body fallback semantics instead
-of the earlier narrower phrasing.
+of the earlier narrower phrasing. The next authoring-safety follow-through is now addressed
+through `ENG-058-T117`: malformed `BehaviorRestProfileAttribute.RelativePattern` placeholder syntax
+now fails at build time through `ABT0026`, while `BehaviorRestProfileResolver` also parses the
+route pattern during runtime normalization even when no explicit binding plan is present so
+attribute fallback or stale hints still fail fast before shorthand publication can map an invalid
+route.
 
 The remaining gap is no longer raw operator visibility; it is richer authoring and build-time
 diagnostics if future shorthand or generated routes broaden enough that more than one projection
-style can compete for the same public behavior boundary in ways the current runtime surfaces do not
-already explain clearly.
+style can compete for the same public behavior boundary in ways that go beyond the now-covered
+invalid placeholder-shape cases and that the current runtime surfaces do not already explain
+clearly.
 
 ## Architecture recommendations
 

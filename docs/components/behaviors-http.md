@@ -35,7 +35,9 @@ module-owned REST endpoints.
   `BehaviorRestBindingDescriptor`, and `BehaviorRestBindingSource` for behavior-authored candidate
   REST method, relative route, optional API-version hints, and explicit route/query/header/body
   binding plans that explicit module-owned shorthand such as `MapProfile<TBehavior>()` can consume
-  without publishing public REST directly from behaviors
+  without publishing public REST directly from behaviors; the build now rejects malformed
+  placeholder syntax such as unbalanced `{...}` segments earlier, while runtime normalization still
+  leaves final route parsing authoritative to ASP.NET Core
 - **OpenAPI enrichment** — module tag names and descriptions, module-major API-version defaults
   with explicit `.ApiVersion(...)` and `.WithOpenApiDocumentName(...)` override support, best-effort XML comment
   summaries/descriptions for module-owned REST endpoints, and separation between public REST docs

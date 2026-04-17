@@ -167,8 +167,9 @@ Current `BehaviorRestProfileAttribute` behavior:
 
 - it is metadata only and does not publish a public REST route by itself
 - `Cephalon.Behaviors.SourceGen` validates the method, relative pattern, and optional API version
-  at build time and emits `GetRestProfiles()` hints that now preserve explicit binding descriptors
-  when they are declared, plus `GetRestProfileBehaviorTypes()` hints for generated module-owned
+  at build time, now also rejects malformed placeholder syntax such as unbalanced `{...}` route
+  segments, and emits `GetRestProfiles()` hints that now preserve explicit binding descriptors when
+  they are declared, plus `GetRestProfileBehaviorTypes()` hints for generated module-owned
   shorthand
 - repeated `BehaviorRestBindingAttribute` declarations can describe explicit `route`, `query`,
   `header`, and `body` sources for object inputs when the module-owned shorthand needs deterministic
@@ -196,6 +197,8 @@ Current `BehaviorRestProfileAttribute` behavior:
 - when `BehaviorRestBindingAttribute` uses `Route`, keep the declared binding name aligned with a
   placeholder that actually exists in `BehaviorRestProfileAttribute.RelativePattern`; the build now
   rejects route-binding placeholder mismatches before `MapProfile<TBehavior>()` is generated
+- runtime shorthand fallback still re-checks the final pattern with ASP.NET Core route parsing, so
+  stale generated hints or direct attribute fallback cannot publish an invalid route shape silently
 
 When a behavior needs to communicate expected branches without throwing exceptions for normal domain
 flow, prefer `Result<T>` over a transport-specific envelope:

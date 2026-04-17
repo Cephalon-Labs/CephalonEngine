@@ -257,6 +257,8 @@ internal static class BehaviorRestProfileResolver
                 $"REST profile metadata for behavior '{descriptor.BehaviorId}' from '{sourceIdentity}' must use a relative route pattern that starts with '/'.");
         }
 
+        EnsureValidRoutePattern(normalizedPattern, descriptor.BehaviorId, sourceIdentity);
+
         if (descriptor.ApiVersionMajor.HasValue && descriptor.ApiVersionMajor.Value <= 0)
         {
             throw new InvalidOperationException(
@@ -279,6 +281,27 @@ internal static class BehaviorRestProfileResolver
             normalizedPattern,
             descriptor.ApiVersionMajor,
             normalizedBindings);
+    }
+
+    private static void EnsureValidRoutePattern(
+        string relativePattern,
+        string behaviorId,
+        string sourceIdentity)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(relativePattern);
+        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(sourceIdentity);
+
+        try
+        {
+            _ = RoutePatternFactory.Parse(relativePattern);
+        }
+        catch (Exception exception)
+        {
+            throw new InvalidOperationException(
+                $"REST profile metadata for behavior '{behaviorId}' from '{sourceIdentity}' must use a valid ASP.NET Core route pattern. Invalid pattern: '{relativePattern}'.",
+                exception);
+        }
     }
 
     private static BehaviorRestBindingDescriptor[] ExtractAttributeBindings(Type behaviorType)

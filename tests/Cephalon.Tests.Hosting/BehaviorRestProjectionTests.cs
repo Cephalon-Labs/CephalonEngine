@@ -3219,6 +3219,22 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void BehaviorRestProfileResolverRejectsInvalidRoutePatternFromAttributeFallback()
+    {
+        var behaviorType = CreateDynamicProfileBehaviorType(
+            "tests.profile.projection.invalid-route-pattern.dynamic",
+            BehaviorRestMethod.Get,
+            "/orders/{",
+            typeof(string));
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            BehaviorRestProfileResolver.Resolve(behaviorType));
+
+        Assert.Contains("valid ASP.NET Core route pattern", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("/orders/{", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void BehaviorRestProfileResolverRejectsProfileBindingsForUnknownInputPropertyFromAttributeFallback()
     {
         var behaviorType = CreateDynamicProfileBehaviorType(

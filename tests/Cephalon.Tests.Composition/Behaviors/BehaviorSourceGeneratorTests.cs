@@ -372,6 +372,7 @@ public sealed class BehaviorSourceGeneratorTests
             BehaviorSourceGenerator.Abt023RestBindingPropertyMustNotBeDuplicated,
             BehaviorSourceGenerator.Abt024RestBodyBindingMustUseBodyCapableMethod,
             BehaviorSourceGenerator.Abt025RestRouteBindingMustMatchRoutePlaceholder,
+            BehaviorSourceGenerator.Abt026RestProfilePatternMustUseValidPlaceholderSyntax,
         };
 
         foreach (var descriptor in descriptors)
@@ -401,6 +402,7 @@ public sealed class BehaviorSourceGeneratorTests
         Assert.Equal("ABT0023", BehaviorSourceGenerator.Abt023RestBindingPropertyMustNotBeDuplicated.Id);
         Assert.Equal("ABT0024", BehaviorSourceGenerator.Abt024RestBodyBindingMustUseBodyCapableMethod.Id);
         Assert.Equal("ABT0025", BehaviorSourceGenerator.Abt025RestRouteBindingMustMatchRoutePlaceholder.Id);
+        Assert.Equal("ABT0026", BehaviorSourceGenerator.Abt026RestProfilePatternMustUseValidPlaceholderSyntax.Id);
     }
 
     [Fact]
@@ -756,6 +758,29 @@ public sealed class BehaviorSourceGeneratorTests
         var (_, diagnostics) = RunGenerator(source);
 
         Assert.Contains(diagnostics, d => d.Id == "ABT0025");
+    }
+
+    [Fact]
+    public void RestProfileWithInvalidPlaceholderSyntaxEmitsAbt0026()
+    {
+        const string source = """
+            using Cephalon.Abstractions.Behaviors;
+            using Cephalon.Behaviors.Http.Abstractions;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            [AppBehavior("orders.lookup")]
+            [BehaviorRestProfile(BehaviorRestMethod.Get, "/orders/{")]
+            public sealed class LookupOrderBehavior : IAppBehavior<string, string>
+            {
+                public Task<string> HandleAsync(string input, IBehaviorContext ctx, CancellationToken ct = default)
+                    => Task.FromResult("ok");
+            }
+            """;
+
+        var (_, diagnostics) = RunGenerator(source);
+
+        Assert.Contains(diagnostics, d => d.Id == "ABT0026");
     }
 
     [Fact]
