@@ -747,6 +747,13 @@ configuration rule hid the candidate instead of another candidate winning. When 
 suppression rule matched, the runtime also keeps the full specificity-ordered match set visible
 through `MatchedSuppressionIds`.
 
+Those same publication-group answers now also expose grouped `GovernanceSuppressionSummaries` and
+`GovernanceOverrideSummaries` at both the behavior-group level and inside each
+`AuthoringStyleSummaries` entry. Suppression summaries keep matched-versus-actually-suppressed
+candidate ids visible per host rule, while override summaries keep matched, selected, and applied
+candidate ids visible per rule so no-op winning overrides stay explicit when `SelectedOverrideId`
+wins but `AppliedOverrideId` remains empty.
+
 Current governance baseline:
 
 - configure host suppression for shorthand candidates, and optionally for explicit module-DSL route

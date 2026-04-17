@@ -284,6 +284,15 @@ Status update:
   `disallowed-authoring-style`, `not-allowed-authoring-style`, and
   `preferred-authoring-style-selected` suppression outcomes without forcing operators to re-join
   the candidate catalog manually
+- the next publication-group host-governance rule-summary follow-through is now shipped through
+  `ENG-058-T147`: grouped publication answers now also expose typed
+  `GovernanceSuppressionSummaries` and `GovernanceOverrideSummaries` at both the behavior-group
+  level and inside each `AuthoringStyleSummaries` entry, so
+  `/engine/rest-endpoint-publication-groups`,
+  `/engine/rest-endpoint-publication-groups/{behaviorId}`, and
+  `snapshot.RestEndpointPublicationGroups` can show matched-versus-suppressed host suppression
+  outcomes plus matched/selected/applied override outcomes, including no-op winning overrides
+  whose applied bucket remains empty, without re-reading `/engine/rest-endpoint-candidates`
 - the next low-code inline module-owned authoring follow-through is now shipped through
   `ENG-058-T81`: `Cephalon.Behaviors.Http` now exposes
   `RestBehaviorEngineBuilderExtensions.AddRestBehaviorModule<TMarker>()`, which lets a host
@@ -1174,6 +1183,11 @@ The following points are durable enough to keep outside thread-local context.
   `disallowed-authoring-style`, `not-allowed-authoring-style`, and
   `preferred-authoring-style-selected` suppression breakdown directly from publication-group and
   snapshot payloads instead of reconstructing that answer candidate by candidate
+- those grouped publication entries now also expose typed `GovernanceSuppressionSummaries` and
+  `GovernanceOverrideSummaries` at both the grouped behavior level and inside each
+  `AuthoringStyleSummaries` entry, so publication-group and snapshot payloads can answer which
+  host rules matched, which candidates they actually suppressed, and which candidates they only
+  selected versus materially changed without re-reading the candidate catalog
 - those candidate entries now keep the original shorthand source shape visible through
   `RestEndpointCandidateRuntimeDescriptor.OriginalProjection` while `ProjectedEndpoint` continues
   to answer the final effective mapped route, version, method, binding, endpoint-name, summary,

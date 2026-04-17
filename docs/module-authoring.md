@@ -613,6 +613,11 @@ which shorthand candidates were filtered by a disallowed style, a not-allowed st
 preferred-style winner directly from `/engine/rest-endpoint-publication-groups` and
 `snapshot.RestEndpointPublicationGroups` without reconstructing the breakdown from candidate-level
 payloads.
+That same grouped runtime surface now also carries `GovernanceSuppressionSummaries` and
+`GovernanceOverrideSummaries` at both the behavior-group level and inside each
+`AuthoringStyleSummaries` entry, so module authors can see which host rules matched, which
+candidate ids they actually suppressed, and which override winners stayed selected-only versus
+applied without treating those grouped summaries as additional authoring inputs.
 
 When a host wants to keep shorthand publication but retarget selected shorthand endpoints to a
 different effective API major version, HTTP method, bounded published route-group prefix,

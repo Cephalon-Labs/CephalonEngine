@@ -37,6 +37,12 @@ public sealed class RestEndpointPublicationGroupAuthoringStyleDescriptor
     /// <param name="skippedOverrideIds">
     /// The ordered override-rule identifiers that targeted ineligible candidates for this authoring style.
     /// </param>
+    /// <param name="governanceSuppressionSummaries">
+    /// The grouped host-governance suppression-rule outcomes summarized by rule for this authoring style.
+    /// </param>
+    /// <param name="governanceOverrideSummaries">
+    /// The grouped host-governance override-rule outcomes summarized by rule for this authoring style.
+    /// </param>
     public RestEndpointPublicationGroupAuthoringStyleDescriptor(
         string authoringStyle,
         IReadOnlyList<string>? sourceModuleIds = null,
@@ -50,7 +56,9 @@ public sealed class RestEndpointPublicationGroupAuthoringStyleDescriptor
         IReadOnlyList<string>? hostGovernanceEligibleCandidateIds = null,
         IReadOnlyList<string>? hostGovernanceIneligibleCandidateIds = null,
         IReadOnlyList<string>? skippedSuppressionIds = null,
-        IReadOnlyList<string>? skippedOverrideIds = null)
+        IReadOnlyList<string>? skippedOverrideIds = null,
+        IReadOnlyList<RestEndpointPublicationGroupGovernanceSuppressionSummaryDescriptor>? governanceSuppressionSummaries = null,
+        IReadOnlyList<RestEndpointPublicationGroupGovernanceOverrideSummaryDescriptor>? governanceOverrideSummaries = null)
     {
         if (string.IsNullOrWhiteSpace(authoringStyle))
         {
@@ -104,6 +112,42 @@ public sealed class RestEndpointPublicationGroupAuthoringStyleDescriptor
                     nameof(authoringPolicySuppressedCandidateIds));
             }
         }
+
+        var normalizedGovernanceSuppressionSummaries = governanceSuppressionSummaries is null
+            ? []
+            : RestEndpointPublicationGroupGovernanceSuppressionSummaryBuilder.Normalize(
+                governanceSuppressionSummaries,
+                candidateIdSet,
+                nameof(governanceSuppressionSummaries));
+        if (normalizedGovernanceSuppressedCandidateIds.Length == 0 &&
+            normalizedGovernanceSuppressionSummaries.Length > 0)
+        {
+            normalizedGovernanceSuppressedCandidateIds =
+                RestEndpointPublicationGroupGovernanceSuppressionSummaryBuilder.BuildSuppressedCandidateIds(
+                    normalizedGovernanceSuppressionSummaries);
+        }
+
+        if (normalizedGovernanceSuppressionSummaries.Length > 0)
+        {
+            var summarizedCandidateIds =
+                RestEndpointPublicationGroupGovernanceSuppressionSummaryBuilder.BuildSuppressedCandidateIds(
+                    normalizedGovernanceSuppressionSummaries);
+            if (!normalizedGovernanceSuppressedCandidateIds.SequenceEqual(
+                    summarizedCandidateIds,
+                    StringComparer.OrdinalIgnoreCase))
+            {
+                throw new ArgumentException(
+                    "Governance suppression summaries must describe the same candidate ids as the grouped authoring-style governance suppression bucket.",
+                    nameof(governanceSuppressedCandidateIds));
+            }
+        }
+
+        var normalizedGovernanceOverrideSummaries = governanceOverrideSummaries is null
+            ? []
+            : RestEndpointPublicationGroupGovernanceOverrideSummaryBuilder.Normalize(
+                governanceOverrideSummaries,
+                candidateIdSet,
+                nameof(governanceOverrideSummaries));
 
         if (!candidateIdSet.IsSupersetOf(normalizedPublishedCandidateIds))
         {
@@ -192,6 +236,8 @@ public sealed class RestEndpointPublicationGroupAuthoringStyleDescriptor
         GovernanceSuppressedCandidateIds = normalizedGovernanceSuppressedCandidateIds;
         AuthoringPolicySuppressedCandidateIds = normalizedAuthoringPolicySuppressedCandidateIds;
         AuthoringPolicySuppressionSummaries = normalizedAuthoringPolicySuppressionSummaries;
+        GovernanceSuppressionSummaries = normalizedGovernanceSuppressionSummaries;
+        GovernanceOverrideSummaries = normalizedGovernanceOverrideSummaries;
         HostGovernanceEligibleCandidateIds = normalizedHostGovernanceEligibleCandidateIds;
         HostGovernanceIneligibleCandidateIds = normalizedHostGovernanceIneligibleCandidateIds;
         SkippedSuppressionIds = normalizedSkippedSuppressionIds;
@@ -242,6 +288,16 @@ public sealed class RestEndpointPublicationGroupAuthoringStyleDescriptor
     /// Gets the grouped authoring-policy suppression outcomes summarized by suppression kind for this authoring style.
     /// </summary>
     public IReadOnlyList<RestEndpointPublicationGroupAuthoringPolicySuppressionDescriptor> AuthoringPolicySuppressionSummaries { get; }
+
+    /// <summary>
+    /// Gets the grouped host-governance suppression-rule outcomes summarized by rule for this authoring style.
+    /// </summary>
+    public IReadOnlyList<RestEndpointPublicationGroupGovernanceSuppressionSummaryDescriptor> GovernanceSuppressionSummaries { get; }
+
+    /// <summary>
+    /// Gets the grouped host-governance override-rule outcomes summarized by rule for this authoring style.
+    /// </summary>
+    public IReadOnlyList<RestEndpointPublicationGroupGovernanceOverrideSummaryDescriptor> GovernanceOverrideSummaries { get; }
 
     /// <summary>
     /// Gets the ordered candidate identifiers whose original projections allowed host governance to participate.
