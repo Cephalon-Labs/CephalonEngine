@@ -374,7 +374,17 @@ internal static class RestBehaviorProjectionCandidateResolver
             }
         }
 
-        if (matchedOverride.Bindings.Count > 0 || matchedOverride.RemovedBindingProperties.Count > 0)
+        if (matchedOverride.ClearBindings)
+        {
+            if (effectiveEndpointProjection.Bindings.Count > 0)
+            {
+                effectiveEndpointProjection = effectiveEndpointProjection.WithBindings([]);
+                wasApplied = true;
+            }
+
+            shouldRevalidateBindings = true;
+        }
+        else if (matchedOverride.Bindings.Count > 0 || matchedOverride.RemovedBindingProperties.Count > 0)
         {
             var overrideBindings = RestEndpointBindingDescriptorAdapter.ToBehaviorDescriptors(matchedOverride.Bindings);
             IReadOnlyList<BehaviorRestBindingDescriptor> effectiveBindings = matchedOverride.BindingMode == RestEndpointOverrideBindingMode.MergeExplicit
@@ -415,6 +425,15 @@ internal static class RestBehaviorProjectionCandidateResolver
                 endpointProjection,
                 effectiveEndpointProjection.Pattern,
                 effectiveEndpointProjection.Bindings);
+        }
+
+        if (matchedOverride.ClearBindings &&
+            endpointProjection.Bindings.Any(static binding => binding.Source == BehaviorRestBindingSource.Route))
+        {
+            ValidateClearBindingsOverride(
+                matchedOverride.Id,
+                endpointProjection,
+                effectiveEndpointProjection.Pattern);
         }
 
         if (!group.HasExplicitApiVersion &&
@@ -683,6 +702,60 @@ internal static class RestBehaviorProjectionCandidateResolver
         }
     }
 
+    private static void ValidateClearBindingsOverride(
+        string overrideId,
+        RestBehaviorEndpointProjection endpointProjection,
+        string effectivePattern)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(overrideId);
+        ArgumentNullException.ThrowIfNull(endpointProjection);
+        ArgumentException.ThrowIfNullOrWhiteSpace(effectivePattern);
+
+        var inputType = ResolveBehaviorInputType(endpointProjection.BehaviorType);
+        if (inputType is null)
+        {
+            return;
+        }
+
+        var effectiveInputType = Nullable.GetUnderlyingType(inputType) ?? inputType;
+        if (IsSimpleInputType(effectiveInputType))
+        {
+            return;
+        }
+
+        var routePlaceholders = ExtractRoutePlaceholders(effectivePattern);
+        if (routePlaceholders.Count == 0)
+        {
+            return;
+        }
+
+        var inputProperties = ResolveBehaviorInputProperties(endpointProjection.BehaviorType);
+        var unresolvedPlaceholders = routePlaceholders
+            .Where(placeholder => !inputProperties.Contains(placeholder))
+            .OrderBy(static placeholder => placeholder, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        if (unresolvedPlaceholders.Length == 0)
+        {
+            return;
+        }
+
+        var explicitRouteBindings = endpointProjection.Bindings
+            .Where(static binding => binding.Source == BehaviorRestBindingSource.Route)
+            .Select(static binding =>
+            {
+                var sourceName = string.IsNullOrWhiteSpace(binding.Name)
+                    ? binding.PropertyName
+                    : binding.Name.Trim();
+                return $"{binding.PropertyName}->{sourceName}";
+            })
+            .ToArray();
+        var explicitRouteBindingSummary = explicitRouteBindings.Length == 0
+            ? "none"
+            : string.Join(", ", explicitRouteBindings);
+        throw new InvalidOperationException(
+            $"REST endpoint override rule '{overrideId}' cannot clear explicit bindings for behavior '{endpointProjection.BehaviorId}' because the effective route pattern '{effectivePattern}' would rely on implicit property-name inference for placeholder(s) '{string.Join("', '", unresolvedPlaceholders)}', but input type '{effectiveInputType.FullName}' does not expose matching property names. The source shorthand candidate currently covers route placeholders through explicit route bindings ({explicitRouteBindingSummary}). Keep explicit Bindings or rename the placeholders to match the input contract before using ClearBindings.");
+    }
+
     private static HashSet<string> ResolveImplicitFallbackEligibleProperties(
         RestBehaviorEndpointProjection endpointProjection,
         HashSet<string> originalExplicitlyBoundProperties,
@@ -819,27 +892,36 @@ internal static class RestBehaviorProjectionCandidateResolver
     {
         ArgumentNullException.ThrowIfNull(behaviorType);
 
-        var contractInterface = behaviorType.GetInterfaces()
-            .FirstOrDefault(static candidate =>
-                candidate.IsGenericType &&
-                candidate.GetGenericTypeDefinition() == typeof(IAppBehavior<,>));
-        if (contractInterface is null)
+        var inputType = ResolveBehaviorInputType(behaviorType);
+        if (inputType is null)
         {
             return [];
         }
 
-        var inputType = Nullable.GetUnderlyingType(contractInterface.GetGenericArguments()[0]) ??
-                        contractInterface.GetGenericArguments()[0];
-        if (IsSimpleInputType(inputType))
+        var effectiveInputType = Nullable.GetUnderlyingType(inputType) ?? inputType;
+        if (IsSimpleInputType(effectiveInputType))
         {
             return [];
         }
 
-        return inputType.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+        return effectiveInputType.GetProperties(BindingFlags.Instance | BindingFlags.Public)
             .Where(static property => property.CanRead)
             .Select(static property => property.Name.Trim())
             .Where(static propertyName => !string.IsNullOrWhiteSpace(propertyName))
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static Type? ResolveBehaviorInputType(Type behaviorType)
+    {
+        ArgumentNullException.ThrowIfNull(behaviorType);
+
+        var contractInterface = behaviorType.GetInterfaces()
+            .FirstOrDefault(static candidate =>
+                candidate.IsGenericType &&
+                candidate.GetGenericTypeDefinition() == typeof(IAppBehavior<,>));
+        return contractInterface is null
+            ? null
+            : contractInterface.GetGenericArguments()[0];
     }
 
     private static bool IsSimpleInputType(Type inputType)

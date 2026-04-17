@@ -172,14 +172,14 @@ candidates without inventing an ASP.NET Core-specific precedence contract, and s
 can compare the original shorthand projection shape with the final effective projected endpoint
 explicitly while also seeing the grouped published-versus-suppressed answer per behavior. The same
 transport namespace now also owns `IRestEndpointOverrideRuntimeCatalog` plus
-`RestEndpointOverrideDescriptor`, including the shorthand endpoint-metadata clear actions
-`ClearEndpointName`, `ClearSummary`, and `ClearDescription`, so hosts can publish set-or-clear
-governance truth without inventing ASP.NET Core-specific override DTOs. The same candidate/runtime
-descriptor family now also keeps original shorthand endpoint metadata visible on `ProjectedEndpoint`
-through `OriginalEndpointName`, `OriginalSummary`, and `OriginalDescription`, keeps preserved
-shorthand fallback truth visible through typed `BindingFallbackMode` properties, and keeps that
-original metadata visible even when a host-level override intentionally clears the effective
-endpoint metadata, while additive
+`RestEndpointOverrideDescriptor`, including shorthand binding resets through `ClearBindings` plus
+the shorthand endpoint-metadata clear actions `ClearEndpointName`, `ClearSummary`, and
+`ClearDescription`, so hosts can publish set-or-clear governance truth without inventing ASP.NET
+Core-specific override DTOs. The same candidate/runtime descriptor family now also keeps original
+shorthand endpoint metadata visible on `ProjectedEndpoint` through `OriginalEndpointName`,
+`OriginalSummary`, and `OriginalDescription`, keeps preserved shorthand fallback truth visible
+through typed `BindingFallbackMode` properties, and keeps that original metadata visible even when
+a host-level override intentionally clears the effective endpoint metadata, while additive
 `metadata.bindingFallbackMode`, `metadata.authoringStyle`, `metadata.routeGroupPrefix`,
 `metadata.relativePattern`, `metadata.behaviorType`, and `metadata.sourceId` remain
 compatibility-only metadata.

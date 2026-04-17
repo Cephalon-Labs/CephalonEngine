@@ -4461,6 +4461,127 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonAppliesClearBindingsOverridesAndReturnsToImplicitRequestBindingBaseline()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.Configuration["RestApi:Overrides:clear-explicit-bindings:Behaviors:0"] = "tests.rest.profile.bindings";
+        builder.Configuration["RestApi:Overrides:clear-explicit-bindings:ClearBindings"] = "true";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileBindingRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(overrides);
+        Assert.NotNull(snapshot);
+
+        var endpoint = Assert.Single(endpoints, static item =>
+            string.Equals(item.BehaviorId, "tests.rest.profile.bindings", StringComparison.Ordinal));
+        Assert.Equal("/api/v6/tests/profile-runtime/bindings/orders/{orderId}", endpoint.RoutePattern);
+        Assert.Equal("clear-explicit-bindings", endpoint.AppliedOverrideId);
+        Assert.Equal(["clear-explicit-bindings"], endpoint.MatchedOverrideIds);
+        Assert.NotNull(endpoint.OriginalProjection);
+        Assert.Equal(4, endpoint.OriginalProjection!.BindingDescriptors.Count);
+        Assert.Empty(endpoint.BindingDescriptors);
+        Assert.Null(endpoint.BindingFallbackMode);
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.profile.bindings", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+        Assert.Equal("clear-explicit-bindings", candidate.AppliedOverrideId);
+        Assert.Equal(endpoint.Id, candidate.ProjectedEndpoint.Id);
+        Assert.Equal(4, candidate.OriginalProjection.BindingDescriptors.Count);
+        Assert.Empty(candidate.ProjectedEndpoint.BindingDescriptors);
+        Assert.Null(candidate.ProjectedEndpoint.BindingFallbackMode);
+
+        var rule = Assert.Single(overrides, static item =>
+            string.Equals(item.Id, "clear-explicit-bindings", StringComparison.Ordinal));
+        Assert.True(rule.ClearBindings);
+        Assert.Equal(RestEndpointOverrideBindingMode.Unspecified, rule.BindingMode);
+        Assert.Empty(rule.Bindings);
+        Assert.Empty(rule.RemovedBindingProperties);
+
+        Assert.Contains(snapshot.RestEndpointOverrides, static item =>
+            string.Equals(item.Id, "clear-explicit-bindings", StringComparison.Ordinal) &&
+            item.ClearBindings);
+
+        using var request = new HttpRequestMessage(
+            HttpMethod.Post,
+            "/api/v6/tests/profile-runtime/bindings/orders/ord-68");
+        request.Content = JsonContent.Create(new
+        {
+            quantity = 12,
+            correlationId = "corr-68",
+            note = "implicit baseline",
+            ignored = "body-fallback"
+        });
+
+        var response = await client.SendAsync(request);
+        response.EnsureSuccessStatusCode();
+
+        var payload = await response.Content.ReadFromJsonAsync<ProfileBindingRuntimeOutput>();
+        Assert.NotNull(payload);
+        Assert.Equal("ord-68", payload.OrderId);
+        Assert.Equal(12, payload.Quantity);
+        Assert.Equal("corr-68", payload.CorrelationId);
+        Assert.Equal("implicit baseline", payload.Note);
+        Assert.Equal("body-fallback", payload.Ignored);
+    }
+
+    [Fact]
+    public void MapCephalonRejectsClearBindingsWhenRoutePlaceholdersRequireExplicitAliases()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.Configuration["RestApi:Overrides:clear-explicit-bindings:Behaviors:0"] = "tests.rest.profile.bindings.alias";
+        builder.Configuration["RestApi:Overrides:clear-explicit-bindings:ClearBindings"] = "true";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileBindingAliasRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        var app = builder.Build();
+
+        var exception = Assert.Throws<InvalidOperationException>(() => app.MapCephalon());
+
+        Assert.Contains("clear-explicit-bindings", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("ClearBindings", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("id", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(nameof(ProfileBindingAliasRuntimeInput.OrderId), exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public async Task MapCephalonAllowsPlaceholderRenameWhenOverrideBindingsCoverTheRenamedRouteSet()
     {
         var builder = WebApplication.CreateBuilder();
@@ -5305,6 +5426,22 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         }
     }
 
+    private sealed class ProfileBindingAliasRuntimeCatalogModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.profile-runtime.bindings.alias",
+            "Profile Runtime Binding Alias Module",
+            "Publishes a profile-driven REST endpoint whose route placeholder currently relies on an explicit alias binding.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Group("/tests/profile-runtime/alias/orders")
+                .WithTagName("Profile Runtime Binding Alias API")
+                .MapProfile<GetProfileBindingAliasRuntimeOrderBehavior>();
+        }
+    }
+
     private sealed class ProfileBindingPartialQueryFallbackRuntimeCatalogModule : RestBehaviorModuleBase
     {
         public override ModuleDescriptor Descriptor { get; } = new(
@@ -5730,6 +5867,20 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         }
     }
 
+    [AppBehavior("tests.rest.profile.bindings.alias")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/{id}", ApiVersionMajor = 6)]
+    [BehaviorRestBinding(nameof(ProfileBindingAliasRuntimeInput.OrderId), BehaviorRestBindingSource.Route, Name = "id")]
+    private sealed class GetProfileBindingAliasRuntimeOrderBehavior : IAppBehavior<ProfileBindingAliasRuntimeInput, ProfileRuntimeOrderOutput>
+    {
+        public Task<ProfileRuntimeOrderOutput> HandleAsync(
+            ProfileBindingAliasRuntimeInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProfileRuntimeOrderOutput(input.OrderId));
+        }
+    }
+
     [AppBehavior("tests.rest.profile.bindings.query")]
     [BehaviorRestProfile(BehaviorRestMethod.Get, "/lookup", ApiVersionMajor = 6)]
     private sealed class GetProfileBindingQueryFallbackRuntimeOrderBehavior : IAppBehavior<ProfileBindingGetRuntimeInput, ProfileBindingGetRuntimeOutput>
@@ -5845,6 +5996,8 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     private sealed record ProfileBindingGetRuntimeOutput(
         string OrderId,
         string? Ignored);
+
+    private sealed record ProfileBindingAliasRuntimeInput(string OrderId);
 
     private sealed record ProfileBindingQueryFallbackPartialRuntimeInput(
         string OrderId,

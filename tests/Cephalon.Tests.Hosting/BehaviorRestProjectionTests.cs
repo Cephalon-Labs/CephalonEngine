@@ -1480,6 +1480,68 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverAllowsClearBindingsOverrideWhenRoutePlaceholdersRemainImplicitlyInferable()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-binding-clear")
+            .MapProfile<ProfileProjectionBoundBehavior>();
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.profile-binding-clear",
+                "Profile Binding Clear Module",
+                "Exercises shorthand binding-plan clearing when route placeholders can fall back to implicit inference safely.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "clear-explicit-bindings",
+                    behaviorIds: ["tests.profile.projection.bound"],
+                    clearBindings: true)
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Equal("clear-explicit-bindings", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal("/api/v6/tests/profile-binding-clear/{cartId}/items", candidate.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Equal(4, candidate.Candidate.OriginalProjection.BindingDescriptors.Count);
+        Assert.Empty(candidate.Candidate.ProjectedEndpoint.BindingDescriptors);
+        Assert.Null(candidate.Candidate.ProjectedEndpoint.BindingFallbackMode);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverRejectsClearBindingsOverrideWhenRoutePlaceholdersNeedExplicitAliases()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-binding-clear-alias")
+            .MapProfile<ProfileProjectionAliasedRouteBehavior>();
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+                new ModuleDescriptor(
+                    "tests.rest.profile-binding-clear-alias",
+                    "Profile Binding Clear Alias Module",
+                    "Exercises clear-bindings validation when route placeholder aliases would lose deterministic coverage.",
+                    version: "1.0.0"),
+                new ApiRoutesOptions(),
+                builder.Build().Groups,
+                overrides:
+                [
+                    new RestEndpointOverrideOptions(
+                        id: "clear-explicit-bindings",
+                        behaviorIds: ["tests.profile.projection.bound.alias"],
+                        clearBindings: true)
+                ]));
+
+        Assert.Contains("clear-explicit-bindings", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("ClearBindings", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("id", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(nameof(ProfileProjectionAliasedRouteInput.CartId), exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverAllowsPlaceholderRenameWhenOverrideBindingsCoverTheRenamedRouteSet()
     {
         var builder = new RestBehaviorModuleBuilder();
@@ -2798,6 +2860,64 @@ public sealed class BehaviorRestProjectionTests
         Assert.Single(options.RemovedBindingProperties);
         Assert.Contains("Quantity", options.RemovedBindingProperties);
         Assert.True(options.HasValues);
+    }
+
+    [Fact]
+    public void RestEndpointOverrideOptionsTreatClearBindingsAsAnOverrideAction()
+    {
+        var options = new RestEndpointOverrideOptions(
+            id: "clear-bindings-only",
+            behaviorIds: ["tests.generated.projection.precedence.lookup"],
+            clearBindings: true);
+
+        Assert.True(options.ClearBindings);
+        Assert.True(options.HasValues);
+        Assert.Equal(RestEndpointOverrideBindingMode.Unspecified, options.BindingMode);
+    }
+
+    [Fact]
+    public void RestEndpointOverrideOptionsRejectClearBindingsWhenBindingsAreAlsoConfigured()
+    {
+        var exception = Assert.Throws<ArgumentException>(() =>
+            new RestEndpointOverrideOptions(
+                id: "invalid-clear-bindings",
+                behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                clearBindings: true,
+                bindings:
+                [
+                    new RestEndpointBindingDescriptor("Quantity", RestEndpointBindingSource.Query, "quantity")
+                ]));
+
+        Assert.Contains("ClearBindings", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Bindings", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void RestEndpointOverrideOptionsRejectClearBindingsWhenRemovedBindingPropertiesAreAlsoConfigured()
+    {
+        var exception = Assert.Throws<ArgumentException>(() =>
+            new RestEndpointOverrideOptions(
+                id: "invalid-clear-bindings",
+                behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                clearBindings: true,
+                removedBindingProperties: ["Quantity"]));
+
+        Assert.Contains("ClearBindings", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("RemovedBindingProperties", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void RestEndpointOverrideOptionsRejectBindingModeWhenClearBindingsIsTrue()
+    {
+        var exception = Assert.Throws<ArgumentException>(() =>
+            new RestEndpointOverrideOptions(
+                id: "invalid-clear-bindings-mode",
+                behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                clearBindings: true,
+                bindingMode: RestEndpointOverrideBindingMode.MergeExplicit));
+
+        Assert.Contains("BindingMode", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("ClearBindings", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -4381,6 +4501,20 @@ public sealed class BehaviorRestProjectionTests
         }
     }
 
+    [AppBehavior("tests.profile.projection.bound.alias")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/{id}", ApiVersionMajor = 6)]
+    [BehaviorRestBinding(nameof(ProfileProjectionAliasedRouteInput.CartId), BehaviorRestBindingSource.Route, Name = "id")]
+    private sealed class ProfileProjectionAliasedRouteBehavior : IAppBehavior<ProfileProjectionAliasedRouteInput, ProjectionCartOutput>
+    {
+        public Task<ProjectionCartOutput> HandleAsync(
+            ProfileProjectionAliasedRouteInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProjectionCartOutput(input.CartId));
+        }
+    }
+
     [AppBehavior("tests.profile.projection.query.get")]
     [BehaviorRestProfile(BehaviorRestMethod.Get, "/lookup", ApiVersionMajor = 6)]
     private sealed class ProfileProjectionQueryFallbackBehavior : IAppBehavior<ProfileProjectionBoundInput, ProjectionCartOutput>
@@ -4441,6 +4575,8 @@ public sealed class BehaviorRestProjectionTests
         string? CorrelationId,
         string? Note,
         string? Ignored = null);
+
+    private sealed record ProfileProjectionAliasedRouteInput(string CartId);
 
     private sealed record DynamicProfileBindingDefinition(
         string PropertyName,

@@ -103,6 +103,7 @@ public sealed class RestApiGovernanceOptions
                 clearRequiredCapability: ReadBoolean(child, "ClearRequiredCapability"),
                 bindings: ReadBindings(child.GetSection("Bindings")),
                 removedBindingProperties: ReadStringArray(child.GetSection("RemovedBindingProperties")),
+                clearBindings: ReadBoolean(child, "ClearBindings"),
                 bindingMode: ReadBindingMode(child),
                 clearEndpointName: ReadBoolean(child, "ClearEndpointName"),
                 clearSummary: ReadBoolean(child, "ClearSummary"),

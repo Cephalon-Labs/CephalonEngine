@@ -453,7 +453,8 @@ Current helper behavior:
   boundary, or explicit binding
   plan for descriptor-backed shorthand candidates through `RestApi:Overrides`, which now supports
   `ApiVersionMajor`, `Method`, `RouteGroupPrefix`, `Pattern`, `RequiredCapabilityKey`,
-  `ClearRequiredCapability`, `Bindings`, `RemovedBindingProperties`, typed `BindingMode`,
+  `ClearRequiredCapability`, `Bindings`, `RemovedBindingProperties`, shorthand binding resets
+  through `ClearBindings`, typed `BindingMode`,
   shorthand endpoint metadata `EndpointName`, `Summary`, and `Description`, OpenAPI tag-name
   rewrites through `TagName`, plus metadata clears `ClearEndpointName`, `ClearSummary`, and
   `ClearDescription`, records the applied rule id through
@@ -489,7 +490,10 @@ Current helper behavior:
   projection descriptors now keep that preserved mode visible through `BindingFallbackMode` values
   backed by `RestEndpointBindingFallbackMode`, additive
   `metadata.bindingFallbackMode = preserve-source-implicit-fallback` remains compatibility-only
-  metadata, and explicit module DSL/manual routes plus shorthand groups with explicit
+  metadata, `ClearBindings = true` can now also discard the source shorthand explicit binding plan
+  entirely and return the candidate to the implicit route/query/body baseline, but that clear
+  fails fast if the effective route placeholders would only remain satisfiable through removed
+  explicit route-binding aliases, and explicit module DSL/manual routes plus shorthand groups with explicit
   `.ApiVersion(...)` remain authoritative for version selection
 
 ## REST runtime catalog and collision guard
@@ -600,8 +604,8 @@ Current governance baseline:
 
 - configure shorthand suppression through `RestApi:Suppressions`
 - configure shorthand API-version, HTTP-method, bounded route-group-prefix, constrained
-  route-pattern, capability-boundary set-or-clear, explicit binding-plan, and endpoint-metadata
-  set-or-clear overrides through
+  route-pattern, capability-boundary set-or-clear, explicit binding-plan replacement/merge/reset,
+  and endpoint-metadata set-or-clear overrides through
   `RestApi:Overrides`
 - target one or more `CandidateIds`, `Behaviors`, `Modules`, and optional `AuthoringStyles`, then
   optionally refine that match with `ApiVersionMajors`, `Methods`, `RelativePatterns`,
@@ -633,9 +637,10 @@ Current governance baseline:
 - the current override slice rewrites only the effective API major version, HTTP method,
   explicit OpenAPI document name, constrained relative route pattern, required capability
   boundary, capability-boundary clear, endpoint metadata set-or-clear actions, OpenAPI tag name,
-  and/or explicit binding plan, keeping the `/v{major}` route segment, OpenAPI document name,
-  mapped endpoint, and runtime catalogs aligned; `ApiVersionMajor` only re-derives the document
-  name when the authored shorthand group did not pin one explicitly
+  and/or explicit binding plan, including shorthand-only `ClearBindings` resets back to the
+  implicit request-binding baseline, keeping the `/v{major}` route segment, OpenAPI document
+  name, mapped endpoint, and runtime catalogs aligned; `ApiVersionMajor` only re-derives the
+  document name when the authored shorthand group did not pin one explicitly
 - pattern rewrites preserve the placeholder set by default and can now also rename placeholders
   when the effective explicit route-binding plan covers the renamed placeholder set exactly
 - placeholder removals can now also apply when the original projection already exposes explicit
@@ -650,6 +655,9 @@ Current governance baseline:
   original explicit bindings through `RemovedBindingProperties`, while failing fast if a removal
   targets a property the source shorthand never bound explicitly or if one merge rule both removes
   and overrides the same property
+- `ClearBindings = true` can now discard the source shorthand explicit binding plan entirely, but
+  it fails fast if the effective route would only stay valid through explicit placeholder aliases
+  that the clear removed
 - `ClearRequiredCapability = true` is now the explicit host answer for removing an inherited
   shorthand capability boundary; when that action wins, shorthand candidate projections, actual
   ASP.NET Core endpoint metadata, `/engine/rest-endpoints`, and `snapshot.RestEndpoints` all keep
@@ -722,6 +730,27 @@ Override example:
   }
 }
 ```
+
+Clear-bindings example:
+
+```json
+{
+  "RestApi": {
+    "Overrides": {
+      "cart-profile-reset-bindings": {
+        "Behaviors": [ "showcase.cart.get" ],
+        "AuthoringStyles": [ "behavior-module-profile" ],
+        "RelativePatterns": [ "/{cartId}" ],
+        "ClearBindings": true
+      }
+    }
+  }
+}
+```
+
+That shorthand-only action removes the candidate's explicit binding descriptors and returns request
+composition to the implicit route/query/body baseline. It is rejected when the final route would
+need placeholder aliases that only existed in the removed explicit route bindings.
 
 The host also now fails fast when two resolved public REST endpoints collide on the same
 `HTTP method + route pattern`.

@@ -91,6 +91,10 @@ public sealed class RestEndpointOverrideOptions
     /// The explicit shorthand binding properties removed from the source binding plan when the rule
     /// matches.
     /// </param>
+    /// <param name="clearBindings">
+    /// <see langword="true" /> when the rule removes the matched shorthand candidate's entire
+    /// explicit binding plan and returns publication to the implicit request-binding baseline.
+    /// </param>
     /// <param name="bindingMode">
     /// The mode used to apply <paramref name="bindings" /> and
     /// <paramref name="removedBindingProperties" /> to the shorthand candidate's explicit binding
@@ -139,6 +143,7 @@ public sealed class RestEndpointOverrideOptions
         bool clearRequiredCapability = false,
         IReadOnlyList<RestEndpointBindingDescriptor>? bindings = null,
         IReadOnlyList<string>? removedBindingProperties = null,
+        bool clearBindings = false,
         RestEndpointOverrideBindingMode bindingMode = RestEndpointOverrideBindingMode.Unspecified,
         bool clearEndpointName = false,
         bool clearSummary = false,
@@ -186,7 +191,11 @@ public sealed class RestEndpointOverrideOptions
         ClearDescription = clearDescription;
         Bindings = NormalizeBindings(bindings);
         RemovedBindingProperties = NormalizeList(removedBindingProperties);
-        BindingMode = NormalizeBindingMode(bindingMode, RemovedBindingProperties.Count > 0);
+        ClearBindings = clearBindings;
+        BindingMode = NormalizeBindingMode(
+            bindingMode,
+            RemovedBindingProperties.Count > 0,
+            clearBindings);
 
         if (ClearRequiredCapability && RequiredCapabilityKey is not null)
         {
@@ -214,6 +223,13 @@ public sealed class RestEndpointOverrideOptions
             throw new ArgumentException(
                 "REST endpoint override rules cannot both set Description and ClearDescription in the same rule.",
                 nameof(clearDescription));
+        }
+
+        if (ClearBindings && (Bindings.Count > 0 || RemovedBindingProperties.Count > 0))
+        {
+            throw new ArgumentException(
+                "REST endpoint override rules cannot combine ClearBindings with Bindings or RemovedBindingProperties in the same rule.",
+                nameof(clearBindings));
         }
 
         if (CandidateIds.Count == 0 && BehaviorIds.Count == 0 && SourceModuleIds.Count == 0)
@@ -247,11 +263,12 @@ public sealed class RestEndpointOverrideOptions
             !ClearDescription &&
             RequiredCapabilityKey is null &&
             !ClearRequiredCapability &&
+            !ClearBindings &&
             Bindings.Count == 0 &&
             RemovedBindingProperties.Count == 0)
         {
             throw new ArgumentException(
-                "REST endpoint override rules must define at least one override action such as ApiVersionMajor, Method, Pattern, RouteGroupPrefix, OpenApiDocumentName, TagName, EndpointName, Summary, Description, ClearEndpointName, ClearSummary, ClearDescription, RequiredCapabilityKey, ClearRequiredCapability, Bindings, or RemovedBindingProperties.",
+                "REST endpoint override rules must define at least one override action such as ApiVersionMajor, Method, Pattern, RouteGroupPrefix, OpenApiDocumentName, TagName, EndpointName, Summary, Description, ClearEndpointName, ClearSummary, ClearDescription, RequiredCapabilityKey, ClearRequiredCapability, ClearBindings, Bindings, or RemovedBindingProperties.",
                 nameof(apiVersionMajor));
         }
 
@@ -409,6 +426,12 @@ public sealed class RestEndpointOverrideOptions
     public IReadOnlyList<string> RemovedBindingProperties { get; }
 
     /// <summary>
+    /// Gets a value indicating whether this override rule clears the matched shorthand candidate's
+    /// entire explicit binding plan.
+    /// </summary>
+    public bool ClearBindings { get; }
+
+    /// <summary>
     /// Gets how <see cref="Bindings" /> and <see cref="RemovedBindingProperties" /> apply to the shorthand candidate's explicit binding plan.
     /// </summary>
     public RestEndpointOverrideBindingMode BindingMode { get; }
@@ -440,6 +463,7 @@ public sealed class RestEndpointOverrideOptions
         ClearDescription ||
         RequiredCapabilityKey is not null ||
         ClearRequiredCapability ||
+        ClearBindings ||
         Bindings.Count > 0 ||
         RemovedBindingProperties.Count > 0;
 
@@ -639,8 +663,18 @@ public sealed class RestEndpointOverrideOptions
 
     private static RestEndpointOverrideBindingMode NormalizeBindingMode(
         RestEndpointOverrideBindingMode bindingMode,
-        bool hasRemovedBindingProperties)
+        bool hasRemovedBindingProperties,
+        bool clearBindings)
     {
+        if (clearBindings)
+        {
+            return bindingMode == RestEndpointOverrideBindingMode.Unspecified
+                ? RestEndpointOverrideBindingMode.Unspecified
+                : throw new ArgumentException(
+                    "REST endpoint override rules cannot set BindingMode when ClearBindings is true.",
+                    nameof(bindingMode));
+        }
+
         return bindingMode switch
         {
             RestEndpointOverrideBindingMode.Unspecified => hasRemovedBindingProperties

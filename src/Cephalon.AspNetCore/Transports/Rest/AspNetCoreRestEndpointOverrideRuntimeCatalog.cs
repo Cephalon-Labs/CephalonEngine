@@ -40,6 +40,7 @@ internal sealed class AspNetCoreRestEndpointOverrideRuntimeCatalog : IRestEndpoi
                 item.ClearRequiredCapability,
                 item.Bindings,
                 item.RemovedBindingProperties,
+                item.ClearBindings,
                 item.BindingMode,
                 item.ClearEndpointName,
                 item.ClearSummary,

@@ -2,7 +2,7 @@
 
 Decision baseline date: `April 14, 2026`
 
-Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`, `ENG-058-T67` / GitHub issue `#332`, `ENG-058-T68` / GitHub issue `#333`, `ENG-058-T69` / GitHub issue `#334`, `ENG-058-T70` / GitHub issue `#335`, `ENG-058-T71` / GitHub issue `#336`, `ENG-058-T72` / GitHub issue `#337`, `ENG-058-T73` / GitHub issue `#338`, `ENG-058-T74` / GitHub issue `#339`, `ENG-058-T75` / GitHub issue `#340`, `ENG-058-T76` / GitHub issue `#341`, `ENG-058-T77` / GitHub issue `#342`, `ENG-058-T78` / GitHub issue `#343`, `ENG-058-T79` / GitHub issue `#344`, `ENG-058-T80` / GitHub issue `#345`, `ENG-058-T81` / GitHub issue `#346`, `ENG-058-T82` / GitHub issue `#347`, `ENG-058-T83` / GitHub issue `#348`, `ENG-058-T84` / GitHub issue `#349`, `ENG-058-T85` / GitHub issue `#350`, `ENG-058-T86` / GitHub issue `#351`, `ENG-058-T87` / GitHub issue `#352`, `ENG-058-T88` / GitHub issue `#353`, `ENG-058-T89` / GitHub issue `#354`, `ENG-058-T90` / GitHub issue `#355`, `ENG-058-T91` / GitHub issue `#356`, `ENG-058-T92` / GitHub issue `#357`, `ENG-058-T93` / GitHub issue `#358`, `ENG-058-T94` / GitHub issue `#359`, `ENG-058-T95` / GitHub issue `#360`, `ENG-058-T96` / GitHub issue `#361`, `ENG-058-T97` / GitHub issue `#362`, `ENG-058-T98` / GitHub issue `#363`, `ENG-058-T99` / GitHub issue `#364`, `ENG-058-T100` / GitHub issue `#365`, `ENG-058-T101` / GitHub issue `#367`, `ENG-058-T102` / GitHub issue `#368`, `ENG-058-T103` / GitHub issue `#369`, `ENG-058-T104` / GitHub issue `#370`, `ENG-058-T105` / GitHub issue `#371`, `ENG-058-T106` / GitHub issue `#372`, `ENG-058-T107` / GitHub issue `#373`, `ENG-058-T108` / GitHub issue `#374`
+Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`, `ENG-058-T67` / GitHub issue `#332`, `ENG-058-T68` / GitHub issue `#333`, `ENG-058-T69` / GitHub issue `#334`, `ENG-058-T70` / GitHub issue `#335`, `ENG-058-T71` / GitHub issue `#336`, `ENG-058-T72` / GitHub issue `#337`, `ENG-058-T73` / GitHub issue `#338`, `ENG-058-T74` / GitHub issue `#339`, `ENG-058-T75` / GitHub issue `#340`, `ENG-058-T76` / GitHub issue `#341`, `ENG-058-T77` / GitHub issue `#342`, `ENG-058-T78` / GitHub issue `#343`, `ENG-058-T79` / GitHub issue `#344`, `ENG-058-T80` / GitHub issue `#345`, `ENG-058-T81` / GitHub issue `#346`, `ENG-058-T82` / GitHub issue `#347`, `ENG-058-T83` / GitHub issue `#348`, `ENG-058-T84` / GitHub issue `#349`, `ENG-058-T85` / GitHub issue `#350`, `ENG-058-T86` / GitHub issue `#351`, `ENG-058-T87` / GitHub issue `#352`, `ENG-058-T88` / GitHub issue `#353`, `ENG-058-T89` / GitHub issue `#354`, `ENG-058-T90` / GitHub issue `#355`, `ENG-058-T91` / GitHub issue `#356`, `ENG-058-T92` / GitHub issue `#357`, `ENG-058-T93` / GitHub issue `#358`, `ENG-058-T94` / GitHub issue `#359`, `ENG-058-T95` / GitHub issue `#360`, `ENG-058-T96` / GitHub issue `#361`, `ENG-058-T97` / GitHub issue `#362`, `ENG-058-T98` / GitHub issue `#363`, `ENG-058-T99` / GitHub issue `#364`, `ENG-058-T100` / GitHub issue `#365`, `ENG-058-T101` / GitHub issue `#367`, `ENG-058-T102` / GitHub issue `#368`, `ENG-058-T103` / GitHub issue `#369`, `ENG-058-T104` / GitHub issue `#370`, `ENG-058-T105` / GitHub issue `#371`, `ENG-058-T106` / GitHub issue `#372`, `ENG-058-T107` / GitHub issue `#373`, `ENG-058-T108` / GitHub issue `#374`, `ENG-058-T109` / GitHub issue `#375`, `ENG-058-T110` / GitHub issue `#376`
 
 Cross-references: `docs/components/behaviors-http.md`, `docs/module-authoring.md`, `docs/architecture.md`, `docs/architecture-review-2026-04.md`, `docs/project-memory.md`
 
@@ -249,6 +249,12 @@ Status update:
   override the same property, removal targets must already exist in the source shorthand explicit
   binding plan, and `/engine/rest-endpoint-overrides` plus `snapshot.RestEndpointOverrides` now
   keep both the typed binding mode and removed-property list visible
+- the next shorthand explicit-binding reset follow-through is now shipped through
+  `ENG-058-T110`: the typed override/runtime contracts plus ASP.NET Core config binding now also
+  support shorthand-only `ClearBindings`, that reset can discard the source explicit binding plan
+  so request composition returns to the implicit route/query/body baseline, it cannot pair with
+  `Bindings`, `RemovedBindingProperties`, or an explicit `BindingMode`, and it fails fast when the
+  effective route would only remain satisfiable through removed explicit route-binding aliases
 - the next low-code generated module-owned shorthand is now shipped through `ENG-058-T67`:
   `IRestBehaviorEndpointGroupBuilder.MapGeneratedProfiles()` and
   `MapGeneratedProfiles(string behaviorIdPrefix)` let an owning module opt into profile-backed
@@ -286,7 +292,9 @@ Status update:
   overrides now default to replacing the shorthand candidate's explicit descriptors, but can also
   merge explicit binding upserts and withdrawals by property name through
   `BindingMode = MergeExplicit` plus `RemovedBindingProperties` while still leaving unbound route
-  placeholders and remaining request-body fields available for deterministic fallback; placeholder
+  placeholders and remaining request-body fields available for deterministic fallback, or clear the
+  explicit plan entirely through shorthand-only `ClearBindings` when the effective route still
+  binds truthfully through the implicit baseline; placeholder
   renames can now also apply when the effective explicit route-binding plan
   covers the renamed placeholder set exactly; placeholder removals can now also apply when the
   original projection already exposes explicit route-binding coverage for the original placeholder
@@ -396,7 +404,8 @@ Current shipped baseline:
   published `RouteGroupPrefix`, relative `Pattern`, `RequiredCapabilityKey`,
   `ClearRequiredCapability`, `EndpointName`, `Summary`, `Description`, `TagName`,
   `ClearEndpointName`, `ClearSummary`, `ClearDescription`, explicit `Bindings`,
-  `RemovedBindingProperties`, and typed `BindingMode`
+  `RemovedBindingProperties`, shorthand binding resets through `ClearBindings`, and typed
+  `BindingMode`
 - both rule families fail fast when a rule omits both `Behaviors` and `Modules`
 - override rules also fail fast when they omit all override actions, use a non-positive
   `ApiVersionMajor`, declare an unsupported HTTP method, declare an invalid relative route
@@ -438,6 +447,10 @@ Current shipped baseline:
   original explicit bindings through `RemovedBindingProperties`, while failing fast if a removal
   targets a property the source shorthand never bound explicitly or if one merge rule both removes
   and overrides the same property
+- `ClearBindings = true` can now discard the source shorthand explicit binding plan entirely and
+  return the candidate to the implicit request-binding baseline, while failing fast if the
+  effective route would only stay valid through explicit placeholder aliases that the clear
+  removed
 - broader implicit-property promotion beyond that constrained body-fallback-plus-bounded-query-
   fallback path plus broader input-binding rewrites beyond the current replace-plus-merge-explicit
   upsert-plus-withdraw model remain later work
@@ -626,16 +639,19 @@ can target the original shorthand candidate shape through `ApiVersionMajors`, `M
 `ApiVersionMajor`, `OpenApiDocumentName`, HTTP `Method`, bounded published `RouteGroupPrefix`,
 relative `Pattern`, `RequiredCapabilityKey`, `ClearRequiredCapability`, `EndpointName`,
 `Summary`, `Description`, `TagName`, `ClearEndpointName`, `ClearSummary`, `ClearDescription`,
-and/or explicit `Bindings` plus `RemovedBindingProperties`, but the current route-pattern slice is
-still constrained enough to keep binding semantics truthful and `ApiVersionMajor` only re-derives
-the effective document name when the authored shorthand group did not pin one explicitly through
-`.WithOpenApiDocumentName(...)`. Cephalon therefore keeps the
+and/or explicit `Bindings` plus `RemovedBindingProperties`, and can now also reset the authored
+explicit binding plan through shorthand-only `ClearBindings`, but the current route-pattern slice
+is still constrained enough to keep binding semantics truthful and `ApiVersionMajor` only
+re-derives the effective document name when the authored shorthand group did not pin one
+explicitly through `.WithOpenApiDocumentName(...)`. Cephalon therefore keeps the
 route-version segment and document name
 together for version rewrites, allows route-pattern rewrites when they preserve the same
 placeholder set or when the effective explicit route-binding plan covers a renamed placeholder set
 exactly, lets binding overrides either replace the shorthand candidate's explicit binding plan or
 merge explicit binding upserts and withdrawals into it by property name while preserving
-deterministic fallback for unbound route placeholders and remaining request-body fields, allows
+deterministic fallback for unbound route placeholders and remaining request-body fields, now also
+lets hosts clear that explicit plan entirely when the effective route can still bind truthfully
+through the implicit baseline, allows
 route-pattern rewrites that remove placeholders when the original projection already
 exposes explicit route-binding coverage for the original placeholder set and the effective explicit
 binding plan keeps every affected original route-bound property explicitly bound, allows
@@ -885,20 +901,24 @@ Status:
   metadata lineage still stays visible through `OriginalEndpointName`, `OriginalSummary`, and
   `OriginalDescription`
 - the next shorthand metadata-and-document truthfulness follow-through is now shipped through
-  `ENG-058-T106`, `ENG-058-T107`, `ENG-058-T108`, and `ENG-058-T109`: same-value
+  `ENG-058-T106`, `ENG-058-T107`, `ENG-058-T108`, `ENG-058-T109`, and `ENG-058-T110`: same-value
   endpoint-metadata, tag, and document-name rewrites now keep `MatchedOverrideIds` visible while
   leaving `AppliedOverrideId = null`, tag rewrites preserve `OriginalProjection.TagName` while
   splitting effective materialized groups, document-name governance now adds
   `OpenApiDocumentName` plus `.WithOpenApiDocumentName(...)`, explicit `.ApiVersion(...)`
   precedence remains authoritative for version selection even when later host governance rewrites
   the effective published document name, and selector targeting can now distinguish candidates by
-  original shorthand document name plus primary tag name without depending on rewritten routes
+  original shorthand document name plus primary tag name without depending on rewritten routes,
+  while `ClearBindings` now resets shorthand explicit binding plans back to the implicit
+  route/query/body baseline, keeps that reset truthful through the override, candidate, endpoint,
+  and snapshot catalogs, and fails fast when the effective route would only remain satisfiable
+  through removed explicit placeholder aliases
 - controlled configuration overrides that promote implicit properties into route placeholders
   beyond the shipped constrained remaining-body-fallback-plus-bounded-query-fallback path, or
   rewrite input binding beyond constrained explicit-binding replacement, remain later work now that
   the current override baseline covers original-shape candidate ids plus selector targeting across
-  version, method, route-group prefix, document name, tag name, capability, bindings, placeholder
-  reshaping, and bounded fallback promotion
+  version, method, route-group prefix, document name, tag name, capability, bindings,
+  clear-bindings resets, placeholder reshaping, and bounded fallback promotion
 
 ## What should be stored as project memory
 
@@ -947,9 +967,10 @@ The following points are durable enough to keep outside thread-local context.
   intentionally limited to shorthand `ApiVersionMajor`, `OpenApiDocumentName`, `Method`, bounded
   `RouteGroupPrefix`, constrained relative `Pattern`, `RequiredCapabilityKey`,
   `ClearRequiredCapability`, `EndpointName`, `Summary`, `Description`, `TagName`,
-  `ClearEndpointName`, `ClearSummary`, `ClearDescription`, and constrained explicit `Bindings`
+  `ClearEndpointName`, `ClearSummary`, `ClearDescription`, constrained explicit `Bindings`
   rewrites with either default full replacement or typed `MergeExplicit` property upserts plus
-  `RemovedBindingProperties`; neither surface rewrites explicit module DSL or manual routes
+  `RemovedBindingProperties`, and shorthand-only `ClearBindings` resets back to the implicit
+  request-binding baseline; neither surface rewrites explicit module DSL or manual routes
 - both rule families can now target exact original-shape shorthand candidates through
   `CandidateIds`, can also refine `Behaviors`/`Modules` targeting with `ApiVersionMajors`,
   `Methods`, `RelativePatterns`, `RouteGroupPrefixes`, `OpenApiDocumentNames`, and `TagNames`,
@@ -980,6 +1001,11 @@ The following points are durable enough to keep outside thread-local context.
   `OriginalProjection.OpenApiDocumentName` continues to preserve the source shorthand document
   lineage, and same-value document rewrites should keep `MatchedOverrideIds` visible while leaving
   `AppliedOverrideId = null`
+- when REST governance clears shorthand explicit bindings through `ClearBindings`, the same
+  effective answer must drive `ProjectedEndpoint.BindingDescriptors`, actual ASP.NET Core request
+  composition, `/engine/rest-endpoints`, and `snapshot.RestEndpoints`, and that clear must fail
+  fast when the effective route would only remain valid through explicit placeholder aliases that
+  the source shorthand binding plan had been supplying
 - when published candidate or endpoint runtime truth is reconciled after ASP.NET Core
   materialization, metadata-only same-value rewrites, same-value document rewrites, same-value tag
   rewrites, and metadata-clear matches against source metadata the module already set or cleared should keep
