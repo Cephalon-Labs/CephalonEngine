@@ -22,6 +22,9 @@ public sealed class RestEndpointPublicationGroupAuthoringStyleDescriptor
     /// <param name="authoringPolicySuppressedCandidateIds">
     /// The ordered candidate identifiers that were suppressed by behavior-level authoring-policy enforcement.
     /// </param>
+    /// <param name="authoringPolicySuppressionSummaries">
+    /// The grouped authoring-policy suppression outcomes summarized by suppression kind for this authoring style.
+    /// </param>
     /// <param name="hostGovernanceEligibleCandidateIds">
     /// The ordered candidate identifiers whose original projections allowed host governance to participate.
     /// </param>
@@ -43,6 +46,7 @@ public sealed class RestEndpointPublicationGroupAuthoringStyleDescriptor
         IReadOnlyList<string>? precedenceSuppressedCandidateIds = null,
         IReadOnlyList<string>? governanceSuppressedCandidateIds = null,
         IReadOnlyList<string>? authoringPolicySuppressedCandidateIds = null,
+        IReadOnlyList<RestEndpointPublicationGroupAuthoringPolicySuppressionDescriptor>? authoringPolicySuppressionSummaries = null,
         IReadOnlyList<string>? hostGovernanceEligibleCandidateIds = null,
         IReadOnlyList<string>? hostGovernanceIneligibleCandidateIds = null,
         IReadOnlyList<string>? skippedSuppressionIds = null,
@@ -58,7 +62,6 @@ public sealed class RestEndpointPublicationGroupAuthoringStyleDescriptor
         var normalizedPublishedCandidateIds = NormalizeOrderedList(publishedCandidateIds);
         var normalizedPrecedenceSuppressedCandidateIds = NormalizeOrderedList(precedenceSuppressedCandidateIds);
         var normalizedGovernanceSuppressedCandidateIds = NormalizeOrderedList(governanceSuppressedCandidateIds);
-        var normalizedAuthoringPolicySuppressedCandidateIds = NormalizeOrderedList(authoringPolicySuppressedCandidateIds);
         var normalizedHostGovernanceEligibleCandidateIds = NormalizeOrderedList(hostGovernanceEligibleCandidateIds);
         var normalizedHostGovernanceIneligibleCandidateIds = NormalizeOrderedList(hostGovernanceIneligibleCandidateIds);
         var normalizedSkippedSuppressionIds = NormalizeOrderedList(skippedSuppressionIds);
@@ -72,6 +75,36 @@ public sealed class RestEndpointPublicationGroupAuthoringStyleDescriptor
         }
 
         var candidateIdSet = normalizedCandidateIds.ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var normalizedAuthoringPolicySuppressionSummaries = authoringPolicySuppressionSummaries is null
+            ? []
+            : RestEndpointPublicationGroupAuthoringPolicySuppressionSummaryBuilder.Normalize(
+                authoringPolicySuppressionSummaries,
+                candidateIdSet,
+                nameof(authoringPolicySuppressionSummaries));
+        var normalizedAuthoringPolicySuppressedCandidateIds = NormalizeOrderedList(authoringPolicySuppressedCandidateIds);
+        if (normalizedAuthoringPolicySuppressedCandidateIds.Length == 0 &&
+            normalizedAuthoringPolicySuppressionSummaries.Length > 0)
+        {
+            normalizedAuthoringPolicySuppressedCandidateIds =
+                RestEndpointPublicationGroupAuthoringPolicySuppressionSummaryBuilder.BuildSuppressedCandidateIds(
+                    normalizedAuthoringPolicySuppressionSummaries);
+        }
+
+        if (normalizedAuthoringPolicySuppressionSummaries.Length > 0)
+        {
+            var summarizedCandidateIds =
+                RestEndpointPublicationGroupAuthoringPolicySuppressionSummaryBuilder.BuildSuppressedCandidateIds(
+                    normalizedAuthoringPolicySuppressionSummaries);
+            if (!normalizedAuthoringPolicySuppressedCandidateIds.SequenceEqual(
+                    summarizedCandidateIds,
+                    StringComparer.OrdinalIgnoreCase))
+            {
+                throw new ArgumentException(
+                    "Authoring-policy suppression summaries must describe the same candidate ids as the grouped authoring-style suppression bucket.",
+                    nameof(authoringPolicySuppressedCandidateIds));
+            }
+        }
+
         if (!candidateIdSet.IsSupersetOf(normalizedPublishedCandidateIds))
         {
             throw new ArgumentException(
@@ -158,6 +191,7 @@ public sealed class RestEndpointPublicationGroupAuthoringStyleDescriptor
         PrecedenceSuppressedCandidateIds = normalizedPrecedenceSuppressedCandidateIds;
         GovernanceSuppressedCandidateIds = normalizedGovernanceSuppressedCandidateIds;
         AuthoringPolicySuppressedCandidateIds = normalizedAuthoringPolicySuppressedCandidateIds;
+        AuthoringPolicySuppressionSummaries = normalizedAuthoringPolicySuppressionSummaries;
         HostGovernanceEligibleCandidateIds = normalizedHostGovernanceEligibleCandidateIds;
         HostGovernanceIneligibleCandidateIds = normalizedHostGovernanceIneligibleCandidateIds;
         SkippedSuppressionIds = normalizedSkippedSuppressionIds;
@@ -203,6 +237,11 @@ public sealed class RestEndpointPublicationGroupAuthoringStyleDescriptor
     /// Gets the ordered candidate identifiers that were suppressed by behavior-level authoring-policy enforcement.
     /// </summary>
     public IReadOnlyList<string> AuthoringPolicySuppressedCandidateIds { get; }
+
+    /// <summary>
+    /// Gets the grouped authoring-policy suppression outcomes summarized by suppression kind for this authoring style.
+    /// </summary>
+    public IReadOnlyList<RestEndpointPublicationGroupAuthoringPolicySuppressionDescriptor> AuthoringPolicySuppressionSummaries { get; }
 
     /// <summary>
     /// Gets the ordered candidate identifiers whose original projections allowed host governance to participate.

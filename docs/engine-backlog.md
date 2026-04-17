@@ -1,6 +1,6 @@
 # Cephalon Engine Backlog
 
-Backlog status in this document reflects the repository state as of `April 17, 2026`.
+Backlog status in this document reflects the repository state as of `April 18, 2026`.
 
 ## Completed foundation work
 
@@ -2285,6 +2285,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-058-T143 align behavior REST runtime guidance with stable wire names: `Cephalon.Behaviors.Http` now reuses the same canonical `get` / `post` / `put` / `patch` / `delete` and `route` / `query` / `header` / `body` vocabularies in runtime attribute-fallback and explicit binding-plan normalization errors, so direct `MapProfile<TBehavior>()` fallback, binding-plan normalization, and last-mile profile-method conversion all point developers/operators at the same stable wire-name contract already used by JSON serialization and source generation — **Shipped** · GitHub issue `#410` · targeted hosting/runtime tests 3/3
 - ENG-058-T144 finish behavior REST method-guidance parity: `Cephalon.Behaviors.Http` now also reuses the canonical `get` / `post` / `put` / `patch` / `delete` vocabulary in non-body method body-binding rejections and unsupported REST method parser failures, so source generation, JSON serialization, primary runtime fallback, body-capability validation, and method-parser guidance all point at one stable behavior-authored REST method contract — **Shipped** · GitHub issue `#411` · targeted hosting/runtime tests 3/3
 - ENG-058-T145 lock authoring-policy suppression wire names in runtime JSON: `/engine/rest-endpoint-candidates`, `/engine/rest-endpoint-candidates/{candidateId}`, and `snapshot.RestEndpointCandidates` now have targeted hosting/runtime coverage that locks `SuppressedByAuthoringPolicyKind` onto the canonical `disallowed-authoring-style`, `not-allowed-authoring-style`, and `preferred-authoring-style-selected` wire names, so operator-facing shorthand-governance payloads do not drift back to raw enum-member or numeric serialization behavior — **Shipped** · GitHub issue `#412` · targeted hosting/runtime tests 1/1
+- ENG-058-T146 surface authoring-policy suppression kinds in publication groups: `Cephalon.Abstractions` now exposes `RestEndpointPublicationGroupAuthoringPolicySuppressionDescriptor`, grouped publication answers now also carry `AuthoringPolicySuppressionSummaries` at both the behavior-group level and inside each `RestEndpointPublicationGroupAuthoringStyleDescriptor`, and `/engine/rest-endpoint-publication-groups`, `/engine/rest-endpoint-publication-groups/{behaviorId}`, plus `snapshot.RestEndpointPublicationGroups` now round-trip the canonical grouped `disallowed-authoring-style` and `not-allowed-authoring-style` suppression breakdown directly instead of forcing operators to re-join candidate payloads — **Shipped** · GitHub issue `#413` · targeted hosting/runtime tests 2/2 + package-surface tests 3/3
 
 ### Infrastructure — Phase 2 Developer Experience
 

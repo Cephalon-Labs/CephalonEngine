@@ -607,6 +607,12 @@ publication authoritative. Operator-facing candidate payloads now also keep
 `preferred-authoring-style-selected` wire names across `/engine/rest-endpoint-candidates`,
 `/engine/rest-endpoint-candidates/{candidateId}`, and `snapshot.RestEndpointCandidates`, so host
 governance troubleshooting does not depend on raw enum serialization details.
+That same grouped publication answer now also carries `AuthoringPolicySuppressionSummaries` at the
+behavior-group level and inside each `AuthoringStyleSummaries` entry, so module authors can see
+which shorthand candidates were filtered by a disallowed style, a not-allowed style, or a
+preferred-style winner directly from `/engine/rest-endpoint-publication-groups` and
+`snapshot.RestEndpointPublicationGroups` without reconstructing the breakdown from candidate-level
+payloads.
 
 When a host wants to keep shorthand publication but retarget selected shorthand endpoints to a
 different effective API major version, HTTP method, bounded published route-group prefix,

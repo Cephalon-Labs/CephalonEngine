@@ -275,6 +275,15 @@ Status update:
   canonical `disallowed-authoring-style`, `not-allowed-authoring-style`, and
   `preferred-authoring-style-selected` wire names instead of leaving operator JSON truth implicit
   in enum serialization behavior alone
+- the next publication-group authoring-policy suppression-breakdown follow-through is now shipped
+  through `ENG-058-T146`: grouped publication answers now also expose typed
+  `AuthoringPolicySuppressionSummaries` at both the behavior-group level and inside each
+  `AuthoringStyleSummaries` entry, so `/engine/rest-endpoint-publication-groups`,
+  `/engine/rest-endpoint-publication-groups/{behaviorId}`, and
+  `snapshot.RestEndpointPublicationGroups` can distinguish
+  `disallowed-authoring-style`, `not-allowed-authoring-style`, and
+  `preferred-authoring-style-selected` suppression outcomes without forcing operators to re-join
+  the candidate catalog manually
 - the next low-code inline module-owned authoring follow-through is now shipped through
   `ENG-058-T81`: `Cephalon.Behaviors.Http` now exposes
   `RestBehaviorEngineBuilderExtensions.AddRestBehaviorModule<TMarker>()`, which lets a host
@@ -1159,6 +1168,12 @@ The following points are durable enough to keep outside thread-local context.
   `RestApi:AuthoringPolicies:{behaviorId}` configuration and see preferred/allowed/disallowed
   authoring-style policy plus authoring-policy-suppressed candidate outcomes without inferring
   either answer from roadmap text alone
+- those grouped publication entries now also expose typed
+  `AuthoringPolicySuppressionSummaries` at both the grouped behavior level and inside each
+  `AuthoringStyleSummaries` entry, so operators can read the per-kind
+  `disallowed-authoring-style`, `not-allowed-authoring-style`, and
+  `preferred-authoring-style-selected` suppression breakdown directly from publication-group and
+  snapshot payloads instead of reconstructing that answer candidate by candidate
 - those candidate entries now keep the original shorthand source shape visible through
   `RestEndpointCandidateRuntimeDescriptor.OriginalProjection` while `ProjectedEndpoint` continues
   to answer the final effective mapped route, version, method, binding, endpoint-name, summary,

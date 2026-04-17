@@ -5000,6 +5000,135 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonExposesPublicationGroupAuthoringPolicySuppressionSummaries()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "12";
+        builder.Configuration["OpenApi:DefaultVersion"] = "12";
+        builder.Configuration["RestApi:AuthoringPolicies:tests.rest.generated.threeway.lookup:AllowedAuthoringStyles:0"] =
+            RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle;
+        builder.Configuration["RestApi:AuthoringPolicies:tests.rest.generated.threeway.lookup:DisallowedAuthoringStyles:0"] =
+            RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle;
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new GeneratedThreeWaySuppressionRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var groups = await client.GetFromJsonAsync<RestEndpointPublicationGroupDescriptor[]>("/engine/rest-endpoint-publication-groups");
+        var groupByBehavior = await client.GetFromJsonAsync<RestEndpointPublicationGroupDescriptor>(
+            "/engine/rest-endpoint-publication-groups/tests.rest.generated.threeway.lookup");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+        var groupsJson = await client.GetStringAsync("/engine/rest-endpoint-publication-groups");
+        var groupByBehaviorJson = await client.GetStringAsync(
+            "/engine/rest-endpoint-publication-groups/tests.rest.generated.threeway.lookup");
+        var snapshotJson = await client.GetStringAsync("/engine/snapshot");
+
+        Assert.NotNull(candidates);
+        Assert.NotNull(groups);
+        Assert.NotNull(groupByBehavior);
+        Assert.NotNull(snapshot);
+
+        var behaviorCandidates = candidates
+            .Where(static candidate => string.Equals(candidate.ProjectedEndpoint.BehaviorId, "tests.rest.generated.threeway.lookup", StringComparison.Ordinal))
+            .ToArray();
+        Assert.Equal(3, behaviorCandidates.Length);
+
+        var published = Assert.Single(behaviorCandidates, static candidate => candidate.Status == RestEndpointCandidateStatus.Published);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle, published.AuthoringStyle);
+
+        var generatedSuppressed = Assert.Single(behaviorCandidates, static candidate =>
+            candidate.Status == RestEndpointCandidateStatus.Suppressed &&
+            string.Equals(candidate.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal(
+            RestEndpointAuthoringPolicySuppressionKind.DisallowedAuthoringStyle,
+            generatedSuppressed.SuppressedByAuthoringPolicyKind);
+
+        var profileSuppressed = Assert.Single(behaviorCandidates, static candidate =>
+            candidate.Status == RestEndpointCandidateStatus.Suppressed &&
+            string.Equals(candidate.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal(
+            RestEndpointAuthoringPolicySuppressionKind.NotAllowedAuthoringStyle,
+            profileSuppressed.SuppressedByAuthoringPolicyKind);
+
+        var group = Assert.Single(groups, static item =>
+            string.Equals(item.BehaviorId, "tests.rest.generated.threeway.lookup", StringComparison.Ordinal));
+        Assert.True(group.AuthoringPolicy.IsConfigured);
+        Assert.Single(group.PublishedCandidateIds);
+        Assert.Equal(published.Id, group.PublishedCandidateIds[0]);
+        Assert.Empty(group.PrecedenceSuppressedCandidateIds);
+        Assert.Empty(group.GovernanceSuppressedCandidateIds);
+        Assert.Equal(2, group.AuthoringPolicySuppressedCandidateIds.Count);
+        Assert.Contains(generatedSuppressed.Id, group.AuthoringPolicySuppressedCandidateIds, StringComparer.Ordinal);
+        Assert.Contains(profileSuppressed.Id, group.AuthoringPolicySuppressedCandidateIds, StringComparer.Ordinal);
+
+        var disallowedSummary = Assert.Single(group.AuthoringPolicySuppressionSummaries, static item =>
+            item.Kind == RestEndpointAuthoringPolicySuppressionKind.DisallowedAuthoringStyle);
+        Assert.Equal([generatedSuppressed.Id], disallowedSummary.CandidateIds);
+        var notAllowedSummary = Assert.Single(group.AuthoringPolicySuppressionSummaries, static item =>
+            item.Kind == RestEndpointAuthoringPolicySuppressionKind.NotAllowedAuthoringStyle);
+        Assert.Equal([profileSuppressed.Id], notAllowedSummary.CandidateIds);
+
+        var explicitStyle = Assert.Single(group.AuthoringStyleSummaries, static item =>
+            string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal([published.Id], explicitStyle.PublishedCandidateIds);
+        Assert.Empty(explicitStyle.AuthoringPolicySuppressedCandidateIds);
+        Assert.Empty(explicitStyle.AuthoringPolicySuppressionSummaries);
+
+        var generatedStyle = Assert.Single(group.AuthoringStyleSummaries, static item =>
+            string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal([generatedSuppressed.Id], generatedStyle.AuthoringPolicySuppressedCandidateIds);
+        Assert.Empty(generatedStyle.PublishedCandidateIds);
+        var generatedStyleSuppression = Assert.Single(generatedStyle.AuthoringPolicySuppressionSummaries);
+        Assert.Equal(RestEndpointAuthoringPolicySuppressionKind.DisallowedAuthoringStyle, generatedStyleSuppression.Kind);
+        Assert.Equal([generatedSuppressed.Id], generatedStyleSuppression.CandidateIds);
+
+        var profileStyle = Assert.Single(group.AuthoringStyleSummaries, static item =>
+            string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal([profileSuppressed.Id], profileStyle.AuthoringPolicySuppressedCandidateIds);
+        Assert.Empty(profileStyle.PublishedCandidateIds);
+        var profileStyleSuppression = Assert.Single(profileStyle.AuthoringPolicySuppressionSummaries);
+        Assert.Equal(RestEndpointAuthoringPolicySuppressionKind.NotAllowedAuthoringStyle, profileStyleSuppression.Kind);
+        Assert.Equal([profileSuppressed.Id], profileStyleSuppression.CandidateIds);
+
+        Assert.Equal(group.AuthoringPolicySuppressedCandidateIds, groupByBehavior.AuthoringPolicySuppressedCandidateIds);
+        Assert.Equal(group.AuthoringPolicySuppressionSummaries.Count, groupByBehavior.AuthoringPolicySuppressionSummaries.Count);
+        Assert.Contains(groupByBehavior.AuthoringPolicySuppressionSummaries, static item =>
+            item.Kind == RestEndpointAuthoringPolicySuppressionKind.DisallowedAuthoringStyle);
+        Assert.Contains(groupByBehavior.AuthoringPolicySuppressionSummaries, static item =>
+            item.Kind == RestEndpointAuthoringPolicySuppressionKind.NotAllowedAuthoringStyle);
+
+        var snapshotGroup = Assert.Single(snapshot.RestEndpointPublicationGroups, static item =>
+            string.Equals(item.BehaviorId, "tests.rest.generated.threeway.lookup", StringComparison.Ordinal));
+        Assert.Equal(group.AuthoringPolicySuppressionSummaries.Count, snapshotGroup.AuthoringPolicySuppressionSummaries.Count);
+        Assert.Contains(snapshotGroup.AuthoringPolicySuppressionSummaries, static item =>
+            item.Kind == RestEndpointAuthoringPolicySuppressionKind.DisallowedAuthoringStyle);
+        Assert.Contains(snapshotGroup.AuthoringPolicySuppressionSummaries, static item =>
+            item.Kind == RestEndpointAuthoringPolicySuppressionKind.NotAllowedAuthoringStyle);
+
+        Assert.Contains("\"kind\":\"disallowed-authoring-style\"", groupsJson, StringComparison.Ordinal);
+        Assert.Contains("\"kind\":\"not-allowed-authoring-style\"", groupsJson, StringComparison.Ordinal);
+        Assert.Contains("\"kind\":\"disallowed-authoring-style\"", groupByBehaviorJson, StringComparison.Ordinal);
+        Assert.Contains("\"kind\":\"not-allowed-authoring-style\"", groupByBehaviorJson, StringComparison.Ordinal);
+        Assert.Contains("\"kind\":\"disallowed-authoring-style\"", snapshotJson, StringComparison.Ordinal);
+        Assert.Contains("\"kind\":\"not-allowed-authoring-style\"", snapshotJson, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task MapCephalonSerializesAuthoringPolicySuppressionKindsUsingCanonicalWireNames()
     {
         var builder = WebApplication.CreateBuilder();

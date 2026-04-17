@@ -684,6 +684,12 @@ operator-facing candidate payloads now also keep `SuppressedByAuthoringPolicyKin
 `disallowed-authoring-style`, `not-allowed-authoring-style`, and
 `preferred-authoring-style-selected` wire names across `/engine/rest-endpoint-candidates`,
 candidate-by-id payloads, and `snapshot.RestEndpointCandidates`.
+Grouped publication answers now also keep that same policy truth summarized by suppression kind
+through `AuthoringPolicySuppressionSummaries` at both the behavior-group level and inside each
+`AuthoringStyleSummaries` entry, so `/engine/rest-endpoint-publication-groups` plus
+`snapshot.RestEndpointPublicationGroups` can show whether a shorthand candidate was filtered by a
+disallowed style, a not-allowed style, or a preferred-style winner without re-reading each
+candidate payload individually.
 
 The host now also publishes the configured shorthand-suppression rules themselves through:
 
