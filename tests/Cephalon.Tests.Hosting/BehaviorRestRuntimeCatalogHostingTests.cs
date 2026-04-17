@@ -5138,13 +5138,14 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         var convention = Assert.Single(diagnostics.Conventions, static item =>
             string.Equals(item.Source, "Cephalon.Behaviors.Http", StringComparison.Ordinal));
         Assert.Equal(5200, convention.MinimumEventId);
-        Assert.Equal(5205, convention.MaximumEventId);
+        Assert.Equal(5206, convention.MaximumEventId);
         Assert.Contains(convention.Events, static item => item.Id == 5200 && item.Name == "RestEndpointGovernanceSuppressed");
         Assert.Contains(convention.Events, static item => item.Id == 5201 && item.Name == "RestEndpointPrecedenceSuppressed");
         Assert.Contains(convention.Events, static item => item.Id == 5202 && item.Name == "RestEndpointOverrideApplied");
         Assert.Contains(convention.Events, static item => item.Id == 5203 && item.Name == "RestEndpointOverrideNoOp");
         Assert.Contains(convention.Events, static item => item.Id == 5204 && item.Name == "RestEndpointBindingFallbackPreserved");
         Assert.Contains(convention.Events, static item => item.Id == 5205 && item.Name == "RestEndpointAuthoringPolicySuppressed");
+        Assert.Contains(convention.Events, static item => item.Id == 5206 && item.Name == "RestEndpointGovernanceSkipped");
 
         Assert.Contains(loggerProvider.Entries, entry =>
             entry.EventId.Id == 5200 &&
@@ -5189,6 +5190,50 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             entry.EventId.Id == 5205 &&
             entry.Message.Contains("tests.rest.generated.threeway.lookup", StringComparison.Ordinal) &&
             entry.Message.Contains("preferred-authoring-style-selected", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task MapCephalonLogsSkippedExplicitGovernanceOutcomes()
+    {
+        var loggerProvider = new TestLoggerProvider();
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Logging.ClearProviders();
+        builder.Logging.AddProvider(loggerProvider);
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "9";
+        builder.Configuration["OpenApi:DefaultVersion"] = "9";
+        builder.Configuration["RestApi:Suppressions:skip-disabled-explicit:Behaviors:0"] = "tests.dsl.runtimeoverride.disabled.lookup";
+        builder.Configuration["RestApi:Suppressions:skip-disabled-explicit:AuthoringStyles:0"] = RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle;
+        builder.Configuration["RestApi:Overrides:rewrite-disabled-explicit:Behaviors:0"] = "tests.dsl.runtimeoverride.disabled.lookup";
+        builder.Configuration["RestApi:Overrides:rewrite-disabled-explicit:AuthoringStyles:0"] = RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle;
+        builder.Configuration["RestApi:Overrides:rewrite-disabled-explicit:Pattern"] = "/governed/{orderId}";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ExplicitDslHostGovernanceDisabledRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 5206 &&
+            entry.Message.Contains("tests.dsl.runtimeoverride.disabled.lookup", StringComparison.Ordinal) &&
+            entry.Message.Contains(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle, StringComparison.Ordinal) &&
+            entry.Message.Contains("did not allow host governance", StringComparison.Ordinal) &&
+            entry.Message.Contains("skip-disabled-explicit", StringComparison.Ordinal) &&
+            entry.Message.Contains("rewrite-disabled-explicit", StringComparison.Ordinal));
+        Assert.DoesNotContain(loggerProvider.Entries, entry =>
+            (entry.EventId.Id == 5200 || entry.EventId.Id == 5202 || entry.EventId.Id == 5203) &&
+            entry.Message.Contains("tests.dsl.runtimeoverride.disabled.lookup", StringComparison.Ordinal));
     }
 
     [Fact]

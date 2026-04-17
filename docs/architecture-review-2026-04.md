@@ -189,7 +189,11 @@ follow-through is now addressed through `ENG-058-T116`: `Cephalon.Abstractions` 
 wire-name helpers for `RestEndpointBindingFallbackMode`, ASP.NET Core compatibility metadata now
 derives `bindingFallbackMode` values from that one public source of truth, and the public XML/docs
 wording now describes both preserved implicit-query and remaining-body fallback semantics instead
-of the earlier narrower phrasing. The next authoring-safety follow-through is now addressed
+of the earlier narrower phrasing. That diagnostics family has since also been extended through
+`ENG-058-T124` and `ENG-058-T131`, so startup logging now distinguishes authoring-policy
+suppression (`5205`) and governance-skipped explicit module-DSL ownership (`5206`) instead of
+leaving those operator answers folded into generic suppression or silence. The next
+authoring-safety follow-through is now addressed
 through `ENG-058-T117`: malformed `BehaviorRestProfileAttribute.RelativePattern` placeholder syntax
 now fails at build time through `ABT0026`, while `BehaviorRestProfileResolver` also parses the
 route pattern during runtime normalization even when no explicit binding plan is present so

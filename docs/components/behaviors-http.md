@@ -47,7 +47,8 @@ module-owned REST endpoints.
 - **REST governance diagnostics** — stable `/engine/diagnostics` convention plus information-level
   startup log events for shorthand governance suppression, authoring-policy suppression,
   precedence suppression, applied override, no-op override, and preserved binding-fallback
-  outcomes
+  outcomes, plus skipped explicit-governance visibility when host rules target an authored
+  module-owned route that stayed authoritative
 - **Optional REST response envelope** — `ApiRoutes:ResultEnvelope:Enabled` projects REST success
   and error responses through `ResultModel<T>` / `ResultModelError` with an `errors` collection
   while leaving GraphQL,
@@ -235,7 +236,7 @@ Current profile behavior:
 ## REST governance diagnostics
 
 When `Cephalon.Behaviors.Http` is active, `/engine/diagnostics` now also publishes source
-`Cephalon.Behaviors.Http` with stable event ids `5200-5205`:
+`Cephalon.Behaviors.Http` with stable event ids `5200-5206`:
 
 - `5200` — a shorthand candidate was suppressed by a configured governance rule
 - `5201` — a shorthand candidate lost publication because a higher-precedence authoring style won
@@ -247,11 +248,14 @@ When `Cephalon.Behaviors.Http` is active, `/engine/diagnostics` now also publish
 - `5205` — a shorthand candidate was suppressed by authoring policy, including
   `disallowed-authoring-style`, `not-allowed-authoring-style`, and
   `preferred-authoring-style-selected`
+- `5206` — an explicit module-DSL candidate skipped targeted host suppression and/or override
+  rules because its original projection did not allow host governance
 
 Those events are emitted during startup/materialization when information-level logging is enabled.
 For full hosted `MapCephalon()` paths, published-candidate logging reconciles against the actual
 post-materialization endpoint answer first, so metadata-only or reorder-only no-op overrides keep
-`MatchedOverrideIds` visible without falsely logging an applied override.
+`MatchedOverrideIds` visible without falsely logging an applied override, and governance-ineligible
+explicit routes now log the skipped host-rule ids instead of silently looking like selector misses.
 
 ## Registration
 

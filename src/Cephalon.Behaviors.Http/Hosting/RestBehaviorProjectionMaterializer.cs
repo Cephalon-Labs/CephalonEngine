@@ -256,6 +256,18 @@ internal static class RestBehaviorProjectionMaterializer
         foreach (var candidate in candidates)
         {
             var behaviorId = candidate.ProjectedEndpoint.BehaviorId ?? "(unknown)";
+            if (candidate.SkippedSuppressionIds.Count > 0 ||
+                candidate.SkippedOverrideIds.Count > 0)
+            {
+                RestBehaviorGovernanceLoggerMessages.LogGovernanceSkipped(
+                    logger,
+                    candidate.Id,
+                    behaviorId,
+                    candidate.AuthoringStyle,
+                    JoinIdentifiers(candidate.SkippedSuppressionIds),
+                    JoinIdentifiers(candidate.SkippedOverrideIds));
+            }
+
             if (!string.IsNullOrWhiteSpace(candidate.SuppressedBySuppressionId))
             {
                 RestBehaviorGovernanceLoggerMessages.LogGovernanceSuppressed(

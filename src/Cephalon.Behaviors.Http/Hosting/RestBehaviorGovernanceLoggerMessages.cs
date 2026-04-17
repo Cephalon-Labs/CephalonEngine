@@ -52,6 +52,14 @@ internal static class RestBehaviorGovernanceLoggerMessages
                 RestBehaviorGovernanceDiagnosticsConventions.AuthoringPolicySuppressedName),
             RestBehaviorGovernanceDiagnosticsConventions.AuthoringPolicySuppressedMessageTemplate);
 
+    private static readonly Action<ILogger, string, string, string, string, string, Exception?> GovernanceSkipped =
+        LoggerMessage.Define<string, string, string, string, string>(
+            LogLevel.Information,
+            new EventId(
+                RestBehaviorGovernanceDiagnosticsConventions.GovernanceSkippedId,
+                RestBehaviorGovernanceDiagnosticsConventions.GovernanceSkippedName),
+            RestBehaviorGovernanceDiagnosticsConventions.GovernanceSkippedMessageTemplate);
+
     public static void LogGovernanceSuppressed(
         ILogger logger,
         string candidateId,
@@ -119,6 +127,24 @@ internal static class RestBehaviorGovernanceLoggerMessages
             authoringStyle,
             suppressionKind,
             suppressionReason,
+            null);
+    }
+
+    public static void LogGovernanceSkipped(
+        ILogger logger,
+        string candidateId,
+        string behaviorId,
+        string authoringStyle,
+        string skippedSuppressionIds,
+        string skippedOverrideIds)
+    {
+        GovernanceSkipped(
+            logger,
+            candidateId,
+            behaviorId,
+            authoringStyle,
+            skippedSuppressionIds,
+            skippedOverrideIds,
             null);
     }
 }
