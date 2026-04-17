@@ -267,6 +267,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateRuntimeDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateStatus),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideDescriptor),
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupAuthoringStyleDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointSuppressionDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor),
@@ -1077,6 +1078,32 @@ public sealed class PackageSurfaceTests
     {
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateProjectionDescriptor)
             .GetProperty("TagName", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void RestEndpointPublicationGroupContractsExposeAuthoringStyleSummaries()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupDescriptor)
+            .GetProperty("AuthoringStyleSummaries", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void RestEndpointPublicationGroupAuthoringStyleContractsExposeOutcomeBuckets()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupAuthoringStyleDescriptor)
+            .GetProperty("AuthoringStyle", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupAuthoringStyleDescriptor)
+            .GetProperty("SourceModuleIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupAuthoringStyleDescriptor)
+            .GetProperty("PrecedenceRanks", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupAuthoringStyleDescriptor)
+            .GetProperty("CandidateIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupAuthoringStyleDescriptor)
+            .GetProperty("PublishedCandidateIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupAuthoringStyleDescriptor)
+            .GetProperty("PrecedenceSuppressedCandidateIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupAuthoringStyleDescriptor)
+            .GetProperty("GovernanceSuppressedCandidateIds", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

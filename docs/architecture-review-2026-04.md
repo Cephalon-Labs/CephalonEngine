@@ -211,11 +211,15 @@ suppression and override rules can now target the original shorthand explicit bi
 directly through `TargetBindings`, so route-only and richer explicitly bound candidates can be
 governed separately without depending on later rewritten published route shape.
 
-The remaining gap is no longer raw operator visibility, original binding/fallback selector
-targeting, or this immediate authoring-parity hole; it is broader shorthand-source competition and
-future authoring rules if shorthand or generated routes
-eventually broaden enough that more than one projection style can compete for the same public
-behavior boundary in ways the current runtime surfaces do not already explain clearly.
+That broader shorthand-source competition visibility gap is now addressed through `ENG-058-T121`:
+publication-group runtime answers now also summarize the grouped candidate truth by authoring
+style, so operators can see which styles participated, published, or were precedence-suppressed or
+governance-suppressed without re-reading the entire candidate set.
+
+The remaining gap is now future authoring rules and governance-model follow-through if shorthand
+or generated routes eventually broaden enough that more than one projection style can compete for
+the same public behavior boundary in ways that still need stronger ownership or configuration
+contracts rather than additional visibility alone.
 
 ## Architecture recommendations
 

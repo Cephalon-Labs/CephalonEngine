@@ -587,6 +587,11 @@ candidates:
 - `GET /engine/rest-endpoint-publication-groups/{behaviorId}`
 - `RuntimeIntrospectionSnapshot.RestEndpointPublicationGroups`
 
+Each grouped publication answer now also carries `AuthoringStyleSummaries`, which summarizes per
+normalized authoring style the participating candidate ids, precedence ranks, published
+candidates, and precedence-versus-governance suppression buckets derived from the same grouped
+candidate truth.
+
 The host now also publishes the configured shorthand-suppression rules themselves through:
 
 - `IRestEndpointSuppressionRuntimeCatalog`

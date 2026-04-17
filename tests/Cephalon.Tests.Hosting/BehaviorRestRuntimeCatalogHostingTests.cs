@@ -4287,13 +4287,41 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(2, group.PrecedenceSuppressedCandidateIds.Count);
         Assert.Empty(group.GovernanceSuppressedCandidateIds);
         Assert.Equal(3, group.Candidates.Count);
+        Assert.Equal(3, group.AuthoringStyleSummaries.Count);
+        var explicitStyle = Assert.Single(group.AuthoringStyleSummaries, static item =>
+            string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal([published.Id], explicitStyle.CandidateIds);
+        Assert.Equal([published.Id], explicitStyle.PublishedCandidateIds);
+        Assert.Equal([RestEndpointRuntimeMetadata.BehaviorModuleDslPrecedenceRank], explicitStyle.PrecedenceRanks);
+        Assert.Empty(explicitStyle.PrecedenceSuppressedCandidateIds);
+        Assert.Empty(explicitStyle.GovernanceSuppressedCandidateIds);
+        var profileSuppressed = Assert.Single(suppressed, static candidate =>
+            string.Equals(candidate.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, StringComparison.Ordinal));
+        var profileStyle = Assert.Single(group.AuthoringStyleSummaries, static item =>
+            string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal([profileSuppressed.Id], profileStyle.CandidateIds);
+        Assert.Equal([profileSuppressed.Id], profileStyle.PrecedenceSuppressedCandidateIds);
+        Assert.Equal([RestEndpointRuntimeMetadata.BehaviorModuleProfilePrecedenceRank], profileStyle.PrecedenceRanks);
+        Assert.Empty(profileStyle.PublishedCandidateIds);
+        Assert.Empty(profileStyle.GovernanceSuppressedCandidateIds);
+        var generatedSuppressed = Assert.Single(suppressed, static candidate =>
+            string.Equals(candidate.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, StringComparison.Ordinal));
+        var generatedStyle = Assert.Single(group.AuthoringStyleSummaries, static item =>
+            string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal([generatedSuppressed.Id], generatedStyle.CandidateIds);
+        Assert.Equal([generatedSuppressed.Id], generatedStyle.PrecedenceSuppressedCandidateIds);
+        Assert.Equal([RestEndpointRuntimeMetadata.BehaviorModuleGeneratedPrecedenceRank], generatedStyle.PrecedenceRanks);
+        Assert.Empty(generatedStyle.PublishedCandidateIds);
+        Assert.Empty(generatedStyle.GovernanceSuppressedCandidateIds);
         Assert.Equal(group.BehaviorId, groupByBehavior.BehaviorId);
         Assert.Equal(group.PublishedCandidateIds, groupByBehavior.PublishedCandidateIds);
         Assert.Equal(group.PrecedenceSuppressedCandidateIds, groupByBehavior.PrecedenceSuppressedCandidateIds);
+        Assert.Equal(group.AuthoringStyleSummaries.Count, groupByBehavior.AuthoringStyleSummaries.Count);
         Assert.Contains(suppressed, candidate =>
             group.PrecedenceSuppressedCandidateIds.Contains(candidate.Id, StringComparer.Ordinal));
         Assert.Contains(snapshot.RestEndpointPublicationGroups, item =>
             string.Equals(item.BehaviorId, group.BehaviorId, StringComparison.Ordinal) &&
+            item.AuthoringStyleSummaries.Count == 3 &&
             item.PublishedCandidateIds.Count == 1 &&
             string.Equals(item.PublishedCandidateIds[0], published.Id, StringComparison.Ordinal));
     }
@@ -4350,8 +4378,24 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Single(group.GovernanceSuppressedCandidateIds);
         Assert.Equal(governanceSuppressed.Id, group.GovernanceSuppressedCandidateIds[0]);
         Assert.Equal(2, group.Candidates.Count);
+        Assert.Equal(2, group.AuthoringStyleSummaries.Count);
+        var profileStyle = Assert.Single(group.AuthoringStyleSummaries, static item =>
+            string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal([governanceSuppressed.Id], profileStyle.CandidateIds);
+        Assert.Equal([governanceSuppressed.Id], profileStyle.GovernanceSuppressedCandidateIds);
+        Assert.Equal([RestEndpointRuntimeMetadata.BehaviorModuleProfilePrecedenceRank], profileStyle.PrecedenceRanks);
+        Assert.Empty(profileStyle.PublishedCandidateIds);
+        Assert.Empty(profileStyle.PrecedenceSuppressedCandidateIds);
+        var generatedStyle = Assert.Single(group.AuthoringStyleSummaries, static item =>
+            string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal([published.Id], generatedStyle.CandidateIds);
+        Assert.Equal([published.Id], generatedStyle.PublishedCandidateIds);
+        Assert.Equal([RestEndpointRuntimeMetadata.BehaviorModuleGeneratedPrecedenceRank], generatedStyle.PrecedenceRanks);
+        Assert.Empty(generatedStyle.PrecedenceSuppressedCandidateIds);
+        Assert.Empty(generatedStyle.GovernanceSuppressedCandidateIds);
         Assert.Contains(snapshot.RestEndpointPublicationGroups, item =>
             string.Equals(item.BehaviorId, group.BehaviorId, StringComparison.Ordinal) &&
+            item.AuthoringStyleSummaries.Count == 2 &&
             item.GovernanceSuppressedCandidateIds.Count == 1 &&
             string.Equals(item.GovernanceSuppressedCandidateIds[0], governanceSuppressed.Id, StringComparison.Ordinal));
     }
@@ -4457,11 +4501,24 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Empty(group.PrecedenceSuppressedCandidateIds);
         Assert.Empty(group.GovernanceSuppressedCandidateIds);
         Assert.Equal(2, group.Candidates.Count);
+        var authoringStyle = Assert.Single(group.AuthoringStyleSummaries);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, authoringStyle.AuthoringStyle);
+        Assert.Equal([RestEndpointRuntimeMetadata.BehaviorModuleProfilePrecedenceRank], authoringStyle.PrecedenceRanks);
+        Assert.Equal(2, authoringStyle.CandidateIds.Count);
+        Assert.Equal(2, authoringStyle.PublishedCandidateIds.Count);
+        Assert.Empty(authoringStyle.PrecedenceSuppressedCandidateIds);
+        Assert.Empty(authoringStyle.GovernanceSuppressedCandidateIds);
         Assert.All(
             behaviorCandidates,
-            candidate => Assert.Contains(candidate.Id, group.PublishedCandidateIds, StringComparer.Ordinal));
+            candidate =>
+            {
+                Assert.Contains(candidate.Id, group.PublishedCandidateIds, StringComparer.Ordinal);
+                Assert.Contains(candidate.Id, authoringStyle.CandidateIds, StringComparer.Ordinal);
+                Assert.Contains(candidate.Id, authoringStyle.PublishedCandidateIds, StringComparer.Ordinal);
+            });
         Assert.Contains(snapshot.RestEndpointPublicationGroups, item =>
             string.Equals(item.BehaviorId, group.BehaviorId, StringComparison.Ordinal) &&
+            item.AuthoringStyleSummaries.Count == 1 &&
             item.PublishedCandidateIds.Count == 2);
     }
 

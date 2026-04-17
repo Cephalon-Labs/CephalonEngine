@@ -103,6 +103,7 @@ public sealed class RestEndpointPublicationGroupDescriptor
         PrecedenceSuppressedCandidateIds = normalizedPrecedenceSuppressedCandidateIds;
         GovernanceSuppressedCandidateIds = normalizedGovernanceSuppressedCandidateIds;
         Candidates = normalizedCandidates;
+        AuthoringStyleSummaries = BuildAuthoringStyleSummaries(normalizedCandidates);
     }
 
     /// <summary>
@@ -140,6 +141,11 @@ public sealed class RestEndpointPublicationGroupDescriptor
     /// </summary>
     public IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> Candidates { get; }
 
+    /// <summary>
+    /// Gets the grouped publication outcome summarized by authoring style for this behavior.
+    /// </summary>
+    public IReadOnlyList<RestEndpointPublicationGroupAuthoringStyleDescriptor> AuthoringStyleSummaries { get; }
+
     private static string[] NormalizeList(IReadOnlyList<string>? values)
     {
         return values?
@@ -156,5 +162,59 @@ public sealed class RestEndpointPublicationGroupDescriptor
         return candidates?
             .Where(static candidate => candidate is not null)
             .ToArray() ?? [];
+    }
+
+    private static RestEndpointPublicationGroupAuthoringStyleDescriptor[] BuildAuthoringStyleSummaries(
+        IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> candidates)
+    {
+        ArgumentNullException.ThrowIfNull(candidates);
+
+        return candidates
+            .GroupBy(static candidate => candidate.AuthoringStyle, StringComparer.OrdinalIgnoreCase)
+            .Select(static group =>
+            {
+                var orderedCandidates = group.ToArray();
+                var sourceModuleIds = orderedCandidates
+                    .Select(static candidate => candidate.ProjectedEndpoint.SourceModuleId)
+                    .Where(static sourceModuleId => !string.IsNullOrWhiteSpace(sourceModuleId))
+                    .Select(static sourceModuleId => sourceModuleId!.Trim())
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .OrderBy(static sourceModuleId => sourceModuleId, StringComparer.OrdinalIgnoreCase)
+                    .ToArray();
+                var precedenceRanks = orderedCandidates
+                    .Select(static candidate => candidate.PrecedenceRank)
+                    .Distinct()
+                    .OrderBy(static rank => rank)
+                    .ToArray();
+                var candidateIds = orderedCandidates
+                    .Select(static candidate => candidate.Id)
+                    .ToArray();
+                var publishedCandidateIds = orderedCandidates
+                    .Where(static candidate => candidate.Status == RestEndpointCandidateStatus.Published)
+                    .Select(static candidate => candidate.Id)
+                    .ToArray();
+                var precedenceSuppressedCandidateIds = orderedCandidates
+                    .Where(static candidate =>
+                        candidate.Status == RestEndpointCandidateStatus.Suppressed &&
+                        !string.IsNullOrWhiteSpace(candidate.SuppressedByCandidateId))
+                    .Select(static candidate => candidate.Id)
+                    .ToArray();
+                var governanceSuppressedCandidateIds = orderedCandidates
+                    .Where(static candidate =>
+                        candidate.Status == RestEndpointCandidateStatus.Suppressed &&
+                        !string.IsNullOrWhiteSpace(candidate.SuppressedBySuppressionId))
+                    .Select(static candidate => candidate.Id)
+                    .ToArray();
+
+                return new RestEndpointPublicationGroupAuthoringStyleDescriptor(
+                    group.Key,
+                    sourceModuleIds,
+                    precedenceRanks,
+                    candidateIds,
+                    publishedCandidateIds,
+                    precedenceSuppressedCandidateIds,
+                    governanceSuppressedCandidateIds);
+            })
+            .ToArray();
     }
 }

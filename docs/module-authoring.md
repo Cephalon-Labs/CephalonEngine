@@ -521,7 +521,10 @@ Current helper behavior:
 - when the same behavior is mapped through both explicit module DSL and shorthand publication, the
   explicit DSL route now wins by default while the lower-precedence shorthand candidate remains
   visible through `/engine/rest-endpoint-candidates`, `snapshot.RestEndpointCandidates`,
-  `/engine/rest-endpoint-publication-groups`, and `snapshot.RestEndpointPublicationGroups`
+  `/engine/rest-endpoint-publication-groups`, and `snapshot.RestEndpointPublicationGroups`; those
+  grouped publication answers now also expose `AuthoringStyleSummaries` so module authors can see
+  which source style published and which lower-precedence styles remained visible only as
+  suppressed candidates
 - when the same behavior is mapped through both `MapProfile<TBehavior>()` and
   `MapGeneratedProfiles(...)`, the explicit per-behavior `MapProfile<TBehavior>()` route wins by
   default while the generated candidate remains visible through the same candidate and grouped
@@ -568,10 +571,12 @@ shape visible there through `OriginalProjection` while `ProjectedEndpoint` carri
 effective mapped answer, now also keeps original shorthand endpoint name plus summary/description
 visible on that effective mapped answer through `ProjectedEndpoint.OriginalEndpointName`,
 `ProjectedEndpoint.OriginalSummary`, and `ProjectedEndpoint.OriginalDescription`, keeps the grouped
-behavior-level publication story visible through `/engine/rest-endpoint-publication-groups`, now
-also keeps every matching override rule visible through `MatchedOverrideIds` in specificity order
-before one winner is selected, and intentionally leaves explicit module DSL/manual routes plus
-shorthand groups with explicit `.ApiVersion(...)` authoritative for version selection.
+behavior-level publication story visible through `/engine/rest-endpoint-publication-groups`,
+including the per-style `AuthoringStyleSummaries` summary derived from the same grouped candidate
+truth, now also keeps every matching override rule visible through `MatchedOverrideIds` in
+specificity order before one winner is selected, and intentionally leaves explicit module
+DSL/manual routes plus shorthand groups with explicit `.ApiVersion(...)` authoritative for version
+selection.
 If ASP.NET Core materialization proves that a matched shorthand override rule did not actually
 change the published endpoint metadata or capability answer, the runtime keeps
 `MatchedOverrideIds` visible but leaves `AppliedOverrideId = null` on both the published
