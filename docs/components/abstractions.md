@@ -64,6 +64,7 @@
 - `Transports/RestEndpointCandidateStatus.cs`
 - `Transports/RestEndpointPublicationGroupDescriptor.cs`
 - `Transports/RestEndpointAuthoringPolicyDescriptor.cs`
+- `Transports/RestEndpointAuthoringPolicyAuthoringStyleDescriptor.cs`
 - `Transports/RestEndpointAuthoringPolicySuppressionSummaryDescriptor.cs`
 - `Transports/IRestEndpointRuntimeCatalog.cs`
 - `Transports/RestEndpointRuntimeDescriptor.cs`
@@ -190,13 +191,15 @@ override rule ids, plus typed
 the ordered candidate set just to see which behavior boundary stayed outside host governance or
 which skipped host rule targeted which ineligible candidate ids. The same
 transport namespace now also owns `IRestEndpointAuthoringPolicyRuntimeCatalog`,
-`RestEndpointAuthoringPolicyDescriptor`, and
+`RestEndpointAuthoringPolicyDescriptor`,
+`RestEndpointAuthoringPolicyAuthoringStyleDescriptor`, and
 `RestEndpointAuthoringPolicySuppressionSummaryDescriptor`, so hosts can surface one behavior-level
 REST authoring-policy answer directly, including explicitly configured policies with no current
 candidates plus separate `CandidateIds`, `RetainedCandidateIds`, `PublishedCandidateIds`,
-`PrecedenceSuppressedCandidateIds`, `GovernanceSuppressedCandidateIds`, and grouped
-authoring-policy suppression summaries without reopening grouped publication answers first. The
-same
+`PrecedenceSuppressedCandidateIds`, `GovernanceSuppressedCandidateIds`,
+`SuppressedCandidateIds`, grouped authoring-policy suppression summaries, and per-style
+`AuthoringStyleSummaries` that partition those same runtime buckets by normalized authoring style
+without reopening grouped publication answers first. The same
 transport namespace now also exposes
 `RestEndpointPublicationGroupGovernanceSelectionBasisSummaryDescriptor` plus
 `RestEndpointPublicationGroupGovernanceOverrideActionKindSummaryDescriptor`, and grouped

@@ -669,7 +669,10 @@ That policy surface complements grouped publication answers by keeping explicitl
 matches one behavior boundary, while also separating `CandidateIds`, `RetainedCandidateIds`,
 `PublishedCandidateIds`, `PrecedenceSuppressedCandidateIds`,
 `GovernanceSuppressedCandidateIds`, and grouped `SuppressionSummaries` in one behavior-level
-runtime answer.
+runtime answer. That same rule-centric answer now also carries `AuthoringStyleSummaries`, so one
+payload can partition those candidate, retained, published, precedence-suppressed,
+governance-suppressed, and authoring-policy-suppressed outcomes by normalized authoring style while
+still leaving explicitly configured-but-unmatched policies visible with an empty style-summary set.
 
 Those same candidates now also drive the inverse per-rule runtime answer for host governance:
 `/engine/rest-endpoint-suppressions` now shows `MatchedCandidateIds`,

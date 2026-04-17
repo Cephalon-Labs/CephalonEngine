@@ -61,6 +61,11 @@ public sealed class RestEndpointAuthoringPolicyDescriptor
     /// <param name="suppressionSummaries">
     /// The grouped authoring-policy suppression outcomes summarized by suppression kind.
     /// </param>
+    /// <param name="authoringStyleSummaries">
+    /// The per-authoring-style runtime buckets that explain how this policy's candidate,
+    /// retained, published, precedence-suppressed, governance-suppressed, and
+    /// authoring-policy-suppressed outcomes distribute across authoring styles.
+    /// </param>
     public RestEndpointAuthoringPolicyDescriptor(
         string behaviorId,
         bool isConfigured = false,
@@ -75,7 +80,8 @@ public sealed class RestEndpointAuthoringPolicyDescriptor
         IReadOnlyList<string>? governanceSuppressedCandidateIds = null,
         IReadOnlyList<string>? suppressedCandidateIds = null,
         IReadOnlyList<RestEndpointAuthoringPolicySuppressionKind>? suppressionKinds = null,
-        IReadOnlyList<RestEndpointAuthoringPolicySuppressionSummaryDescriptor>? suppressionSummaries = null)
+        IReadOnlyList<RestEndpointAuthoringPolicySuppressionSummaryDescriptor>? suppressionSummaries = null,
+        IReadOnlyList<RestEndpointAuthoringPolicyAuthoringStyleDescriptor>? authoringStyleSummaries = null)
     {
         var normalizedPolicy = new RestEndpointPublicationGroupAuthoringPolicyDescriptor(
             behaviorId,
@@ -119,6 +125,9 @@ public sealed class RestEndpointAuthoringPolicyDescriptor
         var normalizedPrecedenceSuppressedCandidateIds = NormalizeOrderedList(precedenceSuppressedCandidateIds);
         var normalizedGovernanceSuppressedCandidateIds = NormalizeOrderedList(governanceSuppressedCandidateIds);
         var retainedCandidateIdSet = normalizedRetainedCandidateIds.ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var normalizedAuthoringStyleSummaries = NormalizeAuthoringStyleSummaries(
+            authoringStyleSummaries,
+            nameof(authoringStyleSummaries));
 
         if (normalizedSuppressionSummaries.Length > 0)
         {
@@ -185,8 +194,7 @@ public sealed class RestEndpointAuthoringPolicyDescriptor
                 nameof(retainedCandidateIds));
         }
 
-        if (!normalizedCandidateIds.ToHashSet(StringComparer.OrdinalIgnoreCase)
-                .SetEquals(normalizedRetainedCandidateIds.Concat(normalizedSuppressedCandidateIds)))
+        if (!candidateIdSet.SetEquals(normalizedRetainedCandidateIds.Concat(normalizedSuppressedCandidateIds)))
         {
             throw new ArgumentException(
                 "Candidate ids must equal the union of the retained and authoring-policy-suppressed candidate buckets.",
@@ -214,6 +222,86 @@ public sealed class RestEndpointAuthoringPolicyDescriptor
                 nameof(retainedCandidateIds));
         }
 
+        if (normalizedAuthoringStyleSummaries.Length > 0)
+        {
+            if (!candidateIdSet.SetEquals(
+                    normalizedAuthoringStyleSummaries.SelectMany(static summary => summary.CandidateIds)))
+            {
+                throw new ArgumentException(
+                    "Authoring-style summaries must describe the same candidate ids as the authoring-policy runtime answer.",
+                    nameof(authoringStyleSummaries));
+            }
+
+            if (!retainedCandidateIdSet.SetEquals(
+                    normalizedAuthoringStyleSummaries.SelectMany(static summary => summary.RetainedCandidateIds)))
+            {
+                throw new ArgumentException(
+                    "Authoring-style summaries must describe the same retained candidate ids as the authoring-policy runtime answer.",
+                    nameof(authoringStyleSummaries));
+            }
+
+            if (!normalizedPublishedCandidateIds.ToHashSet(StringComparer.OrdinalIgnoreCase).SetEquals(
+                    normalizedAuthoringStyleSummaries.SelectMany(static summary => summary.PublishedCandidateIds)))
+            {
+                throw new ArgumentException(
+                    "Authoring-style summaries must describe the same published candidate ids as the authoring-policy runtime answer.",
+                    nameof(authoringStyleSummaries));
+            }
+
+            if (!normalizedPrecedenceSuppressedCandidateIds.ToHashSet(StringComparer.OrdinalIgnoreCase).SetEquals(
+                    normalizedAuthoringStyleSummaries.SelectMany(static summary => summary.PrecedenceSuppressedCandidateIds)))
+            {
+                throw new ArgumentException(
+                    "Authoring-style summaries must describe the same precedence-suppressed candidate ids as the authoring-policy runtime answer.",
+                    nameof(authoringStyleSummaries));
+            }
+
+            if (!normalizedGovernanceSuppressedCandidateIds.ToHashSet(StringComparer.OrdinalIgnoreCase).SetEquals(
+                    normalizedAuthoringStyleSummaries.SelectMany(static summary => summary.GovernanceSuppressedCandidateIds)))
+            {
+                throw new ArgumentException(
+                    "Authoring-style summaries must describe the same governance-suppressed candidate ids as the authoring-policy runtime answer.",
+                    nameof(authoringStyleSummaries));
+            }
+
+            if (!normalizedSuppressedCandidateIds.ToHashSet(StringComparer.OrdinalIgnoreCase).SetEquals(
+                    normalizedAuthoringStyleSummaries.SelectMany(static summary => summary.SuppressedCandidateIds)))
+            {
+                throw new ArgumentException(
+                    "Authoring-style summaries must describe the same authoring-policy-suppressed candidate ids as the authoring-policy runtime answer.",
+                    nameof(authoringStyleSummaries));
+            }
+
+            if (normalizedSuppressionKinds.Length > 0)
+            {
+                var flattenedSuppressionKinds = normalizedAuthoringStyleSummaries
+                    .SelectMany(static summary => summary.SuppressionKinds)
+                    .Distinct()
+                    .OrderBy(static kind => kind.GetWireName(), StringComparer.Ordinal)
+                    .ToArray();
+                if (!normalizedSuppressionKinds.SequenceEqual(flattenedSuppressionKinds))
+                {
+                    throw new ArgumentException(
+                        "Authoring-style summaries must describe the same suppression kinds as the authoring-policy runtime answer.",
+                        nameof(authoringStyleSummaries));
+                }
+            }
+
+            if (normalizedSuppressionSummaries.Length > 0)
+            {
+                var mergedSuppressionSummaries = MergeAuthoringStyleSuppressionSummaries(
+                    normalizedAuthoringStyleSummaries);
+                if (!SuppressionSummariesMatch(
+                        normalizedSuppressionSummaries,
+                        mergedSuppressionSummaries))
+                {
+                    throw new ArgumentException(
+                        "Authoring-style summaries must describe the same grouped suppression outcomes as the authoring-policy runtime answer.",
+                        nameof(authoringStyleSummaries));
+                }
+            }
+        }
+
         BehaviorId = normalizedPolicy.BehaviorId;
         IsConfigured = normalizedPolicy.IsConfigured;
         AllowMultiplePublishedCandidates = normalizedPolicy.AllowMultiplePublishedCandidates;
@@ -228,6 +316,7 @@ public sealed class RestEndpointAuthoringPolicyDescriptor
         SuppressedCandidateIds = normalizedSuppressedCandidateIds;
         SuppressionKinds = normalizedSuppressionKinds;
         SuppressionSummaries = normalizedSuppressionSummaries;
+        AuthoringStyleSummaries = normalizedAuthoringStyleSummaries;
     }
 
     /// <summary>
@@ -301,6 +390,12 @@ public sealed class RestEndpointAuthoringPolicyDescriptor
     /// </summary>
     public IReadOnlyList<RestEndpointAuthoringPolicySuppressionSummaryDescriptor> SuppressionSummaries { get; }
 
+    /// <summary>
+    /// Gets the per-authoring-style runtime buckets that explain how this policy's outcomes
+    /// distribute across authoring styles.
+    /// </summary>
+    public IReadOnlyList<RestEndpointAuthoringPolicyAuthoringStyleDescriptor> AuthoringStyleSummaries { get; }
+
     private static string[] NormalizeOrderedList(IReadOnlyList<string>? values)
     {
         if (values is null || values.Count == 0)
@@ -349,5 +444,98 @@ public sealed class RestEndpointAuthoringPolicyDescriptor
         }
 
         return normalized;
+    }
+
+    private static RestEndpointAuthoringPolicyAuthoringStyleDescriptor[] NormalizeAuthoringStyleSummaries(
+        IReadOnlyList<RestEndpointAuthoringPolicyAuthoringStyleDescriptor>? values,
+        string parameterName)
+    {
+        if (values is null || values.Count == 0)
+        {
+            return [];
+        }
+
+        var result = new List<RestEndpointAuthoringPolicyAuthoringStyleDescriptor>(values.Count);
+        var seenAuthoringStyles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var value in values
+                     .Where(static value => value is not null)
+                     .OrderBy(static value => value.AuthoringStyle, StringComparer.OrdinalIgnoreCase))
+        {
+            if (!seenAuthoringStyles.Add(value.AuthoringStyle))
+            {
+                throw new ArgumentException(
+                    "An authoring-policy runtime answer can only declare one authoring-style summary per authoring style.",
+                    parameterName);
+            }
+
+            result.Add(new RestEndpointAuthoringPolicyAuthoringStyleDescriptor(
+                value.AuthoringStyle,
+                value.CandidateIds,
+                value.RetainedCandidateIds,
+                value.PublishedCandidateIds,
+                value.PrecedenceSuppressedCandidateIds,
+                value.GovernanceSuppressedCandidateIds,
+                value.SuppressedCandidateIds,
+                value.SuppressionKinds,
+                value.SuppressionSummaries));
+        }
+
+        return result.ToArray();
+    }
+
+    private static RestEndpointAuthoringPolicySuppressionSummaryDescriptor[] MergeAuthoringStyleSuppressionSummaries(
+        IReadOnlyList<RestEndpointAuthoringPolicyAuthoringStyleDescriptor> authoringStyleSummaries)
+    {
+        ArgumentNullException.ThrowIfNull(authoringStyleSummaries);
+
+        var candidateIdsByKind = new Dictionary<RestEndpointAuthoringPolicySuppressionKind, List<string>>();
+        foreach (var summary in authoringStyleSummaries)
+        {
+            foreach (var suppressionSummary in summary.SuppressionSummaries)
+            {
+                if (!candidateIdsByKind.TryGetValue(suppressionSummary.Kind, out var candidateIds))
+                {
+                    candidateIds = [];
+                    candidateIdsByKind[suppressionSummary.Kind] = candidateIds;
+                }
+
+                candidateIds.AddRange(suppressionSummary.CandidateIds);
+            }
+        }
+
+        return candidateIdsByKind
+            .OrderBy(static pair => pair.Key.GetWireName(), StringComparer.Ordinal)
+            .Select(static pair => new RestEndpointAuthoringPolicySuppressionSummaryDescriptor(pair.Key, pair.Value))
+            .ToArray();
+    }
+
+    private static bool SuppressionSummariesMatch(
+        RestEndpointAuthoringPolicySuppressionSummaryDescriptor[] left,
+        RestEndpointAuthoringPolicySuppressionSummaryDescriptor[] right)
+    {
+        ArgumentNullException.ThrowIfNull(left);
+        ArgumentNullException.ThrowIfNull(right);
+
+        if (left.Length != right.Length)
+        {
+            return false;
+        }
+
+        var rightByKind = right.ToDictionary(static summary => summary.Kind);
+        foreach (var summary in left)
+        {
+            if (!rightByKind.TryGetValue(summary.Kind, out var other))
+            {
+                return false;
+            }
+
+            if (!summary.CandidateIds.ToHashSet(StringComparer.OrdinalIgnoreCase)
+                    .SetEquals(other.CandidateIds))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

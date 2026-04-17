@@ -262,6 +262,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasisExtensions),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceSelectionBasisSummaryDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceOverrideActionKindSummaryDescriptor),
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyAuthoringStyleDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicySuppressionSummaryDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideActionKind),
@@ -1537,8 +1538,33 @@ public sealed class PackageSurfaceTests
             .GetProperty("SuppressionKinds", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyDescriptor)
             .GetProperty("SuppressionSummaries", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyDescriptor)
+            .GetProperty("AuthoringStyleSummaries", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot)
             .GetProperty("RestEndpointAuthoringPolicies", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void RestEndpointAuthoringPolicyAuthoringStyleSummaryContractsExposeRuntimeBuckets()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyAuthoringStyleDescriptor)
+            .GetProperty("AuthoringStyle", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyAuthoringStyleDescriptor)
+            .GetProperty("CandidateIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyAuthoringStyleDescriptor)
+            .GetProperty("RetainedCandidateIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyAuthoringStyleDescriptor)
+            .GetProperty("PublishedCandidateIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyAuthoringStyleDescriptor)
+            .GetProperty("PrecedenceSuppressedCandidateIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyAuthoringStyleDescriptor)
+            .GetProperty("GovernanceSuppressedCandidateIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyAuthoringStyleDescriptor)
+            .GetProperty("SuppressedCandidateIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyAuthoringStyleDescriptor)
+            .GetProperty("SuppressionKinds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyAuthoringStyleDescriptor)
+            .GetProperty("SuppressionSummaries", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

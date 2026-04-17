@@ -5442,6 +5442,55 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             suppressionSummary.Kind);
         Assert.Equal(authoringPolicySuppressed.Select(static candidate => candidate.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray(),
             suppressionSummary.CandidateIds.OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+        Assert.Equal(3, policy.AuthoringStyleSummaries.Count);
+        var explicitStyle = Assert.Single(policy.AuthoringStyleSummaries, static item =>
+            string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal([published.Id], explicitStyle.CandidateIds);
+        Assert.Equal([published.Id], explicitStyle.RetainedCandidateIds);
+        Assert.Equal([published.Id], explicitStyle.PublishedCandidateIds);
+        Assert.Empty(explicitStyle.PrecedenceSuppressedCandidateIds);
+        Assert.Empty(explicitStyle.GovernanceSuppressedCandidateIds);
+        Assert.Empty(explicitStyle.SuppressedCandidateIds);
+        Assert.Empty(explicitStyle.SuppressionKinds);
+        Assert.Empty(explicitStyle.SuppressionSummaries);
+
+        var generatedSuppressed = Assert.Single(authoringPolicySuppressed, static item =>
+            string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, StringComparison.Ordinal));
+        var generatedStyle = Assert.Single(policy.AuthoringStyleSummaries, static item =>
+            string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal([generatedSuppressed.Id], generatedStyle.CandidateIds);
+        Assert.Empty(generatedStyle.RetainedCandidateIds);
+        Assert.Empty(generatedStyle.PublishedCandidateIds);
+        Assert.Empty(generatedStyle.PrecedenceSuppressedCandidateIds);
+        Assert.Empty(generatedStyle.GovernanceSuppressedCandidateIds);
+        Assert.Equal([generatedSuppressed.Id], generatedStyle.SuppressedCandidateIds);
+        Assert.Equal(
+            [RestEndpointAuthoringPolicySuppressionKind.PreferredAuthoringStyleSelected],
+            generatedStyle.SuppressionKinds);
+        var generatedSuppressionSummary = Assert.Single(generatedStyle.SuppressionSummaries);
+        Assert.Equal(
+            RestEndpointAuthoringPolicySuppressionKind.PreferredAuthoringStyleSelected,
+            generatedSuppressionSummary.Kind);
+        Assert.Equal([generatedSuppressed.Id], generatedSuppressionSummary.CandidateIds);
+
+        var profileSuppressed = Assert.Single(authoringPolicySuppressed, static item =>
+            string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, StringComparison.Ordinal));
+        var profileStyle = Assert.Single(policy.AuthoringStyleSummaries, static item =>
+            string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal([profileSuppressed.Id], profileStyle.CandidateIds);
+        Assert.Empty(profileStyle.RetainedCandidateIds);
+        Assert.Empty(profileStyle.PublishedCandidateIds);
+        Assert.Empty(profileStyle.PrecedenceSuppressedCandidateIds);
+        Assert.Empty(profileStyle.GovernanceSuppressedCandidateIds);
+        Assert.Equal([profileSuppressed.Id], profileStyle.SuppressedCandidateIds);
+        Assert.Equal(
+            [RestEndpointAuthoringPolicySuppressionKind.PreferredAuthoringStyleSelected],
+            profileStyle.SuppressionKinds);
+        var profileSuppressionSummary = Assert.Single(profileStyle.SuppressionSummaries);
+        Assert.Equal(
+            RestEndpointAuthoringPolicySuppressionKind.PreferredAuthoringStyleSelected,
+            profileSuppressionSummary.Kind);
+        Assert.Equal([profileSuppressed.Id], profileSuppressionSummary.CandidateIds);
 
         Assert.Equal(policy.CandidateIds, policyByBehavior.CandidateIds);
         Assert.Equal(policy.RetainedCandidateIds, policyByBehavior.RetainedCandidateIds);
@@ -5449,19 +5498,24 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(policy.SuppressedCandidateIds, policyByBehavior.SuppressedCandidateIds);
         Assert.Equal(policy.SuppressionKinds, policyByBehavior.SuppressionKinds);
         Assert.Equal(policy.SuppressionSummaries.Count, policyByBehavior.SuppressionSummaries.Count);
+        Assert.Equal(policy.AuthoringStyleSummaries.Count, policyByBehavior.AuthoringStyleSummaries.Count);
 
         var snapshotPolicy = Assert.Single(snapshot.RestEndpointAuthoringPolicies, static item =>
             string.Equals(item.BehaviorId, "tests.rest.generated.threeway.lookup", StringComparison.Ordinal));
         Assert.Equal(policy.CandidateIds, snapshotPolicy.CandidateIds);
         Assert.Equal(policy.SuppressedCandidateIds, snapshotPolicy.SuppressedCandidateIds);
         Assert.Equal(policy.SuppressionKinds, snapshotPolicy.SuppressionKinds);
+        Assert.Equal(policy.AuthoringStyleSummaries.Count, snapshotPolicy.AuthoringStyleSummaries.Count);
 
         Assert.Contains("\"suppressionKinds\":[\"preferred-authoring-style-selected\"]", policiesJson, StringComparison.Ordinal);
         Assert.Contains("\"kind\":\"preferred-authoring-style-selected\"", policiesJson, StringComparison.Ordinal);
+        Assert.Contains("\"authoringStyleSummaries\":[", policiesJson, StringComparison.Ordinal);
         Assert.Contains("\"suppressionKinds\":[\"preferred-authoring-style-selected\"]", policyByBehaviorJson, StringComparison.Ordinal);
         Assert.Contains("\"kind\":\"preferred-authoring-style-selected\"", policyByBehaviorJson, StringComparison.Ordinal);
+        Assert.Contains("\"authoringStyleSummaries\":[", policyByBehaviorJson, StringComparison.Ordinal);
         Assert.Contains("\"suppressionKinds\":[\"preferred-authoring-style-selected\"]", snapshotJson, StringComparison.Ordinal);
         Assert.Contains("\"kind\":\"preferred-authoring-style-selected\"", snapshotJson, StringComparison.Ordinal);
+        Assert.Contains("\"authoringStyleSummaries\":[", snapshotJson, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -5523,15 +5577,18 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Empty(policy.SuppressedCandidateIds);
         Assert.Empty(policy.SuppressionKinds);
         Assert.Empty(policy.SuppressionSummaries);
+        Assert.Empty(policy.AuthoringStyleSummaries);
 
         Assert.Equal(policy.BehaviorId, missingPolicy.BehaviorId);
         Assert.Empty(missingPolicy.CandidateIds);
+        Assert.Empty(missingPolicy.AuthoringStyleSummaries);
         Assert.DoesNotContain(groups, static item =>
             string.Equals(item.BehaviorId, "tests.rest.generated.missing.lookup", StringComparison.Ordinal));
         Assert.Contains(snapshot.RestEndpointAuthoringPolicies, static item =>
             string.Equals(item.BehaviorId, "tests.rest.generated.missing.lookup", StringComparison.Ordinal) &&
             item.IsConfigured &&
-            item.CandidateIds.Count == 0);
+            item.CandidateIds.Count == 0 &&
+            item.AuthoringStyleSummaries.Count == 0);
     }
 
     [Fact]
@@ -5599,16 +5656,45 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal([published.Id], policy.PublishedCandidateIds);
         Assert.Equal([precedenceSuppressed.Id], policy.PrecedenceSuppressedCandidateIds);
         Assert.Equal([governanceSuppressed.Id], policy.GovernanceSuppressedCandidateIds);
+        Assert.Equal(3, policy.AuthoringStyleSummaries.Count);
+        var explicitStyle = Assert.Single(policy.AuthoringStyleSummaries, static item =>
+            string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal([published.Id], explicitStyle.CandidateIds);
+        Assert.Equal([published.Id], explicitStyle.RetainedCandidateIds);
+        Assert.Equal([published.Id], explicitStyle.PublishedCandidateIds);
+        Assert.Empty(explicitStyle.PrecedenceSuppressedCandidateIds);
+        Assert.Empty(explicitStyle.GovernanceSuppressedCandidateIds);
+        Assert.Empty(explicitStyle.SuppressedCandidateIds);
+
+        var profileStyle = Assert.Single(policy.AuthoringStyleSummaries, static item =>
+            string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal([precedenceSuppressed.Id], profileStyle.CandidateIds);
+        Assert.Equal([precedenceSuppressed.Id], profileStyle.RetainedCandidateIds);
+        Assert.Empty(profileStyle.PublishedCandidateIds);
+        Assert.Equal([precedenceSuppressed.Id], profileStyle.PrecedenceSuppressedCandidateIds);
+        Assert.Empty(profileStyle.GovernanceSuppressedCandidateIds);
+        Assert.Empty(profileStyle.SuppressedCandidateIds);
+
+        var generatedStyle = Assert.Single(policy.AuthoringStyleSummaries, static item =>
+            string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal([governanceSuppressed.Id], generatedStyle.CandidateIds);
+        Assert.Equal([governanceSuppressed.Id], generatedStyle.RetainedCandidateIds);
+        Assert.Empty(generatedStyle.PublishedCandidateIds);
+        Assert.Empty(generatedStyle.PrecedenceSuppressedCandidateIds);
+        Assert.Equal([governanceSuppressed.Id], generatedStyle.GovernanceSuppressedCandidateIds);
+        Assert.Empty(generatedStyle.SuppressedCandidateIds);
 
         Assert.Equal(policy.RetainedCandidateIds, policyByBehavior.RetainedCandidateIds);
         Assert.Equal(policy.PrecedenceSuppressedCandidateIds, policyByBehavior.PrecedenceSuppressedCandidateIds);
         Assert.Equal(policy.GovernanceSuppressedCandidateIds, policyByBehavior.GovernanceSuppressedCandidateIds);
+        Assert.Equal(policy.AuthoringStyleSummaries.Count, policyByBehavior.AuthoringStyleSummaries.Count);
         Assert.Contains(snapshot.RestEndpointAuthoringPolicies, item =>
             string.Equals(item.BehaviorId, policy.BehaviorId, StringComparison.Ordinal) &&
             item.RetainedCandidateIds.Count == 3 &&
             item.PrecedenceSuppressedCandidateIds.Count == 1 &&
             item.GovernanceSuppressedCandidateIds.Count == 1 &&
-            item.SuppressedCandidateIds.Count == 0);
+            item.SuppressedCandidateIds.Count == 0 &&
+            item.AuthoringStyleSummaries.Count == 3);
     }
 
     [Fact]

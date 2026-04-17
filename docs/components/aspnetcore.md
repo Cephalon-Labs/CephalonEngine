@@ -87,7 +87,10 @@ when no current candidates match, carries the same default-versus-configured pol
 separates `CandidateIds`, `RetainedCandidateIds`, `PublishedCandidateIds`,
 `PrecedenceSuppressedCandidateIds`, `GovernanceSuppressedCandidateIds`, and grouped
 `SuppressionSummaries` so authoring-policy suppression stays distinct from later precedence or
-host-governance outcomes.
+host-governance outcomes. It now also derives typed `AuthoringStyleSummaries`, so the same
+rule-centric policy payload can show which normalized authoring style contributed each candidate,
+which survived authoring policy, which stayed published, and which later moved into precedence,
+governance, or authoring-policy suppression buckets without reopening publication-group payloads.
 
 The rule catalogs themselves now mirror that same truth directly: `/engine/rest-endpoint-suppressions`
 and `snapshot.RestEndpointSuppressions` surface per-rule `MatchedCandidateIds`,
