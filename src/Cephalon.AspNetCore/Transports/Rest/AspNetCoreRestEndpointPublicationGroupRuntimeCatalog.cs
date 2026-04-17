@@ -75,6 +75,12 @@ internal sealed class AspNetCoreRestEndpointPublicationGroupRuntimeCatalog(
                 !string.IsNullOrWhiteSpace(candidate.SuppressedBySuppressionId))
             .Select(static candidate => candidate.Id)
             .ToArray();
+        var authoringPolicySuppressedCandidateIds = orderedCandidates
+            .Where(static candidate =>
+                candidate.Status == RestEndpointCandidateStatus.Suppressed &&
+                candidate.SuppressedByAuthoringPolicyKind.HasValue)
+            .Select(static candidate => candidate.Id)
+            .ToArray();
         var sourceModuleIds = orderedCandidates
             .Select(static candidate => candidate.ProjectedEndpoint.SourceModuleId)
             .Where(static sourceModuleId => !string.IsNullOrWhiteSpace(sourceModuleId))
@@ -96,7 +102,8 @@ internal sealed class AspNetCoreRestEndpointPublicationGroupRuntimeCatalog(
             precedenceSuppressedCandidateIds,
             governanceSuppressedCandidateIds,
             orderedCandidates,
-            authoringPolicy);
+            authoringPolicy,
+            authoringPolicySuppressedCandidateIds);
     }
 
     private static RestEndpointPublicationGroupAuthoringPolicyDescriptor ResolveAuthoringPolicy(

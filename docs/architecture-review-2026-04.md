@@ -224,18 +224,20 @@ now binds explicit default-versus-configured authoring-policy intent for
 `/engine/rest-endpoint-publication-groups` plus `snapshot.RestEndpointPublicationGroups` now
 round-trip that policy truth.
 
-That next policy-enforcement gap is now partially addressed through `ENG-058-T123`:
+That next policy-enforcement gap is now addressed across `ENG-058-T123` and `ENG-058-T124`:
 `Cephalon.Behaviors.Http` now honors
 `RestApi:AuthoringPolicies:{behaviorId}:AllowMultiplePublishedCandidates` during candidate
 resolution, so lower-precedence shorthand candidates can remain published when the grouped
-behavior explicitly opts into that outcome and no governance rule suppresses them. The same slice
-also closes a runtime truth gap that appeared immediately once multi-publication became real:
-effective endpoint names are now disambiguated deterministically for co-published shorthand
-candidates while `OriginalEndpointName` still preserves the source shorthand lineage.
+behavior explicitly opts into that outcome and no governance rule suppresses them. The same area
+now also enforces `PreferredAuthoringStyle`, `AllowedAuthoringStyles`, and
+`DisallowedAuthoringStyles` for shorthand candidates only, keeps explicit module DSL publication
+authoritative, and records authoring-policy suppression as a distinct runtime outcome instead of
+pretending config governance or candidate precedence caused the same result. Effective endpoint
+names are also disambiguated deterministically for co-published shorthand candidates while
+`OriginalEndpointName` still preserves the source shorthand lineage.
 
-The remaining gap is now narrower: decide whether preferred/allowed/disallowed authoring-style
-rules should ever become enforced publication policy, and extend broader governance only if that
-follow-through keeps precedence, ownership, and runtime truth explicit instead of introducing
+The remaining gap is now narrower: keep low-code shorthand growth, broader governance, and future
+projection sources on the same explicit ownership and runtime-truth model without reintroducing
 hidden rule layers.
 
 ## Architecture recommendations

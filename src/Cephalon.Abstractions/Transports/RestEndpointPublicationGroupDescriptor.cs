@@ -24,6 +24,9 @@ public sealed class RestEndpointPublicationGroupDescriptor
     /// <param name="authoringPolicy">
     /// The effective authoring-policy intent for this behavior-level publication group.
     /// </param>
+    /// <param name="authoringPolicySuppressedCandidateIds">
+    /// The candidate identifiers that were suppressed by behavior-level authoring-policy enforcement.
+    /// </param>
     public RestEndpointPublicationGroupDescriptor(
         string behaviorId,
         IReadOnlyList<string>? sourceModuleIds = null,
@@ -32,7 +35,8 @@ public sealed class RestEndpointPublicationGroupDescriptor
         IReadOnlyList<string>? precedenceSuppressedCandidateIds = null,
         IReadOnlyList<string>? governanceSuppressedCandidateIds = null,
         IReadOnlyList<RestEndpointCandidateRuntimeDescriptor>? candidates = null,
-        RestEndpointPublicationGroupAuthoringPolicyDescriptor? authoringPolicy = null)
+        RestEndpointPublicationGroupAuthoringPolicyDescriptor? authoringPolicy = null,
+        IReadOnlyList<string>? authoringPolicySuppressedCandidateIds = null)
     {
         if (string.IsNullOrWhiteSpace(behaviorId))
         {
@@ -68,6 +72,7 @@ public sealed class RestEndpointPublicationGroupDescriptor
         var normalizedPublishedCandidateIds = NormalizeList(publishedCandidateIds);
         var normalizedPrecedenceSuppressedCandidateIds = NormalizeList(precedenceSuppressedCandidateIds);
         var normalizedGovernanceSuppressedCandidateIds = NormalizeList(governanceSuppressedCandidateIds);
+        var normalizedAuthoringPolicySuppressedCandidateIds = NormalizeList(authoringPolicySuppressedCandidateIds);
         var candidateIds = normalizedCandidates
             .Select(static candidate => candidate.Id)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
@@ -93,11 +98,32 @@ public sealed class RestEndpointPublicationGroupDescriptor
                 nameof(governanceSuppressedCandidateIds));
         }
 
+        if (!candidateIds.IsSupersetOf(normalizedAuthoringPolicySuppressedCandidateIds))
+        {
+            throw new ArgumentException(
+                "Authoring-policy-suppressed candidate ids must refer to candidates in the grouped publication answer.",
+                nameof(authoringPolicySuppressedCandidateIds));
+        }
+
         if (normalizedPrecedenceSuppressedCandidateIds.Intersect(normalizedGovernanceSuppressedCandidateIds, StringComparer.OrdinalIgnoreCase).Any())
         {
             throw new ArgumentException(
                 "A grouped publication answer cannot classify the same candidate as both precedence-suppressed and governance-suppressed.",
                 nameof(precedenceSuppressedCandidateIds));
+        }
+
+        if (normalizedPrecedenceSuppressedCandidateIds.Intersect(normalizedAuthoringPolicySuppressedCandidateIds, StringComparer.OrdinalIgnoreCase).Any())
+        {
+            throw new ArgumentException(
+                "A grouped publication answer cannot classify the same candidate as both precedence-suppressed and authoring-policy-suppressed.",
+                nameof(precedenceSuppressedCandidateIds));
+        }
+
+        if (normalizedGovernanceSuppressedCandidateIds.Intersect(normalizedAuthoringPolicySuppressedCandidateIds, StringComparer.OrdinalIgnoreCase).Any())
+        {
+            throw new ArgumentException(
+                "A grouped publication answer cannot classify the same candidate as both governance-suppressed and authoring-policy-suppressed.",
+                nameof(governanceSuppressedCandidateIds));
         }
 
         BehaviorId = normalizedBehaviorId;
@@ -106,6 +132,7 @@ public sealed class RestEndpointPublicationGroupDescriptor
         PublishedCandidateIds = normalizedPublishedCandidateIds;
         PrecedenceSuppressedCandidateIds = normalizedPrecedenceSuppressedCandidateIds;
         GovernanceSuppressedCandidateIds = normalizedGovernanceSuppressedCandidateIds;
+        AuthoringPolicySuppressedCandidateIds = normalizedAuthoringPolicySuppressedCandidateIds;
         Candidates = normalizedCandidates;
         AuthoringStyleSummaries = BuildAuthoringStyleSummaries(normalizedCandidates);
         AuthoringPolicy = NormalizeAuthoringPolicy(authoringPolicy, normalizedBehaviorId);
@@ -140,6 +167,11 @@ public sealed class RestEndpointPublicationGroupDescriptor
     /// Gets the candidate identifiers that were suppressed by host-level REST governance.
     /// </summary>
     public IReadOnlyList<string> GovernanceSuppressedCandidateIds { get; }
+
+    /// <summary>
+    /// Gets the candidate identifiers that were suppressed by behavior-level authoring-policy enforcement.
+    /// </summary>
+    public IReadOnlyList<string> AuthoringPolicySuppressedCandidateIds { get; }
 
     /// <summary>
     /// Gets the ordered candidate set that produced this grouped publication answer.
@@ -215,6 +247,12 @@ public sealed class RestEndpointPublicationGroupDescriptor
                         !string.IsNullOrWhiteSpace(candidate.SuppressedBySuppressionId))
                     .Select(static candidate => candidate.Id)
                     .ToArray();
+                var authoringPolicySuppressedCandidateIds = orderedCandidates
+                    .Where(static candidate =>
+                        candidate.Status == RestEndpointCandidateStatus.Suppressed &&
+                        candidate.SuppressedByAuthoringPolicyKind.HasValue)
+                    .Select(static candidate => candidate.Id)
+                    .ToArray();
 
                 return new RestEndpointPublicationGroupAuthoringStyleDescriptor(
                     group.Key,
@@ -223,7 +261,8 @@ public sealed class RestEndpointPublicationGroupDescriptor
                     candidateIds,
                     publishedCandidateIds,
                     precedenceSuppressedCandidateIds,
-                    governanceSuppressedCandidateIds);
+                    governanceSuppressedCandidateIds,
+                    authoringPolicySuppressedCandidateIds);
             })
             .ToArray();
     }

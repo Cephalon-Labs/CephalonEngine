@@ -560,8 +560,9 @@ lower-precedence unsuppressed shorthand candidates can remain published together
 public route answers stay distinct. When those co-published candidates would otherwise reuse the
 same effective endpoint name, Cephalon now disambiguates that name deterministically while
 preserving `OriginalEndpointName` as source shorthand lineage. `PreferredAuthoringStyle`,
-`AllowedAuthoringStyles`, and `DisallowedAuthoringStyles` still remain operator-visible intent for
-now.
+`AllowedAuthoringStyles`, and `DisallowedAuthoringStyles` now also enforce shorthand publication
+policy for profile and generated shorthand candidates while leaving explicit module DSL
+publication authoritative.
 
 When a host wants to keep shorthand publication but retarget selected shorthand endpoints to a
 different effective API major version, HTTP method, bounded published route-group prefix,

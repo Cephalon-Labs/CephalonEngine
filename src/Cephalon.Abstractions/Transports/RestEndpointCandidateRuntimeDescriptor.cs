@@ -39,6 +39,10 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
     /// The ordered override-rule identifiers that matched this candidate before one winner was selected.
     /// </param>
     /// <param name="suppressionReason">The operator-facing suppression reason when one is available.</param>
+    /// <param name="suppressedByAuthoringPolicyKind">
+    /// The authoring-policy suppression kind when this candidate was suppressed by behavior-level
+    /// authoring-policy enforcement.
+    /// </param>
     public RestEndpointCandidateRuntimeDescriptor(
         string id,
         RestEndpointRuntimeDescriptor projectedEndpoint,
@@ -51,7 +55,8 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
         string? appliedOverrideId = null,
         IReadOnlyList<string>? matchedSuppressionIds = null,
         IReadOnlyList<string>? matchedOverrideIds = null,
-        string? suppressionReason = null)
+        string? suppressionReason = null,
+        RestEndpointAuthoringPolicySuppressionKind? suppressedByAuthoringPolicyKind = null)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -79,12 +84,22 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
             throw new ArgumentException("A supported candidate status is required.", nameof(status));
         }
 
+        if (suppressedByAuthoringPolicyKind.HasValue &&
+            (!Enum.IsDefined(suppressedByAuthoringPolicyKind.Value) ||
+             suppressedByAuthoringPolicyKind.Value == RestEndpointAuthoringPolicySuppressionKind.Unspecified))
+        {
+            throw new ArgumentException(
+                "A supported authoring-policy suppression kind is required when one is declared.",
+                nameof(suppressedByAuthoringPolicyKind));
+        }
+
         var normalizedMatchedSuppressionIds = NormalizeOrderedList(matchedSuppressionIds);
         var normalizedMatchedOverrideIds = NormalizeOrderedList(matchedOverrideIds);
 
         if (status == RestEndpointCandidateStatus.Published &&
             (!string.IsNullOrWhiteSpace(suppressedByCandidateId) ||
             !string.IsNullOrWhiteSpace(suppressedBySuppressionId) ||
+            suppressedByAuthoringPolicyKind.HasValue ||
             normalizedMatchedSuppressionIds.Length > 0 ||
             !string.IsNullOrWhiteSpace(suppressionReason)))
         {
@@ -93,11 +108,26 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
                 nameof(status));
         }
 
-        if (!string.IsNullOrWhiteSpace(suppressedByCandidateId) &&
-            !string.IsNullOrWhiteSpace(suppressedBySuppressionId))
+        var declaredSuppressionOrigins = 0;
+        if (!string.IsNullOrWhiteSpace(suppressedByCandidateId))
+        {
+            declaredSuppressionOrigins++;
+        }
+
+        if (!string.IsNullOrWhiteSpace(suppressedBySuppressionId))
+        {
+            declaredSuppressionOrigins++;
+        }
+
+        if (suppressedByAuthoringPolicyKind.HasValue)
+        {
+            declaredSuppressionOrigins++;
+        }
+
+        if (declaredSuppressionOrigins > 1)
         {
             throw new ArgumentException(
-                "A suppressed candidate cannot declare both precedence and governance suppression ids.",
+                "A suppressed candidate cannot declare more than one suppression origin.",
                 nameof(suppressedByCandidateId));
         }
 
@@ -146,6 +176,7 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
         SuppressionReason = string.IsNullOrWhiteSpace(suppressionReason)
             ? null
             : suppressionReason.Trim();
+        SuppressedByAuthoringPolicyKind = suppressedByAuthoringPolicyKind;
     }
 
     /// <summary>
@@ -188,6 +219,11 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
     /// Gets the host-level suppression identifier when this candidate was suppressed by REST governance.
     /// </summary>
     public string? SuppressedBySuppressionId { get; }
+
+    /// <summary>
+    /// Gets the authoring-policy suppression kind when this candidate was suppressed by behavior-level authoring-policy enforcement.
+    /// </summary>
+    public RestEndpointAuthoringPolicySuppressionKind? SuppressedByAuthoringPolicyKind { get; }
 
     /// <summary>
     /// Gets the host-level override identifier when this candidate shape was rewritten by REST governance.

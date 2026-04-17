@@ -53,19 +53,39 @@ internal static class RestBehaviorProjectionCandidateResolver
             static pair => pair.Key,
             static pair => pair.Value.FirstOrDefault(),
             Comparer);
+        var authoringPolicySuppressionsByCandidateId = candidates
+            .Where(candidate => suppressionByCandidateId[candidate.Candidate.Id] is null)
+            .GroupBy(
+                static candidate => candidate.Candidate.ProjectedEndpoint.BehaviorId ?? string.Empty,
+                Comparer)
+            .SelectMany(group => ResolveAuthoringPolicySuppressions(
+                group.Key,
+                group,
+                ResolveAuthoringPolicy(group.Key, authoringPoliciesByBehaviorId)))
+            .ToDictionary(
+                static suppression => suppression.CandidateId,
+                static suppression => suppression,
+                Comparer);
 
         var winnersByBehavior = candidates
             .Where(candidate => suppressionByCandidateId[candidate.Candidate.Id] is null)
+            .Where(candidate => !authoringPolicySuppressionsByCandidateId.ContainsKey(candidate.Candidate.Id))
             .GroupBy(
                 static candidate => candidate.Candidate.ProjectedEndpoint.BehaviorId ?? string.Empty,
                 Comparer)
             .ToDictionary(
                 static group => group.Key,
-                group => ResolvePublishedCandidates(group, authoringPoliciesByBehaviorId),
+                group => ResolvePublishedCandidates(
+                    group,
+                    ResolveAuthoringPolicy(group.Key, authoringPoliciesByBehaviorId)),
                 Comparer);
 
         var resolvedCandidates = EnsureUniquePublishedEndpointNames(
-            candidates.Select(candidate => ResolvePublication(candidate, matchedSuppressionsByCandidateId, winnersByBehavior)));
+            candidates.Select(candidate => ResolvePublication(
+                candidate,
+                matchedSuppressionsByCandidateId,
+                authoringPolicySuppressionsByCandidateId,
+                winnersByBehavior)));
 
         return resolvedCandidates
             .OrderBy(static candidate => candidate.Candidate.ProjectedEndpoint.RoutePattern, StringComparer.OrdinalIgnoreCase)
@@ -75,11 +95,10 @@ internal static class RestBehaviorProjectionCandidateResolver
     }
 
     private static ResolvedRestBehaviorEndpointProjectionCandidate[] ResolvePublishedCandidates(
-        IGrouping<string, ResolvedRestBehaviorEndpointProjectionCandidate> candidates,
-        IReadOnlyDictionary<string, RestEndpointPublicationGroupAuthoringPolicyDescriptor> authoringPoliciesByBehaviorId)
+        IEnumerable<ResolvedRestBehaviorEndpointProjectionCandidate> candidates,
+        RestEndpointPublicationGroupAuthoringPolicyDescriptor? authoringPolicy)
     {
         ArgumentNullException.ThrowIfNull(candidates);
-        ArgumentNullException.ThrowIfNull(authoringPoliciesByBehaviorId);
 
         var orderedCandidates = candidates
             .OrderBy(static candidate => candidate.Candidate.PrecedenceRank)
@@ -90,7 +109,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             return [];
         }
 
-        if (AllowMultiplePublishedCandidates(candidates.Key, authoringPoliciesByBehaviorId))
+        if (AllowMultiplePublishedCandidates(authoringPolicy))
         {
             return orderedCandidates;
         }
@@ -102,14 +121,9 @@ internal static class RestBehaviorProjectionCandidateResolver
     }
 
     private static bool AllowMultiplePublishedCandidates(
-        string behaviorId,
-        IReadOnlyDictionary<string, RestEndpointPublicationGroupAuthoringPolicyDescriptor> authoringPoliciesByBehaviorId)
+        RestEndpointPublicationGroupAuthoringPolicyDescriptor? authoringPolicy)
     {
-        ArgumentNullException.ThrowIfNull(authoringPoliciesByBehaviorId);
-
-        return !string.IsNullOrWhiteSpace(behaviorId) &&
-               authoringPoliciesByBehaviorId.TryGetValue(behaviorId.Trim(), out var authoringPolicy) &&
-               authoringPolicy.AllowMultiplePublishedCandidates;
+        return authoringPolicy?.AllowMultiplePublishedCandidates == true;
     }
 
     private static ResolvedRestBehaviorEndpointProjectionCandidate[] EnsureUniquePublishedEndpointNames(
@@ -288,7 +302,8 @@ internal static class RestBehaviorProjectionCandidateResolver
                 appliedOverrideId: candidate.Candidate.AppliedOverrideId,
                 matchedSuppressionIds: candidate.Candidate.MatchedSuppressionIds,
                 matchedOverrideIds: candidate.Candidate.MatchedOverrideIds,
-                suppressionReason: candidate.Candidate.SuppressionReason)
+                suppressionReason: candidate.Candidate.SuppressionReason,
+                suppressedByAuthoringPolicyKind: candidate.Candidate.SuppressedByAuthoringPolicyKind)
         };
     }
 
@@ -490,10 +505,12 @@ internal static class RestBehaviorProjectionCandidateResolver
     private static ResolvedRestBehaviorEndpointProjectionCandidate ResolvePublication(
         ResolvedRestBehaviorEndpointProjectionCandidate candidate,
         Dictionary<string, RestEndpointSuppressionOptions[]> matchedSuppressionsByCandidateId,
+        Dictionary<string, ResolvedRestEndpointAuthoringPolicySuppression> authoringPolicySuppressionsByCandidateId,
         Dictionary<string, ResolvedRestBehaviorEndpointProjectionCandidate[]> winnersByBehavior)
     {
         ArgumentNullException.ThrowIfNull(candidate);
         ArgumentNullException.ThrowIfNull(matchedSuppressionsByCandidateId);
+        ArgumentNullException.ThrowIfNull(authoringPolicySuppressionsByCandidateId);
         ArgumentNullException.ThrowIfNull(winnersByBehavior);
 
         var matchedSuppressions = matchedSuppressionsByCandidateId[candidate.Candidate.Id];
@@ -514,6 +531,24 @@ internal static class RestBehaviorProjectionCandidateResolver
                     matchedSuppressionIds: matchedSuppressions.Select(static item => item.Id).ToArray(),
                     matchedOverrideIds: candidate.Candidate.MatchedOverrideIds,
                     suppressionReason: $"Suppressed by REST endpoint suppression rule '{suppression.Id}'.")
+            };
+        }
+
+        if (authoringPolicySuppressionsByCandidateId.TryGetValue(candidate.Candidate.Id, out var authoringPolicySuppression))
+        {
+            return candidate with
+            {
+                Candidate = new RestEndpointCandidateRuntimeDescriptor(
+                    candidate.Candidate.Id,
+                    candidate.Candidate.ProjectedEndpoint,
+                    candidate.Candidate.OriginalProjection,
+                    candidate.Candidate.AuthoringStyle,
+                    candidate.Candidate.PrecedenceRank,
+                    RestEndpointCandidateStatus.Suppressed,
+                    appliedOverrideId: candidate.Candidate.AppliedOverrideId,
+                    matchedOverrideIds: candidate.Candidate.MatchedOverrideIds,
+                    suppressionReason: authoringPolicySuppression.SuppressionReason,
+                    suppressedByAuthoringPolicyKind: authoringPolicySuppression.Kind)
             };
         }
 
@@ -539,6 +574,171 @@ internal static class RestBehaviorProjectionCandidateResolver
                 matchedOverrideIds: candidate.Candidate.MatchedOverrideIds,
                 suppressionReason: $"Suppressed because behavior '{behaviorId}' is also mapped by higher-precedence authoring style '{winningCandidate.AuthoringStyle}'.")
         };
+    }
+
+    private static RestEndpointPublicationGroupAuthoringPolicyDescriptor? ResolveAuthoringPolicy(
+        string behaviorId,
+        Dictionary<string, RestEndpointPublicationGroupAuthoringPolicyDescriptor> authoringPoliciesByBehaviorId)
+    {
+        ArgumentNullException.ThrowIfNull(authoringPoliciesByBehaviorId);
+
+        return !string.IsNullOrWhiteSpace(behaviorId) &&
+               authoringPoliciesByBehaviorId.TryGetValue(behaviorId.Trim(), out var authoringPolicy)
+            ? authoringPolicy
+            : null;
+    }
+
+    private static ResolvedRestEndpointAuthoringPolicySuppression[] ResolveAuthoringPolicySuppressions(
+        string behaviorId,
+        IEnumerable<ResolvedRestBehaviorEndpointProjectionCandidate> candidates,
+        RestEndpointPublicationGroupAuthoringPolicyDescriptor? authoringPolicy)
+    {
+        ArgumentNullException.ThrowIfNull(candidates);
+
+        if (authoringPolicy is null)
+        {
+            return [];
+        }
+
+        var orderedCandidates = candidates
+            .OrderBy(static candidate => candidate.Candidate.PrecedenceRank)
+            .ThenBy(static candidate => candidate.Candidate.AuthoringStyle, Comparer)
+            .ThenBy(static candidate => candidate.Candidate.Id, Comparer)
+            .ToArray();
+        if (orderedCandidates.Length == 0)
+        {
+            return [];
+        }
+
+        var suppressionsByCandidateId = new Dictionary<string, ResolvedRestEndpointAuthoringPolicySuppression>(Comparer);
+
+        ApplyDisallowedAuthoringStyleSuppressions(
+            behaviorId,
+            orderedCandidates,
+            authoringPolicy,
+            suppressionsByCandidateId);
+        ApplyNotAllowedAuthoringStyleSuppressions(
+            behaviorId,
+            orderedCandidates,
+            authoringPolicy,
+            suppressionsByCandidateId);
+        ApplyPreferredAuthoringStyleSuppressions(
+            behaviorId,
+            orderedCandidates,
+            authoringPolicy,
+            suppressionsByCandidateId);
+
+        return suppressionsByCandidateId.Values
+            .OrderBy(static suppression => suppression.CandidateId, Comparer)
+            .ToArray();
+    }
+
+    private static void ApplyDisallowedAuthoringStyleSuppressions(
+        string behaviorId,
+        IReadOnlyList<ResolvedRestBehaviorEndpointProjectionCandidate> orderedCandidates,
+        RestEndpointPublicationGroupAuthoringPolicyDescriptor authoringPolicy,
+        Dictionary<string, ResolvedRestEndpointAuthoringPolicySuppression> suppressionsByCandidateId)
+    {
+        ArgumentNullException.ThrowIfNull(orderedCandidates);
+        ArgumentNullException.ThrowIfNull(authoringPolicy);
+        ArgumentNullException.ThrowIfNull(suppressionsByCandidateId);
+
+        if (authoringPolicy.DisallowedAuthoringStyles.Count == 0)
+        {
+            return;
+        }
+
+        foreach (var candidate in orderedCandidates.Where(CanBeSuppressedByAuthoringPolicy))
+        {
+            if (!authoringPolicy.DisallowedAuthoringStyles.Contains(candidate.Candidate.AuthoringStyle, Comparer))
+            {
+                continue;
+            }
+
+            suppressionsByCandidateId[candidate.Candidate.Id] = new ResolvedRestEndpointAuthoringPolicySuppression(
+                candidate.Candidate.Id,
+                RestEndpointAuthoringPolicySuppressionKind.DisallowedAuthoringStyle,
+                $"Suppressed because behavior '{behaviorId}' authoring policy disallows authoring style '{candidate.Candidate.AuthoringStyle}'.");
+        }
+    }
+
+    private static void ApplyNotAllowedAuthoringStyleSuppressions(
+        string behaviorId,
+        IReadOnlyList<ResolvedRestBehaviorEndpointProjectionCandidate> orderedCandidates,
+        RestEndpointPublicationGroupAuthoringPolicyDescriptor authoringPolicy,
+        Dictionary<string, ResolvedRestEndpointAuthoringPolicySuppression> suppressionsByCandidateId)
+    {
+        ArgumentNullException.ThrowIfNull(orderedCandidates);
+        ArgumentNullException.ThrowIfNull(authoringPolicy);
+        ArgumentNullException.ThrowIfNull(suppressionsByCandidateId);
+
+        if (authoringPolicy.AllowedAuthoringStyles.Count == 0)
+        {
+            return;
+        }
+
+        var allowedAuthoringStyles = string.Join(", ", authoringPolicy.AllowedAuthoringStyles);
+        foreach (var candidate in orderedCandidates
+                     .Where(CanBeSuppressedByAuthoringPolicy)
+                     .Where(candidate => !suppressionsByCandidateId.ContainsKey(candidate.Candidate.Id)))
+        {
+            if (authoringPolicy.AllowedAuthoringStyles.Contains(candidate.Candidate.AuthoringStyle, Comparer))
+            {
+                continue;
+            }
+
+            suppressionsByCandidateId[candidate.Candidate.Id] = new ResolvedRestEndpointAuthoringPolicySuppression(
+                candidate.Candidate.Id,
+                RestEndpointAuthoringPolicySuppressionKind.NotAllowedAuthoringStyle,
+                $"Suppressed because behavior '{behaviorId}' authoring policy allows only [{allowedAuthoringStyles}], and authoring style '{candidate.Candidate.AuthoringStyle}' is outside that set.");
+        }
+    }
+
+    private static void ApplyPreferredAuthoringStyleSuppressions(
+        string behaviorId,
+        IReadOnlyList<ResolvedRestBehaviorEndpointProjectionCandidate> orderedCandidates,
+        RestEndpointPublicationGroupAuthoringPolicyDescriptor authoringPolicy,
+        Dictionary<string, ResolvedRestEndpointAuthoringPolicySuppression> suppressionsByCandidateId)
+    {
+        ArgumentNullException.ThrowIfNull(orderedCandidates);
+        ArgumentNullException.ThrowIfNull(authoringPolicy);
+        ArgumentNullException.ThrowIfNull(suppressionsByCandidateId);
+
+        if (string.IsNullOrWhiteSpace(authoringPolicy.PreferredAuthoringStyle))
+        {
+            return;
+        }
+
+        var preferredAuthoringStyle = authoringPolicy.PreferredAuthoringStyle.Trim();
+        var remainingCandidates = orderedCandidates
+            .Where(candidate => !suppressionsByCandidateId.ContainsKey(candidate.Candidate.Id))
+            .ToArray();
+        if (!remainingCandidates.Any(candidate =>
+                string.Equals(candidate.Candidate.AuthoringStyle, preferredAuthoringStyle, StringComparison.OrdinalIgnoreCase)))
+        {
+            return;
+        }
+
+        foreach (var candidate in remainingCandidates.Where(CanBeSuppressedByAuthoringPolicy))
+        {
+            if (string.Equals(candidate.Candidate.AuthoringStyle, preferredAuthoringStyle, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            suppressionsByCandidateId[candidate.Candidate.Id] = new ResolvedRestEndpointAuthoringPolicySuppression(
+                candidate.Candidate.Id,
+                RestEndpointAuthoringPolicySuppressionKind.PreferredAuthoringStyleSelected,
+                $"Suppressed because behavior '{behaviorId}' authoring policy prefers authoring style '{preferredAuthoringStyle}' when it is present.");
+        }
+    }
+
+    private static bool CanBeSuppressedByAuthoringPolicy(
+        ResolvedRestBehaviorEndpointProjectionCandidate candidate)
+    {
+        ArgumentNullException.ThrowIfNull(candidate);
+
+        return RestEndpointRuntimeMetadata.IsShorthandAuthoringStyle(candidate.Candidate.AuthoringStyle);
     }
 
     private static ResolvedRestEndpointOverrideDecision ResolveOverrideDecision(
@@ -1838,6 +2038,11 @@ internal sealed record AppliedRestEndpointCapabilityOverride(
     string OverrideId,
     string? RequiredCapabilityKey,
     bool ClearRequiredCapability);
+
+internal sealed record ResolvedRestEndpointAuthoringPolicySuppression(
+    string CandidateId,
+    RestEndpointAuthoringPolicySuppressionKind Kind,
+    string SuppressionReason);
 
 internal sealed record ResolvedRestEndpointOverrideDecision(
     IReadOnlyList<string> MatchedOverrideIds,

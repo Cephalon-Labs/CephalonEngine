@@ -16,7 +16,7 @@ public enum RestEndpointCandidateStatus
     Published = 1,
 
     /// <summary>
-    /// The candidate was considered but suppressed by a higher-precedence candidate.
+    /// The candidate was considered but suppressed from the active public REST surface.
     /// </summary>
     Suppressed = 2
 }

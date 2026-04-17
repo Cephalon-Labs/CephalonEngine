@@ -44,6 +44,14 @@ internal static class RestBehaviorGovernanceLoggerMessages
                 RestBehaviorGovernanceDiagnosticsConventions.BindingFallbackPreservedName),
             RestBehaviorGovernanceDiagnosticsConventions.BindingFallbackPreservedMessageTemplate);
 
+    private static readonly Action<ILogger, string, string, string, string, string, Exception?> AuthoringPolicySuppressed =
+        LoggerMessage.Define<string, string, string, string, string>(
+            LogLevel.Information,
+            new EventId(
+                RestBehaviorGovernanceDiagnosticsConventions.AuthoringPolicySuppressedId,
+                RestBehaviorGovernanceDiagnosticsConventions.AuthoringPolicySuppressedName),
+            RestBehaviorGovernanceDiagnosticsConventions.AuthoringPolicySuppressedMessageTemplate);
+
     public static void LogGovernanceSuppressed(
         ILogger logger,
         string candidateId,
@@ -93,5 +101,23 @@ internal static class RestBehaviorGovernanceLoggerMessages
         string matchedOverrideIds)
     {
         BindingFallbackPreserved(logger, candidateId, behaviorId, bindingFallbackMode, matchedOverrideIds, null);
+    }
+
+    public static void LogAuthoringPolicySuppressed(
+        ILogger logger,
+        string candidateId,
+        string behaviorId,
+        string authoringStyle,
+        string suppressionKind,
+        string suppressionReason)
+    {
+        AuthoringPolicySuppressed(
+            logger,
+            candidateId,
+            behaviorId,
+            authoringStyle,
+            suppressionKind,
+            suppressionReason,
+            null);
     }
 }

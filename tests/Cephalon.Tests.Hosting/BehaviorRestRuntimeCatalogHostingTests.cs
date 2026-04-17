@@ -4371,14 +4371,35 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         await app.StartAsync();
         var client = app.GetTestClient();
 
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
         var groups = await client.GetFromJsonAsync<RestEndpointPublicationGroupDescriptor[]>("/engine/rest-endpoint-publication-groups");
         var groupByBehavior = await client.GetFromJsonAsync<RestEndpointPublicationGroupDescriptor>(
             "/engine/rest-endpoint-publication-groups/tests.rest.generated.threeway.lookup");
         var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
 
+        Assert.NotNull(candidates);
         Assert.NotNull(groups);
         Assert.NotNull(groupByBehavior);
         Assert.NotNull(snapshot);
+
+        var published = Assert.Single(candidates, static item =>
+            item.Status == RestEndpointCandidateStatus.Published);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle, published.AuthoringStyle);
+        Assert.Null(published.SuppressedByAuthoringPolicyKind);
+
+        var authoringPolicySuppressed = candidates
+            .Where(static item => item.Status == RestEndpointCandidateStatus.Suppressed)
+            .OrderBy(static item => item.AuthoringStyle, StringComparer.Ordinal)
+            .ToArray();
+        Assert.Equal(2, authoringPolicySuppressed.Length);
+        Assert.All(authoringPolicySuppressed, static item =>
+        {
+            Assert.Equal(
+                RestEndpointAuthoringPolicySuppressionKind.PreferredAuthoringStyleSelected,
+                item.SuppressedByAuthoringPolicyKind);
+            Assert.Null(item.SuppressedByCandidateId);
+            Assert.Null(item.SuppressedBySuppressionId);
+        });
 
         var group = Assert.Single(groups, static item =>
             string.Equals(item.BehaviorId, "tests.rest.generated.threeway.lookup", StringComparison.Ordinal));
@@ -4399,13 +4420,29 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             [RestEndpointRuntimeMetadata.BehaviorHelperAuthoringStyle],
             group.AuthoringPolicy.DisallowedAuthoringStyles);
         Assert.Single(group.PublishedCandidateIds);
-        Assert.Equal(2, group.PrecedenceSuppressedCandidateIds.Count);
+        Assert.Empty(group.PrecedenceSuppressedCandidateIds);
         Assert.Empty(group.GovernanceSuppressedCandidateIds);
+        Assert.Equal(2, group.AuthoringPolicySuppressedCandidateIds.Count);
         Assert.True(groupByBehavior.AuthoringPolicy.IsConfigured);
         Assert.False(groupByBehavior.AuthoringPolicy.AllowMultiplePublishedCandidates);
         Assert.Equal(group.AuthoringPolicy.PreferredAuthoringStyle, groupByBehavior.AuthoringPolicy.PreferredAuthoringStyle);
         Assert.Equal(group.AuthoringPolicy.AllowedAuthoringStyles, groupByBehavior.AuthoringPolicy.AllowedAuthoringStyles);
         Assert.Equal(group.AuthoringPolicy.DisallowedAuthoringStyles, groupByBehavior.AuthoringPolicy.DisallowedAuthoringStyles);
+        Assert.Equal(group.AuthoringPolicySuppressedCandidateIds, groupByBehavior.AuthoringPolicySuppressedCandidateIds);
+        var explicitStyle = Assert.Single(group.AuthoringStyleSummaries, static item =>
+            string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle, StringComparison.Ordinal));
+        Assert.Single(explicitStyle.PublishedCandidateIds);
+        Assert.Empty(explicitStyle.AuthoringPolicySuppressedCandidateIds);
+        var profileStyle = Assert.Single(group.AuthoringStyleSummaries, static item =>
+            string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal([authoringPolicySuppressed[1].Id], profileStyle.AuthoringPolicySuppressedCandidateIds);
+        Assert.Empty(profileStyle.PrecedenceSuppressedCandidateIds);
+        Assert.Empty(profileStyle.GovernanceSuppressedCandidateIds);
+        var generatedStyle = Assert.Single(group.AuthoringStyleSummaries, static item =>
+            string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal([authoringPolicySuppressed[0].Id], generatedStyle.AuthoringPolicySuppressedCandidateIds);
+        Assert.Empty(generatedStyle.PrecedenceSuppressedCandidateIds);
+        Assert.Empty(generatedStyle.GovernanceSuppressedCandidateIds);
         Assert.Contains(snapshot.RestEndpointPublicationGroups, item =>
             string.Equals(item.BehaviorId, group.BehaviorId, StringComparison.Ordinal) &&
             item.AuthoringPolicy.IsConfigured &&
@@ -4415,7 +4452,8 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
                 RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle,
                 StringComparison.Ordinal) &&
             item.AuthoringPolicy.AllowedAuthoringStyles.Count == 3 &&
-            item.AuthoringPolicy.DisallowedAuthoringStyles.Count == 1);
+            item.AuthoringPolicy.DisallowedAuthoringStyles.Count == 1 &&
+            item.AuthoringPolicySuppressedCandidateIds.Count == 2);
     }
 
     [Fact]
@@ -4483,20 +4521,24 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(2, group.PublishedCandidateIds.Count);
         Assert.Empty(group.PrecedenceSuppressedCandidateIds);
         Assert.Empty(group.GovernanceSuppressedCandidateIds);
+        Assert.Empty(group.AuthoringPolicySuppressedCandidateIds);
         Assert.Equal(2, group.AuthoringStyleSummaries.Count);
         var profileStyle = Assert.Single(group.AuthoringStyleSummaries, static item =>
             string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, StringComparison.Ordinal));
         Assert.Single(profileStyle.PublishedCandidateIds);
         Assert.Empty(profileStyle.PrecedenceSuppressedCandidateIds);
+        Assert.Empty(profileStyle.AuthoringPolicySuppressedCandidateIds);
         var generatedStyle = Assert.Single(group.AuthoringStyleSummaries, static item =>
             string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, StringComparison.Ordinal));
         Assert.Single(generatedStyle.PublishedCandidateIds);
         Assert.Empty(generatedStyle.PrecedenceSuppressedCandidateIds);
+        Assert.Empty(generatedStyle.AuthoringPolicySuppressedCandidateIds);
         Assert.Contains(snapshot.RestEndpointPublicationGroups, item =>
             string.Equals(item.BehaviorId, group.BehaviorId, StringComparison.Ordinal) &&
             item.AuthoringPolicy.AllowMultiplePublishedCandidates &&
             item.PublishedCandidateIds.Count == 2 &&
-            item.PrecedenceSuppressedCandidateIds.Count == 0);
+            item.PrecedenceSuppressedCandidateIds.Count == 0 &&
+            item.AuthoringPolicySuppressedCandidateIds.Count == 0);
 
         var profilePayload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>(
             "/api/v6/tests/generated/runtime/governed/orders/ord-61");
@@ -4622,12 +4664,13 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         var convention = Assert.Single(diagnostics.Conventions, static item =>
             string.Equals(item.Source, "Cephalon.Behaviors.Http", StringComparison.Ordinal));
         Assert.Equal(5200, convention.MinimumEventId);
-        Assert.Equal(5204, convention.MaximumEventId);
+        Assert.Equal(5205, convention.MaximumEventId);
         Assert.Contains(convention.Events, static item => item.Id == 5200 && item.Name == "RestEndpointGovernanceSuppressed");
         Assert.Contains(convention.Events, static item => item.Id == 5201 && item.Name == "RestEndpointPrecedenceSuppressed");
         Assert.Contains(convention.Events, static item => item.Id == 5202 && item.Name == "RestEndpointOverrideApplied");
         Assert.Contains(convention.Events, static item => item.Id == 5203 && item.Name == "RestEndpointOverrideNoOp");
         Assert.Contains(convention.Events, static item => item.Id == 5204 && item.Name == "RestEndpointBindingFallbackPreserved");
+        Assert.Contains(convention.Events, static item => item.Id == 5205 && item.Name == "RestEndpointAuthoringPolicySuppressed");
 
         Assert.Contains(loggerProvider.Entries, entry =>
             entry.EventId.Id == 5200 &&
@@ -4637,6 +4680,41 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             entry.EventId.Id == 5201 &&
             entry.Message.Contains("tests.rest.profile.suppression", StringComparison.Ordinal) &&
             entry.Message.Contains(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle, StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task MapCephalonLogsAuthoringPolicySuppressionOutcomes()
+    {
+        var loggerProvider = new TestLoggerProvider();
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Logging.ClearProviders();
+        builder.Logging.AddProvider(loggerProvider);
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "12";
+        builder.Configuration["OpenApi:DefaultVersion"] = "12";
+        builder.Configuration["RestApi:AuthoringPolicies:tests.rest.generated.threeway.lookup:PreferredAuthoringStyle"] =
+            RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle;
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new GeneratedThreeWaySuppressionRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 5205 &&
+            entry.Message.Contains("tests.rest.generated.threeway.lookup", StringComparison.Ordinal) &&
+            entry.Message.Contains("preferred-authoring-style-selected", StringComparison.Ordinal));
     }
 
     [Fact]

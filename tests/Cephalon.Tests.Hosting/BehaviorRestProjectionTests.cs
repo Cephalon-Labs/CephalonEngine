@@ -361,11 +361,149 @@ public sealed class BehaviorRestProjectionTests
             Assert.Equal(RestEndpointCandidateStatus.Published, item.Candidate.Status);
             Assert.Null(item.Candidate.SuppressedByCandidateId);
             Assert.Null(item.Candidate.SuppressedBySuppressionId);
+            Assert.Null(item.Candidate.SuppressedByAuthoringPolicyKind);
         });
         Assert.Contains(candidates, static item =>
             string.Equals(item.Candidate.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, StringComparison.Ordinal));
         Assert.Contains(candidates, static item =>
             string.Equals(item.Candidate.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverSuppressesNonPreferredShorthandCandidateByAuthoringPolicy()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        var group = builder.Group("/tests/generated-profile-preferred")
+            .ApiVersion(10);
+
+        group.MapGeneratedProfiles("tests.generated.projection.precedence");
+        group.MapProfile<GeneratedProjectionProfilePrecedenceBehavior>();
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.generated-profile-preferred",
+                "Generated Profile Preferred Module",
+                "Exercises preferred authoring-style suppression across shorthand REST candidates.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            authoringPolicies:
+            [
+                new RestEndpointPublicationGroupAuthoringPolicyDescriptor(
+                    "tests.generated.projection.precedence.lookup",
+                    isConfigured: true,
+                    preferredAuthoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle)
+            ]);
+
+        Assert.Equal(2, candidates.Count);
+
+        var published = Assert.Single(candidates, static item =>
+            item.Candidate.Status == RestEndpointCandidateStatus.Published);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, published.Candidate.AuthoringStyle);
+        Assert.Null(published.Candidate.SuppressedByAuthoringPolicyKind);
+        Assert.Null(published.Candidate.SuppressedByCandidateId);
+        Assert.Null(published.Candidate.SuppressedBySuppressionId);
+
+        var suppressed = Assert.Single(candidates, static item =>
+            item.Candidate.Status == RestEndpointCandidateStatus.Suppressed);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, suppressed.Candidate.AuthoringStyle);
+        Assert.Equal(
+            RestEndpointAuthoringPolicySuppressionKind.PreferredAuthoringStyleSelected,
+            suppressed.Candidate.SuppressedByAuthoringPolicyKind);
+        Assert.Null(suppressed.Candidate.SuppressedByCandidateId);
+        Assert.Null(suppressed.Candidate.SuppressedBySuppressionId);
+        Assert.Contains(
+            RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle,
+            suppressed.Candidate.SuppressionReason,
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverSuppressesNotAllowedShorthandCandidateByAuthoringPolicy()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        var group = builder.Group("/tests/generated-profile-allowed")
+            .ApiVersion(10);
+
+        group.MapGeneratedProfiles("tests.generated.projection.precedence");
+        group.MapProfile<GeneratedProjectionProfilePrecedenceBehavior>();
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.generated-profile-allowed",
+                "Generated Profile Allowed Module",
+                "Exercises allowed authoring-style suppression across shorthand REST candidates.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            authoringPolicies:
+            [
+                new RestEndpointPublicationGroupAuthoringPolicyDescriptor(
+                    "tests.generated.projection.precedence.lookup",
+                    isConfigured: true,
+                    allowedAuthoringStyles:
+                    [
+                        RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle
+                    ])
+            ]);
+
+        Assert.Equal(2, candidates.Count);
+
+        var published = Assert.Single(candidates, static item =>
+            item.Candidate.Status == RestEndpointCandidateStatus.Published);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, published.Candidate.AuthoringStyle);
+
+        var suppressed = Assert.Single(candidates, static item =>
+            item.Candidate.Status == RestEndpointCandidateStatus.Suppressed);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, suppressed.Candidate.AuthoringStyle);
+        Assert.Equal(
+            RestEndpointAuthoringPolicySuppressionKind.NotAllowedAuthoringStyle,
+            suppressed.Candidate.SuppressedByAuthoringPolicyKind);
+        Assert.Contains("allows only", suppressed.Candidate.SuppressionReason, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverSuppressesDisallowedShorthandCandidateByAuthoringPolicy()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        var group = builder.Group("/tests/generated-profile-disallowed")
+            .ApiVersion(10);
+
+        group.MapGeneratedProfiles("tests.generated.projection.precedence");
+        group.MapProfile<GeneratedProjectionProfilePrecedenceBehavior>();
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.generated-profile-disallowed",
+                "Generated Profile Disallowed Module",
+                "Exercises disallowed authoring-style suppression across shorthand REST candidates.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            authoringPolicies:
+            [
+                new RestEndpointPublicationGroupAuthoringPolicyDescriptor(
+                    "tests.generated.projection.precedence.lookup",
+                    isConfigured: true,
+                    disallowedAuthoringStyles:
+                    [
+                        RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle
+                    ])
+            ]);
+
+        Assert.Equal(2, candidates.Count);
+
+        var published = Assert.Single(candidates, static item =>
+            item.Candidate.Status == RestEndpointCandidateStatus.Published);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, published.Candidate.AuthoringStyle);
+
+        var suppressed = Assert.Single(candidates, static item =>
+            item.Candidate.Status == RestEndpointCandidateStatus.Suppressed);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, suppressed.Candidate.AuthoringStyle);
+        Assert.Equal(
+            RestEndpointAuthoringPolicySuppressionKind.DisallowedAuthoringStyle,
+            suppressed.Candidate.SuppressedByAuthoringPolicyKind);
+        Assert.Contains("disallows", suppressed.Candidate.SuppressionReason, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

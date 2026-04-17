@@ -45,8 +45,9 @@ module-owned REST endpoints.
   summaries/descriptions for module-owned REST endpoints, and separation between public REST docs
   and generic adapter endpoints
 - **REST governance diagnostics** — stable `/engine/diagnostics` convention plus information-level
-  startup log events for shorthand suppression, precedence suppression, applied override, no-op
-  override, and preserved binding-fallback outcomes
+  startup log events for shorthand governance suppression, authoring-policy suppression,
+  precedence suppression, applied override, no-op override, and preserved binding-fallback
+  outcomes
 - **Optional REST response envelope** — `ApiRoutes:ResultEnvelope:Enabled` projects REST success
   and error responses through `ResultModel<T>` / `ResultModelError` with an `errors` collection
   while leaving GraphQL,
@@ -234,7 +235,7 @@ Current profile behavior:
 ## REST governance diagnostics
 
 When `Cephalon.Behaviors.Http` is active, `/engine/diagnostics` now also publishes source
-`Cephalon.Behaviors.Http` with stable event ids `5200-5204`:
+`Cephalon.Behaviors.Http` with stable event ids `5200-5205`:
 
 - `5200` — a shorthand candidate was suppressed by a configured governance rule
 - `5201` — a shorthand candidate lost publication because a higher-precedence authoring style won
@@ -243,6 +244,9 @@ When `Cephalon.Behaviors.Http` is active, `/engine/diagnostics` now also publish
 - `5204` — a shorthand candidate preserved a typed binding fallback mode while partial explicit
   override reconciliation ran, including both preserved source implicit-query fallback and
   preserved remaining request-body fallback
+- `5205` — a shorthand candidate was suppressed by authoring policy, including
+  `disallowed-authoring-style`, `not-allowed-authoring-style`, and
+  `preferred-authoring-style-selected`
 
 Those events are emitted during startup/materialization when information-level logging is enabled.
 For full hosted `MapCephalon()` paths, published-candidate logging reconciles against the actual
@@ -603,7 +607,9 @@ shorthand candidates can remain published beside the default winner as long as t
 route answers stay distinct. When those co-published candidates would otherwise reuse the same
 effective endpoint name, candidate resolution now disambiguates that name deterministically while
 preserving `OriginalEndpointName` as source shorthand lineage. Preferred/allowed/disallowed
-authoring-style fields remain visibility-only intent for now.
+authoring-style fields now also suppress shorthand candidates when they fall outside the configured
+policy, while explicit module DSL publication remains authoritative and runtime truth keeps those
+authoring-policy outcomes distinct from governance suppression and precedence suppression.
 
 The host now also publishes the configured shorthand-suppression rules themselves through:
 

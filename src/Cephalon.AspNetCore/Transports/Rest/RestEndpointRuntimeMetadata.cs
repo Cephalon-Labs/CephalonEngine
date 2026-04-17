@@ -17,6 +17,12 @@ internal static class RestEndpointRuntimeMetadata
     internal const int BehaviorModuleProfilePrecedenceRank = 3;
     internal const int BehaviorModuleGeneratedPrecedenceRank = 4;
 
+    internal static bool IsShorthandAuthoringStyle(string? authoringStyle)
+    {
+        return string.Equals(authoringStyle, BehaviorModuleGeneratedAuthoringStyle, StringComparison.OrdinalIgnoreCase) ||
+               string.Equals(authoringStyle, BehaviorModuleProfileAuthoringStyle, StringComparison.OrdinalIgnoreCase);
+    }
+
     internal static int ResolvePrecedenceRank(string authoringStyle)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(authoringStyle);

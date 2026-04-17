@@ -20,7 +20,7 @@ public sealed class RestEndpointPublicationGroupAuthoringPolicyDescriptor
     /// </param>
     /// <param name="allowMultiplePublishedCandidates">
     /// <see langword="true" /> when the policy explicitly allows more than one projection candidate
-    /// to remain published for the same behavior boundary in a future enforcement slice.
+    /// to remain published for the same behavior boundary after authoring-policy enforcement.
     /// </param>
     /// <param name="preferredAuthoringStyle">
     /// The normalized preferred authoring style when the policy declares one.
@@ -96,7 +96,7 @@ public sealed class RestEndpointPublicationGroupAuthoringPolicyDescriptor
 
     /// <summary>
     /// Gets a value indicating whether the policy explicitly allows multiple published candidates
-    /// for the same behavior boundary in a future enforcement slice.
+    /// for the same behavior boundary after authoring-policy enforcement.
     /// </summary>
     public bool AllowMultiplePublishedCandidates { get; }
 

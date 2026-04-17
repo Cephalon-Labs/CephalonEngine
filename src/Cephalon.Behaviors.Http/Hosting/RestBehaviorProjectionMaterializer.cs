@@ -262,6 +262,16 @@ internal static class RestBehaviorProjectionMaterializer
                     candidate.SuppressedBySuppressionId,
                     JoinIdentifiers(candidate.MatchedSuppressionIds));
             }
+            else if (candidate.SuppressedByAuthoringPolicyKind is { } authoringPolicySuppressionKind)
+            {
+                RestBehaviorGovernanceLoggerMessages.LogAuthoringPolicySuppressed(
+                    logger,
+                    candidate.Id,
+                    behaviorId,
+                    candidate.AuthoringStyle,
+                    authoringPolicySuppressionKind.GetWireName(),
+                    candidate.SuppressionReason ?? "(none)");
+            }
             else if (!string.IsNullOrWhiteSpace(candidate.SuppressedByCandidateId) &&
                      candidatesById.TryGetValue(candidate.SuppressedByCandidateId, out var winningCandidate))
             {
@@ -398,7 +408,8 @@ internal static class RestBehaviorProjectionMaterializer
             appliedOverrideId: appliedOverrideId,
             matchedSuppressionIds: candidate.Candidate.MatchedSuppressionIds,
             matchedOverrideIds: candidate.Candidate.MatchedOverrideIds,
-            suppressionReason: candidate.Candidate.SuppressionReason);
+            suppressionReason: candidate.Candidate.SuppressionReason,
+            suppressedByAuthoringPolicyKind: candidate.Candidate.SuppressedByAuthoringPolicyKind);
     }
 
     private static string? ResolveRegisteredAppliedOverrideId(
