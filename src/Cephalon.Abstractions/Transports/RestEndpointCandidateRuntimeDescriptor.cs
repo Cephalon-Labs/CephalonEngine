@@ -47,6 +47,14 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
     /// The selected host-level override identifier when one winning override rule was resolved for
     /// this candidate, even if that winning rule became a runtime no-op.
     /// </param>
+    /// <param name="suppressionSelectionBasis">
+    /// The earliest decisive specificity rule that selected the winning suppression rule when this
+    /// candidate was suppressed by REST governance.
+    /// </param>
+    /// <param name="overrideSelectionBasis">
+    /// The earliest decisive specificity rule that selected the winning override rule when one was
+    /// resolved for this candidate.
+    /// </param>
     public RestEndpointCandidateRuntimeDescriptor(
         string id,
         RestEndpointRuntimeDescriptor projectedEndpoint,
@@ -61,7 +69,9 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
         IReadOnlyList<string>? matchedOverrideIds = null,
         string? suppressionReason = null,
         RestEndpointAuthoringPolicySuppressionKind? suppressedByAuthoringPolicyKind = null,
-        string? selectedOverrideId = null)
+        string? selectedOverrideId = null,
+        RestEndpointGovernanceRuleSelectionBasis? suppressionSelectionBasis = null,
+        RestEndpointGovernanceRuleSelectionBasis? overrideSelectionBasis = null)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -107,6 +117,12 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
             ? null
             : selectedOverrideId.Trim();
         normalizedSelectedOverrideId ??= normalizedAppliedOverrideId ?? normalizedMatchedOverrideIds.FirstOrDefault();
+        var normalizedSuppressionSelectionBasis = NormalizeSelectionBasis(
+            suppressionSelectionBasis,
+            nameof(suppressionSelectionBasis));
+        var normalizedOverrideSelectionBasis = NormalizeSelectionBasis(
+            overrideSelectionBasis,
+            nameof(overrideSelectionBasis));
 
         if (status == RestEndpointCandidateStatus.Published &&
             (!string.IsNullOrWhiteSpace(suppressedByCandidateId) ||
@@ -159,6 +175,21 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
                 nameof(matchedSuppressionIds));
         }
 
+        if (normalizedSuppressionSelectionBasis.HasValue &&
+            string.IsNullOrWhiteSpace(suppressedBySuppressionId))
+        {
+            throw new ArgumentException(
+                "A suppression selection basis can only be declared for candidates suppressed by REST governance.",
+                nameof(suppressionSelectionBasis));
+        }
+
+        if (!normalizedSuppressionSelectionBasis.HasValue &&
+            !string.IsNullOrWhiteSpace(suppressedBySuppressionId) &&
+            normalizedMatchedSuppressionIds.Length <= 1)
+        {
+            normalizedSuppressionSelectionBasis = RestEndpointGovernanceRuleSelectionBasis.SingleMatch;
+        }
+
         if (normalizedSelectedOverrideId is not null &&
             normalizedMatchedOverrideIds.Length > 0 &&
             !normalizedMatchedOverrideIds.Contains(normalizedSelectedOverrideId, StringComparer.OrdinalIgnoreCase))
@@ -186,6 +217,21 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
                 nameof(appliedOverrideId));
         }
 
+        if (normalizedOverrideSelectionBasis.HasValue &&
+            normalizedSelectedOverrideId is null)
+        {
+            throw new ArgumentException(
+                "An override selection basis can only be declared when a winning override rule is available.",
+                nameof(overrideSelectionBasis));
+        }
+
+        if (!normalizedOverrideSelectionBasis.HasValue &&
+            normalizedSelectedOverrideId is not null &&
+            normalizedMatchedOverrideIds.Length <= 1)
+        {
+            normalizedOverrideSelectionBasis = RestEndpointGovernanceRuleSelectionBasis.SingleMatch;
+        }
+
         Id = id.Trim();
         ProjectedEndpoint = projectedEndpoint;
         OriginalProjection = originalProjection;
@@ -202,6 +248,8 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
         MatchedSuppressionIds = normalizedMatchedSuppressionIds;
         MatchedOverrideIds = normalizedMatchedOverrideIds;
         SelectedOverrideId = normalizedSelectedOverrideId;
+        SuppressionSelectionBasis = normalizedSuppressionSelectionBasis;
+        OverrideSelectionBasis = normalizedOverrideSelectionBasis;
         SuppressionReason = string.IsNullOrWhiteSpace(suppressionReason)
             ? null
             : suppressionReason.Trim();
@@ -266,6 +314,18 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
     public string? SelectedOverrideId { get; }
 
     /// <summary>
+    /// Gets the earliest decisive specificity rule that selected the winning suppression rule when
+    /// this candidate was suppressed by REST governance.
+    /// </summary>
+    public RestEndpointGovernanceRuleSelectionBasis? SuppressionSelectionBasis { get; }
+
+    /// <summary>
+    /// Gets the earliest decisive specificity rule that selected the winning override rule when one
+    /// was resolved for this candidate.
+    /// </summary>
+    public RestEndpointGovernanceRuleSelectionBasis? OverrideSelectionBasis { get; }
+
+    /// <summary>
     /// Gets the ordered suppression-rule identifiers that matched this candidate before one winner was selected.
     /// </summary>
     public IReadOnlyList<string> MatchedSuppressionIds { get; }
@@ -279,6 +339,26 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
     /// Gets the operator-facing suppression reason when one is available.
     /// </summary>
     public string? SuppressionReason { get; }
+
+    private static RestEndpointGovernanceRuleSelectionBasis? NormalizeSelectionBasis(
+        RestEndpointGovernanceRuleSelectionBasis? value,
+        string paramName)
+    {
+        if (!value.HasValue)
+        {
+            return null;
+        }
+
+        if (!Enum.IsDefined(value.Value) ||
+            value.Value == RestEndpointGovernanceRuleSelectionBasis.Unspecified)
+        {
+            throw new ArgumentException(
+                "A supported REST endpoint governance rule selection basis is required when one is declared.",
+                paramName);
+        }
+
+        return value.Value;
+    }
 
     private static string[] NormalizeOrderedList(IReadOnlyList<string>? values)
     {

@@ -46,6 +46,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
     private RestEndpointCandidateProjectionDescriptor? runtimeOriginalProjection;
     private string? runtimeOriginalSummary;
     private string[] runtimeMatchedOverrideIds = [];
+    private RestEndpointGovernanceRuleSelectionBasis? runtimeOverrideSelectionBasis;
     private string runtimeAuthoringStyle = RestEndpointRuntimeMetadata.BehaviorHelperAuthoringStyle;
     private string runtimeSourceKind = RestEndpointRuntimeMetadata.ManualSourceKind;
     private RouteGroupBuilder? routes;
@@ -158,6 +159,21 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             .Select(static value => value.Trim())
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToArray() ?? [];
+    }
+
+    internal void UseRuntimeOverrideSelectionBasis(
+        RestEndpointGovernanceRuleSelectionBasis? overrideSelectionBasis)
+    {
+        if (overrideSelectionBasis.HasValue &&
+            (!Enum.IsDefined(overrideSelectionBasis.Value) ||
+             overrideSelectionBasis.Value == RestEndpointGovernanceRuleSelectionBasis.Unspecified))
+        {
+            throw new ArgumentException(
+                "A supported REST endpoint governance rule selection basis is required when one is declared.",
+                nameof(overrideSelectionBasis));
+        }
+
+        runtimeOverrideSelectionBasis = overrideSelectionBasis;
     }
 
     /// <summary>
@@ -620,7 +636,8 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
                 ? null
                 : RestEndpointBindingDescriptorAdapter.ToRuntimeDescriptors(contract.Bindings),
             contract.BindingFallbackMode,
-            group.runtimeMatchedOverrideIds));
+            group.runtimeMatchedOverrideIds,
+            group.runtimeOverrideSelectionBasis));
 
         ApplyResponseConventions(builder, contract);
 

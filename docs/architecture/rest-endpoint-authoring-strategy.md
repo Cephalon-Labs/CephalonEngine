@@ -333,12 +333,14 @@ Status update:
   `snapshot.RestEndpointOverrides`; candidates now surface the governing rule through
   `RestEndpointCandidateRuntimeDescriptor.AppliedOverrideId` when the winning rule materially
   changes the effective answer, and now also surface the selected winning no-op rule through
-  `RestEndpointCandidateRuntimeDescriptor.SelectedOverrideId` while
+  `RestEndpointCandidateRuntimeDescriptor.SelectedOverrideId` plus
+  `RestEndpointCandidateRuntimeDescriptor.OverrideSelectionBasis` while
   `RestEndpointCandidateRuntimeDescriptor.MatchedOverrideIds` keeps every matching rule visible in
   specificity order, and published candidate registration now reconciles capability-only no-op
   matches against the actual mapped endpoint so no-op clears or same-key capability rewrites leave
-  `AppliedOverrideId = null` while `SelectedOverrideId` plus `MatchedOverrideIds` still show which
-  rule won and matched; the
+  `AppliedOverrideId = null` while `SelectedOverrideId`, `OverrideSelectionBasis`, and
+  `MatchedOverrideIds` still show which rule won, why it beat the runner-up, and which rules
+  matched; the
   normalized materializer now maps the same effective projection shape that
   the runtime catalogs report; explicit binding-plan
   overrides now default to replacing the shorthand candidate's explicit descriptors, but can also
@@ -1144,7 +1146,8 @@ The following points are durable enough to keep outside thread-local context.
   materialization, metadata-only same-value rewrites, same-value document rewrites, same-value tag
   rewrites, and metadata-clear matches against source metadata the module already set or cleared should keep
   `MatchedOverrideIds` visible while leaving `AppliedOverrideId = null`; those no-op wins should
-  still surface the winning rule through `SelectedOverrideId`
+  still surface the winning rule through `SelectedOverrideId` plus the decisive specificity answer
+  through `OverrideSelectionBasis`
 - when REST governance rewrites shorthand `RequiredCapabilityKey` or clears it through
   `ClearRequiredCapability`, the same effective answer must drive
   `ProjectedEndpoint.RequiredCapabilityKey`, actual ASP.NET Core endpoint metadata,
@@ -1154,13 +1157,13 @@ The following points are durable enough to keep outside thread-local context.
   guards behind
 - when published endpoint runtime truth needs to explain shorthand capability governance,
   `/engine/rest-endpoints` and `snapshot.RestEndpoints` now also expose
-  `OriginalRequiredCapabilityKey`, `AppliedOverrideId`, and `SelectedOverrideId`, so the final
-  published surface can
+  `OriginalRequiredCapabilityKey`, `AppliedOverrideId`, `SelectedOverrideId`, and
+  `OverrideSelectionBasis`, so the final published surface can
   distinguish “no capability boundary ever existed” from “a source capability boundary was cleared
   or rewritten” without forcing operators to reconstruct that answer only from candidate joins; the
   endpoint-level `AppliedOverrideId` should remain `null` for capability-only no-op matches whose
-  effective published capability answer does not change, while `SelectedOverrideId` still answers
-  which rule won
+  effective published capability answer does not change, while `SelectedOverrideId` plus
+  `OverrideSelectionBasis` still answer which rule won and why
 - when published endpoint runtime truth needs to explain shorthand governance overlap directly,
   `/engine/rest-endpoints` and `snapshot.RestEndpoints` should also expose the ordered
   `MatchedOverrideIds` set from the originating shorthand candidate so operators can see matched

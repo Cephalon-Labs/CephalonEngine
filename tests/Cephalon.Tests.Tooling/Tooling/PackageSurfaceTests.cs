@@ -257,6 +257,8 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointBindingFallbackModeExtensions),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointBindingDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointBindingSource),
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasis),
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasisExtensions),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideBindingMode),
             typeof(global::Cephalon.Abstractions.Transports.IRestEndpointCandidateRuntimeCatalog),
             typeof(global::Cephalon.Abstractions.Transports.IRestEndpointPublicationGroupRuntimeCatalog),
@@ -1101,6 +1103,41 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void RestEndpointGovernanceRuleSelectionBasisExposesStableSpecificityValues()
+    {
+        Assert.True(Enum.IsDefined(
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasis),
+            "SingleMatch"));
+        Assert.True(Enum.IsDefined(
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasis),
+            "CandidateTargeting"));
+        Assert.True(Enum.IsDefined(
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasis),
+            "StableRuleId"));
+    }
+
+    [Theory]
+    [InlineData(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasis.SingleMatch, "single-match")]
+    [InlineData(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasis.CandidateTargeting, "candidate-targeting")]
+    [InlineData(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasis.NarrowerCandidateSet, "narrower-candidate-set")]
+    [InlineData(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasis.MoreTargetDimensions, "more-target-dimensions")]
+    [InlineData(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasis.BehaviorTargeting, "behavior-targeting")]
+    [InlineData(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasis.NarrowerAuthoringStyleScope, "narrower-authoring-style-scope")]
+    [InlineData(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasis.FewerTargetValues, "fewer-target-values")]
+    [InlineData(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasis.StableRuleId, "stable-rule-id")]
+    public void RestEndpointGovernanceRuleSelectionBasisWireNamesStayAlignedWithJsonSerialization(
+        global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasis basis,
+        string expectedWireName)
+    {
+        Assert.Equal(
+            expectedWireName,
+            global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasisExtensions.GetWireName(basis));
+        Assert.True(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasisExtensions.TryParseWireName(expectedWireName, out var parsed));
+        Assert.Equal(basis, parsed);
+        Assert.Equal($"\"{expectedWireName}\"", JsonSerializer.Serialize(basis));
+    }
+
+    [Fact]
     public void RestEndpointRuntimeContractsExposeOriginalProjectionTagName()
     {
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateProjectionDescriptor)
@@ -1114,6 +1151,10 @@ public sealed class PackageSurfaceTests
             .GetProperty("SuppressedByAuthoringPolicyKind", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateRuntimeDescriptor)
             .GetProperty("SelectedOverrideId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateRuntimeDescriptor)
+            .GetProperty("SuppressionSelectionBasis", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateRuntimeDescriptor)
+            .GetProperty("OverrideSelectionBasis", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupDescriptor)
             .GetProperty("AuthoringStyleSummaries", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupDescriptor)
@@ -1213,6 +1254,8 @@ public sealed class PackageSurfaceTests
             .GetProperty("AppliedOverrideId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor)
             .GetProperty("SelectedOverrideId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor)
+            .GetProperty("OverrideSelectionBasis", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor)
             .GetProperty("MatchedOverrideIds", BindingFlags.Instance | BindingFlags.Public));
     }

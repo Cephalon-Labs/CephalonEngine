@@ -986,7 +986,13 @@ public sealed class BehaviorRestProjectionTests
                 StringComparison.Ordinal));
 
         Assert.Equal("all-candidates", primary.Candidate.SuppressedBySuppressionId);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.SingleMatch,
+            primary.Candidate.SuppressionSelectionBasis);
         Assert.Equal("secondary-only", secondary.Candidate.SuppressedBySuppressionId);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.CandidateTargeting,
+            secondary.Candidate.SuppressionSelectionBasis);
     }
 
     [Fact]
@@ -1282,6 +1288,12 @@ public sealed class BehaviorRestProjectionTests
         Assert.Null(candidate.Candidate.AppliedOverrideId);
         Assert.Equal("prefer-current-document", candidate.Candidate.SelectedOverrideId);
         Assert.Equal(["prefer-current-document"], candidate.Candidate.MatchedOverrideIds);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.SingleMatch,
+            candidate.Candidate.OverrideSelectionBasis);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.SingleMatch,
+            candidate.Candidate.ProjectedEndpoint.OverrideSelectionBasis);
         Assert.Equal(
             baselineCandidate.Candidate.ProjectedEndpoint.OpenApiDocumentName,
             candidate.Candidate.ProjectedEndpoint.OpenApiDocumentName);
@@ -2928,6 +2940,12 @@ public sealed class BehaviorRestProjectionTests
                 StringComparison.Ordinal));
         Assert.Equal("all-candidates", primary.Candidate.AppliedOverrideId);
         Assert.Equal(["all-candidates"], primary.Candidate.MatchedOverrideIds);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.SingleMatch,
+            primary.Candidate.OverrideSelectionBasis);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.SingleMatch,
+            primary.Candidate.ProjectedEndpoint.OverrideSelectionBasis);
 
         var secondary = Assert.Single(candidates, static item =>
             string.Equals(
@@ -2938,6 +2956,12 @@ public sealed class BehaviorRestProjectionTests
         Assert.Equal(
             ["secondary-only", "all-candidates"],
             secondary.Candidate.MatchedOverrideIds);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.MoreTargetDimensions,
+            secondary.Candidate.OverrideSelectionBasis);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.MoreTargetDimensions,
+            secondary.Candidate.ProjectedEndpoint.OverrideSelectionBasis);
     }
 
     [Fact]

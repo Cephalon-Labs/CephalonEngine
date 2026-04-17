@@ -91,6 +91,10 @@ public sealed class RestEndpointRuntimeDescriptor
     /// The selected shorthand override identifier when one winning override rule was resolved for
     /// this endpoint's originating candidate, even if that winning rule became a runtime no-op.
     /// </param>
+    /// <param name="overrideSelectionBasis">
+    /// The earliest decisive specificity rule that selected the winning override rule when one was
+    /// resolved for this endpoint's originating candidate.
+    /// </param>
     public RestEndpointRuntimeDescriptor(
         string id,
         string transportId,
@@ -124,13 +128,17 @@ public sealed class RestEndpointRuntimeDescriptor
         string? originalRequiredCapabilityKey = null,
         string? appliedOverrideId = null,
         IReadOnlyList<string>? matchedOverrideIds = null,
-        string? selectedOverrideId = null)
+        string? selectedOverrideId = null,
+        RestEndpointGovernanceRuleSelectionBasis? overrideSelectionBasis = null)
     {
         var normalizedMatchedOverrideIds = NormalizeOrderedList(matchedOverrideIds);
         var normalizedAppliedOverrideId = NormalizeOptional(appliedOverrideId);
         var normalizedSelectedOverrideId = NormalizeOptional(selectedOverrideId)
             ?? normalizedAppliedOverrideId
             ?? normalizedMatchedOverrideIds.FirstOrDefault();
+        var normalizedOverrideSelectionBasis = NormalizeSelectionBasis(
+            overrideSelectionBasis,
+            nameof(overrideSelectionBasis));
 
         if (normalizedSelectedOverrideId is not null &&
             normalizedMatchedOverrideIds.Length > 0 &&
@@ -148,6 +156,21 @@ public sealed class RestEndpointRuntimeDescriptor
             throw new ArgumentException(
                 "The applied override id must match the selected override id when both are declared.",
                 nameof(appliedOverrideId));
+        }
+
+        if (normalizedOverrideSelectionBasis.HasValue &&
+            normalizedSelectedOverrideId is null)
+        {
+            throw new ArgumentException(
+                "An override selection basis can only be declared when a winning override rule is available.",
+                nameof(overrideSelectionBasis));
+        }
+
+        if (!normalizedOverrideSelectionBasis.HasValue &&
+            normalizedSelectedOverrideId is not null &&
+            normalizedMatchedOverrideIds.Length <= 1)
+        {
+            normalizedOverrideSelectionBasis = RestEndpointGovernanceRuleSelectionBasis.SingleMatch;
         }
 
         Id = NormalizeRequired(id, nameof(id));
@@ -178,6 +201,7 @@ public sealed class RestEndpointRuntimeDescriptor
         AppliedOverrideId = normalizedAppliedOverrideId;
         MatchedOverrideIds = normalizedMatchedOverrideIds;
         SelectedOverrideId = normalizedSelectedOverrideId;
+        OverrideSelectionBasis = normalizedOverrideSelectionBasis;
         CandidateId = NormalizeOptional(candidateId);
         OriginalProjection = NormalizeOriginalProjection(originalProjection);
         BindingDescriptors = NormalizeBindingDescriptors(bindingDescriptors);
@@ -346,6 +370,13 @@ public sealed class RestEndpointRuntimeDescriptor
     public string? SelectedOverrideId { get; }
 
     /// <summary>
+    /// Gets the earliest decisive specificity rule that selected the winning override rule when one
+    /// was resolved for this endpoint's originating candidate.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public RestEndpointGovernanceRuleSelectionBasis? OverrideSelectionBasis { get; }
+
+    /// <summary>
     /// Gets the ordered shorthand override identifiers that matched this endpoint's originating
     /// candidate before one winner was selected.
     /// </summary>
@@ -453,6 +484,26 @@ public sealed class RestEndpointRuntimeDescriptor
                 nameof(value),
                 value,
                 "A supported REST endpoint binding fallback mode is required.");
+        }
+
+        return value.Value;
+    }
+
+    private static RestEndpointGovernanceRuleSelectionBasis? NormalizeSelectionBasis(
+        RestEndpointGovernanceRuleSelectionBasis? value,
+        string paramName)
+    {
+        if (!value.HasValue)
+        {
+            return null;
+        }
+
+        if (!Enum.IsDefined(value.Value) ||
+            value.Value == RestEndpointGovernanceRuleSelectionBasis.Unspecified)
+        {
+            throw new ArgumentException(
+                "A supported REST endpoint governance rule selection basis is required when one is declared.",
+                paramName);
         }
 
         return value.Value;

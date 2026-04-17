@@ -105,4 +105,5 @@ internal sealed record RestBehaviorEndpointMetadata(
     RestEndpointCandidateProjectionDescriptor? OriginalProjection,
     IReadOnlyList<RestEndpointBindingDescriptor>? BindingDescriptors,
     RestEndpointBindingFallbackMode? BindingFallbackMode,
-    IReadOnlyList<string>? MatchedOverrideIds);
+    IReadOnlyList<string>? MatchedOverrideIds,
+    RestEndpointGovernanceRuleSelectionBasis? OverrideSelectionBasis);

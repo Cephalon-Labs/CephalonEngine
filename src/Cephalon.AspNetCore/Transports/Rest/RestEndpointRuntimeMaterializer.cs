@@ -130,7 +130,8 @@ internal static class RestEndpointRuntimeMaterializer
                 requiredCapabilityKey: requiredCapabilityKey,
                 originalRequiredCapabilityKey: originalRequiredCapabilityKey,
                 appliedOverrideId: appliedOverrideId,
-                matchedOverrideIds: behaviorMetadata.MatchedOverrideIds);
+                matchedOverrideIds: behaviorMetadata.MatchedOverrideIds,
+                overrideSelectionBasis: behaviorMetadata.OverrideSelectionBasis);
         }
 
         return new RestEndpointRuntimeDescriptor(

@@ -2643,6 +2643,12 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
 
         Assert.Equal("tests.rest.profile.selector.bindings", primaryEndpoint.BehaviorId);
         Assert.Equal("tests.rest.profile.selector.bindings", secondaryEndpoint.BehaviorId);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.SingleMatch,
+            primaryEndpoint.OverrideSelectionBasis);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.MoreTargetDimensions,
+            secondaryEndpoint.OverrideSelectionBasis);
 
         var primaryCandidate = Assert.Single(candidates, static item =>
             string.Equals(item.ProjectedEndpoint.RoutePattern, "/api/v6/tests/profile-runtime/selectors/primary/orders/lookup/general/{orderId}/items", StringComparison.Ordinal));
@@ -2651,10 +2657,16 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
 
         Assert.Equal("all-candidates", primaryCandidate.AppliedOverrideId);
         Assert.Equal(["all-candidates"], primaryCandidate.MatchedOverrideIds);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.SingleMatch,
+            primaryCandidate.OverrideSelectionBasis);
         Assert.Equal("secondary-only", secondaryCandidate.AppliedOverrideId);
         Assert.Equal(
             ["secondary-only", "all-candidates"],
             secondaryCandidate.MatchedOverrideIds);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.MoreTargetDimensions,
+            secondaryCandidate.OverrideSelectionBasis);
         Assert.Equal("POST", secondaryCandidate.OriginalProjection.Method);
         Assert.Equal(7, secondaryCandidate.OriginalProjection.ApiVersionMajor);
         Assert.Equal("/api/v7/tests/profile-runtime/selectors/secondary/orders", secondaryCandidate.OriginalProjection.RouteGroupPrefix);
@@ -2947,6 +2959,9 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("Profile Selector Secondary API", suppressed.OriginalProjection.TagName);
         Assert.Equal("hide-secondary-only", suppressed.SuppressedBySuppressionId);
         Assert.Equal(["hide-secondary-only", "hide-secondary-tag"], suppressed.MatchedSuppressionIds);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.MoreTargetDimensions,
+            suppressed.SuppressionSelectionBasis);
 
         var rule = Assert.Single(suppressions, static item => string.Equals(item.Id, "hide-secondary-only", StringComparison.Ordinal));
         Assert.Contains("tests.rest.profile.selector.bindings", rule.BehaviorIds);
@@ -5551,6 +5566,9 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Null(endpoint.AppliedOverrideId);
         Assert.Equal("prefer-current-bindings", endpoint.SelectedOverrideId);
         Assert.Equal(["prefer-current-bindings"], endpoint.MatchedOverrideIds);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.SingleMatch,
+            endpoint.OverrideSelectionBasis);
         Assert.NotNull(endpoint.OriginalProjection);
         Assert.Collection(
             endpoint.BindingDescriptors,
@@ -5585,6 +5603,9 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Null(candidate.AppliedOverrideId);
         Assert.Equal("prefer-current-bindings", candidate.SelectedOverrideId);
         Assert.Equal(["prefer-current-bindings"], candidate.MatchedOverrideIds);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.SingleMatch,
+            candidate.OverrideSelectionBasis);
         Assert.Collection(
             candidate.ProjectedEndpoint.BindingDescriptors,
             orderId =>
@@ -5616,11 +5637,13 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal) &&
             item.AppliedOverrideId is null &&
             string.Equals(item.SelectedOverrideId, "prefer-current-bindings", StringComparison.Ordinal) &&
+            item.OverrideSelectionBasis == RestEndpointGovernanceRuleSelectionBasis.SingleMatch &&
             item.MatchedOverrideIds.SequenceEqual(["prefer-current-bindings"]));
         Assert.Contains(snapshot.RestEndpointCandidates, item =>
             string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
             item.AppliedOverrideId is null &&
             string.Equals(item.SelectedOverrideId, "prefer-current-bindings", StringComparison.Ordinal) &&
+            item.OverrideSelectionBasis == RestEndpointGovernanceRuleSelectionBasis.SingleMatch &&
             item.MatchedOverrideIds.SequenceEqual(["prefer-current-bindings"]));
 
         using var request = new HttpRequestMessage(

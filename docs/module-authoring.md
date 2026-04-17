@@ -579,7 +579,7 @@ endpoint-metadata set actions `EndpointName`, `Summary`, and `Description`, endp
 actions `ClearEndpointName`, `ClearSummary`, and `ClearDescription`, and/or explicit `Bindings`;
 the winning rule is recorded through `AppliedOverrideId` in `/engine/rest-endpoint-candidates`
 when it materially changes the effective answer, while no-op winning rules still surface through
-`SelectedOverrideId`,
+`SelectedOverrideId` plus `OverrideSelectionBasis`,
 while the runtime keeps the original shorthand source
 shape visible there through `OriginalProjection` while `ProjectedEndpoint` carries the final
 effective mapped answer, now also keeps original shorthand endpoint name plus summary/description
@@ -594,8 +594,9 @@ selection.
 If ASP.NET Core materialization proves that a matched shorthand override rule did not actually
 change the published endpoint metadata or capability answer, the runtime keeps
 `MatchedOverrideIds` visible, leaves `AppliedOverrideId = null`, and now still surfaces the
-winning rule through `SelectedOverrideId` on both the published candidate and final
-`/engine/rest-endpoints` answer.
+winning rule through `SelectedOverrideId` plus `OverrideSelectionBasis` on both the published
+candidate and final `/engine/rest-endpoints` answer. When more than one suppression rule matches a
+candidate and one wins, the same candidate answer also exposes `SuppressionSelectionBasis`.
 When `Bindings` are supplied, the override
 uses default `ReplaceExplicit` mode unless `BindingMode = MergeExplicit` is set explicitly. Replace
 mode swaps the shorthand candidate's full explicit binding plan, while merge mode upserts only the
