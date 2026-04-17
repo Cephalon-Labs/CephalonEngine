@@ -4411,7 +4411,13 @@ public sealed class BehaviorRestProjectionTests
                 "Publishes explicit endpoint metadata overrides after shorthand materialization.",
                 ClearEndpointName: false,
                 ClearSummary: false,
-                ClearDescription: false));
+                ClearDescription: false,
+                ActionKinds:
+                [
+                    RestEndpointOverrideActionKind.EndpointName,
+                    RestEndpointOverrideActionKind.Summary,
+                    RestEndpointOverrideActionKind.Description
+                ]));
 
         RestBehaviorProjectionMaterializer.MapGroup(
             apiGroup,
@@ -4516,7 +4522,13 @@ public sealed class BehaviorRestProjectionTests
                 Description: null,
                 ClearEndpointName: true,
                 ClearSummary: true,
-                ClearDescription: true));
+                ClearDescription: true,
+                ActionKinds:
+                [
+                    RestEndpointOverrideActionKind.ClearEndpointName,
+                    RestEndpointOverrideActionKind.ClearSummary,
+                    RestEndpointOverrideActionKind.ClearDescription
+                ]));
 
         RestBehaviorProjectionMaterializer.MapGroup(
             apiGroup,
@@ -4614,7 +4626,8 @@ public sealed class BehaviorRestProjectionTests
             AppliedCapabilityOverride: new AppliedRestEndpointCapabilityOverride(
                 "capability-only",
                 "restricted.override",
-                ClearRequiredCapability: false));
+                ClearRequiredCapability: false,
+                ActionKinds: [RestEndpointOverrideActionKind.RequiredCapabilityKey]));
 
         RestBehaviorProjectionMaterializer.MapGroup(
             apiGroup,
@@ -4716,7 +4729,8 @@ public sealed class BehaviorRestProjectionTests
             AppliedCapabilityOverride: new AppliedRestEndpointCapabilityOverride(
                 "capability-clear-only",
                 RequiredCapabilityKey: null,
-                ClearRequiredCapability: true));
+                ClearRequiredCapability: true,
+                ActionKinds: [RestEndpointOverrideActionKind.ClearRequiredCapability]));
 
         RestBehaviorProjectionMaterializer.MapGroup(
             apiGroup,
@@ -4821,7 +4835,8 @@ public sealed class BehaviorRestProjectionTests
             AppliedCapabilityOverride: new AppliedRestEndpointCapabilityOverride(
                 "capability-clear-noop",
                 RequiredCapabilityKey: null,
-                ClearRequiredCapability: true));
+                ClearRequiredCapability: true,
+                ActionKinds: [RestEndpointOverrideActionKind.ClearRequiredCapability]));
 
         RestBehaviorProjectionMaterializer.MapGroup(
             apiGroup,
@@ -4931,7 +4946,13 @@ public sealed class BehaviorRestProjectionTests
                 "Does not mark endpoint-level override provenance when explicit module metadata already matches the host rule.",
                 ClearEndpointName: false,
                 ClearSummary: false,
-                ClearDescription: false));
+                ClearDescription: false,
+                ActionKinds:
+                [
+                    RestEndpointOverrideActionKind.EndpointName,
+                    RestEndpointOverrideActionKind.Summary,
+                    RestEndpointOverrideActionKind.Description
+                ]));
 
         RestBehaviorProjectionMaterializer.MapGroup(
             apiGroup,
@@ -5047,7 +5068,8 @@ public sealed class BehaviorRestProjectionTests
                 Description: null,
                 ClearEndpointName: false,
                 ClearSummary: false,
-                ClearDescription: true));
+                ClearDescription: true,
+                ActionKinds: [RestEndpointOverrideActionKind.ClearDescription]));
 
         RestBehaviorProjectionMaterializer.MapGroup(
             apiGroup,

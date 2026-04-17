@@ -157,6 +157,25 @@ public sealed class RestEndpointOverrideDescriptor
             bindingMode,
             RemovedBindingProperties.Count > 0,
             clearBindings);
+        ActionKinds = ResolveActionKinds(
+            ApiVersionMajor,
+            Method,
+            Pattern,
+            RouteGroupPrefix,
+            OpenApiDocumentName,
+            TagName,
+            EndpointName,
+            Summary,
+            Description,
+            ClearEndpointName,
+            ClearSummary,
+            ClearDescription,
+            RequiredCapabilityKey,
+            ClearRequiredCapability,
+            Bindings,
+            RemovedBindingProperties,
+            ClearBindings,
+            BindingMode);
 
         if (ClearRequiredCapability && RequiredCapabilityKey is not null)
         {
@@ -193,23 +212,7 @@ public sealed class RestEndpointOverrideDescriptor
                 nameof(clearBindings));
         }
 
-        if (!ApiVersionMajor.HasValue &&
-            Method is null &&
-            Pattern is null &&
-            RouteGroupPrefix is null &&
-            OpenApiDocumentName is null &&
-            TagName is null &&
-            EndpointName is null &&
-            Summary is null &&
-            Description is null &&
-            !ClearEndpointName &&
-            !ClearSummary &&
-            !ClearDescription &&
-            RequiredCapabilityKey is null &&
-            !ClearRequiredCapability &&
-            !ClearBindings &&
-            Bindings.Count == 0 &&
-            RemovedBindingProperties.Count == 0)
+        if (ActionKinds.Count == 0)
         {
             throw new ArgumentException(
                 "REST endpoint override descriptors require at least one override action such as ApiVersionMajor, Method, Pattern, RouteGroupPrefix, OpenApiDocumentName, TagName, EndpointName, Summary, Description, ClearEndpointName, ClearSummary, ClearDescription, RequiredCapabilityKey, ClearRequiredCapability, ClearBindings, Bindings, or RemovedBindingProperties.",
@@ -390,6 +393,11 @@ public sealed class RestEndpointOverrideDescriptor
     /// candidate's explicit binding plan.
     /// </summary>
     public RestEndpointOverrideBindingMode BindingMode { get; }
+
+    /// <summary>
+    /// Gets the normalized action dimensions declared by this override rule.
+    /// </summary>
+    public IReadOnlyList<RestEndpointOverrideActionKind> ActionKinds { get; }
 
     private static string[] NormalizeList(IReadOnlyList<string>? values)
     {
@@ -606,5 +614,124 @@ public sealed class RestEndpointOverrideDescriptor
         }
 
         return normalized;
+    }
+
+    private static RestEndpointOverrideActionKind[] ResolveActionKinds(
+        int? apiVersionMajor,
+        string? method,
+        string? pattern,
+        string? routeGroupPrefix,
+        string? openApiDocumentName,
+        string? tagName,
+        string? endpointName,
+        string? summary,
+        string? description,
+        bool clearEndpointName,
+        bool clearSummary,
+        bool clearDescription,
+        string? requiredCapabilityKey,
+        bool clearRequiredCapability,
+        IReadOnlyList<RestEndpointBindingDescriptor> bindings,
+        IReadOnlyList<string> removedBindingProperties,
+        bool clearBindings,
+        RestEndpointOverrideBindingMode bindingMode)
+    {
+        ArgumentNullException.ThrowIfNull(bindings);
+        ArgumentNullException.ThrowIfNull(removedBindingProperties);
+
+        var actionKinds = new List<RestEndpointOverrideActionKind>(16);
+        if (apiVersionMajor.HasValue)
+        {
+            actionKinds.Add(RestEndpointOverrideActionKind.ApiVersionMajor);
+        }
+
+        if (method is not null)
+        {
+            actionKinds.Add(RestEndpointOverrideActionKind.Method);
+        }
+
+        if (pattern is not null)
+        {
+            actionKinds.Add(RestEndpointOverrideActionKind.Pattern);
+        }
+
+        if (routeGroupPrefix is not null)
+        {
+            actionKinds.Add(RestEndpointOverrideActionKind.RouteGroupPrefix);
+        }
+
+        if (openApiDocumentName is not null)
+        {
+            actionKinds.Add(RestEndpointOverrideActionKind.OpenApiDocumentName);
+        }
+
+        if (tagName is not null)
+        {
+            actionKinds.Add(RestEndpointOverrideActionKind.TagName);
+        }
+
+        if (endpointName is not null)
+        {
+            actionKinds.Add(RestEndpointOverrideActionKind.EndpointName);
+        }
+
+        if (summary is not null)
+        {
+            actionKinds.Add(RestEndpointOverrideActionKind.Summary);
+        }
+
+        if (description is not null)
+        {
+            actionKinds.Add(RestEndpointOverrideActionKind.Description);
+        }
+
+        if (clearEndpointName)
+        {
+            actionKinds.Add(RestEndpointOverrideActionKind.ClearEndpointName);
+        }
+
+        if (clearSummary)
+        {
+            actionKinds.Add(RestEndpointOverrideActionKind.ClearSummary);
+        }
+
+        if (clearDescription)
+        {
+            actionKinds.Add(RestEndpointOverrideActionKind.ClearDescription);
+        }
+
+        if (requiredCapabilityKey is not null)
+        {
+            actionKinds.Add(RestEndpointOverrideActionKind.RequiredCapabilityKey);
+        }
+
+        if (clearRequiredCapability)
+        {
+            actionKinds.Add(RestEndpointOverrideActionKind.ClearRequiredCapability);
+        }
+
+        if (clearBindings)
+        {
+            actionKinds.Add(RestEndpointOverrideActionKind.ClearBindings);
+        }
+        else
+        {
+            if (bindings.Count > 0)
+            {
+                actionKinds.Add(bindingMode == RestEndpointOverrideBindingMode.MergeExplicit
+                    ? RestEndpointOverrideActionKind.MergeBindings
+                    : RestEndpointOverrideActionKind.ReplaceBindings);
+            }
+
+            if (removedBindingProperties.Count > 0)
+            {
+                actionKinds.Add(RestEndpointOverrideActionKind.RemoveBindingProperties);
+            }
+        }
+
+        return actionKinds
+            .Distinct()
+            .OrderBy(static actionKind => actionKind)
+            .ToArray();
     }
 }

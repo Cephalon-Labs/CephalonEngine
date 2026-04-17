@@ -33,6 +33,9 @@ internal static class RestEndpointRuntimeDescriptorFactory
         string? originalRequiredCapabilityKey = null,
         string? appliedOverrideId = null,
         IReadOnlyList<string>? matchedOverrideIds = null,
+        string? selectedOverrideId = null,
+        IReadOnlyList<RestEndpointOverrideActionKind>? selectedOverrideActionKinds = null,
+        IReadOnlyList<RestEndpointOverrideActionKind>? appliedOverrideActionKinds = null,
         RestEndpointGovernanceRuleSelectionBasis? overrideSelectionBasis = null,
         IReadOnlyList<string>? skippedSuppressionIds = null,
         IReadOnlyList<string>? skippedOverrideIds = null)
@@ -90,6 +93,9 @@ internal static class RestEndpointRuntimeDescriptorFactory
             originalRequiredCapabilityKey: originalRequiredCapabilityKey,
             appliedOverrideId: appliedOverrideId,
             matchedOverrideIds: matchedOverrideIds,
+            selectedOverrideId: selectedOverrideId,
+            selectedOverrideActionKinds: selectedOverrideActionKinds,
+            appliedOverrideActionKinds: appliedOverrideActionKinds,
             overrideSelectionBasis: overrideSelectionBasis,
             skippedSuppressionIds: skippedSuppressionIds,
             skippedOverrideIds: skippedOverrideIds);

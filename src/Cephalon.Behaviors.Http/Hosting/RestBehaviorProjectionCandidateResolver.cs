@@ -300,7 +300,9 @@ internal static class RestBehaviorProjectionCandidateResolver
             candidate.Candidate.ProjectedEndpoint.SelectedOverrideId,
             candidate.Candidate.ProjectedEndpoint.OverrideSelectionBasis,
             candidate.Candidate.ProjectedEndpoint.SkippedSuppressionIds,
-            candidate.Candidate.ProjectedEndpoint.SkippedOverrideIds);
+            candidate.Candidate.ProjectedEndpoint.SkippedOverrideIds,
+            candidate.Candidate.ProjectedEndpoint.SelectedOverrideActionKinds,
+            candidate.Candidate.ProjectedEndpoint.AppliedOverrideActionKinds);
 
         return candidate with
         {
@@ -322,7 +324,9 @@ internal static class RestBehaviorProjectionCandidateResolver
                 suppressionSelectionBasis: candidate.Candidate.SuppressionSelectionBasis,
                 overrideSelectionBasis: candidate.Candidate.OverrideSelectionBasis,
                 skippedSuppressionIds: candidate.Candidate.SkippedSuppressionIds,
-                skippedOverrideIds: candidate.Candidate.SkippedOverrideIds)
+                skippedOverrideIds: candidate.Candidate.SkippedOverrideIds,
+                selectedOverrideActionKinds: candidate.Candidate.SelectedOverrideActionKinds,
+                appliedOverrideActionKinds: candidate.Candidate.AppliedOverrideActionKinds)
         };
     }
 
@@ -377,7 +381,9 @@ internal static class RestBehaviorProjectionCandidateResolver
             candidate.Candidate.ProjectedEndpoint.SelectedOverrideId,
             candidate.Candidate.ProjectedEndpoint.OverrideSelectionBasis,
             normalizedSkippedSuppressionIds,
-            normalizedSkippedOverrideIds);
+            normalizedSkippedOverrideIds,
+            candidate.Candidate.ProjectedEndpoint.SelectedOverrideActionKinds,
+            candidate.Candidate.ProjectedEndpoint.AppliedOverrideActionKinds);
 
         return candidate with
         {
@@ -399,7 +405,9 @@ internal static class RestBehaviorProjectionCandidateResolver
                 suppressionSelectionBasis: candidate.Candidate.SuppressionSelectionBasis,
                 overrideSelectionBasis: candidate.Candidate.OverrideSelectionBasis,
                 skippedSuppressionIds: normalizedSkippedSuppressionIds,
-                skippedOverrideIds: normalizedSkippedOverrideIds)
+                skippedOverrideIds: normalizedSkippedOverrideIds,
+                selectedOverrideActionKinds: candidate.Candidate.SelectedOverrideActionKinds,
+                appliedOverrideActionKinds: candidate.Candidate.AppliedOverrideActionKinds)
         };
     }
 
@@ -541,6 +549,11 @@ internal static class RestBehaviorProjectionCandidateResolver
             documentation.Summary,
             documentation.Description);
         var appliedCapabilityOverride = CreateAppliedRequiredCapabilityOverride(selectedOverride);
+        var selectedOverrideActionKinds = selectedOverride?.ActionKinds ?? [];
+        var appliedOverrideActionKinds = ResolveAppliedActionKinds(
+            appliedOverride?.ActionKinds,
+            appliedMetadataOverride?.ActionKinds,
+            appliedCapabilityOverride?.ActionKinds);
         var endpointName = ResolveEffectiveMetadataValue(
             selectedOverride?.EndpointName,
             selectedOverride?.ClearEndpointName == true,
@@ -581,7 +594,11 @@ internal static class RestBehaviorProjectionCandidateResolver
             requiredCapabilityKey: appliedCapabilityOverride?.ClearRequiredCapability == true
                 ? null
                 : appliedCapabilityOverride?.RequiredCapabilityKey,
+            appliedOverrideId: appliedOverride?.Id ?? appliedCapabilityOverride?.OverrideId ?? appliedMetadataOverride?.OverrideId,
             matchedOverrideIds: overrideDecision.MatchedOverrideIds,
+            selectedOverrideId: selectedOverride?.Id,
+            selectedOverrideActionKinds: selectedOverrideActionKinds,
+            appliedOverrideActionKinds: appliedOverrideActionKinds,
             overrideSelectionBasis: overrideDecision.SelectionBasis);
         var precedenceRank = RestEndpointRuntimeMetadata.ResolvePrecedenceRank(effectiveEndpointProjection.AuthoringStyle);
 
@@ -598,6 +615,8 @@ internal static class RestBehaviorProjectionCandidateResolver
                 appliedOverrideId: appliedOverride?.Id ?? appliedCapabilityOverride?.OverrideId ?? appliedMetadataOverride?.OverrideId,
                 matchedOverrideIds: overrideDecision.MatchedOverrideIds,
                 selectedOverrideId: selectedOverride?.Id,
+                selectedOverrideActionKinds: selectedOverrideActionKinds,
+                appliedOverrideActionKinds: appliedOverrideActionKinds,
                 overrideSelectionBasis: overrideDecision.SelectionBasis),
             appliedCapabilityOverride,
             appliedMetadataOverride);
@@ -645,7 +664,9 @@ internal static class RestBehaviorProjectionCandidateResolver
                 suppressionSelectionBasis: ResolveSuppressionSelectionBasis(matchedSuppressions),
                 overrideSelectionBasis: candidate.Candidate.OverrideSelectionBasis,
                 skippedSuppressionIds: candidate.Candidate.SkippedSuppressionIds,
-                skippedOverrideIds: candidate.Candidate.SkippedOverrideIds)
+                skippedOverrideIds: candidate.Candidate.SkippedOverrideIds,
+                selectedOverrideActionKinds: candidate.Candidate.SelectedOverrideActionKinds,
+                appliedOverrideActionKinds: candidate.Candidate.AppliedOverrideActionKinds)
             };
         }
 
@@ -667,7 +688,9 @@ internal static class RestBehaviorProjectionCandidateResolver
                     selectedOverrideId: candidate.Candidate.SelectedOverrideId,
                     overrideSelectionBasis: candidate.Candidate.OverrideSelectionBasis,
                     skippedSuppressionIds: candidate.Candidate.SkippedSuppressionIds,
-                    skippedOverrideIds: candidate.Candidate.SkippedOverrideIds)
+                    skippedOverrideIds: candidate.Candidate.SkippedOverrideIds,
+                    selectedOverrideActionKinds: candidate.Candidate.SelectedOverrideActionKinds,
+                    appliedOverrideActionKinds: candidate.Candidate.AppliedOverrideActionKinds)
             };
         }
 
@@ -695,7 +718,9 @@ internal static class RestBehaviorProjectionCandidateResolver
                 selectedOverrideId: candidate.Candidate.SelectedOverrideId,
                 overrideSelectionBasis: candidate.Candidate.OverrideSelectionBasis,
                 skippedSuppressionIds: candidate.Candidate.SkippedSuppressionIds,
-                skippedOverrideIds: candidate.Candidate.SkippedOverrideIds)
+                skippedOverrideIds: candidate.Candidate.SkippedOverrideIds,
+                selectedOverrideActionKinds: candidate.Candidate.SelectedOverrideActionKinds,
+                appliedOverrideActionKinds: candidate.Candidate.AppliedOverrideActionKinds)
         };
     }
 
@@ -917,6 +942,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         var effectiveTagName = originalTagName;
         string? effectiveRouteGroupPrefix = null;
         var wasApplied = false;
+        var appliedActionKinds = new HashSet<RestEndpointOverrideActionKind>();
         var shouldRevalidateBindings = false;
 
         if (!string.IsNullOrWhiteSpace(matchedOverride.Pattern) &&
@@ -924,6 +950,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         {
             effectiveEndpointProjection = effectiveEndpointProjection.WithPattern(matchedOverride.Pattern);
             wasApplied = true;
+            appliedActionKinds.Add(RestEndpointOverrideActionKind.Pattern);
             shouldRevalidateBindings = true;
         }
 
@@ -934,6 +961,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             {
                 effectiveEndpointProjection = effectiveEndpointProjection.WithMethod(overrideMethod);
                 wasApplied = true;
+                appliedActionKinds.Add(RestEndpointOverrideActionKind.Method);
                 shouldRevalidateBindings = true;
             }
         }
@@ -999,6 +1027,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             if (bindingPlanChanged)
             {
                 wasApplied = true;
+                appliedActionKinds.UnionWith(ResolveBindingActionKinds(matchedOverride));
             }
         }
 
@@ -1011,6 +1040,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         {
             effectiveApiVersionMajor = overrideApiVersionMajor;
             wasApplied = true;
+            appliedActionKinds.Add(RestEndpointOverrideActionKind.ApiVersionMajor);
         }
 
         if (!string.IsNullOrWhiteSpace(matchedOverride.OpenApiDocumentName))
@@ -1019,6 +1049,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             {
                 effectiveOpenApiDocumentName = matchedOverride.OpenApiDocumentName;
                 wasApplied = true;
+                appliedActionKinds.Add(RestEndpointOverrideActionKind.OpenApiDocumentName);
             }
         }
         else if (!group.HasExplicitOpenApiDocumentName &&
@@ -1044,6 +1075,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             {
                 effectiveRouteGroupPrefix = matchedOverride.RouteGroupPrefix;
                 wasApplied = true;
+                appliedActionKinds.Add(RestEndpointOverrideActionKind.RouteGroupPrefix);
             }
         }
 
@@ -1052,6 +1084,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         {
             effectiveTagName = matchedOverride.TagName;
             wasApplied = true;
+            appliedActionKinds.Add(RestEndpointOverrideActionKind.TagName);
         }
 
         return new ResolvedRestEndpointOverrideDecision(
@@ -1065,7 +1098,8 @@ internal static class RestBehaviorProjectionCandidateResolver
                     effectiveApiVersionMajor,
                     effectiveOpenApiDocumentName,
                     effectiveRouteGroupPrefix,
-                    effectiveTagName)
+                    effectiveTagName,
+                    appliedActionKinds.OrderBy(static actionKind => actionKind).ToArray())
                 : null);
     }
 
@@ -2192,7 +2226,14 @@ internal static class RestBehaviorProjectionCandidateResolver
             descriptionChanged ? description : null,
             endpointNameChanged && selectedOverride.ClearEndpointName,
             summaryChanged && selectedOverride.ClearSummary,
-            descriptionChanged && selectedOverride.ClearDescription);
+            descriptionChanged && selectedOverride.ClearDescription,
+            ResolveAppliedMetadataActionKinds(
+                endpointNameChanged,
+                selectedOverride.ClearEndpointName,
+                summaryChanged,
+                selectedOverride.ClearSummary,
+                descriptionChanged,
+                selectedOverride.ClearDescription));
     }
 
     private static AppliedRestEndpointCapabilityOverride? CreateAppliedRequiredCapabilityOverride(
@@ -2212,7 +2253,72 @@ internal static class RestBehaviorProjectionCandidateResolver
         return new AppliedRestEndpointCapabilityOverride(
             selectedOverride.Id,
             requiredCapabilityKey,
-            selectedOverride.ClearRequiredCapability);
+            selectedOverride.ClearRequiredCapability,
+            selectedOverride.ClearRequiredCapability
+                ? [RestEndpointOverrideActionKind.ClearRequiredCapability]
+                : [RestEndpointOverrideActionKind.RequiredCapabilityKey]);
+    }
+
+    private static RestEndpointOverrideActionKind[] ResolveAppliedMetadataActionKinds(
+        bool endpointNameChanged,
+        bool clearEndpointName,
+        bool summaryChanged,
+        bool clearSummary,
+        bool descriptionChanged,
+        bool clearDescription)
+    {
+        var actionKinds = new List<RestEndpointOverrideActionKind>(3);
+        if (endpointNameChanged)
+        {
+            actionKinds.Add(clearEndpointName
+                ? RestEndpointOverrideActionKind.ClearEndpointName
+                : RestEndpointOverrideActionKind.EndpointName);
+        }
+
+        if (summaryChanged)
+        {
+            actionKinds.Add(clearSummary
+                ? RestEndpointOverrideActionKind.ClearSummary
+                : RestEndpointOverrideActionKind.Summary);
+        }
+
+        if (descriptionChanged)
+        {
+            actionKinds.Add(clearDescription
+                ? RestEndpointOverrideActionKind.ClearDescription
+                : RestEndpointOverrideActionKind.Description);
+        }
+
+        return actionKinds
+            .Distinct()
+            .OrderBy(static actionKind => actionKind)
+            .ToArray();
+    }
+
+    private static RestEndpointOverrideActionKind[] ResolveAppliedActionKinds(
+        IReadOnlyList<RestEndpointOverrideActionKind>? structuralActionKinds,
+        IReadOnlyList<RestEndpointOverrideActionKind>? metadataActionKinds,
+        IReadOnlyList<RestEndpointOverrideActionKind>? capabilityActionKinds)
+    {
+        return (structuralActionKinds ?? [])
+            .Concat(metadataActionKinds ?? [])
+            .Concat(capabilityActionKinds ?? [])
+            .Distinct()
+            .OrderBy(static actionKind => actionKind)
+            .ToArray();
+    }
+
+    private static RestEndpointOverrideActionKind[] ResolveBindingActionKinds(RestEndpointOverrideOptions overrideOptions)
+    {
+        ArgumentNullException.ThrowIfNull(overrideOptions);
+
+        return overrideOptions.ActionKinds
+            .Where(static actionKind =>
+                actionKind == RestEndpointOverrideActionKind.ReplaceBindings ||
+                actionKind == RestEndpointOverrideActionKind.MergeBindings ||
+                actionKind == RestEndpointOverrideActionKind.RemoveBindingProperties ||
+                actionKind == RestEndpointOverrideActionKind.ClearBindings)
+            .ToArray();
     }
 
     private static int CountTargetValues(RestEndpointSuppressionOptions suppression)
@@ -2434,7 +2540,8 @@ internal sealed record AppliedRestEndpointOverride(
     int? EffectiveApiVersionMajor,
     string EffectiveOpenApiDocumentName,
     string? EffectiveRouteGroupPrefix,
-    string EffectiveTagName);
+    string EffectiveTagName,
+    IReadOnlyList<RestEndpointOverrideActionKind> ActionKinds);
 
 internal sealed record AppliedRestEndpointMetadataOverride(
     string OverrideId,
@@ -2443,12 +2550,14 @@ internal sealed record AppliedRestEndpointMetadataOverride(
     string? Description,
     bool ClearEndpointName,
     bool ClearSummary,
-    bool ClearDescription);
+    bool ClearDescription,
+    IReadOnlyList<RestEndpointOverrideActionKind> ActionKinds);
 
 internal sealed record AppliedRestEndpointCapabilityOverride(
     string OverrideId,
     string? RequiredCapabilityKey,
-    bool ClearRequiredCapability);
+    bool ClearRequiredCapability,
+    IReadOnlyList<RestEndpointOverrideActionKind> ActionKinds);
 
 internal sealed record ResolvedRestEndpointAuthoringPolicySuppression(
     string CandidateId,

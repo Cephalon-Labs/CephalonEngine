@@ -88,7 +88,8 @@ internal static class RestEndpointRuntimeMaterializer
         var requiredCapabilityKey = RestEndpointRuntimeMetadata.ResolveEffectiveRequiredCapabilityKey(capabilityMetadata);
         var originalRequiredCapabilityKey = endpoint.Metadata.GetMetadata<RestEndpointSourceCapabilityMetadata>()?.RequiredCapabilityKey
             ?? RestEndpointRuntimeMetadata.ResolveLastDeclaredRequiredCapabilityKey(capabilityMetadata);
-        var appliedOverrideId = endpoint.Metadata.GetMetadata<RestEndpointAppliedOverrideMetadata>()?.OverrideId;
+        var appliedOverrideMetadata = endpoint.Metadata.GetMetadata<RestEndpointAppliedOverrideMetadata>();
+        var appliedOverrideId = appliedOverrideMetadata?.OverrideId;
         var sourceKind = behaviorMetadata?.SourceKind
             ?? RestEndpointRuntimeMetadata.ManualSourceKind;
         var tags = behaviorMetadata is null
@@ -131,6 +132,9 @@ internal static class RestEndpointRuntimeMaterializer
                 originalRequiredCapabilityKey: originalRequiredCapabilityKey,
                 appliedOverrideId: appliedOverrideId,
                 matchedOverrideIds: behaviorMetadata.MatchedOverrideIds,
+                selectedOverrideId: behaviorMetadata.SelectedOverrideId,
+                selectedOverrideActionKinds: behaviorMetadata.SelectedOverrideActionKinds,
+                appliedOverrideActionKinds: appliedOverrideMetadata?.ActionKinds,
                 overrideSelectionBasis: behaviorMetadata.OverrideSelectionBasis,
                 skippedSuppressionIds: behaviorMetadata.SkippedSuppressionIds,
                 skippedOverrideIds: behaviorMetadata.SkippedOverrideIds);

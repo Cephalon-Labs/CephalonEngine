@@ -511,7 +511,7 @@ Current helper behavior:
   bounded published route-group prefix, constrained relative route pattern, required capability
   boundary, or explicit binding
   plan for descriptor-backed shorthand candidates through `RestApi:Overrides`, which now supports
-  `ApiVersionMajor`, `Method`, `RouteGroupPrefix`, `Pattern`, `RequiredCapabilityKey`,
+  `ApiVersionMajor`, `OpenApiDocumentName`, `Method`, `RouteGroupPrefix`, `Pattern`, `RequiredCapabilityKey`,
   `ClearRequiredCapability`, `Bindings`, `RemovedBindingProperties`, shorthand binding resets
   through `ClearBindings`, typed `BindingMode`,
   shorthand endpoint metadata `EndpointName`, `Summary`, and `Description`, OpenAPI tag-name
@@ -528,7 +528,11 @@ Current helper behavior:
   overrides in either default
   `ReplaceExplicit` mode or `MergeExplicit` property-patch-and-withdraw mode while leaving
   unbound route placeholders and remaining request-body fields available for deterministic
-  fallback, now allows
+  fallback, now allows configured rules to publish their declared effect dimensions through typed
+  `ActionKinds`, and now keeps the winning rule's declared-versus-effective action dimensions
+  visible on both runtime candidates and published endpoints through
+  `SelectedOverrideActionKinds` plus `AppliedOverrideActionKinds` so no-op winning overrides remain
+  explicit without falsely claiming a material runtime rewrite, now allows
   placeholder renames when the effective explicit route-binding plan covers the renamed placeholder
   set exactly, now also allows placeholder removals when the original projection already exposes
   explicit route-binding coverage for the original placeholder set and the effective explicit

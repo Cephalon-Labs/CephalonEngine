@@ -259,6 +259,8 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointBindingSource),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasis),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasisExtensions),
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideActionKind),
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideActionKindExtensions),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideBindingMode),
             typeof(global::Cephalon.Abstractions.Transports.IRestEndpointCandidateRuntimeCatalog),
             typeof(global::Cephalon.Abstractions.Transports.IRestEndpointPublicationGroupRuntimeCatalog),
@@ -1049,6 +1051,19 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void RestEndpointGovernanceContractsExposeOverrideActionKinds()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideDescriptor)
+            .GetProperty("ActionKinds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions)
+            .GetProperty("ActionKinds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideActionKindExtensions)
+            .GetMethod("GetWireName", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideActionKindExtensions)
+            .GetMethod("TryParseWireName", BindingFlags.Static | BindingFlags.Public));
+    }
+
+    [Fact]
     public void RestEndpointGovernanceContractsExposeCapabilityBoundaryOverrides()
     {
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideDescriptor)
@@ -1183,9 +1198,13 @@ public sealed class PackageSurfaceTests
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateRuntimeDescriptor)
             .GetProperty("SelectedOverrideId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateRuntimeDescriptor)
+            .GetProperty("SelectedOverrideActionKinds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateRuntimeDescriptor)
             .GetProperty("SuppressionSelectionBasis", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateRuntimeDescriptor)
             .GetProperty("OverrideSelectionBasis", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateRuntimeDescriptor)
+            .GetProperty("AppliedOverrideActionKinds", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateRuntimeDescriptor)
             .GetProperty("SkippedSuppressionIds", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateRuntimeDescriptor)
@@ -1306,7 +1325,11 @@ public sealed class PackageSurfaceTests
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor)
             .GetProperty("SelectedOverrideId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor)
+            .GetProperty("SelectedOverrideActionKinds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor)
             .GetProperty("OverrideSelectionBasis", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor)
+            .GetProperty("AppliedOverrideActionKinds", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor)
             .GetProperty("MatchedOverrideIds", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor)

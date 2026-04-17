@@ -204,6 +204,12 @@ identity directly through `BindingFallbackModes`, using the same stable wire nam
 runtime contract already publishes, so original-shape selector targeting stays truthful even after
 later override actions rewrite the published endpoint.
 
+That next declared-versus-effective override-dimension visibility gap is now addressed through
+`ENG-058-T132`: the typed override contract now exposes configured `ActionKinds`, while shorthand
+candidate and published endpoint runtime answers now expose `SelectedOverrideActionKinds` plus
+`AppliedOverrideActionKinds`, so no-op override winners preserve the override dimensions they
+declared without falsely claiming a material runtime rewrite.
+
 That richer authoring/build-time-diagnostics gap is now partially addressed through `ENG-058-T119`:
 metadata-only REST profiles can now declare `PreserveImplicitQueryFallback` alongside explicit
 bindings, `Cephalon.Behaviors.SourceGen` now rejects missing-binding cases through `ABT0027`, and

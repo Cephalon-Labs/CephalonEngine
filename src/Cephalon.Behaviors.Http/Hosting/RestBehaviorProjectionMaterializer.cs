@@ -123,6 +123,9 @@ internal static class RestBehaviorProjectionMaterializer
                     candidate.Candidate.ProjectedEndpoint.OriginalSummary,
                     candidate.Candidate.ProjectedEndpoint.OriginalDescription);
                 group.UseRuntimeMatchedOverrideIds(candidate.Candidate.MatchedOverrideIds);
+                group.UseRuntimeSelectedOverride(
+                    candidate.Candidate.SelectedOverrideId,
+                    candidate.Candidate.SelectedOverrideActionKinds);
                 group.UseRuntimeSkippedGovernanceRuleIds(
                     candidate.Candidate.SkippedSuppressionIds,
                     candidate.Candidate.SkippedOverrideIds);
@@ -402,7 +405,8 @@ internal static class RestBehaviorProjectionMaterializer
         ArgumentNullException.ThrowIfNull(endpoint);
 
         return new MaterializedPublishedCandidateState(
-            endpoint.Metadata.GetMetadata<RestEndpointAppliedOverrideMetadata>()?.OverrideId);
+            endpoint.Metadata.GetMetadata<RestEndpointAppliedOverrideMetadata>()?.OverrideId,
+            endpoint.Metadata.GetMetadata<RestEndpointAppliedOverrideMetadata>()?.ActionKinds);
     }
 
     private static RestEndpointCandidateRuntimeDescriptor CreateRegisteredCandidateDescriptor(
@@ -413,6 +417,7 @@ internal static class RestBehaviorProjectionMaterializer
         ArgumentNullException.ThrowIfNull(publishedCandidateStates);
 
         var appliedOverrideId = ResolveRegisteredAppliedOverrideId(candidate, publishedCandidateStates);
+        var appliedOverrideActionKinds = ResolveRegisteredAppliedOverrideActionKinds(candidate, publishedCandidateStates);
         return new RestEndpointCandidateRuntimeDescriptor(
             candidate.Candidate.Id,
             candidate.Candidate.ProjectedEndpoint,
@@ -431,7 +436,9 @@ internal static class RestBehaviorProjectionMaterializer
             suppressionSelectionBasis: candidate.Candidate.SuppressionSelectionBasis,
             overrideSelectionBasis: candidate.Candidate.OverrideSelectionBasis,
             skippedSuppressionIds: candidate.Candidate.SkippedSuppressionIds,
-            skippedOverrideIds: candidate.Candidate.SkippedOverrideIds);
+            skippedOverrideIds: candidate.Candidate.SkippedOverrideIds,
+            selectedOverrideActionKinds: candidate.Candidate.SelectedOverrideActionKinds,
+            appliedOverrideActionKinds: appliedOverrideActionKinds);
     }
 
     private static string? ResolveRegisteredAppliedOverrideId(
@@ -453,6 +460,27 @@ internal static class RestBehaviorProjectionMaterializer
         }
 
         return publishedCandidateState.AppliedOverrideId;
+    }
+
+    private static IReadOnlyList<RestEndpointOverrideActionKind> ResolveRegisteredAppliedOverrideActionKinds(
+        ResolvedRestBehaviorEndpointProjectionCandidate candidate,
+        IReadOnlyDictionary<string, MaterializedPublishedCandidateState> publishedCandidateStates)
+    {
+        ArgumentNullException.ThrowIfNull(candidate);
+        ArgumentNullException.ThrowIfNull(publishedCandidateStates);
+
+        if (candidate.Candidate.Status != RestEndpointCandidateStatus.Published)
+        {
+            return candidate.Candidate.AppliedOverrideActionKinds;
+        }
+
+        if (!publishedCandidateStates.TryGetValue(candidate.Candidate.Id, out var publishedCandidateState))
+        {
+            throw new InvalidOperationException(
+                $"Published REST behavior candidate '{candidate.Candidate.Id}' is missing the materialized endpoint state required for runtime candidate reconciliation.");
+        }
+
+        return publishedCandidateState.AppliedOverrideActionKinds ?? [];
     }
 
     private static void ApplyRequiredCapabilityOverride(
@@ -562,7 +590,9 @@ internal static class RestBehaviorProjectionMaterializer
 
         if (HasStructuralOverride(candidate.Candidate))
         {
-            builder.WithMetadata(new RestEndpointAppliedOverrideMetadata(candidate.Candidate.AppliedOverrideId));
+            builder.WithMetadata(new RestEndpointAppliedOverrideMetadata(
+                candidate.Candidate.AppliedOverrideId,
+                candidate.Candidate.AppliedOverrideActionKinds));
             return;
         }
 
@@ -592,7 +622,9 @@ internal static class RestBehaviorProjectionMaterializer
 
             if (capabilityChanged || metadataChanged)
             {
-                endpointBuilder.Metadata.Add(new RestEndpointAppliedOverrideMetadata(candidate.Candidate.AppliedOverrideId));
+                endpointBuilder.Metadata.Add(new RestEndpointAppliedOverrideMetadata(
+                    candidate.Candidate.AppliedOverrideId,
+                    candidate.Candidate.AppliedOverrideActionKinds));
             }
         });
     }
@@ -709,7 +741,9 @@ internal static class RestBehaviorProjectionMaterializer
         internal string? Description { get; set; }
     }
 
-    private sealed record MaterializedPublishedCandidateState(string? AppliedOverrideId);
+    private sealed record MaterializedPublishedCandidateState(
+        string? AppliedOverrideId,
+        IReadOnlyList<RestEndpointOverrideActionKind>? AppliedOverrideActionKinds);
 
     private sealed record MaterializationGroupIdentity(
         string RouteGroupPrefix,

@@ -71,7 +71,9 @@ internal sealed record RestEndpointSourceDocumentationMetadata(
     string? Summary,
     string? Description);
 
-internal sealed record RestEndpointAppliedOverrideMetadata(string OverrideId);
+internal sealed record RestEndpointAppliedOverrideMetadata(
+    string OverrideId,
+    IReadOnlyList<RestEndpointOverrideActionKind>? ActionKinds);
 
 internal sealed record RestEndpointClearedMetadataState(
     bool ClearEndpointName,
@@ -105,7 +107,9 @@ internal sealed record RestBehaviorEndpointMetadata(
     RestEndpointCandidateProjectionDescriptor? OriginalProjection,
     IReadOnlyList<RestEndpointBindingDescriptor>? BindingDescriptors,
     RestEndpointBindingFallbackMode? BindingFallbackMode,
+    string? SelectedOverrideId,
     IReadOnlyList<string>? MatchedOverrideIds,
+    IReadOnlyList<RestEndpointOverrideActionKind>? SelectedOverrideActionKinds,
     RestEndpointGovernanceRuleSelectionBasis? OverrideSelectionBasis,
     IReadOnlyList<string>? SkippedSuppressionIds,
     IReadOnlyList<string>? SkippedOverrideIds);

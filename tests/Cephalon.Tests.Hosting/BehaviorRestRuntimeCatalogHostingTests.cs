@@ -1408,6 +1408,8 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(6, endpoint.ApiVersionMajor);
         Assert.Equal("prefer-v6", endpoint.AppliedOverrideId);
         Assert.Equal(["prefer-v6"], endpoint.MatchedOverrideIds);
+        Assert.Equal([RestEndpointOverrideActionKind.ApiVersionMajor], endpoint.SelectedOverrideActionKinds);
+        Assert.Equal([RestEndpointOverrideActionKind.ApiVersionMajor], endpoint.AppliedOverrideActionKinds);
         Assert.NotNull(endpoint.OriginalProjection);
         Assert.Equal(4, endpoint.OriginalProjection!.ApiVersionMajor);
         Assert.Equal("public", endpoint.OriginalProjection.OpenApiDocumentName);
@@ -1419,10 +1421,13 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("public", candidate.ProjectedEndpoint.OpenApiDocumentName);
         Assert.Equal(4, candidate.OriginalProjection.ApiVersionMajor);
         Assert.Equal("public", candidate.OriginalProjection.OpenApiDocumentName);
+        Assert.Equal([RestEndpointOverrideActionKind.ApiVersionMajor], candidate.SelectedOverrideActionKinds);
+        Assert.Equal([RestEndpointOverrideActionKind.ApiVersionMajor], candidate.AppliedOverrideActionKinds);
 
         var rule = Assert.Single(overrides, static item => string.Equals(item.Id, "prefer-v6", StringComparison.Ordinal));
         Assert.Equal(6, rule.ApiVersionMajor);
         Assert.Null(rule.OpenApiDocumentName);
+        Assert.Equal([RestEndpointOverrideActionKind.ApiVersionMajor], rule.ActionKinds);
 
         var routeEndpoint = Assert.Single(
             ((IEndpointRouteBuilder)app).DataSources
@@ -1720,6 +1725,14 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Null(endpoint.AppliedOverrideId);
         Assert.Equal("prefer-module-docs-noop", endpoint.SelectedOverrideId);
         Assert.Contains("prefer-module-docs-noop", endpoint.MatchedOverrideIds);
+        Assert.Equal(
+            [
+                RestEndpointOverrideActionKind.EndpointName,
+                RestEndpointOverrideActionKind.Summary,
+                RestEndpointOverrideActionKind.Description
+            ],
+            endpoint.SelectedOverrideActionKinds);
+        Assert.Empty(endpoint.AppliedOverrideActionKinds);
 
         var candidate = Assert.Single(candidates, static item =>
             string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.profile.runtimenoop.metadata", StringComparison.Ordinal));
@@ -1733,6 +1746,14 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(endpoint.OriginalSummary, candidate.ProjectedEndpoint.OriginalSummary);
         Assert.Equal(endpoint.OriginalDescription, candidate.ProjectedEndpoint.OriginalDescription);
         Assert.Contains("prefer-module-docs-noop", candidate.MatchedOverrideIds);
+        Assert.Equal(
+            [
+                RestEndpointOverrideActionKind.EndpointName,
+                RestEndpointOverrideActionKind.Summary,
+                RestEndpointOverrideActionKind.Description
+            ],
+            candidate.SelectedOverrideActionKinds);
+        Assert.Empty(candidate.AppliedOverrideActionKinds);
 
         var rule = Assert.Single(overrides, static item => string.Equals(item.Id, "prefer-module-docs-noop", StringComparison.Ordinal));
         Assert.Equal("tests.profile.runtimeoverride.noop.metadata.lookup", rule.EndpointName);
@@ -1742,6 +1763,13 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(
             "Publishes explicit module metadata so a matching host rule becomes a runtime no-op.",
             rule.Description);
+        Assert.Equal(
+            [
+                RestEndpointOverrideActionKind.EndpointName,
+                RestEndpointOverrideActionKind.Summary,
+                RestEndpointOverrideActionKind.Description
+            ],
+            rule.ActionKinds);
 
         Assert.Contains(snapshot.RestEndpointCandidates, item =>
             string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&

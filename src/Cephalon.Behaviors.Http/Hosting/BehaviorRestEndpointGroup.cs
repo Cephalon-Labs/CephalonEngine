@@ -48,6 +48,8 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
     private string[] runtimeSkippedOverrideIds = [];
     private string[] runtimeSkippedSuppressionIds = [];
     private string[] runtimeMatchedOverrideIds = [];
+    private string? runtimeSelectedOverrideId;
+    private RestEndpointOverrideActionKind[] runtimeSelectedOverrideActionKinds = [];
     private RestEndpointGovernanceRuleSelectionBasis? runtimeOverrideSelectionBasis;
     private string runtimeAuthoringStyle = RestEndpointRuntimeMetadata.BehaviorHelperAuthoringStyle;
     private string runtimeSourceKind = RestEndpointRuntimeMetadata.ManualSourceKind;
@@ -162,6 +164,16 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             .Select(static value => value.Trim())
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToArray() ?? [];
+    }
+
+    internal void UseRuntimeSelectedOverride(
+        string? selectedOverrideId,
+        IReadOnlyList<RestEndpointOverrideActionKind>? selectedOverrideActionKinds)
+    {
+        runtimeSelectedOverrideId = string.IsNullOrWhiteSpace(selectedOverrideId)
+            ? null
+            : selectedOverrideId.Trim();
+        runtimeSelectedOverrideActionKinds = NormalizeRuntimeActionKinds(selectedOverrideActionKinds);
     }
 
     internal void UseRuntimeSkippedGovernanceRuleIds(
@@ -655,7 +667,9 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
                 ? null
                 : RestEndpointBindingDescriptorAdapter.ToRuntimeDescriptors(contract.Bindings),
             contract.BindingFallbackMode,
+            group.runtimeSelectedOverrideId,
             group.runtimeMatchedOverrideIds,
+            group.runtimeSelectedOverrideActionKinds,
             group.runtimeOverrideSelectionBasis,
             group.runtimeSkippedSuppressionIds,
             group.runtimeSkippedOverrideIds));
@@ -929,6 +943,30 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         return string.IsNullOrWhiteSpace(value)
             ? null
             : value.Trim();
+    }
+
+    private static RestEndpointOverrideActionKind[] NormalizeRuntimeActionKinds(
+        IReadOnlyList<RestEndpointOverrideActionKind>? actionKinds)
+    {
+        if (actionKinds is null || actionKinds.Count == 0)
+        {
+            return [];
+        }
+
+        var normalized = actionKinds
+            .Distinct()
+            .OrderBy(static value => value)
+            .ToArray();
+        if (normalized.Any(static value =>
+                !Enum.IsDefined(value) ||
+                value == RestEndpointOverrideActionKind.Unspecified))
+        {
+            throw new ArgumentException(
+                "A supported REST endpoint override action kind is required when one is declared.",
+                nameof(actionKinds));
+        }
+
+        return normalized;
     }
 
     private void EnsureRoutesNotCreated(string methodName)

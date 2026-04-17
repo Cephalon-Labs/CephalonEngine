@@ -63,6 +63,14 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
     /// The ordered override-rule identifiers that otherwise target this candidate but were skipped
     /// because the original projection did not allow host governance to participate.
     /// </param>
+    /// <param name="selectedOverrideActionKinds">
+    /// The normalized action dimensions declared by the selected override rule when one winning
+    /// override rule was resolved for this candidate.
+    /// </param>
+    /// <param name="appliedOverrideActionKinds">
+    /// The normalized action dimensions that materially changed the candidate's effective runtime
+    /// answer when the selected override rule was not a runtime no-op.
+    /// </param>
     public RestEndpointCandidateRuntimeDescriptor(
         string id,
         RestEndpointRuntimeDescriptor projectedEndpoint,
@@ -81,7 +89,9 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
         RestEndpointGovernanceRuleSelectionBasis? suppressionSelectionBasis = null,
         RestEndpointGovernanceRuleSelectionBasis? overrideSelectionBasis = null,
         IReadOnlyList<string>? skippedSuppressionIds = null,
-        IReadOnlyList<string>? skippedOverrideIds = null)
+        IReadOnlyList<string>? skippedOverrideIds = null,
+        IReadOnlyList<RestEndpointOverrideActionKind>? selectedOverrideActionKinds = null,
+        IReadOnlyList<RestEndpointOverrideActionKind>? appliedOverrideActionKinds = null)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -129,6 +139,18 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
             ? null
             : selectedOverrideId.Trim();
         normalizedSelectedOverrideId ??= normalizedAppliedOverrideId ?? normalizedMatchedOverrideIds.FirstOrDefault();
+        var normalizedSelectedOverrideActionKinds = NormalizeActionKinds(
+            selectedOverrideActionKinds,
+            nameof(selectedOverrideActionKinds));
+        var normalizedAppliedOverrideActionKinds = NormalizeActionKinds(
+            appliedOverrideActionKinds,
+            nameof(appliedOverrideActionKinds));
+        if (normalizedSelectedOverrideActionKinds.Length == 0 &&
+            normalizedAppliedOverrideActionKinds.Length > 0)
+        {
+            normalizedSelectedOverrideActionKinds = normalizedAppliedOverrideActionKinds;
+        }
+
         var normalizedSuppressionSelectionBasis = NormalizeSelectionBasis(
             suppressionSelectionBasis,
             nameof(suppressionSelectionBasis));
@@ -229,6 +251,29 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
                 nameof(appliedOverrideId));
         }
 
+        if (normalizedSelectedOverrideActionKinds.Length > 0 &&
+            normalizedSelectedOverrideId is null)
+        {
+            throw new ArgumentException(
+                "Selected override action kinds can only be declared when a winning override rule is available.",
+                nameof(selectedOverrideActionKinds));
+        }
+
+        if (normalizedAppliedOverrideActionKinds.Length > 0 &&
+            normalizedAppliedOverrideId is null)
+        {
+            throw new ArgumentException(
+                "Applied override action kinds can only be declared when an applied override id is available.",
+                nameof(appliedOverrideActionKinds));
+        }
+
+        if (normalizedAppliedOverrideActionKinds.Except(normalizedSelectedOverrideActionKinds).Any())
+        {
+            throw new ArgumentException(
+                "Applied override action kinds must be a subset of the selected override action kinds when both are declared.",
+                nameof(appliedOverrideActionKinds));
+        }
+
         if (normalizedOverrideSelectionBasis.HasValue &&
             normalizedSelectedOverrideId is null)
         {
@@ -284,6 +329,8 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
         SkippedSuppressionIds = normalizedSkippedSuppressionIds;
         SkippedOverrideIds = normalizedSkippedOverrideIds;
         SelectedOverrideId = normalizedSelectedOverrideId;
+        SelectedOverrideActionKinds = normalizedSelectedOverrideActionKinds;
+        AppliedOverrideActionKinds = normalizedAppliedOverrideActionKinds;
         SuppressionSelectionBasis = normalizedSuppressionSelectionBasis;
         OverrideSelectionBasis = normalizedOverrideSelectionBasis;
         SuppressionReason = string.IsNullOrWhiteSpace(suppressionReason)
@@ -348,6 +395,18 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
     /// resolved for this candidate, even if that winning rule became a runtime no-op.
     /// </summary>
     public string? SelectedOverrideId { get; }
+
+    /// <summary>
+    /// Gets the normalized action dimensions declared by the selected override rule when one
+    /// winning override rule was resolved for this candidate.
+    /// </summary>
+    public IReadOnlyList<RestEndpointOverrideActionKind> SelectedOverrideActionKinds { get; }
+
+    /// <summary>
+    /// Gets the normalized action dimensions that materially changed the candidate's effective
+    /// runtime answer when the selected override rule was not a runtime no-op.
+    /// </summary>
+    public IReadOnlyList<RestEndpointOverrideActionKind> AppliedOverrideActionKinds { get; }
 
     /// <summary>
     /// Gets the earliest decisive specificity rule that selected the winning suppression rule when
@@ -432,5 +491,30 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
         }
 
         return normalized.ToArray();
+    }
+
+    private static RestEndpointOverrideActionKind[] NormalizeActionKinds(
+        IReadOnlyList<RestEndpointOverrideActionKind>? values,
+        string paramName)
+    {
+        if (values is null || values.Count == 0)
+        {
+            return [];
+        }
+
+        var normalized = values
+            .Distinct()
+            .OrderBy(static value => value)
+            .ToArray();
+        if (normalized.Any(static value =>
+                !Enum.IsDefined(value) ||
+                value == RestEndpointOverrideActionKind.Unspecified))
+        {
+            throw new ArgumentException(
+                "A supported REST endpoint override action kind is required when one is declared.",
+                paramName);
+        }
+
+        return normalized;
     }
 }
