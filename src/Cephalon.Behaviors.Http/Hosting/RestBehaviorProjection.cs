@@ -21,6 +21,7 @@ internal sealed record RestBehaviorRouteGroupProjection(
     int? ApiVersionMajor = null,
     bool HasExplicitApiVersion = false,
     string? ProfileApiVersionSourceBehaviorId = null,
+    bool AllowHostGovernance = false,
     IReadOnlyList<Action<RouteGroupBuilder>> GroupConventions = null!,
     IReadOnlyList<RestBehaviorEndpointProjection> Endpoints = null!);
 

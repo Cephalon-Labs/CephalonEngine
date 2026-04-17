@@ -50,6 +50,18 @@ public interface IRestBehaviorEndpointGroupBuilder
     IRestBehaviorEndpointGroupBuilder Configure(Action<RouteGroupBuilder> configure);
 
     /// <summary>
+    /// Opts explicit module-DSL endpoints in this route group into host-level REST governance.
+    /// </summary>
+    /// <returns>The same group builder for fluent configuration.</returns>
+    /// <remarks>
+    /// Descriptor-backed shorthand routes published through <see cref="MapProfile{TBehavior}(Action{RouteHandlerBuilder}?)" />
+    /// and <see cref="MapGeneratedProfiles()" /> already participate in host-level suppression and
+    /// override rules. This opt-in only makes explicit <c>MapGet</c>/<c>MapPost</c>/<c>MapPut</c>/<c>MapPatch</c>/<c>MapDelete</c>
+    /// module-DSL endpoints governable by host-level <c>RestApi:Suppressions</c> and <c>RestApi:Overrides</c>.
+    /// </remarks>
+    IRestBehaviorEndpointGroupBuilder AllowHostGovernance();
+
+    /// <summary>
     /// Maps all generated REST profiles from the owning module assembly whose behavior ids match the
     /// route-group prefix convention.
     /// </summary>

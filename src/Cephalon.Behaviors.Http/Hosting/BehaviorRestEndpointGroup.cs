@@ -139,7 +139,8 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
                 originalProjection.OpenApiDocumentName,
                 originalProjection.BindingDescriptors,
                 originalProjection.BindingFallbackMode,
-                originalProjection.TagName);
+                originalProjection.TagName,
+                originalProjection.AllowsHostGovernance);
     }
 
     internal void UseRuntimeOriginalEndpointMetadata(

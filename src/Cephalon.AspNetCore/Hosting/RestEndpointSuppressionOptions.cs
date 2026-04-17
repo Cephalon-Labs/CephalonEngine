@@ -16,7 +16,10 @@ public sealed class RestEndpointSuppressionOptions
     ];
 
     private static readonly HashSet<string> SupportedAuthoringStyles = new(
-        DefaultAuthoringStyles,
+        [
+            .. DefaultAuthoringStyles,
+            RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle
+        ],
         StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
@@ -29,8 +32,10 @@ public sealed class RestEndpointSuppressionOptions
     /// <param name="behaviorIds">The behavior identifiers targeted by the suppression rule.</param>
     /// <param name="sourceModuleIds">The source-module identifiers targeted by the suppression rule.</param>
     /// <param name="authoringStyles">
-    /// The shorthand authoring styles targeted by the suppression rule. When omitted, the rule
-    /// targets both `behavior-module-profile` and `behavior-module-generated`.
+    /// The module-owned REST authoring styles targeted by the suppression rule. When omitted, the
+    /// rule targets only shorthand styles <c>behavior-module-profile</c> and
+    /// <c>behavior-module-generated</c>. Explicit <c>behavior-module-dsl</c> routes participate
+    /// only when the owning route group opted into host governance.
     /// </param>
     /// <param name="apiVersionMajors">
     /// The effective API major versions targeted by the suppression rule before any override
@@ -225,7 +230,8 @@ public sealed class RestEndpointSuppressionOptions
         {
             throw new ArgumentException(
                 $"REST endpoint suppression style '{unsupportedStyle}' is not supported. " +
-                $"Supported shorthand authoring styles: {string.Join(", ", DefaultAuthoringStyles)}.",
+                $"Supported authoring styles: {string.Join(", ", SupportedAuthoringStyles.OrderBy(static value => value, StringComparer.OrdinalIgnoreCase))}. " +
+                "When omitted, only shorthand styles are targeted by default.",
                 nameof(values));
         }
 

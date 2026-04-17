@@ -42,8 +42,8 @@ public sealed class RestEndpointRuntimeDescriptor
     /// module-owned behavior projection pipeline.
     /// </param>
     /// <param name="originalProjection">
-    /// The original shorthand projection shape before later host-level overrides are applied when
-    /// the endpoint was published from the module-owned behavior projection pipeline.
+    /// The original projection shape before later host-level overrides are applied when the
+    /// endpoint was published from the module-owned behavior projection pipeline.
     /// </param>
     /// <param name="bindingDescriptors">The resolved request-binding descriptors when the endpoint exposes an explicit binding plan.</param>
     /// <param name="bindingFallbackMode">
@@ -80,16 +80,16 @@ public sealed class RestEndpointRuntimeDescriptor
     /// the runtime can classify that source answer.
     /// </param>
     /// <param name="appliedOverrideId">
-    /// The host-level shorthand override identifier when runtime governance actually changes the
-    /// published endpoint answer.
+    /// The host-level override identifier when runtime governance actually changes the published
+    /// endpoint answer.
     /// </param>
     /// <param name="matchedOverrideIds">
-    /// The ordered shorthand override identifiers that matched this endpoint's originating
-    /// candidate before one winner was selected.
+    /// The ordered override identifiers that matched this endpoint's originating candidate before
+    /// one winner was selected.
     /// </param>
     /// <param name="selectedOverrideId">
-    /// The selected shorthand override identifier when one winning override rule was resolved for
-    /// this endpoint's originating candidate, even if that winning rule became a runtime no-op.
+    /// The selected override identifier when one winning override rule was resolved for this
+    /// endpoint's originating candidate, even if that winning rule became a runtime no-op.
     /// </param>
     /// <param name="overrideSelectionBasis">
     /// The earliest decisive specificity rule that selected the winning override rule when one was
@@ -356,15 +356,15 @@ public sealed class RestEndpointRuntimeDescriptor
     public string? OriginalRequiredCapabilityKey { get; }
 
     /// <summary>
-    /// Gets the host-level shorthand override identifier when runtime governance actually changes
-    /// the published endpoint answer.
+    /// Gets the host-level override identifier when runtime governance actually changes the
+    /// published endpoint answer.
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? AppliedOverrideId { get; }
 
     /// <summary>
-    /// Gets the selected shorthand override identifier when one winning override rule was resolved
-    /// for this endpoint's originating candidate, even if that winning rule became a runtime no-op.
+    /// Gets the selected override identifier when one winning override rule was resolved for this
+    /// endpoint's originating candidate, even if that winning rule became a runtime no-op.
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? SelectedOverrideId { get; }
@@ -377,8 +377,8 @@ public sealed class RestEndpointRuntimeDescriptor
     public RestEndpointGovernanceRuleSelectionBasis? OverrideSelectionBasis { get; }
 
     /// <summary>
-    /// Gets the ordered shorthand override identifiers that matched this endpoint's originating
-    /// candidate before one winner was selected.
+    /// Gets the ordered override identifiers that matched this endpoint's originating candidate
+    /// before one winner was selected.
     /// </summary>
     public IReadOnlyList<string> MatchedOverrideIds { get; }
 
@@ -390,8 +390,9 @@ public sealed class RestEndpointRuntimeDescriptor
     public string? CandidateId { get; }
 
     /// <summary>
-    /// Gets the original shorthand projection shape before later host-level overrides are applied
-    /// when the endpoint was published from the module-owned behavior projection pipeline.
+    /// Gets the original projection shape before later host-level overrides are applied when the
+    /// endpoint was published from the module-owned behavior projection pipeline, including whether
+    /// host governance was allowed to participate for that source route.
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public RestEndpointCandidateProjectionDescriptor? OriginalProjection { get; }
@@ -467,7 +468,8 @@ public sealed class RestEndpointRuntimeDescriptor
                 value.OpenApiDocumentName,
                 value.BindingDescriptors,
                 value.BindingFallbackMode,
-                value.TagName);
+                value.TagName,
+                value.AllowsHostGovernance);
     }
 
     private static RestEndpointBindingFallbackMode? NormalizeBindingFallbackMode(

@@ -499,7 +499,10 @@ Current helper behavior:
 - ASP.NET Core hosts can now also suppress descriptor-backed shorthand candidates through
   `RestApi:Suppressions`, which runs before precedence resolution, records the governing rule id on
   the suppressed candidate through `SuppressedBySuppressionId`, and intentionally leaves explicit
-  module DSL or manual module-owned REST endpoints untouched
+  module DSL or manual module-owned REST endpoints untouched by default; an explicit module-DSL
+  route group can opt into that governance boundary through `AllowHostGovernance()`, but host
+  rules still have to target authoring style `behavior-module-dsl` explicitly before they can
+  suppress it
 - ASP.NET Core hosts can now also override the effective API major version, HTTP method, or
   bounded published route-group prefix, constrained relative route pattern, required capability
   boundary, or explicit binding
@@ -547,7 +550,10 @@ Current helper behavior:
   entirely and return the candidate to the implicit route/query/body baseline, but that clear
   fails fast if the effective route placeholders would only remain satisfiable through removed
   explicit route-binding aliases, and explicit module DSL/manual routes plus shorthand groups with explicit
-  `.ApiVersion(...)` remain authoritative for version selection
+  `.ApiVersion(...)` remain authoritative for version selection by default; explicit module-DSL
+  route groups enter that override boundary only when the owning group calls
+  `AllowHostGovernance()` and the matching host rule explicitly targets authoring style
+  `behavior-module-dsl`
 
 ## REST runtime catalog and collision guard
 
@@ -581,6 +587,10 @@ candidate, the effective tag now flows through actual ASP.NET Core endpoint tag 
 candidate and published runtime catalogs while `OriginalProjection.TagName` preserves the source
 shorthand tag; if only some candidates in one authored group are retagged, materialization splits
 the effective published groups so runtime truth and actual tag metadata stay aligned.
+`OriginalProjection` now also carries `AllowsHostGovernance`, so both candidate and published
+runtime answers show whether host suppression or override rules were even allowed to participate.
+Shorthand candidates publish that flag as `true` by default, while explicit module-DSL routes
+publish `true` only when the owning route group explicitly called `AllowHostGovernance()`.
 
 The same runtime answer now has a companion candidate catalog for precedence visibility:
 
@@ -675,10 +685,12 @@ through `MatchedSuppressionIds`.
 
 Current governance baseline:
 
-- configure shorthand suppression through `RestApi:Suppressions`
-- configure shorthand API-version, HTTP-method, bounded route-group-prefix, constrained
+- configure host suppression for shorthand candidates, and optionally for explicit module-DSL route
+  groups that both call `AllowHostGovernance()` and are explicitly targeted through
+  `AuthoringStyles = [behavior-module-dsl]`, through `RestApi:Suppressions`
+- configure API-version, HTTP-method, bounded route-group-prefix, constrained
   route-pattern, capability-boundary set-or-clear, explicit binding-plan replacement/merge/reset,
-  and endpoint-metadata set-or-clear overrides through
+  and endpoint-metadata set-or-clear overrides for those same governable candidates through
   `RestApi:Overrides`
 - target one or more `CandidateIds`, `Behaviors`, `Modules`, and optional `AuthoringStyles`, then
   optionally refine that match with `ApiVersionMajors`, `Methods`, `RelativePatterns`,
@@ -695,6 +707,9 @@ Current governance baseline:
   effective HTTP method
 - omit `AuthoringStyles` to suppress both shorthand styles by default:
   `behavior-module-profile` and `behavior-module-generated`
+- explicit module-DSL routes never enter host governance accidentally: they require both
+  `AllowHostGovernance()` on the owning route group and an explicit host rule target of
+  `behavior-module-dsl`
 - exact `CandidateIds` reuse the stable ids published by `GET /engine/rest-endpoint-candidates`
 - the optional selector refiners and exact candidate ids all match the original shorthand
   candidate shape before override actions are applied, including the original shorthand OpenAPI

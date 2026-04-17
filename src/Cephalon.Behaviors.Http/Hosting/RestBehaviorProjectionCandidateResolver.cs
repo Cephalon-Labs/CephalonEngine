@@ -385,7 +385,8 @@ internal static class RestBehaviorProjectionCandidateResolver
             originalOpenApiDocumentName,
             RestEndpointBindingDescriptorAdapter.ToRuntimeDescriptors(endpointProjection.Bindings),
             originalBindingFallbackMode,
-            tagName);
+            tagName,
+            AllowsHostGovernance(group, endpointProjection));
         var candidateId = BuildCandidateId(
             moduleDescriptor.Id,
             endpointProjection.BehaviorId,
@@ -403,6 +404,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             originalProjection.BindingDescriptors,
             originalBindingFallbackMode,
             tagName,
+            originalProjection.AllowsHostGovernance,
             group,
             overrides);
         var selectedOverride = overrideDecision.SelectedOverride;
@@ -767,6 +769,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         IReadOnlyList<RestEndpointBindingDescriptor> originalBindingDescriptors,
         RestEndpointBindingFallbackMode? originalBindingFallbackMode,
         string originalTagName,
+        bool allowsHostGovernance,
         RestBehaviorRouteGroupProjection group,
         IReadOnlyList<RestEndpointOverrideOptions>? overrides)
     {
@@ -779,7 +782,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         ArgumentException.ThrowIfNullOrWhiteSpace(originalTagName);
         ArgumentNullException.ThrowIfNull(group);
 
-        if (overrides is null || overrides.Count == 0)
+        if (!allowsHostGovernance || overrides is null || overrides.Count == 0)
         {
             return new ResolvedRestEndpointOverrideDecision([], null, null, null);
         }
@@ -794,6 +797,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             originalBindingDescriptors,
             originalBindingFallbackMode,
             originalTagName,
+            allowsHostGovernance,
             overrides);
         var matchedOverride = matchedOverrides.FirstOrDefault();
         if (matchedOverride is null)
@@ -969,6 +973,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         IReadOnlyList<RestEndpointBindingDescriptor> originalBindingDescriptors,
         RestEndpointBindingFallbackMode? originalBindingFallbackMode,
         string originalTagName,
+        bool allowsHostGovernance,
         IReadOnlyList<RestEndpointOverrideOptions>? overrides)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sourceModuleId);
@@ -979,7 +984,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         ArgumentNullException.ThrowIfNull(originalBindingDescriptors);
         ArgumentException.ThrowIfNullOrWhiteSpace(originalTagName);
 
-        if (overrides is null || overrides.Count == 0)
+        if (!allowsHostGovernance || overrides is null || overrides.Count == 0)
         {
             return [];
         }
@@ -995,6 +1000,7 @@ internal static class RestBehaviorProjectionCandidateResolver
                 originalBindingDescriptors,
                 originalBindingFallbackMode,
                 originalTagName,
+                allowsHostGovernance,
                 overrideOptions))
             .OrderByDescending(static overrideOptions => overrideOptions.CandidateIds.Count > 0)
             .ThenBy(static overrideOptions => overrideOptions.CandidateIds.Count == 0 ? int.MaxValue : overrideOptions.CandidateIds.Count)
@@ -1499,6 +1505,11 @@ internal static class RestBehaviorProjectionCandidateResolver
         ArgumentNullException.ThrowIfNull(candidate);
         ArgumentNullException.ThrowIfNull(suppression);
 
+        if (!candidate.Candidate.OriginalProjection.AllowsHostGovernance)
+        {
+            return false;
+        }
+
         if (suppression.CandidateIds.Count > 0 &&
             !suppression.CandidateIds.Contains(candidate.Candidate.Id, StringComparer.OrdinalIgnoreCase))
         {
@@ -1616,6 +1627,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         IReadOnlyList<RestEndpointBindingDescriptor> originalBindingDescriptors,
         RestEndpointBindingFallbackMode? originalBindingFallbackMode,
         string originalTagName,
+        bool allowsHostGovernance,
         RestEndpointOverrideOptions overrideOptions)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sourceModuleId);
@@ -1626,6 +1638,11 @@ internal static class RestBehaviorProjectionCandidateResolver
         ArgumentNullException.ThrowIfNull(originalBindingDescriptors);
         ArgumentException.ThrowIfNullOrWhiteSpace(originalTagName);
         ArgumentNullException.ThrowIfNull(overrideOptions);
+
+        if (!allowsHostGovernance)
+        {
+            return false;
+        }
 
         if (overrideOptions.CandidateIds.Count > 0 &&
             !overrideOptions.CandidateIds.Contains(originalCandidateId, StringComparer.OrdinalIgnoreCase))
@@ -2116,7 +2133,8 @@ internal static class RestBehaviorProjectionCandidateResolver
         string openApiDocumentName,
         IReadOnlyList<RestEndpointBindingDescriptor> bindingDescriptors,
         RestEndpointBindingFallbackMode? bindingFallbackMode,
-        string tagName)
+        string tagName,
+        bool allowsHostGovernance)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(method);
         ArgumentException.ThrowIfNullOrWhiteSpace(routeGroupPrefix);
@@ -2134,7 +2152,24 @@ internal static class RestBehaviorProjectionCandidateResolver
             openApiDocumentName,
             bindingDescriptors,
             bindingFallbackMode,
-            tagName);
+            tagName,
+            allowsHostGovernance);
+    }
+
+    private static bool AllowsHostGovernance(
+        RestBehaviorRouteGroupProjection group,
+        RestBehaviorEndpointProjection endpointProjection)
+    {
+        ArgumentNullException.ThrowIfNull(group);
+        ArgumentNullException.ThrowIfNull(endpointProjection);
+
+        return endpointProjection.AuthoringStyle switch
+        {
+            RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle => true,
+            RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle => true,
+            RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle => group.AllowHostGovernance,
+            _ => false
+        };
     }
 }
 

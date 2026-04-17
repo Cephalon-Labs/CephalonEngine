@@ -23,6 +23,12 @@ public sealed class RestEndpointCandidateProjectionDescriptor
     /// implicit-query fallback or preserved remaining request-body fallback.
     /// </param>
     /// <param name="tagName">The projected primary OpenAPI tag name when one is available.</param>
+    /// <param name="allowsHostGovernance">
+    /// <see langword="true" /> when host-level REST suppression and override rules are allowed to
+    /// govern this projection candidate; otherwise, <see langword="false" />. Shorthand
+    /// candidates typically enable this automatically, while explicit module-DSL candidates stay
+    /// authoritative unless the owning route group opts into host governance.
+    /// </param>
     public RestEndpointCandidateProjectionDescriptor(
         string method,
         string routePattern,
@@ -32,7 +38,8 @@ public sealed class RestEndpointCandidateProjectionDescriptor
         string? openApiDocumentName = null,
         IReadOnlyList<RestEndpointBindingDescriptor>? bindingDescriptors = null,
         RestEndpointBindingFallbackMode? bindingFallbackMode = null,
-        string? tagName = null)
+        string? tagName = null,
+        bool allowsHostGovernance = true)
     {
         Method = NormalizeRequired(method, nameof(method)).ToUpperInvariant();
         RoutePattern = NormalizeRequired(routePattern, nameof(routePattern));
@@ -43,6 +50,7 @@ public sealed class RestEndpointCandidateProjectionDescriptor
         BindingDescriptors = NormalizeBindingDescriptors(bindingDescriptors);
         BindingFallbackMode = NormalizeBindingFallbackMode(bindingFallbackMode);
         TagName = NormalizeOptional(tagName);
+        AllowsHostGovernance = allowsHostGovernance;
     }
 
     /// <summary>
@@ -93,6 +101,14 @@ public sealed class RestEndpointCandidateProjectionDescriptor
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? TagName { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether host-level REST suppression and override rules are allowed
+    /// to govern this projection candidate. Shorthand candidates typically enable this
+    /// automatically, while explicit module-DSL candidates stay authoritative unless the owning
+    /// route group opts into host governance.
+    /// </summary>
+    public bool AllowsHostGovernance { get; }
 
     private static string NormalizeRequired(string value, string paramName)
     {

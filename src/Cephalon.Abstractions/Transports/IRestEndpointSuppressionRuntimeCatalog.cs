@@ -6,7 +6,9 @@ namespace Cephalon.Abstractions.Transports;
 /// <remarks>
 /// This surface complements <see cref="IRestEndpointCandidateRuntimeCatalog" /> by publishing the
 /// configured host-level suppression rules that can hide descriptor-backed module-owned REST
-/// candidates before precedence resolution selects the final public REST surface.
+/// candidates that participate in host governance, including shorthand candidates and explicit
+/// module-DSL route groups that opted in, before precedence resolution selects the final public
+/// REST surface.
 /// </remarks>
 public interface IRestEndpointSuppressionRuntimeCatalog
 {

@@ -9,8 +9,8 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
     /// Creates a REST endpoint candidate runtime descriptor.
     /// </summary>
     /// <param name="id">
-    /// The stable candidate identifier derived from the original shorthand projection before any
-    /// host-level overrides are applied.
+    /// The stable candidate identifier derived from the original projection before any host-level
+    /// overrides are applied.
     /// </param>
     /// <param name="projectedEndpoint">
     /// The resolved endpoint shape the candidate would publish when it wins precedence.
@@ -257,8 +257,8 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
     }
 
     /// <summary>
-    /// Gets the stable candidate identifier derived from the original shorthand projection before
-    /// any host-level overrides are applied.
+    /// Gets the stable candidate identifier derived from the original projection before any
+    /// host-level overrides are applied.
     /// </summary>
     public string Id { get; }
 

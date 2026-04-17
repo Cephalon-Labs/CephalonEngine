@@ -2,7 +2,7 @@
 
 Decision baseline date: `April 14, 2026`
 
-Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`, `ENG-058-T67` / GitHub issue `#332`, `ENG-058-T68` / GitHub issue `#333`, `ENG-058-T69` / GitHub issue `#334`, `ENG-058-T70` / GitHub issue `#335`, `ENG-058-T71` / GitHub issue `#336`, `ENG-058-T72` / GitHub issue `#337`, `ENG-058-T73` / GitHub issue `#338`, `ENG-058-T74` / GitHub issue `#339`, `ENG-058-T75` / GitHub issue `#340`, `ENG-058-T76` / GitHub issue `#341`, `ENG-058-T77` / GitHub issue `#342`, `ENG-058-T78` / GitHub issue `#343`, `ENG-058-T79` / GitHub issue `#344`, `ENG-058-T80` / GitHub issue `#345`, `ENG-058-T81` / GitHub issue `#346`, `ENG-058-T82` / GitHub issue `#347`, `ENG-058-T83` / GitHub issue `#348`, `ENG-058-T84` / GitHub issue `#349`, `ENG-058-T85` / GitHub issue `#350`, `ENG-058-T86` / GitHub issue `#351`, `ENG-058-T87` / GitHub issue `#352`, `ENG-058-T88` / GitHub issue `#353`, `ENG-058-T89` / GitHub issue `#354`, `ENG-058-T90` / GitHub issue `#355`, `ENG-058-T91` / GitHub issue `#356`, `ENG-058-T92` / GitHub issue `#357`, `ENG-058-T93` / GitHub issue `#358`, `ENG-058-T94` / GitHub issue `#359`, `ENG-058-T95` / GitHub issue `#360`, `ENG-058-T96` / GitHub issue `#361`, `ENG-058-T97` / GitHub issue `#362`, `ENG-058-T98` / GitHub issue `#363`, `ENG-058-T99` / GitHub issue `#364`, `ENG-058-T100` / GitHub issue `#365`, `ENG-058-T101` / GitHub issue `#367`, `ENG-058-T102` / GitHub issue `#368`, `ENG-058-T103` / GitHub issue `#369`, `ENG-058-T104` / GitHub issue `#370`, `ENG-058-T105` / GitHub issue `#371`, `ENG-058-T106` / GitHub issue `#372`, `ENG-058-T107` / GitHub issue `#373`, `ENG-058-T108` / GitHub issue `#374`, `ENG-058-T109` / GitHub issue `#375`, `ENG-058-T110` / GitHub issue `#376`, `ENG-058-T111` / GitHub issue `#377`, `ENG-058-T112` / GitHub issue `#378`, `ENG-058-T113` / GitHub issue `#379`, `ENG-058-T114` / GitHub issue `#380`, `ENG-058-T115` / GitHub issue `#381`, `ENG-058-T116` / GitHub issue `#382`, `ENG-058-T117` / GitHub issue `#383`, `ENG-058-T118` / GitHub issue `#384`, `ENG-058-T119` / GitHub issue `#385`, `ENG-058-T120` / GitHub issue `#386`, `ENG-058-T121` / GitHub issue `#387`, `ENG-058-T122` / GitHub issue `#388`, `ENG-058-T123` / GitHub issue `#389`, `ENG-058-T124` / GitHub issue `#390`, `ENG-058-T125` / GitHub issue `#391`, `ENG-058-T126` / GitHub issue `#392`, `ENG-058-T127` / GitHub issue `#393`
+Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`, `ENG-058-T67` / GitHub issue `#332`, `ENG-058-T68` / GitHub issue `#333`, `ENG-058-T69` / GitHub issue `#334`, `ENG-058-T70` / GitHub issue `#335`, `ENG-058-T71` / GitHub issue `#336`, `ENG-058-T72` / GitHub issue `#337`, `ENG-058-T73` / GitHub issue `#338`, `ENG-058-T74` / GitHub issue `#339`, `ENG-058-T75` / GitHub issue `#340`, `ENG-058-T76` / GitHub issue `#341`, `ENG-058-T77` / GitHub issue `#342`, `ENG-058-T78` / GitHub issue `#343`, `ENG-058-T79` / GitHub issue `#344`, `ENG-058-T80` / GitHub issue `#345`, `ENG-058-T81` / GitHub issue `#346`, `ENG-058-T82` / GitHub issue `#347`, `ENG-058-T83` / GitHub issue `#348`, `ENG-058-T84` / GitHub issue `#349`, `ENG-058-T85` / GitHub issue `#350`, `ENG-058-T86` / GitHub issue `#351`, `ENG-058-T87` / GitHub issue `#352`, `ENG-058-T88` / GitHub issue `#353`, `ENG-058-T89` / GitHub issue `#354`, `ENG-058-T90` / GitHub issue `#355`, `ENG-058-T91` / GitHub issue `#356`, `ENG-058-T92` / GitHub issue `#357`, `ENG-058-T93` / GitHub issue `#358`, `ENG-058-T94` / GitHub issue `#359`, `ENG-058-T95` / GitHub issue `#360`, `ENG-058-T96` / GitHub issue `#361`, `ENG-058-T97` / GitHub issue `#362`, `ENG-058-T98` / GitHub issue `#363`, `ENG-058-T99` / GitHub issue `#364`, `ENG-058-T100` / GitHub issue `#365`, `ENG-058-T101` / GitHub issue `#367`, `ENG-058-T102` / GitHub issue `#368`, `ENG-058-T103` / GitHub issue `#369`, `ENG-058-T104` / GitHub issue `#370`, `ENG-058-T105` / GitHub issue `#371`, `ENG-058-T106` / GitHub issue `#372`, `ENG-058-T107` / GitHub issue `#373`, `ENG-058-T108` / GitHub issue `#374`, `ENG-058-T109` / GitHub issue `#375`, `ENG-058-T110` / GitHub issue `#376`, `ENG-058-T111` / GitHub issue `#377`, `ENG-058-T112` / GitHub issue `#378`, `ENG-058-T113` / GitHub issue `#379`, `ENG-058-T114` / GitHub issue `#380`, `ENG-058-T115` / GitHub issue `#381`, `ENG-058-T116` / GitHub issue `#382`, `ENG-058-T117` / GitHub issue `#383`, `ENG-058-T118` / GitHub issue `#384`, `ENG-058-T119` / GitHub issue `#385`, `ENG-058-T120` / GitHub issue `#386`, `ENG-058-T121` / GitHub issue `#387`, `ENG-058-T122` / GitHub issue `#388`, `ENG-058-T123` / GitHub issue `#389`, `ENG-058-T124` / GitHub issue `#390`, `ENG-058-T125` / GitHub issue `#391`, `ENG-058-T126` / GitHub issue `#392`, `ENG-058-T127` / GitHub issue `#393`, `ENG-058-T128` / GitHub issue `#394`
 
 Cross-references: `docs/components/behaviors-http.md`, `docs/module-authoring.md`, `docs/architecture.md`, `docs/architecture-review-2026-04.md`, `docs/project-memory.md`
 
@@ -35,6 +35,9 @@ The current shipped model is already opinionated:
 - `Engine:Behaviors:AutoRegister` is an opt-in fallback, not the default behavior-ownership model
 - the current module-owned REST DSL now compiles into one normalized internal projection contract
   before ASP.NET Core materializes route groups and endpoints
+- host governance is still shorthand-first by default; explicit module-DSL route groups only
+  participate when the owning group explicitly allows host governance and the matching host rule
+  deliberately targets authoring style `behavior-module-dsl`
 
 That means Cephalon should not go back to a model where `[AppBehavior]` silently publishes a public
 REST boundary by default.
@@ -72,6 +75,9 @@ Decision:
 
 - keep this as the canonical Cephalon public REST path
 - do not demote it to legacy or escape-hatch status
+- keep explicit module DSL authoritative by default, but allow a route group to opt into
+  host-level publication governance explicitly when a host needs to suppress or rewrite that
+  authored boundary without changing the owning module model
 
 ### Mode 2: behavior-only REST shorthand
 
@@ -312,6 +318,14 @@ Status update:
   module assembly when generated type hints are unavailable, and keep runtime publication on the
   same normalized projection and candidate-catalog path with
   `metadata.authoringStyle = behavior-module-generated`
+- the next explicit module-DSL host-governance boundary follow-through is now shipped through
+  `ENG-058-T128`: `IRestBehaviorEndpointGroupBuilder.AllowHostGovernance()` now lets an explicit
+  module-owned route group opt into ASP.NET Core `RestApi:Suppressions` and `RestApi:Overrides`
+  without changing its authoring style, `RestEndpointCandidateProjectionDescriptor` plus
+  published `OriginalProjection` now keep that opt-in visible through
+  `AllowsHostGovernance`, shorthand candidates still participate by default, and host rules still
+  leave explicit module DSL out of scope unless they explicitly target authoring style
+  `behavior-module-dsl`
 - the first host-governance slice is now shipped through `ENG-058-T68`: ASP.NET Core hosts can
   suppress descriptor-backed shorthand candidates through `RestApi:Suppressions`, the runtime now
   exposes those configured rules through `IRestEndpointSuppressionRuntimeCatalog`,

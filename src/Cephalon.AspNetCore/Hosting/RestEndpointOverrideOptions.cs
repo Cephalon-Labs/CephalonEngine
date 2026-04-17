@@ -16,7 +16,10 @@ public sealed class RestEndpointOverrideOptions
     ];
 
     private static readonly HashSet<string> SupportedAuthoringStyles = new(
-        DefaultAuthoringStyles,
+        [
+            .. DefaultAuthoringStyles,
+            RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle
+        ],
         StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
@@ -29,8 +32,10 @@ public sealed class RestEndpointOverrideOptions
     /// <param name="behaviorIds">The behavior identifiers targeted by the override rule.</param>
     /// <param name="sourceModuleIds">The source-module identifiers targeted by the override rule.</param>
     /// <param name="authoringStyles">
-    /// The shorthand authoring styles targeted by the override rule. When omitted, the rule
-    /// targets both <c>behavior-module-profile</c> and <c>behavior-module-generated</c>.
+    /// The module-owned REST authoring styles targeted by the override rule. When omitted, the
+    /// rule targets only shorthand styles <c>behavior-module-profile</c> and
+    /// <c>behavior-module-generated</c>. Explicit <c>behavior-module-dsl</c> routes participate
+    /// only when the owning route group opted into host governance.
     /// </param>
     /// <param name="apiVersionMajors">
     /// The effective API major versions targeted by the override rule before any override actions
@@ -518,7 +523,8 @@ public sealed class RestEndpointOverrideOptions
         {
             throw new ArgumentException(
                 $"REST endpoint override style '{unsupportedStyle}' is not supported. " +
-                $"Supported shorthand authoring styles: {string.Join(", ", DefaultAuthoringStyles)}.",
+                $"Supported authoring styles: {string.Join(", ", SupportedAuthoringStyles.OrderBy(static value => value, StringComparer.OrdinalIgnoreCase))}. " +
+                "When omitted, only shorthand styles are targeted by default.",
                 nameof(values));
         }
 

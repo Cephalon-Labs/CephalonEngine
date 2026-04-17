@@ -1,7 +1,8 @@
 namespace Cephalon.Abstractions.Transports;
 
 /// <summary>
-/// Describes one host-level REST endpoint suppression rule visible to the current runtime.
+/// Describes one host-level REST endpoint suppression rule visible to the current runtime for
+/// module-owned REST candidates that participate in host governance.
 /// </summary>
 public sealed class RestEndpointSuppressionDescriptor
 {
@@ -9,25 +10,28 @@ public sealed class RestEndpointSuppressionDescriptor
     /// Creates a REST endpoint suppression descriptor.
     /// </summary>
     /// <param name="id">The stable suppression identifier.</param>
-    /// <param name="candidateIds">The original shorthand candidate identifiers targeted by the suppression rule.</param>
+    /// <param name="candidateIds">The original candidate identifiers targeted by the suppression rule.</param>
     /// <param name="behaviorIds">The behavior identifiers targeted by the suppression rule.</param>
     /// <param name="sourceModuleIds">The source-module identifiers targeted by the suppression rule.</param>
-    /// <param name="authoringStyles">The normalized shorthand authoring styles targeted by the suppression rule.</param>
+    /// <param name="authoringStyles">
+    /// The normalized authoring styles targeted by the suppression rule. Explicit module-DSL
+    /// routes participate only when their owning route group opted into host governance.
+    /// </param>
     /// <param name="apiVersionMajors">The effective API major versions targeted by the suppression rule.</param>
     /// <param name="methods">The effective HTTP methods targeted by the suppression rule.</param>
     /// <param name="relativePatterns">The shorthand relative route patterns targeted by the suppression rule.</param>
     /// <param name="routeGroupPrefixes">The published route-group prefixes targeted by the suppression rule.</param>
     /// <param name="openApiDocumentNames">
-    /// The original shorthand OpenAPI document names targeted by the suppression rule.
+    /// The original candidate OpenAPI document names targeted by the suppression rule.
     /// </param>
     /// <param name="tagNames">
-    /// The original shorthand primary OpenAPI tag names targeted by the suppression rule.
+    /// The original candidate primary OpenAPI tag names targeted by the suppression rule.
     /// </param>
     /// <param name="bindingFallbackModes">
-    /// The original shorthand request-binding fallback modes targeted by the suppression rule.
+    /// The original candidate request-binding fallback modes targeted by the suppression rule.
     /// </param>
     /// <param name="targetBindings">
-    /// The original shorthand explicit binding descriptors targeted by the suppression rule before
+    /// The original candidate explicit binding descriptors targeted by the suppression rule before
     /// any override actions are applied.
     /// </param>
     public RestEndpointSuppressionDescriptor(
@@ -71,7 +75,7 @@ public sealed class RestEndpointSuppressionDescriptor
     public string Id { get; }
 
     /// <summary>
-    /// Gets the original shorthand candidate identifiers targeted by this suppression rule.
+    /// Gets the original candidate identifiers targeted by this suppression rule.
     /// </summary>
     public IReadOnlyList<string> CandidateIds { get; }
 
@@ -86,7 +90,9 @@ public sealed class RestEndpointSuppressionDescriptor
     public IReadOnlyList<string> SourceModuleIds { get; }
 
     /// <summary>
-    /// Gets the normalized shorthand authoring styles targeted by this suppression rule.
+    /// Gets the normalized authoring styles targeted by this suppression rule. Explicit
+    /// module-DSL routes participate only when their owning route group opted into host
+    /// governance.
     /// </summary>
     public IReadOnlyList<string> AuthoringStyles { get; }
 
@@ -101,7 +107,7 @@ public sealed class RestEndpointSuppressionDescriptor
     public IReadOnlyList<string> Methods { get; }
 
     /// <summary>
-    /// Gets the shorthand relative route patterns targeted by this suppression rule.
+    /// Gets the relative route patterns targeted by this suppression rule.
     /// </summary>
     public IReadOnlyList<string> RelativePatterns { get; }
 
@@ -111,22 +117,23 @@ public sealed class RestEndpointSuppressionDescriptor
     public IReadOnlyList<string> RouteGroupPrefixes { get; }
 
     /// <summary>
-    /// Gets the original shorthand OpenAPI document names targeted by this suppression rule.
+    /// Gets the original candidate OpenAPI document names targeted by this suppression rule.
     /// </summary>
     public IReadOnlyList<string> OpenApiDocumentNames { get; }
 
     /// <summary>
-    /// Gets the original shorthand primary OpenAPI tag names targeted by this suppression rule.
+    /// Gets the original candidate primary OpenAPI tag names targeted by this suppression rule.
     /// </summary>
     public IReadOnlyList<string> TagNames { get; }
 
     /// <summary>
-    /// Gets the original shorthand request-binding fallback modes targeted by this suppression rule.
+    /// Gets the original candidate request-binding fallback modes targeted by this suppression
+    /// rule.
     /// </summary>
     public IReadOnlyList<RestEndpointBindingFallbackMode> BindingFallbackModes { get; }
 
     /// <summary>
-    /// Gets the original shorthand explicit binding descriptors targeted by this suppression rule
+    /// Gets the original candidate explicit binding descriptors targeted by this suppression rule
     /// before any override actions are applied.
     /// </summary>
     public IReadOnlyList<RestEndpointBindingDescriptor> TargetBindings { get; }

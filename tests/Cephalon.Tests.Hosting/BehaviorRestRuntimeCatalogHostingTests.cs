@@ -864,6 +864,194 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonDoesNotApplyRestGovernanceToExplicitDslRoutesWithoutOptIn()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "9";
+        builder.Configuration["OpenApi:DefaultVersion"] = "9";
+        builder.Configuration["RestApi:Overrides:govern-disabled-explicit:Behaviors:0"] = "tests.dsl.runtimeoverride.disabled.lookup";
+        builder.Configuration["RestApi:Overrides:govern-disabled-explicit:AuthoringStyles:0"] = RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle;
+        builder.Configuration["RestApi:Overrides:govern-disabled-explicit:Pattern"] = "/governed/{orderId}";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ExplicitDslHostGovernanceDisabledRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+
+        var endpoint = Assert.Single(endpoints, static item =>
+            string.Equals(item.BehaviorId, "tests.dsl.runtimeoverride.disabled.lookup", StringComparison.Ordinal));
+        Assert.Equal("/api/v9/tests/dsl/runtime/override-disabled/orders/{orderId}", endpoint.RoutePattern);
+        Assert.Null(endpoint.AppliedOverrideId);
+        Assert.Empty(endpoint.MatchedOverrideIds);
+        Assert.NotNull(endpoint.OriginalProjection);
+        Assert.False(endpoint.OriginalProjection!.AllowsHostGovernance);
+        Assert.Equal(endpoint.RoutePattern, endpoint.OriginalProjection.RoutePattern);
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.dsl.runtimeoverride.disabled.lookup", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+        Assert.Null(candidate.AppliedOverrideId);
+        Assert.Empty(candidate.MatchedOverrideIds);
+        Assert.False(candidate.OriginalProjection.AllowsHostGovernance);
+        Assert.Equal("/api/v9/tests/dsl/runtime/override-disabled/orders/{orderId}", candidate.OriginalProjection.RoutePattern);
+        Assert.Equal(endpoint.Id, candidate.ProjectedEndpoint.Id);
+
+        var originalPayload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>("/api/v9/tests/dsl/runtime/override-disabled/orders/ord-disabled");
+        Assert.NotNull(originalPayload);
+        Assert.Equal("ord-disabled", originalPayload.OrderId);
+
+        var governedResponse = await client.GetAsync("/api/v9/tests/dsl/runtime/override-disabled/orders/governed/ord-disabled");
+        Assert.Equal(System.Net.HttpStatusCode.NotFound, governedResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task MapCephalonAppliesRestGovernanceToExplicitDslRoutesWhenGroupOptsIn()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "9";
+        builder.Configuration["OpenApi:DefaultVersion"] = "9";
+        builder.Configuration["RestApi:Overrides:govern-enabled-explicit:Behaviors:0"] = "tests.dsl.runtimeoverride.enabled.lookup";
+        builder.Configuration["RestApi:Overrides:govern-enabled-explicit:AuthoringStyles:0"] = RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle;
+        builder.Configuration["RestApi:Overrides:govern-enabled-explicit:Pattern"] = "/governed/{orderId}";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ExplicitDslHostGovernanceEnabledRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(overrides);
+
+        var endpoint = Assert.Single(endpoints, static item =>
+            string.Equals(item.BehaviorId, "tests.dsl.runtimeoverride.enabled.lookup", StringComparison.Ordinal));
+        Assert.Equal("/api/v9/tests/dsl/runtime/override-enabled/orders/governed/{orderId}", endpoint.RoutePattern);
+        Assert.Equal("govern-enabled-explicit", endpoint.AppliedOverrideId);
+        Assert.Equal(["govern-enabled-explicit"], endpoint.MatchedOverrideIds);
+        Assert.NotNull(endpoint.OriginalProjection);
+        Assert.True(endpoint.OriginalProjection!.AllowsHostGovernance);
+        Assert.Equal("/api/v9/tests/dsl/runtime/override-enabled/orders/{orderId}", endpoint.OriginalProjection.RoutePattern);
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.dsl.runtimeoverride.enabled.lookup", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+        Assert.Equal("govern-enabled-explicit", candidate.AppliedOverrideId);
+        Assert.Equal(["govern-enabled-explicit"], candidate.MatchedOverrideIds);
+        Assert.True(candidate.OriginalProjection.AllowsHostGovernance);
+        Assert.Equal("/api/v9/tests/dsl/runtime/override-enabled/orders/{orderId}", candidate.OriginalProjection.RoutePattern);
+        Assert.Equal(endpoint.Id, candidate.ProjectedEndpoint.Id);
+
+        var rule = Assert.Single(overrides, static item => string.Equals(item.Id, "govern-enabled-explicit", StringComparison.Ordinal));
+        Assert.Contains("tests.dsl.runtimeoverride.enabled.lookup", rule.BehaviorIds);
+        Assert.Contains(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle, rule.AuthoringStyles);
+
+        var governedPayload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>("/api/v9/tests/dsl/runtime/override-enabled/orders/governed/ord-enabled");
+        Assert.NotNull(governedPayload);
+        Assert.Equal("ord-enabled", governedPayload.OrderId);
+
+        var originalResponse = await client.GetAsync("/api/v9/tests/dsl/runtime/override-enabled/orders/ord-enabled");
+        Assert.Equal(System.Net.HttpStatusCode.NotFound, originalResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task MapCephalonSuppressesExplicitDslRoutesWhenGroupOptsInToHostGovernance()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "9";
+        builder.Configuration["OpenApi:DefaultVersion"] = "9";
+        builder.Configuration["RestApi:Suppressions:suppress-governed-explicit:Behaviors:0"] = "tests.dsl.runtimesuppression.enabled.lookup";
+        builder.Configuration["RestApi:Suppressions:suppress-governed-explicit:AuthoringStyles:0"] = RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle;
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ExplicitDslHostGovernanceSuppressionRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var suppressions = await client.GetFromJsonAsync<RestEndpointSuppressionDescriptor[]>("/engine/rest-endpoint-suppressions");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(suppressions);
+        Assert.NotNull(snapshot);
+        Assert.DoesNotContain(endpoints, static item =>
+            string.Equals(item.BehaviorId, "tests.dsl.runtimesuppression.enabled.lookup", StringComparison.Ordinal));
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.dsl.runtimesuppression.enabled.lookup", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Suppressed, candidate.Status);
+        Assert.Equal("suppress-governed-explicit", candidate.SuppressedBySuppressionId);
+        Assert.Equal(["suppress-governed-explicit"], candidate.MatchedSuppressionIds);
+        Assert.True(candidate.OriginalProjection.AllowsHostGovernance);
+        Assert.Equal("/api/v9/tests/dsl/runtime/suppression-enabled/orders/{orderId}", candidate.OriginalProjection.RoutePattern);
+        Assert.Null(candidate.SuppressedByCandidateId);
+
+        var suppression = Assert.Single(suppressions, static item => string.Equals(item.Id, "suppress-governed-explicit", StringComparison.Ordinal));
+        Assert.Contains("tests.dsl.runtimesuppression.enabled.lookup", suppression.BehaviorIds);
+        Assert.Contains(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle, suppression.AuthoringStyles);
+        Assert.Contains(snapshot.RestEndpointSuppressions, item =>
+            string.Equals(item.Id, "suppress-governed-explicit", StringComparison.Ordinal));
+        Assert.Contains(snapshot.RestEndpointCandidates, item =>
+            string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
+            string.Equals(item.SuppressedBySuppressionId, "suppress-governed-explicit", StringComparison.Ordinal) &&
+            item.OriginalProjection.AllowsHostGovernance);
+
+        var response = await client.GetAsync("/api/v9/tests/dsl/runtime/suppression-enabled/orders/ord-suppressed");
+        Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
     public async Task MapCephalonAppliesRestMethodOverridesAndExposesOverrideCatalog()
     {
         var builder = WebApplication.CreateBuilder();
@@ -6438,6 +6626,59 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         }
     }
 
+    private sealed class ExplicitDslHostGovernanceDisabledRuntimeCatalogModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.dsl-runtime.override-disabled",
+            "Explicit DSL Governance Disabled Module",
+            "Publishes an explicit module-DSL route that remains authoritative when host governance is not opted in.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Group("/tests/dsl/runtime/override-disabled/orders")
+                .ApiVersion(9)
+                .WithTagName("Explicit DSL Governance Disabled API")
+                .MapGet<GetExplicitDslHostGovernanceDisabledRuntimeOrderBehavior>("/{orderId}");
+        }
+    }
+
+    private sealed class ExplicitDslHostGovernanceEnabledRuntimeCatalogModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.dsl-runtime.override-enabled",
+            "Explicit DSL Governance Enabled Module",
+            "Publishes an explicit module-DSL route that opts into host governance.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Group("/tests/dsl/runtime/override-enabled/orders")
+                .ApiVersion(9)
+                .WithTagName("Explicit DSL Governance Enabled API")
+                .AllowHostGovernance()
+                .MapGet<GetExplicitDslHostGovernanceEnabledRuntimeOrderBehavior>("/{orderId}");
+        }
+    }
+
+    private sealed class ExplicitDslHostGovernanceSuppressionRuntimeCatalogModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.dsl-runtime.suppression-enabled",
+            "Explicit DSL Governance Suppression Module",
+            "Publishes an explicit module-DSL route that opts into host suppression governance.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Group("/tests/dsl/runtime/suppression-enabled/orders")
+                .ApiVersion(9)
+                .WithTagName("Explicit DSL Governance Suppression API")
+                .AllowHostGovernance()
+                .MapGet<GetExplicitDslHostGovernanceSuppressedRuntimeOrderBehavior>("/{orderId}");
+        }
+    }
+
     private sealed class ProfileCapabilityOverrideRuntimeCatalogModule : RestBehaviorModuleBase
     {
         public override ModuleDescriptor Descriptor { get; } = new(
@@ -6959,6 +7200,42 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     [AppBehavior("tests.generated.runtimeoverride.lookup")]
     [BehaviorRestProfile(BehaviorRestMethod.Get, "/orders/{orderId}", ApiVersionMajor = 4)]
     private sealed class GetGeneratedVersionOverrideRuntimeOrderBehavior : IAppBehavior<GeneratedRuntimeOrderInput, GeneratedRuntimeOrderOutput>
+    {
+        public Task<GeneratedRuntimeOrderOutput> HandleAsync(
+            GeneratedRuntimeOrderInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new GeneratedRuntimeOrderOutput(input.OrderId));
+        }
+    }
+
+    [AppBehavior("tests.dsl.runtimeoverride.disabled.lookup")]
+    private sealed class GetExplicitDslHostGovernanceDisabledRuntimeOrderBehavior : IAppBehavior<GeneratedRuntimeOrderInput, GeneratedRuntimeOrderOutput>
+    {
+        public Task<GeneratedRuntimeOrderOutput> HandleAsync(
+            GeneratedRuntimeOrderInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new GeneratedRuntimeOrderOutput(input.OrderId));
+        }
+    }
+
+    [AppBehavior("tests.dsl.runtimeoverride.enabled.lookup")]
+    private sealed class GetExplicitDslHostGovernanceEnabledRuntimeOrderBehavior : IAppBehavior<GeneratedRuntimeOrderInput, GeneratedRuntimeOrderOutput>
+    {
+        public Task<GeneratedRuntimeOrderOutput> HandleAsync(
+            GeneratedRuntimeOrderInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new GeneratedRuntimeOrderOutput(input.OrderId));
+        }
+    }
+
+    [AppBehavior("tests.dsl.runtimesuppression.enabled.lookup")]
+    private sealed class GetExplicitDslHostGovernanceSuppressedRuntimeOrderBehavior : IAppBehavior<GeneratedRuntimeOrderInput, GeneratedRuntimeOrderOutput>
     {
         public Task<GeneratedRuntimeOrderOutput> HandleAsync(
             GeneratedRuntimeOrderInput input,

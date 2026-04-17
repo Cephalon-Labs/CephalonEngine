@@ -1,7 +1,8 @@
 namespace Cephalon.Abstractions.Transports;
 
 /// <summary>
-/// Describes one host-level REST endpoint override rule visible to the current runtime.
+/// Describes one host-level REST endpoint override rule visible to the current runtime for
+/// module-owned REST candidates that participate in host governance.
 /// </summary>
 public sealed class RestEndpointOverrideDescriptor
 {
@@ -9,10 +10,13 @@ public sealed class RestEndpointOverrideDescriptor
     /// Creates a REST endpoint override descriptor.
     /// </summary>
     /// <param name="id">The stable override identifier.</param>
-    /// <param name="candidateIds">The original shorthand candidate identifiers targeted by the override rule.</param>
+    /// <param name="candidateIds">The original candidate identifiers targeted by the override rule.</param>
     /// <param name="behaviorIds">The behavior identifiers targeted by the override rule.</param>
     /// <param name="sourceModuleIds">The source-module identifiers targeted by the override rule.</param>
-    /// <param name="authoringStyles">The normalized shorthand authoring styles targeted by the override rule.</param>
+    /// <param name="authoringStyles">
+    /// The normalized authoring styles targeted by the override rule. Explicit module-DSL routes
+    /// participate only when their owning route group opted into host governance.
+    /// </param>
     /// <param name="apiVersionMajors">The effective API major versions targeted by the override rule.</param>
     /// <param name="methods">The effective HTTP methods targeted by the override rule.</param>
     /// <param name="relativePatterns">The shorthand relative route patterns targeted by the override rule.</param>
@@ -31,48 +35,46 @@ public sealed class RestEndpointOverrideDescriptor
     /// </param>
     /// <param name="clearRequiredCapability">
     /// <see langword="true" /> when the rule removes any previously declared Cephalon capability
-    /// boundary from the matched shorthand candidate.
+    /// boundary from the matched candidate.
     /// </param>
     /// <param name="bindings">The effective explicit request-binding plan applied when the rule matches.</param>
     /// <param name="removedBindingProperties">
-    /// The explicit shorthand binding properties removed from the source binding plan when the rule
-    /// matches.
+    /// The explicit binding properties removed from the source binding plan when the rule matches.
     /// </param>
     /// <param name="clearBindings">
-    /// <see langword="true" /> when the rule removes the matched shorthand candidate's entire
-    /// explicit binding plan and returns publication to the implicit request-binding baseline.
+    /// <see langword="true" /> when the rule removes the matched candidate's entire explicit
+    /// binding plan and returns publication to the implicit request-binding baseline.
     /// </param>
     /// <param name="bindingMode">
     /// The mode used to apply <paramref name="bindings" /> and
-    /// <paramref name="removedBindingProperties" /> to the shorthand candidate's explicit binding
-    /// plan.
+    /// <paramref name="removedBindingProperties" /> to the candidate's explicit binding plan.
     /// </param>
     /// <param name="clearEndpointName">
-    /// <see langword="true" /> when the rule removes any previously declared shorthand endpoint
-    /// name from the matched candidate.
+    /// <see langword="true" /> when the rule removes any previously declared endpoint name from
+    /// the matched candidate.
     /// </param>
     /// <param name="clearSummary">
-    /// <see langword="true" /> when the rule removes any previously declared shorthand endpoint
-    /// summary from the matched candidate.
+    /// <see langword="true" /> when the rule removes any previously declared endpoint summary
+    /// from the matched candidate.
     /// </param>
     /// <param name="clearDescription">
-    /// <see langword="true" /> when the rule removes any previously declared shorthand endpoint
-    /// description from the matched candidate.
+    /// <see langword="true" /> when the rule removes any previously declared endpoint description
+    /// from the matched candidate.
     /// </param>
     /// <param name="openApiDocumentNames">
-    /// The original shorthand OpenAPI document names targeted by the override rule before override
+    /// The original candidate OpenAPI document names targeted by the override rule before override
     /// actions are applied.
     /// </param>
     /// <param name="tagNames">
-    /// The original shorthand primary OpenAPI tag names targeted by the override rule before
+    /// The original candidate primary OpenAPI tag names targeted by the override rule before
     /// override actions are applied.
     /// </param>
     /// <param name="bindingFallbackModes">
-    /// The original shorthand request-binding fallback modes targeted by the override rule before
+    /// The original candidate request-binding fallback modes targeted by the override rule before
     /// override actions are applied.
     /// </param>
     /// <param name="targetBindings">
-    /// The original shorthand explicit binding descriptors targeted by the override rule before
+    /// The original candidate explicit binding descriptors targeted by the override rule before
     /// override actions are applied.
     /// </param>
     public RestEndpointOverrideDescriptor(
@@ -232,7 +234,7 @@ public sealed class RestEndpointOverrideDescriptor
     public string Id { get; }
 
     /// <summary>
-    /// Gets the original shorthand candidate identifiers targeted by this override rule.
+    /// Gets the original candidate identifiers targeted by this override rule.
     /// </summary>
     public IReadOnlyList<string> CandidateIds { get; }
 
@@ -247,7 +249,8 @@ public sealed class RestEndpointOverrideDescriptor
     public IReadOnlyList<string> SourceModuleIds { get; }
 
     /// <summary>
-    /// Gets the normalized shorthand authoring styles targeted by this override rule.
+    /// Gets the normalized authoring styles targeted by this override rule. Explicit module-DSL
+    /// routes participate only when their owning route group opted into host governance.
     /// </summary>
     public IReadOnlyList<string> AuthoringStyles { get; }
 
@@ -262,7 +265,7 @@ public sealed class RestEndpointOverrideDescriptor
     public IReadOnlyList<string> Methods { get; }
 
     /// <summary>
-    /// Gets the shorthand relative route patterns targeted by this override rule.
+    /// Gets the relative route patterns targeted by this override rule.
     /// </summary>
     public IReadOnlyList<string> RelativePatterns { get; }
 
@@ -272,22 +275,22 @@ public sealed class RestEndpointOverrideDescriptor
     public IReadOnlyList<string> RouteGroupPrefixes { get; }
 
     /// <summary>
-    /// Gets the original shorthand OpenAPI document names targeted by this override rule.
+    /// Gets the original candidate OpenAPI document names targeted by this override rule.
     /// </summary>
     public IReadOnlyList<string> OpenApiDocumentNames { get; }
 
     /// <summary>
-    /// Gets the original shorthand primary OpenAPI tag names targeted by this override rule.
+    /// Gets the original candidate primary OpenAPI tag names targeted by this override rule.
     /// </summary>
     public IReadOnlyList<string> TagNames { get; }
 
     /// <summary>
-    /// Gets the original shorthand request-binding fallback modes targeted by this override rule.
+    /// Gets the original candidate request-binding fallback modes targeted by this override rule.
     /// </summary>
     public IReadOnlyList<RestEndpointBindingFallbackMode> BindingFallbackModes { get; }
 
     /// <summary>
-    /// Gets the original shorthand explicit binding descriptors targeted by this override rule
+    /// Gets the original candidate explicit binding descriptors targeted by this override rule
     /// before override actions are applied.
     /// </summary>
     public IReadOnlyList<RestEndpointBindingDescriptor> TargetBindings { get; }
@@ -339,19 +342,19 @@ public sealed class RestEndpointOverrideDescriptor
 
     /// <summary>
     /// Gets a value indicating whether this override rule clears any previously declared endpoint
-    /// name from the matched shorthand candidate.
+    /// name from the matched candidate.
     /// </summary>
     public bool ClearEndpointName { get; }
 
     /// <summary>
     /// Gets a value indicating whether this override rule clears any previously declared endpoint
-    /// summary from the matched shorthand candidate.
+    /// summary from the matched candidate.
     /// </summary>
     public bool ClearSummary { get; }
 
     /// <summary>
     /// Gets a value indicating whether this override rule clears any previously declared endpoint
-    /// description from the matched shorthand candidate.
+    /// description from the matched candidate.
     /// </summary>
     public bool ClearDescription { get; }
 
@@ -362,7 +365,7 @@ public sealed class RestEndpointOverrideDescriptor
 
     /// <summary>
     /// Gets a value indicating whether this override rule clears any previously declared Cephalon
-    /// capability boundary from the matched shorthand candidate.
+    /// capability boundary from the matched candidate.
     /// </summary>
     public bool ClearRequiredCapability { get; }
 
@@ -372,18 +375,19 @@ public sealed class RestEndpointOverrideDescriptor
     public IReadOnlyList<RestEndpointBindingDescriptor> Bindings { get; }
 
     /// <summary>
-    /// Gets the explicit shorthand binding properties removed from the source binding plan when this override rule matches.
+    /// Gets the explicit binding properties removed from the source binding plan when this override rule matches.
     /// </summary>
     public IReadOnlyList<string> RemovedBindingProperties { get; }
 
     /// <summary>
-    /// Gets a value indicating whether this override rule clears the matched shorthand candidate's
-    /// entire explicit binding plan.
+    /// Gets a value indicating whether this override rule clears the matched candidate's entire
+    /// explicit binding plan.
     /// </summary>
     public bool ClearBindings { get; }
 
     /// <summary>
-    /// Gets how <see cref="Bindings" /> and <see cref="RemovedBindingProperties" /> apply to the shorthand candidate's explicit binding plan.
+    /// Gets how <see cref="Bindings" /> and <see cref="RemovedBindingProperties" /> apply to the
+    /// candidate's explicit binding plan.
     /// </summary>
     public RestEndpointOverrideBindingMode BindingMode { get; }
 

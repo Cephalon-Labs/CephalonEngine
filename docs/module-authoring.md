@@ -556,6 +556,13 @@ original explicit descriptor set by property/source/name equivalence, so hosts c
 route-only candidate from a richer explicitly bound sibling even when later overrides rewrite the
 published route.
 
+If you want an explicit module-DSL route group to participate in that same host-governance
+boundary, call `AllowHostGovernance()` on the group before mapping endpoints. That keeps explicit
+DSL authoritative by default while making the route group's original projection publish
+`AllowsHostGovernance = true` when you intentionally opt in. Host rules still do not affect that
+group unless they also explicitly target `AuthoringStyles = [behavior-module-dsl]`; omitting
+`AuthoringStyles` continues to mean shorthand-only targeting.
+
 When a host wants to declare grouped authoring-policy intent for one behavior boundary, use
 `RestApi:AuthoringPolicies:{behaviorId}`. That boundary-level contract now actively honors
 `AllowMultiplePublishedCandidates = true` during shorthand candidate resolution, so
@@ -593,7 +600,9 @@ including the per-style `AuthoringStyleSummaries` summary derived from the same 
 truth, now also keeps every matching override rule visible through `MatchedOverrideIds` in
 specificity order before one winner is selected, and intentionally leaves explicit module
 DSL/manual routes plus shorthand groups with explicit `.ApiVersion(...)` authoritative for version
-selection.
+selection by default. If a module deliberately opts an explicit DSL group into host governance
+through `AllowHostGovernance()`, version and metadata overrides can govern that explicit route too,
+but only when the matching host rule explicitly targets authoring style `behavior-module-dsl`.
 If ASP.NET Core materialization proves that a matched shorthand override rule did not actually
 change the published endpoint metadata or capability answer, the runtime keeps
 `MatchedOverrideIds` visible, leaves `AppliedOverrideId = null`, and now still surfaces the

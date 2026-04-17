@@ -861,6 +861,17 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void BehaviorsHttpRestBehaviorEndpointGroupBuilderExposesHostGovernanceOptInMethod()
+    {
+        var methods = typeof(global::Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder)
+            .GetMethods(BindingFlags.Instance | BindingFlags.Public);
+
+        Assert.Contains(methods, static method =>
+            method.Name == "AllowHostGovernance" &&
+            method.GetParameters().Length == 0);
+    }
+
+    [Fact]
     public void BehaviorsHttpRestBehaviorModuleBuilderExposesDerivedGeneratedGroupMethod()
     {
         var methods = typeof(global::Cephalon.Behaviors.Http.Hosting.IRestBehaviorModuleBuilder)
@@ -1066,6 +1077,13 @@ public sealed class PackageSurfaceTests
             .GetProperty("BindingFallbackMode", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateProjectionDescriptor)
             .GetProperty("BindingFallbackMode", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void RestEndpointRuntimeContractsExposeOriginalProjectionHostGovernanceIntent()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateProjectionDescriptor)
+            .GetProperty("AllowsHostGovernance", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

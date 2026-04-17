@@ -11,13 +11,13 @@ public enum RestEndpointOverrideBindingMode
     Unspecified = 0,
 
     /// <summary>
-    /// Replaces the shorthand candidate's explicit binding plan with the configured descriptors.
+    /// Replaces the candidate's explicit binding plan with the configured descriptors.
     /// </summary>
     ReplaceExplicit = 1,
 
     /// <summary>
-    /// Merges configured binding descriptors into the shorthand candidate's explicit binding plan
-    /// by property name and can also remove selected explicit bindings.
+    /// Merges configured binding descriptors into the candidate's explicit binding plan by
+    /// property name and can also remove selected explicit bindings.
     /// </summary>
     MergeExplicit = 2
 }
