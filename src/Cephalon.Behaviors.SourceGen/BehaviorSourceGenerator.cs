@@ -383,8 +383,8 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                 continue;
             }
 
-            var methodName = attribute.ConstructorArguments.Length > 0
-                ? ResolveEnumMemberName(attribute.ConstructorArguments[0])
+            var method = attribute.ConstructorArguments.Length > 0
+                ? ResolveRestMethod(attribute.ConstructorArguments[0])
                 : null;
             var relativePattern = attribute.ConstructorArguments.Length > 1
                 ? attribute.ConstructorArguments[1].Value as string ?? string.Empty
@@ -411,7 +411,8 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             }
 
             return new RestProfileInfo(
-                methodName,
+                method?.MemberName,
+                method?.WireName,
                 relativePattern,
                 hasApiVersionMajor,
                 apiVersionMajor,
@@ -726,7 +727,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             return;
         }
 
-        if (!IsSupportedRestMethod(info.RestProfile.MethodName))
+        if (!IsSupportedRestMethodWireName(info.RestProfile.MethodWireName))
         {
             spc.ReportDiagnostic(Diagnostic.Create(
                 Abt015RestProfileMethodMustBeSpecified,
@@ -928,14 +929,14 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             foreach (var info in behaviorsWithRestProfiles)
             {
                 if (info?.RestProfile is null ||
-                    !IsSupportedRestMethod(info.RestProfile.MethodName))
+                    !IsSupportedRestMethodWireName(info.RestProfile.MethodWireName))
                 {
                     continue;
                 }
 
                 sb.Append("            new global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor(");
                 sb.Append($"\"{EscapeString(info.BehaviorId)}\", ");
-                sb.Append($"global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethod.{info.RestProfile.MethodName}, ");
+                sb.Append($"global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethod.{info.RestProfile.MethodMemberName}, ");
                 sb.Append($"\"{EscapeString(info.RestProfile.RelativePattern.Trim())}\", ");
                 sb.Append(info.RestProfile.HasApiVersionMajor
                     ? info.RestProfile.ApiVersionMajor.ToString(System.Globalization.CultureInfo.InvariantCulture)
@@ -978,7 +979,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             foreach (var info in behaviorsWithRestProfiles)
             {
                 if (info?.RestProfile is null ||
-                    !IsSupportedRestMethod(info.RestProfile.MethodName))
+                    !IsSupportedRestMethodWireName(info.RestProfile.MethodWireName))
                 {
                     continue;
                 }
@@ -1067,6 +1068,19 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             NormalizeRestBindingSourceWireName(member.MemberName, member.WireName));
     }
 
+    private static EnumMemberInfo? ResolveRestMethod(TypedConstant constant)
+    {
+        var member = ResolveEnumMemberInfo(constant);
+        if (member is null)
+        {
+            return null;
+        }
+
+        return new EnumMemberInfo(
+            member.MemberName,
+            NormalizeRestMethodWireName(member.MemberName, member.WireName));
+    }
+
     private static string ResolveEnumWireName(IFieldSymbol member)
     {
         foreach (var attribute in member.GetAttributes())
@@ -1108,14 +1122,33 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         };
     }
 
-    private static bool IsSupportedRestMethod(string? methodName)
+    private static string NormalizeRestMethodWireName(string memberName, string wireName)
     {
-        return methodName is "Get" or "Post" or "Put" or "Patch" or "Delete";
+        if (!string.Equals(wireName, memberName, StringComparison.Ordinal))
+        {
+            return wireName;
+        }
+
+        return memberName switch
+        {
+            "Unspecified" => "unspecified",
+            "Get" => "get",
+            "Post" => "post",
+            "Put" => "put",
+            "Patch" => "patch",
+            "Delete" => "delete",
+            _ => wireName
+        };
     }
 
-    private static bool MethodAcceptsBody(string? methodName)
+    private static bool IsSupportedRestMethodWireName(string? wireName)
     {
-        return methodName is "Post" or "Put" or "Patch";
+        return wireName is "get" or "post" or "put" or "patch" or "delete";
+    }
+
+    private static bool MethodAcceptsBodyWireName(string? wireName)
+    {
+        return wireName is "post" or "put" or "patch";
     }
 
     private static bool IsSupportedRestBindingSourceWireName(string? wireName)
@@ -1150,8 +1183,8 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         var routeParameters = HasValidRoutePattern(info.RestProfile.RelativePattern)
             ? ExtractRouteParameterNames(info.RestProfile.RelativePattern)
             : null;
-        var supportsBody = MethodAcceptsBody(info.RestProfile.MethodName);
-        var hasSupportedMethod = IsSupportedRestMethod(info.RestProfile.MethodName);
+        var supportsBody = MethodAcceptsBodyWireName(info.RestProfile.MethodWireName);
+        var hasSupportedMethod = IsSupportedRestMethodWireName(info.RestProfile.MethodWireName);
         var seenProperties = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         foreach (var binding in info.RestProfile.Bindings)
@@ -1202,7 +1235,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                     Abt024RestBodyBindingMustUseBodyCapableMethod,
                     info.ShortName,
                     effectivePropertyName,
-                    info.RestProfile.MethodName!));
+                    info.RestProfile.MethodMemberName ?? info.RestProfile.MethodWireName ?? string.Empty));
             }
 
             if (routeParameters is not null &&
@@ -1491,7 +1524,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         public bool HasValidRestProfile =>
             IsValid &&
             RestProfile is not null &&
-            IsSupportedRestMethod(RestProfile.MethodName) &&
+            IsSupportedRestMethodWireName(RestProfile.MethodWireName) &&
             !string.IsNullOrWhiteSpace(RestProfile.RelativePattern) &&
             RestProfile.RelativePattern.Trim().StartsWith("/", StringComparison.Ordinal) &&
             TryValidateRoutePatternSyntax(RestProfile.RelativePattern, out _) &&
@@ -1505,14 +1538,16 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
     private sealed class RestProfileInfo
     {
         public RestProfileInfo(
-            string? methodName,
+            string? methodMemberName,
+            string? methodWireName,
             string relativePattern,
             bool hasApiVersionMajor,
             int apiVersionMajor,
             IReadOnlyList<RestBindingInfo> bindings,
             bool preserveImplicitQueryFallback)
         {
-            MethodName = methodName;
+            MethodMemberName = methodMemberName;
+            MethodWireName = methodWireName;
             RelativePattern = relativePattern;
             HasApiVersionMajor = hasApiVersionMajor;
             ApiVersionMajor = apiVersionMajor;
@@ -1520,7 +1555,8 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             PreserveImplicitQueryFallback = preserveImplicitQueryFallback;
         }
 
-        public string? MethodName { get; }
+        public string? MethodMemberName { get; }
+        public string? MethodWireName { get; }
         public string RelativePattern { get; }
         public bool HasApiVersionMajor { get; }
         public int ApiVersionMajor { get; }

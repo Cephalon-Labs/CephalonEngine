@@ -31,13 +31,14 @@ module-owned REST endpoints.
   `IRestBehaviorEndpointGroupBuilder` for one-place public REST and internal behavior ownership,
   compiled internally into a normalized REST projection contract before Minimal API materialization
 - **Metadata-only REST profile contract** — `BehaviorRestProfileAttribute`,
-  `BehaviorRestBindingAttribute`, `BehaviorRestMethod`, `BehaviorRestProfileDescriptor`,
-  `BehaviorRestBindingDescriptor`, and `BehaviorRestBindingSource` for behavior-authored candidate
-  REST method, relative route, optional API-version hints, explicit route/query/header/body
-  binding plans, and optional preserved implicit-query fallback intent for explicitly bound
-  profiles that explicit module-owned shorthand such as `MapProfile<TBehavior>()` can consume
-  without publishing public REST directly from behaviors; the build now rejects malformed
-  placeholder syntax such as unbalanced `{...}` segments and preserved-fallback profiles that omit
+  `BehaviorRestBindingAttribute`, `BehaviorRestMethod`, `BehaviorRestMethodExtensions`,
+  `BehaviorRestProfileDescriptor`, `BehaviorRestBindingDescriptor`,
+  `BehaviorRestBindingSource`, and `BehaviorRestBindingSourceExtensions` for behavior-authored
+  candidate REST method, relative route, optional API-version hints, explicit
+  route/query/header/body binding plans, and optional preserved implicit-query fallback intent for
+  explicitly bound profiles that explicit module-owned shorthand such as `MapProfile<TBehavior>()`
+  can consume without publishing public REST directly from behaviors; the build now rejects
+  malformed placeholder syntax such as unbalanced `{...}` segments and preserved-fallback profiles that omit
   explicit bindings earlier, while runtime normalization still leaves final route parsing
   authoritative to ASP.NET Core
 - **OpenAPI enrichment** — module tag names and descriptions, module-major API-version defaults
@@ -193,6 +194,11 @@ Current profile behavior:
   the explicitly targeted behavior type's attribute only when generated hints are unavailable
 - valid profiles currently require a supported REST method, a non-empty leading-slash relative
   pattern such as `"/{cartId}"`, and a positive `ApiVersionMajor` when one is specified
+- `BehaviorRestMethod` now also exposes `BehaviorRestMethodExtensions` plus the same stable `get`,
+  `post`, `put`, `patch`, and `delete` wire names that JSON serialization uses; source generation
+  validates profile methods against that canonical vocabulary while still emitting the resolved enum
+  member names into generated `GetRestProfiles()` hints so future enum-member renames can preserve
+  valid metadata by keeping the wire-name contract stable
 - explicit profile bindings currently support `route`, `query`, `header`, and `body` sources for
   object inputs only; build-time diagnostics now reject invalid property names, duplicate property
   bindings, unsupported sources, route-placeholder mismatches, and body bindings on `GET` or

@@ -103,11 +103,12 @@ internal static class BehaviorAutoRegistration
 }
 ```
 
-For binding sources, the generator now validates against the stable
-`BehaviorRestBindingSource` wire-name vocabulary (`route`, `query`, `header`, and `body`) rather
-than hardcoding enum member names. Generated `GetRestProfiles()` hints still emit the resolved enum
-member names, so future package versions can rename those members without breaking valid metadata as
-long as the stable wire-name contract stays intact.
+For REST profile methods and binding sources, the generator now validates against the stable
+wire-name vocabularies instead of hardcoding enum member names: `BehaviorRestMethod` uses `get`,
+`post`, `put`, `patch`, and `delete`, while `BehaviorRestBindingSource` uses `route`, `query`,
+`header`, and `body`. Generated `GetRestProfiles()` hints still emit the resolved enum member
+names, so future package versions can rename those members without breaking valid metadata as long
+as the stable wire-name contracts stay intact.
 
 ## Integration
 

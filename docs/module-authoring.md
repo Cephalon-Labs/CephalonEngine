@@ -180,6 +180,11 @@ Current `BehaviorRestProfileAttribute` behavior:
   that canonical vocabulary while still emitting resolved enum member names into generated
   `GetRestProfiles()` hints so future enum-member renames can stay source-compatible by preserving
   those wire names
+- `BehaviorRestMethod` remains the code-authoring enum surface, but `BehaviorRestMethodExtensions`
+  now exposes the same stable `get`, `post`, `put`, `patch`, and `delete` wire names that JSON
+  serialization uses; `Cephalon.Behaviors.SourceGen` validates against that canonical vocabulary
+  while still emitting resolved enum member names into generated `GetRestProfiles()` hints so
+  future enum-member renames can stay source-compatible by preserving those wire names
 - the owning module still decides whether the behavior becomes public REST through
   `ConfigureRestBehaviors(...)`
 - `IRestBehaviorEndpointGroupBuilder.MapProfile<TBehavior>()` is now the shipped low-ceremony

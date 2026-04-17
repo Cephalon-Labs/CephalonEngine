@@ -74,11 +74,17 @@ public sealed class BehaviorSourceGeneratorTests
 
             public enum BehaviorRestMethod
             {
+                [System.Text.Json.Serialization.JsonStringEnumMemberName("unspecified")]
                 Unspecified = 0,
+                [System.Text.Json.Serialization.JsonStringEnumMemberName("get")]
                 Get = 1,
+                [System.Text.Json.Serialization.JsonStringEnumMemberName("post")]
                 Post = 2,
+                [System.Text.Json.Serialization.JsonStringEnumMemberName("put")]
                 Put = 3,
+                [System.Text.Json.Serialization.JsonStringEnumMemberName("patch")]
                 Patch = 4,
+                [System.Text.Json.Serialization.JsonStringEnumMemberName("delete")]
                 Delete = 5
             }
 
@@ -918,22 +924,34 @@ public sealed class BehaviorSourceGeneratorTests
                 """
                         public enum BehaviorRestMethod
                         {
+                            [System.Text.Json.Serialization.JsonStringEnumMemberName("unspecified")]
                             Unspecified = 0,
+                            [System.Text.Json.Serialization.JsonStringEnumMemberName("get")]
                             Get = 1,
+                            [System.Text.Json.Serialization.JsonStringEnumMemberName("post")]
                             Post = 2,
+                            [System.Text.Json.Serialization.JsonStringEnumMemberName("put")]
                             Put = 3,
+                            [System.Text.Json.Serialization.JsonStringEnumMemberName("patch")]
                             Patch = 4,
+                            [System.Text.Json.Serialization.JsonStringEnumMemberName("delete")]
                             Delete = 5
                         }
                 """,
                 """
                         public enum BehaviorRestMethod
                         {
+                            [System.Text.Json.Serialization.JsonStringEnumMemberName("unspecified")]
                             Unspecified = 0,
+                            [System.Text.Json.Serialization.JsonStringEnumMemberName("delete")]
                             Delete = 50,
+                            [System.Text.Json.Serialization.JsonStringEnumMemberName("patch")]
                             Patch = 40,
+                            [System.Text.Json.Serialization.JsonStringEnumMemberName("put")]
                             Put = 30,
+                            [System.Text.Json.Serialization.JsonStringEnumMemberName("post")]
                             Post = 20,
+                            [System.Text.Json.Serialization.JsonStringEnumMemberName("get")]
                             Get = 10
                         }
                 """,
@@ -948,6 +966,43 @@ public sealed class BehaviorSourceGeneratorTests
         Assert.Contains("BehaviorRestMethod.Get", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("BehaviorRestBindingSource.Route", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("BehaviorRestBindingSource.Query", autoRegistration, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void RestProfileHintsRespectMethodWireNamesWhenEnumMembersAreRenamed()
+    {
+        const string source = """
+            using Cephalon.Abstractions.Behaviors;
+            using Cephalon.Behaviors.Http.Abstractions;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            public sealed record LookupOrderInput(string OrderId);
+
+            [AppBehavior("orders.lookup")]
+            [BehaviorRestProfile(BehaviorRestMethod.Read, "/{orderId}")]
+            public sealed class LookupOrderBehavior : IAppBehavior<LookupOrderInput, string>
+            {
+                public Task<string> HandleAsync(LookupOrderInput input, IBehaviorContext ctx, CancellationToken ct = default)
+                    => Task.FromResult("ok");
+            }
+            """;
+
+        var renamedMethodStubs = AttributeStubs
+            .Replace("Unspecified = 0,", "None = 0,", StringComparison.Ordinal)
+            .Replace("Get = 1,", "Read = 10,", StringComparison.Ordinal)
+            .Replace("Post = 2,", "Create = 20,", StringComparison.Ordinal)
+            .Replace("Put = 3,", "Replace = 30,", StringComparison.Ordinal)
+            .Replace("Patch = 4,", "Update = 40,", StringComparison.Ordinal)
+            .Replace("Delete = 5", "Remove = 50", StringComparison.Ordinal);
+
+        var (result, diagnostics) = RunGenerator(source, renamedMethodStubs);
+
+        Assert.Empty(diagnostics);
+
+        var autoRegistration = GetGeneratedAutoRegistrationSource(result);
+        Assert.NotNull(autoRegistration);
+        Assert.Contains("BehaviorRestMethod.Read", autoRegistration, StringComparison.Ordinal);
     }
 
     [Fact]

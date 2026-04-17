@@ -170,6 +170,11 @@ Status update:
   generated `GetRestProfiles()` output no longer depends on hard-coded enum ordinals, and
   `BehaviorRestProfileResolver` now fails fast when an explicit route binding names a placeholder
   that the declared profile route pattern does not contain
+- the next contract-hardening follow-through is now also shipped through `ENG-058-T141` and
+  `ENG-058-T142`: `BehaviorRestBindingSource` plus `BehaviorRestMethod` now carry stable wire-name
+  vocabularies, and `Cephalon.Behaviors.SourceGen` now validates both profile methods and explicit
+  binding metadata against those canonical wire-name contracts while still emitting resolved enum
+  member names into generated `GetRestProfiles()` output
 - the next profile-route authoring-safety follow-through is now also shipped through
   `ENG-058-T117`: `Cephalon.Behaviors.SourceGen` now rejects malformed
   `BehaviorRestProfileAttribute.RelativePattern` placeholder syntax earlier through `ABT0026`, and
