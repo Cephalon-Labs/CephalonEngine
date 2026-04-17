@@ -66,7 +66,7 @@ internal static class RestBehaviorGovernanceDiagnosticsConventions
         Name: BindingFallbackPreservedName,
         Severity: DiagnosticSeverity.Information,
         MessageTemplate: BindingFallbackPreservedMessageTemplate,
-        Description: "Emitted when shorthand REST binding fallback remains visible after partial explicit override reconciliation.");
+        Description: "Emitted when shorthand REST binding fallback remains visible after partial explicit override reconciliation and reports the stable fallback-mode wire name.");
 
     public static readonly DiagnosticEventDefinition AuthoringPolicySuppressed = new(
         Id: AuthoringPolicySuppressedId,

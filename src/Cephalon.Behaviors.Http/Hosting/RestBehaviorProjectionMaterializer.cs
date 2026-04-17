@@ -336,7 +336,7 @@ internal static class RestBehaviorProjectionMaterializer
                     logger,
                     candidate.Id,
                     behaviorId,
-                    bindingFallbackMode.ToString(),
+                    bindingFallbackMode.GetWireName(),
                     JoinIdentifiers(candidate.MatchedOverrideIds));
             }
         }

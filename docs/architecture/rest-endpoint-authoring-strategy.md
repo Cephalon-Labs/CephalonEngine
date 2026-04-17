@@ -1059,7 +1059,10 @@ Status:
   `snapshot.RestEndpoints`, `ENG-058-T115` now keeps event `5204`
   `RestEndpointBindingFallbackPreserved` aligned with that same broader runtime truth so startup
   logging emits whichever typed fallback mode was preserved, including both
-  `PreserveSourceImplicitFallback` and `PreserveRemainingBodyFallback`, and
+  `PreserveSourceImplicitFallback` and `PreserveRemainingBodyFallback`, `ENG-058-T135` now
+  also keeps that startup log payload on the same stable
+  `preserve-source-implicit-fallback` / `preserve-remaining-body-fallback` wire names the runtime
+  contract and compatibility metadata already use, and
   `ENG-058-T116` now centralizes the stable compatibility wire names behind
   `RestEndpointBindingFallbackModeExtensions.GetWireName()` /
   `TryParseWireName(...)` so ASP.NET Core metadata plus tests no longer maintain independent

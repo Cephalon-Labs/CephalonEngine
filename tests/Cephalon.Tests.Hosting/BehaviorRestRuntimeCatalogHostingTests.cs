@@ -6262,6 +6262,8 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         var noOpSelectedActionKinds = JoinActionKinds(noOpCandidate.SelectedOverrideActionKinds);
         var noOpAppliedActionKinds = JoinActionKinds(noOpCandidate.AppliedOverrideActionKinds);
         var noOpSelectionBasis = JoinSelectionBasis(noOpCandidate.OverrideSelectionBasis);
+        var preservedImplicitFallbackWireName = RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback.GetWireName();
+        var preservedRemainingBodyFallbackWireName = RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback.GetWireName();
 
         Assert.Contains(loggerProvider.Entries, entry =>
             entry.EventId.Id == 5202 &&
@@ -6286,13 +6288,21 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Contains(loggerProvider.Entries, entry =>
             entry.EventId.Id == 5204 &&
             entry.Message.Contains("tests.rest.profile.bindings.query.partial", StringComparison.Ordinal) &&
-            entry.Message.Contains("PreserveSourceImplicitFallback", StringComparison.Ordinal) &&
+            entry.Message.Contains(preservedImplicitFallbackWireName, StringComparison.Ordinal) &&
             entry.Message.Contains("prefer-route-order", StringComparison.Ordinal));
         Assert.Contains(loggerProvider.Entries, entry =>
             entry.EventId.Id == 5204 &&
             entry.Message.Contains("tests.rest.profile.bindings.inference", StringComparison.Ordinal) &&
-            entry.Message.Contains("PreserveRemainingBodyFallback", StringComparison.Ordinal) &&
+            entry.Message.Contains(preservedRemainingBodyFallbackWireName, StringComparison.Ordinal) &&
             entry.Message.Contains("withdraw-body-note", StringComparison.Ordinal));
+        Assert.DoesNotContain(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 5204 &&
+            entry.Message.Contains("tests.rest.profile.bindings.query.partial", StringComparison.Ordinal) &&
+            entry.Message.Contains("PreserveSourceImplicitFallback", StringComparison.Ordinal));
+        Assert.DoesNotContain(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 5204 &&
+            entry.Message.Contains("tests.rest.profile.bindings.inference", StringComparison.Ordinal) &&
+            entry.Message.Contains("PreserveRemainingBodyFallback", StringComparison.Ordinal));
     }
 
     private static string JoinActionKinds(IReadOnlyList<RestEndpointOverrideActionKind> actionKinds)

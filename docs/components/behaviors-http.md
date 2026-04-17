@@ -249,7 +249,8 @@ When `Cephalon.Behaviors.Http` is active, `/engine/diagnostics` now also publish
   override action-kind wire names so no-op winners remain explicit
 - `5204` — a shorthand candidate preserved a typed binding fallback mode while partial explicit
   override reconciliation ran, including both preserved source implicit-query fallback and
-  preserved remaining request-body fallback
+  preserved remaining request-body fallback, and startup logging now echoes the same stable
+  fallback-mode wire name the runtime catalog and compatibility metadata use
 - `5205` — a shorthand candidate was suppressed by authoring policy, including
   `disallowed-authoring-style`, `not-allowed-authoring-style`, and
   `preferred-authoring-style-selected`
@@ -266,7 +267,10 @@ publishes, while the override-applied and override-no-op events reuse the same
 `OverrideSelectionBasis`, `ActionKinds`, `SelectedOverrideActionKinds`, and
 `AppliedOverrideActionKinds` story the runtime catalogs expose, using the stable wire names from
 `RestEndpointGovernanceRuleSelectionBasisExtensions` and
-`RestEndpointOverrideActionKindExtensions`.
+`RestEndpointOverrideActionKindExtensions`. Event `5204` now also reuses
+`RestEndpointBindingFallbackModeExtensions.GetWireName()` so startup diagnostics, JSON
+serialization, runtime catalogs, and additive compatibility metadata all speak the same stable
+fallback-mode wire names.
 
 ## Registration
 
