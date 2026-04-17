@@ -1512,6 +1512,69 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverDoesNotApplyOverrideWhenBindingsOnlyReorderTheSourcePlan()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-binding-order-noop")
+            .MapProfile<ProfileProjectionBoundBehavior>();
+
+        var candidate = Assert.Single(
+            RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+                new ModuleDescriptor(
+                    "tests.rest.profile-binding-order-noop",
+                    "Profile Binding Order No-Op Module",
+                    "Exercises reorder-only shorthand binding overrides that should keep runtime truth no-op.",
+                    version: "1.0.0"),
+                new ApiRoutesOptions(),
+                builder.Build().Groups,
+                overrides:
+                [
+                    new RestEndpointOverrideOptions(
+                        id: "prefer-current-bindings",
+                        behaviorIds: ["tests.profile.projection.bound"],
+                        bindings:
+                        [
+                            new RestEndpointBindingDescriptor("CorrelationId", RestEndpointBindingSource.Header, "X-Correlation-Id"),
+                            new RestEndpointBindingDescriptor("Note", RestEndpointBindingSource.Body, "note"),
+                            new RestEndpointBindingDescriptor("CartId", RestEndpointBindingSource.Route, "cartId"),
+                            new RestEndpointBindingDescriptor("Quantity", RestEndpointBindingSource.Query, "quantity")
+                        ])
+                ]));
+
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Null(candidate.Candidate.AppliedOverrideId);
+        Assert.Equal(["prefer-current-bindings"], candidate.Candidate.MatchedOverrideIds);
+        Assert.Equal(4, candidate.Candidate.OriginalProjection.BindingDescriptors.Count);
+        Assert.Collection(
+            candidate.Candidate.ProjectedEndpoint.BindingDescriptors,
+            orderId =>
+            {
+                Assert.Equal("CartId", orderId.PropertyName);
+                Assert.Equal(RestEndpointBindingSource.Route, orderId.Source);
+                Assert.Equal("cartId", orderId.Name);
+            },
+            quantity =>
+            {
+                Assert.Equal("Quantity", quantity.PropertyName);
+                Assert.Equal(RestEndpointBindingSource.Query, quantity.Source);
+                Assert.Equal("quantity", quantity.Name);
+            },
+            correlationId =>
+            {
+                Assert.Equal("CorrelationId", correlationId.PropertyName);
+                Assert.Equal(RestEndpointBindingSource.Header, correlationId.Source);
+                Assert.Equal("X-Correlation-Id", correlationId.Name);
+            },
+            note =>
+            {
+                Assert.Equal("Note", note.PropertyName);
+                Assert.Equal(RestEndpointBindingSource.Body, note.Source);
+                Assert.Equal("note", note.Name);
+            });
+        Assert.Null(candidate.Candidate.ProjectedEndpoint.BindingFallbackMode);
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverRejectsClearBindingsOverrideWhenRoutePlaceholdersNeedExplicitAliases()
     {
         var builder = new RestBehaviorModuleBuilder();

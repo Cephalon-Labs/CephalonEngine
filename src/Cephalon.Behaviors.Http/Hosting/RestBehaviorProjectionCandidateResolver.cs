@@ -376,12 +376,7 @@ internal static class RestBehaviorProjectionCandidateResolver
 
         if (matchedOverride.ClearBindings)
         {
-            if (effectiveEndpointProjection.Bindings.Count > 0)
-            {
-                effectiveEndpointProjection = effectiveEndpointProjection.WithBindings([]);
-                wasApplied = true;
-            }
-
+            effectiveEndpointProjection = effectiveEndpointProjection.WithBindings([]);
             shouldRevalidateBindings = true;
         }
         else if (matchedOverride.Bindings.Count > 0 || matchedOverride.RemovedBindingProperties.Count > 0)
@@ -394,29 +389,20 @@ internal static class RestBehaviorProjectionCandidateResolver
                     overrideBindings,
                     matchedOverride.RemovedBindingProperties)
                 : overrideBindings;
-            if (!effectiveEndpointProjection.Bindings.SequenceEqual(effectiveBindings))
-            {
-                effectiveEndpointProjection = effectiveEndpointProjection.WithBindings(effectiveBindings);
-                wasApplied = true;
-            }
-
+            effectiveEndpointProjection = effectiveEndpointProjection.WithBindings(effectiveBindings);
             shouldRevalidateBindings = true;
         }
 
+        IReadOnlyList<BehaviorRestBindingDescriptor>? normalizedBindings = null;
         if (shouldRevalidateBindings)
         {
-            var normalizedBindings = BehaviorRestBindingPlanNormalizer.Normalize(
+            normalizedBindings = BehaviorRestBindingPlanNormalizer.Normalize(
                 $"REST endpoint override rule '{matchedOverride.Id}' for behavior '{endpointProjection.BehaviorId}'",
                 effectiveEndpointProjection.BehaviorType,
                 effectiveEndpointProjection.Method,
                 effectiveEndpointProjection.Pattern,
                 effectiveEndpointProjection.Bindings);
-            effectiveEndpointProjection = effectiveEndpointProjection.WithBindings(normalizedBindings);
         }
-
-        effectiveEndpointProjection = effectiveEndpointProjection.WithPreserveImplicitQueryFallback(
-            endpointProjection.Bindings.Count == 0 &&
-            effectiveEndpointProjection.Bindings.Count > 0);
 
         if (!string.Equals(effectiveEndpointProjection.Pattern, endpointProjection.Pattern, StringComparison.Ordinal))
         {
@@ -435,6 +421,25 @@ internal static class RestBehaviorProjectionCandidateResolver
                 endpointProjection,
                 effectiveEndpointProjection.Pattern);
         }
+
+        var preserveImplicitQueryFallback = shouldRevalidateBindings && normalizedBindings is not null
+            ? endpointProjection.Bindings.Count == 0 && normalizedBindings.Count > 0
+            : endpointProjection.PreserveImplicitQueryFallback;
+        if (shouldRevalidateBindings && normalizedBindings is not null)
+        {
+            var bindingPlanChanged = !BindingDescriptorsEquivalent(endpointProjection.Bindings, normalizedBindings) ||
+                                     endpointProjection.PreserveImplicitQueryFallback != preserveImplicitQueryFallback;
+            effectiveEndpointProjection = bindingPlanChanged
+                ? effectiveEndpointProjection.WithBindings(normalizedBindings)
+                : effectiveEndpointProjection.WithBindings(endpointProjection.Bindings);
+            if (bindingPlanChanged)
+            {
+                wasApplied = true;
+            }
+        }
+
+        effectiveEndpointProjection = effectiveEndpointProjection.WithPreserveImplicitQueryFallback(
+            preserveImplicitQueryFallback);
 
         if (!group.HasExplicitApiVersion &&
             matchedOverride.ApiVersionMajor is int overrideApiVersionMajor &&
@@ -787,6 +792,60 @@ internal static class RestBehaviorProjectionCandidateResolver
             .Where(propertyName => !originalExplicitlyBoundProperties.Contains(propertyName))
             .Where(propertyName => !originalPlaceholders.Contains(propertyName))
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static bool BindingDescriptorsEquivalent(
+        IReadOnlyList<BehaviorRestBindingDescriptor> left,
+        IReadOnlyList<BehaviorRestBindingDescriptor> right)
+    {
+        ArgumentNullException.ThrowIfNull(left);
+        ArgumentNullException.ThrowIfNull(right);
+
+        if (left.Count != right.Count)
+        {
+            return false;
+        }
+
+        if (left.Count == 0)
+        {
+            return true;
+        }
+
+        var leftByProperty = left
+            .Where(static binding => binding is not null)
+            .ToDictionary(
+                static binding => binding.PropertyName.Trim(),
+                static binding => binding,
+                StringComparer.OrdinalIgnoreCase);
+        if (leftByProperty.Count != left.Count)
+        {
+            return false;
+        }
+
+        foreach (var binding in right)
+        {
+            if (binding is null)
+            {
+                return false;
+            }
+
+            var propertyName = binding.PropertyName.Trim();
+            if (!leftByProperty.TryGetValue(propertyName, out var leftBinding))
+            {
+                return false;
+            }
+
+            if (leftBinding.Source != binding.Source ||
+                !string.Equals(
+                    NormalizeBindingName(leftBinding.Name),
+                    NormalizeBindingName(binding.Name),
+                    StringComparison.Ordinal))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private static List<BehaviorRestBindingDescriptor> MergeBindings(
@@ -1345,6 +1404,13 @@ internal static class RestBehaviorProjectionCandidateResolver
                overrideOptions.RouteGroupPrefixes.Count +
                overrideOptions.OpenApiDocumentNames.Count +
                overrideOptions.TagNames.Count;
+    }
+
+    private static string? NormalizeBindingName(string? value)
+    {
+        return string.IsNullOrWhiteSpace(value)
+            ? null
+            : value.Trim();
     }
 
     private static string? NormalizeOverrideMetadataValue(string? value)
