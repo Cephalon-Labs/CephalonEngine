@@ -540,11 +540,13 @@ bounded `RouteGroupPrefix`, a valid relative `Pattern`, and/or explicit `Binding
 applied rule through
 `AppliedOverrideId` in `/engine/rest-endpoint-candidates`, keeps the original shorthand source
 shape visible there through `OriginalProjection` while `ProjectedEndpoint` carries the final
-effective mapped answer, keeps the grouped behavior-level publication story visible through
-`/engine/rest-endpoint-publication-groups`, now also keeps every matching override rule visible
-through `MatchedOverrideIds` in specificity order before one winner is selected, and intentionally
-leaves explicit module DSL/manual routes plus shorthand groups with explicit `.ApiVersion(...)`
-authoritative for version selection.
+effective mapped answer, now also keeps original shorthand endpoint name plus summary/description
+visible on that effective mapped answer through `ProjectedEndpoint.OriginalEndpointName`,
+`ProjectedEndpoint.OriginalSummary`, and `ProjectedEndpoint.OriginalDescription`, keeps the grouped
+behavior-level publication story visible through `/engine/rest-endpoint-publication-groups`, now
+also keeps every matching override rule visible through `MatchedOverrideIds` in specificity order
+before one winner is selected, and intentionally leaves explicit module DSL/manual routes plus
+shorthand groups with explicit `.ApiVersion(...)` authoritative for version selection.
 When `Bindings` are supplied, the override
 uses default `ReplaceExplicit` mode unless `BindingMode = MergeExplicit` is set explicitly. Replace
 mode swaps the shorthand candidate's full explicit binding plan, while merge mode upserts only the
@@ -564,7 +566,10 @@ group to a different path such as `/api/v1/showcase/cart-admin`, but only when t
 beneath the active REST root, contains no placeholders, and does not silently change effective
 API-version truth; when only some candidates in one authored shorthand group are remapped,
 ASP.NET Core now splits materialization by the effective group prefix so actual HTTP routes match
-`OriginalProjection`/`ProjectedEndpoint` runtime truth. Broader implicit-property promotion beyond
+`OriginalProjection`/`ProjectedEndpoint` runtime truth, while published shorthand endpoints now
+also expose `OriginalEndpointName`, `OriginalSummary`, and `OriginalDescription` directly so the
+final runtime answer keeps source-versus-effective endpoint metadata visible beside route/version
+truth. Broader implicit-property promotion beyond
 that constrained body-fallback-plus-bounded-query-fallback path still fails fast; invalid effective
 method-plus-binding combinations also fail fast during endpoint materialization; and explicit module
 DSL/manual routes still stay authoritative.

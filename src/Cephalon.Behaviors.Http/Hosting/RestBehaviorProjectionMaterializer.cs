@@ -98,6 +98,10 @@ internal static class RestBehaviorProjectionMaterializer
             {
                 group.UseRuntimeCandidateId(candidate.Candidate.Id);
                 group.UseRuntimeOriginalProjection(candidate.Candidate.OriginalProjection);
+                group.UseRuntimeOriginalEndpointMetadata(
+                    candidate.Candidate.ProjectedEndpoint.OriginalEndpointName,
+                    candidate.Candidate.ProjectedEndpoint.OriginalSummary,
+                    candidate.Candidate.ProjectedEndpoint.OriginalDescription);
                 group.UseRuntimeMatchedOverrideIds(candidate.Candidate.MatchedOverrideIds);
                 var builder = candidate.EffectiveEndpointProjection.Apply(group);
                 var sourceCapabilityCapture = CaptureSourceCapability(builder);

@@ -156,6 +156,9 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("tests.rest.manual-runtime:GET:/api/tests/manual-runtime/orders/{orderId}", manualEndpoint.SourceId);
         Assert.Null(manualEndpoint.CandidateId);
         Assert.Null(manualEndpoint.OriginalProjection);
+        Assert.Null(manualEndpoint.OriginalEndpointName);
+        Assert.Null(manualEndpoint.OriginalSummary);
+        Assert.Null(manualEndpoint.OriginalDescription);
         Assert.Equal(RestEndpointRuntimeMetadata.MinimalApiAuthoringStyle, manualEndpoint.Metadata["authoringStyle"]);
         Assert.Equal(manualEndpoint.SourceId, manualEndpoint.Metadata["sourceId"]);
         Assert.Empty(manualEndpoint.BindingDescriptors);
@@ -175,6 +178,9 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("tests.rest.manual-helper.get:GET:/{orderId}", behaviorHelperEndpoint.SourceId);
         Assert.Null(behaviorHelperEndpoint.CandidateId);
         Assert.Null(behaviorHelperEndpoint.OriginalProjection);
+        Assert.Null(behaviorHelperEndpoint.OriginalEndpointName);
+        Assert.Null(behaviorHelperEndpoint.OriginalSummary);
+        Assert.Null(behaviorHelperEndpoint.OriginalDescription);
         Assert.Equal(RestEndpointRuntimeMetadata.BehaviorHelperAuthoringStyle, behaviorHelperEndpoint.Metadata["authoringStyle"]);
         Assert.Equal(behaviorHelperEndpoint.BehaviorType, behaviorHelperEndpoint.Metadata["behaviorType"]);
         Assert.Equal(behaviorHelperEndpoint.SourceId, behaviorHelperEndpoint.Metadata["sourceId"]);
@@ -252,6 +258,12 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(candidate.OriginalProjection.RelativePattern, endpoint.OriginalProjection.RelativePattern);
         Assert.Equal(candidate.OriginalProjection.RoutePattern, endpoint.OriginalProjection.RoutePattern);
         Assert.Equal(candidate.OriginalProjection.BindingDescriptors.Count, endpoint.OriginalProjection.BindingDescriptors.Count);
+        Assert.Equal(endpoint.EndpointName, endpoint.OriginalEndpointName);
+        Assert.Equal(endpoint.Summary, endpoint.OriginalSummary);
+        Assert.Equal(endpoint.Description, endpoint.OriginalDescription);
+        Assert.Equal(endpoint.OriginalEndpointName, candidate.ProjectedEndpoint.OriginalEndpointName);
+        Assert.Equal(endpoint.OriginalSummary, candidate.ProjectedEndpoint.OriginalSummary);
+        Assert.Equal(endpoint.OriginalDescription, candidate.ProjectedEndpoint.OriginalDescription);
 
         var payload = await client.GetFromJsonAsync<ProfileRuntimeOrderOutput>("/api/v3/tests/profile-runtime/orders/ord-42");
         Assert.NotNull(payload);
@@ -704,6 +716,13 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("/api/v4/tests/generated/runtime/override", endpoint.OriginalProjection.RouteGroupPrefix);
         Assert.Equal("/orders/{orderId}", endpoint.OriginalProjection.RelativePattern);
         Assert.Equal("/api/v4/tests/generated/runtime/override/orders/{orderId}", endpoint.OriginalProjection.RoutePattern);
+        Assert.Equal(
+            "tests_rest_generated_runtime_override.v4.tests_generated_runtimeoverride_lookup",
+            endpoint.OriginalEndpointName);
+        Assert.Equal("tests.generated.runtimeoverride.lookup", endpoint.OriginalSummary);
+        Assert.Equal(
+            "Publishes generated shorthand so REST governance can override the effective API version.",
+            endpoint.OriginalDescription);
         Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, endpoint.Metadata["authoringStyle"]);
 
         var candidate = Assert.Single(candidates, static item =>
@@ -717,6 +736,9 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("/orders/{orderId}", candidate.OriginalProjection.RelativePattern);
         Assert.Equal("/api/v4/tests/generated/runtime/override/orders/{orderId}", candidate.OriginalProjection.RoutePattern);
         Assert.Equal(endpoint.Id, candidate.ProjectedEndpoint.Id);
+        Assert.Equal(endpoint.OriginalEndpointName, candidate.ProjectedEndpoint.OriginalEndpointName);
+        Assert.Equal(endpoint.OriginalSummary, candidate.ProjectedEndpoint.OriginalSummary);
+        Assert.Equal(endpoint.OriginalDescription, candidate.ProjectedEndpoint.OriginalDescription);
 
         var rule = Assert.Single(overrides);
         Assert.Equal("prefer-v6", rule.Id);
@@ -728,12 +750,16 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Contains(snapshot.RestEndpointCandidates, item =>
             string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
             string.Equals(item.AppliedOverrideId, "prefer-v6", StringComparison.Ordinal) &&
+            string.Equals(item.ProjectedEndpoint.OriginalEndpointName, "tests_rest_generated_runtime_override.v4.tests_generated_runtimeoverride_lookup", StringComparison.Ordinal) &&
             item.OriginalProjection.ApiVersionMajor == 4 &&
             string.Equals(item.OriginalProjection.RoutePattern, "/api/v4/tests/generated/runtime/override/orders/{orderId}", StringComparison.Ordinal));
         Assert.Contains(snapshot.RestEndpoints, item =>
             string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal) &&
             string.Equals(item.AppliedOverrideId, "prefer-v6", StringComparison.Ordinal) &&
             item.MatchedOverrideIds.SequenceEqual(["prefer-v6"]) &&
+            string.Equals(item.OriginalEndpointName, "tests_rest_generated_runtime_override.v4.tests_generated_runtimeoverride_lookup", StringComparison.Ordinal) &&
+            string.Equals(item.OriginalSummary, "tests.generated.runtimeoverride.lookup", StringComparison.Ordinal) &&
+            string.Equals(item.OriginalDescription, "Publishes generated shorthand so REST governance can override the effective API version.", StringComparison.Ordinal) &&
             item.OriginalProjection is not null &&
             item.OriginalProjection.ApiVersionMajor == 4 &&
             string.Equals(item.OriginalProjection.RoutePattern, "/api/v4/tests/generated/runtime/override/orders/{orderId}", StringComparison.Ordinal));
@@ -864,6 +890,13 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(
             "Publishes shorthand endpoint metadata overrides into runtime catalogs and ASP.NET Core endpoint metadata.",
             endpoint.Description);
+        Assert.Equal(
+            "tests_rest_generated_runtime_override.v4.tests_generated_runtimeoverride_lookup",
+            endpoint.OriginalEndpointName);
+        Assert.Equal("tests.generated.runtimeoverride.lookup", endpoint.OriginalSummary);
+        Assert.Equal(
+            "Publishes generated shorthand so REST governance can override the effective API version.",
+            endpoint.OriginalDescription);
 
         var candidate = Assert.Single(candidates, static item =>
             string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.generated.runtimeoverride.lookup", StringComparison.Ordinal));
@@ -874,6 +907,9 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(endpoint.EndpointName, candidate.ProjectedEndpoint.EndpointName);
         Assert.Equal(endpoint.Summary, candidate.ProjectedEndpoint.Summary);
         Assert.Equal(endpoint.Description, candidate.ProjectedEndpoint.Description);
+        Assert.Equal(endpoint.OriginalEndpointName, candidate.ProjectedEndpoint.OriginalEndpointName);
+        Assert.Equal(endpoint.OriginalSummary, candidate.ProjectedEndpoint.OriginalSummary);
+        Assert.Equal(endpoint.OriginalDescription, candidate.ProjectedEndpoint.OriginalDescription);
 
         var rule = Assert.Single(overrides, static item => string.Equals(item.Id, "prefer-public-docs", StringComparison.Ordinal));
         Assert.Equal("tests.generated.runtimeoverride.public.lookup", rule.EndpointName);
@@ -893,9 +929,13 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
             string.Equals(item.AppliedOverrideId, "prefer-public-docs", StringComparison.Ordinal) &&
             string.Equals(item.ProjectedEndpoint.EndpointName, "tests.generated.runtimeoverride.public.lookup", StringComparison.Ordinal) &&
+            string.Equals(item.ProjectedEndpoint.OriginalEndpointName, "tests_rest_generated_runtime_override.v4.tests_generated_runtimeoverride_lookup", StringComparison.Ordinal) &&
             string.Equals(item.ProjectedEndpoint.Summary, "Gets a generated runtime order through host-governed endpoint metadata.", StringComparison.Ordinal));
         Assert.Contains(snapshot.RestEndpoints, item =>
             string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal) &&
+            string.Equals(item.OriginalEndpointName, "tests_rest_generated_runtime_override.v4.tests_generated_runtimeoverride_lookup", StringComparison.Ordinal) &&
+            string.Equals(item.OriginalSummary, "tests.generated.runtimeoverride.lookup", StringComparison.Ordinal) &&
+            string.Equals(item.OriginalDescription, "Publishes generated shorthand so REST governance can override the effective API version.", StringComparison.Ordinal) &&
             item.MatchedOverrideIds.SequenceEqual(["prefer-public-docs"]));
 
         var routeEndpoint = Assert.Single(

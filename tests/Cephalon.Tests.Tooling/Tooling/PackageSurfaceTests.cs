@@ -1003,6 +1003,17 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void RestEndpointRuntimeContractsExposeOriginalEndpointMetadata()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor)
+            .GetProperty("OriginalEndpointName", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor)
+            .GetProperty("OriginalSummary", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor)
+            .GetProperty("OriginalDescription", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
     public void BehaviorsPatternsAssemblyExposesOnlyTheDocumentedContractSurface()
     {
         AssertExportedTypes(

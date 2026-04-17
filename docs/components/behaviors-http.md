@@ -500,12 +500,14 @@ version when known, behavior id when the route dispatches through a Cephalon beh
 OpenAPI document name, resolved API major version, tags, first-class request-binding descriptors
 when an explicit profile-driven plan exists, first-class `AuthoringStyle`, first-class
 `RouteGroupPrefix` plus `RelativePattern`, first-class nullable `BehaviorType`, first-class
-nullable `SourceId`, nullable `CandidateId`, and nullable `OriginalProjection` when the published
-endpoint comes from the module-owned behavior projection pipeline instead of a manual or
-behavior-helper route. That published `OriginalProjection` keeps the original shorthand method,
-route, document-version, and binding-plan truth visible directly on the final runtime endpoint so
-operators no longer need a candidate-catalog join just to compare original-versus-effective
-publication.
+nullable `SourceId`, nullable `CandidateId`, nullable `OriginalProjection`, and nullable
+`OriginalEndpointName` / `OriginalSummary` / `OriginalDescription` when the published endpoint
+comes from the module-owned behavior projection pipeline instead of a manual or behavior-helper
+route. That published `OriginalProjection` keeps the original shorthand method, route,
+document-version, and binding-plan truth visible directly on the final runtime endpoint, while the
+original-metadata trio keeps the original shorthand endpoint name plus summary/description visible
+beside the final effective endpoint metadata, so operators no longer need a candidate-catalog join
+or behavior-doc fallback just to compare original-versus-effective publication.
 
 The same runtime answer now has a companion candidate catalog for precedence visibility:
 
@@ -538,8 +540,10 @@ The host now also publishes the configured shorthand-override rules themselves t
 
 Candidate entries answer the original shorthand projection shape through
 `RestEndpointCandidateRuntimeDescriptor.OriginalProjection`, the final effective mapped answer
-through `ProjectedEndpoint`, authoring style, precedence rank, published versus suppressed status,
-and when suppression occurs the winning candidate id plus an operator-facing suppression reason.
+through `ProjectedEndpoint`, that same effective answer's original shorthand endpoint metadata
+through `ProjectedEndpoint.OriginalEndpointName` / `OriginalSummary` / `OriginalDescription`,
+authoring style, precedence rank, published versus suppressed status, and when suppression occurs
+the winning candidate id plus an operator-facing suppression reason.
 Candidate ids now resolve from that original shorthand projection before host-level overrides are
 applied, while `ProjectedEndpoint.Id` continues to identify the final effective mapped endpoint
 shape, and published behavior-backed endpoints now also keep that same join visible directly through

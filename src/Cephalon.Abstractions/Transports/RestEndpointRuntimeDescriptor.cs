@@ -25,6 +25,18 @@ public sealed class RestEndpointRuntimeDescriptor
     /// <param name="tags">The resolved OpenAPI tags when any are published.</param>
     /// <param name="summary">The resolved endpoint summary when one is available.</param>
     /// <param name="description">The resolved endpoint description when one is available.</param>
+    /// <param name="originalEndpointName">
+    /// The original endpoint or operation name before later endpoint-governance rewrites when the
+    /// runtime can classify that source answer.
+    /// </param>
+    /// <param name="originalSummary">
+    /// The original endpoint summary before later endpoint-governance rewrites when the runtime
+    /// can classify that source answer.
+    /// </param>
+    /// <param name="originalDescription">
+    /// The original endpoint description before later endpoint-governance rewrites when the
+    /// runtime can classify that source answer.
+    /// </param>
     /// <param name="candidateId">
     /// The stable originating candidate identifier when this endpoint was published from the
     /// module-owned behavior projection pipeline.
@@ -90,6 +102,9 @@ public sealed class RestEndpointRuntimeDescriptor
         IReadOnlyList<string>? tags = null,
         string? summary = null,
         string? description = null,
+        string? originalEndpointName = null,
+        string? originalSummary = null,
+        string? originalDescription = null,
         string? candidateId = null,
         RestEndpointCandidateProjectionDescriptor? originalProjection = null,
         IReadOnlyList<RestEndpointBindingDescriptor>? bindingDescriptors = null,
@@ -120,6 +135,9 @@ public sealed class RestEndpointRuntimeDescriptor
         Tags = NormalizeTags(tags);
         Summary = NormalizeOptional(summary);
         Description = NormalizeOptional(description);
+        OriginalEndpointName = NormalizeOptional(originalEndpointName);
+        OriginalSummary = NormalizeOptional(originalSummary);
+        OriginalDescription = NormalizeOptional(originalDescription);
         AuthoringStyle = NormalizeOptional(authoringStyle);
         RouteGroupPrefix = NormalizeOptional(routeGroupPrefix);
         RelativePattern = NormalizeOptional(relativePattern);
@@ -212,6 +230,27 @@ public sealed class RestEndpointRuntimeDescriptor
     /// Gets the resolved endpoint description when one is available.
     /// </summary>
     public string? Description { get; }
+
+    /// <summary>
+    /// Gets the original endpoint or operation name before later endpoint-governance rewrites
+    /// when the runtime can classify that source answer.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? OriginalEndpointName { get; }
+
+    /// <summary>
+    /// Gets the original endpoint summary before later endpoint-governance rewrites when the
+    /// runtime can classify that source answer.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? OriginalSummary { get; }
+
+    /// <summary>
+    /// Gets the original endpoint description before later endpoint-governance rewrites when the
+    /// runtime can classify that source answer.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? OriginalDescription { get; }
 
     /// <summary>
     /// Gets the normalized authoring style such as <c>behavior-module-profile</c> or

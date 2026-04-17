@@ -40,7 +40,10 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
     private readonly string? moduleRemarks;
     private readonly string routePrefix;
     private string? runtimeCandidateId;
+    private string? runtimeOriginalDescription;
+    private string? runtimeOriginalEndpointName;
     private RestEndpointCandidateProjectionDescriptor? runtimeOriginalProjection;
+    private string? runtimeOriginalSummary;
     private string[] runtimeMatchedOverrideIds = [];
     private string runtimeAuthoringStyle = RestEndpointRuntimeMetadata.BehaviorHelperAuthoringStyle;
     private string runtimeSourceKind = RestEndpointRuntimeMetadata.ManualSourceKind;
@@ -134,6 +137,16 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
                 originalProjection.OpenApiDocumentName,
                 originalProjection.BindingDescriptors,
                 originalProjection.BindingFallbackMode);
+    }
+
+    internal void UseRuntimeOriginalEndpointMetadata(
+        string? endpointName,
+        string? summary,
+        string? description)
+    {
+        runtimeOriginalEndpointName = NormalizeOptionalRuntimeMetadataValue(endpointName);
+        runtimeOriginalSummary = NormalizeOptionalRuntimeMetadataValue(summary);
+        runtimeOriginalDescription = NormalizeOptionalRuntimeMetadataValue(description);
     }
 
     internal void UseRuntimeMatchedOverrideIds(IReadOnlyList<string>? matchedOverrideIds)
@@ -572,6 +585,9 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             contract.OperationName,
             contract.Summary,
             contract.Description,
+            group.runtimeOriginalEndpointName,
+            group.runtimeOriginalSummary,
+            group.runtimeOriginalDescription,
             contract.TagName,
             contract.OpenApiDocumentName,
             contract.ApiVersionMajor,
@@ -847,6 +863,13 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         return normalized.Length > 1
             ? normalized.TrimEnd('/')
             : normalized;
+    }
+
+    private static string? NormalizeOptionalRuntimeMetadataValue(string? value)
+    {
+        return string.IsNullOrWhiteSpace(value)
+            ? null
+            : value.Trim();
     }
 
     private void EnsureRoutesNotCreated(string methodName)
