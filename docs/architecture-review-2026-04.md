@@ -275,6 +275,13 @@ action buckets, so publication-group answers can explain why one host rule won a
 dimensions only stayed declared versus materially applied without forcing operators back into the
 candidate catalog.
 
+That next rule-centric governance effect gap is now addressed through `ENG-058-T150`: the
+suppression and override rule catalogs themselves now derive matched/suppressed/selected/applied
+and skipped candidate buckets directly from candidate runtime truth, while also surfacing
+selection-basis and selected-versus-applied override-action unions on the winning-rule path. That
+lets operators answer "what did this rule actually affect?" from `/engine/rest-endpoint-suppressions`
+or `/engine/rest-endpoint-overrides` without always rejoining the full candidate catalog first.
+
 That next inline generated-module ergonomics gap is now addressed through `ENG-058-T127`:
 `RestBehaviorEngineBuilderExtensions.AddGeneratedRestBehaviorModule<TMarker>(descriptor,
 configureGroup?)` now derives the generated behavior-id prefix from `ModuleDescriptor.Id` for the

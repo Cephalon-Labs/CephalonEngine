@@ -1217,6 +1217,12 @@ The following points are durable enough to keep outside thread-local context.
 - the shipped governance baseline now also exposes configured override-rule truth through
   `IRestEndpointOverrideRuntimeCatalog`, `/engine/rest-endpoint-overrides`,
   `/engine/rest-endpoint-overrides/{overrideId}`, and `snapshot.RestEndpointOverrides`
+- those same rule catalogs now also derive rule-centric runtime-effect buckets directly from
+  candidate truth: suppression descriptors surface `MatchedCandidateIds`,
+  `SuppressedCandidateIds`, `SkippedCandidateIds`, and `SelectionBases`, while override
+  descriptors surface `MatchedCandidateIds`, `SelectedCandidateIds`, `AppliedCandidateIds`,
+  `SkippedCandidateIds`, `SelectionBases`, `SelectedActionKinds`, and `AppliedActionKinds`, so
+  operators can answer per-rule runtime effect without reopening `/engine/rest-endpoint-candidates`
 - the shipped `RestApi:Suppressions` baseline is intentionally limited to suppression of
   descriptor-backed shorthand candidates, and the shipped `RestApi:Overrides` baseline is
   intentionally limited to shorthand `ApiVersionMajor`, `OpenApiDocumentName`, `Method`, bounded

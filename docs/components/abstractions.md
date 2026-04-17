@@ -193,6 +193,13 @@ governance summaries now surface those typed buckets through `SelectionBasisSumm
 `SelectedActionKindSummaries`, and `AppliedActionKindSummaries` so grouped publication answers can
 explain decisive governance precedence and declared-versus-effective override action visibility
 without reopening the candidate catalog. The same
+transport namespace now also lets the rule catalogs publish the inverse view directly:
+`RestEndpointSuppressionDescriptor` now carries `MatchedCandidateIds`,
+`SuppressedCandidateIds`, `SkippedCandidateIds`, and `SelectionBases`, while
+`RestEndpointOverrideDescriptor` now carries `MatchedCandidateIds`, `SelectedCandidateIds`,
+`AppliedCandidateIds`, `SkippedCandidateIds`, `SelectionBases`, `SelectedActionKinds`, and
+`AppliedActionKinds`, so callers can inspect one rule's runtime footprint without rejoining the
+grouped or per-candidate answers first. The same
 transport namespace now also owns `IRestEndpointOverrideRuntimeCatalog` plus
 `RestEndpointOverrideDescriptor`, including shorthand binding resets through `ClearBindings` plus
 the shorthand endpoint-metadata clear actions `ClearEndpointName`, `ClearSummary`, and

@@ -660,6 +660,11 @@ change the published endpoint metadata or capability answer, the runtime keeps
 winning rule through `SelectedOverrideId` plus `OverrideSelectionBasis` on both the published
 candidate and final `/engine/rest-endpoints` answer. When more than one suppression rule matches a
 candidate and one wins, the same candidate answer also exposes `SuppressionSelectionBasis`.
+The inverse rule-centric view now also stays available through `/engine/rest-endpoint-suppressions`
+and `/engine/rest-endpoint-overrides`, where each rule surfaces its own matched/suppressed/selected/
+applied/skipped candidate buckets plus the relevant selection-basis and override-action unions,
+so module authors can inspect host governance from the rule side without reconstructing that answer
+from the full candidate set.
 When `Bindings` are supplied, the override
 uses default `replace-explicit` mode unless `BindingMode = merge-explicit` is set explicitly. Replace
 mode swaps the shorthand candidate's full explicit binding plan, while merge mode upserts only the

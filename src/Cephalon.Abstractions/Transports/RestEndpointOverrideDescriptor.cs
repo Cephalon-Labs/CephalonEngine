@@ -77,6 +77,34 @@ public sealed class RestEndpointOverrideDescriptor
     /// The original candidate explicit binding descriptors targeted by the override rule before
     /// override actions are applied.
     /// </param>
+    /// <param name="matchedCandidateIds">
+    /// The runtime candidate identifiers that matched this override rule, including candidates
+    /// where another override rule won selection.
+    /// </param>
+    /// <param name="selectedCandidateIds">
+    /// The runtime candidate identifiers that selected this override rule as the winning rule,
+    /// including runtime no-op selections.
+    /// </param>
+    /// <param name="appliedCandidateIds">
+    /// The runtime candidate identifiers whose effective answer was materially changed by this
+    /// override rule.
+    /// </param>
+    /// <param name="skippedCandidateIds">
+    /// The runtime candidate identifiers that this rule would otherwise target but skipped because
+    /// the original projection did not allow host governance to participate.
+    /// </param>
+    /// <param name="selectionBases">
+    /// The union of decisive specificity rules that selected this override rule for one or more
+    /// runtime candidates.
+    /// </param>
+    /// <param name="selectedActionKinds">
+    /// The union of configured override action dimensions that were selected for one or more
+    /// runtime candidates, including runtime no-op selections.
+    /// </param>
+    /// <param name="appliedActionKinds">
+    /// The union of override action dimensions that materially changed one or more runtime
+    /// candidates.
+    /// </param>
     public RestEndpointOverrideDescriptor(
         string id,
         IReadOnlyList<string>? candidateIds = null,
@@ -108,7 +136,14 @@ public sealed class RestEndpointOverrideDescriptor
         IReadOnlyList<string>? openApiDocumentNames = null,
         IReadOnlyList<string>? tagNames = null,
         IReadOnlyList<RestEndpointBindingFallbackMode>? bindingFallbackModes = null,
-        IReadOnlyList<RestEndpointBindingDescriptor>? targetBindings = null)
+        IReadOnlyList<RestEndpointBindingDescriptor>? targetBindings = null,
+        IReadOnlyList<string>? matchedCandidateIds = null,
+        IReadOnlyList<string>? selectedCandidateIds = null,
+        IReadOnlyList<string>? appliedCandidateIds = null,
+        IReadOnlyList<string>? skippedCandidateIds = null,
+        IReadOnlyList<RestEndpointGovernanceRuleSelectionBasis>? selectionBases = null,
+        IReadOnlyList<RestEndpointOverrideActionKind>? selectedActionKinds = null,
+        IReadOnlyList<RestEndpointOverrideActionKind>? appliedActionKinds = null)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -176,6 +211,19 @@ public sealed class RestEndpointOverrideDescriptor
             RemovedBindingProperties,
             ClearBindings,
             BindingMode);
+        MatchedCandidateIds = NormalizeOrderedList(matchedCandidateIds);
+        SelectedCandidateIds = NormalizeOrderedList(selectedCandidateIds);
+        AppliedCandidateIds = NormalizeOrderedList(appliedCandidateIds);
+        SkippedCandidateIds = NormalizeOrderedList(skippedCandidateIds);
+        SelectionBases = NormalizeSelectionBases(selectionBases, nameof(selectionBases));
+        SelectedActionKinds = NormalizeActionKinds(selectedActionKinds, nameof(selectedActionKinds));
+        AppliedActionKinds = NormalizeActionKinds(appliedActionKinds, nameof(appliedActionKinds));
+
+        if (SelectedActionKinds.Count == 0 &&
+            AppliedActionKinds.Count > 0)
+        {
+            SelectedActionKinds = AppliedActionKinds;
+        }
 
         if (ClearRequiredCapability && RequiredCapabilityKey is not null)
         {
@@ -229,6 +277,62 @@ public sealed class RestEndpointOverrideDescriptor
         }
 
         ValidateRemovedBindingProperties(Bindings, RemovedBindingProperties);
+
+        if (SelectedCandidateIds.Except(MatchedCandidateIds, StringComparer.OrdinalIgnoreCase).Any())
+        {
+            throw new ArgumentException(
+                "REST endpoint override descriptors cannot classify a candidate as selected unless the same candidate also appears in MatchedCandidateIds.",
+                nameof(selectedCandidateIds));
+        }
+
+        if (AppliedCandidateIds.Except(SelectedCandidateIds, StringComparer.OrdinalIgnoreCase).Any())
+        {
+            throw new ArgumentException(
+                "REST endpoint override descriptors cannot classify a candidate as applied unless the same candidate also appears in SelectedCandidateIds.",
+                nameof(appliedCandidateIds));
+        }
+
+        if (MatchedCandidateIds.Intersect(SkippedCandidateIds, StringComparer.OrdinalIgnoreCase).Any())
+        {
+            throw new ArgumentException(
+                "REST endpoint override descriptors cannot classify the same candidate as both matched and skipped.",
+                nameof(skippedCandidateIds));
+        }
+
+        if (SelectionBases.Count > 0 && SelectedCandidateIds.Count == 0)
+        {
+            throw new ArgumentException(
+                "REST endpoint override descriptors can only declare SelectionBases when at least one candidate selected the rule.",
+                nameof(selectionBases));
+        }
+
+        if (SelectedActionKinds.Count > 0 && SelectedCandidateIds.Count == 0)
+        {
+            throw new ArgumentException(
+                "REST endpoint override descriptors can only declare SelectedActionKinds when at least one candidate selected the rule.",
+                nameof(selectedActionKinds));
+        }
+
+        if (AppliedActionKinds.Count > 0 && AppliedCandidateIds.Count == 0)
+        {
+            throw new ArgumentException(
+                "REST endpoint override descriptors can only declare AppliedActionKinds when at least one candidate was materially changed by the rule.",
+                nameof(appliedActionKinds));
+        }
+
+        if (SelectedActionKinds.Except(ActionKinds).Any())
+        {
+            throw new ArgumentException(
+                "REST endpoint override descriptors cannot classify a selected action kind that is not part of the rule's configured ActionKinds.",
+                nameof(selectedActionKinds));
+        }
+
+        if (AppliedActionKinds.Except(SelectedActionKinds).Any())
+        {
+            throw new ArgumentException(
+                "REST endpoint override descriptors cannot classify an applied action kind that is not part of SelectedActionKinds.",
+                nameof(appliedActionKinds));
+        }
     }
 
     /// <summary>
@@ -399,6 +503,48 @@ public sealed class RestEndpointOverrideDescriptor
     /// </summary>
     public IReadOnlyList<RestEndpointOverrideActionKind> ActionKinds { get; }
 
+    /// <summary>
+    /// Gets the runtime candidate identifiers that matched this override rule, including
+    /// candidates where another override rule won selection.
+    /// </summary>
+    public IReadOnlyList<string> MatchedCandidateIds { get; private set; }
+
+    /// <summary>
+    /// Gets the runtime candidate identifiers that selected this override rule as the winning
+    /// rule, including runtime no-op selections.
+    /// </summary>
+    public IReadOnlyList<string> SelectedCandidateIds { get; private set; }
+
+    /// <summary>
+    /// Gets the runtime candidate identifiers whose effective answer was materially changed by this
+    /// override rule.
+    /// </summary>
+    public IReadOnlyList<string> AppliedCandidateIds { get; private set; }
+
+    /// <summary>
+    /// Gets the runtime candidate identifiers that this rule would otherwise target but skipped
+    /// because the original projection did not allow host governance to participate.
+    /// </summary>
+    public IReadOnlyList<string> SkippedCandidateIds { get; private set; }
+
+    /// <summary>
+    /// Gets the union of decisive specificity rules that selected this override rule for one or
+    /// more runtime candidates.
+    /// </summary>
+    public IReadOnlyList<RestEndpointGovernanceRuleSelectionBasis> SelectionBases { get; private set; }
+
+    /// <summary>
+    /// Gets the union of configured override action dimensions that were selected for one or more
+    /// runtime candidates, including runtime no-op selections.
+    /// </summary>
+    public IReadOnlyList<RestEndpointOverrideActionKind> SelectedActionKinds { get; private set; }
+
+    /// <summary>
+    /// Gets the union of override action dimensions that materially changed one or more runtime
+    /// candidates.
+    /// </summary>
+    public IReadOnlyList<RestEndpointOverrideActionKind> AppliedActionKinds { get; private set; }
+
     private static string[] NormalizeList(IReadOnlyList<string>? values)
     {
         return values?
@@ -407,6 +553,32 @@ public sealed class RestEndpointOverrideDescriptor
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .OrderBy(static value => value, StringComparer.OrdinalIgnoreCase)
             .ToArray() ?? [];
+    }
+
+    private static string[] NormalizeOrderedList(IReadOnlyList<string>? values)
+    {
+        if (values is null || values.Count == 0)
+        {
+            return [];
+        }
+
+        var normalized = new List<string>(values.Count);
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var value in values)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                continue;
+            }
+
+            var trimmed = value.Trim();
+            if (seen.Add(trimmed))
+            {
+                normalized.Add(trimmed);
+            }
+        }
+
+        return normalized.ToArray();
     }
 
     private static string? NormalizeMethod(string? method)
@@ -611,6 +783,56 @@ public sealed class RestEndpointOverrideDescriptor
             throw new ArgumentOutOfRangeException(
                 nameof(values),
                 "REST endpoint override binding fallback selectors must use supported fallback modes.");
+        }
+
+        return normalized;
+    }
+
+    private static RestEndpointGovernanceRuleSelectionBasis[] NormalizeSelectionBases(
+        IReadOnlyList<RestEndpointGovernanceRuleSelectionBasis>? values,
+        string paramName)
+    {
+        if (values is null || values.Count == 0)
+        {
+            return [];
+        }
+
+        var normalized = values
+            .Distinct()
+            .OrderBy(static value => value)
+            .ToArray();
+        if (normalized.Any(static value =>
+                !Enum.IsDefined(value) ||
+                value == RestEndpointGovernanceRuleSelectionBasis.Unspecified))
+        {
+            throw new ArgumentException(
+                "REST endpoint override selection-basis answers must use supported values.",
+                paramName);
+        }
+
+        return normalized;
+    }
+
+    private static RestEndpointOverrideActionKind[] NormalizeActionKinds(
+        IReadOnlyList<RestEndpointOverrideActionKind>? values,
+        string paramName)
+    {
+        if (values is null || values.Count == 0)
+        {
+            return [];
+        }
+
+        var normalized = values
+            .Distinct()
+            .OrderBy(static value => value)
+            .ToArray();
+        if (normalized.Any(static value =>
+                !Enum.IsDefined(value) ||
+                value == RestEndpointOverrideActionKind.Unspecified))
+        {
+            throw new ArgumentException(
+                "REST endpoint override action-kind answers must use supported values.",
+                paramName);
         }
 
         return normalized;

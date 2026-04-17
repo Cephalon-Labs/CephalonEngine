@@ -1780,6 +1780,13 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
                 RestEndpointOverrideActionKind.Description
             ],
             rule.ActionKinds);
+        Assert.Equal([candidate.Id], rule.MatchedCandidateIds);
+        Assert.Equal([candidate.Id], rule.SelectedCandidateIds);
+        Assert.Empty(rule.AppliedCandidateIds);
+        Assert.Empty(rule.SkippedCandidateIds);
+        Assert.Equal([candidate.OverrideSelectionBasis!.Value], rule.SelectionBases);
+        Assert.Equal(candidate.SelectedOverrideActionKinds, rule.SelectedActionKinds);
+        Assert.Empty(rule.AppliedActionKinds);
 
         var group = Assert.Single(groups, static item =>
             string.Equals(item.BehaviorId, "tests.profile.runtimenoop.metadata", StringComparison.Ordinal));
@@ -1822,6 +1829,18 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             item.GovernanceOverrideSummaries[0].SelectionBasisSummaries.Count == 1 &&
             item.GovernanceOverrideSummaries[0].SelectedActionKindSummaries.Count == candidate.SelectedOverrideActionKinds.Count &&
             item.GovernanceOverrideSummaries[0].AppliedActionKindSummaries.Count == 0);
+        Assert.Contains(snapshot.RestEndpointOverrides, item =>
+            string.Equals(item.Id, "prefer-module-docs-noop", StringComparison.Ordinal) &&
+            item.MatchedCandidateIds.Count == 1 &&
+            string.Equals(item.MatchedCandidateIds[0], candidate.Id, StringComparison.Ordinal) &&
+            item.SelectedCandidateIds.Count == 1 &&
+            string.Equals(item.SelectedCandidateIds[0], candidate.Id, StringComparison.Ordinal) &&
+            item.AppliedCandidateIds.Count == 0 &&
+            item.SkippedCandidateIds.Count == 0 &&
+            item.SelectionBases.Count == 1 &&
+            item.SelectionBases[0] == candidate.OverrideSelectionBasis &&
+            item.SelectedActionKinds.Count == candidate.SelectedOverrideActionKinds.Count &&
+            item.AppliedActionKinds.Count == 0);
         Assert.Contains(snapshot.RestEndpoints, item =>
             string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal) &&
             item.AppliedOverrideId is null &&
@@ -3192,6 +3211,15 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Contains("POST", rule.Methods);
         Assert.Contains("/{orderId}/items", rule.RelativePatterns);
         Assert.Contains("/api/v7/tests/profile-runtime/selectors/secondary/orders", rule.RouteGroupPrefixes);
+        Assert.Equal([suppressed.Id], rule.MatchedCandidateIds);
+        Assert.Equal([suppressed.Id], rule.SuppressedCandidateIds);
+        Assert.Empty(rule.SkippedCandidateIds);
+        Assert.Equal([RestEndpointGovernanceRuleSelectionBasis.MoreTargetDimensions], rule.SelectionBases);
+        var matchedButLostRule = Assert.Single(suppressions, static item => string.Equals(item.Id, "hide-secondary-group", StringComparison.Ordinal));
+        Assert.Equal([suppressed.Id], matchedButLostRule.MatchedCandidateIds);
+        Assert.Empty(matchedButLostRule.SuppressedCandidateIds);
+        Assert.Empty(matchedButLostRule.SkippedCandidateIds);
+        Assert.Empty(matchedButLostRule.SelectionBases);
 
         using var publishedRequest = new HttpRequestMessage(
             HttpMethod.Post,
@@ -5285,11 +5313,13 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
         var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
         var groups = await client.GetFromJsonAsync<RestEndpointPublicationGroupDescriptor[]>("/engine/rest-endpoint-publication-groups");
+        var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
         var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
 
         Assert.NotNull(endpoints);
         Assert.NotNull(candidates);
         Assert.NotNull(groups);
+        Assert.NotNull(overrides);
         Assert.NotNull(snapshot);
         Assert.Equal(2, endpoints.Length);
         Assert.Equal(2, candidates.Length);
@@ -5313,6 +5343,8 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.EndsWith(".behavior_module_profile", profileEndpoint.EndpointName, StringComparison.Ordinal);
         Assert.EndsWith(".behavior_module_generated", generatedEndpoint.EndpointName, StringComparison.Ordinal);
         Assert.Equal("split-generated", generatedEndpoint.AppliedOverrideId);
+        Assert.Equal("split-generated", generatedCandidate.SelectedOverrideId);
+        Assert.Equal("split-generated", generatedCandidate.AppliedOverrideId);
 
         var group = Assert.Single(groups, static item =>
             string.Equals(item.BehaviorId, "tests.rest.generated.threeway.lookup", StringComparison.Ordinal));
@@ -5361,6 +5393,14 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(generatedCandidate.OverrideSelectionBasis.Value, Assert.Single(generatedOverrideSummary.SelectionBasisSummaries).SelectionBasis);
         Assert.Equal(generatedCandidate.SelectedOverrideActionKinds, generatedOverrideSummary.SelectedActionKindSummaries.Select(static item => item.ActionKind).ToArray());
         Assert.Equal(generatedCandidate.AppliedOverrideActionKinds, generatedOverrideSummary.AppliedActionKindSummaries.Select(static item => item.ActionKind).ToArray());
+        var overrideRule = Assert.Single(overrides, static item => string.Equals(item.Id, "split-generated", StringComparison.Ordinal));
+        Assert.Equal([generatedCandidate.Id], overrideRule.MatchedCandidateIds);
+        Assert.Equal([generatedCandidate.Id], overrideRule.SelectedCandidateIds);
+        Assert.Equal([generatedCandidate.Id], overrideRule.AppliedCandidateIds);
+        Assert.Empty(overrideRule.SkippedCandidateIds);
+        Assert.Equal([generatedCandidate.OverrideSelectionBasis!.Value], overrideRule.SelectionBases);
+        Assert.Equal(generatedCandidate.SelectedOverrideActionKinds, overrideRule.SelectedActionKinds);
+        Assert.Equal(generatedCandidate.AppliedOverrideActionKinds, overrideRule.AppliedActionKinds);
         Assert.Contains(snapshot.RestEndpointPublicationGroups, item =>
             string.Equals(item.BehaviorId, group.BehaviorId, StringComparison.Ordinal) &&
             item.AuthoringPolicy.AllowMultiplePublishedCandidates &&
@@ -5372,6 +5412,19 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             item.GovernanceOverrideSummaries[0].SelectionBasisSummaries.Count == 1 &&
             item.GovernanceOverrideSummaries[0].SelectedActionKindSummaries.Count == generatedCandidate.SelectedOverrideActionKinds.Count &&
             item.GovernanceOverrideSummaries[0].AppliedActionKindSummaries.Count == generatedCandidate.AppliedOverrideActionKinds.Count);
+        Assert.Contains(snapshot.RestEndpointOverrides, item =>
+            string.Equals(item.Id, "split-generated", StringComparison.Ordinal) &&
+            item.MatchedCandidateIds.Count == 1 &&
+            string.Equals(item.MatchedCandidateIds[0], generatedCandidate.Id, StringComparison.Ordinal) &&
+            item.SelectedCandidateIds.Count == 1 &&
+            string.Equals(item.SelectedCandidateIds[0], generatedCandidate.Id, StringComparison.Ordinal) &&
+            item.AppliedCandidateIds.Count == 1 &&
+            string.Equals(item.AppliedCandidateIds[0], generatedCandidate.Id, StringComparison.Ordinal) &&
+            item.SkippedCandidateIds.Count == 0 &&
+            item.SelectionBases.Count == 1 &&
+            item.SelectionBases[0] == generatedCandidate.OverrideSelectionBasis &&
+            item.SelectedActionKinds.Count == generatedCandidate.SelectedOverrideActionKinds.Count &&
+            item.AppliedActionKinds.Count == generatedCandidate.AppliedOverrideActionKinds.Count);
 
         var profilePayload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>(
             "/api/v6/tests/generated/runtime/governed/orders/ord-61");
@@ -5535,12 +5588,16 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
 
         var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
         var groups = await client.GetFromJsonAsync<RestEndpointPublicationGroupDescriptor[]>("/engine/rest-endpoint-publication-groups");
+        var suppressions = await client.GetFromJsonAsync<RestEndpointSuppressionDescriptor[]>("/engine/rest-endpoint-suppressions");
+        var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
         var groupByBehavior = await client.GetFromJsonAsync<RestEndpointPublicationGroupDescriptor>(
             "/engine/rest-endpoint-publication-groups/tests.dsl.runtimeoverride.disabled.lookup");
         var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
 
         Assert.NotNull(candidates);
         Assert.NotNull(groups);
+        Assert.NotNull(suppressions);
+        Assert.NotNull(overrides);
         Assert.NotNull(groupByBehavior);
         Assert.NotNull(snapshot);
 
@@ -5581,6 +5638,21 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         var explicitStyleSkippedOverrideSummary = Assert.Single(explicitStyle.SkippedOverrideSummaries, static item =>
             string.Equals(item.RuleId, "rewrite-disabled-explicit", StringComparison.Ordinal));
         Assert.Equal([candidate.Id], explicitStyleSkippedOverrideSummary.CandidateIds);
+        var skippedSuppressionRule = Assert.Single(suppressions, static item =>
+            string.Equals(item.Id, "skip-disabled-explicit", StringComparison.Ordinal));
+        Assert.Empty(skippedSuppressionRule.MatchedCandidateIds);
+        Assert.Empty(skippedSuppressionRule.SuppressedCandidateIds);
+        Assert.Equal([candidate.Id], skippedSuppressionRule.SkippedCandidateIds);
+        Assert.Empty(skippedSuppressionRule.SelectionBases);
+        var skippedOverrideRule = Assert.Single(overrides, static item =>
+            string.Equals(item.Id, "rewrite-disabled-explicit", StringComparison.Ordinal));
+        Assert.Empty(skippedOverrideRule.MatchedCandidateIds);
+        Assert.Empty(skippedOverrideRule.SelectedCandidateIds);
+        Assert.Empty(skippedOverrideRule.AppliedCandidateIds);
+        Assert.Equal([candidate.Id], skippedOverrideRule.SkippedCandidateIds);
+        Assert.Empty(skippedOverrideRule.SelectionBases);
+        Assert.Empty(skippedOverrideRule.SelectedActionKinds);
+        Assert.Empty(skippedOverrideRule.AppliedActionKinds);
 
         Assert.Equal(group.HostGovernanceEligibleCandidateIds, groupByBehavior.HostGovernanceEligibleCandidateIds);
         Assert.Equal(group.HostGovernanceIneligibleCandidateIds, groupByBehavior.HostGovernanceIneligibleCandidateIds);
@@ -5610,6 +5682,22 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             item.SkippedOverrideSummaries.Count == 1 &&
             item.SkippedSuppressionSummaries[0].CandidateIds.SequenceEqual([candidate.Id]) &&
             item.SkippedOverrideSummaries[0].CandidateIds.SequenceEqual([candidate.Id]));
+        Assert.Contains(snapshot.RestEndpointSuppressions, item =>
+            string.Equals(item.Id, "skip-disabled-explicit", StringComparison.Ordinal) &&
+            item.MatchedCandidateIds.Count == 0 &&
+            item.SuppressedCandidateIds.Count == 0 &&
+            item.SkippedCandidateIds.Count == 1 &&
+            string.Equals(item.SkippedCandidateIds[0], candidate.Id, StringComparison.Ordinal));
+        Assert.Contains(snapshot.RestEndpointOverrides, item =>
+            string.Equals(item.Id, "rewrite-disabled-explicit", StringComparison.Ordinal) &&
+            item.MatchedCandidateIds.Count == 0 &&
+            item.SelectedCandidateIds.Count == 0 &&
+            item.AppliedCandidateIds.Count == 0 &&
+            item.SkippedCandidateIds.Count == 1 &&
+            string.Equals(item.SkippedCandidateIds[0], candidate.Id, StringComparison.Ordinal) &&
+            item.SelectionBases.Count == 0 &&
+            item.SelectedActionKinds.Count == 0 &&
+            item.AppliedActionKinds.Count == 0);
     }
 
     [Fact]
