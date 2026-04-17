@@ -108,6 +108,14 @@ public sealed class RestEndpointOverrideOptions
     /// <see langword="true" /> when the rule removes any previously declared shorthand endpoint
     /// description from the matched candidate.
     /// </param>
+    /// <param name="openApiDocumentNames">
+    /// The original shorthand OpenAPI document names targeted by the override rule before any
+    /// override actions are applied.
+    /// </param>
+    /// <param name="tagNames">
+    /// The original shorthand primary OpenAPI tag names targeted by the override rule before any
+    /// override actions are applied.
+    /// </param>
     public RestEndpointOverrideOptions(
         string id,
         IReadOnlyList<string>? candidateIds = null,
@@ -134,7 +142,9 @@ public sealed class RestEndpointOverrideOptions
         RestEndpointOverrideBindingMode bindingMode = RestEndpointOverrideBindingMode.Unspecified,
         bool clearEndpointName = false,
         bool clearSummary = false,
-        bool clearDescription = false)
+        bool clearDescription = false,
+        IReadOnlyList<string>? openApiDocumentNames = null,
+        IReadOnlyList<string>? tagNames = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
 
@@ -159,6 +169,8 @@ public sealed class RestEndpointOverrideOptions
             routeGroupPrefixes,
             nameof(routeGroupPrefixes),
             "REST endpoint override target route-group prefix");
+        OpenApiDocumentNames = NormalizeList(openApiDocumentNames);
+        TagNames = NormalizeList(tagNames);
         Method = NormalizeMethod(method);
         Pattern = NormalizePattern(pattern);
         RouteGroupPrefix = NormalizeRouteGroupPrefix(routeGroupPrefix);
@@ -301,6 +313,18 @@ public sealed class RestEndpointOverrideOptions
     public IReadOnlyList<string> RouteGroupPrefixes { get; }
 
     /// <summary>
+    /// Gets the original shorthand OpenAPI document names targeted by this override rule before any
+    /// override actions are applied.
+    /// </summary>
+    public IReadOnlyList<string> OpenApiDocumentNames { get; }
+
+    /// <summary>
+    /// Gets the original shorthand primary OpenAPI tag names targeted by this override rule before
+    /// any override actions are applied.
+    /// </summary>
+    public IReadOnlyList<string> TagNames { get; }
+
+    /// <summary>
     /// Gets the effective API major version applied when this override rule matches.
     /// </summary>
     public int? ApiVersionMajor { get; }
@@ -400,6 +424,8 @@ public sealed class RestEndpointOverrideOptions
         Methods.Count > 0 ||
         RelativePatterns.Count > 0 ||
         RouteGroupPrefixes.Count > 0 ||
+        OpenApiDocumentNames.Count > 0 ||
+        TagNames.Count > 0 ||
         ApiVersionMajor.HasValue ||
         Method is not null ||
         Pattern is not null ||

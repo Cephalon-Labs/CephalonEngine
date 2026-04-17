@@ -73,7 +73,9 @@ public sealed class RestApiGovernanceOptions
                 apiVersionMajors: ReadPositiveIntArray(child.GetSection("ApiVersionMajors")),
                 methods: ReadStringArray(child.GetSection("Methods")),
                 relativePatterns: ReadStringArray(child.GetSection("RelativePatterns")),
-                routeGroupPrefixes: ReadStringArray(child.GetSection("RouteGroupPrefixes"))))
+                routeGroupPrefixes: ReadStringArray(child.GetSection("RouteGroupPrefixes")),
+                openApiDocumentNames: ReadStringArray(child.GetSection("OpenApiDocumentNames")),
+                tagNames: ReadStringArray(child.GetSection("TagNames"))))
             .ToArray();
         var overrides = configuration.GetSection(sectionPath)
             .GetSection("Overrides")
@@ -104,7 +106,9 @@ public sealed class RestApiGovernanceOptions
                 bindingMode: ReadBindingMode(child),
                 clearEndpointName: ReadBoolean(child, "ClearEndpointName"),
                 clearSummary: ReadBoolean(child, "ClearSummary"),
-                clearDescription: ReadBoolean(child, "ClearDescription")))
+                clearDescription: ReadBoolean(child, "ClearDescription"),
+                openApiDocumentNames: ReadStringArray(child.GetSection("OpenApiDocumentNames")),
+                tagNames: ReadStringArray(child.GetSection("TagNames"))))
             .ToArray();
 
         return new RestApiGovernanceOptions(suppressions, overrides);

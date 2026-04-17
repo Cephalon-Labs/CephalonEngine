@@ -2458,6 +2458,117 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverAppliesSuppressionOnlyToCandidatesThatMatchDocumentAndTagSelectors()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-document-tag-selector/primary")
+            .ApiVersion(6)
+            .WithOpenApiDocumentName("public")
+            .WithTagName("Profile Document Selector Primary API")
+            .MapProfile<ProfileProjectionBoundBehavior>();
+        builder.Group("/tests/profile-document-tag-selector/secondary")
+            .ApiVersion(6)
+            .WithOpenApiDocumentName("internal")
+            .WithTagName("Profile Document Selector Secondary API")
+            .MapProfile<ProfileProjectionBoundBehavior>();
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.profile-document-tag-selector",
+                "Profile Document Tag Selector Module",
+                "Exercises suppression targeting through original shorthand document and tag selectors.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            [
+                new RestEndpointSuppressionOptions(
+                    id: "hide-internal-only",
+                    behaviorIds: ["tests.profile.projection.bound"],
+                    openApiDocumentNames: ["internal"],
+                    tagNames: ["Profile Document Selector Secondary API"])
+            ]);
+
+        Assert.Equal(2, candidates.Count);
+
+        var published = Assert.Single(candidates, static item =>
+            item.Candidate.Status == RestEndpointCandidateStatus.Published);
+        Assert.Equal("/api/v6/tests/profile-document-tag-selector/primary/{cartId}/items", published.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Equal("public", published.Candidate.OriginalProjection.OpenApiDocumentName);
+        Assert.Equal("Profile Document Selector Primary API", published.Candidate.OriginalProjection.TagName);
+        Assert.Null(published.Candidate.SuppressedBySuppressionId);
+
+        var suppressed = Assert.Single(candidates, static item =>
+            item.Candidate.Status == RestEndpointCandidateStatus.Suppressed);
+        Assert.Equal("/api/v6/tests/profile-document-tag-selector/secondary/{cartId}/items", suppressed.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Equal("internal", suppressed.Candidate.OriginalProjection.OpenApiDocumentName);
+        Assert.Equal("Profile Document Selector Secondary API", suppressed.Candidate.OriginalProjection.TagName);
+        Assert.Equal("hide-internal-only", suppressed.Candidate.SuppressedBySuppressionId);
+        Assert.Equal(["hide-internal-only"], suppressed.Candidate.MatchedSuppressionIds);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverPrefersDocumentAndTagSpecificOverrideRuleWhenMultipleRulesMatch()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-document-tag-override-specificity/primary")
+            .ApiVersion(6)
+            .WithOpenApiDocumentName("public")
+            .WithTagName("Profile Document Override Primary API")
+            .MapProfile<ProfileProjectionBoundBehavior>();
+        builder.Group("/tests/profile-document-tag-override-specificity/secondary")
+            .ApiVersion(6)
+            .WithOpenApiDocumentName("internal")
+            .WithTagName("Profile Document Override Secondary API")
+            .MapProfile<ProfileProjectionBoundBehavior>();
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.profile-document-tag-override-specificity",
+                "Profile Document Tag Override Specificity Module",
+                "Exercises override specificity through original shorthand document and tag selectors.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "all-candidates",
+                    behaviorIds: ["tests.profile.projection.bound"],
+                    pattern: "/lookup/general/{cartId}/items"),
+                new RestEndpointOverrideOptions(
+                    id: "internal-only",
+                    behaviorIds: ["tests.profile.projection.bound"],
+                    openApiDocumentNames: ["internal"],
+                    tagNames: ["Profile Document Override Secondary API"],
+                    pattern: "/lookup/internal/{cartId}/items")
+            ]);
+
+        Assert.Equal(2, candidates.Count);
+
+        var primary = Assert.Single(candidates, static item =>
+            string.Equals(
+                item.Candidate.ProjectedEndpoint.RoutePattern,
+                "/api/v6/tests/profile-document-tag-override-specificity/primary/lookup/general/{cartId}/items",
+                StringComparison.Ordinal));
+        Assert.Equal("all-candidates", primary.Candidate.AppliedOverrideId);
+        Assert.Equal(["all-candidates"], primary.Candidate.MatchedOverrideIds);
+        Assert.Equal("public", primary.Candidate.OriginalProjection.OpenApiDocumentName);
+        Assert.Equal("Profile Document Override Primary API", primary.Candidate.OriginalProjection.TagName);
+
+        var secondary = Assert.Single(candidates, static item =>
+            string.Equals(
+                item.Candidate.ProjectedEndpoint.RoutePattern,
+                "/api/v6/tests/profile-document-tag-override-specificity/secondary/lookup/internal/{cartId}/items",
+                StringComparison.Ordinal));
+        Assert.Equal("internal-only", secondary.Candidate.AppliedOverrideId);
+        Assert.Equal(
+            ["internal-only", "all-candidates"],
+            secondary.Candidate.MatchedOverrideIds);
+        Assert.Equal("internal", secondary.Candidate.OriginalProjection.OpenApiDocumentName);
+        Assert.Equal("Profile Document Override Secondary API", secondary.Candidate.OriginalProjection.TagName);
+    }
+
+    [Fact]
     public void RestEndpointOverrideOptionsRejectRulesWithoutBehaviorOrModuleTargets()
     {
         var exception = Assert.Throws<ArgumentException>(() =>

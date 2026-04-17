@@ -337,7 +337,9 @@ internal static class RestBehaviorProjectionCandidateResolver
             originalCandidateId,
             endpointProjection,
             defaultApiVersionMajor,
+            originalOpenApiDocumentName,
             originalRouteGroupPrefix,
+            originalTagName,
             overrides);
         var matchedOverride = matchedOverrides.FirstOrDefault();
         if (matchedOverride is null)
@@ -483,13 +485,17 @@ internal static class RestBehaviorProjectionCandidateResolver
         string originalCandidateId,
         RestBehaviorEndpointProjection endpointProjection,
         int? defaultApiVersionMajor,
+        string originalOpenApiDocumentName,
         string originalRouteGroupPrefix,
+        string originalTagName,
         IReadOnlyList<RestEndpointOverrideOptions>? overrides)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sourceModuleId);
         ArgumentException.ThrowIfNullOrWhiteSpace(originalCandidateId);
         ArgumentNullException.ThrowIfNull(endpointProjection);
+        ArgumentException.ThrowIfNullOrWhiteSpace(originalOpenApiDocumentName);
         ArgumentException.ThrowIfNullOrWhiteSpace(originalRouteGroupPrefix);
+        ArgumentException.ThrowIfNullOrWhiteSpace(originalTagName);
 
         if (overrides is null || overrides.Count == 0)
         {
@@ -502,7 +508,9 @@ internal static class RestBehaviorProjectionCandidateResolver
                 originalCandidateId,
                 endpointProjection,
                 defaultApiVersionMajor,
+                originalOpenApiDocumentName,
                 originalRouteGroupPrefix,
+                originalTagName,
                 overrideOptions))
             .OrderByDescending(static overrideOptions => overrideOptions.CandidateIds.Count > 0)
             .ThenBy(static overrideOptions => overrideOptions.CandidateIds.Count == 0 ? int.MaxValue : overrideOptions.CandidateIds.Count)
@@ -946,6 +954,26 @@ internal static class RestBehaviorProjectionCandidateResolver
             }
         }
 
+        if (suppression.OpenApiDocumentNames.Count > 0)
+        {
+            var openApiDocumentName = candidate.Candidate.OriginalProjection.OpenApiDocumentName;
+            if (string.IsNullOrWhiteSpace(openApiDocumentName) ||
+                !suppression.OpenApiDocumentNames.Contains(openApiDocumentName, StringComparer.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+        }
+
+        if (suppression.TagNames.Count > 0)
+        {
+            var tagName = candidate.Candidate.OriginalProjection.TagName;
+            if (string.IsNullOrWhiteSpace(tagName) ||
+                !suppression.TagNames.Contains(tagName, StringComparer.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+        }
+
         return true;
     }
 
@@ -954,13 +982,17 @@ internal static class RestBehaviorProjectionCandidateResolver
         string originalCandidateId,
         RestBehaviorEndpointProjection endpointProjection,
         int? defaultApiVersionMajor,
+        string originalOpenApiDocumentName,
         string originalRouteGroupPrefix,
+        string originalTagName,
         RestEndpointOverrideOptions overrideOptions)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sourceModuleId);
         ArgumentException.ThrowIfNullOrWhiteSpace(originalCandidateId);
         ArgumentNullException.ThrowIfNull(endpointProjection);
+        ArgumentException.ThrowIfNullOrWhiteSpace(originalOpenApiDocumentName);
         ArgumentException.ThrowIfNullOrWhiteSpace(originalRouteGroupPrefix);
+        ArgumentException.ThrowIfNullOrWhiteSpace(originalTagName);
         ArgumentNullException.ThrowIfNull(overrideOptions);
 
         if (overrideOptions.CandidateIds.Count > 0 &&
@@ -1011,6 +1043,18 @@ internal static class RestBehaviorProjectionCandidateResolver
             return false;
         }
 
+        if (overrideOptions.OpenApiDocumentNames.Count > 0 &&
+            !overrideOptions.OpenApiDocumentNames.Contains(originalOpenApiDocumentName, StringComparer.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        if (overrideOptions.TagNames.Count > 0 &&
+            !overrideOptions.TagNames.Contains(originalTagName, StringComparer.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
         return true;
     }
 
@@ -1054,6 +1098,16 @@ internal static class RestBehaviorProjectionCandidateResolver
             count++;
         }
 
+        if (suppression.OpenApiDocumentNames.Count > 0)
+        {
+            count++;
+        }
+
+        if (suppression.TagNames.Count > 0)
+        {
+            count++;
+        }
+
         return count;
     }
 
@@ -1093,6 +1147,16 @@ internal static class RestBehaviorProjectionCandidateResolver
         }
 
         if (overrideOptions.RouteGroupPrefixes.Count > 0)
+        {
+            count++;
+        }
+
+        if (overrideOptions.OpenApiDocumentNames.Count > 0)
+        {
+            count++;
+        }
+
+        if (overrideOptions.TagNames.Count > 0)
         {
             count++;
         }
@@ -1181,7 +1245,9 @@ internal static class RestBehaviorProjectionCandidateResolver
                suppression.ApiVersionMajors.Count +
                suppression.Methods.Count +
                suppression.RelativePatterns.Count +
-               suppression.RouteGroupPrefixes.Count;
+               suppression.RouteGroupPrefixes.Count +
+               suppression.OpenApiDocumentNames.Count +
+               suppression.TagNames.Count;
     }
 
     private static int CountTargetValues(RestEndpointOverrideOptions overrideOptions)
@@ -1194,7 +1260,9 @@ internal static class RestBehaviorProjectionCandidateResolver
                overrideOptions.ApiVersionMajors.Count +
                overrideOptions.Methods.Count +
                overrideOptions.RelativePatterns.Count +
-               overrideOptions.RouteGroupPrefixes.Count;
+               overrideOptions.RouteGroupPrefixes.Count +
+               overrideOptions.OpenApiDocumentNames.Count +
+               overrideOptions.TagNames.Count;
     }
 
     private static string? NormalizeOverrideMetadataValue(string? value)

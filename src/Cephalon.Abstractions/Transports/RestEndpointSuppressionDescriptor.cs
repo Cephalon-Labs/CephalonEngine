@@ -17,6 +17,12 @@ public sealed class RestEndpointSuppressionDescriptor
     /// <param name="methods">The effective HTTP methods targeted by the suppression rule.</param>
     /// <param name="relativePatterns">The shorthand relative route patterns targeted by the suppression rule.</param>
     /// <param name="routeGroupPrefixes">The published route-group prefixes targeted by the suppression rule.</param>
+    /// <param name="openApiDocumentNames">
+    /// The original shorthand OpenAPI document names targeted by the suppression rule.
+    /// </param>
+    /// <param name="tagNames">
+    /// The original shorthand primary OpenAPI tag names targeted by the suppression rule.
+    /// </param>
     public RestEndpointSuppressionDescriptor(
         string id,
         IReadOnlyList<string>? candidateIds = null,
@@ -26,7 +32,9 @@ public sealed class RestEndpointSuppressionDescriptor
         IReadOnlyList<int>? apiVersionMajors = null,
         IReadOnlyList<string>? methods = null,
         IReadOnlyList<string>? relativePatterns = null,
-        IReadOnlyList<string>? routeGroupPrefixes = null)
+        IReadOnlyList<string>? routeGroupPrefixes = null,
+        IReadOnlyList<string>? openApiDocumentNames = null,
+        IReadOnlyList<string>? tagNames = null)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -42,6 +50,8 @@ public sealed class RestEndpointSuppressionDescriptor
         Methods = NormalizeList(methods);
         RelativePatterns = NormalizeList(relativePatterns);
         RouteGroupPrefixes = NormalizeList(routeGroupPrefixes);
+        OpenApiDocumentNames = NormalizeList(openApiDocumentNames);
+        TagNames = NormalizeList(tagNames);
     }
 
     /// <summary>
@@ -88,6 +98,16 @@ public sealed class RestEndpointSuppressionDescriptor
     /// Gets the published route-group prefixes targeted by this suppression rule.
     /// </summary>
     public IReadOnlyList<string> RouteGroupPrefixes { get; }
+
+    /// <summary>
+    /// Gets the original shorthand OpenAPI document names targeted by this suppression rule.
+    /// </summary>
+    public IReadOnlyList<string> OpenApiDocumentNames { get; }
+
+    /// <summary>
+    /// Gets the original shorthand primary OpenAPI tag names targeted by this suppression rule.
+    /// </summary>
+    public IReadOnlyList<string> TagNames { get; }
 
     private static string[] NormalizeList(IReadOnlyList<string>? values)
     {

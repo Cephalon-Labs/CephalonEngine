@@ -604,8 +604,8 @@ Current governance baseline:
   set-or-clear overrides through
   `RestApi:Overrides`
 - target one or more `CandidateIds`, `Behaviors`, `Modules`, and optional `AuthoringStyles`, then
-  optionally refine that match with `ApiVersionMajors`, `Methods`, `RelativePatterns`, and
-  `RouteGroupPrefixes`
+  optionally refine that match with `ApiVersionMajors`, `Methods`, `RelativePatterns`,
+  `RouteGroupPrefixes`, `OpenApiDocumentNames`, and `TagNames`
 - rules that omit all of `CandidateIds`, `Behaviors`, and `Modules` now fail fast instead of
   suppressing every shorthand candidate implicitly
 - override rules must define at least one override action, require a positive `ApiVersionMajor`
@@ -619,9 +619,9 @@ Current governance baseline:
   `behavior-module-profile` and `behavior-module-generated`
 - exact `CandidateIds` reuse the stable ids published by `GET /engine/rest-endpoint-candidates`
 - the optional selector refiners and exact candidate ids all match the original shorthand
-  candidate shape before override actions are applied, so governance can pick one of several
-  shorthand candidates that share the same behavior/module identity without relying on final
-  rewritten route shape
+  candidate shape before override actions are applied, including the original shorthand OpenAPI
+  document name and primary tag name, so governance can pick one of several shorthand candidates
+  that share the same behavior/module identity without relying on final rewritten route shape
 - when more than one rule matches, Cephalon prefers candidate-targeted rules first, then fewer
   targeted candidate ids, then the more specific rule by populated target dimensions, behavior-
   targeted scope, narrower authoring-style scope, fewer total selector values, and finally stable

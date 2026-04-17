@@ -885,18 +885,20 @@ Status:
   metadata lineage still stays visible through `OriginalEndpointName`, `OriginalSummary`, and
   `OriginalDescription`
 - the next shorthand metadata-and-document truthfulness follow-through is now shipped through
-  `ENG-058-T106`, `ENG-058-T107`, and `ENG-058-T108`: same-value endpoint-metadata, tag, and
-  document-name rewrites now keep `MatchedOverrideIds` visible while leaving `AppliedOverrideId =
-  null`, tag rewrites preserve `OriginalProjection.TagName` while splitting effective materialized
-  groups, document-name governance now adds `OpenApiDocumentName` plus
-  `.WithOpenApiDocumentName(...)`, and explicit `.ApiVersion(...)` precedence remains
-  authoritative for version selection even when later host governance rewrites the effective
-  published document name
+  `ENG-058-T106`, `ENG-058-T107`, `ENG-058-T108`, and `ENG-058-T109`: same-value
+  endpoint-metadata, tag, and document-name rewrites now keep `MatchedOverrideIds` visible while
+  leaving `AppliedOverrideId = null`, tag rewrites preserve `OriginalProjection.TagName` while
+  splitting effective materialized groups, document-name governance now adds
+  `OpenApiDocumentName` plus `.WithOpenApiDocumentName(...)`, explicit `.ApiVersion(...)`
+  precedence remains authoritative for version selection even when later host governance rewrites
+  the effective published document name, and selector targeting can now distinguish candidates by
+  original shorthand document name plus primary tag name without depending on rewritten routes
 - controlled configuration overrides that promote implicit properties into route placeholders
   beyond the shipped constrained remaining-body-fallback-plus-bounded-query-fallback path, or
-  rewrite input binding beyond constrained explicit-binding replacement, remain later work now that the
-  version-plus-method-plus-pattern-plus-capability-plus-binding-plus-placeholder-rename-plus-placeholder-removal-plus-placeholder-addition-plus-implicit-body-fallback-promotion-plus-bounded-implicit-query-fallback-promotion-plus-selector-targeting
-  override baseline is shipped
+  rewrite input binding beyond constrained explicit-binding replacement, remain later work now that
+  the current override baseline covers original-shape candidate ids plus selector targeting across
+  version, method, route-group prefix, document name, tag name, capability, bindings, placeholder
+  reshaping, and bounded fallback promotion
 
 ## What should be stored as project memory
 
@@ -950,9 +952,10 @@ The following points are durable enough to keep outside thread-local context.
   `RemovedBindingProperties`; neither surface rewrites explicit module DSL or manual routes
 - both rule families can now target exact original-shape shorthand candidates through
   `CandidateIds`, can also refine `Behaviors`/`Modules` targeting with `ApiVersionMajors`,
-  `Methods`, `RelativePatterns`, and `RouteGroupPrefixes`, and all of those selectors match the
-  original shorthand candidate identity before override actions are applied so suppression and
-  override decisions do not depend on already-rewritten final route shape
+  `Methods`, `RelativePatterns`, `RouteGroupPrefixes`, `OpenApiDocumentNames`, and `TagNames`,
+  and all of those selectors match the original shorthand candidate identity before override
+  actions are applied so suppression and override decisions do not depend on already-rewritten
+  final route shape
 - `/engine/rest-endpoint-candidates` now publishes that same original-shape candidate identity
   through `RestEndpointCandidateRuntimeDescriptor.Id`, while `ProjectedEndpoint.Id` remains the
   effective mapped endpoint identity after override actions are applied
