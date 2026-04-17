@@ -106,9 +106,14 @@ internal static class RestBehaviorProjectionMaterializer
                 group.UseRuntimeMatchedOverrideIds(candidate.Candidate.MatchedOverrideIds);
                 var builder = candidate.EffectiveEndpointProjection.Apply(group);
                 var sourceCapabilityCapture = CaptureSourceCapability(builder);
+                var sourceDocumentationCapture = CaptureSourceDocumentation(builder);
                 ApplyRequiredCapabilityOverride(builder, candidate.AppliedCapabilityOverride);
                 ApplyEndpointMetadataOverride(builder, candidate.AppliedMetadataOverride);
-                ApplyPublishedOverrideProvenance(builder, candidate, sourceCapabilityCapture);
+                ApplyPublishedOverrideProvenance(
+                    builder,
+                    candidate,
+                    sourceCapabilityCapture,
+                    sourceDocumentationCapture);
             }
         }
     }
@@ -124,6 +129,28 @@ internal static class RestBehaviorProjectionMaterializer
                 endpointBuilder.Metadata.OfType<RestEndpointCapabilityMetadata>());
             capture.RequiredCapabilityKey = sourceRequiredCapabilityKey;
             endpointBuilder.Metadata.Add(new RestEndpointSourceCapabilityMetadata(sourceRequiredCapabilityKey));
+        });
+
+        return capture;
+    }
+
+    private static CapturedEndpointDocumentationState CaptureSourceDocumentation(RouteHandlerBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        var capture = new CapturedEndpointDocumentationState();
+        builder.Add(endpointBuilder =>
+        {
+            var sourceEndpointName = endpointBuilder.Metadata.OfType<EndpointNameMetadata>().LastOrDefault()?.EndpointName;
+            var sourceSummary = endpointBuilder.Metadata.OfType<IEndpointSummaryMetadata>().LastOrDefault()?.Summary;
+            var sourceDescription = endpointBuilder.Metadata.OfType<IEndpointDescriptionMetadata>().LastOrDefault()?.Description;
+            capture.EndpointName = sourceEndpointName;
+            capture.Summary = sourceSummary;
+            capture.Description = sourceDescription;
+            endpointBuilder.Metadata.Add(new RestEndpointSourceDocumentationMetadata(
+                sourceEndpointName,
+                sourceSummary,
+                sourceDescription));
         });
 
         return capture;
@@ -209,10 +236,8 @@ internal static class RestBehaviorProjectionMaterializer
     {
         ArgumentNullException.ThrowIfNull(endpoint);
 
-        var sourceRequiredCapabilityKey = endpoint.Metadata.GetMetadata<RestEndpointSourceCapabilityMetadata>()?.RequiredCapabilityKey;
-        var effectiveRequiredCapabilityKey = RestEndpointRuntimeMetadata.ResolveEffectiveRequiredCapabilityKey(
-            endpoint.Metadata.OfType<RestEndpointCapabilityMetadata>());
-        return new MaterializedPublishedCandidateState(sourceRequiredCapabilityKey, effectiveRequiredCapabilityKey);
+        return new MaterializedPublishedCandidateState(
+            endpoint.Metadata.GetMetadata<RestEndpointAppliedOverrideMetadata>()?.OverrideId);
     }
 
     private static RestEndpointCandidateRuntimeDescriptor CreateRegisteredCandidateDescriptor(
@@ -245,15 +270,7 @@ internal static class RestBehaviorProjectionMaterializer
         ArgumentNullException.ThrowIfNull(candidate);
         ArgumentNullException.ThrowIfNull(publishedCandidateStates);
 
-        if (string.IsNullOrWhiteSpace(candidate.Candidate.AppliedOverrideId) ||
-            candidate.Candidate.Status != RestEndpointCandidateStatus.Published)
-        {
-            return candidate.Candidate.AppliedOverrideId;
-        }
-
-        if (HasStructuralOverride(candidate.Candidate) ||
-            candidate.AppliedMetadataOverride is not null ||
-            candidate.AppliedCapabilityOverride is null)
+        if (candidate.Candidate.Status != RestEndpointCandidateStatus.Published)
         {
             return candidate.Candidate.AppliedOverrideId;
         }
@@ -264,12 +281,7 @@ internal static class RestBehaviorProjectionMaterializer
                 $"Published REST behavior candidate '{candidate.Candidate.Id}' is missing the materialized endpoint state required for runtime candidate reconciliation.");
         }
 
-        return string.Equals(
-                publishedCandidateState.SourceRequiredCapabilityKey,
-                publishedCandidateState.EffectiveRequiredCapabilityKey,
-                StringComparison.Ordinal)
-            ? null
-            : candidate.Candidate.AppliedOverrideId;
+        return publishedCandidateState.AppliedOverrideId;
     }
 
     private static void ApplyRequiredCapabilityOverride(
@@ -364,25 +376,22 @@ internal static class RestBehaviorProjectionMaterializer
     private static void ApplyPublishedOverrideProvenance(
         RouteHandlerBuilder builder,
         ResolvedRestBehaviorEndpointProjectionCandidate candidate,
-        CapturedEndpointCapabilityState sourceCapabilityCapture)
+        CapturedEndpointCapabilityState sourceCapabilityCapture,
+        CapturedEndpointDocumentationState sourceDocumentationCapture)
     {
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentNullException.ThrowIfNull(candidate);
         ArgumentNullException.ThrowIfNull(sourceCapabilityCapture);
+        ArgumentNullException.ThrowIfNull(sourceDocumentationCapture);
 
         if (string.IsNullOrWhiteSpace(candidate.Candidate.AppliedOverrideId))
         {
             return;
         }
 
-        if (HasStructuralOverride(candidate.Candidate) || candidate.AppliedMetadataOverride is not null)
+        if (HasStructuralOverride(candidate.Candidate))
         {
             builder.WithMetadata(new RestEndpointAppliedOverrideMetadata(candidate.Candidate.AppliedOverrideId));
-            return;
-        }
-
-        if (candidate.AppliedCapabilityOverride is null)
-        {
             return;
         }
 
@@ -390,10 +399,27 @@ internal static class RestBehaviorProjectionMaterializer
         {
             var effectiveRequiredCapabilityKey = RestEndpointRuntimeMetadata.ResolveEffectiveRequiredCapabilityKey(
                 endpointBuilder.Metadata.OfType<RestEndpointCapabilityMetadata>());
-            if (!string.Equals(
-                    sourceCapabilityCapture.RequiredCapabilityKey,
-                    effectiveRequiredCapabilityKey,
-                    StringComparison.Ordinal))
+            var capabilityChanged = !string.Equals(
+                sourceCapabilityCapture.RequiredCapabilityKey,
+                effectiveRequiredCapabilityKey,
+                StringComparison.Ordinal);
+            var effectiveEndpointName = endpointBuilder.Metadata.OfType<EndpointNameMetadata>().LastOrDefault()?.EndpointName;
+            var effectiveSummary = endpointBuilder.Metadata.OfType<IEndpointSummaryMetadata>().LastOrDefault()?.Summary;
+            var effectiveDescription = endpointBuilder.Metadata.OfType<IEndpointDescriptionMetadata>().LastOrDefault()?.Description;
+            var metadataChanged = !string.Equals(
+                                      sourceDocumentationCapture.EndpointName,
+                                      effectiveEndpointName,
+                                      StringComparison.Ordinal) ||
+                                  !string.Equals(
+                                      sourceDocumentationCapture.Summary,
+                                      effectiveSummary,
+                                      StringComparison.Ordinal) ||
+                                  !string.Equals(
+                                      sourceDocumentationCapture.Description,
+                                      effectiveDescription,
+                                      StringComparison.Ordinal);
+
+            if (capabilityChanged || metadataChanged)
             {
                 endpointBuilder.Metadata.Add(new RestEndpointAppliedOverrideMetadata(candidate.Candidate.AppliedOverrideId));
             }
@@ -507,7 +533,14 @@ internal static class RestBehaviorProjectionMaterializer
         internal string? RequiredCapabilityKey { get; set; }
     }
 
-    private sealed record MaterializedPublishedCandidateState(
-        string? SourceRequiredCapabilityKey,
-        string? EffectiveRequiredCapabilityKey);
+    private sealed class CapturedEndpointDocumentationState
+    {
+        internal string? EndpointName { get; set; }
+
+        internal string? Summary { get; set; }
+
+        internal string? Description { get; set; }
+    }
+
+    private sealed record MaterializedPublishedCandidateState(string? AppliedOverrideId);
 }

@@ -1021,6 +1021,54 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverDoesNotApplySameValueEndpointMetadataOverridesToShorthandCandidates()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        builder.Group("/tests/generated-metadata-noop")
+            .MapGeneratedProfiles("tests.generated.projection.precedence");
+
+        var moduleDescriptor = new ModuleDescriptor(
+            "tests.rest.generated-metadata-noop",
+            "Generated Metadata No-Op Module",
+            "Exercises shorthand endpoint-metadata no-op rewrite resolution.",
+            version: "1.0.0");
+        var baselineCandidate = Assert.Single(
+            RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+                moduleDescriptor,
+                new ApiRoutesOptions(),
+                builder.Build().Groups));
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            moduleDescriptor,
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "prefer-current-docs",
+                    behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                    endpointName: baselineCandidate.Candidate.ProjectedEndpoint.EndpointName,
+                    summary: baselineCandidate.Candidate.ProjectedEndpoint.Summary,
+                    description: baselineCandidate.Candidate.ProjectedEndpoint.Description)
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Null(candidate.Candidate.AppliedOverrideId);
+        Assert.Equal(["prefer-current-docs"], candidate.Candidate.MatchedOverrideIds);
+        Assert.Equal(
+            baselineCandidate.Candidate.ProjectedEndpoint.EndpointName,
+            candidate.Candidate.ProjectedEndpoint.EndpointName);
+        Assert.Equal(
+            baselineCandidate.Candidate.ProjectedEndpoint.Summary,
+            candidate.Candidate.ProjectedEndpoint.Summary);
+        Assert.Equal(
+            baselineCandidate.Candidate.ProjectedEndpoint.Description,
+            candidate.Candidate.ProjectedEndpoint.Description);
+        Assert.Null(candidate.AppliedMetadataOverride);
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverAppliesRequiredCapabilityOverrideToShorthandCandidates()
     {
         var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
@@ -3223,6 +3271,232 @@ public sealed class BehaviorRestProjectionTests
         Assert.Null(endpoint.Metadata.GetMetadata<RestEndpointAppliedOverrideMetadata>()?.OverrideId);
     }
 
+    [Fact]
+    public void RestBehaviorProjectionMaterializerDoesNotMarkNoOpEndpointMetadataRewriteAsAppliedEndpointOverride()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        using var app = builder.Build();
+        var apiGroup = app.MapGroup("/api");
+        var module = new ProjectionCountingRestModule();
+        var endpointProjection = RestBehaviorEndpointProjection.Create<ProjectionCartBehavior>(
+            RestBehaviorHttpMethod.Get,
+            "/{cartId}",
+            configureEndpoint: static route =>
+            {
+                route.WithName("tests.typed.metadata.noop.lookup");
+                route.Add(endpointBuilder =>
+                {
+                    endpointBuilder.Metadata.Add(new ProjectionTestEndpointSummaryMetadata(
+                        "Gets a projection cart through a no-op metadata rewrite rule."));
+                    endpointBuilder.Metadata.Add(new ProjectionTestEndpointDescriptionMetadata(
+                        "Does not mark endpoint-level override provenance when explicit module metadata already matches the host rule."));
+                });
+            },
+            authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle);
+        var projection = new RestBehaviorRouteGroupProjection(
+            Prefix: "/tests/typed-metadata-noop/orders",
+            TagName: "Typed Metadata No-Op API",
+            TagDescription: null,
+            HasExplicitTagDescription: false,
+            ApiVersionMajor: 6,
+            HasExplicitApiVersion: true,
+            ProfileApiVersionSourceBehaviorId: null,
+            GroupConventions: [],
+            Endpoints: [endpointProjection]);
+        var projectedEndpoint = new RestEndpointRuntimeDescriptor(
+            id: "typed-metadata-noop",
+            transportId: "rest-api",
+            sourceKind: RestEndpointRuntimeMetadata.ModuleDslSourceKind,
+            method: "GET",
+            routePattern: "/api/v6/tests/typed-metadata-noop/orders/{cartId}",
+            sourceModuleId: module.Descriptor.Id,
+            sourceModuleVersion: module.Descriptor.Version,
+            sourceModuleVersionMajor: 1,
+            behaviorId: "tests.cart.projection",
+            endpointName: "tests.typed.metadata.noop.lookup",
+            openApiDocumentName: "v6",
+            apiVersionMajor: 6,
+            tags: ["Typed Metadata No-Op API"],
+            summary: "Gets a projection cart through a no-op metadata rewrite rule.",
+            description: "Does not mark endpoint-level override provenance when explicit module metadata already matches the host rule.",
+            metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase),
+            authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle,
+            routeGroupPrefix: "/api/v6/tests/typed-metadata-noop/orders",
+            relativePattern: "/{cartId}",
+            behaviorType: typeof(ProjectionCartBehavior).FullName,
+            sourceId: "tests.cart.projection:GET:/{cartId}");
+        var originalProjection = new RestEndpointCandidateProjectionDescriptor(
+            method: "GET",
+            routePattern: "/api/v6/tests/typed-metadata-noop/orders/{cartId}",
+            routeGroupPrefix: "/api/v6/tests/typed-metadata-noop/orders",
+            relativePattern: "/{cartId}",
+            apiVersionMajor: 6,
+            openApiDocumentName: "v6");
+        var candidate = new ResolvedRestBehaviorEndpointProjectionCandidate(
+            GroupIndex: 0,
+            EffectiveEndpointProjection: endpointProjection,
+            Candidate: new RestEndpointCandidateRuntimeDescriptor(
+                id: "typed-metadata-noop-candidate",
+                projectedEndpoint: projectedEndpoint,
+                originalProjection: originalProjection,
+                authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle,
+                precedenceRank: RestEndpointRuntimeMetadata.ResolvePrecedenceRank(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle),
+                status: RestEndpointCandidateStatus.Published,
+                appliedOverrideId: "metadata-noop"),
+            AppliedMetadataOverride: new AppliedRestEndpointMetadataOverride(
+                "metadata-noop",
+                "tests.typed.metadata.noop.lookup",
+                "Gets a projection cart through a no-op metadata rewrite rule.",
+                "Does not mark endpoint-level override provenance when explicit module metadata already matches the host rule.",
+                ClearEndpointName: false,
+                ClearSummary: false,
+                ClearDescription: false));
+
+        RestBehaviorProjectionMaterializer.MapGroup(
+            apiGroup,
+            module,
+            projection,
+            [candidate],
+            new ApiRoutesOptions());
+
+        var dataSources = ((IEndpointRouteBuilder)app).DataSources;
+        var endpoint = Assert.Single(
+            dataSources
+                .SelectMany(static dataSource => dataSource.Endpoints)
+                .OfType<RouteEndpoint>(),
+            static item => string.Equals(item.RoutePattern.RawText, "/api/v6/tests/typed-metadata-noop/orders/{cartId}", StringComparison.Ordinal));
+
+        Assert.Equal("tests.typed.metadata.noop.lookup", endpoint.Metadata.GetMetadata<EndpointNameMetadata>()?.EndpointName);
+        Assert.Equal(
+            "Gets a projection cart through a no-op metadata rewrite rule.",
+            endpoint.Metadata.OfType<IEndpointSummaryMetadata>().LastOrDefault()?.Summary);
+        Assert.Equal(
+            "Does not mark endpoint-level override provenance when explicit module metadata already matches the host rule.",
+            endpoint.Metadata.OfType<IEndpointDescriptionMetadata>().LastOrDefault()?.Description);
+        Assert.Null(endpoint.Metadata.GetMetadata<RestEndpointAppliedOverrideMetadata>()?.OverrideId);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionMaterializerDoesNotMarkNoOpEndpointMetadataClearAsAppliedEndpointOverride()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        using var app = builder.Build();
+        var apiGroup = app.MapGroup("/api");
+        var module = new ProjectionCountingRestModule();
+        var endpointProjection = RestBehaviorEndpointProjection.Create<ProjectionCartBehavior>(
+            RestBehaviorHttpMethod.Get,
+            "/{cartId}",
+            configureEndpoint: static route =>
+                route.Add(endpointBuilder =>
+                {
+                    for (var index = endpointBuilder.Metadata.Count - 1; index >= 0; index--)
+                    {
+                        if (endpointBuilder.Metadata[index] is IEndpointDescriptionMetadata)
+                        {
+                            endpointBuilder.Metadata.RemoveAt(index);
+                        }
+                    }
+                }),
+            authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle);
+        var projection = new RestBehaviorRouteGroupProjection(
+            Prefix: "/tests/typed-metadata-clear-noop/orders",
+            TagName: "Typed Metadata Clear No-Op API",
+            TagDescription: null,
+            HasExplicitTagDescription: false,
+            ApiVersionMajor: 6,
+            HasExplicitApiVersion: true,
+            ProfileApiVersionSourceBehaviorId: null,
+            GroupConventions: [],
+            Endpoints: [endpointProjection]);
+        var projectedEndpoint = new RestEndpointRuntimeDescriptor(
+            id: "typed-metadata-clear-noop",
+            transportId: "rest-api",
+            sourceKind: RestEndpointRuntimeMetadata.ModuleDslSourceKind,
+            method: "GET",
+            routePattern: "/api/v6/tests/typed-metadata-clear-noop/orders/{cartId}",
+            sourceModuleId: module.Descriptor.Id,
+            sourceModuleVersion: module.Descriptor.Version,
+            sourceModuleVersionMajor: 1,
+            behaviorId: "tests.cart.projection",
+            endpointName: "tests_rest_projection_module.v6.tests_cart_projection",
+            openApiDocumentName: "v6",
+            apiVersionMajor: 6,
+            tags: ["Typed Metadata Clear No-Op API"],
+            summary: "tests.cart.projection",
+            description: null,
+            metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase),
+            authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle,
+            routeGroupPrefix: "/api/v6/tests/typed-metadata-clear-noop/orders",
+            relativePattern: "/{cartId}",
+            behaviorType: typeof(ProjectionCartBehavior).FullName,
+            sourceId: "tests.cart.projection:GET:/{cartId}");
+        var originalProjection = new RestEndpointCandidateProjectionDescriptor(
+            method: "GET",
+            routePattern: "/api/v6/tests/typed-metadata-clear-noop/orders/{cartId}",
+            routeGroupPrefix: "/api/v6/tests/typed-metadata-clear-noop/orders",
+            relativePattern: "/{cartId}",
+            apiVersionMajor: 6,
+            openApiDocumentName: "v6");
+        var candidate = new ResolvedRestBehaviorEndpointProjectionCandidate(
+            GroupIndex: 0,
+            EffectiveEndpointProjection: endpointProjection,
+            Candidate: new RestEndpointCandidateRuntimeDescriptor(
+                id: "typed-metadata-clear-noop-candidate",
+                projectedEndpoint: projectedEndpoint,
+                originalProjection: originalProjection,
+                authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle,
+                precedenceRank: RestEndpointRuntimeMetadata.ResolvePrecedenceRank(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle),
+                status: RestEndpointCandidateStatus.Published,
+                appliedOverrideId: "metadata-clear-noop"),
+            AppliedMetadataOverride: new AppliedRestEndpointMetadataOverride(
+                "metadata-clear-noop",
+                EndpointName: null,
+                Summary: null,
+                Description: null,
+                ClearEndpointName: false,
+                ClearSummary: false,
+                ClearDescription: true));
+
+        RestBehaviorProjectionMaterializer.MapGroup(
+            apiGroup,
+            module,
+            projection,
+            [candidate],
+            new ApiRoutesOptions());
+
+        var dataSources = ((IEndpointRouteBuilder)app).DataSources;
+        var endpoint = Assert.Single(
+            dataSources
+                .SelectMany(static dataSource => dataSource.Endpoints)
+                .OfType<RouteEndpoint>(),
+            static item => string.Equals(item.RoutePattern.RawText, "/api/v6/tests/typed-metadata-clear-noop/orders/{cartId}", StringComparison.Ordinal));
+
+        Assert.Equal("tests_rest_projection_module.v6.tests_cart_projection", endpoint.Metadata.GetMetadata<EndpointNameMetadata>()?.EndpointName);
+        Assert.Equal("tests.cart.projection", endpoint.Metadata.OfType<IEndpointSummaryMetadata>().LastOrDefault()?.Summary);
+        Assert.Null(endpoint.Metadata.OfType<IEndpointDescriptionMetadata>().LastOrDefault()?.Description);
+        Assert.Null(endpoint.Metadata.GetMetadata<RestEndpointAppliedOverrideMetadata>()?.OverrideId);
+    }
+
     private static Type CreateDynamicProfileBehaviorType(
         string behaviorId,
         BehaviorRestMethod method,
@@ -3528,6 +3802,10 @@ public sealed class BehaviorRestProjectionTests
         string PropertyName,
         object SourceValue,
         string? Name = null);
+
+    private sealed record ProjectionTestEndpointSummaryMetadata(string Summary) : IEndpointSummaryMetadata;
+
+    private sealed record ProjectionTestEndpointDescriptionMetadata(string Description) : IEndpointDescriptionMetadata;
 }
 
 public sealed class DynamicProfileBindingInput

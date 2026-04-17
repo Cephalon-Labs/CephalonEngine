@@ -558,9 +558,10 @@ to parse `metadata.authoringStyle` to recover published-endpoint authorship. Pro
 endpoints now also keep endpoint names plus summary/description metadata aligned with the final
 published runtime endpoint conventions, including XML-derived behavior docs when they exist and
 module-description fallback when they do not, and published candidate registration now reconciles
-capability-only no-op matches against the actual mapped endpoint so `MatchedOverrideIds` can still
-show the winning rule without forcing `AppliedOverrideId` to pretend a same-key rewrite or no-op
-clear changed the published boundary. The final published `/engine/rest-endpoints` plus
+capability-only and endpoint-metadata-only no-op matches against the actual mapped endpoint so
+`MatchedOverrideIds` can still show the winning rule without forcing `AppliedOverrideId` to
+pretend a same-key rewrite, no-op clear, or same-value metadata rewrite changed the published
+boundary. The final published `/engine/rest-endpoints` plus
 `snapshot.RestEndpoints` answer now also keeps that same ordered `MatchedOverrideIds` set visible
 directly, so operators no longer need a candidate join to see matched shorthand override rules on a
 live endpoint. When more than one suppression
@@ -647,11 +648,12 @@ Current governance baseline:
   from `/engine/rest-endpoints` when shorthand governance rewrites or clears a boundary; endpoint-
   level capability-only no-op clears now leave `AppliedOverrideId = null`
 - published endpoints now also expose ordered `MatchedOverrideIds`, so the final runtime answer can
-  keep shorthand override matches visible, including capability-only no-op matches that still leave
-  `AppliedOverrideId = null`
+  keep shorthand override matches visible, including capability-only no-op matches and endpoint-
+  metadata-only no-op matches that still leave `AppliedOverrideId = null`
 - `/engine/rest-endpoint-candidates` plus `RuntimeIntrospectionSnapshot.RestEndpointCandidates` now
-  follow that same no-op capability-governance truth for published candidates: capability-only clear
-  matches against an already-empty boundary and same-key capability rewrites keep
+  follow that same no-op governance truth for published candidates: capability-only clear matches
+  against an already-empty boundary, same-key capability rewrites, same-value endpoint-metadata
+  rewrites, and endpoint-metadata clears against source metadata the module already removed keep
   `MatchedOverrideIds` visible but leave `AppliedOverrideId = null`
 - broader implicit-property promotion beyond that constrained body-fallback-plus-bounded-query-
   fallback path plus broader binding-shape overrides beyond the current

@@ -61,6 +61,11 @@ internal sealed class RestEndpointCapabilityRegistration;
 
 internal sealed record RestEndpointSourceCapabilityMetadata(string? RequiredCapabilityKey);
 
+internal sealed record RestEndpointSourceDocumentationMetadata(
+    string? EndpointName,
+    string? Summary,
+    string? Description);
+
 internal sealed record RestEndpointAppliedOverrideMetadata(string OverrideId);
 
 internal sealed record RestEndpointClearedMetadataState(

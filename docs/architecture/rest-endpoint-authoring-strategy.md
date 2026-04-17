@@ -947,6 +947,10 @@ The following points are durable enough to keep outside thread-local context.
   pretend they changed the published answer, and `OriginalEndpointName`,
   `OriginalSummary`, and `OriginalDescription` should remain available so operators can still see
   the source shorthand metadata after a clear wins
+- when published candidate or endpoint runtime truth is reconciled after ASP.NET Core
+  materialization, metadata-only same-value rewrites and metadata-clear matches against source
+  metadata the module already set or cleared should keep `MatchedOverrideIds` visible while leaving
+  `AppliedOverrideId = null`
 - when REST governance rewrites shorthand `RequiredCapabilityKey` or clears it through
   `ClearRequiredCapability`, the same effective answer must drive
   `ProjectedEndpoint.RequiredCapabilityKey`, actual ASP.NET Core endpoint metadata,

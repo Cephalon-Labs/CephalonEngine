@@ -550,6 +550,10 @@ behavior-level publication story visible through `/engine/rest-endpoint-publicat
 also keeps every matching override rule visible through `MatchedOverrideIds` in specificity order
 before one winner is selected, and intentionally leaves explicit module DSL/manual routes plus
 shorthand groups with explicit `.ApiVersion(...)` authoritative for version selection.
+If ASP.NET Core materialization proves that a matched shorthand override rule did not actually
+change the published endpoint metadata or capability answer, the runtime keeps
+`MatchedOverrideIds` visible but leaves `AppliedOverrideId = null` on both the published
+candidate and final `/engine/rest-endpoints` answer.
 When `Bindings` are supplied, the override
 uses default `ReplaceExplicit` mode unless `BindingMode = MergeExplicit` is set explicitly. Replace
 mode swaps the shorthand candidate's full explicit binding plan, while merge mode upserts only the

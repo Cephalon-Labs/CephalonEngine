@@ -1066,6 +1066,216 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonDoesNotExposeAppliedOverrideIdForNoOpEndpointMetadataRewriteOnPublishedCandidate()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "4";
+        builder.Configuration["OpenApi:DefaultVersion"] = "4";
+        builder.Configuration["RestApi:Overrides:prefer-module-docs-noop:Behaviors:0"] = "tests.profile.runtimenoop.metadata";
+        builder.Configuration["RestApi:Overrides:prefer-module-docs-noop:EndpointName"] = "tests.profile.runtimeoverride.noop.metadata.lookup";
+        builder.Configuration["RestApi:Overrides:prefer-module-docs-noop:Summary"] = "Gets a profile-backed runtime order through explicit module metadata.";
+        builder.Configuration["RestApi:Overrides:prefer-module-docs-noop:Description"] = "Publishes explicit module metadata so a matching host rule becomes a runtime no-op.";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileMetadataRewriteNoOpRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(overrides);
+        Assert.NotNull(snapshot);
+
+        var endpoint = Assert.Single(endpoints, static item =>
+            string.Equals(item.BehaviorId, "tests.profile.runtimenoop.metadata", StringComparison.Ordinal));
+        Assert.Equal("/api/v4/tests/profile/runtime/noop/metadata/orders/{orderId}", endpoint.RoutePattern);
+        Assert.Equal("tests.profile.runtimeoverride.noop.metadata.lookup", endpoint.EndpointName);
+        Assert.Equal(
+            "Gets a profile-backed runtime order through explicit module metadata.",
+            endpoint.Summary);
+        Assert.Equal(
+            "Publishes explicit module metadata so a matching host rule becomes a runtime no-op.",
+            endpoint.Description);
+        Assert.Equal(
+            "tests_rest_profile_runtime_noop_metadata.v4.tests_profile_runtimenoop_metadata",
+            endpoint.OriginalEndpointName);
+        Assert.Equal("tests.profile.runtimenoop.metadata", endpoint.OriginalSummary);
+        Assert.Equal(
+            "Publishes a profile-backed route whose explicit module metadata already matches the host metadata rule.",
+            endpoint.OriginalDescription);
+        Assert.Null(endpoint.AppliedOverrideId);
+        Assert.Contains("prefer-module-docs-noop", endpoint.MatchedOverrideIds);
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.profile.runtimenoop.metadata", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+        Assert.Null(candidate.AppliedOverrideId);
+        Assert.Equal(endpoint.EndpointName, candidate.ProjectedEndpoint.EndpointName);
+        Assert.Equal(endpoint.Summary, candidate.ProjectedEndpoint.Summary);
+        Assert.Equal(endpoint.Description, candidate.ProjectedEndpoint.Description);
+        Assert.Equal(endpoint.OriginalEndpointName, candidate.ProjectedEndpoint.OriginalEndpointName);
+        Assert.Equal(endpoint.OriginalSummary, candidate.ProjectedEndpoint.OriginalSummary);
+        Assert.Equal(endpoint.OriginalDescription, candidate.ProjectedEndpoint.OriginalDescription);
+        Assert.Contains("prefer-module-docs-noop", candidate.MatchedOverrideIds);
+
+        var rule = Assert.Single(overrides, static item => string.Equals(item.Id, "prefer-module-docs-noop", StringComparison.Ordinal));
+        Assert.Equal("tests.profile.runtimeoverride.noop.metadata.lookup", rule.EndpointName);
+        Assert.Equal(
+            "Gets a profile-backed runtime order through explicit module metadata.",
+            rule.Summary);
+        Assert.Equal(
+            "Publishes explicit module metadata so a matching host rule becomes a runtime no-op.",
+            rule.Description);
+
+        Assert.Contains(snapshot.RestEndpointCandidates, item =>
+            string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
+            item.AppliedOverrideId is null &&
+            string.Equals(item.ProjectedEndpoint.EndpointName, "tests.profile.runtimeoverride.noop.metadata.lookup", StringComparison.Ordinal) &&
+            item.MatchedOverrideIds.Contains("prefer-module-docs-noop"));
+        Assert.Contains(snapshot.RestEndpoints, item =>
+            string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal) &&
+            item.AppliedOverrideId is null &&
+            string.Equals(item.EndpointName, "tests.profile.runtimeoverride.noop.metadata.lookup", StringComparison.Ordinal) &&
+            item.MatchedOverrideIds.Contains("prefer-module-docs-noop"));
+
+        var routeEndpoint = Assert.Single(
+            ((IEndpointRouteBuilder)app).DataSources
+                .SelectMany(static dataSource => dataSource.Endpoints)
+                .OfType<RouteEndpoint>(),
+            static item => string.Equals(item.RoutePattern.RawText, "/api/v4/tests/profile/runtime/noop/metadata/orders/{orderId}", StringComparison.Ordinal));
+        Assert.Equal(
+            "tests.profile.runtimeoverride.noop.metadata.lookup",
+            routeEndpoint.Metadata.GetMetadata<EndpointNameMetadata>()?.EndpointName);
+        Assert.Equal(
+            "Gets a profile-backed runtime order through explicit module metadata.",
+            routeEndpoint.Metadata.OfType<IEndpointSummaryMetadata>().LastOrDefault()?.Summary);
+        Assert.Equal(
+            "Publishes explicit module metadata so a matching host rule becomes a runtime no-op.",
+            routeEndpoint.Metadata.OfType<IEndpointDescriptionMetadata>().LastOrDefault()?.Description);
+        Assert.Null(routeEndpoint.Metadata.GetMetadata<RestEndpointAppliedOverrideMetadata>()?.OverrideId);
+
+        var response = await client.GetAsync("/api/v4/tests/profile/runtime/noop/metadata/orders/ord-42");
+        response.EnsureSuccessStatusCode();
+        var payload = await response.Content.ReadFromJsonAsync<GeneratedRuntimeOrderOutput>();
+        Assert.NotNull(payload);
+        Assert.Equal("ord-42", payload.OrderId);
+    }
+
+    [Fact]
+    public async Task MapCephalonDoesNotExposeAppliedOverrideIdForNoOpEndpointMetadataClearOnPublishedEndpoint()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "4";
+        builder.Configuration["OpenApi:DefaultVersion"] = "4";
+        builder.Configuration["RestApi:Overrides:clear-module-description-noop:Behaviors:0"] = "tests.profile.runtimenoop.clear.metadata";
+        builder.Configuration["RestApi:Overrides:clear-module-description-noop:ClearDescription"] = "true";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileMetadataClearNoOpRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(overrides);
+        Assert.NotNull(snapshot);
+
+        var endpoint = Assert.Single(endpoints, static item =>
+            string.Equals(item.BehaviorId, "tests.profile.runtimenoop.clear.metadata", StringComparison.Ordinal));
+        Assert.Equal("/api/v4/tests/profile/runtime/noop/clear/metadata/orders/{orderId}", endpoint.RoutePattern);
+        Assert.Equal(
+            "tests_rest_profile_runtime_noop_clear_metadata.v4.tests_profile_runtimenoop_clear_metadata",
+            endpoint.EndpointName);
+        Assert.Equal("tests.profile.runtimenoop.clear.metadata", endpoint.Summary);
+        Assert.Null(endpoint.Description);
+        Assert.Equal(
+            "Publishes a profile-backed route whose explicit module configuration already clears description metadata before host governance runs.",
+            endpoint.OriginalDescription);
+        Assert.Null(endpoint.AppliedOverrideId);
+        Assert.Contains("clear-module-description-noop", endpoint.MatchedOverrideIds);
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.profile.runtimenoop.clear.metadata", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+        Assert.Null(candidate.AppliedOverrideId);
+        Assert.Equal(endpoint.EndpointName, candidate.ProjectedEndpoint.EndpointName);
+        Assert.Equal(endpoint.Summary, candidate.ProjectedEndpoint.Summary);
+        Assert.Null(candidate.ProjectedEndpoint.Description);
+        Assert.Contains("clear-module-description-noop", candidate.MatchedOverrideIds);
+
+        var rule = Assert.Single(overrides, static item => string.Equals(item.Id, "clear-module-description-noop", StringComparison.Ordinal));
+        Assert.True(rule.ClearDescription);
+        Assert.Null(rule.Description);
+
+        Assert.Contains(snapshot.RestEndpointCandidates, item =>
+            string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
+            item.AppliedOverrideId is null &&
+            item.ProjectedEndpoint.Description is null &&
+            item.MatchedOverrideIds.Contains("clear-module-description-noop"));
+        Assert.Contains(snapshot.RestEndpoints, item =>
+            string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal) &&
+            item.AppliedOverrideId is null &&
+            item.Description is null &&
+            item.MatchedOverrideIds.Contains("clear-module-description-noop"));
+
+        var routeEndpoint = Assert.Single(
+            ((IEndpointRouteBuilder)app).DataSources
+                .SelectMany(static dataSource => dataSource.Endpoints)
+                .OfType<RouteEndpoint>(),
+            static item => string.Equals(item.RoutePattern.RawText, "/api/v4/tests/profile/runtime/noop/clear/metadata/orders/{orderId}", StringComparison.Ordinal));
+        Assert.Equal(
+            "tests_rest_profile_runtime_noop_clear_metadata.v4.tests_profile_runtimenoop_clear_metadata",
+            routeEndpoint.Metadata.GetMetadata<EndpointNameMetadata>()?.EndpointName);
+        Assert.Equal(
+            "tests.profile.runtimenoop.clear.metadata",
+            routeEndpoint.Metadata.OfType<IEndpointSummaryMetadata>().LastOrDefault()?.Summary);
+        Assert.Null(routeEndpoint.Metadata.OfType<IEndpointDescriptionMetadata>().LastOrDefault()?.Description);
+        Assert.Null(routeEndpoint.Metadata.GetMetadata<RestEndpointAppliedOverrideMetadata>()?.OverrideId);
+
+        var response = await client.GetAsync("/api/v4/tests/profile/runtime/noop/clear/metadata/orders/ord-42");
+        response.EnsureSuccessStatusCode();
+        var payload = await response.Content.ReadFromJsonAsync<GeneratedRuntimeOrderOutput>();
+        Assert.NotNull(payload);
+        Assert.Equal("ord-42", payload.OrderId);
+    }
+
+    [Fact]
     public async Task MapCephalonAppliesRequiredCapabilityOverridesAndExposesOverrideCatalog()
     {
         var builder = WebApplication.CreateBuilder();
@@ -4433,6 +4643,58 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         }
     }
 
+    private sealed class ProfileMetadataRewriteNoOpRuntimeCatalogModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.profile-runtime.noop.metadata",
+            "Profile Runtime Metadata Rewrite No-Op Module",
+            "Publishes a profile-backed route whose explicit module metadata already matches the host metadata rule.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Group("/tests/profile/runtime/noop/metadata/orders")
+                .WithTagName("Profile Metadata No-Op API")
+                .MapProfile<GetProfileMetadataRewriteNoOpRuntimeOrderBehavior>(builder =>
+                {
+                    builder.WithName("tests.profile.runtimeoverride.noop.metadata.lookup");
+                    builder.Add(endpointBuilder =>
+                    {
+                        endpointBuilder.Metadata.Add(new RuntimeCatalogTestEndpointSummaryMetadata(
+                            "Gets a profile-backed runtime order through explicit module metadata."));
+                        endpointBuilder.Metadata.Add(new RuntimeCatalogTestEndpointDescriptionMetadata(
+                            "Publishes explicit module metadata so a matching host rule becomes a runtime no-op."));
+                    });
+                });
+        }
+    }
+
+    private sealed class ProfileMetadataClearNoOpRuntimeCatalogModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.profile-runtime.noop.clear.metadata",
+            "Profile Runtime Metadata Clear No-Op Module",
+            "Publishes a profile-backed route whose explicit module configuration already clears description metadata before host governance runs.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Group("/tests/profile/runtime/noop/clear/metadata/orders")
+                .WithTagName("Profile Metadata Clear No-Op API")
+                .MapProfile<GetProfileMetadataClearNoOpRuntimeOrderBehavior>(builder =>
+                    builder.Add(endpointBuilder =>
+                    {
+                        for (var index = endpointBuilder.Metadata.Count - 1; index >= 0; index--)
+                        {
+                            if (endpointBuilder.Metadata[index] is IEndpointDescriptionMetadata)
+                            {
+                                endpointBuilder.Metadata.RemoveAt(index);
+                            }
+                        }
+                    }));
+        }
+    }
+
     private sealed class ExplicitVersionOverrideRuntimeCatalogModule : RestBehaviorModuleBase
     {
         public override ModuleDescriptor Descriptor { get; } = new(
@@ -4815,6 +5077,32 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         }
     }
 
+    [AppBehavior("tests.profile.runtimenoop.metadata")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}", ApiVersionMajor = 4)]
+    private sealed class GetProfileMetadataRewriteNoOpRuntimeOrderBehavior : IAppBehavior<GeneratedRuntimeOrderInput, GeneratedRuntimeOrderOutput>
+    {
+        public Task<GeneratedRuntimeOrderOutput> HandleAsync(
+            GeneratedRuntimeOrderInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new GeneratedRuntimeOrderOutput(input.OrderId));
+        }
+    }
+
+    [AppBehavior("tests.profile.runtimenoop.clear.metadata")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}", ApiVersionMajor = 4)]
+    private sealed class GetProfileMetadataClearNoOpRuntimeOrderBehavior : IAppBehavior<GeneratedRuntimeOrderInput, GeneratedRuntimeOrderOutput>
+    {
+        public Task<GeneratedRuntimeOrderOutput> HandleAsync(
+            GeneratedRuntimeOrderInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new GeneratedRuntimeOrderOutput(input.OrderId));
+        }
+    }
+
     [AppBehavior("tests.generated.runtimeexplicitoverride.lookup")]
     [BehaviorRestProfile(BehaviorRestMethod.Get, "/orders/{orderId}", ApiVersionMajor = 4)]
     private sealed class GetGeneratedExplicitOverrideRuntimeOrderBehavior : IAppBehavior<GeneratedRuntimeOrderInput, GeneratedRuntimeOrderOutput>
@@ -4827,6 +5115,10 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             return Task.FromResult(new GeneratedRuntimeOrderOutput(input.OrderId));
         }
     }
+
+    private sealed record RuntimeCatalogTestEndpointSummaryMetadata(string Summary) : IEndpointSummaryMetadata;
+
+    private sealed record RuntimeCatalogTestEndpointDescriptionMetadata(string Description) : IEndpointDescriptionMetadata;
 
     [AppBehavior("tests.generated.runtime.create")]
     [BehaviorRestProfile(BehaviorRestMethod.Post, "/orders/{orderId}/items", ApiVersionMajor = 4)]
