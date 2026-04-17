@@ -290,12 +290,13 @@ public sealed class RestApiGovernanceOptions
             return RestEndpointOverrideBindingMode.Unspecified;
         }
 
-        return rawValue.ToUpperInvariant() switch
+        if (RestEndpointOverrideBindingModeExtensions.TryParseWireName(rawValue, out var parsedValue) &&
+            parsedValue != RestEndpointOverrideBindingMode.Unspecified)
         {
-            "REPLACEEXPLICIT" or "REPLACE-EXPLICIT" => RestEndpointOverrideBindingMode.ReplaceExplicit,
-            "MERGEEXPLICIT" or "MERGE-EXPLICIT" => RestEndpointOverrideBindingMode.MergeExplicit,
-            _ => throw new InvalidOperationException(
-                $"REST API governance value '{section.Path}:BindingMode' must be ReplaceExplicit or MergeExplicit.")
-        };
+            return parsedValue;
+        }
+
+        throw new InvalidOperationException(
+            $"REST API governance value '{section.Path}:BindingMode' must be one of the stable binding mode wire names {string.Join(", ", Enum.GetValues<RestEndpointOverrideBindingMode>().Where(static value => value != RestEndpointOverrideBindingMode.Unspecified).Select(static value => value.GetWireName()))}.");
     }
 }

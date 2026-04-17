@@ -3584,6 +3584,37 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public void MapCephalonRejectsOverrideBindingModeValuesThatUseEnumMemberNames()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.Configuration["RestApi:Overrides:prefer-merge-route-quantity:Behaviors:0"] = "tests.rest.profile.bindings";
+        builder.Configuration["RestApi:Overrides:prefer-merge-route-quantity:Pattern"] = "/lookup/{orderId}/items/{quantity}";
+        builder.Configuration["RestApi:Overrides:prefer-merge-route-quantity:BindingMode"] = "MergeExplicit";
+        builder.Configuration["RestApi:Overrides:prefer-merge-route-quantity:Bindings:0:PropertyName"] = "Quantity";
+        builder.Configuration["RestApi:Overrides:prefer-merge-route-quantity:Bindings:0:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:prefer-merge-route-quantity:Bindings:0:Name"] = "quantity";
+        var exception = Assert.Throws<InvalidOperationException>(() => builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileBindingRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        }));
+
+        Assert.Contains("RestApi:Overrides:prefer-merge-route-quantity:BindingMode", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("stable binding mode wire names", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(RestEndpointOverrideBindingMode.ReplaceExplicit.GetWireName(), exception.Message, StringComparison.Ordinal);
+        Assert.Contains(RestEndpointOverrideBindingMode.MergeExplicit.GetWireName(), exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task MapCephalonAppliesTargetBindingOverrideSelectorsOnlyToTheMatchingCandidate()
     {
         var builder = WebApplication.CreateBuilder();
@@ -5707,7 +5738,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Configuration["OpenApi:DefaultVersion"] = "6";
         builder.Configuration["RestApi:Overrides:prefer-merge-route-quantity:Behaviors:0"] = "tests.rest.profile.bindings";
         builder.Configuration["RestApi:Overrides:prefer-merge-route-quantity:Pattern"] = "/lookup/{orderId}/items/{quantity}";
-        builder.Configuration["RestApi:Overrides:prefer-merge-route-quantity:BindingMode"] = "MergeExplicit";
+        builder.Configuration["RestApi:Overrides:prefer-merge-route-quantity:BindingMode"] = "merge-explicit";
         builder.Configuration["RestApi:Overrides:prefer-merge-route-quantity:Bindings:0:PropertyName"] = "Quantity";
         builder.Configuration["RestApi:Overrides:prefer-merge-route-quantity:Bindings:0:Source"] = "Route";
         builder.Configuration["RestApi:Overrides:prefer-merge-route-quantity:Bindings:0:Name"] = "quantity";

@@ -204,9 +204,9 @@ Status update:
 - the next shorthand binding-governance follow-through is now shipped through `ENG-058-T79`:
   `Cephalon.Abstractions` now also exposes typed
   `RestEndpointOverrideBindingMode` through the override runtime contract, `RestApi:Overrides`
-  can now declare `BindingMode = MergeExplicit` when a host wants to upsert only selected explicit
+  can now declare wire-name-only `BindingMode = merge-explicit` when a host wants to upsert only selected explicit
   bindings by property name instead of restating the whole explicit plan, the existing
-  `ReplaceExplicit` behavior remains the default when `BindingMode` is omitted, and the runtime now
+  `replace-explicit` behavior remains the default when `BindingMode` is omitted, and the runtime now
   keeps that merge-versus-replace governance truth visible through `/engine/rest-endpoint-overrides`
   plus `snapshot.RestEndpointOverrides`
 - the next grouped publication-visibility follow-through is now shipped through `ENG-058-T80`:
@@ -295,9 +295,9 @@ Status update:
   snapshots all report the same published answer
 - the next shorthand explicit-binding withdrawal follow-through is now shipped through
   `ENG-058-T83`: the typed override/runtime contracts plus ASP.NET Core config binding now also
-  support `RemovedBindingProperties`, `MergeExplicit` now covers both property-by-property explicit
+  support `RemovedBindingProperties`, `merge-explicit` now covers both property-by-property explicit
   binding upserts and explicit-binding withdrawals, removal-only rules normalize to merge mode
-  automatically, `ReplaceExplicit` cannot pair with removals, a merge rule cannot both remove and
+  automatically, `replace-explicit` cannot pair with removals, a merge rule cannot both remove and
   override the same property, removal targets must already exist in the source shorthand explicit
   binding plan, and `/engine/rest-endpoint-overrides` plus `snapshot.RestEndpointOverrides` now
   keep both the typed binding mode and removed-property list visible
@@ -389,7 +389,7 @@ Status update:
   the runtime catalogs report; explicit binding-plan
   overrides now default to replacing the shorthand candidate's explicit descriptors, but can also
   merge explicit binding upserts and withdrawals by property name through
-  `BindingMode = MergeExplicit` plus `RemovedBindingProperties` while still leaving unbound route
+  `BindingMode = merge-explicit` plus `RemovedBindingProperties` while still leaving unbound route
   placeholders and remaining request-body fields available for deterministic fallback, or clear the
   explicit plan entirely through shorthand-only `ClearBindings` when the effective route still
   binds truthfully through the implicit baseline; placeholder
@@ -547,7 +547,7 @@ Current shipped baseline:
   bound in the original projection, for `POST`/`PUT`/`PATCH` already part of the original
   deterministic remaining-body fallback surface, or for shorthand candidates with no explicit
   binding plan already part of the original implicit query-fallback surface
-- `BindingMode = MergeExplicit` can now upsert changed explicit bindings and withdraw selected
+- `BindingMode = merge-explicit` can now upsert changed explicit bindings and withdraw selected
   original explicit bindings through `RemovedBindingProperties`, while failing fast if a removal
   targets a property the source shorthand never bound explicitly or if one merge rule both removes
   and overrides the same property
@@ -718,7 +718,7 @@ Current rule:
 - shorthand REST publication still requires an explicit HTTP method selection and does not infer a
   public verb only from behavior-id naming conventions
 - the shipped constrained host-level binding override baseline now supports both full explicit-plan
-  replacement and typed `MergeExplicit` property-by-property binding patches plus withdrawals,
+  replacement and typed `merge-explicit` property-by-property binding patches plus withdrawals,
   still leaves unbound route placeholders and remaining request-body fields available for
   deterministic fallback, and still fails fast when the effective method-plus-binding plan is
   invalid
@@ -1156,7 +1156,7 @@ The following points are durable enough to keep outside thread-local context.
   `RouteGroupPrefix`, constrained relative `Pattern`, `RequiredCapabilityKey`,
   `ClearRequiredCapability`, `EndpointName`, `Summary`, `Description`, `TagName`,
   `ClearEndpointName`, `ClearSummary`, `ClearDescription`, constrained explicit `Bindings`
-  rewrites with either default full replacement or typed `MergeExplicit` property upserts plus
+  rewrites with either default full replacement or typed `merge-explicit` property upserts plus
   `RemovedBindingProperties`, and shorthand-only `ClearBindings` resets back to the implicit
   request-binding baseline; neither surface rewrites explicit module DSL or manual routes
 - both rule families can now target exact original-shape shorthand candidates through
@@ -1268,3 +1268,4 @@ precedence-visibility, and generated-module follow-through slices:
 4. only then evaluate whether any additional convention-backed publication sources are worth the
    added complexity beyond the shipped `MapProfile<TBehavior>()` and `MapGeneratedProfiles(...)`
    surfaces
+

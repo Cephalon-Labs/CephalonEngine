@@ -446,8 +446,8 @@ Current helper behavior:
   override actions are applied, and the override surface itself now supports `ApiVersionMajor`,
   `Method`, `RouteGroupPrefix`, `Pattern`, `Bindings`, and typed `BindingMode`, keeps the
   `/v{major}` route segment, OpenAPI document name, endpoint method, effective route, and
-  effective binding plan aligned with the same projection truth, defaults `Bindings` to full
-  explicit-plan replacement but also allows `BindingMode = MergeExplicit` to patch only the changed
+  effective binding plan aligned with the same projection truth, treats `BindingMode` as a wire-name-only config surface with `replace-explicit` or `merge-explicit`, defaults `Bindings` to full
+  explicit-plan replacement but also allows `BindingMode = merge-explicit` to patch only the changed
   explicit bindings by property name while still letting unbound route placeholders and remaining
   request-body fields fill object properties deterministically, now allows placeholder renames when the
   effective explicit route-binding plan covers the renamed placeholder set exactly, now also allows
@@ -620,7 +620,7 @@ winning rule through `SelectedOverrideId` plus `OverrideSelectionBasis` on both 
 candidate and final `/engine/rest-endpoints` answer. When more than one suppression rule matches a
 candidate and one wins, the same candidate answer also exposes `SuppressionSelectionBasis`.
 When `Bindings` are supplied, the override
-uses default `ReplaceExplicit` mode unless `BindingMode = MergeExplicit` is set explicitly. Replace
+uses default `replace-explicit` mode unless `BindingMode = merge-explicit` is set explicitly. Replace
 mode swaps the shorthand candidate's full explicit binding plan, while merge mode upserts only the
 named explicit bindings by property name and keeps untouched explicit bindings intact; both modes
 still leave unbound route placeholders and remaining request-body fields available for deterministic
@@ -678,7 +678,7 @@ route-binding plan explicit for `{id}`, or to `/lookup` when `Bindings` explicit
 removed route-bound value and the source projection already exposed an explicit route binding for
 `{cartId}`, or to `/lookup/{cartId}/items/{quantity}` when `Bindings` explicitly promote
 `Quantity` from its original explicit query/header/body binding into the route; `Bindings` can
-either replace the whole explicit plan or, with `BindingMode = MergeExplicit`, patch only the
+either replace the whole explicit plan or, with `BindingMode = merge-explicit`, patch only the
 affected explicit properties such as moving `Quantity` from query key `quantity` to route
 placeholder `quantity`, changing `Quantity` from query key `quantity` to `qty`, or changing `Note`
 from body key `note` to `memo`, while `ApiVersionMajors`, `Methods`,
@@ -1013,3 +1013,4 @@ If a package is mainly about a future-tech workload and provides reusable runtim
 Use a module package when the package primarily owns domain behavior.
 Use a technology pack when the package primarily owns reusable workload services or capability activation for a technology profile.
 If a domain module only needs to add descriptors into an existing technology pack, prefer the pack's contributor services instead of creating a new companion package.
+

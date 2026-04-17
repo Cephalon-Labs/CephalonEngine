@@ -542,7 +542,7 @@ Current helper behavior:
   clear, keeps effective tag truth aligned when `TagName` changes,
   applies explicit binding
   overrides in either default
-  `ReplaceExplicit` mode or `MergeExplicit` property-patch-and-withdraw mode while leaving
+  wire-name-only `replace-explicit` mode or `merge-explicit` property-patch-and-withdraw mode while leaving
   unbound route placeholders and remaining request-body fields available for deterministic
   fallback, now allows configured rules to publish their declared effect dimensions through typed
   `ActionKinds`, and now keeps the winning rule's declared-versus-effective action dimensions
@@ -776,7 +776,7 @@ Current governance baseline:
   bound in the original projection, for `POST`/`PUT`/`PATCH` already part of the original
   deterministic remaining-body fallback surface, or for shorthand candidates with no explicit
   binding plan already part of the original implicit query-fallback surface
-- `BindingMode = MergeExplicit` can now upsert changed explicit bindings and withdraw selected
+- `BindingMode = merge-explicit` can now upsert changed explicit bindings and withdraw selected
   original explicit bindings through `RemovedBindingProperties`, while failing fast if a removal
   targets a property the source shorthand never bound explicitly or if one merge rule both removes
   and overrides the same property
@@ -862,7 +862,7 @@ Override example:
             "Name": "memo"
           }
         ],
-        "BindingMode": "MergeExplicit"
+        "BindingMode": "merge-explicit"
       }
     }
   }
@@ -1053,3 +1053,4 @@ reuse it as a universal engine contract.
 - `Cephalon.Behaviors` — dispatcher, catalog, resolver, compatibility rules (required dependency)
 - `Cephalon.Abstractions` — behavior contracts
 - `Cephalon.AspNetCore` — host-level OpenAPI + Scalar surface for REST endpoints
+

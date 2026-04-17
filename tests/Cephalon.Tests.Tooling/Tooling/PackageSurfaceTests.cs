@@ -262,6 +262,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideActionKind),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideActionKindExtensions),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideBindingMode),
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideBindingModeExtensions),
             typeof(global::Cephalon.Abstractions.Transports.IRestEndpointCandidateRuntimeCatalog),
             typeof(global::Cephalon.Abstractions.Transports.IRestEndpointPublicationGroupRuntimeCatalog),
             typeof(global::Cephalon.Abstractions.Transports.IRestEndpointCandidateRuntimeRegistry),
@@ -1083,6 +1084,36 @@ public sealed class PackageSurfaceTests
             .GetProperty("ClearBindings", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions)
             .GetProperty("ClearBindings", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void RestEndpointOverrideBindingModeExposesStableExplicitModes()
+    {
+        Assert.True(Enum.IsDefined(
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideBindingMode),
+            "ReplaceExplicit"));
+        Assert.True(Enum.IsDefined(
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideBindingMode),
+            "MergeExplicit"));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideBindingModeExtensions)
+            .GetMethod("GetWireName", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideBindingModeExtensions)
+            .GetMethod("TryParseWireName", BindingFlags.Static | BindingFlags.Public));
+    }
+
+    [Theory]
+    [InlineData(global::Cephalon.Abstractions.Transports.RestEndpointOverrideBindingMode.ReplaceExplicit, "replace-explicit")]
+    [InlineData(global::Cephalon.Abstractions.Transports.RestEndpointOverrideBindingMode.MergeExplicit, "merge-explicit")]
+    public void RestEndpointOverrideBindingModeWireNamesStayAlignedWithJsonSerialization(
+        global::Cephalon.Abstractions.Transports.RestEndpointOverrideBindingMode bindingMode,
+        string expectedWireName)
+    {
+        Assert.Equal(
+            expectedWireName,
+            global::Cephalon.Abstractions.Transports.RestEndpointOverrideBindingModeExtensions.GetWireName(bindingMode));
+        Assert.True(global::Cephalon.Abstractions.Transports.RestEndpointOverrideBindingModeExtensions.TryParseWireName(expectedWireName, out var parsed));
+        Assert.Equal(bindingMode, parsed);
+        Assert.Equal($"\"{expectedWireName}\"", JsonSerializer.Serialize(bindingMode));
     }
 
     [Fact]
