@@ -1370,12 +1370,14 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             "Publishes a profile-backed route whose explicit module metadata already matches the host metadata rule.",
             endpoint.OriginalDescription);
         Assert.Null(endpoint.AppliedOverrideId);
+        Assert.Equal("prefer-module-docs-noop", endpoint.SelectedOverrideId);
         Assert.Contains("prefer-module-docs-noop", endpoint.MatchedOverrideIds);
 
         var candidate = Assert.Single(candidates, static item =>
             string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.profile.runtimenoop.metadata", StringComparison.Ordinal));
         Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
         Assert.Null(candidate.AppliedOverrideId);
+        Assert.Equal("prefer-module-docs-noop", candidate.SelectedOverrideId);
         Assert.Equal(endpoint.EndpointName, candidate.ProjectedEndpoint.EndpointName);
         Assert.Equal(endpoint.Summary, candidate.ProjectedEndpoint.Summary);
         Assert.Equal(endpoint.Description, candidate.ProjectedEndpoint.Description);
@@ -1396,11 +1398,13 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Contains(snapshot.RestEndpointCandidates, item =>
             string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
             item.AppliedOverrideId is null &&
+            string.Equals(item.SelectedOverrideId, "prefer-module-docs-noop", StringComparison.Ordinal) &&
             string.Equals(item.ProjectedEndpoint.EndpointName, "tests.profile.runtimeoverride.noop.metadata.lookup", StringComparison.Ordinal) &&
             item.MatchedOverrideIds.Contains("prefer-module-docs-noop"));
         Assert.Contains(snapshot.RestEndpoints, item =>
             string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal) &&
             item.AppliedOverrideId is null &&
+            string.Equals(item.SelectedOverrideId, "prefer-module-docs-noop", StringComparison.Ordinal) &&
             string.Equals(item.EndpointName, "tests.profile.runtimeoverride.noop.metadata.lookup", StringComparison.Ordinal) &&
             item.MatchedOverrideIds.Contains("prefer-module-docs-noop"));
 
@@ -1476,12 +1480,14 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             "Publishes a profile-backed route whose explicit module configuration already clears description metadata before host governance runs.",
             endpoint.OriginalDescription);
         Assert.Null(endpoint.AppliedOverrideId);
+        Assert.Equal("clear-module-description-noop", endpoint.SelectedOverrideId);
         Assert.Contains("clear-module-description-noop", endpoint.MatchedOverrideIds);
 
         var candidate = Assert.Single(candidates, static item =>
             string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.profile.runtimenoop.clear.metadata", StringComparison.Ordinal));
         Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
         Assert.Null(candidate.AppliedOverrideId);
+        Assert.Equal("clear-module-description-noop", candidate.SelectedOverrideId);
         Assert.Equal(endpoint.EndpointName, candidate.ProjectedEndpoint.EndpointName);
         Assert.Equal(endpoint.Summary, candidate.ProjectedEndpoint.Summary);
         Assert.Null(candidate.ProjectedEndpoint.Description);
@@ -1494,11 +1500,13 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Contains(snapshot.RestEndpointCandidates, item =>
             string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
             item.AppliedOverrideId is null &&
+            string.Equals(item.SelectedOverrideId, "clear-module-description-noop", StringComparison.Ordinal) &&
             item.ProjectedEndpoint.Description is null &&
             item.MatchedOverrideIds.Contains("clear-module-description-noop"));
         Assert.Contains(snapshot.RestEndpoints, item =>
             string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal) &&
             item.AppliedOverrideId is null &&
+            string.Equals(item.SelectedOverrideId, "clear-module-description-noop", StringComparison.Ordinal) &&
             item.Description is null &&
             item.MatchedOverrideIds.Contains("clear-module-description-noop"));
 
@@ -1734,6 +1742,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Null(endpoint.RequiredCapabilityKey);
         Assert.Null(endpoint.OriginalRequiredCapabilityKey);
         Assert.Null(endpoint.AppliedOverrideId);
+        Assert.Equal("clear-public-capability-noop", endpoint.SelectedOverrideId);
         Assert.Contains("clear-public-capability-noop", endpoint.MatchedOverrideIds);
 
         Assert.Contains(snapshot.RestEndpoints, item =>
@@ -1741,19 +1750,22 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             item.RequiredCapabilityKey is null &&
             item.OriginalRequiredCapabilityKey is null &&
             item.AppliedOverrideId is null &&
+            string.Equals(item.SelectedOverrideId, "clear-public-capability-noop", StringComparison.Ordinal) &&
             item.MatchedOverrideIds.Contains("clear-public-capability-noop"));
 
         var candidate = Assert.Single(candidates, static item =>
             string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.profile.runtimeclear.noop.capability", StringComparison.Ordinal));
         Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
         Assert.Null(candidate.AppliedOverrideId);
+        Assert.Equal("clear-public-capability-noop", candidate.SelectedOverrideId);
         Assert.Null(candidate.ProjectedEndpoint.RequiredCapabilityKey);
         Assert.Contains("clear-public-capability-noop", candidate.MatchedOverrideIds);
 
         Assert.Contains(snapshot.RestEndpointCandidates, item =>
             string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
             item.ProjectedEndpoint.RequiredCapabilityKey is null &&
-            item.AppliedOverrideId is null);
+            item.AppliedOverrideId is null &&
+            string.Equals(item.SelectedOverrideId, "clear-public-capability-noop", StringComparison.Ordinal));
 
         var routeEndpoint = Assert.Single(
             ((IEndpointRouteBuilder)app).DataSources
@@ -1814,12 +1826,14 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("restricted.original", endpoint.RequiredCapabilityKey);
         Assert.Equal("restricted.original", endpoint.OriginalRequiredCapabilityKey);
         Assert.Null(endpoint.AppliedOverrideId);
+        Assert.Equal("prefer-public-capability-same-key", endpoint.SelectedOverrideId);
         Assert.Contains("prefer-public-capability-same-key", endpoint.MatchedOverrideIds);
 
         var candidate = Assert.Single(candidates, static item =>
             string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.profile.runtimeoverride.capability", StringComparison.Ordinal));
         Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
         Assert.Null(candidate.AppliedOverrideId);
+        Assert.Equal("prefer-public-capability-same-key", candidate.SelectedOverrideId);
         Assert.Equal("restricted.original", candidate.ProjectedEndpoint.RequiredCapabilityKey);
         Assert.Contains("prefer-public-capability-same-key", candidate.MatchedOverrideIds);
 
@@ -1833,12 +1847,14 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Contains(snapshot.RestEndpointCandidates, item =>
             string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
             string.Equals(item.ProjectedEndpoint.RequiredCapabilityKey, "restricted.original", StringComparison.Ordinal) &&
-            item.AppliedOverrideId is null);
+            item.AppliedOverrideId is null &&
+            string.Equals(item.SelectedOverrideId, "prefer-public-capability-same-key", StringComparison.Ordinal));
         Assert.Contains(snapshot.RestEndpoints, item =>
             string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal) &&
             string.Equals(item.RequiredCapabilityKey, "restricted.original", StringComparison.Ordinal) &&
             string.Equals(item.OriginalRequiredCapabilityKey, "restricted.original", StringComparison.Ordinal) &&
             item.AppliedOverrideId is null &&
+            string.Equals(item.SelectedOverrideId, "prefer-public-capability-same-key", StringComparison.Ordinal) &&
             item.MatchedOverrideIds.Contains("prefer-public-capability-same-key"));
 
         var routeEndpoint = Assert.Single(
@@ -5533,6 +5549,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         var endpoint = Assert.Single(endpoints, static item =>
             string.Equals(item.BehaviorId, "tests.rest.profile.bindings", StringComparison.Ordinal));
         Assert.Null(endpoint.AppliedOverrideId);
+        Assert.Equal("prefer-current-bindings", endpoint.SelectedOverrideId);
         Assert.Equal(["prefer-current-bindings"], endpoint.MatchedOverrideIds);
         Assert.NotNull(endpoint.OriginalProjection);
         Assert.Collection(
@@ -5566,6 +5583,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.profile.bindings", StringComparison.Ordinal));
         Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
         Assert.Null(candidate.AppliedOverrideId);
+        Assert.Equal("prefer-current-bindings", candidate.SelectedOverrideId);
         Assert.Equal(["prefer-current-bindings"], candidate.MatchedOverrideIds);
         Assert.Collection(
             candidate.ProjectedEndpoint.BindingDescriptors,
@@ -5597,10 +5615,12 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Contains(snapshot.RestEndpoints, item =>
             string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal) &&
             item.AppliedOverrideId is null &&
+            string.Equals(item.SelectedOverrideId, "prefer-current-bindings", StringComparison.Ordinal) &&
             item.MatchedOverrideIds.SequenceEqual(["prefer-current-bindings"]));
         Assert.Contains(snapshot.RestEndpointCandidates, item =>
             string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
             item.AppliedOverrideId is null &&
+            string.Equals(item.SelectedOverrideId, "prefer-current-bindings", StringComparison.Ordinal) &&
             item.MatchedOverrideIds.SequenceEqual(["prefer-current-bindings"]));
 
         using var request = new HttpRequestMessage(
@@ -5686,7 +5706,8 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Contains(loggerProvider.Entries, entry =>
             entry.EventId.Id == 5203 &&
             entry.Message.Contains("tests.rest.profile.bindings", StringComparison.Ordinal) &&
-            entry.Message.Contains("prefer-current-bindings", StringComparison.Ordinal));
+            entry.Message.Contains("prefer-current-bindings", StringComparison.Ordinal) &&
+            entry.Message.Contains("selected governance override", StringComparison.Ordinal));
         Assert.Contains(loggerProvider.Entries, entry =>
             entry.EventId.Id == 5204 &&
             entry.Message.Contains("tests.rest.profile.bindings.query.partial", StringComparison.Ordinal) &&

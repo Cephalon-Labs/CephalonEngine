@@ -43,6 +43,10 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
     /// The authoring-policy suppression kind when this candidate was suppressed by behavior-level
     /// authoring-policy enforcement.
     /// </param>
+    /// <param name="selectedOverrideId">
+    /// The selected host-level override identifier when one winning override rule was resolved for
+    /// this candidate, even if that winning rule became a runtime no-op.
+    /// </param>
     public RestEndpointCandidateRuntimeDescriptor(
         string id,
         RestEndpointRuntimeDescriptor projectedEndpoint,
@@ -56,7 +60,8 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
         IReadOnlyList<string>? matchedSuppressionIds = null,
         IReadOnlyList<string>? matchedOverrideIds = null,
         string? suppressionReason = null,
-        RestEndpointAuthoringPolicySuppressionKind? suppressedByAuthoringPolicyKind = null)
+        RestEndpointAuthoringPolicySuppressionKind? suppressedByAuthoringPolicyKind = null,
+        string? selectedOverrideId = null)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -95,6 +100,13 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
 
         var normalizedMatchedSuppressionIds = NormalizeOrderedList(matchedSuppressionIds);
         var normalizedMatchedOverrideIds = NormalizeOrderedList(matchedOverrideIds);
+        var normalizedAppliedOverrideId = string.IsNullOrWhiteSpace(appliedOverrideId)
+            ? null
+            : appliedOverrideId.Trim();
+        var normalizedSelectedOverrideId = string.IsNullOrWhiteSpace(selectedOverrideId)
+            ? null
+            : selectedOverrideId.Trim();
+        normalizedSelectedOverrideId ??= normalizedAppliedOverrideId ?? normalizedMatchedOverrideIds.FirstOrDefault();
 
         if (status == RestEndpointCandidateStatus.Published &&
             (!string.IsNullOrWhiteSpace(suppressedByCandidateId) ||
@@ -147,13 +159,31 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
                 nameof(matchedSuppressionIds));
         }
 
-        if (!string.IsNullOrWhiteSpace(appliedOverrideId) &&
+        if (normalizedSelectedOverrideId is not null &&
             normalizedMatchedOverrideIds.Length > 0 &&
-            !normalizedMatchedOverrideIds.Contains(appliedOverrideId.Trim(), StringComparer.OrdinalIgnoreCase))
+            !normalizedMatchedOverrideIds.Contains(normalizedSelectedOverrideId, StringComparer.OrdinalIgnoreCase))
+        {
+            throw new ArgumentException(
+                "The selected override id must appear in the matched override id list when that list is provided.",
+                nameof(selectedOverrideId));
+        }
+
+        if (normalizedAppliedOverrideId is not null &&
+            normalizedMatchedOverrideIds.Length > 0 &&
+            !normalizedMatchedOverrideIds.Contains(normalizedAppliedOverrideId, StringComparer.OrdinalIgnoreCase))
         {
             throw new ArgumentException(
                 "The applied override id must appear in the matched override id list when that list is provided.",
                 nameof(matchedOverrideIds));
+        }
+
+        if (normalizedAppliedOverrideId is not null &&
+            normalizedSelectedOverrideId is not null &&
+            !string.Equals(normalizedAppliedOverrideId, normalizedSelectedOverrideId, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new ArgumentException(
+                "The applied override id must match the selected override id when both are declared.",
+                nameof(appliedOverrideId));
         }
 
         Id = id.Trim();
@@ -168,11 +198,10 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
         SuppressedBySuppressionId = string.IsNullOrWhiteSpace(suppressedBySuppressionId)
             ? null
             : suppressedBySuppressionId.Trim();
-        AppliedOverrideId = string.IsNullOrWhiteSpace(appliedOverrideId)
-            ? null
-            : appliedOverrideId.Trim();
+        AppliedOverrideId = normalizedAppliedOverrideId;
         MatchedSuppressionIds = normalizedMatchedSuppressionIds;
         MatchedOverrideIds = normalizedMatchedOverrideIds;
+        SelectedOverrideId = normalizedSelectedOverrideId;
         SuppressionReason = string.IsNullOrWhiteSpace(suppressionReason)
             ? null
             : suppressionReason.Trim();
@@ -229,6 +258,12 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
     /// Gets the host-level override identifier when this candidate shape was rewritten by REST governance.
     /// </summary>
     public string? AppliedOverrideId { get; }
+
+    /// <summary>
+    /// Gets the selected host-level override identifier when one winning override rule was
+    /// resolved for this candidate, even if that winning rule became a runtime no-op.
+    /// </summary>
+    public string? SelectedOverrideId { get; }
 
     /// <summary>
     /// Gets the ordered suppression-rule identifiers that matched this candidate before one winner was selected.

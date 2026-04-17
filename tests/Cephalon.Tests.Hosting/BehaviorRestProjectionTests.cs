@@ -1204,6 +1204,7 @@ public sealed class BehaviorRestProjectionTests
         var candidate = Assert.Single(candidates);
         Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
         Assert.Null(candidate.Candidate.AppliedOverrideId);
+        Assert.Equal("prefer-current-tag", candidate.Candidate.SelectedOverrideId);
         Assert.Equal(["prefer-current-tag"], candidate.Candidate.MatchedOverrideIds);
         Assert.Equal(
             baselineCandidate.Candidate.ProjectedEndpoint.Tags,
@@ -1279,6 +1280,7 @@ public sealed class BehaviorRestProjectionTests
         var candidate = Assert.Single(candidates);
         Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
         Assert.Null(candidate.Candidate.AppliedOverrideId);
+        Assert.Equal("prefer-current-document", candidate.Candidate.SelectedOverrideId);
         Assert.Equal(["prefer-current-document"], candidate.Candidate.MatchedOverrideIds);
         Assert.Equal(
             baselineCandidate.Candidate.ProjectedEndpoint.OpenApiDocumentName,
@@ -1441,6 +1443,7 @@ public sealed class BehaviorRestProjectionTests
         var candidate = Assert.Single(candidates);
         Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
         Assert.Null(candidate.Candidate.AppliedOverrideId);
+        Assert.Equal("prefer-current-docs", candidate.Candidate.SelectedOverrideId);
         Assert.Equal(["prefer-current-docs"], candidate.Candidate.MatchedOverrideIds);
         Assert.Equal(
             baselineCandidate.Candidate.ProjectedEndpoint.EndpointName,
@@ -1752,6 +1755,7 @@ public sealed class BehaviorRestProjectionTests
 
         Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
         Assert.Null(candidate.Candidate.AppliedOverrideId);
+        Assert.Equal("prefer-current-bindings", candidate.Candidate.SelectedOverrideId);
         Assert.Equal(["prefer-current-bindings"], candidate.Candidate.MatchedOverrideIds);
         Assert.Equal(4, candidate.Candidate.OriginalProjection.BindingDescriptors.Count);
         Assert.Collection(

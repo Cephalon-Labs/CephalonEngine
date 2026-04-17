@@ -745,16 +745,18 @@ Current governance baseline:
 - published endpoints now also expose ordered `MatchedOverrideIds`, so the final runtime answer can
   keep shorthand override matches visible, including capability-only no-op matches, endpoint-
   metadata-only no-op matches, and reorder-only equivalent binding-plan rewrites that still leave
-  `AppliedOverrideId = null`; that same semantic binding-set comparison now also drives projection
-  reuse and post-materialization structural override checks
+  `AppliedOverrideId = null`; those no-op wins now also surface the selected winning rule through
+  `SelectedOverrideId`; that same semantic binding-set comparison now also drives projection reuse
+  and post-materialization structural override checks
 - `/engine/rest-endpoint-candidates` plus `RuntimeIntrospectionSnapshot.RestEndpointCandidates` now
   follow that same no-op governance truth for published candidates: capability-only clear matches
   against an already-empty boundary, same-key capability rewrites, same-value endpoint-metadata
   rewrites, endpoint-metadata clears against source metadata the module already removed, and
   reorder-only equivalent binding-plan rewrites keep `MatchedOverrideIds` visible but leave
-  `AppliedOverrideId = null`; in that binding-order case the source explicit binding order remains
-  the authoritative projected answer even when the equivalent reordered binding set comes from a
-  later synthetic or future shorthand path
+  `AppliedOverrideId = null`; those published candidates now also surface the winning no-op rule
+  through `SelectedOverrideId`; in that binding-order case the source explicit binding order
+  remains the authoritative projected answer even when the equivalent reordered binding set comes
+  from a later synthetic or future shorthand path
 - broader implicit-property promotion beyond that constrained body-fallback-plus-bounded-query-
   fallback path plus broader binding-shape overrides beyond the current
   replace-plus-merge-explicit upsert-plus-withdraw model remain later work

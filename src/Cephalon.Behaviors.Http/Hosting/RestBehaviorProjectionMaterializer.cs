@@ -299,6 +299,7 @@ internal static class RestBehaviorProjectionMaterializer
                     logger,
                     candidate.Id,
                     behaviorId,
+                    candidate.SelectedOverrideId ?? "(none)",
                     JoinIdentifiers(candidate.MatchedOverrideIds));
             }
 

@@ -28,8 +28,8 @@ internal static class RestBehaviorGovernanceLoggerMessages
                 RestBehaviorGovernanceDiagnosticsConventions.OverrideAppliedName),
             RestBehaviorGovernanceDiagnosticsConventions.OverrideAppliedMessageTemplate);
 
-    private static readonly Action<ILogger, string, string, string, Exception?> OverrideNoOp =
-        LoggerMessage.Define<string, string, string>(
+    private static readonly Action<ILogger, string, string, string, string, Exception?> OverrideNoOp =
+        LoggerMessage.Define<string, string, string, string>(
             LogLevel.Information,
             new EventId(
                 RestBehaviorGovernanceDiagnosticsConventions.OverrideNoOpId,
@@ -88,9 +88,10 @@ internal static class RestBehaviorGovernanceLoggerMessages
         ILogger logger,
         string candidateId,
         string behaviorId,
+        string selectedOverrideId,
         string matchedOverrideIds)
     {
-        OverrideNoOp(logger, candidateId, behaviorId, matchedOverrideIds, null);
+        OverrideNoOp(logger, candidateId, behaviorId, selectedOverrideId, matchedOverrideIds, null);
     }
 
     public static void LogBindingFallbackPreserved(

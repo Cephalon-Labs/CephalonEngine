@@ -331,11 +331,14 @@ Status update:
   same contract. The runtime now exposes those configured rules through
   `IRestEndpointOverrideRuntimeCatalog`, `/engine/rest-endpoint-overrides`, and
   `snapshot.RestEndpointOverrides`; candidates now surface the governing rule through
-  `RestEndpointCandidateRuntimeDescriptor.AppliedOverrideId` while
+  `RestEndpointCandidateRuntimeDescriptor.AppliedOverrideId` when the winning rule materially
+  changes the effective answer, and now also surface the selected winning no-op rule through
+  `RestEndpointCandidateRuntimeDescriptor.SelectedOverrideId` while
   `RestEndpointCandidateRuntimeDescriptor.MatchedOverrideIds` keeps every matching rule visible in
   specificity order, and published candidate registration now reconciles capability-only no-op
   matches against the actual mapped endpoint so no-op clears or same-key capability rewrites leave
-  `AppliedOverrideId = null` while `MatchedOverrideIds` still shows that the rule matched; the
+  `AppliedOverrideId = null` while `SelectedOverrideId` plus `MatchedOverrideIds` still show which
+  rule won and matched; the
   normalized materializer now maps the same effective projection shape that
   the runtime catalogs report; explicit binding-plan
   overrides now default to replacing the shorthand candidate's explicit descriptors, but can also
@@ -852,7 +855,7 @@ Status:
   `OpenApiDocumentName`, HTTP `Method`, bounded published `RouteGroupPrefix`, constrained
   relative `Pattern`, required capability boundary, endpoint metadata, tag, or explicit binding
   plan, while the runtime keeps both the configured override-rule catalog and the candidate-level
-  `AppliedOverrideId` plus `MatchedOverrideIds` truth visible
+  `AppliedOverrideId`, `SelectedOverrideId`, and `MatchedOverrideIds` truth visible
 - the next governance-overlap visibility follow-through is now shipped through `ENG-058-T87`, so
   overlapping shorthand suppression/override matches now stay visible in runtime truth through the
   ordered `MatchedSuppressionIds` and `MatchedOverrideIds` lists before one rule wins by the
@@ -1140,7 +1143,8 @@ The following points are durable enough to keep outside thread-local context.
 - when published candidate or endpoint runtime truth is reconciled after ASP.NET Core
   materialization, metadata-only same-value rewrites, same-value document rewrites, same-value tag
   rewrites, and metadata-clear matches against source metadata the module already set or cleared should keep
-  `MatchedOverrideIds` visible while leaving `AppliedOverrideId = null`
+  `MatchedOverrideIds` visible while leaving `AppliedOverrideId = null`; those no-op wins should
+  still surface the winning rule through `SelectedOverrideId`
 - when REST governance rewrites shorthand `RequiredCapabilityKey` or clears it through
   `ClearRequiredCapability`, the same effective answer must drive
   `ProjectedEndpoint.RequiredCapabilityKey`, actual ASP.NET Core endpoint metadata,
@@ -1150,11 +1154,13 @@ The following points are durable enough to keep outside thread-local context.
   guards behind
 - when published endpoint runtime truth needs to explain shorthand capability governance,
   `/engine/rest-endpoints` and `snapshot.RestEndpoints` now also expose
-  `OriginalRequiredCapabilityKey` plus `AppliedOverrideId`, so the final published surface can
+  `OriginalRequiredCapabilityKey`, `AppliedOverrideId`, and `SelectedOverrideId`, so the final
+  published surface can
   distinguish “no capability boundary ever existed” from “a source capability boundary was cleared
   or rewritten” without forcing operators to reconstruct that answer only from candidate joins; the
   endpoint-level `AppliedOverrideId` should remain `null` for capability-only no-op matches whose
-  effective published capability answer does not change
+  effective published capability answer does not change, while `SelectedOverrideId` still answers
+  which rule won
 - when published endpoint runtime truth needs to explain shorthand governance overlap directly,
   `/engine/rest-endpoints` and `snapshot.RestEndpoints` should also expose the ordered
   `MatchedOverrideIds` set from the originating shorthand candidate so operators can see matched

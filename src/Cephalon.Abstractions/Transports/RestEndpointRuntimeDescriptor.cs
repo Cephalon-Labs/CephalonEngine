@@ -87,6 +87,10 @@ public sealed class RestEndpointRuntimeDescriptor
     /// The ordered shorthand override identifiers that matched this endpoint's originating
     /// candidate before one winner was selected.
     /// </param>
+    /// <param name="selectedOverrideId">
+    /// The selected shorthand override identifier when one winning override rule was resolved for
+    /// this endpoint's originating candidate, even if that winning rule became a runtime no-op.
+    /// </param>
     public RestEndpointRuntimeDescriptor(
         string id,
         string transportId,
@@ -119,8 +123,33 @@ public sealed class RestEndpointRuntimeDescriptor
         string? requiredCapabilityKey = null,
         string? originalRequiredCapabilityKey = null,
         string? appliedOverrideId = null,
-        IReadOnlyList<string>? matchedOverrideIds = null)
+        IReadOnlyList<string>? matchedOverrideIds = null,
+        string? selectedOverrideId = null)
     {
+        var normalizedMatchedOverrideIds = NormalizeOrderedList(matchedOverrideIds);
+        var normalizedAppliedOverrideId = NormalizeOptional(appliedOverrideId);
+        var normalizedSelectedOverrideId = NormalizeOptional(selectedOverrideId)
+            ?? normalizedAppliedOverrideId
+            ?? normalizedMatchedOverrideIds.FirstOrDefault();
+
+        if (normalizedSelectedOverrideId is not null &&
+            normalizedMatchedOverrideIds.Length > 0 &&
+            !normalizedMatchedOverrideIds.Contains(normalizedSelectedOverrideId, StringComparer.OrdinalIgnoreCase))
+        {
+            throw new ArgumentException(
+                "The selected override id must appear in the matched override id list when that list is provided.",
+                nameof(selectedOverrideId));
+        }
+
+        if (normalizedAppliedOverrideId is not null &&
+            normalizedSelectedOverrideId is not null &&
+            !string.Equals(normalizedAppliedOverrideId, normalizedSelectedOverrideId, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new ArgumentException(
+                "The applied override id must match the selected override id when both are declared.",
+                nameof(appliedOverrideId));
+        }
+
         Id = NormalizeRequired(id, nameof(id));
         TransportId = NormalizeRequired(transportId, nameof(transportId));
         SourceKind = NormalizeRequired(sourceKind, nameof(sourceKind));
@@ -146,8 +175,9 @@ public sealed class RestEndpointRuntimeDescriptor
         SourceId = NormalizeOptional(sourceId);
         RequiredCapabilityKey = NormalizeOptional(requiredCapabilityKey);
         OriginalRequiredCapabilityKey = NormalizeOptional(originalRequiredCapabilityKey);
-        AppliedOverrideId = NormalizeOptional(appliedOverrideId);
-        MatchedOverrideIds = NormalizeOrderedList(matchedOverrideIds);
+        AppliedOverrideId = normalizedAppliedOverrideId;
+        MatchedOverrideIds = normalizedMatchedOverrideIds;
+        SelectedOverrideId = normalizedSelectedOverrideId;
         CandidateId = NormalizeOptional(candidateId);
         OriginalProjection = NormalizeOriginalProjection(originalProjection);
         BindingDescriptors = NormalizeBindingDescriptors(bindingDescriptors);
@@ -307,6 +337,13 @@ public sealed class RestEndpointRuntimeDescriptor
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? AppliedOverrideId { get; }
+
+    /// <summary>
+    /// Gets the selected shorthand override identifier when one winning override rule was resolved
+    /// for this endpoint's originating candidate, even if that winning rule became a runtime no-op.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? SelectedOverrideId { get; }
 
     /// <summary>
     /// Gets the ordered shorthand override identifiers that matched this endpoint's originating

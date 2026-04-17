@@ -577,7 +577,9 @@ candidate shape before override actions are applied, now supports a positive `Ap
 supported HTTP `Method`, a valid bounded `RouteGroupPrefix`, a valid relative `Pattern`,
 endpoint-metadata set actions `EndpointName`, `Summary`, and `Description`, endpoint-metadata clear
 actions `ClearEndpointName`, `ClearSummary`, and `ClearDescription`, and/or explicit `Bindings`;
-the winning rule is recorded through `AppliedOverrideId` in `/engine/rest-endpoint-candidates`,
+the winning rule is recorded through `AppliedOverrideId` in `/engine/rest-endpoint-candidates`
+when it materially changes the effective answer, while no-op winning rules still surface through
+`SelectedOverrideId`,
 while the runtime keeps the original shorthand source
 shape visible there through `OriginalProjection` while `ProjectedEndpoint` carries the final
 effective mapped answer, now also keeps original shorthand endpoint name plus summary/description
@@ -591,8 +593,9 @@ DSL/manual routes plus shorthand groups with explicit `.ApiVersion(...)` authori
 selection.
 If ASP.NET Core materialization proves that a matched shorthand override rule did not actually
 change the published endpoint metadata or capability answer, the runtime keeps
-`MatchedOverrideIds` visible but leaves `AppliedOverrideId = null` on both the published
-candidate and final `/engine/rest-endpoints` answer.
+`MatchedOverrideIds` visible, leaves `AppliedOverrideId = null`, and now still surfaces the
+winning rule through `SelectedOverrideId` on both the published candidate and final
+`/engine/rest-endpoints` answer.
 When `Bindings` are supplied, the override
 uses default `ReplaceExplicit` mode unless `BindingMode = MergeExplicit` is set explicitly. Replace
 mode swaps the shorthand candidate's full explicit binding plan, while merge mode upserts only the
