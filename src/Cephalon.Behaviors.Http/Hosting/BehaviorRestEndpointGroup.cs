@@ -40,6 +40,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
     private readonly string? moduleRemarks;
     private readonly string routePrefix;
     private string? runtimeCandidateId;
+    private RestEndpointCandidateProjectionDescriptor? runtimeOriginalProjection;
     private string[] runtimeMatchedOverrideIds = [];
     private string runtimeAuthoringStyle = RestEndpointRuntimeMetadata.BehaviorHelperAuthoringStyle;
     private string runtimeSourceKind = RestEndpointRuntimeMetadata.ManualSourceKind;
@@ -118,6 +119,21 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         runtimeCandidateId = string.IsNullOrWhiteSpace(candidateId)
             ? null
             : candidateId.Trim();
+    }
+
+    internal void UseRuntimeOriginalProjection(RestEndpointCandidateProjectionDescriptor? originalProjection)
+    {
+        runtimeOriginalProjection = originalProjection is null
+            ? null
+            : new RestEndpointCandidateProjectionDescriptor(
+                originalProjection.Method,
+                originalProjection.RoutePattern,
+                originalProjection.RouteGroupPrefix,
+                originalProjection.RelativePattern,
+                originalProjection.ApiVersionMajor,
+                originalProjection.OpenApiDocumentName,
+                originalProjection.BindingDescriptors,
+                originalProjection.BindingFallbackMode);
     }
 
     internal void UseRuntimeMatchedOverrideIds(IReadOnlyList<string>? matchedOverrideIds)
@@ -562,6 +578,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             group.ResolvedRoutePrefix,
             normalizedPattern,
             group.runtimeCandidateId,
+            group.runtimeOriginalProjection,
             contract.Bindings.Count == 0
                 ? null
                 : RestEndpointBindingDescriptorAdapter.ToRuntimeDescriptors(contract.Bindings),

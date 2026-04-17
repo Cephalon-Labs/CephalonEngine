@@ -500,8 +500,12 @@ version when known, behavior id when the route dispatches through a Cephalon beh
 OpenAPI document name, resolved API major version, tags, first-class request-binding descriptors
 when an explicit profile-driven plan exists, first-class `AuthoringStyle`, first-class
 `RouteGroupPrefix` plus `RelativePattern`, first-class nullable `BehaviorType`, first-class
-nullable `SourceId`, and nullable `CandidateId` when the published endpoint comes from the
-module-owned behavior projection pipeline instead of a manual route.
+nullable `SourceId`, nullable `CandidateId`, and nullable `OriginalProjection` when the published
+endpoint comes from the module-owned behavior projection pipeline instead of a manual or
+behavior-helper route. That published `OriginalProjection` keeps the original shorthand method,
+route, document-version, and binding-plan truth visible directly on the final runtime endpoint so
+operators no longer need a candidate-catalog join just to compare original-versus-effective
+publication.
 
 The same runtime answer now has a companion candidate catalog for precedence visibility:
 

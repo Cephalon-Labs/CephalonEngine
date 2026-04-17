@@ -97,6 +97,7 @@ internal static class RestBehaviorProjectionMaterializer
             foreach (var candidate in routeGroup)
             {
                 group.UseRuntimeCandidateId(candidate.Candidate.Id);
+                group.UseRuntimeOriginalProjection(candidate.Candidate.OriginalProjection);
                 group.UseRuntimeMatchedOverrideIds(candidate.Candidate.MatchedOverrideIds);
                 var builder = candidate.EffectiveEndpointProjection.Apply(group);
                 var sourceCapabilityCapture = CaptureSourceCapability(builder);

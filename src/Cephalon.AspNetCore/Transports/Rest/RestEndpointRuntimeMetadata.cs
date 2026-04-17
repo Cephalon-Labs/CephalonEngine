@@ -84,6 +84,7 @@ internal sealed record RestBehaviorEndpointMetadata(
     string RouteGroupPrefix,
     string RelativePattern,
     string? CandidateId,
+    RestEndpointCandidateProjectionDescriptor? OriginalProjection,
     IReadOnlyList<RestEndpointBindingDescriptor>? BindingDescriptors,
     bool PreserveImplicitQueryFallback,
     IReadOnlyList<string>? MatchedOverrideIds);

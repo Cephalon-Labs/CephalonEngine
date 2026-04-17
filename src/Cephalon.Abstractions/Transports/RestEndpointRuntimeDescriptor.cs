@@ -29,6 +29,10 @@ public sealed class RestEndpointRuntimeDescriptor
     /// The stable originating candidate identifier when this endpoint was published from the
     /// module-owned behavior projection pipeline.
     /// </param>
+    /// <param name="originalProjection">
+    /// The original shorthand projection shape before later host-level overrides are applied when
+    /// the endpoint was published from the module-owned behavior projection pipeline.
+    /// </param>
     /// <param name="bindingDescriptors">The resolved request-binding descriptors when the endpoint exposes an explicit binding plan.</param>
     /// <param name="bindingFallbackMode">
     /// The resolved request-binding fallback mode when the endpoint preserves source shorthand fallback behavior beyond
@@ -87,6 +91,7 @@ public sealed class RestEndpointRuntimeDescriptor
         string? summary = null,
         string? description = null,
         string? candidateId = null,
+        RestEndpointCandidateProjectionDescriptor? originalProjection = null,
         IReadOnlyList<RestEndpointBindingDescriptor>? bindingDescriptors = null,
         RestEndpointBindingFallbackMode? bindingFallbackMode = null,
         IReadOnlyDictionary<string, string>? metadata = null,
@@ -125,6 +130,7 @@ public sealed class RestEndpointRuntimeDescriptor
         AppliedOverrideId = NormalizeOptional(appliedOverrideId);
         MatchedOverrideIds = NormalizeOrderedList(matchedOverrideIds);
         CandidateId = NormalizeOptional(candidateId);
+        OriginalProjection = NormalizeOriginalProjection(originalProjection);
         BindingDescriptors = NormalizeBindingDescriptors(bindingDescriptors);
         BindingFallbackMode = NormalizeBindingFallbackMode(bindingFallbackMode);
         Metadata = metadata is null
@@ -276,6 +282,13 @@ public sealed class RestEndpointRuntimeDescriptor
     public string? CandidateId { get; }
 
     /// <summary>
+    /// Gets the original shorthand projection shape before later host-level overrides are applied
+    /// when the endpoint was published from the module-owned behavior projection pipeline.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public RestEndpointCandidateProjectionDescriptor? OriginalProjection { get; }
+
+    /// <summary>
     /// Gets the resolved request-binding descriptors when the endpoint exposes an explicit binding plan.
     /// </summary>
     public IReadOnlyList<RestEndpointBindingDescriptor> BindingDescriptors { get; }
@@ -329,6 +342,22 @@ public sealed class RestEndpointRuntimeDescriptor
                 value.Source,
                 value.Name))
             .ToArray() ?? [];
+    }
+
+    private static RestEndpointCandidateProjectionDescriptor? NormalizeOriginalProjection(
+        RestEndpointCandidateProjectionDescriptor? value)
+    {
+        return value is null
+            ? null
+            : new RestEndpointCandidateProjectionDescriptor(
+                value.Method,
+                value.RoutePattern,
+                value.RouteGroupPrefix,
+                value.RelativePattern,
+                value.ApiVersionMajor,
+                value.OpenApiDocumentName,
+                value.BindingDescriptors,
+                value.BindingFallbackMode);
     }
 
     private static RestEndpointBindingFallbackMode? NormalizeBindingFallbackMode(

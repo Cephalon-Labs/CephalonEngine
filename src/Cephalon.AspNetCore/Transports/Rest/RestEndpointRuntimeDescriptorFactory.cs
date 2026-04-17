@@ -19,6 +19,7 @@ internal static class RestEndpointRuntimeDescriptorFactory
         string? summary,
         string? description,
         string? candidateId,
+        RestEndpointCandidateProjectionDescriptor? originalProjection,
         string authoringStyle,
         string behaviorType,
         string routeGroupPrefix,
@@ -63,6 +64,7 @@ internal static class RestEndpointRuntimeDescriptorFactory
             description: description,
             authoringStyle: authoringStyle,
             candidateId: candidateId,
+            originalProjection: originalProjection,
             bindingDescriptors: bindingDescriptors,
             bindingFallbackMode: bindingFallbackMode,
             metadata: CreateBehaviorMetadata(

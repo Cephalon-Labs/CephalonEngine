@@ -996,6 +996,13 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void RestEndpointRuntimeContractsExposeOriginalProjection()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor)
+            .GetProperty("OriginalProjection", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
     public void BehaviorsPatternsAssemblyExposesOnlyTheDocumentedContractSurface()
     {
         AssertExportedTypes(

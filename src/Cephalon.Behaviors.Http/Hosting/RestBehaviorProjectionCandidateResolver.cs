@@ -196,6 +196,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             summary: summary,
             description: description,
             candidateId: candidateId,
+            originalProjection: null,
             authoringStyle: effectiveEndpointProjection.AuthoringStyle,
             behaviorType: effectiveEndpointProjection.BehaviorType.FullName ?? effectiveEndpointProjection.BehaviorType.Name,
             routeGroupPrefix: publishedRouteGroupPrefix,

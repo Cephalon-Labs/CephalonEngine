@@ -102,6 +102,7 @@ internal static class RestEndpointRuntimeMaterializer
                 summary: summary,
                 description: description,
                 candidateId: behaviorMetadata.CandidateId,
+                originalProjection: behaviorMetadata.OriginalProjection,
                 authoringStyle: behaviorMetadata.AuthoringStyle,
                 behaviorType: behaviorMetadata.BehaviorType,
                 routeGroupPrefix: RestEndpointRuntimeDescriptorFactory.CombinePaths(
