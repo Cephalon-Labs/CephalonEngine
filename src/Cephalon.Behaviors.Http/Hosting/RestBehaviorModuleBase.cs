@@ -1,7 +1,10 @@
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.AspNetCore.Transports.Rest;
 using Cephalon.Behaviors.Modules;
+using Cephalon.Engine.Diagnostics;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Cephalon.Behaviors.Http.Hosting;
 
@@ -26,6 +29,16 @@ public abstract class RestBehaviorModuleBase : BehaviorModuleBase, IRestModule
 {
     private RestBehaviorModuleProjection? projection;
     private bool ownershipRegistered;
+
+    /// <inheritdoc />
+    public override void ConfigureServices(IServiceCollection services)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        base.ConfigureServices(services);
+        services.TryAddEnumerable(
+            ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, RestBehaviorGovernanceDiagnosticsConventionContributor>());
+    }
 
     /// <summary>
     /// Gets the marker type used to resolve generated REST profile metadata for the current module.

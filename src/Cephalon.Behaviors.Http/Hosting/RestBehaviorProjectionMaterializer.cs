@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Behaviors.Http.Hosting;
 
@@ -25,6 +26,12 @@ internal static class RestBehaviorProjectionMaterializer
         var configuration = endpoints.ServiceProvider.GetRequiredService<IConfiguration>();
         var apiRoutesOptions = ApiRoutesOptions.FromConfiguration(configuration);
         var candidateRegistry = endpoints.ServiceProvider.GetService<IRestEndpointCandidateRuntimeRegistry>();
+        var loggerFactory = endpoints.ServiceProvider.GetService<ILoggerFactory>();
+        var logger = loggerFactory?.CreateLogger(typeof(RestBehaviorProjectionMaterializer).FullName ?? "Cephalon.Behaviors.Http.Hosting.RestBehaviorProjectionMaterializer");
+        if (logger is not null && !logger.IsEnabled(LogLevel.Information))
+        {
+            logger = null;
+        }
         var governanceOptions = endpoints.ServiceProvider.GetService<RestApiGovernanceOptions>()
             ?? RestApiGovernanceOptions.FromConfiguration(configuration);
         var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
@@ -49,7 +56,7 @@ internal static class RestBehaviorProjectionMaterializer
             MapGroup(endpoints, module, projection.Groups[groupIndex], publishedCandidates, apiRoutesOptions);
         }
 
-        RegisterCandidates(candidateRegistry, endpoints, candidates);
+        RegisterCandidates(candidateRegistry, logger, endpoints, candidates);
     }
 
     internal static void MapGroup(
@@ -169,22 +176,121 @@ internal static class RestBehaviorProjectionMaterializer
 
     private static void RegisterCandidates(
         IRestEndpointCandidateRuntimeRegistry? candidateRegistry,
+        ILogger? logger,
         IEndpointRouteBuilder endpoints,
         IReadOnlyList<ResolvedRestBehaviorEndpointProjectionCandidate> candidates)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
         ArgumentNullException.ThrowIfNull(candidates);
 
-        if (candidateRegistry is null || candidates.Count == 0)
+        if (candidates.Count == 0 || (candidateRegistry is null && logger is null))
         {
             return;
         }
 
+        if (candidateRegistry is null)
+        {
+            if (logger is not null)
+            {
+                LogGovernanceOutcomes(
+                    logger,
+                    candidates.Select(static candidate => candidate.Candidate).ToArray());
+            }
+
+            return;
+        }
+
         var publishedCandidateStates = ResolvePublishedCandidateStates(endpoints, candidates);
+        var registeredCandidates = candidates
+            .Select(candidate => CreateRegisteredCandidateDescriptor(candidate, publishedCandidateStates))
+            .ToArray();
+        foreach (var candidate in registeredCandidates)
+        {
+            candidateRegistry.Register(candidate);
+        }
+
+        if (logger is not null)
+        {
+            LogGovernanceOutcomes(logger, registeredCandidates);
+        }
+    }
+
+    private static void LogGovernanceOutcomes(
+        ILogger logger,
+        RestEndpointCandidateRuntimeDescriptor[] candidates)
+    {
+        ArgumentNullException.ThrowIfNull(logger);
+        ArgumentNullException.ThrowIfNull(candidates);
+
+        if (candidates.Length == 0)
+        {
+            return;
+        }
+
+        var candidatesById = candidates.ToDictionary(static candidate => candidate.Id, StringComparer.OrdinalIgnoreCase);
         foreach (var candidate in candidates)
         {
-            candidateRegistry.Register(CreateRegisteredCandidateDescriptor(candidate, publishedCandidateStates));
+            var behaviorId = candidate.ProjectedEndpoint.BehaviorId ?? "(unknown)";
+            if (!string.IsNullOrWhiteSpace(candidate.SuppressedBySuppressionId))
+            {
+                RestBehaviorGovernanceLoggerMessages.LogGovernanceSuppressed(
+                    logger,
+                    candidate.Id,
+                    behaviorId,
+                    candidate.AuthoringStyle,
+                    candidate.SuppressedBySuppressionId,
+                    JoinIdentifiers(candidate.MatchedSuppressionIds));
+            }
+            else if (!string.IsNullOrWhiteSpace(candidate.SuppressedByCandidateId) &&
+                     candidatesById.TryGetValue(candidate.SuppressedByCandidateId, out var winningCandidate))
+            {
+                RestBehaviorGovernanceLoggerMessages.LogPrecedenceSuppressed(
+                    logger,
+                    candidate.Id,
+                    behaviorId,
+                    candidate.AuthoringStyle,
+                    winningCandidate.Id,
+                    winningCandidate.AuthoringStyle);
+            }
+
+            if (!string.IsNullOrWhiteSpace(candidate.AppliedOverrideId))
+            {
+                RestBehaviorGovernanceLoggerMessages.LogOverrideApplied(
+                    logger,
+                    candidate.Id,
+                    behaviorId,
+                    candidate.AppliedOverrideId,
+                    candidate.ProjectedEndpoint.RoutePattern);
+            }
+            else if (candidate.MatchedOverrideIds.Count > 0)
+            {
+                RestBehaviorGovernanceLoggerMessages.LogOverrideNoOp(
+                    logger,
+                    candidate.Id,
+                    behaviorId,
+                    JoinIdentifiers(candidate.MatchedOverrideIds));
+            }
+
+            if (candidate.ProjectedEndpoint.BindingFallbackMode == RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback &&
+                candidate.OriginalProjection.BindingFallbackMode != candidate.ProjectedEndpoint.BindingFallbackMode)
+            {
+                RestBehaviorGovernanceLoggerMessages.LogBindingFallbackPreserved(
+                    logger,
+                    candidate.Id,
+                    behaviorId,
+                    RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback.ToString(),
+                    JoinIdentifiers(candidate.MatchedOverrideIds));
+            }
         }
+    }
+
+    private static string JoinIdentifiers(IReadOnlyList<string> identifiers)
+    {
+        ArgumentNullException.ThrowIfNull(identifiers);
+
+        return identifiers.Count == 0
+            ? "(none)"
+            : string.Join(", ", identifiers);
     }
 
     private static Dictionary<string, MaterializedPublishedCandidateState> ResolvePublishedCandidateStates(

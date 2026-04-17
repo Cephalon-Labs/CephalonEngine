@@ -163,7 +163,7 @@ The repository had substantial planning content, but a durable rule set for keep
 
 `docs/planning-governance.md` now improves that, but the long-term value will come from applying it consistently.
 
-### 6. Public REST still needs suppression visibility after the first explicit binding-plan slice
+### 6. Public REST needed suppression visibility beyond the first explicit binding-plan slice
 
 The explicit DSL is good, and Cephalon now has the normalized internal public REST projection
 layer, the resolved runtime catalog, fail-fast route-collision validation, manual module-owned
@@ -174,9 +174,15 @@ The newest hardening pass now also rejects invalid explicit binding metadata at 
 re-checks route-placeholder truth during runtime profile normalization, so the remaining gap is no
 longer basic authoring safety.
 
-The remaining gap is making future shorthand or generated routes explain more than the active
-winner: operators and developers still need suppression visibility and eventually richer authoring
-diagnostics once more than one projection style can compete for the same public behavior boundary.
+That first operator-facing visibility gap is now addressed through `ENG-058-T113`: the active
+`Cephalon.Behaviors.Http` pack publishes stable `/engine/diagnostics` event ids plus startup log
+events for suppression, precedence suppression, applied overrides, no-op override matches, and
+preserved fallback answers.
+
+The remaining gap is no longer raw operator visibility; it is richer authoring and build-time
+diagnostics if future shorthand or generated routes broaden enough that more than one projection
+style can compete for the same public behavior boundary in ways the current runtime surfaces do not
+already explain clearly.
 
 ## Architecture recommendations
 

@@ -2,6 +2,7 @@ using System.Net.Http.Json;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Transports;
+using Cephalon.AspNetCore.Diagnostics;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.Modules;
 using Cephalon.AspNetCore.Transports.Rest;
@@ -14,6 +15,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.TestHost;
+using Cephalon.Tests.Support;
+using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Tests.Hosting;
 
@@ -2203,8 +2206,9 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Environment.EnvironmentName = "Production";
         builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
         builder.Configuration["Engine:Transports:0"] = "RestApi";
-        builder.Configuration["OpenApi:EnabledVersions:0"] = "8";
-        builder.Configuration["OpenApi:DefaultVersion"] = "8";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:EnabledVersions:1"] = "8";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
         builder.Configuration["RestApi:Overrides:prefer-v6:Behaviors:0"] = "tests.generated.runtimeexplicitoverride.lookup";
         builder.Configuration["RestApi:Overrides:prefer-v6:ApiVersionMajor"] = "6";
         builder.AddCephalon(engine =>
@@ -3922,6 +3926,60 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonExposesBehaviorHttpGovernanceDiagnosticsAndLogsSuppressionOutcomes()
+    {
+        var loggerProvider = new TestLoggerProvider();
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Logging.ClearProviders();
+        builder.Logging.AddProvider(loggerProvider);
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "8";
+        builder.Configuration["OpenApi:DefaultVersion"] = "8";
+        builder.Configuration["RestApi:Suppressions:prefer-generated:Behaviors:0"] = "tests.rest.generated.threeway.lookup";
+        builder.Configuration["RestApi:Suppressions:prefer-generated:AuthoringStyles:0"] = RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle;
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new GeneratedProfileGovernanceRuntimeCatalogModule());
+            engine.AddModule(new ProfileSuppressionRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var diagnostics = await client.GetFromJsonAsync<DiagnosticsSurface>("/engine/diagnostics");
+
+        Assert.NotNull(diagnostics);
+
+        var convention = Assert.Single(diagnostics.Conventions, static item =>
+            string.Equals(item.Source, "Cephalon.Behaviors.Http", StringComparison.Ordinal));
+        Assert.Equal(5200, convention.MinimumEventId);
+        Assert.Equal(5204, convention.MaximumEventId);
+        Assert.Contains(convention.Events, static item => item.Id == 5200 && item.Name == "RestEndpointGovernanceSuppressed");
+        Assert.Contains(convention.Events, static item => item.Id == 5201 && item.Name == "RestEndpointPrecedenceSuppressed");
+        Assert.Contains(convention.Events, static item => item.Id == 5202 && item.Name == "RestEndpointOverrideApplied");
+        Assert.Contains(convention.Events, static item => item.Id == 5203 && item.Name == "RestEndpointOverrideNoOp");
+        Assert.Contains(convention.Events, static item => item.Id == 5204 && item.Name == "RestEndpointBindingFallbackPreserved");
+
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 5200 &&
+            entry.Message.Contains("tests.rest.generated.threeway.lookup", StringComparison.Ordinal) &&
+            entry.Message.Contains("prefer-generated", StringComparison.Ordinal));
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 5201 &&
+            entry.Message.Contains("tests.rest.profile.suppression", StringComparison.Ordinal) &&
+            entry.Message.Contains(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle, StringComparison.Ordinal));
+    }
+
+    [Fact]
     public async Task MapCephalonExposesRestEndpointPublicationGroupsWhenSameRankCandidatesRemainPublished()
     {
         var builder = WebApplication.CreateBuilder();
@@ -4689,6 +4747,72 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("corr-69", payload.CorrelationId);
         Assert.Equal("same binding semantics", payload.Note);
         Assert.Equal("body-fallback", payload.Ignored);
+    }
+
+    [Fact]
+    public async Task MapCephalonLogsBehaviorHttpGovernanceOverrideNoOpAndFallbackOutcomes()
+    {
+        var loggerProvider = new TestLoggerProvider();
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Logging.ClearProviders();
+        builder.Logging.AddProvider(loggerProvider);
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.Configuration["RestApi:Overrides:prefer-current-bindings:Behaviors:0"] = "tests.rest.profile.bindings";
+        builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:0:PropertyName"] = "CorrelationId";
+        builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:0:Source"] = "Header";
+        builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:0:Name"] = "X-Correlation-Id";
+        builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:1:PropertyName"] = "Note";
+        builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:1:Source"] = "Body";
+        builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:1:Name"] = "note";
+        builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:2:PropertyName"] = "OrderId";
+        builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:2:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:2:Name"] = "orderId";
+        builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:3:PropertyName"] = "Quantity";
+        builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:3:Source"] = "Query";
+        builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:3:Name"] = "quantity";
+        builder.Configuration["RestApi:Overrides:prefer-route-order:Behaviors:0"] = "tests.rest.profile.bindings.query.partial";
+        builder.Configuration["RestApi:Overrides:prefer-route-order:Pattern"] = "/lookup/{orderId}";
+        builder.Configuration["RestApi:Overrides:prefer-route-order:Bindings:0:PropertyName"] = "OrderId";
+        builder.Configuration["RestApi:Overrides:prefer-route-order:Bindings:0:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:prefer-route-order:Bindings:0:Name"] = "orderId";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileBindingRuntimeCatalogModule());
+            engine.AddModule(new ProfileBindingPartialQueryFallbackRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 5202 &&
+            entry.Message.Contains("tests.rest.profile.bindings.query.partial", StringComparison.Ordinal) &&
+            entry.Message.Contains("prefer-route-order", StringComparison.Ordinal) &&
+            entry.Message.Contains("/api/v6/tests/profile-runtime/query-partial/orders/lookup/{orderId}", StringComparison.Ordinal));
+        Assert.DoesNotContain(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 5202 &&
+            entry.Message.Contains("tests.rest.profile.bindings", StringComparison.Ordinal) &&
+            entry.Message.Contains("prefer-current-bindings", StringComparison.Ordinal));
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 5203 &&
+            entry.Message.Contains("tests.rest.profile.bindings", StringComparison.Ordinal) &&
+            entry.Message.Contains("prefer-current-bindings", StringComparison.Ordinal));
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 5204 &&
+            entry.Message.Contains("tests.rest.profile.bindings.query.partial", StringComparison.Ordinal) &&
+            entry.Message.Contains("PreserveSourceImplicitFallback", StringComparison.Ordinal) &&
+            entry.Message.Contains("prefer-route-order", StringComparison.Ordinal));
     }
 
     [Fact]

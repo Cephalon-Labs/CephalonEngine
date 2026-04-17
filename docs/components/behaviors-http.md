@@ -40,6 +40,9 @@ module-owned REST endpoints.
   with explicit `.ApiVersion(...)` and `.WithOpenApiDocumentName(...)` override support, best-effort XML comment
   summaries/descriptions for module-owned REST endpoints, and separation between public REST docs
   and generic adapter endpoints
+- **REST governance diagnostics** — stable `/engine/diagnostics` convention plus information-level
+  startup log events for shorthand suppression, precedence suppression, applied override, no-op
+  override, and preserved binding-fallback outcomes
 - **Optional REST response envelope** — `ApiRoutes:ResultEnvelope:Enabled` projects REST success
   and error responses through `ResultModel<T>` / `ResultModelError` with an `errors` collection
   while leaving GraphQL,
@@ -208,6 +211,23 @@ Current profile behavior:
 - profile API-version metadata is still only a candidate endpoint version; host publication remains
   governed by `OpenApi:EnabledVersions`, `OpenApi:DefaultVersion`, and the legacy document
   allow-list settings
+
+## REST governance diagnostics
+
+When `Cephalon.Behaviors.Http` is active, `/engine/diagnostics` now also publishes source
+`Cephalon.Behaviors.Http` with stable event ids `5200-5204`:
+
+- `5200` — a shorthand candidate was suppressed by a configured governance rule
+- `5201` — a shorthand candidate lost publication because a higher-precedence authoring style won
+- `5202` — a matched shorthand override materially changed the published runtime answer
+- `5203` — a matched shorthand override became a runtime no-op after truth reconciliation
+- `5204` — a shorthand candidate preserved binding fallback while partial explicit override
+  reconciliation ran
+
+Those events are emitted during startup/materialization when information-level logging is enabled.
+For full hosted `MapCephalon()` paths, published-candidate logging reconciles against the actual
+post-materialization endpoint answer first, so metadata-only or reorder-only no-op overrides keep
+`MatchedOverrideIds` visible without falsely logging an applied override.
 
 ## Registration
 

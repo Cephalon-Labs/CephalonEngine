@@ -3,6 +3,7 @@ using Cephalon.Behaviors.Http.Abstractions;
 using Cephalon.Behaviors.Http.Bindings;
 using Cephalon.Behaviors.Http.Registry;
 using Cephalon.Behaviors.Services;
+using Cephalon.Engine.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -44,6 +45,8 @@ public static class HttpBehaviorBindingExtensions
         // This mapper is invoked when the "behavior-http" transport is selected in the engine manifest.
         services.TryAddEnumerable(
             ServiceDescriptor.Singleton<ITransportRouteMapper, BehaviorHttpTransportRouteMapper>());
+        services.TryAddEnumerable(
+            ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, RestBehaviorGovernanceDiagnosticsConventionContributor>());
 
         return builder;
     }
