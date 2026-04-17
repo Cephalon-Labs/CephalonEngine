@@ -255,7 +255,8 @@ internal sealed record RestBehaviorEndpointProjection(
             BehaviorRestMethod.Put => RestBehaviorHttpMethod.Put,
             BehaviorRestMethod.Patch => RestBehaviorHttpMethod.Patch,
             BehaviorRestMethod.Delete => RestBehaviorHttpMethod.Delete,
-            _ => throw new InvalidOperationException($"Unsupported behavior REST profile method '{method}'.")
+            _ => throw new InvalidOperationException(
+                $"Unsupported behavior REST profile method '{method}'. {BehaviorRestWireNameDiagnostics.DescribeMethodSupport()}")
         };
     }
 }

@@ -97,7 +97,7 @@ internal static class BehaviorRestBindingPlanNormalizer
             if (!Enum.IsDefined(binding.Source) || binding.Source == BehaviorRestBindingSource.Unspecified)
             {
                 throw new InvalidOperationException(
-                    $"{sourceLabel} declares an explicit REST binding for input property '{propertyName}' without a supported source.");
+                    $"{sourceLabel} declares an explicit REST binding for input property '{propertyName}' without a supported source. {BehaviorRestWireNameDiagnostics.DescribeBindingSourceSupport()}");
             }
 
             var sourceName = string.IsNullOrWhiteSpace(binding.Name)

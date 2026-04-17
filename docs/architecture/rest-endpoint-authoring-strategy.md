@@ -175,6 +175,11 @@ Status update:
   vocabularies, and `Cephalon.Behaviors.SourceGen` now validates both profile methods and explicit
   binding metadata against those canonical wire-name contracts while still emitting resolved enum
   member names into generated `GetRestProfiles()` output
+- the next runtime-guidance parity follow-through is now also shipped through `ENG-058-T143`:
+  runtime attribute-fallback, explicit binding-plan normalization, and last-mile profile-method
+  conversion now echo those same canonical `get` / `post` / `put` / `patch` / `delete` and
+  `route` / `query` / `header` / `body` wire names in their exception guidance, so operator and
+  developer troubleshooting no longer diverges from the JSON/source-generation contract
 - the next profile-route authoring-safety follow-through is now also shipped through
   `ENG-058-T117`: `Cephalon.Behaviors.SourceGen` now rejects malformed
   `BehaviorRestProfileAttribute.RelativePattern` placeholder syntax earlier through `ABT0026`, and

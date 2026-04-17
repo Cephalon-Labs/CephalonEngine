@@ -242,7 +242,7 @@ internal static class BehaviorRestProfileResolver
             descriptor.Method == BehaviorRestMethod.Unspecified)
         {
             throw new InvalidOperationException(
-                $"REST profile metadata for behavior '{descriptor.BehaviorId}' from '{sourceIdentity}' is missing a supported HTTP method.");
+                $"REST profile metadata for behavior '{descriptor.BehaviorId}' from '{sourceIdentity}' is missing a supported HTTP method. {BehaviorRestWireNameDiagnostics.DescribeMethodSupport()}");
         }
 
         if (string.IsNullOrWhiteSpace(descriptor.RelativePattern))
@@ -386,7 +386,7 @@ internal static class BehaviorRestProfileResolver
             if (!Enum.IsDefined(binding.Source) || binding.Source == BehaviorRestBindingSource.Unspecified)
             {
                 throw new InvalidOperationException(
-                    $"REST profile metadata for behavior '{behaviorId}' from '{sourceIdentity}' declares an explicit binding for '{binding.PropertyName}' without a supported binding source.");
+                    $"REST profile metadata for behavior '{behaviorId}' from '{sourceIdentity}' declares an explicit binding for '{binding.PropertyName}' without a supported binding source. {BehaviorRestWireNameDiagnostics.DescribeBindingSourceSupport()}");
             }
 
             if (!inputProperties.TryGetValue(binding.PropertyName.Trim(), out var property))

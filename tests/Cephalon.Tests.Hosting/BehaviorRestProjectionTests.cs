@@ -3812,6 +3812,26 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void BehaviorRestProfileResolverRejectsProfilesWithoutSupportedMethodFromAttributeFallback()
+    {
+        var behaviorType = CreateDynamicProfileBehaviorType(
+            "tests.profile.projection.unsupported-method.dynamic",
+            (BehaviorRestMethod)999,
+            "/lookup",
+            typeof(string));
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            BehaviorRestProfileResolver.Resolve(behaviorType));
+
+        Assert.Contains("supported HTTP method", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(BehaviorRestMethod.Get.GetWireName(), exception.Message, StringComparison.Ordinal);
+        Assert.Contains(BehaviorRestMethod.Post.GetWireName(), exception.Message, StringComparison.Ordinal);
+        Assert.Contains(BehaviorRestMethod.Put.GetWireName(), exception.Message, StringComparison.Ordinal);
+        Assert.Contains(BehaviorRestMethod.Patch.GetWireName(), exception.Message, StringComparison.Ordinal);
+        Assert.Contains(BehaviorRestMethod.Delete.GetWireName(), exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void BehaviorRestProfileResolverRejectsInvalidRoutePatternFromAttributeFallback()
     {
         var behaviorType = CreateDynamicProfileBehaviorType(
@@ -3893,6 +3913,33 @@ public sealed class BehaviorRestProjectionTests
             BehaviorRestProfileResolver.Resolve(behaviorType));
 
         Assert.Contains("supported binding source", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(BehaviorRestBindingSource.Route.GetWireName(), exception.Message, StringComparison.Ordinal);
+        Assert.Contains(BehaviorRestBindingSource.Query.GetWireName(), exception.Message, StringComparison.Ordinal);
+        Assert.Contains(BehaviorRestBindingSource.Header.GetWireName(), exception.Message, StringComparison.Ordinal);
+        Assert.Contains(BehaviorRestBindingSource.Body.GetWireName(), exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void BehaviorRestBindingPlanNormalizerRejectsBindingsWithoutSupportedSourceUsingCanonicalWireNames()
+    {
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            BehaviorRestBindingPlanNormalizer.NormalizeForInputType(
+                "tests.binding-normalizer",
+                typeof(DynamicProfileBindingInput),
+                RestBehaviorHttpMethod.Post,
+                "/{cartId}",
+                [
+                    new BehaviorRestBindingDescriptor(
+                        nameof(DynamicProfileBindingInput.CartId),
+                        (BehaviorRestBindingSource)999,
+                        "cartId")
+                ]));
+
+        Assert.Contains("supported source", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(BehaviorRestBindingSource.Route.GetWireName(), exception.Message, StringComparison.Ordinal);
+        Assert.Contains(BehaviorRestBindingSource.Query.GetWireName(), exception.Message, StringComparison.Ordinal);
+        Assert.Contains(BehaviorRestBindingSource.Header.GetWireName(), exception.Message, StringComparison.Ordinal);
+        Assert.Contains(BehaviorRestBindingSource.Body.GetWireName(), exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]

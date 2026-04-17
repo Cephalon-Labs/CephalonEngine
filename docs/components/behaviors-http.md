@@ -199,6 +199,9 @@ Current profile behavior:
   validates profile methods against that canonical vocabulary while still emitting the resolved enum
   member names into generated `GetRestProfiles()` hints so future enum-member renames can preserve
   valid metadata by keeping the wire-name contract stable
+- runtime profile normalization and fallback conversion now echo those same canonical method wire
+  names in their exception guidance, so operator/developer troubleshooting does not have to switch
+  between generic runtime wording and the stable JSON/source-generation vocabulary
 - explicit profile bindings currently support `route`, `query`, `header`, and `body` sources for
   object inputs only; build-time diagnostics now reject invalid property names, duplicate property
   bindings, unsupported sources, route-placeholder mismatches, and body bindings on `GET` or
@@ -209,6 +212,9 @@ Current profile behavior:
   generation validates profile bindings against that canonical vocabulary while still emitting the
   resolved enum member names into generated `GetRestProfiles()` hints so future enum-member renames
   can preserve valid metadata by keeping the wire-name contract stable
+- runtime attribute-fallback and explicit binding-plan normalization now also echo those same
+  canonical binding-source wire names in their exception guidance, so profile authoring,
+  normalization, and troubleshooting all point at one stable source vocabulary
 - when explicit bindings are present, they override the implicit merge baseline, while unbound
   route placeholders and body-capable request bodies can still fill remaining object properties
 - explicit profiles can now also preserve the remaining implicit query-string fallback surface by
