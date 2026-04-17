@@ -855,12 +855,12 @@ Override example:
         "Bindings": [
           {
             "PropertyName": "CorrelationId",
-            "Source": "Header",
+            "Source": "header",
             "Name": "X-Trace-Id"
           },
           {
             "PropertyName": "Note",
-            "Source": "Body",
+            "Source": "body",
             "Name": "memo"
           }
         ],
@@ -870,6 +870,9 @@ Override example:
   }
 }
 ```
+
+For host governance config, `Bindings:*:Source` and `TargetBindings:*:Source` now use the same
+stable wire-name vocabulary that runtime JSON emits: `route`, `query`, `header`, and `body`.
 
 Clear-bindings example:
 

@@ -446,7 +446,7 @@ Current helper behavior:
   override actions are applied, and the override surface itself now supports `ApiVersionMajor`,
   `Method`, `RouteGroupPrefix`, `Pattern`, `Bindings`, and typed `BindingMode`, keeps the
   `/v{major}` route segment, OpenAPI document name, endpoint method, effective route, and
-  effective binding plan aligned with the same projection truth, treats `BindingMode` as a wire-name-only config surface with `replace-explicit` or `merge-explicit`, now serializes omitted runtime binding modes as `unspecified`, and defaults `Bindings` to full
+  effective binding plan aligned with the same projection truth, treats `BindingMode` as a wire-name-only config surface with `replace-explicit` or `merge-explicit`, preserves `bindingMode = unspecified` only for `ClearBindings` rules that omitted an explicit mode, uses stable `route` / `query` / `header` / `body` wire names for `Bindings` and `TargetBindings` sources, and defaults `Bindings` to full
   explicit-plan replacement but also allows `BindingMode = merge-explicit` to patch only the changed
   explicit bindings by property name while still letting unbound route placeholders and remaining
   request-body fields fill object properties deterministically, now allows placeholder renames when the

@@ -257,6 +257,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointBindingFallbackModeExtensions),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointBindingDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointBindingSource),
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointBindingSourceExtensions),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasis),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasisExtensions),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideActionKind),
@@ -1127,6 +1128,48 @@ public sealed class PackageSurfaceTests
             .GetProperty("BindingFallbackMode", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateProjectionDescriptor)
             .GetProperty("BindingFallbackMode", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void RestEndpointBindingSourceExposesStableSources()
+    {
+        Assert.True(Enum.IsDefined(
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointBindingSource),
+            "Unspecified"));
+        Assert.True(Enum.IsDefined(
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointBindingSource),
+            "Route"));
+        Assert.True(Enum.IsDefined(
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointBindingSource),
+            "Query"));
+        Assert.True(Enum.IsDefined(
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointBindingSource),
+            "Header"));
+        Assert.True(Enum.IsDefined(
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointBindingSource),
+            "Body"));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointBindingSourceExtensions)
+            .GetMethod("GetWireName", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointBindingSourceExtensions)
+            .GetMethod("TryParseWireName", BindingFlags.Static | BindingFlags.Public));
+    }
+
+    [Theory]
+    [InlineData(global::Cephalon.Abstractions.Transports.RestEndpointBindingSource.Unspecified, "unspecified")]
+    [InlineData(global::Cephalon.Abstractions.Transports.RestEndpointBindingSource.Route, "route")]
+    [InlineData(global::Cephalon.Abstractions.Transports.RestEndpointBindingSource.Query, "query")]
+    [InlineData(global::Cephalon.Abstractions.Transports.RestEndpointBindingSource.Header, "header")]
+    [InlineData(global::Cephalon.Abstractions.Transports.RestEndpointBindingSource.Body, "body")]
+    public void RestEndpointBindingSourceWireNamesStayAlignedWithJsonSerialization(
+        global::Cephalon.Abstractions.Transports.RestEndpointBindingSource source,
+        string expectedWireName)
+    {
+        Assert.Equal(
+            expectedWireName,
+            global::Cephalon.Abstractions.Transports.RestEndpointBindingSourceExtensions.GetWireName(source));
+        Assert.True(global::Cephalon.Abstractions.Transports.RestEndpointBindingSourceExtensions.TryParseWireName(expectedWireName, out var parsed));
+        Assert.Equal(source, parsed);
+        Assert.Equal($"\"{expectedWireName}\"", JsonSerializer.Serialize(source));
     }
 
     [Fact]

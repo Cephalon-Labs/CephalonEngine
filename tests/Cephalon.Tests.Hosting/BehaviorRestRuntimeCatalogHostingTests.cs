@@ -2972,16 +2972,16 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Configuration["RestApi:Overrides:all-candidates:Behaviors:0"] = "tests.rest.profile.selector.bindings";
         builder.Configuration["RestApi:Overrides:all-candidates:Pattern"] = "/lookup/general/{orderId}/items";
         builder.Configuration["RestApi:Overrides:all-candidates:Bindings:0:PropertyName"] = "OrderId";
-        builder.Configuration["RestApi:Overrides:all-candidates:Bindings:0:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:all-candidates:Bindings:0:Source"] = "route";
         builder.Configuration["RestApi:Overrides:all-candidates:Bindings:0:Name"] = "orderId";
         builder.Configuration["RestApi:Overrides:all-candidates:Bindings:1:PropertyName"] = "Quantity";
-        builder.Configuration["RestApi:Overrides:all-candidates:Bindings:1:Source"] = "Query";
+        builder.Configuration["RestApi:Overrides:all-candidates:Bindings:1:Source"] = "query";
         builder.Configuration["RestApi:Overrides:all-candidates:Bindings:1:Name"] = "quantity";
         builder.Configuration["RestApi:Overrides:all-candidates:Bindings:2:PropertyName"] = "CorrelationId";
-        builder.Configuration["RestApi:Overrides:all-candidates:Bindings:2:Source"] = "Header";
+        builder.Configuration["RestApi:Overrides:all-candidates:Bindings:2:Source"] = "header";
         builder.Configuration["RestApi:Overrides:all-candidates:Bindings:2:Name"] = "X-Correlation-Id";
         builder.Configuration["RestApi:Overrides:all-candidates:Bindings:3:PropertyName"] = "Note";
-        builder.Configuration["RestApi:Overrides:all-candidates:Bindings:3:Source"] = "Body";
+        builder.Configuration["RestApi:Overrides:all-candidates:Bindings:3:Source"] = "body";
         builder.Configuration["RestApi:Overrides:all-candidates:Bindings:3:Name"] = "note";
         builder.AddCephalon(engine =>
         {
@@ -3599,7 +3599,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Configuration["RestApi:Overrides:prefer-merge-route-quantity:Pattern"] = "/lookup/{orderId}/items/{quantity}";
         builder.Configuration["RestApi:Overrides:prefer-merge-route-quantity:BindingMode"] = "MergeExplicit";
         builder.Configuration["RestApi:Overrides:prefer-merge-route-quantity:Bindings:0:PropertyName"] = "Quantity";
-        builder.Configuration["RestApi:Overrides:prefer-merge-route-quantity:Bindings:0:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:prefer-merge-route-quantity:Bindings:0:Source"] = "route";
         builder.Configuration["RestApi:Overrides:prefer-merge-route-quantity:Bindings:0:Name"] = "quantity";
         var exception = Assert.Throws<InvalidOperationException>(() => builder.AddCephalon(engine =>
         {
@@ -3617,6 +3617,38 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public void MapCephalonRejectsBindingSourceValuesThatUseEnumMemberNames()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.Configuration["RestApi:Overrides:prefer-short-bindings:Behaviors:0"] = "tests.rest.profile.bindings";
+        builder.Configuration["RestApi:Overrides:prefer-short-bindings:Bindings:0:PropertyName"] = "Quantity";
+        builder.Configuration["RestApi:Overrides:prefer-short-bindings:Bindings:0:Source"] = "Query";
+        builder.Configuration["RestApi:Overrides:prefer-short-bindings:Bindings:0:Name"] = "qty";
+
+        var exception = Assert.Throws<InvalidOperationException>(() => builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileBindingRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        }));
+
+        Assert.Contains("RestApi:Overrides:prefer-short-bindings:Bindings:0:Source", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("stable binding source wire names", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(RestEndpointBindingSource.Route.GetWireName(), exception.Message, StringComparison.Ordinal);
+        Assert.Contains(RestEndpointBindingSource.Query.GetWireName(), exception.Message, StringComparison.Ordinal);
+        Assert.Contains(RestEndpointBindingSource.Header.GetWireName(), exception.Message, StringComparison.Ordinal);
+        Assert.Contains(RestEndpointBindingSource.Body.GetWireName(), exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task MapCephalonAppliesTargetBindingOverrideSelectorsOnlyToTheMatchingCandidate()
     {
         var builder = WebApplication.CreateBuilder();
@@ -3628,7 +3660,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Configuration["OpenApi:DefaultVersion"] = "6";
         builder.Configuration["RestApi:Overrides:route-only-target:Modules:0"] = "tests.rest.profile-runtime.binding-fallback-selectors";
         builder.Configuration["RestApi:Overrides:route-only-target:TargetBindings:0:PropertyName"] = "OrderId";
-        builder.Configuration["RestApi:Overrides:route-only-target:TargetBindings:0:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:route-only-target:TargetBindings:0:Source"] = "route";
         builder.Configuration["RestApi:Overrides:route-only-target:TargetBindings:0:Name"] = "orderId";
         builder.Configuration["RestApi:Overrides:route-only-target:Pattern"] = "/lookup/{orderId}";
         builder.AddCephalon(engine =>
@@ -3649,12 +3681,18 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
         var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
         var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
+        var overrideById = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor>("/engine/rest-endpoint-overrides/route-only-target");
+        var rawOverrides = await client.GetStringAsync("/engine/rest-endpoint-overrides");
+        var rawOverride = await client.GetStringAsync("/engine/rest-endpoint-overrides/route-only-target");
 
         Assert.NotNull(endpoints);
         Assert.NotNull(candidates);
         Assert.NotNull(overrides);
+        Assert.NotNull(overrideById);
         Assert.Equal(2, endpoints.Length);
         Assert.Equal(2, candidates.Length);
+        Assert.Contains("\"source\":\"route\"", rawOverrides, StringComparison.Ordinal);
+        Assert.Contains("\"source\":\"route\"", rawOverride, StringComparison.Ordinal);
 
         var writeEndpoint = Assert.Single(endpoints, static item =>
             string.Equals(
@@ -3689,6 +3727,10 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             binding.PropertyName == "OrderId" &&
             binding.Source == RestEndpointBindingSource.Route &&
             binding.Name == "orderId");
+        Assert.Equal(rule.Id, overrideById.Id);
+        Assert.Equal(rule.Pattern, overrideById.Pattern);
+        Assert.Single(overrideById.TargetBindings);
+        Assert.Equal(RestEndpointBindingSource.Route, overrideById.TargetBindings[0].Source);
 
         using var writeRequest = new HttpRequestMessage(
             HttpMethod.Post,
@@ -3718,7 +3760,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Configuration["OpenApi:DefaultVersion"] = "6";
         builder.Configuration["RestApi:Suppressions:hide-route-only:Modules:0"] = "tests.rest.profile-runtime.binding-fallback-selectors";
         builder.Configuration["RestApi:Suppressions:hide-route-only:TargetBindings:0:PropertyName"] = "OrderId";
-        builder.Configuration["RestApi:Suppressions:hide-route-only:TargetBindings:0:Source"] = "Route";
+        builder.Configuration["RestApi:Suppressions:hide-route-only:TargetBindings:0:Source"] = "route";
         builder.Configuration["RestApi:Suppressions:hide-route-only:TargetBindings:0:Name"] = "orderId";
         builder.AddCephalon(engine =>
         {
@@ -3738,10 +3780,16 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
         var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
         var suppressions = await client.GetFromJsonAsync<RestEndpointSuppressionDescriptor[]>("/engine/rest-endpoint-suppressions");
+        var suppressionById = await client.GetFromJsonAsync<RestEndpointSuppressionDescriptor>("/engine/rest-endpoint-suppressions/hide-route-only");
+        var rawSuppressions = await client.GetStringAsync("/engine/rest-endpoint-suppressions");
+        var rawSuppression = await client.GetStringAsync("/engine/rest-endpoint-suppressions/hide-route-only");
 
         Assert.NotNull(endpoints);
         Assert.NotNull(candidates);
         Assert.NotNull(suppressions);
+        Assert.NotNull(suppressionById);
+        Assert.Contains("\"source\":\"route\"", rawSuppressions, StringComparison.Ordinal);
+        Assert.Contains("\"source\":\"route\"", rawSuppression, StringComparison.Ordinal);
 
         var endpoint = Assert.Single(endpoints);
         Assert.Equal("/api/v6/tests/profile-runtime/binding-fallback-selectors/write/orders/{orderId}", endpoint.RoutePattern);
@@ -3763,6 +3811,9 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             binding.PropertyName == "OrderId" &&
             binding.Source == RestEndpointBindingSource.Route &&
             binding.Name == "orderId");
+        Assert.Equal(rule.Id, suppressionById.Id);
+        Assert.Single(suppressionById.TargetBindings);
+        Assert.Equal(RestEndpointBindingSource.Route, suppressionById.TargetBindings[0].Source);
 
         using var writeRequest = new HttpRequestMessage(
             HttpMethod.Post,
@@ -4047,13 +4098,13 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Configuration["RestApi:Overrides:prefer-route-quantity:Behaviors:0"] = "tests.rest.profile.bindings";
         builder.Configuration["RestApi:Overrides:prefer-route-quantity:Pattern"] = "/lookup/{orderId}/items/{quantity}";
         builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:0:PropertyName"] = "OrderId";
-        builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:0:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:0:Source"] = "route";
         builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:0:Name"] = "orderId";
         builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:1:PropertyName"] = "CorrelationId";
-        builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:1:Source"] = "Header";
+        builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:1:Source"] = "header";
         builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:1:Name"] = "X-Correlation-Id";
         builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:2:PropertyName"] = "Note";
-        builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:2:Source"] = "Body";
+        builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:2:Source"] = "body";
         builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:2:Name"] = "note";
         builder.AddCephalon(engine =>
         {
@@ -4082,16 +4133,16 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Configuration["RestApi:Overrides:prefer-route-quantity:Behaviors:0"] = "tests.rest.profile.bindings.inference";
         builder.Configuration["RestApi:Overrides:prefer-route-quantity:Pattern"] = "/lookup/{orderId}/items/{quantity}";
         builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:0:PropertyName"] = "OrderId";
-        builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:0:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:0:Source"] = "route";
         builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:0:Name"] = "orderId";
         builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:1:PropertyName"] = "Quantity";
-        builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:1:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:1:Source"] = "route";
         builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:1:Name"] = "quantity";
         builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:2:PropertyName"] = "CorrelationId";
-        builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:2:Source"] = "Header";
+        builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:2:Source"] = "header";
         builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:2:Name"] = "X-Correlation-Id";
         builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:3:PropertyName"] = "Note";
-        builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:3:Source"] = "Body";
+        builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:3:Source"] = "body";
         builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:3:Name"] = "note";
         builder.AddCephalon(engine =>
         {
@@ -4120,10 +4171,10 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Configuration["RestApi:Overrides:prefer-route-ignored:Behaviors:0"] = "tests.rest.profile.bindings.get";
         builder.Configuration["RestApi:Overrides:prefer-route-ignored:Pattern"] = "/lookup/{orderId}/{ignored}";
         builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:0:PropertyName"] = "OrderId";
-        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:0:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:0:Source"] = "route";
         builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:0:Name"] = "orderId";
         builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:1:PropertyName"] = "Ignored";
-        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:1:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:1:Source"] = "route";
         builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:1:Name"] = "ignored";
         builder.AddCephalon(engine =>
         {
@@ -4154,10 +4205,10 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Configuration["RestApi:Overrides:prefer-route-query:Behaviors:0"] = "tests.rest.profile.bindings.query";
         builder.Configuration["RestApi:Overrides:prefer-route-query:Pattern"] = "/lookup/{orderId}/{ignored}";
         builder.Configuration["RestApi:Overrides:prefer-route-query:Bindings:0:PropertyName"] = "OrderId";
-        builder.Configuration["RestApi:Overrides:prefer-route-query:Bindings:0:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:prefer-route-query:Bindings:0:Source"] = "route";
         builder.Configuration["RestApi:Overrides:prefer-route-query:Bindings:0:Name"] = "orderId";
         builder.Configuration["RestApi:Overrides:prefer-route-query:Bindings:1:PropertyName"] = "Ignored";
-        builder.Configuration["RestApi:Overrides:prefer-route-query:Bindings:1:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:prefer-route-query:Bindings:1:Source"] = "route";
         builder.Configuration["RestApi:Overrides:prefer-route-query:Bindings:1:Name"] = "ignored";
         builder.AddCephalon(engine =>
         {
@@ -4250,7 +4301,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Configuration["RestApi:Overrides:prefer-route-order:Behaviors:0"] = "tests.rest.profile.bindings.query.partial";
         builder.Configuration["RestApi:Overrides:prefer-route-order:Pattern"] = "/lookup/{orderId}";
         builder.Configuration["RestApi:Overrides:prefer-route-order:Bindings:0:PropertyName"] = "OrderId";
-        builder.Configuration["RestApi:Overrides:prefer-route-order:Bindings:0:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:prefer-route-order:Bindings:0:Source"] = "route";
         builder.Configuration["RestApi:Overrides:prefer-route-order:Bindings:0:Name"] = "orderId";
         builder.AddCephalon(engine =>
         {
@@ -4432,16 +4483,16 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Configuration["RestApi:Overrides:prefer-query-identity:Behaviors:0"] = "tests.rest.profile.bindings.inference";
         builder.Configuration["RestApi:Overrides:prefer-query-identity:Pattern"] = "/lookup";
         builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:0:PropertyName"] = "OrderId";
-        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:0:Source"] = "Query";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:0:Source"] = "query";
         builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:0:Name"] = "orderId";
         builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:1:PropertyName"] = "Quantity";
-        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:1:Source"] = "Query";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:1:Source"] = "query";
         builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:1:Name"] = "quantity";
         builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:2:PropertyName"] = "CorrelationId";
-        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:2:Source"] = "Header";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:2:Source"] = "header";
         builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:2:Name"] = "X-Correlation-Id";
         builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:3:PropertyName"] = "Note";
-        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:3:Source"] = "Body";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:3:Source"] = "body";
         builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:3:Name"] = "note";
         builder.AddCephalon(engine =>
         {
@@ -4472,16 +4523,16 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Configuration["RestApi:Overrides:prefer-route-quantity:Behaviors:0"] = "tests.rest.profile.bindings";
         builder.Configuration["RestApi:Overrides:prefer-route-quantity:Pattern"] = "/lookup/{orderId}/items/{quantity}";
         builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:0:PropertyName"] = "OrderId";
-        builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:0:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:0:Source"] = "route";
         builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:0:Name"] = "orderId";
         builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:1:PropertyName"] = "Quantity";
-        builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:1:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:1:Source"] = "route";
         builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:1:Name"] = "quantity";
         builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:2:PropertyName"] = "CorrelationId";
-        builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:2:Source"] = "Header";
+        builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:2:Source"] = "header";
         builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:2:Name"] = "X-Correlation-Id";
         builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:3:PropertyName"] = "Note";
-        builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:3:Source"] = "Body";
+        builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:3:Source"] = "body";
         builder.Configuration["RestApi:Overrides:prefer-route-quantity:Bindings:3:Name"] = "note";
         builder.AddCephalon(engine =>
         {
@@ -4566,19 +4617,19 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Configuration["RestApi:Overrides:prefer-route-ignored:Behaviors:0"] = "tests.rest.profile.bindings";
         builder.Configuration["RestApi:Overrides:prefer-route-ignored:Pattern"] = "/lookup/{orderId}/items/{ignored}";
         builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:0:PropertyName"] = "OrderId";
-        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:0:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:0:Source"] = "route";
         builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:0:Name"] = "orderId";
         builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:1:PropertyName"] = "Quantity";
-        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:1:Source"] = "Query";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:1:Source"] = "query";
         builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:1:Name"] = "quantity";
         builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:2:PropertyName"] = "CorrelationId";
-        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:2:Source"] = "Header";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:2:Source"] = "header";
         builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:2:Name"] = "X-Correlation-Id";
         builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:3:PropertyName"] = "Note";
-        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:3:Source"] = "Body";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:3:Source"] = "body";
         builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:3:Name"] = "note";
         builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:4:PropertyName"] = "Ignored";
-        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:4:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:4:Source"] = "route";
         builder.Configuration["RestApi:Overrides:prefer-route-ignored:Bindings:4:Name"] = "ignored";
         builder.AddCephalon(engine =>
         {
@@ -5540,17 +5591,27 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         var client = app.GetTestClient();
 
         var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var rawEndpoints = await client.GetStringAsync("/engine/rest-endpoints");
 
         Assert.NotNull(endpoints);
+        Assert.Contains("\"source\":\"route\"", rawEndpoints, StringComparison.Ordinal);
+        Assert.Contains("\"source\":\"query\"", rawEndpoints, StringComparison.Ordinal);
+        Assert.Contains("\"source\":\"header\"", rawEndpoints, StringComparison.Ordinal);
+        Assert.Contains("\"source\":\"body\"", rawEndpoints, StringComparison.Ordinal);
 
         var endpoint = Assert.Single(endpoints, static candidate =>
             string.Equals(candidate.BehaviorId, "tests.rest.profile.bindings", StringComparison.Ordinal));
+        var rawEndpoint = await client.GetStringAsync($"/engine/rest-endpoints/{Uri.EscapeDataString(endpoint.Id)}");
         Assert.Equal("/api/v6/tests/profile-runtime/bindings/orders/{orderId}", endpoint.RoutePattern);
         Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, endpoint.Metadata["authoringStyle"]);
         Assert.False(endpoint.Metadata.ContainsKey("bindingDescriptors"));
         Assert.Equal(
             RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback,
             endpoint.BindingFallbackMode);
+        Assert.Contains("\"source\":\"route\"", rawEndpoint, StringComparison.Ordinal);
+        Assert.Contains("\"source\":\"query\"", rawEndpoint, StringComparison.Ordinal);
+        Assert.Contains("\"source\":\"header\"", rawEndpoint, StringComparison.Ordinal);
+        Assert.Contains("\"source\":\"body\"", rawEndpoint, StringComparison.Ordinal);
         Assert.Equal(
             RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback.GetWireName(),
             endpoint.Metadata["bindingFallbackMode"]);
@@ -5594,7 +5655,12 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("body-fallback", payload.Ignored);
 
         var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+        var rawSnapshot = await client.GetStringAsync("/engine/snapshot");
         Assert.NotNull(snapshot);
+        Assert.Contains("\"source\":\"route\"", rawSnapshot, StringComparison.Ordinal);
+        Assert.Contains("\"source\":\"query\"", rawSnapshot, StringComparison.Ordinal);
+        Assert.Contains("\"source\":\"header\"", rawSnapshot, StringComparison.Ordinal);
+        Assert.Contains("\"source\":\"body\"", rawSnapshot, StringComparison.Ordinal);
 
         var snapshotEndpoint = Assert.Single(snapshot.RestEndpoints, static candidate =>
             string.Equals(candidate.BehaviorId, "tests.rest.profile.bindings", StringComparison.Ordinal));
@@ -5624,13 +5690,13 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Configuration["OpenApi:DefaultVersion"] = "6";
         builder.Configuration["RestApi:Overrides:prefer-short-bindings:Behaviors:0"] = "tests.rest.profile.bindings";
         builder.Configuration["RestApi:Overrides:prefer-short-bindings:Bindings:0:PropertyName"] = "Quantity";
-        builder.Configuration["RestApi:Overrides:prefer-short-bindings:Bindings:0:Source"] = "Query";
+        builder.Configuration["RestApi:Overrides:prefer-short-bindings:Bindings:0:Source"] = "query";
         builder.Configuration["RestApi:Overrides:prefer-short-bindings:Bindings:0:Name"] = "qty";
         builder.Configuration["RestApi:Overrides:prefer-short-bindings:Bindings:1:PropertyName"] = "CorrelationId";
-        builder.Configuration["RestApi:Overrides:prefer-short-bindings:Bindings:1:Source"] = "Header";
+        builder.Configuration["RestApi:Overrides:prefer-short-bindings:Bindings:1:Source"] = "header";
         builder.Configuration["RestApi:Overrides:prefer-short-bindings:Bindings:1:Name"] = "X-Trace-Id";
         builder.Configuration["RestApi:Overrides:prefer-short-bindings:Bindings:2:PropertyName"] = "Note";
-        builder.Configuration["RestApi:Overrides:prefer-short-bindings:Bindings:2:Source"] = "Body";
+        builder.Configuration["RestApi:Overrides:prefer-short-bindings:Bindings:2:Source"] = "body";
         builder.Configuration["RestApi:Overrides:prefer-short-bindings:Bindings:2:Name"] = "memo";
         builder.AddCephalon(engine =>
         {
@@ -5742,7 +5808,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Configuration["RestApi:Overrides:prefer-merge-route-quantity:Pattern"] = "/lookup/{orderId}/items/{quantity}";
         builder.Configuration["RestApi:Overrides:prefer-merge-route-quantity:BindingMode"] = "merge-explicit";
         builder.Configuration["RestApi:Overrides:prefer-merge-route-quantity:Bindings:0:PropertyName"] = "Quantity";
-        builder.Configuration["RestApi:Overrides:prefer-merge-route-quantity:Bindings:0:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:prefer-merge-route-quantity:Bindings:0:Source"] = "route";
         builder.Configuration["RestApi:Overrides:prefer-merge-route-quantity:Bindings:0:Name"] = "quantity";
         builder.AddCephalon(engine =>
         {
@@ -6145,16 +6211,16 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Configuration["OpenApi:DefaultVersion"] = "6";
         builder.Configuration["RestApi:Overrides:prefer-current-bindings:Behaviors:0"] = "tests.rest.profile.bindings";
         builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:0:PropertyName"] = "CorrelationId";
-        builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:0:Source"] = "Header";
+        builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:0:Source"] = "header";
         builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:0:Name"] = "X-Correlation-Id";
         builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:1:PropertyName"] = "Note";
-        builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:1:Source"] = "Body";
+        builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:1:Source"] = "body";
         builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:1:Name"] = "note";
         builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:2:PropertyName"] = "OrderId";
-        builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:2:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:2:Source"] = "route";
         builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:2:Name"] = "orderId";
         builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:3:PropertyName"] = "Quantity";
-        builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:3:Source"] = "Query";
+        builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:3:Source"] = "query";
         builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:3:Name"] = "quantity";
         builder.AddCephalon(engine =>
         {
@@ -6301,21 +6367,21 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Configuration["OpenApi:DefaultVersion"] = "6";
         builder.Configuration["RestApi:Overrides:prefer-current-bindings:Behaviors:0"] = "tests.rest.profile.bindings";
         builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:0:PropertyName"] = "CorrelationId";
-        builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:0:Source"] = "Header";
+        builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:0:Source"] = "header";
         builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:0:Name"] = "X-Correlation-Id";
         builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:1:PropertyName"] = "Note";
-        builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:1:Source"] = "Body";
+        builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:1:Source"] = "body";
         builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:1:Name"] = "note";
         builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:2:PropertyName"] = "OrderId";
-        builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:2:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:2:Source"] = "route";
         builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:2:Name"] = "orderId";
         builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:3:PropertyName"] = "Quantity";
-        builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:3:Source"] = "Query";
+        builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:3:Source"] = "query";
         builder.Configuration["RestApi:Overrides:prefer-current-bindings:Bindings:3:Name"] = "quantity";
         builder.Configuration["RestApi:Overrides:prefer-route-order:Behaviors:0"] = "tests.rest.profile.bindings.query.partial";
         builder.Configuration["RestApi:Overrides:prefer-route-order:Pattern"] = "/lookup/{orderId}";
         builder.Configuration["RestApi:Overrides:prefer-route-order:Bindings:0:PropertyName"] = "OrderId";
-        builder.Configuration["RestApi:Overrides:prefer-route-order:Bindings:0:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:prefer-route-order:Bindings:0:Source"] = "route";
         builder.Configuration["RestApi:Overrides:prefer-route-order:Bindings:0:Name"] = "orderId";
         builder.Configuration["RestApi:Overrides:withdraw-body-note:Behaviors:0"] = "tests.rest.profile.bindings.inference";
         builder.Configuration["RestApi:Overrides:withdraw-body-note:RemovedBindingProperties:0"] = "Note";
@@ -6452,16 +6518,16 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Configuration["RestApi:Overrides:prefer-renamed-placeholder:Behaviors:0"] = "tests.rest.profile.bindings";
         builder.Configuration["RestApi:Overrides:prefer-renamed-placeholder:Pattern"] = "/lookup/{id}";
         builder.Configuration["RestApi:Overrides:prefer-renamed-placeholder:Bindings:0:PropertyName"] = "OrderId";
-        builder.Configuration["RestApi:Overrides:prefer-renamed-placeholder:Bindings:0:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:prefer-renamed-placeholder:Bindings:0:Source"] = "route";
         builder.Configuration["RestApi:Overrides:prefer-renamed-placeholder:Bindings:0:Name"] = "id";
         builder.Configuration["RestApi:Overrides:prefer-renamed-placeholder:Bindings:1:PropertyName"] = "Quantity";
-        builder.Configuration["RestApi:Overrides:prefer-renamed-placeholder:Bindings:1:Source"] = "Query";
+        builder.Configuration["RestApi:Overrides:prefer-renamed-placeholder:Bindings:1:Source"] = "query";
         builder.Configuration["RestApi:Overrides:prefer-renamed-placeholder:Bindings:1:Name"] = "quantity";
         builder.Configuration["RestApi:Overrides:prefer-renamed-placeholder:Bindings:2:PropertyName"] = "CorrelationId";
-        builder.Configuration["RestApi:Overrides:prefer-renamed-placeholder:Bindings:2:Source"] = "Header";
+        builder.Configuration["RestApi:Overrides:prefer-renamed-placeholder:Bindings:2:Source"] = "header";
         builder.Configuration["RestApi:Overrides:prefer-renamed-placeholder:Bindings:2:Name"] = "X-Correlation-Id";
         builder.Configuration["RestApi:Overrides:prefer-renamed-placeholder:Bindings:3:PropertyName"] = "Note";
-        builder.Configuration["RestApi:Overrides:prefer-renamed-placeholder:Bindings:3:Source"] = "Body";
+        builder.Configuration["RestApi:Overrides:prefer-renamed-placeholder:Bindings:3:Source"] = "body";
         builder.Configuration["RestApi:Overrides:prefer-renamed-placeholder:Bindings:3:Name"] = "note";
         builder.AddCephalon(engine =>
         {
@@ -6567,16 +6633,16 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Configuration["RestApi:Overrides:prefer-query-identity:Behaviors:0"] = "tests.rest.profile.bindings";
         builder.Configuration["RestApi:Overrides:prefer-query-identity:Pattern"] = "/lookup";
         builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:0:PropertyName"] = "OrderId";
-        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:0:Source"] = "Query";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:0:Source"] = "query";
         builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:0:Name"] = "orderId";
         builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:1:PropertyName"] = "Quantity";
-        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:1:Source"] = "Query";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:1:Source"] = "query";
         builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:1:Name"] = "quantity";
         builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:2:PropertyName"] = "CorrelationId";
-        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:2:Source"] = "Header";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:2:Source"] = "header";
         builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:2:Name"] = "X-Correlation-Id";
         builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:3:PropertyName"] = "Note";
-        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:3:Source"] = "Body";
+        builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:3:Source"] = "body";
         builder.Configuration["RestApi:Overrides:prefer-query-identity:Bindings:3:Name"] = "note";
         builder.AddCephalon(engine =>
         {

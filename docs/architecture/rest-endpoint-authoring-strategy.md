@@ -208,9 +208,10 @@ Status update:
   bindings by property name instead of restating the whole explicit plan, the existing
   `replace-explicit` behavior remains the default when `BindingMode` is omitted, and the runtime now
   keeps that merge-versus-replace governance truth visible through `/engine/rest-endpoint-overrides`
-  plus `snapshot.RestEndpointOverrides`, and rules that omit an explicit binding mode now serialize
-  `bindingMode = unspecified` there while host config still accepts only `replace-explicit` or
-  `merge-explicit`
+  plus `snapshot.RestEndpointOverrides`; `bindingMode = unspecified` is preserved there only when a
+  `ClearBindings` rule omitted an explicit mode, while other omitted modes still normalize to
+  `replace-explicit` or `merge-explicit`, and host config still accepts only those two explicit
+  wire names
 - the next grouped publication-visibility follow-through is now shipped through `ENG-058-T80`:
   `Cephalon.Abstractions` now also exposes `IRestEndpointPublicationGroupRuntimeCatalog` plus
   `RestEndpointPublicationGroupDescriptor`, `Cephalon.AspNetCore` now publishes

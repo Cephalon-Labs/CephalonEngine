@@ -270,11 +270,11 @@ public sealed class RestApiGovernanceOptions
                 $"REST API governance value '{section.Path}:Source' is required.");
         }
 
-        if (!Enum.TryParse<RestEndpointBindingSource>(rawValue, ignoreCase: true, out var parsedValue) ||
+        if (!RestEndpointBindingSourceExtensions.TryParseWireName(rawValue, out var parsedValue) ||
             parsedValue == RestEndpointBindingSource.Unspecified)
         {
             throw new InvalidOperationException(
-                $"REST API governance value '{section.Path}:Source' must be one of Route, Query, Header, or Body.");
+                $"REST API governance value '{section.Path}:Source' must be one of the stable binding source wire names {string.Join(", ", Enum.GetValues<RestEndpointBindingSource>().Where(static value => value != RestEndpointBindingSource.Unspecified).Select(static value => value.GetWireName()))}.");
         }
 
         return parsedValue;

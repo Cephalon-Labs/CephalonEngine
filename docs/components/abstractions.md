@@ -150,7 +150,8 @@ without leaking ASP.NET Core proxy behavior, YARP, or cloud traffic-manager type
 The same transport-first rule also now covers the published REST runtime answer. The `Transports`
 namespace owns `IRestEndpointRuntimeCatalog`, `RestEndpointRuntimeDescriptor`,
 `RestEndpointBindingDescriptor`, `RestEndpointBindingFallbackMode`, and
-`RestEndpointBindingSource` so hosts, operator tooling, and companion packages can read resolved
+`RestEndpointBindingSource` plus its stable `route`, `query`, `header`, and `body` wire names so
+hosts, operator tooling, and companion packages can read resolved
 public REST route truth plus explicit request-binding plans and preserved shorthand fallback truth
 through one host-agnostic transport contract. That keeps the runtime answer transport-owned instead
 of behavior-package-owned and avoids treating `metadata` dictionaries as the canonical binding-plan
