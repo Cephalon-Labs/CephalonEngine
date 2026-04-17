@@ -592,6 +592,13 @@ normalized authoring style the participating candidate ids, precedence ranks, pu
 candidates, and precedence-versus-governance suppression buckets derived from the same grouped
 candidate truth.
 
+Each grouped publication answer now also carries `AuthoringPolicy` as typed
+`RestEndpointPublicationGroupAuthoringPolicyDescriptor` data. That policy surface distinguishes the
+implicit default single-winner boundary from an explicit
+`RestApi:AuthoringPolicies:{behaviorId}` configuration and keeps
+`AllowMultiplePublishedCandidates` plus preferred/allowed/disallowed authoring-style intent
+visible without changing current publication behavior.
+
 The host now also publishes the configured shorthand-suppression rules themselves through:
 
 - `IRestEndpointSuppressionRuntimeCatalog`

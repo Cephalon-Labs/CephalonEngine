@@ -20,12 +20,17 @@ public sealed class RestApiGovernanceOptions
     /// <summary>
     /// Initializes a new instance of the <see cref="RestApiGovernanceOptions" /> class.
     /// </summary>
+    /// <param name="authoringPolicies">The configured behavior-level authoring policies for REST publication groups.</param>
     /// <param name="suppressions">The configured suppression rules for shorthand REST candidates.</param>
     /// <param name="overrides">The configured override rules for shorthand REST candidates.</param>
     public RestApiGovernanceOptions(
+        IReadOnlyList<RestEndpointPublicationGroupAuthoringPolicyDescriptor>? authoringPolicies = null,
         IReadOnlyList<RestEndpointSuppressionOptions>? suppressions = null,
         IReadOnlyList<RestEndpointOverrideOptions>? overrides = null)
     {
+        AuthoringPolicies = authoringPolicies?
+            .Where(static value => value is not null)
+            .ToArray() ?? [];
         Suppressions = suppressions?
             .Where(static value => value is not null)
             .ToArray() ?? [];
@@ -33,6 +38,11 @@ public sealed class RestApiGovernanceOptions
             .Where(static value => value is not null)
             .ToArray() ?? [];
     }
+
+    /// <summary>
+    /// Gets the configured behavior-level authoring policies for REST publication groups.
+    /// </summary>
+    public IReadOnlyList<RestEndpointPublicationGroupAuthoringPolicyDescriptor> AuthoringPolicies { get; }
 
     /// <summary>
     /// Gets the configured suppression rules for descriptor-backed REST shorthand candidates.
@@ -47,7 +57,7 @@ public sealed class RestApiGovernanceOptions
     /// <summary>
     /// Gets a value indicating whether any REST governance values were explicitly supplied.
     /// </summary>
-    public bool HasValues => Suppressions.Count > 0 || Overrides.Count > 0;
+    public bool HasValues => AuthoringPolicies.Count > 0 || Suppressions.Count > 0 || Overrides.Count > 0;
 
     /// <summary>
     /// Binds and normalizes REST governance settings from configuration.
@@ -61,6 +71,17 @@ public sealed class RestApiGovernanceOptions
     {
         ArgumentNullException.ThrowIfNull(configuration);
 
+        var authoringPolicies = configuration.GetSection(sectionPath)
+            .GetSection("AuthoringPolicies")
+            .GetChildren()
+            .Select(child => new RestEndpointPublicationGroupAuthoringPolicyDescriptor(
+                behaviorId: child.Key,
+                isConfigured: true,
+                allowMultiplePublishedCandidates: ReadBoolean(child, "AllowMultiplePublishedCandidates"),
+                preferredAuthoringStyle: child["PreferredAuthoringStyle"]?.Trim(),
+                allowedAuthoringStyles: ReadStringArray(child.GetSection("AllowedAuthoringStyles")),
+                disallowedAuthoringStyles: ReadStringArray(child.GetSection("DisallowedAuthoringStyles"))))
+            .ToArray();
         var suppressions = configuration.GetSection(sectionPath)
             .GetSection("Suppressions")
             .GetChildren()
@@ -116,7 +137,7 @@ public sealed class RestApiGovernanceOptions
                 targetBindings: ReadBindings(child.GetSection("TargetBindings"))))
             .ToArray();
 
-        return new RestApiGovernanceOptions(suppressions, overrides);
+        return new RestApiGovernanceOptions(authoringPolicies, suppressions, overrides);
     }
 
     private static string[] ReadStringArray(IConfiguration section)

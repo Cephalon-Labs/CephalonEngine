@@ -522,9 +522,10 @@ Current helper behavior:
   explicit DSL route now wins by default while the lower-precedence shorthand candidate remains
   visible through `/engine/rest-endpoint-candidates`, `snapshot.RestEndpointCandidates`,
   `/engine/rest-endpoint-publication-groups`, and `snapshot.RestEndpointPublicationGroups`; those
-  grouped publication answers now also expose `AuthoringStyleSummaries` so module authors can see
-  which source style published and which lower-precedence styles remained visible only as
-  suppressed candidates
+  grouped publication answers now also expose `AuthoringStyleSummaries` plus `AuthoringPolicy` so
+  module authors can see which source style published, which lower-precedence styles remained
+  visible only as suppressed candidates, and whether the behavior boundary is still on the implicit
+  default single-winner policy or an explicit `RestApi:AuthoringPolicies:{behaviorId}` contract.
 - when the same behavior is mapped through both `MapProfile<TBehavior>()` and
   `MapGeneratedProfiles(...)`, the explicit per-behavior `MapProfile<TBehavior>()` route wins by
   default while the generated candidate remains visible through the same candidate and grouped
@@ -551,6 +552,11 @@ candidate keeps the full ordered match set visible through `MatchedSuppressionId
 original explicit descriptor set by property/source/name equivalence, so hosts can distinguish a
 route-only candidate from a richer explicitly bound sibling even when later overrides rewrite the
 published route.
+
+When a host wants to declare grouped authoring-policy intent without changing current publication
+behavior, use `RestApi:AuthoringPolicies:{behaviorId}`. That boundary-level contract now lets the
+host declare whether future enforcement should allow multiple published candidates and which
+authoring styles are preferred, allowed, or disallowed for the same grouped behavior answer.
 
 When a host wants to keep shorthand publication but retarget selected shorthand endpoints to a
 different effective API major version, HTTP method, bounded published route-group prefix,

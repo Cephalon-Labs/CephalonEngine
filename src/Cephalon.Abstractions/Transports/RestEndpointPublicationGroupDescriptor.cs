@@ -21,6 +21,9 @@ public sealed class RestEndpointPublicationGroupDescriptor
     /// The candidate identifiers that were suppressed by host-level REST governance.
     /// </param>
     /// <param name="candidates">The ordered candidate set that produced this grouped publication answer.</param>
+    /// <param name="authoringPolicy">
+    /// The effective authoring-policy intent for this behavior-level publication group.
+    /// </param>
     public RestEndpointPublicationGroupDescriptor(
         string behaviorId,
         IReadOnlyList<string>? sourceModuleIds = null,
@@ -28,7 +31,8 @@ public sealed class RestEndpointPublicationGroupDescriptor
         IReadOnlyList<string>? publishedCandidateIds = null,
         IReadOnlyList<string>? precedenceSuppressedCandidateIds = null,
         IReadOnlyList<string>? governanceSuppressedCandidateIds = null,
-        IReadOnlyList<RestEndpointCandidateRuntimeDescriptor>? candidates = null)
+        IReadOnlyList<RestEndpointCandidateRuntimeDescriptor>? candidates = null,
+        RestEndpointPublicationGroupAuthoringPolicyDescriptor? authoringPolicy = null)
     {
         if (string.IsNullOrWhiteSpace(behaviorId))
         {
@@ -104,6 +108,7 @@ public sealed class RestEndpointPublicationGroupDescriptor
         GovernanceSuppressedCandidateIds = normalizedGovernanceSuppressedCandidateIds;
         Candidates = normalizedCandidates;
         AuthoringStyleSummaries = BuildAuthoringStyleSummaries(normalizedCandidates);
+        AuthoringPolicy = NormalizeAuthoringPolicy(authoringPolicy, normalizedBehaviorId);
     }
 
     /// <summary>
@@ -145,6 +150,11 @@ public sealed class RestEndpointPublicationGroupDescriptor
     /// Gets the grouped publication outcome summarized by authoring style for this behavior.
     /// </summary>
     public IReadOnlyList<RestEndpointPublicationGroupAuthoringStyleDescriptor> AuthoringStyleSummaries { get; }
+
+    /// <summary>
+    /// Gets the effective authoring-policy intent for this behavior-level publication group.
+    /// </summary>
+    public RestEndpointPublicationGroupAuthoringPolicyDescriptor AuthoringPolicy { get; }
 
     private static string[] NormalizeList(IReadOnlyList<string>? values)
     {
@@ -216,5 +226,32 @@ public sealed class RestEndpointPublicationGroupDescriptor
                     governanceSuppressedCandidateIds);
             })
             .ToArray();
+    }
+
+    private static RestEndpointPublicationGroupAuthoringPolicyDescriptor NormalizeAuthoringPolicy(
+        RestEndpointPublicationGroupAuthoringPolicyDescriptor? authoringPolicy,
+        string behaviorId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
+
+        if (authoringPolicy is null)
+        {
+            return new RestEndpointPublicationGroupAuthoringPolicyDescriptor(behaviorId);
+        }
+
+        if (!string.Equals(authoringPolicy.BehaviorId, behaviorId, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new ArgumentException(
+                "The grouped authoring policy must target the same behavior id as the publication group.",
+                nameof(authoringPolicy));
+        }
+
+        return new RestEndpointPublicationGroupAuthoringPolicyDescriptor(
+            authoringPolicy.BehaviorId,
+            authoringPolicy.IsConfigured,
+            authoringPolicy.AllowMultiplePublishedCandidates,
+            authoringPolicy.PreferredAuthoringStyle,
+            authoringPolicy.AllowedAuthoringStyles,
+            authoringPolicy.DisallowedAuthoringStyles);
     }
 }

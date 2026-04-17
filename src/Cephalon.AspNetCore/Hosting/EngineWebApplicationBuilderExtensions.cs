@@ -94,6 +94,8 @@ public static class EngineWebApplicationBuilderExtensions
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ITransportRouteMapper, ServerSentEventsTransportRouteMapper>());
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ITransportRouteMapper, WebSocketTransportRouteMapper>());
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, EngineHostedService>());
+        var restApiGovernanceOptions = RestApiGovernanceOptions.FromConfiguration(builder.Configuration);
+        builder.Services.TryAddSingleton(restApiGovernanceOptions);
         builder.Services.TryAddSingleton<AspNetCoreRestEndpointCandidateRuntimeCatalog>();
         builder.Services.TryAddSingleton<IRestEndpointCandidateRuntimeCatalog>(serviceProvider =>
             serviceProvider.GetRequiredService<AspNetCoreRestEndpointCandidateRuntimeCatalog>());
@@ -101,9 +103,8 @@ public static class EngineWebApplicationBuilderExtensions
             serviceProvider.GetRequiredService<AspNetCoreRestEndpointCandidateRuntimeCatalog>());
         builder.Services.TryAddSingleton<IRestEndpointPublicationGroupRuntimeCatalog>(serviceProvider =>
             new AspNetCoreRestEndpointPublicationGroupRuntimeCatalog(
-                serviceProvider.GetRequiredService<IRestEndpointCandidateRuntimeCatalog>()));
-        var restApiGovernanceOptions = RestApiGovernanceOptions.FromConfiguration(builder.Configuration);
-        builder.Services.TryAddSingleton(restApiGovernanceOptions);
+                serviceProvider.GetRequiredService<IRestEndpointCandidateRuntimeCatalog>(),
+                restApiGovernanceOptions));
         builder.Services.TryAddSingleton<IRestEndpointOverrideRuntimeCatalog>(_ =>
             new AspNetCoreRestEndpointOverrideRuntimeCatalog(restApiGovernanceOptions));
         builder.Services.TryAddSingleton<IRestEndpointSuppressionRuntimeCatalog>(_ =>

@@ -2,7 +2,7 @@
 
 Decision baseline date: `April 14, 2026`
 
-Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`, `ENG-058-T67` / GitHub issue `#332`, `ENG-058-T68` / GitHub issue `#333`, `ENG-058-T69` / GitHub issue `#334`, `ENG-058-T70` / GitHub issue `#335`, `ENG-058-T71` / GitHub issue `#336`, `ENG-058-T72` / GitHub issue `#337`, `ENG-058-T73` / GitHub issue `#338`, `ENG-058-T74` / GitHub issue `#339`, `ENG-058-T75` / GitHub issue `#340`, `ENG-058-T76` / GitHub issue `#341`, `ENG-058-T77` / GitHub issue `#342`, `ENG-058-T78` / GitHub issue `#343`, `ENG-058-T79` / GitHub issue `#344`, `ENG-058-T80` / GitHub issue `#345`, `ENG-058-T81` / GitHub issue `#346`, `ENG-058-T82` / GitHub issue `#347`, `ENG-058-T83` / GitHub issue `#348`, `ENG-058-T84` / GitHub issue `#349`, `ENG-058-T85` / GitHub issue `#350`, `ENG-058-T86` / GitHub issue `#351`, `ENG-058-T87` / GitHub issue `#352`, `ENG-058-T88` / GitHub issue `#353`, `ENG-058-T89` / GitHub issue `#354`, `ENG-058-T90` / GitHub issue `#355`, `ENG-058-T91` / GitHub issue `#356`, `ENG-058-T92` / GitHub issue `#357`, `ENG-058-T93` / GitHub issue `#358`, `ENG-058-T94` / GitHub issue `#359`, `ENG-058-T95` / GitHub issue `#360`, `ENG-058-T96` / GitHub issue `#361`, `ENG-058-T97` / GitHub issue `#362`, `ENG-058-T98` / GitHub issue `#363`, `ENG-058-T99` / GitHub issue `#364`, `ENG-058-T100` / GitHub issue `#365`, `ENG-058-T101` / GitHub issue `#367`, `ENG-058-T102` / GitHub issue `#368`, `ENG-058-T103` / GitHub issue `#369`, `ENG-058-T104` / GitHub issue `#370`, `ENG-058-T105` / GitHub issue `#371`, `ENG-058-T106` / GitHub issue `#372`, `ENG-058-T107` / GitHub issue `#373`, `ENG-058-T108` / GitHub issue `#374`, `ENG-058-T109` / GitHub issue `#375`, `ENG-058-T110` / GitHub issue `#376`, `ENG-058-T111` / GitHub issue `#377`, `ENG-058-T112` / GitHub issue `#378`, `ENG-058-T113` / GitHub issue `#379`, `ENG-058-T114` / GitHub issue `#380`, `ENG-058-T115` / GitHub issue `#381`, `ENG-058-T116` / GitHub issue `#382`, `ENG-058-T117` / GitHub issue `#383`, `ENG-058-T118` / GitHub issue `#384`, `ENG-058-T119` / GitHub issue `#385`, `ENG-058-T120` / GitHub issue `#386`, `ENG-058-T121` / GitHub issue `#387`
+Related issues: `ENG-058-T55` / GitHub issue `#313`, `ENG-058-T56` / GitHub issue `#314`, `ENG-058-T57` / GitHub issue `#318`, `ENG-058-T58` / GitHub issue `#320`, `ENG-058-T61` / GitHub issue `#324`, `ENG-058-T62` / GitHub issue `#325`, `ENG-058-T63` / GitHub issue `#326`, `ENG-058-T64` / GitHub issue `#327`, `ENG-058-T65` / GitHub issue `#329`, `ENG-058-T66` / GitHub issue `#331`, `ENG-058-T67` / GitHub issue `#332`, `ENG-058-T68` / GitHub issue `#333`, `ENG-058-T69` / GitHub issue `#334`, `ENG-058-T70` / GitHub issue `#335`, `ENG-058-T71` / GitHub issue `#336`, `ENG-058-T72` / GitHub issue `#337`, `ENG-058-T73` / GitHub issue `#338`, `ENG-058-T74` / GitHub issue `#339`, `ENG-058-T75` / GitHub issue `#340`, `ENG-058-T76` / GitHub issue `#341`, `ENG-058-T77` / GitHub issue `#342`, `ENG-058-T78` / GitHub issue `#343`, `ENG-058-T79` / GitHub issue `#344`, `ENG-058-T80` / GitHub issue `#345`, `ENG-058-T81` / GitHub issue `#346`, `ENG-058-T82` / GitHub issue `#347`, `ENG-058-T83` / GitHub issue `#348`, `ENG-058-T84` / GitHub issue `#349`, `ENG-058-T85` / GitHub issue `#350`, `ENG-058-T86` / GitHub issue `#351`, `ENG-058-T87` / GitHub issue `#352`, `ENG-058-T88` / GitHub issue `#353`, `ENG-058-T89` / GitHub issue `#354`, `ENG-058-T90` / GitHub issue `#355`, `ENG-058-T91` / GitHub issue `#356`, `ENG-058-T92` / GitHub issue `#357`, `ENG-058-T93` / GitHub issue `#358`, `ENG-058-T94` / GitHub issue `#359`, `ENG-058-T95` / GitHub issue `#360`, `ENG-058-T96` / GitHub issue `#361`, `ENG-058-T97` / GitHub issue `#362`, `ENG-058-T98` / GitHub issue `#363`, `ENG-058-T99` / GitHub issue `#364`, `ENG-058-T100` / GitHub issue `#365`, `ENG-058-T101` / GitHub issue `#367`, `ENG-058-T102` / GitHub issue `#368`, `ENG-058-T103` / GitHub issue `#369`, `ENG-058-T104` / GitHub issue `#370`, `ENG-058-T105` / GitHub issue `#371`, `ENG-058-T106` / GitHub issue `#372`, `ENG-058-T107` / GitHub issue `#373`, `ENG-058-T108` / GitHub issue `#374`, `ENG-058-T109` / GitHub issue `#375`, `ENG-058-T110` / GitHub issue `#376`, `ENG-058-T111` / GitHub issue `#377`, `ENG-058-T112` / GitHub issue `#378`, `ENG-058-T113` / GitHub issue `#379`, `ENG-058-T114` / GitHub issue `#380`, `ENG-058-T115` / GitHub issue `#381`, `ENG-058-T116` / GitHub issue `#382`, `ENG-058-T117` / GitHub issue `#383`, `ENG-058-T118` / GitHub issue `#384`, `ENG-058-T119` / GitHub issue `#385`, `ENG-058-T120` / GitHub issue `#386`, `ENG-058-T121` / GitHub issue `#387`, `ENG-058-T122` / GitHub issue `#388`
 
 Cross-references: `docs/components/behaviors-http.md`, `docs/module-authoring.md`, `docs/architecture.md`, `docs/architecture-review-2026-04.md`, `docs/project-memory.md`
 
@@ -221,6 +221,15 @@ Status update:
   show which authoring styles participated, which remained published, and which were
   precedence-suppressed or governance-suppressed without re-partitioning the ordered candidate set
   manually
+- the next publication-group authoring-policy contract follow-through is now shipped through
+  `ENG-058-T122`: `Cephalon.Abstractions` now also exposes
+  `RestEndpointPublicationGroupAuthoringPolicyDescriptor`,
+  `RestEndpointPublicationGroupDescriptor.AuthoringPolicy` now carries the effective default-
+  versus-configured authoring-policy intent for each grouped behavior answer, and
+  `RestApi:AuthoringPolicies:{behaviorId}` now binds
+  `AllowMultiplePublishedCandidates` plus preferred/allowed/disallowed authoring-style intent so
+  `/engine/rest-endpoint-publication-groups` and `snapshot.RestEndpointPublicationGroups` can
+  round-trip that policy truth without changing current publication semantics
 - the next low-code inline module-owned authoring follow-through is now shipped through
   `ENG-058-T81`: `Cephalon.Behaviors.Http` now exposes
   `RestBehaviorEngineBuilderExtensions.AddRestBehaviorModule<TMarker>()`, which lets a host
@@ -512,6 +521,11 @@ decision as silent startup behavior.
 If any higher-precedence layer maps a behavior into public REST, lower-precedence public REST
 projections for that behavior should be suppressed automatically unless the higher-precedence layer
 explicitly opts into multiple projections.
+
+The current shipped place for that intent is
+`RestApi:AuthoringPolicies:{behaviorId}:AllowMultiplePublishedCandidates`, surfaced back out
+through `RestEndpointPublicationGroupDescriptor.AuthoringPolicy`; changing actual publication
+semantics to honor that flag remains a later enforcement slice.
 
 That means:
 
@@ -1031,6 +1045,11 @@ The following points are durable enough to keep outside thread-local context.
   same candidate set, so operators can inspect per-style participation, candidate ids, precedence
   ranks, published candidates, and suppression buckets without manually splitting the ordered
   behavior-level candidate set
+- those grouped publication entries now also expose `AuthoringPolicy` as typed
+  `RestEndpointPublicationGroupAuthoringPolicyDescriptor` data, so operators can distinguish the
+  implicit default single-winner boundary from an explicit
+  `RestApi:AuthoringPolicies:{behaviorId}` configuration and see preferred/allowed/disallowed
+  authoring-style intent without inferring it from roadmap text alone
 - those candidate entries now keep the original shorthand source shape visible through
   `RestEndpointCandidateRuntimeDescriptor.OriginalProjection` while `ProjectedEndpoint` continues
   to answer the final effective mapped route, version, method, binding, endpoint-name, summary,
@@ -1154,10 +1173,13 @@ The following points are durable enough to keep outside thread-local context.
 Recommended implementation sequence after the shipped normalization, runtime-catalog,
 precedence-visibility, and generated-module follow-through slices:
 
-1. extend the shipped suppression-plus-override governance baseline from the current
-   candidate-id-plus-selector-targeting-plus-version-plus-method-plus-pattern-plus-binding model
-   toward broader configuration-override modeling only if runtime truth, ownership, precedence,
-   and candidate visibility stay explicit and introspectable
-2. only then evaluate whether any additional convention-backed publication sources are worth the
+1. evaluate whether future enforcement of the now-shipped
+   `RestApi:AuthoringPolicies:{behaviorId}` contract should change precedence or allow bounded
+   multi-projection publication only if runtime truth, ownership, precedence, and grouped-policy
+   visibility stay explicit and introspectable
+2. extend the shipped suppression-plus-override governance baseline further only if those stronger
+   authoring-policy contracts keep the runtime truth model understandable instead of introducing
+   hidden rule layers
+3. only then evaluate whether any additional convention-backed publication sources are worth the
    added complexity beyond the shipped `MapProfile<TBehavior>()` and `MapGeneratedProfiles(...)`
    surfaces

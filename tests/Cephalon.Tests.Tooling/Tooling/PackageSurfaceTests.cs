@@ -267,6 +267,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateRuntimeDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateStatus),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideDescriptor),
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupAuthoringPolicyDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupAuthoringStyleDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointSuppressionDescriptor),
@@ -1085,6 +1086,25 @@ public sealed class PackageSurfaceTests
     {
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupDescriptor)
             .GetProperty("AuthoringStyleSummaries", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupDescriptor)
+            .GetProperty("AuthoringPolicy", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void RestEndpointPublicationGroupAuthoringPolicyContractsExposeConfiguredIntent()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupAuthoringPolicyDescriptor)
+            .GetProperty("BehaviorId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupAuthoringPolicyDescriptor)
+            .GetProperty("IsConfigured", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupAuthoringPolicyDescriptor)
+            .GetProperty("AllowMultiplePublishedCandidates", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupAuthoringPolicyDescriptor)
+            .GetProperty("PreferredAuthoringStyle", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupAuthoringPolicyDescriptor)
+            .GetProperty("AllowedAuthoringStyles", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupAuthoringPolicyDescriptor)
+            .GetProperty("DisallowedAuthoringStyles", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

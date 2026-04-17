@@ -216,10 +216,18 @@ publication-group runtime answers now also summarize the grouped candidate truth
 style, so operators can see which styles participated, published, or were precedence-suppressed or
 governance-suppressed without re-reading the entire candidate set.
 
-The remaining gap is now future authoring rules and governance-model follow-through if shorthand
-or generated routes eventually broaden enough that more than one projection style can compete for
-the same public behavior boundary in ways that still need stronger ownership or configuration
-contracts rather than additional visibility alone.
+That next authoring-policy contract gap is now addressed through `ENG-058-T122`: grouped
+publication answers now also expose typed `AuthoringPolicy` data through
+`RestEndpointPublicationGroupAuthoringPolicyDescriptor`, `RestApi:AuthoringPolicies:{behaviorId}`
+now binds explicit default-versus-configured authoring-policy intent for
+`AllowMultiplePublishedCandidates` plus preferred/allowed/disallowed authoring styles, and
+`/engine/rest-endpoint-publication-groups` plus `snapshot.RestEndpointPublicationGroups` now
+round-trip that policy truth without changing current winner or suppression behavior.
+
+The remaining gap is now policy enforcement and broader governance follow-through if shorthand or
+generated routes eventually broaden enough that more than one projection style can compete for the
+same public behavior boundary in ways that should materially change publication outcomes rather than
+only surfacing authoring-policy intent.
 
 ## Architecture recommendations
 

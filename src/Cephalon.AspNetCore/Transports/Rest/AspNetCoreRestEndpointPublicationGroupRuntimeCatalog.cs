@@ -1,13 +1,17 @@
+using Cephalon.AspNetCore.Hosting;
 using Cephalon.Abstractions.Transports;
 
 namespace Cephalon.AspNetCore.Transports.Rest;
 
 internal sealed class AspNetCoreRestEndpointPublicationGroupRuntimeCatalog(
-    IRestEndpointCandidateRuntimeCatalog candidateRuntimeCatalog) : IRestEndpointPublicationGroupRuntimeCatalog
+    IRestEndpointCandidateRuntimeCatalog candidateRuntimeCatalog,
+    RestApiGovernanceOptions governanceOptions) : IRestEndpointPublicationGroupRuntimeCatalog
 {
     private static readonly StringComparer Comparer = StringComparer.OrdinalIgnoreCase;
 
-    public IReadOnlyList<RestEndpointPublicationGroupDescriptor> Groups => BuildGroups(candidateRuntimeCatalog.Candidates);
+    public IReadOnlyList<RestEndpointPublicationGroupDescriptor> Groups => BuildGroups(
+        candidateRuntimeCatalog.Candidates,
+        governanceOptions.AuthoringPolicies);
 
     public RestEndpointPublicationGroupDescriptor? GetByBehaviorId(string behaviorId)
     {
@@ -21,24 +25,31 @@ internal sealed class AspNetCoreRestEndpointPublicationGroupRuntimeCatalog(
     }
 
     private static RestEndpointPublicationGroupDescriptor[] BuildGroups(
-        IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> candidates)
+        IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> candidates,
+        IReadOnlyList<RestEndpointPublicationGroupAuthoringPolicyDescriptor> authoringPolicies)
     {
         ArgumentNullException.ThrowIfNull(candidates);
+        ArgumentNullException.ThrowIfNull(authoringPolicies);
+
+        var authoringPoliciesByBehaviorId = authoringPolicies
+            .ToDictionary(static policy => policy.BehaviorId, Comparer);
 
         return candidates
             .Where(static candidate => !string.IsNullOrWhiteSpace(candidate.ProjectedEndpoint.BehaviorId))
             .GroupBy(static candidate => candidate.ProjectedEndpoint.BehaviorId!, Comparer)
-            .Select(static group => CreateGroupDescriptor(group.Key, group))
+            .Select(group => CreateGroupDescriptor(group.Key, group, authoringPoliciesByBehaviorId))
             .OrderBy(static group => group.BehaviorId, Comparer)
             .ToArray();
     }
 
     private static RestEndpointPublicationGroupDescriptor CreateGroupDescriptor(
         string behaviorId,
-        IEnumerable<RestEndpointCandidateRuntimeDescriptor> candidates)
+        IEnumerable<RestEndpointCandidateRuntimeDescriptor> candidates,
+        IReadOnlyDictionary<string, RestEndpointPublicationGroupAuthoringPolicyDescriptor> authoringPoliciesByBehaviorId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
         ArgumentNullException.ThrowIfNull(candidates);
+        ArgumentNullException.ThrowIfNull(authoringPoliciesByBehaviorId);
 
         var orderedCandidates = candidates
             .OrderBy(static candidate => candidate.PrecedenceRank)
@@ -75,6 +86,7 @@ internal sealed class AspNetCoreRestEndpointPublicationGroupRuntimeCatalog(
             .Where(static candidate => candidate.Status == RestEndpointCandidateStatus.Published)
             .Select(static candidate => (int?)candidate.PrecedenceRank)
             .Min();
+        var authoringPolicy = ResolveAuthoringPolicy(behaviorId, authoringPoliciesByBehaviorId);
 
         return new RestEndpointPublicationGroupDescriptor(
             behaviorId,
@@ -83,6 +95,28 @@ internal sealed class AspNetCoreRestEndpointPublicationGroupRuntimeCatalog(
             publishedCandidateIds,
             precedenceSuppressedCandidateIds,
             governanceSuppressedCandidateIds,
-            orderedCandidates);
+            orderedCandidates,
+            authoringPolicy);
+    }
+
+    private static RestEndpointPublicationGroupAuthoringPolicyDescriptor ResolveAuthoringPolicy(
+        string behaviorId,
+        IReadOnlyDictionary<string, RestEndpointPublicationGroupAuthoringPolicyDescriptor> authoringPoliciesByBehaviorId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
+        ArgumentNullException.ThrowIfNull(authoringPoliciesByBehaviorId);
+
+        if (!authoringPoliciesByBehaviorId.TryGetValue(behaviorId.Trim(), out var authoringPolicy))
+        {
+            return new RestEndpointPublicationGroupAuthoringPolicyDescriptor(behaviorId);
+        }
+
+        return new RestEndpointPublicationGroupAuthoringPolicyDescriptor(
+            authoringPolicy.BehaviorId,
+            authoringPolicy.IsConfigured,
+            authoringPolicy.AllowMultiplePublishedCandidates,
+            authoringPolicy.PreferredAuthoringStyle,
+            authoringPolicy.AllowedAuthoringStyles,
+            authoringPolicy.DisallowedAuthoringStyles);
     }
 }
