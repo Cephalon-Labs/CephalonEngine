@@ -39,7 +39,8 @@ internal static class RestBehaviorProjectionMaterializer
             apiRoutesOptions,
             projection.Groups,
             governanceOptions.Suppressions,
-            governanceOptions.Overrides);
+            governanceOptions.Overrides,
+            governanceOptions.AuthoringPolicies);
 
         for (var groupIndex = 0; groupIndex < projection.Groups.Count; groupIndex++)
         {
@@ -125,6 +126,10 @@ internal static class RestBehaviorProjectionMaterializer
                 var builder = candidate.EffectiveEndpointProjection.Apply(group);
                 var sourceCapabilityCapture = CaptureSourceCapability(builder);
                 var sourceDocumentationCapture = CaptureSourceDocumentation(builder);
+                ApplyResolvedEndpointName(
+                    builder,
+                    candidate.Candidate.ProjectedEndpoint.EndpointName,
+                    sourceDocumentationCapture.EndpointName);
                 ApplyRequiredCapabilityOverride(builder, candidate.AppliedCapabilityOverride);
                 ApplyEndpointMetadataOverride(builder, candidate.AppliedMetadataOverride);
                 ApplyPublishedOverrideProvenance(
@@ -172,6 +177,22 @@ internal static class RestBehaviorProjectionMaterializer
         });
 
         return capture;
+    }
+
+    private static void ApplyResolvedEndpointName(
+        RouteHandlerBuilder builder,
+        string? endpointName,
+        string? sourceEndpointName)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        if (string.IsNullOrWhiteSpace(endpointName) ||
+            string.Equals(endpointName, sourceEndpointName, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        builder.WithName(endpointName);
     }
 
     private static void RegisterCandidates(

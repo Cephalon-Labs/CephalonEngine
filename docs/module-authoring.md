@@ -553,10 +553,15 @@ original explicit descriptor set by property/source/name equivalence, so hosts c
 route-only candidate from a richer explicitly bound sibling even when later overrides rewrite the
 published route.
 
-When a host wants to declare grouped authoring-policy intent without changing current publication
-behavior, use `RestApi:AuthoringPolicies:{behaviorId}`. That boundary-level contract now lets the
-host declare whether future enforcement should allow multiple published candidates and which
-authoring styles are preferred, allowed, or disallowed for the same grouped behavior answer.
+When a host wants to declare grouped authoring-policy intent for one behavior boundary, use
+`RestApi:AuthoringPolicies:{behaviorId}`. That boundary-level contract now actively honors
+`AllowMultiplePublishedCandidates = true` during shorthand candidate resolution, so
+lower-precedence unsuppressed shorthand candidates can remain published together when the final
+public route answers stay distinct. When those co-published candidates would otherwise reuse the
+same effective endpoint name, Cephalon now disambiguates that name deterministically while
+preserving `OriginalEndpointName` as source shorthand lineage. `PreferredAuthoringStyle`,
+`AllowedAuthoringStyles`, and `DisallowedAuthoringStyles` still remain operator-visible intent for
+now.
 
 When a host wants to keep shorthand publication but retarget selected shorthand endpoints to a
 different effective API major version, HTTP method, bounded published route-group prefix,

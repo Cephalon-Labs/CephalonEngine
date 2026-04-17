@@ -597,7 +597,13 @@ Each grouped publication answer now also carries `AuthoringPolicy` as typed
 implicit default single-winner boundary from an explicit
 `RestApi:AuthoringPolicies:{behaviorId}` configuration and keeps
 `AllowMultiplePublishedCandidates` plus preferred/allowed/disallowed authoring-style intent
-visible without changing current publication behavior.
+visible. That same policy surface now also changes actual publication behavior for grouped
+shorthand candidates: when `AllowMultiplePublishedCandidates = true`, lower-precedence unsuppressed
+shorthand candidates can remain published beside the default winner as long as the resolved public
+route answers stay distinct. When those co-published candidates would otherwise reuse the same
+effective endpoint name, candidate resolution now disambiguates that name deterministically while
+preserving `OriginalEndpointName` as source shorthand lineage. Preferred/allowed/disallowed
+authoring-style fields remain visibility-only intent for now.
 
 The host now also publishes the configured shorthand-suppression rules themselves through:
 

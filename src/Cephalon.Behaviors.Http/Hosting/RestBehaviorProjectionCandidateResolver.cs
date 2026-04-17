@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Transports;
@@ -11,12 +12,15 @@ namespace Cephalon.Behaviors.Http.Hosting;
 
 internal static class RestBehaviorProjectionCandidateResolver
 {
+    private static readonly StringComparer Comparer = StringComparer.OrdinalIgnoreCase;
+
     internal static IReadOnlyList<ResolvedRestBehaviorEndpointProjectionCandidate> ResolveCandidates(
         ModuleDescriptor moduleDescriptor,
         ApiRoutesOptions apiRoutesOptions,
         IReadOnlyList<RestBehaviorRouteGroupProjection> groups,
         IReadOnlyList<RestEndpointSuppressionOptions>? suppressions = null,
-        IReadOnlyList<RestEndpointOverrideOptions>? overrides = null)
+        IReadOnlyList<RestEndpointOverrideOptions>? overrides = null,
+        IReadOnlyList<RestEndpointPublicationGroupAuthoringPolicyDescriptor>? authoringPolicies = null)
     {
         ArgumentNullException.ThrowIfNull(moduleDescriptor);
         ArgumentNullException.ThrowIfNull(apiRoutesOptions);
@@ -38,38 +42,254 @@ internal static class RestBehaviorProjectionCandidateResolver
             return [];
         }
 
+        var authoringPoliciesByBehaviorId = (authoringPolicies ?? [])
+            .Where(static policy => policy is not null)
+            .ToDictionary(static policy => policy.BehaviorId, Comparer);
         var matchedSuppressionsByCandidateId = candidates.ToDictionary(
             static candidate => candidate.Candidate.Id,
             candidate => ResolveMatchingSuppressions(candidate, suppressions),
-            StringComparer.OrdinalIgnoreCase);
+            Comparer);
         var suppressionByCandidateId = matchedSuppressionsByCandidateId.ToDictionary(
             static pair => pair.Key,
             static pair => pair.Value.FirstOrDefault(),
-            StringComparer.OrdinalIgnoreCase);
+            Comparer);
 
         var winnersByBehavior = candidates
             .Where(candidate => suppressionByCandidateId[candidate.Candidate.Id] is null)
             .GroupBy(
                 static candidate => candidate.Candidate.ProjectedEndpoint.BehaviorId ?? string.Empty,
-                StringComparer.OrdinalIgnoreCase)
+                Comparer)
             .ToDictionary(
                 static group => group.Key,
-                static group =>
-                {
-                    var winningRank = group.Min(static candidate => candidate.Candidate.PrecedenceRank);
-                    return group
-                        .Where(candidate => candidate.Candidate.PrecedenceRank == winningRank)
-                        .OrderBy(static candidate => candidate.Candidate.Id, StringComparer.OrdinalIgnoreCase)
-                        .ToArray();
-                },
-                StringComparer.OrdinalIgnoreCase);
+                group => ResolvePublishedCandidates(group, authoringPoliciesByBehaviorId),
+                Comparer);
 
-        return candidates
-            .Select(candidate => ResolvePublication(candidate, matchedSuppressionsByCandidateId, winnersByBehavior))
+        var resolvedCandidates = EnsureUniquePublishedEndpointNames(
+            candidates.Select(candidate => ResolvePublication(candidate, matchedSuppressionsByCandidateId, winnersByBehavior)));
+
+        return resolvedCandidates
             .OrderBy(static candidate => candidate.Candidate.ProjectedEndpoint.RoutePattern, StringComparer.OrdinalIgnoreCase)
             .ThenBy(static candidate => candidate.Candidate.ProjectedEndpoint.Method, StringComparer.OrdinalIgnoreCase)
             .ThenBy(static candidate => candidate.Candidate.Id, StringComparer.OrdinalIgnoreCase)
             .ToArray();
+    }
+
+    private static ResolvedRestBehaviorEndpointProjectionCandidate[] ResolvePublishedCandidates(
+        IGrouping<string, ResolvedRestBehaviorEndpointProjectionCandidate> candidates,
+        IReadOnlyDictionary<string, RestEndpointPublicationGroupAuthoringPolicyDescriptor> authoringPoliciesByBehaviorId)
+    {
+        ArgumentNullException.ThrowIfNull(candidates);
+        ArgumentNullException.ThrowIfNull(authoringPoliciesByBehaviorId);
+
+        var orderedCandidates = candidates
+            .OrderBy(static candidate => candidate.Candidate.PrecedenceRank)
+            .ThenBy(static candidate => candidate.Candidate.Id, Comparer)
+            .ToArray();
+        if (orderedCandidates.Length == 0)
+        {
+            return [];
+        }
+
+        if (AllowMultiplePublishedCandidates(candidates.Key, authoringPoliciesByBehaviorId))
+        {
+            return orderedCandidates;
+        }
+
+        var winningRank = orderedCandidates[0].Candidate.PrecedenceRank;
+        return orderedCandidates
+            .Where(candidate => candidate.Candidate.PrecedenceRank == winningRank)
+            .ToArray();
+    }
+
+    private static bool AllowMultiplePublishedCandidates(
+        string behaviorId,
+        IReadOnlyDictionary<string, RestEndpointPublicationGroupAuthoringPolicyDescriptor> authoringPoliciesByBehaviorId)
+    {
+        ArgumentNullException.ThrowIfNull(authoringPoliciesByBehaviorId);
+
+        return !string.IsNullOrWhiteSpace(behaviorId) &&
+               authoringPoliciesByBehaviorId.TryGetValue(behaviorId.Trim(), out var authoringPolicy) &&
+               authoringPolicy.AllowMultiplePublishedCandidates;
+    }
+
+    private static ResolvedRestBehaviorEndpointProjectionCandidate[] EnsureUniquePublishedEndpointNames(
+        IEnumerable<ResolvedRestBehaviorEndpointProjectionCandidate> candidates)
+    {
+        ArgumentNullException.ThrowIfNull(candidates);
+
+        var candidateArray = candidates.ToArray();
+        if (candidateArray.Length <= 1)
+        {
+            return candidateArray;
+        }
+
+        var replacementNamesByCandidateId = new Dictionary<string, string>(Comparer);
+        foreach (var duplicateGroup in candidateArray
+                     .Where(static candidate =>
+                         candidate.Candidate.Status == RestEndpointCandidateStatus.Published &&
+                         !string.IsNullOrWhiteSpace(candidate.Candidate.ProjectedEndpoint.EndpointName))
+                     .GroupBy(static candidate => candidate.Candidate.ProjectedEndpoint.EndpointName!, Comparer)
+                     .Where(static group => group.Count() > 1))
+        {
+            var usedNames = new HashSet<string>(Comparer);
+            foreach (var candidate in duplicateGroup
+                         .OrderBy(static item => item.Candidate.PrecedenceRank)
+                         .ThenBy(static item => item.Candidate.AuthoringStyle, Comparer)
+                         .ThenBy(static item => item.Candidate.ProjectedEndpoint.RoutePattern, Comparer)
+                         .ThenBy(static item => item.Candidate.Id, Comparer))
+            {
+                var uniqueEndpointName = BuildUniquePublishedEndpointName(candidate, usedNames);
+                replacementNamesByCandidateId[candidate.Candidate.Id] = uniqueEndpointName;
+            }
+        }
+
+        if (replacementNamesByCandidateId.Count == 0)
+        {
+            return candidateArray;
+        }
+
+        return candidateArray
+            .Select(candidate => replacementNamesByCandidateId.TryGetValue(candidate.Candidate.Id, out var endpointName)
+                ? UpdateProjectedEndpointName(candidate, endpointName)
+                : candidate)
+            .ToArray();
+    }
+
+    private static string BuildUniquePublishedEndpointName(
+        ResolvedRestBehaviorEndpointProjectionCandidate candidate,
+        HashSet<string> usedNames)
+    {
+        ArgumentNullException.ThrowIfNull(candidate);
+        ArgumentNullException.ThrowIfNull(usedNames);
+
+        var baseEndpointName = candidate.Candidate.ProjectedEndpoint.EndpointName
+            ?? throw new InvalidOperationException("Published REST endpoint candidates must expose an endpoint name before disambiguation.");
+        var authoringStyleSuffix = NormalizeEndpointNameSegment(candidate.Candidate.AuthoringStyle);
+        var preferredName = $"{baseEndpointName}.{authoringStyleSuffix}";
+        if (usedNames.Add(preferredName))
+        {
+            return preferredName;
+        }
+
+        var routeSuffix = NormalizeEndpointNameSegment(
+            candidate.Candidate.ProjectedEndpoint.RelativePattern ?? candidate.Candidate.ProjectedEndpoint.RoutePattern);
+        var routeQualifiedName = $"{preferredName}.{routeSuffix}";
+        if (usedNames.Add(routeQualifiedName))
+        {
+            return routeQualifiedName;
+        }
+
+        var candidateIdSuffix = candidate.Candidate.Id.Length > 8
+            ? candidate.Candidate.Id[..8]
+            : candidate.Candidate.Id;
+        var candidateQualifiedName = $"{preferredName}.{NormalizeEndpointNameSegment(candidateIdSuffix)}";
+        if (usedNames.Add(candidateQualifiedName))
+        {
+            return candidateQualifiedName;
+        }
+
+        var counter = 2;
+        while (true)
+        {
+            var numberedName = $"{candidateQualifiedName}.{counter}";
+            if (usedNames.Add(numberedName))
+            {
+                return numberedName;
+            }
+
+            counter++;
+        }
+    }
+
+    private static string NormalizeEndpointNameSegment(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return "candidate";
+        }
+
+        var builder = new StringBuilder(value.Length);
+        var pendingSeparator = false;
+        foreach (var character in value.Trim())
+        {
+            if (char.IsLetterOrDigit(character))
+            {
+                if (pendingSeparator && builder.Length > 0)
+                {
+                    builder.Append('_');
+                }
+
+                builder.Append(char.ToLowerInvariant(character));
+                pendingSeparator = false;
+            }
+            else
+            {
+                pendingSeparator = true;
+            }
+        }
+
+        return builder.Length == 0
+            ? "candidate"
+            : builder.ToString();
+    }
+
+    private static ResolvedRestBehaviorEndpointProjectionCandidate UpdateProjectedEndpointName(
+        ResolvedRestBehaviorEndpointProjectionCandidate candidate,
+        string endpointName)
+    {
+        ArgumentNullException.ThrowIfNull(candidate);
+        ArgumentException.ThrowIfNullOrWhiteSpace(endpointName);
+
+        var updatedProjectedEndpoint = new RestEndpointRuntimeDescriptor(
+            candidate.Candidate.ProjectedEndpoint.Id,
+            candidate.Candidate.ProjectedEndpoint.TransportId,
+            candidate.Candidate.ProjectedEndpoint.SourceKind,
+            candidate.Candidate.ProjectedEndpoint.Method,
+            candidate.Candidate.ProjectedEndpoint.RoutePattern,
+            candidate.Candidate.ProjectedEndpoint.SourceModuleId,
+            candidate.Candidate.ProjectedEndpoint.SourceModuleVersion,
+            candidate.Candidate.ProjectedEndpoint.SourceModuleVersionMajor,
+            candidate.Candidate.ProjectedEndpoint.BehaviorId,
+            endpointName,
+            candidate.Candidate.ProjectedEndpoint.OpenApiDocumentName,
+            candidate.Candidate.ProjectedEndpoint.ApiVersionMajor,
+            candidate.Candidate.ProjectedEndpoint.Tags,
+            candidate.Candidate.ProjectedEndpoint.Summary,
+            candidate.Candidate.ProjectedEndpoint.Description,
+            candidate.Candidate.ProjectedEndpoint.OriginalEndpointName,
+            candidate.Candidate.ProjectedEndpoint.OriginalSummary,
+            candidate.Candidate.ProjectedEndpoint.OriginalDescription,
+            candidate.Candidate.ProjectedEndpoint.CandidateId,
+            candidate.Candidate.ProjectedEndpoint.OriginalProjection,
+            candidate.Candidate.ProjectedEndpoint.BindingDescriptors,
+            candidate.Candidate.ProjectedEndpoint.BindingFallbackMode,
+            candidate.Candidate.ProjectedEndpoint.Metadata,
+            candidate.Candidate.ProjectedEndpoint.AuthoringStyle,
+            candidate.Candidate.ProjectedEndpoint.RouteGroupPrefix,
+            candidate.Candidate.ProjectedEndpoint.RelativePattern,
+            candidate.Candidate.ProjectedEndpoint.BehaviorType,
+            candidate.Candidate.ProjectedEndpoint.SourceId,
+            candidate.Candidate.ProjectedEndpoint.RequiredCapabilityKey,
+            candidate.Candidate.ProjectedEndpoint.OriginalRequiredCapabilityKey,
+            candidate.Candidate.ProjectedEndpoint.AppliedOverrideId,
+            candidate.Candidate.ProjectedEndpoint.MatchedOverrideIds);
+
+        return candidate with
+        {
+            Candidate = new RestEndpointCandidateRuntimeDescriptor(
+                candidate.Candidate.Id,
+                updatedProjectedEndpoint,
+                candidate.Candidate.OriginalProjection,
+                candidate.Candidate.AuthoringStyle,
+                candidate.Candidate.PrecedenceRank,
+                candidate.Candidate.Status,
+                suppressedByCandidateId: candidate.Candidate.SuppressedByCandidateId,
+                suppressedBySuppressionId: candidate.Candidate.SuppressedBySuppressionId,
+                appliedOverrideId: candidate.Candidate.AppliedOverrideId,
+                matchedSuppressionIds: candidate.Candidate.MatchedSuppressionIds,
+                matchedOverrideIds: candidate.Candidate.MatchedOverrideIds,
+                suppressionReason: candidate.Candidate.SuppressionReason)
+        };
     }
 
     private static ResolvedRestBehaviorEndpointProjectionCandidate[] BuildGroupCandidates(

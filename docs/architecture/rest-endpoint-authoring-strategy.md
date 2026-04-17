@@ -229,7 +229,16 @@ Status update:
   `RestApi:AuthoringPolicies:{behaviorId}` now binds
   `AllowMultiplePublishedCandidates` plus preferred/allowed/disallowed authoring-style intent so
   `/engine/rest-endpoint-publication-groups` and `snapshot.RestEndpointPublicationGroups` can
-  round-trip that policy truth without changing current publication semantics
+  round-trip that policy truth
+- the next bounded authoring-policy enforcement follow-through is now shipped through
+  `ENG-058-T123`: `Cephalon.Behaviors.Http` now honors
+  `RestApi:AuthoringPolicies:{behaviorId}:AllowMultiplePublishedCandidates` during candidate
+  resolution so lower-precedence shorthand candidates can remain published when governance does not
+  suppress them, while route-collision validation still stays authoritative and effective endpoint
+  names are now disambiguated deterministically by authoring style, route shape, and candidate
+  identity when co-published shorthand candidates would otherwise reuse the same endpoint name;
+  `PreferredAuthoringStyle`, `AllowedAuthoringStyles`, and `DisallowedAuthoringStyles` remain
+  visibility-only intent for now
 - the next low-code inline module-owned authoring follow-through is now shipped through
   `ENG-058-T81`: `Cephalon.Behaviors.Http` now exposes
   `RestBehaviorEngineBuilderExtensions.AddRestBehaviorModule<TMarker>()`, which lets a host
@@ -524,13 +533,20 @@ explicitly opts into multiple projections.
 
 The current shipped place for that intent is
 `RestApi:AuthoringPolicies:{behaviorId}:AllowMultiplePublishedCandidates`, surfaced back out
-through `RestEndpointPublicationGroupDescriptor.AuthoringPolicy`; changing actual publication
-semantics to honor that flag remains a later enforcement slice.
+through `RestEndpointPublicationGroupDescriptor.AuthoringPolicy`. When that flag is omitted or
+`false`, the default single-winner precedence answer still applies. When it is `true`,
+lower-precedence shorthand candidates can remain published side by side as long as governance does
+not suppress them and the final `HTTP method + route pattern` answers still stay distinct; if
+co-published candidates would otherwise reuse the same effective endpoint name, the resolver now
+disambiguates that endpoint name deterministically while preserving `OriginalEndpointName` as the
+source shorthand lineage.
 
 That means:
 
 - explicit module mapping should suppress implicit behavior-only REST projection for the same behavior
 - Cephalon should not run both side by side by default
+- Cephalon may run more than one shorthand candidate side by side only when the grouped behavior
+  explicitly opts into that outcome and the final mapped public surface remains deterministic
 
 ### Registration precedence
 
@@ -1174,9 +1190,10 @@ Recommended implementation sequence after the shipped normalization, runtime-cat
 precedence-visibility, and generated-module follow-through slices:
 
 1. evaluate whether future enforcement of the now-shipped
-   `RestApi:AuthoringPolicies:{behaviorId}` contract should change precedence or allow bounded
-   multi-projection publication only if runtime truth, ownership, precedence, and grouped-policy
-   visibility stay explicit and introspectable
+   `RestApi:AuthoringPolicies:{behaviorId}` contract should also enforce
+   `PreferredAuthoringStyle`, `AllowedAuthoringStyles`, or `DisallowedAuthoringStyles` in a way
+   that keeps runtime truth, ownership, precedence, and grouped-policy visibility explicit and
+   introspectable now that bounded multi-publication is already shipped
 2. extend the shipped suppression-plus-override governance baseline further only if those stronger
    authoring-policy contracts keep the runtime truth model understandable instead of introducing
    hidden rule layers

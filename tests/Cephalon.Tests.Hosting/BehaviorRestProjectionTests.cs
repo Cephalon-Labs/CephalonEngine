@@ -330,6 +330,45 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverHonorsAllowMultiplePublishedCandidatesAuthoringPolicy()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        var group = builder.Group("/tests/generated-profile-multi")
+            .ApiVersion(10);
+
+        group.MapGeneratedProfiles("tests.generated.projection.precedence");
+        group.MapProfile<GeneratedProjectionProfilePrecedenceBehavior>();
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.generated-profile-multi",
+                "Generated Profile Multi-Publish Module",
+                "Exercises authoring-policy publication across explicit profile and generated shorthand.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            authoringPolicies:
+            [
+                new RestEndpointPublicationGroupAuthoringPolicyDescriptor(
+                    "tests.generated.projection.precedence.lookup",
+                    isConfigured: true,
+                    allowMultiplePublishedCandidates: true)
+            ]);
+
+        Assert.Equal(2, candidates.Count);
+        Assert.All(candidates, static item =>
+        {
+            Assert.Equal(RestEndpointCandidateStatus.Published, item.Candidate.Status);
+            Assert.Null(item.Candidate.SuppressedByCandidateId);
+            Assert.Null(item.Candidate.SuppressedBySuppressionId);
+        });
+        Assert.Contains(candidates, static item =>
+            string.Equals(item.Candidate.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, StringComparison.Ordinal));
+        Assert.Contains(candidates, static item =>
+            string.Equals(item.Candidate.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, StringComparison.Ordinal));
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverLetsGeneratedCandidatePublishWhenProfileCandidateIsSuppressedByGovernance()
     {
         var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));

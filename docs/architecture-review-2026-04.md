@@ -222,12 +222,21 @@ publication answers now also expose typed `AuthoringPolicy` data through
 now binds explicit default-versus-configured authoring-policy intent for
 `AllowMultiplePublishedCandidates` plus preferred/allowed/disallowed authoring styles, and
 `/engine/rest-endpoint-publication-groups` plus `snapshot.RestEndpointPublicationGroups` now
-round-trip that policy truth without changing current winner or suppression behavior.
+round-trip that policy truth.
 
-The remaining gap is now policy enforcement and broader governance follow-through if shorthand or
-generated routes eventually broaden enough that more than one projection style can compete for the
-same public behavior boundary in ways that should materially change publication outcomes rather than
-only surfacing authoring-policy intent.
+That next policy-enforcement gap is now partially addressed through `ENG-058-T123`:
+`Cephalon.Behaviors.Http` now honors
+`RestApi:AuthoringPolicies:{behaviorId}:AllowMultiplePublishedCandidates` during candidate
+resolution, so lower-precedence shorthand candidates can remain published when the grouped
+behavior explicitly opts into that outcome and no governance rule suppresses them. The same slice
+also closes a runtime truth gap that appeared immediately once multi-publication became real:
+effective endpoint names are now disambiguated deterministically for co-published shorthand
+candidates while `OriginalEndpointName` still preserves the source shorthand lineage.
+
+The remaining gap is now narrower: decide whether preferred/allowed/disallowed authoring-style
+rules should ever become enforced publication policy, and extend broader governance only if that
+follow-through keeps precedence, ownership, and runtime truth explicit instead of introducing
+hidden rule layers.
 
 ## Architecture recommendations
 
