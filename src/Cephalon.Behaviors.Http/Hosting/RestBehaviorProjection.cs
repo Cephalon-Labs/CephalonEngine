@@ -13,14 +13,16 @@ internal sealed record RestBehaviorModuleProjection(
 
 internal sealed record RestBehaviorRouteGroupProjection(
     string Prefix,
-    string? TagName,
-    string? TagDescription,
-    bool HasExplicitTagDescription,
-    int? ApiVersionMajor,
-    bool HasExplicitApiVersion,
-    string? ProfileApiVersionSourceBehaviorId,
-    IReadOnlyList<Action<RouteGroupBuilder>> GroupConventions,
-    IReadOnlyList<RestBehaviorEndpointProjection> Endpoints);
+    string? OpenApiDocumentName = null,
+    bool HasExplicitOpenApiDocumentName = false,
+    string? TagName = null,
+    string? TagDescription = null,
+    bool HasExplicitTagDescription = false,
+    int? ApiVersionMajor = null,
+    bool HasExplicitApiVersion = false,
+    string? ProfileApiVersionSourceBehaviorId = null,
+    IReadOnlyList<Action<RouteGroupBuilder>> GroupConventions = null!,
+    IReadOnlyList<RestBehaviorEndpointProjection> Endpoints = null!);
 
 internal sealed record RestBehaviorEndpointProjection(
     RestBehaviorHttpMethod Method,

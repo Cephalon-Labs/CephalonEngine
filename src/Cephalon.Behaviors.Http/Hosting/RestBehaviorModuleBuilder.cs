@@ -135,6 +135,19 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
             state.ApiVersionMajor = major;
             state.HasExplicitApiVersion = true;
             state.ProfileApiVersionSourceBehaviorId = null;
+            if (!state.HasExplicitOpenApiDocumentName)
+            {
+                state.OpenApiDocumentName = ResolveVersionDocumentName(major);
+            }
+
+            return this;
+        }
+
+        public IRestBehaviorEndpointGroupBuilder WithOpenApiDocumentName(string openApiDocumentName)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(openApiDocumentName);
+            state.OpenApiDocumentName = openApiDocumentName.Trim();
+            state.HasExplicitOpenApiDocumentName = true;
             return this;
         }
 
@@ -328,6 +341,11 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
             {
                 state.ApiVersionMajor = profile.ApiVersionMajor.Value;
                 state.ProfileApiVersionSourceBehaviorId = profile.BehaviorId;
+                if (!state.HasExplicitOpenApiDocumentName)
+                {
+                    state.OpenApiDocumentName = ResolveVersionDocumentName(profile.ApiVersionMajor.Value);
+                }
+
                 return;
             }
 
@@ -350,11 +368,17 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
                     .Trim('/')
                     .Split('/', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
         }
+
+        private static string ResolveVersionDocumentName(int apiVersionMajor) => $"v{apiVersionMajor}";
     }
 
     private sealed class RestBehaviorRouteGroupState(string prefix)
     {
         public string Prefix { get; } = prefix;
+
+        public string? OpenApiDocumentName { get; set; }
+
+        public bool HasExplicitOpenApiDocumentName { get; set; }
 
         public string? TagName { get; set; }
 
@@ -376,6 +400,8 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
         {
             return new RestBehaviorRouteGroupProjection(
                 Prefix,
+                OpenApiDocumentName,
+                HasExplicitOpenApiDocumentName,
                 TagName,
                 TagDescription,
                 HasExplicitTagDescription,

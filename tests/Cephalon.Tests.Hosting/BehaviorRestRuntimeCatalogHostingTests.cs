@@ -930,6 +930,163 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonAppliesOpenApiDocumentNameOverridesAndExposesOverrideCatalog()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "4";
+        builder.Configuration["OpenApi:DefaultVersion"] = "4";
+        builder.Configuration["RestApi:Overrides:prefer-public-document:Behaviors:0"] = "tests.generated.runtimeoverride.lookup";
+        builder.Configuration["RestApi:Overrides:prefer-public-document:OpenApiDocumentName"] = "public";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new GeneratedVersionOverrideRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(overrides);
+        Assert.NotNull(snapshot);
+
+        var endpoint = Assert.Single(endpoints, static candidate =>
+            string.Equals(candidate.BehaviorId, "tests.generated.runtimeoverride.lookup", StringComparison.Ordinal));
+        Assert.Equal("/api/v4/tests/generated/runtime/override/orders/{orderId}", endpoint.RoutePattern);
+        Assert.Equal("public", endpoint.OpenApiDocumentName);
+        Assert.Equal(4, endpoint.ApiVersionMajor);
+        Assert.Equal("prefer-public-document", endpoint.AppliedOverrideId);
+        Assert.Equal(["prefer-public-document"], endpoint.MatchedOverrideIds);
+        Assert.NotNull(endpoint.OriginalProjection);
+        Assert.Equal("v4", endpoint.OriginalProjection!.OpenApiDocumentName);
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.generated.runtimeoverride.lookup", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+        Assert.Equal("prefer-public-document", candidate.AppliedOverrideId);
+        Assert.Equal("public", candidate.ProjectedEndpoint.OpenApiDocumentName);
+        Assert.Equal("v4", candidate.OriginalProjection.OpenApiDocumentName);
+
+        var rule = Assert.Single(overrides, static item => string.Equals(item.Id, "prefer-public-document", StringComparison.Ordinal));
+        Assert.Equal("public", rule.OpenApiDocumentName);
+
+        Assert.Contains(snapshot.RestEndpointOverrides, item =>
+            string.Equals(item.Id, "prefer-public-document", StringComparison.Ordinal) &&
+            string.Equals(item.OpenApiDocumentName, "public", StringComparison.Ordinal));
+        Assert.Contains(snapshot.RestEndpointCandidates, item =>
+            string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
+            string.Equals(item.AppliedOverrideId, "prefer-public-document", StringComparison.Ordinal) &&
+            string.Equals(item.ProjectedEndpoint.OpenApiDocumentName, "public", StringComparison.Ordinal) &&
+            string.Equals(item.OriginalProjection.OpenApiDocumentName, "v4", StringComparison.Ordinal));
+        Assert.Contains(snapshot.RestEndpoints, item =>
+            string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal) &&
+            string.Equals(item.AppliedOverrideId, "prefer-public-document", StringComparison.Ordinal) &&
+            item.MatchedOverrideIds.SequenceEqual(["prefer-public-document"]) &&
+            string.Equals(item.OpenApiDocumentName, "public", StringComparison.Ordinal) &&
+            item.OriginalProjection is not null &&
+            string.Equals(item.OriginalProjection.OpenApiDocumentName, "v4", StringComparison.Ordinal));
+
+        var routeEndpoint = Assert.Single(
+            ((IEndpointRouteBuilder)app).DataSources
+                .SelectMany(static dataSource => dataSource.Endpoints)
+                .OfType<RouteEndpoint>(),
+            static item => string.Equals(item.RoutePattern.RawText, "/api/v4/tests/generated/runtime/override/orders/{orderId}", StringComparison.Ordinal));
+        Assert.Equal("public", routeEndpoint.Metadata.GetMetadata<IEndpointGroupNameMetadata>()?.EndpointGroupName);
+        Assert.Equal("prefer-public-document", routeEndpoint.Metadata.GetMetadata<RestEndpointAppliedOverrideMetadata>()?.OverrideId);
+
+        var payload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>("/api/v4/tests/generated/runtime/override/orders/ord-42");
+        Assert.NotNull(payload);
+        Assert.Equal("ord-42", payload.OrderId);
+    }
+
+    [Fact]
+    public async Task MapCephalonKeepsExplicitOpenApiDocumentNameWhenProfileSeededApiVersionOverridesChangeRouteVersion()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.Configuration["RestApi:Overrides:prefer-v6:Behaviors:0"] = "tests.rest.profile.documentpinned.lookup";
+        builder.Configuration["RestApi:Overrides:prefer-v6:ApiVersionMajor"] = "6";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileSeededDocumentVersionOverrideRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(overrides);
+
+        var endpoint = Assert.Single(endpoints, static item =>
+            string.Equals(item.BehaviorId, "tests.rest.profile.documentpinned.lookup", StringComparison.Ordinal));
+        Assert.Equal("/api/v6/tests/profile/runtime/document-pinned/{orderId}", endpoint.RoutePattern);
+        Assert.Equal("public", endpoint.OpenApiDocumentName);
+        Assert.Equal(6, endpoint.ApiVersionMajor);
+        Assert.Equal("prefer-v6", endpoint.AppliedOverrideId);
+        Assert.Equal(["prefer-v6"], endpoint.MatchedOverrideIds);
+        Assert.NotNull(endpoint.OriginalProjection);
+        Assert.Equal(4, endpoint.OriginalProjection!.ApiVersionMajor);
+        Assert.Equal("public", endpoint.OriginalProjection.OpenApiDocumentName);
+        Assert.Equal("/api/v4/tests/profile/runtime/document-pinned/{orderId}", endpoint.OriginalProjection.RoutePattern);
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.profile.documentpinned.lookup", StringComparison.Ordinal));
+        Assert.Equal("prefer-v6", candidate.AppliedOverrideId);
+        Assert.Equal("public", candidate.ProjectedEndpoint.OpenApiDocumentName);
+        Assert.Equal(4, candidate.OriginalProjection.ApiVersionMajor);
+        Assert.Equal("public", candidate.OriginalProjection.OpenApiDocumentName);
+
+        var rule = Assert.Single(overrides, static item => string.Equals(item.Id, "prefer-v6", StringComparison.Ordinal));
+        Assert.Equal(6, rule.ApiVersionMajor);
+        Assert.Null(rule.OpenApiDocumentName);
+
+        var routeEndpoint = Assert.Single(
+            ((IEndpointRouteBuilder)app).DataSources
+                .SelectMany(static dataSource => dataSource.Endpoints)
+                .OfType<RouteEndpoint>(),
+            static item => string.Equals(item.RoutePattern.RawText, "/api/v6/tests/profile/runtime/document-pinned/{orderId}", StringComparison.Ordinal));
+        Assert.Equal("public", routeEndpoint.Metadata.GetMetadata<IEndpointGroupNameMetadata>()?.EndpointGroupName);
+        Assert.Equal("prefer-v6", routeEndpoint.Metadata.GetMetadata<RestEndpointAppliedOverrideMetadata>()?.OverrideId);
+
+        var payload = await client.GetFromJsonAsync<ProfileRuntimeOrderOutput>("/api/v6/tests/profile/runtime/document-pinned/ord-99");
+        Assert.NotNull(payload);
+        Assert.Equal("ord-99", payload.OrderId);
+    }
+
+    [Fact]
     public async Task MapCephalonAppliesEndpointMetadataOverridesAndExposesOverrideCatalog()
     {
         var builder = WebApplication.CreateBuilder();
@@ -4698,6 +4855,23 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         }
     }
 
+    private sealed class ProfileSeededDocumentVersionOverrideRuntimeCatalogModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.profile-runtime.document-pinned",
+            "Profile Document Pinned Runtime Module",
+            "Publishes a profile-backed shorthand route beneath an explicit OpenAPI document name so profile-seeded route-version overrides can keep document truth pinned.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Group("/tests/profile/runtime/document-pinned")
+                .WithOpenApiDocumentName("public")
+                .WithTagName("Profile Document Pinned API")
+                .MapProfile<GetProfileDocumentPinnedRuntimeOrderBehavior>();
+        }
+    }
+
     private sealed class ProfileCapabilityClearRuntimeCatalogModule : RestBehaviorModuleBase
     {
         public override ModuleDescriptor Descriptor { get; } = new(
@@ -5090,6 +5264,19 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     [AppBehavior("tests.rest.profile.override")]
     [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}", ApiVersionMajor = 2)]
     private sealed class GetProfileOverrideOrderBehavior : IAppBehavior<ProfileRuntimeOrderInput, ProfileRuntimeOrderOutput>
+    {
+        public Task<ProfileRuntimeOrderOutput> HandleAsync(
+            ProfileRuntimeOrderInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProfileRuntimeOrderOutput(input.OrderId));
+        }
+    }
+
+    [AppBehavior("tests.rest.profile.documentpinned.lookup")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}", ApiVersionMajor = 4)]
+    private sealed class GetProfileDocumentPinnedRuntimeOrderBehavior : IAppBehavior<ProfileRuntimeOrderInput, ProfileRuntimeOrderOutput>
     {
         public Task<ProfileRuntimeOrderOutput> HandleAsync(
             ProfileRuntimeOrderInput input,

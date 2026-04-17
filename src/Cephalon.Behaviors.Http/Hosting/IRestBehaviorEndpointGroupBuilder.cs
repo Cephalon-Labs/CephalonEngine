@@ -22,6 +22,13 @@ public interface IRestBehaviorEndpointGroupBuilder
     IRestBehaviorEndpointGroupBuilder ApiVersion(int major);
 
     /// <summary>
+    /// Overrides the published OpenAPI document name for the route group.
+    /// </summary>
+    /// <param name="openApiDocumentName">The OpenAPI document name to publish.</param>
+    /// <returns>The same group builder for fluent configuration.</returns>
+    IRestBehaviorEndpointGroupBuilder WithOpenApiDocumentName(string openApiDocumentName);
+
+    /// <summary>
     /// Overrides the published OpenAPI tag name for the route group.
     /// </summary>
     /// <param name="tagName">The tag name to publish.</param>

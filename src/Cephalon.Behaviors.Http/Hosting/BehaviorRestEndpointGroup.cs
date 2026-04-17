@@ -39,6 +39,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
     private readonly string? moduleSummary;
     private readonly string? moduleRemarks;
     private readonly string routePrefix;
+    private bool hasExplicitOpenApiDocumentName;
     private string? runtimeCandidateId;
     private string? runtimeOriginalDescription;
     private string? runtimeOriginalEndpointName;
@@ -178,7 +179,26 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         EnsureRoutesNotCreated(nameof(ApiVersion));
 
         ApiVersionMajor = major;
-        OpenApiDocumentName = $"v{major}";
+        if (!hasExplicitOpenApiDocumentName)
+        {
+            OpenApiDocumentName = $"v{major}";
+        }
+
+        return this;
+    }
+
+    /// <summary>
+    /// Overrides the OpenAPI document name applied to subsequently mapped endpoints in this group.
+    /// </summary>
+    /// <param name="openApiDocumentName">The OpenAPI document name to publish.</param>
+    /// <returns>The same group instance for fluent endpoint composition.</returns>
+    public BehaviorRestEndpointGroup WithOpenApiDocumentName(string openApiDocumentName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(openApiDocumentName);
+        EnsureRoutesNotCreated(nameof(WithOpenApiDocumentName));
+
+        OpenApiDocumentName = openApiDocumentName.Trim();
+        hasExplicitOpenApiDocumentName = true;
         return this;
     }
 

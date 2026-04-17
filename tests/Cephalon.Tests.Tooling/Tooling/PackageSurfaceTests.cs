@@ -841,6 +841,18 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void BehaviorsHttpRestBehaviorEndpointGroupBuilderExposesOpenApiDocumentNameOverrideMethod()
+    {
+        var methods = typeof(global::Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder)
+            .GetMethods(BindingFlags.Instance | BindingFlags.Public);
+
+        Assert.Contains(methods, static method =>
+            method.Name == "WithOpenApiDocumentName" &&
+            method.GetParameters() is [{ ParameterType: { } parameterType }] &&
+            parameterType == typeof(string));
+    }
+
+    [Fact]
     public void BehaviorsHttpRestBehaviorModuleBuilderExposesDerivedGeneratedGroupMethod()
     {
         var methods = typeof(global::Cephalon.Behaviors.Http.Hosting.IRestBehaviorModuleBuilder)
@@ -937,6 +949,15 @@ public sealed class PackageSurfaceTests
             .GetProperty("TagName", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions)
             .GetProperty("TagName", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void RestEndpointGovernanceContractsExposeOpenApiDocumentNameOverrides()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideDescriptor)
+            .GetProperty("OpenApiDocumentName", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions)
+            .GetProperty("OpenApiDocumentName", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

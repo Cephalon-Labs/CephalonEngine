@@ -93,6 +93,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             ? moduleDescriptor.DisplayName
             : group.TagName.Trim();
         var defaultApiVersionMajor = group.ApiVersionMajor ?? moduleVersionMajor;
+        var originalOpenApiDocumentName = ResolveGroupOpenApiDocumentName(group, defaultApiVersionMajor);
         var originalRouteGroupPrefix = RestEndpointRuntimeDescriptorFactory.CombinePaths(
             apiRoutesOptions.RestPrefix,
             ResolveRouteGroupPrefix(group.Prefix, defaultApiVersionMajor));
@@ -104,6 +105,7 @@ internal static class RestBehaviorProjectionCandidateResolver
                 endpoint,
                 tagName,
                 defaultApiVersionMajor,
+                originalOpenApiDocumentName,
                 originalRouteGroupPrefix,
                 apiRoutesOptions,
                 group,
@@ -117,6 +119,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         RestBehaviorEndpointProjection endpointProjection,
         string tagName,
         int? defaultApiVersionMajor,
+        string originalOpenApiDocumentName,
         string originalRouteGroupPrefix,
         ApiRoutesOptions apiRoutesOptions,
         RestBehaviorRouteGroupProjection group,
@@ -133,6 +136,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             endpointProjection.Method.ToString().ToUpperInvariant(),
             originalRouteGroupPrefix,
             endpointProjection.Pattern,
+            originalOpenApiDocumentName,
             RestEndpointBindingDescriptorAdapter.ToRuntimeDescriptors(endpointProjection.Bindings),
             endpointProjection.PreserveImplicitQueryFallback,
             tagName);
@@ -148,6 +152,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             endpointProjection,
             defaultApiVersionMajor,
             apiRoutesOptions.RestPrefix,
+            originalOpenApiDocumentName,
             originalRouteGroupPrefix,
             tagName,
             group,
@@ -156,12 +161,12 @@ internal static class RestBehaviorProjectionCandidateResolver
         var appliedOverride = overrideDecision.AppliedOverride;
         var effectiveEndpointProjection = appliedOverride?.EffectiveEndpointProjection ?? endpointProjection;
         var effectiveApiVersionMajor = appliedOverride?.EffectiveApiVersionMajor ?? defaultApiVersionMajor;
+        var effectiveOpenApiDocumentName = appliedOverride?.EffectiveOpenApiDocumentName ?? originalOpenApiDocumentName;
         var effectiveTagName = appliedOverride?.EffectiveTagName ?? tagName;
         var publishedRouteGroupPrefix = appliedOverride?.EffectiveRouteGroupPrefix ??
                                         RestEndpointRuntimeDescriptorFactory.CombinePaths(
                                             apiRoutesOptions.RestPrefix,
                                             ResolveRouteGroupPrefix(group.Prefix, effectiveApiVersionMajor));
-        var openApiDocumentName = ResolveOpenApiDocumentName(effectiveApiVersionMajor);
         var method = effectiveEndpointProjection.Method.ToString().ToUpperInvariant();
         var routePattern = RestEndpointRuntimeDescriptorFactory.CombinePaths(
             publishedRouteGroupPrefix,
@@ -210,7 +215,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             sourceModuleVersionMajor: ResolveModuleMajorVersion(moduleDescriptor.Version),
             behaviorId: effectiveEndpointProjection.BehaviorId,
             endpointName: endpointName,
-            openApiDocumentName: openApiDocumentName,
+            openApiDocumentName: effectiveOpenApiDocumentName,
             apiVersionMajor: effectiveApiVersionMajor,
             tags: [effectiveTagName],
             summary: summary,
@@ -308,6 +313,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         RestBehaviorEndpointProjection endpointProjection,
         int? defaultApiVersionMajor,
         string restPrefix,
+        string originalOpenApiDocumentName,
         string originalRouteGroupPrefix,
         string originalTagName,
         RestBehaviorRouteGroupProjection group,
@@ -341,6 +347,7 @@ internal static class RestBehaviorProjectionCandidateResolver
 
         var effectiveEndpointProjection = endpointProjection;
         var effectiveApiVersionMajor = defaultApiVersionMajor;
+        var effectiveOpenApiDocumentName = originalOpenApiDocumentName;
         var effectiveTagName = originalTagName;
         string? effectiveRouteGroupPrefix = null;
         var wasApplied = false;
@@ -416,6 +423,24 @@ internal static class RestBehaviorProjectionCandidateResolver
             wasApplied = true;
         }
 
+        if (!string.IsNullOrWhiteSpace(matchedOverride.OpenApiDocumentName))
+        {
+            if (!string.Equals(matchedOverride.OpenApiDocumentName, effectiveOpenApiDocumentName, StringComparison.Ordinal))
+            {
+                effectiveOpenApiDocumentName = matchedOverride.OpenApiDocumentName;
+                wasApplied = true;
+            }
+        }
+        else if (!group.HasExplicitOpenApiDocumentName &&
+                 effectiveApiVersionMajor != defaultApiVersionMajor)
+        {
+            var versionDerivedOpenApiDocumentName = ResolveOpenApiDocumentName(effectiveApiVersionMajor);
+            if (!string.Equals(versionDerivedOpenApiDocumentName, effectiveOpenApiDocumentName, StringComparison.Ordinal))
+            {
+                effectiveOpenApiDocumentName = versionDerivedOpenApiDocumentName;
+            }
+        }
+
         if (!string.IsNullOrWhiteSpace(matchedOverride.RouteGroupPrefix))
         {
             ValidateRouteGroupPrefixOverride(
@@ -447,6 +472,7 @@ internal static class RestBehaviorProjectionCandidateResolver
                     matchedOverride.Id,
                     effectiveEndpointProjection,
                     effectiveApiVersionMajor,
+                    effectiveOpenApiDocumentName,
                     effectiveRouteGroupPrefix,
                     effectiveTagName)
                 : null);
@@ -1264,6 +1290,20 @@ internal static class RestBehaviorProjectionCandidateResolver
             : "v1";
     }
 
+    private static string ResolveGroupOpenApiDocumentName(
+        RestBehaviorRouteGroupProjection group,
+        int? apiVersionMajor)
+    {
+        ArgumentNullException.ThrowIfNull(group);
+
+        if (!string.IsNullOrWhiteSpace(group.OpenApiDocumentName))
+        {
+            return group.OpenApiDocumentName.Trim();
+        }
+
+        return ResolveOpenApiDocumentName(apiVersionMajor);
+    }
+
     private static string BuildCandidateId(
         string sourceModuleId,
         string behaviorId,
@@ -1286,6 +1326,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         string method,
         string routeGroupPrefix,
         string relativePattern,
+        string openApiDocumentName,
         IReadOnlyList<RestEndpointBindingDescriptor> bindingDescriptors,
         bool preserveImplicitQueryFallback,
         string tagName)
@@ -1293,6 +1334,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         ArgumentException.ThrowIfNullOrWhiteSpace(method);
         ArgumentException.ThrowIfNullOrWhiteSpace(routeGroupPrefix);
         ArgumentException.ThrowIfNullOrWhiteSpace(relativePattern);
+        ArgumentException.ThrowIfNullOrWhiteSpace(openApiDocumentName);
         ArgumentNullException.ThrowIfNull(bindingDescriptors);
         ArgumentException.ThrowIfNullOrWhiteSpace(tagName);
 
@@ -1302,7 +1344,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             routeGroupPrefix,
             relativePattern,
             apiVersionMajor,
-            ResolveOpenApiDocumentName(apiVersionMajor),
+            openApiDocumentName,
             bindingDescriptors,
             preserveImplicitQueryFallback
                 ? RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback
@@ -1322,6 +1364,7 @@ internal sealed record AppliedRestEndpointOverride(
     string Id,
     RestBehaviorEndpointProjection EffectiveEndpointProjection,
     int? EffectiveApiVersionMajor,
+    string EffectiveOpenApiDocumentName,
     string? EffectiveRouteGroupPrefix,
     string EffectiveTagName);
 

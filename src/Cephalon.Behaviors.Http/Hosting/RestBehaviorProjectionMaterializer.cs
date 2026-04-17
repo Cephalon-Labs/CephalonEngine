@@ -68,6 +68,7 @@ internal static class RestBehaviorProjectionMaterializer
         foreach (var routeGroup in publishedCandidates
                      .GroupBy(candidate => ResolvePublishedMaterializationIdentity(candidate.Candidate))
                      .OrderBy(static group => group.Key.RouteGroupPrefix, StringComparer.OrdinalIgnoreCase)
+                     .ThenBy(static group => group.Key.OpenApiDocumentName, StringComparer.OrdinalIgnoreCase)
                      .ThenBy(static group => group.Key.TagName, StringComparer.OrdinalIgnoreCase))
         {
             var firstCandidate = routeGroup.First();
@@ -76,6 +77,11 @@ internal static class RestBehaviorProjectionMaterializer
                 ResolveMaterializationGroupPrefix(routeGroup.Key.RouteGroupPrefix, apiRoutesOptions.RestPrefix));
             group.UseRuntimeSourceKind(RestEndpointRuntimeMetadata.ModuleDslSourceKind);
             group.UseRuntimeAuthoringStyle(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle);
+            if (!string.IsNullOrWhiteSpace(routeGroup.Key.OpenApiDocumentName))
+            {
+                group.WithOpenApiDocumentName(routeGroup.Key.OpenApiDocumentName);
+            }
+
             if (!string.IsNullOrWhiteSpace(routeGroup.Key.TagName))
             {
                 group.WithTagName(routeGroup.Key.TagName);
@@ -495,6 +501,7 @@ internal static class RestBehaviorProjectionMaterializer
 
         return new MaterializationGroupIdentity(
             ResolvePublishedRouteGroupPrefix(candidate),
+            candidate.ProjectedEndpoint.OpenApiDocumentName,
             ResolveProjectedTagName(candidate.ProjectedEndpoint));
     }
 
@@ -569,5 +576,8 @@ internal static class RestBehaviorProjectionMaterializer
 
     private sealed record MaterializedPublishedCandidateState(string? AppliedOverrideId);
 
-    private sealed record MaterializationGroupIdentity(string RouteGroupPrefix, string? TagName);
+    private sealed record MaterializationGroupIdentity(
+        string RouteGroupPrefix,
+        string? OpenApiDocumentName,
+        string? TagName);
 }

@@ -92,6 +92,7 @@ public sealed class RestApiGovernanceOptions
                 method: child["Method"]?.Trim(),
                 pattern: child["Pattern"]?.Trim(),
                 routeGroupPrefix: child["RouteGroupPrefix"]?.Trim(),
+                openApiDocumentName: child["OpenApiDocumentName"]?.Trim(),
                 tagName: child["TagName"]?.Trim(),
                 endpointName: child["EndpointName"]?.Trim(),
                 summary: child["Summary"]?.Trim(),

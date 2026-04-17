@@ -37,7 +37,7 @@ module-owned REST endpoints.
   binding plans that explicit module-owned shorthand such as `MapProfile<TBehavior>()` can consume
   without publishing public REST directly from behaviors
 - **OpenAPI enrichment** — module tag names and descriptions, module-major API-version defaults
-  with explicit `.ApiVersion(...)` override support, best-effort XML comment
+  with explicit `.ApiVersion(...)` and `.WithOpenApiDocumentName(...)` override support, best-effort XML comment
   summaries/descriptions for module-owned REST endpoints, and separation between public REST docs
   and generic adapter endpoints
 - **Optional REST response envelope** — `ApiRoutes:ResultEnvelope:Enabled` projects REST success
@@ -407,6 +407,9 @@ Current helper behavior:
   `/v1` route prefix even without `.ApiVersion(1)`
 - keeps `.ApiVersion(major)` as the explicit override when a module needs a public API version
   that differs from the module package major
+- lets modules pin a published OpenAPI document name independently from the `/v{major}` route
+  segment through `.WithOpenApiDocumentName(...)` when a stable named document such as `public`
+  should remain authoritative
 - prefixes the mapped REST route group with `/v{major}` for the resolved API major version, so
   hosts expose paths such as `/api/v1/showcase/cart/{cartId}`
 - uses the resolved API major version as the operation-name version segment, falling back to the
@@ -415,9 +418,10 @@ Current helper behavior:
   OpenAPI + Scalar can show summaries and descriptions without extra boilerplate
 - maps behavior `<summary>` to the OpenAPI operation summary and behavior `<remarks>` to the
   OpenAPI operation description so Scalar does not repeat the same text twice
-- lets modules declare candidate OpenAPI document versions through `.ApiVersion(...)` or the owning
-  module major version, while the host-level `OpenApi:EnabledVersions` list decides which of those
-  versioned docs are actually published
+- lets modules declare candidate OpenAPI document membership through `.ApiVersion(...)`,
+  `.WithOpenApiDocumentName(...)`, or the owning module major version, while the host-level
+  `OpenApi:EnabledVersions` list still decides which versioned docs are actually published and
+  legacy `OpenApi:Documents` remains the named-document publication contract
 - expects `/scalar` to redirect to the default canonical document such as `/scalar/v1`, while
   `/scalar/` remains available for multi-document flows and hash-based selections are normalized
   back into pinned versioned links
@@ -627,10 +631,11 @@ Current governance baseline:
   host-level version rewrites, while shorthand method and constrained pattern overrides can still
   apply
 - the current override slice rewrites only the effective API major version, HTTP method,
-  constrained relative route pattern, required capability boundary, capability-boundary clear,
-  endpoint metadata set-or-clear actions, and/or explicit binding plan, keeping the `/v{major}`
-  route segment,
-  OpenAPI document name, mapped endpoint, and runtime catalogs aligned
+  explicit OpenAPI document name, constrained relative route pattern, required capability
+  boundary, capability-boundary clear, endpoint metadata set-or-clear actions, OpenAPI tag name,
+  and/or explicit binding plan, keeping the `/v{major}` route segment, OpenAPI document name,
+  mapped endpoint, and runtime catalogs aligned; `ApiVersionMajor` only re-derives the document
+  name when the authored shorthand group did not pin one explicitly
 - pattern rewrites preserve the placeholder set by default and can now also rename placeholders
   when the effective explicit route-binding plan covers the renamed placeholder set exactly
 - placeholder removals can now also apply when the original projection already exposes explicit

@@ -34,6 +34,8 @@ public sealed class BehaviorRestProjectionTests
 
         var routeGroup = Assert.Single(projection.Groups);
         Assert.Equal("/tests/cart", routeGroup.Prefix);
+        Assert.Equal("v2", routeGroup.OpenApiDocumentName);
+        Assert.False(routeGroup.HasExplicitOpenApiDocumentName);
         Assert.Equal("Test Cart API", routeGroup.TagName);
         Assert.Equal("Commands and queries exposed by the test cart REST surface.", routeGroup.TagDescription);
         Assert.True(routeGroup.HasExplicitTagDescription);
@@ -119,6 +121,8 @@ public sealed class BehaviorRestProjectionTests
 
         var routeGroup = Assert.Single(projection.Groups);
         Assert.Equal("/tests/profile-cart", routeGroup.Prefix);
+        Assert.Equal("v3", routeGroup.OpenApiDocumentName);
+        Assert.False(routeGroup.HasExplicitOpenApiDocumentName);
         Assert.Equal(3, routeGroup.ApiVersionMajor);
         Assert.False(routeGroup.HasExplicitApiVersion);
         Assert.Equal("tests.profile.projection.get", routeGroup.ProfileApiVersionSourceBehaviorId);
@@ -142,6 +146,27 @@ public sealed class BehaviorRestProjectionTests
 
         var routeGroup = Assert.Single(builder.Build().Groups);
 
+        Assert.Equal("v7", routeGroup.OpenApiDocumentName);
+        Assert.False(routeGroup.HasExplicitOpenApiDocumentName);
+        Assert.Equal(7, routeGroup.ApiVersionMajor);
+        Assert.True(routeGroup.HasExplicitApiVersion);
+        Assert.Null(routeGroup.ProfileApiVersionSourceBehaviorId);
+    }
+
+    [Fact]
+    public void RestBehaviorModuleBuilderBuildKeepsExplicitOpenApiDocumentName()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+
+        builder.Group("/tests/profile-cart")
+            .ApiVersion(7)
+            .WithOpenApiDocumentName("public")
+            .MapProfile<ProfileProjectionGetBehavior>();
+
+        var routeGroup = Assert.Single(builder.Build().Groups);
+
+        Assert.Equal("public", routeGroup.OpenApiDocumentName);
+        Assert.True(routeGroup.HasExplicitOpenApiDocumentName);
         Assert.Equal(7, routeGroup.ApiVersionMajor);
         Assert.True(routeGroup.HasExplicitApiVersion);
         Assert.Null(routeGroup.ProfileApiVersionSourceBehaviorId);
@@ -161,6 +186,8 @@ public sealed class BehaviorRestProjectionTests
 
         var routeGroup = Assert.Single(projection.Groups);
         Assert.Equal("/tests/generated-projection", routeGroup.Prefix);
+        Assert.Equal("v9", routeGroup.OpenApiDocumentName);
+        Assert.False(routeGroup.HasExplicitOpenApiDocumentName);
         Assert.Equal(9, routeGroup.ApiVersionMajor);
         Assert.False(routeGroup.HasExplicitApiVersion);
         Assert.Equal("tests.generated.projection.publish.get", routeGroup.ProfileApiVersionSourceBehaviorId);
@@ -1005,6 +1032,116 @@ public sealed class BehaviorRestProjectionTests
             baselineCandidate.Candidate.ProjectedEndpoint.Tags,
             candidate.Candidate.ProjectedEndpoint.Tags);
         Assert.Equal("Generated Tag No-Op API", candidate.Candidate.OriginalProjection.TagName);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverAppliesOpenApiDocumentNameOverrideToShorthandCandidates()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        builder.Group("/tests/generated-document-override")
+            .WithTagName("Generated Document Override API")
+            .MapGeneratedProfiles("tests.generated.projection.precedence");
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.generated-document-override",
+                "Generated Document Override Module",
+                "Exercises shorthand OpenAPI document-name override resolution.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "prefer-public-document",
+                    behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                    openApiDocumentName: "public")
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Equal("prefer-public-document", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal("/api/v10/tests/generated-document-override/{cartId}", candidate.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Equal("public", candidate.Candidate.ProjectedEndpoint.OpenApiDocumentName);
+        Assert.Equal(10, candidate.Candidate.ProjectedEndpoint.ApiVersionMajor);
+        Assert.Equal("v10", candidate.Candidate.OriginalProjection.OpenApiDocumentName);
+        Assert.Equal("/api/v10/tests/generated-document-override/{cartId}", candidate.Candidate.OriginalProjection.RoutePattern);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverDoesNotApplySameValueOpenApiDocumentNameOverrideToShorthandCandidates()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        builder.Group("/tests/generated-document-noop")
+            .WithTagName("Generated Document No-Op API")
+            .MapGeneratedProfiles("tests.generated.projection.precedence");
+
+        var moduleDescriptor = new ModuleDescriptor(
+            "tests.rest.generated-document-noop",
+            "Generated Document No-Op Module",
+            "Exercises shorthand OpenAPI document-name no-op rewrite resolution.",
+            version: "1.0.0");
+        var baselineCandidate = Assert.Single(
+            RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+                moduleDescriptor,
+                new ApiRoutesOptions(),
+                builder.Build().Groups));
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            moduleDescriptor,
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "prefer-current-document",
+                    behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                    openApiDocumentName: baselineCandidate.Candidate.ProjectedEndpoint.OpenApiDocumentName)
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Null(candidate.Candidate.AppliedOverrideId);
+        Assert.Equal(["prefer-current-document"], candidate.Candidate.MatchedOverrideIds);
+        Assert.Equal(
+            baselineCandidate.Candidate.ProjectedEndpoint.OpenApiDocumentName,
+            candidate.Candidate.ProjectedEndpoint.OpenApiDocumentName);
+        Assert.Equal("v10", candidate.Candidate.OriginalProjection.OpenApiDocumentName);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverKeepsExplicitOpenApiDocumentNameWhenProfileSeededApiVersionOverrideChangesRouteVersion()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-document-pinned")
+            .WithOpenApiDocumentName("public")
+            .MapProfile<ProfileProjectionGetBehavior>();
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.profile-document-pinned",
+                "Profile Document Pinned Module",
+                "Exercises shorthand route-version overrides when the module group explicitly pins its OpenAPI document name while the route version remains profile-seeded.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "prefer-v6",
+                    behaviorIds: ["tests.profile.projection.get"],
+                    apiVersionMajor: 6)
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Equal("prefer-v6", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal("/api/v6/tests/profile-document-pinned/{cartId}", candidate.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Equal(6, candidate.Candidate.ProjectedEndpoint.ApiVersionMajor);
+        Assert.Equal("public", candidate.Candidate.ProjectedEndpoint.OpenApiDocumentName);
+        Assert.Equal(3, candidate.Candidate.OriginalProjection.ApiVersionMajor);
+        Assert.Equal("public", candidate.Candidate.OriginalProjection.OpenApiDocumentName);
+        Assert.Equal("/api/v3/tests/profile-document-pinned/{cartId}", candidate.Candidate.OriginalProjection.RoutePattern);
     }
 
     [Fact]
@@ -2463,6 +2600,18 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestEndpointOverrideOptionsTreatOpenApiDocumentNameAsOverrideAction()
+    {
+        var options = new RestEndpointOverrideOptions(
+            id: "document-only",
+            behaviorIds: ["tests.generated.projection.precedence.lookup"],
+            openApiDocumentName: "public");
+
+        Assert.Equal("public", options.OpenApiDocumentName);
+        Assert.True(options.HasValues);
+    }
+
+    [Fact]
     public void RestEndpointOverrideOptionsRejectSettingAndClearingRequiredCapabilityInSameRule()
     {
         var exception = Assert.Throws<ArgumentException>(() =>
@@ -2993,6 +3142,154 @@ public sealed class BehaviorRestProjectionTests
             checkoutRoute.Metadata.OfType<ITagsMetadata>().SelectMany(static metadata => metadata.Tags).Distinct(StringComparer.OrdinalIgnoreCase).ToArray());
         Assert.Null(lookupRoute.Metadata.GetMetadata<RestEndpointAppliedOverrideMetadata>()?.OverrideId);
         Assert.Equal("checkout-tag", checkoutRoute.Metadata.GetMetadata<RestEndpointAppliedOverrideMetadata>()?.OverrideId);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionMaterializerSplitsSharedRouteGroupsByEffectiveOpenApiDocumentName()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        using var app = builder.Build();
+        var apiGroup = app.MapGroup("/api");
+        var module = new ProjectionCountingRestModule();
+        var lookupProjection = RestBehaviorEndpointProjection.Create<ProjectionCartBehavior>(
+            RestBehaviorHttpMethod.Get,
+            "/{cartId}",
+            configureEndpoint: null,
+            authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle);
+        var checkoutProjection = RestBehaviorEndpointProjection.Create<ProfileProjectionGetBehavior>(
+            RestBehaviorHttpMethod.Get,
+            "/lookup/{cartId}",
+            configureEndpoint: null,
+            authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle);
+        var projection = new RestBehaviorRouteGroupProjection(
+            Prefix: "/tests/typed-document-split/orders",
+            OpenApiDocumentName: "v6",
+            HasExplicitOpenApiDocumentName: false,
+            TagName: "Shared Document API",
+            TagDescription: null,
+            HasExplicitTagDescription: false,
+            ApiVersionMajor: 6,
+            HasExplicitApiVersion: true,
+            ProfileApiVersionSourceBehaviorId: null,
+            GroupConventions: [],
+            Endpoints: [lookupProjection, checkoutProjection]);
+        var lookupEndpoint = new RestEndpointRuntimeDescriptor(
+            id: "typed-document-split-lookup",
+            transportId: "rest-api",
+            sourceKind: RestEndpointRuntimeMetadata.ModuleDslSourceKind,
+            method: "GET",
+            routePattern: "/api/v6/tests/typed-document-split/orders/{cartId}",
+            sourceModuleId: module.Descriptor.Id,
+            sourceModuleVersion: module.Descriptor.Version,
+            sourceModuleVersionMajor: 1,
+            behaviorId: "tests.cart.projection",
+            openApiDocumentName: "v6",
+            apiVersionMajor: 6,
+            tags: ["Shared Document API"],
+            metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase),
+            authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle,
+            routeGroupPrefix: "/api/v6/tests/typed-document-split/orders",
+            relativePattern: "/{cartId}",
+            behaviorType: typeof(ProjectionCartBehavior).FullName,
+            sourceId: "tests.cart.projection:GET:/{cartId}");
+        var checkoutEndpoint = new RestEndpointRuntimeDescriptor(
+            id: "typed-document-split-checkout",
+            transportId: "rest-api",
+            sourceKind: RestEndpointRuntimeMetadata.ModuleDslSourceKind,
+            method: "GET",
+            routePattern: "/api/v6/tests/typed-document-split/orders/lookup/{cartId}",
+            sourceModuleId: module.Descriptor.Id,
+            sourceModuleVersion: module.Descriptor.Version,
+            sourceModuleVersionMajor: 1,
+            behaviorId: "tests.profile.projection.get",
+            openApiDocumentName: "public",
+            apiVersionMajor: 6,
+            tags: ["Shared Document API"],
+            metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase),
+            authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle,
+            routeGroupPrefix: "/api/v6/tests/typed-document-split/orders",
+            relativePattern: "/lookup/{cartId}",
+            behaviorType: typeof(ProfileProjectionGetBehavior).FullName,
+            sourceId: "tests.profile.projection.get:GET:/lookup/{cartId}");
+        var lookupOriginalProjection = new RestEndpointCandidateProjectionDescriptor(
+            method: "GET",
+            routePattern: "/api/v6/tests/typed-document-split/orders/{cartId}",
+            routeGroupPrefix: "/api/v6/tests/typed-document-split/orders",
+            relativePattern: "/{cartId}",
+            apiVersionMajor: 6,
+            openApiDocumentName: "v6",
+            tagName: "Shared Document API");
+        var checkoutOriginalProjection = new RestEndpointCandidateProjectionDescriptor(
+            method: "GET",
+            routePattern: "/api/v6/tests/typed-document-split/orders/lookup/{cartId}",
+            routeGroupPrefix: "/api/v6/tests/typed-document-split/orders",
+            relativePattern: "/lookup/{cartId}",
+            apiVersionMajor: 6,
+            openApiDocumentName: "v6",
+            tagName: "Shared Document API");
+        var publishedCandidates = new[]
+        {
+            new ResolvedRestBehaviorEndpointProjectionCandidate(
+                GroupIndex: 0,
+                EffectiveEndpointProjection: lookupProjection,
+                Candidate: new RestEndpointCandidateRuntimeDescriptor(
+                    id: "typed-document-split-lookup-candidate",
+                    projectedEndpoint: lookupEndpoint,
+                    originalProjection: lookupOriginalProjection,
+                    authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle,
+                    precedenceRank: RestEndpointRuntimeMetadata.ResolvePrecedenceRank(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle),
+                    status: RestEndpointCandidateStatus.Published)),
+            new ResolvedRestBehaviorEndpointProjectionCandidate(
+                GroupIndex: 0,
+                EffectiveEndpointProjection: checkoutProjection,
+                Candidate: new RestEndpointCandidateRuntimeDescriptor(
+                    id: "typed-document-split-checkout-candidate",
+                    projectedEndpoint: checkoutEndpoint,
+                    originalProjection: checkoutOriginalProjection,
+                    authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle,
+                    precedenceRank: RestEndpointRuntimeMetadata.ResolvePrecedenceRank(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle),
+                    status: RestEndpointCandidateStatus.Published,
+                    appliedOverrideId: "checkout-document"))
+        };
+
+        RestBehaviorProjectionMaterializer.MapGroup(
+            apiGroup,
+            module,
+            projection,
+            publishedCandidates,
+            new ApiRoutesOptions());
+
+        var routeEndpoints = ((IEndpointRouteBuilder)app).DataSources
+            .SelectMany(static dataSource => dataSource.Endpoints)
+            .OfType<RouteEndpoint>()
+            .ToArray();
+        var lookupRoute = Assert.Single(
+            routeEndpoints,
+            static item => string.Equals(item.RoutePattern.RawText, "/api/v6/tests/typed-document-split/orders/{cartId}", StringComparison.Ordinal));
+        var checkoutRoute = Assert.Single(
+            routeEndpoints,
+            static item => string.Equals(item.RoutePattern.RawText, "/api/v6/tests/typed-document-split/orders/lookup/{cartId}", StringComparison.Ordinal));
+
+        Assert.Equal("v6", lookupRoute.Metadata.GetMetadata<IEndpointGroupNameMetadata>()?.EndpointGroupName);
+        Assert.Equal("public", checkoutRoute.Metadata.GetMetadata<IEndpointGroupNameMetadata>()?.EndpointGroupName);
+        Assert.Equal(
+            ["Shared Document API"],
+            lookupRoute.Metadata.OfType<ITagsMetadata>().SelectMany(static metadata => metadata.Tags).Distinct(StringComparer.OrdinalIgnoreCase).ToArray());
+        Assert.Equal(
+            ["Shared Document API"],
+            checkoutRoute.Metadata.OfType<ITagsMetadata>().SelectMany(static metadata => metadata.Tags).Distinct(StringComparer.OrdinalIgnoreCase).ToArray());
+        Assert.Null(lookupRoute.Metadata.GetMetadata<RestEndpointAppliedOverrideMetadata>()?.OverrideId);
+        Assert.Equal("checkout-document", checkoutRoute.Metadata.GetMetadata<RestEndpointAppliedOverrideMetadata>()?.OverrideId);
     }
 
     [Fact]
