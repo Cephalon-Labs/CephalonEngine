@@ -614,7 +614,11 @@ candidates:
 Each grouped publication answer now also carries `AuthoringStyleSummaries`, which summarizes per
 normalized authoring style the participating candidate ids, precedence ranks, published
 candidates, and precedence-versus-governance suppression buckets derived from the same grouped
-candidate truth.
+candidate truth. Those grouped answers now also keep
+`HostGovernanceEligibleCandidateIds`, `HostGovernanceIneligibleCandidateIds`,
+`SkippedSuppressionIds`, and `SkippedOverrideIds` visible at both the grouped behavior level and
+inside each authoring-style summary, so explicit module-DSL ownership that stayed out of host
+governance is still visible without drilling into each candidate.
 
 Each grouped publication answer now also carries `AuthoringPolicy` as typed
 `RestEndpointPublicationGroupAuthoringPolicyDescriptor` data. That policy surface distinguishes the

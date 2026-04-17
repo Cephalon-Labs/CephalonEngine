@@ -173,7 +173,10 @@ hosts can surface both candidate-level and grouped publication truth for module-
 candidates without inventing an ASP.NET Core-specific precedence contract, and so operator tooling
 can compare the original shorthand projection shape with the final effective projected endpoint
 explicitly while also seeing skipped-governance visibility and the grouped
-published-versus-suppressed answer per behavior. The same
+published-versus-suppressed answer per behavior. Grouped publication answers now also carry typed
+host-governance eligibility/ineligibility candidate buckets plus grouped skipped suppression and
+override rule ids, so callers do not need to repartition the ordered candidate set just to see
+which behavior boundary stayed outside host governance. The same
 transport namespace now also owns `IRestEndpointOverrideRuntimeCatalog` plus
 `RestEndpointOverrideDescriptor`, including shorthand binding resets through `ClearBindings` plus
 the shorthand endpoint-metadata clear actions `ClearEndpointName`, `ClearSummary`, and

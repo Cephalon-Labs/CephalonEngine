@@ -527,8 +527,11 @@ Current helper behavior:
   `/engine/rest-endpoint-publication-groups`, and `snapshot.RestEndpointPublicationGroups`; those
   grouped publication answers now also expose `AuthoringStyleSummaries` plus `AuthoringPolicy` so
   module authors can see which source style published, which lower-precedence styles remained
-  visible only as suppressed candidates, and whether the behavior boundary is still on the implicit
-  default single-winner policy or an explicit `RestApi:AuthoringPolicies:{behaviorId}` contract.
+  visible only as suppressed candidates, whether the behavior boundary is still on the implicit
+  default single-winner policy or an explicit `RestApi:AuthoringPolicies:{behaviorId}` contract,
+  and which candidates stayed outside host governance through grouped
+  `HostGovernanceEligibleCandidateIds`, `HostGovernanceIneligibleCandidateIds`,
+  `SkippedSuppressionIds`, and `SkippedOverrideIds`.
 - when the same behavior is mapped through both `MapProfile<TBehavior>()` and
   `MapGeneratedProfiles(...)`, the explicit per-behavior `MapProfile<TBehavior>()` route wins by
   default while the generated candidate remains visible through the same candidate and grouped
@@ -565,6 +568,10 @@ group unless they also explicitly target `AuthoringStyles = [behavior-module-dsl
 When you intentionally leave the group authoritative, runtime candidates and published behavior
 endpoints now surface ordered `SkippedSuppressionIds` and `SkippedOverrideIds` for any host rules
 that targeted the route but were skipped because the group never entered the governable surface.
+The grouped publication answer now also surfaces that same story per behavior and per authoring
+style through `HostGovernanceEligibleCandidateIds`, `HostGovernanceIneligibleCandidateIds`,
+`SkippedSuppressionIds`, and `SkippedOverrideIds`, so module authors do not need to drill into
+each candidate to confirm that explicit ownership stayed authoritative.
 
 When a host wants to declare grouped authoring-policy intent for one behavior boundary, use
 `RestApi:AuthoringPolicies:{behaviorId}`. That boundary-level contract now actively honors

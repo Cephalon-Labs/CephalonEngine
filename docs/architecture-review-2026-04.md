@@ -240,6 +240,13 @@ The remaining gap is now narrower: keep low-code shorthand growth, broader gover
 projection sources on the same explicit ownership and runtime-truth model without reintroducing
 hidden rule layers.
 
+That next grouped-governance visibility gap is now addressed through `ENG-058-T130`:
+`/engine/rest-endpoint-publication-groups` plus `snapshot.RestEndpointPublicationGroups` now also
+surface grouped `HostGovernanceEligibleCandidateIds`, `HostGovernanceIneligibleCandidateIds`,
+`SkippedSuppressionIds`, and `SkippedOverrideIds` at both the behavior-group level and inside each
+authoring-style summary, so operators can confirm that explicit module-owned REST stayed outside
+host governance without drilling into the raw candidate catalog first.
+
 That next inline generated-module ergonomics gap is now addressed through `ENG-058-T127`:
 `RestBehaviorEngineBuilderExtensions.AddGeneratedRestBehaviorModule<TMarker>(descriptor,
 configureGroup?)` now derives the generated behavior-id prefix from `ModuleDescriptor.Id` for the

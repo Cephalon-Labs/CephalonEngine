@@ -22,6 +22,18 @@ public sealed class RestEndpointPublicationGroupAuthoringStyleDescriptor
     /// <param name="authoringPolicySuppressedCandidateIds">
     /// The ordered candidate identifiers that were suppressed by behavior-level authoring-policy enforcement.
     /// </param>
+    /// <param name="hostGovernanceEligibleCandidateIds">
+    /// The ordered candidate identifiers whose original projections allowed host governance to participate.
+    /// </param>
+    /// <param name="hostGovernanceIneligibleCandidateIds">
+    /// The ordered candidate identifiers whose original projections kept host governance out of scope.
+    /// </param>
+    /// <param name="skippedSuppressionIds">
+    /// The ordered suppression-rule identifiers that targeted ineligible candidates for this authoring style.
+    /// </param>
+    /// <param name="skippedOverrideIds">
+    /// The ordered override-rule identifiers that targeted ineligible candidates for this authoring style.
+    /// </param>
     public RestEndpointPublicationGroupAuthoringStyleDescriptor(
         string authoringStyle,
         IReadOnlyList<string>? sourceModuleIds = null,
@@ -30,7 +42,11 @@ public sealed class RestEndpointPublicationGroupAuthoringStyleDescriptor
         IReadOnlyList<string>? publishedCandidateIds = null,
         IReadOnlyList<string>? precedenceSuppressedCandidateIds = null,
         IReadOnlyList<string>? governanceSuppressedCandidateIds = null,
-        IReadOnlyList<string>? authoringPolicySuppressedCandidateIds = null)
+        IReadOnlyList<string>? authoringPolicySuppressedCandidateIds = null,
+        IReadOnlyList<string>? hostGovernanceEligibleCandidateIds = null,
+        IReadOnlyList<string>? hostGovernanceIneligibleCandidateIds = null,
+        IReadOnlyList<string>? skippedSuppressionIds = null,
+        IReadOnlyList<string>? skippedOverrideIds = null)
     {
         if (string.IsNullOrWhiteSpace(authoringStyle))
         {
@@ -43,6 +59,10 @@ public sealed class RestEndpointPublicationGroupAuthoringStyleDescriptor
         var normalizedPrecedenceSuppressedCandidateIds = NormalizeOrderedList(precedenceSuppressedCandidateIds);
         var normalizedGovernanceSuppressedCandidateIds = NormalizeOrderedList(governanceSuppressedCandidateIds);
         var normalizedAuthoringPolicySuppressedCandidateIds = NormalizeOrderedList(authoringPolicySuppressedCandidateIds);
+        var normalizedHostGovernanceEligibleCandidateIds = NormalizeOrderedList(hostGovernanceEligibleCandidateIds);
+        var normalizedHostGovernanceIneligibleCandidateIds = NormalizeOrderedList(hostGovernanceIneligibleCandidateIds);
+        var normalizedSkippedSuppressionIds = NormalizeOrderedList(skippedSuppressionIds);
+        var normalizedSkippedOverrideIds = NormalizeOrderedList(skippedOverrideIds);
 
         if (normalizedCandidateIds.Length == 0)
         {
@@ -80,6 +100,20 @@ public sealed class RestEndpointPublicationGroupAuthoringStyleDescriptor
                 nameof(authoringPolicySuppressedCandidateIds));
         }
 
+        if (!candidateIdSet.IsSupersetOf(normalizedHostGovernanceEligibleCandidateIds))
+        {
+            throw new ArgumentException(
+                "Host-governance-eligible candidate ids must refer to candidates in the grouped authoring-style answer.",
+                nameof(hostGovernanceEligibleCandidateIds));
+        }
+
+        if (!candidateIdSet.IsSupersetOf(normalizedHostGovernanceIneligibleCandidateIds))
+        {
+            throw new ArgumentException(
+                "Host-governance-ineligible candidate ids must refer to candidates in the grouped authoring-style answer.",
+                nameof(hostGovernanceIneligibleCandidateIds));
+        }
+
         if (normalizedPrecedenceSuppressedCandidateIds.Intersect(
                 normalizedGovernanceSuppressedCandidateIds,
                 StringComparer.OrdinalIgnoreCase).Any())
@@ -107,6 +141,15 @@ public sealed class RestEndpointPublicationGroupAuthoringStyleDescriptor
                 nameof(governanceSuppressedCandidateIds));
         }
 
+        if (normalizedHostGovernanceEligibleCandidateIds.Intersect(
+                normalizedHostGovernanceIneligibleCandidateIds,
+                StringComparer.OrdinalIgnoreCase).Any())
+        {
+            throw new ArgumentException(
+                "An authoring-style publication answer cannot classify the same candidate as both host-governance-eligible and host-governance-ineligible.",
+                nameof(hostGovernanceEligibleCandidateIds));
+        }
+
         AuthoringStyle = authoringStyle.Trim();
         SourceModuleIds = NormalizeSortedList(sourceModuleIds);
         PrecedenceRanks = normalizedPrecedenceRanks;
@@ -115,6 +158,10 @@ public sealed class RestEndpointPublicationGroupAuthoringStyleDescriptor
         PrecedenceSuppressedCandidateIds = normalizedPrecedenceSuppressedCandidateIds;
         GovernanceSuppressedCandidateIds = normalizedGovernanceSuppressedCandidateIds;
         AuthoringPolicySuppressedCandidateIds = normalizedAuthoringPolicySuppressedCandidateIds;
+        HostGovernanceEligibleCandidateIds = normalizedHostGovernanceEligibleCandidateIds;
+        HostGovernanceIneligibleCandidateIds = normalizedHostGovernanceIneligibleCandidateIds;
+        SkippedSuppressionIds = normalizedSkippedSuppressionIds;
+        SkippedOverrideIds = normalizedSkippedOverrideIds;
     }
 
     /// <summary>
@@ -156,6 +203,26 @@ public sealed class RestEndpointPublicationGroupAuthoringStyleDescriptor
     /// Gets the ordered candidate identifiers that were suppressed by behavior-level authoring-policy enforcement.
     /// </summary>
     public IReadOnlyList<string> AuthoringPolicySuppressedCandidateIds { get; }
+
+    /// <summary>
+    /// Gets the ordered candidate identifiers whose original projections allowed host governance to participate.
+    /// </summary>
+    public IReadOnlyList<string> HostGovernanceEligibleCandidateIds { get; }
+
+    /// <summary>
+    /// Gets the ordered candidate identifiers whose original projections kept host governance out of scope.
+    /// </summary>
+    public IReadOnlyList<string> HostGovernanceIneligibleCandidateIds { get; }
+
+    /// <summary>
+    /// Gets the ordered suppression-rule identifiers that targeted ineligible candidates for this authoring style.
+    /// </summary>
+    public IReadOnlyList<string> SkippedSuppressionIds { get; }
+
+    /// <summary>
+    /// Gets the ordered override-rule identifiers that targeted ineligible candidates for this authoring style.
+    /// </summary>
+    public IReadOnlyList<string> SkippedOverrideIds { get; }
 
     private static int[] NormalizePrecedenceRanks(IReadOnlyList<int>? precedenceRanks)
     {

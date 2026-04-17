@@ -4982,6 +4982,10 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Empty(group.PrecedenceSuppressedCandidateIds);
         Assert.Single(group.GovernanceSuppressedCandidateIds);
         Assert.Equal(governanceSuppressed.Id, group.GovernanceSuppressedCandidateIds[0]);
+        Assert.Equal(2, group.HostGovernanceEligibleCandidateIds.Count);
+        Assert.Empty(group.HostGovernanceIneligibleCandidateIds);
+        Assert.Empty(group.SkippedSuppressionIds);
+        Assert.Empty(group.SkippedOverrideIds);
         Assert.Equal(2, group.Candidates.Count);
         Assert.Equal(2, group.AuthoringStyleSummaries.Count);
         var profileStyle = Assert.Single(group.AuthoringStyleSummaries, static item =>
@@ -4989,21 +4993,112 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal([governanceSuppressed.Id], profileStyle.CandidateIds);
         Assert.Equal([governanceSuppressed.Id], profileStyle.GovernanceSuppressedCandidateIds);
         Assert.Equal([RestEndpointRuntimeMetadata.BehaviorModuleProfilePrecedenceRank], profileStyle.PrecedenceRanks);
+        Assert.Equal([governanceSuppressed.Id], profileStyle.HostGovernanceEligibleCandidateIds);
+        Assert.Empty(profileStyle.HostGovernanceIneligibleCandidateIds);
         Assert.Empty(profileStyle.PublishedCandidateIds);
         Assert.Empty(profileStyle.PrecedenceSuppressedCandidateIds);
+        Assert.Empty(profileStyle.SkippedSuppressionIds);
+        Assert.Empty(profileStyle.SkippedOverrideIds);
         var generatedStyle = Assert.Single(group.AuthoringStyleSummaries, static item =>
             string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, StringComparison.Ordinal));
         Assert.Equal([published.Id], generatedStyle.CandidateIds);
         Assert.Equal([published.Id], generatedStyle.PublishedCandidateIds);
         Assert.Equal([RestEndpointRuntimeMetadata.BehaviorModuleGeneratedPrecedenceRank], generatedStyle.PrecedenceRanks);
+        Assert.Equal([published.Id], generatedStyle.HostGovernanceEligibleCandidateIds);
+        Assert.Empty(generatedStyle.HostGovernanceIneligibleCandidateIds);
         Assert.Empty(generatedStyle.PrecedenceSuppressedCandidateIds);
         Assert.Empty(generatedStyle.GovernanceSuppressedCandidateIds);
+        Assert.Empty(generatedStyle.SkippedSuppressionIds);
+        Assert.Empty(generatedStyle.SkippedOverrideIds);
         Assert.Contains(snapshot.RestEndpointPublicationGroups, item =>
             string.Equals(item.BehaviorId, group.BehaviorId, StringComparison.Ordinal) &&
             item.AuthoringPolicy.IsConfigured == false &&
             item.AuthoringStyleSummaries.Count == 2 &&
             item.GovernanceSuppressedCandidateIds.Count == 1 &&
+            item.HostGovernanceEligibleCandidateIds.Count == 2 &&
+            item.HostGovernanceIneligibleCandidateIds.Count == 0 &&
+            item.SkippedSuppressionIds.Count == 0 &&
+            item.SkippedOverrideIds.Count == 0 &&
             string.Equals(item.GovernanceSuppressedCandidateIds[0], governanceSuppressed.Id, StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task MapCephalonExposesRestEndpointPublicationGroupsForExplicitDslGovernanceSkippedVisibility()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "9";
+        builder.Configuration["OpenApi:DefaultVersion"] = "9";
+        builder.Configuration["RestApi:Suppressions:skip-disabled-explicit:Behaviors:0"] = "tests.dsl.runtimeoverride.disabled.lookup";
+        builder.Configuration["RestApi:Suppressions:skip-disabled-explicit:AuthoringStyles:0"] = RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle;
+        builder.Configuration["RestApi:Overrides:rewrite-disabled-explicit:Behaviors:0"] = "tests.dsl.runtimeoverride.disabled.lookup";
+        builder.Configuration["RestApi:Overrides:rewrite-disabled-explicit:AuthoringStyles:0"] = RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle;
+        builder.Configuration["RestApi:Overrides:rewrite-disabled-explicit:Pattern"] = "/governed/{orderId}";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ExplicitDslHostGovernanceDisabledRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var groups = await client.GetFromJsonAsync<RestEndpointPublicationGroupDescriptor[]>("/engine/rest-endpoint-publication-groups");
+        var groupByBehavior = await client.GetFromJsonAsync<RestEndpointPublicationGroupDescriptor>(
+            "/engine/rest-endpoint-publication-groups/tests.dsl.runtimeoverride.disabled.lookup");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(candidates);
+        Assert.NotNull(groups);
+        Assert.NotNull(groupByBehavior);
+        Assert.NotNull(snapshot);
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.dsl.runtimeoverride.disabled.lookup", StringComparison.Ordinal));
+        var group = Assert.Single(groups, static item =>
+            string.Equals(item.BehaviorId, "tests.dsl.runtimeoverride.disabled.lookup", StringComparison.Ordinal));
+        Assert.Equal([candidate.Id], group.PublishedCandidateIds);
+        Assert.Empty(group.PrecedenceSuppressedCandidateIds);
+        Assert.Empty(group.GovernanceSuppressedCandidateIds);
+        Assert.Empty(group.AuthoringPolicySuppressedCandidateIds);
+        Assert.Empty(group.HostGovernanceEligibleCandidateIds);
+        Assert.Equal([candidate.Id], group.HostGovernanceIneligibleCandidateIds);
+        Assert.Equal(["skip-disabled-explicit"], group.SkippedSuppressionIds);
+        Assert.Equal(["rewrite-disabled-explicit"], group.SkippedOverrideIds);
+        Assert.Single(group.AuthoringStyleSummaries);
+
+        var explicitStyle = Assert.Single(group.AuthoringStyleSummaries, static item =>
+            string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal([candidate.Id], explicitStyle.CandidateIds);
+        Assert.Equal([candidate.Id], explicitStyle.PublishedCandidateIds);
+        Assert.Empty(explicitStyle.PrecedenceSuppressedCandidateIds);
+        Assert.Empty(explicitStyle.GovernanceSuppressedCandidateIds);
+        Assert.Empty(explicitStyle.AuthoringPolicySuppressedCandidateIds);
+        Assert.Empty(explicitStyle.HostGovernanceEligibleCandidateIds);
+        Assert.Equal([candidate.Id], explicitStyle.HostGovernanceIneligibleCandidateIds);
+        Assert.Equal(["skip-disabled-explicit"], explicitStyle.SkippedSuppressionIds);
+        Assert.Equal(["rewrite-disabled-explicit"], explicitStyle.SkippedOverrideIds);
+
+        Assert.Equal(group.HostGovernanceEligibleCandidateIds, groupByBehavior.HostGovernanceEligibleCandidateIds);
+        Assert.Equal(group.HostGovernanceIneligibleCandidateIds, groupByBehavior.HostGovernanceIneligibleCandidateIds);
+        Assert.Equal(group.SkippedSuppressionIds, groupByBehavior.SkippedSuppressionIds);
+        Assert.Equal(group.SkippedOverrideIds, groupByBehavior.SkippedOverrideIds);
+        Assert.Contains(snapshot.RestEndpointPublicationGroups, item =>
+            string.Equals(item.BehaviorId, group.BehaviorId, StringComparison.Ordinal) &&
+            item.HostGovernanceEligibleCandidateIds.Count == 0 &&
+            item.HostGovernanceIneligibleCandidateIds.Count == 1 &&
+            item.SkippedSuppressionIds.SequenceEqual(["skip-disabled-explicit"]) &&
+            item.SkippedOverrideIds.SequenceEqual(["rewrite-disabled-explicit"]));
     }
 
     [Fact]

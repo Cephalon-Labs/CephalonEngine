@@ -27,6 +27,18 @@ public sealed class RestEndpointPublicationGroupDescriptor
     /// <param name="authoringPolicySuppressedCandidateIds">
     /// The candidate identifiers that were suppressed by behavior-level authoring-policy enforcement.
     /// </param>
+    /// <param name="hostGovernanceEligibleCandidateIds">
+    /// The candidate identifiers whose original projections allowed host governance to participate.
+    /// </param>
+    /// <param name="hostGovernanceIneligibleCandidateIds">
+    /// The candidate identifiers whose original projections kept host governance out of scope.
+    /// </param>
+    /// <param name="skippedSuppressionIds">
+    /// The ordered suppression-rule identifiers that targeted ineligible candidates in this behavior group.
+    /// </param>
+    /// <param name="skippedOverrideIds">
+    /// The ordered override-rule identifiers that targeted ineligible candidates in this behavior group.
+    /// </param>
     public RestEndpointPublicationGroupDescriptor(
         string behaviorId,
         IReadOnlyList<string>? sourceModuleIds = null,
@@ -36,7 +48,11 @@ public sealed class RestEndpointPublicationGroupDescriptor
         IReadOnlyList<string>? governanceSuppressedCandidateIds = null,
         IReadOnlyList<RestEndpointCandidateRuntimeDescriptor>? candidates = null,
         RestEndpointPublicationGroupAuthoringPolicyDescriptor? authoringPolicy = null,
-        IReadOnlyList<string>? authoringPolicySuppressedCandidateIds = null)
+        IReadOnlyList<string>? authoringPolicySuppressedCandidateIds = null,
+        IReadOnlyList<string>? hostGovernanceEligibleCandidateIds = null,
+        IReadOnlyList<string>? hostGovernanceIneligibleCandidateIds = null,
+        IReadOnlyList<string>? skippedSuppressionIds = null,
+        IReadOnlyList<string>? skippedOverrideIds = null)
     {
         if (string.IsNullOrWhiteSpace(behaviorId))
         {
@@ -73,6 +89,18 @@ public sealed class RestEndpointPublicationGroupDescriptor
         var normalizedPrecedenceSuppressedCandidateIds = NormalizeList(precedenceSuppressedCandidateIds);
         var normalizedGovernanceSuppressedCandidateIds = NormalizeList(governanceSuppressedCandidateIds);
         var normalizedAuthoringPolicySuppressedCandidateIds = NormalizeList(authoringPolicySuppressedCandidateIds);
+        var normalizedHostGovernanceEligibleCandidateIds = hostGovernanceEligibleCandidateIds is null
+            ? BuildHostGovernanceCandidateIds(normalizedCandidates, allowsHostGovernance: true)
+            : NormalizeList(hostGovernanceEligibleCandidateIds);
+        var normalizedHostGovernanceIneligibleCandidateIds = hostGovernanceIneligibleCandidateIds is null
+            ? BuildHostGovernanceCandidateIds(normalizedCandidates, allowsHostGovernance: false)
+            : NormalizeList(hostGovernanceIneligibleCandidateIds);
+        var normalizedSkippedSuppressionIds = skippedSuppressionIds is null
+            ? BuildOrderedSkippedRuleIds(normalizedCandidates, static candidate => candidate.SkippedSuppressionIds)
+            : NormalizeList(skippedSuppressionIds);
+        var normalizedSkippedOverrideIds = skippedOverrideIds is null
+            ? BuildOrderedSkippedRuleIds(normalizedCandidates, static candidate => candidate.SkippedOverrideIds)
+            : NormalizeList(skippedOverrideIds);
         var candidateIds = normalizedCandidates
             .Select(static candidate => candidate.Id)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
@@ -105,6 +133,20 @@ public sealed class RestEndpointPublicationGroupDescriptor
                 nameof(authoringPolicySuppressedCandidateIds));
         }
 
+        if (!candidateIds.IsSupersetOf(normalizedHostGovernanceEligibleCandidateIds))
+        {
+            throw new ArgumentException(
+                "Host-governance-eligible candidate ids must refer to candidates in the grouped publication answer.",
+                nameof(hostGovernanceEligibleCandidateIds));
+        }
+
+        if (!candidateIds.IsSupersetOf(normalizedHostGovernanceIneligibleCandidateIds))
+        {
+            throw new ArgumentException(
+                "Host-governance-ineligible candidate ids must refer to candidates in the grouped publication answer.",
+                nameof(hostGovernanceIneligibleCandidateIds));
+        }
+
         if (normalizedPrecedenceSuppressedCandidateIds.Intersect(normalizedGovernanceSuppressedCandidateIds, StringComparer.OrdinalIgnoreCase).Any())
         {
             throw new ArgumentException(
@@ -126,6 +168,13 @@ public sealed class RestEndpointPublicationGroupDescriptor
                 nameof(governanceSuppressedCandidateIds));
         }
 
+        if (normalizedHostGovernanceEligibleCandidateIds.Intersect(normalizedHostGovernanceIneligibleCandidateIds, StringComparer.OrdinalIgnoreCase).Any())
+        {
+            throw new ArgumentException(
+                "A grouped publication answer cannot classify the same candidate as both host-governance-eligible and host-governance-ineligible.",
+                nameof(hostGovernanceEligibleCandidateIds));
+        }
+
         BehaviorId = normalizedBehaviorId;
         SourceModuleIds = normalizedSourceModuleIds;
         WinningPrecedenceRank = winningPrecedenceRank;
@@ -133,6 +182,10 @@ public sealed class RestEndpointPublicationGroupDescriptor
         PrecedenceSuppressedCandidateIds = normalizedPrecedenceSuppressedCandidateIds;
         GovernanceSuppressedCandidateIds = normalizedGovernanceSuppressedCandidateIds;
         AuthoringPolicySuppressedCandidateIds = normalizedAuthoringPolicySuppressedCandidateIds;
+        HostGovernanceEligibleCandidateIds = normalizedHostGovernanceEligibleCandidateIds;
+        HostGovernanceIneligibleCandidateIds = normalizedHostGovernanceIneligibleCandidateIds;
+        SkippedSuppressionIds = normalizedSkippedSuppressionIds;
+        SkippedOverrideIds = normalizedSkippedOverrideIds;
         Candidates = normalizedCandidates;
         AuthoringStyleSummaries = BuildAuthoringStyleSummaries(normalizedCandidates);
         AuthoringPolicy = NormalizeAuthoringPolicy(authoringPolicy, normalizedBehaviorId);
@@ -172,6 +225,26 @@ public sealed class RestEndpointPublicationGroupDescriptor
     /// Gets the candidate identifiers that were suppressed by behavior-level authoring-policy enforcement.
     /// </summary>
     public IReadOnlyList<string> AuthoringPolicySuppressedCandidateIds { get; }
+
+    /// <summary>
+    /// Gets the candidate identifiers whose original projections allowed host governance to participate.
+    /// </summary>
+    public IReadOnlyList<string> HostGovernanceEligibleCandidateIds { get; }
+
+    /// <summary>
+    /// Gets the candidate identifiers whose original projections kept host governance out of scope.
+    /// </summary>
+    public IReadOnlyList<string> HostGovernanceIneligibleCandidateIds { get; }
+
+    /// <summary>
+    /// Gets the ordered suppression-rule identifiers that targeted ineligible candidates in this behavior group.
+    /// </summary>
+    public IReadOnlyList<string> SkippedSuppressionIds { get; }
+
+    /// <summary>
+    /// Gets the ordered override-rule identifiers that targeted ineligible candidates in this behavior group.
+    /// </summary>
+    public IReadOnlyList<string> SkippedOverrideIds { get; }
 
     /// <summary>
     /// Gets the ordered candidate set that produced this grouped publication answer.
@@ -253,6 +326,18 @@ public sealed class RestEndpointPublicationGroupDescriptor
                         candidate.SuppressedByAuthoringPolicyKind.HasValue)
                     .Select(static candidate => candidate.Id)
                     .ToArray();
+                var hostGovernanceEligibleCandidateIds = BuildHostGovernanceCandidateIds(
+                    orderedCandidates,
+                    allowsHostGovernance: true);
+                var hostGovernanceIneligibleCandidateIds = BuildHostGovernanceCandidateIds(
+                    orderedCandidates,
+                    allowsHostGovernance: false);
+                var skippedSuppressionIds = BuildOrderedSkippedRuleIds(
+                    orderedCandidates,
+                    static candidate => candidate.SkippedSuppressionIds);
+                var skippedOverrideIds = BuildOrderedSkippedRuleIds(
+                    orderedCandidates,
+                    static candidate => candidate.SkippedOverrideIds);
 
                 return new RestEndpointPublicationGroupAuthoringStyleDescriptor(
                     group.Key,
@@ -262,9 +347,54 @@ public sealed class RestEndpointPublicationGroupDescriptor
                     publishedCandidateIds,
                     precedenceSuppressedCandidateIds,
                     governanceSuppressedCandidateIds,
-                    authoringPolicySuppressedCandidateIds);
+                    authoringPolicySuppressedCandidateIds,
+                    hostGovernanceEligibleCandidateIds,
+                    hostGovernanceIneligibleCandidateIds,
+                    skippedSuppressionIds,
+                    skippedOverrideIds);
             })
             .ToArray();
+    }
+
+    private static string[] BuildHostGovernanceCandidateIds(
+        IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> candidates,
+        bool allowsHostGovernance)
+    {
+        ArgumentNullException.ThrowIfNull(candidates);
+
+        return candidates
+            .Where(candidate => candidate.OriginalProjection.AllowsHostGovernance == allowsHostGovernance)
+            .Select(static candidate => candidate.Id)
+            .ToArray();
+    }
+
+    private static string[] BuildOrderedSkippedRuleIds(
+        IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> candidates,
+        Func<RestEndpointCandidateRuntimeDescriptor, IReadOnlyList<string>> selector)
+    {
+        ArgumentNullException.ThrowIfNull(candidates);
+        ArgumentNullException.ThrowIfNull(selector);
+
+        var ordered = new List<string>();
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var candidate in candidates)
+        {
+            foreach (var value in selector(candidate))
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    continue;
+                }
+
+                var trimmed = value.Trim();
+                if (seen.Add(trimmed))
+                {
+                    ordered.Add(trimmed);
+                }
+            }
+        }
+
+        return ordered.ToArray();
     }
 
     private static RestEndpointPublicationGroupAuthoringPolicyDescriptor NormalizeAuthoringPolicy(
