@@ -195,11 +195,17 @@ explain decisive governance precedence and declared-versus-effective override ac
 without reopening the candidate catalog. The same
 transport namespace now also lets the rule catalogs publish the inverse view directly:
 `RestEndpointSuppressionDescriptor` now carries `MatchedCandidateIds`,
-`SuppressedCandidateIds`, `SkippedCandidateIds`, and `SelectionBases`, while
+`SuppressedCandidateIds`, `SkippedCandidateIds`, `SelectionBases`, and
+`SelectionBasisSummaries`, while
 `RestEndpointOverrideDescriptor` now carries `MatchedCandidateIds`, `SelectedCandidateIds`,
-`AppliedCandidateIds`, `SkippedCandidateIds`, `SelectionBases`, `SelectedActionKinds`, and
-`AppliedActionKinds`, so callers can inspect one rule's runtime footprint without rejoining the
-grouped or per-candidate answers first. The same
+`AppliedCandidateIds`, `SkippedCandidateIds`, `SelectionBases`, `SelectionBasisSummaries`,
+`SelectedActionKinds`, `SelectedActionKindSummaries`, `AppliedActionKinds`, and
+`AppliedActionKindSummaries`, so callers can inspect one rule's runtime footprint and grouped
+provenance without rejoining the grouped or per-candidate answers first. The same transport
+namespace now also owns the reusable grouped bucket contracts
+`RestEndpointGovernanceSelectionBasisSummaryDescriptor` and
+`RestEndpointGovernanceOverrideActionKindSummaryDescriptor`, so behavior-grouped and rule-centric
+governance answers reuse one stable candidate-bucket shape. The same
 transport namespace now also owns `IRestEndpointOverrideRuntimeCatalog` plus
 `RestEndpointOverrideDescriptor`, including shorthand binding resets through `ClearBindings` plus
 the shorthand endpoint-metadata clear actions `ClearEndpointName`, `ClearSummary`, and

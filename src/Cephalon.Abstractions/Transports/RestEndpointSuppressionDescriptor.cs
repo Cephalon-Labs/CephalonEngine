@@ -50,6 +50,10 @@ public sealed class RestEndpointSuppressionDescriptor
     /// The union of decisive specificity rules that selected this suppression rule for one or more
     /// runtime candidates.
     /// </param>
+    /// <param name="selectionBasisSummaries">
+    /// The grouped selection-basis buckets for runtime candidates that were actually suppressed by
+    /// this rule.
+    /// </param>
     public RestEndpointSuppressionDescriptor(
         string id,
         IReadOnlyList<string>? candidateIds = null,
@@ -67,7 +71,8 @@ public sealed class RestEndpointSuppressionDescriptor
         IReadOnlyList<string>? matchedCandidateIds = null,
         IReadOnlyList<string>? suppressedCandidateIds = null,
         IReadOnlyList<string>? skippedCandidateIds = null,
-        IReadOnlyList<RestEndpointGovernanceRuleSelectionBasis>? selectionBases = null)
+        IReadOnlyList<RestEndpointGovernanceRuleSelectionBasis>? selectionBases = null,
+        IReadOnlyList<RestEndpointGovernanceSelectionBasisSummaryDescriptor>? selectionBasisSummaries = null)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -90,7 +95,28 @@ public sealed class RestEndpointSuppressionDescriptor
         MatchedCandidateIds = NormalizeOrderedList(matchedCandidateIds);
         SuppressedCandidateIds = NormalizeOrderedList(suppressedCandidateIds);
         SkippedCandidateIds = NormalizeOrderedList(skippedCandidateIds);
+        SelectionBasisSummaries = RestEndpointGovernanceSelectionBasisSummaryBuilder.Normalize(
+            selectionBasisSummaries,
+            SuppressedCandidateIds.ToHashSet(StringComparer.OrdinalIgnoreCase),
+            nameof(selectionBasisSummaries));
         SelectionBases = NormalizeSelectionBases(selectionBases, nameof(selectionBases));
+
+        if (SelectionBases.Count == 0 &&
+            SelectionBasisSummaries.Count > 0)
+        {
+            SelectionBases = SelectionBasisSummaries
+                .Select(static summary => summary.SelectionBasis)
+                .ToArray();
+        }
+
+        if (SelectionBasisSummaries.Count > 0 &&
+            !SelectionBases.SequenceEqual(
+                SelectionBasisSummaries.Select(static summary => summary.SelectionBasis)))
+        {
+            throw new ArgumentException(
+                "REST endpoint suppression selection-basis summaries must stay aligned with SelectionBases when both are provided.",
+                nameof(selectionBasisSummaries));
+        }
 
         if (SuppressedCandidateIds.Except(MatchedCandidateIds, StringComparer.OrdinalIgnoreCase).Any())
         {
@@ -206,6 +232,12 @@ public sealed class RestEndpointSuppressionDescriptor
     /// more runtime candidates.
     /// </summary>
     public IReadOnlyList<RestEndpointGovernanceRuleSelectionBasis> SelectionBases { get; }
+
+    /// <summary>
+    /// Gets the grouped selection-basis buckets for runtime candidates that were actually
+    /// suppressed by this rule.
+    /// </summary>
+    public IReadOnlyList<RestEndpointGovernanceSelectionBasisSummaryDescriptor> SelectionBasisSummaries { get; }
 
     private static string[] NormalizeList(IReadOnlyList<string>? values)
     {

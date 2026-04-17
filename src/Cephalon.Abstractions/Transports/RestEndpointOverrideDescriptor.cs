@@ -105,6 +105,18 @@ public sealed class RestEndpointOverrideDescriptor
     /// The union of override action dimensions that materially changed one or more runtime
     /// candidates.
     /// </param>
+    /// <param name="selectionBasisSummaries">
+    /// The grouped selection-basis buckets for runtime candidates that selected this override
+    /// rule, including runtime no-op selections.
+    /// </param>
+    /// <param name="selectedActionKindSummaries">
+    /// The grouped override-action buckets for runtime candidates that selected this override
+    /// rule, including runtime no-op selections.
+    /// </param>
+    /// <param name="appliedActionKindSummaries">
+    /// The grouped override-action buckets for runtime candidates materially changed by this
+    /// override rule.
+    /// </param>
     public RestEndpointOverrideDescriptor(
         string id,
         IReadOnlyList<string>? candidateIds = null,
@@ -143,7 +155,10 @@ public sealed class RestEndpointOverrideDescriptor
         IReadOnlyList<string>? skippedCandidateIds = null,
         IReadOnlyList<RestEndpointGovernanceRuleSelectionBasis>? selectionBases = null,
         IReadOnlyList<RestEndpointOverrideActionKind>? selectedActionKinds = null,
-        IReadOnlyList<RestEndpointOverrideActionKind>? appliedActionKinds = null)
+        IReadOnlyList<RestEndpointOverrideActionKind>? appliedActionKinds = null,
+        IReadOnlyList<RestEndpointGovernanceSelectionBasisSummaryDescriptor>? selectionBasisSummaries = null,
+        IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor>? selectedActionKindSummaries = null,
+        IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor>? appliedActionKindSummaries = null)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -215,14 +230,77 @@ public sealed class RestEndpointOverrideDescriptor
         SelectedCandidateIds = NormalizeOrderedList(selectedCandidateIds);
         AppliedCandidateIds = NormalizeOrderedList(appliedCandidateIds);
         SkippedCandidateIds = NormalizeOrderedList(skippedCandidateIds);
+        SelectionBasisSummaries = RestEndpointGovernanceSelectionBasisSummaryBuilder.Normalize(
+            selectionBasisSummaries,
+            SelectedCandidateIds.ToHashSet(StringComparer.OrdinalIgnoreCase),
+            nameof(selectionBasisSummaries));
+        SelectedActionKindSummaries = RestEndpointGovernanceOverrideActionKindSummaryBuilder.Normalize(
+            selectedActionKindSummaries,
+            SelectedCandidateIds.ToHashSet(StringComparer.OrdinalIgnoreCase),
+            nameof(selectedActionKindSummaries));
+        AppliedActionKindSummaries = RestEndpointGovernanceOverrideActionKindSummaryBuilder.Normalize(
+            appliedActionKindSummaries,
+            AppliedCandidateIds.ToHashSet(StringComparer.OrdinalIgnoreCase),
+            nameof(appliedActionKindSummaries));
         SelectionBases = NormalizeSelectionBases(selectionBases, nameof(selectionBases));
         SelectedActionKinds = NormalizeActionKinds(selectedActionKinds, nameof(selectedActionKinds));
         AppliedActionKinds = NormalizeActionKinds(appliedActionKinds, nameof(appliedActionKinds));
+
+        if (SelectionBases.Count == 0 &&
+            SelectionBasisSummaries.Count > 0)
+        {
+            SelectionBases = SelectionBasisSummaries
+                .Select(static summary => summary.SelectionBasis)
+                .ToArray();
+        }
+
+        if (SelectedActionKinds.Count == 0 &&
+            SelectedActionKindSummaries.Count > 0)
+        {
+            SelectedActionKinds = SelectedActionKindSummaries
+                .Select(static summary => summary.ActionKind)
+                .ToArray();
+        }
+
+        if (AppliedActionKinds.Count == 0 &&
+            AppliedActionKindSummaries.Count > 0)
+        {
+            AppliedActionKinds = AppliedActionKindSummaries
+                .Select(static summary => summary.ActionKind)
+                .ToArray();
+        }
 
         if (SelectedActionKinds.Count == 0 &&
             AppliedActionKinds.Count > 0)
         {
             SelectedActionKinds = AppliedActionKinds;
+        }
+
+        if (SelectionBasisSummaries.Count > 0 &&
+            !SelectionBases.SequenceEqual(
+                SelectionBasisSummaries.Select(static summary => summary.SelectionBasis)))
+        {
+            throw new ArgumentException(
+                "REST endpoint override selection-basis summaries must stay aligned with SelectionBases when both are provided.",
+                nameof(selectionBasisSummaries));
+        }
+
+        if (SelectedActionKindSummaries.Count > 0 &&
+            !SelectedActionKinds.SequenceEqual(
+                SelectedActionKindSummaries.Select(static summary => summary.ActionKind)))
+        {
+            throw new ArgumentException(
+                "REST endpoint override selected-action summaries must stay aligned with SelectedActionKinds when both are provided.",
+                nameof(selectedActionKindSummaries));
+        }
+
+        if (AppliedActionKindSummaries.Count > 0 &&
+            !AppliedActionKinds.SequenceEqual(
+                AppliedActionKindSummaries.Select(static summary => summary.ActionKind)))
+        {
+            throw new ArgumentException(
+                "REST endpoint override applied-action summaries must stay aligned with AppliedActionKinds when both are provided.",
+                nameof(appliedActionKindSummaries));
         }
 
         if (ClearRequiredCapability && RequiredCapabilityKey is not null)
@@ -534,16 +612,34 @@ public sealed class RestEndpointOverrideDescriptor
     public IReadOnlyList<RestEndpointGovernanceRuleSelectionBasis> SelectionBases { get; private set; }
 
     /// <summary>
+    /// Gets the grouped selection-basis buckets for runtime candidates that selected this override
+    /// rule, including runtime no-op selections.
+    /// </summary>
+    public IReadOnlyList<RestEndpointGovernanceSelectionBasisSummaryDescriptor> SelectionBasisSummaries { get; private set; }
+
+    /// <summary>
     /// Gets the union of configured override action dimensions that were selected for one or more
     /// runtime candidates, including runtime no-op selections.
     /// </summary>
     public IReadOnlyList<RestEndpointOverrideActionKind> SelectedActionKinds { get; private set; }
 
     /// <summary>
+    /// Gets the grouped override-action buckets for runtime candidates that selected this override
+    /// rule, including runtime no-op selections.
+    /// </summary>
+    public IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor> SelectedActionKindSummaries { get; private set; }
+
+    /// <summary>
     /// Gets the union of override action dimensions that materially changed one or more runtime
     /// candidates.
     /// </summary>
     public IReadOnlyList<RestEndpointOverrideActionKind> AppliedActionKinds { get; private set; }
+
+    /// <summary>
+    /// Gets the grouped override-action buckets for runtime candidates materially changed by this
+    /// override rule.
+    /// </summary>
+    public IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor> AppliedActionKindSummaries { get; private set; }
 
     private static string[] NormalizeList(IReadOnlyList<string>? values)
     {

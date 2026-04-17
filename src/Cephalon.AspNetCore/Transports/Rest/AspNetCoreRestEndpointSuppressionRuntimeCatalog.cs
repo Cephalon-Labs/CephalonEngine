@@ -85,7 +85,7 @@ internal sealed class AspNetCoreRestEndpointSuppressionRuntimeCatalog(
         var matchedCandidateIdsByRule = new Dictionary<string, List<string>>(Comparer);
         var suppressedCandidateIdsByRule = new Dictionary<string, List<string>>(Comparer);
         var skippedCandidateIdsByRule = new Dictionary<string, List<string>>(Comparer);
-        var selectionBasesByRule = new Dictionary<string, List<RestEndpointGovernanceRuleSelectionBasis>>(Comparer);
+        var suppressedCandidatesByRule = new Dictionary<string, List<RestEndpointCandidateRuntimeDescriptor>>(Comparer);
 
         foreach (var candidate in candidates)
         {
@@ -98,14 +98,7 @@ internal sealed class AspNetCoreRestEndpointSuppressionRuntimeCatalog(
             {
                 AddDistinctStringValue(matchedCandidateIdsByRule, candidate.SuppressedBySuppressionId, candidate.Id);
                 AddDistinctStringValue(suppressedCandidateIdsByRule, candidate.SuppressedBySuppressionId, candidate.Id);
-
-                if (candidate.SuppressionSelectionBasis.HasValue)
-                {
-                    AddDistinctEnumValue(
-                        selectionBasesByRule,
-                        candidate.SuppressedBySuppressionId,
-                        candidate.SuppressionSelectionBasis.Value);
-                }
+                AddDistinctCandidateValue(suppressedCandidatesByRule, candidate.SuppressedBySuppressionId, candidate);
             }
 
             foreach (var suppressionId in candidate.SkippedSuppressionIds)
@@ -115,24 +108,32 @@ internal sealed class AspNetCoreRestEndpointSuppressionRuntimeCatalog(
         }
 
         var suppressions = options.Suppressions
-            .Select(suppression => new RestEndpointSuppressionDescriptor(
-                suppression.Id,
-                suppression.CandidateIds,
-                suppression.BehaviorIds,
-                suppression.SourceModuleIds,
-                suppression.AuthoringStyles,
-                suppression.ApiVersionMajors,
-                suppression.Methods,
-                suppression.RelativePatterns,
-                suppression.RouteGroupPrefixes,
-                suppression.OpenApiDocumentNames,
-                suppression.TagNames,
-                suppression.BindingFallbackModes,
-                suppression.TargetBindings,
-                GetStringValues(matchedCandidateIdsByRule, suppression.Id),
-                GetStringValues(suppressedCandidateIdsByRule, suppression.Id),
-                GetStringValues(skippedCandidateIdsByRule, suppression.Id),
-                GetEnumValues(selectionBasesByRule, suppression.Id)))
+            .Select(suppression =>
+            {
+                var selectionBasisSummaries = BuildSelectionBasisSummaries(
+                    GetCandidateValues(suppressedCandidatesByRule, suppression.Id),
+                    static candidate => candidate.SuppressionSelectionBasis);
+
+                return new RestEndpointSuppressionDescriptor(
+                    suppression.Id,
+                    suppression.CandidateIds,
+                    suppression.BehaviorIds,
+                    suppression.SourceModuleIds,
+                    suppression.AuthoringStyles,
+                    suppression.ApiVersionMajors,
+                    suppression.Methods,
+                    suppression.RelativePatterns,
+                    suppression.RouteGroupPrefixes,
+                    suppression.OpenApiDocumentNames,
+                    suppression.TagNames,
+                    suppression.BindingFallbackModes,
+                    suppression.TargetBindings,
+                    GetStringValues(matchedCandidateIdsByRule, suppression.Id),
+                    GetStringValues(suppressedCandidateIdsByRule, suppression.Id),
+                    GetStringValues(skippedCandidateIdsByRule, suppression.Id),
+                    selectionBasisSummaries.Select(static summary => summary.SelectionBasis).ToArray(),
+                    selectionBasisSummaries);
+            })
             .OrderBy(static suppression => suppression.Id, Comparer)
             .ToArray();
 
@@ -185,11 +186,10 @@ internal sealed class AspNetCoreRestEndpointSuppressionRuntimeCatalog(
         }
     }
 
-    private static void AddDistinctEnumValue<TEnum>(
-        Dictionary<string, List<TEnum>> valuesByRuleId,
+    private static void AddDistinctCandidateValue(
+        Dictionary<string, List<RestEndpointCandidateRuntimeDescriptor>> valuesByRuleId,
         string? ruleId,
-        TEnum value)
-        where TEnum : struct, Enum
+        RestEndpointCandidateRuntimeDescriptor candidate)
     {
         if (string.IsNullOrWhiteSpace(ruleId))
         {
@@ -203,9 +203,9 @@ internal sealed class AspNetCoreRestEndpointSuppressionRuntimeCatalog(
             valuesByRuleId[trimmedRuleId] = values;
         }
 
-        if (!values.Contains(value))
+        if (!values.Any(existing => string.Equals(existing.Id, candidate.Id, StringComparison.OrdinalIgnoreCase)))
         {
-            values.Add(value);
+            values.Add(candidate);
         }
     }
 
@@ -218,14 +218,48 @@ internal sealed class AspNetCoreRestEndpointSuppressionRuntimeCatalog(
             : [];
     }
 
-    private static List<TEnum> GetEnumValues<TEnum>(
-        Dictionary<string, List<TEnum>> valuesByRuleId,
+    private static List<RestEndpointCandidateRuntimeDescriptor> GetCandidateValues(
+        Dictionary<string, List<RestEndpointCandidateRuntimeDescriptor>> valuesByRuleId,
         string ruleId)
-        where TEnum : struct, Enum
     {
         return valuesByRuleId.TryGetValue(ruleId, out var values)
             ? values
             : [];
+    }
+
+    private static RestEndpointGovernanceSelectionBasisSummaryDescriptor[] BuildSelectionBasisSummaries(
+        IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> candidates,
+        Func<RestEndpointCandidateRuntimeDescriptor, RestEndpointGovernanceRuleSelectionBasis?> selector)
+    {
+        ArgumentNullException.ThrowIfNull(candidates);
+        ArgumentNullException.ThrowIfNull(selector);
+
+        var candidateIdsBySelectionBasis =
+            new Dictionary<RestEndpointGovernanceRuleSelectionBasis, List<string>>();
+        foreach (var candidate in candidates)
+        {
+            var selectionBasis = selector(candidate);
+            if (!selectionBasis.HasValue)
+            {
+                continue;
+            }
+
+            if (!candidateIdsBySelectionBasis.TryGetValue(selectionBasis.Value, out var candidateIds))
+            {
+                candidateIds = [];
+                candidateIdsBySelectionBasis[selectionBasis.Value] = candidateIds;
+            }
+
+            if (!candidateIds.Contains(candidate.Id, Comparer))
+            {
+                candidateIds.Add(candidate.Id);
+            }
+        }
+
+        return candidateIdsBySelectionBasis
+            .OrderBy(static pair => pair.Key)
+            .Select(pair => new RestEndpointGovernanceSelectionBasisSummaryDescriptor(pair.Key, pair.Value))
+            .ToArray();
     }
 
     private sealed class CatalogState(

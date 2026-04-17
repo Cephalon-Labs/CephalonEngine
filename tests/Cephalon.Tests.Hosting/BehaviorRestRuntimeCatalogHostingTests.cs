@@ -1785,8 +1785,18 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Empty(rule.AppliedCandidateIds);
         Assert.Empty(rule.SkippedCandidateIds);
         Assert.Equal([candidate.OverrideSelectionBasis!.Value], rule.SelectionBases);
+        var ruleSelectionBasisSummary = Assert.Single(rule.SelectionBasisSummaries);
+        Assert.Equal(candidate.OverrideSelectionBasis.Value, ruleSelectionBasisSummary.SelectionBasis);
+        Assert.Equal([candidate.Id], ruleSelectionBasisSummary.CandidateIds);
         Assert.Equal(candidate.SelectedOverrideActionKinds, rule.SelectedActionKinds);
+        Assert.Equal(
+            candidate.SelectedOverrideActionKinds,
+            rule.SelectedActionKindSummaries.Select(static item => item.ActionKind).ToArray());
+        Assert.All(
+            rule.SelectedActionKindSummaries,
+            summary => Assert.Equal([candidate.Id], summary.CandidateIds));
         Assert.Empty(rule.AppliedActionKinds);
+        Assert.Empty(rule.AppliedActionKindSummaries);
 
         var group = Assert.Single(groups, static item =>
             string.Equals(item.BehaviorId, "tests.profile.runtimenoop.metadata", StringComparison.Ordinal));
@@ -3325,11 +3335,57 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("internal", secondaryCandidate.OriginalProjection.OpenApiDocumentName);
         Assert.Equal("Profile Selector Secondary API", secondaryCandidate.OriginalProjection.TagName);
 
+        var allCandidatesRule = Assert.Single(overrides, static item => string.Equals(item.Id, "all-candidates", StringComparison.Ordinal));
+        Assert.Equal([primaryCandidate.Id, secondaryCandidate.Id], allCandidatesRule.MatchedCandidateIds);
+        Assert.Equal([primaryCandidate.Id], allCandidatesRule.SelectedCandidateIds);
+        Assert.Equal([primaryCandidate.Id], allCandidatesRule.AppliedCandidateIds);
+        Assert.Empty(allCandidatesRule.SkippedCandidateIds);
+        Assert.Equal([primaryCandidate.OverrideSelectionBasis!.Value], allCandidatesRule.SelectionBases);
+        var allCandidatesSelectionBasisSummary = Assert.Single(allCandidatesRule.SelectionBasisSummaries);
+        Assert.Equal(primaryCandidate.OverrideSelectionBasis.Value, allCandidatesSelectionBasisSummary.SelectionBasis);
+        Assert.Equal([primaryCandidate.Id], allCandidatesSelectionBasisSummary.CandidateIds);
+        Assert.Equal(primaryCandidate.SelectedOverrideActionKinds, allCandidatesRule.SelectedActionKinds);
+        Assert.Equal(primaryCandidate.AppliedOverrideActionKinds, allCandidatesRule.AppliedActionKinds);
+        Assert.Equal(
+            primaryCandidate.SelectedOverrideActionKinds,
+            allCandidatesRule.SelectedActionKindSummaries.Select(static item => item.ActionKind).ToArray());
+        Assert.All(
+            allCandidatesRule.SelectedActionKindSummaries,
+            summary => Assert.Equal([primaryCandidate.Id], summary.CandidateIds));
+        Assert.Equal(
+            primaryCandidate.AppliedOverrideActionKinds,
+            allCandidatesRule.AppliedActionKindSummaries.Select(static item => item.ActionKind).ToArray());
+        Assert.All(
+            allCandidatesRule.AppliedActionKindSummaries,
+            summary => Assert.Equal([primaryCandidate.Id], summary.CandidateIds));
+
         var rule = Assert.Single(overrides, static item => string.Equals(item.Id, "internal-only", StringComparison.Ordinal));
         Assert.Contains("tests.rest.profile.selector.bindings", rule.BehaviorIds);
         Assert.Contains("internal", rule.OpenApiDocumentNames, StringComparer.Ordinal);
         Assert.Contains("Profile Selector Secondary API", rule.TagNames, StringComparer.Ordinal);
         Assert.Equal("/lookup/document-tag/{orderId}/items", rule.Pattern);
+        Assert.Equal([secondaryCandidate.Id], rule.MatchedCandidateIds);
+        Assert.Equal([secondaryCandidate.Id], rule.SelectedCandidateIds);
+        Assert.Equal([secondaryCandidate.Id], rule.AppliedCandidateIds);
+        Assert.Empty(rule.SkippedCandidateIds);
+        Assert.Equal([secondaryCandidate.OverrideSelectionBasis!.Value], rule.SelectionBases);
+        var internalOnlySelectionBasisSummary = Assert.Single(rule.SelectionBasisSummaries);
+        Assert.Equal(secondaryCandidate.OverrideSelectionBasis.Value, internalOnlySelectionBasisSummary.SelectionBasis);
+        Assert.Equal([secondaryCandidate.Id], internalOnlySelectionBasisSummary.CandidateIds);
+        Assert.Equal(secondaryCandidate.SelectedOverrideActionKinds, rule.SelectedActionKinds);
+        Assert.Equal(secondaryCandidate.AppliedOverrideActionKinds, rule.AppliedActionKinds);
+        Assert.Equal(
+            secondaryCandidate.SelectedOverrideActionKinds,
+            rule.SelectedActionKindSummaries.Select(static item => item.ActionKind).ToArray());
+        Assert.All(
+            rule.SelectedActionKindSummaries,
+            summary => Assert.Equal([secondaryCandidate.Id], summary.CandidateIds));
+        Assert.Equal(
+            secondaryCandidate.AppliedOverrideActionKinds,
+            rule.AppliedActionKindSummaries.Select(static item => item.ActionKind).ToArray());
+        Assert.All(
+            rule.AppliedActionKindSummaries,
+            summary => Assert.Equal([secondaryCandidate.Id], summary.CandidateIds));
 
         using var primaryRequest = new HttpRequestMessage(
             HttpMethod.Post,
@@ -3420,6 +3476,19 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Contains("tests.rest.profile.selector.bindings", rule.BehaviorIds);
         Assert.Contains("internal", rule.OpenApiDocumentNames, StringComparer.Ordinal);
         Assert.Contains("Profile Selector Secondary API", rule.TagNames, StringComparer.Ordinal);
+        Assert.Equal([suppressed.Id], rule.MatchedCandidateIds);
+        Assert.Equal([suppressed.Id], rule.SuppressedCandidateIds);
+        Assert.Empty(rule.SkippedCandidateIds);
+        Assert.Equal([suppressed.SuppressionSelectionBasis!.Value], rule.SelectionBases);
+        var suppressionSelectionBasisSummary = Assert.Single(rule.SelectionBasisSummaries);
+        Assert.Equal(suppressed.SuppressionSelectionBasis.Value, suppressionSelectionBasisSummary.SelectionBasis);
+        Assert.Equal([suppressed.Id], suppressionSelectionBasisSummary.CandidateIds);
+
+        var matchedButLosingRule = Assert.Single(suppressions, static item => string.Equals(item.Id, "hide-secondary-tag", StringComparison.Ordinal));
+        Assert.Equal([suppressed.Id], matchedButLosingRule.MatchedCandidateIds);
+        Assert.Empty(matchedButLosingRule.SuppressedCandidateIds);
+        Assert.Empty(matchedButLosingRule.SelectionBases);
+        Assert.Empty(matchedButLosingRule.SelectionBasisSummaries);
 
         using var publishedRequest = new HttpRequestMessage(
             HttpMethod.Post,

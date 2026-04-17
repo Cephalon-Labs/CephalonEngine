@@ -86,9 +86,8 @@ internal sealed class AspNetCoreRestEndpointOverrideRuntimeCatalog(
         var selectedCandidateIdsByRule = new Dictionary<string, List<string>>(Comparer);
         var appliedCandidateIdsByRule = new Dictionary<string, List<string>>(Comparer);
         var skippedCandidateIdsByRule = new Dictionary<string, List<string>>(Comparer);
-        var selectionBasesByRule = new Dictionary<string, List<RestEndpointGovernanceRuleSelectionBasis>>(Comparer);
-        var selectedActionKindsByRule = new Dictionary<string, List<RestEndpointOverrideActionKind>>(Comparer);
-        var appliedActionKindsByRule = new Dictionary<string, List<RestEndpointOverrideActionKind>>(Comparer);
+        var selectedCandidatesByRule = new Dictionary<string, List<RestEndpointCandidateRuntimeDescriptor>>(Comparer);
+        var appliedCandidatesByRule = new Dictionary<string, List<RestEndpointCandidateRuntimeDescriptor>>(Comparer);
 
         foreach (var candidate in candidates)
         {
@@ -101,19 +100,7 @@ internal sealed class AspNetCoreRestEndpointOverrideRuntimeCatalog(
             {
                 AddDistinctStringValue(matchedCandidateIdsByRule, candidate.SelectedOverrideId, candidate.Id);
                 AddDistinctStringValue(selectedCandidateIdsByRule, candidate.SelectedOverrideId, candidate.Id);
-
-                if (candidate.OverrideSelectionBasis.HasValue)
-                {
-                    AddDistinctEnumValue(
-                        selectionBasesByRule,
-                        candidate.SelectedOverrideId,
-                        candidate.OverrideSelectionBasis.Value);
-                }
-
-                foreach (var actionKind in candidate.SelectedOverrideActionKinds)
-                {
-                    AddDistinctEnumValue(selectedActionKindsByRule, candidate.SelectedOverrideId, actionKind);
-                }
+                AddDistinctCandidateValue(selectedCandidatesByRule, candidate.SelectedOverrideId, candidate);
             }
 
             if (!string.IsNullOrWhiteSpace(candidate.AppliedOverrideId))
@@ -121,11 +108,7 @@ internal sealed class AspNetCoreRestEndpointOverrideRuntimeCatalog(
                 AddDistinctStringValue(matchedCandidateIdsByRule, candidate.AppliedOverrideId, candidate.Id);
                 AddDistinctStringValue(selectedCandidateIdsByRule, candidate.AppliedOverrideId, candidate.Id);
                 AddDistinctStringValue(appliedCandidateIdsByRule, candidate.AppliedOverrideId, candidate.Id);
-
-                foreach (var actionKind in candidate.AppliedOverrideActionKinds)
-                {
-                    AddDistinctEnumValue(appliedActionKindsByRule, candidate.AppliedOverrideId, actionKind);
-                }
+                AddDistinctCandidateValue(appliedCandidatesByRule, candidate.AppliedOverrideId, candidate);
             }
 
             foreach (var overrideId in candidate.SkippedOverrideIds)
@@ -135,45 +118,61 @@ internal sealed class AspNetCoreRestEndpointOverrideRuntimeCatalog(
         }
 
         var overrideRules = options.Overrides
-            .Select(item => new RestEndpointOverrideDescriptor(
-                item.Id,
-                item.CandidateIds,
-                item.BehaviorIds,
-                item.SourceModuleIds,
-                item.AuthoringStyles,
-                item.ApiVersionMajors,
-                item.Methods,
-                item.RelativePatterns,
-                item.RouteGroupPrefixes,
-                item.ApiVersionMajor,
-                item.Method,
-                item.Pattern,
-                item.RouteGroupPrefix,
-                item.OpenApiDocumentName,
-                item.TagName,
-                item.EndpointName,
-                item.Summary,
-                item.Description,
-                item.RequiredCapabilityKey,
-                item.ClearRequiredCapability,
-                item.Bindings,
-                item.RemovedBindingProperties,
-                item.ClearBindings,
-                item.BindingMode,
-                item.ClearEndpointName,
-                item.ClearSummary,
-                item.ClearDescription,
-                item.OpenApiDocumentNames,
-                item.TagNames,
-                item.BindingFallbackModes,
-                item.TargetBindings,
-                GetStringValues(matchedCandidateIdsByRule, item.Id),
-                GetStringValues(selectedCandidateIdsByRule, item.Id),
-                GetStringValues(appliedCandidateIdsByRule, item.Id),
-                GetStringValues(skippedCandidateIdsByRule, item.Id),
-                GetEnumValues(selectionBasesByRule, item.Id),
-                GetEnumValues(selectedActionKindsByRule, item.Id),
-                GetEnumValues(appliedActionKindsByRule, item.Id)))
+            .Select(item =>
+            {
+                var selectionBasisSummaries = BuildSelectionBasisSummaries(
+                    GetCandidateValues(selectedCandidatesByRule, item.Id),
+                    static candidate => candidate.OverrideSelectionBasis);
+                var selectedActionKindSummaries = BuildActionKindSummaries(
+                    GetCandidateValues(selectedCandidatesByRule, item.Id),
+                    static candidate => candidate.SelectedOverrideActionKinds);
+                var appliedActionKindSummaries = BuildActionKindSummaries(
+                    GetCandidateValues(appliedCandidatesByRule, item.Id),
+                    static candidate => candidate.AppliedOverrideActionKinds);
+
+                return new RestEndpointOverrideDescriptor(
+                    item.Id,
+                    item.CandidateIds,
+                    item.BehaviorIds,
+                    item.SourceModuleIds,
+                    item.AuthoringStyles,
+                    item.ApiVersionMajors,
+                    item.Methods,
+                    item.RelativePatterns,
+                    item.RouteGroupPrefixes,
+                    item.ApiVersionMajor,
+                    item.Method,
+                    item.Pattern,
+                    item.RouteGroupPrefix,
+                    item.OpenApiDocumentName,
+                    item.TagName,
+                    item.EndpointName,
+                    item.Summary,
+                    item.Description,
+                    item.RequiredCapabilityKey,
+                    item.ClearRequiredCapability,
+                    item.Bindings,
+                    item.RemovedBindingProperties,
+                    item.ClearBindings,
+                    item.BindingMode,
+                    item.ClearEndpointName,
+                    item.ClearSummary,
+                    item.ClearDescription,
+                    item.OpenApiDocumentNames,
+                    item.TagNames,
+                    item.BindingFallbackModes,
+                    item.TargetBindings,
+                    GetStringValues(matchedCandidateIdsByRule, item.Id),
+                    GetStringValues(selectedCandidateIdsByRule, item.Id),
+                    GetStringValues(appliedCandidateIdsByRule, item.Id),
+                    GetStringValues(skippedCandidateIdsByRule, item.Id),
+                    selectionBasisSummaries.Select(static summary => summary.SelectionBasis).ToArray(),
+                    selectedActionKindSummaries.Select(static summary => summary.ActionKind).ToArray(),
+                    appliedActionKindSummaries.Select(static summary => summary.ActionKind).ToArray(),
+                    selectionBasisSummaries,
+                    selectedActionKindSummaries,
+                    appliedActionKindSummaries);
+            })
             .OrderBy(static item => item.Id, Comparer)
             .ToArray();
 
@@ -226,11 +225,10 @@ internal sealed class AspNetCoreRestEndpointOverrideRuntimeCatalog(
         }
     }
 
-    private static void AddDistinctEnumValue<TEnum>(
-        Dictionary<string, List<TEnum>> valuesByRuleId,
+    private static void AddDistinctCandidateValue(
+        Dictionary<string, List<RestEndpointCandidateRuntimeDescriptor>> valuesByRuleId,
         string? ruleId,
-        TEnum value)
-        where TEnum : struct, Enum
+        RestEndpointCandidateRuntimeDescriptor candidate)
     {
         if (string.IsNullOrWhiteSpace(ruleId))
         {
@@ -244,9 +242,9 @@ internal sealed class AspNetCoreRestEndpointOverrideRuntimeCatalog(
             valuesByRuleId[trimmedRuleId] = values;
         }
 
-        if (!values.Contains(value))
+        if (!values.Any(existing => string.Equals(existing.Id, candidate.Id, StringComparison.OrdinalIgnoreCase)))
         {
-            values.Add(value);
+            values.Add(candidate);
         }
     }
 
@@ -259,14 +257,80 @@ internal sealed class AspNetCoreRestEndpointOverrideRuntimeCatalog(
             : [];
     }
 
-    private static List<TEnum> GetEnumValues<TEnum>(
-        Dictionary<string, List<TEnum>> valuesByRuleId,
+    private static List<RestEndpointCandidateRuntimeDescriptor> GetCandidateValues(
+        Dictionary<string, List<RestEndpointCandidateRuntimeDescriptor>> valuesByRuleId,
         string ruleId)
-        where TEnum : struct, Enum
     {
         return valuesByRuleId.TryGetValue(ruleId, out var values)
             ? values
             : [];
+    }
+
+    private static RestEndpointGovernanceSelectionBasisSummaryDescriptor[] BuildSelectionBasisSummaries(
+        IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> candidates,
+        Func<RestEndpointCandidateRuntimeDescriptor, RestEndpointGovernanceRuleSelectionBasis?> selector)
+    {
+        ArgumentNullException.ThrowIfNull(candidates);
+        ArgumentNullException.ThrowIfNull(selector);
+
+        var candidateIdsBySelectionBasis =
+            new Dictionary<RestEndpointGovernanceRuleSelectionBasis, List<string>>();
+        foreach (var candidate in candidates)
+        {
+            var selectionBasis = selector(candidate);
+            if (!selectionBasis.HasValue)
+            {
+                continue;
+            }
+
+            if (!candidateIdsBySelectionBasis.TryGetValue(selectionBasis.Value, out var candidateIds))
+            {
+                candidateIds = [];
+                candidateIdsBySelectionBasis[selectionBasis.Value] = candidateIds;
+            }
+
+            if (!candidateIds.Contains(candidate.Id, Comparer))
+            {
+                candidateIds.Add(candidate.Id);
+            }
+        }
+
+        return candidateIdsBySelectionBasis
+            .OrderBy(static pair => pair.Key)
+            .Select(pair => new RestEndpointGovernanceSelectionBasisSummaryDescriptor(pair.Key, pair.Value))
+            .ToArray();
+    }
+
+    private static RestEndpointGovernanceOverrideActionKindSummaryDescriptor[] BuildActionKindSummaries(
+        IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> candidates,
+        Func<RestEndpointCandidateRuntimeDescriptor, IReadOnlyList<RestEndpointOverrideActionKind>> selector)
+    {
+        ArgumentNullException.ThrowIfNull(candidates);
+        ArgumentNullException.ThrowIfNull(selector);
+
+        var candidateIdsByActionKind =
+            new Dictionary<RestEndpointOverrideActionKind, List<string>>();
+        foreach (var candidate in candidates)
+        {
+            foreach (var actionKind in selector(candidate))
+            {
+                if (!candidateIdsByActionKind.TryGetValue(actionKind, out var candidateIds))
+                {
+                    candidateIds = [];
+                    candidateIdsByActionKind[actionKind] = candidateIds;
+                }
+
+                if (!candidateIds.Contains(candidate.Id, Comparer))
+                {
+                    candidateIds.Add(candidate.Id);
+                }
+            }
+        }
+
+        return candidateIdsByActionKind
+            .OrderBy(static pair => pair.Key)
+            .Select(pair => new RestEndpointGovernanceOverrideActionKindSummaryDescriptor(pair.Key, pair.Value))
+            .ToArray();
     }
 
     private sealed class CatalogState(

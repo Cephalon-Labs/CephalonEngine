@@ -659,11 +659,14 @@ candidates:
 
 Those same candidates now also drive the inverse per-rule runtime answer for host governance:
 `/engine/rest-endpoint-suppressions` now shows `MatchedCandidateIds`,
-`SuppressedCandidateIds`, `SkippedCandidateIds`, and `SelectionBases` per suppression rule, while
+`SuppressedCandidateIds`, `SkippedCandidateIds`, `SelectionBases`, and
+`SelectionBasisSummaries` per suppression rule, while
 `/engine/rest-endpoint-overrides` now shows `MatchedCandidateIds`, `SelectedCandidateIds`,
-`AppliedCandidateIds`, `SkippedCandidateIds`, `SelectionBases`, `SelectedActionKinds`, and
-`AppliedActionKinds` per override rule, so the operator can move between candidate-centric,
-behavior-grouped, and rule-centric views without losing one shared runtime truth.
+`AppliedCandidateIds`, `SkippedCandidateIds`, `SelectionBases`, `SelectionBasisSummaries`,
+`SelectedActionKinds`, `SelectedActionKindSummaries`, `AppliedActionKinds`, and
+`AppliedActionKindSummaries` per override rule, so the operator can move between
+candidate-centric, behavior-grouped, and rule-centric views without losing one shared runtime
+truth or re-bucketing candidate provenance by hand.
 
 Each grouped publication answer now also carries `AuthoringStyleSummaries`, which summarizes per
 normalized authoring style the participating candidate ids, precedence ranks, published

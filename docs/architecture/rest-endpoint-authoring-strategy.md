@@ -1219,10 +1219,14 @@ The following points are durable enough to keep outside thread-local context.
   `/engine/rest-endpoint-overrides/{overrideId}`, and `snapshot.RestEndpointOverrides`
 - those same rule catalogs now also derive rule-centric runtime-effect buckets directly from
   candidate truth: suppression descriptors surface `MatchedCandidateIds`,
-  `SuppressedCandidateIds`, `SkippedCandidateIds`, and `SelectionBases`, while override
-  descriptors surface `MatchedCandidateIds`, `SelectedCandidateIds`, `AppliedCandidateIds`,
-  `SkippedCandidateIds`, `SelectionBases`, `SelectedActionKinds`, and `AppliedActionKinds`, so
-  operators can answer per-rule runtime effect without reopening `/engine/rest-endpoint-candidates`
+  `SuppressedCandidateIds`, `SkippedCandidateIds`, `SelectionBases`, and grouped
+  `SelectionBasisSummaries`, while override descriptors surface `MatchedCandidateIds`,
+  `SelectedCandidateIds`, `AppliedCandidateIds`, `SkippedCandidateIds`, `SelectionBases`,
+  grouped `SelectionBasisSummaries`, `SelectedActionKinds`, grouped
+  `SelectedActionKindSummaries`, `AppliedActionKinds`, and grouped
+  `AppliedActionKindSummaries`, so operators can answer per-rule runtime effect and per-bucket
+  provenance without reopening `/engine/rest-endpoint-candidates` or
+  `/engine/rest-endpoint-publication-groups`
 - the shipped `RestApi:Suppressions` baseline is intentionally limited to suppression of
   descriptor-backed shorthand candidates, and the shipped `RestApi:Overrides` baseline is
   intentionally limited to shorthand `ApiVersionMajor`, `OpenApiDocumentName`, `Method`, bounded

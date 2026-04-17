@@ -79,11 +79,15 @@ forcing operators back into `/engine/rest-endpoint-candidates`.
 
 The rule catalogs themselves now mirror that same truth directly: `/engine/rest-endpoint-suppressions`
 and `snapshot.RestEndpointSuppressions` surface per-rule `MatchedCandidateIds`,
-`SuppressedCandidateIds`, `SkippedCandidateIds`, and `SelectionBases`, while
+`SuppressedCandidateIds`, `SkippedCandidateIds`, `SelectionBases`, and
+`SelectionBasisSummaries`, while
 `/engine/rest-endpoint-overrides` plus `snapshot.RestEndpointOverrides` surface per-rule
 `MatchedCandidateIds`, `SelectedCandidateIds`, `AppliedCandidateIds`, `SkippedCandidateIds`,
-`SelectionBases`, `SelectedActionKinds`, and `AppliedActionKinds`, all derived lazily from the
-same candidate runtime catalog instead of staying as configuration-only echoes.
+`SelectionBases`, `SelectionBasisSummaries`, `SelectedActionKinds`,
+`SelectedActionKindSummaries`, `AppliedActionKinds`, and `AppliedActionKindSummaries`, all
+derived lazily from the same candidate runtime catalog instead of staying as configuration-only
+echoes. That keeps one route-level answer for both union-level runtime effect and grouped
+candidate-level provenance.
 
 For shorthand governance provenance, published endpoint and candidate answers now also use `SelectedOverrideId` to name the winning override rule when post-materialization reconciliation proves that the rule matched but did not materially change the effective published answer, so `AppliedOverrideId = null` no longer means “no override rule won.” Those same runtime answers now also expose `SelectedOverrideActionKinds` plus `AppliedOverrideActionKinds`, while the configured override catalog exposes `ActionKinds`, so operators can read the same winning-rule story at both the declared-rule and effective-runtime levels without reconstructing which override dimensions were intended versus which ones actually changed the published boundary. Those same runtime answers now also expose `OverrideSelectionBasis`, and suppressed candidates now also expose `SuppressionSelectionBasis`, so operators can see the earliest decisive specificity reason that chose one matching governance rule over another instead of reconstructing it from the ordered match set alone.
 
