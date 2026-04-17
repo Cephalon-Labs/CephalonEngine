@@ -18,11 +18,23 @@ public sealed class RestEndpointPublicationGroupGovernanceOverrideSummaryDescrip
     /// <param name="appliedCandidateIds">
     /// The ordered candidate identifiers whose effective runtime answer was materially changed by this override rule.
     /// </param>
+    /// <param name="selectionBasisSummaries">
+    /// The grouped decisive selection-basis buckets for the candidates that selected this override rule.
+    /// </param>
+    /// <param name="selectedActionKindSummaries">
+    /// The grouped declared override-action buckets for the candidates that selected this override rule.
+    /// </param>
+    /// <param name="appliedActionKindSummaries">
+    /// The grouped materially applied override-action buckets for the candidates this override rule changed.
+    /// </param>
     public RestEndpointPublicationGroupGovernanceOverrideSummaryDescriptor(
         string ruleId,
         IReadOnlyList<string>? matchedCandidateIds = null,
         IReadOnlyList<string>? selectedCandidateIds = null,
-        IReadOnlyList<string>? appliedCandidateIds = null)
+        IReadOnlyList<string>? appliedCandidateIds = null,
+        IReadOnlyList<RestEndpointPublicationGroupGovernanceSelectionBasisSummaryDescriptor>? selectionBasisSummaries = null,
+        IReadOnlyList<RestEndpointPublicationGroupGovernanceOverrideActionKindSummaryDescriptor>? selectedActionKindSummaries = null,
+        IReadOnlyList<RestEndpointPublicationGroupGovernanceOverrideActionKindSummaryDescriptor>? appliedActionKindSummaries = null)
     {
         if (string.IsNullOrWhiteSpace(ruleId))
         {
@@ -53,10 +65,29 @@ public sealed class RestEndpointPublicationGroupGovernanceOverrideSummaryDescrip
                 nameof(appliedCandidateIds));
         }
 
+        var normalizedSelectionBasisSummaries =
+            RestEndpointPublicationGroupGovernanceSelectionBasisSummaryBuilder.Normalize(
+                selectionBasisSummaries,
+                normalizedSelectedCandidateIds.ToHashSet(StringComparer.OrdinalIgnoreCase),
+                nameof(selectionBasisSummaries));
+        var normalizedSelectedActionKindSummaries =
+            RestEndpointPublicationGroupGovernanceOverrideActionKindSummaryBuilder.Normalize(
+                selectedActionKindSummaries,
+                normalizedSelectedCandidateIds.ToHashSet(StringComparer.OrdinalIgnoreCase),
+                nameof(selectedActionKindSummaries));
+        var normalizedAppliedActionKindSummaries =
+            RestEndpointPublicationGroupGovernanceOverrideActionKindSummaryBuilder.Normalize(
+                appliedActionKindSummaries,
+                normalizedAppliedCandidateIds.ToHashSet(StringComparer.OrdinalIgnoreCase),
+                nameof(appliedActionKindSummaries));
+
         RuleId = ruleId.Trim();
         MatchedCandidateIds = normalizedMatchedCandidateIds;
         SelectedCandidateIds = normalizedSelectedCandidateIds;
         AppliedCandidateIds = normalizedAppliedCandidateIds;
+        SelectionBasisSummaries = normalizedSelectionBasisSummaries;
+        SelectedActionKindSummaries = normalizedSelectedActionKindSummaries;
+        AppliedActionKindSummaries = normalizedAppliedActionKindSummaries;
     }
 
     /// <summary>
@@ -78,6 +109,21 @@ public sealed class RestEndpointPublicationGroupGovernanceOverrideSummaryDescrip
     /// Gets the ordered candidate identifiers whose effective runtime answer was materially changed by this override rule.
     /// </summary>
     public IReadOnlyList<string> AppliedCandidateIds { get; }
+
+    /// <summary>
+    /// Gets the grouped decisive selection-basis buckets for the candidates that selected this override rule.
+    /// </summary>
+    public IReadOnlyList<RestEndpointPublicationGroupGovernanceSelectionBasisSummaryDescriptor> SelectionBasisSummaries { get; }
+
+    /// <summary>
+    /// Gets the grouped declared override-action buckets for the candidates that selected this override rule.
+    /// </summary>
+    public IReadOnlyList<RestEndpointPublicationGroupGovernanceOverrideActionKindSummaryDescriptor> SelectedActionKindSummaries { get; }
+
+    /// <summary>
+    /// Gets the grouped materially applied override-action buckets for the candidates this override rule changed.
+    /// </summary>
+    public IReadOnlyList<RestEndpointPublicationGroupGovernanceOverrideActionKindSummaryDescriptor> AppliedActionKindSummaries { get; }
 
     private static string[] NormalizeOrderedList(IReadOnlyList<string>? values)
     {
@@ -141,7 +187,15 @@ internal static class RestEndpointPublicationGroupGovernanceOverrideSummaryBuild
         return matchedCandidateIdsByRuleId
             .OrderBy(static pair => pair.Key, StringComparer.OrdinalIgnoreCase)
             .Select(pair =>
-                new RestEndpointPublicationGroupGovernanceOverrideSummaryDescriptor(
+            {
+                var selectedCandidatesForRule = candidates
+                    .Where(candidate => string.Equals(candidate.SelectedOverrideId, pair.Key, StringComparison.OrdinalIgnoreCase))
+                    .ToArray();
+                var appliedCandidatesForRule = candidates
+                    .Where(candidate => string.Equals(candidate.AppliedOverrideId, pair.Key, StringComparison.OrdinalIgnoreCase))
+                    .ToArray();
+
+                return new RestEndpointPublicationGroupGovernanceOverrideSummaryDescriptor(
                     pair.Key,
                     pair.Value,
                     selectedCandidateIdsByRuleId.TryGetValue(pair.Key, out var selectedCandidateIds)
@@ -149,7 +203,17 @@ internal static class RestEndpointPublicationGroupGovernanceOverrideSummaryBuild
                         : [],
                     appliedCandidateIdsByRuleId.TryGetValue(pair.Key, out var appliedCandidateIds)
                         ? appliedCandidateIds
-                        : []))
+                        : [],
+                    RestEndpointPublicationGroupGovernanceSelectionBasisSummaryBuilder.BuildFromCandidates(
+                        selectedCandidatesForRule,
+                        static candidate => candidate.OverrideSelectionBasis),
+                    RestEndpointPublicationGroupGovernanceOverrideActionKindSummaryBuilder.BuildFromCandidates(
+                        selectedCandidatesForRule,
+                        static candidate => candidate.SelectedOverrideActionKinds),
+                    RestEndpointPublicationGroupGovernanceOverrideActionKindSummaryBuilder.BuildFromCandidates(
+                        appliedCandidatesForRule,
+                        static candidate => candidate.AppliedOverrideActionKinds));
+            })
             .ToArray();
     }
 
@@ -225,7 +289,10 @@ internal static class RestEndpointPublicationGroupGovernanceOverrideSummaryBuild
                 summary.RuleId,
                 summary.MatchedCandidateIds,
                 summary.SelectedCandidateIds,
-                summary.AppliedCandidateIds));
+                summary.AppliedCandidateIds,
+                summary.SelectionBasisSummaries,
+                summary.SelectedActionKindSummaries,
+                summary.AppliedActionKindSummaries));
         }
 
         return result.ToArray();

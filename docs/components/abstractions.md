@@ -186,6 +186,13 @@ override rule ids, plus typed
 `SkippedSuppressionSummaries` and `SkippedOverrideSummaries`, so callers do not need to repartition
 the ordered candidate set just to see which behavior boundary stayed outside host governance or
 which skipped host rule targeted which ineligible candidate ids. The same
+transport namespace now also exposes
+`RestEndpointPublicationGroupGovernanceSelectionBasisSummaryDescriptor` plus
+`RestEndpointPublicationGroupGovernanceOverrideActionKindSummaryDescriptor`, and grouped
+governance summaries now surface those typed buckets through `SelectionBasisSummaries`,
+`SelectedActionKindSummaries`, and `AppliedActionKindSummaries` so grouped publication answers can
+explain decisive governance precedence and declared-versus-effective override action visibility
+without reopening the candidate catalog. The same
 transport namespace now also owns `IRestEndpointOverrideRuntimeCatalog` plus
 `RestEndpointOverrideDescriptor`, including shorthand binding resets through `ClearBindings` plus
 the shorthand endpoint-metadata clear actions `ClearEndpointName`, `ClearSummary`, and

@@ -1789,12 +1789,24 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal([candidate.Id], overrideSummary.MatchedCandidateIds);
         Assert.Equal([candidate.Id], overrideSummary.SelectedCandidateIds);
         Assert.Empty(overrideSummary.AppliedCandidateIds);
+        Assert.NotNull(candidate.OverrideSelectionBasis);
+        var overrideSelectionBasisSummary = Assert.Single(overrideSummary.SelectionBasisSummaries);
+        Assert.Equal(candidate.OverrideSelectionBasis.Value, overrideSelectionBasisSummary.SelectionBasis);
+        Assert.Equal([candidate.Id], overrideSelectionBasisSummary.CandidateIds);
+        Assert.Equal(candidate.SelectedOverrideActionKinds, overrideSummary.SelectedActionKindSummaries.Select(static item => item.ActionKind).ToArray());
+        Assert.All(
+            overrideSummary.SelectedActionKindSummaries,
+            summary => Assert.Equal([candidate.Id], summary.CandidateIds));
+        Assert.Empty(overrideSummary.AppliedActionKindSummaries);
         var profileStyle = Assert.Single(group.AuthoringStyleSummaries);
         var profileOverrideSummary = Assert.Single(profileStyle.GovernanceOverrideSummaries);
         Assert.Equal("prefer-module-docs-noop", profileOverrideSummary.RuleId);
         Assert.Equal([candidate.Id], profileOverrideSummary.MatchedCandidateIds);
         Assert.Equal([candidate.Id], profileOverrideSummary.SelectedCandidateIds);
         Assert.Empty(profileOverrideSummary.AppliedCandidateIds);
+        Assert.Equal(candidate.OverrideSelectionBasis.Value, Assert.Single(profileOverrideSummary.SelectionBasisSummaries).SelectionBasis);
+        Assert.Equal(candidate.SelectedOverrideActionKinds, profileOverrideSummary.SelectedActionKindSummaries.Select(static item => item.ActionKind).ToArray());
+        Assert.Empty(profileOverrideSummary.AppliedActionKindSummaries);
 
         Assert.Contains(snapshot.RestEndpointCandidates, item =>
             string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
@@ -1806,7 +1818,10 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             string.Equals(item.BehaviorId, "tests.profile.runtimenoop.metadata", StringComparison.Ordinal) &&
             item.GovernanceOverrideSummaries.Count == 1 &&
             string.Equals(item.GovernanceOverrideSummaries[0].RuleId, "prefer-module-docs-noop", StringComparison.Ordinal) &&
-            item.GovernanceOverrideSummaries[0].AppliedCandidateIds.Count == 0);
+            item.GovernanceOverrideSummaries[0].AppliedCandidateIds.Count == 0 &&
+            item.GovernanceOverrideSummaries[0].SelectionBasisSummaries.Count == 1 &&
+            item.GovernanceOverrideSummaries[0].SelectedActionKindSummaries.Count == candidate.SelectedOverrideActionKinds.Count &&
+            item.GovernanceOverrideSummaries[0].AppliedActionKindSummaries.Count == 0);
         Assert.Contains(snapshot.RestEndpoints, item =>
             string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal) &&
             item.AppliedOverrideId is null &&
@@ -1814,6 +1829,9 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             string.Equals(item.EndpointName, "tests.profile.runtimeoverride.noop.metadata.lookup", StringComparison.Ordinal) &&
             item.MatchedOverrideIds.Contains("prefer-module-docs-noop"));
         Assert.Contains("\"ruleId\":\"prefer-module-docs-noop\"", groupsJson, StringComparison.Ordinal);
+        Assert.Contains("\"selectionBasisSummaries\":", groupsJson, StringComparison.Ordinal);
+        Assert.Contains("\"selectedActionKindSummaries\":", groupsJson, StringComparison.Ordinal);
+        Assert.Contains("\"appliedActionKindSummaries\":[]", groupsJson, StringComparison.Ordinal);
 
         var routeEndpoint = Assert.Single(
             ((IEndpointRouteBuilder)app).DataSources
@@ -5310,6 +5328,18 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal([generatedCandidate.Id], overrideSummary.MatchedCandidateIds);
         Assert.Equal([generatedCandidate.Id], overrideSummary.SelectedCandidateIds);
         Assert.Equal([generatedCandidate.Id], overrideSummary.AppliedCandidateIds);
+        Assert.NotNull(generatedCandidate.OverrideSelectionBasis);
+        var generatedSelectionBasisSummary = Assert.Single(overrideSummary.SelectionBasisSummaries);
+        Assert.Equal(generatedCandidate.OverrideSelectionBasis.Value, generatedSelectionBasisSummary.SelectionBasis);
+        Assert.Equal([generatedCandidate.Id], generatedSelectionBasisSummary.CandidateIds);
+        Assert.Equal(generatedCandidate.SelectedOverrideActionKinds, overrideSummary.SelectedActionKindSummaries.Select(static item => item.ActionKind).ToArray());
+        Assert.All(
+            overrideSummary.SelectedActionKindSummaries,
+            summary => Assert.Equal([generatedCandidate.Id], summary.CandidateIds));
+        Assert.Equal(generatedCandidate.AppliedOverrideActionKinds, overrideSummary.AppliedActionKindSummaries.Select(static item => item.ActionKind).ToArray());
+        Assert.All(
+            overrideSummary.AppliedActionKindSummaries,
+            summary => Assert.Equal([generatedCandidate.Id], summary.CandidateIds));
         Assert.Equal(2, group.AuthoringStyleSummaries.Count);
         var profileStyle = Assert.Single(group.AuthoringStyleSummaries, static item =>
             string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, StringComparison.Ordinal));
@@ -5328,6 +5358,9 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal([generatedCandidate.Id], generatedOverrideSummary.MatchedCandidateIds);
         Assert.Equal([generatedCandidate.Id], generatedOverrideSummary.SelectedCandidateIds);
         Assert.Equal([generatedCandidate.Id], generatedOverrideSummary.AppliedCandidateIds);
+        Assert.Equal(generatedCandidate.OverrideSelectionBasis.Value, Assert.Single(generatedOverrideSummary.SelectionBasisSummaries).SelectionBasis);
+        Assert.Equal(generatedCandidate.SelectedOverrideActionKinds, generatedOverrideSummary.SelectedActionKindSummaries.Select(static item => item.ActionKind).ToArray());
+        Assert.Equal(generatedCandidate.AppliedOverrideActionKinds, generatedOverrideSummary.AppliedActionKindSummaries.Select(static item => item.ActionKind).ToArray());
         Assert.Contains(snapshot.RestEndpointPublicationGroups, item =>
             string.Equals(item.BehaviorId, group.BehaviorId, StringComparison.Ordinal) &&
             item.AuthoringPolicy.AllowMultiplePublishedCandidates &&
@@ -5335,7 +5368,10 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             item.PrecedenceSuppressedCandidateIds.Count == 0 &&
             item.AuthoringPolicySuppressedCandidateIds.Count == 0 &&
             item.GovernanceOverrideSummaries.Count == 1 &&
-            string.Equals(item.GovernanceOverrideSummaries[0].RuleId, "split-generated", StringComparison.Ordinal));
+            string.Equals(item.GovernanceOverrideSummaries[0].RuleId, "split-generated", StringComparison.Ordinal) &&
+            item.GovernanceOverrideSummaries[0].SelectionBasisSummaries.Count == 1 &&
+            item.GovernanceOverrideSummaries[0].SelectedActionKindSummaries.Count == generatedCandidate.SelectedOverrideActionKinds.Count &&
+            item.GovernanceOverrideSummaries[0].AppliedActionKindSummaries.Count == generatedCandidate.AppliedOverrideActionKinds.Count);
 
         var profilePayload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>(
             "/api/v6/tests/generated/runtime/governed/orders/ord-61");
@@ -5405,6 +5441,10 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             string.Equals(item.RuleId, "prefer-generated", StringComparison.Ordinal));
         Assert.Equal([governanceSuppressed.Id], suppressionSummary.MatchedCandidateIds);
         Assert.Equal([governanceSuppressed.Id], suppressionSummary.SuppressedCandidateIds);
+        Assert.NotNull(governanceSuppressed.SuppressionSelectionBasis);
+        var suppressionSelectionBasisSummary = Assert.Single(suppressionSummary.SelectionBasisSummaries);
+        Assert.Equal(governanceSuppressed.SuppressionSelectionBasis.Value, suppressionSelectionBasisSummary.SelectionBasis);
+        Assert.Equal([governanceSuppressed.Id], suppressionSelectionBasisSummary.CandidateIds);
         Assert.Equal(2, group.HostGovernanceEligibleCandidateIds.Count);
         Assert.Empty(group.HostGovernanceIneligibleCandidateIds);
         Assert.Empty(group.SkippedSuppressionIds);
@@ -5430,6 +5470,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("prefer-generated", profileSuppressionSummary.RuleId);
         Assert.Equal([governanceSuppressed.Id], profileSuppressionSummary.MatchedCandidateIds);
         Assert.Equal([governanceSuppressed.Id], profileSuppressionSummary.SuppressedCandidateIds);
+        Assert.Equal(governanceSuppressed.SuppressionSelectionBasis.Value, Assert.Single(profileSuppressionSummary.SelectionBasisSummaries).SelectionBasis);
         Assert.Empty(profileStyle.GovernanceOverrideSummaries);
         var generatedStyle = Assert.Single(group.AuthoringStyleSummaries, static item =>
             string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, StringComparison.Ordinal));
@@ -5452,6 +5493,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             item.AuthoringStyleSummaries.Count == 2 &&
             item.GovernanceSuppressedCandidateIds.Count == 1 &&
             item.GovernanceSuppressionSummaries.Count == 1 &&
+            item.GovernanceSuppressionSummaries[0].SelectionBasisSummaries.Count == 1 &&
             item.HostGovernanceEligibleCandidateIds.Count == 2 &&
             item.HostGovernanceIneligibleCandidateIds.Count == 0 &&
             item.SkippedSuppressionIds.Count == 0 &&

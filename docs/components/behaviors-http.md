@@ -754,7 +754,10 @@ Those same publication-group answers now also expose grouped `GovernanceSuppress
 `AuthoringStyleSummaries` entry. Suppression summaries keep matched-versus-actually-suppressed
 candidate ids visible per host rule, while override summaries keep matched, selected, and applied
 candidate ids visible per rule so no-op winning overrides stay explicit when `SelectedOverrideId`
-wins but `AppliedOverrideId` remains empty.
+wins but `AppliedOverrideId` remains empty. Those same grouped summaries now also surface typed
+selection-basis buckets plus grouped declared-versus-effective override-action buckets, so
+publication-group answers can say why a host rule won and which override dimensions only stayed
+declared versus materially applied without reopening the candidate catalog.
 
 Current governance baseline:
 

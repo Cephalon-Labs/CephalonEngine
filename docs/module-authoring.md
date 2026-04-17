@@ -619,7 +619,11 @@ That same grouped runtime surface now also carries `GovernanceSuppressionSummari
 `GovernanceOverrideSummaries` at both the behavior-group level and inside each
 `AuthoringStyleSummaries` entry, so module authors can see which host rules matched, which
 candidate ids they actually suppressed, and which override winners stayed selected-only versus
-applied without treating those grouped summaries as additional authoring inputs.
+applied without treating those grouped summaries as additional authoring inputs. Those same grouped
+summaries now also keep typed selection-basis buckets plus grouped declared-versus-effective
+override-action buckets visible, so module authors can read why a winning host rule beat the
+runner-up and which override dimensions only stayed declared versus materially applied without
+dropping back to candidate-level payloads.
 
 When a host wants to keep shorthand publication but retarget selected shorthand endpoints to a
 different effective API major version, HTTP method, bounded published route-group prefix,

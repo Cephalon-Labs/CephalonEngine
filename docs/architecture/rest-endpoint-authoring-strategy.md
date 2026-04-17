@@ -1194,6 +1194,10 @@ The following points are durable enough to keep outside thread-local context.
   `AuthoringStyleSummaries` entry, so publication-group and snapshot payloads can answer which
   host rules matched, which candidates they actually suppressed, and which candidates they only
   selected versus materially changed without re-reading the candidate catalog
+- those same grouped governance summaries now also expose typed selection-basis and override-action
+  buckets, so grouped publication answers can say why a winning host rule beat the runner-up and
+  which override dimensions only stayed declared versus materially applied without reopening the
+  candidate catalog
 - those candidate entries now keep the original shorthand source shape visible through
   `RestEndpointCandidateRuntimeDescriptor.OriginalProjection` while `ProjectedEndpoint` continues
   to answer the final effective mapped route, version, method, binding, endpoint-name, summary,

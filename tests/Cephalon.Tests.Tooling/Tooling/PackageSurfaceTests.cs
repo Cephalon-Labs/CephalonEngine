@@ -276,8 +276,10 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateStatus),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateStatusExtensions),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideDescriptor),
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupGovernanceOverrideActionKindSummaryDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupGovernanceSkippedOverrideSummaryDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupGovernanceSkippedSuppressionSummaryDescriptor),
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupGovernanceSelectionBasisSummaryDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupGovernanceOverrideSummaryDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupGovernanceSuppressionSummaryDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupAuthoringPolicyDescriptor),
@@ -1517,6 +1519,8 @@ public sealed class PackageSurfaceTests
             .GetProperty("MatchedCandidateIds", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupGovernanceSuppressionSummaryDescriptor)
             .GetProperty("SuppressedCandidateIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupGovernanceSuppressionSummaryDescriptor)
+            .GetProperty("SelectionBasisSummaries", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]
@@ -1530,6 +1534,30 @@ public sealed class PackageSurfaceTests
             .GetProperty("SelectedCandidateIds", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupGovernanceOverrideSummaryDescriptor)
             .GetProperty("AppliedCandidateIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupGovernanceOverrideSummaryDescriptor)
+            .GetProperty("SelectionBasisSummaries", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupGovernanceOverrideSummaryDescriptor)
+            .GetProperty("SelectedActionKindSummaries", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupGovernanceOverrideSummaryDescriptor)
+            .GetProperty("AppliedActionKindSummaries", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void RestEndpointPublicationGroupGovernanceSelectionBasisSummaryContractsExposeBasisAndCandidateBuckets()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupGovernanceSelectionBasisSummaryDescriptor)
+            .GetProperty("SelectionBasis", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupGovernanceSelectionBasisSummaryDescriptor)
+            .GetProperty("CandidateIds", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void RestEndpointPublicationGroupGovernanceOverrideActionKindSummaryContractsExposeActionKindAndCandidateBuckets()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupGovernanceOverrideActionKindSummaryDescriptor)
+            .GetProperty("ActionKind", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupGovernanceOverrideActionKindSummaryDescriptor)
+            .GetProperty("CandidateIds", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

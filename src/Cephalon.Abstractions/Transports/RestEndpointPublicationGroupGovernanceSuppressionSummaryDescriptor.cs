@@ -15,10 +15,14 @@ public sealed class RestEndpointPublicationGroupGovernanceSuppressionSummaryDesc
     /// <param name="suppressedCandidateIds">
     /// The ordered candidate identifiers that this suppression rule ultimately suppressed.
     /// </param>
+    /// <param name="selectionBasisSummaries">
+    /// The grouped decisive selection-basis buckets for the candidates this suppression rule ultimately suppressed.
+    /// </param>
     public RestEndpointPublicationGroupGovernanceSuppressionSummaryDescriptor(
         string ruleId,
         IReadOnlyList<string>? matchedCandidateIds = null,
-        IReadOnlyList<string>? suppressedCandidateIds = null)
+        IReadOnlyList<string>? suppressedCandidateIds = null,
+        IReadOnlyList<RestEndpointPublicationGroupGovernanceSelectionBasisSummaryDescriptor>? selectionBasisSummaries = null)
     {
         if (string.IsNullOrWhiteSpace(ruleId))
         {
@@ -41,9 +45,16 @@ public sealed class RestEndpointPublicationGroupGovernanceSuppressionSummaryDesc
                 nameof(suppressedCandidateIds));
         }
 
+        var normalizedSelectionBasisSummaries =
+            RestEndpointPublicationGroupGovernanceSelectionBasisSummaryBuilder.Normalize(
+                selectionBasisSummaries,
+                normalizedSuppressedCandidateIds.ToHashSet(StringComparer.OrdinalIgnoreCase),
+                nameof(selectionBasisSummaries));
+
         RuleId = ruleId.Trim();
         MatchedCandidateIds = normalizedMatchedCandidateIds;
         SuppressedCandidateIds = normalizedSuppressedCandidateIds;
+        SelectionBasisSummaries = normalizedSelectionBasisSummaries;
     }
 
     /// <summary>
@@ -60,6 +71,11 @@ public sealed class RestEndpointPublicationGroupGovernanceSuppressionSummaryDesc
     /// Gets the ordered candidate identifiers that this suppression rule ultimately suppressed.
     /// </summary>
     public IReadOnlyList<string> SuppressedCandidateIds { get; }
+
+    /// <summary>
+    /// Gets the grouped decisive selection-basis buckets for the candidates this suppression rule ultimately suppressed.
+    /// </summary>
+    public IReadOnlyList<RestEndpointPublicationGroupGovernanceSelectionBasisSummaryDescriptor> SelectionBasisSummaries { get; }
 
     private static string[] NormalizeOrderedList(IReadOnlyList<string>? values)
     {
@@ -115,12 +131,24 @@ internal static class RestEndpointPublicationGroupGovernanceSuppressionSummaryBu
         return matchedCandidateIdsByRuleId
             .OrderBy(static pair => pair.Key, StringComparer.OrdinalIgnoreCase)
             .Select(pair =>
-                new RestEndpointPublicationGroupGovernanceSuppressionSummaryDescriptor(
+            {
+                var suppressedCandidateIds = suppressedCandidateIdsByRuleId.TryGetValue(pair.Key, out var value)
+                    ? value
+                    : [];
+                var suppressedCandidatesForRule = suppressedCandidateIds.Count == 0
+                    ? []
+                    : candidates.Where(candidate =>
+                            string.Equals(candidate.SuppressedBySuppressionId, pair.Key, StringComparison.OrdinalIgnoreCase))
+                        .ToArray();
+
+                return new RestEndpointPublicationGroupGovernanceSuppressionSummaryDescriptor(
                     pair.Key,
                     pair.Value,
-                    suppressedCandidateIdsByRuleId.TryGetValue(pair.Key, out var suppressedCandidateIds)
-                        ? suppressedCandidateIds
-                        : []))
+                    suppressedCandidateIds,
+                    RestEndpointPublicationGroupGovernanceSelectionBasisSummaryBuilder.BuildFromCandidates(
+                        suppressedCandidatesForRule,
+                        static candidate => candidate.SuppressionSelectionBasis));
+            })
             .ToArray();
     }
 
@@ -177,7 +205,8 @@ internal static class RestEndpointPublicationGroupGovernanceSuppressionSummaryBu
             result.Add(new RestEndpointPublicationGroupGovernanceSuppressionSummaryDescriptor(
                 summary.RuleId,
                 summary.MatchedCandidateIds,
-                summary.SuppressedCandidateIds));
+                summary.SuppressedCandidateIds,
+                summary.SelectionBasisSummaries));
         }
 
         return result.ToArray();

@@ -268,6 +268,13 @@ those same publication-group answers now also surface `SkippedSuppressionSummari
 `SkippedOverrideSummaries`, so operators can see which ineligible candidate ids each skipped host
 rule targeted without reconstructing that answer from the candidate catalog.
 
+That next grouped governance provenance gap is now addressed through `ENG-058-T149`: grouped
+suppression summaries now also surface typed selection-basis buckets, while grouped override
+summaries now also surface typed selection-basis buckets plus declared-versus-effective override
+action buckets, so publication-group answers can explain why one host rule won and which override
+dimensions only stayed declared versus materially applied without forcing operators back into the
+candidate catalog.
+
 That next inline generated-module ergonomics gap is now addressed through `ENG-058-T127`:
 `RestBehaviorEngineBuilderExtensions.AddGeneratedRestBehaviorModule<TMarker>(descriptor,
 configureGroup?)` now derives the generated behavior-id prefix from `ModuleDescriptor.Id` for the
