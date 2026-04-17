@@ -232,14 +232,13 @@ public sealed class RestApiGovernanceOptions
                         $"REST API governance value '{child.Path}' must be a supported binding fallback mode.");
                 }
 
-                if (RestEndpointBindingFallbackModeExtensions.TryParseWireName(rawValue, out var parsedValue) ||
-                    Enum.TryParse(rawValue, ignoreCase: true, out parsedValue))
+                if (RestEndpointBindingFallbackModeExtensions.TryParseWireName(rawValue, out var parsedValue))
                 {
                     return parsedValue;
                 }
 
                 throw new InvalidOperationException(
-                    $"REST API governance value '{child.Path}' must be one of {string.Join(", ", Enum.GetValues<RestEndpointBindingFallbackMode>().Select(static value => value.GetWireName()))}.");
+                    $"REST API governance value '{child.Path}' must be one of the stable binding fallback mode wire names {string.Join(", ", Enum.GetValues<RestEndpointBindingFallbackMode>().Select(static value => value.GetWireName()))}.");
             })
             .Distinct()
             .OrderBy(static value => value)

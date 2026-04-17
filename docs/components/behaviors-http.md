@@ -223,7 +223,8 @@ Current profile behavior:
   `RestEndpointBindingFallbackMode`, and
   `RestEndpointBindingFallbackModeExtensions.GetWireName()` /
   `TryParseWireName(...)` now provide the canonical compatibility bridge for metadata and JSON wire
-  names; additive
+  names; ASP.NET Core governance config now also expects those same stable wire names for
+  `BindingFallbackModes` instead of accepting enum-member aliases; additive
   `metadata.bindingFallbackMode = preserve-source-implicit-fallback` and
   `metadata.bindingFallbackMode = preserve-remaining-body-fallback` remain compatibility-only
   metadata

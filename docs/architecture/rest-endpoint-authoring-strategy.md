@@ -1073,7 +1073,10 @@ Status:
   catalogs now publish those configured selectors directly, specificity now counts that extra
   dimension consistently, and hosts can target the original shorthand fallback identity through the
   stable wire names `preserve-source-implicit-fallback` and
-  `preserve-remaining-body-fallback` without depending on later rewritten published shape
+  `preserve-remaining-body-fallback` without depending on later rewritten published shape;
+  `ENG-058-T136` now also makes those stable wire names the only accepted host-config input for
+  `BindingFallbackModes`, so runtime truth, diagnostics, and config no longer mix PascalCase enum
+  aliases into the operator contract
 - the next original-binding-plan selector-targeting follow-through is now shipped through
   `ENG-058-T120`, so both `RestApi:Suppressions` and `RestApi:Overrides` can now refine original-
   shape shorthand governance with exact `TargetBindings` selector sets, the runtime

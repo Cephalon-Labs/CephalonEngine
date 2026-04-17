@@ -3534,6 +3534,56 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public void MapCephalonRejectsBindingFallbackOverrideSelectorsThatUseEnumMemberNames()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["RestApi:Overrides:body-fallback-only:Modules:0"] = "tests.rest.profile-runtime.binding-fallback-selectors";
+        builder.Configuration["RestApi:Overrides:body-fallback-only:BindingFallbackModes:0"] = "PreserveRemainingBodyFallback";
+        var exception = Assert.Throws<InvalidOperationException>(() => builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new BindingFallbackSelectorRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        }));
+
+        Assert.Contains("RestApi:Overrides:body-fallback-only:BindingFallbackModes:0", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("stable binding fallback mode wire names", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback.GetWireName(), exception.Message, StringComparison.Ordinal);
+        Assert.Contains(RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback.GetWireName(), exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void MapCephalonRejectsBindingFallbackSuppressionSelectorsThatUseEnumMemberNames()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["RestApi:Suppressions:hide-body-fallback:Modules:0"] = "tests.rest.profile-runtime.binding-fallback-selectors";
+        builder.Configuration["RestApi:Suppressions:hide-body-fallback:BindingFallbackModes:0"] = "PreserveRemainingBodyFallback";
+        var exception = Assert.Throws<InvalidOperationException>(() => builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new BindingFallbackSelectorRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        }));
+
+        Assert.Contains("RestApi:Suppressions:hide-body-fallback:BindingFallbackModes:0", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("stable binding fallback mode wire names", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback.GetWireName(), exception.Message, StringComparison.Ordinal);
+        Assert.Contains(RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback.GetWireName(), exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task MapCephalonAppliesTargetBindingOverrideSelectorsOnlyToTheMatchingCandidate()
     {
         var builder = WebApplication.CreateBuilder();
