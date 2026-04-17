@@ -67,6 +67,10 @@ public sealed class RestEndpointOverrideDescriptor
     /// The original shorthand primary OpenAPI tag names targeted by the override rule before
     /// override actions are applied.
     /// </param>
+    /// <param name="bindingFallbackModes">
+    /// The original shorthand request-binding fallback modes targeted by the override rule before
+    /// override actions are applied.
+    /// </param>
     public RestEndpointOverrideDescriptor(
         string id,
         IReadOnlyList<string>? candidateIds = null,
@@ -96,7 +100,8 @@ public sealed class RestEndpointOverrideDescriptor
         bool clearSummary = false,
         bool clearDescription = false,
         IReadOnlyList<string>? openApiDocumentNames = null,
-        IReadOnlyList<string>? tagNames = null)
+        IReadOnlyList<string>? tagNames = null,
+        IReadOnlyList<RestEndpointBindingFallbackMode>? bindingFallbackModes = null)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -122,6 +127,7 @@ public sealed class RestEndpointOverrideDescriptor
         RouteGroupPrefixes = NormalizeList(routeGroupPrefixes);
         OpenApiDocumentNames = NormalizeList(openApiDocumentNames);
         TagNames = NormalizeList(tagNames);
+        BindingFallbackModes = NormalizeBindingFallbackModes(bindingFallbackModes);
         ApiVersionMajor = apiVersionMajor;
         Method = NormalizeMethod(method);
         Pattern = NormalizePattern(pattern);
@@ -268,6 +274,11 @@ public sealed class RestEndpointOverrideDescriptor
     /// Gets the original shorthand primary OpenAPI tag names targeted by this override rule.
     /// </summary>
     public IReadOnlyList<string> TagNames { get; }
+
+    /// <summary>
+    /// Gets the original shorthand request-binding fallback modes targeted by this override rule.
+    /// </summary>
+    public IReadOnlyList<RestEndpointBindingFallbackMode> BindingFallbackModes { get; }
 
     /// <summary>
     /// Gets the effective API major version applied when this override rule matches.
@@ -510,5 +521,27 @@ public sealed class RestEndpointOverrideDescriptor
                 bindingMode,
                 "REST endpoint override binding mode must be ReplaceExplicit or MergeExplicit.")
         };
+    }
+
+    private static RestEndpointBindingFallbackMode[] NormalizeBindingFallbackModes(
+        IReadOnlyList<RestEndpointBindingFallbackMode>? values)
+    {
+        if (values is null)
+        {
+            return [];
+        }
+
+        var normalized = values
+            .Distinct()
+            .OrderBy(static value => value)
+            .ToArray();
+        if (normalized.Any(static value => !Enum.IsDefined(value)))
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(values),
+                "REST endpoint override binding fallback selectors must use supported fallback modes.");
+        }
+
+        return normalized;
     }
 }

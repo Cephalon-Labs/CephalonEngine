@@ -2830,6 +2830,97 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverAppliesSuppressionOnlyToCandidatesThatMatchBindingFallbackSelectors()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-binding-fallback-selector/write")
+            .MapProfile<ProfileProjectionBoundBehavior>();
+        builder.Group("/tests/profile-binding-fallback-selector/read")
+            .MapProfile<ProfileProjectionBoundGetBehavior>();
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.profile-binding-fallback-selector",
+                "Profile Binding Fallback Selector Module",
+                "Exercises suppression targeting through original shorthand binding fallback selectors.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            [
+                new RestEndpointSuppressionOptions(
+                    id: "hide-body-fallback",
+                    sourceModuleIds: ["tests.rest.profile-binding-fallback-selector"],
+                    bindingFallbackModes: [RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback])
+            ]);
+
+        Assert.Equal(2, candidates.Count);
+
+        var published = Assert.Single(candidates, static item =>
+            item.Candidate.Status == RestEndpointCandidateStatus.Published);
+        Assert.Equal("/api/v6/tests/profile-binding-fallback-selector/read/{cartId}", published.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Null(published.Candidate.OriginalProjection.BindingFallbackMode);
+        Assert.Empty(published.Candidate.MatchedSuppressionIds);
+
+        var suppressed = Assert.Single(candidates, static item =>
+            item.Candidate.Status == RestEndpointCandidateStatus.Suppressed);
+        Assert.Equal("/api/v6/tests/profile-binding-fallback-selector/write/{cartId}/items", suppressed.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback,
+            suppressed.Candidate.OriginalProjection.BindingFallbackMode);
+        Assert.Equal("hide-body-fallback", suppressed.Candidate.SuppressedBySuppressionId);
+        Assert.Equal(["hide-body-fallback"], suppressed.Candidate.MatchedSuppressionIds);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverAppliesOverrideOnlyToCandidatesThatMatchBindingFallbackSelectors()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-binding-fallback-override/write")
+            .MapProfile<ProfileProjectionBoundBehavior>();
+        builder.Group("/tests/profile-binding-fallback-override/read")
+            .MapProfile<ProfileProjectionBoundGetBehavior>();
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.profile-binding-fallback-override",
+                "Profile Binding Fallback Override Module",
+                "Exercises override targeting through original shorthand binding fallback selectors.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "rewrite-body-fallback",
+                    sourceModuleIds: ["tests.rest.profile-binding-fallback-override"],
+                    bindingFallbackModes: [RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback],
+                    pattern: "/lookup/{cartId}/items")
+            ]);
+
+        Assert.Equal(2, candidates.Count);
+
+        var overridden = Assert.Single(candidates, static item =>
+            string.Equals(
+                item.Candidate.ProjectedEndpoint.RoutePattern,
+                "/api/v6/tests/profile-binding-fallback-override/write/lookup/{cartId}/items",
+                StringComparison.Ordinal));
+        Assert.Equal("rewrite-body-fallback", overridden.Candidate.AppliedOverrideId);
+        Assert.Equal(["rewrite-body-fallback"], overridden.Candidate.MatchedOverrideIds);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback,
+            overridden.Candidate.OriginalProjection.BindingFallbackMode);
+
+        var untouched = Assert.Single(candidates, static item =>
+            string.Equals(
+                item.Candidate.ProjectedEndpoint.RoutePattern,
+                "/api/v6/tests/profile-binding-fallback-override/read/{cartId}",
+                StringComparison.Ordinal));
+        Assert.Null(untouched.Candidate.AppliedOverrideId);
+        Assert.Empty(untouched.Candidate.MatchedOverrideIds);
+        Assert.Null(untouched.Candidate.OriginalProjection.BindingFallbackMode);
+    }
+
+    [Fact]
     public void RestEndpointOverrideOptionsRejectRulesWithoutBehaviorOrModuleTargets()
     {
         var exception = Assert.Throws<ArgumentException>(() =>
@@ -2871,6 +2962,35 @@ public sealed class BehaviorRestProjectionTests
             tagName: "Generated Public API");
 
         Assert.Equal("Generated Public API", options.TagName);
+        Assert.True(options.HasValues);
+    }
+
+    [Fact]
+    public void RestEndpointSuppressionOptionsTreatBindingFallbackModesAsSelectors()
+    {
+        var options = new RestEndpointSuppressionOptions(
+            id: "fallback-only",
+            sourceModuleIds: ["tests.rest.profile-binding-fallback-selector"],
+            bindingFallbackModes: [RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback]);
+
+        Assert.Equal(
+            [RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback],
+            options.BindingFallbackModes);
+        Assert.True(options.HasValues);
+    }
+
+    [Fact]
+    public void RestEndpointOverrideOptionsTreatBindingFallbackModesAsSelectors()
+    {
+        var options = new RestEndpointOverrideOptions(
+            id: "fallback-only",
+            sourceModuleIds: ["tests.rest.profile-binding-fallback-override"],
+            bindingFallbackModes: [RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback],
+            pattern: "/lookup/{cartId}/items");
+
+        Assert.Equal(
+            [RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback],
+            options.BindingFallbackModes);
         Assert.True(options.HasValues);
     }
 

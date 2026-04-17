@@ -160,6 +160,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             apiRoutesOptions.RestPrefix,
             originalOpenApiDocumentName,
             originalRouteGroupPrefix,
+            originalBindingFallbackMode,
             tagName,
             group,
             overrides);
@@ -327,6 +328,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         string restPrefix,
         string originalOpenApiDocumentName,
         string originalRouteGroupPrefix,
+        RestEndpointBindingFallbackMode? originalBindingFallbackMode,
         string originalTagName,
         RestBehaviorRouteGroupProjection group,
         IReadOnlyList<RestEndpointOverrideOptions>? overrides)
@@ -351,6 +353,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             defaultApiVersionMajor,
             originalOpenApiDocumentName,
             originalRouteGroupPrefix,
+            originalBindingFallbackMode,
             originalTagName,
             overrides);
         var matchedOverride = matchedOverrides.FirstOrDefault();
@@ -523,6 +526,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         int? defaultApiVersionMajor,
         string originalOpenApiDocumentName,
         string originalRouteGroupPrefix,
+        RestEndpointBindingFallbackMode? originalBindingFallbackMode,
         string originalTagName,
         IReadOnlyList<RestEndpointOverrideOptions>? overrides)
     {
@@ -546,6 +550,7 @@ internal static class RestBehaviorProjectionCandidateResolver
                 defaultApiVersionMajor,
                 originalOpenApiDocumentName,
                 originalRouteGroupPrefix,
+                originalBindingFallbackMode,
                 originalTagName,
                 overrideOptions))
             .OrderByDescending(static overrideOptions => overrideOptions.CandidateIds.Count > 0)
@@ -1073,6 +1078,16 @@ internal static class RestBehaviorProjectionCandidateResolver
             }
         }
 
+        if (suppression.BindingFallbackModes.Count > 0)
+        {
+            var bindingFallbackMode = candidate.Candidate.OriginalProjection.BindingFallbackMode;
+            if (!bindingFallbackMode.HasValue ||
+                !suppression.BindingFallbackModes.Contains(bindingFallbackMode.Value))
+            {
+                return false;
+            }
+        }
+
         return true;
     }
 
@@ -1083,6 +1098,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         int? defaultApiVersionMajor,
         string originalOpenApiDocumentName,
         string originalRouteGroupPrefix,
+        RestEndpointBindingFallbackMode? originalBindingFallbackMode,
         string originalTagName,
         RestEndpointOverrideOptions overrideOptions)
     {
@@ -1154,6 +1170,13 @@ internal static class RestBehaviorProjectionCandidateResolver
             return false;
         }
 
+        if (overrideOptions.BindingFallbackModes.Count > 0 &&
+            (!originalBindingFallbackMode.HasValue ||
+             !overrideOptions.BindingFallbackModes.Contains(originalBindingFallbackMode.Value)))
+        {
+            return false;
+        }
+
         return true;
     }
 
@@ -1207,6 +1230,11 @@ internal static class RestBehaviorProjectionCandidateResolver
             count++;
         }
 
+        if (suppression.BindingFallbackModes.Count > 0)
+        {
+            count++;
+        }
+
         return count;
     }
 
@@ -1256,6 +1284,11 @@ internal static class RestBehaviorProjectionCandidateResolver
         }
 
         if (overrideOptions.TagNames.Count > 0)
+        {
+            count++;
+        }
+
+        if (overrideOptions.BindingFallbackModes.Count > 0)
         {
             count++;
         }
@@ -1346,7 +1379,8 @@ internal static class RestBehaviorProjectionCandidateResolver
                suppression.RelativePatterns.Count +
                suppression.RouteGroupPrefixes.Count +
                suppression.OpenApiDocumentNames.Count +
-               suppression.TagNames.Count;
+               suppression.TagNames.Count +
+               suppression.BindingFallbackModes.Count;
     }
 
     private static int CountTargetValues(RestEndpointOverrideOptions overrideOptions)
@@ -1361,7 +1395,8 @@ internal static class RestBehaviorProjectionCandidateResolver
                overrideOptions.RelativePatterns.Count +
                overrideOptions.RouteGroupPrefixes.Count +
                overrideOptions.OpenApiDocumentNames.Count +
-               overrideOptions.TagNames.Count;
+               overrideOptions.TagNames.Count +
+               overrideOptions.BindingFallbackModes.Count;
     }
 
     private static string? NormalizeOverrideMetadataValue(string? value)

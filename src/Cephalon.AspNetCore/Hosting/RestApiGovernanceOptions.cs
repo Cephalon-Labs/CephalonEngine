@@ -75,7 +75,8 @@ public sealed class RestApiGovernanceOptions
                 relativePatterns: ReadStringArray(child.GetSection("RelativePatterns")),
                 routeGroupPrefixes: ReadStringArray(child.GetSection("RouteGroupPrefixes")),
                 openApiDocumentNames: ReadStringArray(child.GetSection("OpenApiDocumentNames")),
-                tagNames: ReadStringArray(child.GetSection("TagNames"))))
+                tagNames: ReadStringArray(child.GetSection("TagNames")),
+                bindingFallbackModes: ReadBindingFallbackModeArray(child.GetSection("BindingFallbackModes"))))
             .ToArray();
         var overrides = configuration.GetSection(sectionPath)
             .GetSection("Overrides")
@@ -109,7 +110,8 @@ public sealed class RestApiGovernanceOptions
                 clearSummary: ReadBoolean(child, "ClearSummary"),
                 clearDescription: ReadBoolean(child, "ClearDescription"),
                 openApiDocumentNames: ReadStringArray(child.GetSection("OpenApiDocumentNames")),
-                tagNames: ReadStringArray(child.GetSection("TagNames"))))
+                tagNames: ReadStringArray(child.GetSection("TagNames")),
+                bindingFallbackModes: ReadBindingFallbackModeArray(child.GetSection("BindingFallbackModes"))))
             .ToArray();
 
         return new RestApiGovernanceOptions(suppressions, overrides);
@@ -191,6 +193,34 @@ public sealed class RestApiGovernanceOptions
         }
 
         return parsedValue;
+    }
+
+    private static RestEndpointBindingFallbackMode[] ReadBindingFallbackModeArray(IConfiguration section)
+    {
+        ArgumentNullException.ThrowIfNull(section);
+
+        return section.GetChildren()
+            .Select(child =>
+            {
+                var rawValue = child.Value?.Trim();
+                if (string.IsNullOrWhiteSpace(rawValue))
+                {
+                    throw new InvalidOperationException(
+                        $"REST API governance value '{child.Path}' must be a supported binding fallback mode.");
+                }
+
+                if (RestEndpointBindingFallbackModeExtensions.TryParseWireName(rawValue, out var parsedValue) ||
+                    Enum.TryParse(rawValue, ignoreCase: true, out parsedValue))
+                {
+                    return parsedValue;
+                }
+
+                throw new InvalidOperationException(
+                    $"REST API governance value '{child.Path}' must be one of {string.Join(", ", Enum.GetValues<RestEndpointBindingFallbackMode>().Select(static value => value.GetWireName()))}.");
+            })
+            .Distinct()
+            .OrderBy(static value => value)
+            .ToArray();
     }
 
     private static RestEndpointBindingDescriptor[] ReadBindings(IConfiguration section)

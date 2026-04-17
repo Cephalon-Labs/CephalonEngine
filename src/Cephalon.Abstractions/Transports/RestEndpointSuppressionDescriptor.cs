@@ -23,6 +23,9 @@ public sealed class RestEndpointSuppressionDescriptor
     /// <param name="tagNames">
     /// The original shorthand primary OpenAPI tag names targeted by the suppression rule.
     /// </param>
+    /// <param name="bindingFallbackModes">
+    /// The original shorthand request-binding fallback modes targeted by the suppression rule.
+    /// </param>
     public RestEndpointSuppressionDescriptor(
         string id,
         IReadOnlyList<string>? candidateIds = null,
@@ -34,7 +37,8 @@ public sealed class RestEndpointSuppressionDescriptor
         IReadOnlyList<string>? relativePatterns = null,
         IReadOnlyList<string>? routeGroupPrefixes = null,
         IReadOnlyList<string>? openApiDocumentNames = null,
-        IReadOnlyList<string>? tagNames = null)
+        IReadOnlyList<string>? tagNames = null,
+        IReadOnlyList<RestEndpointBindingFallbackMode>? bindingFallbackModes = null)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -52,6 +56,7 @@ public sealed class RestEndpointSuppressionDescriptor
         RouteGroupPrefixes = NormalizeList(routeGroupPrefixes);
         OpenApiDocumentNames = NormalizeList(openApiDocumentNames);
         TagNames = NormalizeList(tagNames);
+        BindingFallbackModes = NormalizeBindingFallbackModes(bindingFallbackModes);
     }
 
     /// <summary>
@@ -109,6 +114,11 @@ public sealed class RestEndpointSuppressionDescriptor
     /// </summary>
     public IReadOnlyList<string> TagNames { get; }
 
+    /// <summary>
+    /// Gets the original shorthand request-binding fallback modes targeted by this suppression rule.
+    /// </summary>
+    public IReadOnlyList<RestEndpointBindingFallbackMode> BindingFallbackModes { get; }
+
     private static string[] NormalizeList(IReadOnlyList<string>? values)
     {
         return values?
@@ -125,5 +135,27 @@ public sealed class RestEndpointSuppressionDescriptor
             .Distinct()
             .OrderBy(static value => value)
             .ToArray() ?? [];
+    }
+
+    private static RestEndpointBindingFallbackMode[] NormalizeBindingFallbackModes(
+        IReadOnlyList<RestEndpointBindingFallbackMode>? values)
+    {
+        if (values is null)
+        {
+            return [];
+        }
+
+        var normalized = values
+            .Distinct()
+            .OrderBy(static value => value)
+            .ToArray();
+        if (normalized.Any(static value => !Enum.IsDefined(value)))
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(values),
+                "REST endpoint suppression binding fallback selectors must use supported fallback modes.");
+        }
+
+        return normalized;
     }
 }

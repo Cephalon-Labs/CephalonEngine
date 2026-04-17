@@ -46,7 +46,8 @@ internal sealed class AspNetCoreRestEndpointOverrideRuntimeCatalog : IRestEndpoi
                 item.ClearSummary,
                 item.ClearDescription,
                 item.OpenApiDocumentNames,
-                item.TagNames))
+                item.TagNames,
+                item.BindingFallbackModes))
             .OrderBy(static item => item.Id, Comparer)
             .ToArray();
 

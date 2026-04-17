@@ -28,7 +28,8 @@ internal sealed class AspNetCoreRestEndpointSuppressionRuntimeCatalog : IRestEnd
                 suppression.RelativePatterns,
                 suppression.RouteGroupPrefixes,
                 suppression.OpenApiDocumentNames,
-                suppression.TagNames))
+                suppression.TagNames,
+                suppression.BindingFallbackModes))
             .OrderBy(static suppression => suppression.Id, Comparer)
             .ToArray();
 

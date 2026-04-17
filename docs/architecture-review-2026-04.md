@@ -194,7 +194,11 @@ through `ENG-058-T117`: malformed `BehaviorRestProfileAttribute.RelativePattern`
 now fails at build time through `ABT0026`, while `BehaviorRestProfileResolver` also parses the
 route pattern during runtime normalization even when no explicit binding plan is present so
 attribute fallback or stale hints still fail fast before shorthand publication can map an invalid
-route.
+route. The next governance-targeting follow-through is now addressed through `ENG-058-T118`: host
+suppression and override rules can now target the original shorthand `BindingFallbackMode`
+identity directly through `BindingFallbackModes`, using the same stable wire names that the typed
+runtime contract already publishes, so original-shape selector targeting stays truthful even after
+later override actions rewrite the published endpoint.
 
 The remaining gap is no longer raw operator visibility; it is richer authoring and build-time
 diagnostics if future shorthand or generated routes broaden enough that more than one projection

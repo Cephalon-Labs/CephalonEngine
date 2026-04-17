@@ -1,5 +1,6 @@
 using Cephalon.AspNetCore.Transports.Rest;
 using Microsoft.AspNetCore.Routing.Patterns;
+using Cephalon.Abstractions.Transports;
 
 namespace Cephalon.AspNetCore.Hosting;
 
@@ -55,6 +56,10 @@ public sealed class RestEndpointSuppressionOptions
     /// The original shorthand primary OpenAPI tag names targeted by the suppression rule before
     /// any override actions are applied.
     /// </param>
+    /// <param name="bindingFallbackModes">
+    /// The original shorthand request-binding fallback modes targeted by the suppression rule
+    /// before any override actions are applied.
+    /// </param>
     public RestEndpointSuppressionOptions(
         string id,
         IReadOnlyList<string>? candidateIds = null,
@@ -66,7 +71,8 @@ public sealed class RestEndpointSuppressionOptions
         IReadOnlyList<string>? relativePatterns = null,
         IReadOnlyList<string>? routeGroupPrefixes = null,
         IReadOnlyList<string>? openApiDocumentNames = null,
-        IReadOnlyList<string>? tagNames = null)
+        IReadOnlyList<string>? tagNames = null,
+        IReadOnlyList<RestEndpointBindingFallbackMode>? bindingFallbackModes = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
 
@@ -93,6 +99,9 @@ public sealed class RestEndpointSuppressionOptions
             "REST endpoint suppression route-group prefix");
         OpenApiDocumentNames = NormalizeList(openApiDocumentNames);
         TagNames = NormalizeList(tagNames);
+        BindingFallbackModes = NormalizeBindingFallbackModes(
+            bindingFallbackModes,
+            nameof(bindingFallbackModes));
 
         if (CandidateIds.Count == 0 && BehaviorIds.Count == 0 && SourceModuleIds.Count == 0)
         {
@@ -160,6 +169,12 @@ public sealed class RestEndpointSuppressionOptions
     public IReadOnlyList<string> TagNames { get; }
 
     /// <summary>
+    /// Gets the original shorthand request-binding fallback modes targeted by this suppression rule
+    /// before override actions are applied.
+    /// </summary>
+    public IReadOnlyList<RestEndpointBindingFallbackMode> BindingFallbackModes { get; }
+
+    /// <summary>
     /// Gets a value indicating whether any targeting values were explicitly supplied.
     /// </summary>
     public bool HasValues =>
@@ -171,7 +186,8 @@ public sealed class RestEndpointSuppressionOptions
         RelativePatterns.Count > 0 ||
         RouteGroupPrefixes.Count > 0 ||
         OpenApiDocumentNames.Count > 0 ||
-        TagNames.Count > 0;
+        TagNames.Count > 0 ||
+        BindingFallbackModes.Count > 0;
 
     private static string[] NormalizeList(IReadOnlyList<string>? values)
     {
@@ -284,6 +300,29 @@ public sealed class RestEndpointSuppressionOptions
                 $"{errorPrefix} '{value}' is not a valid ASP.NET Core route pattern.",
                 paramName,
                 ex);
+        }
+
+        return normalized;
+    }
+
+    private static RestEndpointBindingFallbackMode[] NormalizeBindingFallbackModes(
+        IReadOnlyList<RestEndpointBindingFallbackMode>? values,
+        string paramName)
+    {
+        if (values is null)
+        {
+            return [];
+        }
+
+        var normalized = values
+            .Distinct()
+            .OrderBy(static value => value)
+            .ToArray();
+        if (normalized.Any(static value => !Enum.IsDefined(value)))
+        {
+            throw new ArgumentOutOfRangeException(
+                paramName,
+                "REST endpoint suppression binding fallback selectors must use supported fallback modes.");
         }
 
         return normalized;
