@@ -66,16 +66,21 @@ internal static class RestBehaviorProjectionMaterializer
         ArgumentNullException.ThrowIfNull(apiRoutesOptions);
 
         foreach (var routeGroup in publishedCandidates
-                     .GroupBy(candidate => ResolvePublishedRouteGroupPrefix(candidate.Candidate))
-                     .OrderBy(static group => group.Key, StringComparer.OrdinalIgnoreCase))
+                     .GroupBy(candidate => ResolvePublishedMaterializationIdentity(candidate.Candidate))
+                     .OrderBy(static group => group.Key.RouteGroupPrefix, StringComparer.OrdinalIgnoreCase)
+                     .ThenBy(static group => group.Key.TagName, StringComparer.OrdinalIgnoreCase))
         {
             var firstCandidate = routeGroup.First();
             var group = endpoints.MapBehaviorRestGroup(
                 module,
-                ResolveMaterializationGroupPrefix(routeGroup.Key, apiRoutesOptions.RestPrefix));
+                ResolveMaterializationGroupPrefix(routeGroup.Key.RouteGroupPrefix, apiRoutesOptions.RestPrefix));
             group.UseRuntimeSourceKind(RestEndpointRuntimeMetadata.ModuleDslSourceKind);
             group.UseRuntimeAuthoringStyle(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle);
-            if (!string.IsNullOrWhiteSpace(projection.TagName))
+            if (!string.IsNullOrWhiteSpace(routeGroup.Key.TagName))
+            {
+                group.WithTagName(routeGroup.Key.TagName);
+            }
+            else if (!string.IsNullOrWhiteSpace(projection.TagName))
             {
                 group.WithTagName(projection.TagName);
             }
@@ -438,6 +443,7 @@ internal static class RestBehaviorProjectionMaterializer
                !string.Equals(originalProjection.RelativePattern, projectedEndpoint.RelativePattern, StringComparison.Ordinal) ||
                originalProjection.ApiVersionMajor != projectedEndpoint.ApiVersionMajor ||
                !string.Equals(originalProjection.OpenApiDocumentName, projectedEndpoint.OpenApiDocumentName, StringComparison.Ordinal) ||
+               !string.Equals(originalProjection.TagName, ResolveProjectedTagName(projectedEndpoint), StringComparison.Ordinal) ||
                originalProjection.BindingFallbackMode != projectedEndpoint.BindingFallbackMode ||
                !BindingDescriptorsMatch(originalProjection.BindingDescriptors, projectedEndpoint.BindingDescriptors);
     }
@@ -480,6 +486,25 @@ internal static class RestBehaviorProjectionMaterializer
 
         throw new InvalidOperationException(
             $"REST endpoint candidate '{candidate.Id}' is missing the projected route-group prefix required for endpoint materialization.");
+    }
+
+    private static MaterializationGroupIdentity ResolvePublishedMaterializationIdentity(
+        RestEndpointCandidateRuntimeDescriptor candidate)
+    {
+        ArgumentNullException.ThrowIfNull(candidate);
+
+        return new MaterializationGroupIdentity(
+            ResolvePublishedRouteGroupPrefix(candidate),
+            ResolveProjectedTagName(candidate.ProjectedEndpoint));
+    }
+
+    private static string? ResolveProjectedTagName(RestEndpointRuntimeDescriptor projectedEndpoint)
+    {
+        ArgumentNullException.ThrowIfNull(projectedEndpoint);
+
+        return projectedEndpoint.Tags
+            .FirstOrDefault(static tag => !string.IsNullOrWhiteSpace(tag))
+            ?.Trim();
     }
 
     private static string ResolveMaterializationGroupPrefix(
@@ -543,4 +568,6 @@ internal static class RestBehaviorProjectionMaterializer
     }
 
     private sealed record MaterializedPublishedCandidateState(string? AppliedOverrideId);
+
+    private sealed record MaterializationGroupIdentity(string RouteGroupPrefix, string? TagName);
 }

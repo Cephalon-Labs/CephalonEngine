@@ -61,6 +61,9 @@ public sealed class RestEndpointOverrideOptions
     /// The effective published route-group prefix applied when the rule matches a shorthand
     /// candidate.
     /// </param>
+    /// <param name="tagName">
+    /// The effective primary OpenAPI tag name applied when the rule matches a shorthand candidate.
+    /// </param>
     /// <param name="endpointName">
     /// The effective endpoint name applied when the rule matches a shorthand candidate.
     /// </param>
@@ -116,6 +119,7 @@ public sealed class RestEndpointOverrideOptions
         string? method = null,
         string? pattern = null,
         string? routeGroupPrefix = null,
+        string? tagName = null,
         string? endpointName = null,
         string? summary = null,
         string? description = null,
@@ -154,6 +158,7 @@ public sealed class RestEndpointOverrideOptions
         Method = NormalizeMethod(method);
         Pattern = NormalizePattern(pattern);
         RouteGroupPrefix = NormalizeRouteGroupPrefix(routeGroupPrefix);
+        TagName = NormalizeNonEmptyValue(tagName);
         EndpointName = NormalizeNonEmptyValue(endpointName);
         Summary = NormalizeNonEmptyValue(summary);
         Description = NormalizeNonEmptyValue(description);
@@ -215,6 +220,7 @@ public sealed class RestEndpointOverrideOptions
             Method is null &&
             Pattern is null &&
             RouteGroupPrefix is null &&
+            TagName is null &&
             EndpointName is null &&
             Summary is null &&
             Description is null &&
@@ -227,7 +233,7 @@ public sealed class RestEndpointOverrideOptions
             RemovedBindingProperties.Count == 0)
         {
             throw new ArgumentException(
-                "REST endpoint override rules must define at least one override action such as ApiVersionMajor, Method, Pattern, RouteGroupPrefix, EndpointName, Summary, Description, ClearEndpointName, ClearSummary, ClearDescription, RequiredCapabilityKey, ClearRequiredCapability, Bindings, or RemovedBindingProperties.",
+                "REST endpoint override rules must define at least one override action such as ApiVersionMajor, Method, Pattern, RouteGroupPrefix, TagName, EndpointName, Summary, Description, ClearEndpointName, ClearSummary, ClearDescription, RequiredCapabilityKey, ClearRequiredCapability, Bindings, or RemovedBindingProperties.",
                 nameof(apiVersionMajor));
         }
 
@@ -309,6 +315,11 @@ public sealed class RestEndpointOverrideOptions
     public string? RouteGroupPrefix { get; }
 
     /// <summary>
+    /// Gets the effective primary OpenAPI tag name applied when this override rule matches.
+    /// </summary>
+    public string? TagName { get; }
+
+    /// <summary>
     /// Gets the effective endpoint name applied when this override rule matches.
     /// </summary>
     public string? EndpointName { get; }
@@ -382,6 +393,7 @@ public sealed class RestEndpointOverrideOptions
         Method is not null ||
         Pattern is not null ||
         RouteGroupPrefix is not null ||
+        TagName is not null ||
         EndpointName is not null ||
         Summary is not null ||
         Description is not null ||

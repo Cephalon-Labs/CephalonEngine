@@ -716,6 +716,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("/api/v4/tests/generated/runtime/override", endpoint.OriginalProjection.RouteGroupPrefix);
         Assert.Equal("/orders/{orderId}", endpoint.OriginalProjection.RelativePattern);
         Assert.Equal("/api/v4/tests/generated/runtime/override/orders/{orderId}", endpoint.OriginalProjection.RoutePattern);
+        Assert.Equal("Generated Override API", endpoint.OriginalProjection.TagName);
         Assert.Equal(
             "tests_rest_generated_runtime_override.v4.tests_generated_runtimeoverride_lookup",
             endpoint.OriginalEndpointName);
@@ -735,6 +736,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("/api/v4/tests/generated/runtime/override", candidate.OriginalProjection.RouteGroupPrefix);
         Assert.Equal("/orders/{orderId}", candidate.OriginalProjection.RelativePattern);
         Assert.Equal("/api/v4/tests/generated/runtime/override/orders/{orderId}", candidate.OriginalProjection.RoutePattern);
+        Assert.Equal("Generated Override API", candidate.OriginalProjection.TagName);
         Assert.Equal(endpoint.Id, candidate.ProjectedEndpoint.Id);
         Assert.Equal(endpoint.OriginalEndpointName, candidate.ProjectedEndpoint.OriginalEndpointName);
         Assert.Equal(endpoint.OriginalSummary, candidate.ProjectedEndpoint.OriginalSummary);
@@ -837,6 +839,92 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         var deleteResponse = await client.DeleteAsync("/api/v4/tests/generated/runtime/override/orders/ord-42");
         deleteResponse.EnsureSuccessStatusCode();
         var payload = await deleteResponse.Content.ReadFromJsonAsync<GeneratedRuntimeOrderOutput>();
+        Assert.NotNull(payload);
+        Assert.Equal("ord-42", payload.OrderId);
+    }
+
+    [Fact]
+    public async Task MapCephalonAppliesTagNameOverridesAndExposesOverrideCatalog()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "4";
+        builder.Configuration["OpenApi:DefaultVersion"] = "4";
+        builder.Configuration["RestApi:Overrides:prefer-public-tag:Behaviors:0"] = "tests.generated.runtimeoverride.lookup";
+        builder.Configuration["RestApi:Overrides:prefer-public-tag:TagName"] = "Generated Public API";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new GeneratedVersionOverrideRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(overrides);
+        Assert.NotNull(snapshot);
+
+        var endpoint = Assert.Single(endpoints, static candidate =>
+            string.Equals(candidate.BehaviorId, "tests.generated.runtimeoverride.lookup", StringComparison.Ordinal));
+        Assert.Equal("/api/v4/tests/generated/runtime/override/orders/{orderId}", endpoint.RoutePattern);
+        Assert.Equal(["Generated Public API"], endpoint.Tags);
+        Assert.Equal("prefer-public-tag", endpoint.AppliedOverrideId);
+        Assert.Equal(["prefer-public-tag"], endpoint.MatchedOverrideIds);
+        Assert.NotNull(endpoint.OriginalProjection);
+        Assert.Equal("Generated Override API", endpoint.OriginalProjection!.TagName);
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.generated.runtimeoverride.lookup", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+        Assert.Equal("prefer-public-tag", candidate.AppliedOverrideId);
+        Assert.Equal(["Generated Public API"], candidate.ProjectedEndpoint.Tags);
+        Assert.Equal("Generated Override API", candidate.OriginalProjection.TagName);
+
+        var rule = Assert.Single(overrides, static item => string.Equals(item.Id, "prefer-public-tag", StringComparison.Ordinal));
+        Assert.Equal("Generated Public API", rule.TagName);
+
+        Assert.Contains(snapshot.RestEndpointOverrides, item =>
+            string.Equals(item.Id, "prefer-public-tag", StringComparison.Ordinal) &&
+            string.Equals(item.TagName, "Generated Public API", StringComparison.Ordinal));
+        Assert.Contains(snapshot.RestEndpointCandidates, item =>
+            string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
+            string.Equals(item.AppliedOverrideId, "prefer-public-tag", StringComparison.Ordinal) &&
+            item.ProjectedEndpoint.Tags.SequenceEqual(["Generated Public API"]) &&
+            string.Equals(item.OriginalProjection.TagName, "Generated Override API", StringComparison.Ordinal));
+        Assert.Contains(snapshot.RestEndpoints, item =>
+            string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal) &&
+            string.Equals(item.AppliedOverrideId, "prefer-public-tag", StringComparison.Ordinal) &&
+            item.Tags.SequenceEqual(["Generated Public API"]) &&
+            item.OriginalProjection is not null &&
+            string.Equals(item.OriginalProjection.TagName, "Generated Override API", StringComparison.Ordinal));
+
+        var routeEndpoint = Assert.Single(
+            ((IEndpointRouteBuilder)app).DataSources
+                .SelectMany(static dataSource => dataSource.Endpoints)
+                .OfType<RouteEndpoint>(),
+            static item => string.Equals(item.RoutePattern.RawText, "/api/v4/tests/generated/runtime/override/orders/{orderId}", StringComparison.Ordinal));
+        Assert.Equal(
+            ["Generated Public API"],
+            routeEndpoint.Metadata.OfType<ITagsMetadata>().SelectMany(static metadata => metadata.Tags).Distinct(StringComparer.OrdinalIgnoreCase).ToArray());
+        Assert.Equal("prefer-public-tag", routeEndpoint.Metadata.GetMetadata<RestEndpointAppliedOverrideMetadata>()?.OverrideId);
+
+        var payload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>("/api/v4/tests/generated/runtime/override/orders/ord-42");
         Assert.NotNull(payload);
         Assert.Equal("ord-42", payload.OrderId);
     }

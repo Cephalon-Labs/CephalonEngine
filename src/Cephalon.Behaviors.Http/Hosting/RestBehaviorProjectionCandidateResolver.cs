@@ -134,7 +134,8 @@ internal static class RestBehaviorProjectionCandidateResolver
             originalRouteGroupPrefix,
             endpointProjection.Pattern,
             RestEndpointBindingDescriptorAdapter.ToRuntimeDescriptors(endpointProjection.Bindings),
-            endpointProjection.PreserveImplicitQueryFallback);
+            endpointProjection.PreserveImplicitQueryFallback,
+            tagName);
         var candidateId = BuildCandidateId(
             moduleDescriptor.Id,
             endpointProjection.BehaviorId,
@@ -148,12 +149,14 @@ internal static class RestBehaviorProjectionCandidateResolver
             defaultApiVersionMajor,
             apiRoutesOptions.RestPrefix,
             originalRouteGroupPrefix,
+            tagName,
             group,
             overrides);
         var selectedOverride = overrideDecision.SelectedOverride;
         var appliedOverride = overrideDecision.AppliedOverride;
         var effectiveEndpointProjection = appliedOverride?.EffectiveEndpointProjection ?? endpointProjection;
         var effectiveApiVersionMajor = appliedOverride?.EffectiveApiVersionMajor ?? defaultApiVersionMajor;
+        var effectiveTagName = appliedOverride?.EffectiveTagName ?? tagName;
         var publishedRouteGroupPrefix = appliedOverride?.EffectiveRouteGroupPrefix ??
                                         RestEndpointRuntimeDescriptorFactory.CombinePaths(
                                             apiRoutesOptions.RestPrefix,
@@ -209,7 +212,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             endpointName: endpointName,
             openApiDocumentName: openApiDocumentName,
             apiVersionMajor: effectiveApiVersionMajor,
-            tags: [tagName],
+            tags: [effectiveTagName],
             summary: summary,
             description: description,
             originalEndpointName: originalOperationName,
@@ -306,6 +309,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         int? defaultApiVersionMajor,
         string restPrefix,
         string originalRouteGroupPrefix,
+        string originalTagName,
         RestBehaviorRouteGroupProjection group,
         IReadOnlyList<RestEndpointOverrideOptions>? overrides)
     {
@@ -314,6 +318,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         ArgumentNullException.ThrowIfNull(endpointProjection);
         ArgumentNullException.ThrowIfNull(restPrefix);
         ArgumentException.ThrowIfNullOrWhiteSpace(originalRouteGroupPrefix);
+        ArgumentException.ThrowIfNullOrWhiteSpace(originalTagName);
         ArgumentNullException.ThrowIfNull(group);
 
         if (overrides is null || overrides.Count == 0)
@@ -336,6 +341,7 @@ internal static class RestBehaviorProjectionCandidateResolver
 
         var effectiveEndpointProjection = endpointProjection;
         var effectiveApiVersionMajor = defaultApiVersionMajor;
+        var effectiveTagName = originalTagName;
         string? effectiveRouteGroupPrefix = null;
         var wasApplied = false;
         var shouldRevalidateBindings = false;
@@ -426,6 +432,13 @@ internal static class RestBehaviorProjectionCandidateResolver
             }
         }
 
+        if (!string.IsNullOrWhiteSpace(matchedOverride.TagName) &&
+            !string.Equals(matchedOverride.TagName, effectiveTagName, StringComparison.Ordinal))
+        {
+            effectiveTagName = matchedOverride.TagName;
+            wasApplied = true;
+        }
+
         return new ResolvedRestEndpointOverrideDecision(
             matchedOverrides.Select(static overrideOptions => overrideOptions.Id).ToArray(),
             matchedOverride,
@@ -434,7 +447,8 @@ internal static class RestBehaviorProjectionCandidateResolver
                     matchedOverride.Id,
                     effectiveEndpointProjection,
                     effectiveApiVersionMajor,
-                    effectiveRouteGroupPrefix)
+                    effectiveRouteGroupPrefix,
+                    effectiveTagName)
                 : null);
     }
 
@@ -1273,12 +1287,14 @@ internal static class RestBehaviorProjectionCandidateResolver
         string routeGroupPrefix,
         string relativePattern,
         IReadOnlyList<RestEndpointBindingDescriptor> bindingDescriptors,
-        bool preserveImplicitQueryFallback)
+        bool preserveImplicitQueryFallback,
+        string tagName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(method);
         ArgumentException.ThrowIfNullOrWhiteSpace(routeGroupPrefix);
         ArgumentException.ThrowIfNullOrWhiteSpace(relativePattern);
         ArgumentNullException.ThrowIfNull(bindingDescriptors);
+        ArgumentException.ThrowIfNullOrWhiteSpace(tagName);
 
         return new RestEndpointCandidateProjectionDescriptor(
             method,
@@ -1290,7 +1306,8 @@ internal static class RestBehaviorProjectionCandidateResolver
             bindingDescriptors,
             preserveImplicitQueryFallback
                 ? RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback
-                : null);
+                : null,
+            tagName);
     }
 }
 
@@ -1305,7 +1322,8 @@ internal sealed record AppliedRestEndpointOverride(
     string Id,
     RestBehaviorEndpointProjection EffectiveEndpointProjection,
     int? EffectiveApiVersionMajor,
-    string? EffectiveRouteGroupPrefix);
+    string? EffectiveRouteGroupPrefix,
+    string EffectiveTagName);
 
 internal sealed record AppliedRestEndpointMetadataOverride(
     string OverrideId,

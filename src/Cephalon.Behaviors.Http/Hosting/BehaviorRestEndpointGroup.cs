@@ -136,7 +136,8 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
                 originalProjection.ApiVersionMajor,
                 originalProjection.OpenApiDocumentName,
                 originalProjection.BindingDescriptors,
-                originalProjection.BindingFallbackMode);
+                originalProjection.BindingFallbackMode,
+                originalProjection.TagName);
     }
 
     internal void UseRuntimeOriginalEndpointMetadata(

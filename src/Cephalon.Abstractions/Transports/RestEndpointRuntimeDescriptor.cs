@@ -396,7 +396,8 @@ public sealed class RestEndpointRuntimeDescriptor
                 value.ApiVersionMajor,
                 value.OpenApiDocumentName,
                 value.BindingDescriptors,
-                value.BindingFallbackMode);
+                value.BindingFallbackMode,
+                value.TagName);
     }
 
     private static RestEndpointBindingFallbackMode? NormalizeBindingFallbackMode(

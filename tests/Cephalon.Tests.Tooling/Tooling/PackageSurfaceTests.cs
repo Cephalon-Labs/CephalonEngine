@@ -931,6 +931,15 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void RestEndpointGovernanceContractsExposeTagNameOverrides()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideDescriptor)
+            .GetProperty("TagName", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions)
+            .GetProperty("TagName", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
     public void RestEndpointGovernanceContractsExposeCapabilityBoundaryOverrides()
     {
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideDescriptor)
@@ -950,6 +959,13 @@ public sealed class PackageSurfaceTests
             .GetProperty("BindingFallbackMode", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateProjectionDescriptor)
             .GetProperty("BindingFallbackMode", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void RestEndpointRuntimeContractsExposeOriginalProjectionTagName()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateProjectionDescriptor)
+            .GetProperty("TagName", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

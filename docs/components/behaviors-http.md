@@ -450,15 +450,16 @@ Current helper behavior:
   plan for descriptor-backed shorthand candidates through `RestApi:Overrides`, which now supports
   `ApiVersionMajor`, `Method`, `RouteGroupPrefix`, `Pattern`, `RequiredCapabilityKey`,
   `ClearRequiredCapability`, `Bindings`, `RemovedBindingProperties`, typed `BindingMode`,
-  shorthand endpoint metadata `EndpointName`, `Summary`, and `Description`, plus metadata clears
-  `ClearEndpointName`, `ClearSummary`, and `ClearDescription`, records the applied rule id through
+  shorthand endpoint metadata `EndpointName`, `Summary`, and `Description`, OpenAPI tag-name
+  rewrites through `TagName`, plus metadata clears `ClearEndpointName`, `ClearSummary`, and
+  `ClearDescription`, records the applied rule id through
   `AppliedOverrideId` when the selected rule materially changes the effective answer, rewrites the
   shorthand candidate's `/v{major}` route segment and OpenAPI document name together when version
   changes, keeps the mapped endpoint method aligned when method changes, keeps the published
   route-group boundary aligned when `RouteGroupPrefix` changes, keeps the mapped endpoint route
   aligned when pattern changes, keeps actual ASP.NET Core endpoint metadata plus
   `/engine/rest-endpoints` aligned when capability-boundary or endpoint-metadata values change or
-  clear,
+  clear, keeps effective tag truth aligned when `TagName` changes,
   applies explicit binding
   overrides in either default
   `ReplaceExplicit` mode or `MergeExplicit` property-patch-and-withdraw mode while leaving
@@ -476,8 +477,10 @@ Current helper behavior:
   bindings remain on the stricter explicit-binding path, `RouteGroupPrefix` stays bounded beneath
   the active REST root with no placeholders and no implicit API-version drift, materialization now
   splits effective shorthand route groups when only some candidates in one authored group are
-  remapped, merge-time removals must still target properties the source shorthand already bound
-  explicitly, no-explicit-plan shorthand candidates now also preserve their remaining implicit
+  remapped or retagged, using the effective route-group prefix plus tag to keep actual endpoint
+  tag metadata aligned with runtime truth, merge-time removals must still target properties the
+  source shorthand already bound explicitly, no-explicit-plan shorthand candidates now also
+  preserve their remaining implicit
   query-fallback surface when a host adds only partial explicit bindings, the typed runtime and
   projection descriptors now keep that preserved mode visible through `BindingFallbackMode` values
   backed by `RestEndpointBindingFallbackMode`, additive
@@ -506,13 +509,17 @@ nullable `SourceId`, nullable `CandidateId`, nullable `OriginalProjection`, and 
 `OriginalEndpointName` / `OriginalSummary` / `OriginalDescription` when the published endpoint
 comes from the module-owned behavior projection pipeline instead of a manual or behavior-helper
 route. That published `OriginalProjection` keeps the original shorthand method, route,
-document-version, and binding-plan truth visible directly on the final runtime endpoint, while the
-original-metadata trio keeps the original shorthand endpoint name plus summary/description visible
-beside the final effective endpoint metadata, so operators no longer need a candidate-catalog join
-or behavior-doc fallback just to compare original-versus-effective publication. When a host
-override clears one of those endpoint-metadata fields, the effective ASP.NET Core endpoint metadata
-and runtime-catalog answer now stay intentionally empty while the original-metadata trio still
-preserves the source shorthand lineage.
+document-version, tag name, and binding-plan truth visible directly on the final runtime endpoint,
+while the original-metadata trio keeps the original shorthand endpoint name plus summary/description
+visible beside the final effective endpoint metadata, so operators no longer need a
+candidate-catalog join or behavior-doc fallback just to compare original-versus-effective
+publication. When a host override clears one of those endpoint-metadata fields, the effective
+ASP.NET Core endpoint metadata and runtime-catalog answer now stay intentionally empty while the
+original-metadata trio still preserves the source shorthand lineage. When a host override retags one
+candidate, the effective tag now flows through actual ASP.NET Core endpoint tag metadata plus the
+candidate and published runtime catalogs while `OriginalProjection.TagName` preserves the source
+shorthand tag; if only some candidates in one authored group are retagged, materialization splits
+the effective published groups so runtime truth and actual tag metadata stay aligned.
 
 The same runtime answer now has a companion candidate catalog for precedence visibility:
 
@@ -558,10 +565,10 @@ to parse `metadata.authoringStyle` to recover published-endpoint authorship. Pro
 endpoints now also keep endpoint names plus summary/description metadata aligned with the final
 published runtime endpoint conventions, including XML-derived behavior docs when they exist and
 module-description fallback when they do not, and published candidate registration now reconciles
-capability-only and endpoint-metadata-only no-op matches against the actual mapped endpoint so
-`MatchedOverrideIds` can still show the winning rule without forcing `AppliedOverrideId` to
-pretend a same-key rewrite, no-op clear, or same-value metadata rewrite changed the published
-boundary. The final published `/engine/rest-endpoints` plus
+capability-only, endpoint-metadata-only, and tag-only no-op matches against the actual mapped
+endpoint so `MatchedOverrideIds` can still show the winning rule without forcing `AppliedOverrideId`
+to pretend a same-key rewrite, no-op clear, or same-value metadata or tag rewrite changed the
+published boundary. The final published `/engine/rest-endpoints` plus
 `snapshot.RestEndpoints` answer now also keeps that same ordered `MatchedOverrideIds` set visible
 directly, so operators no longer need a candidate join to see matched shorthand override rules on a
 live endpoint. When more than one suppression

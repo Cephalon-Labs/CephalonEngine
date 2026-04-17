@@ -925,7 +925,7 @@ The following points are durable enough to keep outside thread-local context.
   descriptor-backed shorthand candidates, and the shipped `RestApi:Overrides` baseline is
   intentionally limited to shorthand `ApiVersionMajor`, `Method`, bounded `RouteGroupPrefix`,
   constrained relative `Pattern`, `RequiredCapabilityKey`, `ClearRequiredCapability`,
-  `EndpointName`, `Summary`, `Description`, `ClearEndpointName`, `ClearSummary`,
+  `EndpointName`, `Summary`, `Description`, `TagName`, `ClearEndpointName`, `ClearSummary`,
   `ClearDescription`, and constrained explicit `Bindings` rewrites with either default full
   replacement or typed `MergeExplicit` property upserts plus
   `RemovedBindingProperties`; neither surface rewrites explicit module DSL or manual routes
@@ -947,10 +947,15 @@ The following points are durable enough to keep outside thread-local context.
   pretend they changed the published answer, and `OriginalEndpointName`,
   `OriginalSummary`, and `OriginalDescription` should remain available so operators can still see
   the source shorthand metadata after a clear wins
+- when REST governance rewrites shorthand `TagName`, the same effective answer must drive
+  `ProjectedEndpoint.Tags`, actual ASP.NET Core endpoint tag metadata, `/engine/rest-endpoints`,
+  and `snapshot.RestEndpoints` while `OriginalProjection.TagName` continues to preserve the source
+  shorthand tag lineage, and same-value tag rewrites should keep `MatchedOverrideIds` visible while
+  leaving `AppliedOverrideId = null`
 - when published candidate or endpoint runtime truth is reconciled after ASP.NET Core
-  materialization, metadata-only same-value rewrites and metadata-clear matches against source
-  metadata the module already set or cleared should keep `MatchedOverrideIds` visible while leaving
-  `AppliedOverrideId = null`
+  materialization, metadata-only same-value rewrites, same-value tag rewrites, and metadata-clear
+  matches against source metadata the module already set or cleared should keep
+  `MatchedOverrideIds` visible while leaving `AppliedOverrideId = null`
 - when REST governance rewrites shorthand `RequiredCapabilityKey` or clears it through
   `ClearRequiredCapability`, the same effective answer must drive
   `ProjectedEndpoint.RequiredCapabilityKey`, actual ASP.NET Core endpoint metadata,
@@ -982,8 +987,9 @@ The following points are durable enough to keep outside thread-local context.
   explicit binding plan already part of the original implicit query-fallback surface, bounded
   `RouteGroupPrefix` rewrites now also stay below the active REST root with no placeholders and no
   silent API-version drift, ASP.NET Core now materializes split effective groups when only some
-  shorthand candidates in one authored group are remapped, no-explicit-plan shorthand candidates
-  now also preserve their remaining implicit query-fallback surface when hosts add only partial
+  shorthand candidates in one authored group are remapped or retagged so route mapping, endpoint
+  tag metadata, and runtime catalogs stay aligned, no-explicit-plan shorthand candidates now also
+  preserve their remaining implicit query-fallback surface when hosts add only partial
   explicit bindings, typed `BindingFallbackMode` values backed by
   `RestEndpointBindingFallbackMode` now keep that preserved mode visible on both candidate and
   published endpoint runtime surfaces, additive

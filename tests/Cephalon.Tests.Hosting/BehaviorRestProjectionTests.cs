@@ -936,6 +936,78 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverAppliesTagNameOverrideToShorthandCandidates()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        builder.Group("/tests/generated-tag-override")
+            .WithTagName("Generated Tag Override API")
+            .MapGeneratedProfiles("tests.generated.projection.precedence");
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.generated-tag-override",
+                "Generated Tag Override Module",
+                "Exercises shorthand OpenAPI tag override resolution.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "prefer-public-tag",
+                    behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                    tagName: "Generated Public API")
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Equal("prefer-public-tag", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal(["Generated Public API"], candidate.Candidate.ProjectedEndpoint.Tags);
+        Assert.Equal("Generated Tag Override API", candidate.Candidate.OriginalProjection.TagName);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverDoesNotApplySameValueTagNameOverrideToShorthandCandidates()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        builder.Group("/tests/generated-tag-noop")
+            .WithTagName("Generated Tag No-Op API")
+            .MapGeneratedProfiles("tests.generated.projection.precedence");
+
+        var moduleDescriptor = new ModuleDescriptor(
+            "tests.rest.generated-tag-noop",
+            "Generated Tag No-Op Module",
+            "Exercises shorthand OpenAPI tag no-op rewrite resolution.",
+            version: "1.0.0");
+        var baselineCandidate = Assert.Single(
+            RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+                moduleDescriptor,
+                new ApiRoutesOptions(),
+                builder.Build().Groups));
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            moduleDescriptor,
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "prefer-current-tag",
+                    behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                    tagName: baselineCandidate.Candidate.ProjectedEndpoint.Tags.Single())
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Null(candidate.Candidate.AppliedOverrideId);
+        Assert.Equal(["prefer-current-tag"], candidate.Candidate.MatchedOverrideIds);
+        Assert.Equal(
+            baselineCandidate.Candidate.ProjectedEndpoint.Tags,
+            candidate.Candidate.ProjectedEndpoint.Tags);
+        Assert.Equal("Generated Tag No-Op API", candidate.Candidate.OriginalProjection.TagName);
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverAppliesEndpointMetadataOverridesToShorthandCandidates()
     {
         var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
@@ -2282,6 +2354,18 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestEndpointOverrideOptionsTreatTagNameAsAnOverrideAction()
+    {
+        var options = new RestEndpointOverrideOptions(
+            id: "tag-only",
+            behaviorIds: ["tests.generated.projection.precedence.lookup"],
+            tagName: "Generated Public API");
+
+        Assert.Equal("Generated Public API", options.TagName);
+        Assert.True(options.HasValues);
+    }
+
+    [Fact]
     public void RestEndpointOverrideOptionsTreatEndpointMetadataAsOverrideActions()
     {
         var options = new RestEndpointOverrideOptions(
@@ -2737,7 +2821,8 @@ public sealed class BehaviorRestProjectionTests
             routeGroupPrefix: "/api/v6/tests/original-orders",
             relativePattern: "/{cartId}",
             apiVersionMajor: 6,
-            openApiDocumentName: "v6");
+            openApiDocumentName: "v6",
+            tagName: projectedEndpoint.Tags.Single());
         var candidate = new ResolvedRestBehaviorEndpointProjectionCandidate(
             GroupIndex: 0,
             EffectiveEndpointProjection: endpointProjection,
@@ -2764,6 +2849,150 @@ public sealed class BehaviorRestProjectionTests
             static item => string.Equals(item.RoutePattern.RawText, "/api/v6/tests/typed-prefix/orders/{cartId}", StringComparison.Ordinal));
 
         Assert.Equal("/api/v6/tests/typed-prefix/orders/{cartId}", endpoint.RoutePattern.RawText);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionMaterializerSplitsSharedRouteGroupsByEffectiveTagName()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        using var app = builder.Build();
+        var apiGroup = app.MapGroup("/api");
+        var module = new ProjectionCountingRestModule();
+        var lookupProjection = RestBehaviorEndpointProjection.Create<ProjectionCartBehavior>(
+            RestBehaviorHttpMethod.Get,
+            "/{cartId}",
+            configureEndpoint: null,
+            authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle);
+        var checkoutProjection = RestBehaviorEndpointProjection.Create<ProfileProjectionGetBehavior>(
+            RestBehaviorHttpMethod.Get,
+            "/lookup/{cartId}",
+            configureEndpoint: null,
+            authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle);
+        var projection = new RestBehaviorRouteGroupProjection(
+            Prefix: "/tests/typed-tag-split/orders",
+            TagName: "Shared Tagged API",
+            TagDescription: null,
+            HasExplicitTagDescription: false,
+            ApiVersionMajor: 6,
+            HasExplicitApiVersion: true,
+            ProfileApiVersionSourceBehaviorId: null,
+            GroupConventions: [],
+            Endpoints: [lookupProjection, checkoutProjection]);
+        var lookupEndpoint = new RestEndpointRuntimeDescriptor(
+            id: "typed-tag-split-lookup",
+            transportId: "rest-api",
+            sourceKind: RestEndpointRuntimeMetadata.ModuleDslSourceKind,
+            method: "GET",
+            routePattern: "/api/v6/tests/typed-tag-split/orders/{cartId}",
+            sourceModuleId: module.Descriptor.Id,
+            sourceModuleVersion: module.Descriptor.Version,
+            sourceModuleVersionMajor: 1,
+            behaviorId: "tests.cart.projection",
+            openApiDocumentName: "v6",
+            apiVersionMajor: 6,
+            tags: ["Shared Tagged API"],
+            metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase),
+            authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle,
+            routeGroupPrefix: "/api/v6/tests/typed-tag-split/orders",
+            relativePattern: "/{cartId}",
+            behaviorType: typeof(ProjectionCartBehavior).FullName,
+            sourceId: "tests.cart.projection:GET:/{cartId}");
+        var checkoutEndpoint = new RestEndpointRuntimeDescriptor(
+            id: "typed-tag-split-checkout",
+            transportId: "rest-api",
+            sourceKind: RestEndpointRuntimeMetadata.ModuleDslSourceKind,
+            method: "GET",
+            routePattern: "/api/v6/tests/typed-tag-split/orders/lookup/{cartId}",
+            sourceModuleId: module.Descriptor.Id,
+            sourceModuleVersion: module.Descriptor.Version,
+            sourceModuleVersionMajor: 1,
+            behaviorId: "tests.profile.projection.get",
+            openApiDocumentName: "v6",
+            apiVersionMajor: 6,
+            tags: ["Checkout Tagged API"],
+            metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase),
+            authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle,
+            routeGroupPrefix: "/api/v6/tests/typed-tag-split/orders",
+            relativePattern: "/lookup/{cartId}",
+            behaviorType: typeof(ProfileProjectionGetBehavior).FullName,
+            sourceId: "tests.profile.projection.get:GET:/lookup/{cartId}");
+        var lookupOriginalProjection = new RestEndpointCandidateProjectionDescriptor(
+            method: "GET",
+            routePattern: "/api/v6/tests/typed-tag-split/orders/{cartId}",
+            routeGroupPrefix: "/api/v6/tests/typed-tag-split/orders",
+            relativePattern: "/{cartId}",
+            apiVersionMajor: 6,
+            openApiDocumentName: "v6",
+            tagName: "Shared Tagged API");
+        var checkoutOriginalProjection = new RestEndpointCandidateProjectionDescriptor(
+            method: "GET",
+            routePattern: "/api/v6/tests/typed-tag-split/orders/lookup/{cartId}",
+            routeGroupPrefix: "/api/v6/tests/typed-tag-split/orders",
+            relativePattern: "/lookup/{cartId}",
+            apiVersionMajor: 6,
+            openApiDocumentName: "v6",
+            tagName: "Shared Tagged API");
+        var publishedCandidates = new[]
+        {
+            new ResolvedRestBehaviorEndpointProjectionCandidate(
+                GroupIndex: 0,
+                EffectiveEndpointProjection: lookupProjection,
+                Candidate: new RestEndpointCandidateRuntimeDescriptor(
+                    id: "typed-tag-split-lookup-candidate",
+                    projectedEndpoint: lookupEndpoint,
+                    originalProjection: lookupOriginalProjection,
+                    authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle,
+                    precedenceRank: RestEndpointRuntimeMetadata.ResolvePrecedenceRank(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle),
+                    status: RestEndpointCandidateStatus.Published)),
+            new ResolvedRestBehaviorEndpointProjectionCandidate(
+                GroupIndex: 0,
+                EffectiveEndpointProjection: checkoutProjection,
+                Candidate: new RestEndpointCandidateRuntimeDescriptor(
+                    id: "typed-tag-split-checkout-candidate",
+                    projectedEndpoint: checkoutEndpoint,
+                    originalProjection: checkoutOriginalProjection,
+                    authoringStyle: RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle,
+                    precedenceRank: RestEndpointRuntimeMetadata.ResolvePrecedenceRank(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle),
+                    status: RestEndpointCandidateStatus.Published,
+                    appliedOverrideId: "checkout-tag"))
+        };
+
+        RestBehaviorProjectionMaterializer.MapGroup(
+            apiGroup,
+            module,
+            projection,
+            publishedCandidates,
+            new ApiRoutesOptions());
+
+        var routeEndpoints = ((IEndpointRouteBuilder)app).DataSources
+            .SelectMany(static dataSource => dataSource.Endpoints)
+            .OfType<RouteEndpoint>()
+            .ToArray();
+        var lookupRoute = Assert.Single(
+            routeEndpoints,
+            static item => string.Equals(item.RoutePattern.RawText, "/api/v6/tests/typed-tag-split/orders/{cartId}", StringComparison.Ordinal));
+        var checkoutRoute = Assert.Single(
+            routeEndpoints,
+            static item => string.Equals(item.RoutePattern.RawText, "/api/v6/tests/typed-tag-split/orders/lookup/{cartId}", StringComparison.Ordinal));
+
+        Assert.Equal(
+            ["Shared Tagged API"],
+            lookupRoute.Metadata.OfType<ITagsMetadata>().SelectMany(static metadata => metadata.Tags).Distinct(StringComparer.OrdinalIgnoreCase).ToArray());
+        Assert.Equal(
+            ["Checkout Tagged API"],
+            checkoutRoute.Metadata.OfType<ITagsMetadata>().SelectMany(static metadata => metadata.Tags).Distinct(StringComparer.OrdinalIgnoreCase).ToArray());
+        Assert.Null(lookupRoute.Metadata.GetMetadata<RestEndpointAppliedOverrideMetadata>()?.OverrideId);
+        Assert.Equal("checkout-tag", checkoutRoute.Metadata.GetMetadata<RestEndpointAppliedOverrideMetadata>()?.OverrideId);
     }
 
     [Fact]
@@ -2826,7 +3055,8 @@ public sealed class BehaviorRestProjectionTests
             routeGroupPrefix: "/api/v6/tests/typed-metadata/orders",
             relativePattern: "/{cartId}",
             apiVersionMajor: 6,
-            openApiDocumentName: "v6");
+            openApiDocumentName: "v6",
+            tagName: projectedEndpoint.Tags.Single());
         var candidate = new ResolvedRestBehaviorEndpointProjectionCandidate(
             GroupIndex: 0,
             EffectiveEndpointProjection: endpointProjection,
@@ -2930,7 +3160,8 @@ public sealed class BehaviorRestProjectionTests
             routeGroupPrefix: "/api/v6/tests/typed-metadata-clear/orders",
             relativePattern: "/{cartId}",
             apiVersionMajor: 6,
-            openApiDocumentName: "v6");
+            openApiDocumentName: "v6",
+            tagName: projectedEndpoint.Tags.Single());
         var candidate = new ResolvedRestBehaviorEndpointProjectionCandidate(
             GroupIndex: 0,
             EffectiveEndpointProjection: endpointProjection,
@@ -3031,7 +3262,8 @@ public sealed class BehaviorRestProjectionTests
             routeGroupPrefix: "/api/v6/tests/typed-capability/orders",
             relativePattern: "/{cartId}",
             apiVersionMajor: 6,
-            openApiDocumentName: "v6");
+            openApiDocumentName: "v6",
+            tagName: projectedEndpoint.Tags.Single());
         var candidate = new ResolvedRestBehaviorEndpointProjectionCandidate(
             GroupIndex: 0,
             EffectiveEndpointProjection: endpointProjection,
@@ -3132,7 +3364,8 @@ public sealed class BehaviorRestProjectionTests
             routeGroupPrefix: "/api/v6/tests/typed-capability-clear/orders",
             relativePattern: "/{cartId}",
             apiVersionMajor: 6,
-            openApiDocumentName: "v6");
+            openApiDocumentName: "v6",
+            tagName: projectedEndpoint.Tags.Single());
         var candidate = new ResolvedRestBehaviorEndpointProjectionCandidate(
             GroupIndex: 0,
             EffectiveEndpointProjection: endpointProjection,
@@ -3236,7 +3469,8 @@ public sealed class BehaviorRestProjectionTests
             routeGroupPrefix: "/api/v6/tests/typed-capability-clear-noop/orders",
             relativePattern: "/{cartId}",
             apiVersionMajor: 6,
-            openApiDocumentName: "v6");
+            openApiDocumentName: "v6",
+            tagName: projectedEndpoint.Tags.Single());
         var candidate = new ResolvedRestBehaviorEndpointProjectionCandidate(
             GroupIndex: 0,
             EffectiveEndpointProjection: endpointProjection,
@@ -3341,7 +3575,8 @@ public sealed class BehaviorRestProjectionTests
             routeGroupPrefix: "/api/v6/tests/typed-metadata-noop/orders",
             relativePattern: "/{cartId}",
             apiVersionMajor: 6,
-            openApiDocumentName: "v6");
+            openApiDocumentName: "v6",
+            tagName: projectedEndpoint.Tags.Single());
         var candidate = new ResolvedRestBehaviorEndpointProjectionCandidate(
             GroupIndex: 0,
             EffectiveEndpointProjection: endpointProjection,
@@ -3456,7 +3691,8 @@ public sealed class BehaviorRestProjectionTests
             routeGroupPrefix: "/api/v6/tests/typed-metadata-clear-noop/orders",
             relativePattern: "/{cartId}",
             apiVersionMajor: 6,
-            openApiDocumentName: "v6");
+            openApiDocumentName: "v6",
+            tagName: projectedEndpoint.Tags.Single());
         var candidate = new ResolvedRestBehaviorEndpointProjectionCandidate(
             GroupIndex: 0,
             EffectiveEndpointProjection: endpointProjection,

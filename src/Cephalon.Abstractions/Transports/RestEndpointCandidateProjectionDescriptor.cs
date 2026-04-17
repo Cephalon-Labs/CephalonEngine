@@ -21,6 +21,7 @@ public sealed class RestEndpointCandidateProjectionDescriptor
     /// The projected request-binding fallback mode when the projection preserves source shorthand fallback behavior
     /// beyond the explicit binding plan.
     /// </param>
+    /// <param name="tagName">The projected primary OpenAPI tag name when one is available.</param>
     public RestEndpointCandidateProjectionDescriptor(
         string method,
         string routePattern,
@@ -29,7 +30,8 @@ public sealed class RestEndpointCandidateProjectionDescriptor
         int? apiVersionMajor = null,
         string? openApiDocumentName = null,
         IReadOnlyList<RestEndpointBindingDescriptor>? bindingDescriptors = null,
-        RestEndpointBindingFallbackMode? bindingFallbackMode = null)
+        RestEndpointBindingFallbackMode? bindingFallbackMode = null,
+        string? tagName = null)
     {
         Method = NormalizeRequired(method, nameof(method)).ToUpperInvariant();
         RoutePattern = NormalizeRequired(routePattern, nameof(routePattern));
@@ -39,6 +41,7 @@ public sealed class RestEndpointCandidateProjectionDescriptor
         OpenApiDocumentName = NormalizeOptional(openApiDocumentName);
         BindingDescriptors = NormalizeBindingDescriptors(bindingDescriptors);
         BindingFallbackMode = NormalizeBindingFallbackMode(bindingFallbackMode);
+        TagName = NormalizeOptional(tagName);
     }
 
     /// <summary>
@@ -82,6 +85,12 @@ public sealed class RestEndpointCandidateProjectionDescriptor
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public RestEndpointBindingFallbackMode? BindingFallbackMode { get; }
+
+    /// <summary>
+    /// Gets the projected primary OpenAPI tag name when one is available.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? TagName { get; }
 
     private static string NormalizeRequired(string value, string paramName)
     {
