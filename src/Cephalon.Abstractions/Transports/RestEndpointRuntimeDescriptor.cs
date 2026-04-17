@@ -47,8 +47,9 @@ public sealed class RestEndpointRuntimeDescriptor
     /// </param>
     /// <param name="bindingDescriptors">The resolved request-binding descriptors when the endpoint exposes an explicit binding plan.</param>
     /// <param name="bindingFallbackMode">
-    /// The resolved request-binding fallback mode when the endpoint preserves source shorthand fallback behavior beyond
-    /// the explicit binding plan.
+    /// The resolved request-binding fallback mode when the endpoint preserves deterministic
+    /// request-binding behavior beyond the explicit binding plan, such as preserved source
+    /// implicit-query fallback or preserved remaining request-body fallback.
     /// </param>
     /// <param name="metadata">Optional additive metadata.</param>
     /// <param name="authoringStyle">
@@ -333,8 +334,9 @@ public sealed class RestEndpointRuntimeDescriptor
     public IReadOnlyList<RestEndpointBindingDescriptor> BindingDescriptors { get; }
 
     /// <summary>
-    /// Gets the resolved request-binding fallback mode when the endpoint preserves source shorthand
-    /// fallback behavior beyond the explicit binding plan.
+    /// Gets the resolved request-binding fallback mode when the endpoint preserves deterministic
+    /// request-binding behavior beyond the explicit binding plan, such as preserved source
+    /// implicit-query fallback or preserved remaining request-body fallback.
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public RestEndpointBindingFallbackMode? BindingFallbackMode { get; }

@@ -451,8 +451,11 @@ Current helper behavior:
   authoritative for version selection; when the source shorthand had no explicit binding plan,
   partial explicit overrides now also preserve the remaining implicit query-fallback surface and
   publish that runtime truth through typed `BindingFallbackMode` values backed by
-  `RestEndpointBindingFallbackMode`, while additive
-  `metadata.bindingFallbackMode = preserve-source-implicit-fallback` remains compatibility-only
+  `RestEndpointBindingFallbackMode`, while
+  `RestEndpointBindingFallbackModeExtensions.GetWireName()` and `TryParseWireName(...)` now give
+  the canonical compatibility bridge for metadata/JSON wire names, and additive
+  `metadata.bindingFallbackMode = preserve-source-implicit-fallback` plus
+  `metadata.bindingFallbackMode = preserve-remaining-body-fallback` remain compatibility-only
   metadata; when more than one suppression or override rule matches the same shorthand
   candidate, `/engine/rest-endpoint-candidates` now keeps the full specificity-ordered match trace
   visible through `MatchedSuppressionIds` and `MatchedOverrideIds` before one rule wins

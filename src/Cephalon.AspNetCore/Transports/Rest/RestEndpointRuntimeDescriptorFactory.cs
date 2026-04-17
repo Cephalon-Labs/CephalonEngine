@@ -147,15 +147,10 @@ internal static class RestEndpointRuntimeDescriptorFactory
             ["sourceId"] = $"{behaviorId}:{method}:{relativePattern}"
         };
 
-        if (bindingFallbackMode == RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback)
+        if (bindingFallbackMode is { } fallbackMode)
         {
             metadata[RestEndpointRuntimeMetadata.BindingFallbackModeMetadataKey] =
-                RestEndpointRuntimeMetadata.PreserveSourceImplicitFallbackMode;
-        }
-        else if (bindingFallbackMode == RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback)
-        {
-            metadata[RestEndpointRuntimeMetadata.BindingFallbackModeMetadataKey] =
-                RestEndpointRuntimeMetadata.PreserveRemainingBodyFallbackMode;
+                fallbackMode.GetWireName();
         }
 
         if (!string.IsNullOrWhiteSpace(requiredCapabilityKey))

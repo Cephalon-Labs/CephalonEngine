@@ -1504,7 +1504,7 @@ public sealed class BehaviorRestProjectionTests
             RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback,
             candidate.Candidate.ProjectedEndpoint.BindingFallbackMode);
         Assert.Equal(
-            "preserve-remaining-body-fallback",
+            RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback.GetWireName(),
             candidate.Candidate.ProjectedEndpoint.Metadata["bindingFallbackMode"]);
     }
 
@@ -2015,7 +2015,9 @@ public sealed class BehaviorRestProjectionTests
         Assert.Equal(
             RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback,
             candidate.Candidate.ProjectedEndpoint.BindingFallbackMode);
-        Assert.Equal("preserve-source-implicit-fallback", candidate.Candidate.ProjectedEndpoint.Metadata["bindingFallbackMode"]);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback.GetWireName(),
+            candidate.Candidate.ProjectedEndpoint.Metadata["bindingFallbackMode"]);
         Assert.Single(candidate.Candidate.ProjectedEndpoint.BindingDescriptors);
         Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
             binding.PropertyName == "CartId" &&
@@ -2197,7 +2199,7 @@ public sealed class BehaviorRestProjectionTests
             RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback,
             candidate.Candidate.ProjectedEndpoint.BindingFallbackMode);
         Assert.Equal(
-            "preserve-remaining-body-fallback",
+            RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback.GetWireName(),
             candidate.Candidate.ProjectedEndpoint.Metadata["bindingFallbackMode"]);
         Assert.Equal("/api/v6/tests/profile-binding-removal-body-fallback/{cartId}/items", candidate.Candidate.ProjectedEndpoint.RoutePattern);
         Assert.Equal(2, candidate.Candidate.ProjectedEndpoint.BindingDescriptors.Count);

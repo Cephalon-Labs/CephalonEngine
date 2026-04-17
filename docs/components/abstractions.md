@@ -66,6 +66,7 @@
 - `Transports/RestEndpointRuntimeDescriptor.cs`
 - `Transports/RestEndpointBindingDescriptor.cs`
 - `Transports/RestEndpointBindingFallbackMode.cs`
+- `Transports/RestEndpointBindingFallbackModeExtensions.cs`
 - `Transports/RestEndpointBindingSource.cs`
 - `Transports/RestEndpointOverrideBindingMode.cs`
 - `Transports/IRestEndpointOverrideRuntimeCatalog.cs`
@@ -179,7 +180,10 @@ Core-specific override DTOs. The same candidate/runtime descriptor family now al
 shorthand endpoint metadata visible on `ProjectedEndpoint` through `OriginalEndpointName`,
 `OriginalSummary`, and `OriginalDescription`, keeps preserved shorthand fallback truth visible
 through typed `BindingFallbackMode` properties that distinguish preserved source implicit fallback
-from preserved remaining request-body fallback, and keeps that original metadata visible even when
+from preserved remaining request-body fallback, and now also exposes
+`RestEndpointBindingFallbackModeExtensions.GetWireName()` plus `TryParseWireName(...)` as the
+canonical compatibility bridge for the stable wire names used by JSON serialization and additive
+`metadata.bindingFallbackMode`, while keeping that original metadata visible even when
 a host-level override intentionally clears the effective endpoint metadata, while additive
 `metadata.bindingFallbackMode`, `metadata.authoringStyle`, `metadata.routeGroupPrefix`,
 `metadata.relativePattern`, `metadata.behaviorType`, and `metadata.sourceId` remain

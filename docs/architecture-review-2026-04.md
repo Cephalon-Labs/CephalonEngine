@@ -184,7 +184,12 @@ remaining request-body fallback visible as
 `RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback` on shorthand candidates and
 published endpoints instead of leaving that answer in compatibility metadata alone, and emitted
 event `5204` logging now follows whichever typed preserved-fallback mode the runtime actually
-resolved instead of stopping at the earlier implicit-query-only case.
+resolved instead of stopping at the earlier implicit-query-only case. The next contract-hardening
+follow-through is now addressed through `ENG-058-T116`: `Cephalon.Abstractions` exposes canonical
+wire-name helpers for `RestEndpointBindingFallbackMode`, ASP.NET Core compatibility metadata now
+derives `bindingFallbackMode` values from that one public source of truth, and the public XML/docs
+wording now describes both preserved implicit-query and remaining-body fallback semantics instead
+of the earlier narrower phrasing.
 
 The remaining gap is no longer raw operator visibility; it is richer authoring and build-time
 diagnostics if future shorthand or generated routes broaden enough that more than one projection

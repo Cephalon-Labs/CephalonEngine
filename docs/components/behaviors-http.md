@@ -209,7 +209,10 @@ Current profile behavior:
 - the canonical runtime answer for preserved fallback modes now lives on the typed transport
   contracts through `RestEndpointCandidateProjectionDescriptor.BindingFallbackMode` and
   `RestEndpointRuntimeDescriptor.BindingFallbackMode` using
-  `RestEndpointBindingFallbackMode`; additive
+  `RestEndpointBindingFallbackMode`, and
+  `RestEndpointBindingFallbackModeExtensions.GetWireName()` /
+  `TryParseWireName(...)` now provide the canonical compatibility bridge for metadata and JSON wire
+  names; additive
   `metadata.bindingFallbackMode = preserve-source-implicit-fallback` and
   `metadata.bindingFallbackMode = preserve-remaining-body-fallback` remain compatibility-only
   metadata
@@ -517,7 +520,8 @@ Current helper behavior:
   query-fallback surface when a host adds only partial explicit bindings, the typed runtime and
   projection descriptors now keep that preserved mode visible through `BindingFallbackMode` values
   backed by `RestEndpointBindingFallbackMode`, additive
-  `metadata.bindingFallbackMode = preserve-source-implicit-fallback` remains compatibility-only
+  `metadata.bindingFallbackMode = preserve-source-implicit-fallback` and
+  `metadata.bindingFallbackMode = preserve-remaining-body-fallback` remain compatibility-only
   metadata, `ClearBindings = true` can now also discard the source shorthand explicit binding plan
   entirely and return the candidate to the implicit route/query/body baseline, but that clear
   fails fast if the effective route placeholders would only remain satisfiable through removed

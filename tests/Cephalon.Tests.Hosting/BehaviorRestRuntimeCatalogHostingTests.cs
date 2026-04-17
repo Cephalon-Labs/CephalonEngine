@@ -3463,7 +3463,9 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(
             RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback,
             endpoint.BindingFallbackMode);
-        Assert.Equal("preserve-source-implicit-fallback", endpoint.Metadata["bindingFallbackMode"]);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback.GetWireName(),
+            endpoint.Metadata["bindingFallbackMode"]);
         Assert.Single(endpoint.BindingDescriptors);
         Assert.Contains(endpoint.BindingDescriptors, static binding =>
             binding.PropertyName == "OrderId" &&
@@ -3480,7 +3482,9 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(
             RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback,
             candidate.ProjectedEndpoint.BindingFallbackMode);
-        Assert.Equal("preserve-source-implicit-fallback", candidate.ProjectedEndpoint.Metadata["bindingFallbackMode"]);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback.GetWireName(),
+            candidate.ProjectedEndpoint.Metadata["bindingFallbackMode"]);
 
         var response = await client.GetAsync("/api/v6/tests/profile-runtime/query-partial/orders/lookup/ord-90?quantity=4");
         response.EnsureSuccessStatusCode();
@@ -3493,11 +3497,17 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Contains(snapshot.RestEndpoints, static item =>
             string.Equals(item.BehaviorId, "tests.rest.profile.bindings.query.partial", StringComparison.Ordinal) &&
             item.BindingFallbackMode == RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback &&
-            string.Equals(item.Metadata["bindingFallbackMode"], "preserve-source-implicit-fallback", StringComparison.Ordinal));
+            string.Equals(
+                item.Metadata["bindingFallbackMode"],
+                RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback.GetWireName(),
+                StringComparison.Ordinal));
         Assert.Contains(snapshot.RestEndpointCandidates, static item =>
             string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.profile.bindings.query.partial", StringComparison.Ordinal) &&
             item.ProjectedEndpoint.BindingFallbackMode == RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback &&
-            string.Equals(item.ProjectedEndpoint.Metadata["bindingFallbackMode"], "preserve-source-implicit-fallback", StringComparison.Ordinal));
+            string.Equals(
+                item.ProjectedEndpoint.Metadata["bindingFallbackMode"],
+                RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback.GetWireName(),
+                StringComparison.Ordinal));
     }
 
     [Fact]
@@ -4152,7 +4162,9 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(
             RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback,
             endpoint.BindingFallbackMode);
-        Assert.Equal("preserve-remaining-body-fallback", endpoint.Metadata["bindingFallbackMode"]);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback.GetWireName(),
+            endpoint.Metadata["bindingFallbackMode"]);
         Assert.Equal(4, endpoint.BindingDescriptors.Count);
         Assert.Contains(endpoint.BindingDescriptors, static binding =>
             binding.PropertyName == "OrderId" &&
@@ -4201,7 +4213,9 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(
             RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback,
             snapshotEndpoint.BindingFallbackMode);
-        Assert.Equal("preserve-remaining-body-fallback", snapshotEndpoint.Metadata["bindingFallbackMode"]);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback.GetWireName(),
+            snapshotEndpoint.Metadata["bindingFallbackMode"]);
         Assert.Equal(4, snapshotEndpoint.BindingDescriptors.Count);
         Assert.Contains(snapshotEndpoint.BindingDescriptors, static binding =>
             binding.PropertyName == "OrderId" &&
@@ -4567,7 +4581,9 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(
             RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback,
             endpoint.BindingFallbackMode);
-        Assert.Equal("preserve-remaining-body-fallback", endpoint.Metadata["bindingFallbackMode"]);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback.GetWireName(),
+            endpoint.Metadata["bindingFallbackMode"]);
         Assert.Equal(2, endpoint.BindingDescriptors.Count);
         Assert.DoesNotContain(endpoint.BindingDescriptors, static binding =>
             string.Equals(binding.PropertyName, nameof(ProfileBindingInferenceRuntimeInput.Note), StringComparison.Ordinal));
@@ -4588,7 +4604,9 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(
             RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback,
             candidate.ProjectedEndpoint.BindingFallbackMode);
-        Assert.Equal("preserve-remaining-body-fallback", candidate.ProjectedEndpoint.Metadata["bindingFallbackMode"]);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback.GetWireName(),
+            candidate.ProjectedEndpoint.Metadata["bindingFallbackMode"]);
         Assert.Equal(endpoint.Id, candidate.ProjectedEndpoint.Id);
 
         using var request = new HttpRequestMessage(
@@ -4613,11 +4631,17 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Contains(snapshot.RestEndpoints, static item =>
             string.Equals(item.BehaviorId, "tests.rest.profile.bindings.inference", StringComparison.Ordinal) &&
             item.BindingFallbackMode == RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback &&
-            string.Equals(item.Metadata["bindingFallbackMode"], "preserve-remaining-body-fallback", StringComparison.Ordinal));
+            string.Equals(
+                item.Metadata["bindingFallbackMode"],
+                RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback.GetWireName(),
+                StringComparison.Ordinal));
         Assert.Contains(snapshot.RestEndpointCandidates, static item =>
             string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.profile.bindings.inference", StringComparison.Ordinal) &&
             item.ProjectedEndpoint.BindingFallbackMode == RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback &&
-            string.Equals(item.ProjectedEndpoint.Metadata["bindingFallbackMode"], "preserve-remaining-body-fallback", StringComparison.Ordinal));
+            string.Equals(
+                item.ProjectedEndpoint.Metadata["bindingFallbackMode"],
+                RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback.GetWireName(),
+                StringComparison.Ordinal));
     }
 
     [Fact]

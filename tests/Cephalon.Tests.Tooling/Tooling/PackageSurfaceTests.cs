@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text.Json;
 using Cephalon.Cli;
 using Cephalon.ReferenceDocs;
 
@@ -251,6 +252,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Tenancy.TenantResolutionRequest),
             typeof(global::Cephalon.Abstractions.Tenancy.TenantResolutionResult),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointBindingFallbackMode),
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointBindingFallbackModeExtensions),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointBindingDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointBindingSource),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideBindingMode),
@@ -1018,6 +1020,21 @@ public sealed class PackageSurfaceTests
         Assert.True(Enum.IsDefined(
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointBindingFallbackMode),
             "PreserveRemainingBodyFallback"));
+    }
+
+    [Theory]
+    [InlineData(global::Cephalon.Abstractions.Transports.RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback, "preserve-source-implicit-fallback")]
+    [InlineData(global::Cephalon.Abstractions.Transports.RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback, "preserve-remaining-body-fallback")]
+    public void RestEndpointBindingFallbackModeWireNamesStayAlignedWithJsonSerialization(
+        global::Cephalon.Abstractions.Transports.RestEndpointBindingFallbackMode mode,
+        string expectedWireName)
+    {
+        Assert.Equal(
+            expectedWireName,
+            global::Cephalon.Abstractions.Transports.RestEndpointBindingFallbackModeExtensions.GetWireName(mode));
+        Assert.True(global::Cephalon.Abstractions.Transports.RestEndpointBindingFallbackModeExtensions.TryParseWireName(expectedWireName, out var parsed));
+        Assert.Equal(mode, parsed);
+        Assert.Equal($"\"{expectedWireName}\"", JsonSerializer.Serialize(mode));
     }
 
     [Fact]

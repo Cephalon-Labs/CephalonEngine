@@ -18,8 +18,9 @@ public sealed class RestEndpointCandidateProjectionDescriptor
     /// <param name="openApiDocumentName">The projected OpenAPI document name when one is available.</param>
     /// <param name="bindingDescriptors">The projected request-binding descriptors when the projection exposes an explicit binding plan.</param>
     /// <param name="bindingFallbackMode">
-    /// The projected request-binding fallback mode when the projection preserves source shorthand fallback behavior
-    /// beyond the explicit binding plan.
+    /// The projected request-binding fallback mode when the projection preserves deterministic
+    /// request-binding behavior beyond the explicit binding plan, such as preserved source
+    /// implicit-query fallback or preserved remaining request-body fallback.
     /// </param>
     /// <param name="tagName">The projected primary OpenAPI tag name when one is available.</param>
     public RestEndpointCandidateProjectionDescriptor(
@@ -80,8 +81,9 @@ public sealed class RestEndpointCandidateProjectionDescriptor
     public IReadOnlyList<RestEndpointBindingDescriptor> BindingDescriptors { get; }
 
     /// <summary>
-    /// Gets the projected request-binding fallback mode when the projection preserves source shorthand
-    /// fallback behavior beyond the explicit binding plan.
+    /// Gets the projected request-binding fallback mode when the projection preserves deterministic
+    /// request-binding behavior beyond the explicit binding plan, such as preserved source
+    /// implicit-query fallback or preserved remaining request-body fallback.
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public RestEndpointBindingFallbackMode? BindingFallbackMode { get; }
