@@ -374,14 +374,17 @@ engine.AddGeneratedRestBehaviorModule<GetCartBehavior>(
         "Cart Module",
         "Publishes the cart public REST surface through the generated inline helper.",
         version: "1.0.0"),
-    "showcase.cart",
     group => group.WithTagName("Cart API"));
 ```
 
-`AddGeneratedRestBehaviorModule<TMarker>(...)` still creates a real module, still maps through the
-same generated-profile projection and runtime-catalog pipeline, and still never publishes public
-REST from `[AppBehavior]` alone. Keep `AddRestBehaviorModule<TMarker>(...)` when the route group
-should not mirror the behavior-id prefix or when the inline module needs more than one group.
+`AddGeneratedRestBehaviorModule<TMarker>(descriptor, configureGroup?)` still creates a real
+module, still maps through the same generated-profile projection and runtime-catalog pipeline, and
+still never publishes public REST from `[AppBehavior]` alone. It derives the generated behavior-id
+prefix from `ModuleDescriptor.Id`, so keep the explicit
+`AddGeneratedRestBehaviorModule<TMarker>(descriptor, "prefix", ...)` overload when the inline
+module id and generated behavior-id prefix should differ. Keep `AddRestBehaviorModule<TMarker>(...)`
+when the route group should not mirror the behavior-id prefix or when the inline module needs more
+than one group.
 
 Current helper behavior:
 
@@ -392,8 +395,11 @@ Current helper behavior:
 - gives behavior-owning REST modules both a dedicated base class and a low-code
   `AddRestBehaviorModule<TMarker>(...)` host helper instead of forcing authors to implement
   `IBehaviorOwnerModule` plus `IRestModule` manually
-- adds `GroupFromBehaviorIdPrefix(...)` and `AddGeneratedRestBehaviorModule<TMarker>(...)` for the
-  common generated-profile path where the route-group prefix should mirror the behavior-id prefix
+- adds `GroupFromBehaviorIdPrefix(...)` plus
+  `AddGeneratedRestBehaviorModule<TMarker>(descriptor, configureGroup?)` for the common generated-
+  profile path where the route-group prefix, generated behavior-id prefix, and inline module id
+  should mirror one another while the explicit `behaviorIdPrefix` overload stays available when
+  they should differ
 - treats the REST DSL as the primary authoring path, so public routes also imply module ownership
 - compiles author-facing REST group and endpoint declarations into a reusable internal projection
   model before the ASP.NET Core adapter materializes route groups and handlers

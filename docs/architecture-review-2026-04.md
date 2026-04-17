@@ -240,6 +240,14 @@ The remaining gap is now narrower: keep low-code shorthand growth, broader gover
 projection sources on the same explicit ownership and runtime-truth model without reintroducing
 hidden rule layers.
 
+That next inline generated-module ergonomics gap is now addressed through `ENG-058-T127`:
+`RestBehaviorEngineBuilderExtensions.AddGeneratedRestBehaviorModule<TMarker>(descriptor,
+configureGroup?)` now derives the generated behavior-id prefix from `ModuleDescriptor.Id` for the
+common inline module case, reuses the same fail-fast deterministic route-group validation as
+`GroupFromBehaviorIdPrefix(...)`, and keeps the explicit prefix overload for the cases where module
+identity and generated ownership intentionally differ. That keeps lower-ceremony inline module
+growth on the same explicit ownership model instead of inventing a new silent projection layer.
+
 ## Architecture recommendations
 
 ### Next 30 days

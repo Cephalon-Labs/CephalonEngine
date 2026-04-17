@@ -379,14 +379,17 @@ engine.AddGeneratedRestBehaviorModule<GetCartBehavior>(
         "Cart Module",
         "Publishes the cart REST surface through the generated inline helper.",
         version: "1.0.0"),
-    "showcase.cart",
     group => group.WithTagName("Cart API"));
 ```
 
-`AddGeneratedRestBehaviorModule<TMarker>(...)` still creates a real module, still maps through the
-same generated-profile projection and runtime-catalog pipeline, and still never publishes public
-REST from `[AppBehavior]` alone. Keep `AddRestBehaviorModule<TMarker>(...)` when the module needs a
-non-default route group, a mix of generated and manual endpoints, or more than one group.
+`AddGeneratedRestBehaviorModule<TMarker>(descriptor, configureGroup?)` still creates a real module,
+still maps through the same generated-profile projection and runtime-catalog pipeline, and still
+never publishes public REST from `[AppBehavior]` alone. It derives the generated behavior-id prefix
+from `ModuleDescriptor.Id`, so keep the explicit
+`AddGeneratedRestBehaviorModule<TMarker>(descriptor, "prefix", ...)` overload when the inline
+module id and generated behavior-id prefix should differ. Keep
+`AddRestBehaviorModule<TMarker>(...)` when the module needs a non-default route group, a mix of
+generated and manual endpoints, or more than one group.
 
 If the profile also needs an explicit binding plan, keep that detail on the behavior metadata
 instead of moving it into the module:

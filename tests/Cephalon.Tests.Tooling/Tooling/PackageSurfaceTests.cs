@@ -908,6 +908,19 @@ public sealed class PackageSurfaceTests
             [
                 { ParameterType: { } engineType },
                 { ParameterType: { } descriptorType },
+                { ParameterType: { } configureType }
+            ] &&
+            engineType == typeof(global::Cephalon.Engine.Composition.EngineBuilder) &&
+            descriptorType == typeof(global::Cephalon.Abstractions.Modules.ModuleDescriptor) &&
+            configureType == typeof(Action<global::Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder>));
+        Assert.Contains(methods, static method =>
+            method.Name == "AddGeneratedRestBehaviorModule" &&
+            method.IsGenericMethodDefinition &&
+            method.GetGenericArguments().Length == 1 &&
+            method.GetParameters() is
+            [
+                { ParameterType: { } engineType },
+                { ParameterType: { } descriptorType },
                 { ParameterType: { } prefixType },
                 { ParameterType: { } configureType }
             ] &&

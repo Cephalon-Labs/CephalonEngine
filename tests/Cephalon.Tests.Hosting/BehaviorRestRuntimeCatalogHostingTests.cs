@@ -650,6 +650,75 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task AddGeneratedRestBehaviorModuleDerivesGeneratedPrefixFromDescriptorId()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddGeneratedRestBehaviorModule<GetGeneratedRuntimeOrderBehavior>(
+                new ModuleDescriptor(
+                    "tests.generated.runtime",
+                    "Descriptor Id Generated Runtime Module",
+                    "Publishes generated REST endpoints through the descriptor-id inline helper.",
+                    version: "1.0.0"),
+                group => group
+                    .ApiVersion(6)
+                    .WithTagName("Descriptor Id Generated Runtime API"));
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(snapshot);
+
+        var moduleEndpoints = endpoints
+            .Where(static candidate =>
+                string.Equals(candidate.SourceModuleId, "tests.generated.runtime", StringComparison.Ordinal))
+            .OrderBy(static candidate => candidate.Method, StringComparer.Ordinal)
+            .ToArray();
+        Assert.Equal(2, moduleEndpoints.Length);
+
+        var getEndpoint = Assert.Single(moduleEndpoints, static endpoint => endpoint.Method == "GET");
+        Assert.Equal("/api/v6/tests/generated/runtime/orders/{orderId}", getEndpoint.RoutePattern);
+        Assert.Equal("v6", getEndpoint.OpenApiDocumentName);
+        Assert.Equal(6, getEndpoint.ApiVersionMajor);
+        Assert.Equal("/api/v6/tests/generated/runtime", getEndpoint.RouteGroupPrefix);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, getEndpoint.Metadata["authoringStyle"]);
+        Assert.Contains("Descriptor Id Generated Runtime API", getEndpoint.Tags);
+
+        Assert.Equal(2, candidates.Count(static candidate =>
+            string.Equals(candidate.ProjectedEndpoint.SourceModuleId, "tests.generated.runtime", StringComparison.Ordinal) &&
+            candidate.Status == RestEndpointCandidateStatus.Published &&
+            string.Equals(candidate.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, StringComparison.Ordinal)));
+        Assert.Contains(snapshot.RestEndpoints, item =>
+            string.Equals(item.SourceModuleId, "tests.generated.runtime", StringComparison.Ordinal) &&
+            string.Equals(item.RoutePattern, "/api/v6/tests/generated/runtime/orders/{orderId}", StringComparison.Ordinal));
+
+        var payload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>("/api/v6/tests/generated/runtime/orders/ord-descriptor-id");
+        Assert.NotNull(payload);
+        Assert.Equal("ord-descriptor-id", payload.OrderId);
+    }
+
+    [Fact]
     public void AddGeneratedRestBehaviorModuleRejectsBehaviorIdPrefixesWithEmptySegments()
     {
         var builder = WebApplication.CreateBuilder();
@@ -666,6 +735,26 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
                     "tests..generated.runtime");
             }));
 
+        Assert.Contains("non-empty dot-separated segments", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void AddGeneratedRestBehaviorModuleRejectsDescriptorIdsThatCannotDeriveGeneratedPrefixes()
+    {
+        var builder = WebApplication.CreateBuilder();
+
+        var exception = Assert.Throws<ArgumentException>(() =>
+            builder.AddCephalon(engine =>
+            {
+                engine.AddGeneratedRestBehaviorModule<GetGeneratedRuntimeOrderBehavior>(
+                    new ModuleDescriptor(
+                        "tests..generated.runtime",
+                        "Invalid Descriptor Id Generated Runtime Module",
+                        "Attempts to derive a generated behavior-id prefix from an invalid module id.",
+                        version: "1.0.0"));
+            }));
+
+        Assert.Contains("cannot be used as an inline generated REST behavior-id prefix", exception.Message, StringComparison.Ordinal);
         Assert.Contains("non-empty dot-separated segments", exception.Message, StringComparison.Ordinal);
     }
 
