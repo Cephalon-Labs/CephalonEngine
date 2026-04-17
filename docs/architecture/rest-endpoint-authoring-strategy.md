@@ -268,6 +268,13 @@ Status update:
   suppression distinct from config-governance suppression and candidate-precedence suppression
   through dedicated suppression kinds, policy-suppressed candidate buckets, and startup
   diagnostics/logging
+- the next authoring-policy runtime-contract conformance follow-through is now shipped through
+  `ENG-058-T145`: `/engine/rest-endpoint-candidates`,
+  `/engine/rest-endpoint-candidates/{candidateId}`, and `snapshot.RestEndpointCandidates` now have
+  targeted hosting/runtime coverage that locks `SuppressedByAuthoringPolicyKind` onto the
+  canonical `disallowed-authoring-style`, `not-allowed-authoring-style`, and
+  `preferred-authoring-style-selected` wire names instead of leaving operator JSON truth implicit
+  in enum serialization behavior alone
 - the next low-code inline module-owned authoring follow-through is now shipped through
   `ENG-058-T81`: `Cephalon.Behaviors.Http` now exposes
   `RestBehaviorEngineBuilderExtensions.AddRestBehaviorModule<TMarker>()`, which lets a host

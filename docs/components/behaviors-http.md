@@ -679,7 +679,11 @@ effective endpoint name, candidate resolution now disambiguates that name determ
 preserving `OriginalEndpointName` as source shorthand lineage. Preferred/allowed/disallowed
 authoring-style fields now also suppress shorthand candidates when they fall outside the configured
 policy, while explicit module DSL publication remains authoritative and runtime truth keeps those
-authoring-policy outcomes distinct from governance suppression and precedence suppression.
+authoring-policy outcomes distinct from governance suppression and precedence suppression. The same
+operator-facing candidate payloads now also keep `SuppressedByAuthoringPolicyKind` on canonical
+`disallowed-authoring-style`, `not-allowed-authoring-style`, and
+`preferred-authoring-style-selected` wire names across `/engine/rest-endpoint-candidates`,
+candidate-by-id payloads, and `snapshot.RestEndpointCandidates`.
 
 The host now also publishes the configured shorthand-suppression rules themselves through:
 

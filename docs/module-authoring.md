@@ -601,7 +601,12 @@ same effective endpoint name, Cephalon now disambiguates that name deterministic
 preserving `OriginalEndpointName` as source shorthand lineage. `PreferredAuthoringStyle`,
 `AllowedAuthoringStyles`, and `DisallowedAuthoringStyles` now also enforce shorthand publication
 policy for profile and generated shorthand candidates while leaving explicit module DSL
-publication authoritative.
+publication authoritative. Operator-facing candidate payloads now also keep
+`SuppressedByAuthoringPolicyKind` on the same canonical
+`disallowed-authoring-style`, `not-allowed-authoring-style`, and
+`preferred-authoring-style-selected` wire names across `/engine/rest-endpoint-candidates`,
+`/engine/rest-endpoint-candidates/{candidateId}`, and `snapshot.RestEndpointCandidates`, so host
+governance troubleshooting does not depend on raw enum serialization details.
 
 When a host wants to keep shorthand publication but retarget selected shorthand endpoints to a
 different effective API major version, HTTP method, bounded published route-group prefix,
