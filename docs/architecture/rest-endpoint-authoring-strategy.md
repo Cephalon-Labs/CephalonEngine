@@ -912,6 +912,10 @@ Status:
   overlapping shorthand suppression/override matches now stay visible in runtime truth through the
   ordered `MatchedSuppressionIds` and `MatchedOverrideIds` lists before one rule wins by the
   existing specificity model
+- the candidate-runtime status contract now also uses stable `published` / `suppressed` wire names
+  through `RestEndpointCandidateStatus`, so `/engine/rest-endpoint-candidates`,
+  `/engine/rest-endpoint-candidates/{candidateId}`, and `snapshot.RestEndpointCandidates` no
+  longer rely on raw enum-number serialization for operator-facing publication state
 - the next selector-targeting follow-through is now shipped through `ENG-058-T77`,
   `ENG-058-T109`, `ENG-058-T118`, and `ENG-058-T120`, so both
   `RestApi:Suppressions` and `RestApi:Overrides` can refine that same descriptor-backed shorthand

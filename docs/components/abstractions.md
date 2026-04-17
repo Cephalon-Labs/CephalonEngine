@@ -174,7 +174,11 @@ hosts can surface both candidate-level and grouped publication truth for module-
 candidates without inventing an ASP.NET Core-specific precedence contract, and so operator tooling
 can compare the original shorthand projection shape with the final effective projected endpoint
 explicitly while also seeing skipped-governance visibility and the grouped
-published-versus-suppressed answer per behavior. Grouped publication answers now also carry typed
+published-versus-suppressed answer per behavior. `RestEndpointCandidateStatus` now also carries
+stable `published` / `suppressed` JSON wire names through
+`RestEndpointCandidateStatusExtensions.GetWireName()` plus `TryParseWireName(...)`, so candidate
+catalogs and snapshots no longer rely on raw enum-number serialization for operator-facing status
+truth. Grouped publication answers now also carry typed
 host-governance eligibility/ineligibility candidate buckets plus grouped skipped suppression and
 override rule ids, so callers do not need to repartition the ordered candidate set just to see
 which behavior boundary stayed outside host governance. The same

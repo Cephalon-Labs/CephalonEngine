@@ -274,6 +274,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateProjectionDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateRuntimeDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateStatus),
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateStatusExtensions),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupAuthoringPolicyDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupAuthoringStyleDescriptor),
@@ -1177,6 +1178,40 @@ public sealed class PackageSurfaceTests
     {
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateProjectionDescriptor)
             .GetProperty("AllowsHostGovernance", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void RestEndpointCandidateStatusExposesStableStatuses()
+    {
+        Assert.True(Enum.IsDefined(
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateStatus),
+            "Unspecified"));
+        Assert.True(Enum.IsDefined(
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateStatus),
+            "Published"));
+        Assert.True(Enum.IsDefined(
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateStatus),
+            "Suppressed"));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateStatusExtensions)
+            .GetMethod("GetWireName", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateStatusExtensions)
+            .GetMethod("TryParseWireName", BindingFlags.Static | BindingFlags.Public));
+    }
+
+    [Theory]
+    [InlineData(global::Cephalon.Abstractions.Transports.RestEndpointCandidateStatus.Unspecified, "unspecified")]
+    [InlineData(global::Cephalon.Abstractions.Transports.RestEndpointCandidateStatus.Published, "published")]
+    [InlineData(global::Cephalon.Abstractions.Transports.RestEndpointCandidateStatus.Suppressed, "suppressed")]
+    public void RestEndpointCandidateStatusWireNamesStayAlignedWithJsonSerialization(
+        global::Cephalon.Abstractions.Transports.RestEndpointCandidateStatus status,
+        string expectedWireName)
+    {
+        Assert.Equal(
+            expectedWireName,
+            global::Cephalon.Abstractions.Transports.RestEndpointCandidateStatusExtensions.GetWireName(status));
+        Assert.True(global::Cephalon.Abstractions.Transports.RestEndpointCandidateStatusExtensions.TryParseWireName(expectedWireName, out var parsed));
+        Assert.Equal(status, parsed);
+        Assert.Equal($"\"{expectedWireName}\"", JsonSerializer.Serialize(status));
     }
 
     [Fact]

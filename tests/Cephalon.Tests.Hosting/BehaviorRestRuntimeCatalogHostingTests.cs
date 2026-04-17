@@ -342,6 +342,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
         var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
         var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+        var candidatesJson = await client.GetStringAsync("/engine/rest-endpoint-candidates");
 
         Assert.NotNull(endpoints);
         Assert.NotNull(candidates);
@@ -478,6 +479,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
         var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
         var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+        var candidatesJson = await client.GetStringAsync("/engine/rest-endpoint-candidates");
 
         Assert.NotNull(endpoints);
         Assert.NotNull(candidates);
@@ -5512,6 +5514,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
         var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
         var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+        var candidatesJson = await client.GetStringAsync("/engine/rest-endpoint-candidates");
 
         Assert.NotNull(endpoints);
         Assert.NotNull(candidates);
@@ -5542,10 +5545,17 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(published.Id, suppressed.SuppressedByCandidateId);
         Assert.Contains("higher-precedence authoring style", suppressed.SuppressionReason, StringComparison.OrdinalIgnoreCase);
 
+        Assert.Contains("\"status\":\"published\"", candidatesJson, StringComparison.Ordinal);
+        Assert.Contains("\"status\":\"suppressed\"", candidatesJson, StringComparison.Ordinal);
+
         var candidateById = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor>(
             $"/engine/rest-endpoint-candidates/{suppressed.Id}");
+        var candidateByIdJson = await client.GetStringAsync($"/engine/rest-endpoint-candidates/{suppressed.Id}");
         Assert.NotNull(candidateById);
         Assert.Equal(suppressed.Id, candidateById.Id);
+        Assert.Contains("\"status\":\"suppressed\"", candidateByIdJson, StringComparison.Ordinal);
+
+        var snapshotJson = await client.GetStringAsync("/engine/snapshot");
 
         var snapshotPublished = Assert.Single(snapshot.RestEndpointCandidates, candidate =>
             string.Equals(candidate.Id, published.Id, StringComparison.Ordinal));
@@ -5555,6 +5565,8 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             string.Equals(candidate.Id, suppressed.Id, StringComparison.Ordinal));
         Assert.Equal(RestEndpointCandidateStatus.Suppressed, snapshotSuppressed.Status);
         Assert.Equal(published.Id, snapshotSuppressed.SuppressedByCandidateId);
+        Assert.Contains("\"status\":\"published\"", snapshotJson, StringComparison.Ordinal);
+        Assert.Contains("\"status\":\"suppressed\"", snapshotJson, StringComparison.Ordinal);
 
         var payload = await client.GetFromJsonAsync<ProfileRuntimeOrderOutput>(
             "/api/v8/tests/profile-runtime/precedence/orders/explicit/ord-42");
