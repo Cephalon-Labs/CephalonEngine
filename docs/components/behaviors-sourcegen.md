@@ -103,6 +103,12 @@ internal static class BehaviorAutoRegistration
 }
 ```
 
+For binding sources, the generator now validates against the stable
+`BehaviorRestBindingSource` wire-name vocabulary (`route`, `query`, `header`, and `body`) rather
+than hardcoding enum member names. Generated `GetRestProfiles()` hints still emit the resolved enum
+member names, so future package versions can rename those members without breaking valid metadata as
+long as the stable wire-name contract stays intact.
+
 ## Integration
 
 The generator is automatically applied when `Cephalon.Behaviors` is referenced. No additional setup required.

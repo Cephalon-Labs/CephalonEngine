@@ -174,6 +174,12 @@ Current `BehaviorRestProfileAttribute` behavior:
 - repeated `BehaviorRestBindingAttribute` declarations can describe explicit `route`, `query`,
   `header`, and `body` sources for object inputs when the module-owned shorthand needs deterministic
   input sourcing
+- `BehaviorRestBindingSource` remains the code-authoring enum surface, but
+  `BehaviorRestBindingSourceExtensions` now exposes the same stable `route`, `query`, `header`, and
+  `body` wire names that JSON serialization uses; `Cephalon.Behaviors.SourceGen` validates against
+  that canonical vocabulary while still emitting resolved enum member names into generated
+  `GetRestProfiles()` hints so future enum-member renames can stay source-compatible by preserving
+  those wire names
 - the owning module still decides whether the behavior becomes public REST through
   `ConfigureRestBehaviors(...)`
 - `IRestBehaviorEndpointGroupBuilder.MapProfile<TBehavior>()` is now the shipped low-ceremony

@@ -198,6 +198,11 @@ Current profile behavior:
   bindings, unsupported sources, route-placeholder mismatches, and body bindings on `GET` or
   `DELETE`, while module-owned profile consumption still re-checks the same contract when runtime
   falls back to direct attribute metadata
+- `BehaviorRestBindingSource` now also exposes `BehaviorRestBindingSourceExtensions` plus the same
+  stable `route`, `query`, `header`, and `body` wire names that JSON serialization uses; source
+  generation validates profile bindings against that canonical vocabulary while still emitting the
+  resolved enum member names into generated `GetRestProfiles()` hints so future enum-member renames
+  can preserve valid metadata by keeping the wire-name contract stable
 - when explicit bindings are present, they override the implicit merge baseline, while unbound
   route placeholders and body-capable request bodies can still fill remaining object properties
 - explicit profiles can now also preserve the remaining implicit query-string fallback surface by
@@ -872,7 +877,9 @@ Override example:
 ```
 
 For host governance config, `Bindings:*:Source` and `TargetBindings:*:Source` now use the same
-stable wire-name vocabulary that runtime JSON emits: `route`, `query`, `header`, and `body`.
+stable wire-name vocabulary that runtime JSON emits: `route`, `query`, `header`, and `body`. The
+behavior-authored `BehaviorRestBindingSource` contract now uses that same stable vocabulary for its
+own JSON surface and source-generated validation flow.
 
 Clear-bindings example:
 

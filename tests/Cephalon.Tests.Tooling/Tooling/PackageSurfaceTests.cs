@@ -826,6 +826,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingAttribute),
             typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor),
             typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource),
+            typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSourceExtensions),
             typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethod),
             typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileAttribute),
             typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor),
@@ -895,6 +896,48 @@ public sealed class PackageSurfaceTests
             .GetProperty("PreserveImplicitQueryFallback", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor)
             .GetProperty("PreserveImplicitQueryFallback", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void BehaviorsHttpRestBindingSourceExposesStableWireNameHelpers()
+    {
+        Assert.True(Enum.IsDefined(
+            typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource),
+            "Unspecified"));
+        Assert.True(Enum.IsDefined(
+            typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource),
+            "Route"));
+        Assert.True(Enum.IsDefined(
+            typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource),
+            "Query"));
+        Assert.True(Enum.IsDefined(
+            typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource),
+            "Header"));
+        Assert.True(Enum.IsDefined(
+            typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource),
+            "Body"));
+        Assert.NotNull(typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSourceExtensions)
+            .GetMethod("GetWireName", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSourceExtensions)
+            .GetMethod("TryParseWireName", BindingFlags.Static | BindingFlags.Public));
+    }
+
+    [Theory]
+    [InlineData(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource.Unspecified, "unspecified")]
+    [InlineData(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource.Route, "route")]
+    [InlineData(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource.Query, "query")]
+    [InlineData(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource.Header, "header")]
+    [InlineData(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource.Body, "body")]
+    public void BehaviorsHttpRestBindingSourceWireNamesStayAlignedWithJsonSerialization(
+        global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource source,
+        string expectedWireName)
+    {
+        Assert.Equal(
+            expectedWireName,
+            global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSourceExtensions.GetWireName(source));
+        Assert.True(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSourceExtensions.TryParseWireName(expectedWireName, out var parsed));
+        Assert.Equal(source, parsed);
+        Assert.Equal($"\"{expectedWireName}\"", JsonSerializer.Serialize(source));
     }
 
     [Fact]

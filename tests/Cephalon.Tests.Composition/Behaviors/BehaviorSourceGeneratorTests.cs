@@ -14,6 +14,16 @@ public sealed class BehaviorSourceGeneratorTests
 {
     /// <summary>Minimal attribute stubs so the generator has types to resolve.</summary>
     private const string AttributeStubs = """
+        namespace System.Text.Json.Serialization
+        {
+            [System.AttributeUsage(System.AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
+            public sealed class JsonStringEnumMemberNameAttribute : System.Attribute
+            {
+                public JsonStringEnumMemberNameAttribute(string name) { Name = name; }
+                public string Name { get; }
+            }
+        }
+
         namespace Cephalon.Abstractions.Behaviors
         {
             [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
@@ -50,10 +60,15 @@ public sealed class BehaviorSourceGeneratorTests
         {
             public enum BehaviorRestBindingSource
             {
+                [System.Text.Json.Serialization.JsonStringEnumMemberName("unspecified")]
                 Unspecified = 0,
+                [System.Text.Json.Serialization.JsonStringEnumMemberName("route")]
                 Route = 1,
+                [System.Text.Json.Serialization.JsonStringEnumMemberName("query")]
                 Query = 2,
+                [System.Text.Json.Serialization.JsonStringEnumMemberName("header")]
                 Header = 3,
+                [System.Text.Json.Serialization.JsonStringEnumMemberName("body")]
                 Body = 4
             }
 
@@ -871,20 +886,30 @@ public sealed class BehaviorSourceGeneratorTests
                 """
                         public enum BehaviorRestBindingSource
                         {
+                            [System.Text.Json.Serialization.JsonStringEnumMemberName("unspecified")]
                             Unspecified = 0,
+                            [System.Text.Json.Serialization.JsonStringEnumMemberName("route")]
                             Route = 1,
+                            [System.Text.Json.Serialization.JsonStringEnumMemberName("query")]
                             Query = 2,
+                            [System.Text.Json.Serialization.JsonStringEnumMemberName("header")]
                             Header = 3,
+                            [System.Text.Json.Serialization.JsonStringEnumMemberName("body")]
                             Body = 4
                         }
                 """,
                 """
                         public enum BehaviorRestBindingSource
                         {
+                            [System.Text.Json.Serialization.JsonStringEnumMemberName("unspecified")]
                             Unspecified = 0,
+                            [System.Text.Json.Serialization.JsonStringEnumMemberName("header")]
                             Header = 40,
+                            [System.Text.Json.Serialization.JsonStringEnumMemberName("body")]
                             Body = 30,
+                            [System.Text.Json.Serialization.JsonStringEnumMemberName("query")]
                             Query = 20,
+                            [System.Text.Json.Serialization.JsonStringEnumMemberName("route")]
                             Route = 10
                         }
                 """,
@@ -923,6 +948,45 @@ public sealed class BehaviorSourceGeneratorTests
         Assert.Contains("BehaviorRestMethod.Get", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("BehaviorRestBindingSource.Route", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("BehaviorRestBindingSource.Query", autoRegistration, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void RestProfileHintsRespectBindingSourceWireNamesWhenEnumMembersAreRenamed()
+    {
+        const string source = """
+            using Cephalon.Abstractions.Behaviors;
+            using Cephalon.Behaviors.Http.Abstractions;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            public sealed record LookupOrderInput(string OrderId, int Quantity);
+
+            [AppBehavior("orders.lookup")]
+            [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}")]
+            [BehaviorRestBinding(nameof(LookupOrderInput.OrderId), BehaviorRestBindingSource.RouteParameter, Name = "orderId")]
+            [BehaviorRestBinding(nameof(LookupOrderInput.Quantity), BehaviorRestBindingSource.QueryValue, Name = "quantity")]
+            public sealed class LookupOrderBehavior : IAppBehavior<LookupOrderInput, string>
+            {
+                public Task<string> HandleAsync(LookupOrderInput input, IBehaviorContext ctx, CancellationToken ct = default)
+                    => Task.FromResult("ok");
+            }
+            """;
+
+        var renamedBindingSourceStubs = AttributeStubs
+            .Replace("Unspecified = 0,", "None = 0,", StringComparison.Ordinal)
+            .Replace("Route = 1,", "RouteParameter = 10,", StringComparison.Ordinal)
+            .Replace("Query = 2,", "QueryValue = 20,", StringComparison.Ordinal)
+            .Replace("Header = 3,", "RequestHeader = 30,", StringComparison.Ordinal)
+            .Replace("Body = 4", "RequestBody = 40", StringComparison.Ordinal);
+
+        var (result, diagnostics) = RunGenerator(source, renamedBindingSourceStubs);
+
+        Assert.Empty(diagnostics);
+
+        var autoRegistration = GetGeneratedAutoRegistrationSource(result);
+        Assert.NotNull(autoRegistration);
+        Assert.Contains("BehaviorRestBindingSource.RouteParameter", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("BehaviorRestBindingSource.QueryValue", autoRegistration, StringComparison.Ordinal);
     }
 
     [Fact]

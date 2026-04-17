@@ -439,8 +439,8 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             var propertyName = attribute.ConstructorArguments.Length > 0
                 ? attribute.ConstructorArguments[0].Value as string ?? string.Empty
                 : string.Empty;
-            var sourceName = attribute.ConstructorArguments.Length > 1
-                ? ResolveEnumMemberName(attribute.ConstructorArguments[1])
+            var source = attribute.ConstructorArguments.Length > 1
+                ? ResolveRestBindingSource(attribute.ConstructorArguments[1])
                 : null;
             string? name = null;
 
@@ -455,7 +455,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                 break;
             }
 
-            bindings.Add(new RestBindingInfo(propertyName, sourceName, name));
+            bindings.Add(new RestBindingInfo(propertyName, source?.MemberName, source?.WireName, name));
         }
 
         return bindings;
@@ -949,7 +949,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                         sb.Append(string.Join(
                             ", ",
                             info.RestProfile.Bindings.Select(static binding =>
-                                $"new global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor(\"{EscapeString(binding.PropertyName)}\", global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource.{binding.SourceName}, {(string.IsNullOrWhiteSpace(binding.Name) ? "null" : $"\"{EscapeString(binding.Name!)}\"")})")));
+                                $"new global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor(\"{EscapeString(binding.PropertyName)}\", global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource.{binding.SourceMemberName}, {(string.IsNullOrWhiteSpace(binding.Name) ? "null" : $"\"{EscapeString(binding.Name!)}\"")})")));
                         sb.Append(" }");
                     }
                     else
@@ -1028,6 +1028,9 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         s.Replace("\\", "\\\\").Replace("\"", "\\\"");
 
     private static string? ResolveEnumMemberName(TypedConstant constant)
+        => ResolveEnumMemberInfo(constant)?.MemberName;
+
+    private static EnumMemberInfo? ResolveEnumMemberInfo(TypedConstant constant)
     {
         if (constant.Type is not INamedTypeSymbol { TypeKind: TypeKind.Enum } enumType ||
             constant.Value is null)
@@ -1044,11 +1047,65 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
 
             if (Equals(member.ConstantValue, constant.Value))
             {
-                return member.Name;
+                return new EnumMemberInfo(member.Name, ResolveEnumWireName(member));
             }
         }
 
         return null;
+    }
+
+    private static EnumMemberInfo? ResolveRestBindingSource(TypedConstant constant)
+    {
+        var member = ResolveEnumMemberInfo(constant);
+        if (member is null)
+        {
+            return null;
+        }
+
+        return new EnumMemberInfo(
+            member.MemberName,
+            NormalizeRestBindingSourceWireName(member.MemberName, member.WireName));
+    }
+
+    private static string ResolveEnumWireName(IFieldSymbol member)
+    {
+        foreach (var attribute in member.GetAttributes())
+        {
+            if (!string.Equals(
+                    attribute.AttributeClass?.ToDisplayString(),
+                    "System.Text.Json.Serialization.JsonStringEnumMemberNameAttribute",
+                    StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            if (attribute.ConstructorArguments.Length > 0 &&
+                attribute.ConstructorArguments[0].Value is string wireName &&
+                !string.IsNullOrWhiteSpace(wireName))
+            {
+                return wireName.Trim();
+            }
+        }
+
+        return member.Name;
+    }
+
+    private static string NormalizeRestBindingSourceWireName(string memberName, string wireName)
+    {
+        if (!string.Equals(wireName, memberName, StringComparison.Ordinal))
+        {
+            return wireName;
+        }
+
+        return memberName switch
+        {
+            "Unspecified" => "unspecified",
+            "Route" => "route",
+            "Query" => "query",
+            "Header" => "header",
+            "Body" => "body",
+            _ => wireName
+        };
     }
 
     private static bool IsSupportedRestMethod(string? methodName)
@@ -1061,9 +1118,9 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         return methodName is "Post" or "Put" or "Patch";
     }
 
-    private static bool IsSupportedRestBindingSource(string? sourceName)
+    private static bool IsSupportedRestBindingSourceWireName(string? wireName)
     {
-        return sourceName is "Route" or "Query" or "Header" or "Body";
+        return wireName is "route" or "query" or "header" or "body";
     }
 
     private static ImmutableArray<RestBindingValidationIssue> ValidateRestBindingMetadata(BehaviorInfo info)
@@ -1128,7 +1185,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                     canonicalPropertyName!));
             }
 
-            if (!IsSupportedRestBindingSource(binding.SourceName))
+            if (!IsSupportedRestBindingSourceWireName(binding.SourceWireName))
             {
                 issues.Add(new RestBindingValidationIssue(
                     Abt020RestBindingSourceMustBeSupported,
@@ -1138,7 +1195,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             }
 
             if (hasSupportedMethod &&
-                string.Equals(binding.SourceName, "Body", StringComparison.Ordinal) &&
+                string.Equals(binding.SourceWireName, "body", StringComparison.Ordinal) &&
                 !supportsBody)
             {
                 issues.Add(new RestBindingValidationIssue(
@@ -1149,7 +1206,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             }
 
             if (routeParameters is not null &&
-                string.Equals(binding.SourceName, "Route", StringComparison.Ordinal))
+                string.Equals(binding.SourceWireName, "route", StringComparison.Ordinal))
             {
                 var placeholderName = string.IsNullOrWhiteSpace(binding.Name)
                     ? effectivePropertyName
@@ -1473,16 +1530,30 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
 
     private sealed class RestBindingInfo
     {
-        public RestBindingInfo(string propertyName, string? sourceName, string? name)
+        public RestBindingInfo(string propertyName, string? sourceMemberName, string? sourceWireName, string? name)
         {
             PropertyName = propertyName;
-            SourceName = sourceName;
+            SourceMemberName = sourceMemberName;
+            SourceWireName = sourceWireName;
             Name = name;
         }
 
         public string PropertyName { get; }
-        public string? SourceName { get; }
+        public string? SourceMemberName { get; }
+        public string? SourceWireName { get; }
         public string? Name { get; }
+    }
+
+    private sealed class EnumMemberInfo
+    {
+        public EnumMemberInfo(string memberName, string wireName)
+        {
+            MemberName = memberName;
+            WireName = wireName;
+        }
+
+        public string MemberName { get; }
+        public string WireName { get; }
     }
 
     private sealed class InputTypeInfo
