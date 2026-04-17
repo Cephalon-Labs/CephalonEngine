@@ -157,12 +157,13 @@ of behavior-package-owned and avoids treating `metadata` dictionaries as the can
 or binding-fallback surface. `RestEndpointRuntimeDescriptor` now also carries first-class
 `AuthoringStyle`, `RouteGroupPrefix`, `RelativePattern`, nullable `BehaviorType`, nullable
 `SourceId`, nullable `CandidateId`, and nullable `OriginalEndpointName` /
-`OriginalSummary` / `OriginalDescription`, so published endpoints do not need
+`OriginalSummary` / `OriginalDescription`, plus ordered `SkippedSuppressionIds` /
+`SkippedOverrideIds` for governance-ineligible explicit DSL routes, so published endpoints do not need
 `metadata.authoringStyle`, `metadata.routeGroupPrefix`, `metadata.relativePattern`,
 `metadata.behaviorType`, or `metadata.sourceId` as the canonical authored-route answer and
 published behavior-backed endpoints can still point back to the originating shorthand candidate
-and compare original-versus-effective endpoint metadata without consumers reverse-engineering that
-join from route text, endpoint ids, or behavior docs. The same
+and compare original-versus-effective endpoint metadata plus skipped-governance visibility without
+consumers reverse-engineering that join from route text, endpoint ids, or behavior docs. The same
 namespace now also owns
 `IRestEndpointCandidateRuntimeCatalog`,
 `IRestEndpointCandidateRuntimeRegistry`, `RestEndpointCandidateProjectionDescriptor`,
@@ -171,7 +172,8 @@ namespace now also owns
 hosts can surface both candidate-level and grouped publication truth for module-owned REST
 candidates without inventing an ASP.NET Core-specific precedence contract, and so operator tooling
 can compare the original shorthand projection shape with the final effective projected endpoint
-explicitly while also seeing the grouped published-versus-suppressed answer per behavior. The same
+explicitly while also seeing skipped-governance visibility and the grouped
+published-versus-suppressed answer per behavior. The same
 transport namespace now also owns `IRestEndpointOverrideRuntimeCatalog` plus
 `RestEndpointOverrideDescriptor`, including shorthand binding resets through `ClearBindings` plus
 the shorthand endpoint-metadata clear actions `ClearEndpointName`, `ClearSummary`, and

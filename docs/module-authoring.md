@@ -562,6 +562,9 @@ DSL authoritative by default while making the route group's original projection 
 `AllowsHostGovernance = true` when you intentionally opt in. Host rules still do not affect that
 group unless they also explicitly target `AuthoringStyles = [behavior-module-dsl]`; omitting
 `AuthoringStyles` continues to mean shorthand-only targeting.
+When you intentionally leave the group authoritative, runtime candidates and published behavior
+endpoints now surface ordered `SkippedSuppressionIds` and `SkippedOverrideIds` for any host rules
+that targeted the route but were skipped because the group never entered the governable surface.
 
 When a host wants to declare grouped authoring-policy intent for one behavior boundary, use
 `RestApi:AuthoringPolicies:{behaviorId}`. That boundary-level contract now actively honors

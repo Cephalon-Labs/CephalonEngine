@@ -924,6 +924,77 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonExposesSkippedRestGovernanceRulesForExplicitDslRoutesWithoutOptIn()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "9";
+        builder.Configuration["OpenApi:DefaultVersion"] = "9";
+        builder.Configuration["RestApi:Suppressions:skip-disabled-explicit:Behaviors:0"] = "tests.dsl.runtimeoverride.disabled.lookup";
+        builder.Configuration["RestApi:Suppressions:skip-disabled-explicit:AuthoringStyles:0"] = RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle;
+        builder.Configuration["RestApi:Overrides:rewrite-disabled-explicit:Behaviors:0"] = "tests.dsl.runtimeoverride.disabled.lookup";
+        builder.Configuration["RestApi:Overrides:rewrite-disabled-explicit:AuthoringStyles:0"] = RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle;
+        builder.Configuration["RestApi:Overrides:rewrite-disabled-explicit:Pattern"] = "/governed/{orderId}";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ExplicitDslHostGovernanceDisabledRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(snapshot);
+
+        var endpoint = Assert.Single(endpoints, static item =>
+            string.Equals(item.BehaviorId, "tests.dsl.runtimeoverride.disabled.lookup", StringComparison.Ordinal));
+        Assert.Equal("/api/v9/tests/dsl/runtime/override-disabled/orders/{orderId}", endpoint.RoutePattern);
+        Assert.Empty(endpoint.MatchedOverrideIds);
+        Assert.Equal(["skip-disabled-explicit"], endpoint.SkippedSuppressionIds);
+        Assert.Equal(["rewrite-disabled-explicit"], endpoint.SkippedOverrideIds);
+        Assert.NotNull(endpoint.OriginalProjection);
+        Assert.False(endpoint.OriginalProjection!.AllowsHostGovernance);
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.dsl.runtimeoverride.disabled.lookup", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+        Assert.Empty(candidate.MatchedSuppressionIds);
+        Assert.Empty(candidate.MatchedOverrideIds);
+        Assert.Equal(["skip-disabled-explicit"], candidate.SkippedSuppressionIds);
+        Assert.Equal(["rewrite-disabled-explicit"], candidate.SkippedOverrideIds);
+        Assert.False(candidate.OriginalProjection.AllowsHostGovernance);
+        Assert.Equal(["skip-disabled-explicit"], candidate.ProjectedEndpoint.SkippedSuppressionIds);
+        Assert.Equal(["rewrite-disabled-explicit"], candidate.ProjectedEndpoint.SkippedOverrideIds);
+        Assert.Contains(snapshot.RestEndpoints, item =>
+            string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal) &&
+            item.SkippedSuppressionIds.SequenceEqual(["skip-disabled-explicit"]) &&
+            item.SkippedOverrideIds.SequenceEqual(["rewrite-disabled-explicit"]));
+        Assert.Contains(snapshot.RestEndpointCandidates, item =>
+            string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
+            item.SkippedSuppressionIds.SequenceEqual(["skip-disabled-explicit"]) &&
+            item.SkippedOverrideIds.SequenceEqual(["rewrite-disabled-explicit"]));
+
+        var payload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>("/api/v9/tests/dsl/runtime/override-disabled/orders/ord-visible");
+        Assert.NotNull(payload);
+        Assert.Equal("ord-visible", payload.OrderId);
+    }
+
+    [Fact]
     public async Task MapCephalonAppliesRestGovernanceToExplicitDslRoutesWhenGroupOptsIn()
     {
         var builder = WebApplication.CreateBuilder();

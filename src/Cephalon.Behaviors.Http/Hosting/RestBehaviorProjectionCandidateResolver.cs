@@ -49,6 +49,14 @@ internal static class RestBehaviorProjectionCandidateResolver
             static candidate => candidate.Candidate.Id,
             candidate => ResolveMatchingSuppressions(candidate, suppressions),
             Comparer);
+        var skippedSuppressionsByCandidateId = candidates.ToDictionary(
+            static candidate => candidate.Candidate.Id,
+            candidate => ResolveSkippedSuppressions(candidate, suppressions),
+            Comparer);
+        var skippedOverridesByCandidateId = candidates.ToDictionary(
+            static candidate => candidate.Candidate.Id,
+            candidate => ResolveSkippedOverrides(candidate, overrides),
+            Comparer);
         var suppressionByCandidateId = matchedSuppressionsByCandidateId.ToDictionary(
             static pair => pair.Key,
             static pair => pair.Value.FirstOrDefault(),
@@ -84,6 +92,8 @@ internal static class RestBehaviorProjectionCandidateResolver
             candidates.Select(candidate => ResolvePublication(
                 candidate,
                 matchedSuppressionsByCandidateId,
+                skippedSuppressionsByCandidateId,
+                skippedOverridesByCandidateId,
                 authoringPolicySuppressionsByCandidateId,
                 winnersByBehavior)));
 
@@ -288,7 +298,9 @@ internal static class RestBehaviorProjectionCandidateResolver
             candidate.Candidate.ProjectedEndpoint.AppliedOverrideId,
             candidate.Candidate.ProjectedEndpoint.MatchedOverrideIds,
             candidate.Candidate.ProjectedEndpoint.SelectedOverrideId,
-            candidate.Candidate.ProjectedEndpoint.OverrideSelectionBasis);
+            candidate.Candidate.ProjectedEndpoint.OverrideSelectionBasis,
+            candidate.Candidate.ProjectedEndpoint.SkippedSuppressionIds,
+            candidate.Candidate.ProjectedEndpoint.SkippedOverrideIds);
 
         return candidate with
         {
@@ -308,7 +320,86 @@ internal static class RestBehaviorProjectionCandidateResolver
                 suppressedByAuthoringPolicyKind: candidate.Candidate.SuppressedByAuthoringPolicyKind,
                 selectedOverrideId: candidate.Candidate.SelectedOverrideId,
                 suppressionSelectionBasis: candidate.Candidate.SuppressionSelectionBasis,
-                overrideSelectionBasis: candidate.Candidate.OverrideSelectionBasis)
+                overrideSelectionBasis: candidate.Candidate.OverrideSelectionBasis,
+                skippedSuppressionIds: candidate.Candidate.SkippedSuppressionIds,
+                skippedOverrideIds: candidate.Candidate.SkippedOverrideIds)
+        };
+    }
+
+    private static ResolvedRestBehaviorEndpointProjectionCandidate ApplySkippedGovernanceRuleIds(
+        ResolvedRestBehaviorEndpointProjectionCandidate candidate,
+        IReadOnlyList<string>? skippedSuppressionIds,
+        IReadOnlyList<string>? skippedOverrideIds)
+    {
+        ArgumentNullException.ThrowIfNull(candidate);
+
+        var normalizedSkippedSuppressionIds = NormalizeOrderedIdentifiers(skippedSuppressionIds);
+        var normalizedSkippedOverrideIds = NormalizeOrderedIdentifiers(skippedOverrideIds);
+        if (candidate.Candidate.SkippedSuppressionIds.SequenceEqual(normalizedSkippedSuppressionIds, Comparer) &&
+            candidate.Candidate.SkippedOverrideIds.SequenceEqual(normalizedSkippedOverrideIds, Comparer))
+        {
+            return candidate;
+        }
+
+        var updatedProjectedEndpoint = new RestEndpointRuntimeDescriptor(
+            candidate.Candidate.ProjectedEndpoint.Id,
+            candidate.Candidate.ProjectedEndpoint.TransportId,
+            candidate.Candidate.ProjectedEndpoint.SourceKind,
+            candidate.Candidate.ProjectedEndpoint.Method,
+            candidate.Candidate.ProjectedEndpoint.RoutePattern,
+            candidate.Candidate.ProjectedEndpoint.SourceModuleId,
+            candidate.Candidate.ProjectedEndpoint.SourceModuleVersion,
+            candidate.Candidate.ProjectedEndpoint.SourceModuleVersionMajor,
+            candidate.Candidate.ProjectedEndpoint.BehaviorId,
+            candidate.Candidate.ProjectedEndpoint.EndpointName,
+            candidate.Candidate.ProjectedEndpoint.OpenApiDocumentName,
+            candidate.Candidate.ProjectedEndpoint.ApiVersionMajor,
+            candidate.Candidate.ProjectedEndpoint.Tags,
+            candidate.Candidate.ProjectedEndpoint.Summary,
+            candidate.Candidate.ProjectedEndpoint.Description,
+            candidate.Candidate.ProjectedEndpoint.OriginalEndpointName,
+            candidate.Candidate.ProjectedEndpoint.OriginalSummary,
+            candidate.Candidate.ProjectedEndpoint.OriginalDescription,
+            candidate.Candidate.ProjectedEndpoint.CandidateId,
+            candidate.Candidate.ProjectedEndpoint.OriginalProjection,
+            candidate.Candidate.ProjectedEndpoint.BindingDescriptors,
+            candidate.Candidate.ProjectedEndpoint.BindingFallbackMode,
+            candidate.Candidate.ProjectedEndpoint.Metadata,
+            candidate.Candidate.ProjectedEndpoint.AuthoringStyle,
+            candidate.Candidate.ProjectedEndpoint.RouteGroupPrefix,
+            candidate.Candidate.ProjectedEndpoint.RelativePattern,
+            candidate.Candidate.ProjectedEndpoint.BehaviorType,
+            candidate.Candidate.ProjectedEndpoint.SourceId,
+            candidate.Candidate.ProjectedEndpoint.RequiredCapabilityKey,
+            candidate.Candidate.ProjectedEndpoint.OriginalRequiredCapabilityKey,
+            candidate.Candidate.ProjectedEndpoint.AppliedOverrideId,
+            candidate.Candidate.ProjectedEndpoint.MatchedOverrideIds,
+            candidate.Candidate.ProjectedEndpoint.SelectedOverrideId,
+            candidate.Candidate.ProjectedEndpoint.OverrideSelectionBasis,
+            normalizedSkippedSuppressionIds,
+            normalizedSkippedOverrideIds);
+
+        return candidate with
+        {
+            Candidate = new RestEndpointCandidateRuntimeDescriptor(
+                candidate.Candidate.Id,
+                updatedProjectedEndpoint,
+                candidate.Candidate.OriginalProjection,
+                candidate.Candidate.AuthoringStyle,
+                candidate.Candidate.PrecedenceRank,
+                candidate.Candidate.Status,
+                suppressedByCandidateId: candidate.Candidate.SuppressedByCandidateId,
+                suppressedBySuppressionId: candidate.Candidate.SuppressedBySuppressionId,
+                appliedOverrideId: candidate.Candidate.AppliedOverrideId,
+                matchedSuppressionIds: candidate.Candidate.MatchedSuppressionIds,
+                matchedOverrideIds: candidate.Candidate.MatchedOverrideIds,
+                suppressionReason: candidate.Candidate.SuppressionReason,
+                suppressedByAuthoringPolicyKind: candidate.Candidate.SuppressedByAuthoringPolicyKind,
+                selectedOverrideId: candidate.Candidate.SelectedOverrideId,
+                suppressionSelectionBasis: candidate.Candidate.SuppressionSelectionBasis,
+                overrideSelectionBasis: candidate.Candidate.OverrideSelectionBasis,
+                skippedSuppressionIds: normalizedSkippedSuppressionIds,
+                skippedOverrideIds: normalizedSkippedOverrideIds)
         };
     }
 
@@ -515,13 +606,22 @@ internal static class RestBehaviorProjectionCandidateResolver
     private static ResolvedRestBehaviorEndpointProjectionCandidate ResolvePublication(
         ResolvedRestBehaviorEndpointProjectionCandidate candidate,
         Dictionary<string, RestEndpointSuppressionOptions[]> matchedSuppressionsByCandidateId,
+        Dictionary<string, string[]> skippedSuppressionsByCandidateId,
+        Dictionary<string, string[]> skippedOverridesByCandidateId,
         Dictionary<string, ResolvedRestEndpointAuthoringPolicySuppression> authoringPolicySuppressionsByCandidateId,
         Dictionary<string, ResolvedRestBehaviorEndpointProjectionCandidate[]> winnersByBehavior)
     {
         ArgumentNullException.ThrowIfNull(candidate);
         ArgumentNullException.ThrowIfNull(matchedSuppressionsByCandidateId);
+        ArgumentNullException.ThrowIfNull(skippedSuppressionsByCandidateId);
+        ArgumentNullException.ThrowIfNull(skippedOverridesByCandidateId);
         ArgumentNullException.ThrowIfNull(authoringPolicySuppressionsByCandidateId);
         ArgumentNullException.ThrowIfNull(winnersByBehavior);
+
+        candidate = ApplySkippedGovernanceRuleIds(
+            candidate,
+            skippedSuppressionsByCandidateId[candidate.Candidate.Id],
+            skippedOverridesByCandidateId[candidate.Candidate.Id]);
 
         var matchedSuppressions = matchedSuppressionsByCandidateId[candidate.Candidate.Id];
         var suppression = matchedSuppressions.FirstOrDefault();
@@ -539,11 +639,13 @@ internal static class RestBehaviorProjectionCandidateResolver
                     suppressedBySuppressionId: suppression.Id,
                     appliedOverrideId: candidate.Candidate.AppliedOverrideId,
                     matchedSuppressionIds: matchedSuppressions.Select(static item => item.Id).ToArray(),
-                    matchedOverrideIds: candidate.Candidate.MatchedOverrideIds,
-                    suppressionReason: $"Suppressed by REST endpoint suppression rule '{suppression.Id}'.",
-                    selectedOverrideId: candidate.Candidate.SelectedOverrideId,
-                    suppressionSelectionBasis: ResolveSuppressionSelectionBasis(matchedSuppressions),
-                    overrideSelectionBasis: candidate.Candidate.OverrideSelectionBasis)
+                matchedOverrideIds: candidate.Candidate.MatchedOverrideIds,
+                suppressionReason: $"Suppressed by REST endpoint suppression rule '{suppression.Id}'.",
+                selectedOverrideId: candidate.Candidate.SelectedOverrideId,
+                suppressionSelectionBasis: ResolveSuppressionSelectionBasis(matchedSuppressions),
+                overrideSelectionBasis: candidate.Candidate.OverrideSelectionBasis,
+                skippedSuppressionIds: candidate.Candidate.SkippedSuppressionIds,
+                skippedOverrideIds: candidate.Candidate.SkippedOverrideIds)
             };
         }
 
@@ -563,7 +665,9 @@ internal static class RestBehaviorProjectionCandidateResolver
                     suppressionReason: authoringPolicySuppression.SuppressionReason,
                     suppressedByAuthoringPolicyKind: authoringPolicySuppression.Kind,
                     selectedOverrideId: candidate.Candidate.SelectedOverrideId,
-                    overrideSelectionBasis: candidate.Candidate.OverrideSelectionBasis)
+                    overrideSelectionBasis: candidate.Candidate.OverrideSelectionBasis,
+                    skippedSuppressionIds: candidate.Candidate.SkippedSuppressionIds,
+                    skippedOverrideIds: candidate.Candidate.SkippedOverrideIds)
             };
         }
 
@@ -589,7 +693,9 @@ internal static class RestBehaviorProjectionCandidateResolver
                 matchedOverrideIds: candidate.Candidate.MatchedOverrideIds,
                 suppressionReason: $"Suppressed because behavior '{behaviorId}' is also mapped by higher-precedence authoring style '{winningCandidate.AuthoringStyle}'.",
                 selectedOverrideId: candidate.Candidate.SelectedOverrideId,
-                overrideSelectionBasis: candidate.Candidate.OverrideSelectionBasis)
+                overrideSelectionBasis: candidate.Candidate.OverrideSelectionBasis,
+                skippedSuppressionIds: candidate.Candidate.SkippedSuppressionIds,
+                skippedOverrideIds: candidate.Candidate.SkippedOverrideIds)
         };
     }
 
@@ -989,26 +1095,57 @@ internal static class RestBehaviorProjectionCandidateResolver
             return [];
         }
 
-        return overrides
-            .Where(overrideOptions => MatchesOverride(
+        return OrderOverrides(overrides.Where(overrideOptions => MatchesOverride(
+            sourceModuleId,
+            originalCandidateId,
+            endpointProjection,
+            defaultApiVersionMajor,
+            originalOpenApiDocumentName,
+            originalRouteGroupPrefix,
+            originalBindingDescriptors,
+            originalBindingFallbackMode,
+            originalTagName,
+            allowsHostGovernance,
+            overrideOptions)));
+    }
+
+    private static string[] ResolveSkippedOverrides(
+        ResolvedRestBehaviorEndpointProjectionCandidate candidate,
+        IReadOnlyList<RestEndpointOverrideOptions>? overrides)
+    {
+        ArgumentNullException.ThrowIfNull(candidate);
+
+        if (candidate.Candidate.OriginalProjection.AllowsHostGovernance ||
+            overrides is null ||
+            overrides.Count == 0)
+        {
+            return [];
+        }
+
+        var originalProjection = candidate.Candidate.OriginalProjection;
+        var endpointProjection = candidate.EffectiveEndpointProjection;
+        var sourceModuleId = candidate.Candidate.ProjectedEndpoint.SourceModuleId
+            ?? throw new InvalidOperationException(
+                $"REST endpoint candidate '{candidate.Candidate.Id}' is missing the source module id required to evaluate skipped governance rules.");
+        if (string.IsNullOrWhiteSpace(originalProjection.OpenApiDocumentName) ||
+            string.IsNullOrWhiteSpace(originalProjection.RouteGroupPrefix) ||
+            string.IsNullOrWhiteSpace(originalProjection.TagName))
+        {
+            return [];
+        }
+
+        return OrderOverrides(overrides.Where(overrideOptions => MatchesOverrideSelectors(
                 sourceModuleId,
-                originalCandidateId,
+                candidate.Candidate.Id,
                 endpointProjection,
-                defaultApiVersionMajor,
-                originalOpenApiDocumentName,
-                originalRouteGroupPrefix,
-                originalBindingDescriptors,
-                originalBindingFallbackMode,
-                originalTagName,
-                allowsHostGovernance,
-                overrideOptions))
-            .OrderByDescending(static overrideOptions => overrideOptions.CandidateIds.Count > 0)
-            .ThenBy(static overrideOptions => overrideOptions.CandidateIds.Count == 0 ? int.MaxValue : overrideOptions.CandidateIds.Count)
-            .ThenByDescending(static overrideOptions => CountTargetDimensions(overrideOptions))
-            .ThenByDescending(static overrideOptions => overrideOptions.BehaviorIds.Count > 0)
-            .ThenBy(static overrideOptions => overrideOptions.AuthoringStyles.Count)
-            .ThenBy(static overrideOptions => CountTargetValues(overrideOptions))
-            .ThenBy(static overrideOptions => overrideOptions.Id, StringComparer.OrdinalIgnoreCase)
+                originalProjection.ApiVersionMajor,
+                originalProjection.OpenApiDocumentName,
+                originalProjection.RouteGroupPrefix,
+                originalProjection.BindingDescriptors,
+                originalProjection.BindingFallbackMode,
+                originalProjection.TagName,
+                overrideOptions)))
+            .Select(static overrideOptions => overrideOptions.Id)
             .ToArray();
     }
 
@@ -1454,15 +1591,24 @@ internal static class RestBehaviorProjectionCandidateResolver
             return [];
         }
 
-        return suppressions
-            .Where(suppression => MatchesSuppression(candidate, suppression))
-            .OrderByDescending(static suppression => suppression.CandidateIds.Count > 0)
-            .ThenBy(static suppression => suppression.CandidateIds.Count == 0 ? int.MaxValue : suppression.CandidateIds.Count)
-            .ThenByDescending(static suppression => CountTargetDimensions(suppression))
-            .ThenByDescending(static suppression => suppression.BehaviorIds.Count > 0)
-            .ThenBy(static suppression => suppression.AuthoringStyles.Count)
-            .ThenBy(static suppression => CountTargetValues(suppression))
-            .ThenBy(static suppression => suppression.Id, StringComparer.OrdinalIgnoreCase)
+        return OrderSuppressions(suppressions.Where(suppression => MatchesSuppression(candidate, suppression)));
+    }
+
+    private static string[] ResolveSkippedSuppressions(
+        ResolvedRestBehaviorEndpointProjectionCandidate candidate,
+        IReadOnlyList<RestEndpointSuppressionOptions>? suppressions)
+    {
+        ArgumentNullException.ThrowIfNull(candidate);
+
+        if (candidate.Candidate.OriginalProjection.AllowsHostGovernance ||
+            suppressions is null ||
+            suppressions.Count == 0)
+        {
+            return [];
+        }
+
+        return OrderSuppressions(suppressions.Where(suppression => MatchesSuppressionSelectors(candidate, suppression)))
+            .Select(static suppression => suppression.Id)
             .ToArray();
     }
 
@@ -1509,6 +1655,16 @@ internal static class RestBehaviorProjectionCandidateResolver
         {
             return false;
         }
+
+        return MatchesSuppressionSelectors(candidate, suppression);
+    }
+
+    private static bool MatchesSuppressionSelectors(
+        ResolvedRestBehaviorEndpointProjectionCandidate candidate,
+        RestEndpointSuppressionOptions suppression)
+    {
+        ArgumentNullException.ThrowIfNull(candidate);
+        ArgumentNullException.ThrowIfNull(suppression);
 
         if (suppression.CandidateIds.Count > 0 &&
             !suppression.CandidateIds.Contains(candidate.Candidate.Id, StringComparer.OrdinalIgnoreCase))
@@ -1644,6 +1800,40 @@ internal static class RestBehaviorProjectionCandidateResolver
             return false;
         }
 
+        return MatchesOverrideSelectors(
+            sourceModuleId,
+            originalCandidateId,
+            endpointProjection,
+            defaultApiVersionMajor,
+            originalOpenApiDocumentName,
+            originalRouteGroupPrefix,
+            originalBindingDescriptors,
+            originalBindingFallbackMode,
+            originalTagName,
+            overrideOptions);
+    }
+
+    private static bool MatchesOverrideSelectors(
+        string sourceModuleId,
+        string originalCandidateId,
+        RestBehaviorEndpointProjection endpointProjection,
+        int? defaultApiVersionMajor,
+        string originalOpenApiDocumentName,
+        string originalRouteGroupPrefix,
+        IReadOnlyList<RestEndpointBindingDescriptor> originalBindingDescriptors,
+        RestEndpointBindingFallbackMode? originalBindingFallbackMode,
+        string originalTagName,
+        RestEndpointOverrideOptions overrideOptions)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(sourceModuleId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(originalCandidateId);
+        ArgumentNullException.ThrowIfNull(endpointProjection);
+        ArgumentException.ThrowIfNullOrWhiteSpace(originalOpenApiDocumentName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(originalRouteGroupPrefix);
+        ArgumentNullException.ThrowIfNull(originalBindingDescriptors);
+        ArgumentException.ThrowIfNullOrWhiteSpace(originalTagName);
+        ArgumentNullException.ThrowIfNull(overrideOptions);
+
         if (overrideOptions.CandidateIds.Count > 0 &&
             !overrideOptions.CandidateIds.Contains(originalCandidateId, StringComparer.OrdinalIgnoreCase))
         {
@@ -1720,6 +1910,64 @@ internal static class RestBehaviorProjectionCandidateResolver
         }
 
         return true;
+    }
+
+    private static RestEndpointSuppressionOptions[] OrderSuppressions(
+        IEnumerable<RestEndpointSuppressionOptions> suppressions)
+    {
+        ArgumentNullException.ThrowIfNull(suppressions);
+
+        return suppressions
+            .OrderByDescending(static suppression => suppression.CandidateIds.Count > 0)
+            .ThenBy(static suppression => suppression.CandidateIds.Count == 0 ? int.MaxValue : suppression.CandidateIds.Count)
+            .ThenByDescending(static suppression => CountTargetDimensions(suppression))
+            .ThenByDescending(static suppression => suppression.BehaviorIds.Count > 0)
+            .ThenBy(static suppression => suppression.AuthoringStyles.Count)
+            .ThenBy(static suppression => CountTargetValues(suppression))
+            .ThenBy(static suppression => suppression.Id, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+    }
+
+    private static RestEndpointOverrideOptions[] OrderOverrides(
+        IEnumerable<RestEndpointOverrideOptions> overrides)
+    {
+        ArgumentNullException.ThrowIfNull(overrides);
+
+        return overrides
+            .OrderByDescending(static overrideOptions => overrideOptions.CandidateIds.Count > 0)
+            .ThenBy(static overrideOptions => overrideOptions.CandidateIds.Count == 0 ? int.MaxValue : overrideOptions.CandidateIds.Count)
+            .ThenByDescending(static overrideOptions => CountTargetDimensions(overrideOptions))
+            .ThenByDescending(static overrideOptions => overrideOptions.BehaviorIds.Count > 0)
+            .ThenBy(static overrideOptions => overrideOptions.AuthoringStyles.Count)
+            .ThenBy(static overrideOptions => CountTargetValues(overrideOptions))
+            .ThenBy(static overrideOptions => overrideOptions.Id, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+    }
+
+    private static string[] NormalizeOrderedIdentifiers(IReadOnlyList<string>? values)
+    {
+        if (values is null || values.Count == 0)
+        {
+            return [];
+        }
+
+        var normalized = new List<string>(values.Count);
+        var seen = new HashSet<string>(Comparer);
+        foreach (var value in values)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                continue;
+            }
+
+            var trimmed = value.Trim();
+            if (seen.Add(trimmed))
+            {
+                normalized.Add(trimmed);
+            }
+        }
+
+        return normalized.ToArray();
     }
 
     private static int CountTargetDimensions(RestEndpointSuppressionOptions suppression)

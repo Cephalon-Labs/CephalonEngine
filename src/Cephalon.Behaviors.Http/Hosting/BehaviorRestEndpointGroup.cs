@@ -45,6 +45,8 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
     private string? runtimeOriginalEndpointName;
     private RestEndpointCandidateProjectionDescriptor? runtimeOriginalProjection;
     private string? runtimeOriginalSummary;
+    private string[] runtimeSkippedOverrideIds = [];
+    private string[] runtimeSkippedSuppressionIds = [];
     private string[] runtimeMatchedOverrideIds = [];
     private RestEndpointGovernanceRuleSelectionBasis? runtimeOverrideSelectionBasis;
     private string runtimeAuthoringStyle = RestEndpointRuntimeMetadata.BehaviorHelperAuthoringStyle;
@@ -156,6 +158,22 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
     internal void UseRuntimeMatchedOverrideIds(IReadOnlyList<string>? matchedOverrideIds)
     {
         runtimeMatchedOverrideIds = matchedOverrideIds?
+            .Where(static value => !string.IsNullOrWhiteSpace(value))
+            .Select(static value => value.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray() ?? [];
+    }
+
+    internal void UseRuntimeSkippedGovernanceRuleIds(
+        IReadOnlyList<string>? skippedSuppressionIds,
+        IReadOnlyList<string>? skippedOverrideIds)
+    {
+        runtimeSkippedSuppressionIds = skippedSuppressionIds?
+            .Where(static value => !string.IsNullOrWhiteSpace(value))
+            .Select(static value => value.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray() ?? [];
+        runtimeSkippedOverrideIds = skippedOverrideIds?
             .Where(static value => !string.IsNullOrWhiteSpace(value))
             .Select(static value => value.Trim())
             .Distinct(StringComparer.OrdinalIgnoreCase)
@@ -638,7 +656,9 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
                 : RestEndpointBindingDescriptorAdapter.ToRuntimeDescriptors(contract.Bindings),
             contract.BindingFallbackMode,
             group.runtimeMatchedOverrideIds,
-            group.runtimeOverrideSelectionBasis));
+            group.runtimeOverrideSelectionBasis,
+            group.runtimeSkippedSuppressionIds,
+            group.runtimeSkippedOverrideIds));
 
         ApplyResponseConventions(builder, contract);
 

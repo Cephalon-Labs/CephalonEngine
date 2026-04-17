@@ -106,4 +106,6 @@ internal sealed record RestBehaviorEndpointMetadata(
     IReadOnlyList<RestEndpointBindingDescriptor>? BindingDescriptors,
     RestEndpointBindingFallbackMode? BindingFallbackMode,
     IReadOnlyList<string>? MatchedOverrideIds,
-    RestEndpointGovernanceRuleSelectionBasis? OverrideSelectionBasis);
+    RestEndpointGovernanceRuleSelectionBasis? OverrideSelectionBasis,
+    IReadOnlyList<string>? SkippedSuppressionIds,
+    IReadOnlyList<string>? SkippedOverrideIds);

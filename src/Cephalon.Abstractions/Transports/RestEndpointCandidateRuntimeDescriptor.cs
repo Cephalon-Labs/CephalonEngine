@@ -55,6 +55,14 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
     /// The earliest decisive specificity rule that selected the winning override rule when one was
     /// resolved for this candidate.
     /// </param>
+    /// <param name="skippedSuppressionIds">
+    /// The ordered suppression-rule identifiers that otherwise target this candidate but were
+    /// skipped because the original projection did not allow host governance to participate.
+    /// </param>
+    /// <param name="skippedOverrideIds">
+    /// The ordered override-rule identifiers that otherwise target this candidate but were skipped
+    /// because the original projection did not allow host governance to participate.
+    /// </param>
     public RestEndpointCandidateRuntimeDescriptor(
         string id,
         RestEndpointRuntimeDescriptor projectedEndpoint,
@@ -71,7 +79,9 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
         RestEndpointAuthoringPolicySuppressionKind? suppressedByAuthoringPolicyKind = null,
         string? selectedOverrideId = null,
         RestEndpointGovernanceRuleSelectionBasis? suppressionSelectionBasis = null,
-        RestEndpointGovernanceRuleSelectionBasis? overrideSelectionBasis = null)
+        RestEndpointGovernanceRuleSelectionBasis? overrideSelectionBasis = null,
+        IReadOnlyList<string>? skippedSuppressionIds = null,
+        IReadOnlyList<string>? skippedOverrideIds = null)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -110,6 +120,8 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
 
         var normalizedMatchedSuppressionIds = NormalizeOrderedList(matchedSuppressionIds);
         var normalizedMatchedOverrideIds = NormalizeOrderedList(matchedOverrideIds);
+        var normalizedSkippedSuppressionIds = NormalizeOrderedList(skippedSuppressionIds);
+        var normalizedSkippedOverrideIds = NormalizeOrderedList(skippedOverrideIds);
         var normalizedAppliedOverrideId = string.IsNullOrWhiteSpace(appliedOverrideId)
             ? null
             : appliedOverrideId.Trim();
@@ -232,6 +244,28 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
             normalizedOverrideSelectionBasis = RestEndpointGovernanceRuleSelectionBasis.SingleMatch;
         }
 
+        if ((normalizedSkippedSuppressionIds.Length > 0 || normalizedSkippedOverrideIds.Length > 0) &&
+            originalProjection.AllowsHostGovernance)
+        {
+            throw new ArgumentException(
+                "Skipped governance-rule ids can only be declared when the original projection does not allow host governance.",
+                nameof(skippedSuppressionIds));
+        }
+
+        if (normalizedMatchedSuppressionIds.Intersect(normalizedSkippedSuppressionIds, StringComparer.OrdinalIgnoreCase).Any())
+        {
+            throw new ArgumentException(
+                "A candidate cannot classify the same suppression rule as both matched and skipped.",
+                nameof(skippedSuppressionIds));
+        }
+
+        if (normalizedMatchedOverrideIds.Intersect(normalizedSkippedOverrideIds, StringComparer.OrdinalIgnoreCase).Any())
+        {
+            throw new ArgumentException(
+                "A candidate cannot classify the same override rule as both matched and skipped.",
+                nameof(skippedOverrideIds));
+        }
+
         Id = id.Trim();
         ProjectedEndpoint = projectedEndpoint;
         OriginalProjection = originalProjection;
@@ -247,6 +281,8 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
         AppliedOverrideId = normalizedAppliedOverrideId;
         MatchedSuppressionIds = normalizedMatchedSuppressionIds;
         MatchedOverrideIds = normalizedMatchedOverrideIds;
+        SkippedSuppressionIds = normalizedSkippedSuppressionIds;
+        SkippedOverrideIds = normalizedSkippedOverrideIds;
         SelectedOverrideId = normalizedSelectedOverrideId;
         SuppressionSelectionBasis = normalizedSuppressionSelectionBasis;
         OverrideSelectionBasis = normalizedOverrideSelectionBasis;
@@ -334,6 +370,18 @@ public sealed class RestEndpointCandidateRuntimeDescriptor
     /// Gets the ordered override-rule identifiers that matched this candidate before one winner was selected.
     /// </summary>
     public IReadOnlyList<string> MatchedOverrideIds { get; }
+
+    /// <summary>
+    /// Gets the ordered suppression-rule identifiers that otherwise target this candidate but were
+    /// skipped because the original projection did not allow host governance.
+    /// </summary>
+    public IReadOnlyList<string> SkippedSuppressionIds { get; }
+
+    /// <summary>
+    /// Gets the ordered override-rule identifiers that otherwise target this candidate but were
+    /// skipped because the original projection did not allow host governance.
+    /// </summary>
+    public IReadOnlyList<string> SkippedOverrideIds { get; }
 
     /// <summary>
     /// Gets the operator-facing suppression reason when one is available.

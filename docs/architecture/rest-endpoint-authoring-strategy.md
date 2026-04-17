@@ -326,6 +326,12 @@ Status update:
   `AllowsHostGovernance`, shorthand candidates still participate by default, and host rules still
   leave explicit module DSL out of scope unless they explicitly target authoring style
   `behavior-module-dsl`
+- the next explicit module-DSL governance-visibility follow-through is now shipped through
+  `ENG-058-T129`: when host suppression or override rules target that same explicit module-DSL
+  surface before the route group opts in, runtime candidates plus published behavior-backed
+  endpoints now keep the ordered skipped rule ids visible through `SkippedSuppressionIds` and
+  `SkippedOverrideIds` while `Matched*` stays empty, so operators can distinguish
+  governance-ineligible explicit ownership from a simple selector miss
 - the first host-governance slice is now shipped through `ENG-058-T68`: ASP.NET Core hosts can
   suppress descriptor-backed shorthand candidates through `RestApi:Suppressions`, the runtime now
   exposes those configured rules through `IRestEndpointSuppressionRuntimeCatalog`,

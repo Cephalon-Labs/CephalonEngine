@@ -591,6 +591,10 @@ the effective published groups so runtime truth and actual tag metadata stay ali
 runtime answers show whether host suppression or override rules were even allowed to participate.
 Shorthand candidates publish that flag as `true` by default, while explicit module-DSL routes
 publish `true` only when the owning route group explicitly called `AllowHostGovernance()`.
+When an explicit module-DSL route stays authoritative because the group did not opt in, the same
+candidate and published endpoint answers now also keep ordered `SkippedSuppressionIds` and
+`SkippedOverrideIds` visible. That makes targeted host rules observable without pretending they
+matched or won governance for a route that never entered the governable surface.
 
 The same runtime answer now has a companion candidate catalog for precedence visibility:
 

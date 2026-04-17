@@ -678,6 +678,51 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverExposesSkippedGovernanceRulesForExplicitDslCandidatesWithoutOptIn()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/explicit-governance/orders")
+            .MapGet<ProfileProjectionBoundGetBehavior>("/{cartId}");
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.explicit-governance",
+                "Explicit Governance Module",
+                "Exercises skipped governance visibility for explicit DSL candidates without opt-in.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            suppressions:
+            [
+                new RestEndpointSuppressionOptions(
+                    id: "hide-explicit",
+                    behaviorIds: ["tests.profile.projection.bound.get"],
+                    authoringStyles: [RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle])
+            ],
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "rewrite-explicit",
+                    behaviorIds: ["tests.profile.projection.bound.get"],
+                    authoringStyles: [RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle],
+                    pattern: "/governed/{cartId}")
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.False(candidate.Candidate.OriginalProjection.AllowsHostGovernance);
+        Assert.Empty(candidate.Candidate.MatchedSuppressionIds);
+        Assert.Empty(candidate.Candidate.MatchedOverrideIds);
+        Assert.Equal(["hide-explicit"], candidate.Candidate.SkippedSuppressionIds);
+        Assert.Equal(["rewrite-explicit"], candidate.Candidate.SkippedOverrideIds);
+        Assert.Equal(["hide-explicit"], candidate.Candidate.ProjectedEndpoint.SkippedSuppressionIds);
+        Assert.Equal(["rewrite-explicit"], candidate.Candidate.ProjectedEndpoint.SkippedOverrideIds);
+        Assert.Equal(
+            "/api/v1/tests/explicit-governance/orders/{cartId}",
+            candidate.Candidate.ProjectedEndpoint.RoutePattern);
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverPrefersSelectorSpecificSuppressionRuleWhenMultipleRulesMatch()
     {
         var builder = new RestBehaviorModuleBuilder();

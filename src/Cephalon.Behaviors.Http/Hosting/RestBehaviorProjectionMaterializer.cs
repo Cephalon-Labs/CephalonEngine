@@ -123,6 +123,9 @@ internal static class RestBehaviorProjectionMaterializer
                     candidate.Candidate.ProjectedEndpoint.OriginalSummary,
                     candidate.Candidate.ProjectedEndpoint.OriginalDescription);
                 group.UseRuntimeMatchedOverrideIds(candidate.Candidate.MatchedOverrideIds);
+                group.UseRuntimeSkippedGovernanceRuleIds(
+                    candidate.Candidate.SkippedSuppressionIds,
+                    candidate.Candidate.SkippedOverrideIds);
                 group.UseRuntimeOverrideSelectionBasis(candidate.Candidate.OverrideSelectionBasis);
                 var builder = candidate.EffectiveEndpointProjection.Apply(group);
                 var sourceCapabilityCapture = CaptureSourceCapability(builder);
@@ -414,7 +417,9 @@ internal static class RestBehaviorProjectionMaterializer
             suppressedByAuthoringPolicyKind: candidate.Candidate.SuppressedByAuthoringPolicyKind,
             selectedOverrideId: candidate.Candidate.SelectedOverrideId,
             suppressionSelectionBasis: candidate.Candidate.SuppressionSelectionBasis,
-            overrideSelectionBasis: candidate.Candidate.OverrideSelectionBasis);
+            overrideSelectionBasis: candidate.Candidate.OverrideSelectionBasis,
+            skippedSuppressionIds: candidate.Candidate.SkippedSuppressionIds,
+            skippedOverrideIds: candidate.Candidate.SkippedOverrideIds);
     }
 
     private static string? ResolveRegisteredAppliedOverrideId(

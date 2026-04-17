@@ -33,7 +33,9 @@ internal static class RestEndpointRuntimeDescriptorFactory
         string? originalRequiredCapabilityKey = null,
         string? appliedOverrideId = null,
         IReadOnlyList<string>? matchedOverrideIds = null,
-        RestEndpointGovernanceRuleSelectionBasis? overrideSelectionBasis = null)
+        RestEndpointGovernanceRuleSelectionBasis? overrideSelectionBasis = null,
+        IReadOnlyList<string>? skippedSuppressionIds = null,
+        IReadOnlyList<string>? skippedOverrideIds = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sourceKind);
         ArgumentException.ThrowIfNullOrWhiteSpace(method);
@@ -88,7 +90,9 @@ internal static class RestEndpointRuntimeDescriptorFactory
             originalRequiredCapabilityKey: originalRequiredCapabilityKey,
             appliedOverrideId: appliedOverrideId,
             matchedOverrideIds: matchedOverrideIds,
-            overrideSelectionBasis: overrideSelectionBasis);
+            overrideSelectionBasis: overrideSelectionBasis,
+            skippedSuppressionIds: skippedSuppressionIds,
+            skippedOverrideIds: skippedOverrideIds);
     }
 
     internal static string BuildBehaviorEndpointId(
