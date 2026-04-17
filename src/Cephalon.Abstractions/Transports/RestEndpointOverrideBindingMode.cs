@@ -11,6 +11,7 @@ public enum RestEndpointOverrideBindingMode
     /// <summary>
     /// No explicit binding-override mode has been selected.
     /// </summary>
+    [JsonStringEnumMemberName("unspecified")]
     Unspecified = 0,
 
     /// <summary>

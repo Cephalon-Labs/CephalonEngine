@@ -544,7 +544,9 @@ Current helper behavior:
   overrides in either default
   wire-name-only `replace-explicit` mode or `merge-explicit` property-patch-and-withdraw mode while leaving
   unbound route placeholders and remaining request-body fields available for deterministic
-  fallback, now allows configured rules to publish their declared effect dimensions through typed
+  fallback, now also keeps omitted binding modes visible as runtime JSON `unspecified` on
+  `/engine/rest-endpoint-overrides` plus `snapshot.RestEndpointOverrides` while leaving host config
+  explicit-mode-only, and now allows configured rules to publish their declared effect dimensions through typed
   `ActionKinds`, and now keeps the winning rule's declared-versus-effective action dimensions
   visible on both runtime candidates and published endpoints through
   `SelectedOverrideActionKinds` plus `AppliedOverrideActionKinds` so no-op winning overrides remain

@@ -1087,8 +1087,11 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
-    public void RestEndpointOverrideBindingModeExposesStableExplicitModes()
+    public void RestEndpointOverrideBindingModeExposesStableModes()
     {
+        Assert.True(Enum.IsDefined(
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideBindingMode),
+            "Unspecified"));
         Assert.True(Enum.IsDefined(
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideBindingMode),
             "ReplaceExplicit"));
@@ -1102,6 +1105,7 @@ public sealed class PackageSurfaceTests
     }
 
     [Theory]
+    [InlineData(global::Cephalon.Abstractions.Transports.RestEndpointOverrideBindingMode.Unspecified, "unspecified")]
     [InlineData(global::Cephalon.Abstractions.Transports.RestEndpointOverrideBindingMode.ReplaceExplicit, "replace-explicit")]
     [InlineData(global::Cephalon.Abstractions.Transports.RestEndpointOverrideBindingMode.MergeExplicit, "merge-explicit")]
     public void RestEndpointOverrideBindingModeWireNamesStayAlignedWithJsonSerialization(

@@ -1152,7 +1152,9 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
         var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
         var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
+        var rawOverrides = await client.GetStringAsync("/engine/rest-endpoint-overrides");
         var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+        var rawSnapshot = await client.GetStringAsync("/engine/snapshot");
 
         Assert.NotNull(endpoints);
         Assert.NotNull(candidates);
@@ -6061,7 +6063,9 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
         var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
         var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
+        var rawOverrides = await client.GetStringAsync("/engine/rest-endpoint-overrides");
         var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+        var rawSnapshot = await client.GetStringAsync("/engine/snapshot");
 
         Assert.NotNull(endpoints);
         Assert.NotNull(candidates);
@@ -6099,10 +6103,12 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(RestEndpointOverrideBindingMode.Unspecified, rule.BindingMode);
         Assert.Empty(rule.Bindings);
         Assert.Empty(rule.RemovedBindingProperties);
+        Assert.Contains("\"bindingMode\":\"unspecified\"", rawOverrides, StringComparison.Ordinal);
 
         Assert.Contains(snapshot.RestEndpointOverrides, static item =>
             string.Equals(item.Id, "clear-explicit-bindings", StringComparison.Ordinal) &&
             item.ClearBindings);
+        Assert.Contains("\"bindingMode\":\"unspecified\"", rawSnapshot, StringComparison.Ordinal);
 
         using var request = new HttpRequestMessage(
             HttpMethod.Post,
