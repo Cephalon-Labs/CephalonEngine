@@ -3675,6 +3675,99 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonPreservesImplicitQueryFallbackWhenProfileDeclaresItExplicitly()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileBindingExplicitQueryFallbackRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(snapshot);
+
+        var endpoint = Assert.Single(endpoints, static item =>
+            string.Equals(item.BehaviorId, "tests.rest.profile.bindings.query.explicit", StringComparison.Ordinal));
+        Assert.Equal("/api/v6/tests/profile-runtime/query-explicit/orders/lookup/{orderId}", endpoint.RoutePattern);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback,
+            endpoint.BindingFallbackMode);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback.GetWireName(),
+            endpoint.Metadata["bindingFallbackMode"]);
+        Assert.Single(endpoint.BindingDescriptors);
+        Assert.Contains(endpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "OrderId" &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "orderId");
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.profile.bindings.query.explicit", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+        Assert.Null(candidate.AppliedOverrideId);
+        Assert.Equal(endpoint.Id, candidate.ProjectedEndpoint.Id);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback,
+            candidate.OriginalProjection.BindingFallbackMode);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback,
+            candidate.ProjectedEndpoint.BindingFallbackMode);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback.GetWireName(),
+            candidate.ProjectedEndpoint.Metadata["bindingFallbackMode"]);
+        Assert.Single(candidate.OriginalProjection.BindingDescriptors);
+        Assert.Contains(candidate.OriginalProjection.BindingDescriptors, static binding =>
+            binding.PropertyName == "OrderId" &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "orderId");
+
+        var response = await client.GetAsync("/api/v6/tests/profile-runtime/query-explicit/orders/lookup/ord-91?quantity=5");
+        response.EnsureSuccessStatusCode();
+
+        var payload = await response.Content.ReadFromJsonAsync<ProfileBindingQueryFallbackPartialRuntimeOutput>();
+        Assert.NotNull(payload);
+        Assert.Equal("ord-91", payload.OrderId);
+        Assert.Equal(5, payload.Quantity);
+
+        Assert.Contains(snapshot.RestEndpoints, static item =>
+            string.Equals(item.BehaviorId, "tests.rest.profile.bindings.query.explicit", StringComparison.Ordinal) &&
+            item.BindingFallbackMode == RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback &&
+            string.Equals(
+                item.Metadata["bindingFallbackMode"],
+                RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback.GetWireName(),
+                StringComparison.Ordinal));
+        Assert.Contains(snapshot.RestEndpointCandidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.profile.bindings.query.explicit", StringComparison.Ordinal) &&
+            item.OriginalProjection.BindingFallbackMode == RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback &&
+            item.ProjectedEndpoint.BindingFallbackMode == RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback &&
+            string.Equals(
+                item.ProjectedEndpoint.Metadata["bindingFallbackMode"],
+                RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback.GetWireName(),
+                StringComparison.Ordinal));
+    }
+
+    [Fact]
     public void MapCephalonRejectsPlaceholderRemovalWhenOriginalRouteCoverageReliesOnInference()
     {
         var builder = WebApplication.CreateBuilder();
@@ -6027,6 +6120,22 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         }
     }
 
+    private sealed class ProfileBindingExplicitQueryFallbackRuntimeCatalogModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.profile-runtime.bindings.query.explicit",
+            "Profile Runtime Explicit Query Fallback Module",
+            "Publishes a profile-driven REST endpoint with explicit bindings that still preserve the remaining implicit query fallback surface.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Group("/tests/profile-runtime/query-explicit/orders")
+                .WithTagName("Profile Runtime Explicit Query API")
+                .MapProfile<GetProfileBindingExplicitQueryFallbackRuntimeOrderBehavior>();
+        }
+    }
+
     private static string BuildBehaviorProjectionCandidateId(
         string sourceModuleId,
         string behaviorId,
@@ -6490,6 +6599,22 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     [AppBehavior("tests.rest.profile.bindings.query.partial")]
     [BehaviorRestProfile(BehaviorRestMethod.Get, "/lookup", ApiVersionMajor = 6)]
     private sealed class GetProfileBindingPartialQueryFallbackRuntimeOrderBehavior : IAppBehavior<ProfileBindingQueryFallbackPartialRuntimeInput, ProfileBindingQueryFallbackPartialRuntimeOutput>
+    {
+        public Task<ProfileBindingQueryFallbackPartialRuntimeOutput> HandleAsync(
+            ProfileBindingQueryFallbackPartialRuntimeInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProfileBindingQueryFallbackPartialRuntimeOutput(
+                input.OrderId,
+                input.Quantity));
+        }
+    }
+
+    [AppBehavior("tests.rest.profile.bindings.query.explicit")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/lookup/{orderId}", ApiVersionMajor = 6, PreserveImplicitQueryFallback = true)]
+    [BehaviorRestBinding(nameof(ProfileBindingQueryFallbackPartialRuntimeInput.OrderId), BehaviorRestBindingSource.Route, Name = "orderId")]
+    private sealed class GetProfileBindingExplicitQueryFallbackRuntimeOrderBehavior : IAppBehavior<ProfileBindingQueryFallbackPartialRuntimeInput, ProfileBindingQueryFallbackPartialRuntimeOutput>
     {
         public Task<ProfileBindingQueryFallbackPartialRuntimeOutput> HandleAsync(
             ProfileBindingQueryFallbackPartialRuntimeInput input,

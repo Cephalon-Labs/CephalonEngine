@@ -49,7 +49,8 @@ internal static class BehaviorRestProfileResolver
                 attribute.Method,
                 attribute.RelativePattern,
                 attribute.ApiVersionMajor > 0 ? attribute.ApiVersionMajor : null,
-                ExtractAttributeBindings(behaviorType)),
+                ExtractAttributeBindings(behaviorType),
+                attribute.PreserveImplicitQueryFallback),
             behaviorType.FullName ?? behaviorType.Name,
             behaviorType);
     }
@@ -274,13 +275,20 @@ internal static class BehaviorRestProfileResolver
                 normalizedPattern,
                 sourceIdentity,
                 descriptor.BehaviorId);
+        if (descriptor.PreserveImplicitQueryFallback &&
+            normalizedBindings.Length == 0)
+        {
+            throw new InvalidOperationException(
+                $"REST profile metadata for behavior '{descriptor.BehaviorId}' from '{sourceIdentity}' sets PreserveImplicitQueryFallback, but preserved implicit query fallback requires at least one explicit binding descriptor.");
+        }
 
         return new BehaviorRestProfileDescriptor(
             descriptor.BehaviorId.Trim(),
             descriptor.Method,
             normalizedPattern,
             descriptor.ApiVersionMajor,
-            normalizedBindings);
+            normalizedBindings,
+            descriptor.PreserveImplicitQueryFallback);
     }
 
     private static void EnsureValidRoutePattern(

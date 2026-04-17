@@ -33,11 +33,13 @@ module-owned REST endpoints.
 - **Metadata-only REST profile contract** — `BehaviorRestProfileAttribute`,
   `BehaviorRestBindingAttribute`, `BehaviorRestMethod`, `BehaviorRestProfileDescriptor`,
   `BehaviorRestBindingDescriptor`, and `BehaviorRestBindingSource` for behavior-authored candidate
-  REST method, relative route, optional API-version hints, and explicit route/query/header/body
-  binding plans that explicit module-owned shorthand such as `MapProfile<TBehavior>()` can consume
+  REST method, relative route, optional API-version hints, explicit route/query/header/body
+  binding plans, and optional preserved implicit-query fallback intent for explicitly bound
+  profiles that explicit module-owned shorthand such as `MapProfile<TBehavior>()` can consume
   without publishing public REST directly from behaviors; the build now rejects malformed
-  placeholder syntax such as unbalanced `{...}` segments earlier, while runtime normalization still
-  leaves final route parsing authoritative to ASP.NET Core
+  placeholder syntax such as unbalanced `{...}` segments and preserved-fallback profiles that omit
+  explicit bindings earlier, while runtime normalization still leaves final route parsing
+  authoritative to ASP.NET Core
 - **OpenAPI enrichment** — module tag names and descriptions, module-major API-version defaults
   with explicit `.ApiVersion(...)` and `.WithOpenApiDocumentName(...)` override support, best-effort XML comment
   summaries/descriptions for module-owned REST endpoints, and separation between public REST docs
@@ -180,8 +182,9 @@ Current profile behavior:
 - the owning module still chooses whether that behavior becomes public REST through
   `ConfigureRestBehaviors(...)`
 - `Cephalon.Behaviors.SourceGen` validates the core profile shape at build time and emits
-  `GetRestProfiles()` hints, including explicit binding descriptors when they are declared, and
-  `GetRestProfileBehaviorTypes()` hints for generated module-owned shorthand
+  `GetRestProfiles()` hints, including explicit binding descriptors and preserved implicit
+  query-fallback intent when they are declared, plus `GetRestProfileBehaviorTypes()` hints for
+  generated module-owned shorthand
 - `IRestBehaviorEndpointGroupBuilder.MapProfile<TBehavior>()` is now the shipped low-ceremony
   module-owned shorthand that consumes those hints through the existing REST projection pipeline
 - profile consumption prefers source-generated `GetRestProfiles()` hints first and falls back to
@@ -195,6 +198,10 @@ Current profile behavior:
   falls back to direct attribute metadata
 - when explicit bindings are present, they override the implicit merge baseline, while unbound
   route placeholders and body-capable request bodies can still fill remaining object properties
+- explicit profiles can now also preserve the remaining implicit query-string fallback surface by
+  setting `BehaviorRestProfile(PreserveImplicitQueryFallback = true)`, but that flag requires at
+  least one explicit `BehaviorRestBindingAttribute`; build-time `ABT0027` and runtime profile
+  normalization both fail fast when the flag appears without bindings
 - when no explicit binding plan is present, shorthand candidates still use the implicit
   query-plus-route merge baseline, and bounded placeholder additions can promote from that original
   implicit query-fallback surface; once explicit bindings exist, the stricter explicit-binding path
@@ -392,8 +399,8 @@ Current helper behavior:
   a dedicated module class, while still reusing the same normalized projection and runtime-catalog
   path
 - adds `MapProfile<TBehavior>()` as an explicit module-owned shorthand that consumes the behavior
-  profile's method, relative pattern, optional candidate API version, and any explicit binding
-  descriptors
+  profile's method, relative pattern, optional candidate API version, any explicit binding
+  descriptors, and optional preserved implicit query-fallback intent for explicitly bound profiles
 - adds `MapGeneratedProfiles()` and `MapGeneratedProfiles(string)` as explicit module-owned
   low-code shorthands that publish every matching profiled behavior beneath one owned route group
 - derives the default generated-selection prefix from the route-group path by trimming slashes and
@@ -429,7 +436,9 @@ Current helper behavior:
 - dispatches through `BehaviorDispatcher` using Minimal API handlers
 - lets behaviors return raw `TOutput` or transport-neutral `Result<TOutput>` values
 - uses the implicit route/query/body merge baseline only when no explicit profile bindings are
-  present; profile-driven bindings switch to the descriptor-aware override model instead
+  present; profile-driven bindings switch to the descriptor-aware override model instead, unless the
+  profile explicitly preserves source implicit query fallback through
+  `BehaviorRestProfile(PreserveImplicitQueryFallback = true)`
 - uses the owning module display name as the OpenAPI tag
 - lets the module override the published tag name and tag description through `.WithTagName(...)`
   and `.WithTagDescription(...)`

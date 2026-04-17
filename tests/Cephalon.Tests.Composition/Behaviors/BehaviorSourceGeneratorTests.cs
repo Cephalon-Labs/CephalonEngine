@@ -79,6 +79,7 @@ public sealed class BehaviorSourceGeneratorTests
                 public BehaviorRestMethod Method { get; }
                 public string RelativePattern { get; }
                 public int ApiVersionMajor { get; set; }
+                public bool PreserveImplicitQueryFallback { get; set; }
             }
 
             [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
@@ -116,13 +117,15 @@ public sealed class BehaviorSourceGeneratorTests
                     BehaviorRestMethod method,
                     string relativePattern,
                     int? apiVersionMajor,
-                    System.Collections.Generic.IReadOnlyList<BehaviorRestBindingDescriptor>? bindings = null)
+                    System.Collections.Generic.IReadOnlyList<BehaviorRestBindingDescriptor>? bindings = null,
+                    bool preserveImplicitQueryFallback = false)
                 {
                     BehaviorId = behaviorId;
                     Method = method;
                     RelativePattern = relativePattern;
                     ApiVersionMajor = apiVersionMajor;
                     Bindings = bindings;
+                    PreserveImplicitQueryFallback = preserveImplicitQueryFallback;
                 }
 
                 public string BehaviorId { get; }
@@ -130,6 +133,7 @@ public sealed class BehaviorSourceGeneratorTests
                 public string RelativePattern { get; }
                 public int? ApiVersionMajor { get; }
                 public System.Collections.Generic.IReadOnlyList<BehaviorRestBindingDescriptor>? Bindings { get; }
+                public bool PreserveImplicitQueryFallback { get; }
             }
         }
         """;
@@ -277,6 +281,36 @@ public sealed class BehaviorSourceGeneratorTests
     }
 
     [Fact]
+    public void ValidBehaviorWithRestProfilePreservedImplicitQueryFallbackGeneratesFallbackHint()
+    {
+        const string source = """
+            using Cephalon.Abstractions.Behaviors;
+            using Cephalon.Behaviors.Http.Abstractions;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            public sealed record LookupOrderInput(string OrderId, int Quantity);
+
+            [AppBehavior("orders.lookup")]
+            [BehaviorRestProfile(BehaviorRestMethod.Get, "/lookup/{orderId}", ApiVersionMajor = 3, PreserveImplicitQueryFallback = true)]
+            [BehaviorRestBinding(nameof(LookupOrderInput.OrderId), BehaviorRestBindingSource.Route, Name = "orderId")]
+            public sealed class LookupOrderBehavior : IAppBehavior<LookupOrderInput, string>
+            {
+                public Task<string> HandleAsync(LookupOrderInput input, IBehaviorContext ctx, CancellationToken ct = default)
+                    => Task.FromResult("ok");
+            }
+            """;
+
+        var (result, diagnostics) = RunGenerator(source);
+
+        Assert.Empty(diagnostics);
+
+        var autoRegistration = GetGeneratedAutoRegistrationSource(result);
+        Assert.NotNull(autoRegistration);
+        Assert.Contains("preserveImplicitQueryFallback: true", autoRegistration, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void ClassWithoutIAppBehaviorEmitsAbt0010()
     {
         const string source = """
@@ -373,6 +407,7 @@ public sealed class BehaviorSourceGeneratorTests
             BehaviorSourceGenerator.Abt024RestBodyBindingMustUseBodyCapableMethod,
             BehaviorSourceGenerator.Abt025RestRouteBindingMustMatchRoutePlaceholder,
             BehaviorSourceGenerator.Abt026RestProfilePatternMustUseValidPlaceholderSyntax,
+            BehaviorSourceGenerator.Abt027RestPreservedImplicitQueryFallbackRequiresExplicitBindings,
         };
 
         foreach (var descriptor in descriptors)
@@ -403,6 +438,7 @@ public sealed class BehaviorSourceGeneratorTests
         Assert.Equal("ABT0024", BehaviorSourceGenerator.Abt024RestBodyBindingMustUseBodyCapableMethod.Id);
         Assert.Equal("ABT0025", BehaviorSourceGenerator.Abt025RestRouteBindingMustMatchRoutePlaceholder.Id);
         Assert.Equal("ABT0026", BehaviorSourceGenerator.Abt026RestProfilePatternMustUseValidPlaceholderSyntax.Id);
+        Assert.Equal("ABT0027", BehaviorSourceGenerator.Abt027RestPreservedImplicitQueryFallbackRequiresExplicitBindings.Id);
     }
 
     [Fact]
@@ -781,6 +817,31 @@ public sealed class BehaviorSourceGeneratorTests
         var (_, diagnostics) = RunGenerator(source);
 
         Assert.Contains(diagnostics, d => d.Id == "ABT0026");
+    }
+
+    [Fact]
+    public void RestProfilePreservedImplicitQueryFallbackWithoutBindingsEmitsAbt0027()
+    {
+        const string source = """
+            using Cephalon.Abstractions.Behaviors;
+            using Cephalon.Behaviors.Http.Abstractions;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            public sealed record LookupOrderInput(string OrderId, int Quantity);
+
+            [AppBehavior("orders.lookup")]
+            [BehaviorRestProfile(BehaviorRestMethod.Get, "/lookup", PreserveImplicitQueryFallback = true)]
+            public sealed class LookupOrderBehavior : IAppBehavior<LookupOrderInput, string>
+            {
+                public Task<string> HandleAsync(LookupOrderInput input, IBehaviorContext ctx, CancellationToken ct = default)
+                    => Task.FromResult("ok");
+            }
+            """;
+
+        var (_, diagnostics) = RunGenerator(source);
+
+        Assert.Contains(diagnostics, d => d.Id == "ABT0027");
     }
 
     [Fact]

@@ -14,9 +14,14 @@ namespace Cephalon.Behaviors.Http.Abstractions;
 /// Optional explicit input-binding hints that describe where individual input properties should be
 /// sourced from when an owning module consumes the profile.
 /// </param>
+/// <param name="PreserveImplicitQueryFallback">
+/// Indicates whether explicit profile bindings should preserve the remaining implicit query-string
+/// fallback surface when an owning module consumes the profile.
+/// </param>
 public sealed record BehaviorRestProfileDescriptor(
     string BehaviorId,
     BehaviorRestMethod Method,
     string RelativePattern,
     int? ApiVersionMajor,
-    IReadOnlyList<BehaviorRestBindingDescriptor>? Bindings = null);
+    IReadOnlyList<BehaviorRestBindingDescriptor>? Bindings = null,
+    bool PreserveImplicitQueryFallback = false);

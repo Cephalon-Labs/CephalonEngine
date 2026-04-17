@@ -116,7 +116,8 @@ internal sealed record RestBehaviorEndpointProjection(
             profile.RelativePattern,
             configureEndpoint,
             authoringStyle,
-            profile.Bindings);
+            profile.Bindings,
+            profile.PreserveImplicitQueryFallback);
     }
 
     internal RestBehaviorEndpointProjection WithMethod(RestBehaviorHttpMethod method)

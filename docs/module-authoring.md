@@ -405,6 +405,13 @@ public sealed class AddToCartBehavior : IAppBehavior<AddToCartInput, Result<AddT
 }
 ```
 
+For a `GET`-style profile that needs one explicit route alias but should keep the remaining unbound
+query-string properties on the original implicit fallback surface, set
+`BehaviorRestProfile(PreserveImplicitQueryFallback = true)` alongside at least one explicit
+`BehaviorRestBindingAttribute`. `Cephalon.Behaviors.SourceGen` now rejects the flag through
+`ABT0027` when no explicit bindings are present, and runtime normalization re-checks the same rule
+when generated hints are unavailable or stale.
+
 Current helper behavior:
 
 - gives behavior authors a base class instead of forcing modules to implement multiple interfaces
@@ -470,7 +477,8 @@ Current helper behavior:
   profile bindings, while profile-driven explicit bindings switch to descriptor-aware source
   resolution with deterministic route/body fallback
 - validates explicit binding metadata at build time and re-checks the same route-placeholder truth
-  during runtime fallback so low-ceremony profile authoring stays deterministic
+  plus preserved implicit-query fallback requirements during runtime fallback so low-ceremony
+  profile authoring stays deterministic
 - derives the default generated-selection prefix from the route-group path by trimming slashes and
   replacing `/` separators with `.`, while still allowing an explicit behavior-id prefix override
 - uses the module display name for OpenAPI tags

@@ -21,3 +21,4 @@ ABT0023 | Cephalon.Behaviors | Error | BehaviorRestBinding property must not be 
 ABT0024 | Cephalon.Behaviors | Error | BehaviorRestBinding body sources require a body-capable REST method
 ABT0025 | Cephalon.Behaviors | Error | BehaviorRestBinding route sources must match declared route placeholders
 ABT0026 | Cephalon.Behaviors | Error | BehaviorRestProfile relative pattern must use valid route placeholder syntax
+ABT0027 | Cephalon.Behaviors | Error | BehaviorRestProfile preserved implicit query fallback requires explicit bindings

@@ -45,7 +45,7 @@ internal static class RestBehaviorBindingFallbackModeResolver
         ArgumentException.ThrowIfNullOrWhiteSpace(pattern);
         ArgumentNullException.ThrowIfNull(bindings);
 
-        if (preserveImplicitQueryFallback)
+        if (preserveImplicitQueryFallback && bindings.Count > 0)
         {
             return RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback;
         }

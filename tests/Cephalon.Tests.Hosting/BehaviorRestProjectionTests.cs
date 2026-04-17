@@ -2026,6 +2026,47 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverPreservesImplicitQueryFallbackMetadataWhenProfileDeclaresItExplicitly()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-binding-explicit-query")
+            .MapProfile<ProfileProjectionPreservedQueryBindingBehavior>();
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.profile-binding-explicit-query",
+                "Profile Binding Explicit Query Module",
+                "Exercises profile-authored preserved implicit query fallback with an explicit source binding plan.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Null(candidate.Candidate.AppliedOverrideId);
+        Assert.Equal("/api/v6/tests/profile-binding-explicit-query/lookup/{cartId}", candidate.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback,
+            candidate.Candidate.OriginalProjection.BindingFallbackMode);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback,
+            candidate.Candidate.ProjectedEndpoint.BindingFallbackMode);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback.GetWireName(),
+            candidate.Candidate.ProjectedEndpoint.Metadata["bindingFallbackMode"]);
+        Assert.Single(candidate.Candidate.OriginalProjection.BindingDescriptors);
+        Assert.Contains(candidate.Candidate.OriginalProjection.BindingDescriptors, static binding =>
+            binding.PropertyName == "CartId" &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "cartId");
+        Assert.Single(candidate.Candidate.ProjectedEndpoint.BindingDescriptors);
+        Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "CartId" &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "cartId");
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverAllowsPlaceholderRemovalWhenAffectedPropertiesStayExplicitlyBound()
     {
         var builder = new RestBehaviorModuleBuilder();
@@ -3282,6 +3323,34 @@ public sealed class BehaviorRestProjectionTests
 
         Assert.Contains("MapProfile<TBehavior>()", exception.Message, StringComparison.Ordinal);
         Assert.Contains("BehaviorRestProfile", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void RestBehaviorModuleBuilderRejectsPreservedImplicitQueryFallbackProfilesWithoutExplicitBindings()
+    {
+        var behaviorType = CreateDynamicProfileBehaviorType(
+            "tests.profile.projection.query.explicit.invalid",
+            BehaviorRestMethod.Get,
+            "/lookup",
+            typeof(string),
+            preserveImplicitQueryFallback: true);
+        var builder = new RestBehaviorModuleBuilder();
+        var group = builder.Group("/tests/profile-preserved-query");
+        var mapProfileMethod = group.GetType()
+            .GetMethods(BindingFlags.Instance | BindingFlags.Public)
+            .Single(method =>
+                method.Name == "MapProfile" &&
+                method.IsGenericMethodDefinition &&
+                method.GetGenericArguments().Length == 1 &&
+                method.GetParameters() is [{ ParameterType: { } parameterType }] &&
+                parameterType == typeof(Action<RouteHandlerBuilder>));
+
+        var invocationException = Assert.Throws<TargetInvocationException>(() =>
+            mapProfileMethod.MakeGenericMethod(behaviorType).Invoke(group, [null]));
+        var exception = Assert.IsType<InvalidOperationException>(invocationException.InnerException);
+
+        Assert.Contains("PreserveImplicitQueryFallback", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("explicit binding", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -4718,6 +4787,21 @@ public sealed class BehaviorRestProjectionTests
         string relativePattern,
         Type inputType,
         params DynamicProfileBindingDefinition[] bindings)
+        => CreateDynamicProfileBehaviorType(
+            behaviorId,
+            method,
+            relativePattern,
+            inputType,
+            preserveImplicitQueryFallback: false,
+            bindings);
+
+    private static Type CreateDynamicProfileBehaviorType(
+        string behaviorId,
+        BehaviorRestMethod method,
+        string relativePattern,
+        Type inputType,
+        bool preserveImplicitQueryFallback = false,
+        params DynamicProfileBindingDefinition[] bindings)
     {
         var assemblyName = new AssemblyName($"Cephalon.Tests.Hosting.DynamicProfiles.{Guid.NewGuid():N}");
         var assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
@@ -4734,11 +4818,22 @@ public sealed class BehaviorRestProjectionTests
             typeof(AppBehaviorAttribute).GetConstructor([typeof(string)])!,
             [behaviorId]));
 
+        var profileProperties = new List<PropertyInfo>
+        {
+            typeof(BehaviorRestProfileAttribute).GetProperty(nameof(BehaviorRestProfileAttribute.ApiVersionMajor))!
+        };
+        var profileValues = new List<object> { 6 };
+        if (preserveImplicitQueryFallback)
+        {
+            profileProperties.Add(typeof(BehaviorRestProfileAttribute).GetProperty(nameof(BehaviorRestProfileAttribute.PreserveImplicitQueryFallback))!);
+            profileValues.Add(true);
+        }
+
         typeBuilder.SetCustomAttribute(new CustomAttributeBuilder(
             typeof(BehaviorRestProfileAttribute).GetConstructor([typeof(BehaviorRestMethod), typeof(string)])!,
             [method, relativePattern],
-            [typeof(BehaviorRestProfileAttribute).GetProperty(nameof(BehaviorRestProfileAttribute.ApiVersionMajor))!],
-            [6]));
+            [.. profileProperties],
+            [.. profileValues]));
 
         var bindingConstructor = typeof(BehaviorRestBindingAttribute).GetConstructor(
             [typeof(string), typeof(BehaviorRestBindingSource)])!;
@@ -4985,6 +5080,20 @@ public sealed class BehaviorRestProjectionTests
     [AppBehavior("tests.profile.projection.query.get")]
     [BehaviorRestProfile(BehaviorRestMethod.Get, "/lookup", ApiVersionMajor = 6)]
     private sealed class ProfileProjectionQueryFallbackBehavior : IAppBehavior<ProfileProjectionBoundInput, ProjectionCartOutput>
+    {
+        public Task<ProjectionCartOutput> HandleAsync(
+            ProfileProjectionBoundInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProjectionCartOutput(input.CartId));
+        }
+    }
+
+    [AppBehavior("tests.profile.projection.query.explicit")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/lookup/{cartId}", ApiVersionMajor = 6, PreserveImplicitQueryFallback = true)]
+    [BehaviorRestBinding(nameof(ProfileProjectionBoundInput.CartId), BehaviorRestBindingSource.Route, Name = "cartId")]
+    private sealed class ProfileProjectionPreservedQueryBindingBehavior : IAppBehavior<ProfileProjectionBoundInput, ProjectionCartOutput>
     {
         public Task<ProjectionCartOutput> HandleAsync(
             ProfileProjectionBoundInput input,

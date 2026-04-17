@@ -9,7 +9,8 @@ namespace Cephalon.Behaviors.Http.Abstractions;
 /// version for future generated or descriptor-backed module projections. Use repeated
 /// <see cref="BehaviorRestBindingAttribute" /> declarations when a module-owned projection should
 /// bind selected input properties explicitly from route values, query string values, headers, or
-/// JSON body fields.
+/// JSON body fields. When a profile declares explicit bindings and still needs remaining query
+/// values to flow implicitly, set <see cref="PreserveImplicitQueryFallback" /> to <see langword="true" />.
 /// </remarks>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
 public sealed class BehaviorRestProfileAttribute : Attribute
@@ -46,4 +47,16 @@ public sealed class BehaviorRestProfileAttribute : Attribute
     /// published OpenAPI document allow-list such as <c>OpenApi:EnabledVersions</c>.
     /// </remarks>
     public int ApiVersionMajor { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether explicit profile bindings should preserve the
+    /// remaining implicit query-string fallback surface.
+    /// </summary>
+    /// <remarks>
+    /// This flag is meaningful only when the profile also declares explicit bindings through
+    /// <see cref="BehaviorRestBindingAttribute" />. It lets module-owned shorthand keep selected
+    /// explicit route/query/header/body bindings while still letting unbound query-string values
+    /// populate the remaining input properties deterministically.
+    /// </remarks>
+    public bool PreserveImplicitQueryFallback { get; set; }
 }

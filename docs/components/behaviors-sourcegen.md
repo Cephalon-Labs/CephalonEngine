@@ -12,7 +12,7 @@ conventions at build time and produce a compile-time-known registration hint fil
   - Emits `BehaviorAutoRegistration.g.cs` for zero-reflection DI/type registration plus pre-built topology descriptors when compile-time extraction succeeds
   - Emits source-generated metadata-only REST profile hints through `GetRestProfiles()` when behaviors declare valid `BehaviorRestProfileAttribute` metadata
   - Extracts compile-time topology from `ConfigureTopology(...)` for pattern, transports, feature flags, and literal `WithApiSurface(...)` overrides
-- Reports ABT0010–ABT0026 diagnostics on invalid behavior declarations, metadata-only REST profile hints, malformed REST profile placeholder syntax, and explicit REST binding metadata before `GetRestProfiles()` is generated
+- Reports ABT0010–ABT0027 diagnostics on invalid behavior declarations, metadata-only REST profile hints, malformed REST profile placeholder syntax, explicit REST binding metadata, and invalid preserved implicit query-fallback authoring before `GetRestProfiles()` is generated
 
 ## Diagnostic rules
 
@@ -35,6 +35,7 @@ conventions at build time and produce a compile-time-known registration hint fil
 | ABT0024 | Error | `[BehaviorRestBinding]` uses `Body` on a REST method that does not accept a request body |
 | ABT0025 | Error | `[BehaviorRestBinding]` uses a route placeholder that is not declared in `[BehaviorRestProfile(...)]` |
 | ABT0026 | Error | `[BehaviorRestProfile]` uses malformed route placeholder syntax such as unbalanced or empty `{...}` segments |
+| ABT0027 | Error | `[BehaviorRestProfile(PreserveImplicitQueryFallback = true)]` is declared without any explicit `[BehaviorRestBinding]` metadata |
 
 ## Generated output
 
@@ -115,12 +116,13 @@ behavior source-generator topology model; `ABT0014` now rejects `http.rest` and 
 so authors map REST in a module with `RestBehaviorModuleBase.ConfigureRestBehaviors(...)`, or with
 manual `MapBehaviorRestGroup(...)` wiring when they intentionally stay on the low-level REST module
 path.
-`BehaviorRestProfileAttribute` plus optional repeated `BehaviorRestBindingAttribute` declarations is
-now the shipped metadata-only bridge for future low-ceremony REST: the generator validates the core
-profile shape plus explicit binding metadata and emits `GetRestProfiles()` hints, including
-explicit binding descriptors when present, plus `GetRestProfileBehaviorTypes()` hints for the
-generated module-owned shorthand path, but that metadata still does not publish public REST routes
-by itself and does not override host OpenAPI document publication policy.
+`BehaviorRestProfileAttribute` plus optional repeated `BehaviorRestBindingAttribute` declarations
+are now the shipped metadata-only bridge for future low-ceremony REST: the generator validates the
+core profile shape plus explicit binding metadata, preserved implicit query-fallback authoring, and
+emits `GetRestProfiles()` hints, including explicit binding descriptors and
+`preserveImplicitQueryFallback: true` when present, plus `GetRestProfileBehaviorTypes()` hints for
+the generated module-owned shorthand path, but that metadata still does not publish public REST
+routes by itself and does not override host OpenAPI document publication policy.
 `Cephalon.Behaviors.Http` now consumes those hints through the explicit module-owned
 `MapProfile<TBehavior>()` and `MapGeneratedProfiles(...)` shorthands on
 `IRestBehaviorEndpointGroupBuilder`, preferring the generated hints and falling back only to the
@@ -129,12 +131,13 @@ assembly when the current assembly lacks generated type hints. Generated REST pr
 hints now resolve their enum member names from the actual attribute arguments instead of assuming
 fixed numeric ordinals.
 The build now rejects unsupported binding sources, malformed route placeholder syntax, missing or
-duplicate input-property targets, scalar-input misuse, body-binding verb restrictions, and
-route-placeholder mismatches earlier, while `Cephalon.Behaviors.Http` still re-checks the same
-contract when the runtime falls back to direct attribute resolution for `MapProfile<TBehavior>()`
-or to the bounded owner-assembly scan used by `MapGeneratedProfiles(...)`. Runtime normalization
-still lets ASP.NET Core route parsing stay authoritative for the final route-shape truth even after
-the generator moves the most common placeholder-shape mistakes to compile time.
+duplicate input-property targets, scalar-input misuse, body-binding verb restrictions,
+route-placeholder mismatches, and preserved implicit-query fallback without any explicit bindings
+earlier, while `Cephalon.Behaviors.Http` still re-checks the same contract when the runtime falls
+back to direct attribute resolution for `MapProfile<TBehavior>()` or to the bounded owner-assembly
+scan used by `MapGeneratedProfiles(...)`. Runtime normalization still lets ASP.NET Core route
+parsing stay authoritative for the final route-shape truth even after the generator moves the most
+common placeholder-shape mistakes and preserved-fallback authoring errors to compile time.
 Likewise, explicit module ownership through `IBehaviorOwnerModule`, `BehaviorModuleBase`, or
 `RestBehaviorModuleBase` remains a runtime-composition concern rather than a source-generated
 topology concern: the generator still focuses on behavior shape and topology, while the engine owns
@@ -146,7 +149,7 @@ until another topology source selects one explicitly.
 
 ## Status
 
-> Status: ✅ Shipped — targeted source-generator tests 27/27
+> Status: ✅ Shipped — targeted source-generator tests 29/29
 
 ## Related components
 

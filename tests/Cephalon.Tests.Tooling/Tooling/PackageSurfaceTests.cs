@@ -867,6 +867,15 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void BehaviorsHttpRestProfileContractsExposePreservedImplicitQueryFallback()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileAttribute)
+            .GetProperty("PreserveImplicitQueryFallback", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor)
+            .GetProperty("PreserveImplicitQueryFallback", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
     public void BehaviorsHttpAssemblyExposesInlineRestBehaviorModuleEngineBuilderMethods()
     {
         var methods = typeof(global::Cephalon.Behaviors.Http.Hosting.RestBehaviorEngineBuilderExtensions)

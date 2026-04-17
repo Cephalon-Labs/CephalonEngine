@@ -211,6 +211,17 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         description: "Behavior-authored REST profile metadata must use balanced route-parameter placeholder syntax so module-owned shorthand stays build-time safe before runtime route parsing runs.",
         helpLinkUri: HelpLink);
 
+    /// <summary>ABT-027: Preserved implicit query fallback requires at least one explicit binding.</summary>
+    public static readonly DiagnosticDescriptor Abt027RestPreservedImplicitQueryFallbackRequiresExplicitBindings = new(
+        id: "ABT0027",
+        title: "Preserved implicit query fallback requires explicit bindings",
+        messageFormat: "'{0}' declares [BehaviorRestProfile(PreserveImplicitQueryFallback = true)] without any [BehaviorRestBinding] metadata",
+        category: "Cephalon.Behaviors",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true,
+        description: "Preserved implicit query fallback only has meaning when a REST profile already declares at least one explicit binding and needs the remaining unbound query-string surface to stay available.",
+        helpLinkUri: HelpLink);
+
     // ─────────────────────────────────────────────────────────────────────────
     // Initialization
     // ─────────────────────────────────────────────────────────────────────────
@@ -381,18 +392,22 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
 
             var hasApiVersionMajor = false;
             var apiVersionMajor = 0;
+            var preserveImplicitQueryFallback = false;
             foreach (var namedArgument in attribute.NamedArguments)
             {
-                if (!string.Equals(namedArgument.Key, "ApiVersionMajor", StringComparison.Ordinal))
+                if (string.Equals(namedArgument.Key, "ApiVersionMajor", StringComparison.Ordinal))
                 {
+                    hasApiVersionMajor = true;
+                    apiVersionMajor = namedArgument.Value.Value is null
+                        ? 0
+                        : Convert.ToInt32(namedArgument.Value.Value, System.Globalization.CultureInfo.InvariantCulture);
                     continue;
                 }
 
-                hasApiVersionMajor = true;
-                apiVersionMajor = namedArgument.Value.Value is null
-                    ? 0
-                    : Convert.ToInt32(namedArgument.Value.Value, System.Globalization.CultureInfo.InvariantCulture);
-                break;
+                if (string.Equals(namedArgument.Key, "PreserveImplicitQueryFallback", StringComparison.Ordinal))
+                {
+                    preserveImplicitQueryFallback = namedArgument.Value.Value is bool preserve && preserve;
+                }
             }
 
             return new RestProfileInfo(
@@ -400,7 +415,8 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                 relativePattern,
                 hasApiVersionMajor,
                 apiVersionMajor,
-                ExtractRestBindings(typeSymbol));
+                ExtractRestBindings(typeSymbol),
+                preserveImplicitQueryFallback);
         }
 
         return null;
@@ -752,6 +768,15 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                 info.RestProfile.ApiVersionMajor));
         }
 
+        if (info.RestProfile.PreserveImplicitQueryFallback &&
+            info.RestProfile.Bindings.Count == 0)
+        {
+            spc.ReportDiagnostic(Diagnostic.Create(
+                Abt027RestPreservedImplicitQueryFallbackRequiresExplicitBindings,
+                info.Location,
+                info.ShortName));
+        }
+
         foreach (var issue in ValidateRestBindingMetadata(info))
         {
             spc.ReportDiagnostic(Diagnostic.Create(
@@ -915,14 +940,27 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                 sb.Append(info.RestProfile.HasApiVersionMajor
                     ? info.RestProfile.ApiVersionMajor.ToString(System.Globalization.CultureInfo.InvariantCulture)
                     : "null");
-                if (info.RestProfile.Bindings.Count > 0)
+                if (info.RestProfile.Bindings.Count > 0 || info.RestProfile.PreserveImplicitQueryFallback)
                 {
-                    sb.Append(", new global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor[] { ");
-                    sb.Append(string.Join(
-                        ", ",
-                        info.RestProfile.Bindings.Select(static binding =>
-                            $"new global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor(\"{EscapeString(binding.PropertyName)}\", global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource.{binding.SourceName}, {(string.IsNullOrWhiteSpace(binding.Name) ? "null" : $"\"{EscapeString(binding.Name!)}\"")})")));
-                    sb.Append(" }");
+                    sb.Append(", ");
+                    if (info.RestProfile.Bindings.Count > 0)
+                    {
+                        sb.Append("new global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor[] { ");
+                        sb.Append(string.Join(
+                            ", ",
+                            info.RestProfile.Bindings.Select(static binding =>
+                                $"new global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor(\"{EscapeString(binding.PropertyName)}\", global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource.{binding.SourceName}, {(string.IsNullOrWhiteSpace(binding.Name) ? "null" : $"\"{EscapeString(binding.Name!)}\"")})")));
+                        sb.Append(" }");
+                    }
+                    else
+                    {
+                        sb.Append("null");
+                    }
+
+                    if (info.RestProfile.PreserveImplicitQueryFallback)
+                    {
+                        sb.Append(", preserveImplicitQueryFallback: true");
+                    }
                 }
                 sb.AppendLine("),");
             }
@@ -1401,6 +1439,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             RestProfile.RelativePattern.Trim().StartsWith("/", StringComparison.Ordinal) &&
             TryValidateRoutePatternSyntax(RestProfile.RelativePattern, out _) &&
             (!RestProfile.HasApiVersionMajor || RestProfile.ApiVersionMajor > 0) &&
+            (!RestProfile.PreserveImplicitQueryFallback || RestProfile.Bindings.Count > 0) &&
             ValidateRestBindingMetadata(this).IsDefaultOrEmpty &&
             !HasRestTransportAttribute &&
             !HasConfigureTopologyRestTransport;
@@ -1413,13 +1452,15 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             string relativePattern,
             bool hasApiVersionMajor,
             int apiVersionMajor,
-            IReadOnlyList<RestBindingInfo> bindings)
+            IReadOnlyList<RestBindingInfo> bindings,
+            bool preserveImplicitQueryFallback)
         {
             MethodName = methodName;
             RelativePattern = relativePattern;
             HasApiVersionMajor = hasApiVersionMajor;
             ApiVersionMajor = apiVersionMajor;
             Bindings = bindings;
+            PreserveImplicitQueryFallback = preserveImplicitQueryFallback;
         }
 
         public string? MethodName { get; }
@@ -1427,6 +1468,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         public bool HasApiVersionMajor { get; }
         public int ApiVersionMajor { get; }
         public IReadOnlyList<RestBindingInfo> Bindings { get; }
+        public bool PreserveImplicitQueryFallback { get; }
     }
 
     private sealed class RestBindingInfo

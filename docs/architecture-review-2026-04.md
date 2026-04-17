@@ -200,11 +200,16 @@ identity directly through `BindingFallbackModes`, using the same stable wire nam
 runtime contract already publishes, so original-shape selector targeting stays truthful even after
 later override actions rewrite the published endpoint.
 
-The remaining gap is no longer raw operator visibility; it is richer authoring and build-time
-diagnostics if future shorthand or generated routes broaden enough that more than one projection
-style can compete for the same public behavior boundary in ways that go beyond the now-covered
-invalid placeholder-shape cases and that the current runtime surfaces do not already explain
-clearly.
+That richer authoring/build-time-diagnostics gap is now partially addressed through `ENG-058-T119`:
+metadata-only REST profiles can now declare `PreserveImplicitQueryFallback` alongside explicit
+bindings, `Cephalon.Behaviors.SourceGen` now rejects missing-binding cases through `ABT0027`, and
+`BehaviorRestProfileResolver` re-checks the same rule during runtime fallback so explicit profile
+authoring can preserve source implicit query fallback without losing fail-fast truth.
+
+The remaining gap is no longer raw operator visibility or this immediate authoring-parity hole; it
+is broader shorthand-source competition and future authoring rules if shorthand or generated routes
+eventually broaden enough that more than one projection style can compete for the same public
+behavior boundary in ways the current runtime surfaces do not already explain clearly.
 
 ## Architecture recommendations
 
