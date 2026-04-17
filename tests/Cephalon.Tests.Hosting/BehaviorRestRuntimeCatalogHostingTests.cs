@@ -4527,6 +4527,100 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonAppliesMergeBindingRemovalAndPreservesRemainingBodyFallbackVisibility()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.Configuration["RestApi:Overrides:withdraw-body-note:Behaviors:0"] = "tests.rest.profile.bindings.inference";
+        builder.Configuration["RestApi:Overrides:withdraw-body-note:RemovedBindingProperties:0"] = "Note";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileBindingInferenceRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(snapshot);
+
+        var endpoint = Assert.Single(endpoints, static item =>
+            string.Equals(item.BehaviorId, "tests.rest.profile.bindings.inference", StringComparison.Ordinal));
+        Assert.Equal("/api/v6/tests/profile-runtime/inference/orders/{orderId}", endpoint.RoutePattern);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback,
+            endpoint.BindingFallbackMode);
+        Assert.Equal("preserve-remaining-body-fallback", endpoint.Metadata["bindingFallbackMode"]);
+        Assert.Equal(2, endpoint.BindingDescriptors.Count);
+        Assert.DoesNotContain(endpoint.BindingDescriptors, static binding =>
+            string.Equals(binding.PropertyName, nameof(ProfileBindingInferenceRuntimeInput.Note), StringComparison.Ordinal));
+        Assert.Contains(endpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "Quantity" &&
+            binding.Source == RestEndpointBindingSource.Query &&
+            binding.Name == "quantity");
+        Assert.Contains(endpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "CorrelationId" &&
+            binding.Source == RestEndpointBindingSource.Header &&
+            binding.Name == "X-Correlation-Id");
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.profile.bindings.inference", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+        Assert.Equal("withdraw-body-note", candidate.AppliedOverrideId);
+        Assert.Null(candidate.OriginalProjection.BindingFallbackMode);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback,
+            candidate.ProjectedEndpoint.BindingFallbackMode);
+        Assert.Equal("preserve-remaining-body-fallback", candidate.ProjectedEndpoint.Metadata["bindingFallbackMode"]);
+        Assert.Equal(endpoint.Id, candidate.ProjectedEndpoint.Id);
+
+        using var request = new HttpRequestMessage(
+            HttpMethod.Post,
+            "/api/v6/tests/profile-runtime/inference/orders/ord-88?quantity=9");
+        request.Headers.Add("X-Correlation-Id", "corr-88");
+        request.Content = JsonContent.Create(new
+        {
+            note = "body fallback note"
+        });
+
+        var response = await client.SendAsync(request);
+        response.EnsureSuccessStatusCode();
+
+        var payload = await response.Content.ReadFromJsonAsync<ProfileBindingInferenceRuntimeOutput>();
+        Assert.NotNull(payload);
+        Assert.Equal("ord-88", payload.OrderId);
+        Assert.Equal(9, payload.Quantity);
+        Assert.Equal("corr-88", payload.CorrelationId);
+        Assert.Equal("body fallback note", payload.Note);
+
+        Assert.Contains(snapshot.RestEndpoints, static item =>
+            string.Equals(item.BehaviorId, "tests.rest.profile.bindings.inference", StringComparison.Ordinal) &&
+            item.BindingFallbackMode == RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback &&
+            string.Equals(item.Metadata["bindingFallbackMode"], "preserve-remaining-body-fallback", StringComparison.Ordinal));
+        Assert.Contains(snapshot.RestEndpointCandidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.profile.bindings.inference", StringComparison.Ordinal) &&
+            item.ProjectedEndpoint.BindingFallbackMode == RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback &&
+            string.Equals(item.ProjectedEndpoint.Metadata["bindingFallbackMode"], "preserve-remaining-body-fallback", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public async Task MapCephalonAppliesClearBindingsOverridesAndReturnsToImplicitRequestBindingBaseline()
     {
         var builder = WebApplication.CreateBuilder();
@@ -4794,10 +4888,13 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Configuration["RestApi:Overrides:prefer-route-order:Bindings:0:PropertyName"] = "OrderId";
         builder.Configuration["RestApi:Overrides:prefer-route-order:Bindings:0:Source"] = "Route";
         builder.Configuration["RestApi:Overrides:prefer-route-order:Bindings:0:Name"] = "orderId";
+        builder.Configuration["RestApi:Overrides:withdraw-body-note:Behaviors:0"] = "tests.rest.profile.bindings.inference";
+        builder.Configuration["RestApi:Overrides:withdraw-body-note:RemovedBindingProperties:0"] = "Note";
         builder.AddCephalon(engine =>
         {
             engine.AddModule(new ProfileBindingRuntimeCatalogModule());
             engine.AddModule(new ProfileBindingPartialQueryFallbackRuntimeCatalogModule());
+            engine.AddModule(new ProfileBindingInferenceRuntimeCatalogModule());
             engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
             {
                 behaviors.AddHttpBehaviorBindings();
@@ -4827,6 +4924,11 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             entry.Message.Contains("tests.rest.profile.bindings.query.partial", StringComparison.Ordinal) &&
             entry.Message.Contains("PreserveSourceImplicitFallback", StringComparison.Ordinal) &&
             entry.Message.Contains("prefer-route-order", StringComparison.Ordinal));
+        Assert.Contains(loggerProvider.Entries, entry =>
+            entry.EventId.Id == 5204 &&
+            entry.Message.Contains("tests.rest.profile.bindings.inference", StringComparison.Ordinal) &&
+            entry.Message.Contains("PreserveRemainingBodyFallback", StringComparison.Ordinal) &&
+            entry.Message.Contains("withdraw-body-note", StringComparison.Ordinal));
     }
 
     [Fact]

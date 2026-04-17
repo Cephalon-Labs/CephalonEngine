@@ -174,14 +174,17 @@ The newest hardening pass now also rejects invalid explicit binding metadata at 
 re-checks route-placeholder truth during runtime profile normalization, so the remaining gap is no
 longer basic authoring safety.
 
-That first operator-facing visibility gap is now addressed through `ENG-058-T113`, and the next
-runtime-contract truth gap is now addressed through `ENG-058-T114`: the active
+That first operator-facing visibility gap is now addressed through `ENG-058-T113`, the next
+runtime-contract truth gap is now addressed through `ENG-058-T114`, and the next diagnostics-parity
+follow-through is now addressed through `ENG-058-T115`: the active
 `Cephalon.Behaviors.Http` pack publishes stable `/engine/diagnostics` event ids plus startup log
 events for suppression, precedence suppression, applied overrides, no-op override matches, and
 preserved fallback answers, while the typed REST runtime contract now also keeps deterministic
 remaining request-body fallback visible as
 `RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback` on shorthand candidates and
-published endpoints instead of leaving that answer in compatibility metadata alone.
+published endpoints instead of leaving that answer in compatibility metadata alone, and emitted
+event `5204` logging now follows whichever typed preserved-fallback mode the runtime actually
+resolved instead of stopping at the earlier implicit-query-only case.
 
 The remaining gap is no longer raw operator visibility; it is richer authoring and build-time
 diagnostics if future shorthand or generated routes broaden enough that more than one projection

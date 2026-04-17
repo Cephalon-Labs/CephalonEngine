@@ -228,8 +228,9 @@ When `Cephalon.Behaviors.Http` is active, `/engine/diagnostics` now also publish
 - `5201` — a shorthand candidate lost publication because a higher-precedence authoring style won
 - `5202` — a matched shorthand override materially changed the published runtime answer
 - `5203` — a matched shorthand override became a runtime no-op after truth reconciliation
-- `5204` — a shorthand candidate preserved binding fallback while partial explicit override
-  reconciliation ran
+- `5204` — a shorthand candidate preserved a typed binding fallback mode while partial explicit
+  override reconciliation ran, including both preserved source implicit-query fallback and
+  preserved remaining request-body fallback
 
 Those events are emitted during startup/materialization when information-level logging is enabled.
 For full hosted `MapCephalon()` paths, published-candidate logging reconciles against the actual

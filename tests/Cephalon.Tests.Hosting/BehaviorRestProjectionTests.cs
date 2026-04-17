@@ -2167,6 +2167,53 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverPreservesRemainingBodyFallbackWhenMergeBindingRemovalLeavesBodySurface()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-binding-removal-body-fallback")
+            .MapProfile<ProfileProjectionInferenceWithoutFallbackBehavior>();
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.profile-binding-removal-body-fallback",
+                "Profile Binding Removal Body Fallback Module",
+                "Exercises merge-mode binding withdrawal when the host removes one explicit body binding and the effective shorthand endpoint falls back to the remaining deterministic request body surface.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "withdraw-body-note",
+                    behaviorIds: ["tests.profile.projection.inference.body-fallback"],
+                    removedBindingProperties: [nameof(ProfileProjectionInferenceWithoutFallbackInput.Note)])
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Equal("withdraw-body-note", candidate.Candidate.AppliedOverrideId);
+        Assert.Null(candidate.Candidate.OriginalProjection.BindingFallbackMode);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback,
+            candidate.Candidate.ProjectedEndpoint.BindingFallbackMode);
+        Assert.Equal(
+            "preserve-remaining-body-fallback",
+            candidate.Candidate.ProjectedEndpoint.Metadata["bindingFallbackMode"]);
+        Assert.Equal("/api/v6/tests/profile-binding-removal-body-fallback/{cartId}/items", candidate.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Equal(2, candidate.Candidate.ProjectedEndpoint.BindingDescriptors.Count);
+        Assert.DoesNotContain(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            string.Equals(binding.PropertyName, nameof(ProfileProjectionInferenceWithoutFallbackInput.Note), StringComparison.Ordinal));
+        Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "Quantity" &&
+            binding.Source == RestEndpointBindingSource.Query &&
+            binding.Name == "quantity");
+        Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "CorrelationId" &&
+            binding.Source == RestEndpointBindingSource.Header &&
+            binding.Name == "X-Correlation-Id");
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverRejectsMergeBindingRemovalForPropertyNotExplicitlyBound()
     {
         var builder = new RestBehaviorModuleBuilder();
@@ -4753,6 +4800,22 @@ public sealed class BehaviorRestProjectionTests
         }
     }
 
+    [AppBehavior("tests.profile.projection.inference.body-fallback")]
+    [BehaviorRestProfile(BehaviorRestMethod.Post, "/{cartId}/items", ApiVersionMajor = 6)]
+    [BehaviorRestBinding(nameof(ProfileProjectionInferenceWithoutFallbackInput.Quantity), BehaviorRestBindingSource.Query, Name = "quantity")]
+    [BehaviorRestBinding(nameof(ProfileProjectionInferenceWithoutFallbackInput.CorrelationId), BehaviorRestBindingSource.Header, Name = "X-Correlation-Id")]
+    [BehaviorRestBinding(nameof(ProfileProjectionInferenceWithoutFallbackInput.Note), BehaviorRestBindingSource.Body, Name = "note")]
+    private sealed class ProfileProjectionInferenceWithoutFallbackBehavior : IAppBehavior<ProfileProjectionInferenceWithoutFallbackInput, ProjectionCartOutput>
+    {
+        public Task<ProjectionCartOutput> HandleAsync(
+            ProfileProjectionInferenceWithoutFallbackInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProjectionCartOutput(input.CartId));
+        }
+    }
+
     [AppBehavior("tests.profile.projection.bound.get")]
     [BehaviorRestProfile(BehaviorRestMethod.Get, "/{cartId}", ApiVersionMajor = 6)]
     [BehaviorRestBinding(nameof(ProfileProjectionBoundInput.CartId), BehaviorRestBindingSource.Route, Name = "cartId")]
@@ -4841,6 +4904,12 @@ public sealed class BehaviorRestProjectionTests
         string? CorrelationId,
         string? Note,
         string? Ignored = null);
+
+    private sealed record ProfileProjectionInferenceWithoutFallbackInput(
+        string CartId,
+        int Quantity,
+        string? CorrelationId,
+        string? Note);
 
     private sealed record ProfileProjectionAliasedRouteInput(string CartId);
 

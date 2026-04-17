@@ -271,14 +271,14 @@ internal static class RestBehaviorProjectionMaterializer
                     JoinIdentifiers(candidate.MatchedOverrideIds));
             }
 
-            if (candidate.ProjectedEndpoint.BindingFallbackMode == RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback &&
-                candidate.OriginalProjection.BindingFallbackMode != candidate.ProjectedEndpoint.BindingFallbackMode)
+            if (candidate.ProjectedEndpoint.BindingFallbackMode is { } bindingFallbackMode &&
+                candidate.OriginalProjection.BindingFallbackMode != bindingFallbackMode)
             {
                 RestBehaviorGovernanceLoggerMessages.LogBindingFallbackPreserved(
                     logger,
                     candidate.Id,
                     behaviorId,
-                    RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback.ToString(),
+                    bindingFallbackMode.ToString(),
                     JoinIdentifiers(candidate.MatchedOverrideIds));
             }
         }
