@@ -381,6 +381,12 @@ Status update:
   `SkippedSuppressionIds`, and `SkippedOverrideIds` visible at both the top-level behavior group
   and per-authoring-style summary, so operators can inspect grouped publication truth without
   drilling into each candidate first
+- the next explicit module-DSL grouped skipped-governance follow-through is now shipped through
+  `ENG-058-T148`: those same grouped publication answers now also keep per-rule skipped
+  suppression/override candidate buckets visible through `SkippedSuppressionSummaries` and
+  `SkippedOverrideSummaries` at both the top-level behavior group and per-authoring-style summary,
+  so operators can see which ineligible candidates each skipped host rule targeted without
+  re-reading `/engine/rest-endpoint-candidates`
 - the next explicit module-DSL diagnostics follow-through is now shipped through `ENG-058-T131`:
   `/engine/diagnostics` plus information-level startup logging now also emit
   `RestEndpointGovernanceSkipped` event `5206` when host suppression or override rules target an

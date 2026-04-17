@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Cephalon.Abstractions.Transports;
 
 /// <summary>
@@ -59,6 +61,90 @@ public sealed class RestEndpointPublicationGroupAuthoringStyleDescriptor
         IReadOnlyList<string>? skippedOverrideIds = null,
         IReadOnlyList<RestEndpointPublicationGroupGovernanceSuppressionSummaryDescriptor>? governanceSuppressionSummaries = null,
         IReadOnlyList<RestEndpointPublicationGroupGovernanceOverrideSummaryDescriptor>? governanceOverrideSummaries = null)
+        : this(
+            authoringStyle,
+            sourceModuleIds,
+            precedenceRanks,
+            candidateIds,
+            publishedCandidateIds,
+            precedenceSuppressedCandidateIds,
+            governanceSuppressedCandidateIds,
+            authoringPolicySuppressedCandidateIds,
+            authoringPolicySuppressionSummaries,
+            hostGovernanceEligibleCandidateIds,
+            hostGovernanceIneligibleCandidateIds,
+            skippedSuppressionIds,
+            skippedOverrideIds,
+            governanceSuppressionSummaries,
+            governanceOverrideSummaries,
+            skippedSuppressionSummaries: null,
+            skippedOverrideSummaries: null)
+    {
+    }
+
+    /// <summary>
+    /// Creates a grouped publication descriptor for one authoring style, including grouped skipped-governance summaries.
+    /// </summary>
+    /// <param name="authoringStyle">The normalized authoring style that contributed the grouped candidates.</param>
+    /// <param name="sourceModuleIds">The distinct source-module identifiers that contributed candidates for this authoring style.</param>
+    /// <param name="precedenceRanks">The distinct precedence ranks visible for this authoring style within the group.</param>
+    /// <param name="candidateIds">The ordered candidate identifiers contributed by this authoring style.</param>
+    /// <param name="publishedCandidateIds">The ordered candidate identifiers that remain published for this authoring style.</param>
+    /// <param name="precedenceSuppressedCandidateIds">
+    /// The ordered candidate identifiers that were suppressed by another candidate through precedence resolution.
+    /// </param>
+    /// <param name="governanceSuppressedCandidateIds">
+    /// The ordered candidate identifiers that were suppressed by host-level REST governance.
+    /// </param>
+    /// <param name="authoringPolicySuppressedCandidateIds">
+    /// The ordered candidate identifiers that were suppressed by behavior-level authoring-policy enforcement.
+    /// </param>
+    /// <param name="authoringPolicySuppressionSummaries">
+    /// The grouped authoring-policy suppression outcomes summarized by suppression kind for this authoring style.
+    /// </param>
+    /// <param name="hostGovernanceEligibleCandidateIds">
+    /// The ordered candidate identifiers whose original projections allowed host governance to participate.
+    /// </param>
+    /// <param name="hostGovernanceIneligibleCandidateIds">
+    /// The ordered candidate identifiers whose original projections kept host governance out of scope.
+    /// </param>
+    /// <param name="skippedSuppressionIds">
+    /// The ordered suppression-rule identifiers that targeted ineligible candidates for this authoring style.
+    /// </param>
+    /// <param name="skippedOverrideIds">
+    /// The ordered override-rule identifiers that targeted ineligible candidates for this authoring style.
+    /// </param>
+    /// <param name="governanceSuppressionSummaries">
+    /// The grouped host-governance suppression-rule outcomes summarized by rule for this authoring style.
+    /// </param>
+    /// <param name="governanceOverrideSummaries">
+    /// The grouped host-governance override-rule outcomes summarized by rule for this authoring style.
+    /// </param>
+    /// <param name="skippedSuppressionSummaries">
+    /// The grouped host-governance-skipped suppression-rule outcomes summarized by rule for this authoring style.
+    /// </param>
+    /// <param name="skippedOverrideSummaries">
+    /// The grouped host-governance-skipped override-rule outcomes summarized by rule for this authoring style.
+    /// </param>
+    [JsonConstructor]
+    public RestEndpointPublicationGroupAuthoringStyleDescriptor(
+        string authoringStyle,
+        IReadOnlyList<string>? sourceModuleIds,
+        IReadOnlyList<int>? precedenceRanks,
+        IReadOnlyList<string>? candidateIds,
+        IReadOnlyList<string>? publishedCandidateIds,
+        IReadOnlyList<string>? precedenceSuppressedCandidateIds,
+        IReadOnlyList<string>? governanceSuppressedCandidateIds,
+        IReadOnlyList<string>? authoringPolicySuppressedCandidateIds,
+        IReadOnlyList<RestEndpointPublicationGroupAuthoringPolicySuppressionDescriptor>? authoringPolicySuppressionSummaries,
+        IReadOnlyList<string>? hostGovernanceEligibleCandidateIds,
+        IReadOnlyList<string>? hostGovernanceIneligibleCandidateIds,
+        IReadOnlyList<string>? skippedSuppressionIds,
+        IReadOnlyList<string>? skippedOverrideIds,
+        IReadOnlyList<RestEndpointPublicationGroupGovernanceSuppressionSummaryDescriptor>? governanceSuppressionSummaries,
+        IReadOnlyList<RestEndpointPublicationGroupGovernanceOverrideSummaryDescriptor>? governanceOverrideSummaries,
+        IReadOnlyList<RestEndpointPublicationGroupGovernanceSkippedSuppressionSummaryDescriptor>? skippedSuppressionSummaries,
+        IReadOnlyList<RestEndpointPublicationGroupGovernanceSkippedOverrideSummaryDescriptor>? skippedOverrideSummaries)
     {
         if (string.IsNullOrWhiteSpace(authoringStyle))
         {
@@ -148,6 +234,60 @@ public sealed class RestEndpointPublicationGroupAuthoringStyleDescriptor
                 governanceOverrideSummaries,
                 candidateIdSet,
                 nameof(governanceOverrideSummaries));
+        var normalizedSkippedSuppressionSummaries = skippedSuppressionSummaries is null
+            ? []
+            : RestEndpointPublicationGroupGovernanceSkippedSuppressionSummaryBuilder.Normalize(
+                skippedSuppressionSummaries,
+                candidateIdSet,
+                nameof(skippedSuppressionSummaries));
+        var normalizedSkippedOverrideSummaries = skippedOverrideSummaries is null
+            ? []
+            : RestEndpointPublicationGroupGovernanceSkippedOverrideSummaryBuilder.Normalize(
+                skippedOverrideSummaries,
+                candidateIdSet,
+                nameof(skippedOverrideSummaries));
+
+        if (normalizedSkippedSuppressionIds.Length == 0 &&
+            normalizedSkippedSuppressionSummaries.Length > 0)
+        {
+            normalizedSkippedSuppressionIds =
+                RestEndpointPublicationGroupGovernanceSkippedSuppressionSummaryBuilder.BuildRuleIds(
+                    normalizedSkippedSuppressionSummaries);
+        }
+
+        if (normalizedSkippedOverrideIds.Length == 0 &&
+            normalizedSkippedOverrideSummaries.Length > 0)
+        {
+            normalizedSkippedOverrideIds =
+                RestEndpointPublicationGroupGovernanceSkippedOverrideSummaryBuilder.BuildRuleIds(
+                    normalizedSkippedOverrideSummaries);
+        }
+
+        if (normalizedSkippedSuppressionSummaries.Length > 0)
+        {
+            var summarizedRuleIds =
+                RestEndpointPublicationGroupGovernanceSkippedSuppressionSummaryBuilder.BuildRuleIds(
+                    normalizedSkippedSuppressionSummaries);
+            if (!normalizedSkippedSuppressionIds.SequenceEqual(summarizedRuleIds, StringComparer.OrdinalIgnoreCase))
+            {
+                throw new ArgumentException(
+                    "Skipped suppression summaries must describe the same rule ids as the grouped authoring-style skipped suppression bucket.",
+                    nameof(skippedSuppressionIds));
+            }
+        }
+
+        if (normalizedSkippedOverrideSummaries.Length > 0)
+        {
+            var summarizedRuleIds =
+                RestEndpointPublicationGroupGovernanceSkippedOverrideSummaryBuilder.BuildRuleIds(
+                    normalizedSkippedOverrideSummaries);
+            if (!normalizedSkippedOverrideIds.SequenceEqual(summarizedRuleIds, StringComparer.OrdinalIgnoreCase))
+            {
+                throw new ArgumentException(
+                    "Skipped override summaries must describe the same rule ids as the grouped authoring-style skipped override bucket.",
+                    nameof(skippedOverrideIds));
+            }
+        }
 
         if (!candidateIdSet.IsSupersetOf(normalizedPublishedCandidateIds))
         {
@@ -238,6 +378,8 @@ public sealed class RestEndpointPublicationGroupAuthoringStyleDescriptor
         AuthoringPolicySuppressionSummaries = normalizedAuthoringPolicySuppressionSummaries;
         GovernanceSuppressionSummaries = normalizedGovernanceSuppressionSummaries;
         GovernanceOverrideSummaries = normalizedGovernanceOverrideSummaries;
+        SkippedSuppressionSummaries = normalizedSkippedSuppressionSummaries;
+        SkippedOverrideSummaries = normalizedSkippedOverrideSummaries;
         HostGovernanceEligibleCandidateIds = normalizedHostGovernanceEligibleCandidateIds;
         HostGovernanceIneligibleCandidateIds = normalizedHostGovernanceIneligibleCandidateIds;
         SkippedSuppressionIds = normalizedSkippedSuppressionIds;
@@ -298,6 +440,16 @@ public sealed class RestEndpointPublicationGroupAuthoringStyleDescriptor
     /// Gets the grouped host-governance override-rule outcomes summarized by rule for this authoring style.
     /// </summary>
     public IReadOnlyList<RestEndpointPublicationGroupGovernanceOverrideSummaryDescriptor> GovernanceOverrideSummaries { get; }
+
+    /// <summary>
+    /// Gets the grouped host-governance-skipped suppression-rule outcomes summarized by rule for this authoring style.
+    /// </summary>
+    public IReadOnlyList<RestEndpointPublicationGroupGovernanceSkippedSuppressionSummaryDescriptor> SkippedSuppressionSummaries { get; }
+
+    /// <summary>
+    /// Gets the grouped host-governance-skipped override-rule outcomes summarized by rule for this authoring style.
+    /// </summary>
+    public IReadOnlyList<RestEndpointPublicationGroupGovernanceSkippedOverrideSummaryDescriptor> SkippedOverrideSummaries { get; }
 
     /// <summary>
     /// Gets the ordered candidate identifiers whose original projections allowed host governance to participate.

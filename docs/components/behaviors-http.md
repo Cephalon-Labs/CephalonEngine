@@ -662,9 +662,11 @@ normalized authoring style the participating candidate ids, precedence ranks, pu
 candidates, and precedence-versus-governance suppression buckets derived from the same grouped
 candidate truth. Those grouped answers now also keep
 `HostGovernanceEligibleCandidateIds`, `HostGovernanceIneligibleCandidateIds`,
-`SkippedSuppressionIds`, and `SkippedOverrideIds` visible at both the grouped behavior level and
-inside each authoring-style summary, so explicit module-DSL ownership that stayed out of host
-governance is still visible without drilling into each candidate.
+`SkippedSuppressionIds`, `SkippedOverrideIds`, `SkippedSuppressionSummaries`, and
+`SkippedOverrideSummaries` visible at both the grouped behavior level and inside each
+authoring-style summary, so explicit module-DSL ownership that stayed out of host governance is
+still visible without drilling into each candidate and operators can see which candidate ids each
+skipped host rule actually targeted.
 
 Each grouped publication answer now also carries `AuthoringPolicy` as typed
 `RestEndpointPublicationGroupAuthoringPolicyDescriptor` data. That policy surface distinguishes the

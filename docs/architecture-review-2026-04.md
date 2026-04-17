@@ -263,6 +263,11 @@ surface grouped `HostGovernanceEligibleCandidateIds`, `HostGovernanceIneligibleC
 authoring-style summary, so operators can confirm that explicit module-owned REST stayed outside
 host governance without drilling into the raw candidate catalog first.
 
+That remaining grouped skipped-rule provenance gap is now addressed through `ENG-058-T148`:
+those same publication-group answers now also surface `SkippedSuppressionSummaries` and
+`SkippedOverrideSummaries`, so operators can see which ineligible candidate ids each skipped host
+rule targeted without reconstructing that answer from the candidate catalog.
+
 That next inline generated-module ergonomics gap is now addressed through `ENG-058-T127`:
 `RestBehaviorEngineBuilderExtensions.AddGeneratedRestBehaviorModule<TMarker>(descriptor,
 configureGroup?)` now derives the generated behavior-id prefix from `ModuleDescriptor.Id` for the

@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Cephalon.Abstractions.Transports;
 
 /// <summary>
@@ -65,6 +67,97 @@ public sealed class RestEndpointPublicationGroupDescriptor
         IReadOnlyList<string>? skippedOverrideIds = null,
         IReadOnlyList<RestEndpointPublicationGroupGovernanceSuppressionSummaryDescriptor>? governanceSuppressionSummaries = null,
         IReadOnlyList<RestEndpointPublicationGroupGovernanceOverrideSummaryDescriptor>? governanceOverrideSummaries = null)
+        : this(
+            behaviorId,
+            sourceModuleIds,
+            winningPrecedenceRank,
+            publishedCandidateIds,
+            precedenceSuppressedCandidateIds,
+            governanceSuppressedCandidateIds,
+            candidates,
+            authoringPolicy,
+            authoringPolicySuppressedCandidateIds,
+            authoringPolicySuppressionSummaries,
+            hostGovernanceEligibleCandidateIds,
+            hostGovernanceIneligibleCandidateIds,
+            skippedSuppressionIds,
+            skippedOverrideIds,
+            governanceSuppressionSummaries,
+            governanceOverrideSummaries,
+            skippedSuppressionSummaries: null,
+            skippedOverrideSummaries: null)
+    {
+    }
+
+    /// <summary>
+    /// Creates a grouped REST endpoint publication descriptor, including grouped skipped-governance summaries.
+    /// </summary>
+    /// <param name="behaviorId">The stable behavior identifier for the grouped publication answer.</param>
+    /// <param name="sourceModuleIds">The distinct source-module identifiers that contributed the grouped candidates.</param>
+    /// <param name="winningPrecedenceRank">
+    /// The winning precedence rank for the published candidates when one or more candidates remain published.
+    /// </param>
+    /// <param name="publishedCandidateIds">The candidate identifiers that remain published for this behavior.</param>
+    /// <param name="precedenceSuppressedCandidateIds">
+    /// The candidate identifiers that were suppressed by another candidate through precedence resolution.
+    /// </param>
+    /// <param name="governanceSuppressedCandidateIds">
+    /// The candidate identifiers that were suppressed by host-level REST governance.
+    /// </param>
+    /// <param name="candidates">The ordered candidate set that produced this grouped publication answer.</param>
+    /// <param name="authoringPolicy">
+    /// The effective authoring-policy intent for this behavior-level publication group.
+    /// </param>
+    /// <param name="authoringPolicySuppressedCandidateIds">
+    /// The candidate identifiers that were suppressed by behavior-level authoring-policy enforcement.
+    /// </param>
+    /// <param name="authoringPolicySuppressionSummaries">
+    /// The grouped authoring-policy suppression outcomes summarized by suppression kind.
+    /// </param>
+    /// <param name="hostGovernanceEligibleCandidateIds">
+    /// The candidate identifiers whose original projections allowed host governance to participate.
+    /// </param>
+    /// <param name="hostGovernanceIneligibleCandidateIds">
+    /// The candidate identifiers whose original projections kept host governance out of scope.
+    /// </param>
+    /// <param name="skippedSuppressionIds">
+    /// The ordered suppression-rule identifiers that targeted ineligible candidates in this behavior group.
+    /// </param>
+    /// <param name="skippedOverrideIds">
+    /// The ordered override-rule identifiers that targeted ineligible candidates in this behavior group.
+    /// </param>
+    /// <param name="governanceSuppressionSummaries">
+    /// The grouped host-governance suppression-rule outcomes summarized by rule.
+    /// </param>
+    /// <param name="governanceOverrideSummaries">
+    /// The grouped host-governance override-rule outcomes summarized by rule.
+    /// </param>
+    /// <param name="skippedSuppressionSummaries">
+    /// The grouped host-governance-skipped suppression-rule outcomes summarized by rule.
+    /// </param>
+    /// <param name="skippedOverrideSummaries">
+    /// The grouped host-governance-skipped override-rule outcomes summarized by rule.
+    /// </param>
+    [JsonConstructor]
+    public RestEndpointPublicationGroupDescriptor(
+        string behaviorId,
+        IReadOnlyList<string>? sourceModuleIds,
+        int? winningPrecedenceRank,
+        IReadOnlyList<string>? publishedCandidateIds,
+        IReadOnlyList<string>? precedenceSuppressedCandidateIds,
+        IReadOnlyList<string>? governanceSuppressedCandidateIds,
+        IReadOnlyList<RestEndpointCandidateRuntimeDescriptor>? candidates,
+        RestEndpointPublicationGroupAuthoringPolicyDescriptor? authoringPolicy,
+        IReadOnlyList<string>? authoringPolicySuppressedCandidateIds,
+        IReadOnlyList<RestEndpointPublicationGroupAuthoringPolicySuppressionDescriptor>? authoringPolicySuppressionSummaries,
+        IReadOnlyList<string>? hostGovernanceEligibleCandidateIds,
+        IReadOnlyList<string>? hostGovernanceIneligibleCandidateIds,
+        IReadOnlyList<string>? skippedSuppressionIds,
+        IReadOnlyList<string>? skippedOverrideIds,
+        IReadOnlyList<RestEndpointPublicationGroupGovernanceSuppressionSummaryDescriptor>? governanceSuppressionSummaries,
+        IReadOnlyList<RestEndpointPublicationGroupGovernanceOverrideSummaryDescriptor>? governanceOverrideSummaries,
+        IReadOnlyList<RestEndpointPublicationGroupGovernanceSkippedSuppressionSummaryDescriptor>? skippedSuppressionSummaries,
+        IReadOnlyList<RestEndpointPublicationGroupGovernanceSkippedOverrideSummaryDescriptor>? skippedOverrideSummaries)
     {
         if (string.IsNullOrWhiteSpace(behaviorId))
         {
@@ -180,6 +273,60 @@ public sealed class RestEndpointPublicationGroupDescriptor
                 governanceOverrideSummaries,
                 candidateIds,
                 nameof(governanceOverrideSummaries));
+        var normalizedSkippedSuppressionSummaries = skippedSuppressionSummaries is null
+            ? BuildSkippedSuppressionSummaries(normalizedCandidates)
+            : RestEndpointPublicationGroupGovernanceSkippedSuppressionSummaryBuilder.Normalize(
+                skippedSuppressionSummaries,
+                candidateIds,
+                nameof(skippedSuppressionSummaries));
+        var normalizedSkippedOverrideSummaries = skippedOverrideSummaries is null
+            ? BuildSkippedOverrideSummaries(normalizedCandidates)
+            : RestEndpointPublicationGroupGovernanceSkippedOverrideSummaryBuilder.Normalize(
+                skippedOverrideSummaries,
+                candidateIds,
+                nameof(skippedOverrideSummaries));
+
+        if (normalizedSkippedSuppressionIds.Length == 0 &&
+            normalizedSkippedSuppressionSummaries.Length > 0)
+        {
+            normalizedSkippedSuppressionIds =
+                RestEndpointPublicationGroupGovernanceSkippedSuppressionSummaryBuilder.BuildRuleIds(
+                    normalizedSkippedSuppressionSummaries);
+        }
+
+        if (normalizedSkippedOverrideIds.Length == 0 &&
+            normalizedSkippedOverrideSummaries.Length > 0)
+        {
+            normalizedSkippedOverrideIds =
+                RestEndpointPublicationGroupGovernanceSkippedOverrideSummaryBuilder.BuildRuleIds(
+                    normalizedSkippedOverrideSummaries);
+        }
+
+        if (normalizedSkippedSuppressionSummaries.Length > 0)
+        {
+            var summarizedRuleIds =
+                RestEndpointPublicationGroupGovernanceSkippedSuppressionSummaryBuilder.BuildRuleIds(
+                    normalizedSkippedSuppressionSummaries);
+            if (!normalizedSkippedSuppressionIds.SequenceEqual(summarizedRuleIds, StringComparer.OrdinalIgnoreCase))
+            {
+                throw new ArgumentException(
+                    "Skipped suppression summaries must describe the same rule ids as the grouped skipped suppression bucket.",
+                    nameof(skippedSuppressionIds));
+            }
+        }
+
+        if (normalizedSkippedOverrideSummaries.Length > 0)
+        {
+            var summarizedRuleIds =
+                RestEndpointPublicationGroupGovernanceSkippedOverrideSummaryBuilder.BuildRuleIds(
+                    normalizedSkippedOverrideSummaries);
+            if (!normalizedSkippedOverrideIds.SequenceEqual(summarizedRuleIds, StringComparer.OrdinalIgnoreCase))
+            {
+                throw new ArgumentException(
+                    "Skipped override summaries must describe the same rule ids as the grouped skipped override bucket.",
+                    nameof(skippedOverrideIds));
+            }
+        }
 
         if (!candidateIds.IsSupersetOf(normalizedPublishedCandidateIds))
         {
@@ -261,6 +408,8 @@ public sealed class RestEndpointPublicationGroupDescriptor
         AuthoringPolicySuppressionSummaries = normalizedAuthoringPolicySuppressionSummaries;
         GovernanceSuppressionSummaries = normalizedGovernanceSuppressionSummaries;
         GovernanceOverrideSummaries = normalizedGovernanceOverrideSummaries;
+        SkippedSuppressionSummaries = normalizedSkippedSuppressionSummaries;
+        SkippedOverrideSummaries = normalizedSkippedOverrideSummaries;
         HostGovernanceEligibleCandidateIds = normalizedHostGovernanceEligibleCandidateIds;
         HostGovernanceIneligibleCandidateIds = normalizedHostGovernanceIneligibleCandidateIds;
         SkippedSuppressionIds = normalizedSkippedSuppressionIds;
@@ -319,6 +468,16 @@ public sealed class RestEndpointPublicationGroupDescriptor
     /// Gets the grouped host-governance override-rule outcomes summarized by rule.
     /// </summary>
     public IReadOnlyList<RestEndpointPublicationGroupGovernanceOverrideSummaryDescriptor> GovernanceOverrideSummaries { get; }
+
+    /// <summary>
+    /// Gets the grouped host-governance-skipped suppression-rule outcomes summarized by rule.
+    /// </summary>
+    public IReadOnlyList<RestEndpointPublicationGroupGovernanceSkippedSuppressionSummaryDescriptor> SkippedSuppressionSummaries { get; }
+
+    /// <summary>
+    /// Gets the grouped host-governance-skipped override-rule outcomes summarized by rule.
+    /// </summary>
+    public IReadOnlyList<RestEndpointPublicationGroupGovernanceSkippedOverrideSummaryDescriptor> SkippedOverrideSummaries { get; }
 
     /// <summary>
     /// Gets the candidate identifiers whose original projections allowed host governance to participate.
@@ -435,6 +594,8 @@ public sealed class RestEndpointPublicationGroupDescriptor
                 var skippedOverrideIds = BuildOrderedSkippedRuleIds(
                     orderedCandidates,
                     static candidate => candidate.SkippedOverrideIds);
+                var skippedSuppressionSummaries = BuildSkippedSuppressionSummaries(orderedCandidates);
+                var skippedOverrideSummaries = BuildSkippedOverrideSummaries(orderedCandidates);
 
                 return new RestEndpointPublicationGroupAuthoringStyleDescriptor(
                     group.Key,
@@ -451,7 +612,9 @@ public sealed class RestEndpointPublicationGroupDescriptor
                     skippedSuppressionIds,
                     skippedOverrideIds,
                     governanceSuppressionSummaries,
-                    governanceOverrideSummaries);
+                    governanceOverrideSummaries,
+                    skippedSuppressionSummaries,
+                    skippedOverrideSummaries);
             })
             .ToArray();
     }
@@ -540,5 +703,17 @@ public sealed class RestEndpointPublicationGroupDescriptor
         IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> candidates)
     {
         return RestEndpointPublicationGroupGovernanceOverrideSummaryBuilder.BuildFromCandidates(candidates);
+    }
+
+    private static RestEndpointPublicationGroupGovernanceSkippedSuppressionSummaryDescriptor[] BuildSkippedSuppressionSummaries(
+        IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> candidates)
+    {
+        return RestEndpointPublicationGroupGovernanceSkippedSuppressionSummaryBuilder.BuildFromCandidates(candidates);
+    }
+
+    private static RestEndpointPublicationGroupGovernanceSkippedOverrideSummaryDescriptor[] BuildSkippedOverrideSummaries(
+        IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> candidates)
+    {
+        return RestEndpointPublicationGroupGovernanceSkippedOverrideSummaryBuilder.BuildFromCandidates(candidates);
     }
 }

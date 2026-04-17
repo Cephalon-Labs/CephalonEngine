@@ -180,8 +180,12 @@ stable `published` / `suppressed` JSON wire names through
 catalogs and snapshots no longer rely on raw enum-number serialization for operator-facing status
 truth. Grouped publication answers now also carry typed
 host-governance eligibility/ineligibility candidate buckets plus grouped skipped suppression and
-override rule ids, so callers do not need to repartition the ordered candidate set just to see
-which behavior boundary stayed outside host governance. The same
+override rule ids, plus typed
+`RestEndpointPublicationGroupGovernanceSkippedSuppressionSummaryDescriptor` and
+`RestEndpointPublicationGroupGovernanceSkippedOverrideSummaryDescriptor` entries through
+`SkippedSuppressionSummaries` and `SkippedOverrideSummaries`, so callers do not need to repartition
+the ordered candidate set just to see which behavior boundary stayed outside host governance or
+which skipped host rule targeted which ineligible candidate ids. The same
 transport namespace now also owns `IRestEndpointOverrideRuntimeCatalog` plus
 `RestEndpointOverrideDescriptor`, including shorthand binding resets through `ClearBindings` plus
 the shorthand endpoint-metadata clear actions `ClearEndpointName`, `ClearSummary`, and

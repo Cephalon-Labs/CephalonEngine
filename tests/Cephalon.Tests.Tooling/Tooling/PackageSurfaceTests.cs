@@ -276,6 +276,8 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateStatus),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateStatusExtensions),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideDescriptor),
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupGovernanceSkippedOverrideSummaryDescriptor),
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupGovernanceSkippedSuppressionSummaryDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupGovernanceOverrideSummaryDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupGovernanceSuppressionSummaryDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupAuthoringPolicyDescriptor),
@@ -1428,6 +1430,10 @@ public sealed class PackageSurfaceTests
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupDescriptor)
             .GetProperty("GovernanceOverrideSummaries", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupDescriptor)
+            .GetProperty("SkippedSuppressionSummaries", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupDescriptor)
+            .GetProperty("SkippedOverrideSummaries", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupDescriptor)
             .GetProperty("HostGovernanceEligibleCandidateIds", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupDescriptor)
             .GetProperty("HostGovernanceIneligibleCandidateIds", BindingFlags.Instance | BindingFlags.Public));
@@ -1480,6 +1486,10 @@ public sealed class PackageSurfaceTests
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupAuthoringStyleDescriptor)
             .GetProperty("GovernanceOverrideSummaries", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupAuthoringStyleDescriptor)
+            .GetProperty("SkippedSuppressionSummaries", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupAuthoringStyleDescriptor)
+            .GetProperty("SkippedOverrideSummaries", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupAuthoringStyleDescriptor)
             .GetProperty("HostGovernanceEligibleCandidateIds", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupAuthoringStyleDescriptor)
             .GetProperty("HostGovernanceIneligibleCandidateIds", BindingFlags.Instance | BindingFlags.Public));
@@ -1520,6 +1530,24 @@ public sealed class PackageSurfaceTests
             .GetProperty("SelectedCandidateIds", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupGovernanceOverrideSummaryDescriptor)
             .GetProperty("AppliedCandidateIds", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void RestEndpointPublicationGroupGovernanceSkippedSuppressionSummaryContractsExposeRuleAndCandidateBuckets()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupGovernanceSkippedSuppressionSummaryDescriptor)
+            .GetProperty("RuleId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupGovernanceSkippedSuppressionSummaryDescriptor)
+            .GetProperty("CandidateIds", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void RestEndpointPublicationGroupGovernanceSkippedOverrideSummaryContractsExposeRuleAndCandidateBuckets()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupGovernanceSkippedOverrideSummaryDescriptor)
+            .GetProperty("RuleId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupGovernanceSkippedOverrideSummaryDescriptor)
+            .GetProperty("CandidateIds", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

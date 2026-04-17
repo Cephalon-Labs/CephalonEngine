@@ -589,8 +589,10 @@ endpoints now surface ordered `SkippedSuppressionIds` and `SkippedOverrideIds` f
 that targeted the route but were skipped because the group never entered the governable surface.
 The grouped publication answer now also surfaces that same story per behavior and per authoring
 style through `HostGovernanceEligibleCandidateIds`, `HostGovernanceIneligibleCandidateIds`,
-`SkippedSuppressionIds`, and `SkippedOverrideIds`, so module authors do not need to drill into
-each candidate to confirm that explicit ownership stayed authoritative.
+`SkippedSuppressionIds`, `SkippedOverrideIds`, `SkippedSuppressionSummaries`, and
+`SkippedOverrideSummaries`, so module authors do not need to drill into each candidate to confirm
+that explicit ownership stayed authoritative or which ineligible candidates each skipped host rule
+targeted.
 
 When a host wants to declare grouped authoring-policy intent for one behavior boundary, use
 `RestApi:AuthoringPolicies:{behaviorId}`. That boundary-level contract now actively honors

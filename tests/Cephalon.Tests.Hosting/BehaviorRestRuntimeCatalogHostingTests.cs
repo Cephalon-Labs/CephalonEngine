@@ -5409,6 +5409,8 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Empty(group.HostGovernanceIneligibleCandidateIds);
         Assert.Empty(group.SkippedSuppressionIds);
         Assert.Empty(group.SkippedOverrideIds);
+        Assert.Empty(group.SkippedSuppressionSummaries);
+        Assert.Empty(group.SkippedOverrideSummaries);
         Assert.Equal(2, group.Candidates.Count);
         Assert.Equal(2, group.AuthoringStyleSummaries.Count);
         var profileStyle = Assert.Single(group.AuthoringStyleSummaries, static item =>
@@ -5422,6 +5424,8 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Empty(profileStyle.PrecedenceSuppressedCandidateIds);
         Assert.Empty(profileStyle.SkippedSuppressionIds);
         Assert.Empty(profileStyle.SkippedOverrideIds);
+        Assert.Empty(profileStyle.SkippedSuppressionSummaries);
+        Assert.Empty(profileStyle.SkippedOverrideSummaries);
         var profileSuppressionSummary = Assert.Single(profileStyle.GovernanceSuppressionSummaries);
         Assert.Equal("prefer-generated", profileSuppressionSummary.RuleId);
         Assert.Equal([governanceSuppressed.Id], profileSuppressionSummary.MatchedCandidateIds);
@@ -5438,6 +5442,8 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Empty(generatedStyle.GovernanceSuppressedCandidateIds);
         Assert.Empty(generatedStyle.SkippedSuppressionIds);
         Assert.Empty(generatedStyle.SkippedOverrideIds);
+        Assert.Empty(generatedStyle.SkippedSuppressionSummaries);
+        Assert.Empty(generatedStyle.SkippedOverrideSummaries);
         Assert.Empty(generatedStyle.GovernanceSuppressionSummaries);
         Assert.Empty(generatedStyle.GovernanceOverrideSummaries);
         Assert.Contains(snapshot.RestEndpointPublicationGroups, item =>
@@ -5450,6 +5456,8 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             item.HostGovernanceIneligibleCandidateIds.Count == 0 &&
             item.SkippedSuppressionIds.Count == 0 &&
             item.SkippedOverrideIds.Count == 0 &&
+            item.SkippedSuppressionSummaries.Count == 0 &&
+            item.SkippedOverrideSummaries.Count == 0 &&
             string.Equals(item.GovernanceSuppressedCandidateIds[0], governanceSuppressed.Id, StringComparison.Ordinal));
     }
 
@@ -5506,6 +5514,12 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal([candidate.Id], group.HostGovernanceIneligibleCandidateIds);
         Assert.Equal(["skip-disabled-explicit"], group.SkippedSuppressionIds);
         Assert.Equal(["rewrite-disabled-explicit"], group.SkippedOverrideIds);
+        var skippedSuppressionSummary = Assert.Single(group.SkippedSuppressionSummaries, static item =>
+            string.Equals(item.RuleId, "skip-disabled-explicit", StringComparison.Ordinal));
+        Assert.Equal([candidate.Id], skippedSuppressionSummary.CandidateIds);
+        var skippedOverrideSummary = Assert.Single(group.SkippedOverrideSummaries, static item =>
+            string.Equals(item.RuleId, "rewrite-disabled-explicit", StringComparison.Ordinal));
+        Assert.Equal([candidate.Id], skippedOverrideSummary.CandidateIds);
         Assert.Single(group.AuthoringStyleSummaries);
 
         var explicitStyle = Assert.Single(group.AuthoringStyleSummaries, static item =>
@@ -5519,17 +5533,41 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal([candidate.Id], explicitStyle.HostGovernanceIneligibleCandidateIds);
         Assert.Equal(["skip-disabled-explicit"], explicitStyle.SkippedSuppressionIds);
         Assert.Equal(["rewrite-disabled-explicit"], explicitStyle.SkippedOverrideIds);
+        var explicitStyleSkippedSuppressionSummary = Assert.Single(explicitStyle.SkippedSuppressionSummaries, static item =>
+            string.Equals(item.RuleId, "skip-disabled-explicit", StringComparison.Ordinal));
+        Assert.Equal([candidate.Id], explicitStyleSkippedSuppressionSummary.CandidateIds);
+        var explicitStyleSkippedOverrideSummary = Assert.Single(explicitStyle.SkippedOverrideSummaries, static item =>
+            string.Equals(item.RuleId, "rewrite-disabled-explicit", StringComparison.Ordinal));
+        Assert.Equal([candidate.Id], explicitStyleSkippedOverrideSummary.CandidateIds);
 
         Assert.Equal(group.HostGovernanceEligibleCandidateIds, groupByBehavior.HostGovernanceEligibleCandidateIds);
         Assert.Equal(group.HostGovernanceIneligibleCandidateIds, groupByBehavior.HostGovernanceIneligibleCandidateIds);
         Assert.Equal(group.SkippedSuppressionIds, groupByBehavior.SkippedSuppressionIds);
         Assert.Equal(group.SkippedOverrideIds, groupByBehavior.SkippedOverrideIds);
+        Assert.Collection(
+            groupByBehavior.SkippedSuppressionSummaries,
+            summary =>
+            {
+                Assert.Equal("skip-disabled-explicit", summary.RuleId);
+                Assert.Equal([candidate.Id], summary.CandidateIds);
+            });
+        Assert.Collection(
+            groupByBehavior.SkippedOverrideSummaries,
+            summary =>
+            {
+                Assert.Equal("rewrite-disabled-explicit", summary.RuleId);
+                Assert.Equal([candidate.Id], summary.CandidateIds);
+            });
         Assert.Contains(snapshot.RestEndpointPublicationGroups, item =>
             string.Equals(item.BehaviorId, group.BehaviorId, StringComparison.Ordinal) &&
             item.HostGovernanceEligibleCandidateIds.Count == 0 &&
             item.HostGovernanceIneligibleCandidateIds.Count == 1 &&
             item.SkippedSuppressionIds.SequenceEqual(["skip-disabled-explicit"]) &&
-            item.SkippedOverrideIds.SequenceEqual(["rewrite-disabled-explicit"]));
+            item.SkippedOverrideIds.SequenceEqual(["rewrite-disabled-explicit"]) &&
+            item.SkippedSuppressionSummaries.Count == 1 &&
+            item.SkippedOverrideSummaries.Count == 1 &&
+            item.SkippedSuppressionSummaries[0].CandidateIds.SequenceEqual([candidate.Id]) &&
+            item.SkippedOverrideSummaries[0].CandidateIds.SequenceEqual([candidate.Id]));
     }
 
     [Fact]
