@@ -76,7 +76,8 @@ public sealed class RestApiGovernanceOptions
                 routeGroupPrefixes: ReadStringArray(child.GetSection("RouteGroupPrefixes")),
                 openApiDocumentNames: ReadStringArray(child.GetSection("OpenApiDocumentNames")),
                 tagNames: ReadStringArray(child.GetSection("TagNames")),
-                bindingFallbackModes: ReadBindingFallbackModeArray(child.GetSection("BindingFallbackModes"))))
+                bindingFallbackModes: ReadBindingFallbackModeArray(child.GetSection("BindingFallbackModes")),
+                targetBindings: ReadBindings(child.GetSection("TargetBindings"))))
             .ToArray();
         var overrides = configuration.GetSection(sectionPath)
             .GetSection("Overrides")
@@ -111,7 +112,8 @@ public sealed class RestApiGovernanceOptions
                 clearDescription: ReadBoolean(child, "ClearDescription"),
                 openApiDocumentNames: ReadStringArray(child.GetSection("OpenApiDocumentNames")),
                 tagNames: ReadStringArray(child.GetSection("TagNames")),
-                bindingFallbackModes: ReadBindingFallbackModeArray(child.GetSection("BindingFallbackModes"))))
+                bindingFallbackModes: ReadBindingFallbackModeArray(child.GetSection("BindingFallbackModes")),
+                targetBindings: ReadBindings(child.GetSection("TargetBindings"))))
             .ToArray();
 
         return new RestApiGovernanceOptions(suppressions, overrides);

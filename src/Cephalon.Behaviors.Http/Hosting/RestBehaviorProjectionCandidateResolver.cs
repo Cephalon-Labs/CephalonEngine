@@ -160,6 +160,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             apiRoutesOptions.RestPrefix,
             originalOpenApiDocumentName,
             originalRouteGroupPrefix,
+            originalProjection.BindingDescriptors,
             originalBindingFallbackMode,
             tagName,
             group,
@@ -328,6 +329,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         string restPrefix,
         string originalOpenApiDocumentName,
         string originalRouteGroupPrefix,
+        IReadOnlyList<RestEndpointBindingDescriptor> originalBindingDescriptors,
         RestEndpointBindingFallbackMode? originalBindingFallbackMode,
         string originalTagName,
         RestBehaviorRouteGroupProjection group,
@@ -338,6 +340,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         ArgumentNullException.ThrowIfNull(endpointProjection);
         ArgumentNullException.ThrowIfNull(restPrefix);
         ArgumentException.ThrowIfNullOrWhiteSpace(originalRouteGroupPrefix);
+        ArgumentNullException.ThrowIfNull(originalBindingDescriptors);
         ArgumentException.ThrowIfNullOrWhiteSpace(originalTagName);
         ArgumentNullException.ThrowIfNull(group);
 
@@ -353,6 +356,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             defaultApiVersionMajor,
             originalOpenApiDocumentName,
             originalRouteGroupPrefix,
+            originalBindingDescriptors,
             originalBindingFallbackMode,
             originalTagName,
             overrides);
@@ -526,6 +530,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         int? defaultApiVersionMajor,
         string originalOpenApiDocumentName,
         string originalRouteGroupPrefix,
+        IReadOnlyList<RestEndpointBindingDescriptor> originalBindingDescriptors,
         RestEndpointBindingFallbackMode? originalBindingFallbackMode,
         string originalTagName,
         IReadOnlyList<RestEndpointOverrideOptions>? overrides)
@@ -535,6 +540,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         ArgumentNullException.ThrowIfNull(endpointProjection);
         ArgumentException.ThrowIfNullOrWhiteSpace(originalOpenApiDocumentName);
         ArgumentException.ThrowIfNullOrWhiteSpace(originalRouteGroupPrefix);
+        ArgumentNullException.ThrowIfNull(originalBindingDescriptors);
         ArgumentException.ThrowIfNullOrWhiteSpace(originalTagName);
 
         if (overrides is null || overrides.Count == 0)
@@ -550,6 +556,7 @@ internal static class RestBehaviorProjectionCandidateResolver
                 defaultApiVersionMajor,
                 originalOpenApiDocumentName,
                 originalRouteGroupPrefix,
+                originalBindingDescriptors,
                 originalBindingFallbackMode,
                 originalTagName,
                 overrideOptions))
@@ -1088,6 +1095,14 @@ internal static class RestBehaviorProjectionCandidateResolver
             }
         }
 
+        if (suppression.TargetBindings.Count > 0 &&
+            !RestBehaviorBindingDescriptorSetComparer.Equivalent(
+                suppression.TargetBindings,
+                candidate.Candidate.OriginalProjection.BindingDescriptors))
+        {
+            return false;
+        }
+
         return true;
     }
 
@@ -1098,6 +1113,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         int? defaultApiVersionMajor,
         string originalOpenApiDocumentName,
         string originalRouteGroupPrefix,
+        IReadOnlyList<RestEndpointBindingDescriptor> originalBindingDescriptors,
         RestEndpointBindingFallbackMode? originalBindingFallbackMode,
         string originalTagName,
         RestEndpointOverrideOptions overrideOptions)
@@ -1107,6 +1123,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         ArgumentNullException.ThrowIfNull(endpointProjection);
         ArgumentException.ThrowIfNullOrWhiteSpace(originalOpenApiDocumentName);
         ArgumentException.ThrowIfNullOrWhiteSpace(originalRouteGroupPrefix);
+        ArgumentNullException.ThrowIfNull(originalBindingDescriptors);
         ArgumentException.ThrowIfNullOrWhiteSpace(originalTagName);
         ArgumentNullException.ThrowIfNull(overrideOptions);
 
@@ -1177,6 +1194,14 @@ internal static class RestBehaviorProjectionCandidateResolver
             return false;
         }
 
+        if (overrideOptions.TargetBindings.Count > 0 &&
+            !RestBehaviorBindingDescriptorSetComparer.Equivalent(
+                overrideOptions.TargetBindings,
+                originalBindingDescriptors))
+        {
+            return false;
+        }
+
         return true;
     }
 
@@ -1235,6 +1260,11 @@ internal static class RestBehaviorProjectionCandidateResolver
             count++;
         }
 
+        if (suppression.TargetBindings.Count > 0)
+        {
+            count++;
+        }
+
         return count;
     }
 
@@ -1289,6 +1319,11 @@ internal static class RestBehaviorProjectionCandidateResolver
         }
 
         if (overrideOptions.BindingFallbackModes.Count > 0)
+        {
+            count++;
+        }
+
+        if (overrideOptions.TargetBindings.Count > 0)
         {
             count++;
         }
@@ -1380,7 +1415,8 @@ internal static class RestBehaviorProjectionCandidateResolver
                suppression.RouteGroupPrefixes.Count +
                suppression.OpenApiDocumentNames.Count +
                suppression.TagNames.Count +
-               suppression.BindingFallbackModes.Count;
+               suppression.BindingFallbackModes.Count +
+               suppression.TargetBindings.Count;
     }
 
     private static int CountTargetValues(RestEndpointOverrideOptions overrideOptions)
@@ -1396,7 +1432,8 @@ internal static class RestBehaviorProjectionCandidateResolver
                overrideOptions.RouteGroupPrefixes.Count +
                overrideOptions.OpenApiDocumentNames.Count +
                overrideOptions.TagNames.Count +
-               overrideOptions.BindingFallbackModes.Count;
+               overrideOptions.BindingFallbackModes.Count +
+               overrideOptions.TargetBindings.Count;
     }
 
     private static string? NormalizeOverrideMetadataValue(string? value)

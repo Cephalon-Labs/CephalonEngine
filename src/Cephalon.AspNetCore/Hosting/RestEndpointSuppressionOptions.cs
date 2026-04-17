@@ -60,6 +60,10 @@ public sealed class RestEndpointSuppressionOptions
     /// The original shorthand request-binding fallback modes targeted by the suppression rule
     /// before any override actions are applied.
     /// </param>
+    /// <param name="targetBindings">
+    /// The original shorthand explicit binding descriptors targeted by the suppression rule before
+    /// any override actions are applied.
+    /// </param>
     public RestEndpointSuppressionOptions(
         string id,
         IReadOnlyList<string>? candidateIds = null,
@@ -72,7 +76,8 @@ public sealed class RestEndpointSuppressionOptions
         IReadOnlyList<string>? routeGroupPrefixes = null,
         IReadOnlyList<string>? openApiDocumentNames = null,
         IReadOnlyList<string>? tagNames = null,
-        IReadOnlyList<RestEndpointBindingFallbackMode>? bindingFallbackModes = null)
+        IReadOnlyList<RestEndpointBindingFallbackMode>? bindingFallbackModes = null,
+        IReadOnlyList<RestEndpointBindingDescriptor>? targetBindings = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
 
@@ -102,6 +107,7 @@ public sealed class RestEndpointSuppressionOptions
         BindingFallbackModes = NormalizeBindingFallbackModes(
             bindingFallbackModes,
             nameof(bindingFallbackModes));
+        TargetBindings = NormalizeTargetBindings(targetBindings, nameof(targetBindings));
 
         if (CandidateIds.Count == 0 && BehaviorIds.Count == 0 && SourceModuleIds.Count == 0)
         {
@@ -175,6 +181,12 @@ public sealed class RestEndpointSuppressionOptions
     public IReadOnlyList<RestEndpointBindingFallbackMode> BindingFallbackModes { get; }
 
     /// <summary>
+    /// Gets the original shorthand explicit binding descriptors targeted by this suppression rule
+    /// before override actions are applied.
+    /// </summary>
+    public IReadOnlyList<RestEndpointBindingDescriptor> TargetBindings { get; }
+
+    /// <summary>
     /// Gets a value indicating whether any targeting values were explicitly supplied.
     /// </summary>
     public bool HasValues =>
@@ -187,7 +199,8 @@ public sealed class RestEndpointSuppressionOptions
         RouteGroupPrefixes.Count > 0 ||
         OpenApiDocumentNames.Count > 0 ||
         TagNames.Count > 0 ||
-        BindingFallbackModes.Count > 0;
+        BindingFallbackModes.Count > 0 ||
+        TargetBindings.Count > 0;
 
     private static string[] NormalizeList(IReadOnlyList<string>? values)
     {
@@ -326,5 +339,52 @@ public sealed class RestEndpointSuppressionOptions
         }
 
         return normalized;
+    }
+
+    private static RestEndpointBindingDescriptor[] NormalizeTargetBindings(
+        IReadOnlyList<RestEndpointBindingDescriptor>? values,
+        string paramName)
+    {
+        if (values is null)
+        {
+            return [];
+        }
+
+        var normalized = new List<RestEndpointBindingDescriptor>(values.Count);
+        var seenByProperty = new Dictionary<string, RestEndpointBindingDescriptor>(StringComparer.OrdinalIgnoreCase);
+        foreach (var value in values)
+        {
+            if (value is null)
+            {
+                continue;
+            }
+
+            var binding = new RestEndpointBindingDescriptor(
+                value.PropertyName,
+                value.Source,
+                value.Name);
+            var propertyName = binding.PropertyName.Trim();
+            if (seenByProperty.TryGetValue(propertyName, out var existing))
+            {
+                if (existing.Source != binding.Source ||
+                    !string.Equals(existing.Name, binding.Name, StringComparison.Ordinal))
+                {
+                    throw new ArgumentException(
+                        $"REST endpoint suppression target bindings cannot declare more than one binding selector for property '{propertyName}'.",
+                        paramName);
+                }
+
+                continue;
+            }
+
+            seenByProperty[propertyName] = binding;
+            normalized.Add(binding);
+        }
+
+        return normalized
+            .OrderBy(static binding => binding.PropertyName, StringComparer.OrdinalIgnoreCase)
+            .ThenBy(static binding => binding.Source)
+            .ThenBy(static binding => binding.Name ?? string.Empty, StringComparer.Ordinal)
+            .ToArray();
     }
 }

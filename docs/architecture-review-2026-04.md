@@ -206,8 +206,14 @@ bindings, `Cephalon.Behaviors.SourceGen` now rejects missing-binding cases throu
 `BehaviorRestProfileResolver` re-checks the same rule during runtime fallback so explicit profile
 authoring can preserve source implicit query fallback without losing fail-fast truth.
 
-The remaining gap is no longer raw operator visibility or this immediate authoring-parity hole; it
-is broader shorthand-source competition and future authoring rules if shorthand or generated routes
+The next governance-targeting follow-through is now addressed through `ENG-058-T120`: host
+suppression and override rules can now target the original shorthand explicit binding-plan identity
+directly through `TargetBindings`, so route-only and richer explicitly bound candidates can be
+governed separately without depending on later rewritten published route shape.
+
+The remaining gap is no longer raw operator visibility, original binding/fallback selector
+targeting, or this immediate authoring-parity hole; it is broader shorthand-source competition and
+future authoring rules if shorthand or generated routes
 eventually broaden enough that more than one projection style can compete for the same public
 behavior boundary in ways the current runtime surfaces do not already explain clearly.
 

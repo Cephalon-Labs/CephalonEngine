@@ -436,15 +436,17 @@ Current helper behavior:
   HTTP method, bounded published route-group prefix, constrained relative route pattern, or
   explicit binding plan through
   `RestApi:Overrides` without taking away module ownership; the suppression/override surfaces can
-  both now refine `Behaviors`/`Modules` targeting with `ApiVersionMajors`, `Methods`,
-  `RelativePatterns`, and `RouteGroupPrefixes`, those selector refiners match the original
-  shorthand candidate shape before override actions are applied, and the override surface itself
-  now supports `ApiVersionMajor`, `Method`, `RouteGroupPrefix`, `Pattern`, `Bindings`, and typed `BindingMode`, keeps the `/v{major}` route segment,
-  OpenAPI document name, endpoint method, effective route, and effective binding plan aligned with
-  the same projection truth, defaults `Bindings` to full explicit-plan replacement but also allows
-  `BindingMode = MergeExplicit` to patch only the changed explicit bindings by property name while
-  still letting unbound route placeholders and remaining request-body fields fill object properties
-  deterministically, now allows placeholder renames when the
+  both target exact `CandidateIds` and refine `Behaviors`/`Modules` targeting with
+  `ApiVersionMajors`, `Methods`, `RelativePatterns`, `RouteGroupPrefixes`,
+  `OpenApiDocumentNames`, `TagNames`, `BindingFallbackModes`, and exact original explicit
+  `TargetBindings`, those selector refiners match the original shorthand candidate shape before
+  override actions are applied, and the override surface itself now supports `ApiVersionMajor`,
+  `Method`, `RouteGroupPrefix`, `Pattern`, `Bindings`, and typed `BindingMode`, keeps the
+  `/v{major}` route segment, OpenAPI document name, endpoint method, effective route, and
+  effective binding plan aligned with the same projection truth, defaults `Bindings` to full
+  explicit-plan replacement but also allows `BindingMode = MergeExplicit` to patch only the changed
+  explicit bindings by property name while still letting unbound route placeholders and remaining
+  request-body fields fill object properties deterministically, now allows placeholder renames when the
   effective explicit route-binding plan covers the renamed placeholder set exactly, now also allows
   placeholder removals when the original projection already exposes explicit route-binding coverage
   for the original placeholder set and the effective explicit binding plan keeps every affected
@@ -530,17 +532,22 @@ Current helper behavior:
   shared `/engine/rest-endpoints` runtime catalog plus duplicate-route validation baseline
 
 When a host wants to suppress shorthand publication without removing the module-owned route group,
-use `RestApi:Suppressions`. That host-level governance surface can target `Behaviors`, `Modules`,
-and optional `AuthoringStyles`, can refine that target further with `ApiVersionMajors`, `Methods`,
-`RelativePatterns`, and `RouteGroupPrefixes`, matches those selector refiners against the original
-shorthand candidate shape before override actions are applied, defaults to both shorthand styles
-when `AuthoringStyles` is omitted, fails fast when both `Behaviors` and `Modules` are missing,
-prefers the more specific matching rule deterministically by populated target dimensions first,
-then by behavior-targeted scope, narrower authoring-style scope, fewer total selector values, and
-stable rule id ordering, and intentionally suppresses only descriptor-backed shorthand candidates
-rather than rewriting explicit module DSL/manual routes. When more than one suppression rule
-matches, the suppressed candidate keeps the full ordered match set visible through
-`MatchedSuppressionIds` while `SuppressedBySuppressionId` keeps identifying the winning rule.
+use `RestApi:Suppressions`. That host-level governance surface can target exact `CandidateIds`,
+`Behaviors`, `Modules`, and optional `AuthoringStyles`, can refine that target further with
+`ApiVersionMajors`, `Methods`, `RelativePatterns`, `RouteGroupPrefixes`,
+`OpenApiDocumentNames`, `TagNames`, `BindingFallbackModes`, and exact original explicit
+`TargetBindings`, matches those selector refiners against the original shorthand candidate shape
+before override actions are applied, defaults to both shorthand styles when `AuthoringStyles` is
+omitted, fails fast when both `Behaviors` and `Modules` are missing, prefers the more specific
+matching rule deterministically by populated target dimensions first, then by behavior-targeted
+scope, narrower authoring-style scope, fewer total selector values, and stable rule id ordering,
+and intentionally suppresses only descriptor-backed shorthand candidates rather than rewriting
+explicit module DSL/manual routes. When more than one suppression rule matches, the suppressed
+candidate keeps the full ordered match set visible through `MatchedSuppressionIds` while
+`SuppressedBySuppressionId` keeps identifying the winning rule. `TargetBindings` matches the full
+original explicit descriptor set by property/source/name equivalence, so hosts can distinguish a
+route-only candidate from a richer explicitly bound sibling even when later overrides rewrite the
+published route.
 
 When a host wants to keep shorthand publication but retarget selected shorthand endpoints to a
 different effective API major version, HTTP method, bounded published route-group prefix,
@@ -548,14 +555,15 @@ constrained relative route pattern, endpoint metadata, or explicit binding plan,
 `RestApi:Overrides`. That
 host-level governance surface targets the same
 descriptor-backed shorthand candidates, also requires `Behaviors` or `Modules`, can refine that
-target further with `ApiVersionMajors`, `Methods`, `RelativePatterns`, and `RouteGroupPrefixes`,
-matches those selector refiners against the original shorthand candidate shape before override
-actions are applied, now supports a positive `ApiVersionMajor`, a supported HTTP `Method`, a valid
-bounded `RouteGroupPrefix`, a valid relative `Pattern`, endpoint-metadata set actions
-`EndpointName`, `Summary`, and `Description`, endpoint-metadata clear actions
-`ClearEndpointName`, `ClearSummary`, and `ClearDescription`, and/or explicit `Bindings`, records the
-applied rule through
-`AppliedOverrideId` in `/engine/rest-endpoint-candidates`, keeps the original shorthand source
+target further with exact `CandidateIds`, `ApiVersionMajors`, `Methods`, `RelativePatterns`,
+`RouteGroupPrefixes`, `OpenApiDocumentNames`, `TagNames`, `BindingFallbackModes`, and exact
+original explicit `TargetBindings`, matches those selector refiners against the original shorthand
+candidate shape before override actions are applied, now supports a positive `ApiVersionMajor`, a
+supported HTTP `Method`, a valid bounded `RouteGroupPrefix`, a valid relative `Pattern`,
+endpoint-metadata set actions `EndpointName`, `Summary`, and `Description`, endpoint-metadata clear
+actions `ClearEndpointName`, `ClearSummary`, and `ClearDescription`, and/or explicit `Bindings`;
+the winning rule is recorded through `AppliedOverrideId` in `/engine/rest-endpoint-candidates`,
+while the runtime keeps the original shorthand source
 shape visible there through `OriginalProjection` while `ProjectedEndpoint` carries the final
 effective mapped answer, now also keeps original shorthand endpoint name plus summary/description
 visible on that effective mapped answer through `ProjectedEndpoint.OriginalEndpointName`,
@@ -587,10 +595,12 @@ group to a different path such as `/api/v1/showcase/cart-admin`, but only when t
 beneath the active REST root, contains no placeholders, and does not silently change effective
 API-version truth; when only some candidates in one authored shorthand group are remapped,
 ASP.NET Core now splits materialization by the effective group prefix so actual HTTP routes match
-`OriginalProjection`/`ProjectedEndpoint` runtime truth, while published shorthand endpoints now
-also expose `OriginalEndpointName`, `OriginalSummary`, and `OriginalDescription` directly so the
-final runtime answer keeps source-versus-effective endpoint metadata visible beside route/version
-truth even when a host-level override intentionally clears the effective endpoint metadata. A
+`OriginalProjection`/`ProjectedEndpoint` runtime truth, published shorthand endpoints also expose
+`OriginalEndpointName`, `OriginalSummary`, and `OriginalDescription` directly so the final runtime
+answer keeps source-versus-effective endpoint metadata visible beside route/version truth even when
+a host-level override intentionally clears the effective endpoint metadata, and `TargetBindings`
+lets hosts pick the original exact explicit binding plan as a selector instead of an override
+action so governance can distinguish authored binding shapes without rewriting them. A
 single override rule cannot both set and clear the same endpoint-metadata field. Broader
 implicit-property promotion beyond
 that constrained body-fallback-plus-bounded-query-fallback path still fails fast; invalid effective

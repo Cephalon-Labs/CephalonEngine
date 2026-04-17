@@ -2962,6 +2962,116 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverMatchesSuppressionTargetBindingsAgainstOriginalCandidateShapeBeforeBindingOverrides()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-binding-targeting/orders")
+            .MapProfile<ProfileProjectionBoundBehavior>();
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.profile-binding-targeting",
+                "Profile Binding Targeting Module",
+                "Exercises suppression targeting through original shorthand explicit binding selectors before override actions rewrite the effective binding plan.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            [
+                new RestEndpointSuppressionOptions(
+                    id: "hide-original-bindings",
+                    sourceModuleIds: ["tests.rest.profile-binding-targeting"],
+                    targetBindings:
+                    [
+                        new RestEndpointBindingDescriptor(nameof(ProfileProjectionBoundInput.CorrelationId), RestEndpointBindingSource.Header, "X-Correlation-Id"),
+                        new RestEndpointBindingDescriptor(nameof(ProfileProjectionBoundInput.Note), RestEndpointBindingSource.Body, "note"),
+                        new RestEndpointBindingDescriptor(nameof(ProfileProjectionBoundInput.CartId), RestEndpointBindingSource.Route, "cartId"),
+                        new RestEndpointBindingDescriptor(nameof(ProfileProjectionBoundInput.Quantity), RestEndpointBindingSource.Query, "quantity")
+                    ])
+            ],
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "rewrite-route-quantity",
+                    sourceModuleIds: ["tests.rest.profile-binding-targeting"],
+                    pattern: "/lookup/{cartId}/items/{quantity}",
+                    bindings:
+                    [
+                        new RestEndpointBindingDescriptor(nameof(ProfileProjectionBoundInput.CartId), RestEndpointBindingSource.Route, "cartId"),
+                        new RestEndpointBindingDescriptor(nameof(ProfileProjectionBoundInput.Quantity), RestEndpointBindingSource.Route, "quantity"),
+                        new RestEndpointBindingDescriptor(nameof(ProfileProjectionBoundInput.CorrelationId), RestEndpointBindingSource.Header, "X-Correlation-Id"),
+                        new RestEndpointBindingDescriptor(nameof(ProfileProjectionBoundInput.Note), RestEndpointBindingSource.Body, "note")
+                    ])
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Suppressed, candidate.Candidate.Status);
+        Assert.Equal("hide-original-bindings", candidate.Candidate.SuppressedBySuppressionId);
+        Assert.Equal(["hide-original-bindings"], candidate.Candidate.MatchedSuppressionIds);
+        Assert.Equal("rewrite-route-quantity", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal(["rewrite-route-quantity"], candidate.Candidate.MatchedOverrideIds);
+        Assert.Equal("/api/v6/tests/profile-binding-targeting/orders/{cartId}/items", candidate.Candidate.OriginalProjection.RoutePattern);
+        Assert.Equal("/api/v6/tests/profile-binding-targeting/orders/lookup/{cartId}/items/{quantity}", candidate.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Contains(candidate.Candidate.OriginalProjection.BindingDescriptors, static binding =>
+            binding.PropertyName == nameof(ProfileProjectionBoundInput.Quantity) &&
+            binding.Source == RestEndpointBindingSource.Query &&
+            binding.Name == "quantity");
+        Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == nameof(ProfileProjectionBoundInput.Quantity) &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "quantity");
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverAppliesOverrideOnlyToCandidatesThatMatchTargetBindings()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-binding-target-override/write")
+            .MapProfile<ProfileProjectionBoundBehavior>();
+        builder.Group("/tests/profile-binding-target-override/read")
+            .MapProfile<ProfileProjectionBoundGetBehavior>();
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.profile-binding-target-override",
+                "Profile Binding Target Override Module",
+                "Exercises override targeting through original shorthand explicit binding selectors.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "rewrite-route-only",
+                    sourceModuleIds: ["tests.rest.profile-binding-target-override"],
+                    targetBindings:
+                    [
+                        new RestEndpointBindingDescriptor(nameof(ProfileProjectionBoundInput.CartId), RestEndpointBindingSource.Route, "cartId")
+                    ],
+                    pattern: "/lookup/{cartId}")
+            ]);
+
+        Assert.Equal(2, candidates.Count);
+
+        var overridden = Assert.Single(candidates, static item =>
+            string.Equals(
+                item.Candidate.ProjectedEndpoint.RoutePattern,
+                "/api/v6/tests/profile-binding-target-override/read/lookup/{cartId}",
+                StringComparison.Ordinal));
+        Assert.Equal("rewrite-route-only", overridden.Candidate.AppliedOverrideId);
+        Assert.Equal(["rewrite-route-only"], overridden.Candidate.MatchedOverrideIds);
+        Assert.Single(overridden.Candidate.OriginalProjection.BindingDescriptors);
+
+        var untouched = Assert.Single(candidates, static item =>
+            string.Equals(
+                item.Candidate.ProjectedEndpoint.RoutePattern,
+                "/api/v6/tests/profile-binding-target-override/write/{cartId}/items",
+                StringComparison.Ordinal));
+        Assert.Null(untouched.Candidate.AppliedOverrideId);
+        Assert.Empty(untouched.Candidate.MatchedOverrideIds);
+        Assert.Equal(4, untouched.Candidate.OriginalProjection.BindingDescriptors.Count);
+    }
+
+    [Fact]
     public void RestEndpointOverrideOptionsRejectRulesWithoutBehaviorOrModuleTargets()
     {
         var exception = Assert.Throws<ArgumentException>(() =>
@@ -3032,6 +3142,50 @@ public sealed class BehaviorRestProjectionTests
         Assert.Equal(
             [RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback],
             options.BindingFallbackModes);
+        Assert.True(options.HasValues);
+    }
+
+    [Fact]
+    public void RestEndpointSuppressionOptionsTreatTargetBindingsAsSelectors()
+    {
+        var options = new RestEndpointSuppressionOptions(
+            id: "route-only",
+            sourceModuleIds: ["tests.rest.profile-binding-targeting"],
+            targetBindings:
+            [
+                new RestEndpointBindingDescriptor(nameof(ProfileProjectionBoundInput.Note), RestEndpointBindingSource.Body, "note"),
+                new RestEndpointBindingDescriptor(nameof(ProfileProjectionBoundInput.CartId), RestEndpointBindingSource.Route, "cartId")
+            ]);
+
+        Assert.Equal(2, options.TargetBindings.Count);
+        Assert.Contains(options.TargetBindings, static binding =>
+            binding.PropertyName == nameof(ProfileProjectionBoundInput.CartId) &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "cartId");
+        Assert.Contains(options.TargetBindings, static binding =>
+            binding.PropertyName == nameof(ProfileProjectionBoundInput.Note) &&
+            binding.Source == RestEndpointBindingSource.Body &&
+            binding.Name == "note");
+        Assert.True(options.HasValues);
+    }
+
+    [Fact]
+    public void RestEndpointOverrideOptionsTreatTargetBindingsAsSelectors()
+    {
+        var options = new RestEndpointOverrideOptions(
+            id: "route-only",
+            sourceModuleIds: ["tests.rest.profile-binding-target-override"],
+            targetBindings:
+            [
+                new RestEndpointBindingDescriptor(nameof(ProfileProjectionBoundInput.CartId), RestEndpointBindingSource.Route, "cartId")
+            ],
+            pattern: "/lookup/{cartId}");
+
+        Assert.Single(options.TargetBindings);
+        Assert.Contains(options.TargetBindings, static binding =>
+            binding.PropertyName == nameof(ProfileProjectionBoundInput.CartId) &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "cartId");
         Assert.True(options.HasValues);
     }
 

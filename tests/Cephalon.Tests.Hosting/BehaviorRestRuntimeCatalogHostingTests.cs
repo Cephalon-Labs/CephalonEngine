@@ -3127,6 +3127,170 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonAppliesTargetBindingOverrideSelectorsOnlyToTheMatchingCandidate()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.Configuration["RestApi:Overrides:route-only-target:Modules:0"] = "tests.rest.profile-runtime.binding-fallback-selectors";
+        builder.Configuration["RestApi:Overrides:route-only-target:TargetBindings:0:PropertyName"] = "OrderId";
+        builder.Configuration["RestApi:Overrides:route-only-target:TargetBindings:0:Source"] = "Route";
+        builder.Configuration["RestApi:Overrides:route-only-target:TargetBindings:0:Name"] = "orderId";
+        builder.Configuration["RestApi:Overrides:route-only-target:Pattern"] = "/lookup/{orderId}";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new BindingFallbackSelectorRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(overrides);
+        Assert.Equal(2, endpoints.Length);
+        Assert.Equal(2, candidates.Length);
+
+        var writeEndpoint = Assert.Single(endpoints, static item =>
+            string.Equals(
+                item.RoutePattern,
+                "/api/v6/tests/profile-runtime/binding-fallback-selectors/write/orders/{orderId}",
+                StringComparison.Ordinal));
+        var readEndpoint = Assert.Single(endpoints, static item =>
+            string.Equals(
+                item.RoutePattern,
+                "/api/v6/tests/profile-runtime/binding-fallback-selectors/read/orders/lookup/{orderId}",
+                StringComparison.Ordinal));
+
+        Assert.Null(writeEndpoint.AppliedOverrideId);
+        Assert.Equal("route-only-target", readEndpoint.AppliedOverrideId);
+
+        var writeCandidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.profile.bindings", StringComparison.Ordinal));
+        var readCandidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.profile.bindings.get", StringComparison.Ordinal));
+
+        Assert.Null(writeCandidate.AppliedOverrideId);
+        Assert.Empty(writeCandidate.MatchedOverrideIds);
+        Assert.Equal("route-only-target", readCandidate.AppliedOverrideId);
+        Assert.Equal(["route-only-target"], readCandidate.MatchedOverrideIds);
+        Assert.Single(readCandidate.OriginalProjection.BindingDescriptors);
+
+        var rule = Assert.Single(overrides, static item =>
+            string.Equals(item.Id, "route-only-target", StringComparison.Ordinal));
+        Assert.Equal("/lookup/{orderId}", rule.Pattern);
+        Assert.Single(rule.TargetBindings);
+        Assert.Contains(rule.TargetBindings, static binding =>
+            binding.PropertyName == "OrderId" &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "orderId");
+
+        using var writeRequest = new HttpRequestMessage(
+            HttpMethod.Post,
+            "/api/v6/tests/profile-runtime/binding-fallback-selectors/write/orders/ord-125?quantity=3");
+        writeRequest.Headers.Add("X-Correlation-Id", "corr-125");
+        writeRequest.Content = JsonContent.Create(new
+        {
+            note = "write"
+        });
+
+        var writeResponse = await client.SendAsync(writeRequest);
+        writeResponse.EnsureSuccessStatusCode();
+
+        var readResponse = await client.GetAsync("/api/v6/tests/profile-runtime/binding-fallback-selectors/read/orders/lookup/ord-126");
+        readResponse.EnsureSuccessStatusCode();
+    }
+
+    [Fact]
+    public async Task MapCephalonAppliesTargetBindingSuppressionSelectorsOnlyToTheMatchingCandidate()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.Configuration["RestApi:Suppressions:hide-route-only:Modules:0"] = "tests.rest.profile-runtime.binding-fallback-selectors";
+        builder.Configuration["RestApi:Suppressions:hide-route-only:TargetBindings:0:PropertyName"] = "OrderId";
+        builder.Configuration["RestApi:Suppressions:hide-route-only:TargetBindings:0:Source"] = "Route";
+        builder.Configuration["RestApi:Suppressions:hide-route-only:TargetBindings:0:Name"] = "orderId";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new BindingFallbackSelectorRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var suppressions = await client.GetFromJsonAsync<RestEndpointSuppressionDescriptor[]>("/engine/rest-endpoint-suppressions");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(suppressions);
+
+        var endpoint = Assert.Single(endpoints);
+        Assert.Equal("/api/v6/tests/profile-runtime/binding-fallback-selectors/write/orders/{orderId}", endpoint.RoutePattern);
+
+        var published = Assert.Single(candidates, static item => item.Status == RestEndpointCandidateStatus.Published);
+        Assert.Equal("tests.rest.profile.bindings", published.ProjectedEndpoint.BehaviorId);
+        Assert.Empty(published.MatchedSuppressionIds);
+
+        var suppressed = Assert.Single(candidates, static item => item.Status == RestEndpointCandidateStatus.Suppressed);
+        Assert.Equal("tests.rest.profile.bindings.get", suppressed.ProjectedEndpoint.BehaviorId);
+        Assert.Equal("hide-route-only", suppressed.SuppressedBySuppressionId);
+        Assert.Equal(["hide-route-only"], suppressed.MatchedSuppressionIds);
+        Assert.Single(suppressed.OriginalProjection.BindingDescriptors);
+
+        var rule = Assert.Single(suppressions, static item =>
+            string.Equals(item.Id, "hide-route-only", StringComparison.Ordinal));
+        Assert.Single(rule.TargetBindings);
+        Assert.Contains(rule.TargetBindings, static binding =>
+            binding.PropertyName == "OrderId" &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "orderId");
+
+        using var writeRequest = new HttpRequestMessage(
+            HttpMethod.Post,
+            "/api/v6/tests/profile-runtime/binding-fallback-selectors/write/orders/ord-127?quantity=4");
+        writeRequest.Headers.Add("X-Correlation-Id", "corr-127");
+        writeRequest.Content = JsonContent.Create(new
+        {
+            note = "write"
+        });
+
+        var writeResponse = await client.SendAsync(writeRequest);
+        writeResponse.EnsureSuccessStatusCode();
+
+        var suppressedResponse = await client.GetAsync("/api/v6/tests/profile-runtime/binding-fallback-selectors/read/orders/ord-128");
+        Assert.Equal(System.Net.HttpStatusCode.NotFound, suppressedResponse.StatusCode);
+    }
+
+    [Fact]
     public async Task MapCephalonAppliesCandidateIdOverrideSelectorsUsingStableCandidateIds()
     {
         var builder = WebApplication.CreateBuilder();

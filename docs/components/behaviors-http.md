@@ -652,7 +652,8 @@ Current governance baseline:
   `RestApi:Overrides`
 - target one or more `CandidateIds`, `Behaviors`, `Modules`, and optional `AuthoringStyles`, then
   optionally refine that match with `ApiVersionMajors`, `Methods`, `RelativePatterns`,
-  `RouteGroupPrefixes`, `OpenApiDocumentNames`, `TagNames`, and `BindingFallbackModes`
+  `RouteGroupPrefixes`, `OpenApiDocumentNames`, `TagNames`, `BindingFallbackModes`, and exact
+  original explicit `TargetBindings`
 - rules that omit all of `CandidateIds`, `Behaviors`, and `Modules` now fail fast instead of
   suppressing every shorthand candidate implicitly
 - override rules must define at least one override action, require a positive `ApiVersionMajor`
@@ -667,10 +668,12 @@ Current governance baseline:
 - exact `CandidateIds` reuse the stable ids published by `GET /engine/rest-endpoint-candidates`
 - the optional selector refiners and exact candidate ids all match the original shorthand
   candidate shape before override actions are applied, including the original shorthand OpenAPI
-  document name, primary tag name, and typed binding-fallback identity, so governance can pick one
-  of several shorthand candidates that share the same behavior/module identity without relying on
-  final rewritten route shape; `BindingFallbackModes` uses the stable wire names
-  `preserve-source-implicit-fallback` and `preserve-remaining-body-fallback`
+  document name, primary tag name, typed binding-fallback identity, and exact original explicit
+  binding-plan identity, so governance can pick one of several shorthand candidates that share the
+  same behavior/module identity without relying on final rewritten route shape;
+  `BindingFallbackModes` uses the stable wire names `preserve-source-implicit-fallback` and
+  `preserve-remaining-body-fallback`, while `TargetBindings` matches the full original explicit
+  descriptor set by property/source/name equivalence
 - when more than one rule matches, Cephalon prefers candidate-targeted rules first, then fewer
   targeted candidate ids, then the more specific rule by populated target dimensions, behavior-
   targeted scope, narrower authoring-style scope, fewer total selector values, and finally stable
@@ -703,6 +706,9 @@ Current governance baseline:
 - `ClearBindings = true` can now discard the source shorthand explicit binding plan entirely, but
   it fails fast if the effective route would only stay valid through explicit placeholder aliases
   that the clear removed
+- `TargetBindings` can now distinguish route-only shorthand candidates from richer route-plus-
+  query/header/body profiles even when they share the same behavior/module scope and later publish
+  under rewritten effective routes
 - `ClearRequiredCapability = true` is now the explicit host answer for removing an inherited
   shorthand capability boundary; when that action wins, shorthand candidate projections, actual
   ASP.NET Core endpoint metadata, `/engine/rest-endpoints`, and `snapshot.RestEndpoints` all keep

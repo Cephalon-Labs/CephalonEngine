@@ -124,6 +124,10 @@ public sealed class RestEndpointOverrideOptions
     /// The original shorthand request-binding fallback modes targeted by the override rule before
     /// any override actions are applied.
     /// </param>
+    /// <param name="targetBindings">
+    /// The original shorthand explicit binding descriptors targeted by the override rule before
+    /// any override actions are applied.
+    /// </param>
     public RestEndpointOverrideOptions(
         string id,
         IReadOnlyList<string>? candidateIds = null,
@@ -154,7 +158,8 @@ public sealed class RestEndpointOverrideOptions
         bool clearDescription = false,
         IReadOnlyList<string>? openApiDocumentNames = null,
         IReadOnlyList<string>? tagNames = null,
-        IReadOnlyList<RestEndpointBindingFallbackMode>? bindingFallbackModes = null)
+        IReadOnlyList<RestEndpointBindingFallbackMode>? bindingFallbackModes = null,
+        IReadOnlyList<RestEndpointBindingDescriptor>? targetBindings = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
 
@@ -184,6 +189,7 @@ public sealed class RestEndpointOverrideOptions
         BindingFallbackModes = NormalizeBindingFallbackModes(
             bindingFallbackModes,
             nameof(bindingFallbackModes));
+        TargetBindings = NormalizeTargetBindings(targetBindings, nameof(targetBindings));
         Method = NormalizeMethod(method);
         Pattern = NormalizePattern(pattern);
         RouteGroupPrefix = NormalizeRouteGroupPrefix(routeGroupPrefix);
@@ -356,6 +362,12 @@ public sealed class RestEndpointOverrideOptions
     public IReadOnlyList<RestEndpointBindingFallbackMode> BindingFallbackModes { get; }
 
     /// <summary>
+    /// Gets the original shorthand explicit binding descriptors targeted by this override rule
+    /// before any override actions are applied.
+    /// </summary>
+    public IReadOnlyList<RestEndpointBindingDescriptor> TargetBindings { get; }
+
+    /// <summary>
     /// Gets the effective API major version applied when this override rule matches.
     /// </summary>
     public int? ApiVersionMajor { get; }
@@ -464,6 +476,7 @@ public sealed class RestEndpointOverrideOptions
         OpenApiDocumentNames.Count > 0 ||
         TagNames.Count > 0 ||
         BindingFallbackModes.Count > 0 ||
+        TargetBindings.Count > 0 ||
         ApiVersionMajor.HasValue ||
         Method is not null ||
         Pattern is not null ||
@@ -650,6 +663,53 @@ public sealed class RestEndpointOverrideOptions
                 binding.Source,
                 binding.Name))
             .ToArray() ?? [];
+    }
+
+    private static RestEndpointBindingDescriptor[] NormalizeTargetBindings(
+        IReadOnlyList<RestEndpointBindingDescriptor>? bindings,
+        string paramName)
+    {
+        if (bindings is null)
+        {
+            return [];
+        }
+
+        var normalized = new List<RestEndpointBindingDescriptor>(bindings.Count);
+        var seenByProperty = new Dictionary<string, RestEndpointBindingDescriptor>(StringComparer.OrdinalIgnoreCase);
+        foreach (var bindingValue in bindings)
+        {
+            if (bindingValue is null)
+            {
+                continue;
+            }
+
+            var binding = new RestEndpointBindingDescriptor(
+                bindingValue.PropertyName,
+                bindingValue.Source,
+                bindingValue.Name);
+            var propertyName = binding.PropertyName.Trim();
+            if (seenByProperty.TryGetValue(propertyName, out var existing))
+            {
+                if (existing.Source != binding.Source ||
+                    !string.Equals(existing.Name, binding.Name, StringComparison.Ordinal))
+                {
+                    throw new ArgumentException(
+                        $"REST endpoint override target bindings cannot declare more than one binding selector for property '{propertyName}'.",
+                        paramName);
+                }
+
+                continue;
+            }
+
+            seenByProperty[propertyName] = binding;
+            normalized.Add(binding);
+        }
+
+        return normalized
+            .OrderBy(static binding => binding.PropertyName, StringComparer.OrdinalIgnoreCase)
+            .ThenBy(static binding => binding.Source)
+            .ThenBy(static binding => binding.Name ?? string.Empty, StringComparer.Ordinal)
+            .ToArray();
     }
 
     private static void ValidateRemovedBindingProperties(
