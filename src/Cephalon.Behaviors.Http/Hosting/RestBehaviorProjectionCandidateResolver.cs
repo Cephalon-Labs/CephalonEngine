@@ -131,6 +131,12 @@ internal static class RestBehaviorProjectionCandidateResolver
         ArgumentNullException.ThrowIfNull(apiRoutesOptions);
         ArgumentNullException.ThrowIfNull(group);
 
+        var originalBindingFallbackMode = RestBehaviorBindingFallbackModeResolver.ResolveForBehavior(
+            endpointProjection.BehaviorType,
+            endpointProjection.Method,
+            endpointProjection.Pattern,
+            endpointProjection.Bindings,
+            endpointProjection.PreserveImplicitQueryFallback);
         var originalProjection = CreateCandidateProjectionDescriptor(
             defaultApiVersionMajor,
             endpointProjection.Method.ToString().ToUpperInvariant(),
@@ -138,7 +144,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             endpointProjection.Pattern,
             originalOpenApiDocumentName,
             RestEndpointBindingDescriptorAdapter.ToRuntimeDescriptors(endpointProjection.Bindings),
-            endpointProjection.PreserveImplicitQueryFallback,
+            originalBindingFallbackMode,
             tagName);
         var candidateId = BuildCandidateId(
             moduleDescriptor.Id,
@@ -172,6 +178,12 @@ internal static class RestBehaviorProjectionCandidateResolver
             publishedRouteGroupPrefix,
             effectiveEndpointProjection.Pattern);
         var runtimeBindings = RestEndpointBindingDescriptorAdapter.ToRuntimeDescriptors(effectiveEndpointProjection.Bindings);
+        var projectedBindingFallbackMode = RestBehaviorBindingFallbackModeResolver.ResolveForBehavior(
+            effectiveEndpointProjection.BehaviorType,
+            effectiveEndpointProjection.Method,
+            effectiveEndpointProjection.Pattern,
+            effectiveEndpointProjection.Bindings,
+            effectiveEndpointProjection.PreserveImplicitQueryFallback);
         var originalOperationName = RestBehaviorEndpointMetadataConventions.BuildOperationName(
             moduleDescriptor.Id,
             defaultApiVersionMajor,
@@ -230,7 +242,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             routeGroupPrefix: publishedRouteGroupPrefix,
             relativePattern: effectiveEndpointProjection.Pattern,
             bindingDescriptors: runtimeBindings,
-            preserveImplicitQueryFallback: effectiveEndpointProjection.PreserveImplicitQueryFallback,
+            bindingFallbackMode: projectedBindingFallbackMode,
             requiredCapabilityKey: appliedCapabilityOverride?.ClearRequiredCapability == true
                 ? null
                 : appliedCapabilityOverride?.RequiredCapabilityKey,
@@ -1483,7 +1495,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         string relativePattern,
         string openApiDocumentName,
         IReadOnlyList<RestEndpointBindingDescriptor> bindingDescriptors,
-        bool preserveImplicitQueryFallback,
+        RestEndpointBindingFallbackMode? bindingFallbackMode,
         string tagName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(method);
@@ -1501,9 +1513,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             apiVersionMajor,
             openApiDocumentName,
             bindingDescriptors,
-            preserveImplicitQueryFallback
-                ? RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback
-                : null,
+            bindingFallbackMode,
             tagName);
     }
 }

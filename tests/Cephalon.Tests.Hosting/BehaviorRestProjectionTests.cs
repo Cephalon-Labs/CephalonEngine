@@ -1480,6 +1480,35 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverExposesBodyFallbackModeWhenExplicitBindingsLeaveRemainingBodySurface()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-binding-body-fallback")
+            .MapProfile<ProfileProjectionBoundBehavior>();
+
+        var candidate = Assert.Single(
+            RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+                new ModuleDescriptor(
+                    "tests.rest.profile-binding-body-fallback",
+                    "Profile Binding Body Fallback Module",
+                    "Exercises runtime truth for explicit shorthand bindings that still preserve deterministic remaining body fallback.",
+                    version: "1.0.0"),
+                new ApiRoutesOptions(),
+                builder.Build().Groups));
+
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback,
+            candidate.Candidate.OriginalProjection.BindingFallbackMode);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback,
+            candidate.Candidate.ProjectedEndpoint.BindingFallbackMode);
+        Assert.Equal(
+            "preserve-remaining-body-fallback",
+            candidate.Candidate.ProjectedEndpoint.Metadata["bindingFallbackMode"]);
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverAllowsClearBindingsOverrideWhenRoutePlaceholdersRemainImplicitlyInferable()
     {
         var builder = new RestBehaviorModuleBuilder();
@@ -1507,6 +1536,9 @@ public sealed class BehaviorRestProjectionTests
         Assert.Equal("clear-explicit-bindings", candidate.Candidate.AppliedOverrideId);
         Assert.Equal("/api/v6/tests/profile-binding-clear/{cartId}/items", candidate.Candidate.ProjectedEndpoint.RoutePattern);
         Assert.Equal(4, candidate.Candidate.OriginalProjection.BindingDescriptors.Count);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback,
+            candidate.Candidate.OriginalProjection.BindingFallbackMode);
         Assert.Empty(candidate.Candidate.ProjectedEndpoint.BindingDescriptors);
         Assert.Null(candidate.Candidate.ProjectedEndpoint.BindingFallbackMode);
     }
@@ -1571,7 +1603,9 @@ public sealed class BehaviorRestProjectionTests
                 Assert.Equal(RestEndpointBindingSource.Body, note.Source);
                 Assert.Equal("note", note.Name);
             });
-        Assert.Null(candidate.Candidate.ProjectedEndpoint.BindingFallbackMode);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback,
+            candidate.Candidate.ProjectedEndpoint.BindingFallbackMode);
     }
 
     [Fact]

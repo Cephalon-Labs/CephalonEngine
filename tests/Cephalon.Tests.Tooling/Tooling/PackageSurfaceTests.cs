@@ -1013,6 +1013,14 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void RestEndpointBindingFallbackModeExposesRemainingBodyFallbackValue()
+    {
+        Assert.True(Enum.IsDefined(
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointBindingFallbackMode),
+            "PreserveRemainingBodyFallback"));
+    }
+
+    [Fact]
     public void RestEndpointRuntimeContractsExposeOriginalProjectionTagName()
     {
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateProjectionDescriptor)

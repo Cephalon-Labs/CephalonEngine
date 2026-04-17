@@ -4149,6 +4149,10 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("/api/v6/tests/profile-runtime/bindings/orders/{orderId}", endpoint.RoutePattern);
         Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle, endpoint.Metadata["authoringStyle"]);
         Assert.False(endpoint.Metadata.ContainsKey("bindingDescriptors"));
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback,
+            endpoint.BindingFallbackMode);
+        Assert.Equal("preserve-remaining-body-fallback", endpoint.Metadata["bindingFallbackMode"]);
         Assert.Equal(4, endpoint.BindingDescriptors.Count);
         Assert.Contains(endpoint.BindingDescriptors, static binding =>
             binding.PropertyName == "OrderId" &&
@@ -4194,6 +4198,10 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         var snapshotEndpoint = Assert.Single(snapshot.RestEndpoints, static candidate =>
             string.Equals(candidate.BehaviorId, "tests.rest.profile.bindings", StringComparison.Ordinal));
         Assert.False(snapshotEndpoint.Metadata.ContainsKey("bindingDescriptors"));
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback,
+            snapshotEndpoint.BindingFallbackMode);
+        Assert.Equal("preserve-remaining-body-fallback", snapshotEndpoint.Metadata["bindingFallbackMode"]);
         Assert.Equal(4, snapshotEndpoint.BindingDescriptors.Count);
         Assert.Contains(snapshotEndpoint.BindingDescriptors, static binding =>
             binding.PropertyName == "OrderId" &&
@@ -4562,6 +4570,9 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(["clear-explicit-bindings"], endpoint.MatchedOverrideIds);
         Assert.NotNull(endpoint.OriginalProjection);
         Assert.Equal(4, endpoint.OriginalProjection!.BindingDescriptors.Count);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback,
+            endpoint.OriginalProjection.BindingFallbackMode);
         Assert.Empty(endpoint.BindingDescriptors);
         Assert.Null(endpoint.BindingFallbackMode);
 
@@ -4571,6 +4582,9 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("clear-explicit-bindings", candidate.AppliedOverrideId);
         Assert.Equal(endpoint.Id, candidate.ProjectedEndpoint.Id);
         Assert.Equal(4, candidate.OriginalProjection.BindingDescriptors.Count);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback,
+            candidate.OriginalProjection.BindingFallbackMode);
         Assert.Empty(candidate.ProjectedEndpoint.BindingDescriptors);
         Assert.Null(candidate.ProjectedEndpoint.BindingFallbackMode);
 

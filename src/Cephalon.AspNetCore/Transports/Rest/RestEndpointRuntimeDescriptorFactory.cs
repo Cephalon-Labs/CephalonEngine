@@ -28,7 +28,7 @@ internal static class RestEndpointRuntimeDescriptorFactory
         string routeGroupPrefix,
         string relativePattern,
         IReadOnlyList<RestEndpointBindingDescriptor>? bindingDescriptors = null,
-        bool preserveImplicitQueryFallback = false,
+        RestEndpointBindingFallbackMode? bindingFallbackMode = null,
         string? requiredCapabilityKey = null,
         string? originalRequiredCapabilityKey = null,
         string? appliedOverrideId = null,
@@ -46,9 +46,6 @@ internal static class RestEndpointRuntimeDescriptorFactory
 
         var normalizedMethod = method.Trim().ToUpperInvariant();
         var sourceId = $"{behaviorId}:{normalizedMethod}:{relativePattern}";
-        RestEndpointBindingFallbackMode? bindingFallbackMode = preserveImplicitQueryFallback
-            ? RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback
-            : null;
         return new RestEndpointRuntimeDescriptor(
             id: BuildBehaviorEndpointId(sourceModuleId, behaviorId, normalizedMethod, routePattern),
             transportId: "rest-api",
@@ -154,6 +151,11 @@ internal static class RestEndpointRuntimeDescriptorFactory
         {
             metadata[RestEndpointRuntimeMetadata.BindingFallbackModeMetadataKey] =
                 RestEndpointRuntimeMetadata.PreserveSourceImplicitFallbackMode;
+        }
+        else if (bindingFallbackMode == RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback)
+        {
+            metadata[RestEndpointRuntimeMetadata.BindingFallbackModeMetadataKey] =
+                RestEndpointRuntimeMetadata.PreserveRemainingBodyFallbackMode;
         }
 
         if (!string.IsNullOrWhiteSpace(requiredCapabilityKey))

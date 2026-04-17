@@ -178,7 +178,8 @@ the shorthand endpoint-metadata clear actions `ClearEndpointName`, `ClearSummary
 Core-specific override DTOs. The same candidate/runtime descriptor family now also keeps original
 shorthand endpoint metadata visible on `ProjectedEndpoint` through `OriginalEndpointName`,
 `OriginalSummary`, and `OriginalDescription`, keeps preserved shorthand fallback truth visible
-through typed `BindingFallbackMode` properties, and keeps that original metadata visible even when
+through typed `BindingFallbackMode` properties that distinguish preserved source implicit fallback
+from preserved remaining request-body fallback, and keeps that original metadata visible even when
 a host-level override intentionally clears the effective endpoint metadata, while additive
 `metadata.bindingFallbackMode`, `metadata.authoringStyle`, `metadata.routeGroupPrefix`,
 `metadata.relativePattern`, `metadata.behaviorType`, and `metadata.sourceId` remain

@@ -619,7 +619,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             contract.Bindings.Count == 0
                 ? null
                 : RestEndpointBindingDescriptorAdapter.ToRuntimeDescriptors(contract.Bindings),
-            contract.PreserveImplicitQueryFallback,
+            contract.BindingFallbackMode,
             group.runtimeMatchedOverrideIds));
 
         ApplyResponseConventions(builder, contract);
@@ -1042,6 +1042,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         bool UseResultModelEnvelope,
         IReadOnlySet<int> DocumentedStatusCodes,
         IReadOnlyList<BehaviorRestBindingDescriptor> Bindings,
+        RestEndpointBindingFallbackMode? BindingFallbackMode,
         bool PreserveImplicitQueryFallback)
     {
         internal static BehaviorRestEndpointContract Create(
@@ -1095,6 +1096,12 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             var useResultModelEnvelope = configuration is not null &&
                 ApiRoutesOptions.FromConfiguration(configuration).UseResultModelEnvelope;
             var documentedStatusCodes = ResolveDocumentedStatusCodes(services, "rest-api", behaviorId);
+            var bindingFallbackMode = RestBehaviorBindingFallbackModeResolver.ResolveForInputType(
+                typeArguments[0],
+                method,
+                pattern,
+                normalizedBindings,
+                preserveImplicitQueryFallback);
 
             return new BehaviorRestEndpointContract(
                 moduleDescriptor.Id,
@@ -1114,6 +1121,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
                 useResultModelEnvelope,
                 documentedStatusCodes,
                 normalizedBindings,
+                bindingFallbackMode,
                 preserveImplicitQueryFallback);
         }
 

@@ -13,5 +13,12 @@ public enum RestEndpointBindingFallbackMode
     /// Preserves the remaining implicit fallback surface from the source shorthand projection.
     /// </summary>
     [JsonStringEnumMemberName("preserve-source-implicit-fallback")]
-    PreserveSourceImplicitFallback = 1
+    PreserveSourceImplicitFallback = 1,
+
+    /// <summary>
+    /// Preserves the deterministic remaining request-body fallback surface for unbound properties on
+    /// body-capable endpoints that still expose an explicit binding plan.
+    /// </summary>
+    [JsonStringEnumMemberName("preserve-remaining-body-fallback")]
+    PreserveRemainingBodyFallback = 2
 }

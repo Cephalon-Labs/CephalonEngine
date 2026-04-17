@@ -126,7 +126,7 @@ internal static class RestEndpointRuntimeMaterializer
                     behaviorMetadata.RouteGroupPrefix),
                 relativePattern: behaviorMetadata.RelativePattern,
                 bindingDescriptors: behaviorMetadata.BindingDescriptors,
-                preserveImplicitQueryFallback: behaviorMetadata.PreserveImplicitQueryFallback,
+                bindingFallbackMode: behaviorMetadata.BindingFallbackMode,
                 requiredCapabilityKey: requiredCapabilityKey,
                 originalRequiredCapabilityKey: originalRequiredCapabilityKey,
                 appliedOverrideId: appliedOverrideId,

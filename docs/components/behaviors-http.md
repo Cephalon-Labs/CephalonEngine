@@ -192,7 +192,7 @@ Current profile behavior:
   `DELETE`, while module-owned profile consumption still re-checks the same contract when runtime
   falls back to direct attribute metadata
 - when explicit bindings are present, they override the implicit merge baseline, while unbound
-  route placeholders and request bodies can still fill remaining object properties
+  route placeholders and body-capable request bodies can still fill remaining object properties
 - when no explicit binding plan is present, shorthand candidates still use the implicit
   query-plus-route merge baseline, and bounded placeholder additions can promote from that original
   implicit query-fallback surface; once explicit bindings exist, the stricter explicit-binding path
@@ -200,11 +200,18 @@ Current profile behavior:
 - when a host adds only partial explicit bindings to a shorthand candidate that originally had no
   explicit binding plan, the remaining unbound query properties now continue to follow that
   original implicit query-fallback surface instead of disappearing silently
-- the canonical runtime answer for that preserved fallback mode now lives on the typed transport
+- when a body-capable shorthand candidate keeps explicit bindings but still leaves deterministic
+  request-body-bindable properties unbound, runtime truth now also keeps that preserved remaining
+  request-body fallback visible through typed
+  `BindingFallbackMode = PreserveRemainingBodyFallback`, while additive
+  `metadata.bindingFallbackMode = preserve-remaining-body-fallback` remains compatibility-only
+  metadata
+- the canonical runtime answer for preserved fallback modes now lives on the typed transport
   contracts through `RestEndpointCandidateProjectionDescriptor.BindingFallbackMode` and
   `RestEndpointRuntimeDescriptor.BindingFallbackMode` using
   `RestEndpointBindingFallbackMode`; additive
-  `metadata.bindingFallbackMode = preserve-source-implicit-fallback` remains compatibility-only
+  `metadata.bindingFallbackMode = preserve-source-implicit-fallback` and
+  `metadata.bindingFallbackMode = preserve-remaining-body-fallback` remain compatibility-only
   metadata
 - a JSON body that tries to overwrite a property reserved by an explicit non-body binding fails
   fast instead of silently winning or losing
