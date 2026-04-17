@@ -279,6 +279,7 @@ internal static class RestBehaviorProjectionMaterializer
                     behaviorId,
                     candidate.AuthoringStyle,
                     candidate.SuppressedBySuppressionId,
+                    JoinSelectionBasis(candidate.SuppressionSelectionBasis),
                     JoinIdentifiers(candidate.MatchedSuppressionIds));
             }
             else if (candidate.SuppressedByAuthoringPolicyKind is { } authoringPolicySuppressionKind)
@@ -310,6 +311,7 @@ internal static class RestBehaviorProjectionMaterializer
                     candidate.Id,
                     behaviorId,
                     candidate.AppliedOverrideId,
+                    JoinSelectionBasis(candidate.OverrideSelectionBasis),
                     JoinActionKinds(candidate.SelectedOverrideActionKinds),
                     JoinActionKinds(candidate.AppliedOverrideActionKinds),
                     candidate.ProjectedEndpoint.RoutePattern);
@@ -322,6 +324,7 @@ internal static class RestBehaviorProjectionMaterializer
                     behaviorId,
                     candidate.SelectedOverrideId ?? "(none)",
                     JoinIdentifiers(candidate.MatchedOverrideIds),
+                    JoinSelectionBasis(candidate.OverrideSelectionBasis),
                     JoinActionKinds(candidate.SelectedOverrideActionKinds),
                     JoinActionKinds(candidate.AppliedOverrideActionKinds));
             }
@@ -355,6 +358,13 @@ internal static class RestBehaviorProjectionMaterializer
         return actionKinds.Count == 0
             ? "(none)"
             : string.Join(", ", actionKinds.Select(static item => item.GetWireName()));
+    }
+
+    private static string JoinSelectionBasis(RestEndpointGovernanceRuleSelectionBasis? selectionBasis)
+    {
+        return selectionBasis.HasValue
+            ? selectionBasis.Value.GetWireName()
+            : "(none)";
     }
 
     private static Dictionary<string, MaterializedPublishedCandidateState> ResolvePublishedCandidateStates(

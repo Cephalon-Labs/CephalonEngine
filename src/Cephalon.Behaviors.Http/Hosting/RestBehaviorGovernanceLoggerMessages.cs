@@ -2,10 +2,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Behaviors.Http.Hosting;
 
-internal static class RestBehaviorGovernanceLoggerMessages
+internal static partial class RestBehaviorGovernanceLoggerMessages
 {
-    private static readonly Action<ILogger, string, string, string, string, string, Exception?> GovernanceSuppressed =
-        LoggerMessage.Define<string, string, string, string, string>(
+    private static readonly Action<ILogger, string, string, string, string, string, string, Exception?> GovernanceSuppressed =
+        LoggerMessage.Define<string, string, string, string, string, string>(
             LogLevel.Information,
             new EventId(
                 RestBehaviorGovernanceDiagnosticsConventions.GovernanceSuppressedId,
@@ -19,22 +19,6 @@ internal static class RestBehaviorGovernanceLoggerMessages
                 RestBehaviorGovernanceDiagnosticsConventions.PrecedenceSuppressedId,
                 RestBehaviorGovernanceDiagnosticsConventions.PrecedenceSuppressedName),
             RestBehaviorGovernanceDiagnosticsConventions.PrecedenceSuppressedMessageTemplate);
-
-    private static readonly Action<ILogger, string, string, string, string, string, string, Exception?> OverrideApplied =
-        LoggerMessage.Define<string, string, string, string, string, string>(
-            LogLevel.Information,
-            new EventId(
-                RestBehaviorGovernanceDiagnosticsConventions.OverrideAppliedId,
-                RestBehaviorGovernanceDiagnosticsConventions.OverrideAppliedName),
-            RestBehaviorGovernanceDiagnosticsConventions.OverrideAppliedMessageTemplate);
-
-    private static readonly Action<ILogger, string, string, string, string, string, string, Exception?> OverrideNoOp =
-        LoggerMessage.Define<string, string, string, string, string, string>(
-            LogLevel.Information,
-            new EventId(
-                RestBehaviorGovernanceDiagnosticsConventions.OverrideNoOpId,
-                RestBehaviorGovernanceDiagnosticsConventions.OverrideNoOpName),
-            RestBehaviorGovernanceDiagnosticsConventions.OverrideNoOpMessageTemplate);
 
     private static readonly Action<ILogger, string, string, string, string, Exception?> BindingFallbackPreserved =
         LoggerMessage.Define<string, string, string, string>(
@@ -60,15 +44,52 @@ internal static class RestBehaviorGovernanceLoggerMessages
                 RestBehaviorGovernanceDiagnosticsConventions.GovernanceSkippedName),
             RestBehaviorGovernanceDiagnosticsConventions.GovernanceSkippedMessageTemplate);
 
+    [LoggerMessage(
+        EventId = RestBehaviorGovernanceDiagnosticsConventions.OverrideAppliedId,
+        Level = LogLevel.Information,
+        Message = RestBehaviorGovernanceDiagnosticsConventions.OverrideAppliedMessageTemplate)]
+    private static partial void OverrideApplied(
+        ILogger logger,
+        string candidateId,
+        string behaviorId,
+        string overrideId,
+        string overrideSelectionBasis,
+        string selectedOverrideActionKinds,
+        string appliedOverrideActionKinds,
+        string routePattern);
+
+    [LoggerMessage(
+        EventId = RestBehaviorGovernanceDiagnosticsConventions.OverrideNoOpId,
+        Level = LogLevel.Information,
+        Message = RestBehaviorGovernanceDiagnosticsConventions.OverrideNoOpMessageTemplate)]
+    private static partial void OverrideNoOp(
+        ILogger logger,
+        string candidateId,
+        string behaviorId,
+        string selectedOverrideId,
+        string matchedOverrideIds,
+        string overrideSelectionBasis,
+        string selectedOverrideActionKinds,
+        string appliedOverrideActionKinds);
+
     public static void LogGovernanceSuppressed(
         ILogger logger,
         string candidateId,
         string behaviorId,
         string authoringStyle,
         string suppressionId,
+        string suppressionSelectionBasis,
         string matchedSuppressionIds)
     {
-        GovernanceSuppressed(logger, candidateId, behaviorId, authoringStyle, suppressionId, matchedSuppressionIds, null);
+        GovernanceSuppressed(
+            logger,
+            candidateId,
+            behaviorId,
+            authoringStyle,
+            suppressionId,
+            suppressionSelectionBasis,
+            matchedSuppressionIds,
+            null);
     }
 
     public static void LogPrecedenceSuppressed(
@@ -87,6 +108,7 @@ internal static class RestBehaviorGovernanceLoggerMessages
         string candidateId,
         string behaviorId,
         string overrideId,
+        string overrideSelectionBasis,
         string selectedOverrideActionKinds,
         string appliedOverrideActionKinds,
         string routePattern)
@@ -96,10 +118,10 @@ internal static class RestBehaviorGovernanceLoggerMessages
             candidateId,
             behaviorId,
             overrideId,
+            overrideSelectionBasis,
             selectedOverrideActionKinds,
             appliedOverrideActionKinds,
-            routePattern,
-            null);
+            routePattern);
     }
 
     public static void LogOverrideNoOp(
@@ -108,6 +130,7 @@ internal static class RestBehaviorGovernanceLoggerMessages
         string behaviorId,
         string selectedOverrideId,
         string matchedOverrideIds,
+        string overrideSelectionBasis,
         string selectedOverrideActionKinds,
         string appliedOverrideActionKinds)
     {
@@ -117,9 +140,9 @@ internal static class RestBehaviorGovernanceLoggerMessages
             behaviorId,
             selectedOverrideId,
             matchedOverrideIds,
+            overrideSelectionBasis,
             selectedOverrideActionKinds,
-            appliedOverrideActionKinds,
-            null);
+            appliedOverrideActionKinds);
     }
 
     public static void LogBindingFallbackPreserved(

@@ -5160,28 +5160,39 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         await app.StartAsync();
         var client = app.GetTestClient();
         var diagnostics = await client.GetFromJsonAsync<DiagnosticsSurface>("/engine/diagnostics");
+        var candidates = await client.GetFromJsonAsync<List<RestEndpointCandidateRuntimeDescriptor>>("/engine/rest-endpoint-candidates");
 
         Assert.NotNull(diagnostics);
+        Assert.NotNull(candidates);
 
         var convention = Assert.Single(diagnostics.Conventions, static item =>
             string.Equals(item.Source, "Cephalon.Behaviors.Http", StringComparison.Ordinal));
         Assert.Equal(5200, convention.MinimumEventId);
         Assert.Equal(5206, convention.MaximumEventId);
-        Assert.Contains(convention.Events, static item => item.Id == 5200 && item.Name == "RestEndpointGovernanceSuppressed");
+        var governanceSuppressed = Assert.Single(convention.Events, static item => item.Id == 5200 && item.Name == "RestEndpointGovernanceSuppressed");
+        Assert.Contains("{SuppressionSelectionBasis}", governanceSuppressed.MessageTemplate, StringComparison.Ordinal);
         Assert.Contains(convention.Events, static item => item.Id == 5201 && item.Name == "RestEndpointPrecedenceSuppressed");
         var overrideApplied = Assert.Single(convention.Events, static item => item.Id == 5202 && item.Name == "RestEndpointOverrideApplied");
+        Assert.Contains("{OverrideSelectionBasis}", overrideApplied.MessageTemplate, StringComparison.Ordinal);
         Assert.Contains("{SelectedOverrideActionKinds}", overrideApplied.MessageTemplate, StringComparison.Ordinal);
         Assert.Contains("{AppliedOverrideActionKinds}", overrideApplied.MessageTemplate, StringComparison.Ordinal);
         var overrideNoOp = Assert.Single(convention.Events, static item => item.Id == 5203 && item.Name == "RestEndpointOverrideNoOp");
+        Assert.Contains("{OverrideSelectionBasis}", overrideNoOp.MessageTemplate, StringComparison.Ordinal);
         Assert.Contains("{SelectedOverrideActionKinds}", overrideNoOp.MessageTemplate, StringComparison.Ordinal);
         Assert.Contains("{AppliedOverrideActionKinds}", overrideNoOp.MessageTemplate, StringComparison.Ordinal);
         Assert.Contains(convention.Events, static item => item.Id == 5204 && item.Name == "RestEndpointBindingFallbackPreserved");
         Assert.Contains(convention.Events, static item => item.Id == 5205 && item.Name == "RestEndpointAuthoringPolicySuppressed");
         Assert.Contains(convention.Events, static item => item.Id == 5206 && item.Name == "RestEndpointGovernanceSkipped");
 
+        var suppressedCandidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.generated.threeway.lookup", StringComparison.Ordinal) &&
+            !string.IsNullOrWhiteSpace(item.SuppressedBySuppressionId));
+        var suppressionSelectionBasis = JoinSelectionBasis(suppressedCandidate.SuppressionSelectionBasis);
+
         Assert.Contains(loggerProvider.Entries, entry =>
             entry.EventId.Id == 5200 &&
             entry.Message.Contains("tests.rest.generated.threeway.lookup", StringComparison.Ordinal) &&
+            entry.Message.Contains(suppressionSelectionBasis, StringComparison.Ordinal) &&
             entry.Message.Contains("prefer-generated", StringComparison.Ordinal));
         Assert.Contains(loggerProvider.Entries, entry =>
             entry.EventId.Id == 5201 &&
@@ -6247,13 +6258,16 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.profile.bindings", StringComparison.Ordinal));
         var appliedSelectedActionKinds = JoinActionKinds(appliedCandidate.SelectedOverrideActionKinds);
         var appliedActionKinds = JoinActionKinds(appliedCandidate.AppliedOverrideActionKinds);
+        var appliedSelectionBasis = JoinSelectionBasis(appliedCandidate.OverrideSelectionBasis);
         var noOpSelectedActionKinds = JoinActionKinds(noOpCandidate.SelectedOverrideActionKinds);
         var noOpAppliedActionKinds = JoinActionKinds(noOpCandidate.AppliedOverrideActionKinds);
+        var noOpSelectionBasis = JoinSelectionBasis(noOpCandidate.OverrideSelectionBasis);
 
         Assert.Contains(loggerProvider.Entries, entry =>
             entry.EventId.Id == 5202 &&
             entry.Message.Contains("tests.rest.profile.bindings.query.partial", StringComparison.Ordinal) &&
             entry.Message.Contains("prefer-route-order", StringComparison.Ordinal) &&
+            entry.Message.Contains(appliedSelectionBasis, StringComparison.Ordinal) &&
             entry.Message.Contains(appliedSelectedActionKinds, StringComparison.Ordinal) &&
             entry.Message.Contains(appliedActionKinds, StringComparison.Ordinal) &&
             entry.Message.Contains("/api/v6/tests/profile-runtime/query-partial/orders/lookup/{orderId}", StringComparison.Ordinal));
@@ -6265,6 +6279,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             entry.EventId.Id == 5203 &&
             entry.Message.Contains("tests.rest.profile.bindings", StringComparison.Ordinal) &&
             entry.Message.Contains("prefer-current-bindings", StringComparison.Ordinal) &&
+            entry.Message.Contains(noOpSelectionBasis, StringComparison.Ordinal) &&
             entry.Message.Contains(noOpSelectedActionKinds, StringComparison.Ordinal) &&
             entry.Message.Contains(noOpAppliedActionKinds, StringComparison.Ordinal) &&
             entry.Message.Contains("selected governance override", StringComparison.Ordinal));
@@ -6287,6 +6302,13 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         return actionKinds.Count == 0
             ? "(none)"
             : string.Join(", ", actionKinds.Select(static item => item.GetWireName()));
+    }
+
+    private static string JoinSelectionBasis(RestEndpointGovernanceRuleSelectionBasis? selectionBasis)
+    {
+        return selectionBasis.HasValue
+            ? selectionBasis.Value.GetWireName()
+            : "(none)";
     }
 
     [Fact]

@@ -190,10 +190,11 @@ wire-name helpers for `RestEndpointBindingFallbackMode`, ASP.NET Core compatibil
 derives `bindingFallbackMode` values from that one public source of truth, and the public XML/docs
 wording now describes both preserved implicit-query and remaining-body fallback semantics instead
 of the earlier narrower phrasing. That diagnostics family has since also been extended through
-`ENG-058-T124`, `ENG-058-T131`, and `ENG-058-T133`, so startup logging now distinguishes
-authoring-policy suppression (`5205`), governance-skipped explicit module-DSL ownership (`5206`),
-and selected-versus-applied override action dimensions on `5202` / `5203` instead of leaving
-those operator answers folded into generic suppression or silence. The next
+`ENG-058-T124`, `ENG-058-T131`, `ENG-058-T133`, and `ENG-058-T134`, so startup logging now
+distinguishes authoring-policy suppression (`5205`), governance-skipped explicit module-DSL
+ownership (`5206`), decisive suppression selection basis on `5200`, and both decisive override
+selection basis plus selected-versus-applied override action dimensions on `5202` / `5203`
+instead of leaving those operator answers folded into generic suppression or silence. The next
 authoring-safety follow-through is now addressed
 through `ENG-058-T117`: malformed `BehaviorRestProfileAttribute.RelativePattern` placeholder syntax
 now fails at build time through `ABT0026`, while `BehaviorRestProfileResolver` also parses the

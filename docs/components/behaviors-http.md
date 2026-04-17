@@ -238,13 +238,15 @@ Current profile behavior:
 When `Cephalon.Behaviors.Http` is active, `/engine/diagnostics` now also publishes source
 `Cephalon.Behaviors.Http` with stable event ids `5200-5206`:
 
-- `5200` — a shorthand candidate was suppressed by a configured governance rule
+- `5200` — a shorthand candidate was suppressed by a configured governance rule and now echoes
+  the decisive suppression selection-basis wire name beside the winning suppression id
 - `5201` — a shorthand candidate lost publication because a higher-precedence authoring style won
 - `5202` — a matched shorthand override materially changed the published runtime answer and now
-  echoes the selected and applied override action-kind wire names beside the winning override id
+  echoes the decisive override selection-basis wire name plus the selected and applied override
+  action-kind wire names beside the winning override id
 - `5203` — a matched shorthand override became a runtime no-op after truth reconciliation and now
-  still echoes the selected and applied override action-kind wire names so no-op winners remain
-  explicit
+  still echoes the decisive override selection-basis wire name plus the selected and applied
+  override action-kind wire names so no-op winners remain explicit
 - `5204` — a shorthand candidate preserved a typed binding fallback mode while partial explicit
   override reconciliation ran, including both preserved source implicit-query fallback and
   preserved remaining request-body fallback
@@ -259,9 +261,11 @@ For full hosted `MapCephalon()` paths, published-candidate logging reconciles ag
 post-materialization endpoint answer first, so metadata-only or reorder-only no-op overrides keep
 `MatchedOverrideIds` visible without falsely logging an applied override, and governance-ineligible
 explicit routes now log the skipped host-rule ids instead of silently looking like selector misses.
-The override-applied and override-no-op events now also reuse the same declared-versus-effective
-override-action story the runtime catalogs expose through `ActionKinds`,
-`SelectedOverrideActionKinds`, and `AppliedOverrideActionKinds`, using the stable wire names from
+Event `5200` now also reuses the same `SuppressionSelectionBasis` wire name the runtime catalog
+publishes, while the override-applied and override-no-op events reuse the same
+`OverrideSelectionBasis`, `ActionKinds`, `SelectedOverrideActionKinds`, and
+`AppliedOverrideActionKinds` story the runtime catalogs expose, using the stable wire names from
+`RestEndpointGovernanceRuleSelectionBasisExtensions` and
 `RestEndpointOverrideActionKindExtensions`.
 
 ## Registration
