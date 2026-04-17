@@ -240,8 +240,11 @@ When `Cephalon.Behaviors.Http` is active, `/engine/diagnostics` now also publish
 
 - `5200` — a shorthand candidate was suppressed by a configured governance rule
 - `5201` — a shorthand candidate lost publication because a higher-precedence authoring style won
-- `5202` — a matched shorthand override materially changed the published runtime answer
-- `5203` — a matched shorthand override became a runtime no-op after truth reconciliation
+- `5202` — a matched shorthand override materially changed the published runtime answer and now
+  echoes the selected and applied override action-kind wire names beside the winning override id
+- `5203` — a matched shorthand override became a runtime no-op after truth reconciliation and now
+  still echoes the selected and applied override action-kind wire names so no-op winners remain
+  explicit
 - `5204` — a shorthand candidate preserved a typed binding fallback mode while partial explicit
   override reconciliation ran, including both preserved source implicit-query fallback and
   preserved remaining request-body fallback
@@ -256,6 +259,10 @@ For full hosted `MapCephalon()` paths, published-candidate logging reconciles ag
 post-materialization endpoint answer first, so metadata-only or reorder-only no-op overrides keep
 `MatchedOverrideIds` visible without falsely logging an applied override, and governance-ineligible
 explicit routes now log the skipped host-rule ids instead of silently looking like selector misses.
+The override-applied and override-no-op events now also reuse the same declared-versus-effective
+override-action story the runtime catalogs expose through `ActionKinds`,
+`SelectedOverrideActionKinds`, and `AppliedOverrideActionKinds`, using the stable wire names from
+`RestEndpointOverrideActionKindExtensions`.
 
 ## Registration
 

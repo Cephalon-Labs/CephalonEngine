@@ -310,6 +310,8 @@ internal static class RestBehaviorProjectionMaterializer
                     candidate.Id,
                     behaviorId,
                     candidate.AppliedOverrideId,
+                    JoinActionKinds(candidate.SelectedOverrideActionKinds),
+                    JoinActionKinds(candidate.AppliedOverrideActionKinds),
                     candidate.ProjectedEndpoint.RoutePattern);
             }
             else if (candidate.MatchedOverrideIds.Count > 0)
@@ -319,7 +321,9 @@ internal static class RestBehaviorProjectionMaterializer
                     candidate.Id,
                     behaviorId,
                     candidate.SelectedOverrideId ?? "(none)",
-                    JoinIdentifiers(candidate.MatchedOverrideIds));
+                    JoinIdentifiers(candidate.MatchedOverrideIds),
+                    JoinActionKinds(candidate.SelectedOverrideActionKinds),
+                    JoinActionKinds(candidate.AppliedOverrideActionKinds));
             }
 
             if (candidate.ProjectedEndpoint.BindingFallbackMode is { } bindingFallbackMode &&
@@ -342,6 +346,15 @@ internal static class RestBehaviorProjectionMaterializer
         return identifiers.Count == 0
             ? "(none)"
             : string.Join(", ", identifiers);
+    }
+
+    private static string JoinActionKinds(IReadOnlyList<RestEndpointOverrideActionKind> actionKinds)
+    {
+        ArgumentNullException.ThrowIfNull(actionKinds);
+
+        return actionKinds.Count == 0
+            ? "(none)"
+            : string.Join(", ", actionKinds.Select(static item => item.GetWireName()));
     }
 
     private static Dictionary<string, MaterializedPublishedCandidateState> ResolvePublishedCandidateStates(

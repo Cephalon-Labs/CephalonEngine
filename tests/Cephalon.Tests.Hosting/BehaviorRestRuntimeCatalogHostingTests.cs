@@ -5169,8 +5169,12 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(5206, convention.MaximumEventId);
         Assert.Contains(convention.Events, static item => item.Id == 5200 && item.Name == "RestEndpointGovernanceSuppressed");
         Assert.Contains(convention.Events, static item => item.Id == 5201 && item.Name == "RestEndpointPrecedenceSuppressed");
-        Assert.Contains(convention.Events, static item => item.Id == 5202 && item.Name == "RestEndpointOverrideApplied");
-        Assert.Contains(convention.Events, static item => item.Id == 5203 && item.Name == "RestEndpointOverrideNoOp");
+        var overrideApplied = Assert.Single(convention.Events, static item => item.Id == 5202 && item.Name == "RestEndpointOverrideApplied");
+        Assert.Contains("{SelectedOverrideActionKinds}", overrideApplied.MessageTemplate, StringComparison.Ordinal);
+        Assert.Contains("{AppliedOverrideActionKinds}", overrideApplied.MessageTemplate, StringComparison.Ordinal);
+        var overrideNoOp = Assert.Single(convention.Events, static item => item.Id == 5203 && item.Name == "RestEndpointOverrideNoOp");
+        Assert.Contains("{SelectedOverrideActionKinds}", overrideNoOp.MessageTemplate, StringComparison.Ordinal);
+        Assert.Contains("{AppliedOverrideActionKinds}", overrideNoOp.MessageTemplate, StringComparison.Ordinal);
         Assert.Contains(convention.Events, static item => item.Id == 5204 && item.Name == "RestEndpointBindingFallbackPreserved");
         Assert.Contains(convention.Events, static item => item.Id == 5205 && item.Name == "RestEndpointAuthoringPolicySuppressed");
         Assert.Contains(convention.Events, static item => item.Id == 5206 && item.Name == "RestEndpointGovernanceSkipped");
@@ -6232,11 +6236,26 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         app.MapCephalon();
 
         await app.StartAsync();
+        var client = app.GetTestClient();
+        var candidates = await client.GetFromJsonAsync<List<RestEndpointCandidateRuntimeDescriptor>>("/engine/rest-endpoint-candidates");
+
+        Assert.NotNull(candidates);
+
+        var appliedCandidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.profile.bindings.query.partial", StringComparison.Ordinal));
+        var noOpCandidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.profile.bindings", StringComparison.Ordinal));
+        var appliedSelectedActionKinds = JoinActionKinds(appliedCandidate.SelectedOverrideActionKinds);
+        var appliedActionKinds = JoinActionKinds(appliedCandidate.AppliedOverrideActionKinds);
+        var noOpSelectedActionKinds = JoinActionKinds(noOpCandidate.SelectedOverrideActionKinds);
+        var noOpAppliedActionKinds = JoinActionKinds(noOpCandidate.AppliedOverrideActionKinds);
 
         Assert.Contains(loggerProvider.Entries, entry =>
             entry.EventId.Id == 5202 &&
             entry.Message.Contains("tests.rest.profile.bindings.query.partial", StringComparison.Ordinal) &&
             entry.Message.Contains("prefer-route-order", StringComparison.Ordinal) &&
+            entry.Message.Contains(appliedSelectedActionKinds, StringComparison.Ordinal) &&
+            entry.Message.Contains(appliedActionKinds, StringComparison.Ordinal) &&
             entry.Message.Contains("/api/v6/tests/profile-runtime/query-partial/orders/lookup/{orderId}", StringComparison.Ordinal));
         Assert.DoesNotContain(loggerProvider.Entries, entry =>
             entry.EventId.Id == 5202 &&
@@ -6246,6 +6265,8 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             entry.EventId.Id == 5203 &&
             entry.Message.Contains("tests.rest.profile.bindings", StringComparison.Ordinal) &&
             entry.Message.Contains("prefer-current-bindings", StringComparison.Ordinal) &&
+            entry.Message.Contains(noOpSelectedActionKinds, StringComparison.Ordinal) &&
+            entry.Message.Contains(noOpAppliedActionKinds, StringComparison.Ordinal) &&
             entry.Message.Contains("selected governance override", StringComparison.Ordinal));
         Assert.Contains(loggerProvider.Entries, entry =>
             entry.EventId.Id == 5204 &&
@@ -6257,6 +6278,15 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             entry.Message.Contains("tests.rest.profile.bindings.inference", StringComparison.Ordinal) &&
             entry.Message.Contains("PreserveRemainingBodyFallback", StringComparison.Ordinal) &&
             entry.Message.Contains("withdraw-body-note", StringComparison.Ordinal));
+    }
+
+    private static string JoinActionKinds(IReadOnlyList<RestEndpointOverrideActionKind> actionKinds)
+    {
+        ArgumentNullException.ThrowIfNull(actionKinds);
+
+        return actionKinds.Count == 0
+            ? "(none)"
+            : string.Join(", ", actionKinds.Select(static item => item.GetWireName()));
     }
 
     [Fact]

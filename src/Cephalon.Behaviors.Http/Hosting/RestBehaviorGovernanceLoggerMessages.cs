@@ -20,16 +20,16 @@ internal static class RestBehaviorGovernanceLoggerMessages
                 RestBehaviorGovernanceDiagnosticsConventions.PrecedenceSuppressedName),
             RestBehaviorGovernanceDiagnosticsConventions.PrecedenceSuppressedMessageTemplate);
 
-    private static readonly Action<ILogger, string, string, string, string, Exception?> OverrideApplied =
-        LoggerMessage.Define<string, string, string, string>(
+    private static readonly Action<ILogger, string, string, string, string, string, string, Exception?> OverrideApplied =
+        LoggerMessage.Define<string, string, string, string, string, string>(
             LogLevel.Information,
             new EventId(
                 RestBehaviorGovernanceDiagnosticsConventions.OverrideAppliedId,
                 RestBehaviorGovernanceDiagnosticsConventions.OverrideAppliedName),
             RestBehaviorGovernanceDiagnosticsConventions.OverrideAppliedMessageTemplate);
 
-    private static readonly Action<ILogger, string, string, string, string, Exception?> OverrideNoOp =
-        LoggerMessage.Define<string, string, string, string>(
+    private static readonly Action<ILogger, string, string, string, string, string, string, Exception?> OverrideNoOp =
+        LoggerMessage.Define<string, string, string, string, string, string>(
             LogLevel.Information,
             new EventId(
                 RestBehaviorGovernanceDiagnosticsConventions.OverrideNoOpId,
@@ -87,9 +87,19 @@ internal static class RestBehaviorGovernanceLoggerMessages
         string candidateId,
         string behaviorId,
         string overrideId,
+        string selectedOverrideActionKinds,
+        string appliedOverrideActionKinds,
         string routePattern)
     {
-        OverrideApplied(logger, candidateId, behaviorId, overrideId, routePattern, null);
+        OverrideApplied(
+            logger,
+            candidateId,
+            behaviorId,
+            overrideId,
+            selectedOverrideActionKinds,
+            appliedOverrideActionKinds,
+            routePattern,
+            null);
     }
 
     public static void LogOverrideNoOp(
@@ -97,9 +107,19 @@ internal static class RestBehaviorGovernanceLoggerMessages
         string candidateId,
         string behaviorId,
         string selectedOverrideId,
-        string matchedOverrideIds)
+        string matchedOverrideIds,
+        string selectedOverrideActionKinds,
+        string appliedOverrideActionKinds)
     {
-        OverrideNoOp(logger, candidateId, behaviorId, selectedOverrideId, matchedOverrideIds, null);
+        OverrideNoOp(
+            logger,
+            candidateId,
+            behaviorId,
+            selectedOverrideId,
+            matchedOverrideIds,
+            selectedOverrideActionKinds,
+            appliedOverrideActionKinds,
+            null);
     }
 
     public static void LogBindingFallbackPreserved(

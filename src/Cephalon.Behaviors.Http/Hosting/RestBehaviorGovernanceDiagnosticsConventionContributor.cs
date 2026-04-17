@@ -27,8 +27,8 @@ internal static class RestBehaviorGovernanceDiagnosticsConventions
 
     public const string GovernanceSuppressedMessageTemplate = "REST endpoint candidate '{CandidateId}' for behavior '{BehaviorId}' from authoring style '{AuthoringStyle}' was suppressed by governance rule '{SuppressionId}'. Matched suppressions {MatchedSuppressionIds}.";
     public const string PrecedenceSuppressedMessageTemplate = "REST endpoint candidate '{CandidateId}' for behavior '{BehaviorId}' from authoring style '{AuthoringStyle}' was suppressed by higher-precedence candidate '{WinningCandidateId}' from authoring style '{WinningAuthoringStyle}'.";
-    public const string OverrideAppliedMessageTemplate = "REST endpoint candidate '{CandidateId}' for behavior '{BehaviorId}' applied governance override '{OverrideId}' and published route '{RoutePattern}'.";
-    public const string OverrideNoOpMessageTemplate = "REST endpoint candidate '{CandidateId}' for behavior '{BehaviorId}' selected governance override '{SelectedOverrideId}' from matched override(s) {MatchedOverrideIds} without changing the published runtime answer.";
+    public const string OverrideAppliedMessageTemplate = "REST endpoint candidate '{CandidateId}' for behavior '{BehaviorId}' applied governance override '{OverrideId}' with selected action kind(s) {SelectedOverrideActionKinds}, applied action kind(s) {AppliedOverrideActionKinds}, and published route '{RoutePattern}'.";
+    public const string OverrideNoOpMessageTemplate = "REST endpoint candidate '{CandidateId}' for behavior '{BehaviorId}' selected governance override '{SelectedOverrideId}' from matched override(s) {MatchedOverrideIds} with selected action kind(s) {SelectedOverrideActionKinds} and applied action kind(s) {AppliedOverrideActionKinds} without changing the published runtime answer.";
     public const string BindingFallbackPreservedMessageTemplate = "REST endpoint candidate '{CandidateId}' for behavior '{BehaviorId}' preserved binding fallback mode '{BindingFallbackMode}' while reconciling governance override(s) {MatchedOverrideIds}.";
     public const string AuthoringPolicySuppressedMessageTemplate = "REST endpoint candidate '{CandidateId}' for behavior '{BehaviorId}' from authoring style '{AuthoringStyle}' was suppressed by authoring policy '{SuppressionKind}'. {SuppressionReason}";
     public const string GovernanceSkippedMessageTemplate = "REST endpoint candidate '{CandidateId}' for behavior '{BehaviorId}' from authoring style '{AuthoringStyle}' skipped host governance because the original projection did not allow host governance. Skipped suppressions {SkippedSuppressionIds}. Skipped overrides {SkippedOverrideIds}.";
@@ -52,14 +52,14 @@ internal static class RestBehaviorGovernanceDiagnosticsConventions
         Name: OverrideAppliedName,
         Severity: DiagnosticSeverity.Information,
         MessageTemplate: OverrideAppliedMessageTemplate,
-        Description: "Emitted when a matched REST governance override materially changes the published runtime answer.");
+        Description: "Emitted when a matched REST governance override materially changes the published runtime answer and reports the selected-versus-applied override action dimensions.");
 
     public static readonly DiagnosticEventDefinition OverrideNoOp = new(
         Id: OverrideNoOpId,
         Name: OverrideNoOpName,
         Severity: DiagnosticSeverity.Information,
         MessageTemplate: OverrideNoOpMessageTemplate,
-        Description: "Emitted when a REST governance override matches a candidate but becomes a no-op after runtime-truth reconciliation.");
+        Description: "Emitted when a REST governance override matches a candidate but becomes a no-op after runtime-truth reconciliation while preserving the selected-versus-applied override action dimensions.");
 
     public static readonly DiagnosticEventDefinition BindingFallbackPreserved = new(
         Id: BindingFallbackPreservedId,
@@ -85,7 +85,7 @@ internal static class RestBehaviorGovernanceDiagnosticsConventions
     public static readonly DiagnosticsConvention Convention = new(
         Source: "Cephalon.Behaviors.Http",
         LoggerCategoryPrefix: "Cephalon.Behaviors.Http",
-        Description: "Structured governance, authoring-policy, precedence, override, skipped-governance, no-op, and fallback-preservation diagnostics for behavior-backed REST governance.",
+        Description: "Structured governance, authoring-policy, precedence, override, override-action, skipped-governance, no-op, and fallback-preservation diagnostics for behavior-backed REST governance.",
         Events:
         [
             GovernanceSuppressed,
