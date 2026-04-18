@@ -60,6 +60,11 @@ public sealed class RestEndpointSuppressionDescriptor
     /// The grouped selection-basis buckets for runtime candidates that were actually suppressed by
     /// this rule.
     /// </param>
+    /// <param name="behaviorIdPrefixes">
+    /// The behavior-id prefixes targeted by the suppression rule. Prefix matches use the stable
+    /// dot-separated behavior-id hierarchy, so a prefix targets the exact behavior id and any
+    /// descendant behavior ids beneath that prefix.
+    /// </param>
     public RestEndpointSuppressionDescriptor(
         string id,
         IReadOnlyList<string>? candidateIds = null,
@@ -80,7 +85,8 @@ public sealed class RestEndpointSuppressionDescriptor
         IReadOnlyList<string>? skippedCandidateIds = null,
         IReadOnlyList<RestEndpointGovernanceRuleSelectionBasis>? selectionBases = null,
         IReadOnlyList<RestEndpointGovernanceSelectionBasisSummaryDescriptor>? selectionBasisSummaries = null,
-        IReadOnlyList<string>? hostGovernanceScopes = null)
+        IReadOnlyList<string>? hostGovernanceScopes = null,
+        IReadOnlyList<string>? behaviorIdPrefixes = null)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -90,6 +96,7 @@ public sealed class RestEndpointSuppressionDescriptor
         Id = id.Trim();
         CandidateIds = NormalizeList(candidateIds);
         BehaviorIds = NormalizeList(behaviorIds);
+        BehaviorIdPrefixes = NormalizeList(behaviorIdPrefixes);
         SourceModuleIds = NormalizeList(sourceModuleIds);
         AuthoringStyles = NormalizeList(authoringStyles);
         ApiVersionMajors = NormalizeIntList(apiVersionMajors);
@@ -164,6 +171,11 @@ public sealed class RestEndpointSuppressionDescriptor
     /// Gets the behavior identifiers targeted by this suppression rule.
     /// </summary>
     public IReadOnlyList<string> BehaviorIds { get; }
+
+    /// <summary>
+    /// Gets the behavior-id prefixes targeted by this suppression rule.
+    /// </summary>
+    public IReadOnlyList<string> BehaviorIdPrefixes { get; }
 
     /// <summary>
     /// Gets the source-module identifiers targeted by this suppression rule.

@@ -32,7 +32,8 @@ public interface IRestEndpointSuppressionRuntimeCatalog
     IReadOnlyList<RestEndpointSuppressionDescriptor> GetBySourceModule(string sourceModuleId);
 
     /// <summary>
-    /// Gets all REST endpoint suppression rules that target the requested behavior identifier.
+    /// Gets all REST endpoint suppression rules that target the requested behavior identifier,
+    /// either directly or through configured behavior-id prefixes.
     /// </summary>
     /// <param name="behaviorId">The stable behavior identifier to filter by.</param>
     /// <returns>The matching suppression descriptors, or an empty list when no rules exist.</returns>

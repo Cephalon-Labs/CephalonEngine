@@ -32,7 +32,8 @@ public interface IRestEndpointOverrideRuntimeCatalog
     IReadOnlyList<RestEndpointOverrideDescriptor> GetBySourceModule(string sourceModuleId);
 
     /// <summary>
-    /// Gets all REST endpoint override rules that target the requested behavior identifier.
+    /// Gets all REST endpoint override rules that target the requested behavior identifier, either
+    /// directly or through configured behavior-id prefixes.
     /// </summary>
     /// <param name="behaviorId">The stable behavior identifier to filter by.</param>
     /// <returns>The matching override descriptors, or an empty list when no rules exist.</returns>

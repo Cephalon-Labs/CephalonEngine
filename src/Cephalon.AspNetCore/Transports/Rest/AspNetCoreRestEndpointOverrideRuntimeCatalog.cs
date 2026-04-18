@@ -45,9 +45,13 @@ internal sealed class AspNetCoreRestEndpointOverrideRuntimeCatalog(
             return [];
         }
 
-        return GetState().OverridesByBehaviorId.TryGetValue(behaviorId.Trim(), out var matches)
-            ? matches
-            : [];
+        var normalizedBehaviorId = behaviorId.Trim();
+        return GetState().OverrideRules
+            .Where(item => MatchesBehaviorSelector(
+                normalizedBehaviorId,
+                item.BehaviorIds,
+                item.BehaviorIdPrefixes))
+            .ToArray();
     }
 
     private CatalogState GetState()
@@ -173,7 +177,8 @@ internal sealed class AspNetCoreRestEndpointOverrideRuntimeCatalog(
                     selectionBasisSummaries,
                     selectedActionKindSummaries,
                     appliedActionKindSummaries,
-                    hostGovernanceScopes: item.HostGovernanceScopes);
+                    hostGovernanceScopes: item.HostGovernanceScopes,
+                    behaviorIdPrefixes: item.BehaviorIdPrefixes);
             })
             .OrderBy(static item => item.Id, Comparer)
             .ToArray();
@@ -187,21 +192,39 @@ internal sealed class AspNetCoreRestEndpointOverrideRuntimeCatalog(
                 static group => group.Key,
                 static group => (IReadOnlyList<RestEndpointOverrideDescriptor>)group.Select(static pair => pair.Value).ToArray(),
                 Comparer);
-        var overridesByBehaviorId = overrideRules
-            .Where(static item => item.BehaviorIds.Count > 0)
-            .SelectMany(static item => item.BehaviorIds.Select(behaviorId => new KeyValuePair<string, RestEndpointOverrideDescriptor>(behaviorId, item)))
-            .GroupBy(static pair => pair.Key, Comparer)
-            .ToDictionary(
-                static group => group.Key,
-                static group => (IReadOnlyList<RestEndpointOverrideDescriptor>)group.Select(static pair => pair.Value).ToArray(),
-                Comparer);
-
         return new CatalogState(
             candidates,
             overrideRules,
             overridesById,
-            overridesBySourceModule,
-            overridesByBehaviorId);
+            overridesBySourceModule);
+    }
+
+    private static bool MatchesBehaviorSelector(
+        string behaviorId,
+        IReadOnlyList<string> behaviorIds,
+        IReadOnlyList<string> behaviorIdPrefixes)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
+        ArgumentNullException.ThrowIfNull(behaviorIds);
+        ArgumentNullException.ThrowIfNull(behaviorIdPrefixes);
+
+        if (behaviorIds.Contains(behaviorId, Comparer))
+        {
+            return true;
+        }
+
+        return behaviorIdPrefixes.Any(prefix => BehaviorIdMatchesPrefix(behaviorId, prefix));
+    }
+
+    private static bool BehaviorIdMatchesPrefix(string behaviorId, string behaviorIdPrefix)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorIdPrefix);
+
+        return string.Equals(behaviorId, behaviorIdPrefix, StringComparison.OrdinalIgnoreCase) ||
+               (behaviorId.Length > behaviorIdPrefix.Length &&
+                behaviorId.StartsWith(behaviorIdPrefix, StringComparison.OrdinalIgnoreCase) &&
+                behaviorId[behaviorIdPrefix.Length] == '.');
     }
 
     private static void AddDistinctStringValue(
@@ -339,8 +362,7 @@ internal sealed class AspNetCoreRestEndpointOverrideRuntimeCatalog(
         IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> candidates,
         IReadOnlyList<RestEndpointOverrideDescriptor> overrideRules,
         IReadOnlyDictionary<string, RestEndpointOverrideDescriptor> overridesById,
-        IReadOnlyDictionary<string, IReadOnlyList<RestEndpointOverrideDescriptor>> overridesBySourceModule,
-        IReadOnlyDictionary<string, IReadOnlyList<RestEndpointOverrideDescriptor>> overridesByBehaviorId)
+        IReadOnlyDictionary<string, IReadOnlyList<RestEndpointOverrideDescriptor>> overridesBySourceModule)
     {
         public IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> Candidates { get; } = candidates;
 
@@ -349,7 +371,5 @@ internal sealed class AspNetCoreRestEndpointOverrideRuntimeCatalog(
         public IReadOnlyDictionary<string, RestEndpointOverrideDescriptor> OverridesById { get; } = overridesById;
 
         public IReadOnlyDictionary<string, IReadOnlyList<RestEndpointOverrideDescriptor>> OverridesBySourceModule { get; } = overridesBySourceModule;
-
-        public IReadOnlyDictionary<string, IReadOnlyList<RestEndpointOverrideDescriptor>> OverridesByBehaviorId { get; } = overridesByBehaviorId;
     }
 }

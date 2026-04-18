@@ -418,7 +418,10 @@ Cephalon groups matching behavior ids by their parent prefix before publication,
 `/showcase/generated/inventory`. The optional callback applies the same group-level conventions to
 each derived route group, and the generated endpoints still publish through the existing
 `behavior-module-generated` authoring-style and runtime-catalog pipeline instead of inventing a
-second generated publication source.
+second generated publication source. Hosts can now also target those same grouped branches by exact
+behavior id or by subtree `BehaviorIdPrefixes` such as `showcase.generated.orders`, so one
+governance rule can suppress or override one generated group without enumerating every exact
+generated candidate id.
 
 When a project wants the same module-owned REST behavior without creating a dedicated module class,
 the host can still register an inline module explicitly:
@@ -586,7 +589,8 @@ Current helper behavior:
   module DSL or manual module-owned REST endpoints untouched by default; an explicit module-DSL
   route group can opt into that governance boundary through `AllowHostGovernance()`, but host
   rules still have to target authoring style `behavior-module-dsl` explicitly before they can
-  suppress it
+  suppress it, while generated grouped shorthand can now be targeted either by exact `Behaviors`
+  or by subtree `BehaviorIdPrefixes`
 - ASP.NET Core hosts can now also override the effective API major version, HTTP method, or
   bounded published route-group prefix, constrained relative route pattern, required capability
   boundary, or explicit binding
@@ -855,12 +859,13 @@ Current governance baseline:
   route-pattern, capability-boundary set-or-clear, explicit binding-plan replacement/merge/reset,
   and endpoint-metadata set-or-clear overrides for those same governable candidates through
   `RestApi:Overrides`
-- target one or more `CandidateIds`, `Behaviors`, `Modules`, and optional `AuthoringStyles`, then
-  optionally refine that match with `ApiVersionMajors`, `Methods`, `RelativePatterns`,
-  `RouteGroupPrefixes`, `OpenApiDocumentNames`, `TagNames`, `EndpointNames`,
-  `BindingFallbackModes`, and exact original explicit `TargetBindings`
-- rules that omit all of `CandidateIds`, `Behaviors`, `Modules`, and `HostGovernanceScopes` now
-  still fail fast instead of suppressing every shorthand candidate implicitly, while one deliberate
+- target one or more `CandidateIds`, exact `Behaviors`, subtree `BehaviorIdPrefixes`, `Modules`,
+  and optional `AuthoringStyles`, then optionally refine that match with `ApiVersionMajors`,
+  `Methods`, `RelativePatterns`, `RouteGroupPrefixes`, `OpenApiDocumentNames`, `TagNames`,
+  `EndpointNames`, `BindingFallbackModes`, and exact original explicit `TargetBindings`
+- rules that omit all of `CandidateIds`, `Behaviors`, `BehaviorIdPrefixes`, `Modules`, and
+  `HostGovernanceScopes` now still fail fast instead of suppressing every shorthand candidate
+  implicitly, while one deliberate
   `HostGovernanceScopes` selector can now stand in as the primary authored target
 - override rules must define at least one override action, require a positive `ApiVersionMajor`
   when that action is present, accept only `GET`, `POST`, `PUT`, `PATCH`, or `DELETE` for
@@ -878,6 +883,8 @@ Current governance baseline:
   `RestApi:Suppressions` and `RestApi:Overrides` can target without depending on rewritten route
   shape, but that scope alone does not opt explicit module-DSL routes into host governance
 - exact `CandidateIds` reuse the stable ids published by `GET /engine/rest-endpoint-candidates`
+- `BehaviorIdPrefixes` now target the original dot-separated behavior-id hierarchy directly, which
+  is especially useful for grouped generated shorthand from `MapGeneratedProfileGroups(...)`
 - the optional selector refiners and exact candidate ids all match the original shorthand
   candidate shape before override actions are applied, including the original shorthand OpenAPI
   document name, primary tag name, original shorthand endpoint name through
@@ -889,6 +896,9 @@ Current governance baseline:
   `preserve-remaining-body-fallback`, `HostGovernanceScopes` matches the original authored scope
   when one exists, and `TargetBindings` matches the full original explicit descriptor set by
   property/source/name equivalence
+- overlapping behavior-targeted rules prefer exact behavior ids first and then longer
+  `BehaviorIdPrefixes`, with the winning narrower subtree reason surfaced through the stable
+  `narrower-behavior-scope` selection basis
 - when more than one rule matches, Cephalon prefers candidate-targeted rules first, then fewer
   targeted candidate ids, then the more specific rule by populated target dimensions, behavior-
   targeted scope, narrower authoring-style scope, fewer total selector values, and finally stable

@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.TestHost;
 using Cephalon.Tests.Support;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Tests.Hosting;
@@ -821,6 +822,95 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.NotNull(ordersPayload);
         Assert.NotNull(inventoryPayload);
         Assert.Equal("ord-grouped", ordersPayload.OrderId);
+        Assert.Equal("ord-inventory", inventoryPayload.OrderId);
+    }
+
+    [Fact]
+    public async Task MapCephalonAppliesBehaviorIdPrefixSuppressionsToGeneratedGroupedRuntimeCatalog()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "7";
+        builder.Configuration["OpenApi:EnabledVersions:1"] = "8";
+        builder.Configuration["OpenApi:DefaultVersion"] = "7";
+        builder.Configuration["RestApi:Suppressions:hide-grouped-orders:BehaviorIdPrefixes:0"] = "tests.generated.runtimegrouped.orders";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new GeneratedGroupedRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var suppressionCatalog = app.Services.GetRequiredService<IRestEndpointSuppressionRuntimeCatalog>();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var suppressions = await client.GetFromJsonAsync<RestEndpointSuppressionDescriptor[]>("/engine/rest-endpoint-suppressions");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(suppressions);
+        Assert.NotNull(snapshot);
+
+        var moduleEndpoints = endpoints
+            .Where(static endpoint =>
+                string.Equals(endpoint.SourceModuleId, "tests.rest.generated-grouped-runtime", StringComparison.Ordinal))
+            .ToArray();
+        var publishedEndpoint = Assert.Single(moduleEndpoints);
+        Assert.Equal("tests.generated.runtimegrouped.inventory.lookup", publishedEndpoint.BehaviorId);
+        Assert.Equal("/api/v8/tests/generated/runtimegrouped/inventory/{orderId}", publishedEndpoint.RoutePattern);
+
+        var ordersLookupCandidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.generated.runtimegrouped.orders.lookup", StringComparison.Ordinal));
+        var ordersCreateCandidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.generated.runtimegrouped.orders.create", StringComparison.Ordinal));
+        Assert.Equal("hide-grouped-orders", ordersLookupCandidate.SuppressedBySuppressionId);
+        Assert.Equal("hide-grouped-orders", ordersCreateCandidate.SuppressedBySuppressionId);
+        Assert.Equal(["hide-grouped-orders"], ordersLookupCandidate.MatchedSuppressionIds);
+        Assert.Equal(["hide-grouped-orders"], ordersCreateCandidate.MatchedSuppressionIds);
+        Assert.Equal(RestEndpointGovernanceRuleSelectionBasis.SingleMatch, ordersLookupCandidate.SuppressionSelectionBasis);
+        Assert.Equal(RestEndpointGovernanceRuleSelectionBasis.SingleMatch, ordersCreateCandidate.SuppressionSelectionBasis);
+
+        var rule = Assert.Single(suppressions);
+        Assert.Equal("hide-grouped-orders", rule.Id);
+        Assert.Empty(rule.BehaviorIds);
+        Assert.Equal(["tests.generated.runtimegrouped.orders"], rule.BehaviorIdPrefixes);
+        Assert.Equal(2, rule.MatchedCandidateIds.Count);
+        Assert.Equal(2, rule.SuppressedCandidateIds.Count);
+        Assert.Equal([RestEndpointGovernanceRuleSelectionBasis.SingleMatch], rule.SelectionBases);
+
+        Assert.Equal(
+            ["hide-grouped-orders"],
+            suppressionCatalog.GetByBehaviorId("tests.generated.runtimegrouped.orders.lookup").Select(static item => item.Id).ToArray());
+        Assert.Equal(
+            ["hide-grouped-orders"],
+            suppressionCatalog.GetByBehaviorId("tests.generated.runtimegrouped.orders.create").Select(static item => item.Id).ToArray());
+        Assert.Empty(suppressionCatalog.GetByBehaviorId("tests.generated.runtimegrouped.inventory.lookup"));
+
+        Assert.Contains(snapshot.RestEndpointSuppressions, item =>
+            string.Equals(item.Id, "hide-grouped-orders", StringComparison.Ordinal) &&
+            item.BehaviorIdPrefixes.SequenceEqual(["tests.generated.runtimegrouped.orders"]) &&
+            item.SuppressedCandidateIds.Count == 2);
+        Assert.DoesNotContain(snapshot.RestEndpoints, item =>
+            string.Equals(item.BehaviorId, "tests.generated.runtimegrouped.orders.lookup", StringComparison.Ordinal));
+
+        var ordersResponse = await client.GetAsync("/api/v7/tests/generated/runtimegrouped/orders/ord-grouped");
+        Assert.Equal(System.Net.HttpStatusCode.NotFound, ordersResponse.StatusCode);
+
+        var inventoryPayload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>(
+            "/api/v8/tests/generated/runtimegrouped/inventory/ord-inventory");
+        Assert.NotNull(inventoryPayload);
         Assert.Equal("ord-inventory", inventoryPayload.OrderId);
     }
 
@@ -3275,6 +3365,121 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonPrefersExactBehaviorOverrideOverPrefixTargetedRuleInRuntimeCatalog()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "7";
+        builder.Configuration["OpenApi:EnabledVersions:1"] = "8";
+        builder.Configuration["OpenApi:DefaultVersion"] = "7";
+        builder.Configuration["RestApi:Overrides:promote-grouped-orders:BehaviorIdPrefixes:0"] = "tests.generated.runtimegrouped.orders";
+        builder.Configuration["RestApi:Overrides:promote-grouped-orders:TagName"] = "Generated Grouped Orders API";
+        builder.Configuration["RestApi:Overrides:promote-grouped-orders-lookup:Behaviors:0"] = "tests.generated.runtimegrouped.orders.lookup";
+        builder.Configuration["RestApi:Overrides:promote-grouped-orders-lookup:TagName"] = "Generated Grouped Orders Lookup API";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new GeneratedGroupedRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var overrideCatalog = app.Services.GetRequiredService<IRestEndpointOverrideRuntimeCatalog>();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(overrides);
+        Assert.NotNull(snapshot);
+
+        var ordersLookupEndpoint = Assert.Single(endpoints, static item =>
+            string.Equals(item.BehaviorId, "tests.generated.runtimegrouped.orders.lookup", StringComparison.Ordinal));
+        Assert.Equal("promote-grouped-orders-lookup", ordersLookupEndpoint.AppliedOverrideId);
+        Assert.Equal(
+            ["promote-grouped-orders-lookup", "promote-grouped-orders"],
+            ordersLookupEndpoint.MatchedOverrideIds);
+        Assert.Equal(RestEndpointGovernanceRuleSelectionBasis.NarrowerBehaviorScope, ordersLookupEndpoint.OverrideSelectionBasis);
+        Assert.Equal(["Generated Grouped Orders Lookup API"], ordersLookupEndpoint.Tags);
+
+        var ordersCreateEndpoint = Assert.Single(endpoints, static item =>
+            string.Equals(item.BehaviorId, "tests.generated.runtimegrouped.orders.create", StringComparison.Ordinal));
+        Assert.Equal("promote-grouped-orders", ordersCreateEndpoint.AppliedOverrideId);
+        Assert.Equal(["promote-grouped-orders"], ordersCreateEndpoint.MatchedOverrideIds);
+        Assert.Equal(RestEndpointGovernanceRuleSelectionBasis.SingleMatch, ordersCreateEndpoint.OverrideSelectionBasis);
+        Assert.Equal(["Generated Grouped Orders API"], ordersCreateEndpoint.Tags);
+
+        var ordersLookupCandidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.generated.runtimegrouped.orders.lookup", StringComparison.Ordinal));
+        Assert.Equal("promote-grouped-orders-lookup", ordersLookupCandidate.AppliedOverrideId);
+        Assert.Equal(
+            ["promote-grouped-orders-lookup", "promote-grouped-orders"],
+            ordersLookupCandidate.MatchedOverrideIds);
+        Assert.Equal(RestEndpointGovernanceRuleSelectionBasis.NarrowerBehaviorScope, ordersLookupCandidate.OverrideSelectionBasis);
+
+        var ordersCreateCandidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.generated.runtimegrouped.orders.create", StringComparison.Ordinal));
+        Assert.Equal("promote-grouped-orders", ordersCreateCandidate.AppliedOverrideId);
+        Assert.Equal(RestEndpointGovernanceRuleSelectionBasis.SingleMatch, ordersCreateCandidate.OverrideSelectionBasis);
+
+        var exactRule = Assert.Single(overrides, static item => string.Equals(item.Id, "promote-grouped-orders-lookup", StringComparison.Ordinal));
+        Assert.Equal(["tests.generated.runtimegrouped.orders.lookup"], exactRule.BehaviorIds);
+        Assert.Empty(exactRule.BehaviorIdPrefixes);
+        Assert.Equal([ordersLookupCandidate.Id], exactRule.SelectedCandidateIds);
+        Assert.Equal([ordersLookupCandidate.Id], exactRule.AppliedCandidateIds);
+        Assert.Equal([RestEndpointGovernanceRuleSelectionBasis.NarrowerBehaviorScope], exactRule.SelectionBases);
+
+        var prefixRule = Assert.Single(overrides, static item => string.Equals(item.Id, "promote-grouped-orders", StringComparison.Ordinal));
+        Assert.Empty(prefixRule.BehaviorIds);
+        Assert.Equal(["tests.generated.runtimegrouped.orders"], prefixRule.BehaviorIdPrefixes);
+        Assert.Contains(ordersLookupCandidate.Id, prefixRule.MatchedCandidateIds);
+        Assert.Contains(ordersCreateCandidate.Id, prefixRule.MatchedCandidateIds);
+        Assert.Equal([ordersCreateCandidate.Id], prefixRule.SelectedCandidateIds);
+        Assert.Equal([ordersCreateCandidate.Id], prefixRule.AppliedCandidateIds);
+
+        Assert.Equal(
+            ["promote-grouped-orders", "promote-grouped-orders-lookup"],
+            overrideCatalog.GetByBehaviorId("tests.generated.runtimegrouped.orders.lookup").Select(static item => item.Id).ToArray());
+        Assert.Equal(
+            ["promote-grouped-orders"],
+            overrideCatalog.GetByBehaviorId("tests.generated.runtimegrouped.orders.create").Select(static item => item.Id).ToArray());
+        Assert.Empty(overrideCatalog.GetByBehaviorId("tests.generated.runtimegrouped.inventory.lookup"));
+
+        Assert.Contains(snapshot.RestEndpointOverrides, item =>
+            string.Equals(item.Id, "promote-grouped-orders-lookup", StringComparison.Ordinal) &&
+            item.SelectionBases.SequenceEqual([RestEndpointGovernanceRuleSelectionBasis.NarrowerBehaviorScope]));
+
+        var lookupPayload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>(
+            "/api/v7/tests/generated/runtimegrouped/orders/ord-lookup");
+        Assert.NotNull(lookupPayload);
+        Assert.Equal("ord-lookup", lookupPayload.OrderId);
+
+        using var createRequest = new HttpRequestMessage(
+            HttpMethod.Post,
+            "/api/v7/tests/generated/runtimegrouped/orders/ord-create/items");
+        createRequest.Content = JsonContent.Create(new
+        {
+            productId = "sku-1"
+        });
+        var createResponse = await client.SendAsync(createRequest);
+        createResponse.EnsureSuccessStatusCode();
+        var createPayload = await createResponse.Content.ReadFromJsonAsync<GeneratedRuntimeOrderOutput>();
+        Assert.NotNull(createPayload);
+        Assert.Equal("ord-create", createPayload.OrderId);
+    }
+
+    [Fact]
     public async Task MapCephalonAppliesExpandedSuppressionSelectorsOnlyToTheMatchingCandidate()
     {
         var builder = WebApplication.CreateBuilder();
@@ -4705,7 +4910,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
                 });
             }));
 
-        Assert.Contains("candidate id, behavior id, source module id, or host-governance scope", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("candidate id, behavior id, behavior-id prefix, source module id, or host-governance scope", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

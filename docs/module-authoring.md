@@ -393,7 +393,9 @@ Cephalon derives one public route group per parent behavior-id prefix, so
 `/showcase/generated/orders`, while `showcase.generated.inventory.lookup` lands beneath
 `/showcase/generated/inventory`. The generated endpoints stay on the same
 `behavior-module-generated` shorthand/runtime path and still never publish public REST from
-`[AppBehavior]` alone.
+`[AppBehavior]` alone. Hosts can now also target those same generated grouped branches by exact
+behavior id or by subtree `BehaviorIdPrefixes`, so one rule can govern one derived group without
+giving up module ownership or enumerating every exact generated candidate id.
 
 When a project wants to stay explicit and module-owned without creating a dedicated module class,
 the host can still register the full group manually:
@@ -491,11 +493,12 @@ Current helper behavior:
   HTTP method, bounded published route-group prefix, constrained relative route pattern, or
   explicit binding plan through
   `RestApi:Overrides` without taking away module ownership; the suppression/override surfaces can
-  both target exact `CandidateIds` and refine `Behaviors`/`Modules` targeting with
-  `ApiVersionMajors`, `Methods`, `RelativePatterns`, `RouteGroupPrefixes`,
-  `OpenApiDocumentNames`, `TagNames`, `BindingFallbackModes`, and exact original explicit
-  `TargetBindings`, those selector refiners match the original shorthand candidate shape before
-  override actions are applied, and the override surface itself now supports `ApiVersionMajor`,
+  both target exact `CandidateIds`, exact `Behaviors`, subtree `BehaviorIdPrefixes`, and refine
+  `Modules` targeting with `ApiVersionMajors`, `Methods`, `RelativePatterns`,
+  `RouteGroupPrefixes`, `OpenApiDocumentNames`, `TagNames`, `BindingFallbackModes`, and exact
+  original explicit `TargetBindings`, those selector refiners match the original shorthand
+  candidate shape before override actions are applied, and the override surface itself now supports
+  `ApiVersionMajor`,
   `Method`, `RouteGroupPrefix`, `Pattern`, `Bindings`, and typed `BindingMode`, keeps the
   `/v{major}` route segment, OpenAPI document name, endpoint method, effective route, and
   effective binding plan aligned with the same projection truth, treats `BindingMode` as a wire-name-only config surface with `replace-explicit` or `merge-explicit`, preserves `bindingMode = unspecified` only for `ClearBindings` rules that omitted an explicit mode, uses stable `route` / `query` / `header` / `body` wire names for `Bindings` and `TargetBindings` sources, and defaults `Bindings` to full
@@ -595,17 +598,18 @@ Current helper behavior:
 
 When a host wants to suppress shorthand publication without removing the module-owned route group,
 use `RestApi:Suppressions`. That host-level governance surface can target exact `CandidateIds`,
-`Behaviors`, `Modules`, optional `HostGovernanceScopes`, and optional `AuthoringStyles`, can
-refine that target further with
+exact `Behaviors`, subtree `BehaviorIdPrefixes`, `Modules`, optional `HostGovernanceScopes`, and
+optional `AuthoringStyles`, can refine that target further with
 `ApiVersionMajors`, `Methods`, `RelativePatterns`, `RouteGroupPrefixes`,
 `OpenApiDocumentNames`, `TagNames`, `EndpointNames`, `BindingFallbackModes`, exact original
 explicit `TargetBindings`, and additive `HostGovernanceScopes`, matches those selector refiners
 against the original shorthand candidate shape before override actions are applied, defaults to
 both shorthand styles when `AuthoringStyles` is omitted, fails fast only when all of
-`CandidateIds`, `Behaviors`, `Modules`, and `HostGovernanceScopes` are missing, prefers the more
-specific matching rule deterministically by populated target dimensions
-first, then by behavior-targeted scope, narrower authoring-style scope, fewer total selector
-values, and stable rule id ordering, and intentionally suppresses only descriptor-backed shorthand
+`CandidateIds`, `Behaviors`, `BehaviorIdPrefixes`, `Modules`, and `HostGovernanceScopes` are
+missing, prefers the more specific matching rule deterministically by populated target dimensions
+first, then by exact behavior-targeted scope, narrower behavior-subtree scope, narrower
+authoring-style scope, fewer total selector values, and stable rule id ordering, and intentionally
+suppresses only descriptor-backed shorthand
 candidates rather than rewriting explicit module DSL/manual routes. When more than one suppression
 rule matches, the suppressed candidate keeps the full ordered match set visible through
 `MatchedSuppressionIds` while `SuppressedBySuppressionId` keeps identifying the winning rule.

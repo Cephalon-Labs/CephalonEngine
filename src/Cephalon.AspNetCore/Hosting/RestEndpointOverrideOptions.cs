@@ -142,6 +142,11 @@ public sealed class RestEndpointOverrideOptions
     /// The original shorthand explicit binding descriptors targeted by the override rule before
     /// any override actions are applied.
     /// </param>
+    /// <param name="behaviorIdPrefixes">
+    /// The behavior-id prefixes targeted by the override rule. Prefix matches use the stable
+    /// dot-separated behavior-id hierarchy, so a prefix targets the exact behavior id and any
+    /// descendant behavior ids beneath that prefix.
+    /// </param>
     public RestEndpointOverrideOptions(
         string id,
         IReadOnlyList<string>? candidateIds = null,
@@ -175,13 +180,15 @@ public sealed class RestEndpointOverrideOptions
         IReadOnlyList<string>? endpointNames = null,
         IReadOnlyList<RestEndpointBindingFallbackMode>? bindingFallbackModes = null,
         IReadOnlyList<RestEndpointBindingDescriptor>? targetBindings = null,
-        IReadOnlyList<string>? hostGovernanceScopes = null)
+        IReadOnlyList<string>? hostGovernanceScopes = null,
+        IReadOnlyList<string>? behaviorIdPrefixes = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
 
         Id = id.Trim();
         CandidateIds = NormalizeList(candidateIds);
         BehaviorIds = NormalizeList(behaviorIds);
+        BehaviorIdPrefixes = NormalizeList(behaviorIdPrefixes);
         SourceModuleIds = NormalizeList(sourceModuleIds);
         AuthoringStyles = NormalizeAuthoringStyles(authoringStyles);
         ApiVersionMajors = NormalizePositiveIntegers(
@@ -266,11 +273,12 @@ public sealed class RestEndpointOverrideOptions
 
         if (CandidateIds.Count == 0 &&
             BehaviorIds.Count == 0 &&
+            BehaviorIdPrefixes.Count == 0 &&
             SourceModuleIds.Count == 0 &&
             HostGovernanceScopes.Count == 0)
         {
             throw new ArgumentException(
-                "REST endpoint override rules must target at least one candidate id, behavior id, source module id, or host-governance scope.",
+                "REST endpoint override rules must target at least one candidate id, behavior id, behavior-id prefix, source module id, or host-governance scope.",
                 nameof(candidateIds));
         }
 
@@ -336,6 +344,11 @@ public sealed class RestEndpointOverrideOptions
     /// Gets the behavior identifiers targeted by this override rule.
     /// </summary>
     public IReadOnlyList<string> BehaviorIds { get; }
+
+    /// <summary>
+    /// Gets the behavior-id prefixes targeted by this override rule.
+    /// </summary>
+    public IReadOnlyList<string> BehaviorIdPrefixes { get; }
 
     /// <summary>
     /// Gets the source-module identifiers targeted by this override rule.
@@ -509,6 +522,7 @@ public sealed class RestEndpointOverrideOptions
     public bool HasValues =>
         CandidateIds.Count > 0 ||
         BehaviorIds.Count > 0 ||
+        BehaviorIdPrefixes.Count > 0 ||
         SourceModuleIds.Count > 0 ||
         ApiVersionMajors.Count > 0 ||
         Methods.Count > 0 ||

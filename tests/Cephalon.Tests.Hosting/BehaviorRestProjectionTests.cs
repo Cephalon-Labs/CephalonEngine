@@ -832,6 +832,123 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverAppliesBehaviorIdPrefixSuppressionsToGeneratedGroupedCandidates()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        builder.MapGeneratedProfileGroups(
+            "tests.generated.projection.grouped",
+            group => group.WithHostGovernanceScope("generated-grouped"));
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.generated-prefix-suppression",
+                "Generated Prefix Suppression Module",
+                "Exercises behavior-id prefix suppression selectors across generated grouped candidates.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            [
+                new RestEndpointSuppressionOptions(
+                    id: "hide-grouped-orders",
+                    behaviorIdPrefixes: ["tests.generated.projection.grouped.orders"])
+            ]);
+
+        Assert.Equal(3, candidates.Count);
+
+        var inventory = Assert.Single(candidates, static item =>
+            string.Equals(
+                item.Candidate.ProjectedEndpoint.BehaviorId,
+                "tests.generated.projection.grouped.inventory.lookup",
+                StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, inventory.Candidate.Status);
+
+        var ordersLookup = Assert.Single(candidates, static item =>
+            string.Equals(
+                item.Candidate.ProjectedEndpoint.BehaviorId,
+                "tests.generated.projection.grouped.orders.lookup",
+                StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Suppressed, ordersLookup.Candidate.Status);
+        Assert.Equal("hide-grouped-orders", ordersLookup.Candidate.SuppressedBySuppressionId);
+        Assert.Equal(["hide-grouped-orders"], ordersLookup.Candidate.MatchedSuppressionIds);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.SingleMatch,
+            ordersLookup.Candidate.SuppressionSelectionBasis);
+
+        var ordersCreate = Assert.Single(candidates, static item =>
+            string.Equals(
+                item.Candidate.ProjectedEndpoint.BehaviorId,
+                "tests.generated.projection.grouped.orders.create",
+                StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Suppressed, ordersCreate.Candidate.Status);
+        Assert.Equal("hide-grouped-orders", ordersCreate.Candidate.SuppressedBySuppressionId);
+        Assert.Equal(["hide-grouped-orders"], ordersCreate.Candidate.MatchedSuppressionIds);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.SingleMatch,
+            ordersCreate.Candidate.SuppressionSelectionBasis);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverPrefersExactBehaviorSuppressionOverPrefixTargetedRule()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        builder.MapGeneratedProfileGroups(
+            "tests.generated.projection.grouped",
+            group => group.WithHostGovernanceScope("generated-grouped"));
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.generated-prefix-suppression-specificity",
+                "Generated Prefix Suppression Specificity Module",
+                "Exercises exact behavior suppression specificity over broader behavior-id prefixes.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            [
+                new RestEndpointSuppressionOptions(
+                    id: "hide-grouped-orders",
+                    behaviorIdPrefixes: ["tests.generated.projection.grouped.orders"]),
+                new RestEndpointSuppressionOptions(
+                    id: "hide-grouped-orders-lookup",
+                    behaviorIds: ["tests.generated.projection.grouped.orders.lookup"])
+            ]);
+
+        Assert.Equal(3, candidates.Count);
+
+        var lookup = Assert.Single(candidates, static item =>
+            string.Equals(
+                item.Candidate.ProjectedEndpoint.BehaviorId,
+                "tests.generated.projection.grouped.orders.lookup",
+                StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Suppressed, lookup.Candidate.Status);
+        Assert.Equal("hide-grouped-orders-lookup", lookup.Candidate.SuppressedBySuppressionId);
+        Assert.Equal(
+            ["hide-grouped-orders-lookup", "hide-grouped-orders"],
+            lookup.Candidate.MatchedSuppressionIds);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.NarrowerBehaviorScope,
+            lookup.Candidate.SuppressionSelectionBasis);
+
+        var create = Assert.Single(candidates, static item =>
+            string.Equals(
+                item.Candidate.ProjectedEndpoint.BehaviorId,
+                "tests.generated.projection.grouped.orders.create",
+                StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Suppressed, create.Candidate.Status);
+        Assert.Equal("hide-grouped-orders", create.Candidate.SuppressedBySuppressionId);
+        Assert.Equal(["hide-grouped-orders"], create.Candidate.MatchedSuppressionIds);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.SingleMatch,
+            create.Candidate.SuppressionSelectionBasis);
+
+        var inventory = Assert.Single(candidates, static item =>
+            string.Equals(
+                item.Candidate.ProjectedEndpoint.BehaviorId,
+                "tests.generated.projection.grouped.inventory.lookup",
+                StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, inventory.Candidate.Status);
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverMatchesSuppressionSelectorsAgainstOriginalCandidateShapeBeforeOverrides()
     {
         var builder = new RestBehaviorModuleBuilder();
@@ -1113,7 +1230,7 @@ public sealed class BehaviorRestProjectionTests
                 id: "invalid",
                 authoringStyles: [RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle]));
 
-        Assert.Contains("candidate id, behavior id, source module id, or host-governance scope", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("candidate id, behavior id, behavior-id prefix, source module id, or host-governance scope", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -3202,6 +3319,75 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverPrefersExactBehaviorOverrideOverPrefixTargetedRule()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        builder.MapGeneratedProfileGroups(
+            "tests.generated.projection.grouped",
+            group => group.WithTagName("Generated Grouped Projection API"));
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.generated-prefix-override-specificity",
+                "Generated Prefix Override Specificity Module",
+                "Exercises exact behavior override specificity over broader behavior-id prefixes.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "promote-grouped-orders",
+                    behaviorIdPrefixes: ["tests.generated.projection.grouped.orders"],
+                    tagName: "Generated Grouped Orders API"),
+                new RestEndpointOverrideOptions(
+                    id: "promote-grouped-orders-lookup",
+                    behaviorIds: ["tests.generated.projection.grouped.orders.lookup"],
+                    tagName: "Generated Grouped Orders Lookup API")
+            ]);
+
+        Assert.Equal(3, candidates.Count);
+
+        var lookup = Assert.Single(candidates, static item =>
+            string.Equals(
+                item.Candidate.ProjectedEndpoint.BehaviorId,
+                "tests.generated.projection.grouped.orders.lookup",
+                StringComparison.Ordinal));
+        Assert.Equal("promote-grouped-orders-lookup", lookup.Candidate.AppliedOverrideId);
+        Assert.Equal(
+            ["promote-grouped-orders-lookup", "promote-grouped-orders"],
+            lookup.Candidate.MatchedOverrideIds);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.NarrowerBehaviorScope,
+            lookup.Candidate.OverrideSelectionBasis);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.NarrowerBehaviorScope,
+            lookup.Candidate.ProjectedEndpoint.OverrideSelectionBasis);
+        Assert.Equal(["Generated Grouped Orders Lookup API"], lookup.Candidate.ProjectedEndpoint.Tags);
+
+        var create = Assert.Single(candidates, static item =>
+            string.Equals(
+                item.Candidate.ProjectedEndpoint.BehaviorId,
+                "tests.generated.projection.grouped.orders.create",
+                StringComparison.Ordinal));
+        Assert.Equal("promote-grouped-orders", create.Candidate.AppliedOverrideId);
+        Assert.Equal(["promote-grouped-orders"], create.Candidate.MatchedOverrideIds);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.SingleMatch,
+            create.Candidate.OverrideSelectionBasis);
+        Assert.Equal(["Generated Grouped Orders API"], create.Candidate.ProjectedEndpoint.Tags);
+
+        var inventory = Assert.Single(candidates, static item =>
+            string.Equals(
+                item.Candidate.ProjectedEndpoint.BehaviorId,
+                "tests.generated.projection.grouped.inventory.lookup",
+                StringComparison.Ordinal));
+        Assert.Null(inventory.Candidate.AppliedOverrideId);
+        Assert.Empty(inventory.Candidate.MatchedOverrideIds);
+        Assert.Equal(["Generated Grouped Projection API"], inventory.Candidate.ProjectedEndpoint.Tags);
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverAppliesSuppressionOnlyToCandidatesThatMatchDocumentAndTagSelectors()
     {
         var builder = new RestBehaviorModuleBuilder();
@@ -3521,7 +3707,7 @@ public sealed class BehaviorRestProjectionTests
                 id: "invalid",
                 apiVersionMajor: 6));
 
-        Assert.Contains("candidate id, behavior id, source module id, or host-governance scope", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("candidate id, behavior id, behavior-id prefix, source module id, or host-governance scope", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -3584,6 +3770,17 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestEndpointSuppressionOptionsTreatBehaviorIdPrefixesAsPrimarySelectors()
+    {
+        var options = new RestEndpointSuppressionOptions(
+            id: "orders-subtree",
+            behaviorIdPrefixes: ["tests.generated.projection.grouped.orders"]);
+
+        Assert.Equal(["tests.generated.projection.grouped.orders"], options.BehaviorIdPrefixes);
+        Assert.True(options.HasValues);
+    }
+
+    [Fact]
     public void RestEndpointOverrideOptionsTreatBindingFallbackModesAsSelectors()
     {
         var options = new RestEndpointOverrideOptions(
@@ -3607,6 +3804,18 @@ public sealed class BehaviorRestProjectionTests
             pattern: "/lookup/{cartId}/items");
 
         Assert.Equal(["secondary-scope"], options.HostGovernanceScopes);
+        Assert.True(options.HasValues);
+    }
+
+    [Fact]
+    public void RestEndpointOverrideOptionsTreatBehaviorIdPrefixesAsPrimarySelectors()
+    {
+        var options = new RestEndpointOverrideOptions(
+            id: "orders-subtree",
+            behaviorIdPrefixes: ["tests.generated.projection.grouped.orders"],
+            tagName: "Generated Grouped Orders API");
+
+        Assert.Equal(["tests.generated.projection.grouped.orders"], options.BehaviorIdPrefixes);
         Assert.True(options.HasValues);
     }
 

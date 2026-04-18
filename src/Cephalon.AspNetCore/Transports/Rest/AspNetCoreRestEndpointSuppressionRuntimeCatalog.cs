@@ -45,9 +45,13 @@ internal sealed class AspNetCoreRestEndpointSuppressionRuntimeCatalog(
             return [];
         }
 
-        return GetState().SuppressionsByBehaviorId.TryGetValue(behaviorId.Trim(), out var matches)
-            ? matches
-            : [];
+        var normalizedBehaviorId = behaviorId.Trim();
+        return GetState().Suppressions
+            .Where(suppression => MatchesBehaviorSelector(
+                normalizedBehaviorId,
+                suppression.BehaviorIds,
+                suppression.BehaviorIdPrefixes))
+            .ToArray();
     }
 
     private CatalogState GetState()
@@ -134,7 +138,8 @@ internal sealed class AspNetCoreRestEndpointSuppressionRuntimeCatalog(
                     GetStringValues(skippedCandidateIdsByRule, suppression.Id),
                     selectionBasisSummaries.Select(static summary => summary.SelectionBasis).ToArray(),
                     selectionBasisSummaries,
-                    hostGovernanceScopes: suppression.HostGovernanceScopes);
+                    hostGovernanceScopes: suppression.HostGovernanceScopes,
+                    behaviorIdPrefixes: suppression.BehaviorIdPrefixes);
             })
             .OrderBy(static suppression => suppression.Id, Comparer)
             .ToArray();
@@ -148,21 +153,39 @@ internal sealed class AspNetCoreRestEndpointSuppressionRuntimeCatalog(
                 static group => group.Key,
                 static group => (IReadOnlyList<RestEndpointSuppressionDescriptor>)group.Select(static pair => pair.Value).ToArray(),
                 Comparer);
-        var suppressionsByBehaviorId = suppressions
-            .Where(static suppression => suppression.BehaviorIds.Count > 0)
-            .SelectMany(static suppression => suppression.BehaviorIds.Select(behaviorId => new KeyValuePair<string, RestEndpointSuppressionDescriptor>(behaviorId, suppression)))
-            .GroupBy(static pair => pair.Key, Comparer)
-            .ToDictionary(
-                static group => group.Key,
-                static group => (IReadOnlyList<RestEndpointSuppressionDescriptor>)group.Select(static pair => pair.Value).ToArray(),
-                Comparer);
-
         return new CatalogState(
             candidates,
             suppressions,
             suppressionsById,
-            suppressionsBySourceModule,
-            suppressionsByBehaviorId);
+            suppressionsBySourceModule);
+    }
+
+    private static bool MatchesBehaviorSelector(
+        string behaviorId,
+        IReadOnlyList<string> behaviorIds,
+        IReadOnlyList<string> behaviorIdPrefixes)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
+        ArgumentNullException.ThrowIfNull(behaviorIds);
+        ArgumentNullException.ThrowIfNull(behaviorIdPrefixes);
+
+        if (behaviorIds.Contains(behaviorId, Comparer))
+        {
+            return true;
+        }
+
+        return behaviorIdPrefixes.Any(prefix => BehaviorIdMatchesPrefix(behaviorId, prefix));
+    }
+
+    private static bool BehaviorIdMatchesPrefix(string behaviorId, string behaviorIdPrefix)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorIdPrefix);
+
+        return string.Equals(behaviorId, behaviorIdPrefix, StringComparison.OrdinalIgnoreCase) ||
+               (behaviorId.Length > behaviorIdPrefix.Length &&
+                behaviorId.StartsWith(behaviorIdPrefix, StringComparison.OrdinalIgnoreCase) &&
+                behaviorId[behaviorIdPrefix.Length] == '.');
     }
 
     private static void AddDistinctStringValue(
@@ -268,8 +291,7 @@ internal sealed class AspNetCoreRestEndpointSuppressionRuntimeCatalog(
         IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> candidates,
         IReadOnlyList<RestEndpointSuppressionDescriptor> suppressions,
         IReadOnlyDictionary<string, RestEndpointSuppressionDescriptor> suppressionsById,
-        IReadOnlyDictionary<string, IReadOnlyList<RestEndpointSuppressionDescriptor>> suppressionsBySourceModule,
-        IReadOnlyDictionary<string, IReadOnlyList<RestEndpointSuppressionDescriptor>> suppressionsByBehaviorId)
+        IReadOnlyDictionary<string, IReadOnlyList<RestEndpointSuppressionDescriptor>> suppressionsBySourceModule)
     {
         public IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> Candidates { get; } = candidates;
 
@@ -278,7 +300,5 @@ internal sealed class AspNetCoreRestEndpointSuppressionRuntimeCatalog(
         public IReadOnlyDictionary<string, RestEndpointSuppressionDescriptor> SuppressionsById { get; } = suppressionsById;
 
         public IReadOnlyDictionary<string, IReadOnlyList<RestEndpointSuppressionDescriptor>> SuppressionsBySourceModule { get; } = suppressionsBySourceModule;
-
-        public IReadOnlyDictionary<string, IReadOnlyList<RestEndpointSuppressionDescriptor>> SuppressionsByBehaviorId { get; } = suppressionsByBehaviorId;
     }
 }

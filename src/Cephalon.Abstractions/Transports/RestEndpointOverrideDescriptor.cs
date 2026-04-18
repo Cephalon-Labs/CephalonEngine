@@ -125,6 +125,11 @@ public sealed class RestEndpointOverrideDescriptor
     /// The grouped override-action buckets for runtime candidates materially changed by this
     /// override rule.
     /// </param>
+    /// <param name="behaviorIdPrefixes">
+    /// The behavior-id prefixes targeted by the override rule. Prefix matches use the stable
+    /// dot-separated behavior-id hierarchy, so a prefix targets the exact behavior id and any
+    /// descendant behavior ids beneath that prefix.
+    /// </param>
     public RestEndpointOverrideDescriptor(
         string id,
         IReadOnlyList<string>? candidateIds = null,
@@ -168,7 +173,8 @@ public sealed class RestEndpointOverrideDescriptor
         IReadOnlyList<RestEndpointGovernanceSelectionBasisSummaryDescriptor>? selectionBasisSummaries = null,
         IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor>? selectedActionKindSummaries = null,
         IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor>? appliedActionKindSummaries = null,
-        IReadOnlyList<string>? hostGovernanceScopes = null)
+        IReadOnlyList<string>? hostGovernanceScopes = null,
+        IReadOnlyList<string>? behaviorIdPrefixes = null)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -186,6 +192,7 @@ public sealed class RestEndpointOverrideDescriptor
         Id = id.Trim();
         CandidateIds = NormalizeList(candidateIds);
         BehaviorIds = NormalizeList(behaviorIds);
+        BehaviorIdPrefixes = NormalizeList(behaviorIdPrefixes);
         SourceModuleIds = NormalizeList(sourceModuleIds);
         AuthoringStyles = NormalizeList(authoringStyles);
         ApiVersionMajors = NormalizeIntList(apiVersionMajors);
@@ -439,6 +446,11 @@ public sealed class RestEndpointOverrideDescriptor
     /// Gets the behavior identifiers targeted by this override rule.
     /// </summary>
     public IReadOnlyList<string> BehaviorIds { get; }
+
+    /// <summary>
+    /// Gets the behavior-id prefixes targeted by this override rule.
+    /// </summary>
+    public IReadOnlyList<string> BehaviorIdPrefixes { get; }
 
     /// <summary>
     /// Gets the source-module identifiers targeted by this override rule.

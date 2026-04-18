@@ -1159,6 +1159,19 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void RestEndpointGovernanceContractsExposeBehaviorIdPrefixSelectors()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointSuppressionDescriptor)
+            .GetProperty("BehaviorIdPrefixes", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideDescriptor)
+            .GetProperty("BehaviorIdPrefixes", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.AspNetCore.Hosting.RestEndpointSuppressionOptions)
+            .GetProperty("BehaviorIdPrefixes", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions)
+            .GetProperty("BehaviorIdPrefixes", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
     public void RestEndpointGovernanceContractsExposeDocumentAndTagSelectors()
     {
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointSuppressionDescriptor)
@@ -1534,6 +1547,9 @@ public sealed class PackageSurfaceTests
             "CandidateTargeting"));
         Assert.True(Enum.IsDefined(
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasis),
+            "NarrowerBehaviorScope"));
+        Assert.True(Enum.IsDefined(
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasis),
             "StableRuleId"));
     }
 
@@ -1543,6 +1559,7 @@ public sealed class PackageSurfaceTests
     [InlineData(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasis.NarrowerCandidateSet, "narrower-candidate-set")]
     [InlineData(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasis.MoreTargetDimensions, "more-target-dimensions")]
     [InlineData(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasis.BehaviorTargeting, "behavior-targeting")]
+    [InlineData(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasis.NarrowerBehaviorScope, "narrower-behavior-scope")]
     [InlineData(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasis.NarrowerAuthoringStyleScope, "narrower-authoring-style-scope")]
     [InlineData(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasis.FewerTargetValues, "fewer-target-values")]
     [InlineData(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasis.StableRuleId, "stable-rule-id")]

@@ -45,6 +45,12 @@ public enum RestEndpointGovernanceRuleSelectionBasis
     BehaviorTargeting = 5,
 
     /// <summary>
+    /// A rule that targeted a narrower behavior-id scope won over a broader behavior-targeted rule.
+    /// </summary>
+    [JsonStringEnumMemberName("narrower-behavior-scope")]
+    NarrowerBehaviorScope = 9,
+
+    /// <summary>
     /// A rule that constrained fewer authoring styles won over a broader authoring-style scope.
     /// </summary>
     [JsonStringEnumMemberName("narrower-authoring-style-scope")]

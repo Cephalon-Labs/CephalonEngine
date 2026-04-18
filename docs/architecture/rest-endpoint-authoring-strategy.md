@@ -483,16 +483,17 @@ Status update:
   or addition attempts that would promote any other implicit property into the public route now
   fail fast
 - the selector-expansion follow-through is now shipped through `ENG-058-T77`,
-  `ENG-058-T109`, `ENG-058-T118`, and `ENG-058-T156`: both
-  `RestApi:Suppressions` and `RestApi:Overrides` can refine `Behaviors`/`Modules` targeting with
-  `ApiVersionMajors`, `Methods`, `RelativePatterns`, `RouteGroupPrefixes`,
-  `OpenApiDocumentNames`, `TagNames`, `EndpointNames`, and `BindingFallbackModes`; those selectors
-  match the original shorthand candidate shape before override actions are applied, with
-  `EndpointNames` targeting `ProjectedEndpoint.OriginalEndpointName`, suppression now preserves
-  that same original-shape contract even when an override later rewrites the final published
-  endpoint, rule specificity now also considers populated selector dimensions plus narrower
-  selector sets, and the runtime suppression/override catalogs now expose the selector arrays
-  directly
+  `ENG-058-T109`, `ENG-058-T118`, `ENG-058-T156`, and `ENG-058-T164`: both
+  `RestApi:Suppressions` and `RestApi:Overrides` can refine exact `Behaviors`/`Modules` targeting
+  with `ApiVersionMajors`, `Methods`, `RelativePatterns`, `RouteGroupPrefixes`,
+  `OpenApiDocumentNames`, `TagNames`, `EndpointNames`, `BehaviorIdPrefixes`, and
+  `BindingFallbackModes`; those selectors match the original shorthand candidate shape before
+  override actions are applied, with `EndpointNames` targeting
+  `ProjectedEndpoint.OriginalEndpointName` and `BehaviorIdPrefixes` targeting the original
+  dot-separated behavior-id hierarchy, suppression now preserves that same original-shape contract
+  even when an override later rewrites the final published endpoint, rule specificity now also
+  considers populated selector dimensions plus narrower selector sets and narrower behavior-subtree
+  scope, and the runtime suppression/override catalogs now expose the selector arrays directly
 - broader configuration-driven projection overrides that promote implicit properties into route
   placeholders beyond that constrained body-fallback-plus-bounded-query-fallback-plus-preserved-
   explicit-query-fallback path, or rewrite binding shape beyond that constrained
@@ -579,7 +580,8 @@ Current shipped baseline:
 - `RestApi:Suppressions` and `RestApi:Overrides` are the first ASP.NET Core host-governance
   surfaces
 - they apply only to descriptor-backed shorthand candidates such as `MapProfile<TBehavior>()` and
-  `MapGeneratedProfiles(...)`
+  `MapGeneratedProfiles(...)`, including grouped generated shorthand from
+  `MapGeneratedProfileGroups(...)`
 - suppression runs before precedence resolution rather than silently rewriting candidates
 - override currently supports `ApiVersionMajor`, `OpenApiDocumentName`, `Method`, bounded
   published `RouteGroupPrefix`, relative `Pattern`, `RequiredCapabilityKey`,
@@ -587,17 +589,20 @@ Current shipped baseline:
   `ClearEndpointName`, `ClearSummary`, `ClearDescription`, explicit `Bindings`,
   `RemovedBindingProperties`, shorthand binding resets through `ClearBindings`, and typed
   `BindingMode`
-- both rule families fail fast when a rule omits both `Behaviors` and `Modules`
+- both rule families fail fast when a rule omits every primary selector:
+  `CandidateIds`, `Behaviors`, `BehaviorIdPrefixes`, `Modules`, and `HostGovernanceScopes`
 - override rules also fail fast when they omit all override actions, use a non-positive
   `ApiVersionMajor`, declare an unsupported HTTP method, declare an invalid relative route
   pattern, or declare an invalid `RouteGroupPrefix`
-- both rule families can refine `Behaviors`/`Modules` targeting with `ApiVersionMajors`,
-  `Methods`, `RelativePatterns`, `RouteGroupPrefixes`, `OpenApiDocumentNames`, `TagNames`,
-  `EndpointNames`, and `BindingFallbackModes`, and those selector refiners match the original
-  shorthand candidate shape before override actions are applied
+- both rule families can target exact `Behaviors`, subtree `BehaviorIdPrefixes`, and `Modules`,
+  then refine that targeting with `ApiVersionMajors`, `Methods`, `RelativePatterns`,
+  `RouteGroupPrefixes`, `OpenApiDocumentNames`, `TagNames`, `EndpointNames`, and
+  `BindingFallbackModes`, and those selector refiners match the original shorthand candidate shape
+  before override actions are applied
 - when more than one rule matches, the host prefers the more specific rule deterministically by
-  populated target dimensions first, then by behavior-targeted scope, narrower authoring-style
-  scope, fewer total selector values, and finally stable rule-id ordering
+  populated target dimensions first, then by exact behavior-targeted scope, narrower
+  behavior-subtree scope, narrower authoring-style scope, fewer total selector values, and finally
+  stable rule-id ordering
 - neither surface overrides explicit module DSL or manual module-owned REST endpoints
 - shorthand groups that declare `.ApiVersion(...)` explicitly stay authoritative over host version
   rewrites, while shorthand method and constrained pattern overrides can still apply to those same
@@ -844,9 +849,10 @@ The host still decides which documents are published through:
 That allow-list remains authoritative and must stay separate from endpoint authoring metadata.
 
 The shipped configuration-driven override surface is still intentionally narrow: `RestApi:Overrides`
-can target the original shorthand candidate shape through `ApiVersionMajors`, `Methods`,
-`RelativePatterns`, `RouteGroupPrefixes`, `OpenApiDocumentNames`, `TagNames`, `EndpointNames`, and
-`BindingFallbackModes`, then change the effective shorthand candidate `ApiVersionMajor`,
+can target the original shorthand candidate shape through exact `Behaviors`, subtree
+`BehaviorIdPrefixes`, `ApiVersionMajors`, `Methods`, `RelativePatterns`, `RouteGroupPrefixes`,
+`OpenApiDocumentNames`, `TagNames`, `EndpointNames`, and `BindingFallbackModes`, then change the
+effective shorthand candidate `ApiVersionMajor`,
 `OpenApiDocumentName`, HTTP `Method`, bounded published `RouteGroupPrefix`, relative `Pattern`,
 `RequiredCapabilityKey`, `ClearRequiredCapability`, `EndpointName`, `Summary`, `Description`,
 `TagName`, `ClearEndpointName`, `ClearSummary`, `ClearDescription`, and/or explicit `Bindings`
@@ -1244,6 +1250,12 @@ Status:
   group-level convention callback to each derived group, and still keep `behavior-module-generated`
   authoring style, source-module ownership, publication-group answers, and candidate/runtime truth
   on the same normalized module-owned path
+- the next behavior-subtree governance follow-through is now also shipped through
+  `ENG-058-T164`, so `RestApi:Suppressions` and `RestApi:Overrides` can target one generated or
+  profiled shorthand subtree through `BehaviorIdPrefixes`, exact behavior-id rules still beat those
+  broader subtree matches, longer prefixes now beat shorter prefixes through
+  `narrower-behavior-scope`, and the suppression/override runtime catalogs plus `snapshot` keep the
+  configured prefix arrays and decisive selection-basis truth visible directly
 - the next metadata-authoring parity follow-through is now also shipped through `ENG-058-T119`, so
   that same `preserve-source-implicit-fallback` story is no longer limited to no-explicit-plan
   shorthand candidates plus later host overrides; explicit metadata-only profiles can now opt into
@@ -1254,9 +1266,10 @@ Status:
   beyond the shipped constrained remaining-body-fallback-plus-bounded-query-fallback-plus-
   preserved-explicit-query-fallback path, or rewrite input binding beyond constrained
   explicit-binding replacement, remain later work now that the current override baseline covers
-  original-shape candidate ids plus selector targeting across version, method, route-group prefix,
-  document name, tag name, binding fallback, exact original explicit binding plans, capability,
-  bindings, clear-bindings resets, placeholder reshaping, and bounded fallback promotion
+  original-shape candidate ids plus selector targeting across exact behavior ids, behavior-subtree
+  prefixes, version, method, route-group prefix, document name, tag name, binding fallback, exact
+  original explicit binding plans, capability, bindings, clear-bindings resets, placeholder
+  reshaping, and bounded fallback promotion
 
 ## What should be stored as project memory
 
@@ -1271,6 +1284,12 @@ The following points are durable enough to keep outside thread-local context.
   first, and should allow only bounded owner-assembly fallback when a module explicitly opts into
   generated publication
 - `[AppBehavior]` plus auto-registration alone must still not publish a public REST boundary
+- host governance can now target that same shorthand ownership model by exact behavior id or by
+  subtree `BehaviorIdPrefixes`, so one rule can govern one generated grouped branch without
+  enumerating every exact candidate id while the owning module still owns the public REST boundary
+- overlapping behavior-targeted host rules now resolve exact behavior ids before broader subtree
+  prefixes, then prefer longer subtree prefixes through `narrower-behavior-scope`, and the runtime
+  suppression/override catalogs plus `snapshot` keep that decisive basis operator-visible
 - the shipped public REST baseline now exposes resolved route truth through
   `IRestEndpointRuntimeCatalog`, `/engine/rest-endpoints`, `/engine/rest-endpoints/{restEndpointId}`,
   and `snapshot.RestEndpoints`
@@ -1527,10 +1546,10 @@ precedence-visibility, generated-module, and rule-centric authoring-policy follo
    `MapGeneratedProfileGroups(...)`, which keeps module ownership, candidate identity, and grouped
    runtime truth readable while one generated root prefix fans out into several derived route
    groups
-2. extend the shipped suppression-plus-override governance baseline further only after safe
-   merge-withdrawal guardrails and authored-versus-effective fallback truth stay readable, and only
-   if those stronger contracts keep the runtime truth model understandable instead of introducing
-   hidden rule layers
+2. the next governance follow-through is now also shipped through `ENG-058-T164`, where
+   `BehaviorIdPrefixes` let hosts govern one shorthand behavior subtree without enumerating every
+   exact behavior id while runtime truth stays explicit in the candidate, suppression, override,
+   and snapshot catalogs
 3. only then evaluate whether any additional convention-backed publication sources are worth the
    added complexity beyond the shipped `MapProfile<TBehavior>()`,
    `MapGeneratedProfiles(...)`, and `MapGeneratedProfileGroups(...)` surfaces

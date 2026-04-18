@@ -78,6 +78,11 @@ public sealed class RestEndpointSuppressionOptions
     /// The original shorthand explicit binding descriptors targeted by the suppression rule before
     /// any override actions are applied.
     /// </param>
+    /// <param name="behaviorIdPrefixes">
+    /// The behavior-id prefixes targeted by the suppression rule. Prefix matches use the stable
+    /// dot-separated behavior-id hierarchy, so a prefix targets the exact behavior id and any
+    /// descendant behavior ids beneath that prefix.
+    /// </param>
     public RestEndpointSuppressionOptions(
         string id,
         IReadOnlyList<string>? candidateIds = null,
@@ -93,13 +98,15 @@ public sealed class RestEndpointSuppressionOptions
         IReadOnlyList<string>? endpointNames = null,
         IReadOnlyList<RestEndpointBindingFallbackMode>? bindingFallbackModes = null,
         IReadOnlyList<RestEndpointBindingDescriptor>? targetBindings = null,
-        IReadOnlyList<string>? hostGovernanceScopes = null)
+        IReadOnlyList<string>? hostGovernanceScopes = null,
+        IReadOnlyList<string>? behaviorIdPrefixes = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
 
         Id = id.Trim();
         CandidateIds = NormalizeList(candidateIds);
         BehaviorIds = NormalizeList(behaviorIds);
+        BehaviorIdPrefixes = NormalizeList(behaviorIdPrefixes);
         SourceModuleIds = NormalizeList(sourceModuleIds);
         AuthoringStyles = NormalizeAuthoringStyles(authoringStyles);
         ApiVersionMajors = NormalizePositiveIntegers(
@@ -129,11 +136,12 @@ public sealed class RestEndpointSuppressionOptions
 
         if (CandidateIds.Count == 0 &&
             BehaviorIds.Count == 0 &&
+            BehaviorIdPrefixes.Count == 0 &&
             SourceModuleIds.Count == 0 &&
             HostGovernanceScopes.Count == 0)
         {
             throw new ArgumentException(
-                "REST endpoint suppression rules must target at least one candidate id, behavior id, source module id, or host-governance scope.",
+                "REST endpoint suppression rules must target at least one candidate id, behavior id, behavior-id prefix, source module id, or host-governance scope.",
                 nameof(candidateIds));
         }
     }
@@ -152,6 +160,11 @@ public sealed class RestEndpointSuppressionOptions
     /// Gets the behavior identifiers targeted by this suppression rule.
     /// </summary>
     public IReadOnlyList<string> BehaviorIds { get; }
+
+    /// <summary>
+    /// Gets the behavior-id prefixes targeted by this suppression rule.
+    /// </summary>
+    public IReadOnlyList<string> BehaviorIdPrefixes { get; }
 
     /// <summary>
     /// Gets the source-module identifiers targeted by this suppression rule.
@@ -225,6 +238,7 @@ public sealed class RestEndpointSuppressionOptions
     public bool HasValues =>
         CandidateIds.Count > 0 ||
         BehaviorIds.Count > 0 ||
+        BehaviorIdPrefixes.Count > 0 ||
         SourceModuleIds.Count > 0 ||
         ApiVersionMajors.Count > 0 ||
         Methods.Count > 0 ||
