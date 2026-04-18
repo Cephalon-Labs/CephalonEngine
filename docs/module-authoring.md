@@ -17,14 +17,20 @@ Choose the starter that matches the package you want to author:
   - plus `IRestModule` and a localized REST endpoint
   - best for generic REST modules that do not dispatch into Cephalon behaviors
   - generated `cephalon.package.json` copied to the output folder
+- `dotnet new cephalon-rest-behavior-module`
+  - everything needed for a behavior-backed REST module starter
+  - uses `RestBehaviorModuleBase` plus a metadata-profiled starter behavior mapped through `MapProfile<TBehavior>()`
+  - best for modules that own Cephalon behaviors and expose them publicly over REST
+  - generated `cephalon.package.json` copied to the output folder
 
 For behavior-owning modules, add `Cephalon.Behaviors` or `Cephalon.Behaviors.Http` and prefer
 `BehaviorModuleBase` or `RestBehaviorModuleBase` instead of implementing
 `IBehaviorOwnerModule`/`IRestModule` directly in normal authoring code.
 
-For a concrete reference implementation, use:
+For concrete reference implementations, use:
 
 - `samples/Cephalon.ReferenceModule.Operations`
+- `samples/Cephalon.Sample.Showcase/Modules/*.cs`
 
 ## Recommended package shape
 

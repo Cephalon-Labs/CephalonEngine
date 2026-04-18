@@ -163,6 +163,12 @@ The main adoption paths are:
 - `samples/` as adoption-quality blueprint examples
 - `playground/` as freeform experimentation rather than the official starter baseline
 
+The shipped template-pack module starters now include:
+
+- `cephalon-module` for host-agnostic modules
+- `cephalon-rest-module` for generic REST modules that do not dispatch into Cephalon behaviors
+- `cephalon-rest-behavior-module` for the recommended behavior-backed `RestBehaviorModuleBase` path
+
 The generated app baseline already includes publishing and deployment assets for:
 
 - published output smoke
@@ -375,7 +381,7 @@ If you need to resume deeper analysis later, the most likely next focus areas ar
 
 - `Cephalon.Engine` runtime, package, trust, and introspection internals
 - `Cephalon.Behaviors` and the ABT pipeline, strategies, and transport bindings
-- continued engine-first REST authoring follow-through, especially endpoint governance/config override modeling that preserves runtime truth after the shipped low-ceremony inline module-ownership baseline
+- REST authoring is now mostly in adoption and closeout mode: keep the engine-first module-owned strategy, grouped shorthand/runtime-truth surfaces, and the `cephalon-rest-behavior-module` starter stable, and only revisit new publication sources when they preserve ownership, deterministic precedence, and the existing runtime-catalog/operator-story contract
 - continued `.NET 11` readiness follow-through, including analyzer drift, package-surface compatibility expectations, and the eventual deliberate migration from readiness lane to supported default baseline
 - `Cephalon.Data` plus provider families and event-sourcing follow-through
 - `Cephalon.Observability` plus dependency-health and exporter/provider conventions

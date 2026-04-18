@@ -16,7 +16,8 @@ public sealed class TemplatePackTests
             ("cephalon-modular-vertical-slice", "Cephalon.Templates.ModularVerticalSlice", "cephalon-slice", "CephalonTemplateApp"),
             ("cephalon-microservice", "Cephalon.Templates.Microservice", "cephalon-microservice", "CephalonTemplateApp"),
             ("cephalon-module", "Cephalon.Templates.Module", "cephalon-module", "CephalonTemplateModule"),
-            ("cephalon-rest-module", "Cephalon.Templates.RestModule", "cephalon-rest-module", "CephalonTemplateModule")
+            ("cephalon-rest-module", "Cephalon.Templates.RestModule", "cephalon-rest-module", "CephalonTemplateModule"),
+            ("cephalon-rest-behavior-module", "Cephalon.Templates.RestBehaviorModule", "cephalon-rest-behavior-module", "CephalonTemplateModule")
         };
 
         foreach (var (folderName, identity, shortName, sourceName) in expectedTemplates)
@@ -63,9 +64,13 @@ public sealed class TemplatePackTests
             Assert.Contains(package.Entries, entry =>
                 entry.FullName.EndsWith("content/templates/cephalon-rest-module/.template.config/template.json", StringComparison.OrdinalIgnoreCase));
             Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-rest-behavior-module/.template.config/template.json", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
                 entry.FullName.EndsWith("content/templates/cephalon-module/cephalon.package.json", StringComparison.OrdinalIgnoreCase));
             Assert.Contains(package.Entries, entry =>
                 entry.FullName.EndsWith("content/templates/cephalon-rest-module/cephalon.package.json", StringComparison.OrdinalIgnoreCase));
+            Assert.Contains(package.Entries, entry =>
+                entry.FullName.EndsWith("content/templates/cephalon-rest-behavior-module/cephalon.package.json", StringComparison.OrdinalIgnoreCase));
             Assert.Contains(package.Entries, entry =>
                 entry.FullName.EndsWith("content/templates/cephalon-modular-monolith/Dockerfile", StringComparison.OrdinalIgnoreCase));
             Assert.Contains(package.Entries, entry =>
@@ -230,6 +235,7 @@ public sealed class TemplatePackTests
         var customHivePath = Path.Combine(Path.GetTempPath(), $"cephalon-template-hive-{Guid.NewGuid():N}");
         var appOutputPath = Path.Combine(Path.GetTempPath(), $"cephalon-template-app-{Guid.NewGuid():N}");
         var moduleOutputPath = Path.Combine(Path.GetTempPath(), $"cephalon-template-module-{Guid.NewGuid():N}");
+        var behaviorModuleOutputPath = Path.Combine(Path.GetTempPath(), $"cephalon-template-behavior-module-{Guid.NewGuid():N}");
 
         Directory.CreateDirectory(packageOutputPath);
         Directory.CreateDirectory(customHivePath);
@@ -471,9 +477,51 @@ public sealed class TemplatePackTests
             Assert.Contains("\"displayName\": \"OperationsKit\"", packageManifestContents, StringComparison.Ordinal);
             Assert.Contains("\"minimumEngineVersion\": \"0.1.0-preview\"", packageManifestContents, StringComparison.Ordinal);
             Assert.Contains("\"supportedTargetFrameworks\": [ \"net10.0\" ]", packageManifestContents, StringComparison.Ordinal);
+
+            var generateBehaviorModuleResult = RunProcess(
+                "dotnet",
+                $"new cephalon-rest-behavior-module -n OrdersBehaviorKit -o \"{behaviorModuleOutputPath}\" --debug:custom-hive \"{customHivePath}\"",
+                workingDirectory: packageOutputPath);
+
+            Assert.Equal(0, generateBehaviorModuleResult.ExitCode);
+            Assert.True(File.Exists(Path.Combine(behaviorModuleOutputPath, "OrdersBehaviorKit.csproj")));
+            Assert.True(File.Exists(Path.Combine(behaviorModuleOutputPath, "Registration", "RestBehaviorModuleEntry.cs")));
+            Assert.True(File.Exists(Path.Combine(behaviorModuleOutputPath, "Application", "GetModuleStatusBehavior.cs")));
+            Assert.True(File.Exists(Path.Combine(behaviorModuleOutputPath, "Contracts", "GetModuleStatusInput.cs")));
+            Assert.True(File.Exists(Path.Combine(behaviorModuleOutputPath, "Contracts", "RestBehaviorModuleStatusSnapshot.cs")));
+            Assert.True(File.Exists(Path.Combine(behaviorModuleOutputPath, "README.md")));
+            Assert.True(File.Exists(Path.Combine(behaviorModuleOutputPath, "cephalon.package.json")));
+
+            var behaviorModuleEntryPath = Path.Combine(behaviorModuleOutputPath, "Registration", "RestBehaviorModuleEntry.cs");
+            var behaviorModuleEntryContents = File.ReadAllText(behaviorModuleEntryPath);
+            Assert.Contains("RestBehaviorModuleBase", behaviorModuleEntryContents, StringComparison.Ordinal);
+            Assert.Contains("ConfigureRestBehaviors", behaviorModuleEntryContents, StringComparison.Ordinal);
+            Assert.Contains("MapProfile<GetModuleStatusBehavior>()", behaviorModuleEntryContents, StringComparison.Ordinal);
+
+            var behaviorPath = Path.Combine(behaviorModuleOutputPath, "Application", "GetModuleStatusBehavior.cs");
+            var behaviorContents = File.ReadAllText(behaviorPath);
+            Assert.Contains("[AppBehavior(", behaviorContents, StringComparison.Ordinal);
+            Assert.Contains("[BehaviorRestProfile(", behaviorContents, StringComparison.Ordinal);
+            Assert.Contains("builder.AsDirect()", behaviorContents, StringComparison.Ordinal);
+
+            var behaviorModuleProjectPath = Path.Combine(behaviorModuleOutputPath, "OrdersBehaviorKit.csproj");
+            var behaviorModuleProjectContents = File.ReadAllText(behaviorModuleProjectPath);
+            Assert.Contains("Cephalon.Behaviors.Http", behaviorModuleProjectContents, StringComparison.Ordinal);
+            Assert.Contains("<Content Include=\"cephalon.package.json\">", behaviorModuleProjectContents, StringComparison.Ordinal);
+
+            var behaviorPackageManifestPath = Path.Combine(behaviorModuleOutputPath, "cephalon.package.json");
+            var behaviorPackageManifestContents = File.ReadAllText(behaviorPackageManifestPath);
+            Assert.Contains("\"assembly\": \"OrdersBehaviorKit.dll\"", behaviorPackageManifestContents, StringComparison.Ordinal);
+            Assert.Contains("\"id\": \"ordersbehaviorkit\"", behaviorPackageManifestContents, StringComparison.Ordinal);
+            Assert.Contains("\"displayName\": \"OrdersBehaviorKit\"", behaviorPackageManifestContents, StringComparison.Ordinal);
         }
         finally
         {
+            if (Directory.Exists(behaviorModuleOutputPath))
+            {
+                Directory.Delete(behaviorModuleOutputPath, recursive: true);
+            }
+
             if (Directory.Exists(moduleOutputPath))
             {
                 Directory.Delete(moduleOutputPath, recursive: true);

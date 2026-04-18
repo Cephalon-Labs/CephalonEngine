@@ -7,6 +7,7 @@
 - `cephalon-microservice`
 - `cephalon-module`
 - `cephalon-rest-module`
+- `cephalon-rest-behavior-module`
 
 These templates are the lightweight installation surface for teams that want a fast starting point without cloning the full Cephalon repository.
 
@@ -26,6 +27,7 @@ dotnet new cephalon-slice -n Acme.Store
 dotnet new cephalon-microservice -n Acme.Customers
 dotnet new cephalon-module -n Acme.Orders.Module
 dotnet new cephalon-rest-module -n Acme.Orders.RestModule
+dotnet new cephalon-rest-behavior-module -n Acme.Orders.BehaviorRestModule
 ```
 
 If you also install `Cephalon.Cli`, run `cephalon doctor` first so the active SDK/runtime baseline and template-pack availability are verified from one place before you scaffold.

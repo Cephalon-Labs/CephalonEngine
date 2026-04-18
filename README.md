@@ -669,6 +669,7 @@ dotnet run --project src/Cephalon.Cli -- new Acme.Store `
 - `cephalon-microservice`
 - `cephalon-module`
 - `cephalon-rest-module`
+- `cephalon-rest-behavior-module`
 
 Local install flow:
 
@@ -682,7 +683,7 @@ The template pack is intentionally lighter than `Cephalon.Cli`. Use the template
 
 When version, target-framework, or starter-contract expectations change, keep the template pack aligned with `Cephalon.Cli`, `Cephalon.Scaffolding`, and the manifest rules documented in `docs/compatibility.md`.
 
-Cephalon now also ships a first-class module authoring baseline. `dotnet new cephalon-module` gives a host-agnostic package starter, `dotnet new cephalon-rest-module` gives a REST-ready module package starter, and `docs/module-authoring.md` documents the recommended authoring flow. Those starters now emit `cephalon.package.json` and copy it to the build output by default so package discovery works without extra manual setup. The concrete reference package lives in `samples/Cephalon.ReferenceModule.Operations`.
+Cephalon now also ships a first-class module authoring baseline. `dotnet new cephalon-module` gives a host-agnostic package starter, `dotnet new cephalon-rest-module` gives a generic REST-ready module package starter, `dotnet new cephalon-rest-behavior-module` gives a behavior-backed REST module starter built on `RestBehaviorModuleBase`, and `docs/module-authoring.md` documents the recommended authoring flow. Those starters now emit `cephalon.package.json` and copy it to the build output by default so package discovery works without extra manual setup. The generic reference package lives in `samples/Cephalon.ReferenceModule.Operations`, while the showcase sample modules demonstrate behavior-backed REST authoring.
 
 The runtime now also has a package-loading baseline for those authored modules. Explicit package assembly paths, package manifests, and configured package directories can be loaded into the engine, surfaced through `/engine/packages`, and mapped into host transports the same way as in-repo modules. Scaffolded module projects now emit the same `cephalon.package.json` convention, and `/engine/packages` now shows the package `kind`, resolved assembly `path`, original `sourcePath`, declared `version`, compatibility fields, computed `checksumSha256`, and `trustReason` so operators can tell both where a module came from and why the current trust policy accepted or rejected it.
 

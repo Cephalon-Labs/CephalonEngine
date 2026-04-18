@@ -554,12 +554,17 @@ itself.
 For serious systems, this remains the recommended path because it makes the bounded context, route
 shape, and public contract explicit in one place.
 
-For lower-ceremony systems, Cephalon can later add a generated or convention-backed module path
-that still materializes into module-owned projections at runtime.
+For lower-ceremony systems, Cephalon now also ships generated and inline module paths that still
+materialize into module-owned projections at runtime, so authors can reduce ceremony without
+moving the public REST boundary out of this layer.
 
 Current shipped follow-through:
 
 - `RestBehaviorModuleBase` remains the class-based path for dedicated module types
+- `cephalon-rest-behavior-module` now gives teams an adoption-ready `dotnet new` starter for that
+  same class-based path, keeping module ownership, localized sample behavior wiring, and package-
+  manifest output aligned without forcing authors to start from the generic `IRestModule` path and
+  migrate later
 - `AddRestBehaviorModule<TMarker>()` is now the lowest-ceremony explicit module-registration path
   for straightforward hosts: the `moduleId` / `displayName` / `description` convenience overload
   covers the common path, while the `ModuleDescriptor` overload remains available for richer inline
@@ -1562,32 +1567,22 @@ following remain true together:
   property promotion, or richer binding evolution should only land through this same normalized
   projection/runtime-catalog/materialization pipeline instead of inventing a parallel REST model
 
-## Near-term follow-through candidates
+## Current closeout posture
 
-Recommended implementation sequence after the shipped normalization, runtime-catalog,
-precedence-visibility, generated-module, and rule-centric authoring-policy follow-through slices:
+The core engine-first REST authoring model is now shipped. Recommended posture for new work:
 
-1. the next low-code generated follow-through is now shipped through
-   `MapGeneratedProfileGroups(...)`, which keeps module ownership, candidate identity, and grouped
-   runtime truth readable while one generated root prefix fans out into several derived route
-   groups
-2. the next governance follow-through is now also shipped through `ENG-058-T164`, where
-   `BehaviorIdPrefixes` let hosts govern one shorthand behavior subtree without enumerating every
-   exact behavior id while runtime truth stays explicit in the candidate, suppression, override,
-   and snapshot catalogs
-3. the next grouped/operator parity follow-through is now also shipped through `ENG-058-T165`,
-   where publication-group and authoring-policy answers now explicitly preserve that same
-   exact-versus-prefix governance trace per behavior and per authoring style instead of stopping at
-   the rule-centric catalogs
-4. the next skipped-governance parity follow-through is now also shipped through `ENG-058-T166`,
-   where prefix-targeted rules that match explicit module-DSL behavior ids without
-   `AllowHostGovernance()` remain visible as skipped group/policy outcomes instead of collapsing
-   into selector misses
-5. the next inline grouped-generated helper follow-through is now also shipped through
-   `ENG-058-T167`, where `AddGeneratedRestBehaviorModuleGroups<TMarker>()` keeps the
-   `MapGeneratedProfileGroups(...)` ownership/runtime story available on the low-code inline module
-   path and reuses the same fail-fast grouped-prefix validation
-6. only then evaluate whether any additional convention-backed publication sources are worth the
-   added complexity beyond the shipped `MapProfile<TBehavior>()`,
-   `MapGeneratedProfiles(...)`, and `MapGeneratedProfileGroups(...)` surfaces
+1. start new behavior-backed public modules from `dotnet new cephalon-rest-behavior-module` when a
+   dedicated package should own both behavior registration and public REST projection from day one
+2. keep `RestBehaviorModuleBase` or `AddRestBehaviorModule<TMarker>()` as the canonical public-
+   boundary entry points, because they stay explicit about ownership, route groups, and published
+   REST truth
+3. use `MapGeneratedProfiles(...)` or `MapGeneratedProfileGroups(...)` only when generated-profile
+   shorthand materially reduces repetition, but keep those paths on the same module-owned
+   projection, runtime-catalog, and governance pipeline
+4. treat `RestApi:AuthoringPolicies`, `RestApi:Suppressions`, and `RestApi:Overrides` as additive
+   host governance over shorthand by default; explicit module-DSL routes should only participate
+   when the owning group opts in through `AllowHostGovernance()`
+5. evaluate any future convention-backed publication source only if it preserves module ownership,
+   deterministic precedence, and the existing candidate/publication-group/runtime-catalog/operator
+   story instead of inventing a parallel REST model
 

@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Cephalon",
+  "classifications": [ "Cephalon", "Class Library", "Module", "REST", "Behaviors" ],
+  "identity": "Cephalon.Templates.RestBehaviorModule",
+  "name": "Cephalon Behavior-backed REST Module Package",
+  "shortName": "cephalon-rest-behavior-module",
+  "sourceName": "CephalonTemplateModule",
+  "preferNameDirectory": true,
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "primaryOutputs": [
+    { "path": "CephalonTemplateModule.csproj" }
+  ]
+}
