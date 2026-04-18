@@ -90,6 +90,18 @@ internal sealed class AspNetCoreRestEndpointAuthoringPolicyRuntimeCatalog(
                 !string.IsNullOrWhiteSpace(candidate.SuppressedBySuppressionId))
             .Select(static candidate => candidate.Id)
             .ToArray();
+        var hostGovernanceEligibleCandidateIds = BuildHostGovernanceCandidateIds(
+            orderedCandidates,
+            allowsHostGovernance: true);
+        var hostGovernanceIneligibleCandidateIds = BuildHostGovernanceCandidateIds(
+            orderedCandidates,
+            allowsHostGovernance: false);
+        var skippedSuppressionIds = BuildOrderedSkippedRuleIds(
+            orderedCandidates,
+            static candidate => candidate.SkippedSuppressionIds);
+        var skippedOverrideIds = BuildOrderedSkippedRuleIds(
+            orderedCandidates,
+            static candidate => candidate.SkippedOverrideIds);
         var suppressedCandidateIds = orderedCandidates
             .Where(static candidate =>
                 candidate.Status == RestEndpointCandidateStatus.Suppressed &&
@@ -121,6 +133,10 @@ internal sealed class AspNetCoreRestEndpointAuthoringPolicyRuntimeCatalog(
             suppressedCandidateIds,
             suppressionKinds,
             suppressionSummaries,
+            hostGovernanceEligibleCandidateIds,
+            hostGovernanceIneligibleCandidateIds,
+            skippedSuppressionIds,
+            skippedOverrideIds,
             authoringStyleSummaries);
     }
 
@@ -237,8 +253,61 @@ internal sealed class AspNetCoreRestEndpointAuthoringPolicyRuntimeCatalog(
                         .Select(static candidate => candidate.Id)
                         .ToArray(),
                     suppressionKinds: suppressionKinds,
-                    suppressionSummaries: suppressionSummaries);
+                    suppressionSummaries: suppressionSummaries,
+                    hostGovernanceEligibleCandidateIds: BuildHostGovernanceCandidateIds(
+                        orderedCandidates,
+                        allowsHostGovernance: true),
+                    hostGovernanceIneligibleCandidateIds: BuildHostGovernanceCandidateIds(
+                        orderedCandidates,
+                        allowsHostGovernance: false),
+                    skippedSuppressionIds: BuildOrderedSkippedRuleIds(
+                        orderedCandidates,
+                        static candidate => candidate.SkippedSuppressionIds),
+                    skippedOverrideIds: BuildOrderedSkippedRuleIds(
+                        orderedCandidates,
+                        static candidate => candidate.SkippedOverrideIds));
             })
             .ToArray();
+    }
+
+    private static string[] BuildHostGovernanceCandidateIds(
+        IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> candidates,
+        bool allowsHostGovernance)
+    {
+        ArgumentNullException.ThrowIfNull(candidates);
+
+        return candidates
+            .Where(candidate => candidate.OriginalProjection.AllowsHostGovernance == allowsHostGovernance)
+            .Select(static candidate => candidate.Id)
+            .ToArray();
+    }
+
+    private static string[] BuildOrderedSkippedRuleIds(
+        IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> candidates,
+        Func<RestEndpointCandidateRuntimeDescriptor, IReadOnlyList<string>> selector)
+    {
+        ArgumentNullException.ThrowIfNull(candidates);
+        ArgumentNullException.ThrowIfNull(selector);
+
+        var ordered = new List<string>();
+        var seen = new HashSet<string>(Comparer);
+        foreach (var candidate in candidates)
+        {
+            foreach (var value in selector(candidate))
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    continue;
+                }
+
+                var trimmed = value.Trim();
+                if (seen.Add(trimmed))
+                {
+                    ordered.Add(trimmed);
+                }
+            }
+        }
+
+        return ordered.ToArray();
     }
 }

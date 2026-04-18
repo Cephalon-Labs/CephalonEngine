@@ -673,6 +673,10 @@ runtime answer. That same rule-centric answer now also carries `AuthoringStyleSu
 payload can partition those candidate, retained, published, precedence-suppressed,
 governance-suppressed, and authoring-policy-suppressed outcomes by normalized authoring style while
 still leaving explicitly configured-but-unmatched policies visible with an empty style-summary set.
+The same authoring-policy payload now also keeps `HostGovernanceEligibleCandidateIds`,
+`HostGovernanceIneligibleCandidateIds`, `SkippedSuppressionIds`, and `SkippedOverrideIds` visible
+at both the behavior level and inside each style summary, so explicit ownership that never entered
+host governance remains visible without reopening publication-group answers first.
 
 Those same candidates now also drive the inverse per-rule runtime answer for host governance:
 `/engine/rest-endpoint-suppressions` now shows `MatchedCandidateIds`,

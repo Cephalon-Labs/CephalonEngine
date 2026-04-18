@@ -1539,6 +1539,14 @@ public sealed class PackageSurfaceTests
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyDescriptor)
             .GetProperty("SuppressionSummaries", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyDescriptor)
+            .GetProperty("HostGovernanceEligibleCandidateIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyDescriptor)
+            .GetProperty("HostGovernanceIneligibleCandidateIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyDescriptor)
+            .GetProperty("SkippedSuppressionIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyDescriptor)
+            .GetProperty("SkippedOverrideIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyDescriptor)
             .GetProperty("AuthoringStyleSummaries", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot)
             .GetProperty("RestEndpointAuthoringPolicies", BindingFlags.Instance | BindingFlags.Public));
@@ -1565,6 +1573,14 @@ public sealed class PackageSurfaceTests
             .GetProperty("SuppressionKinds", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyAuthoringStyleDescriptor)
             .GetProperty("SuppressionSummaries", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyAuthoringStyleDescriptor)
+            .GetProperty("HostGovernanceEligibleCandidateIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyAuthoringStyleDescriptor)
+            .GetProperty("HostGovernanceIneligibleCandidateIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyAuthoringStyleDescriptor)
+            .GetProperty("SkippedSuppressionIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyAuthoringStyleDescriptor)
+            .GetProperty("SkippedOverrideIds", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

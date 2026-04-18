@@ -285,7 +285,7 @@ Status update:
   `preferred-authoring-style-selected` suppression outcomes without forcing operators to re-join
   the candidate catalog manually
 - the next rule-centric authoring-policy runtime-answer follow-through is now shipped through
-  `ENG-058-T152` plus `ENG-058-T153`: `Cephalon.Abstractions` now also exposes
+  `ENG-058-T152`, `ENG-058-T153`, and `ENG-058-T154`: `Cephalon.Abstractions` now also exposes
   `IRestEndpointAuthoringPolicyRuntimeCatalog`, `RestEndpointAuthoringPolicyDescriptor`,
   `RestEndpointAuthoringPolicyAuthoringStyleDescriptor`, and
   `RestEndpointAuthoringPolicySuppressionSummaryDescriptor`; `Cephalon.AspNetCore` now publishes
@@ -294,7 +294,9 @@ Status update:
   `snapshot.RestEndpointAuthoringPolicies`; and that top-level behavior answer keeps explicit
   default-versus-configured policy intent, explicitly configured-but-unmatched policies, separate
   retained-versus-published-versus-precedence/governance-suppressed buckets, and per-style
-  `AuthoringStyleSummaries` visible without reopening grouped publication answers
+  `AuthoringStyleSummaries` visible without reopening grouped publication answers, while also
+  keeping host-governance eligibility and skipped-rule ids visible there when explicit ownership
+  kept later host governance out of scope
 - the next publication-group host-governance rule-summary follow-through is now shipped through
   `ENG-058-T147`: grouped publication answers now also expose typed
   `GovernanceSuppressionSummaries` and `GovernanceOverrideSummaries` at both the behavior-group
@@ -1215,6 +1217,11 @@ The following points are durable enough to keep outside thread-local context.
   `PrecedenceSuppressedCandidateIds`, `GovernanceSuppressedCandidateIds`,
   `SuppressedCandidateIds`, and grouped suppression summaries without falling back to
   publication-group-only answers
+- that same rule-centric authoring-policy answer now also keeps
+  `HostGovernanceEligibleCandidateIds`, `HostGovernanceIneligibleCandidateIds`,
+  `SkippedSuppressionIds`, and `SkippedOverrideIds` visible at both the behavior level and inside
+  each authoring-style summary, so operators can confirm when explicit ownership stayed outside
+  host governance without reopening publication-group-only answers
 - those grouped publication entries now also expose typed `GovernanceSuppressionSummaries` and
   `GovernanceOverrideSummaries` at both the grouped behavior level and inside each
   `AuthoringStyleSummaries` entry, so publication-group and snapshot payloads can answer which

@@ -285,8 +285,8 @@ in which decisive basis or action bucket?" from `/engine/rest-endpoint-suppressi
 `/engine/rest-endpoint-overrides` without always rejoining the full candidate or publication-group
 catalog first.
 
-That next rule-centric authoring-policy visibility gap is now addressed through `ENG-058-T152`
-plus `ENG-058-T153`: `Cephalon.Abstractions` now also exposes
+That next rule-centric authoring-policy visibility gap is now addressed through `ENG-058-T152`,
+`ENG-058-T153`, and `ENG-058-T154`: `Cephalon.Abstractions` now also exposes
 `IRestEndpointAuthoringPolicyRuntimeCatalog`, `RestEndpointAuthoringPolicyDescriptor`,
 `RestEndpointAuthoringPolicyAuthoringStyleDescriptor`, and
 `RestEndpointAuthoringPolicySuppressionSummaryDescriptor`, while `Cephalon.AspNetCore` now
@@ -296,7 +296,9 @@ publishes `/engine/rest-endpoint-authoring-policies`,
 policies visible, separates authoring-policy-retained, published, precedence-suppressed,
 governance-suppressed, and authoring-policy-suppressed candidate buckets, and now also partitions
 those same outcomes by normalized authoring style without forcing operators back through grouped
-publication joins first.
+publication joins first. It now also keeps host-governance eligibility and skipped-rule ids
+visible on that same rule-centric answer, so explicit ownership that never entered host governance
+does not disappear behind publication-group-only visibility.
 
 The remaining gap is now narrower still: keep low-code shorthand growth, broader governance, and
 future projection sources on the same explicit ownership and runtime-truth model without
