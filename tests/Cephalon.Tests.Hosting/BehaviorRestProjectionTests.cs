@@ -2614,6 +2614,60 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverAllowsHostGovernanceToOptExplicitQueryWithdrawalsIntoPreservedImplicitQueryFallback()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-binding-explicit-query-governed-withdraw")
+            .MapProfile<ProfileProjectionExplicitQueryBindingBehavior>();
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.profile-binding-explicit-query-governed-withdraw",
+                "Profile Binding Explicit Query Governed Withdraw Module",
+                "Exercises merge-mode query-binding withdrawal when host governance opts an explicit shorthand profile into preserved implicit query fallback.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "withdraw-query-quantity",
+                    behaviorIds: ["tests.profile.projection.query.explicit.withdraw"],
+                    removedBindingProperties: [nameof(ProfileProjectionBoundInput.Quantity)],
+                    preserveImplicitQueryFallback: true)
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Equal("withdraw-query-quantity", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback,
+            candidate.Candidate.ProjectedEndpoint.BindingFallbackMode);
+        Assert.Null(candidate.Candidate.OriginalProjection.BindingFallbackMode);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback.GetWireName(),
+            candidate.Candidate.ProjectedEndpoint.Metadata["bindingFallbackMode"]);
+        Assert.Equal(2, candidate.Candidate.OriginalProjection.BindingDescriptors.Count);
+        Assert.Single(candidate.Candidate.ProjectedEndpoint.BindingDescriptors);
+        Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "CartId" &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "cartId");
+        Assert.Contains(
+            candidate.Candidate.SelectedOverrideActionKinds,
+            static actionKind => actionKind == RestEndpointOverrideActionKind.PreserveImplicitQueryFallback);
+        Assert.Contains(
+            candidate.Candidate.SelectedOverrideActionKinds,
+            static actionKind => actionKind == RestEndpointOverrideActionKind.RemoveBindingProperties);
+        Assert.Contains(
+            candidate.Candidate.AppliedOverrideActionKinds,
+            static actionKind => actionKind == RestEndpointOverrideActionKind.PreserveImplicitQueryFallback);
+        Assert.Contains(
+            candidate.Candidate.AppliedOverrideActionKinds,
+            static actionKind => actionKind == RestEndpointOverrideActionKind.RemoveBindingProperties);
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverAllowsPlaceholderRemovalWhenAffectedPropertiesStayExplicitlyBound()
     {
         var builder = new RestBehaviorModuleBuilder();
@@ -4064,6 +4118,21 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestEndpointOverrideOptionsTreatPreserveImplicitQueryFallbackAsAnOverrideAction()
+    {
+        var options = new RestEndpointOverrideOptions(
+            id: "preserve-implicit-query-fallback",
+            behaviorIds: ["tests.generated.projection.precedence.lookup"],
+            preserveImplicitQueryFallback: true);
+
+        Assert.True(options.PreserveImplicitQueryFallback);
+        Assert.True(options.HasValues);
+        Assert.Contains(
+            RestEndpointOverrideActionKind.PreserveImplicitQueryFallback,
+            options.ActionKinds);
+    }
+
+    [Fact]
     public void RestEndpointOverrideOptionsRejectClearBindingsWhenBindingsAreAlsoConfigured()
     {
         var exception = Assert.Throws<ArgumentException>(() =>
@@ -4092,6 +4161,20 @@ public sealed class BehaviorRestProjectionTests
 
         Assert.Contains("ClearBindings", exception.Message, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("RemovedBindingProperties", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void RestEndpointOverrideOptionsRejectPreserveImplicitQueryFallbackWhenClearBindingsIsTrue()
+    {
+        var exception = Assert.Throws<ArgumentException>(() =>
+            new RestEndpointOverrideOptions(
+                id: "invalid-clear-bindings-fallback",
+                behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                clearBindings: true,
+                preserveImplicitQueryFallback: true));
+
+        Assert.Contains("ClearBindings", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("PreserveImplicitQueryFallback", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

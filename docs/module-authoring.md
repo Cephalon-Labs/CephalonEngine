@@ -495,7 +495,11 @@ query-string properties on the original implicit fallback surface, set
 `BehaviorRestProfile(PreserveImplicitQueryFallback = true)` alongside at least one explicit
 `BehaviorRestBindingAttribute`. `Cephalon.Behaviors.SourceGen` now rejects the flag through
 `ABT0027` when no explicit bindings are present, and runtime normalization re-checks the same rule
-when generated hints are unavailable or stale.
+when generated hints are unavailable or stale. When that preserved source query surface is part of
+the module's intentional contract, prefer declaring it here in the module-owned profile; a host can
+now also opt the same preservation back in later through
+`RestApi:Overrides:*:PreserveImplicitQueryFallback`, but that path is best reserved for
+environment- or host-governed publication policy rather than source-owned route semantics.
 
 Current helper behavior:
 
@@ -531,7 +535,8 @@ Current helper behavior:
   original explicit `TargetBindings`, those selector refiners match the original shorthand
   candidate shape before override actions are applied, and the override surface itself now supports
   `ApiVersionMajor`,
-  `Method`, `RouteGroupPrefix`, `Pattern`, `Bindings`, and typed `BindingMode`, keeps the
+  `Method`, `RouteGroupPrefix`, `Pattern`, `Bindings`, host-governed preserved query fallback
+  through `PreserveImplicitQueryFallback`, and typed `BindingMode`, keeps the
   `/v{major}` route segment, OpenAPI document name, endpoint method, effective route, and
   effective binding plan aligned with the same projection truth, treats `BindingMode` as a wire-name-only config surface with `replace-explicit` or `merge-explicit`, preserves `bindingMode = unspecified` only for `ClearBindings` rules that omitted an explicit mode, uses stable `route` / `query` / `header` / `body` wire names for `Bindings` and `TargetBindings` sources, and defaults `Bindings` to full
   explicit-plan replacement but also allows `BindingMode = merge-explicit` to patch only the changed
@@ -545,7 +550,10 @@ Current helper behavior:
   route-bound property was either already explicitly bound in the original projection, for
   `POST`/`PUT`/`PATCH` already part of the original deterministic remaining-body fallback surface,
   or for shorthand candidates with no explicit binding plan already part of the original implicit
-  query-fallback surface; it still rejects broader implicit-property promotion beyond that bounded
+  query-fallback surface, or for explicit shorthand candidates whose remaining source query surface
+  is intentionally preserved either by the authored profile or by a winning
+  `PreserveImplicitQueryFallback` host override; it still rejects broader implicit-property
+  promotion beyond that bounded
   query-fallback slice, fails fast when the effective method-plus-binding plan is invalid or when a
   rename, removal, or addition would rely on inference, drop explicit binding coverage, or promote
   another implicit property into the public route, and still leaves explicit `MapGet/MapPost/...`
@@ -758,7 +766,9 @@ full final placeholder set and every newly route-bound property was either alrea
 in the source projection, for `POST`/`PUT`/`PATCH` already part of the original deterministic
 remaining-body fallback surface, or for shorthand candidates with no explicit binding plan already
 part of the original implicit query-fallback surface. Explicit-binding shorthand candidates still
-stay on the stricter explicit-binding path. `RouteGroupPrefix` can now move the published shorthand
+stay on the stricter explicit-binding path unless the authored profile or a winning
+`PreserveImplicitQueryFallback` host override intentionally keeps that remaining source query
+surface available. `RouteGroupPrefix` can now move the published shorthand
 group to a different path such as `/api/v1/showcase/cart-admin`, but only when that group stays
 beneath the active REST root, contains no placeholders, and does not silently change effective
 API-version truth; when only some candidates in one authored shorthand group are remapped,

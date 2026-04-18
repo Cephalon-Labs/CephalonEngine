@@ -195,9 +195,11 @@ Current profile behavior:
 - valid profiles currently require a supported REST method, a non-empty leading-slash relative
   pattern such as `"/{cartId}"`, and a positive `ApiVersionMajor` when one is specified
 - when a profile declares explicit bindings, `BehaviorRestProfile(PreserveImplicitQueryFallback = true)`
-  is now the only author-side contract that allows a later host merge override to re-expose the
-  remaining source query surface without turning that rewrite into a fail-fast invalid binding
-  transition
+  is now the first-class author-side contract that allows a later host merge override to re-expose
+  the remaining source query surface without turning that rewrite into a fail-fast invalid binding
+  transition, and host governance can now also opt that same preserved source query surface into an
+  explicit-binding shorthand candidate through
+  `RestApi:Overrides:*:PreserveImplicitQueryFallback`
 - `BehaviorRestMethod` now also exposes `BehaviorRestMethodExtensions` plus the same stable `get`,
   `post`, `put`, `patch`, and `delete` wire names that JSON serialization uses; source generation
   validates profile methods against that canonical vocabulary while still emitting the resolved enum
@@ -235,7 +237,8 @@ Current profile behavior:
 - when no explicit binding plan is present, shorthand candidates still use the implicit
   query-plus-route merge baseline, and bounded placeholder additions can promote from that original
   implicit query-fallback surface; once explicit bindings exist, the stricter explicit-binding path
-  remains in force
+  remains in force unless the source profile or a winning host override intentionally preserves the
+  remaining source query surface
 - when a host adds only partial explicit bindings to a shorthand candidate that originally had no
   explicit binding plan, the remaining unbound query properties now continue to follow that
   original implicit query-fallback surface instead of disappearing silently
@@ -622,7 +625,8 @@ Current helper behavior:
   plan for descriptor-backed shorthand candidates through `RestApi:Overrides`, which now supports
   `ApiVersionMajor`, `OpenApiDocumentName`, `Method`, `RouteGroupPrefix`, `Pattern`, `RequiredCapabilityKey`,
   `ClearRequiredCapability`, `Bindings`, `RemovedBindingProperties`, shorthand binding resets
-  through `ClearBindings`, typed `BindingMode`,
+  through `ClearBindings`, typed `BindingMode`, host-governed preserved query fallback through
+  `PreserveImplicitQueryFallback`,
   shorthand endpoint metadata `EndpointName`, `Summary`, and `Description`, OpenAPI tag-name
   rewrites through `TagName`, plus metadata clears `ClearEndpointName`, `ClearSummary`, and
   `ClearDescription`, records the applied rule id through
@@ -652,13 +656,14 @@ Current helper behavior:
   placeholder set and every newly route-bound property was either already explicitly bound in the
   original projection, for `POST`/`PUT`/`PATCH` already part of the original deterministic
   remaining-body fallback surface, or for shorthand candidates with no explicit binding plan
-  already part of the original implicit query-fallback surface; shorthand candidates with explicit
-  bindings remain on the stricter explicit-binding path, `RouteGroupPrefix` stays bounded beneath
-  the active REST root with no placeholders and no implicit API-version drift, materialization now
-  splits effective shorthand route groups when only some candidates in one authored group are
-  remapped or retagged, using the effective route-group prefix plus tag to keep actual endpoint
-  tag metadata aligned with runtime truth, merge-time removals must still target properties the
-  source shorthand already bound explicitly, no-explicit-plan shorthand candidates now also
+  already part of the original implicit query-fallback surface, or for explicit-binding shorthand
+  candidates whose remaining source query surface is intentionally preserved by the source profile
+  or by a winning `PreserveImplicitQueryFallback` host override; `RouteGroupPrefix` stays bounded
+  beneath the active REST root with no placeholders and no implicit API-version drift,
+  materialization now splits effective shorthand route groups when only some candidates in one
+  authored group are remapped or retagged, using the effective route-group prefix plus tag to keep
+  actual endpoint tag metadata aligned with runtime truth, merge-time removals must still target
+  properties the source shorthand already bound explicitly, no-explicit-plan shorthand candidates now also
   preserve their remaining implicit
   query-fallback surface when a host adds only partial explicit bindings, the typed runtime and
   projection descriptors now keep that preserved mode visible through `BindingFallbackMode` values
@@ -667,8 +672,9 @@ Current helper behavior:
   `metadata.bindingFallbackMode = preserve-remaining-body-fallback` remain compatibility-only
   metadata, merge-mode removals on non-body-capable methods now also fail fast when they would
   stop explicitly binding a source query-bound property unless that property still belongs to a
-  profile that intentionally preserved source implicit query fallback, `ClearBindings = true` can
-  now also discard the source shorthand explicit binding plan
+  profile that intentionally preserved source implicit query fallback, a winning host override that
+  sets `PreserveImplicitQueryFallback = true`, or `ClearBindings = true`; that clear can now also
+  discard the source shorthand explicit binding plan
   entirely and return the candidate to the implicit route/query/body baseline, but that clear
   fails fast if the effective route placeholders would only remain satisfiable through removed
   explicit route-binding aliases, and explicit module DSL/manual routes plus shorthand groups with explicit
@@ -996,8 +1002,9 @@ Current governance baseline:
   even when the equivalent reordered binding set comes from a later synthetic or future shorthand
   path
 - broader implicit-property promotion beyond that constrained body-fallback-plus-bounded-query-
-  fallback-plus-preserved-explicit-query-fallback path plus broader binding-shape overrides beyond
-  the current replace-plus-merge-explicit upsert-plus-withdraw model remain later work
+  fallback-plus-source-or-host-preserved-explicit-query-fallback path plus broader binding-shape
+  overrides beyond the current replace-plus-merge-explicit upsert-plus-withdraw model remain later
+  work
 
 Example:
 

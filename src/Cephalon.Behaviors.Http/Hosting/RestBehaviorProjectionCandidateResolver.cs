@@ -1024,6 +1024,14 @@ internal static class RestBehaviorProjectionCandidateResolver
                 effectiveEndpointProjection.Pattern);
         }
 
+        var preserveImplicitQueryFallback = shouldRevalidateBindings && normalizedBindings is not null
+            ? normalizedBindings.Count > 0 &&
+              (endpointProjection.PreserveImplicitQueryFallback ||
+               endpointProjection.Bindings.Count == 0 ||
+               matchedOverride.PreserveImplicitQueryFallback)
+            : matchedOverride.PreserveImplicitQueryFallback && endpointProjection.Bindings.Count > 0
+                ? true
+            : endpointProjection.PreserveImplicitQueryFallback;
         if (shouldRevalidateBindings && normalizedBindings is not null)
         {
             ValidateExplicitQueryBindingRewrite(
@@ -1031,13 +1039,10 @@ internal static class RestBehaviorProjectionCandidateResolver
                 endpointProjection,
                 effectiveEndpointProjection.Method,
                 normalizedBindings,
-                matchedOverride.ClearBindings);
+                matchedOverride.ClearBindings,
+                preserveImplicitQueryFallback);
         }
 
-        var preserveImplicitQueryFallback = shouldRevalidateBindings && normalizedBindings is not null
-            ? normalizedBindings.Count > 0 &&
-              (endpointProjection.PreserveImplicitQueryFallback || endpointProjection.Bindings.Count == 0)
-            : endpointProjection.PreserveImplicitQueryFallback;
         if (shouldRevalidateBindings && normalizedBindings is not null)
         {
             var bindingPlanChanged = !RestBehaviorBindingDescriptorSetComparer.Equivalent(endpointProjection.Bindings, normalizedBindings) ||
@@ -1050,6 +1055,11 @@ internal static class RestBehaviorProjectionCandidateResolver
                 wasApplied = true;
                 appliedActionKinds.UnionWith(ResolveBindingActionKinds(matchedOverride));
             }
+        }
+        else if (endpointProjection.PreserveImplicitQueryFallback != preserveImplicitQueryFallback)
+        {
+            wasApplied = true;
+            appliedActionKinds.UnionWith(ResolveBindingActionKinds(matchedOverride));
         }
 
         effectiveEndpointProjection = effectiveEndpointProjection.WithPreserveImplicitQueryFallback(
@@ -1509,14 +1519,15 @@ internal static class RestBehaviorProjectionCandidateResolver
         RestBehaviorEndpointProjection sourceProjection,
         RestBehaviorHttpMethod effectiveMethod,
         IReadOnlyList<BehaviorRestBindingDescriptor> effectiveBindings,
-        bool clearBindings)
+        bool clearBindings,
+        bool preserveImplicitQueryFallback)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(overrideId);
         ArgumentNullException.ThrowIfNull(sourceProjection);
         ArgumentNullException.ThrowIfNull(effectiveBindings);
 
         if (clearBindings ||
-            sourceProjection.PreserveImplicitQueryFallback ||
+            preserveImplicitQueryFallback ||
             sourceProjection.Bindings.Count == 0 ||
             effectiveMethod is RestBehaviorHttpMethod.Post or RestBehaviorHttpMethod.Put or RestBehaviorHttpMethod.Patch)
         {
@@ -2589,7 +2600,8 @@ internal static class RestBehaviorProjectionCandidateResolver
                 actionKind == RestEndpointOverrideActionKind.ReplaceBindings ||
                 actionKind == RestEndpointOverrideActionKind.MergeBindings ||
                 actionKind == RestEndpointOverrideActionKind.RemoveBindingProperties ||
-                actionKind == RestEndpointOverrideActionKind.ClearBindings)
+                actionKind == RestEndpointOverrideActionKind.ClearBindings ||
+                actionKind == RestEndpointOverrideActionKind.PreserveImplicitQueryFallback)
             .ToArray();
     }
 

@@ -119,5 +119,11 @@ public enum RestEndpointOverrideActionKind
     /// The rule clears the explicit request-binding plan and returns to the implicit baseline.
     /// </summary>
     [JsonStringEnumMemberName("clear-bindings")]
-    ClearBindings = 18
+    ClearBindings = 18,
+
+    /// <summary>
+    /// The rule opts the matched explicit-binding shorthand candidate into preserved implicit-query fallback.
+    /// </summary>
+    [JsonStringEnumMemberName("preserve-implicit-query-fallback")]
+    PreserveImplicitQueryFallback = 19
 }

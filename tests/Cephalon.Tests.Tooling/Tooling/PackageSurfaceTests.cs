@@ -1373,6 +1373,24 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void RestEndpointOverrideActionKindsExposePreserveImplicitQueryFallback()
+    {
+        Assert.True(Enum.IsDefined(
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideActionKind),
+            "PreserveImplicitQueryFallback"));
+        Assert.Equal(
+            "preserve-implicit-query-fallback",
+            global::Cephalon.Abstractions.Transports.RestEndpointOverrideActionKindExtensions.GetWireName(
+                global::Cephalon.Abstractions.Transports.RestEndpointOverrideActionKind.PreserveImplicitQueryFallback));
+        Assert.True(global::Cephalon.Abstractions.Transports.RestEndpointOverrideActionKindExtensions.TryParseWireName(
+            "preserve-implicit-query-fallback",
+            out var parsed));
+        Assert.Equal(
+            global::Cephalon.Abstractions.Transports.RestEndpointOverrideActionKind.PreserveImplicitQueryFallback,
+            parsed);
+    }
+
+    [Fact]
     public void RestEndpointGovernanceContractsExposeRuleCentricRuntimeEffects()
     {
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointSuppressionDescriptor)
@@ -1427,6 +1445,15 @@ public sealed class PackageSurfaceTests
             .GetProperty("ClearBindings", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions)
             .GetProperty("ClearBindings", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void RestEndpointGovernanceContractsExposePreserveImplicitQueryFallbackOverrides()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideDescriptor)
+            .GetProperty("PreserveImplicitQueryFallback", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions)
+            .GetProperty("PreserveImplicitQueryFallback", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

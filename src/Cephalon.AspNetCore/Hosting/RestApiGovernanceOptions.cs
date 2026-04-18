@@ -140,7 +140,8 @@ public sealed class RestApiGovernanceOptions
                 endpointNames: ReadStringArray(child.GetSection("EndpointNames")),
                 bindingFallbackModes: ReadBindingFallbackModeArray(child.GetSection("BindingFallbackModes")),
                 targetBindings: ReadBindings(child.GetSection("TargetBindings")),
-                hostGovernanceScopes: ReadStringArray(child.GetSection("HostGovernanceScopes"))))
+                hostGovernanceScopes: ReadStringArray(child.GetSection("HostGovernanceScopes")),
+                preserveImplicitQueryFallback: ReadBoolean(child, "PreserveImplicitQueryFallback")))
             .ToArray();
 
         return new RestApiGovernanceOptions(authoringPolicies, suppressions, overrides);

@@ -178,7 +178,8 @@ internal sealed class AspNetCoreRestEndpointOverrideRuntimeCatalog(
                     selectedActionKindSummaries,
                     appliedActionKindSummaries,
                     hostGovernanceScopes: item.HostGovernanceScopes,
-                    behaviorIdPrefixes: item.BehaviorIdPrefixes);
+                    behaviorIdPrefixes: item.BehaviorIdPrefixes,
+                    preserveImplicitQueryFallback: item.PreserveImplicitQueryFallback);
             })
             .OrderBy(static item => item.Id, Comparer)
             .ToArray();

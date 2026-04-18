@@ -197,9 +197,11 @@ Status update:
   `ENG-058-T119`: metadata-only REST profiles can now declare
   `BehaviorRestProfile(PreserveImplicitQueryFallback = true)` when they already carry explicit
   bindings, so profile authors can keep explicit route aliases or other explicit bindings without
-  losing the remaining implicit query-fallback surface; `Cephalon.Behaviors.SourceGen` rejects
-  missing-binding cases through `ABT0027`, and `BehaviorRestProfileResolver` re-checks the same
-  rule during runtime fallback
+  losing the remaining implicit query-fallback surface; later host governance can now also opt an
+  explicit-binding shorthand candidate into that same preserved source query surface through
+  `RestApi:Overrides:*:PreserveImplicitQueryFallback` when the module did not declare it up front,
+  while `Cephalon.Behaviors.SourceGen` still rejects missing-binding cases through `ABT0027` and
+  `BehaviorRestProfileResolver` re-checks the same rule during runtime fallback
 - the next runtime-contract follow-through is now shipped through `ENG-058-T65`: the engine-owned
   transport contract now publishes explicit binding plans through
   `RestEndpointRuntimeDescriptor.BindingDescriptors`, `RestEndpointBindingDescriptor`, and
@@ -648,8 +650,9 @@ Current shipped baseline:
   bound in the original projection, for `POST`/`PUT`/`PATCH` already part of the original
   deterministic remaining-body fallback surface, or for shorthand candidates with no explicit
   binding plan already part of the original implicit query-fallback surface, or for explicit
-  shorthand profiles that intentionally preserve source implicit query fallback when the newly
-  route-bound property still belongs to that remaining source query surface
+  shorthand candidates whose remaining source query surface was intentionally preserved either by
+  the source profile or by a winning host override that sets
+  `PreserveImplicitQueryFallback = true`
 - `BindingMode = merge-explicit` can now upsert changed explicit bindings and withdraw selected
   original explicit bindings through `RemovedBindingProperties`, while failing fast if a removal
   targets a property the source shorthand never bound explicitly or if one merge rule both removes
@@ -657,15 +660,17 @@ Current shipped baseline:
 - on non-body-capable methods, merge-mode withdrawals now also fail fast when they would stop
   explicitly binding a source query-bound property unless that property still belongs to a source
   profile that intentionally declared
-  `BehaviorRestProfile(PreserveImplicitQueryFallback = true)` or the host intentionally resets the
+  `BehaviorRestProfile(PreserveImplicitQueryFallback = true)`, a winning host override that
+  intentionally sets `PreserveImplicitQueryFallback = true`, or the host intentionally resets the
   whole authored plan through `ClearBindings = true`
 - `ClearBindings = true` can now discard the source shorthand explicit binding plan entirely and
   return the candidate to the implicit request-binding baseline, while failing fast if the
   effective route would only stay valid through explicit placeholder aliases that the clear
   removed
 - broader implicit-property promotion beyond that constrained body-fallback-plus-bounded-query-
-  fallback-plus-preserved-explicit-query-fallback path plus broader input-binding rewrites beyond
-  the current replace-plus-merge-explicit upsert-plus-withdraw model remain later work
+  fallback-plus-source-or-host-preserved-explicit-query-fallback path plus broader input-binding
+  rewrites beyond the current replace-plus-merge-explicit upsert-plus-withdraw model remain later
+  work
 
 ## Precedence and suppression rules
 
@@ -903,9 +908,9 @@ ASP.NET Core materialize split effective route groups when one authored shorthan
 to more than one published group, rejects any one rule that tries to both set and clear the same
 endpoint-metadata field, and does not yet support route rewrites that promote other
 implicit properties into placeholders outside the shipped body-fallback, no-explicit-plan
-query-fallback, and preserved-explicit-query-fallback slices or broader host-level binding
-rewrites beyond the current replace-plus-merge-explicit upsert-plus-withdraw model that would
-silently change how one shorthand endpoint reads its input.
+query-fallback, and source-or-host-preserved-explicit-query-fallback slices or broader
+host-level binding rewrites beyond the current replace-plus-merge-explicit upsert-plus-withdraw
+model that would silently change how one shorthand endpoint reads its input.
 
 Within that bounded capability-governance slice, `ClearRequiredCapability = true` is the explicit
 host answer for removing an inherited shorthand capability boundary. It is mutually exclusive with
@@ -1051,7 +1056,8 @@ Status:
 - the next constrained shorthand REST implicit query-fallback route promotion is now shipped
   through `ENG-058-T88`, so shorthand candidates with no explicit binding plan can promote
   placeholders from the original implicit query-fallback surface while explicit-binding candidates
-  stay on the stricter explicit-binding path
+  stay on the stricter explicit-binding path unless a later preserved-explicit follow-through
+  deliberately keeps source query fallback available
 - the next partial-explicit-override follow-through is now shipped through `ENG-058-T89`, so when
   a shorthand candidate originally had no explicit binding plan, hosts can add partial explicit
   bindings without losing the remaining implicit query-fallback surface for unbound properties, and
@@ -1257,9 +1263,10 @@ Status:
 - the next explicit-query withdrawal guardrail follow-through is now also shipped through
   `ENG-058-T162`, so merge-mode shorthand binding removals on non-body-capable methods now fail
   fast when they would stop explicitly binding a source query-bound property unless the source
-  profile intentionally declared `BehaviorRestProfile(PreserveImplicitQueryFallback = true)` or
-  the host intentionally resets the plan through `ClearBindings`; when preserved fallback remains
-  valid after the rewrite, runtime truth also stays honest by allowing
+  profile intentionally declared `BehaviorRestProfile(PreserveImplicitQueryFallback = true)`, the
+  winning host override intentionally set `PreserveImplicitQueryFallback = true`, or the host
+  intentionally resets the plan through `ClearBindings`; when preserved fallback remains valid
+  after the rewrite, runtime truth also stays honest by allowing
   `OriginalProjection.BindingFallbackMode` to remain `null` while
   `ProjectedEndpoint.BindingFallbackMode` becomes `PreserveSourceImplicitFallback`
 - the next generated profile-group shorthand follow-through is now also shipped through
@@ -1298,12 +1305,12 @@ Status:
   invalid no-binding cases from leaking into shorthand publication
 - controlled configuration overrides that promote implicit properties into route placeholders
   beyond the shipped constrained remaining-body-fallback-plus-bounded-query-fallback-plus-
-  preserved-explicit-query-fallback path, or rewrite input binding beyond constrained
-  explicit-binding replacement, remain later work now that the current override baseline covers
-  original-shape candidate ids plus selector targeting across exact behavior ids, behavior-subtree
-  prefixes, version, method, route-group prefix, document name, tag name, binding fallback, exact
-  original explicit binding plans, capability, bindings, clear-bindings resets, placeholder
-  reshaping, and bounded fallback promotion
+  source-or-host-preserved-explicit-query-fallback path, or rewrite input binding beyond
+  constrained explicit-binding replacement, remain later work now that the current override
+  baseline covers original-shape candidate ids plus selector targeting across exact behavior ids,
+  behavior-subtree prefixes, version, method, route-group prefix, document name, tag name, binding
+  fallback, exact original explicit binding plans, capability, bindings, clear-bindings resets,
+  `PreserveImplicitQueryFallback`, placeholder reshaping, and bounded fallback promotion
 
 ## What should be stored as project memory
 
@@ -1523,8 +1530,8 @@ The following points are durable enough to keep outside thread-local context.
   preserved query surface into added route placeholders through host overrides, and candidate plus
   published runtime truth now clear `BindingFallbackMode` once the effective binding plan fully
   consumes that preserved surface; broader implicit-property promotion beyond the shipped body-
-  fallback, no-explicit-plan query-fallback, and preserved-explicit-query-fallback slices remains
-  later work
+  fallback, no-explicit-plan query-fallback, and source-or-host-preserved-explicit-query-fallback
+  slices remains later work
 - future shorthand or convention REST publication must compose through the shared projection,
   runtime-catalog, and collision-validation pipeline instead of bypassing it
 - future agentic, AI, or multi-platform expansion should not outrun core engine contract quality,

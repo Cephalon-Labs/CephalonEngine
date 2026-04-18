@@ -130,6 +130,10 @@ public sealed class RestEndpointOverrideDescriptor
     /// dot-separated behavior-id hierarchy, so a prefix targets the exact behavior id and any
     /// descendant behavior ids beneath that prefix.
     /// </param>
+    /// <param name="preserveImplicitQueryFallback">
+    /// <see langword="true" /> when the rule opts the matched explicit-binding shorthand candidate
+    /// into preserved implicit-query fallback for any remaining unbound query properties.
+    /// </param>
     public RestEndpointOverrideDescriptor(
         string id,
         IReadOnlyList<string>? candidateIds = null,
@@ -174,7 +178,8 @@ public sealed class RestEndpointOverrideDescriptor
         IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor>? selectedActionKindSummaries = null,
         IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor>? appliedActionKindSummaries = null,
         IReadOnlyList<string>? hostGovernanceScopes = null,
-        IReadOnlyList<string>? behaviorIdPrefixes = null)
+        IReadOnlyList<string>? behaviorIdPrefixes = null,
+        bool preserveImplicitQueryFallback = false)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -226,6 +231,13 @@ public sealed class RestEndpointOverrideDescriptor
             bindingMode,
             RemovedBindingProperties.Count > 0,
             clearBindings);
+        PreserveImplicitQueryFallback = preserveImplicitQueryFallback;
+        if (ClearBindings && PreserveImplicitQueryFallback)
+        {
+            throw new ArgumentException(
+                "REST endpoint override rules cannot combine ClearBindings with PreserveImplicitQueryFallback in the same rule.",
+                nameof(preserveImplicitQueryFallback));
+        }
         ActionKinds = ResolveActionKinds(
             ApiVersionMajor,
             Method,
@@ -244,7 +256,8 @@ public sealed class RestEndpointOverrideDescriptor
             Bindings,
             RemovedBindingProperties,
             ClearBindings,
-            BindingMode);
+            BindingMode,
+            PreserveImplicitQueryFallback);
         MatchedCandidateIds = NormalizeOrderedList(matchedCandidateIds);
         SelectedCandidateIds = NormalizeOrderedList(selectedCandidateIds);
         AppliedCandidateIds = NormalizeOrderedList(appliedCandidateIds);
@@ -609,6 +622,13 @@ public sealed class RestEndpointOverrideDescriptor
     /// candidate's explicit binding plan.
     /// </summary>
     public RestEndpointOverrideBindingMode BindingMode { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether this override rule opts the matched explicit-binding
+    /// shorthand candidate into preserved implicit-query fallback for remaining unbound query
+    /// properties.
+    /// </summary>
+    public bool PreserveImplicitQueryFallback { get; }
 
     /// <summary>
     /// Gets the normalized action dimensions declared by this override rule.
@@ -986,7 +1006,8 @@ public sealed class RestEndpointOverrideDescriptor
         IReadOnlyList<RestEndpointBindingDescriptor> bindings,
         IReadOnlyList<string> removedBindingProperties,
         bool clearBindings,
-        RestEndpointOverrideBindingMode bindingMode)
+        RestEndpointOverrideBindingMode bindingMode,
+        bool preserveImplicitQueryFallback)
     {
         ArgumentNullException.ThrowIfNull(bindings);
         ArgumentNullException.ThrowIfNull(removedBindingProperties);
@@ -1079,6 +1100,11 @@ public sealed class RestEndpointOverrideDescriptor
             {
                 actionKinds.Add(RestEndpointOverrideActionKind.RemoveBindingProperties);
             }
+        }
+
+        if (preserveImplicitQueryFallback)
+        {
+            actionKinds.Add(RestEndpointOverrideActionKind.PreserveImplicitQueryFallback);
         }
 
         return actionKinds
