@@ -19,16 +19,19 @@ public sealed class BehaviorExecutionResilienceSelection
     /// <param name="timeout">The timeout selection that applies to behavior execution.</param>
     /// <param name="circuitBreaker">The circuit-breaker selection that applies to behavior execution.</param>
     /// <param name="bulkhead">The bulkhead selection that applies to behavior execution.</param>
+    /// <param name="rateLimiting">The rate-limiting selection that applies to behavior execution.</param>
     public BehaviorExecutionResilienceSelection(
         RetrySelection? retry = null,
         TimeoutSelection? timeout = null,
         CircuitBreakerSelection? circuitBreaker = null,
-        BulkheadSelection? bulkhead = null)
+        BulkheadSelection? bulkhead = null,
+        RateLimitingSelection? rateLimiting = null)
     {
         Retry = retry ?? RetrySelection.Empty;
         Timeout = timeout ?? TimeoutSelection.Empty;
         CircuitBreaker = circuitBreaker ?? CircuitBreakerSelection.Empty;
         Bulkhead = bulkhead ?? BulkheadSelection.Empty;
+        RateLimiting = rateLimiting ?? RateLimitingSelection.Empty;
     }
 
     /// <summary>
@@ -52,11 +55,17 @@ public sealed class BehaviorExecutionResilienceSelection
     public BulkheadSelection Bulkhead { get; }
 
     /// <summary>
+    /// Gets the rate-limiting selection that applies to behavior execution.
+    /// </summary>
+    public RateLimitingSelection RateLimiting { get; }
+
+    /// <summary>
     /// Gets a value indicating whether any behavior-execution resilience inputs were supplied.
     /// </summary>
     public bool HasValues =>
         Retry.HasValues ||
         Timeout.HasValues ||
         CircuitBreaker.HasValues ||
-        Bulkhead.HasValues;
+        Bulkhead.HasValues ||
+        RateLimiting.HasValues;
 }

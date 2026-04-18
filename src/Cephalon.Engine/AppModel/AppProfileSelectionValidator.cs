@@ -392,13 +392,29 @@ internal static class AppProfileSelectionValidator
         if (!overrideSelection.HasStrategyValues)
         {
             throw new InvalidOperationException(
-                $"Behavior execution resilience override '{overrideSelection.Id}' must specify at least one retry, timeout, circuit-breaker, or bulkhead value.");
+                $"Behavior execution resilience override '{overrideSelection.Id}' must specify at least one retry, timeout, circuit-breaker, bulkhead, or rate-limiting value.");
         }
 
         ValidateRetrySelection(overrideSelection.Retry);
         ValidateTimeoutSelection(overrideSelection.Timeout);
         ValidateCircuitBreakerSelection(overrideSelection.CircuitBreaker);
         ValidateBulkheadSelection(overrideSelection.Bulkhead);
+        ValidateBehaviorExecutionRateLimitingSelection(overrideSelection.Id, overrideSelection.RateLimiting);
+    }
+
+    private static void ValidateBehaviorExecutionRateLimitingSelection(
+        string overrideId,
+        RateLimitingSelection rateLimiting)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(overrideId);
+        ArgumentNullException.ThrowIfNull(rateLimiting);
+
+        ValidateRateLimitingSelection(rateLimiting);
+        if (rateLimiting.Overrides.Count > 0)
+        {
+            throw new InvalidOperationException(
+                $"Behavior execution resilience override '{overrideId}' cannot declare nested rate-limiting overrides. Use Engine:Resilience:BehaviorExecution:Overrides for behavior execution scope or Engine:Resilience:RateLimiting:Overrides for ASP.NET Core endpoint scope.");
+        }
     }
 
     private static void ValidateDatabaseRoleReferences(

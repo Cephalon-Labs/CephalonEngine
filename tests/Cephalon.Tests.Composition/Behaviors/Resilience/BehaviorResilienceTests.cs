@@ -43,7 +43,13 @@ public sealed class BehaviorResilienceTests
                     bulkhead: new BulkheadSettings(
                         enabled: true,
                         maxConcurrentExecutions: 2,
-                        maxQueuedActions: 1))));
+                        maxQueuedActions: 1),
+                    rateLimiting: new RateLimitingSettings(
+                        enabled: true,
+                        algorithm: "FixedWindow",
+                        permitLimit: 5,
+                        queueLimit: 2,
+                        windowSeconds: 30))));
             engine.AddBehaviors(
                 configureOptions: options => options.AutoRegister = false,
                 configure: behaviors => behaviors.Register<FastGreetingBehavior>(topology => topology
@@ -72,6 +78,11 @@ public sealed class BehaviorResilienceTests
         Assert.True(policy.Effective.Bulkhead.Enabled);
         Assert.Equal(2, policy.Effective.Bulkhead.MaxConcurrentExecutions);
         Assert.Equal(1, policy.Effective.Bulkhead.MaxQueuedActions);
+        Assert.True(policy.Effective.RateLimiting.Enabled);
+        Assert.Equal("FixedWindow", policy.Effective.RateLimiting.Algorithm);
+        Assert.Equal(5, policy.Effective.RateLimiting.PermitLimit);
+        Assert.Equal(2, policy.Effective.RateLimiting.QueueLimit);
+        Assert.Equal(30, policy.Effective.RateLimiting.WindowSeconds);
         Assert.True(policy.Effective.Retry.Enabled);
         Assert.Equal(3, policy.Effective.Retry.MaxAttempts);
         Assert.Equal("Exponential", policy.Effective.Retry.Backoff);
@@ -88,8 +99,13 @@ public sealed class BehaviorResilienceTests
         Assert.Equal("enforced", policy.Metadata["circuitBreakerMode"]);
         Assert.Equal("enforced", policy.Metadata["timeoutMode"]);
         Assert.Equal("enforced", policy.Metadata["bulkheadMode"]);
-        Assert.Equal("retry,timeout,circuit-breaker,bulkhead", policy.Metadata["requestedStrategies"]);
-        Assert.Equal("retry,timeout,circuit-breaker,bulkhead", policy.Metadata["effectiveStrategies"]);
+        Assert.Equal("enforced", policy.Metadata["rateLimitingMode"]);
+        Assert.Equal("FixedWindow", policy.Metadata["rateLimitingAlgorithm"]);
+        Assert.Equal("5", policy.Metadata["rateLimitingPermitLimit"]);
+        Assert.Equal("2", policy.Metadata["rateLimitingQueueLimit"]);
+        Assert.Equal("30", policy.Metadata["rateLimitingWindowSeconds"]);
+        Assert.Equal("retry,timeout,circuit-breaker,bulkhead,rate-limiting", policy.Metadata["requestedStrategies"]);
+        Assert.Equal("retry,timeout,circuit-breaker,bulkhead,rate-limiting", policy.Metadata["effectiveStrategies"]);
 
         var snapshotPolicy = Assert.Single(snapshot.BehaviorResiliencePolicies);
         Assert.Equal(policy.Id, snapshotPolicy.Id);
@@ -98,6 +114,7 @@ public sealed class BehaviorResilienceTests
         Assert.Equal(policy.Effective.Timeout.TotalTimeoutSeconds, snapshotPolicy.Effective.Timeout.TotalTimeoutSeconds);
         Assert.Equal(policy.Effective.Timeout.AttemptTimeoutSeconds, snapshotPolicy.Effective.Timeout.AttemptTimeoutSeconds);
         Assert.Equal(policy.Effective.Bulkhead.MaxConcurrentExecutions, snapshotPolicy.Effective.Bulkhead.MaxConcurrentExecutions);
+        Assert.Equal(policy.Effective.RateLimiting.PermitLimit, snapshotPolicy.Effective.RateLimiting.PermitLimit);
         Assert.Equal("enforced", snapshotPolicy.Metadata["retryMode"]);
         Assert.Equal("behavior-dependent", snapshotPolicy.Metadata["retryEligibilityMode"]);
     }
@@ -495,6 +512,53 @@ public sealed class BehaviorResilienceTests
     }
 
     [Fact]
+    public async Task BehaviorDispatcherAppliesConfiguredRateLimiting()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularMonolith",
+                resilience: new ResilienceSettings(
+                    rateLimiting: new RateLimitingSettings(
+                        enabled: true,
+                        algorithm: "FixedWindow",
+                        permitLimit: 1,
+                        queueLimit: 0,
+                        windowSeconds: 60))));
+            engine.AddBehaviors(
+                configureOptions: options => options.AutoRegister = false,
+                configure: behaviors => behaviors.Register<FastGreetingBehavior>(topology => topology
+                    .AsDirect()
+                    .ViaInMemory()));
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var dispatcher = provider.GetRequiredService<BehaviorDispatcher>();
+        var catalog = provider.GetRequiredService<IBehaviorResilienceRuntimeCatalog>();
+
+        var firstResult = await dispatcher.DispatchAsync(
+            "tests.resilience.fast",
+            "alpha",
+            new TestBehaviorContext("tests.resilience.fast", isDirect: true));
+
+        var secondException = await Assert.ThrowsAsync<RateLimiterRejectedException>(() =>
+            dispatcher.DispatchAsync(
+                "tests.resilience.fast",
+                "beta",
+                new TestBehaviorContext("tests.resilience.fast", isDirect: true)));
+
+        var policy = catalog.Resolve("tests.resilience.fast", "in-memory");
+
+        Assert.Equal("Hello, alpha!", firstResult);
+        Assert.NotNull(secondException);
+        Assert.NotNull(policy);
+        Assert.True(policy!.Effective.RateLimiting.Enabled);
+        Assert.Equal("FixedWindow", policy.Effective.RateLimiting.Algorithm);
+        Assert.Equal("enforced", policy.Metadata["rateLimitingMode"]);
+    }
+
+    [Fact]
     public void AddBehaviorsDoesNotPublishBehaviorResiliencePolicyWhenStrategiesAreExplicitlyDisabled()
     {
         var services = new ServiceCollection();
@@ -685,6 +749,58 @@ public sealed class BehaviorResilienceTests
                 }));
 
         Assert.Equal("completed", result);
+    }
+
+    [Fact]
+    public async Task BehaviorDispatcherSkipsRateLimitingWhenBehaviorSpecificOverrideDisablesDefaultRateLimiting()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularMonolith",
+                resilience: new ResilienceSettings(
+                    rateLimiting: new RateLimitingSettings(
+                        enabled: true,
+                        algorithm: "FixedWindow",
+                        permitLimit: 1,
+                        queueLimit: 0,
+                        windowSeconds: 60),
+                    behaviorExecutionOverrides:
+                    [
+                        new BehaviorExecutionResilienceOverrideSettings(
+                            id: "fast-rate-limit-disabled",
+                            behaviorIds: ["tests.resilience.fast"],
+                            rateLimiting: new RateLimitingSettings(enabled: false))
+                    ])));
+            engine.AddBehaviors(
+                configureOptions: options => options.AutoRegister = false,
+                configure: behaviors => behaviors.Register<FastGreetingBehavior>(topology => topology
+                    .AsDirect()
+                    .ViaInMemory()));
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var dispatcher = provider.GetRequiredService<BehaviorDispatcher>();
+        var catalog = provider.GetRequiredService<IBehaviorResilienceRuntimeCatalog>();
+
+        var firstResult = await dispatcher.DispatchAsync(
+            "tests.resilience.fast",
+            "alpha",
+            new TestBehaviorContext("tests.resilience.fast", isDirect: true));
+        var secondResult = await dispatcher.DispatchAsync(
+            "tests.resilience.fast",
+            "beta",
+            new TestBehaviorContext("tests.resilience.fast", isDirect: true));
+
+        var policy = catalog.Resolve("tests.resilience.fast", "in-memory");
+
+        Assert.Equal("Hello, alpha!", firstResult);
+        Assert.Equal("Hello, beta!", secondResult);
+        Assert.NotNull(policy);
+        Assert.Equal("disabled", policy!.ExecutionMode);
+        Assert.False(policy.Effective.RateLimiting.HasValues);
+        Assert.Equal("fast-rate-limit-disabled", policy.Metadata["overrideId"]);
     }
 
     [AppBehavior("tests.resilience.fast")]

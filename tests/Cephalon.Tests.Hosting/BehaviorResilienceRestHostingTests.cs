@@ -171,6 +171,119 @@ public sealed class BehaviorResilienceRestHostingTests
     }
 
     [Fact]
+    public async Task BehaviorRestReturnsHostRateLimitingEnvelopeWhenAspNetCoreAndBehaviorExecutionRateLimitingBothApply()
+    {
+        const string route = "/api/v1/tests/resilience/rate-limiting/tasks/alpha";
+
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["ApiRoutes:ResultEnvelope:Enabled"] = "true";
+        builder.Configuration["Engine:Resilience:RateLimiting:Enabled"] = "true";
+        builder.Configuration["Engine:Resilience:RateLimiting:Algorithm"] = "FixedWindow";
+        builder.Configuration["Engine:Resilience:RateLimiting:PermitLimit"] = "1";
+        builder.Configuration["Engine:Resilience:RateLimiting:QueueLimit"] = "0";
+        builder.Configuration["Engine:Resilience:RateLimiting:WindowSeconds"] = "60";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new RateLimitingRestModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var firstResponse = await client.GetAsync(route);
+        var rejectedResponse = await client.GetAsync(route);
+        var rejectedPayload = await rejectedResponse.Content.ReadFromJsonAsync<ResultModelError>();
+        using var document = JsonDocument.Parse(await client.GetStringAsync("/openapi/v1.json"));
+        var rateLimitedOperation = document.RootElement
+            .GetProperty("paths")
+            .EnumerateObject()
+            .Single(static path =>
+                path.Name.EndsWith("/tests/resilience/rate-limiting/tasks/{taskId}", StringComparison.Ordinal))
+            .Value
+            .GetProperty("get");
+        var responses = rateLimitedOperation.GetProperty("responses");
+
+        Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.TooManyRequests, rejectedResponse.StatusCode);
+        Assert.NotNull(rejectedPayload);
+        Assert.False(rejectedPayload!.Success);
+        Assert.Equal(429, rejectedPayload.StatusCode);
+        Assert.NotNull(rejectedPayload.Errors);
+        var error = Assert.Single(rejectedPayload.Errors!);
+        Assert.Equal("rate_limit_exceeded", error.Key);
+        Assert.Contains("cephalon rate limit", error.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.True(responses.TryGetProperty("429", out _));
+    }
+
+    [Fact]
+    public async Task BehaviorRestReturnsBehaviorExecutionRateLimitingEnvelopeWhenHostRateLimitingOverrideDisablesEndpointPolicy()
+    {
+        const string route = "/api/v1/tests/resilience/rate-limiting/tasks/alpha";
+
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["ApiRoutes:ResultEnvelope:Enabled"] = "true";
+        builder.Configuration["Engine:Resilience:RateLimiting:Enabled"] = "true";
+        builder.Configuration["Engine:Resilience:RateLimiting:Algorithm"] = "FixedWindow";
+        builder.Configuration["Engine:Resilience:RateLimiting:PermitLimit"] = "1";
+        builder.Configuration["Engine:Resilience:RateLimiting:QueueLimit"] = "0";
+        builder.Configuration["Engine:Resilience:RateLimiting:WindowSeconds"] = "60";
+        builder.Configuration["Engine:Resilience:RateLimiting:Overrides:rest-behavior-pass-through:Behaviors:0"] = "tests.resilience.rate-limiting";
+        builder.Configuration["Engine:Resilience:RateLimiting:Overrides:rest-behavior-pass-through:Transports:0"] = "rest-api";
+        builder.Configuration["Engine:Resilience:RateLimiting:Overrides:rest-behavior-pass-through:Enabled"] = "false";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new RateLimitingRestModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var firstResponse = await client.GetAsync(route);
+        var rejectedResponse = await client.GetAsync(route);
+        var rejectedPayload = await rejectedResponse.Content.ReadFromJsonAsync<ResultModelError>();
+        using var document = JsonDocument.Parse(await client.GetStringAsync("/openapi/v1.json"));
+        var rateLimitedOperation = document.RootElement
+            .GetProperty("paths")
+            .EnumerateObject()
+            .Single(static path =>
+                path.Name.EndsWith("/tests/resilience/rate-limiting/tasks/{taskId}", StringComparison.Ordinal))
+            .Value
+            .GetProperty("get");
+        var responses = rateLimitedOperation.GetProperty("responses");
+
+        Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.TooManyRequests, rejectedResponse.StatusCode);
+        Assert.NotNull(rejectedPayload);
+        Assert.False(rejectedPayload!.Success);
+        Assert.Equal(429, rejectedPayload.StatusCode);
+        Assert.NotNull(rejectedPayload.Errors);
+        var error = Assert.Single(rejectedPayload.Errors!);
+        Assert.Equal("behavior_execution_rate_limited", error.Key);
+        Assert.Contains("rate limit", error.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.True(responses.TryGetProperty("429", out _));
+    }
+
+    [Fact]
     public async Task BehaviorRestOpenApiDocuments503WhenExecutionCircuitBreakerIsEnabledWithoutTimeout()
     {
         var builder = WebApplication.CreateBuilder();
@@ -287,6 +400,10 @@ public sealed class BehaviorResilienceRestHostingTests
 
     private sealed record CircuitBreakerOutput(string TaskId, string Status);
 
+    private sealed record RateLimitingInput(string TaskId);
+
+    private sealed record RateLimitingOutput(string TaskId, string Status);
+
     private sealed record OpenApiTimeoutInput(string TaskId);
 
     private sealed record OpenApiTimeoutOutput(string TaskId, string Status);
@@ -316,6 +433,16 @@ public sealed class BehaviorResilienceRestHostingTests
             await Task.Delay(TimeSpan.FromSeconds(2), cancellationToken);
             return new CircuitBreakerOutput(input.TaskId, "done");
         }
+    }
+
+    [AppBehavior("tests.resilience.rate-limiting")]
+    private sealed class RateLimitingBehavior : IAppBehavior<RateLimitingInput, RateLimitingOutput>
+    {
+        public Task<RateLimitingOutput> HandleAsync(
+            RateLimitingInput input,
+            IBehaviorContext context,
+            CancellationToken cancellationToken = default)
+            => Task.FromResult(new RateLimitingOutput(input.TaskId, "done"));
     }
 
     [AppBehavior("tests.resilience.openapi.default")]
@@ -392,6 +519,23 @@ public sealed class BehaviorResilienceRestHostingTests
         {
             var group = behaviors.Group("/tests/resilience/circuit-breaker/tasks");
             group.MapGet<CircuitBreakerBehavior>("/{taskId}");
+        }
+    }
+
+    private sealed class RateLimitingRestModule : RestBehaviorModuleBase
+    {
+        private static readonly ModuleDescriptor DescriptorInstance = new(
+            id: "tests.resilience.rate-limiting",
+            displayName: "Rate Limiting Resilience",
+            description: "Test module for behavior execution rate-limiting translation and documentation.",
+            version: "1.0.0");
+
+        public override ModuleDescriptor Descriptor => DescriptorInstance;
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            var group = behaviors.Group("/tests/resilience/rate-limiting/tasks");
+            group.MapGet<RateLimitingBehavior>("/{taskId}");
         }
     }
 

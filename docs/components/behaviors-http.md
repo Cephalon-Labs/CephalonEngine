@@ -1171,6 +1171,8 @@ separate concerns:
 - when ASP.NET Core rate limiting is enabled, `429` is documented per endpoint when the effective
   rate-limiting policy actually applies to that REST route, and behavior/transport overrides can
   suppress it again for specific endpoints through `Engine:Resilience:RateLimiting:Overrides`
+- when shared behavior-execution rate limiting is active, behavior-owned REST helpers also
+  document and return `429` for behavior-dispatch rate-limit rejections
 - when shared behavior-execution bulkhead enforcement is active, behavior-owned REST helpers also
   document and return `429` for bulkhead saturation
 - when shared behavior-execution timeout enforcement is active, behavior-owned REST helpers also
@@ -1178,8 +1180,11 @@ separate concerns:
 - when shared behavior-execution circuit-breaker enforcement is active, behavior-owned REST helpers
   also document and return `503` for open-circuit rejections, including retry-after details when the
   runtime can compute them
+- if a route keeps both the ASP.NET Core endpoint limiter and the behavior-execution limiter active,
+  ASP.NET Core rejects first; disable the endpoint policy for that route through
+  `Engine:Resilience:RateLimiting:Overrides` when the behavior-owned `429` answer should surface instead
 - `Engine:Resilience:BehaviorExecution:Overrides` can narrow or disable inherited timeout,
-  circuit-breaker, and bulkhead answers per behavior id, per transport id, or per behavior+transport pair with
+  circuit-breaker, bulkhead, and behavior-execution rate-limiting answers per behavior id, per transport id, or per behavior+transport pair with
   `behavior+transport > behavior > transport > default` precedence, and REST docs follow that
   resolved runtime answer per endpoint
 - GraphQL and JSON-RPC keep their protocol-native response shapes and are intentionally not wrapped

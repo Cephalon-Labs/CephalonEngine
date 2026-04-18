@@ -193,6 +193,13 @@ public static class AppProfileFactory
                 bulkhead: new Abstractions.AppModel.BulkheadSelection(
                     enabled: entry.Bulkhead.Enabled,
                     maxConcurrentExecutions: entry.Bulkhead.MaxConcurrentExecutions,
-                    maxQueuedActions: entry.Bulkhead.MaxQueuedActions))).ToArray());
+                    maxQueuedActions: entry.Bulkhead.MaxQueuedActions),
+                rateLimiting: new Abstractions.AppModel.RateLimitingSelection(
+                    enabled: entry.RateLimiting.Enabled,
+                    algorithm: entry.RateLimiting.Algorithm,
+                    permitLimit: entry.RateLimiting.PermitLimit,
+                    queueLimit: entry.RateLimiting.QueueLimit,
+                    windowSeconds: entry.RateLimiting.WindowSeconds,
+                    segmentsPerWindow: entry.RateLimiting.SegmentsPerWindow))).ToArray());
     }
 }

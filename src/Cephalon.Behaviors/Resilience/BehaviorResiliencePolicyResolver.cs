@@ -2,6 +2,7 @@ using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Resilience;
 using Cephalon.Engine.Configuration;
+using System.Threading.RateLimiting;
 using Polly;
 using Polly.CircuitBreaker;
 using Polly.RateLimiting;
@@ -30,6 +31,11 @@ internal static class BehaviorResiliencePolicyResolver
     internal const int DefaultCircuitBreakerMinimumThroughput = 100;
     internal const int DefaultCircuitBreakerSamplingDurationSeconds = 30;
     internal const int DefaultCircuitBreakerBreakDurationSeconds = 5;
+    internal const string DefaultRateLimitingAlgorithm = "SlidingWindow";
+    internal const int DefaultRateLimitingPermitLimit = 100;
+    internal const int DefaultRateLimitingQueueLimit = 0;
+    internal const int DefaultRateLimitingWindowSeconds = 60;
+    internal const int DefaultRateLimitingSegmentsPerWindow = 4;
 
     internal static BehaviorResiliencePolicyCatalog ResolvePolicies(ResilienceSettings settings)
     {
@@ -57,6 +63,13 @@ internal static class BehaviorResiliencePolicyResolver
                 enabled: settings.Bulkhead.Enabled,
                 maxConcurrentExecutions: settings.Bulkhead.MaxConcurrentExecutions,
                 maxQueuedActions: settings.Bulkhead.MaxQueuedActions),
+            rateLimiting: new RateLimitingSelection(
+                enabled: settings.RateLimiting.Enabled,
+                algorithm: settings.RateLimiting.Algorithm,
+                permitLimit: settings.RateLimiting.PermitLimit,
+                queueLimit: settings.RateLimiting.QueueLimit,
+                windowSeconds: settings.RateLimiting.WindowSeconds,
+                segmentsPerWindow: settings.RateLimiting.SegmentsPerWindow),
             behaviorExecutionOverrides: settings.BehaviorExecutionOverrides
                 .Select(static entry => new BehaviorExecutionResilienceOverrideSelection(
                     id: entry.Id,
@@ -82,7 +95,14 @@ internal static class BehaviorResiliencePolicyResolver
                     bulkhead: new BulkheadSelection(
                         enabled: entry.Bulkhead.Enabled,
                         maxConcurrentExecutions: entry.Bulkhead.MaxConcurrentExecutions,
-                        maxQueuedActions: entry.Bulkhead.MaxQueuedActions)))
+                        maxQueuedActions: entry.Bulkhead.MaxQueuedActions),
+                    rateLimiting: new RateLimitingSelection(
+                        enabled: entry.RateLimiting.Enabled,
+                        algorithm: entry.RateLimiting.Algorithm,
+                        permitLimit: entry.RateLimiting.PermitLimit,
+                        queueLimit: entry.RateLimiting.QueueLimit,
+                        windowSeconds: entry.RateLimiting.WindowSeconds,
+                        segmentsPerWindow: entry.RateLimiting.SegmentsPerWindow)))
                 .ToArray());
 
         return ResolvePolicies(selection);
@@ -97,7 +117,14 @@ internal static class BehaviorResiliencePolicyResolver
             retry: selection.Retry,
             timeout: selection.Timeout,
             circuitBreaker: selection.CircuitBreaker,
-            bulkhead: selection.Bulkhead);
+            bulkhead: selection.Bulkhead,
+            rateLimiting: new RateLimitingSelection(
+                enabled: selection.RateLimiting.Enabled,
+                algorithm: selection.RateLimiting.Algorithm,
+                permitLimit: selection.RateLimiting.PermitLimit,
+                queueLimit: selection.RateLimiting.QueueLimit,
+                windowSeconds: selection.RateLimiting.WindowSeconds,
+                segmentsPerWindow: selection.RateLimiting.SegmentsPerWindow));
         var defaultPolicy = ResolveDefaultPolicy(defaultRequested);
         if (defaultPolicy is not null)
         {
@@ -181,7 +208,8 @@ internal static class BehaviorResiliencePolicyResolver
             retry: selection.Retry,
             timeout: selection.Timeout,
             circuitBreaker: selection.CircuitBreaker,
-            bulkhead: selection.Bulkhead);
+            bulkhead: selection.Bulkhead,
+            rateLimiting: selection.RateLimiting);
         var requested = MergeRequested(defaultRequested, explicitRequested);
         var hasRequestedStrategies = HasRequestedStrategies(requested);
         var effective = hasRequestedStrategies
@@ -231,7 +259,8 @@ internal static class BehaviorResiliencePolicyResolver
             retry: retry,
             circuitBreaker: ResolveCircuitBreaker(requested.CircuitBreaker),
             timeout: ResolveTimeout(requested, retry),
-            bulkhead: ResolveBulkhead(requested.Bulkhead));
+            bulkhead: ResolveBulkhead(requested.Bulkhead),
+            rateLimiting: ResolveRateLimiting(requested.RateLimiting));
     }
 
     private static RetrySelection ResolveRetry(RetrySelection settings)
@@ -306,7 +335,8 @@ internal static class BehaviorResiliencePolicyResolver
             retry: MergeRetry(baseline.Retry, overrideSelection.Retry),
             timeout: MergeTimeout(baseline.Timeout, overrideSelection.Timeout),
             circuitBreaker: MergeCircuitBreaker(baseline.CircuitBreaker, overrideSelection.CircuitBreaker),
-            bulkhead: MergeBulkhead(baseline.Bulkhead, overrideSelection.Bulkhead));
+            bulkhead: MergeBulkhead(baseline.Bulkhead, overrideSelection.Bulkhead),
+            rateLimiting: MergeRateLimiting(baseline.RateLimiting, overrideSelection.RateLimiting));
     }
 
     private static TimeoutSelection ResolveTimeout(
@@ -464,6 +494,60 @@ internal static class BehaviorResiliencePolicyResolver
             maxQueuedActions: overrideSelection.MaxQueuedActions ?? baseline.MaxQueuedActions);
     }
 
+    private static RateLimitingSelection ResolveRateLimiting(RateLimitingSelection settings)
+    {
+        ArgumentNullException.ThrowIfNull(settings);
+
+        if (settings.Enabled == false)
+        {
+            return RateLimitingSelection.Empty;
+        }
+
+        if (settings.Enabled != true &&
+            settings.Algorithm is null &&
+            !settings.PermitLimit.HasValue &&
+            !settings.QueueLimit.HasValue &&
+            !settings.WindowSeconds.HasValue &&
+            !settings.SegmentsPerWindow.HasValue)
+        {
+            return RateLimitingSelection.Empty;
+        }
+
+        var algorithm = NormalizeRateLimitingAlgorithm(settings.Algorithm);
+        return new RateLimitingSelection(
+            enabled: true,
+            algorithm: algorithm,
+            permitLimit: settings.PermitLimit ?? DefaultRateLimitingPermitLimit,
+            queueLimit: settings.QueueLimit ?? DefaultRateLimitingQueueLimit,
+            windowSeconds: UsesRateLimitingWindow(algorithm)
+                ? settings.WindowSeconds ?? DefaultRateLimitingWindowSeconds
+                : null,
+            segmentsPerWindow: string.Equals(algorithm, "SlidingWindow", StringComparison.OrdinalIgnoreCase)
+                ? settings.SegmentsPerWindow ?? DefaultRateLimitingSegmentsPerWindow
+                : null);
+    }
+
+    private static RateLimitingSelection MergeRateLimiting(
+        RateLimitingSelection baseline,
+        RateLimitingSelection overrideSelection)
+    {
+        ArgumentNullException.ThrowIfNull(baseline);
+        ArgumentNullException.ThrowIfNull(overrideSelection);
+
+        if (!overrideSelection.HasValues)
+        {
+            return baseline;
+        }
+
+        return new RateLimitingSelection(
+            enabled: overrideSelection.Enabled ?? baseline.Enabled,
+            algorithm: overrideSelection.Algorithm ?? baseline.Algorithm,
+            permitLimit: overrideSelection.PermitLimit ?? baseline.PermitLimit,
+            queueLimit: overrideSelection.QueueLimit ?? baseline.QueueLimit,
+            windowSeconds: overrideSelection.WindowSeconds ?? baseline.WindowSeconds,
+            segmentsPerWindow: overrideSelection.SegmentsPerWindow ?? baseline.SegmentsPerWindow);
+    }
+
     private static Dictionary<string, string> CreateMetadata(
         bool isOverride,
         string? overrideId,
@@ -486,7 +570,8 @@ internal static class BehaviorResiliencePolicyResolver
             ["retryEligibilityMode"] = IsRequested(requested.Retry) ? "behavior-dependent" : "disabled",
             ["timeoutMode"] = effective.Timeout.HasValues ? "enforced" : "disabled",
             ["circuitBreakerMode"] = effective.CircuitBreaker.HasValues ? "enforced" : IsRequested(requested.CircuitBreaker) ? "contract-only" : "disabled",
-            ["bulkheadMode"] = effective.Bulkhead.HasValues ? "enforced" : "disabled"
+            ["bulkheadMode"] = effective.Bulkhead.HasValues ? "enforced" : "disabled",
+            ["rateLimitingMode"] = effective.RateLimiting.HasValues ? "enforced" : IsRequested(requested.RateLimiting) ? "contract-only" : "disabled"
         };
         if (!string.IsNullOrWhiteSpace(overrideId))
         {
@@ -589,6 +674,32 @@ internal static class BehaviorResiliencePolicyResolver
             metadata["maxQueuedActions"] = effective.Bulkhead.MaxQueuedActions.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
         }
 
+        if (!string.IsNullOrWhiteSpace(effective.RateLimiting.Algorithm))
+        {
+            metadata["rateLimitingAlgorithm"] = effective.RateLimiting.Algorithm;
+            metadata["rateLimitingQueueProcessingOrder"] = QueueProcessingOrder.OldestFirst.ToString();
+        }
+
+        if (effective.RateLimiting.PermitLimit.HasValue)
+        {
+            metadata["rateLimitingPermitLimit"] = effective.RateLimiting.PermitLimit.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        if (effective.RateLimiting.QueueLimit.HasValue)
+        {
+            metadata["rateLimitingQueueLimit"] = effective.RateLimiting.QueueLimit.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        if (effective.RateLimiting.WindowSeconds.HasValue)
+        {
+            metadata["rateLimitingWindowSeconds"] = effective.RateLimiting.WindowSeconds.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        if (effective.RateLimiting.SegmentsPerWindow.HasValue)
+        {
+            metadata["rateLimitingSegmentsPerWindow"] = effective.RateLimiting.SegmentsPerWindow.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
+
         return metadata;
     }
 
@@ -615,6 +726,11 @@ internal static class BehaviorResiliencePolicyResolver
         if (selection.Bulkhead.HasValues)
         {
             strategies.Add("bulkhead");
+        }
+
+        if (selection.RateLimiting.HasValues)
+        {
+            strategies.Add("rate-limiting");
         }
 
         return strategies.ToArray();
@@ -645,6 +761,11 @@ internal static class BehaviorResiliencePolicyResolver
             strategies.Add("bulkhead");
         }
 
+        if (IsRequested(selection.RateLimiting))
+        {
+            strategies.Add("rate-limiting");
+        }
+
         return strategies.ToArray();
     }
 
@@ -671,6 +792,11 @@ internal static class BehaviorResiliencePolicyResolver
         if (selection.Bulkhead.HasValues && selection.Bulkhead.Enabled == true)
         {
             strategies.Add("bulkhead");
+        }
+
+        if (selection.RateLimiting.HasValues && selection.RateLimiting.Enabled == true)
+        {
+            strategies.Add("rate-limiting");
         }
 
         return strategies.ToArray();
@@ -749,7 +875,8 @@ internal static class BehaviorResiliencePolicyResolver
         return IsRequested(requested.Retry) ||
             IsRequested(requested.Timeout) ||
             IsRequested(requested.CircuitBreaker) ||
-            IsRequested(requested.Bulkhead);
+            IsRequested(requested.Bulkhead) ||
+            IsRequested(requested.RateLimiting);
     }
 
     private static bool IsRequested(RetrySelection selection)
@@ -771,6 +898,12 @@ internal static class BehaviorResiliencePolicyResolver
     }
 
     private static bool IsRequested(BulkheadSelection selection)
+    {
+        ArgumentNullException.ThrowIfNull(selection);
+        return selection.HasValues && selection.Enabled != false;
+    }
+
+    private static bool IsRequested(RateLimitingSelection selection)
     {
         ArgumentNullException.ThrowIfNull(selection);
         return selection.HasValues && selection.Enabled != false;
@@ -800,6 +933,89 @@ internal static class BehaviorResiliencePolicyResolver
         => string.IsNullOrWhiteSpace(backoff)
             ? string.Empty
             : string.Concat(backoff.Trim().Where(static ch => !char.IsWhiteSpace(ch) && ch != '-' && ch != '_')).ToLowerInvariant();
+
+    private static string NormalizeRateLimitingAlgorithm(string? algorithm)
+    {
+        if (string.IsNullOrWhiteSpace(algorithm))
+        {
+            return DefaultRateLimitingAlgorithm;
+        }
+
+        var trimmed = algorithm.Trim();
+        if (string.Equals(trimmed, "FixedWindow", StringComparison.OrdinalIgnoreCase))
+        {
+            return "FixedWindow";
+        }
+
+        if (string.Equals(trimmed, "SlidingWindow", StringComparison.OrdinalIgnoreCase))
+        {
+            return "SlidingWindow";
+        }
+
+        if (string.Equals(trimmed, "TokenBucket", StringComparison.OrdinalIgnoreCase))
+        {
+            return "TokenBucket";
+        }
+
+        if (string.Equals(trimmed, "ConcurrencyLimiter", StringComparison.OrdinalIgnoreCase))
+        {
+            return "ConcurrencyLimiter";
+        }
+
+        return DefaultRateLimitingAlgorithm;
+    }
+
+    private static bool UsesRateLimitingWindow(string algorithm)
+    {
+        return string.Equals(algorithm, "FixedWindow", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(algorithm, "SlidingWindow", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(algorithm, "TokenBucket", StringComparison.OrdinalIgnoreCase);
+    }
+
+    internal static RateLimiter CreateRateLimiter(RateLimitingSelection settings)
+    {
+        ArgumentNullException.ThrowIfNull(settings);
+
+        var algorithm = NormalizeRateLimitingAlgorithm(settings.Algorithm);
+        var permitLimit = settings.PermitLimit ?? DefaultRateLimitingPermitLimit;
+        var queueLimit = settings.QueueLimit ?? DefaultRateLimitingQueueLimit;
+
+        return algorithm switch
+        {
+            "FixedWindow" => new FixedWindowRateLimiter(new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = permitLimit,
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = queueLimit,
+                Window = TimeSpan.FromSeconds(settings.WindowSeconds ?? DefaultRateLimitingWindowSeconds),
+                AutoReplenishment = true
+            }),
+            "TokenBucket" => new TokenBucketRateLimiter(new TokenBucketRateLimiterOptions
+            {
+                TokenLimit = permitLimit,
+                TokensPerPeriod = permitLimit,
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = queueLimit,
+                ReplenishmentPeriod = TimeSpan.FromSeconds(settings.WindowSeconds ?? DefaultRateLimitingWindowSeconds),
+                AutoReplenishment = true
+            }),
+            "ConcurrencyLimiter" => new ConcurrencyLimiter(new ConcurrencyLimiterOptions
+            {
+                PermitLimit = permitLimit,
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = queueLimit
+            }),
+            _ => new SlidingWindowRateLimiter(new SlidingWindowRateLimiterOptions
+            {
+                PermitLimit = permitLimit,
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = queueLimit,
+                Window = TimeSpan.FromSeconds(settings.WindowSeconds ?? DefaultRateLimitingWindowSeconds),
+                SegmentsPerWindow = settings.SegmentsPerWindow ?? DefaultRateLimitingSegmentsPerWindow,
+                AutoReplenishment = true
+            })
+        };
+    }
 
 }
 
@@ -1022,6 +1238,11 @@ internal sealed record ResolvedBehaviorResiliencePolicy(
         else if (Effective.Timeout.TotalTimeoutSeconds.HasValue)
         {
             builder.AddTimeout(TimeSpan.FromSeconds(Effective.Timeout.TotalTimeoutSeconds.Value));
+        }
+
+        if (Effective.RateLimiting.HasValues && Effective.RateLimiting.Enabled == true)
+        {
+            builder.AddRateLimiter(BehaviorResiliencePolicyResolver.CreateRateLimiter(Effective.RateLimiting));
         }
 
         if (Effective.Bulkhead.HasValues && Effective.Bulkhead.Enabled == true)

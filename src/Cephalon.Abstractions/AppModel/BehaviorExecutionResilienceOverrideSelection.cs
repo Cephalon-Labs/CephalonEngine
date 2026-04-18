@@ -17,6 +17,7 @@ public sealed class BehaviorExecutionResilienceOverrideSelection
     /// <param name="timeout">The timeout override requested for the targeted surface.</param>
     /// <param name="circuitBreaker">The circuit-breaker override requested for the targeted surface.</param>
     /// <param name="bulkhead">The bulkhead override requested for the targeted surface.</param>
+    /// <param name="rateLimiting">The rate-limiting override requested for the targeted surface.</param>
     [JsonConstructor]
     public BehaviorExecutionResilienceOverrideSelection(
         string id,
@@ -25,7 +26,8 @@ public sealed class BehaviorExecutionResilienceOverrideSelection
         RetrySelection? retry = null,
         TimeoutSelection? timeout = null,
         CircuitBreakerSelection? circuitBreaker = null,
-        BulkheadSelection? bulkhead = null)
+        BulkheadSelection? bulkhead = null,
+        RateLimitingSelection? rateLimiting = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
 
@@ -36,6 +38,7 @@ public sealed class BehaviorExecutionResilienceOverrideSelection
         Timeout = timeout ?? TimeoutSelection.Empty;
         CircuitBreaker = circuitBreaker ?? CircuitBreakerSelection.Empty;
         Bulkhead = bulkhead ?? BulkheadSelection.Empty;
+        RateLimiting = rateLimiting ?? RateLimitingSelection.Empty;
     }
 
     /// <summary>
@@ -74,6 +77,11 @@ public sealed class BehaviorExecutionResilienceOverrideSelection
     public BulkheadSelection Bulkhead { get; }
 
     /// <summary>
+    /// Gets the rate-limiting override requested for the targeted surface.
+    /// </summary>
+    public RateLimitingSelection RateLimiting { get; }
+
+    /// <summary>
     /// Gets a value indicating whether any override values were explicitly supplied.
     /// </summary>
     public bool HasValues =>
@@ -88,7 +96,8 @@ public sealed class BehaviorExecutionResilienceOverrideSelection
         Retry.HasValues ||
         Timeout.HasValues ||
         CircuitBreaker.HasValues ||
-        Bulkhead.HasValues;
+        Bulkhead.HasValues ||
+        RateLimiting.HasValues;
 
     private static string[] NormalizeList(IReadOnlyList<string>? values)
     {

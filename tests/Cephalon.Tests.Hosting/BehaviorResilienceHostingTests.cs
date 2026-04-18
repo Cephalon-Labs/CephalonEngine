@@ -36,6 +36,12 @@ public sealed class BehaviorResilienceHostingTests
         builder.Configuration[$"{EngineSettings.SectionName}:Resilience:Bulkhead:Enabled"] = "true";
         builder.Configuration[$"{EngineSettings.SectionName}:Resilience:Bulkhead:MaxConcurrentExecutions"] = "4";
         builder.Configuration[$"{EngineSettings.SectionName}:Resilience:Bulkhead:MaxQueuedActions"] = "2";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:Enabled"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:Algorithm"] = "SlidingWindow";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:PermitLimit"] = "7";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:QueueLimit"] = "3";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:WindowSeconds"] = "40";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:SegmentsPerWindow"] = "5";
         builder.AddCephalon(engine =>
         {
             engine.AddBehaviors(
@@ -79,6 +85,12 @@ public sealed class BehaviorResilienceHostingTests
         Assert.True(policy.Effective.Bulkhead.Enabled);
         Assert.Equal(4, policy.Effective.Bulkhead.MaxConcurrentExecutions);
         Assert.Equal(2, policy.Effective.Bulkhead.MaxQueuedActions);
+        Assert.True(policy.Effective.RateLimiting.Enabled);
+        Assert.Equal("SlidingWindow", policy.Effective.RateLimiting.Algorithm);
+        Assert.Equal(7, policy.Effective.RateLimiting.PermitLimit);
+        Assert.Equal(3, policy.Effective.RateLimiting.QueueLimit);
+        Assert.Equal(40, policy.Effective.RateLimiting.WindowSeconds);
+        Assert.Equal(5, policy.Effective.RateLimiting.SegmentsPerWindow);
         Assert.Equal("enforced", policy.Metadata["retryMode"]);
         Assert.Equal("behavior-dependent", policy.Metadata["retryEligibilityMode"]);
         Assert.Equal("3", policy.Metadata["retryMaxAttempts"]);
@@ -87,7 +99,13 @@ public sealed class BehaviorResilienceHostingTests
         Assert.Equal("50", policy.Metadata["retryMaxDelayMilliseconds"]);
         Assert.Equal("false", policy.Metadata["retryUseJitter"]);
         Assert.Equal("enforced", policy.Metadata["circuitBreakerMode"]);
-        Assert.Equal("retry,timeout,circuit-breaker,bulkhead", policy.Metadata["effectiveStrategies"]);
+        Assert.Equal("enforced", policy.Metadata["rateLimitingMode"]);
+        Assert.Equal("SlidingWindow", policy.Metadata["rateLimitingAlgorithm"]);
+        Assert.Equal("7", policy.Metadata["rateLimitingPermitLimit"]);
+        Assert.Equal("3", policy.Metadata["rateLimitingQueueLimit"]);
+        Assert.Equal("40", policy.Metadata["rateLimitingWindowSeconds"]);
+        Assert.Equal("5", policy.Metadata["rateLimitingSegmentsPerWindow"]);
+        Assert.Equal("retry,timeout,circuit-breaker,bulkhead,rate-limiting", policy.Metadata["effectiveStrategies"]);
 
         Assert.NotNull(snapshot);
         var snapshotPolicy = Assert.Single(snapshot!.BehaviorResiliencePolicies);
@@ -96,6 +114,7 @@ public sealed class BehaviorResilienceHostingTests
         Assert.Equal(policy.Effective.Retry.MaxAttempts, snapshotPolicy.Effective.Retry.MaxAttempts);
         Assert.Equal(policy.Effective.Timeout.TotalTimeoutSeconds, snapshotPolicy.Effective.Timeout.TotalTimeoutSeconds);
         Assert.Equal(policy.Effective.Timeout.AttemptTimeoutSeconds, snapshotPolicy.Effective.Timeout.AttemptTimeoutSeconds);
+        Assert.Equal(policy.Effective.RateLimiting.PermitLimit, snapshotPolicy.Effective.RateLimiting.PermitLimit);
         Assert.Equal("enforced", snapshotPolicy.Metadata["retryMode"]);
         Assert.Equal("behavior-dependent", snapshotPolicy.Metadata["retryEligibilityMode"]);
     }

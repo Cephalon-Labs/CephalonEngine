@@ -17,6 +17,7 @@ public sealed class BehaviorExecutionResilienceOverrideSettings
     /// <param name="timeout">The timeout override requested for the targeted surface.</param>
     /// <param name="circuitBreaker">The circuit-breaker override requested for the targeted surface.</param>
     /// <param name="bulkhead">The bulkhead override requested for the targeted surface.</param>
+    /// <param name="rateLimiting">The rate-limiting override requested for the targeted surface.</param>
     public BehaviorExecutionResilienceOverrideSettings(
         string id,
         IReadOnlyList<string>? behaviorIds = null,
@@ -24,7 +25,8 @@ public sealed class BehaviorExecutionResilienceOverrideSettings
         RetrySettings? retry = null,
         TimeoutSettings? timeout = null,
         CircuitBreakerSettings? circuitBreaker = null,
-        BulkheadSettings? bulkhead = null)
+        BulkheadSettings? bulkhead = null,
+        RateLimitingSettings? rateLimiting = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
 
@@ -35,6 +37,7 @@ public sealed class BehaviorExecutionResilienceOverrideSettings
         Timeout = timeout ?? TimeoutSettings.Empty;
         CircuitBreaker = circuitBreaker ?? CircuitBreakerSettings.Empty;
         Bulkhead = bulkhead ?? BulkheadSettings.Empty;
+        RateLimiting = rateLimiting ?? RateLimitingSettings.Empty;
     }
 
     /// <summary>
@@ -73,6 +76,11 @@ public sealed class BehaviorExecutionResilienceOverrideSettings
     public BulkheadSettings Bulkhead { get; }
 
     /// <summary>
+    /// Gets the rate-limiting override requested for the targeted surface.
+    /// </summary>
+    public RateLimitingSettings RateLimiting { get; }
+
+    /// <summary>
     /// Gets a value indicating whether any override settings were explicitly supplied.
     /// </summary>
     public bool HasValues =>
@@ -87,7 +95,8 @@ public sealed class BehaviorExecutionResilienceOverrideSettings
         Retry.HasValues ||
         Timeout.HasValues ||
         CircuitBreaker.HasValues ||
-        Bulkhead.HasValues;
+        Bulkhead.HasValues ||
+        RateLimiting.HasValues;
 
     internal static IReadOnlyList<BehaviorExecutionResilienceOverrideSettings> FromSection(IConfiguration section)
     {
@@ -101,7 +110,8 @@ public sealed class BehaviorExecutionResilienceOverrideSettings
                 retry: RetrySettings.FromSection(child.GetSection("Retry")),
                 timeout: TimeoutSettings.FromSection(child.GetSection("Timeout")),
                 circuitBreaker: CircuitBreakerSettings.FromSection(child.GetSection("CircuitBreaker")),
-                bulkhead: BulkheadSettings.FromSection(child.GetSection("Bulkhead"))))
+                bulkhead: BulkheadSettings.FromSection(child.GetSection("Bulkhead")),
+                rateLimiting: RateLimitingSettings.FromSection(child.GetSection("RateLimiting"))))
             .ToArray();
     }
 

@@ -2191,6 +2191,20 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void BehaviorExecutionResilienceSelectionContractsExposeRateLimiting()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Resilience.BehaviorExecutionResilienceSelection)
+            .GetProperty("RateLimiting", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void BehaviorExecutionResilienceOverrideSelectionContractsExposeRateLimiting()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.AppModel.BehaviorExecutionResilienceOverrideSelection)
+            .GetProperty("RateLimiting", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
     public void BehaviorsPatternsAssemblyExposesOnlyTheDocumentedContractSurface()
     {
         AssertExportedTypes(

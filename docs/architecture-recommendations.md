@@ -35,18 +35,18 @@ Implementation outline:
 
 Effort: medium.
 
-### Retry with Backoff, Timeout, and Bulkhead (resilience suite)
+### Retry, Timeout, Circuit Breaker, Bulkhead, and Behavior Rate Limiting (resilience suite)
 
-Current state: the contract-first baseline is now shipped through `Engine:Resilience` with `Retry`, `Timeout`, `CircuitBreaker`, and `Bulkhead` selections plus operator-facing introspection, and the current behavior-pipeline follow-through now enforces shared execution retry, timeout, circuit-breaker, and bulkhead policies through `Cephalon.Behaviors`, `/engine/behavior-resilience`, and `snapshot.BehaviorResiliencePolicies`. `Engine:Resilience:BehaviorExecution:Overrides` now adds behavior- and transport-scoped override resolution with precedence `behavior+transport > behavior > transport > default`, including explicit disable answers that suppress inherited retry, timeout, circuit-breaker, or bulkhead behavior for a narrower surface. The behavior contract layer now also exposes `BehaviorIdempotencyAttribute` plus `BehaviorIdempotencyMode`, the default classifier distinguishes retry-eligible transient failures only for explicitly idempotent behaviors, and `IBehaviorResilienceRuntimeCatalog.Resolve(...)` now surfaces behavior-specific retry-eligibility metadata plus effective retry settings. Automatic replay remains intentionally gated by that explicit idempotency contract instead of being inferred from transports or CQRS naming.
+Current state: the contract-first baseline is now shipped through `Engine:Resilience` with `Retry`, `Timeout`, `CircuitBreaker`, `Bulkhead`, and `RateLimiting` selections plus operator-facing introspection, and the current behavior-pipeline follow-through now enforces shared execution retry, timeout, circuit-breaker, bulkhead, and rate-limiting policies through `Cephalon.Behaviors`, `/engine/behavior-resilience`, and `snapshot.BehaviorResiliencePolicies`. `Engine:Resilience:BehaviorExecution:Overrides` now adds behavior- and transport-scoped override resolution with precedence `behavior+transport > behavior > transport > default`, including explicit disable answers that suppress inherited retry, timeout, circuit-breaker, bulkhead, or behavior-execution rate limiting for a narrower surface. The behavior contract layer now also exposes `BehaviorIdempotencyAttribute` plus `BehaviorIdempotencyMode`, the default classifier distinguishes retry-eligible transient failures only for explicitly idempotent behaviors, and `IBehaviorResilienceRuntimeCatalog.Resolve(...)` now surfaces behavior-specific retry-eligibility metadata plus effective retry settings. Automatic replay remains intentionally gated by that explicit idempotency contract instead of being inferred from transports or CQRS naming.
 
-Recommendation: keep the shared `Microsoft.Extensions.Resilience` baseline in `Cephalon.Behaviors`, treat behavior-authored idempotency as the retry gate, and add automatic retry execution only on top of that explicit contract instead of inferring replay safety from transports or CQRS naming.
+Recommendation: keep ASP.NET Core middleware as the truthful baseline for public HTTP protection, keep the shared `Microsoft.Extensions.Resilience` baseline in `Cephalon.Behaviors` for cross-transport execution retry/timeout/circuit-breaker/bulkhead/rate-limiting behavior, treat behavior-authored idempotency as the retry gate, and use endpoint-scoped ASP.NET Core rate-limiting overrides when a REST route needs behavior-owned `429` semantics to surface instead of the host limiter.
 
 Implementation outline:
 - Keep `BehaviorIdempotencyAttribute` / `BehaviorIdempotencyMode` as the explicit replay-safety contract for behavior authors
 - Keep `IBehaviorResilienceExceptionClassifier` as the host-agnostic retry/circuit-breaker decision seam
 - Keep automatic retry execution in the shared `Cephalon.Behaviors` pipeline only when the effective behavior policy requests retry and the classifier reports a retryable transient fault for an explicitly idempotent behavior
 - Per-behavior and per-transport resilience configuration through `Engine:Resilience:BehaviorExecution:Overrides`
-- Capabilities: `resilience.retry`, `resilience.timeout`, `resilience.circuit-breaker`, `resilience.bulkhead`
+- Capabilities: `resilience.retry`, `resilience.timeout`, `resilience.circuit-breaker`, `resilience.bulkhead`, `resilience.rate-limiting`
 
 Effort: medium.
 
@@ -63,13 +63,10 @@ stream and connection surfaces through fields such as `transportKind`, `transpor
 `enforcementMoment`, so GraphQL-SSE, GraphQL-WS, SSE, and WebSocket policies no longer collapse
 into one generic endpoint label.
 
-Recommendation: keep ASP.NET Core middleware as the truthful baseline for public HTTP protection, and
-add finer per-behavior or transport-native override models on top of that surface instead of jumping
-straight to a generic resilience runtime catalog or a behavior pipeline that does not exist yet.
+Recommendation: keep ASP.NET Core middleware as the truthful baseline for public HTTP protection, keep the shared behavior-dispatch pipeline as the truthful non-host follow-through for cross-transport execution limits, and coordinate the two through endpoint-scoped overrides so REST routes can intentionally expose either the host-owned or behavior-owned `429` answer without lying in runtime catalogs or OpenAPI.
 
 Remaining follow-through:
-- Broader non-route or non-ASP.NET Core transport semantics beyond the current ASP.NET Core route-mapped HTTP, stream, and connection baseline
-- Coordination between ASP.NET Core rate limiting and the new behavior-execution timeout/bulkhead middleware
+- Broader non-route or non-ASP.NET Core transport semantics beyond the current ASP.NET Core public-HTTP plus shared behavior-dispatch baseline
 - Capability: `resilience.rate-limiting`
 
 Effort: medium for the remaining non-baseline work.
