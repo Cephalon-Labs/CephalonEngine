@@ -9,7 +9,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Polly.CircuitBreaker;
 using Polly.RateLimiting;
+using Polly.Timeout;
 
 namespace Cephalon.Behaviors.Http.Bindings;
 
@@ -75,6 +77,25 @@ public sealed class GraphqlSseBehaviorBinding : IHttpBehaviorBinding
                     var json = JsonSerializer.Serialize(new { data = result });
                     var nextEvent = $"event: next\ndata: {json}\n\n";
                     await ctx.Response.WriteAsync(nextEvent, Encoding.UTF8, ctx.RequestAborted).ConfigureAwait(false);
+                }
+                catch (TimeoutRejectedException)
+                {
+                    var errorJson = JsonSerializer.Serialize(
+                        BehaviorTransportResilienceMapper.CreateGraphqlErrorResponse(
+                            BehaviorTransportResilienceMapper.CreateTimeoutFault()));
+                    var errorEvent = $"event: next\ndata: {errorJson}\n\n";
+                    await ctx.Response.WriteAsync(errorEvent, Encoding.UTF8, ctx.RequestAborted).ConfigureAwait(false);
+                }
+                catch (BrokenCircuitException)
+                {
+                    var errorJson = JsonSerializer.Serialize(
+                        BehaviorTransportResilienceMapper.CreateGraphqlErrorResponse(
+                            BehaviorTransportResilienceMapper.CreateCircuitBreakerFault(
+                                ctx.RequestServices,
+                                descriptor.Id,
+                                TransportId)));
+                    var errorEvent = $"event: next\ndata: {errorJson}\n\n";
+                    await ctx.Response.WriteAsync(errorEvent, Encoding.UTF8, ctx.RequestAborted).ConfigureAwait(false);
                 }
                 catch (RateLimiterRejectedException ex)
                 {

@@ -7,6 +7,7 @@ namespace Cephalon.Behaviors.Http.Hosting;
 internal static class BehaviorTransportResilienceMapper
 {
     internal const int JsonRpcTooManyRequestsCode = -32029;
+    internal const int JsonRpcServiceUnavailableCode = -32053;
 
     public static BehaviorTransportFaultDescriptor CreateRateLimitingFault(
         IServiceProvider services,
@@ -24,6 +25,31 @@ internal static class BehaviorTransportResilienceMapper
             rejection.Code,
             StatusCodes.Status429TooManyRequests,
             ResolveRetryAfterSeconds(retryAfter));
+    }
+
+    public static BehaviorTransportFaultDescriptor CreateTimeoutFault()
+    {
+        return new BehaviorTransportFaultDescriptor(
+            "The request exceeded the configured Cephalon behavior execution timeout.",
+            "behavior_execution_timeout",
+            StatusCodes.Status503ServiceUnavailable,
+            RetryAfterSeconds: null);
+    }
+
+    public static BehaviorTransportFaultDescriptor CreateCircuitBreakerFault(
+        IServiceProvider services,
+        string behaviorId,
+        string transportId)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(transportId);
+
+        return new BehaviorTransportFaultDescriptor(
+            "The request was rejected because the configured Cephalon behavior circuit breaker is open.",
+            "behavior_execution_circuit_breaker_open",
+            StatusCodes.Status503ServiceUnavailable,
+            ResolveCircuitRetryAfterSeconds(services, behaviorId, transportId));
     }
 
     public static object CreateGraphqlErrorResponse(BehaviorTransportFaultDescriptor fault)
@@ -64,6 +90,38 @@ internal static class BehaviorTransportResilienceMapper
 
     public static (int Code, string Message, string? Data) CreateJsonRpcRateLimitingError(
         BehaviorTransportFaultDescriptor fault)
+        => CreateJsonRpcError(JsonRpcTooManyRequestsCode, "Too many requests", fault);
+
+    public static (int Code, string Message, string? Data) CreateJsonRpcServiceUnavailableError(
+        BehaviorTransportFaultDescriptor fault)
+        => CreateJsonRpcError(JsonRpcServiceUnavailableCode, "Service unavailable", fault);
+
+    public static int? ResolveCircuitRetryAfterSeconds(
+        IServiceProvider services,
+        string behaviorId,
+        string transportId)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(transportId);
+
+        var behaviorResilienceCatalog = services.GetService(typeof(IBehaviorResilienceRuntimeCatalog))
+            as IBehaviorResilienceRuntimeCatalog;
+        var policy = behaviorResilienceCatalog?.Resolve(behaviorId, transportId);
+        if (policy?.Metadata.TryGetValue("circuitRetryAfterSeconds", out var rawRetryAfterSeconds) != true)
+        {
+            return null;
+        }
+
+        return int.TryParse(rawRetryAfterSeconds, out var retryAfterSeconds)
+            ? retryAfterSeconds
+            : null;
+    }
+
+    private static (int Code, string Message, string? Data) CreateJsonRpcError(
+        int code,
+        string message,
+        BehaviorTransportFaultDescriptor fault)
     {
         ArgumentNullException.ThrowIfNull(fault);
 
@@ -71,7 +129,7 @@ internal static class BehaviorTransportResilienceMapper
             ? $"{fault.Code}: {fault.Message} Retry after {fault.RetryAfterSeconds.Value} seconds."
             : $"{fault.Code}: {fault.Message}";
 
-        return (JsonRpcTooManyRequestsCode, "Too many requests", data);
+        return (code, message, data);
     }
 
     public static int? ResolveRetryAfterSeconds(TimeSpan? retryAfter)

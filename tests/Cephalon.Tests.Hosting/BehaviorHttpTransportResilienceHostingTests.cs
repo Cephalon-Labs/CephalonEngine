@@ -16,7 +16,10 @@ namespace Cephalon.Tests.Hosting;
 
 public sealed class BehaviorHttpTransportResilienceHostingTests
 {
-    private const string BehaviorId = "tests.rate-limited";
+    private const string CircuitBreakerBehaviorId = "tests.circuit-breaker";
+    private const string RateLimitedBehaviorId = "tests.rate-limited";
+    private const int JsonRpcServiceUnavailableCode = -32053;
+    private const string TimeoutBehaviorId = "tests.timeout";
 
     [Fact]
     public async Task BehaviorHttpGraphQlReturnsProtocolRateLimitingEnvelopeWhenHostLimiterOverrideDisablesEndpointPolicy()
@@ -233,7 +236,7 @@ public sealed class BehaviorHttpTransportResilienceHostingTests
         builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:PermitLimit"] = "1";
         builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:QueueLimit"] = "0";
         builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:WindowSeconds"] = "60";
-        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:Overrides:behavior-http-pass-through:Behaviors:0"] = BehaviorId;
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:Overrides:behavior-http-pass-through:Behaviors:0"] = RateLimitedBehaviorId;
         builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:Overrides:behavior-http-pass-through:Transports:0"] = transportId;
         builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:Overrides:behavior-http-pass-through:Enabled"] = "false";
         builder.AddCephalon(engine =>
@@ -242,6 +245,89 @@ public sealed class BehaviorHttpTransportResilienceHostingTests
             {
                 behaviors.AddHttpBehaviorBindings();
                 behaviors.Register<RateLimitedBehavior>(topology =>
+                {
+                    topology.AsDirect();
+                    ConfigureTransport(topology, transportId);
+                });
+            });
+        });
+
+        var app = builder.Build();
+        app.MapCephalon();
+        await app.StartAsync();
+        return app;
+    }
+
+    [Theory]
+    [InlineData("http.graphql")]
+    [InlineData("http.jsonrpc")]
+    [InlineData("http.graphql-sse")]
+    [InlineData("http.graphql-ws")]
+    [InlineData("http.sse")]
+    [InlineData("http.ws")]
+    public async Task BehaviorHttpTransportsReturnProtocolTimeoutEnvelopeWhenBehaviorExecutionTimeoutApplies(string transportId)
+    {
+        await AssertTimeoutTransportEnvelopeAsync(transportId);
+    }
+
+    [Theory]
+    [InlineData("http.graphql")]
+    [InlineData("http.jsonrpc")]
+    [InlineData("http.graphql-sse")]
+    [InlineData("http.graphql-ws")]
+    [InlineData("http.sse")]
+    [InlineData("http.ws")]
+    public async Task BehaviorHttpTransportsReturnProtocolCircuitBreakerEnvelopeWhenBehaviorExecutionCircuitBreakerOpens(string transportId)
+    {
+        await AssertCircuitBreakerTransportEnvelopeAsync(transportId);
+    }
+
+    private static async Task<WebApplication> BuildTimeoutBehaviorHttpAppAsync(string transportId)
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "BehaviorHttp";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:Timeout:Enabled"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:Timeout:TotalTimeoutSeconds"] = "1";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+                behaviors.Register<TimeoutBehavior>(topology =>
+                {
+                    topology.AsDirect();
+                    ConfigureTransport(topology, transportId);
+                });
+            });
+        });
+
+        var app = builder.Build();
+        app.MapCephalon();
+        await app.StartAsync();
+        return app;
+    }
+
+    private static async Task<WebApplication> BuildCircuitBreakerBehaviorHttpAppAsync(string transportId)
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "BehaviorHttp";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:Timeout:Enabled"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:Timeout:TotalTimeoutSeconds"] = "1";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:CircuitBreaker:Enabled"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:CircuitBreaker:FailureRatio"] = "0.5";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:CircuitBreaker:MinimumThroughput"] = "2";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:CircuitBreaker:SamplingDurationSeconds"] = "30";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:CircuitBreaker:BreakDurationSeconds"] = "20";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+                behaviors.Register<CircuitBreakerBehavior>(topology =>
                 {
                     topology.AsDirect();
                     ConfigureTransport(topology, transportId);
@@ -285,6 +371,295 @@ public sealed class BehaviorHttpTransportResilienceHostingTests
         }
     }
 
+    private static async Task AssertTimeoutTransportEnvelopeAsync(string transportId)
+    {
+        switch (transportId)
+        {
+            case "http.graphql":
+            {
+                await using var app = await BuildTimeoutBehaviorHttpAppAsync(transportId);
+                var client = app.GetTestClient();
+
+                var response = await client.PostAsJsonAsync("/graphql/v1/tests/timeout", CreateGraphqlRequest("alpha"));
+                var payload = await response.Content.ReadFromJsonAsync<JsonElement>();
+
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                AssertGraphqlError(
+                    Assert.Single(payload.GetProperty("errors").EnumerateArray()),
+                    "behavior_execution_timeout",
+                    503,
+                    "timeout");
+                break;
+            }
+            case "http.jsonrpc":
+            {
+                await using var app = await BuildTimeoutBehaviorHttpAppAsync(transportId);
+                var client = app.GetTestClient();
+
+                var response = await client.PostAsJsonAsync(
+                    "/json-rpc/v1/tests/timeout",
+                    CreateJsonRpcRequest("req-1", "alpha"));
+                var payload = await response.Content.ReadFromJsonAsync<JsonElement>();
+
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                AssertJsonRpcServiceUnavailable(
+                    payload,
+                    "behavior_execution_timeout",
+                    "timeout",
+                    expectRetryAfter: false);
+                break;
+            }
+            case "http.graphql-sse":
+            {
+                await using var app = await BuildTimeoutBehaviorHttpAppAsync(transportId);
+                var client = app.GetTestClient();
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
+                using var request = new HttpRequestMessage(HttpMethod.Post, "/graphql-sse/v1/tests/timeout");
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("text/event-stream"));
+                request.Content = JsonContent.Create(CreateGraphqlRequest("alpha"));
+                using var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cts.Token);
+                var message = await ReadSseMessageAsync(response, cts.Token);
+                using var payload = JsonDocument.Parse(message.Data);
+
+                Assert.Equal("text/event-stream", response.Content.Headers.ContentType?.MediaType);
+                Assert.Equal("next", message.EventName);
+                AssertGraphqlError(
+                    Assert.Single(payload.RootElement.GetProperty("errors").EnumerateArray()),
+                    "behavior_execution_timeout",
+                    503,
+                    "timeout");
+                break;
+            }
+            case "http.graphql-ws":
+            {
+                await using var app = await BuildTimeoutBehaviorHttpAppAsync(transportId);
+                var webSocketClient = app.GetTestServer().CreateWebSocketClient();
+                webSocketClient.SubProtocols.Add("graphql-transport-ws");
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+                using var socket = await webSocketClient.ConnectAsync(
+                    new Uri("ws://localhost/graphql-ws/v1/tests/timeout"),
+                    cts.Token);
+
+                await InitializeGraphqlWebSocketAsync(socket, cts.Token);
+                await SendWebSocketJsonAsync(
+                    socket,
+                    new
+                    {
+                        id = "req-1",
+                        type = "subscribe",
+                        payload = CreateGraphqlRequest("alpha")
+                    },
+                    cts.Token);
+                var message = await ReceiveWebSocketMessageMatchingAsync(
+                    socket,
+                    text => text.Contains("\"type\":\"error\"", StringComparison.Ordinal) &&
+                        text.Contains("\"id\":\"req-1\"", StringComparison.Ordinal),
+                    cts.Token);
+                using var payload = JsonDocument.Parse(message);
+
+                AssertGraphqlError(
+                    Assert.Single(payload.RootElement.GetProperty("payload").EnumerateArray()),
+                    "behavior_execution_timeout",
+                    503,
+                    "timeout");
+                break;
+            }
+            case "http.sse":
+            {
+                await using var app = await BuildTimeoutBehaviorHttpAppAsync(transportId);
+                var client = app.GetTestClient();
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
+                using var request = new HttpRequestMessage(HttpMethod.Get, "/sse/v1/tests/timeout?value=alpha");
+                using var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cts.Token);
+                var message = await ReadSseMessageAsync(response, cts.Token);
+                using var payload = JsonDocument.Parse(message.Data);
+
+                Assert.Equal("text/event-stream", response.Content.Headers.ContentType?.MediaType);
+                Assert.Equal("error", message.EventName);
+                AssertStreamingError(payload.RootElement, "behavior_execution_timeout", 503, "timeout");
+                break;
+            }
+            case "http.ws":
+            {
+                await using var app = await BuildTimeoutBehaviorHttpAppAsync(transportId);
+                var webSocketClient = app.GetTestServer().CreateWebSocketClient();
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+                using var socket = await webSocketClient.ConnectAsync(
+                    new Uri("ws://localhost/ws/v1/tests/timeout"),
+                    cts.Token);
+
+                await SendWebSocketJsonAsync(socket, new { value = "alpha" }, cts.Token);
+                var message = await ReceiveWebSocketTextAsync(socket, cts.Token);
+                using var payload = JsonDocument.Parse(message);
+
+                AssertStreamingError(payload.RootElement, "behavior_execution_timeout", 503, "timeout");
+                break;
+            }
+            default:
+                throw new InvalidOperationException($"Unsupported behavior HTTP transport '{transportId}'.");
+        }
+    }
+
+    private static async Task AssertCircuitBreakerTransportEnvelopeAsync(string transportId)
+    {
+        switch (transportId)
+        {
+            case "http.graphql":
+            {
+                await using var app = await BuildCircuitBreakerBehaviorHttpAppAsync(transportId);
+                var client = app.GetTestClient();
+
+                var firstPayload = await PostGraphqlAsync(client, "/graphql/v1/tests/circuit-breaker", "alpha");
+                var secondPayload = await PostGraphqlAsync(client, "/graphql/v1/tests/circuit-breaker", "beta");
+                var openCircuitPayload = await PostGraphqlAsync(client, "/graphql/v1/tests/circuit-breaker", "gamma");
+
+                AssertGraphqlError(
+                    Assert.Single(firstPayload.GetProperty("errors").EnumerateArray()),
+                    "behavior_execution_timeout",
+                    503,
+                    "timeout");
+                AssertGraphqlError(
+                    Assert.Single(secondPayload.GetProperty("errors").EnumerateArray()),
+                    "behavior_execution_timeout",
+                    503,
+                    "timeout");
+                AssertGraphqlError(
+                    Assert.Single(openCircuitPayload.GetProperty("errors").EnumerateArray()),
+                    "behavior_execution_circuit_breaker_open",
+                    503,
+                    "circuit breaker",
+                    expectRetryAfter: true);
+                break;
+            }
+            case "http.jsonrpc":
+            {
+                await using var app = await BuildCircuitBreakerBehaviorHttpAppAsync(transportId);
+                var client = app.GetTestClient();
+
+                var firstPayload = await PostJsonRpcAsync(client, "/json-rpc/v1/tests/circuit-breaker", "req-1", "alpha");
+                var secondPayload = await PostJsonRpcAsync(client, "/json-rpc/v1/tests/circuit-breaker", "req-2", "beta");
+                var openCircuitPayload = await PostJsonRpcAsync(client, "/json-rpc/v1/tests/circuit-breaker", "req-3", "gamma");
+
+                AssertJsonRpcServiceUnavailable(firstPayload, "behavior_execution_timeout", "timeout", expectRetryAfter: false);
+                AssertJsonRpcServiceUnavailable(secondPayload, "behavior_execution_timeout", "timeout", expectRetryAfter: false);
+                AssertJsonRpcServiceUnavailable(
+                    openCircuitPayload,
+                    "behavior_execution_circuit_breaker_open",
+                    "circuit breaker",
+                    expectRetryAfter: true);
+                break;
+            }
+            case "http.graphql-sse":
+            {
+                await using var app = await BuildCircuitBreakerBehaviorHttpAppAsync(transportId);
+                var client = app.GetTestClient();
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
+                using var firstPayload = await PostGraphqlSseAsync(client, "/graphql-sse/v1/tests/circuit-breaker", "alpha", cts.Token);
+                using var secondPayload = await PostGraphqlSseAsync(client, "/graphql-sse/v1/tests/circuit-breaker", "beta", cts.Token);
+                using var openCircuitPayload = await PostGraphqlSseAsync(client, "/graphql-sse/v1/tests/circuit-breaker", "gamma", cts.Token);
+
+                AssertGraphqlError(
+                    Assert.Single(firstPayload.RootElement.GetProperty("errors").EnumerateArray()),
+                    "behavior_execution_timeout",
+                    503,
+                    "timeout");
+                AssertGraphqlError(
+                    Assert.Single(secondPayload.RootElement.GetProperty("errors").EnumerateArray()),
+                    "behavior_execution_timeout",
+                    503,
+                    "timeout");
+                AssertGraphqlError(
+                    Assert.Single(openCircuitPayload.RootElement.GetProperty("errors").EnumerateArray()),
+                    "behavior_execution_circuit_breaker_open",
+                    503,
+                    "circuit breaker",
+                    expectRetryAfter: true);
+                break;
+            }
+            case "http.graphql-ws":
+            {
+                await using var app = await BuildCircuitBreakerBehaviorHttpAppAsync(transportId);
+                var webSocketClient = app.GetTestServer().CreateWebSocketClient();
+                webSocketClient.SubProtocols.Add("graphql-transport-ws");
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+                using var socket = await webSocketClient.ConnectAsync(
+                    new Uri("ws://localhost/graphql-ws/v1/tests/circuit-breaker"),
+                    cts.Token);
+
+                await InitializeGraphqlWebSocketAsync(socket, cts.Token);
+                using var firstPayload = await SubscribeGraphqlWsErrorAsync(socket, "req-1", "alpha", cts.Token);
+                using var secondPayload = await SubscribeGraphqlWsErrorAsync(socket, "req-2", "beta", cts.Token);
+                using var openCircuitPayload = await SubscribeGraphqlWsErrorAsync(socket, "req-3", "gamma", cts.Token);
+
+                AssertGraphqlError(
+                    Assert.Single(firstPayload.RootElement.GetProperty("payload").EnumerateArray()),
+                    "behavior_execution_timeout",
+                    503,
+                    "timeout");
+                AssertGraphqlError(
+                    Assert.Single(secondPayload.RootElement.GetProperty("payload").EnumerateArray()),
+                    "behavior_execution_timeout",
+                    503,
+                    "timeout");
+                AssertGraphqlError(
+                    Assert.Single(openCircuitPayload.RootElement.GetProperty("payload").EnumerateArray()),
+                    "behavior_execution_circuit_breaker_open",
+                    503,
+                    "circuit breaker",
+                    expectRetryAfter: true);
+                break;
+            }
+            case "http.sse":
+            {
+                await using var app = await BuildCircuitBreakerBehaviorHttpAppAsync(transportId);
+                var client = app.GetTestClient();
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
+                using var firstPayload = await GetStreamingErrorAsync(client, "/sse/v1/tests/circuit-breaker?value=alpha", cts.Token);
+                using var secondPayload = await GetStreamingErrorAsync(client, "/sse/v1/tests/circuit-breaker?value=beta", cts.Token);
+                using var openCircuitPayload = await GetStreamingErrorAsync(client, "/sse/v1/tests/circuit-breaker?value=gamma", cts.Token);
+
+                AssertStreamingError(firstPayload.RootElement, "behavior_execution_timeout", 503, "timeout");
+                AssertStreamingError(secondPayload.RootElement, "behavior_execution_timeout", 503, "timeout");
+                AssertStreamingError(
+                    openCircuitPayload.RootElement,
+                    "behavior_execution_circuit_breaker_open",
+                    503,
+                    "circuit breaker",
+                    expectRetryAfter: true);
+                break;
+            }
+            case "http.ws":
+            {
+                await using var app = await BuildCircuitBreakerBehaviorHttpAppAsync(transportId);
+                var webSocketClient = app.GetTestServer().CreateWebSocketClient();
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+                using var socket = await webSocketClient.ConnectAsync(
+                    new Uri("ws://localhost/ws/v1/tests/circuit-breaker"),
+                    cts.Token);
+
+                using var firstPayload = await SendWebSocketRequestAndReadJsonAsync(socket, "alpha", cts.Token);
+                using var secondPayload = await SendWebSocketRequestAndReadJsonAsync(socket, "beta", cts.Token);
+                using var openCircuitPayload = await SendWebSocketRequestAndReadJsonAsync(socket, "gamma", cts.Token);
+
+                AssertStreamingError(firstPayload.RootElement, "behavior_execution_timeout", 503, "timeout");
+                AssertStreamingError(secondPayload.RootElement, "behavior_execution_timeout", 503, "timeout");
+                AssertStreamingError(
+                    openCircuitPayload.RootElement,
+                    "behavior_execution_circuit_breaker_open",
+                    503,
+                    "circuit breaker",
+                    expectRetryAfter: true);
+                break;
+            }
+            default:
+                throw new InvalidOperationException($"Unsupported behavior HTTP transport '{transportId}'.");
+        }
+    }
+
     private static object CreateGraphqlRequest(string value)
     {
         return new
@@ -295,6 +670,164 @@ public sealed class BehaviorHttpTransportResilienceHostingTests
                 value
             }
         };
+    }
+
+    private static object CreateJsonRpcRequest(string requestId, string value)
+    {
+        return new
+        {
+            jsonrpc = "2.0",
+            method = "handle",
+            @params = new { value },
+            id = requestId
+        };
+    }
+
+    private static async Task<JsonElement> PostGraphqlAsync(HttpClient client, string route, string value)
+    {
+        var response = await client.PostAsJsonAsync(route, CreateGraphqlRequest(value));
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        return await response.Content.ReadFromJsonAsync<JsonElement>();
+    }
+
+    private static async Task<JsonElement> PostJsonRpcAsync(HttpClient client, string route, string requestId, string value)
+    {
+        var response = await client.PostAsJsonAsync(route, CreateJsonRpcRequest(requestId, value));
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        return await response.Content.ReadFromJsonAsync<JsonElement>();
+    }
+
+    private static async Task<JsonDocument> PostGraphqlSseAsync(
+        HttpClient client,
+        string route,
+        string value,
+        CancellationToken cancellationToken)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Post, route);
+        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("text/event-stream"));
+        request.Content = JsonContent.Create(CreateGraphqlRequest(value));
+        using var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+        Assert.Equal("text/event-stream", response.Content.Headers.ContentType?.MediaType);
+        var message = await ReadSseMessageAsync(response, cancellationToken);
+        Assert.Equal("next", message.EventName);
+        return JsonDocument.Parse(message.Data);
+    }
+
+    private static async Task<JsonDocument> GetStreamingErrorAsync(
+        HttpClient client,
+        string route,
+        CancellationToken cancellationToken)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Get, route);
+        using var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+        Assert.Equal("text/event-stream", response.Content.Headers.ContentType?.MediaType);
+        var message = await ReadSseMessageAsync(response, cancellationToken);
+        Assert.Equal("error", message.EventName);
+        return JsonDocument.Parse(message.Data);
+    }
+
+    private static async Task InitializeGraphqlWebSocketAsync(WebSocket socket, CancellationToken cancellationToken)
+    {
+        await SendWebSocketJsonAsync(socket, new { type = "connection_init" }, cancellationToken);
+        await ReceiveWebSocketMessageMatchingAsync(
+            socket,
+            message => message.Contains("\"type\":\"connection_ack\"", StringComparison.Ordinal),
+            cancellationToken);
+    }
+
+    private static async Task<JsonDocument> SubscribeGraphqlWsErrorAsync(
+        WebSocket socket,
+        string requestId,
+        string value,
+        CancellationToken cancellationToken)
+    {
+        await SendWebSocketJsonAsync(
+            socket,
+            new
+            {
+                id = requestId,
+                type = "subscribe",
+                payload = CreateGraphqlRequest(value)
+            },
+            cancellationToken);
+        var message = await ReceiveWebSocketMessageMatchingAsync(
+            socket,
+            text => text.Contains("\"type\":\"error\"", StringComparison.Ordinal) &&
+                text.Contains($"\"id\":\"{requestId}\"", StringComparison.Ordinal),
+            cancellationToken);
+        return JsonDocument.Parse(message);
+    }
+
+    private static async Task<JsonDocument> SendWebSocketRequestAndReadJsonAsync(
+        WebSocket socket,
+        string value,
+        CancellationToken cancellationToken)
+    {
+        await SendWebSocketJsonAsync(socket, new { value }, cancellationToken);
+        var message = await ReceiveWebSocketTextAsync(socket, cancellationToken);
+        return JsonDocument.Parse(message);
+    }
+
+    private static void AssertGraphqlError(
+        JsonElement error,
+        string expectedCephalonCode,
+        int expectedStatusCode,
+        string expectedMessageFragment,
+        bool expectRetryAfter = false)
+    {
+        Assert.Equal(expectedCephalonCode, error.GetProperty("extensions").GetProperty("cephalonCode").GetString());
+        Assert.Equal(expectedCephalonCode.ToUpperInvariant(), error.GetProperty("extensions").GetProperty("code").GetString());
+        Assert.Equal(expectedStatusCode, error.GetProperty("extensions").GetProperty("statusCode").GetInt32());
+        Assert.Contains(expectedMessageFragment, error.GetProperty("message").GetString(), StringComparison.OrdinalIgnoreCase);
+        if (expectRetryAfter)
+        {
+            Assert.True(error.GetProperty("extensions").GetProperty("retryAfterSeconds").GetInt32() > 0);
+        }
+        else
+        {
+            Assert.False(error.GetProperty("extensions").TryGetProperty("retryAfterSeconds", out _));
+        }
+    }
+
+    private static void AssertStreamingError(
+        JsonElement payload,
+        string expectedCode,
+        int expectedStatusCode,
+        string expectedMessageFragment,
+        bool expectRetryAfter = false)
+    {
+        Assert.Equal(expectedCode, payload.GetProperty("code").GetString());
+        Assert.Equal(expectedStatusCode, payload.GetProperty("statusCode").GetInt32());
+        Assert.Contains(expectedMessageFragment, payload.GetProperty("error").GetString(), StringComparison.OrdinalIgnoreCase);
+        if (expectRetryAfter)
+        {
+            Assert.True(payload.GetProperty("retryAfterSeconds").GetInt32() > 0);
+        }
+        else
+        {
+            Assert.False(payload.TryGetProperty("retryAfterSeconds", out _));
+        }
+    }
+
+    private static void AssertJsonRpcServiceUnavailable(
+        JsonElement payload,
+        string expectedCephalonCode,
+        string expectedMessageFragment,
+        bool expectRetryAfter)
+    {
+        Assert.Equal(JsonRpcServiceUnavailableCode, payload.GetProperty("error").GetProperty("code").GetInt32());
+        Assert.Equal("Service unavailable", payload.GetProperty("error").GetProperty("message").GetString());
+        var data = payload.GetProperty("error").GetProperty("data").GetString();
+        Assert.Contains(expectedCephalonCode, data, StringComparison.Ordinal);
+        Assert.Contains(expectedMessageFragment, data, StringComparison.OrdinalIgnoreCase);
+        if (expectRetryAfter)
+        {
+            Assert.Contains("Retry after", data, StringComparison.OrdinalIgnoreCase);
+        }
+        else
+        {
+            Assert.DoesNotContain("Retry after", data, StringComparison.OrdinalIgnoreCase);
+        }
     }
 
     private static async Task<SseMessage> ReadSseMessageAsync(
@@ -395,7 +928,7 @@ public sealed class BehaviorHttpTransportResilienceHostingTests
         return Encoding.UTF8.GetString(stream.ToArray());
     }
 
-    [AppBehavior(BehaviorId)]
+    [AppBehavior(RateLimitedBehaviorId)]
     private sealed class RateLimitedBehavior : IAppBehavior<RateLimitedInput, RateLimitedOutput>
     {
         public Task<RateLimitedOutput> HandleAsync(
@@ -410,6 +943,36 @@ public sealed class BehaviorHttpTransportResilienceHostingTests
     private sealed record RateLimitedInput(string? Value);
 
     private sealed record RateLimitedOutput(string? Value);
+
+    [AppBehavior(TimeoutBehaviorId)]
+    private sealed class TimeoutBehavior : IAppBehavior<SlowInput, SlowOutput>
+    {
+        public async Task<SlowOutput> HandleAsync(
+            SlowInput input,
+            IBehaviorContext context,
+            CancellationToken cancellationToken = default)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(2), cancellationToken);
+            return new SlowOutput(input.Value);
+        }
+    }
+
+    [AppBehavior(CircuitBreakerBehaviorId)]
+    private sealed class CircuitBreakerBehavior : IAppBehavior<SlowInput, SlowOutput>
+    {
+        public async Task<SlowOutput> HandleAsync(
+            SlowInput input,
+            IBehaviorContext context,
+            CancellationToken cancellationToken = default)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(2), cancellationToken);
+            return new SlowOutput(input.Value);
+        }
+    }
+
+    private sealed record SlowInput(string? Value);
+
+    private sealed record SlowOutput(string? Value);
 
     private sealed record SseMessage(string? EventName, string Data);
 }

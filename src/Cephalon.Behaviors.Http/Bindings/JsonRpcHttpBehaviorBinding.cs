@@ -9,7 +9,9 @@ using Cephalon.Behaviors.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Polly.CircuitBreaker;
 using Polly.RateLimiting;
+using Polly.Timeout;
 
 namespace Cephalon.Behaviors.Http.Bindings;
 
@@ -196,6 +198,21 @@ public sealed class JsonRpcHttpBehaviorBinding : IHttpBehaviorBinding
                 {
                     // G-RPC-07
                     return BuildErrorResult(id, -32003, "Security violation", ex.Message);
+                }
+                catch (TimeoutRejectedException)
+                {
+                    var rpcError = BehaviorTransportResilienceMapper.CreateJsonRpcServiceUnavailableError(
+                        BehaviorTransportResilienceMapper.CreateTimeoutFault());
+                    return BuildErrorResult(id, rpcError.Code, rpcError.Message, rpcError.Data);
+                }
+                catch (BrokenCircuitException)
+                {
+                    var rpcError = BehaviorTransportResilienceMapper.CreateJsonRpcServiceUnavailableError(
+                        BehaviorTransportResilienceMapper.CreateCircuitBreakerFault(
+                            ctx.RequestServices,
+                            descriptor.Id,
+                            TransportId));
+                    return BuildErrorResult(id, rpcError.Code, rpcError.Message, rpcError.Data);
                 }
                 catch (RateLimiterRejectedException ex)
                 {

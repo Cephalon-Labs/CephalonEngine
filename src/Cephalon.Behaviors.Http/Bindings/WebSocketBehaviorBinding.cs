@@ -12,7 +12,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Polly.CircuitBreaker;
 using Polly.RateLimiting;
+using Polly.Timeout;
 
 namespace Cephalon.Behaviors.Http.Bindings;
 
@@ -161,6 +163,27 @@ public sealed class WebSocketBehaviorBinding : IHttpBehaviorBinding
                     var responseJson = JsonSerializer.Serialize(dispatchResult);
                     var responseBytes = Encoding.UTF8.GetBytes(responseJson);
                     await ws.SendAsync(responseBytes, WebSocketMessageType.Text, endOfMessage: true, ctx.RequestAborted)
+                        .ConfigureAwait(false);
+                }
+                catch (TimeoutRejectedException)
+                {
+                    var errBytes = Encoding.UTF8.GetBytes(
+                        JsonSerializer.Serialize(
+                            BehaviorTransportResilienceMapper.CreateStreamingErrorPayload(
+                                BehaviorTransportResilienceMapper.CreateTimeoutFault())));
+                    await ws.SendAsync(errBytes, WebSocketMessageType.Text, endOfMessage: true, CancellationToken.None)
+                        .ConfigureAwait(false);
+                }
+                catch (BrokenCircuitException)
+                {
+                    var errBytes = Encoding.UTF8.GetBytes(
+                        JsonSerializer.Serialize(
+                            BehaviorTransportResilienceMapper.CreateStreamingErrorPayload(
+                                BehaviorTransportResilienceMapper.CreateCircuitBreakerFault(
+                                    ctx.RequestServices,
+                                    behaviorId,
+                                    transportId))));
+                    await ws.SendAsync(errBytes, WebSocketMessageType.Text, endOfMessage: true, CancellationToken.None)
                         .ConfigureAwait(false);
                 }
                 catch (RateLimiterRejectedException ex)

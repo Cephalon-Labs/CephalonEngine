@@ -981,7 +981,7 @@ Acceptance:
 - generic behavior HTTP GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings surface behavior-owned rate-limiting rejections through native protocol envelopes instead of generic transport failures
 - the shared limiter-fault mapping keeps stable Cephalon codes plus `429` metadata consistent across REST and the other behavior HTTP transports
 - targeted hosting coverage proves each shipped binding preserves its native wire contract under behavior-owned rate limiting
-- docs, roadmap, backlog, and project memory narrow the remaining phase-11 gap truthfully to the still-missing non-REST timeout, circuit-breaker, and broader resilience-envelope follow-through
+- docs, roadmap, backlog, and project memory narrow the remaining phase-11 gap truthfully to the broader non-REST resilience-envelope follow-through beyond the shipped `429`/`503` baseline
 
 Delivered:
 
@@ -990,6 +990,33 @@ Delivered:
 - the JSON-RPC binding now returns a protocol-native error response with a dedicated limiter code and structured limiter metadata instead of a generic failure payload
 - the SSE and WebSocket bindings now emit native error events or frames that preserve the same behavior-owned limiter truth without wrapping those transports in the REST `ResultModel` contract
 - targeted hosting, composition, and package-surface coverage now prove the new cross-transport limiter-envelope behavior and keep the package surface aligned with the shipped implementation
+
+### ENG-100 generic behavior HTTP transport-native timeout and circuit-breaker envelopes
+
+Status: done
+Estimate: 5
+Completed: April 19, 2026
+
+Why:
+
+- `ENG-099` closed the generic behavior HTTP rate-limiting gap, but behavior-owned timeout and circuit-breaker rejections still collapsed into generic failures for the non-REST behavior HTTP bindings
+- phase 11 still needed the generic GraphQL, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket adapters to keep the same behavior-owned timeout and open-circuit truth without pretending every transport speaks the REST envelope
+- runtime truth is stronger when one shared resilience-fault classification path can project timeout and circuit-breaker outcomes consistently across REST and the other shipped behavior HTTP transports
+
+Acceptance:
+
+- generic behavior HTTP GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings surface behavior-owned timeout and open-circuit rejections through native protocol envelopes instead of generic transport failures
+- the shared resilience-fault mapping keeps stable Cephalon timeout and circuit-breaker codes plus `503` metadata consistent across REST and the other behavior HTTP transports
+- targeted hosting coverage proves each shipped binding preserves its native wire contract under behavior-owned timeout and circuit-breaker rejections
+- docs, roadmap, backlog, and project memory narrow the remaining phase-11 gap truthfully to broader non-REST resilience-envelope follow-through beyond the shipped `429`/`503` baseline
+
+Delivered:
+
+- `Cephalon.Behaviors.Http` now shares one resilience-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution timeout and open-circuit rejections keep stable Cephalon codes plus `statusCode = 503` metadata and optional retry-after timing
+- the GraphQL HTTP and GraphQL streaming bindings now return GraphQL-native `errors[].extensions` timeout and open-circuit details instead of flattening shared dispatch failures into generic transport errors
+- the JSON-RPC binding now returns a protocol-native `-32053` service-unavailable server error while `error.data` preserves the stable Cephalon code, message, and optional retry-after detail for timeout and open-circuit answers
+- the SSE and WebSocket bindings now emit native error events or frames that preserve the same behavior-owned timeout and circuit-breaker truth without wrapping those transports in the REST `ResultModel` contract
+- targeted hosting, composition, and package-surface coverage now prove the new cross-transport timeout and circuit-breaker envelope behavior and keep the package surface aligned with the shipped implementation
 
 ## Next configurable application-platform work
 
@@ -2470,4 +2497,4 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-097 `.NET 11` readiness baseline: the repo now ships `scripts/validate-dotnet-readiness.ps1`, `validate-release.ps1` now uses the split test projects plus emits readiness artifacts, the release-validation workflow now includes a dedicated `.NET 11` lane, and scaffolding now keeps `net11.0` Dockerfile base images aligned with the requested target framework instead of freezing on `10.0` — **Shipped** · targeted tooling tests plus readiness-script contract coverage
 - ENG-098 behavior-execution rate-limiting baseline: `Cephalon.Abstractions` now extends `BehaviorExecutionResilienceSelection` plus `BehaviorExecutionResilienceOverrideSelection` with rate-limiting inputs, `Cephalon.Engine` now binds and validates behavior-execution rate-limiting overrides, `Cephalon.Behaviors` now enforces shared execution rate limiting in the behavior-dispatch middleware while publishing truthful rate-limiting metadata through `/engine/behavior-resilience` plus `snapshot.BehaviorResiliencePolicies`, and `Cephalon.Behaviors.Http` now proves both REST `429` precedence paths: the host-owned ASP.NET Core limiter wins when both layers are active, while `Engine:Resilience:RateLimiting:Overrides` can disable the endpoint policy for a targeted behavior/transport pair so the behavior-owned `429` answer surfaces without breaking OpenAPI or runtime truth — **Shipped** · targeted composition tests 16/16 + hosting tests 8/8 + package-surface tests 153/153
 - ENG-099 generic behavior HTTP transport-native rate-limit envelopes: `Cephalon.Behaviors.Http` now shares one limiter-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution limiter rejections keep protocol-native error shapes with stable Cephalon codes plus `429` metadata instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned rate limiting — **Shipped** · targeted hosting tests 13/13 + composition tests 28/28 + package-surface tests 153/153
-
+- ENG-100 generic behavior HTTP transport-native timeout and circuit-breaker envelopes: `Cephalon.Behaviors.Http` now shares one resilience-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution timeout and open-circuit rejections keep protocol-native error shapes with stable Cephalon codes plus `503` metadata and optional retry-after timing instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned timeout and circuit-breaker policy — **Shipped** · targeted hosting tests 25/25 + composition tests 28/28 + package-surface tests 153/153

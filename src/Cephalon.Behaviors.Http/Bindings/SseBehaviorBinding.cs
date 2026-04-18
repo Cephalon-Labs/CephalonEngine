@@ -8,7 +8,9 @@ using Cephalon.Behaviors.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Polly.CircuitBreaker;
 using Polly.RateLimiting;
+using Polly.Timeout;
 
 namespace Cephalon.Behaviors.Http.Bindings;
 
@@ -100,6 +102,29 @@ public sealed class SseBehaviorBinding : IHttpBehaviorBinding
                 catch (OperationCanceledException)
                 {
                     // G-SSE-05: client disconnected — exit gracefully, no error event
+                }
+                catch (TimeoutRejectedException)
+                {
+                    var errorJson = JsonSerializer.Serialize(
+                        BehaviorTransportResilienceMapper.CreateStreamingErrorPayload(
+                            BehaviorTransportResilienceMapper.CreateTimeoutFault()));
+                    var errorEvent = $"event: error\ndata: {errorJson}\n\n";
+                    await ctx.Response.WriteAsync(errorEvent, Encoding.UTF8, CancellationToken.None)
+                        .ConfigureAwait(false);
+                    await ctx.Response.Body.FlushAsync(CancellationToken.None).ConfigureAwait(false);
+                }
+                catch (BrokenCircuitException)
+                {
+                    var errorJson = JsonSerializer.Serialize(
+                        BehaviorTransportResilienceMapper.CreateStreamingErrorPayload(
+                            BehaviorTransportResilienceMapper.CreateCircuitBreakerFault(
+                                ctx.RequestServices,
+                                descriptor.Id,
+                                TransportId)));
+                    var errorEvent = $"event: error\ndata: {errorJson}\n\n";
+                    await ctx.Response.WriteAsync(errorEvent, Encoding.UTF8, CancellationToken.None)
+                        .ConfigureAwait(false);
+                    await ctx.Response.Body.FlushAsync(CancellationToken.None).ConfigureAwait(false);
                 }
                 catch (RateLimiterRejectedException ex)
                 {

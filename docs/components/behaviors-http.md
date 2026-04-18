@@ -1193,6 +1193,17 @@ separate concerns:
   JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings keep their native error envelopes
   while surfacing the shared Cephalon limiter code plus `429` metadata instead of flattening the
   rejection into a generic transport failure
+- when behavior-owned execution timeout rejects a generic behavior HTTP request, GraphQL HTTP,
+  JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings keep their native error envelopes
+  while surfacing the shared `behavior_execution_timeout` code plus `503` metadata instead of
+  flattening the rejection into a generic transport failure
+- when behavior-owned execution circuit-breaker rejections hit a generic behavior HTTP request,
+  GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings keep their native
+  error envelopes while surfacing the shared `behavior_execution_circuit_breaker_open` code plus
+  `503` metadata and retry-after timing when the runtime can compute it
+- JSON-RPC keeps those `503`-class semantics in-band through a dedicated `-32053` service-unavailable
+  server error while `error.data` preserves the stable Cephalon code, message, and optional
+  retry-after details
 
 Example host override:
 

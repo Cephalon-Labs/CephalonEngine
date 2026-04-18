@@ -8,7 +8,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Polly.CircuitBreaker;
 using Polly.RateLimiting;
+using Polly.Timeout;
 
 namespace Cephalon.Behaviors.Http.Bindings;
 
@@ -66,6 +68,19 @@ public sealed class GraphqlHttpBehaviorBinding : IHttpBehaviorBinding
                     var result = await dispatcher.DispatchAsync(descriptor.Id, input, context, ctx.RequestAborted)
                         .ConfigureAwait(false);
                     return Results.Json(new { data = result });
+                }
+                catch (TimeoutRejectedException)
+                {
+                    var fault = BehaviorTransportResilienceMapper.CreateTimeoutFault();
+                    return Results.Json(BehaviorTransportResilienceMapper.CreateGraphqlErrorResponse(fault));
+                }
+                catch (BrokenCircuitException)
+                {
+                    var fault = BehaviorTransportResilienceMapper.CreateCircuitBreakerFault(
+                        ctx.RequestServices,
+                        descriptor.Id,
+                        TransportId);
+                    return Results.Json(BehaviorTransportResilienceMapper.CreateGraphqlErrorResponse(fault));
                 }
                 catch (RateLimiterRejectedException ex)
                 {

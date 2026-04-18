@@ -884,21 +884,24 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         }
         catch (TimeoutRejectedException)
         {
+            var fault = BehaviorTransportResilienceMapper.CreateTimeoutFault();
             return BehaviorRestResponseMapper.MapServiceUnavailable(
-                "The request exceeded the configured Cephalon behavior execution timeout.",
+                fault.Message,
                 context.RequestServices,
-                code: "behavior_execution_timeout");
+                code: fault.Code,
+                retryAfterSeconds: fault.RetryAfterSeconds);
         }
         catch (BrokenCircuitException)
         {
-            return BehaviorRestResponseMapper.MapServiceUnavailable(
-                "The request was rejected because the configured Cephalon behavior circuit breaker is open.",
+            var fault = BehaviorTransportResilienceMapper.CreateCircuitBreakerFault(
                 context.RequestServices,
-                code: "behavior_execution_circuit_breaker_open",
-                retryAfterSeconds: ResolveCircuitRetryAfterSeconds(
-                    context.RequestServices,
-                    behaviorId,
-                    "rest-api"));
+                behaviorId,
+                "rest-api");
+            return BehaviorRestResponseMapper.MapServiceUnavailable(
+                fault.Message,
+                context.RequestServices,
+                code: fault.Code,
+                retryAfterSeconds: fault.RetryAfterSeconds);
         }
         catch (RateLimiterRejectedException ex)
         {
@@ -1071,27 +1074,6 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         }
 
         return statusCodes;
-    }
-
-    private static int? ResolveCircuitRetryAfterSeconds(
-        IServiceProvider services,
-        string behaviorId,
-        string transportId)
-    {
-        ArgumentNullException.ThrowIfNull(services);
-        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
-        ArgumentException.ThrowIfNullOrWhiteSpace(transportId);
-
-        var behaviorResilienceCatalog = services.GetService<IBehaviorResilienceRuntimeCatalog>();
-        var policy = behaviorResilienceCatalog?.Resolve(behaviorId, transportId);
-        if (policy?.Metadata.TryGetValue("circuitRetryAfterSeconds", out var rawRetryAfterSeconds) != true)
-        {
-            return null;
-        }
-
-        return int.TryParse(rawRetryAfterSeconds, out var retryAfterSeconds)
-            ? retryAfterSeconds
-            : null;
     }
 
     private static MethodInfo GetRequiredCoreMethod(string methodName)
