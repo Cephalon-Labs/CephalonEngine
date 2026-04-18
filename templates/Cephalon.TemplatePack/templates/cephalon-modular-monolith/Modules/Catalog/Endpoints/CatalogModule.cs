@@ -1,13 +1,14 @@
+using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
-using Cephalon.AspNetCore.Modules;
+using Cephalon.Behaviors.Http.Abstractions;
+using Cephalon.Behaviors.Http.Hosting;
 using CephalonTemplateApp.Modules.Catalog.Application;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CephalonTemplateApp.Modules.Catalog.Endpoints;
 
-public sealed class CatalogModule : ModuleBase, IEndpointModule
+public sealed class CatalogModule : RestBehaviorModuleBase
 {
     private static readonly ModuleDescriptor DescriptorInstance = new(
         id: "catalog",
@@ -31,9 +32,40 @@ public sealed class CatalogModule : ModuleBase, IEndpointModule
             description: "Summarizes the generated module-first catalog surface."));
     }
 
-    public void MapEndpoints(IEndpointRouteBuilder endpoints)
+    public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
     {
-        var group = endpoints.MapGroup("/catalog");
-        group.MapGet("/overview", (CatalogOverviewService service) => TypedResults.Ok(service.Build()));
+        behaviors.Group("/catalog")
+            .WithTagName("Catalog API")
+            .MapProfile<GetCatalogOverviewBehavior>();
     }
 }
+
+[AppBehavior("catalog.overview.get")]
+[BehaviorAllowedPatterns("direct")]
+[BehaviorRestProfile(BehaviorRestMethod.Get, "/overview", ApiVersionMajor = 1)]
+internal sealed class GetCatalogOverviewBehavior : IAppBehavior<GetCatalogOverviewInput, Result<CatalogOverviewEnvelope>>
+{
+    private readonly CatalogOverviewService service;
+
+    public GetCatalogOverviewBehavior(CatalogOverviewService service)
+    {
+        this.service = service;
+    }
+
+    public Task<Result<CatalogOverviewEnvelope>> HandleAsync(
+        GetCatalogOverviewInput input,
+        IBehaviorContext context,
+        CancellationToken cancellationToken = default)
+    {
+        return Task.FromResult(Result.Ok(
+            service.Build(),
+            message: "Catalog overview resolved."));
+    }
+
+    public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
+    {
+        builder.AsDirect();
+    }
+}
+
+internal sealed record GetCatalogOverviewInput();

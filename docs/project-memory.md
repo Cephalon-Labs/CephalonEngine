@@ -168,6 +168,7 @@ The shipped template-pack module starters now include:
 - `cephalon-module` for host-agnostic modules
 - `cephalon-rest-module` for generic REST modules that do not dispatch into Cephalon behaviors
 - `cephalon-rest-behavior-module` for the recommended behavior-backed `RestBehaviorModuleBase` path
+- REST-enabled generated blueprint apps, `dotnet new` blueprint starters, and the matching shipped blueprint samples now also default their public starter modules to `RestBehaviorModuleBase.ConfigureRestBehaviors(...)` plus `MapProfile<TBehavior>()`; keep `cephalon-rest-module` and `Cephalon.ReferenceModule.Operations` as the generic non-behavior path instead of treating them as the starter baseline
 
 The generated app baseline already includes publishing and deployment assets for:
 

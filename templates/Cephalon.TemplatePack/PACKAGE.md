@@ -40,6 +40,8 @@ The app-focused starters now also include `NuGet.config`, `./.cephalon/packages/
 - For richer customization, `Cephalon.Cli` and `Cephalon.Scaffolding` remain the more expressive generation path.
 - The app starters now use canonical phase-8 ids plus structured `Engine:Data`, `Engine:Identity`, `Engine:Tenancy`, `Engine:Audit`, and `Engine:Messaging` sections so `dotnet new` stays aligned with the runtime app-model contract.
 - The app starters also ship a narrow low-ceremony `Sfid` plus `Audit` baseline so teams can start with additive ids and audit plumbing before they choose fuller data, identity, tenancy, or messaging follow-through.
+- When a blueprint app starter includes `RestApi`, its public starter module now uses `RestBehaviorModuleBase`, `ConfigureRestBehaviors(...)`, and `MapProfile<TBehavior>()` so `cephalon-monolith`, `cephalon-slice`, and `cephalon-microservice` stay aligned with the settled engine-first REST model.
+- `cephalon-rest-behavior-module` is the recommended package starter for new behavior-backed public REST modules, while `cephalon-rest-module` remains the generic non-behavior package path.
 - The generated test project now starts with `Architecture/CompositionSmokeTests.cs` plus per-feature `Features/*BehaviorSpecifications.cs` placeholders so teams can move straight into composition checks and Given/When/Then-style business behavior instead of inventing a starter harness from scratch.
 - Generated projects assume you will restore Cephalon packages from the feed or local package source you target.
 - The shipped `NuGet.config` points the `cephalon` source at `./.cephalon/packages` by default so repo-local package artifacts can unblock first-run restore; replace that source when your team has a shared feed.

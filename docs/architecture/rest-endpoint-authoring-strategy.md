@@ -565,6 +565,10 @@ Current shipped follow-through:
   same class-based path, keeping module ownership, localized sample behavior wiring, and package-
   manifest output aligned without forcing authors to start from the generic `IRestModule` path and
   migrate later
+- the shipped `cephalon-monolith`, `cephalon-slice`, and `cephalon-microservice` starters, plus
+  the matching blueprint samples, now also begin their public REST starter modules on
+  `RestBehaviorModuleBase.ConfigureRestBehaviors(...).MapProfile<TBehavior>()` whenever `RestApi`
+  is enabled, keeping app-level adoption aligned with the same settled module-owned boundary
 - `AddRestBehaviorModule<TMarker>()` is now the lowest-ceremony explicit module-registration path
   for straightforward hosts: the `moduleId` / `displayName` / `description` convenience overload
   covers the common path, while the `ModuleDescriptor` overload remains available for richer inline
@@ -1573,16 +1577,21 @@ The core engine-first REST authoring model is now shipped. Recommended posture f
 
 1. start new behavior-backed public modules from `dotnet new cephalon-rest-behavior-module` when a
    dedicated package should own both behavior registration and public REST projection from day one
-2. keep `RestBehaviorModuleBase` or `AddRestBehaviorModule<TMarker>()` as the canonical public-
+2. treat the shipped `cephalon-monolith`, `cephalon-slice`, and `cephalon-microservice` starters
+   plus the matching blueprint samples as the app-level adoption baseline: when `RestApi` is
+   enabled, their public starter modules now begin on
+   `RestBehaviorModuleBase.ConfigureRestBehaviors(...).MapProfile<TBehavior>()` rather than the
+   generic `IRestModule` path
+3. keep `RestBehaviorModuleBase` or `AddRestBehaviorModule<TMarker>()` as the canonical public-
    boundary entry points, because they stay explicit about ownership, route groups, and published
    REST truth
-3. use `MapGeneratedProfiles(...)` or `MapGeneratedProfileGroups(...)` only when generated-profile
+4. use `MapGeneratedProfiles(...)` or `MapGeneratedProfileGroups(...)` only when generated-profile
    shorthand materially reduces repetition, but keep those paths on the same module-owned
    projection, runtime-catalog, and governance pipeline
-4. treat `RestApi:AuthoringPolicies`, `RestApi:Suppressions`, and `RestApi:Overrides` as additive
+5. treat `RestApi:AuthoringPolicies`, `RestApi:Suppressions`, and `RestApi:Overrides` as additive
    host governance over shorthand by default; explicit module-DSL routes should only participate
    when the owning group opts in through `AllowHostGovernance()`
-5. evaluate any future convention-backed publication source only if it preserves module ownership,
+6. evaluate any future convention-backed publication source only if it preserves module ownership,
    deterministic precedence, and the existing candidate/publication-group/runtime-catalog/operator
    story instead of inventing a parallel REST model
 

@@ -1,10 +1,12 @@
+using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
-using Cephalon.AspNetCore.Modules;
+using Cephalon.Behaviors.Http.Abstractions;
+using Cephalon.Behaviors.Http.Hosting;
+using Cephalon.Sample.MicroserviceSuite.Foundation.Contracts;
 using Cephalon.Sample.MicroserviceSuite.OrdersService.Modules.Orders.Features.Coordination.Application;
 using Cephalon.Sample.MicroserviceSuite.OrdersService.Modules.Orders.Features.Governance.Application;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
+using Cephalon.Sample.MicroserviceSuite.Governance.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Sample.MicroserviceSuite.OrdersService.Modules.Orders.Features.Coordination.Api;
@@ -12,7 +14,7 @@ namespace Cephalon.Sample.MicroserviceSuite.OrdersService.Modules.Orders.Feature
 /// <summary>
 /// Registers the orders module for the microservice-suite orders service.
 /// </summary>
-public sealed class OrdersModule : ModuleBase, IEndpointModule
+public sealed class OrdersModule : RestBehaviorModuleBase
 {
     private static readonly ModuleDescriptor DescriptorInstance = new(
         id: "orders",
@@ -57,17 +59,76 @@ public sealed class OrdersModule : ModuleBase, IEndpointModule
     }
 
     /// <summary>
-    /// Maps the HTTP endpoints exposed by the orders module.
+    /// Configures the public REST behaviors exposed by the orders module.
     /// </summary>
-    /// <param name="endpoints">
-    /// The endpoint route builder used by the ASP.NET Core host adapter.
+    /// <param name="behaviors">
+    /// The REST behavior builder used by the ASP.NET Core host adapter.
     /// </param>
-    public void MapEndpoints(IEndpointRouteBuilder endpoints)
+    public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
     {
-        var group = endpoints.MapGroup("/orders");
-        group.MapGet("/coordination/{orderId?}", (string? orderId, string? fulfillmentRegion, OrderCoordinationApplicationService service) =>
-            TypedResults.Ok(service.Build(orderId, fulfillmentRegion)));
-        group.MapGet("/governance", (OrdersGovernanceApplicationService service) =>
-            TypedResults.Ok(service.Build()));
+        behaviors.Group("/orders")
+            .WithTagName("Orders API")
+            .MapProfile<GetOrderCoordinationBehavior>()
+            .MapProfile<GetOrdersGovernanceBehavior>();
     }
 }
+
+[AppBehavior("orders.coordination.get")]
+[BehaviorAllowedPatterns("direct")]
+[BehaviorRestProfile(BehaviorRestMethod.Get, "/coordination/{orderId?}", ApiVersionMajor = 1)]
+internal sealed class GetOrderCoordinationBehavior : IAppBehavior<GetOrderCoordinationInput, Result<SuiteServiceSummaryContract>>
+{
+    private readonly OrderCoordinationApplicationService service;
+
+    public GetOrderCoordinationBehavior(OrderCoordinationApplicationService service)
+    {
+        this.service = service;
+    }
+
+    public Task<Result<SuiteServiceSummaryContract>> HandleAsync(
+        GetOrderCoordinationInput input,
+        IBehaviorContext context,
+        CancellationToken cancellationToken = default)
+    {
+        return Task.FromResult(Result.Ok(
+            service.Build(input.OrderId, input.FulfillmentRegion),
+            message: "Order coordination resolved."));
+    }
+
+    public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
+    {
+        builder.AsDirect();
+    }
+}
+
+[AppBehavior("orders.governance.get")]
+[BehaviorAllowedPatterns("direct")]
+[BehaviorRestProfile(BehaviorRestMethod.Get, "/governance", ApiVersionMajor = 1)]
+internal sealed class GetOrdersGovernanceBehavior : IAppBehavior<GetOrdersGovernanceInput, Result<SuiteGovernanceSnapshotContract>>
+{
+    private readonly OrdersGovernanceApplicationService service;
+
+    public GetOrdersGovernanceBehavior(OrdersGovernanceApplicationService service)
+    {
+        this.service = service;
+    }
+
+    public Task<Result<SuiteGovernanceSnapshotContract>> HandleAsync(
+        GetOrdersGovernanceInput input,
+        IBehaviorContext context,
+        CancellationToken cancellationToken = default)
+    {
+        return Task.FromResult(Result.Ok(
+            service.Build(),
+            message: "Orders governance guidance resolved."));
+    }
+
+    public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
+    {
+        builder.AsDirect();
+    }
+}
+
+internal sealed record GetOrderCoordinationInput(string? OrderId = null, string? FulfillmentRegion = null);
+
+internal sealed record GetOrdersGovernanceInput();

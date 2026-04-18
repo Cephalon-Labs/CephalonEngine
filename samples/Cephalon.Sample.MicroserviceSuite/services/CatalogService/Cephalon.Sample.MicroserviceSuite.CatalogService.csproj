@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\src\Cephalon.AspNetCore\Cephalon.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Cephalon.Behaviors.Http\Cephalon.Behaviors.Http.csproj" />
     <ProjectReference Include="..\..\..\..\src\Cephalon.Observability\Cephalon.Observability.csproj" />
     <ProjectReference Include="..\..\shared\Cephalon.Sample.MicroserviceSuite.Governance\Cephalon.Sample.MicroserviceSuite.Governance.csproj" />
     <ProjectReference Include="..\..\shared\Cephalon.Sample.MicroserviceSuite.Shared.Foundation\Cephalon.Sample.MicroserviceSuite.Shared.Foundation.csproj" />

@@ -1,6 +1,7 @@
 # Cephalon Microservice Suite Sample
 
 This sample shows the shipped `MicroserviceSuite` blueprint as a coordinated pair of Cephalon microservices that reuse one shared foundation project plus one shared governance package.
+Both service modules keep their public REST boundaries behavior-backed through `RestBehaviorModuleBase.ConfigureRestBehaviors(...)` and `MapProfile<TBehavior>()`, so the suite shows the same starter-aligned REST ownership model at multi-service scale.
 
 Layout:
 

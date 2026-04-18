@@ -10,7 +10,7 @@ This guide describes the compatibility contract that must stay aligned across Ce
 | Target framework baseline | the `TargetFramework` used by shipped `src/Cephalon.*` projects | CLI defaults, scaffolded project files, generated module manifests, template project files, sample/reference-module projects, and docs examples |
 | Blueprint, pattern, technology, and transport identifiers | the runtime/app-model contracts in `Cephalon.Abstractions` and `Cephalon.Engine` | scaffold plans, CLI parsing/help text, template coverage, samples, and hand-authored docs |
 | Package manifest contract | `cephalon.package.json` plus engine package-loading and policy enforcement | scaffolded module output, template module starters, reference modules, module-authoring docs, operations docs, and trust/package-policy guidance |
-| REST authoring and governance contract | the module-owned projection, runtime-catalog, and governance surfaces in `Cephalon.Behaviors.Http` and `Cephalon.AspNetCore` | `cephalon-rest-behavior-module`, `cephalon-rest-module`, REST strategy docs, module-authoring docs, component docs, runtime/operator guidance, and host governance config examples |
+| REST authoring and governance contract | the module-owned projection, runtime-catalog, and governance surfaces in `Cephalon.Behaviors.Http` and `Cephalon.AspNetCore` | REST-enabled `Cephalon.Scaffolding` output, `cephalon-monolith` / `cephalon-slice` / `cephalon-microservice`, `cephalon-rest-behavior-module`, `cephalon-rest-module`, blueprint samples, REST strategy docs, module-authoring docs, component docs, runtime/operator guidance, and host governance config examples |
 | Reference-doc publishing flow | `Cephalon.ReferenceDocs`, the CLI docs commands, and the host `ReferenceDocs` section | scaffolded host appsettings/readmes, docs-publish command help, hosted docs guidance, and docs examples |
 | Release package-artifact flow | `scripts/publish-package-artifacts.ps1`, `scripts/validate-release.ps1`, and the release-validation workflow | intended packable project set, shared NuGet metadata/readme defaults, CLI tool packaging, release checksum/provenance metadata, artifact uploads, and package-publishing docs |
 | Framework readiness and deployment-mode claims | `scripts/validate-dotnet-readiness.ps1` plus the dedicated `.NET 11` readiness workflow lane | `global.json`, shipped TFMs, template baselines, scaffolding/runtime defaults, docs claims, package-publishing guidance, and roadmap/backlog planning |
@@ -51,8 +51,8 @@ This guide describes the compatibility contract that must stay aligned across Ce
 
 ### REST authoring and governance
 
-- when behavior-backed REST authoring, shorthand projection, or host-governance semantics change, update `cephalon-rest-behavior-module`, module-authoring guidance, component docs, compatibility guidance, and runtime/operator docs together
-- keep starter guidance aligned with the settled module-owned boundary: `cephalon-rest-behavior-module` is the recommended path for behavior-backed public REST, while `cephalon-rest-module` remains the generic non-behavior REST starter
+- when behavior-backed REST authoring, shorthand projection, or host-governance semantics change, update REST-enabled `Cephalon.Scaffolding` output, the REST-enabled blueprint app starters, `cephalon-rest-behavior-module`, the matching blueprint samples, module-authoring guidance, component docs, compatibility guidance, and runtime/operator docs together
+- keep starter guidance aligned with the settled module-owned boundary: REST-enabled blueprint app starters and blueprint samples now treat `RestBehaviorModuleBase.ConfigureRestBehaviors(...)` plus `MapProfile<TBehavior>()` as the default public REST path, `cephalon-rest-behavior-module` remains the recommended package starter for behavior-backed public REST, and `cephalon-rest-module` remains the generic non-behavior REST starter
 
 ### Reference-doc and DocFX flows
 

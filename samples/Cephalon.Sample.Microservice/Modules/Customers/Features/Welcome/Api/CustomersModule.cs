@@ -1,8 +1,10 @@
+using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
-using Cephalon.AspNetCore.Modules;
+using Cephalon.Behaviors.Http.Abstractions;
+using Cephalon.Behaviors.Http.Hosting;
+using Cephalon.Sample.Microservice.Contracts;
 using Cephalon.Sample.Microservice.Modules.Customers.Features.Welcome.Application;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Sample.Microservice.Modules.Customers.Features.Welcome.Api;
@@ -10,7 +12,7 @@ namespace Cephalon.Sample.Microservice.Modules.Customers.Features.Welcome.Api;
 /// <summary>
 /// Registers the customers module for the microservice sample.
 /// </summary>
-public sealed class CustomersModule : ModuleBase, IEndpointModule
+public sealed class CustomersModule : RestBehaviorModuleBase
 {
     private static readonly ModuleDescriptor DescriptorInstance = new(
         id: "customers",
@@ -50,15 +52,45 @@ public sealed class CustomersModule : ModuleBase, IEndpointModule
     }
 
     /// <summary>
-    /// Maps the HTTP endpoints exposed by the customers module.
+    /// Configures the public REST behaviors exposed by the customers module.
     /// </summary>
-    /// <param name="endpoints">
-    /// The endpoint route builder used by the ASP.NET Core host adapter.
+    /// <param name="behaviors">
+    /// The REST behavior builder used by the ASP.NET Core host adapter.
     /// </param>
-    public void MapEndpoints(IEndpointRouteBuilder endpoints)
+    public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
     {
-        var group = endpoints.MapGroup("/customers");
-        group.MapGet("/welcome/{name?}", (string? name, string? tenant, WelcomeApplicationService service) =>
-            TypedResults.Ok(service.Build(name, tenant)));
+        behaviors.Group("/customers")
+            .WithTagName("Customers API")
+            .MapProfile<GetWelcomeBehavior>();
     }
 }
+
+[AppBehavior("customers.welcome.get")]
+[BehaviorAllowedPatterns("direct")]
+[BehaviorRestProfile(BehaviorRestMethod.Get, "/welcome/{name?}", ApiVersionMajor = 1)]
+internal sealed class GetWelcomeBehavior : IAppBehavior<GetWelcomeInput, Result<WelcomeContract>>
+{
+    private readonly WelcomeApplicationService service;
+
+    public GetWelcomeBehavior(WelcomeApplicationService service)
+    {
+        this.service = service;
+    }
+
+    public Task<Result<WelcomeContract>> HandleAsync(
+        GetWelcomeInput input,
+        IBehaviorContext context,
+        CancellationToken cancellationToken = default)
+    {
+        return Task.FromResult(Result.Ok(
+            service.Build(input.Name, input.Tenant),
+            message: "Customer welcome resolved."));
+    }
+
+    public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
+    {
+        builder.AsDirect();
+    }
+}
+
+internal sealed record GetWelcomeInput(string? Name = null, string? Tenant = null);

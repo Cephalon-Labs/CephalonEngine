@@ -3,6 +3,7 @@
 This sample is the operator-ready local runtime baseline for Cephalon.
 
 The sample now also carries the narrow phase-8 starter baseline: canonical `Engine` ids, structured `Engine:Data`, `Engine:Identity`, `Engine:Tenancy`, `Engine:Audit`, and `Engine:Messaging` sections, plus low-ceremony `Sfid` id generation and `Cephalon.Audit` wiring in the host.
+Its public REST boundary is now behavior-backed: the starter module owns routes through `RestBehaviorModuleBase.ConfigureRestBehaviors(...)` and `MapProfile<TBehavior>()`, matching the shipped `cephalon-monolith` starter baseline.
 
 ## Run from source
 

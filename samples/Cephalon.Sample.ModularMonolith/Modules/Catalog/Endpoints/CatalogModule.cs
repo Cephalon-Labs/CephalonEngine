@@ -1,8 +1,9 @@
+using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
-using Cephalon.AspNetCore.Modules;
+using Cephalon.Behaviors.Http.Abstractions;
+using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Sample.ModularMonolith.Modules.Catalog.Application;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Sample.ModularMonolith.Modules.Catalog.Endpoints;
@@ -10,7 +11,7 @@ namespace Cephalon.Sample.ModularMonolith.Modules.Catalog.Endpoints;
 /// <summary>
 /// Registers the catalog module for the modular monolith sample.
 /// </summary>
-public sealed class CatalogModule : ModuleBase, IEndpointModule
+public sealed class CatalogModule : RestBehaviorModuleBase
 {
     private static readonly ModuleDescriptor DescriptorInstance = new(
         id: "catalog",
@@ -50,14 +51,45 @@ public sealed class CatalogModule : ModuleBase, IEndpointModule
     }
 
     /// <summary>
-    /// Maps the HTTP endpoints exposed by the catalog module.
+    /// Configures the public REST behaviors exposed by the catalog module.
     /// </summary>
-    /// <param name="endpoints">
-    /// The endpoint route builder used by the ASP.NET Core host adapter.
+    /// <param name="behaviors">
+    /// The REST behavior builder used by the ASP.NET Core host adapter.
     /// </param>
-    public void MapEndpoints(IEndpointRouteBuilder endpoints)
+    public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
     {
-        var group = endpoints.MapGroup("/catalog");
-        group.MapGet("/overview", (CatalogOverviewService service) => TypedResults.Ok(service.Build()));
+        behaviors.Group("/catalog")
+            .WithTagName("Catalog API")
+            .MapProfile<GetCatalogOverviewBehavior>();
     }
 }
+
+[AppBehavior("catalog.overview.get")]
+[BehaviorAllowedPatterns("direct")]
+[BehaviorRestProfile(BehaviorRestMethod.Get, "/overview", ApiVersionMajor = 1)]
+internal sealed class GetCatalogOverviewBehavior : IAppBehavior<GetCatalogOverviewInput, Result<CatalogOverviewEnvelope>>
+{
+    private readonly CatalogOverviewService service;
+
+    public GetCatalogOverviewBehavior(CatalogOverviewService service)
+    {
+        this.service = service;
+    }
+
+    public Task<Result<CatalogOverviewEnvelope>> HandleAsync(
+        GetCatalogOverviewInput input,
+        IBehaviorContext context,
+        CancellationToken cancellationToken = default)
+    {
+        return Task.FromResult(Result.Ok(
+            service.Build(),
+            message: "Catalog overview resolved."));
+    }
+
+    public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
+    {
+        builder.AsDirect();
+    }
+}
+
+internal sealed record GetCatalogOverviewInput();

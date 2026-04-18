@@ -11,9 +11,10 @@ Reference module package for Cephalon authoring.
 - package-owned localized text
 - REST contribution through `IRestModule` for a generic non-behavior REST module path
 
-For behavior-owning REST modules, prefer `RestBehaviorModuleBase` from
-`Cephalon.Behaviors.Http` so the same module can own both internal and public behaviors while the
-host adapter keeps route mapping in `MapEndpoints(...)`.
+For new behavior-owning public REST modules and the shipped blueprint starters, prefer
+`RestBehaviorModuleBase` from `Cephalon.Behaviors.Http` and keep public routes in
+`ConfigureRestBehaviors(...)` via `MapProfile<TBehavior>()`; reserve raw `IRestModule` plus manual
+`MapEndpoints(...)` for generic non-behavior modules or advanced/manual escape hatches.
 
 ## How to load it
 

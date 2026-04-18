@@ -43,7 +43,7 @@ public static class ScaffoldGenerator
 
         var renderedProjects = projectsBySourceId.Values
             .SelectMany(projects => projects)
-            .Select(instance => instance.ToRenderedProject(projectsBySourceId))
+            .Select(instance => instance.ToRenderedProject(appProfile, projectsBySourceId))
             .OrderBy(project => project.Path, StringComparer.OrdinalIgnoreCase)
             .ThenBy(project => project.Name, StringComparer.OrdinalIgnoreCase)
             .ToArray();
@@ -370,12 +370,10 @@ public static class ScaffoldGenerator
             : string.Join(", ", request.Modules.Select(module => $"`{module}`"));
         var hostProjectName = ResolveHostProjectName(appProfile, request);
         var hostProjectPath = $"src/{hostProjectName}/{hostProjectName}.csproj";
-        var restDocsLine = appProfile.Transports.Any(transport =>
-            string.Equals(transport.Id, "rest", StringComparison.OrdinalIgnoreCase))
+        var restDocsLine = HasRestApiTransport(appProfile)
             ? "Then inspect `/engine`, `/engine/snapshot`, `/health/ready`, and `/scalar`."
             : "Then inspect `/engine`, `/engine/snapshot`, and `/health/ready`.";
-        var restDocsServiceLine = appProfile.Transports.Any(transport =>
-            string.Equals(transport.Id, "rest", StringComparison.OrdinalIgnoreCase))
+        var restDocsServiceLine = HasRestApiTransport(appProfile)
             ? "Then inspect the host URL with `/engine`, `/engine/snapshot`, `/health/ready`, and `/scalar`."
             : "Then inspect the host URL with `/engine`, `/engine/snapshot`, and `/health/ready`.";
 
@@ -398,19 +396,20 @@ Generated from the Cephalon `{appProfile.BlueprintDisplayName}` blueprint.
 2. Populate `./.cephalon/packages` from the Cephalon repository or replace the `cephalon` source in `NuGet.config` with your published package feed.
 3. Adjust package versions in `Directory.Packages.props` if needed.
 4. Flesh out module services, capabilities, and transport adapters.
-5. Add feature handlers inside the generated folders for each module.
-6. Add project-specific languages or replace the localization catalog through `Engine:Localization` and DI.
-7. Generate and publish API reference docs before enabling the shipped `ReferenceDocs` host section.
-8. Keep Cephalon defaults in `Configurations/Add*.json`, use `appsettings.json` plus `appsettings.[Environment].json` for project-specific overrides, and add `Configurations/[group]/[Environment].json` when you want grouped environment overrides. `Configurations/Observability/Development.json` already seeds a Serilog console example, and `Program.cs` only switches to Serilog when that section exists.
-9. Use the shipped `Properties/PublishProfiles/CephalonFolder.pubxml` profile when you want a deterministic published-output path before deployment packaging.
-10. Use the shipped `deploy/container-image/README.md` plus the generated image-publish script when you want a provider-neutral build/tag/push baseline from the generated Dockerfile.
-11. Use the shipped `deploy/azure-app-service/README.md` plus the generated ZIP deployment script when you want an Azure App Service run-from-package baseline after publish.
-12. Use the shipped `deploy/azure-container-apps/README.md` plus the generated source-deploy script when you want an Azure Container Apps baseline from the generated Dockerfile and source root.
-13. Use the shipped `deploy/kubernetes/README.md` plus the generated manifest/apply assets when you want a platform-neutral Kubernetes baseline from the generated Dockerfile and source root.
-14. Use the shipped `deploy/windows-service/README.md` plus the generated install/remove scripts when you want a self-hosted Windows Service deployment baseline after publish.
-15. Use the shipped `deploy/iis/README.md` plus the generated site/app-pool preview scripts when you want a hosted Windows IIS deployment baseline after publish.
-16. Use the shipped `deploy/linux/systemd/README.md` plus the generated unit/env files when you want a self-hosted Linux `systemd` deployment baseline after publish.
-17. Use `docker compose up --build` for the generated local container + collector smoke path when you want to validate health and `/engine/*` routes under deployment-like boundaries.
+5. When `RestApi` is enabled, keep public REST in `ConfigureRestBehaviors(...)`, add profiled behaviors instead of inline endpoint handlers, and use `MapGeneratedProfiles(...)` only when grouped shorthand materially reduces repetition.
+6. Add feature handlers inside the generated folders for each module.
+7. Add project-specific languages or replace the localization catalog through `Engine:Localization` and DI.
+8. Generate and publish API reference docs before enabling the shipped `ReferenceDocs` host section.
+9. Keep Cephalon defaults in `Configurations/Add*.json`, use `appsettings.json` plus `appsettings.[Environment].json` for project-specific overrides, and add `Configurations/[group]/[Environment].json` when you want grouped environment overrides. `Configurations/Observability/Development.json` already seeds a Serilog console example, and `Program.cs` only switches to Serilog when that section exists.
+10. Use the shipped `Properties/PublishProfiles/CephalonFolder.pubxml` profile when you want a deterministic published-output path before deployment packaging.
+11. Use the shipped `deploy/container-image/README.md` plus the generated image-publish script when you want a provider-neutral build/tag/push baseline from the generated Dockerfile.
+12. Use the shipped `deploy/azure-app-service/README.md` plus the generated ZIP deployment script when you want an Azure App Service run-from-package baseline after publish.
+13. Use the shipped `deploy/azure-container-apps/README.md` plus the generated source-deploy script when you want an Azure Container Apps baseline from the generated Dockerfile and source root.
+14. Use the shipped `deploy/kubernetes/README.md` plus the generated manifest/apply assets when you want a platform-neutral Kubernetes baseline from the generated Dockerfile and source root.
+15. Use the shipped `deploy/windows-service/README.md` plus the generated install/remove scripts when you want a self-hosted Windows Service deployment baseline after publish.
+16. Use the shipped `deploy/iis/README.md` plus the generated site/app-pool preview scripts when you want a hosted Windows IIS deployment baseline after publish.
+17. Use the shipped `deploy/linux/systemd/README.md` plus the generated unit/env files when you want a self-hosted Linux `systemd` deployment baseline after publish.
+18. Use `docker compose up --build` for the generated local container + collector smoke path when you want to validate health and `/engine/*` routes under deployment-like boundaries.
 
 ## Published output
 
@@ -1283,6 +1282,16 @@ public sealed record GreetingContract(string Message, DateTimeOffset CreatedAtUt
         RenderedProject project,
         ScaffoldRequest request)
     {
+        return HasRestApiTransport(appProfile)
+            ? BuildRestBehaviorModuleFile(appProfile, project, request)
+            : BuildGenericModuleFile(appProfile, project, request);
+    }
+
+    private static string BuildGenericModuleFile(
+        AppProfile appProfile,
+        RenderedProject project,
+        ScaffoldRequest request)
+    {
         var moduleName = ResolveModuleName(project);
         var moduleTypeName = ResolveModuleTypeName(project);
         var moduleId = ScaffoldRequest.ToSlug(moduleName, "module");
@@ -1308,6 +1317,85 @@ public sealed class {moduleTypeName}Module : ModuleBase
             description: ""Generated health capability for the {EscapeString(moduleName)} module.""));
     }}
 }}
+";
+    }
+
+    private static string BuildRestBehaviorModuleFile(
+        AppProfile appProfile,
+        RenderedProject project,
+        ScaffoldRequest request)
+    {
+        var moduleName = ResolveModuleName(project);
+        var moduleTypeName = ResolveModuleTypeName(project);
+        var moduleId = ScaffoldRequest.ToSlug(moduleName, "module");
+        var behaviorTypeName = $"Get{moduleTypeName}StatusBehavior";
+        var inputTypeName = $"Get{moduleTypeName}StatusInput";
+        var responseTypeName = $"{moduleTypeName}StatusSnapshot";
+
+        return $@"using Cephalon.Abstractions.Behaviors;
+using Cephalon.Abstractions.Capabilities;
+using Cephalon.Abstractions.Modules;
+using Cephalon.Behaviors.Http.Abstractions;
+using Cephalon.Behaviors.Http.Hosting;
+
+namespace {request.RootNamespace}.Modules.{ScaffoldRequest.ToIdentifier(moduleName, "Module")};
+
+public sealed class {moduleTypeName}Module : RestBehaviorModuleBase
+{{
+    public override ModuleDescriptor Descriptor {{ get; }} = new(
+        id: ""{moduleId}"",
+        displayName: ""{EscapeString(moduleName)}"",
+        description: ""Generated {EscapeString(moduleName)} behavior-backed REST module for the {EscapeString(appProfile.BlueprintDisplayName)} blueprint."",
+        tags: [""generated"", ""{appProfile.BlueprintId}"", ""rest"", ""behaviors""]);
+
+    public override void RegisterCapabilities(ICapabilityRegistry capabilities)
+    {{
+        capabilities.Add(new Capability(
+            key: ""{moduleId}.status"",
+            displayName: ""{EscapeString(moduleName)} status"",
+            description: ""Generated behavior-backed REST status capability for the {EscapeString(moduleName)} module.""));
+    }}
+
+    public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+    {{
+        behaviors.Group(""/{moduleId}"")
+            .WithTagName(""{EscapeString(moduleName)} API"")
+            .MapProfile<{behaviorTypeName}>();
+    }}
+}}
+
+[AppBehavior(""{moduleId}.status.get"")]
+[BehaviorAllowedPatterns(""direct"")]
+[BehaviorRestProfile(BehaviorRestMethod.Get, ""/status"", ApiVersionMajor = 1)]
+internal sealed class {behaviorTypeName} : IAppBehavior<{inputTypeName}, Result<{responseTypeName}>>
+{{
+    public Task<Result<{responseTypeName}>> HandleAsync(
+        {inputTypeName} input,
+        IBehaviorContext context,
+        CancellationToken cancellationToken = default)
+    {{
+        return Task.FromResult(Result.Ok(
+            new {responseTypeName}(
+                ModuleId: ""{moduleId}"",
+                Module: ""{EscapeString(moduleName)}"",
+                Blueprint: ""{EscapeString(appProfile.BlueprintDisplayName)}"",
+                Message: ""Generated behavior-backed REST module is running.""),
+            message: ""Generated behavior-backed REST module status resolved.""));
+    }}
+
+    public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
+    {{
+        builder.AsDirect();
+    }}
+}}
+
+internal sealed record {inputTypeName}();
+
+internal sealed record {responseTypeName}(
+    string ModuleId,
+    string Module,
+    string Blueprint,
+    string Message);
 ";
     }
 
@@ -1494,8 +1582,7 @@ If your team already publishes Cephalon packages to a shared source, replace the
         ScaffoldRequest request,
         string hostProjectName)
     {
-        var restDocsLine = appProfile.Transports.Any(transport =>
-            string.Equals(transport.Id, "rest", StringComparison.OrdinalIgnoreCase))
+        var restDocsLine = HasRestApiTransport(appProfile)
             ? "Then inspect the running host with `/engine`, `/engine/snapshot`, `/health/ready`, and `/scalar`."
             : "Then inspect the running host with `/engine`, `/engine/snapshot`, and `/health/ready`.";
 
@@ -1684,8 +1771,7 @@ Write-Host "Windows Service '$ServiceName' deleted successfully." -ForegroundCol
         ScaffoldRequest request,
         string hostProjectName)
     {
-        var restDocsLine = appProfile.Transports.Any(transport =>
-            string.Equals(transport.Id, "rest", StringComparison.OrdinalIgnoreCase))
+        var restDocsLine = HasRestApiTransport(appProfile)
             ? "Then inspect the running host with `/engine`, `/engine/snapshot`, `/health/ready`, and `/scalar`."
             : "Then inspect the running host with `/engine`, `/engine/snapshot`, and `/health/ready`.";
 
@@ -1882,8 +1968,7 @@ Write-Host "IIS site '$SiteName' and app pool '$AppPoolName' deleted successfull
         ScaffoldRequest request,
         string hostProjectName)
     {
-        var restDocsLine = appProfile.Transports.Any(transport =>
-            string.Equals(transport.Id, "rest", StringComparison.OrdinalIgnoreCase))
+        var restDocsLine = HasRestApiTransport(appProfile)
             ? "Then inspect the running host with `/engine`, `/engine/snapshot`, `/health/ready`, and `/scalar`."
             : "Then inspect the running host with `/engine`, `/engine/snapshot`, and `/health/ready`.";
 
@@ -2296,8 +2381,7 @@ else {
         ScaffoldRequest request,
         string hostProjectName)
     {
-        var restDocsLine = appProfile.Transports.Any(transport =>
-            string.Equals(transport.Id, "rest", StringComparison.OrdinalIgnoreCase))
+        var restDocsLine = HasRestApiTransport(appProfile)
             ? "Then inspect the running host with `/engine`, `/engine/snapshot`, `/health/ready`, and `/scalar`."
             : "Then inspect the running host with `/engine`, `/engine/snapshot`, and `/health/ready`.";
 
@@ -2474,8 +2558,7 @@ Write-Host "App: $AppName" -ForegroundColor Cyan
         AppProfile appProfile,
         ScaffoldRequest request)
     {
-        var restDocsLine = appProfile.Transports.Any(transport =>
-            string.Equals(transport.Id, "rest", StringComparison.OrdinalIgnoreCase))
+        var restDocsLine = HasRestApiTransport(appProfile)
             ? "Then inspect the running host with `/engine`, `/engine/snapshot`, `/health/ready`, and `/scalar`."
             : "Then inspect the running host with `/engine`, `/engine/snapshot`, and `/health/ready`.";
         var resourceName = BuildKubernetesResourceName(request);
@@ -2830,8 +2913,7 @@ spec:
         ScaffoldRequest request,
         string hostProjectName)
     {
-        var restDocsLine = appProfile.Transports.Any(transport =>
-            string.Equals(transport.Id, "rest", StringComparison.OrdinalIgnoreCase))
+        var restDocsLine = HasRestApiTransport(appProfile)
             ? "Then inspect the running host with `/engine`, `/engine/snapshot`, `/health/ready`, and `/scalar`."
             : "Then inspect the running host with `/engine`, `/engine/snapshot`, and `/health/ready`.";
 
@@ -3200,6 +3282,20 @@ service:
         return path.Replace('\\', '/');
     }
 
+    private static bool HasTransport(AppProfile appProfile, string transportId)
+    {
+        ArgumentNullException.ThrowIfNull(appProfile);
+        ArgumentException.ThrowIfNullOrWhiteSpace(transportId);
+
+        return appProfile.Transports.Any(transport =>
+            string.Equals(transport.Id, transportId, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static bool HasRestApiTransport(AppProfile appProfile)
+    {
+        return HasTransport(appProfile, "rest-api");
+    }
+
     private sealed class ProjectInstance
     {
         public ProjectInstance(
@@ -3239,6 +3335,7 @@ service:
         public IReadOnlyDictionary<string, string> Tokens { get; }
 
         public RenderedProject ToRenderedProject(
+            AppProfile appProfile,
             IReadOnlyDictionary<string, List<ProjectInstance>> projectsBySourceId)
         {
             var dependencies = Source.DependsOn
@@ -3278,7 +3375,7 @@ service:
                 scope: Source.Scope,
                 role: Source.Role,
                 template: Source.Template,
-                packages: GetEffectiveProjectPackages(Source.Template, Source.Packages),
+                packages: GetEffectiveProjectPackages(appProfile, Source.Template, Source.Packages),
                 projectReferences: projectReferences,
                 metadata: metadata);
         }
@@ -3293,9 +3390,11 @@ service:
     }
 
     private static string[] GetEffectiveProjectPackages(
+        AppProfile appProfile,
         string template,
         IReadOnlyList<string> packages)
     {
+        ArgumentNullException.ThrowIfNull(appProfile);
         ArgumentException.ThrowIfNullOrWhiteSpace(template);
         ArgumentNullException.ThrowIfNull(packages);
 
@@ -3305,6 +3404,11 @@ service:
         {
             effectivePackages.Add("Cephalon.Observability.Serilog");
             effectivePackages.Add("Serilog.Sinks.Console");
+        }
+
+        if (template == "cephalon-module" && HasRestApiTransport(appProfile))
+        {
+            effectivePackages.Add("Cephalon.Behaviors.Http");
         }
 
         return effectivePackages

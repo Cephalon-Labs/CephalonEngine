@@ -1,8 +1,10 @@
+using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
-using Cephalon.AspNetCore.Modules;
+using Cephalon.Behaviors.Http.Abstractions;
+using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Sample.ModularVerticalSlice.Modules.Orders.Features.Checkout.Commands;
-using Microsoft.AspNetCore.Routing;
+using Cephalon.Sample.ModularVerticalSlice.Modules.Orders.Features.Checkout.Queries;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Sample.ModularVerticalSlice.Modules.Orders.Features.Checkout.Endpoints;
@@ -10,7 +12,7 @@ namespace Cephalon.Sample.ModularVerticalSlice.Modules.Orders.Features.Checkout.
 /// <summary>
 /// Registers the orders module for the modular vertical-slice sample.
 /// </summary>
-public sealed class OrdersModule : ModuleBase, IEndpointModule
+public sealed class OrdersModule : RestBehaviorModuleBase
 {
     private static readonly ModuleDescriptor DescriptorInstance = new(
         id: "orders",
@@ -50,15 +52,45 @@ public sealed class OrdersModule : ModuleBase, IEndpointModule
     }
 
     /// <summary>
-    /// Maps the HTTP endpoints exposed by the orders module.
+    /// Configures the public REST behaviors exposed by the orders module.
     /// </summary>
-    /// <param name="endpoints">
-    /// The endpoint route builder used by the ASP.NET Core host adapter.
+    /// <param name="behaviors">
+    /// The REST behavior builder used by the ASP.NET Core host adapter.
     /// </param>
-    public void MapEndpoints(IEndpointRouteBuilder endpoints)
+    public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
     {
-        var group = endpoints.MapGroup("/orders/checkout");
-        group.MapGet("/preview/{customerId?}", (string? customerId, CheckoutPreviewService service) =>
-            TypedResults.Ok(service.Build(customerId)));
+        behaviors.Group("/orders/checkout")
+            .WithTagName("Orders API")
+            .MapProfile<GetCheckoutPreviewBehavior>();
     }
 }
+
+[AppBehavior("orders.checkout.preview.get")]
+[BehaviorAllowedPatterns("direct")]
+[BehaviorRestProfile(BehaviorRestMethod.Get, "/preview/{customerId?}", ApiVersionMajor = 1)]
+internal sealed class GetCheckoutPreviewBehavior : IAppBehavior<GetCheckoutPreviewInput, Result<CheckoutPreviewEnvelope>>
+{
+    private readonly CheckoutPreviewService service;
+
+    public GetCheckoutPreviewBehavior(CheckoutPreviewService service)
+    {
+        this.service = service;
+    }
+
+    public Task<Result<CheckoutPreviewEnvelope>> HandleAsync(
+        GetCheckoutPreviewInput input,
+        IBehaviorContext context,
+        CancellationToken cancellationToken = default)
+    {
+        return Task.FromResult(Result.Ok(
+            service.Build(input.CustomerId),
+            message: "Checkout preview resolved."));
+    }
+
+    public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
+    {
+        builder.AsDirect();
+    }
+}
+
+internal sealed record GetCheckoutPreviewInput(string? CustomerId = null);

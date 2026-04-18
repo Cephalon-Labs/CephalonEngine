@@ -562,6 +562,65 @@ public sealed class ScaffoldGeneratorTests
     }
 
     [Fact]
+    public void GenerateUsesBehaviorBackedRestModulesWhenRestApiTransportIsSelected()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseSettings(new EngineSettings(
+            blueprint: "ModularMonolith",
+            transports: ["RestApi"]));
+
+        var runtime = builder.Build();
+        var scaffold = ScaffoldGenerator.Generate(
+            runtime.Manifest.AppProfile,
+            new ScaffoldRequest(
+                appName: "Acme.RestStarter",
+                modules: ["Platform"],
+                cephalonPackageVersion: "9.1.0-preview"));
+
+        var moduleProject = Assert.Single(scaffold.Projects, project => project.Name == "Acme.RestStarter.Modules.Platform");
+        Assert.Contains("Cephalon.Behaviors.Http", moduleProject.Packages, StringComparer.OrdinalIgnoreCase);
+
+        var moduleFile = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "src/Acme.RestStarter.Modules.Platform/PlatformModule.cs");
+        Assert.Contains("RestBehaviorModuleBase", moduleFile.Contents, StringComparison.Ordinal);
+        Assert.Contains("ConfigureRestBehaviors", moduleFile.Contents, StringComparison.Ordinal);
+        Assert.Contains("MapProfile<GetPlatformStatusBehavior>()", moduleFile.Contents, StringComparison.Ordinal);
+        Assert.Contains("[BehaviorRestProfile(BehaviorRestMethod.Get, \"/status\", ApiVersionMajor = 1)]", moduleFile.Contents, StringComparison.Ordinal);
+
+        var readme = Assert.Single(scaffold.Files, file => file.Path == "README.md");
+        Assert.Contains("/scalar", readme.Contents, StringComparison.Ordinal);
+        Assert.Contains("ConfigureRestBehaviors(...)", readme.Contents, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void GenerateKeepsGenericModulesWhenRestApiTransportIsNotSelected()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseSettings(new EngineSettings(
+            blueprint: "ModularMonolith",
+            transports: ["JsonRpc"]));
+
+        var runtime = builder.Build();
+        var scaffold = ScaffoldGenerator.Generate(
+            runtime.Manifest.AppProfile,
+            new ScaffoldRequest(
+                appName: "Acme.GenericStarter",
+                modules: ["Platform"],
+                cephalonPackageVersion: "9.1.0-preview"));
+
+        var moduleProject = Assert.Single(scaffold.Projects, project => project.Name == "Acme.GenericStarter.Modules.Platform");
+        Assert.DoesNotContain("Cephalon.Behaviors.Http", moduleProject.Packages, StringComparer.OrdinalIgnoreCase);
+
+        var moduleFile = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "src/Acme.GenericStarter.Modules.Platform/PlatformModule.cs");
+        Assert.Contains("ModuleBase", moduleFile.Contents, StringComparison.Ordinal);
+        Assert.DoesNotContain("RestBehaviorModuleBase", moduleFile.Contents, StringComparison.Ordinal);
+        Assert.DoesNotContain("ConfigureRestBehaviors", moduleFile.Contents, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void GenerateKeepsPackageVersionsAlignedWithRepositoryCatalog()
     {
         var builder = new EngineBuilder(new ServiceCollection());
@@ -645,6 +704,11 @@ public sealed class ScaffoldGeneratorTests
             Assert.True(File.Exists(Path.Combine(outputPath, "src", "Future.Stack.Host", "Program.cs")));
             Assert.True(Directory.Exists(Path.Combine(outputPath, "src", "Future.Stack.Modules.Platform", "Application")));
             Assert.True(File.Exists(Path.Combine(outputPath, "src", "Future.Stack.Modules.Platform", "cephalon.package.json")));
+            Assert.True(File.Exists(Path.Combine(outputPath, "src", "Future.Stack.Modules.Platform", "PlatformModule.cs")));
+
+            var moduleFileContents = File.ReadAllText(Path.Combine(outputPath, "src", "Future.Stack.Modules.Platform", "PlatformModule.cs"));
+            Assert.Contains("RestBehaviorModuleBase", moduleFileContents, StringComparison.Ordinal);
+            Assert.Contains("MapProfile<GetPlatformStatusBehavior>()", moduleFileContents, StringComparison.Ordinal);
 
             var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => FileSystemScaffoldWriter.WriteAsync(outputPath, scaffold));
             Assert.Contains("already exists", exception.Message, StringComparison.Ordinal);

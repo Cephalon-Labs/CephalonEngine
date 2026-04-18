@@ -1,10 +1,12 @@
+using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
-using Cephalon.AspNetCore.Modules;
+using Cephalon.Behaviors.Http.Abstractions;
+using Cephalon.Behaviors.Http.Hosting;
+using Cephalon.Sample.MicroserviceSuite.Foundation.Contracts;
 using Cephalon.Sample.MicroserviceSuite.CatalogService.Modules.Catalog.Features.Governance.Application;
 using Cephalon.Sample.MicroserviceSuite.CatalogService.Modules.Catalog.Features.Overview.Application;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
+using Cephalon.Sample.MicroserviceSuite.Governance.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Sample.MicroserviceSuite.CatalogService.Modules.Catalog.Features.Overview.Api;
@@ -12,7 +14,7 @@ namespace Cephalon.Sample.MicroserviceSuite.CatalogService.Modules.Catalog.Featu
 /// <summary>
 /// Registers the catalog module for the microservice-suite catalog service.
 /// </summary>
-public sealed class CatalogModule : ModuleBase, IEndpointModule
+public sealed class CatalogModule : RestBehaviorModuleBase
 {
     private static readonly ModuleDescriptor DescriptorInstance = new(
         id: "catalog",
@@ -57,17 +59,76 @@ public sealed class CatalogModule : ModuleBase, IEndpointModule
     }
 
     /// <summary>
-    /// Maps the HTTP endpoints exposed by the catalog module.
+    /// Configures the public REST behaviors exposed by the catalog module.
     /// </summary>
-    /// <param name="endpoints">
-    /// The endpoint route builder used by the ASP.NET Core host adapter.
+    /// <param name="behaviors">
+    /// The REST behavior builder used by the ASP.NET Core host adapter.
     /// </param>
-    public void MapEndpoints(IEndpointRouteBuilder endpoints)
+    public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
     {
-        var group = endpoints.MapGroup("/catalog");
-        group.MapGet("/overview", (CatalogOverviewApplicationService service) =>
-            TypedResults.Ok(service.Build()));
-        group.MapGet("/governance", (CatalogGovernanceApplicationService service) =>
-            TypedResults.Ok(service.Build()));
+        behaviors.Group("/catalog")
+            .WithTagName("Catalog API")
+            .MapProfile<GetCatalogOverviewBehavior>()
+            .MapProfile<GetCatalogGovernanceBehavior>();
     }
 }
+
+[AppBehavior("catalog.overview.get")]
+[BehaviorAllowedPatterns("direct")]
+[BehaviorRestProfile(BehaviorRestMethod.Get, "/overview", ApiVersionMajor = 1)]
+internal sealed class GetCatalogOverviewBehavior : IAppBehavior<GetCatalogOverviewInput, Result<SuiteServiceSummaryContract>>
+{
+    private readonly CatalogOverviewApplicationService service;
+
+    public GetCatalogOverviewBehavior(CatalogOverviewApplicationService service)
+    {
+        this.service = service;
+    }
+
+    public Task<Result<SuiteServiceSummaryContract>> HandleAsync(
+        GetCatalogOverviewInput input,
+        IBehaviorContext context,
+        CancellationToken cancellationToken = default)
+    {
+        return Task.FromResult(Result.Ok(
+            service.Build(),
+            message: "Catalog overview resolved."));
+    }
+
+    public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
+    {
+        builder.AsDirect();
+    }
+}
+
+[AppBehavior("catalog.governance.get")]
+[BehaviorAllowedPatterns("direct")]
+[BehaviorRestProfile(BehaviorRestMethod.Get, "/governance", ApiVersionMajor = 1)]
+internal sealed class GetCatalogGovernanceBehavior : IAppBehavior<GetCatalogGovernanceInput, Result<SuiteGovernanceSnapshotContract>>
+{
+    private readonly CatalogGovernanceApplicationService service;
+
+    public GetCatalogGovernanceBehavior(CatalogGovernanceApplicationService service)
+    {
+        this.service = service;
+    }
+
+    public Task<Result<SuiteGovernanceSnapshotContract>> HandleAsync(
+        GetCatalogGovernanceInput input,
+        IBehaviorContext context,
+        CancellationToken cancellationToken = default)
+    {
+        return Task.FromResult(Result.Ok(
+            service.Build(),
+            message: "Catalog governance guidance resolved."));
+    }
+
+    public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
+    {
+        builder.AsDirect();
+    }
+}
+
+internal sealed record GetCatalogOverviewInput();
+
+internal sealed record GetCatalogGovernanceInput();

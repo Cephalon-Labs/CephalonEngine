@@ -217,6 +217,21 @@ public sealed class TemplatePackTests
             AssertTemplatePackStarterUsesSplitSerilogConfig(package, "cephalon-modular-monolith");
             AssertTemplatePackStarterUsesSplitSerilogConfig(package, "cephalon-microservice");
             AssertTemplatePackStarterUsesSplitSerilogConfig(package, "cephalon-modular-vertical-slice");
+            AssertTemplatePackStarterUsesBehaviorBackedRestModule(
+                package,
+                "cephalon-modular-monolith",
+                "Modules/Catalog/Endpoints/CatalogModule.cs",
+                "GetCatalogOverviewBehavior");
+            AssertTemplatePackStarterUsesBehaviorBackedRestModule(
+                package,
+                "cephalon-modular-vertical-slice",
+                "Modules/Orders/Features/Checkout/Endpoints/OrdersModule.cs",
+                "GetCheckoutPreviewBehavior");
+            AssertTemplatePackStarterUsesBehaviorBackedRestModule(
+                package,
+                "cephalon-microservice",
+                "Modules/Customers/Features/Welcome/Api/CustomersModule.cs",
+                "GetWelcomeBehavior");
         }
         finally
         {
@@ -319,6 +334,7 @@ public sealed class TemplatePackTests
             Assert.Contains("Configurations\\**\\*.json", appProjectContents, StringComparison.Ordinal);
             Assert.Contains("Cephalon.Audit", appProjectContents, StringComparison.Ordinal);
             Assert.Contains("Cephalon.Ids.Sfid", appProjectContents, StringComparison.Ordinal);
+            Assert.Contains("Cephalon.Behaviors.Http", appProjectContents, StringComparison.Ordinal);
             Assert.Contains("<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>", appProjectContents, StringComparison.Ordinal);
             Assert.Contains("Cephalon.Observability.OpenTelemetry", appProjectContents, StringComparison.Ordinal);
             Assert.Contains("Cephalon.Observability.Serilog", appProjectContents, StringComparison.Ordinal);
@@ -397,6 +413,13 @@ public sealed class TemplatePackTests
             Assert.Contains("docker compose up --build", appReadmeContents, StringComparison.Ordinal);
             Assert.Contains("NuGet.config", appReadmeContents, StringComparison.Ordinal);
             Assert.Contains("./.cephalon/packages", appReadmeContents, StringComparison.Ordinal);
+
+            var generatedCatalogModulePath = Path.Combine(appOutputPath, "Modules", "Catalog", "Endpoints", "CatalogModule.cs");
+            var generatedCatalogModuleContents = File.ReadAllText(generatedCatalogModulePath);
+            Assert.Contains("RestBehaviorModuleBase", generatedCatalogModuleContents, StringComparison.Ordinal);
+            Assert.Contains("ConfigureRestBehaviors", generatedCatalogModuleContents, StringComparison.Ordinal);
+            Assert.Contains("MapProfile<GetCatalogOverviewBehavior>()", generatedCatalogModuleContents, StringComparison.Ordinal);
+            Assert.Contains("[BehaviorRestProfile(BehaviorRestMethod.Get, \"/overview\", ApiVersionMajor = 1)]", generatedCatalogModuleContents, StringComparison.Ordinal);
 
             var templateComposePath = Path.Combine(appOutputPath, "compose.yaml");
             var templateComposeContents = File.ReadAllText(templateComposePath);
@@ -579,6 +602,26 @@ public sealed class TemplatePackTests
             $"content/templates/{templateFolder}/README.md");
         Assert.Contains("Configurations/Observability/Development.json", readme, StringComparison.Ordinal);
         Assert.Contains("appsettings.{Environment}.json", readme, StringComparison.Ordinal);
+    }
+
+    private static void AssertTemplatePackStarterUsesBehaviorBackedRestModule(
+        ZipArchive package,
+        string templateFolder,
+        string modulePath,
+        string behaviorTypeName)
+    {
+        var appProject = ReadPackageEntry(
+            package,
+            $"content/templates/{templateFolder}/CephalonTemplateApp.csproj");
+        Assert.Contains("Cephalon.Behaviors.Http", appProject, StringComparison.Ordinal);
+
+        var moduleContents = ReadPackageEntry(
+            package,
+            $"content/templates/{templateFolder}/{modulePath}");
+        Assert.Contains("RestBehaviorModuleBase", moduleContents, StringComparison.Ordinal);
+        Assert.Contains("ConfigureRestBehaviors", moduleContents, StringComparison.Ordinal);
+        Assert.Contains($"MapProfile<{behaviorTypeName}>()", moduleContents, StringComparison.Ordinal);
+        Assert.Contains("[BehaviorRestProfile(", moduleContents, StringComparison.Ordinal);
     }
 
     private static string ReadPackageEntry(ZipArchive package, string entryPath)
