@@ -278,6 +278,85 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorModuleBuilderBuildMapsGeneratedProfileGroupsWithPerDerivedGroupConfiguration()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+
+        builder.MapGeneratedProfileGroups(
+            "tests.generated.projection.grouped",
+            (derivedBehaviorIdPrefix, group) =>
+            {
+                if (string.Equals(derivedBehaviorIdPrefix, "tests.generated.projection.grouped.orders", StringComparison.Ordinal))
+                {
+                    group.ApiVersion(20)
+                        .AllowHostGovernance()
+                        .WithHostGovernanceScope("generated-orders")
+                        .WithTagName("Generated Orders Projection API");
+                }
+                else if (string.Equals(derivedBehaviorIdPrefix, "tests.generated.projection.grouped.inventory", StringComparison.Ordinal))
+                {
+                    group.WithHostGovernanceScope("generated-inventory")
+                        .WithTagName("Generated Inventory Projection API");
+                }
+            });
+
+        var projection = builder.Build();
+
+        Assert.Equal(3, projection.OwnershipRegistrations.Count);
+        Assert.Equal(2, projection.Groups.Count);
+
+        Assert.Collection(
+            projection.Groups,
+            inventoryGroup =>
+            {
+                Assert.Equal("/tests/generated/projection/grouped/inventory", inventoryGroup.Prefix);
+                Assert.Equal("v13", inventoryGroup.OpenApiDocumentName);
+                Assert.False(inventoryGroup.HasExplicitOpenApiDocumentName);
+                Assert.Equal(13, inventoryGroup.ApiVersionMajor);
+                Assert.False(inventoryGroup.HasExplicitApiVersion);
+                Assert.Equal("tests.generated.projection.grouped.inventory.lookup", inventoryGroup.ProfileApiVersionSourceBehaviorId);
+                Assert.False(inventoryGroup.AllowHostGovernance);
+                Assert.Equal("generated-inventory", inventoryGroup.HostGovernanceScope);
+                Assert.Equal("Generated Inventory Projection API", inventoryGroup.TagName);
+
+                var endpoint = Assert.Single(inventoryGroup.Endpoints);
+                Assert.Equal(RestBehaviorHttpMethod.Get, endpoint.Method);
+                Assert.Equal(typeof(GeneratedProjectionGroupedInventoryBehavior), endpoint.BehaviorType);
+                Assert.Equal("/{cartId}", endpoint.Pattern);
+                Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, endpoint.AuthoringStyle);
+            },
+            ordersGroup =>
+            {
+                Assert.Equal("/tests/generated/projection/grouped/orders", ordersGroup.Prefix);
+                Assert.Equal("v20", ordersGroup.OpenApiDocumentName);
+                Assert.False(ordersGroup.HasExplicitOpenApiDocumentName);
+                Assert.Equal(20, ordersGroup.ApiVersionMajor);
+                Assert.True(ordersGroup.HasExplicitApiVersion);
+                Assert.Null(ordersGroup.ProfileApiVersionSourceBehaviorId);
+                Assert.True(ordersGroup.AllowHostGovernance);
+                Assert.Equal("generated-orders", ordersGroup.HostGovernanceScope);
+                Assert.Equal("Generated Orders Projection API", ordersGroup.TagName);
+
+                Assert.Collection(
+                    ordersGroup.Endpoints,
+                    createEndpoint =>
+                    {
+                        Assert.Equal(RestBehaviorHttpMethod.Post, createEndpoint.Method);
+                        Assert.Equal(typeof(GeneratedProjectionGroupedOrdersCreateBehavior), createEndpoint.BehaviorType);
+                        Assert.Equal("/{cartId}/items", createEndpoint.Pattern);
+                        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, createEndpoint.AuthoringStyle);
+                    },
+                    lookupEndpoint =>
+                    {
+                        Assert.Equal(RestBehaviorHttpMethod.Get, lookupEndpoint.Method);
+                        Assert.Equal(typeof(GeneratedProjectionGroupedOrdersLookupBehavior), lookupEndpoint.BehaviorType);
+                        Assert.Equal("/{cartId}", lookupEndpoint.Pattern);
+                        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, lookupEndpoint.AuthoringStyle);
+                    });
+            });
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverPublishesHigherPrecedenceDslCandidateAndSuppressesProfileCandidate()
     {
         var builder = new RestBehaviorModuleBuilder();

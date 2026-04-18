@@ -426,6 +426,33 @@ behavior id or by subtree `BehaviorIdPrefixes` such as `showcase.generated.order
 governance rule can suppress or override one generated group without enumerating every exact
 generated candidate id.
 
+When each derived route group needs different conventions, use the derived-prefix-aware overload:
+
+```csharp
+behaviors.MapGeneratedProfileGroups(
+    "showcase.generated",
+    (derivedBehaviorIdPrefix, group) =>
+    {
+        if (string.Equals(derivedBehaviorIdPrefix, "showcase.generated.orders", StringComparison.Ordinal))
+        {
+            group.ApiVersion(2)
+                .WithTagName("Generated Orders API")
+                .WithHostGovernanceScope("generated-orders");
+        }
+        else if (string.Equals(derivedBehaviorIdPrefix, "showcase.generated.inventory", StringComparison.Ordinal))
+        {
+            group.WithTagName("Generated Inventory API")
+                .WithHostGovernanceScope("generated-inventory");
+        }
+    });
+```
+
+The callback now receives each derived generated behavior-id prefix before its profiles are mapped,
+so one owning module can stamp different version, tag, or governance-scope conventions per branch
+without restating every derived group manually. Generated shorthand already participates in host
+governance by default, so this overload is mainly about per-branch projection conventions and
+stable original-projection scope truth rather than opt-in governance.
+
 When a project wants the same module-owned REST behavior without creating a dedicated module class,
 the host can still register an inline module explicitly:
 
@@ -494,6 +521,35 @@ module identity, grouped generated ownership, or inline metadata should differ. 
 prefix validation now also fails fast consistently for both dedicated-module and inline-helper paths
 when the supplied dot-separated prefix contains empty segments.
 
+When the inline helper also needs different conventions per derived group, use the matching
+derived-prefix-aware overload:
+
+```csharp
+engine.AddGeneratedRestBehaviorModuleGroups<GetCatalogOrderBehavior>(
+    "showcase.generated",
+    "Generated Catalog Module",
+    "Publishes generated REST profiles across several derived route groups through the inline helper.",
+    (derivedBehaviorIdPrefix, group) =>
+    {
+        if (string.Equals(derivedBehaviorIdPrefix, "showcase.generated.orders", StringComparison.Ordinal))
+        {
+            group.ApiVersion(2)
+                .WithTagName("Generated Orders API")
+                .WithHostGovernanceScope("generated-orders");
+        }
+        else if (string.Equals(derivedBehaviorIdPrefix, "showcase.generated.inventory", StringComparison.Ordinal))
+        {
+            group.WithTagName("Generated Inventory API")
+                .WithHostGovernanceScope("generated-inventory");
+        }
+    },
+    version: "1.0.0");
+```
+
+That keeps the same inline-module ownership story, but now the callback can branch on
+`showcase.generated.orders` versus `showcase.generated.inventory` before the generated profiles are
+materialized.
+
 Current helper behavior:
 
 - keeps REST route shape in the host-adapter layer instead of overloading behavior attributes with
@@ -521,10 +577,10 @@ Current helper behavior:
   descriptors, and optional preserved implicit query-fallback intent for explicitly bound profiles
 - adds `MapGeneratedProfiles()` and `MapGeneratedProfiles(string)` as explicit module-owned
   low-code shorthands that publish every matching profiled behavior beneath one owned route group
-- adds `MapGeneratedProfileGroups(string)` plus the shared-group-configuration overload on
-  `IRestBehaviorModuleBuilder`, plus `AddGeneratedRestBehaviorModuleGroups<TMarker>(...)` on
-  `EngineBuilder`, when one generated root prefix should fan out into several derived owned route
-  groups while preserving the same generated shorthand runtime truth
+- adds `MapGeneratedProfileGroups(string)`, the shared-group-configuration overload, the
+  derived-prefix-aware overload, and matching `AddGeneratedRestBehaviorModuleGroups<TMarker>(...)`
+  helpers when one generated root prefix should fan out into several derived owned route groups
+  while preserving the same generated shorthand runtime truth
 - derives the default generated-selection prefix from the route-group path by trimming slashes and
   replacing `/` separators with `.`, while still allowing an explicit behavior-id prefix override
 - derives the common generated route-group path from a dot-separated behavior-id prefix when

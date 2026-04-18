@@ -346,6 +346,13 @@ Status update:
   grouped generated root prefix from the inline module id while the explicit `behaviorIdPrefix`
   and `ModuleDescriptor` overloads remain the escape hatches, and now reuses the same fail-fast
   dot-separated prefix validation regardless of which grouped-generated helper path is used
+- the next grouped-generated per-derived-group configuration follow-through is now also shipped
+  through `ENG-058-T173`: `Cephalon.Behaviors.Http` now also exposes derived-prefix-aware
+  `MapGeneratedProfileGroups(...)` and `AddGeneratedRestBehaviorModuleGroups<TMarker>()`
+  overloads so one owning module or inline helper can branch on each derived generated
+  behavior-id prefix before mapping profiles, keeping per-branch API version, tag, and
+  governance-scope conventions low-code while preserving the same grouped generated ownership,
+  candidate, publication-group, governance, and runtime-catalog path
 - the next stable shorthand candidate-id governance follow-through is now shipped through
   `ENG-058-T85`: shorthand candidate ids now resolve from the original shorthand projection before
   host-level overrides are applied, `RestApi:Suppressions` and `RestApi:Overrides` now also accept
@@ -580,7 +587,9 @@ Current shipped follow-through:
   where one route group or one grouped generated subtree should derive from a stable generated root
   prefix, while the explicit `behaviorIdPrefix` and `ModuleDescriptor` overloads remain available
   when inline module identity, generated ownership, or inline metadata should differ, again without
-  inventing a new publication source
+  inventing a new publication source; the grouped-generated module and inline-helper paths now also
+  expose derived-prefix-aware callbacks so each derived branch can stamp its own API version, tag,
+  or governance scope without abandoning grouped generated shorthand
 
 ### Layer 4: host- or app-level projection overrides
 
@@ -1001,6 +1010,11 @@ Status:
   route groups, applies optional shared group-level conventions before publication, and still keeps
   generated publication on the same normalized projection, candidate-catalog, publication-group,
   and runtime-catalog path instead of inventing a new generated publication source
+- now also shipped through `ENG-058-T173`; those same grouped generated dedicated-module and
+  inline-helper paths can now also configure each derived group with awareness of its exact
+  generated behavior-id prefix, so one owner can stamp different API versions, tags, or
+  governance scopes per branch without falling back to manual derived-group enumeration or leaving
+  the same normalized grouped-generated runtime path
 
 Follow-through later:
 
@@ -1297,6 +1311,11 @@ Status:
   runtime story on the low-code inline module path through
   `AddGeneratedRestBehaviorModuleGroups<TMarker>()`, while the grouped generated root-prefix
   validation now fails fast consistently for both dedicated-module and inline-helper entry points
+- the next grouped-generated per-derived-group configuration follow-through is now also shipped
+  through `ENG-058-T173`, so both the dedicated-module and inline-helper grouped generated paths
+  can now configure each derived group with awareness of its exact generated behavior-id prefix
+  before profiles are mapped, keeping per-branch API-version, tag, and governance-scope
+  conventions on the same generated authoring-style and runtime-truth path
 - the next metadata-authoring parity follow-through is now also shipped through `ENG-058-T119`, so
   that same `preserve-source-implicit-fallback` story is no longer limited to no-explicit-plan
   shorthand candidates plus later host overrides; explicit metadata-only profiles can now opt into

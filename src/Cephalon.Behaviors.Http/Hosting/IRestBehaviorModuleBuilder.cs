@@ -89,4 +89,23 @@ public interface IRestBehaviorModuleBuilder
     IRestBehaviorModuleBuilder MapGeneratedProfileGroups(
         string behaviorIdPrefix,
         Action<IRestBehaviorEndpointGroupBuilder> configureGroup);
+
+    /// <summary>
+    /// Maps matching generated REST profiles from the owning module assembly into one or more
+    /// derived route groups while applying per-group conventions with awareness of each derived
+    /// generated behavior-id prefix.
+    /// </summary>
+    /// <param name="behaviorIdPrefix">
+    /// The root behavior-id prefix used to select generated REST profiles from the owning module
+    /// assembly.
+    /// </param>
+    /// <param name="configureGroup">
+    /// The callback applied to each derived route group before the generated profiles are mapped.
+    /// The first argument is the derived behavior-id prefix for that route group, such as
+    /// <c>showcase.generated.orders</c>.
+    /// </param>
+    /// <returns>The same builder for fluent authoring.</returns>
+    IRestBehaviorModuleBuilder MapGeneratedProfileGroups(
+        string behaviorIdPrefix,
+        Action<string, IRestBehaviorEndpointGroupBuilder> configureGroup);
 }

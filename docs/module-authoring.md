@@ -404,6 +404,33 @@ Cephalon derives one public route group per parent behavior-id prefix, so
 behavior id or by subtree `BehaviorIdPrefixes`, so one rule can govern one derived group without
 giving up module ownership or enumerating every exact generated candidate id.
 
+When each derived route group needs different conventions, use the derived-prefix-aware overload:
+
+```csharp
+behaviors.MapGeneratedProfileGroups(
+    "showcase.generated",
+    (derivedBehaviorIdPrefix, group) =>
+    {
+        if (string.Equals(derivedBehaviorIdPrefix, "showcase.generated.orders", StringComparison.Ordinal))
+        {
+            group.ApiVersion(2)
+                .WithTagName("Generated Orders API")
+                .WithHostGovernanceScope("generated-orders");
+        }
+        else if (string.Equals(derivedBehaviorIdPrefix, "showcase.generated.inventory", StringComparison.Ordinal))
+        {
+            group.WithTagName("Generated Inventory API")
+                .WithHostGovernanceScope("generated-inventory");
+        }
+    });
+```
+
+The callback now receives each derived generated behavior-id prefix before its profiles are mapped,
+so one owning module can stamp different version, tag, or governance-scope conventions per branch
+without enumerating every derived group manually. Generated shorthand already participates in host
+governance by default, so this overload is mainly about per-branch projection conventions and
+stable original-projection scope truth rather than opt-in governance.
+
 When a project wants to stay explicit and module-owned without creating a dedicated module class,
 the host can still register the full group manually:
 
@@ -473,6 +500,35 @@ ownership, or inline metadata should differ. Grouped generated prefix validation
 fast consistently for both dedicated-module and inline-helper paths when the supplied dot-separated
 prefix contains empty segments.
 
+When the inline helper also needs different conventions per derived group, use the matching
+derived-prefix-aware overload:
+
+```csharp
+engine.AddGeneratedRestBehaviorModuleGroups<GetCatalogOrderBehavior>(
+    "showcase.generated",
+    "Generated Catalog Module",
+    "Publishes generated REST profiles across several derived route groups through the inline helper.",
+    (derivedBehaviorIdPrefix, group) =>
+    {
+        if (string.Equals(derivedBehaviorIdPrefix, "showcase.generated.orders", StringComparison.Ordinal))
+        {
+            group.ApiVersion(2)
+                .WithTagName("Generated Orders API")
+                .WithHostGovernanceScope("generated-orders");
+        }
+        else if (string.Equals(derivedBehaviorIdPrefix, "showcase.generated.inventory", StringComparison.Ordinal))
+        {
+            group.WithTagName("Generated Inventory API")
+                .WithHostGovernanceScope("generated-inventory");
+        }
+    },
+    version: "1.0.0");
+```
+
+That keeps the same inline-module ownership story, but now the callback can branch on
+`showcase.generated.orders` versus `showcase.generated.inventory` before the generated profiles are
+materialized.
+
 If the profile also needs an explicit binding plan, keep that detail on the behavior metadata
 instead of moving it into the module:
 
@@ -518,10 +574,10 @@ Current helper behavior:
 - adds `behaviors.Group(...).MapGeneratedProfiles()` and `MapGeneratedProfiles(string)` as the
   explicit low-code module-owned shorthand when a whole owned route group should publish every
   matching profiled behavior
-- adds `behaviors.MapGeneratedProfileGroups(string)` plus the shared-group-configuration overload
-  plus `engine.AddGeneratedRestBehaviorModuleGroups<TMarker>(...)` when one generated root prefix
-  should fan out into several derived owned route groups without inventing a second generated
-  publication model
+- adds `behaviors.MapGeneratedProfileGroups(string)`, the shared-group-configuration overload, the
+  derived-prefix-aware overload, plus `engine.AddGeneratedRestBehaviorModuleGroups<TMarker>(...)`
+  when one generated root prefix should fan out into several derived owned route groups without
+  inventing a second generated publication model
 - lets ASP.NET Core hosts suppress those shorthand candidates through `RestApi:Suppressions`
   without taking away module ownership, while explicit `MapGet/MapPost/...` routes and manual
   module-owned endpoints remain authoritative

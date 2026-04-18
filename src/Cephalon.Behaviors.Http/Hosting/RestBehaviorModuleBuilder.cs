@@ -75,6 +75,20 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
 
         AddGeneratedProfileGroups(
             NormalizeGeneratedBehaviorIdPrefix(behaviorIdPrefix),
+            static (_, group, configure) => configure(group),
+            configureGroup);
+        return this;
+    }
+
+    public IRestBehaviorModuleBuilder MapGeneratedProfileGroups(
+        string behaviorIdPrefix,
+        Action<string, IRestBehaviorEndpointGroupBuilder> configureGroup)
+    {
+        ArgumentNullException.ThrowIfNull(configureGroup);
+
+        AddGeneratedProfileGroups(
+            NormalizeGeneratedBehaviorIdPrefix(behaviorIdPrefix),
+            static (derivedBehaviorIdPrefix, group, configure) => configure(derivedBehaviorIdPrefix, group),
             configureGroup);
         return this;
     }
@@ -87,6 +101,15 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
     private void AddGeneratedProfileGroups(
         string behaviorIdPrefix,
         Action<IRestBehaviorEndpointGroupBuilder>? configureGroup)
+        => AddGeneratedProfileGroups(
+            behaviorIdPrefix,
+            static (_, group, configure) => configure(group),
+            configureGroup);
+
+    private void AddGeneratedProfileGroups<TConfigureGroup>(
+        string behaviorIdPrefix,
+        Action<string, IRestBehaviorEndpointGroupBuilder, TConfigureGroup>? configureGroup,
+        TConfigureGroup? configureGroupState)
     {
         var owningModuleType = ownerModuleType
             ?? throw new InvalidOperationException(
@@ -109,7 +132,11 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
         foreach (var groupBehaviorIdPrefix in groupBehaviorIdPrefixes)
         {
             var group = (RestBehaviorEndpointGroupBuilder)GroupFromBehaviorIdPrefix(groupBehaviorIdPrefix);
-            configureGroup?.Invoke(group);
+            if (configureGroup is not null && configureGroupState is not null)
+            {
+                configureGroup(groupBehaviorIdPrefix, group, configureGroupState);
+            }
+
             group.MapGeneratedProfilesCore(groupBehaviorIdPrefix);
         }
     }

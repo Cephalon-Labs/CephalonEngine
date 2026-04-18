@@ -393,6 +393,152 @@ public static class RestBehaviorEngineBuilderExtensions
 
     /// <summary>
     /// Adds a low-code generated REST module that fans one generated behavior-id root prefix out
+    /// into several derived route groups while applying per-derived-group conventions with
+    /// awareness of the derived generated behavior-id prefix.
+    /// </summary>
+    /// <typeparam name="TMarker">
+    /// A stable marker type from the module's behavior assembly. Cephalon uses this marker both to
+    /// create a distinct module type for engine validation and to resolve generated REST profile
+    /// hints from the correct assembly.
+    /// </typeparam>
+    /// <param name="engine">The engine builder to extend.</param>
+    /// <param name="descriptor">The descriptor that identifies the inline module.</param>
+    /// <param name="configureGroup">
+    /// The callback applied to each derived route group before the generated profiles are mapped.
+    /// The first argument is the derived behavior-id prefix for that route group.
+    /// </param>
+    /// <returns>The same engine builder for fluent composition.</returns>
+    public static EngineBuilder AddGeneratedRestBehaviorModuleGroups<TMarker>(
+        this EngineBuilder engine,
+        ModuleDescriptor descriptor,
+        Action<string, IRestBehaviorEndpointGroupBuilder> configureGroup)
+    {
+        ArgumentNullException.ThrowIfNull(engine);
+        ArgumentNullException.ThrowIfNull(descriptor);
+        ArgumentNullException.ThrowIfNull(configureGroup);
+
+        return engine.AddGeneratedRestBehaviorModuleGroups<TMarker>(
+            descriptor,
+            ResolveGeneratedBehaviorIdPrefix(descriptor),
+            configureGroup);
+    }
+
+    /// <summary>
+    /// Adds a low-code generated REST module that fans one generated behavior-id root prefix out
+    /// into several derived route groups while applying per-derived-group conventions with
+    /// awareness of the derived generated behavior-id prefix.
+    /// </summary>
+    /// <typeparam name="TMarker">
+    /// A stable marker type from the module's behavior assembly. Cephalon uses this marker both to
+    /// create a distinct module type for engine validation and to resolve generated REST profile
+    /// hints from the correct assembly.
+    /// </typeparam>
+    /// <param name="engine">The engine builder to extend.</param>
+    /// <param name="moduleId">The stable module identifier.</param>
+    /// <param name="displayName">The human-readable module name.</param>
+    /// <param name="description">The module description.</param>
+    /// <param name="configureGroup">
+    /// The callback applied to each derived route group before the generated profiles are mapped.
+    /// The first argument is the derived behavior-id prefix for that route group.
+    /// </param>
+    /// <param name="version">The declared module version, when one is available.</param>
+    /// <returns>The same engine builder for fluent composition.</returns>
+    public static EngineBuilder AddGeneratedRestBehaviorModuleGroups<TMarker>(
+        this EngineBuilder engine,
+        string moduleId,
+        string displayName,
+        string description,
+        Action<string, IRestBehaviorEndpointGroupBuilder> configureGroup,
+        string? version = null)
+        => engine.AddGeneratedRestBehaviorModuleGroups<TMarker>(
+            CreateInlineModuleDescriptor(
+                moduleId,
+                displayName,
+                description,
+                version),
+            configureGroup);
+
+    /// <summary>
+    /// Adds a low-code generated REST module that fans one generated behavior-id root prefix out
+    /// into several derived route groups while applying per-derived-group conventions with
+    /// awareness of the derived generated behavior-id prefix.
+    /// </summary>
+    /// <typeparam name="TMarker">
+    /// A stable marker type from the module's behavior assembly. Cephalon uses this marker both to
+    /// create a distinct module type for engine validation and to resolve generated REST profile
+    /// hints from the correct assembly.
+    /// </typeparam>
+    /// <param name="engine">The engine builder to extend.</param>
+    /// <param name="descriptor">The descriptor that identifies the inline module.</param>
+    /// <param name="behaviorIdPrefix">
+    /// The root dot-separated behavior-id prefix whose child parent prefixes become the derived
+    /// public route groups.
+    /// </param>
+    /// <param name="configureGroup">
+    /// The callback applied to each derived route group before the generated profiles are mapped.
+    /// The first argument is the derived behavior-id prefix for that route group.
+    /// </param>
+    /// <returns>The same engine builder for fluent composition.</returns>
+    public static EngineBuilder AddGeneratedRestBehaviorModuleGroups<TMarker>(
+        this EngineBuilder engine,
+        ModuleDescriptor descriptor,
+        string behaviorIdPrefix,
+        Action<string, IRestBehaviorEndpointGroupBuilder> configureGroup)
+    {
+        ArgumentNullException.ThrowIfNull(engine);
+        ArgumentNullException.ThrowIfNull(descriptor);
+        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorIdPrefix);
+        ArgumentNullException.ThrowIfNull(configureGroup);
+
+        return engine.AddRestBehaviorModule<TMarker>(
+            descriptor,
+            behaviors => behaviors.MapGeneratedProfileGroups(behaviorIdPrefix, configureGroup));
+    }
+
+    /// <summary>
+    /// Adds a low-code generated REST module that fans one generated behavior-id root prefix out
+    /// into several derived route groups without requiring a manually constructed
+    /// <see cref="ModuleDescriptor" />, while applying per-derived-group conventions with
+    /// awareness of the derived generated behavior-id prefix.
+    /// </summary>
+    /// <typeparam name="TMarker">
+    /// A stable marker type from the module's behavior assembly. Cephalon uses this marker both to
+    /// create a distinct module type for engine validation and to resolve generated REST profile
+    /// hints from the correct assembly.
+    /// </typeparam>
+    /// <param name="engine">The engine builder to extend.</param>
+    /// <param name="moduleId">The stable module identifier.</param>
+    /// <param name="displayName">The human-readable module name.</param>
+    /// <param name="description">The module description.</param>
+    /// <param name="behaviorIdPrefix">
+    /// The root dot-separated behavior-id prefix whose child parent prefixes become the derived
+    /// public route groups.
+    /// </param>
+    /// <param name="configureGroup">
+    /// The callback applied to each derived route group before the generated profiles are mapped.
+    /// The first argument is the derived behavior-id prefix for that route group.
+    /// </param>
+    /// <param name="version">The declared module version, when one is available.</param>
+    /// <returns>The same engine builder for fluent composition.</returns>
+    public static EngineBuilder AddGeneratedRestBehaviorModuleGroups<TMarker>(
+        this EngineBuilder engine,
+        string moduleId,
+        string displayName,
+        string description,
+        string behaviorIdPrefix,
+        Action<string, IRestBehaviorEndpointGroupBuilder> configureGroup,
+        string? version = null)
+        => engine.AddGeneratedRestBehaviorModuleGroups<TMarker>(
+            CreateInlineModuleDescriptor(
+                moduleId,
+                displayName,
+                description,
+                version),
+            behaviorIdPrefix,
+            configureGroup);
+
+    /// <summary>
+    /// Adds a low-code generated REST module that fans one generated behavior-id root prefix out
     /// into several derived route groups without requiring a manually constructed
     /// <see cref="ModuleDescriptor" />.
     /// </summary>
