@@ -717,6 +717,239 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task AddGeneratedRestBehaviorModuleGroupsDerivesMultipleRouteGroupsAndPublishesGeneratedProfiles()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "7";
+        builder.Configuration["OpenApi:EnabledVersions:1"] = "8";
+        builder.Configuration["OpenApi:DefaultVersion"] = "7";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddGeneratedRestBehaviorModuleGroups<GetGeneratedGroupedRuntimeOrderBehavior>(
+                "tests.rest.inline-generated-grouped-runtime",
+                "Inline Generated Grouped Runtime Module",
+                "Publishes grouped generated REST endpoints through the inline helper.",
+                "tests.generated.runtimegrouped",
+                group => group
+                    .WithTagName("Inline Generated Grouped Runtime API")
+                    .WithHostGovernanceScope("inline-generated-grouped"),
+                version: "1.0.0");
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var publicationGroups = await client.GetFromJsonAsync<RestEndpointPublicationGroupDescriptor[]>("/engine/rest-endpoint-publication-groups");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(publicationGroups);
+        Assert.NotNull(snapshot);
+
+        var moduleEndpoints = endpoints
+            .Where(static endpoint =>
+                string.Equals(endpoint.SourceModuleId, "tests.rest.inline-generated-grouped-runtime", StringComparison.Ordinal))
+            .OrderBy(static endpoint => endpoint.RoutePattern, StringComparer.Ordinal)
+            .ToArray();
+        Assert.Equal(3, moduleEndpoints.Length);
+
+        var inventoryEndpoint = Assert.Single(moduleEndpoints, static endpoint =>
+            string.Equals(endpoint.BehaviorId, "tests.generated.runtimegrouped.inventory.lookup", StringComparison.Ordinal));
+        Assert.Equal("/api/v8/tests/generated/runtimegrouped/inventory/{orderId}", inventoryEndpoint.RoutePattern);
+        Assert.Equal("/api/v8/tests/generated/runtimegrouped/inventory", inventoryEndpoint.RouteGroupPrefix);
+        Assert.Equal("v8", inventoryEndpoint.OpenApiDocumentName);
+        Assert.Equal(8, inventoryEndpoint.ApiVersionMajor);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, inventoryEndpoint.AuthoringStyle);
+        Assert.Contains("Inline Generated Grouped Runtime API", inventoryEndpoint.Tags);
+
+        var ordersLookupEndpoint = Assert.Single(moduleEndpoints, static endpoint =>
+            string.Equals(endpoint.BehaviorId, "tests.generated.runtimegrouped.orders.lookup", StringComparison.Ordinal));
+        Assert.Equal("/api/v7/tests/generated/runtimegrouped/orders/{orderId}", ordersLookupEndpoint.RoutePattern);
+        Assert.Equal("/api/v7/tests/generated/runtimegrouped/orders", ordersLookupEndpoint.RouteGroupPrefix);
+        Assert.Equal("v7", ordersLookupEndpoint.OpenApiDocumentName);
+        Assert.Equal(7, ordersLookupEndpoint.ApiVersionMajor);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, ordersLookupEndpoint.AuthoringStyle);
+        Assert.Contains("Inline Generated Grouped Runtime API", ordersLookupEndpoint.Tags);
+
+        var moduleCandidates = candidates
+            .Where(static candidate =>
+                string.Equals(candidate.ProjectedEndpoint.SourceModuleId, "tests.rest.inline-generated-grouped-runtime", StringComparison.Ordinal))
+            .OrderBy(static candidate => candidate.ProjectedEndpoint.RoutePattern, StringComparer.Ordinal)
+            .ToArray();
+        Assert.Equal(3, moduleCandidates.Length);
+        Assert.All(
+            moduleCandidates,
+            candidate =>
+            {
+                Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+                Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, candidate.AuthoringStyle);
+                Assert.True(candidate.OriginalProjection.AllowsHostGovernance);
+                Assert.Equal("inline-generated-grouped", candidate.OriginalProjection.HostGovernanceScope);
+            });
+
+        Assert.Contains(
+            publicationGroups,
+            group =>
+                string.Equals(group.BehaviorId, "tests.generated.runtimegrouped.orders.lookup", StringComparison.Ordinal) &&
+                group.SourceModuleIds.SequenceEqual(["tests.rest.inline-generated-grouped-runtime"]) &&
+                group.PublishedCandidateIds.Count == 1 &&
+                group.HostGovernanceEligibleCandidateIds.Count == 1);
+        Assert.Contains(
+            snapshot.RestEndpointPublicationGroups,
+            group =>
+                string.Equals(group.BehaviorId, "tests.generated.runtimegrouped.inventory.lookup", StringComparison.Ordinal) &&
+                group.SourceModuleIds.SequenceEqual(["tests.rest.inline-generated-grouped-runtime"]) &&
+                group.PublishedCandidateIds.Count == 1);
+
+        var ordersPayload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>(
+            "/api/v7/tests/generated/runtimegrouped/orders/ord-inline-grouped");
+        var inventoryPayload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>(
+            "/api/v8/tests/generated/runtimegrouped/inventory/ord-inline-inventory");
+        Assert.NotNull(ordersPayload);
+        Assert.NotNull(inventoryPayload);
+        Assert.Equal("ord-inline-grouped", ordersPayload.OrderId);
+        Assert.Equal("ord-inline-inventory", inventoryPayload.OrderId);
+    }
+
+    [Fact]
+    public async Task AddGeneratedRestBehaviorModuleGroupsStringOverloadDerivesGeneratedPrefixFromModuleId()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "7";
+        builder.Configuration["OpenApi:EnabledVersions:1"] = "8";
+        builder.Configuration["OpenApi:DefaultVersion"] = "7";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddGeneratedRestBehaviorModuleGroups<GetGeneratedGroupedRuntimeOrderBehavior>(
+                "tests.generated.runtimegrouped",
+                "Descriptor Id Generated Grouped Runtime Module",
+                "Publishes grouped generated REST endpoints by deriving the root prefix from the module id.",
+                group => group
+                    .WithTagName("Descriptor Id Generated Grouped Runtime API")
+                    .WithHostGovernanceScope("descriptor-generated-grouped"),
+                version: "1.0.0");
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(snapshot);
+
+        var moduleEndpoints = endpoints
+            .Where(static endpoint =>
+                string.Equals(endpoint.SourceModuleId, "tests.generated.runtimegrouped", StringComparison.Ordinal))
+            .OrderBy(static endpoint => endpoint.RoutePattern, StringComparer.Ordinal)
+            .ToArray();
+        Assert.Equal(3, moduleEndpoints.Length);
+        Assert.All(
+            moduleEndpoints,
+            endpoint =>
+            {
+                Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, endpoint.AuthoringStyle);
+                Assert.Contains("Descriptor Id Generated Grouped Runtime API", endpoint.Tags);
+            });
+        Assert.Contains(moduleEndpoints, static endpoint =>
+            string.Equals(endpoint.RoutePattern, "/api/v7/tests/generated/runtimegrouped/orders/{orderId}", StringComparison.Ordinal));
+        Assert.Contains(moduleEndpoints, static endpoint =>
+            string.Equals(endpoint.RoutePattern, "/api/v7/tests/generated/runtimegrouped/orders/{orderId}/items", StringComparison.Ordinal));
+        Assert.Contains(moduleEndpoints, static endpoint =>
+            string.Equals(endpoint.RoutePattern, "/api/v8/tests/generated/runtimegrouped/inventory/{orderId}", StringComparison.Ordinal));
+
+        var moduleCandidates = candidates
+            .Where(static candidate =>
+                string.Equals(candidate.ProjectedEndpoint.SourceModuleId, "tests.generated.runtimegrouped", StringComparison.Ordinal))
+            .ToArray();
+        Assert.Equal(3, moduleCandidates.Length);
+        Assert.All(
+            moduleCandidates,
+            candidate =>
+            {
+                Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+                Assert.True(candidate.OriginalProjection.AllowsHostGovernance);
+                Assert.Equal("descriptor-generated-grouped", candidate.OriginalProjection.HostGovernanceScope);
+            });
+        Assert.Contains(snapshot.RestEndpoints, item =>
+            string.Equals(item.SourceModuleId, "tests.generated.runtimegrouped", StringComparison.Ordinal) &&
+            string.Equals(item.RoutePattern, "/api/v7/tests/generated/runtimegrouped/orders/{orderId}", StringComparison.Ordinal));
+
+        var payload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>(
+            "/api/v7/tests/generated/runtimegrouped/orders/ord-derived-grouped");
+        Assert.NotNull(payload);
+        Assert.Equal("ord-derived-grouped", payload.OrderId);
+    }
+
+    [Fact]
+    public void AddGeneratedRestBehaviorModuleGroupsRejectsBehaviorIdPrefixesWithEmptySegments()
+    {
+        var builder = WebApplication.CreateBuilder();
+
+        var exception = Assert.Throws<ArgumentException>(() =>
+            builder.AddCephalon(engine =>
+            {
+                engine.AddGeneratedRestBehaviorModuleGroups<GetGeneratedGroupedRuntimeOrderBehavior>(
+                    new ModuleDescriptor(
+                        "tests.rest.invalid-inline-generated-grouped-runtime",
+                        "Invalid Inline Generated Grouped Runtime Module",
+                        "Attempts to derive grouped route groups from an invalid behavior id prefix.",
+                        version: "1.0.0"),
+                    "tests..generated.runtimegrouped");
+            }));
+
+        Assert.Contains("non-empty dot-separated segments", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void AddGeneratedRestBehaviorModuleGroupsRejectsDescriptorIdsThatCannotDeriveGeneratedPrefixes()
+    {
+        var builder = WebApplication.CreateBuilder();
+
+        var exception = Assert.Throws<ArgumentException>(() =>
+            builder.AddCephalon(engine =>
+            {
+                engine.AddGeneratedRestBehaviorModuleGroups<GetGeneratedGroupedRuntimeOrderBehavior>(
+                    new ModuleDescriptor(
+                        "tests..generated.runtimegrouped",
+                        "Invalid Descriptor Id Generated Grouped Runtime Module",
+                        "Attempts to derive grouped generated behavior-id prefixes from an invalid module id.",
+                        version: "1.0.0"));
+            }));
+
+        Assert.Contains("cannot be used as an inline generated REST behavior-id prefix", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("non-empty dot-separated segments", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task MapGeneratedProfileGroupsDerivesMultipleGeneratedRouteGroupsAndPreservesModuleOwnership()
     {
         var builder = WebApplication.CreateBuilder();

@@ -117,7 +117,9 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
     private static string NormalizeGeneratedBehaviorIdPrefix(string behaviorIdPrefix)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(behaviorIdPrefix);
-        return behaviorIdPrefix.Trim();
+        var normalizedPrefix = behaviorIdPrefix.Trim();
+        _ = RestBehaviorAuthoringPathConventions.DeriveRouteGroupPrefixFromBehaviorIdPrefix(normalizedPrefix);
+        return normalizedPrefix;
     }
 
     private static string DeriveGeneratedGroupBehaviorIdPrefix(

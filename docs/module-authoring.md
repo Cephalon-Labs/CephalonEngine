@@ -442,6 +442,30 @@ module id and generated behavior-id prefix should differ. Keep
 `AddRestBehaviorModule<TMarker>(...)` when the module needs a non-default route group, a mix of
 generated and manual endpoints, or more than one group.
 
+When one inline module wants one generated root prefix to fan out into several owned public route
+groups, the host can now use the grouped inline helper instead of creating a dedicated module class:
+
+```csharp
+engine.AddGeneratedRestBehaviorModuleGroups<GetCatalogOrderBehavior>(
+    "showcase.generated",
+    "Generated Catalog Module",
+    "Publishes generated REST profiles across several derived route groups through the inline helper.",
+    group => group
+        .WithTagName("Generated Catalog API")
+        .WithHostGovernanceScope("generated-catalog"),
+    version: "1.0.0");
+```
+
+`AddGeneratedRestBehaviorModuleGroups<TMarker>(...)` still creates a real module, still delegates
+to `MapGeneratedProfileGroups(...)`, still keeps grouped generated publication on the same
+`behavior-module-generated` candidate/publication-group/governance/runtime-catalog path, and still
+never publishes public REST from `[AppBehavior]` alone. The common overload derives the grouped
+generated behavior-id root prefix from the inline module id, while the explicit `behaviorIdPrefix`
+and `ModuleDescriptor` overloads remain available when inline module identity, grouped generated
+ownership, or inline metadata should differ. Grouped generated prefix validation now also fails
+fast consistently for both dedicated-module and inline-helper paths when the supplied dot-separated
+prefix contains empty segments.
+
 If the profile also needs an explicit binding plan, keep that detail on the behavior metadata
 instead of moving it into the module:
 
@@ -484,8 +508,9 @@ Current helper behavior:
   explicit low-code module-owned shorthand when a whole owned route group should publish every
   matching profiled behavior
 - adds `behaviors.MapGeneratedProfileGroups(string)` plus the shared-group-configuration overload
-  when one generated root prefix should fan out into several derived owned route groups without
-  inventing a second generated publication model
+  plus `engine.AddGeneratedRestBehaviorModuleGroups<TMarker>(...)` when one generated root prefix
+  should fan out into several derived owned route groups without inventing a second generated
+  publication model
 - lets ASP.NET Core hosts suppress those shorthand candidates through `RestApi:Suppressions`
   without taking away module ownership, while explicit `MapGet/MapPost/...` routes and manual
   module-owned endpoints remain authoritative

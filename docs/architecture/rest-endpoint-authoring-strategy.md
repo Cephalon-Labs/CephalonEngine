@@ -335,6 +335,15 @@ Status update:
   identity plus source-assembly semantics, keep the normalized
   projection/materialization/candidate/governance pipeline unchanged, and still keep the explicit
   `behaviorIdPrefix` escape hatch when inline module identity and generated ownership should differ
+- the next inline grouped-generated follow-through is now also shipped through `ENG-058-T167`:
+  `Cephalon.Behaviors.Http` now also exposes
+  `AddGeneratedRestBehaviorModuleGroups<TMarker>()` so hosts can keep the
+  `MapGeneratedProfileGroups(...)` path low-code without a dedicated module class; the helper
+  still materializes a real module, reuses the same marker-based module-identity plus
+  source-assembly semantics as the existing inline helpers, lets the common overload derive the
+  grouped generated root prefix from the inline module id while the explicit `behaviorIdPrefix`
+  and `ModuleDescriptor` overloads remain the escape hatches, and now reuses the same fail-fast
+  dot-separated prefix validation regardless of which grouped-generated helper path is used
 - the next stable shorthand candidate-id governance follow-through is now shipped through
   `ENG-058-T85`: shorthand candidate ids now resolve from the original shorthand projection before
   host-level overrides are applied, `RestApi:Suppressions` and `RestApi:Overrides` now also accept
@@ -555,12 +564,12 @@ Current shipped follow-through:
   for straightforward hosts: the `moduleId` / `displayName` / `description` convenience overload
   covers the common path, while the `ModuleDescriptor` overload remains available for richer inline
   metadata, but both still land on this same layer instead of inventing a new publication source
-- `GroupFromBehaviorIdPrefix(...)` plus `AddGeneratedRestBehaviorModule<TMarker>(...)` now cover
-  the common generated-profile cases where route-group path, generated behavior-id prefix, and
-  inline module id intentionally mirror one another, while the explicit
-  `AddGeneratedRestBehaviorModule<TMarker>(..., "prefix", ...)` and `ModuleDescriptor` overloads
-  remain available when the inline module id and generated ownership prefix should differ or the
-  inline module needs richer metadata, again without inventing a new publication source
+- `GroupFromBehaviorIdPrefix(...)`, `AddGeneratedRestBehaviorModule<TMarker>()`, and
+  `AddGeneratedRestBehaviorModuleGroups<TMarker>()` now cover the common generated-profile cases
+  where one route group or one grouped generated subtree should derive from a stable generated root
+  prefix, while the explicit `behaviorIdPrefix` and `ModuleDescriptor` overloads remain available
+  when inline module identity, generated ownership, or inline metadata should differ, again without
+  inventing a new publication source
 
 ### Layer 4: host- or app-level projection overrides
 
@@ -1267,6 +1276,11 @@ Status:
   `/engine/rest-endpoint-publication-groups`, `/engine/rest-endpoint-authoring-policies`, the
   direct grouped/operator runtime catalogs, and `snapshot` instead of disappearing as if selector
   targeting failed
+- the next inline grouped-generated helper follow-through is now also shipped through
+  `ENG-058-T167`, so hosts can keep that same `MapGeneratedProfileGroups(...)` ownership and
+  runtime story on the low-code inline module path through
+  `AddGeneratedRestBehaviorModuleGroups<TMarker>()`, while the grouped generated root-prefix
+  validation now fails fast consistently for both dedicated-module and inline-helper entry points
 - the next metadata-authoring parity follow-through is now also shipped through `ENG-058-T119`, so
   that same `preserve-source-implicit-fallback` story is no longer limited to no-explicit-plan
   shorthand candidates plus later host overrides; explicit metadata-only profiles can now opt into
@@ -1569,7 +1583,11 @@ precedence-visibility, generated-module, and rule-centric authoring-policy follo
    where prefix-targeted rules that match explicit module-DSL behavior ids without
    `AllowHostGovernance()` remain visible as skipped group/policy outcomes instead of collapsing
    into selector misses
-5. only then evaluate whether any additional convention-backed publication sources are worth the
+5. the next inline grouped-generated helper follow-through is now also shipped through
+   `ENG-058-T167`, where `AddGeneratedRestBehaviorModuleGroups<TMarker>()` keeps the
+   `MapGeneratedProfileGroups(...)` ownership/runtime story available on the low-code inline module
+   path and reuses the same fail-fast grouped-prefix validation
+6. only then evaluate whether any additional convention-backed publication sources are worth the
    added complexity beyond the shipped `MapProfile<TBehavior>()`,
    `MapGeneratedProfiles(...)`, and `MapGeneratedProfileGroups(...)` surfaces
 

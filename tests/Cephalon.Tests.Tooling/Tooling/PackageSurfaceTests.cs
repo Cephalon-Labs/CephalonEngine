@@ -1143,6 +1143,74 @@ public sealed class PackageSurfaceTests
             prefixType == typeof(string) &&
             configureType == typeof(Action<global::Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder>) &&
             versionType == typeof(string));
+        Assert.Contains(methods, static method =>
+            method.Name == "AddGeneratedRestBehaviorModuleGroups" &&
+            method.IsGenericMethodDefinition &&
+            method.GetGenericArguments().Length == 1 &&
+            method.GetParameters() is
+            [
+                { ParameterType: { } engineType },
+                { ParameterType: { } descriptorType },
+                { ParameterType: { } configureType }
+            ] &&
+            engineType == typeof(global::Cephalon.Engine.Composition.EngineBuilder) &&
+            descriptorType == typeof(global::Cephalon.Abstractions.Modules.ModuleDescriptor) &&
+            configureType == typeof(Action<global::Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder>));
+        Assert.Contains(methods, static method =>
+            method.Name == "AddGeneratedRestBehaviorModuleGroups" &&
+            method.IsGenericMethodDefinition &&
+            method.GetGenericArguments().Length == 1 &&
+            method.GetParameters() is
+            [
+                { ParameterType: { } engineType },
+                { ParameterType: { } moduleIdType },
+                { ParameterType: { } displayNameType },
+                { ParameterType: { } descriptionType },
+                { ParameterType: { } configureType },
+                { ParameterType: { } versionType }
+            ] &&
+            engineType == typeof(global::Cephalon.Engine.Composition.EngineBuilder) &&
+            moduleIdType == typeof(string) &&
+            displayNameType == typeof(string) &&
+            descriptionType == typeof(string) &&
+            configureType == typeof(Action<global::Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder>) &&
+            versionType == typeof(string));
+        Assert.Contains(methods, static method =>
+            method.Name == "AddGeneratedRestBehaviorModuleGroups" &&
+            method.IsGenericMethodDefinition &&
+            method.GetGenericArguments().Length == 1 &&
+            method.GetParameters() is
+            [
+                { ParameterType: { } engineType },
+                { ParameterType: { } descriptorType },
+                { ParameterType: { } prefixType },
+                { ParameterType: { } configureType }
+            ] &&
+            engineType == typeof(global::Cephalon.Engine.Composition.EngineBuilder) &&
+            descriptorType == typeof(global::Cephalon.Abstractions.Modules.ModuleDescriptor) &&
+            prefixType == typeof(string) &&
+            configureType == typeof(Action<global::Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder>));
+        Assert.Contains(methods, static method =>
+            method.Name == "AddGeneratedRestBehaviorModuleGroups" &&
+            method.IsGenericMethodDefinition &&
+            method.GetGenericArguments().Length == 1 &&
+            method.GetParameters() is
+            [
+                { ParameterType: { } engineType },
+                { ParameterType: { } moduleIdType },
+                { ParameterType: { } displayNameType },
+                { ParameterType: { } descriptionType },
+                { ParameterType: { } prefixType },
+                { ParameterType: { } configureType },
+                { ParameterType: { } versionType }
+            ] &&
+            engineType == typeof(global::Cephalon.Engine.Composition.EngineBuilder) &&
+            moduleIdType == typeof(string) &&
+            displayNameType == typeof(string) &&
+            descriptionType == typeof(string) &&
+            prefixType == typeof(string) &&
+            configureType == typeof(Action<global::Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder>) &&
+            versionType == typeof(string));
     }
 
     [Fact]

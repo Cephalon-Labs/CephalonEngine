@@ -467,6 +467,30 @@ overloads remain available when the inline module needs richer metadata or when 
 generated ownership prefix should differ. Keep `AddRestBehaviorModule<TMarker>(...)` when the route
 group should not mirror the behavior-id prefix or when the inline module needs more than one group.
 
+When one inline module wants one generated root prefix to fan out into several owned public route
+groups, the host can now stay on that same grouped generated path through the matching inline
+helper:
+
+```csharp
+engine.AddGeneratedRestBehaviorModuleGroups<GetCatalogOrderBehavior>(
+    "showcase.generated",
+    "Generated Catalog Module",
+    "Publishes generated REST profiles across several derived route groups through the inline helper.",
+    group => group
+        .WithTagName("Generated Catalog API")
+        .WithHostGovernanceScope("generated-catalog"),
+    version: "1.0.0");
+```
+
+`AddGeneratedRestBehaviorModuleGroups<TMarker>(...)` still creates a real module, still delegates
+to `MapGeneratedProfileGroups(...)`, and still keeps grouped generated publication on the same
+`behavior-module-generated` candidate, publication-group, governance, and runtime-catalog path.
+The common overload derives the grouped generated behavior-id root prefix from the inline module id,
+while the explicit `behaviorIdPrefix` and `ModuleDescriptor` overloads remain available when inline
+module identity, grouped generated ownership, or inline metadata should differ. Grouped generated
+prefix validation now also fails fast consistently for both dedicated-module and inline-helper paths
+when the supplied dot-separated prefix contains empty segments.
+
 Current helper behavior:
 
 - keeps REST route shape in the host-adapter layer instead of overloading behavior attributes with
@@ -495,8 +519,9 @@ Current helper behavior:
 - adds `MapGeneratedProfiles()` and `MapGeneratedProfiles(string)` as explicit module-owned
   low-code shorthands that publish every matching profiled behavior beneath one owned route group
 - adds `MapGeneratedProfileGroups(string)` plus the shared-group-configuration overload on
-  `IRestBehaviorModuleBuilder` when one generated root prefix should fan out into several derived
-  owned route groups while preserving the same generated shorthand runtime truth
+  `IRestBehaviorModuleBuilder`, plus `AddGeneratedRestBehaviorModuleGroups<TMarker>(...)` on
+  `EngineBuilder`, when one generated root prefix should fan out into several derived owned route
+  groups while preserving the same generated shorthand runtime truth
 - derives the default generated-selection prefix from the route-group path by trimming slashes and
   replacing `/` separators with `.`, while still allowing an explicit behavior-id prefix override
 - derives the common generated route-group path from a dot-separated behavior-id prefix when
