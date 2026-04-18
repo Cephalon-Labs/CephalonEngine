@@ -885,6 +885,15 @@ Current governance baseline:
 - exact `CandidateIds` reuse the stable ids published by `GET /engine/rest-endpoint-candidates`
 - `BehaviorIdPrefixes` now target the original dot-separated behavior-id hierarchy directly, which
   is especially useful for grouped generated shorthand from `MapGeneratedProfileGroups(...)`
+- that same exact-versus-prefix governance trace is now also explicitly proven through
+  `GET /engine/rest-endpoint-publication-groups`,
+  `GET /engine/rest-endpoint-authoring-policies`, and the matching snapshot answers, including
+  per-authoring-style grouped summaries where broader prefix rules can remain visible as matched-
+  only outcomes beside narrower exact winners
+- those same prefix selectors now also preserve skipped-governance truth for explicit
+  `behavior-module-dsl` routes that did not opt into host governance, so grouped/operator runtime
+  answers keep the prefix-targeted rules visible as skipped outcomes instead of collapsing them
+  into a selector miss
 - the optional selector refiners and exact candidate ids all match the original shorthand
   candidate shape before override actions are applied, including the original shorthand OpenAPI
   document name, primary tag name, original shorthand endpoint name through

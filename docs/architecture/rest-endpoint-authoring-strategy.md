@@ -1256,6 +1256,17 @@ Status:
   broader subtree matches, longer prefixes now beat shorter prefixes through
   `narrower-behavior-scope`, and the suppression/override runtime catalogs plus `snapshot` keep the
   configured prefix arrays and decisive selection-basis truth visible directly
+- the next grouped-operator parity follow-through is now also shipped through `ENG-058-T165`, so
+  that same exact-versus-prefix subtree governance story is now explicitly proven through
+  `/engine/rest-endpoint-publication-groups`, `/engine/rest-endpoint-authoring-policies`, and the
+  matching `snapshot` answers, including per-authoring-style grouped summaries where broader prefix
+  rules stay visible as matched-only outcomes beside narrower exact winners
+- the next skipped-governance parity follow-through is now also shipped through `ENG-058-T166`, so
+  prefix-targeted suppression and override rules that hit explicit module-DSL behavior ids without
+  `AllowHostGovernance()` now remain visible as skipped outcomes through
+  `/engine/rest-endpoint-publication-groups`, `/engine/rest-endpoint-authoring-policies`, the
+  direct grouped/operator runtime catalogs, and `snapshot` instead of disappearing as if selector
+  targeting failed
 - the next metadata-authoring parity follow-through is now also shipped through `ENG-058-T119`, so
   that same `preserve-source-implicit-fallback` story is no longer limited to no-explicit-plan
   shorthand candidates plus later host overrides; explicit metadata-only profiles can now opt into
@@ -1550,7 +1561,15 @@ precedence-visibility, generated-module, and rule-centric authoring-policy follo
    `BehaviorIdPrefixes` let hosts govern one shorthand behavior subtree without enumerating every
    exact behavior id while runtime truth stays explicit in the candidate, suppression, override,
    and snapshot catalogs
-3. only then evaluate whether any additional convention-backed publication sources are worth the
+3. the next grouped/operator parity follow-through is now also shipped through `ENG-058-T165`,
+   where publication-group and authoring-policy answers now explicitly preserve that same
+   exact-versus-prefix governance trace per behavior and per authoring style instead of stopping at
+   the rule-centric catalogs
+4. the next skipped-governance parity follow-through is now also shipped through `ENG-058-T166`,
+   where prefix-targeted rules that match explicit module-DSL behavior ids without
+   `AllowHostGovernance()` remain visible as skipped group/policy outcomes instead of collapsing
+   into selector misses
+5. only then evaluate whether any additional convention-backed publication sources are worth the
    added complexity beyond the shipped `MapProfile<TBehavior>()`,
    `MapGeneratedProfiles(...)`, and `MapGeneratedProfileGroups(...)` surfaces
 

@@ -915,6 +915,215 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonPrefersExactBehaviorSuppressionOverPrefixTargetedRuleAcrossGroupedOperatorSurfaces()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "7";
+        builder.Configuration["OpenApi:EnabledVersions:1"] = "8";
+        builder.Configuration["OpenApi:DefaultVersion"] = "7";
+        builder.Configuration["RestApi:Suppressions:hide-grouped-orders:BehaviorIdPrefixes:0"] = "tests.generated.runtimegrouped.orders";
+        builder.Configuration["RestApi:Suppressions:hide-grouped-orders-lookup:Behaviors:0"] = "tests.generated.runtimegrouped.orders.lookup";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new GeneratedGroupedRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var suppressionCatalog = app.Services.GetRequiredService<IRestEndpointSuppressionRuntimeCatalog>();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var groups = await client.GetFromJsonAsync<RestEndpointPublicationGroupDescriptor[]>("/engine/rest-endpoint-publication-groups");
+        var lookupGroupByBehavior = await client.GetFromJsonAsync<RestEndpointPublicationGroupDescriptor>(
+            "/engine/rest-endpoint-publication-groups/tests.generated.runtimegrouped.orders.lookup");
+        var createGroupByBehavior = await client.GetFromJsonAsync<RestEndpointPublicationGroupDescriptor>(
+            "/engine/rest-endpoint-publication-groups/tests.generated.runtimegrouped.orders.create");
+        var policies = await client.GetFromJsonAsync<RestEndpointAuthoringPolicyDescriptor[]>("/engine/rest-endpoint-authoring-policies");
+        var lookupPolicyByBehavior = await client.GetFromJsonAsync<RestEndpointAuthoringPolicyDescriptor>(
+            "/engine/rest-endpoint-authoring-policies/tests.generated.runtimegrouped.orders.lookup");
+        var createPolicyByBehavior = await client.GetFromJsonAsync<RestEndpointAuthoringPolicyDescriptor>(
+            "/engine/rest-endpoint-authoring-policies/tests.generated.runtimegrouped.orders.create");
+        var suppressions = await client.GetFromJsonAsync<RestEndpointSuppressionDescriptor[]>("/engine/rest-endpoint-suppressions");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(groups);
+        Assert.NotNull(lookupGroupByBehavior);
+        Assert.NotNull(createGroupByBehavior);
+        Assert.NotNull(policies);
+        Assert.NotNull(lookupPolicyByBehavior);
+        Assert.NotNull(createPolicyByBehavior);
+        Assert.NotNull(suppressions);
+        Assert.NotNull(snapshot);
+
+        var moduleEndpoints = endpoints
+            .Where(static endpoint =>
+                string.Equals(endpoint.SourceModuleId, "tests.rest.generated-grouped-runtime", StringComparison.Ordinal))
+            .ToArray();
+        var publishedEndpoint = Assert.Single(moduleEndpoints);
+        Assert.Equal("tests.generated.runtimegrouped.inventory.lookup", publishedEndpoint.BehaviorId);
+
+        var ordersLookupCandidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.generated.runtimegrouped.orders.lookup", StringComparison.Ordinal));
+        var ordersCreateCandidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.generated.runtimegrouped.orders.create", StringComparison.Ordinal));
+        Assert.Equal("hide-grouped-orders-lookup", ordersLookupCandidate.SuppressedBySuppressionId);
+        Assert.Equal(
+            ["hide-grouped-orders-lookup", "hide-grouped-orders"],
+            ordersLookupCandidate.MatchedSuppressionIds);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.NarrowerBehaviorScope,
+            ordersLookupCandidate.SuppressionSelectionBasis);
+        Assert.Equal("hide-grouped-orders", ordersCreateCandidate.SuppressedBySuppressionId);
+        Assert.Equal(["hide-grouped-orders"], ordersCreateCandidate.MatchedSuppressionIds);
+        Assert.Equal(RestEndpointGovernanceRuleSelectionBasis.SingleMatch, ordersCreateCandidate.SuppressionSelectionBasis);
+
+        var exactRule = Assert.Single(suppressions, static item => string.Equals(item.Id, "hide-grouped-orders-lookup", StringComparison.Ordinal));
+        Assert.Equal(["tests.generated.runtimegrouped.orders.lookup"], exactRule.BehaviorIds);
+        Assert.Empty(exactRule.BehaviorIdPrefixes);
+        Assert.Equal([ordersLookupCandidate.Id], exactRule.MatchedCandidateIds);
+        Assert.Equal([ordersLookupCandidate.Id], exactRule.SuppressedCandidateIds);
+        Assert.Equal([RestEndpointGovernanceRuleSelectionBasis.NarrowerBehaviorScope], exactRule.SelectionBases);
+
+        var prefixRule = Assert.Single(suppressions, static item => string.Equals(item.Id, "hide-grouped-orders", StringComparison.Ordinal));
+        Assert.Empty(prefixRule.BehaviorIds);
+        Assert.Equal(["tests.generated.runtimegrouped.orders"], prefixRule.BehaviorIdPrefixes);
+        Assert.Contains(ordersLookupCandidate.Id, prefixRule.MatchedCandidateIds, StringComparer.Ordinal);
+        Assert.Contains(ordersCreateCandidate.Id, prefixRule.MatchedCandidateIds, StringComparer.Ordinal);
+        Assert.Equal([ordersCreateCandidate.Id], prefixRule.SuppressedCandidateIds);
+
+        Assert.Equal(
+            ["hide-grouped-orders", "hide-grouped-orders-lookup"],
+            suppressionCatalog.GetByBehaviorId("tests.generated.runtimegrouped.orders.lookup").Select(static item => item.Id).ToArray());
+        Assert.Equal(
+            ["hide-grouped-orders"],
+            suppressionCatalog.GetByBehaviorId("tests.generated.runtimegrouped.orders.create").Select(static item => item.Id).ToArray());
+        Assert.Empty(suppressionCatalog.GetByBehaviorId("tests.generated.runtimegrouped.inventory.lookup"));
+
+        var lookupGroup = Assert.Single(groups, static item =>
+            string.Equals(item.BehaviorId, "tests.generated.runtimegrouped.orders.lookup", StringComparison.Ordinal));
+        Assert.False(lookupGroup.AuthoringPolicy.IsConfigured);
+        Assert.False(lookupGroup.AuthoringPolicy.AllowMultiplePublishedCandidates);
+        Assert.Empty(lookupGroup.PublishedCandidateIds);
+        Assert.Equal([ordersLookupCandidate.Id], lookupGroup.GovernanceSuppressedCandidateIds);
+        Assert.Equal(2, lookupGroup.GovernanceSuppressionSummaries.Count);
+        var lookupExactSuppression = Assert.Single(lookupGroup.GovernanceSuppressionSummaries, static item =>
+            string.Equals(item.RuleId, "hide-grouped-orders-lookup", StringComparison.Ordinal));
+        Assert.Equal([ordersLookupCandidate.Id], lookupExactSuppression.MatchedCandidateIds);
+        Assert.Equal([ordersLookupCandidate.Id], lookupExactSuppression.SuppressedCandidateIds);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.NarrowerBehaviorScope,
+            Assert.Single(lookupExactSuppression.SelectionBasisSummaries).SelectionBasis);
+        var lookupPrefixSuppression = Assert.Single(lookupGroup.GovernanceSuppressionSummaries, static item =>
+            string.Equals(item.RuleId, "hide-grouped-orders", StringComparison.Ordinal));
+        Assert.Equal([ordersLookupCandidate.Id], lookupPrefixSuppression.MatchedCandidateIds);
+        Assert.Empty(lookupPrefixSuppression.SuppressedCandidateIds);
+        Assert.Empty(lookupPrefixSuppression.SelectionBasisSummaries);
+        var lookupGeneratedStyle = Assert.Single(lookupGroup.AuthoringStyleSummaries, static item =>
+            string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal([ordersLookupCandidate.Id], lookupGeneratedStyle.GovernanceSuppressedCandidateIds);
+        Assert.Equal(2, lookupGeneratedStyle.GovernanceSuppressionSummaries.Count);
+
+        var createGroup = Assert.Single(groups, static item =>
+            string.Equals(item.BehaviorId, "tests.generated.runtimegrouped.orders.create", StringComparison.Ordinal));
+        Assert.False(createGroup.AuthoringPolicy.IsConfigured);
+        Assert.False(createGroup.AuthoringPolicy.AllowMultiplePublishedCandidates);
+        Assert.Empty(createGroup.PublishedCandidateIds);
+        Assert.Equal([ordersCreateCandidate.Id], createGroup.GovernanceSuppressedCandidateIds);
+        var createSuppression = Assert.Single(createGroup.GovernanceSuppressionSummaries);
+        Assert.Equal("hide-grouped-orders", createSuppression.RuleId);
+        Assert.Equal([ordersCreateCandidate.Id], createSuppression.MatchedCandidateIds);
+        Assert.Equal([ordersCreateCandidate.Id], createSuppression.SuppressedCandidateIds);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.SingleMatch,
+            Assert.Single(createSuppression.SelectionBasisSummaries).SelectionBasis);
+        var createGeneratedStyle = Assert.Single(createGroup.AuthoringStyleSummaries, static item =>
+            string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal([ordersCreateCandidate.Id], createGeneratedStyle.GovernanceSuppressedCandidateIds);
+        Assert.Single(createGeneratedStyle.GovernanceSuppressionSummaries);
+
+        var lookupPolicy = Assert.Single(policies, static item =>
+            string.Equals(item.BehaviorId, "tests.generated.runtimegrouped.orders.lookup", StringComparison.Ordinal));
+        Assert.False(lookupPolicy.IsConfigured);
+        Assert.False(lookupPolicy.AllowMultiplePublishedCandidates);
+        Assert.Equal([ordersLookupCandidate.Id], lookupPolicy.GovernanceSuppressedCandidateIds);
+        Assert.Equal(2, lookupPolicy.GovernanceSuppressionSummaries.Count);
+        var lookupExactPolicySuppression = Assert.Single(lookupPolicy.GovernanceSuppressionSummaries, static item =>
+            string.Equals(item.RuleId, "hide-grouped-orders-lookup", StringComparison.Ordinal));
+        Assert.Equal([ordersLookupCandidate.Id], lookupExactPolicySuppression.MatchedCandidateIds);
+        Assert.Equal([ordersLookupCandidate.Id], lookupExactPolicySuppression.SuppressedCandidateIds);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.NarrowerBehaviorScope,
+            Assert.Single(lookupExactPolicySuppression.SelectionBasisSummaries).SelectionBasis);
+        var lookupPrefixPolicySuppression = Assert.Single(lookupPolicy.GovernanceSuppressionSummaries, static item =>
+            string.Equals(item.RuleId, "hide-grouped-orders", StringComparison.Ordinal));
+        Assert.Equal([ordersLookupCandidate.Id], lookupPrefixPolicySuppression.MatchedCandidateIds);
+        Assert.Empty(lookupPrefixPolicySuppression.SuppressedCandidateIds);
+        Assert.Empty(lookupPrefixPolicySuppression.SelectionBasisSummaries);
+        var lookupPolicyGeneratedStyle = Assert.Single(lookupPolicy.AuthoringStyleSummaries, static item =>
+            string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal(2, lookupPolicyGeneratedStyle.GovernanceSuppressionSummaries.Count);
+
+        var createPolicy = Assert.Single(policies, static item =>
+            string.Equals(item.BehaviorId, "tests.generated.runtimegrouped.orders.create", StringComparison.Ordinal));
+        Assert.False(createPolicy.IsConfigured);
+        Assert.False(createPolicy.AllowMultiplePublishedCandidates);
+        Assert.Equal([ordersCreateCandidate.Id], createPolicy.GovernanceSuppressedCandidateIds);
+        var createPolicySuppression = Assert.Single(createPolicy.GovernanceSuppressionSummaries);
+        Assert.Equal("hide-grouped-orders", createPolicySuppression.RuleId);
+        Assert.Equal([ordersCreateCandidate.Id], createPolicySuppression.MatchedCandidateIds);
+        Assert.Equal([ordersCreateCandidate.Id], createPolicySuppression.SuppressedCandidateIds);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.SingleMatch,
+            Assert.Single(createPolicySuppression.SelectionBasisSummaries).SelectionBasis);
+        var createPolicyGeneratedStyle = Assert.Single(createPolicy.AuthoringStyleSummaries, static item =>
+            string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, StringComparison.Ordinal));
+        Assert.Single(createPolicyGeneratedStyle.GovernanceSuppressionSummaries);
+
+        Assert.Equal(lookupGroup.GovernanceSuppressionSummaries.Count, lookupGroupByBehavior.GovernanceSuppressionSummaries.Count);
+        Assert.Equal(createGroup.GovernanceSuppressionSummaries.Count, createGroupByBehavior.GovernanceSuppressionSummaries.Count);
+        Assert.Equal(lookupPolicy.GovernanceSuppressionSummaries.Count, lookupPolicyByBehavior.GovernanceSuppressionSummaries.Count);
+        Assert.Equal(createPolicy.GovernanceSuppressionSummaries.Count, createPolicyByBehavior.GovernanceSuppressionSummaries.Count);
+
+        Assert.Contains(snapshot.RestEndpointPublicationGroups, item =>
+            string.Equals(item.BehaviorId, lookupGroup.BehaviorId, StringComparison.Ordinal) &&
+            item.GovernanceSuppressionSummaries.Count == 2 &&
+            item.GovernanceSuppressedCandidateIds.SequenceEqual([ordersLookupCandidate.Id]));
+        Assert.Contains(snapshot.RestEndpointPublicationGroups, item =>
+            string.Equals(item.BehaviorId, createGroup.BehaviorId, StringComparison.Ordinal) &&
+            item.GovernanceSuppressionSummaries.Count == 1 &&
+            item.GovernanceSuppressedCandidateIds.SequenceEqual([ordersCreateCandidate.Id]));
+        Assert.Contains(snapshot.RestEndpointAuthoringPolicies, item =>
+            string.Equals(item.BehaviorId, lookupPolicy.BehaviorId, StringComparison.Ordinal) &&
+            item.GovernanceSuppressionSummaries.Count == 2 &&
+            item.GovernanceSuppressedCandidateIds.SequenceEqual([ordersLookupCandidate.Id]));
+        Assert.Contains(snapshot.RestEndpointAuthoringPolicies, item =>
+            string.Equals(item.BehaviorId, createPolicy.BehaviorId, StringComparison.Ordinal) &&
+            item.GovernanceSuppressionSummaries.Count == 1 &&
+            item.GovernanceSuppressedCandidateIds.SequenceEqual([ordersCreateCandidate.Id]));
+        Assert.Contains(snapshot.RestEndpointSuppressions, item =>
+            string.Equals(item.Id, "hide-grouped-orders-lookup", StringComparison.Ordinal) &&
+            item.SelectionBases.SequenceEqual([RestEndpointGovernanceRuleSelectionBasis.NarrowerBehaviorScope]));
+        Assert.Contains(snapshot.RestEndpointSuppressions, item =>
+            string.Equals(item.Id, "hide-grouped-orders", StringComparison.Ordinal) &&
+            item.BehaviorIdPrefixes.SequenceEqual(["tests.generated.runtimegrouped.orders"]) &&
+            item.SuppressedCandidateIds.SequenceEqual([ordersCreateCandidate.Id]));
+    }
+
+    [Fact]
     public void AddGeneratedRestBehaviorModuleRejectsBehaviorIdPrefixesWithEmptySegments()
     {
         var builder = WebApplication.CreateBuilder();
@@ -3477,6 +3686,194 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         var createPayload = await createResponse.Content.ReadFromJsonAsync<GeneratedRuntimeOrderOutput>();
         Assert.NotNull(createPayload);
         Assert.Equal("ord-create", createPayload.OrderId);
+    }
+
+    [Fact]
+    public async Task MapCephalonExposesBehaviorIdPrefixOverrideParityAcrossGroupedOperatorSurfaces()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "7";
+        builder.Configuration["OpenApi:EnabledVersions:1"] = "8";
+        builder.Configuration["OpenApi:DefaultVersion"] = "7";
+        builder.Configuration["RestApi:Overrides:promote-grouped-orders:BehaviorIdPrefixes:0"] = "tests.generated.runtimegrouped.orders";
+        builder.Configuration["RestApi:Overrides:promote-grouped-orders:TagName"] = "Generated Grouped Orders API";
+        builder.Configuration["RestApi:Overrides:promote-grouped-orders-lookup:Behaviors:0"] = "tests.generated.runtimegrouped.orders.lookup";
+        builder.Configuration["RestApi:Overrides:promote-grouped-orders-lookup:TagName"] = "Generated Grouped Orders Lookup API";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new GeneratedGroupedRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var groups = await client.GetFromJsonAsync<RestEndpointPublicationGroupDescriptor[]>("/engine/rest-endpoint-publication-groups");
+        var lookupGroupByBehavior = await client.GetFromJsonAsync<RestEndpointPublicationGroupDescriptor>(
+            "/engine/rest-endpoint-publication-groups/tests.generated.runtimegrouped.orders.lookup");
+        var createGroupByBehavior = await client.GetFromJsonAsync<RestEndpointPublicationGroupDescriptor>(
+            "/engine/rest-endpoint-publication-groups/tests.generated.runtimegrouped.orders.create");
+        var policies = await client.GetFromJsonAsync<RestEndpointAuthoringPolicyDescriptor[]>("/engine/rest-endpoint-authoring-policies");
+        var lookupPolicyByBehavior = await client.GetFromJsonAsync<RestEndpointAuthoringPolicyDescriptor>(
+            "/engine/rest-endpoint-authoring-policies/tests.generated.runtimegrouped.orders.lookup");
+        var createPolicyByBehavior = await client.GetFromJsonAsync<RestEndpointAuthoringPolicyDescriptor>(
+            "/engine/rest-endpoint-authoring-policies/tests.generated.runtimegrouped.orders.create");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(candidates);
+        Assert.NotNull(groups);
+        Assert.NotNull(lookupGroupByBehavior);
+        Assert.NotNull(createGroupByBehavior);
+        Assert.NotNull(policies);
+        Assert.NotNull(lookupPolicyByBehavior);
+        Assert.NotNull(createPolicyByBehavior);
+        Assert.NotNull(snapshot);
+
+        var ordersLookupCandidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.generated.runtimegrouped.orders.lookup", StringComparison.Ordinal));
+        var ordersCreateCandidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.generated.runtimegrouped.orders.create", StringComparison.Ordinal));
+        Assert.Equal("promote-grouped-orders-lookup", ordersLookupCandidate.SelectedOverrideId);
+        Assert.Equal("promote-grouped-orders-lookup", ordersLookupCandidate.AppliedOverrideId);
+        Assert.Equal(
+            ["promote-grouped-orders-lookup", "promote-grouped-orders"],
+            ordersLookupCandidate.MatchedOverrideIds);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.NarrowerBehaviorScope,
+            ordersLookupCandidate.OverrideSelectionBasis);
+        Assert.Equal("promote-grouped-orders", ordersCreateCandidate.SelectedOverrideId);
+        Assert.Equal("promote-grouped-orders", ordersCreateCandidate.AppliedOverrideId);
+        Assert.Equal(["promote-grouped-orders"], ordersCreateCandidate.MatchedOverrideIds);
+        Assert.Equal(RestEndpointGovernanceRuleSelectionBasis.SingleMatch, ordersCreateCandidate.OverrideSelectionBasis);
+
+        var lookupGroup = Assert.Single(groups, static item =>
+            string.Equals(item.BehaviorId, "tests.generated.runtimegrouped.orders.lookup", StringComparison.Ordinal));
+        Assert.False(lookupGroup.AuthoringPolicy.IsConfigured);
+        Assert.False(lookupGroup.AuthoringPolicy.AllowMultiplePublishedCandidates);
+        Assert.Equal([ordersLookupCandidate.Id], lookupGroup.PublishedCandidateIds);
+        Assert.Equal(2, lookupGroup.GovernanceOverrideSummaries.Count);
+        var lookupExactOverride = Assert.Single(lookupGroup.GovernanceOverrideSummaries, static item =>
+            string.Equals(item.RuleId, "promote-grouped-orders-lookup", StringComparison.Ordinal));
+        Assert.Equal([ordersLookupCandidate.Id], lookupExactOverride.MatchedCandidateIds);
+        Assert.Equal([ordersLookupCandidate.Id], lookupExactOverride.SelectedCandidateIds);
+        Assert.Equal([ordersLookupCandidate.Id], lookupExactOverride.AppliedCandidateIds);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.NarrowerBehaviorScope,
+            Assert.Single(lookupExactOverride.SelectionBasisSummaries).SelectionBasis);
+        Assert.Equal(
+            ordersLookupCandidate.SelectedOverrideActionKinds,
+            lookupExactOverride.SelectedActionKindSummaries.Select(static item => item.ActionKind).ToArray());
+        Assert.Equal(
+            ordersLookupCandidate.AppliedOverrideActionKinds,
+            lookupExactOverride.AppliedActionKindSummaries.Select(static item => item.ActionKind).ToArray());
+        var lookupPrefixOverride = Assert.Single(lookupGroup.GovernanceOverrideSummaries, static item =>
+            string.Equals(item.RuleId, "promote-grouped-orders", StringComparison.Ordinal));
+        Assert.Equal([ordersLookupCandidate.Id], lookupPrefixOverride.MatchedCandidateIds);
+        Assert.Empty(lookupPrefixOverride.SelectedCandidateIds);
+        Assert.Empty(lookupPrefixOverride.AppliedCandidateIds);
+        Assert.Empty(lookupPrefixOverride.SelectionBasisSummaries);
+        Assert.Empty(lookupPrefixOverride.SelectedActionKindSummaries);
+        Assert.Empty(lookupPrefixOverride.AppliedActionKindSummaries);
+        var lookupGeneratedStyle = Assert.Single(lookupGroup.AuthoringStyleSummaries, static item =>
+            string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal(2, lookupGeneratedStyle.GovernanceOverrideSummaries.Count);
+
+        var createGroup = Assert.Single(groups, static item =>
+            string.Equals(item.BehaviorId, "tests.generated.runtimegrouped.orders.create", StringComparison.Ordinal));
+        Assert.False(createGroup.AuthoringPolicy.IsConfigured);
+        Assert.False(createGroup.AuthoringPolicy.AllowMultiplePublishedCandidates);
+        Assert.Equal([ordersCreateCandidate.Id], createGroup.PublishedCandidateIds);
+        var createOverride = Assert.Single(createGroup.GovernanceOverrideSummaries);
+        Assert.Equal("promote-grouped-orders", createOverride.RuleId);
+        Assert.Equal([ordersCreateCandidate.Id], createOverride.MatchedCandidateIds);
+        Assert.Equal([ordersCreateCandidate.Id], createOverride.SelectedCandidateIds);
+        Assert.Equal([ordersCreateCandidate.Id], createOverride.AppliedCandidateIds);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.SingleMatch,
+            Assert.Single(createOverride.SelectionBasisSummaries).SelectionBasis);
+        Assert.Equal(
+            ordersCreateCandidate.SelectedOverrideActionKinds,
+            createOverride.SelectedActionKindSummaries.Select(static item => item.ActionKind).ToArray());
+        Assert.Equal(
+            ordersCreateCandidate.AppliedOverrideActionKinds,
+            createOverride.AppliedActionKindSummaries.Select(static item => item.ActionKind).ToArray());
+        var createGeneratedStyle = Assert.Single(createGroup.AuthoringStyleSummaries, static item =>
+            string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, StringComparison.Ordinal));
+        Assert.Single(createGeneratedStyle.GovernanceOverrideSummaries);
+
+        var lookupPolicy = Assert.Single(policies, static item =>
+            string.Equals(item.BehaviorId, "tests.generated.runtimegrouped.orders.lookup", StringComparison.Ordinal));
+        Assert.False(lookupPolicy.IsConfigured);
+        Assert.False(lookupPolicy.AllowMultiplePublishedCandidates);
+        Assert.Equal([ordersLookupCandidate.Id], lookupPolicy.PublishedCandidateIds);
+        Assert.Equal(2, lookupPolicy.GovernanceOverrideSummaries.Count);
+        var lookupExactPolicyOverride = Assert.Single(lookupPolicy.GovernanceOverrideSummaries, static item =>
+            string.Equals(item.RuleId, "promote-grouped-orders-lookup", StringComparison.Ordinal));
+        Assert.Equal([ordersLookupCandidate.Id], lookupExactPolicyOverride.MatchedCandidateIds);
+        Assert.Equal([ordersLookupCandidate.Id], lookupExactPolicyOverride.SelectedCandidateIds);
+        Assert.Equal([ordersLookupCandidate.Id], lookupExactPolicyOverride.AppliedCandidateIds);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.NarrowerBehaviorScope,
+            Assert.Single(lookupExactPolicyOverride.SelectionBasisSummaries).SelectionBasis);
+        var lookupPrefixPolicyOverride = Assert.Single(lookupPolicy.GovernanceOverrideSummaries, static item =>
+            string.Equals(item.RuleId, "promote-grouped-orders", StringComparison.Ordinal));
+        Assert.Equal([ordersLookupCandidate.Id], lookupPrefixPolicyOverride.MatchedCandidateIds);
+        Assert.Empty(lookupPrefixPolicyOverride.SelectedCandidateIds);
+        Assert.Empty(lookupPrefixPolicyOverride.AppliedCandidateIds);
+        Assert.Empty(lookupPrefixPolicyOverride.SelectionBasisSummaries);
+        var lookupPolicyGeneratedStyle = Assert.Single(lookupPolicy.AuthoringStyleSummaries, static item =>
+            string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal(2, lookupPolicyGeneratedStyle.GovernanceOverrideSummaries.Count);
+
+        var createPolicy = Assert.Single(policies, static item =>
+            string.Equals(item.BehaviorId, "tests.generated.runtimegrouped.orders.create", StringComparison.Ordinal));
+        Assert.False(createPolicy.IsConfigured);
+        Assert.False(createPolicy.AllowMultiplePublishedCandidates);
+        Assert.Equal([ordersCreateCandidate.Id], createPolicy.PublishedCandidateIds);
+        var createPolicyOverride = Assert.Single(createPolicy.GovernanceOverrideSummaries);
+        Assert.Equal("promote-grouped-orders", createPolicyOverride.RuleId);
+        Assert.Equal([ordersCreateCandidate.Id], createPolicyOverride.MatchedCandidateIds);
+        Assert.Equal([ordersCreateCandidate.Id], createPolicyOverride.SelectedCandidateIds);
+        Assert.Equal([ordersCreateCandidate.Id], createPolicyOverride.AppliedCandidateIds);
+        Assert.Equal(
+            RestEndpointGovernanceRuleSelectionBasis.SingleMatch,
+            Assert.Single(createPolicyOverride.SelectionBasisSummaries).SelectionBasis);
+        var createPolicyGeneratedStyle = Assert.Single(createPolicy.AuthoringStyleSummaries, static item =>
+            string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, StringComparison.Ordinal));
+        Assert.Single(createPolicyGeneratedStyle.GovernanceOverrideSummaries);
+
+        Assert.Equal(lookupGroup.GovernanceOverrideSummaries.Count, lookupGroupByBehavior.GovernanceOverrideSummaries.Count);
+        Assert.Equal(createGroup.GovernanceOverrideSummaries.Count, createGroupByBehavior.GovernanceOverrideSummaries.Count);
+        Assert.Equal(lookupPolicy.GovernanceOverrideSummaries.Count, lookupPolicyByBehavior.GovernanceOverrideSummaries.Count);
+        Assert.Equal(createPolicy.GovernanceOverrideSummaries.Count, createPolicyByBehavior.GovernanceOverrideSummaries.Count);
+
+        Assert.Contains(snapshot.RestEndpointPublicationGroups, item =>
+            string.Equals(item.BehaviorId, lookupGroup.BehaviorId, StringComparison.Ordinal) &&
+            item.GovernanceOverrideSummaries.Count == 2 &&
+            item.PublishedCandidateIds.SequenceEqual([ordersLookupCandidate.Id]));
+        Assert.Contains(snapshot.RestEndpointPublicationGroups, item =>
+            string.Equals(item.BehaviorId, createGroup.BehaviorId, StringComparison.Ordinal) &&
+            item.GovernanceOverrideSummaries.Count == 1 &&
+            item.PublishedCandidateIds.SequenceEqual([ordersCreateCandidate.Id]));
+        Assert.Contains(snapshot.RestEndpointAuthoringPolicies, item =>
+            string.Equals(item.BehaviorId, lookupPolicy.BehaviorId, StringComparison.Ordinal) &&
+            item.GovernanceOverrideSummaries.Count == 2 &&
+            item.PublishedCandidateIds.SequenceEqual([ordersLookupCandidate.Id]));
+        Assert.Contains(snapshot.RestEndpointAuthoringPolicies, item =>
+            string.Equals(item.BehaviorId, createPolicy.BehaviorId, StringComparison.Ordinal) &&
+            item.GovernanceOverrideSummaries.Count == 1 &&
+            item.PublishedCandidateIds.SequenceEqual([ordersCreateCandidate.Id]));
     }
 
     [Fact]
@@ -7218,6 +7615,184 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             item.SelectionBases.Count == 0 &&
             item.SelectedActionKinds.Count == 0 &&
             item.AppliedActionKinds.Count == 0);
+    }
+
+    [Fact]
+    public async Task MapCephalonExposesBehaviorIdPrefixSkippedGovernanceParityAcrossGroupedOperatorSurfaces()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "9";
+        builder.Configuration["OpenApi:DefaultVersion"] = "9";
+        builder.Configuration["RestApi:Suppressions:skip-prefix-disabled-explicit:BehaviorIdPrefixes:0"] = "tests.dsl.runtimeoverride.disabled";
+        builder.Configuration["RestApi:Suppressions:skip-prefix-disabled-explicit:AuthoringStyles:0"] =
+            RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle;
+        builder.Configuration["RestApi:Overrides:rewrite-prefix-disabled-explicit:BehaviorIdPrefixes:0"] = "tests.dsl.runtimeoverride.disabled";
+        builder.Configuration["RestApi:Overrides:rewrite-prefix-disabled-explicit:AuthoringStyles:0"] =
+            RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle;
+        builder.Configuration["RestApi:Overrides:rewrite-prefix-disabled-explicit:Pattern"] = "/governed/{orderId}";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ExplicitDslHostGovernanceDisabledRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var publicationGroupCatalog = app.Services.GetRequiredService<IRestEndpointPublicationGroupRuntimeCatalog>();
+        var authoringPolicyCatalog = app.Services.GetRequiredService<IRestEndpointAuthoringPolicyRuntimeCatalog>();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var groups = await client.GetFromJsonAsync<RestEndpointPublicationGroupDescriptor[]>("/engine/rest-endpoint-publication-groups");
+        var groupByBehavior = await client.GetFromJsonAsync<RestEndpointPublicationGroupDescriptor>(
+            "/engine/rest-endpoint-publication-groups/tests.dsl.runtimeoverride.disabled.lookup");
+        var policies = await client.GetFromJsonAsync<RestEndpointAuthoringPolicyDescriptor[]>("/engine/rest-endpoint-authoring-policies");
+        var policyByBehavior = await client.GetFromJsonAsync<RestEndpointAuthoringPolicyDescriptor>(
+            "/engine/rest-endpoint-authoring-policies/tests.dsl.runtimeoverride.disabled.lookup");
+        var suppressions = await client.GetFromJsonAsync<RestEndpointSuppressionDescriptor[]>("/engine/rest-endpoint-suppressions");
+        var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(groups);
+        Assert.NotNull(groupByBehavior);
+        Assert.NotNull(policies);
+        Assert.NotNull(policyByBehavior);
+        Assert.NotNull(suppressions);
+        Assert.NotNull(overrides);
+        Assert.NotNull(snapshot);
+
+        var endpoint = Assert.Single(endpoints, static item =>
+            string.Equals(item.BehaviorId, "tests.dsl.runtimeoverride.disabled.lookup", StringComparison.Ordinal));
+        Assert.Equal(["skip-prefix-disabled-explicit"], endpoint.SkippedSuppressionIds);
+        Assert.Equal(["rewrite-prefix-disabled-explicit"], endpoint.SkippedOverrideIds);
+        Assert.NotNull(endpoint.OriginalProjection);
+        Assert.False(endpoint.OriginalProjection!.AllowsHostGovernance);
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.dsl.runtimeoverride.disabled.lookup", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+        Assert.Empty(candidate.MatchedSuppressionIds);
+        Assert.Empty(candidate.MatchedOverrideIds);
+        Assert.Equal(["skip-prefix-disabled-explicit"], candidate.SkippedSuppressionIds);
+        Assert.Equal(["rewrite-prefix-disabled-explicit"], candidate.SkippedOverrideIds);
+        Assert.Equal(["skip-prefix-disabled-explicit"], candidate.ProjectedEndpoint.SkippedSuppressionIds);
+        Assert.Equal(["rewrite-prefix-disabled-explicit"], candidate.ProjectedEndpoint.SkippedOverrideIds);
+
+        var suppressionRule = Assert.Single(suppressions, static item =>
+            string.Equals(item.Id, "skip-prefix-disabled-explicit", StringComparison.Ordinal));
+        Assert.Empty(suppressionRule.BehaviorIds);
+        Assert.Equal(["tests.dsl.runtimeoverride.disabled"], suppressionRule.BehaviorIdPrefixes);
+        Assert.Empty(suppressionRule.MatchedCandidateIds);
+        Assert.Empty(suppressionRule.SuppressedCandidateIds);
+        Assert.Equal([candidate.Id], suppressionRule.SkippedCandidateIds);
+        Assert.Empty(suppressionRule.SelectionBases);
+
+        var overrideRule = Assert.Single(overrides, static item =>
+            string.Equals(item.Id, "rewrite-prefix-disabled-explicit", StringComparison.Ordinal));
+        Assert.Empty(overrideRule.BehaviorIds);
+        Assert.Equal(["tests.dsl.runtimeoverride.disabled"], overrideRule.BehaviorIdPrefixes);
+        Assert.Empty(overrideRule.MatchedCandidateIds);
+        Assert.Empty(overrideRule.SelectedCandidateIds);
+        Assert.Empty(overrideRule.AppliedCandidateIds);
+        Assert.Equal([candidate.Id], overrideRule.SkippedCandidateIds);
+        Assert.Empty(overrideRule.SelectionBases);
+        Assert.Empty(overrideRule.SelectedActionKinds);
+        Assert.Empty(overrideRule.AppliedActionKinds);
+
+        var group = Assert.Single(groups, static item =>
+            string.Equals(item.BehaviorId, "tests.dsl.runtimeoverride.disabled.lookup", StringComparison.Ordinal));
+        Assert.Equal([candidate.Id], group.PublishedCandidateIds);
+        Assert.Empty(group.HostGovernanceEligibleCandidateIds);
+        Assert.Equal([candidate.Id], group.HostGovernanceIneligibleCandidateIds);
+        Assert.Equal(["skip-prefix-disabled-explicit"], group.SkippedSuppressionIds);
+        Assert.Equal(["rewrite-prefix-disabled-explicit"], group.SkippedOverrideIds);
+        Assert.Equal("skip-prefix-disabled-explicit", Assert.Single(group.SkippedSuppressionSummaries).RuleId);
+        Assert.Equal([candidate.Id], Assert.Single(group.SkippedSuppressionSummaries).CandidateIds);
+        Assert.Equal("rewrite-prefix-disabled-explicit", Assert.Single(group.SkippedOverrideSummaries).RuleId);
+        Assert.Equal([candidate.Id], Assert.Single(group.SkippedOverrideSummaries).CandidateIds);
+        var groupExplicitStyle = Assert.Single(group.AuthoringStyleSummaries, static item =>
+            string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal(["skip-prefix-disabled-explicit"], groupExplicitStyle.SkippedSuppressionIds);
+        Assert.Equal(["rewrite-prefix-disabled-explicit"], groupExplicitStyle.SkippedOverrideIds);
+        Assert.Equal("skip-prefix-disabled-explicit", Assert.Single(groupExplicitStyle.SkippedSuppressionSummaries).RuleId);
+        Assert.Equal("rewrite-prefix-disabled-explicit", Assert.Single(groupExplicitStyle.SkippedOverrideSummaries).RuleId);
+
+        var policy = Assert.Single(policies, static item =>
+            string.Equals(item.BehaviorId, "tests.dsl.runtimeoverride.disabled.lookup", StringComparison.Ordinal));
+        Assert.Equal([candidate.Id], policy.PublishedCandidateIds);
+        Assert.Empty(policy.HostGovernanceEligibleCandidateIds);
+        Assert.Equal([candidate.Id], policy.HostGovernanceIneligibleCandidateIds);
+        Assert.Equal(["skip-prefix-disabled-explicit"], policy.SkippedSuppressionIds);
+        Assert.Equal(["rewrite-prefix-disabled-explicit"], policy.SkippedOverrideIds);
+        Assert.Empty(policy.GovernanceSuppressionSummaries);
+        Assert.Empty(policy.GovernanceOverrideSummaries);
+        Assert.Equal("skip-prefix-disabled-explicit", Assert.Single(policy.SkippedSuppressionSummaries).RuleId);
+        Assert.Equal([candidate.Id], Assert.Single(policy.SkippedSuppressionSummaries).CandidateIds);
+        Assert.Equal("rewrite-prefix-disabled-explicit", Assert.Single(policy.SkippedOverrideSummaries).RuleId);
+        Assert.Equal([candidate.Id], Assert.Single(policy.SkippedOverrideSummaries).CandidateIds);
+        var policyExplicitStyle = Assert.Single(policy.AuthoringStyleSummaries, static item =>
+            string.Equals(item.AuthoringStyle, RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle, StringComparison.Ordinal));
+        Assert.Equal(["skip-prefix-disabled-explicit"], policyExplicitStyle.SkippedSuppressionIds);
+        Assert.Equal(["rewrite-prefix-disabled-explicit"], policyExplicitStyle.SkippedOverrideIds);
+        Assert.Equal("skip-prefix-disabled-explicit", Assert.Single(policyExplicitStyle.SkippedSuppressionSummaries).RuleId);
+        Assert.Equal("rewrite-prefix-disabled-explicit", Assert.Single(policyExplicitStyle.SkippedOverrideSummaries).RuleId);
+
+        var groupFromCatalog = publicationGroupCatalog.GetByBehaviorId("tests.dsl.runtimeoverride.disabled.lookup");
+        Assert.NotNull(groupFromCatalog);
+        Assert.Equal(group.SkippedSuppressionIds, groupFromCatalog!.SkippedSuppressionIds);
+        Assert.Equal(group.SkippedOverrideIds, groupFromCatalog.SkippedOverrideIds);
+        var policyFromCatalog = authoringPolicyCatalog.GetByBehaviorId("tests.dsl.runtimeoverride.disabled.lookup");
+        Assert.NotNull(policyFromCatalog);
+        Assert.Equal(policy.SkippedSuppressionIds, policyFromCatalog!.SkippedSuppressionIds);
+        Assert.Equal(policy.SkippedOverrideIds, policyFromCatalog.SkippedOverrideIds);
+
+        Assert.Equal(group.SkippedSuppressionIds, groupByBehavior.SkippedSuppressionIds);
+        Assert.Equal(group.SkippedOverrideIds, groupByBehavior.SkippedOverrideIds);
+        Assert.Equal(policy.SkippedSuppressionIds, policyByBehavior.SkippedSuppressionIds);
+        Assert.Equal(policy.SkippedOverrideIds, policyByBehavior.SkippedOverrideIds);
+
+        Assert.Contains(snapshot.RestEndpoints, item =>
+            string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal) &&
+            item.SkippedSuppressionIds.SequenceEqual(["skip-prefix-disabled-explicit"]) &&
+            item.SkippedOverrideIds.SequenceEqual(["rewrite-prefix-disabled-explicit"]));
+        Assert.Contains(snapshot.RestEndpointCandidates, item =>
+            string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
+            item.SkippedSuppressionIds.SequenceEqual(["skip-prefix-disabled-explicit"]) &&
+            item.SkippedOverrideIds.SequenceEqual(["rewrite-prefix-disabled-explicit"]));
+        Assert.Contains(snapshot.RestEndpointPublicationGroups, item =>
+            string.Equals(item.BehaviorId, group.BehaviorId, StringComparison.Ordinal) &&
+            item.SkippedSuppressionIds.SequenceEqual(["skip-prefix-disabled-explicit"]) &&
+            item.SkippedOverrideIds.SequenceEqual(["rewrite-prefix-disabled-explicit"]) &&
+            item.SkippedSuppressionSummaries.Count == 1 &&
+            item.SkippedOverrideSummaries.Count == 1);
+        Assert.Contains(snapshot.RestEndpointAuthoringPolicies, item =>
+            string.Equals(item.BehaviorId, policy.BehaviorId, StringComparison.Ordinal) &&
+            item.SkippedSuppressionIds.SequenceEqual(["skip-prefix-disabled-explicit"]) &&
+            item.SkippedOverrideIds.SequenceEqual(["rewrite-prefix-disabled-explicit"]) &&
+            item.SkippedSuppressionSummaries.Count == 1 &&
+            item.SkippedOverrideSummaries.Count == 1);
+        Assert.Contains(snapshot.RestEndpointSuppressions, item =>
+            string.Equals(item.Id, "skip-prefix-disabled-explicit", StringComparison.Ordinal) &&
+            item.BehaviorIdPrefixes.SequenceEqual(["tests.dsl.runtimeoverride.disabled"]) &&
+            item.SkippedCandidateIds.SequenceEqual([candidate.Id]));
+        Assert.Contains(snapshot.RestEndpointOverrides, item =>
+            string.Equals(item.Id, "rewrite-prefix-disabled-explicit", StringComparison.Ordinal) &&
+            item.BehaviorIdPrefixes.SequenceEqual(["tests.dsl.runtimeoverride.disabled"]) &&
+            item.SkippedCandidateIds.SequenceEqual([candidate.Id]) &&
+            item.SelectedCandidateIds.Count == 0 &&
+            item.AppliedCandidateIds.Count == 0);
     }
 
     [Fact]
