@@ -10,7 +10,7 @@ namespace Cephalon.Benchmarks.Runtime;
 /// Measures startup and shutdown costs for the baseline engine runtime lifecycle.
 /// </summary>
 [MemoryDiagnoser]
-[ShortRunJob]
+[Config(typeof(BenchmarkInProcessShortRunConfig))]
 public class EngineRuntimeBenchmarks
 {
     private const int LifecyclesPerIteration = 2048;

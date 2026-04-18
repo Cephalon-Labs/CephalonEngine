@@ -11,7 +11,7 @@ namespace Cephalon.Benchmarks.HotPath;
 /// enforcement on the framework's outbox hot path.
 /// </summary>
 [MemoryDiagnoser]
-[ShortRunJob]
+[Config(typeof(BenchmarkInProcessShortRunConfig))]
 public class OutboxStagingBenchmarks
 {
     private const int StagingsPerIteration = 4096;

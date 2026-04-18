@@ -1,6 +1,8 @@
 using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Audit.Registration;
+using Cephalon.Behaviors.Hosting;
+using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Data.Registration;
 using Cephalon.Engine.AppModel;
 using Cephalon.Engine.Composition;
@@ -37,6 +39,19 @@ internal static class BenchmarkScenarioFactory
         builder.AddModule(new BenchmarkOperationsModule());
         builder.AddModule(new BenchmarkDiscoveryModule());
         builder.AddModule(new BenchmarkClockModule());
+    }
+
+    public static void ConfigureRestGovernanceEngine(EngineBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        builder.UseSettings(CreateAspNetCoreSettings());
+        builder.AddModule(new BenchmarkRestGovernanceModule());
+        builder.AddModule(new BenchmarkRestGeneratedGroupsModule());
+        builder.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+        {
+            behaviors.AddHttpBehaviorBindings();
+        });
     }
 
     public static EngineBuilder CreateEngineBuilder()

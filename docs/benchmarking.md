@@ -2,7 +2,7 @@
 
 `Cephalon.Benchmarks` is the repository performance suite built on BenchmarkDotNet.
 
-It currently tracks ten hot paths:
+It currently tracks the following benchmark lanes across composition, runtime, ASP.NET Core hosting, REST publication, scaffolding, and hot-path engine services:
 
 - `Cephalon.Benchmarks.Composition`: configured-builder engine composition and manifest construction
 - `Cephalon.Benchmarks.Composition`: strict trust-policy composition and capability filtering
@@ -12,26 +12,29 @@ It currently tracks ten hot paths:
 - `Cephalon.Benchmarks.Runtime`: ASP.NET Core request logging with bounded request/response body capture and trace correlation
 - `Cephalon.Benchmarks.Runtime`: ASP.NET Core request logging while oversized textual payloads are truncated to the configured capture limits
 - `Cephalon.Benchmarks.Runtime`: ASP.NET Core request logging under concurrent request pressure with the shipped logging and redaction pipeline enabled
+- `Cephalon.Benchmarks.Runtime`: engine-first REST projection, governance, and runtime-catalog materialization across generated/profile/DSL precedence, grouped generated module ownership, authoring policy, suppression, override, and preserved implicit query fallback
 - `Cephalon.Benchmarks.Scaffolding`: blueprint-to-files scaffold generation
 - `Cephalon.Benchmarks.Scaffolding`: phase-8 blueprint-to-files scaffold generation with structured `Engine:*` sections, additive pack hints, and starter-test conventions
 
 The benchmark suite now also ships a guardrail catalog at `benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json`.
 
-That catalog is the repository baseline for the current hot paths:
+That catalog is the repository baseline for the currently shipped benchmark methods:
 
-- `BuildRuntimeManifest`
-- `BuildRuntimeManifestWithStrictTrustPolicy`
-- `BuildPhase8RuntimeManifest`
-- `InitializeStartStopRuntime`
-- `InitializeStartStopPhase8Runtime`
-- `HandleLoggedJsonRequest`
-- `HandleTruncatedJsonRequest`
-- `HandleConcurrentLoggedJsonRequest`
-- `GenerateBlueprintScaffold`
-- `GeneratePhase8BlueprintScaffold`
+- `EngineBuilderBenchmarks`: `BuildRuntimeManifest`, `BuildRuntimeManifestWithStrictTrustPolicy`, `BuildPhase8RuntimeManifest`
+- `EngineRuntimeBenchmarks`: `InitializeStartStopRuntime`, `InitializeStartStopPhase8Runtime`
+- `AspNetCoreRequestLoggingBenchmarks`: `HandleLoggedJsonRequest`, `HandleTruncatedJsonRequest`, `HandleConcurrentLoggedJsonRequest`
+- `RestEndpointProjectionGovernanceBenchmarks`: `BuildMapGovernedRestCatalogs`
+- `ScaffoldGeneratorBenchmarks`: `GenerateBlueprintScaffold`, `GeneratePhase8BlueprintScaffold`
+- `DataDispatchBenchmarks`: `DispatchQuery`, `DispatchCommand`, `DispatchCommandWithResult`
+- `BehaviorDispatchBenchmarks`: `DispatchBehavior`
+- `AuthorizationEvaluationBenchmarks`: `EvaluateRbacAllow`, `EvaluateRbacDeny`
+- `TenantResolutionBenchmarks`: `ResolveByTenantId`, `ResolveByHostName`, `ResolveDefaultTenant`
+- `EventSourcingBenchmarks`: `AppendSingleEvent`, `ReadStream`, `GetStreamVersion`
+- `OutboxStagingBenchmarks`: `StageOutboxMessage`
 
 The composition and runtime baselines prepare configured builders, runtimes, and service providers outside the measured loop so the guardrails track `Build()` and lifecycle transition costs rather than one-time benchmark harness setup.
-That baseline now also includes the stricter trust-policy composition path, the shipped phase-8 low-ceremony companion-pack path, the bounded-truncation HTTP logging path, and a concurrent logging throughput path so security hardening work stays measurable under both single-request and multi-request pressure.
+That baseline now also includes the stricter trust-policy composition path, the shipped phase-8 low-ceremony companion-pack path, the bounded-truncation HTTP logging path, the engine-first REST projection/governance startup path, and a concurrent logging throughput path so security hardening work stays measurable under both single-request and multi-request pressure.
+The shipped local smoke suite now uses a shared in-process short-run BenchmarkDotNet config across every benchmark class so mirrored worktree artifacts such as repo-local `.build/*` copies do not break benchmark project resolution during `validate-release`.
 
 ## Run all benchmarks
 
@@ -45,7 +48,14 @@ dotnet run -c Release --project benchmarks/Cephalon.Benchmarks
 dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*EngineBuilderBenchmarks*"
 dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*EngineRuntimeBenchmarks*"
 dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*AspNetCoreRequestLoggingBenchmarks*"
+dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*RestEndpointProjectionGovernanceBenchmarks*"
 dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*ScaffoldGeneratorBenchmarks*"
+dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*DataDispatchBenchmarks*"
+dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*BehaviorDispatchBenchmarks*"
+dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*AuthorizationEvaluationBenchmarks*"
+dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*TenantResolutionBenchmarks*"
+dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*EventSourcingBenchmarks*"
+dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*OutboxStagingBenchmarks*"
 ```
 
 The phase-8 composition, runtime, and scaffolding scenarios live in the same benchmark classes as the earlier baselines, so those filters cover both the original and phase-8 paths.
@@ -80,7 +90,7 @@ pwsh ./scripts/validate-release.ps1 -SkipTests
 pwsh ./scripts/validate-release.ps1 -SkipOperationalConventions
 pwsh ./scripts/validate-release.ps1 -SkipPhase8Conventions
 pwsh ./scripts/validate-release.ps1 -SkipReferenceDocs
-pwsh ./scripts/validate-release.ps1 -BenchmarkFilters "*EngineBuilderBenchmarks*" "*EngineRuntimeBenchmarks*" "*AspNetCoreRequestLoggingBenchmarks*" "*ScaffoldGeneratorBenchmarks*"
+pwsh ./scripts/validate-release.ps1 -BenchmarkFilters "*EngineBuilderBenchmarks*" "*EngineRuntimeBenchmarks*" "*AspNetCoreRequestLoggingBenchmarks*" "*RestEndpointProjectionGovernanceBenchmarks*" "*ScaffoldGeneratorBenchmarks*" "*DataDispatchBenchmarks*" "*BehaviorDispatchBenchmarks*" "*AuthorizationEvaluationBenchmarks*" "*TenantResolutionBenchmarks*" "*EventSourcingBenchmarks*" "*OutboxStagingBenchmarks*"
 ```
 
 Run only the focused health/export convention suite:
@@ -118,5 +128,6 @@ Treat `scripts/validate-release.ps1` as the source of truth. If the local releas
 - update the guardrail catalog deliberately when benchmark scenarios change materially
 - use the guardrails to catch regressions, not to chase machine-specific micro-noise
 - keep HTTP-host hot paths covered when request logging, body capture, or trace-correlation behavior changes materially
+- keep at least one end-to-end REST projection/governance startup path benchmarked when module-owned REST authoring, grouped generation, or runtime catalog truth changes materially
 - keep at least one concurrent HTTP-host path benchmarked when request logging changes materially enough to affect shared-host throughput
 - keep trust-policy and bounded-capture paths benchmarked when security-sensitive host behavior changes materially

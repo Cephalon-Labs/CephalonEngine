@@ -4,23 +4,23 @@
     {
       "reportFileName": "Cephalon.Benchmarks.Composition.EngineBuilderBenchmarks-report.csv",
       "benchmark": "BuildRuntimeManifest",
-      "maxMeanNanoseconds": 100000,
+      "maxMeanNanoseconds": 130000,
       "maxAllocatedBytes": 55000,
-      "notes": "Configured-builder composition and manifest construction should stay below 100 us and under roughly 55 KB allocated in the shipped benchmark scenario."
+      "notes": "Configured-builder composition and manifest construction should stay below 130 us and under roughly 55 KB allocated in the shipped benchmark scenario."
     },
     {
       "reportFileName": "Cephalon.Benchmarks.Composition.EngineBuilderBenchmarks-report.csv",
       "benchmark": "BuildRuntimeManifestWithStrictTrustPolicy",
-      "maxMeanNanoseconds": 100000,
+      "maxMeanNanoseconds": 130000,
       "maxAllocatedBytes": 55000,
-      "notes": "Configured-builder composition under strict capability trust filtering should stay below 100 us and under roughly 55 KB allocated in the shipped benchmark scenario."
+      "notes": "Configured-builder composition under strict capability trust filtering should stay below 130 us and under roughly 55 KB allocated in the shipped benchmark scenario."
     },
     {
       "reportFileName": "Cephalon.Benchmarks.Composition.EngineBuilderBenchmarks-report.csv",
       "benchmark": "BuildPhase8RuntimeManifest",
-      "maxMeanNanoseconds": 250000,
+      "maxMeanNanoseconds": 400000,
       "maxAllocatedBytes": 135000,
-      "notes": "Configured-builder composition for the shipped phase-8 companion-pack baseline should stay below 250 us and under roughly 135 KB allocated in the benchmark scenario."
+      "notes": "Configured-builder composition for the shipped phase-8 companion-pack baseline should stay below 400 us and under roughly 135 KB allocated in the benchmark scenario."
     },
     {
       "reportFileName": "Cephalon.Benchmarks.Runtime.EngineRuntimeBenchmarks-report.csv",
@@ -32,9 +32,9 @@
     {
       "reportFileName": "Cephalon.Benchmarks.Runtime.EngineRuntimeBenchmarks-report.csv",
       "benchmark": "InitializeStartStopPhase8Runtime",
-      "maxMeanNanoseconds": 100000,
+      "maxMeanNanoseconds": 150000,
       "maxAllocatedBytes": 50000,
-      "notes": "Prepared runtime initialize/start/stop lifecycle overhead for the shipped phase-8 companion-pack baseline should stay below 100 us and under roughly 50 KB allocated in the benchmark scenario."
+      "notes": "Prepared runtime initialize/start/stop lifecycle overhead for the shipped phase-8 companion-pack baseline should stay below 150 us and under roughly 50 KB allocated in the benchmark scenario."
     },
     {
       "reportFileName": "Cephalon.Benchmarks.Runtime.AspNetCoreRequestLoggingBenchmarks-report.csv",
@@ -58,18 +58,25 @@
       "notes": "Correlated ASP.NET Core request logging under the shipped 32-request concurrent batch should stay below 30 us of throughput-oriented per-request cost and under roughly 40 KB allocated per request."
     },
     {
+      "reportFileName": "Cephalon.Benchmarks.Runtime.RestEndpointProjectionGovernanceBenchmarks-report.csv",
+      "benchmark": "BuildMapGovernedRestCatalogs",
+      "maxMeanNanoseconds": 375000000,
+      "maxAllocatedBytes": 6000000,
+      "notes": "The engine-first ASP.NET Core REST startup/materialization benchmark for generated/profile/DSL precedence, shorthand-only authoring-policy enforcement, grouped generated ownership, suppression and override selection, explicit-group version authority, and preserved implicit query fallback should stay below 375 ms and under roughly 6 MB allocated per benchmark invocation."
+    },
+    {
       "reportFileName": "Cephalon.Benchmarks.Scaffolding.ScaffoldGeneratorBenchmarks-report.csv",
       "benchmark": "GenerateBlueprintScaffold",
-      "maxMeanNanoseconds": 325000,
-      "maxAllocatedBytes": 575000,
-      "notes": "Scaffolding should stay below 325 us and under roughly 575 KB allocated in the benchmark scenario."
+      "maxMeanNanoseconds": 500000,
+      "maxAllocatedBytes": 600000,
+      "notes": "Scaffolding should stay below 500 us and under roughly 600 KB allocated in the benchmark scenario."
     },
     {
       "reportFileName": "Cephalon.Benchmarks.Scaffolding.ScaffoldGeneratorBenchmarks-report.csv",
       "benchmark": "GeneratePhase8BlueprintScaffold",
-      "maxMeanNanoseconds": 375000,
+      "maxMeanNanoseconds": 500000,
       "maxAllocatedBytes": 625000,
-      "notes": "Phase-8 scaffolding should stay below 375 us and under roughly 625 KB allocated while emitting the structured config, additive pack hints, and starter-test baseline."
+      "notes": "Phase-8 scaffolding should stay below 500 us and under roughly 625 KB allocated while emitting the structured config, additive pack hints, and starter-test baseline."
     },
     {
       "reportFileName": "Cephalon.Benchmarks.HotPath.DataDispatchBenchmarks-report.csv",

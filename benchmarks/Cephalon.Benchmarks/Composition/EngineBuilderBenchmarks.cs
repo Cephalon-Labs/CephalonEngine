@@ -8,7 +8,7 @@ namespace Cephalon.Benchmarks.Composition;
 /// Measures the cost of composing the baseline engine runtime and manifest surface.
 /// </summary>
 [MemoryDiagnoser]
-[ShortRunJob]
+[Config(typeof(BenchmarkInProcessShortRunConfig))]
 public class EngineBuilderBenchmarks
 {
     private const int BuildsPerIteration = 4096;

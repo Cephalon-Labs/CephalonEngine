@@ -12,7 +12,7 @@ namespace Cephalon.Benchmarks.HotPath;
 /// invocation. This benchmark measures the steady-state cost after the dispatch table is built.
 /// </summary>
 [MemoryDiagnoser]
-[ShortRunJob]
+[Config(typeof(BenchmarkInProcessShortRunConfig))]
 public class BehaviorDispatchBenchmarks
 {
     private const int DispatchesPerIteration = 8192;

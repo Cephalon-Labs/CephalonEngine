@@ -9,7 +9,7 @@ namespace Cephalon.Benchmarks.Scaffolding;
 /// Measures scaffold generation for the shipped blueprint sample profile.
 /// </summary>
 [MemoryDiagnoser]
-[ShortRunJob]
+[Config(typeof(BenchmarkInProcessShortRunConfig))]
 public class ScaffoldGeneratorBenchmarks
 {
     private readonly AppProfile appProfile = BenchmarkScenarioFactory.CreateAppProfile();

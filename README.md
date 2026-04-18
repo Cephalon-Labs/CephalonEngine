@@ -114,7 +114,7 @@ This first cut focuses on the core shape we can keep growing:
 - `src/Cephalon.Cli`: command-line surface for blueprint generation, external package staging, and reference-doc workflows, with `CliApplication` as the stable entry point
 - `src/Cephalon.Scaffolding`: scaffold generator that turns app profiles into solution/projects/files
 - `templates/Cephalon.TemplatePack`: `dotnet new` template pack for the shipped Cephalon blueprints
-- `benchmarks/Cephalon.Benchmarks`: BenchmarkDotNet suite for composition, runtime lifecycle, and scaffolding performance
+- `benchmarks/Cephalon.Benchmarks`: BenchmarkDotNet suite for composition, runtime lifecycle, ASP.NET Core REST/runtime-host hot paths, and scaffolding performance
 - `samples/*`: adoption-quality sample apps plus reference module packages
 - `playground/Cephalon.Playground`: a minimal host that demonstrates the stack
 - `playground/Cephalon.WorkerPlayground`: a worker host that demonstrates non-HTTP runtime execution
@@ -726,7 +726,7 @@ Modules and installed packages can now also contribute dependency health details
 
 The same runtime now also runs under the generic host through `Cephalon.Worker`. The worker playground uses configuration-driven assembly discovery, module lifecycle hooks, and a background heartbeat service to prove the engine can operate cleanly outside HTTP hosts.
 
-`Cephalon.Benchmarks` gives the repo a first-class performance regression suite over engine composition, runtime lifecycle, and scaffold generation so we can evolve the framework without guessing about cost. The suite now also carries a committed guardrail catalog plus a validation command, so release checks can assert the current hot-path baselines intentionally instead of relying on ad-hoc benchmark runs.
+`Cephalon.Benchmarks` gives the repo a first-class performance regression suite over engine composition, runtime lifecycle, engine-first REST projection/governance materialization, scaffold generation, and hot-path engine services so we can evolve the framework without guessing about cost. The suite now also carries a committed guardrail catalog plus a validation command, and the local smoke path uses one shared in-process BenchmarkDotNet config so release checks can assert the current baselines intentionally without getting tripped up by repo-local mirrored benchmark projects.
 
 GitHub Actions now runs the same repo-native release validation flow through `.github/workflows/release-validation.yml`, calling `scripts/validate-release.ps1` on both `windows-latest` and `ubuntu-latest`. The Windows leg keeps the full benchmark smoke and guardrail path, while the Ubuntu leg currently uses `-SkipBenchmarks` until the benchmark baseline is made OS-neutral. Local and CI validation still share the same script entry point.
 

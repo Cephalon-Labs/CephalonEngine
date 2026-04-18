@@ -960,7 +960,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
 
                     if (info.RestProfile.PreserveImplicitQueryFallback)
                     {
-                        sb.Append(", preserveImplicitQueryFallback: true");
+                sb.Append(", PreserveImplicitQueryFallback: true");
                     }
                 }
                 sb.AppendLine("),");

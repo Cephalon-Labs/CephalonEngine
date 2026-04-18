@@ -11,7 +11,14 @@ param(
         "*EngineBuilderBenchmarks*",
         "*EngineRuntimeBenchmarks*",
         "*AspNetCoreRequestLoggingBenchmarks*",
-        "*ScaffoldGeneratorBenchmarks*"
+        "*RestEndpointProjectionGovernanceBenchmarks*",
+        "*ScaffoldGeneratorBenchmarks*",
+        "*DataDispatchBenchmarks*",
+        "*BehaviorDispatchBenchmarks*",
+        "*AuthorizationEvaluationBenchmarks*",
+        "*TenantResolutionBenchmarks*",
+        "*EventSourcingBenchmarks*",
+        "*OutboxStagingBenchmarks*"
     )
 )
 

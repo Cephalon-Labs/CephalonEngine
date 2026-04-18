@@ -21,7 +21,7 @@ namespace Cephalon.Benchmarks.HotPath;
 /// both the allow and deny evaluation paths.
 /// </summary>
 [MemoryDiagnoser]
-[ShortRunJob]
+[Config(typeof(BenchmarkInProcessShortRunConfig))]
 public class AuthorizationEvaluationBenchmarks
 {
     private const int EvaluationsPerIteration = 8192;

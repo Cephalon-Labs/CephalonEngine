@@ -14,7 +14,7 @@ namespace Cephalon.Benchmarks.Runtime;
 /// Measures ASP.NET Core request logging overhead for the shipped correlated request/response path.
 /// </summary>
 [MemoryDiagnoser]
-[ShortRunJob]
+[Config(typeof(BenchmarkInProcessShortRunConfig))]
 public class AspNetCoreRequestLoggingBenchmarks
 {
     private const int RequestsPerIteration = 256;

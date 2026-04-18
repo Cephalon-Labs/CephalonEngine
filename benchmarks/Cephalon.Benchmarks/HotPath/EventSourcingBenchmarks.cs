@@ -11,7 +11,7 @@ namespace Cephalon.Benchmarks.HotPath;
 /// on the framework's append, read, and version-check hot paths.
 /// </summary>
 [MemoryDiagnoser]
-[ShortRunJob]
+[Config(typeof(BenchmarkInProcessShortRunConfig))]
 public class EventSourcingBenchmarks
 {
     private const int OperationsPerIteration = 4096;

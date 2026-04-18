@@ -15,7 +15,7 @@ namespace Cephalon.Benchmarks.HotPath;
 /// dispatch cost, which is the steady-state per-request overhead.
 /// </summary>
 [MemoryDiagnoser]
-[ShortRunJob]
+[Config(typeof(BenchmarkInProcessShortRunConfig))]
 public class DataDispatchBenchmarks
 {
     private const int DispatchesPerIteration = 8192;

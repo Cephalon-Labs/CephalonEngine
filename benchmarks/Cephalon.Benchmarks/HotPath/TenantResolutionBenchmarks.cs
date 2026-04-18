@@ -21,7 +21,7 @@ namespace Cephalon.Benchmarks.HotPath;
 /// and the default-tenant fallback.
 /// </summary>
 [MemoryDiagnoser]
-[ShortRunJob]
+[Config(typeof(BenchmarkInProcessShortRunConfig))]
 public class TenantResolutionBenchmarks
 {
     private const int ResolutionsPerIteration = 8192;
