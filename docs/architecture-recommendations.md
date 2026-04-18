@@ -63,10 +63,10 @@ stream and connection surfaces through fields such as `transportKind`, `transpor
 `enforcementMoment`, so GraphQL-SSE, GraphQL-WS, SSE, and WebSocket policies no longer collapse
 into one generic endpoint label.
 
-Recommendation: keep ASP.NET Core middleware as the truthful baseline for public HTTP protection, keep the shared behavior-dispatch pipeline as the truthful non-host follow-through for cross-transport execution limits, and coordinate the two through endpoint-scoped overrides so REST routes can intentionally expose either the host-owned or behavior-owned `429` answer without lying in runtime catalogs or OpenAPI.
+Recommendation: keep ASP.NET Core middleware as the truthful baseline for public HTTP protection, keep the shared behavior-dispatch pipeline as the truthful non-host follow-through for cross-transport execution limits, and coordinate the two through endpoint-scoped overrides so REST routes can intentionally expose either the host-owned or behavior-owned `429` answer without lying in runtime catalogs or OpenAPI. That same behavior-owned limiter truth should stay protocol-native for generic behavior HTTP adapters instead of being rewrapped into one generic failure contract.
 
 Remaining follow-through:
-- Broader non-route or non-ASP.NET Core transport semantics beyond the current ASP.NET Core public-HTTP plus shared behavior-dispatch baseline
+- Broader non-REST transport-native timeout, circuit-breaker, and other resilience-envelope semantics beyond the current ASP.NET Core public-HTTP plus shared behavior-dispatch rate-limiting baseline
 - Capability: `resilience.rate-limiting`
 
 Effort: medium for the remaining non-baseline work.

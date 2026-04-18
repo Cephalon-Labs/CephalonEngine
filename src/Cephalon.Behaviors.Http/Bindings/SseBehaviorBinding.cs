@@ -8,6 +8,7 @@ using Cephalon.Behaviors.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Polly.RateLimiting;
 
 namespace Cephalon.Behaviors.Http.Bindings;
 
@@ -99,6 +100,20 @@ public sealed class SseBehaviorBinding : IHttpBehaviorBinding
                 catch (OperationCanceledException)
                 {
                     // G-SSE-05: client disconnected — exit gracefully, no error event
+                }
+                catch (RateLimiterRejectedException ex)
+                {
+                    var fault = BehaviorTransportResilienceMapper.CreateRateLimitingFault(
+                        ctx.RequestServices,
+                        descriptor.Id,
+                        TransportId,
+                        ex.RetryAfter);
+                    var errorJson = JsonSerializer.Serialize(
+                        BehaviorTransportResilienceMapper.CreateStreamingErrorPayload(fault));
+                    var errorEvent = $"event: error\ndata: {errorJson}\n\n";
+                    await ctx.Response.WriteAsync(errorEvent, Encoding.UTF8, CancellationToken.None)
+                        .ConfigureAwait(false);
+                    await ctx.Response.Body.FlushAsync(CancellationToken.None).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {

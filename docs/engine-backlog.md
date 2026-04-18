@@ -937,6 +937,60 @@ Delivered:
 - updated `Cephalon.Scaffolding` plus tooling tests so a `net11.0` scaffold override now keeps the generated host project, module manifest, and Dockerfile base images aligned instead of freezing container images on `10.0`
 - added `.NET 11` readiness docs plus compatibility, planning, package-publishing, and project-memory updates so framework and deployment-mode claims stay explicit and truthful
 
+### ENG-098 behavior-execution rate-limiting baseline
+
+Status: done
+Estimate: 5
+Completed: April 18, 2026
+
+Why:
+
+- phase 11 still listed broader non-route or non-ASP.NET Core rate-limiting semantics as the main resilience gap even though the shared behavior-dispatch layer already owned the rest of the behavior-execution resilience story
+- the current behavior-execution runtime already enforced retry, timeout, circuit-breaker, and bulkhead, but rate limiting was still only a requested contract at that layer
+- operators needed `/engine/behavior-resilience`, `snapshot.BehaviorResiliencePolicies`, and behavior-owned REST/OpenAPI `429` answers to reflect the same effective behavior-execution rate-limiting truth instead of depending only on ASP.NET Core endpoint middleware
+
+Acceptance:
+
+- `BehaviorExecutionResilienceSelection` and `BehaviorExecutionResilienceOverrideSelection` expose `RateLimiting` as part of the supported public contract
+- `Cephalon.Behaviors` enforces behavior-execution rate limiting with the existing default plus override precedence and publishes the effective answer through `IBehaviorResilienceRuntimeCatalog`, `/engine/behavior-resilience`, and `snapshot.BehaviorResiliencePolicies`
+- behavior-owned REST endpoints return truthful `429` payloads and OpenAPI metadata when the effective behavior-execution policy is rate-limited even without ASP.NET Core endpoint-level rate limiting
+- targeted composition, hosting, and package-surface coverage prove the new runtime contract and rejection behavior
+
+Delivered:
+
+- `Cephalon.Abstractions` now extends `BehaviorExecutionResilienceSelection` plus `BehaviorExecutionResilienceOverrideSelection` with behavior-execution `RateLimiting` settings
+- `Cephalon.Engine` now binds, validates, and projects behavior-execution rate-limiting defaults plus overrides through the same `behavior+transport > behavior > transport > default` precedence used by the other shared resilience strategies
+- `Cephalon.Behaviors` now enforces the effective behavior-execution limiter in the shared dispatch pipeline and publishes truthful requested, explicit, inherited, disabled, and effective answers through `/engine/behavior-resilience` plus `snapshot.BehaviorResiliencePolicies`
+- `Cephalon.Behaviors.Http` now keeps behavior-owned REST `429` translation truthful when both the ASP.NET Core endpoint limiter and the behavior-dispatch limiter target the same route, including the targeted override path where `Engine:Resilience:RateLimiting:Overrides` disables the endpoint policy so the behavior-owned answer can surface instead
+- targeted composition, hosting, and package-surface coverage now prove the shared runtime contract, REST/OpenAPI behavior, and public package surface for the new phase-11 slice
+
+### ENG-099 generic behavior HTTP transport-native rate-limit envelopes
+
+Status: done
+Estimate: 5
+Completed: April 19, 2026
+
+Why:
+
+- `ENG-098` made behavior-execution rate limiting real in the shared dispatch pipeline, but the non-REST generic behavior HTTP bindings still flattened those shared limiter rejections into generic protocol failures
+- phase 11 still needed the generic GraphQL, JSON-RPC, SSE, and WebSocket adapters to keep the same behavior-owned limiter truth without pretending every transport speaks the REST envelope
+- runtime truth is stronger when one limiter-fault classification path can project protocol-native error shapes consistently across REST and the other shipped behavior HTTP transports
+
+Acceptance:
+
+- generic behavior HTTP GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings surface behavior-owned rate-limiting rejections through native protocol envelopes instead of generic transport failures
+- the shared limiter-fault mapping keeps stable Cephalon codes plus `429` metadata consistent across REST and the other behavior HTTP transports
+- targeted hosting coverage proves each shipped binding preserves its native wire contract under behavior-owned rate limiting
+- docs, roadmap, backlog, and project memory narrow the remaining phase-11 gap truthfully to the still-missing non-REST timeout, circuit-breaker, and broader resilience-envelope follow-through
+
+Delivered:
+
+- `Cephalon.Behaviors.Http` now shares one internal limiter-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution limiter rejections keep a stable Cephalon code plus `statusCode = 429` metadata
+- the GraphQL HTTP and GraphQL streaming bindings now return GraphQL-native `errors[].extensions` limiter details instead of flattening the shared dispatch rejection into a generic transport error
+- the JSON-RPC binding now returns a protocol-native error response with a dedicated limiter code and structured limiter metadata instead of a generic failure payload
+- the SSE and WebSocket bindings now emit native error events or frames that preserve the same behavior-owned limiter truth without wrapping those transports in the REST `ResultModel` contract
+- targeted hosting, composition, and package-surface coverage now prove the new cross-transport limiter-envelope behavior and keep the package surface aligned with the shipped implementation
+
 ## Next configurable application-platform work
 
 This feature wave is split into three non-overlapping workstreams so core contracts can freeze before package and generation follow-through:
@@ -2415,4 +2469,5 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 
 - ENG-097 `.NET 11` readiness baseline: the repo now ships `scripts/validate-dotnet-readiness.ps1`, `validate-release.ps1` now uses the split test projects plus emits readiness artifacts, the release-validation workflow now includes a dedicated `.NET 11` lane, and scaffolding now keeps `net11.0` Dockerfile base images aligned with the requested target framework instead of freezing on `10.0` — **Shipped** · targeted tooling tests plus readiness-script contract coverage
 - ENG-098 behavior-execution rate-limiting baseline: `Cephalon.Abstractions` now extends `BehaviorExecutionResilienceSelection` plus `BehaviorExecutionResilienceOverrideSelection` with rate-limiting inputs, `Cephalon.Engine` now binds and validates behavior-execution rate-limiting overrides, `Cephalon.Behaviors` now enforces shared execution rate limiting in the behavior-dispatch middleware while publishing truthful rate-limiting metadata through `/engine/behavior-resilience` plus `snapshot.BehaviorResiliencePolicies`, and `Cephalon.Behaviors.Http` now proves both REST `429` precedence paths: the host-owned ASP.NET Core limiter wins when both layers are active, while `Engine:Resilience:RateLimiting:Overrides` can disable the endpoint policy for a targeted behavior/transport pair so the behavior-owned `429` answer surfaces without breaking OpenAPI or runtime truth — **Shipped** · targeted composition tests 16/16 + hosting tests 8/8 + package-surface tests 153/153
+- ENG-099 generic behavior HTTP transport-native rate-limit envelopes: `Cephalon.Behaviors.Http` now shares one limiter-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution limiter rejections keep protocol-native error shapes with stable Cephalon codes plus `429` metadata instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned rate limiting — **Shipped** · targeted hosting tests 13/13 + composition tests 28/28 + package-surface tests 153/153
 

@@ -902,12 +902,16 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         }
         catch (RateLimiterRejectedException ex)
         {
-            var rejection = ResolveRateLimitingRejection(context.RequestServices, behaviorId, "rest-api");
+            var rejection = BehaviorTransportResilienceMapper.CreateRateLimitingFault(
+                context.RequestServices,
+                behaviorId,
+                "rest-api",
+                ex.RetryAfter);
             return BehaviorRestResponseMapper.MapTooManyRequests(
                 rejection.Message,
                 context.RequestServices,
                 code: rejection.Code,
-                retryAfterSeconds: ResolveRetryAfterSeconds(ex.RetryAfter));
+                retryAfterSeconds: rejection.RetryAfterSeconds);
         }
         catch (InvalidOperationException ex)
         {
@@ -1090,58 +1094,11 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             : null;
     }
 
-    private static BehaviorRateLimitingRejection ResolveRateLimitingRejection(
-        IServiceProvider services,
-        string behaviorId,
-        string transportId)
-    {
-        ArgumentNullException.ThrowIfNull(services);
-        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
-        ArgumentException.ThrowIfNullOrWhiteSpace(transportId);
-
-        var behaviorResilienceCatalog = services.GetService<IBehaviorResilienceRuntimeCatalog>();
-        var policy = behaviorResilienceCatalog?.Resolve(behaviorId, transportId);
-        var rateLimitingEnabled = policy?.Effective.RateLimiting.Enabled == true &&
-            policy.Effective.RateLimiting.HasValues;
-        var bulkheadEnabled = policy?.Effective.Bulkhead.Enabled == true &&
-            policy.Effective.Bulkhead.HasValues;
-
-        return (rateLimitingEnabled, bulkheadEnabled) switch
-        {
-            (true, false) => new BehaviorRateLimitingRejection(
-                "The request exceeded the configured Cephalon behavior execution rate limit.",
-                "behavior_execution_rate_limited"),
-            (false, true) => new BehaviorRateLimitingRejection(
-                "The request exceeded the configured Cephalon behavior concurrency limit.",
-                "behavior_execution_rejected"),
-            (true, true) => new BehaviorRateLimitingRejection(
-                "The request exceeded the configured Cephalon behavior execution rate or concurrency limit.",
-                "behavior_execution_limited"),
-            _ => new BehaviorRateLimitingRejection(
-                "The request exceeded the configured Cephalon behavior execution limit.",
-                "behavior_execution_limited")
-        };
-    }
-
-    private static int? ResolveRetryAfterSeconds(TimeSpan? retryAfter)
-    {
-        if (retryAfter is null)
-        {
-            return null;
-        }
-
-        return retryAfter.Value <= TimeSpan.Zero
-            ? 0
-            : (int)Math.Ceiling(retryAfter.Value.TotalSeconds);
-    }
-
     private static MethodInfo GetRequiredCoreMethod(string methodName)
     {
         return typeof(BehaviorRestEndpointGroup).GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Static)
             ?? throw new InvalidOperationException($"Required helper method '{methodName}' was not found.");
     }
-
-    private sealed record BehaviorRateLimitingRejection(string Message, string Code);
 
     private sealed record BehaviorRestGroupMetadata(
         string ModuleId,

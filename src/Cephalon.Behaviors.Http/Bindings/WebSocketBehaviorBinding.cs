@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Polly.RateLimiting;
 
 namespace Cephalon.Behaviors.Http.Bindings;
 
@@ -160,6 +161,18 @@ public sealed class WebSocketBehaviorBinding : IHttpBehaviorBinding
                     var responseJson = JsonSerializer.Serialize(dispatchResult);
                     var responseBytes = Encoding.UTF8.GetBytes(responseJson);
                     await ws.SendAsync(responseBytes, WebSocketMessageType.Text, endOfMessage: true, ctx.RequestAborted)
+                        .ConfigureAwait(false);
+                }
+                catch (RateLimiterRejectedException ex)
+                {
+                    var fault = BehaviorTransportResilienceMapper.CreateRateLimitingFault(
+                        ctx.RequestServices,
+                        behaviorId,
+                        transportId,
+                        ex.RetryAfter);
+                    var errBytes = Encoding.UTF8.GetBytes(
+                        JsonSerializer.Serialize(BehaviorTransportResilienceMapper.CreateStreamingErrorPayload(fault)));
+                    await ws.SendAsync(errBytes, WebSocketMessageType.Text, endOfMessage: true, CancellationToken.None)
                         .ConfigureAwait(false);
                 }
                 catch (Exception ex)

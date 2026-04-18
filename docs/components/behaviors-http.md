@@ -1189,6 +1189,10 @@ separate concerns:
   resolved runtime answer per endpoint
 - GraphQL and JSON-RPC keep their protocol-native response shapes and are intentionally not wrapped
   in `ResultModel`
+- when behavior-owned execution rate limiting rejects a generic behavior HTTP request, GraphQL HTTP,
+  JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings keep their native error envelopes
+  while surfacing the shared Cephalon limiter code plus `429` metadata instead of flattening the
+  rejection into a generic transport failure
 
 Example host override:
 

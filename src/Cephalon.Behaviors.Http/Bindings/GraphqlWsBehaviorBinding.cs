@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Polly.RateLimiting;
 
 namespace Cephalon.Behaviors.Http.Bindings;
 
@@ -208,6 +209,20 @@ public sealed class GraphqlWsBehaviorBinding : IHttpBehaviorBinding
                         catch (OperationCanceledException)
                         {
                             // subscription cancelled by client — no error event
+                        }
+                        catch (RateLimiterRejectedException ex)
+                        {
+                            var fault = BehaviorTransportResilienceMapper.CreateRateLimitingFault(
+                                ctx.RequestServices,
+                                behaviorId,
+                                transportId,
+                                ex.RetryAfter);
+                            await SendWsMessageAsync(ws, new
+                            {
+                                type = "error",
+                                id,
+                                payload = BehaviorTransportResilienceMapper.CreateGraphqlWsErrorPayload(fault)
+                            }, ctx.RequestAborted).ConfigureAwait(false);
                         }
                         catch (Exception ex)
                         {
