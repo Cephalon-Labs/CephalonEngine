@@ -1080,12 +1080,12 @@ public sealed class DatabaseRuntimeSelection
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-appmodel-databaseruntimeselection-ctor-system-nullable-system-boolean-system-nullable-system-boolean-system-nullable-system-boolean-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32"></a>
+<a id="member-m-cephalon-abstractions-appmodel-databaseruntimeselection-ctor-system-nullable-system-boolean-system-nullable-system-boolean-system-nullable-system-boolean-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32"></a>
 
 ##### `DatabaseRuntimeSelection`
 
 ```csharp
-DatabaseRuntimeSelection(bool? enableDetailedErrors, bool? enableSensitiveDataLogging, bool? enableRetryOnFailure, int? maxRetryCount, int? maxRetryDelaySeconds, int? commandTimeoutSeconds, int? maxBatchSize)
+DatabaseRuntimeSelection(bool? enableDetailedErrors, bool? enableSensitiveDataLogging, bool? enableRetryOnFailure, int? maxRetryCount, int? maxRetryDelaySeconds, int? commandTimeoutSeconds, int? maxBatchSize, int? roleProbeFreshnessSeconds)
 ```
 
 Initializes a new instance of the `DatabaseRuntimeSelection` class.
@@ -1181,6 +1181,16 @@ int? MaxRetryDelaySeconds { get; }
 ```
 
 Gets the maximum retry delay in seconds when transient-failure retries were configured.
+
+<a id="member-p-cephalon-abstractions-appmodel-databaseruntimeselection-roleprobefreshnessseconds"></a>
+
+##### `RoleProbeFreshnessSeconds`
+
+```csharp
+int? RoleProbeFreshnessSeconds { get; }
+```
+
+Gets the freshness window in seconds for cached database-role probes when one was selected. A value of `0` disables probe-result caching.
 
 <a id="type-cephalon-abstractions-appmodel-databasetargetselection"></a>
 
@@ -6945,7 +6955,7 @@ IBehaviorTopologyBuilder WithApiSurface(string groupPath, string operationPath)
 
 Overrides the logical API surface projected by route-shaped transport adapters.
 
-Remarks: This primarily affects the shared generic behavior HTTP transport surface used by JSON-RPC, GraphQL, GraphQL-SSE, GraphQL-WS, Server-Sent Events, and WebSocket bindings. Public REST endpoints are module-owned and should be mapped through `MapEndpoints(...)` plus `MapBehaviorRestGroup(...)` instead of behavior topology.
+Remarks: This primarily affects the shared generic behavior HTTP transport surface used by JSON-RPC, GraphQL, GraphQL-SSE, GraphQL-WS, Server-Sent Events, and WebSocket bindings. Public REST endpoints are module-owned and should be mapped through `RestBehaviorModuleBase.ConfigureRestBehaviors(...)`, with `MapAdditionalEndpoints(...)` plus `MapBehaviorRestGroup(...)` reserved for the advanced manual-route escape hatch, instead of behavior topology.
 
 <a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-withmetadata-system-string-system-string"></a>
 
@@ -7464,12 +7474,12 @@ public sealed class DatabaseMigrationCommandDescriptor
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-data-databasemigrationcommanddescriptor-ctor-system-string-system-string-system-string-system-string-system-boolean-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+<a id="member-m-cephalon-abstractions-data-databasemigrationcommanddescriptor-ctor-system-string-system-string-system-string-system-string-system-boolean-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string"></a>
 
 ##### `DatabaseMigrationCommandDescriptor`
 
 ```csharp
-DatabaseMigrationCommandDescriptor(string id, string displayName, string description, string commandTemplate, bool recommendedForProduction, IReadOnlyDictionary<string, string> metadata)
+DatabaseMigrationCommandDescriptor(string id, string displayName, string description, string commandTemplate, bool recommendedForProduction, IReadOnlyDictionary<string, string> metadata, string toolId, string executionCategory, string workingDirectoryHint)
 ```
 
 Creates a new database-migration command descriptor.
@@ -7481,6 +7491,9 @@ Parameters:
 - `commandTemplate`: The command template that operators can adapt for their environment.
 - `recommendedForProduction`: Whether this command is recommended for production use.
 - `metadata`: Optional operator-facing metadata associated with the command.
+- `toolId`: An optional stable tool identifier such as `dotnet-ef`.
+- `executionCategory`: An optional execution category such as `deploy-time` or `manual`.
+- `workingDirectoryHint`: An optional working-directory hint for where the command is typically run.
 
 #### Properties
 
@@ -7514,6 +7527,16 @@ string DisplayName { get; }
 
 Gets the operator-facing command name.
 
+<a id="member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-executioncategory"></a>
+
+##### `ExecutionCategory`
+
+```csharp
+string ExecutionCategory { get; }
+```
+
+Gets the execution category when the provider can distinguish deploy-time, manual, or other command paths.
+
 <a id="member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-id"></a>
 
 ##### `Id`
@@ -7544,6 +7567,26 @@ bool RecommendedForProduction { get; }
 
 Gets a value indicating whether this command is recommended for production use.
 
+<a id="member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-toolid"></a>
+
+##### `ToolId`
+
+```csharp
+string ToolId { get; }
+```
+
+Gets the stable operator tool identifier when the provider can name one.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-workingdirectoryhint"></a>
+
+##### `WorkingDirectoryHint`
+
+```csharp
+string WorkingDirectoryHint { get; }
+```
+
+Gets the provider-published working-directory hint when one is known.
+
 <a id="type-cephalon-abstractions-data-databasemigrationdescriptor"></a>
 
 ### `DatabaseMigrationDescriptor`
@@ -7557,12 +7600,12 @@ public sealed class DatabaseMigrationDescriptor
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-data-databasemigrationdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-cephalon-abstractions-data-databasemigrationstatus-system-boolean-system-boolean-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-data-databasemigrationcommanddescriptor-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+<a id="member-m-cephalon-abstractions-data-databasemigrationdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-cephalon-abstractions-data-databasemigrationstatus-system-boolean-system-boolean-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-data-databasemigrationcommanddescriptor-system-collections-generic-ireadonlydictionary-system-string-system-string-system-nullable-system-int32-system-nullable-cephalon-abstractions-health-healthstate-system-string-system-string-system-string-system-nullable-system-datetimeoffset"></a>
 
 ##### `DatabaseMigrationDescriptor`
 
 ```csharp
-DatabaseMigrationDescriptor(string id, string displayName, string description, string requestedRoleId, string resolvedRoleId, string executionMode, DatabaseMigrationStatus status, bool applyOnStartup, bool exitAfterApply, string provider, string dbContextType, string mechanism, DateTimeOffset? startedAtUtc, DateTimeOffset? completedAtUtc, string lastError, IReadOnlyList<DatabaseMigrationCommandDescriptor> commands, IReadOnlyDictionary<string, string> metadata)
+DatabaseMigrationDescriptor(string id, string displayName, string description, string requestedRoleId, string resolvedRoleId, string executionMode, DatabaseMigrationStatus status, bool applyOnStartup, bool exitAfterApply, string provider, string dbContextType, string mechanism, DateTimeOffset? startedAtUtc, DateTimeOffset? completedAtUtc, string lastError, IReadOnlyList<DatabaseMigrationCommandDescriptor> commands, IReadOnlyDictionary<string, string> metadata, int? recommendedExecutionOrder, HealthState? roleHealthState, string roleHealthDescription, string roleMigrationState, string roleMigrationDescription, DateTimeOffset? roleObservedAtUtc)
 ```
 
 Creates a new database-migration descriptor.
@@ -7585,6 +7628,12 @@ Parameters:
 - `lastError`: The latest error observed for this target.
 - `commands`: Optional operator-facing command templates for executing this target outside startup apply.
 - `metadata`: Optional operator-facing metadata associated with the migration target.
+- `recommendedExecutionOrder`: An optional positive ordinal that operator surfaces can use when presenting a recommended migration sequence.
+- `roleHealthState`: The current runtime health state reported for the resolved role behind this target, when available.
+- `roleHealthDescription`: The operator-facing health description reported for the resolved role behind this target, when available.
+- `roleMigrationState`: The current migration execution state reported for the resolved role behind this target, when available.
+- `roleMigrationDescription`: The operator-facing migration description reported for the resolved role behind this target, when available.
+- `roleObservedAtUtc`: The UTC timestamp when resolved-role runtime state was last observed for this target, when available.
 
 #### Properties
 
@@ -7718,6 +7767,16 @@ string Provider { get; }
 
 Gets the effective provider identifier when known.
 
+<a id="member-p-cephalon-abstractions-data-databasemigrationdescriptor-recommendedexecutionorder"></a>
+
+##### `RecommendedExecutionOrder`
+
+```csharp
+int? RecommendedExecutionOrder { get; }
+```
+
+Gets the recommended positive ordinal for operator-facing migration playbooks when the provider can publish one.
+
 <a id="member-p-cephalon-abstractions-data-databasemigrationdescriptor-requestedroleid"></a>
 
 ##### `RequestedRoleId`
@@ -7738,6 +7797,56 @@ string ResolvedRoleId { get; }
 
 Gets the concrete database role that backs the target.
 
+<a id="member-p-cephalon-abstractions-data-databasemigrationdescriptor-rolehealthdescription"></a>
+
+##### `RoleHealthDescription`
+
+```csharp
+string RoleHealthDescription { get; }
+```
+
+Gets the operator-facing health description reported for the resolved role behind this target, when available.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationdescriptor-rolehealthstate"></a>
+
+##### `RoleHealthState`
+
+```csharp
+HealthState? RoleHealthState { get; }
+```
+
+Gets the current runtime health state reported for the resolved role behind this target, when available.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationdescriptor-rolemigrationdescription"></a>
+
+##### `RoleMigrationDescription`
+
+```csharp
+string RoleMigrationDescription { get; }
+```
+
+Gets the operator-facing migration description reported for the resolved role behind this target, when available.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationdescriptor-rolemigrationstate"></a>
+
+##### `RoleMigrationState`
+
+```csharp
+string RoleMigrationState { get; }
+```
+
+Gets the current migration execution state reported for the resolved role behind this target, when available.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationdescriptor-roleobservedatutc"></a>
+
+##### `RoleObservedAtUtc`
+
+```csharp
+DateTimeOffset? RoleObservedAtUtc { get; }
+```
+
+Gets the UTC timestamp when resolved-role runtime state was last observed for this target, when available.
+
 <a id="member-p-cephalon-abstractions-data-databasemigrationdescriptor-startedatutc"></a>
 
 ##### `StartedAtUtc`
@@ -7757,6 +7866,784 @@ DatabaseMigrationStatus Status { get; }
 ```
 
 Gets the current execution status of the migration target.
+
+<a id="type-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup"></a>
+
+### `DatabaseMigrationOperationalExecutionGroup`
+
+Describes one engine-owned execution group in the database-migration playbook.
+
+#### Declaration
+```csharp
+public sealed class DatabaseMigrationOperationalExecutionGroup
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-ctor-system-int32-system-string-system-string-cephalon-abstractions-data-databasemigrationstatus-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-int32-system-int32-system-int32-system-collections-generic-ireadonlylist-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommand-system-collections-generic-ireadonlylist-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommand-system-string"></a>
+
+##### `DatabaseMigrationOperationalExecutionGroup`
+
+```csharp
+DatabaseMigrationOperationalExecutionGroup(int order, string physicalTargetId, string physicalTargetDisplayName, DatabaseMigrationStatus status, IReadOnlyList<string> databaseMigrationIds, IReadOnlyList<string> requestedRoleIds, IReadOnlyList<string> resolvedRoleIds, int productionReadyTargetCount, int manualPathTargetCount, int applyOnStartupTargetCount, IReadOnlyList<DatabaseMigrationOperationalExecutionGroupCommand> productionCommands, IReadOnlyList<DatabaseMigrationOperationalExecutionGroupCommand> manualCommands, string coordinationHint)
+```
+
+Creates a new database-migration execution group.
+
+Parameters:
+- `order`: The positive execution-group order in the playbook.
+- `physicalTargetId`: The stable physical-target identifier that anchors this execution group. When the runtime cannot resolve a physical database identity, the engine uses a logical fallback identifier instead of leaving the group anonymous.
+- `physicalTargetDisplayName`: The operator-facing description of the physical target that anchors this group.
+- `status`: The aggregate execution status across the logical migration targets in this group.
+- `databaseMigrationIds`: The logical migration targets that belong to this execution group.
+- `requestedRoleIds`: The logical requested role ids represented in this group.
+- `resolvedRoleIds`: The concrete resolved role ids represented in this group.
+- `productionReadyTargetCount`: The number of targets in this group that publish a production-recommended command.
+- `manualPathTargetCount`: The number of targets in this group that publish a direct or manual command path.
+- `applyOnStartupTargetCount`: The number of targets in this group that are configured for startup execution.
+- `productionCommands`: The selected production-recommended commands grouped for this physical-target batch.
+- `manualCommands`: The selected direct or manual commands grouped for this physical-target batch.
+- `coordinationHint`: The operator-facing coordination guidance for shared physical targets, when available.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-applyonstartuptargetcount"></a>
+
+##### `ApplyOnStartupTargetCount`
+
+```csharp
+int ApplyOnStartupTargetCount { get; }
+```
+
+Gets the number of targets in this group that are configured for startup execution.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-coordinationhint"></a>
+
+##### `CoordinationHint`
+
+```csharp
+string CoordinationHint { get; }
+```
+
+Gets the operator-facing coordination guidance for shared physical targets, when available.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-databasemigrationids"></a>
+
+##### `DatabaseMigrationIds`
+
+```csharp
+IReadOnlyList<string> DatabaseMigrationIds { get; }
+```
+
+Gets the logical migration targets that belong to this execution group.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-hasmanualcommandsforalltargets"></a>
+
+##### `HasManualCommandsForAllTargets`
+
+```csharp
+bool HasManualCommandsForAllTargets { get; }
+```
+
+Gets a value indicating whether every target in this group publishes a direct or manual command path.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-hasproductionrecommendedcommandsforalltargets"></a>
+
+##### `HasProductionRecommendedCommandsForAllTargets`
+
+```csharp
+bool HasProductionRecommendedCommandsForAllTargets { get; }
+```
+
+Gets a value indicating whether every target in this group publishes a production-recommended command.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-manualcommandbatch"></a>
+
+##### `ManualCommandBatch`
+
+```csharp
+DatabaseMigrationOperationalExecutionGroupCommandBatch ManualCommandBatch { get; }
+```
+
+Gets the combined manual command-batch template for this physical-target batch, when available.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-manualcommands"></a>
+
+##### `ManualCommands`
+
+```csharp
+IReadOnlyList<DatabaseMigrationOperationalExecutionGroupCommand> ManualCommands { get; }
+```
+
+Gets the selected direct or manual commands grouped for this physical-target batch.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-manualpathtargetcount"></a>
+
+##### `ManualPathTargetCount`
+
+```csharp
+int ManualPathTargetCount { get; }
+```
+
+Gets the number of targets in this group that publish a direct or manual command path.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-order"></a>
+
+##### `Order`
+
+```csharp
+int Order { get; }
+```
+
+Gets the positive execution-group order in the playbook.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-physicaltargetdisplayname"></a>
+
+##### `PhysicalTargetDisplayName`
+
+```csharp
+string PhysicalTargetDisplayName { get; }
+```
+
+Gets the operator-facing description of the physical target that anchors this group.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-physicaltargetid"></a>
+
+##### `PhysicalTargetId`
+
+```csharp
+string PhysicalTargetId { get; }
+```
+
+Gets the stable physical-target identifier that anchors this execution group.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-productioncommandbatch"></a>
+
+##### `ProductionCommandBatch`
+
+```csharp
+DatabaseMigrationOperationalExecutionGroupCommandBatch ProductionCommandBatch { get; }
+```
+
+Gets the combined production command-batch template for this physical-target batch, when available.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-productioncommands"></a>
+
+##### `ProductionCommands`
+
+```csharp
+IReadOnlyList<DatabaseMigrationOperationalExecutionGroupCommand> ProductionCommands { get; }
+```
+
+Gets the selected production-recommended commands grouped for this physical-target batch.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-productionreadytargetcount"></a>
+
+##### `ProductionReadyTargetCount`
+
+```csharp
+int ProductionReadyTargetCount { get; }
+```
+
+Gets the number of targets in this group that publish a production-recommended command.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-requestedroleids"></a>
+
+##### `RequestedRoleIds`
+
+```csharp
+IReadOnlyList<string> RequestedRoleIds { get; }
+```
+
+Gets the logical requested role ids represented in this group.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-requiresphysicaltargetcoordination"></a>
+
+##### `RequiresPhysicalTargetCoordination`
+
+```csharp
+bool RequiresPhysicalTargetCoordination { get; }
+```
+
+Gets a value indicating whether this execution group spans multiple logical migration targets on one physical database target.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-resolvedroleids"></a>
+
+##### `ResolvedRoleIds`
+
+```csharp
+IReadOnlyList<string> ResolvedRoleIds { get; }
+```
+
+Gets the concrete resolved role ids represented in this group.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-status"></a>
+
+##### `Status`
+
+```csharp
+DatabaseMigrationStatus Status { get; }
+```
+
+Gets the aggregate execution status across the logical migration targets in this group.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-targetcount"></a>
+
+##### `TargetCount`
+
+```csharp
+int TargetCount { get; }
+```
+
+Gets the number of logical migration targets represented in this group.
+
+<a id="type-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommand"></a>
+
+### `DatabaseMigrationOperationalExecutionGroupCommand`
+
+Describes one selected command path for a logical migration target inside an engine-owned execution group.
+
+#### Declaration
+```csharp
+public sealed class DatabaseMigrationOperationalExecutionGroupCommand
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommand-ctor-system-int32-system-string-system-string-system-string-cephalon-abstractions-data-databasemigrationcommanddescriptor"></a>
+
+##### `DatabaseMigrationOperationalExecutionGroupCommand`
+
+```csharp
+DatabaseMigrationOperationalExecutionGroupCommand(int order, string databaseMigrationId, string requestedRoleId, string resolvedRoleId, DatabaseMigrationCommandDescriptor command)
+```
+
+Creates a new execution-group command entry.
+
+Parameters:
+- `order`: The positive playbook order of the logical migration target that owns this command.
+- `databaseMigrationId`: The logical migration target identifier that owns this command.
+- `requestedRoleId`: The logical requested role id represented by this command.
+- `resolvedRoleId`: The concrete resolved role id represented by this command.
+- `command`: The selected command descriptor for this execution-group entry.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommand-command"></a>
+
+##### `Command`
+
+```csharp
+DatabaseMigrationCommandDescriptor Command { get; }
+```
+
+Gets the selected command descriptor for this execution-group entry.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommand-databasemigrationid"></a>
+
+##### `DatabaseMigrationId`
+
+```csharp
+string DatabaseMigrationId { get; }
+```
+
+Gets the logical migration target identifier that owns this command.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommand-order"></a>
+
+##### `Order`
+
+```csharp
+int Order { get; }
+```
+
+Gets the positive playbook order of the logical migration target that owns this command.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommand-requestedroleid"></a>
+
+##### `RequestedRoleId`
+
+```csharp
+string RequestedRoleId { get; }
+```
+
+Gets the logical requested role id represented by this command.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommand-resolvedroleid"></a>
+
+##### `ResolvedRoleId`
+
+```csharp
+string ResolvedRoleId { get; }
+```
+
+Gets the concrete resolved role id represented by this command.
+
+<a id="type-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommandbatch"></a>
+
+### `DatabaseMigrationOperationalExecutionGroupCommandBatch`
+
+Describes one combined command-batch template derived from the selected command path of an engine-owned execution group.
+
+#### Declaration
+```csharp
+public sealed class DatabaseMigrationOperationalExecutionGroupCommandBatch
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommandbatch-ctor-system-string-system-string-system-string-system-string-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `DatabaseMigrationOperationalExecutionGroupCommandBatch`
+
+```csharp
+DatabaseMigrationOperationalExecutionGroupCommandBatch(string id, string displayName, string description, string commandTemplate, int commandCount, IReadOnlyList<string> databaseMigrationIds, IReadOnlyList<string> commandIds, IReadOnlyList<string> toolIds, IReadOnlyList<string> workingDirectoryHints)
+```
+
+Creates a new execution-group command-batch template.
+
+Parameters:
+- `id`: The stable batch identifier such as `production` or `manual`.
+- `displayName`: The operator-facing batch name.
+- `description`: The human-readable batch description.
+- `commandTemplate`: The ordered combined command template for this execution-group path.
+- `commandCount`: The number of command entries represented in this batch.
+- `databaseMigrationIds`: The logical migration targets represented in this batch, in execution order.
+- `commandIds`: The stable command identifiers represented in this batch, in encounter order.
+- `toolIds`: The stable operator tool identifiers represented in this batch, in encounter order.
+- `workingDirectoryHints`: The working-directory hints represented in this batch, in encounter order.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommandbatch-commandcount"></a>
+
+##### `CommandCount`
+
+```csharp
+int CommandCount { get; }
+```
+
+Gets the number of command entries represented in this batch.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommandbatch-commandids"></a>
+
+##### `CommandIds`
+
+```csharp
+IReadOnlyList<string> CommandIds { get; }
+```
+
+Gets the stable command identifiers represented in this batch, in encounter order.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommandbatch-commandtemplate"></a>
+
+##### `CommandTemplate`
+
+```csharp
+string CommandTemplate { get; }
+```
+
+Gets the ordered combined command template for this execution-group path.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommandbatch-databasemigrationids"></a>
+
+##### `DatabaseMigrationIds`
+
+```csharp
+IReadOnlyList<string> DatabaseMigrationIds { get; }
+```
+
+Gets the logical migration targets represented in this batch, in execution order.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommandbatch-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable batch description.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommandbatch-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing batch name.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommandbatch-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable batch identifier such as `production` or `manual`.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommandbatch-primarytoolid"></a>
+
+##### `PrimaryToolId`
+
+```csharp
+string PrimaryToolId { get; }
+```
+
+Gets the single stable operator tool identifier when the batch uses only one tool.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommandbatch-primaryworkingdirectoryhint"></a>
+
+##### `PrimaryWorkingDirectoryHint`
+
+```csharp
+string PrimaryWorkingDirectoryHint { get; }
+```
+
+Gets the single working-directory hint when every command in the batch uses the same working directory.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommandbatch-toolids"></a>
+
+##### `ToolIds`
+
+```csharp
+IReadOnlyList<string> ToolIds { get; }
+```
+
+Gets the stable operator tool identifiers represented in this batch, in encounter order.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommandbatch-workingdirectoryhints"></a>
+
+##### `WorkingDirectoryHints`
+
+```csharp
+IReadOnlyList<string> WorkingDirectoryHints { get; }
+```
+
+Gets the working-directory hints represented in this batch, in encounter order.
+
+<a id="type-cephalon-abstractions-data-databasemigrationoperationalplaybook"></a>
+
+### `DatabaseMigrationOperationalPlaybook`
+
+Describes the engine-owned ordered operator playbook for database migration targets.
+
+#### Declaration
+```csharp
+public sealed class DatabaseMigrationOperationalPlaybook
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-databasemigrationoperationalplaybook-ctor-system-datetimeoffset-system-collections-generic-ireadonlylist-cephalon-abstractions-data-databasemigrationoperationalstep-system-collections-generic-ireadonlylist-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup"></a>
+
+##### `DatabaseMigrationOperationalPlaybook`
+
+```csharp
+DatabaseMigrationOperationalPlaybook(DateTimeOffset generatedAtUtc, IReadOnlyList<DatabaseMigrationOperationalStep> steps, IReadOnlyList<DatabaseMigrationOperationalExecutionGroup> executionGroups)
+```
+
+Creates a new database-migration operational playbook.
+
+Parameters:
+- `generatedAtUtc`: The UTC timestamp when the playbook was created.
+- `steps`: The ordered operator steps derived from the current migration catalog.
+- `executionGroups`: The ordered physical-target execution groups derived from the current migration catalog and shared-target topology truth.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalplaybook-applyonstartuptargetcount"></a>
+
+##### `ApplyOnStartupTargetCount`
+
+```csharp
+int ApplyOnStartupTargetCount { get; }
+```
+
+Gets the number of targets that are configured for startup execution.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalplaybook-coordinationrequiredgroupcount"></a>
+
+##### `CoordinationRequiredGroupCount`
+
+```csharp
+int CoordinationRequiredGroupCount { get; }
+```
+
+Gets the number of physical-target execution groups that span multiple logical migration targets.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalplaybook-coordinationrequiredtargetcount"></a>
+
+##### `CoordinationRequiredTargetCount`
+
+```csharp
+int CoordinationRequiredTargetCount { get; }
+```
+
+Gets the number of targets that share one physical database target with another migration target.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalplaybook-executiongroupcount"></a>
+
+##### `ExecutionGroupCount`
+
+```csharp
+int ExecutionGroupCount { get; }
+```
+
+Gets the total number of physical-target execution groups in the playbook.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalplaybook-executiongroups"></a>
+
+##### `ExecutionGroups`
+
+```csharp
+IReadOnlyList<DatabaseMigrationOperationalExecutionGroup> ExecutionGroups { get; }
+```
+
+Gets the ordered physical-target execution groups derived from the current migration catalog.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalplaybook-generatedatutc"></a>
+
+##### `GeneratedAtUtc`
+
+```csharp
+DateTimeOffset GeneratedAtUtc { get; }
+```
+
+Gets the UTC timestamp when the playbook was created.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalplaybook-manualpathtargetcount"></a>
+
+##### `ManualPathTargetCount`
+
+```csharp
+int ManualPathTargetCount { get; }
+```
+
+Gets the number of targets that publish a direct or manual command path.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalplaybook-productionreadytargetcount"></a>
+
+##### `ProductionReadyTargetCount`
+
+```csharp
+int ProductionReadyTargetCount { get; }
+```
+
+Gets the number of targets that publish a production-recommended command.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalplaybook-steps"></a>
+
+##### `Steps`
+
+```csharp
+IReadOnlyList<DatabaseMigrationOperationalStep> Steps { get; }
+```
+
+Gets the ordered operator steps derived from the current migration catalog.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalplaybook-targetcount"></a>
+
+##### `TargetCount`
+
+```csharp
+int TargetCount { get; }
+```
+
+Gets the total number of migration targets in the playbook.
+
+<a id="type-cephalon-abstractions-data-databasemigrationoperationalstep"></a>
+
+### `DatabaseMigrationOperationalStep`
+
+Describes one ordered operator step in the engine-owned database-migration playbook.
+
+#### Declaration
+```csharp
+public sealed class DatabaseMigrationOperationalStep
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-databasemigrationoperationalstep-ctor-system-int32-system-string-system-string-system-string-cephalon-abstractions-data-databasemigrationstatus-system-string-system-boolean-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-cephalon-abstractions-data-databasemigrationcommanddescriptor-cephalon-abstractions-data-databasemigrationcommanddescriptor"></a>
+
+##### `DatabaseMigrationOperationalStep`
+
+```csharp
+DatabaseMigrationOperationalStep(int order, string databaseMigrationId, string requestedRoleId, string resolvedRoleId, DatabaseMigrationStatus status, string executionMode, bool applyOnStartup, string physicalTargetId, string physicalTargetDisplayName, IReadOnlyList<string> coordinatedMigrationIds, string coordinationHint, DatabaseMigrationCommandDescriptor productionCommand, DatabaseMigrationCommandDescriptor manualCommand)
+```
+
+Creates a new database-migration operational step.
+
+Parameters:
+- `order`: The positive playbook order for this step.
+- `databaseMigrationId`: The logical database-migration target identifier for this step.
+- `requestedRoleId`: The logical database role requested by migration policy.
+- `resolvedRoleId`: The concrete database role that backs this step.
+- `status`: The current execution status for this step.
+- `executionMode`: The execution mode such as `startup-hosted-service` or `manual-or-deploy-time`.
+- `applyOnStartup`: Whether startup execution is enabled for this step.
+- `physicalTargetId`: The stable physical-target identifier that backs this step when known.
+- `physicalTargetDisplayName`: The operator-facing description of the physical target that backs this step when known.
+- `coordinatedMigrationIds`: Other logical migration targets that share the same physical database target.
+- `coordinationHint`: The operator-facing coordination guidance for shared physical targets, when available.
+- `productionCommand`: The primary production-recommended command selected for this step when available.
+- `manualCommand`: The primary direct or manual command selected for this step when available.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalstep-applyonstartup"></a>
+
+##### `ApplyOnStartup`
+
+```csharp
+bool ApplyOnStartup { get; }
+```
+
+Gets a value indicating whether startup execution is enabled for this step.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalstep-coordinatedmigrationids"></a>
+
+##### `CoordinatedMigrationIds`
+
+```csharp
+IReadOnlyList<string> CoordinatedMigrationIds { get; }
+```
+
+Gets the other logical migration targets that share the same physical database target.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalstep-coordinationhint"></a>
+
+##### `CoordinationHint`
+
+```csharp
+string CoordinationHint { get; }
+```
+
+Gets the operator-facing coordination guidance for shared physical targets, when available.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalstep-databasemigrationid"></a>
+
+##### `DatabaseMigrationId`
+
+```csharp
+string DatabaseMigrationId { get; }
+```
+
+Gets the logical database-migration target identifier for this step.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalstep-executionmode"></a>
+
+##### `ExecutionMode`
+
+```csharp
+string ExecutionMode { get; }
+```
+
+Gets the execution mode for this step.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalstep-hasproductionrecommendedcommand"></a>
+
+##### `HasProductionRecommendedCommand`
+
+```csharp
+bool HasProductionRecommendedCommand { get; }
+```
+
+Gets a value indicating whether this step publishes a production-recommended command.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalstep-manualcommand"></a>
+
+##### `ManualCommand`
+
+```csharp
+DatabaseMigrationCommandDescriptor ManualCommand { get; }
+```
+
+Gets the primary direct or manual command selected for this step when available.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalstep-order"></a>
+
+##### `Order`
+
+```csharp
+int Order { get; }
+```
+
+Gets the positive playbook order for this step.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalstep-physicaltargetdisplayname"></a>
+
+##### `PhysicalTargetDisplayName`
+
+```csharp
+string PhysicalTargetDisplayName { get; }
+```
+
+Gets the operator-facing description of the physical target that backs this step when known.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalstep-physicaltargetid"></a>
+
+##### `PhysicalTargetId`
+
+```csharp
+string PhysicalTargetId { get; }
+```
+
+Gets the stable physical-target identifier that backs this step when known.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalstep-productioncommand"></a>
+
+##### `ProductionCommand`
+
+```csharp
+DatabaseMigrationCommandDescriptor ProductionCommand { get; }
+```
+
+Gets the primary production-recommended command selected for this step when available.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalstep-requestedroleid"></a>
+
+##### `RequestedRoleId`
+
+```csharp
+string RequestedRoleId { get; }
+```
+
+Gets the logical database role requested by migration policy.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalstep-requiresphysicaltargetcoordination"></a>
+
+##### `RequiresPhysicalTargetCoordination`
+
+```csharp
+bool RequiresPhysicalTargetCoordination { get; }
+```
+
+Gets a value indicating whether this step needs shared-physical-target coordination.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalstep-resolvedroleid"></a>
+
+##### `ResolvedRoleId`
+
+```csharp
+string ResolvedRoleId { get; }
+```
+
+Gets the concrete database role that backs this step.
+
+<a id="member-p-cephalon-abstractions-data-databasemigrationoperationalstep-status"></a>
+
+##### `Status`
+
+```csharp
+DatabaseMigrationStatus Status { get; }
+```
+
+Gets the current execution status for this step.
 
 <a id="type-cephalon-abstractions-data-databasemigrationstatus"></a>
 
@@ -7834,12 +8721,12 @@ public sealed class DatabaseRoleDescriptor
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-data-databaseroledescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-cephalon-abstractions-appmodel-databaseruntimeselection-system-boolean-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-nullable-cephalon-abstractions-health-healthstate-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+<a id="member-m-cephalon-abstractions-data-databaseroledescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-cephalon-abstractions-appmodel-databaseruntimeselection-system-boolean-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-nullable-cephalon-abstractions-health-healthstate-system-string-system-string-system-string-system-nullable-system-datetimeoffset-cephalon-abstractions-data-databaseroleprobedescriptor-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
 
 ##### `DatabaseRoleDescriptor`
 
 ```csharp
-DatabaseRoleDescriptor(string id, string displayName, string description, string provider, string requestedRoleId, string resolvedRoleId, string resolutionMode, DatabaseRuntimeSelection runtime, bool usesRoleReference, string useRole, string connectionMode, string connectionStringName, string schema, IReadOnlyList<string> consumers, IReadOnlyList<string> referencedByRoles, IReadOnlyList<string> coLocatedRoles, IReadOnlyDictionary<string, string> metadata, HealthState? healthState, string healthDescription, string migrationState, string migrationDescription, DateTimeOffset? observedAtUtc, IReadOnlyDictionary<string, string> runtimeMetadata)
+DatabaseRoleDescriptor(string id, string displayName, string description, string provider, string requestedRoleId, string resolvedRoleId, string resolutionMode, DatabaseRuntimeSelection runtime, bool usesRoleReference, string useRole, string connectionMode, string connectionStringName, string schema, IReadOnlyList<string> consumers, IReadOnlyList<string> referencedByRoles, IReadOnlyList<string> coLocatedRoles, string physicalTargetId, string physicalTargetDisplayName, IReadOnlyList<string> physicalCoLocatedRoles, IReadOnlyDictionary<string, string> metadata, HealthState? healthState, string healthDescription, string migrationState, string migrationDescription, DateTimeOffset? observedAtUtc, DatabaseRoleProbeDescriptor probe, IReadOnlyDictionary<string, string> runtimeMetadata)
 ```
 
 Creates a new database-role descriptor.
@@ -7861,12 +8748,16 @@ Parameters:
 - `consumers`: The logical engine features that explicitly target this role.
 - `referencedByRoles`: Other logical roles that explicitly reference this role through `UseRole`.
 - `coLocatedRoles`: Other logical roles that resolve to the same concrete role target.
+- `physicalTargetId`: The stable physical-target identifier used to group logical roles that share one physical database target.
+- `physicalTargetDisplayName`: The operator-facing description of the physical target that backs this role.
+- `physicalCoLocatedRoles`: Other logical roles that share the same physical database target.
 - `metadata`: Optional operator-facing metadata associated with the database role.
 - `healthState`: The current runtime health state reported for the database role, when available.
 - `healthDescription`: The operator-facing health description reported for the database role, when available.
 - `migrationState`: The current migration execution state reported for the database role, when available.
 - `migrationDescription`: The operator-facing migration description reported for the database role, when available.
 - `observedAtUtc`: The UTC timestamp when runtime state was last observed for the database role, when available.
+- `probe`: The stable probe-freshness answer reported for the database role, when available.
 - `runtimeMetadata`: Optional runtime metadata associated with the database role.
 
 #### Properties
@@ -8001,6 +8892,46 @@ DateTimeOffset? ObservedAtUtc { get; }
 
 Gets the UTC timestamp when runtime state was last observed for the database role, when available.
 
+<a id="member-p-cephalon-abstractions-data-databaseroledescriptor-physicalcolocatedroles"></a>
+
+##### `PhysicalCoLocatedRoles`
+
+```csharp
+IReadOnlyList<string> PhysicalCoLocatedRoles { get; }
+```
+
+Gets the logical roles that share the same physical database target.
+
+<a id="member-p-cephalon-abstractions-data-databaseroledescriptor-physicaltargetdisplayname"></a>
+
+##### `PhysicalTargetDisplayName`
+
+```csharp
+string PhysicalTargetDisplayName { get; }
+```
+
+Gets the operator-facing description of the physical target that backs this role.
+
+<a id="member-p-cephalon-abstractions-data-databaseroledescriptor-physicaltargetid"></a>
+
+##### `PhysicalTargetId`
+
+```csharp
+string PhysicalTargetId { get; }
+```
+
+Gets the stable physical-target identifier used to group logical roles that share one physical database target.
+
+<a id="member-p-cephalon-abstractions-data-databaseroledescriptor-probe"></a>
+
+##### `Probe`
+
+```csharp
+DatabaseRoleProbeDescriptor Probe { get; }
+```
+
+Gets the stable probe-freshness answer reported for the database role, when available.
+
 <a id="member-p-cephalon-abstractions-data-databaseroledescriptor-provider"></a>
 
 ##### `Provider`
@@ -8101,6 +9032,99 @@ bool UsesRoleReference { get; }
 
 Gets a value indicating whether this role resolves through `UseRole`.
 
+<a id="type-cephalon-abstractions-data-databaseroleprobedescriptor"></a>
+
+### `DatabaseRoleProbeDescriptor`
+
+Describes the stable probe-freshness runtime state published for one database role.
+
+#### Declaration
+```csharp
+public sealed class DatabaseRoleProbeDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-databaseroleprobedescriptor-ctor-system-boolean-system-int32-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-int32"></a>
+
+##### `DatabaseRoleProbeDescriptor`
+
+```csharp
+DatabaseRoleProbeDescriptor(bool cacheEnabled, int freshnessSeconds, string freshnessOrigin, string source, DateTimeOffset? freshUntilUtc, int? ageSeconds)
+```
+
+Creates a new database-role probe descriptor.
+
+Parameters:
+- `cacheEnabled`: Whether cached probe answers are enabled for the role.
+- `freshnessSeconds`: The configured or default freshness window in seconds.
+- `freshnessOrigin`: The source of the effective freshness window, such as `configured` or `default`.
+- `source`: The source of the current answer, such as `live` or `cache`.
+- `freshUntilUtc`: The UTC timestamp until which the current answer remains fresh, when known.
+- `ageSeconds`: The age in seconds of the current answer, when known.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-databaseroleprobedescriptor-ageseconds"></a>
+
+##### `AgeSeconds`
+
+```csharp
+int? AgeSeconds { get; }
+```
+
+Gets the age in seconds of the current answer, when known.
+
+<a id="member-p-cephalon-abstractions-data-databaseroleprobedescriptor-cacheenabled"></a>
+
+##### `CacheEnabled`
+
+```csharp
+bool CacheEnabled { get; }
+```
+
+Gets a value indicating whether cached probe answers are enabled for the role.
+
+<a id="member-p-cephalon-abstractions-data-databaseroleprobedescriptor-freshnessorigin"></a>
+
+##### `FreshnessOrigin`
+
+```csharp
+string FreshnessOrigin { get; }
+```
+
+Gets the source of the effective freshness window, when known.
+
+<a id="member-p-cephalon-abstractions-data-databaseroleprobedescriptor-freshnessseconds"></a>
+
+##### `FreshnessSeconds`
+
+```csharp
+int FreshnessSeconds { get; }
+```
+
+Gets the configured or default freshness window in seconds.
+
+<a id="member-p-cephalon-abstractions-data-databaseroleprobedescriptor-freshuntilutc"></a>
+
+##### `FreshUntilUtc`
+
+```csharp
+DateTimeOffset? FreshUntilUtc { get; }
+```
+
+Gets the UTC timestamp until which the current answer remains fresh, when known.
+
+<a id="member-p-cephalon-abstractions-data-databaseroleprobedescriptor-source"></a>
+
+##### `Source`
+
+```csharp
+string Source { get; }
+```
+
+Gets the source of the current answer, such as `live` or `cache`, when known.
+
 <a id="type-cephalon-abstractions-data-databaseroleruntimedescriptor"></a>
 
 ### `DatabaseRoleRuntimeDescriptor`
@@ -8114,12 +9138,12 @@ public sealed class DatabaseRoleRuntimeDescriptor
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-data-databaseroleruntimedescriptor-ctor-system-string-system-nullable-cephalon-abstractions-health-healthstate-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+<a id="member-m-cephalon-abstractions-data-databaseroleruntimedescriptor-ctor-system-string-system-nullable-cephalon-abstractions-health-healthstate-system-string-system-string-system-string-system-nullable-system-datetimeoffset-cephalon-abstractions-data-databaseroleprobedescriptor-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
 
 ##### `DatabaseRoleRuntimeDescriptor`
 
 ```csharp
-DatabaseRoleRuntimeDescriptor(string databaseRoleId, HealthState? healthState, string healthDescription, string migrationState, string migrationDescription, DateTimeOffset? observedAtUtc, IReadOnlyDictionary<string, string> metadata)
+DatabaseRoleRuntimeDescriptor(string databaseRoleId, HealthState? healthState, string healthDescription, string migrationState, string migrationDescription, DateTimeOffset? observedAtUtc, DatabaseRoleProbeDescriptor probe, IReadOnlyDictionary<string, string> metadata)
 ```
 
 Creates a new database-role runtime descriptor.
@@ -8131,6 +9155,7 @@ Parameters:
 - `migrationState`: The current migration execution state for the role, when known.
 - `migrationDescription`: The operator-facing migration description for the role, when known.
 - `observedAtUtc`: The UTC timestamp when this runtime state was last observed.
+- `probe`: The stable probe-freshness answer for the role, when known.
 - `metadata`: Optional runtime metadata associated with the role.
 
 #### Properties
@@ -8204,6 +9229,609 @@ DateTimeOffset? ObservedAtUtc { get; }
 ```
 
 Gets the UTC timestamp when this runtime state was last observed.
+
+<a id="member-p-cephalon-abstractions-data-databaseroleruntimedescriptor-probe"></a>
+
+##### `Probe`
+
+```csharp
+DatabaseRoleProbeDescriptor Probe { get; }
+```
+
+Gets the stable probe-freshness answer for the role, when known.
+
+<a id="type-cephalon-abstractions-data-databasetopologyoperationalaction"></a>
+
+### `DatabaseTopologyOperationalAction`
+
+Describes one engine-owned operator action for the current database-topology posture.
+
+#### Declaration
+```csharp
+public sealed class DatabaseTopologyOperationalAction
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-databasetopologyoperationalaction-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `DatabaseTopologyOperationalAction`
+
+```csharp
+DatabaseTopologyOperationalAction(string id, string category, string tone, string title, string detail, string completionSignal, string actionLabel, string actionPath, IReadOnlyList<string> sourceRoleIds, IReadOnlyList<string> sourceMigrationIds)
+```
+
+Creates a new database-topology operator action.
+
+Parameters:
+- `id`: The stable action identifier.
+- `category`: The stable machine-readable remediation category.
+- `tone`: The operator-facing tone such as `Success`, `Warning`, or `Error`.
+- `title`: The human-readable action title.
+- `detail`: The operator-facing action detail.
+- `completionSignal`: The operator-facing signal that the action is complete.
+- `actionLabel`: The suggested operator action label.
+- `actionPath`: The suggested operator action path.
+- `sourceRoleIds`: Optional logical database-role identifiers that contributed to the action.
+- `sourceMigrationIds`: Optional logical migration-target identifiers that contributed to the action.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalaction-actionlabel"></a>
+
+##### `ActionLabel`
+
+```csharp
+string ActionLabel { get; }
+```
+
+Gets the suggested operator action label.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalaction-actionpath"></a>
+
+##### `ActionPath`
+
+```csharp
+string ActionPath { get; }
+```
+
+Gets the suggested operator action path.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalaction-category"></a>
+
+##### `Category`
+
+```csharp
+string Category { get; }
+```
+
+Gets the stable machine-readable remediation category.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalaction-completionsignal"></a>
+
+##### `CompletionSignal`
+
+```csharp
+string CompletionSignal { get; }
+```
+
+Gets the operator-facing signal that the action is complete.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalaction-detail"></a>
+
+##### `Detail`
+
+```csharp
+string Detail { get; }
+```
+
+Gets the operator-facing action detail.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalaction-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable action identifier.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalaction-sourcemigrationids"></a>
+
+##### `SourceMigrationIds`
+
+```csharp
+IReadOnlyList<string> SourceMigrationIds { get; }
+```
+
+Gets the logical migration-target identifiers that contributed to the action.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalaction-sourceroleids"></a>
+
+##### `SourceRoleIds`
+
+```csharp
+IReadOnlyList<string> SourceRoleIds { get; }
+```
+
+Gets the logical database-role identifiers that contributed to the action.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalaction-title"></a>
+
+##### `Title`
+
+```csharp
+string Title { get; }
+```
+
+Gets the human-readable action title.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalaction-tone"></a>
+
+##### `Tone`
+
+```csharp
+string Tone { get; }
+```
+
+Gets the operator-facing action tone.
+
+<a id="type-cephalon-abstractions-data-databasetopologyoperationalactionplan"></a>
+
+### `DatabaseTopologyOperationalActionPlan`
+
+Describes the engine-owned ordered operator action plan for the current database-topology posture.
+
+#### Declaration
+```csharp
+public sealed class DatabaseTopologyOperationalActionPlan
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-databasetopologyoperationalactionplan-ctor-system-datetimeoffset-system-collections-generic-ireadonlylist-cephalon-abstractions-data-databasetopologyoperationalaction"></a>
+
+##### `DatabaseTopologyOperationalActionPlan`
+
+```csharp
+DatabaseTopologyOperationalActionPlan(DateTimeOffset generatedAtUtc, IReadOnlyList<DatabaseTopologyOperationalAction> actions)
+```
+
+Creates a new database-topology action plan.
+
+Parameters:
+- `generatedAtUtc`: The UTC timestamp when the plan was created.
+- `actions`: The ordered operator actions derived from the current topology posture.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalactionplan-actions"></a>
+
+##### `Actions`
+
+```csharp
+IReadOnlyList<DatabaseTopologyOperationalAction> Actions { get; }
+```
+
+Gets the ordered operator actions derived from the current topology posture.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalactionplan-attentionactioncount"></a>
+
+##### `AttentionActionCount`
+
+```csharp
+int AttentionActionCount { get; }
+```
+
+Gets the number of attention-level actions in the plan.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalactionplan-blockingactioncount"></a>
+
+##### `BlockingActionCount`
+
+```csharp
+int BlockingActionCount { get; }
+```
+
+Gets the number of blocking actions in the plan.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalactionplan-generatedatutc"></a>
+
+##### `GeneratedAtUtc`
+
+```csharp
+DateTimeOffset GeneratedAtUtc { get; }
+```
+
+Gets the UTC timestamp when the plan was created.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalactionplan-readyactioncount"></a>
+
+##### `ReadyActionCount`
+
+```csharp
+int ReadyActionCount { get; }
+```
+
+Gets the number of ready-state actions in the plan.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalactionplan-totalactioncount"></a>
+
+##### `TotalActionCount`
+
+```csharp
+int TotalActionCount { get; }
+```
+
+Gets the total number of operator actions in the plan.
+
+<a id="type-cephalon-abstractions-data-databasetopologyoperationaladvisory"></a>
+
+### `DatabaseTopologyOperationalAdvisory`
+
+Describes one reusable operator-facing advisory for the current database-topology posture.
+
+#### Declaration
+```csharp
+public sealed class DatabaseTopologyOperationalAdvisory
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-databasetopologyoperationaladvisory-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `DatabaseTopologyOperationalAdvisory`
+
+```csharp
+DatabaseTopologyOperationalAdvisory(string id, string tone, string title, string detail, string actionLabel, string actionPath, IReadOnlyList<string> sourceRoleIds, IReadOnlyList<string> sourceMigrationIds)
+```
+
+Creates a new database-topology advisory.
+
+Parameters:
+- `id`: The stable advisory identifier.
+- `tone`: The operator-facing tone such as `Success`, `Warning`, or `Error`.
+- `title`: The human-readable advisory title.
+- `detail`: The operator-facing advisory detail.
+- `actionLabel`: The suggested operator action label.
+- `actionPath`: The suggested operator action path.
+- `sourceRoleIds`: Optional logical database-role identifiers that contributed to the advisory.
+- `sourceMigrationIds`: Optional logical migration-target identifiers that contributed to the advisory.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationaladvisory-actionlabel"></a>
+
+##### `ActionLabel`
+
+```csharp
+string ActionLabel { get; }
+```
+
+Gets the suggested operator action label.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationaladvisory-actionpath"></a>
+
+##### `ActionPath`
+
+```csharp
+string ActionPath { get; }
+```
+
+Gets the suggested operator action path.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationaladvisory-detail"></a>
+
+##### `Detail`
+
+```csharp
+string Detail { get; }
+```
+
+Gets the operator-facing advisory detail.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationaladvisory-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable advisory identifier.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationaladvisory-sourcemigrationids"></a>
+
+##### `SourceMigrationIds`
+
+```csharp
+IReadOnlyList<string> SourceMigrationIds { get; }
+```
+
+Gets the logical migration-target identifiers that contributed to the advisory.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationaladvisory-sourceroleids"></a>
+
+##### `SourceRoleIds`
+
+```csharp
+IReadOnlyList<string> SourceRoleIds { get; }
+```
+
+Gets the logical database-role identifiers that contributed to the advisory.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationaladvisory-title"></a>
+
+##### `Title`
+
+```csharp
+string Title { get; }
+```
+
+Gets the human-readable advisory title.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationaladvisory-tone"></a>
+
+##### `Tone`
+
+```csharp
+string Tone { get; }
+```
+
+Gets the operator-facing advisory tone.
+
+<a id="type-cephalon-abstractions-data-databasetopologyoperationalsnapshot"></a>
+
+### `DatabaseTopologyOperationalSnapshot`
+
+Combines the engine-owned operator-facing database-topology posture into one reusable payload.
+
+#### Declaration
+```csharp
+public sealed class DatabaseTopologyOperationalSnapshot
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-databasetopologyoperationalsnapshot-ctor-system-datetimeoffset-cephalon-abstractions-data-databasetopologyoperationalsummary-system-collections-generic-ireadonlylist-cephalon-abstractions-data-databasetopologyoperationaladvisory-cephalon-abstractions-data-databasetopologyoperationalactionplan"></a>
+
+##### `DatabaseTopologyOperationalSnapshot`
+
+```csharp
+DatabaseTopologyOperationalSnapshot(DateTimeOffset generatedAtUtc, DatabaseTopologyOperationalSummary summary, IReadOnlyList<DatabaseTopologyOperationalAdvisory> advisories, DatabaseTopologyOperationalActionPlan actionPlan)
+```
+
+Creates a new database-topology operational snapshot.
+
+Parameters:
+- `generatedAtUtc`: The UTC timestamp when the snapshot was created.
+- `summary`: The aggregate operator-facing topology summary.
+- `advisories`: The reusable operator-facing advisories derived from the current topology state.
+- `actionPlan`: The ordered engine-owned operator action plan derived from the current topology state.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalsnapshot-actionplan"></a>
+
+##### `ActionPlan`
+
+```csharp
+DatabaseTopologyOperationalActionPlan ActionPlan { get; }
+```
+
+Gets the ordered engine-owned operator action plan derived from the current topology state.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalsnapshot-advisories"></a>
+
+##### `Advisories`
+
+```csharp
+IReadOnlyList<DatabaseTopologyOperationalAdvisory> Advisories { get; }
+```
+
+Gets the reusable operator-facing advisories derived from the current topology state.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalsnapshot-generatedatutc"></a>
+
+##### `GeneratedAtUtc`
+
+```csharp
+DateTimeOffset GeneratedAtUtc { get; }
+```
+
+Gets the UTC timestamp when the snapshot was created.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalsnapshot-summary"></a>
+
+##### `Summary`
+
+```csharp
+DatabaseTopologyOperationalSummary Summary { get; }
+```
+
+Gets the aggregate operator-facing topology summary.
+
+<a id="type-cephalon-abstractions-data-databasetopologyoperationalsummary"></a>
+
+### `DatabaseTopologyOperationalSummary`
+
+Describes the aggregate operator-facing posture for the current database topology.
+
+#### Declaration
+```csharp
+public sealed class DatabaseTopologyOperationalSummary
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-databasetopologyoperationalsummary-ctor-system-string-system-string-system-string-system-string-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32"></a>
+
+##### `DatabaseTopologyOperationalSummary`
+
+```csharp
+DatabaseTopologyOperationalSummary(string status, string headline, string detail, string actionLabel, string actionPath, int roleCount, int healthyRoleCount, int degradedRoleCount, int unhealthyRoleCount, int migrationTargetCount, int succeededMigrationTargetCount, int failedMigrationTargetCount, int pendingMigrationTargetCount, int productionReadyMigrationTargetCount)
+```
+
+Creates a new database-topology operational summary.
+
+Parameters:
+- `status`: The aggregate topology status such as `Ready`, `Attention`, or `Blocked`.
+- `headline`: The operator-facing summary headline.
+- `detail`: The operator-facing summary detail.
+- `actionLabel`: The suggested operator action label.
+- `actionPath`: The suggested operator action path.
+- `roleCount`: The total number of configured logical database roles.
+- `healthyRoleCount`: The number of roles currently reporting healthy runtime state.
+- `degradedRoleCount`: The number of roles currently reporting degraded runtime state.
+- `unhealthyRoleCount`: The number of roles currently reporting unhealthy runtime state.
+- `migrationTargetCount`: The total number of visible logical migration targets.
+- `succeededMigrationTargetCount`: The number of migration targets currently reporting `Succeeded`.
+- `failedMigrationTargetCount`: The number of migration targets currently reporting `Failed`.
+- `pendingMigrationTargetCount`: The number of migration targets that are not yet `Succeeded`.
+- `productionReadyMigrationTargetCount`: The number of migration targets that publish production-recommended guidance.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalsummary-actionlabel"></a>
+
+##### `ActionLabel`
+
+```csharp
+string ActionLabel { get; }
+```
+
+Gets the suggested operator action label.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalsummary-actionpath"></a>
+
+##### `ActionPath`
+
+```csharp
+string ActionPath { get; }
+```
+
+Gets the suggested operator action path.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalsummary-degradedrolecount"></a>
+
+##### `DegradedRoleCount`
+
+```csharp
+int DegradedRoleCount { get; }
+```
+
+Gets the number of roles currently reporting degraded runtime state.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalsummary-detail"></a>
+
+##### `Detail`
+
+```csharp
+string Detail { get; }
+```
+
+Gets the operator-facing summary detail.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalsummary-failedmigrationtargetcount"></a>
+
+##### `FailedMigrationTargetCount`
+
+```csharp
+int FailedMigrationTargetCount { get; }
+```
+
+Gets the number of migration targets currently reporting `Failed`.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalsummary-headline"></a>
+
+##### `Headline`
+
+```csharp
+string Headline { get; }
+```
+
+Gets the operator-facing summary headline.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalsummary-healthyrolecount"></a>
+
+##### `HealthyRoleCount`
+
+```csharp
+int HealthyRoleCount { get; }
+```
+
+Gets the number of roles currently reporting healthy runtime state.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalsummary-migrationtargetcount"></a>
+
+##### `MigrationTargetCount`
+
+```csharp
+int MigrationTargetCount { get; }
+```
+
+Gets the total number of visible logical migration targets.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalsummary-pendingmigrationtargetcount"></a>
+
+##### `PendingMigrationTargetCount`
+
+```csharp
+int PendingMigrationTargetCount { get; }
+```
+
+Gets the number of migration targets that are not yet `Succeeded`.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalsummary-productionreadymigrationtargetcount"></a>
+
+##### `ProductionReadyMigrationTargetCount`
+
+```csharp
+int ProductionReadyMigrationTargetCount { get; }
+```
+
+Gets the number of migration targets that publish production-recommended guidance.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalsummary-rolecount"></a>
+
+##### `RoleCount`
+
+```csharp
+int RoleCount { get; }
+```
+
+Gets the total number of configured logical database roles.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalsummary-status"></a>
+
+##### `Status`
+
+```csharp
+string Status { get; }
+```
+
+Gets the aggregate topology status.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalsummary-succeededmigrationtargetcount"></a>
+
+##### `SucceededMigrationTargetCount`
+
+```csharp
+int SucceededMigrationTargetCount { get; }
+```
+
+Gets the number of migration targets currently reporting `Succeeded`.
+
+<a id="member-p-cephalon-abstractions-data-databasetopologyoperationalsummary-unhealthyrolecount"></a>
+
+##### `UnhealthyRoleCount`
+
+```csharp
+int UnhealthyRoleCount { get; }
+```
+
+Gets the number of roles currently reporting unhealthy runtime state.
 
 <a id="type-cephalon-abstractions-data-eventdispatchruntimedescriptor"></a>
 
@@ -8854,6 +10482,31 @@ Describes the database-migration targets that should appear in the active runtim
 
 Returns: The migration descriptors contributed by the current provider or module pack.
 
+<a id="type-cephalon-abstractions-data-idatabasemigrationoperationalplaybookprovider"></a>
+
+### `IDatabaseMigrationOperationalPlaybookProvider`
+
+Creates the engine-owned ordered operator playbook for the current database-migration catalog.
+
+#### Declaration
+```csharp
+public interface IDatabaseMigrationOperationalPlaybookProvider
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-idatabasemigrationoperationalplaybookprovider-createplaybook"></a>
+
+##### `CreatePlaybook`
+
+```csharp
+DatabaseMigrationOperationalPlaybook CreatePlaybook()
+```
+
+Creates the current database-migration playbook.
+
+Returns: The current ordered operator playbook for database migrations.
+
 <a id="type-cephalon-abstractions-data-idatabaserolecatalog"></a>
 
 ### `IDatabaseRoleCatalog`
@@ -8948,6 +10601,31 @@ IReadOnlyList<DatabaseRoleRuntimeDescriptor> DescribeDatabaseRoleRuntime()
 Describes the runtime state that should be merged into the active database-role catalog.
 
 Returns: The runtime descriptors that should enrich the active database-role catalog.
+
+<a id="type-cephalon-abstractions-data-idatabasetopologyoperationalsnapshotprovider"></a>
+
+### `IDatabaseTopologyOperationalSnapshotProvider`
+
+Creates the engine-owned operator-facing database-topology posture snapshot for the current runtime.
+
+#### Declaration
+```csharp
+public interface IDatabaseTopologyOperationalSnapshotProvider
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-idatabasetopologyoperationalsnapshotprovider-createsnapshot"></a>
+
+##### `CreateSnapshot`
+
+```csharp
+DatabaseTopologyOperationalSnapshot CreateSnapshot()
+```
+
+Creates the current database-topology posture snapshot.
+
+Returns: The current operator-facing database-topology posture snapshot.
 
 <a id="type-cephalon-abstractions-data-ieventdispatchruntimecatalog"></a>
 
@@ -12616,6 +14294,142 @@ Gets the declared module version, when one is available.
 
 ## Namespace Cephalon.Abstractions.Patterns
 
+<a id="type-cephalon-abstractions-patterns-istranglerfigroutecontributor"></a>
+
+### `IStranglerFigRouteContributor`
+
+Allows a module to contribute strangler-fig routes into the active runtime.
+
+#### Declaration
+```csharp
+public interface IStranglerFigRouteContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-patterns-istranglerfigroutecontributor-registerroutes-cephalon-abstractions-patterns-istranglerfigrouteregistry"></a>
+
+##### `RegisterRoutes`
+
+```csharp
+void RegisterRoutes(IStranglerFigRouteRegistry routes)
+```
+
+Registers one or more strangler-fig route descriptors with the supplied registry.
+
+Parameters:
+- `routes`: The registry that collects contributed route descriptors.
+
+<a id="type-cephalon-abstractions-patterns-istranglerfigrouter"></a>
+
+### `IStranglerFigRouter`
+
+Resolves requests against the active strangler-fig migration routes.
+
+#### Declaration
+```csharp
+public interface IStranglerFigRouter
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-patterns-istranglerfigrouter-resolveasync-cephalon-abstractions-patterns-stranglerfigrequest-system-threading-cancellationtoken"></a>
+
+##### `ResolveAsync`
+
+```csharp
+ValueTask<StranglerFigRouteResolution> ResolveAsync(StranglerFigRequest request, CancellationToken cancellationToken)
+```
+
+Resolves the migration boundary that should receive the supplied request.
+
+Returns: The matched route resolution when the request is covered by an active strangler-fig route; otherwise, `null`.
+
+Parameters:
+- `request`: The request to evaluate.
+- `cancellationToken`: The token that cancels the evaluation.
+
+<a id="type-cephalon-abstractions-patterns-istranglerfigrouteregistry"></a>
+
+### `IStranglerFigRouteRegistry`
+
+Collects strangler-fig route descriptors contributed to the active runtime.
+
+#### Declaration
+```csharp
+public interface IStranglerFigRouteRegistry
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-patterns-istranglerfigrouteregistry-add-cephalon-abstractions-patterns-stranglerfigroutedescriptor"></a>
+
+##### `Add`
+
+```csharp
+void Add(StranglerFigRouteDescriptor route)
+```
+
+Adds a strangler-fig route descriptor to the current runtime composition.
+
+Parameters:
+- `route`: The route descriptor to register.
+
+<a id="type-cephalon-abstractions-patterns-istranglerfigruntimecatalog"></a>
+
+### `IStranglerFigRuntimeCatalog`
+
+Exposes the strangler-fig routes visible to the current runtime.
+
+#### Declaration
+```csharp
+public interface IStranglerFigRuntimeCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-patterns-istranglerfigruntimecatalog-routes"></a>
+
+##### `Routes`
+
+```csharp
+IReadOnlyList<StranglerFigRouteDescriptor> Routes { get; }
+```
+
+Gets all strangler-fig routes visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-patterns-istranglerfigruntimecatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+StranglerFigRouteDescriptor GetById(string routeId)
+```
+
+Gets one strangler-fig route by its stable identifier.
+
+Returns: The matching route descriptor, or `null` when it is not active.
+
+Parameters:
+- `routeId`: The route identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-patterns-istranglerfigruntimecatalog-getbysourcemodule-system-string"></a>
+
+##### `GetBySourceModule`
+
+```csharp
+IReadOnlyList<StranglerFigRouteDescriptor> GetBySourceModule(string sourceModuleId)
+```
+
+Gets all strangler-fig routes owned by the requested module.
+
+Returns: The matching route descriptors, or an empty list when none are active.
+
+Parameters:
+- `sourceModuleId`: The module identifier to filter by.
+
 <a id="type-cephalon-abstractions-patterns-patterndescriptor"></a>
 
 ### `PatternDescriptor`
@@ -12834,6 +14648,395 @@ const PatternKind Organization
 ```
 
 Identifies an organization pattern.
+
+<a id="type-cephalon-abstractions-patterns-stranglerfigrequest"></a>
+
+### `StranglerFigRequest`
+
+Describes one request that should be evaluated by a strangler-fig router.
+
+#### Declaration
+```csharp
+public sealed class StranglerFigRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-patterns-stranglerfigrequest-ctor-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `StranglerFigRequest`
+
+```csharp
+StranglerFigRequest(string path, string method, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new strangler-fig routing request.
+
+Parameters:
+- `path`: The request path or absolute URI that should be evaluated.
+- `method`: The request method to evaluate, such as `GET` or `POST`.
+- `metadata`: Optional host-specific metadata that can accompany the request.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigrequest-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional host-specific metadata that accompanied the request.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigrequest-method"></a>
+
+##### `Method`
+
+```csharp
+string Method { get; }
+```
+
+Gets the normalized request method.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigrequest-path"></a>
+
+##### `Path`
+
+```csharp
+string Path { get; }
+```
+
+Gets the request path or absolute URI that should be evaluated.
+
+<a id="type-cephalon-abstractions-patterns-stranglerfigroutedescriptor"></a>
+
+### `StranglerFigRouteDescriptor`
+
+Describes one strangler-fig route owned by a Cephalon module.
+
+#### Declaration
+```csharp
+public sealed class StranglerFigRouteDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-patterns-stranglerfigroutedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-cephalon-abstractions-patterns-stranglerfigtarget-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `StranglerFigRouteDescriptor`
+
+```csharp
+StranglerFigRouteDescriptor(string id, string sourceModuleId, string displayName, string description, string pathPrefix, StranglerFigTarget preferredTarget, string legacyEndpoint, string modernEndpoint, IReadOnlyList<string> methods, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a strangler-fig route descriptor.
+
+Parameters:
+- `id`: The stable route identifier.
+- `sourceModuleId`: The Cephalon module that owns the modern boundary for this route.
+- `displayName`: The operator-facing route name.
+- `description`: The human-readable description of the migration boundary.
+- `pathPrefix`: The rooted path prefix that this route should match.
+- `preferredTarget`: The preferred boundary for matched requests.
+- `legacyEndpoint`: The legacy boundary identifier or endpoint.
+- `modernEndpoint`: The modern Cephalon boundary identifier or endpoint.
+- `methods`: Optional request methods that this route should match.
+- `metadata`: Optional route metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigroutedescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable description of the migration boundary.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigroutedescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing route name.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigroutedescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable route identifier.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigroutedescriptor-legacyendpoint"></a>
+
+##### `LegacyEndpoint`
+
+```csharp
+string LegacyEndpoint { get; }
+```
+
+Gets the legacy boundary identifier or endpoint when one is configured.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigroutedescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional route metadata.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigroutedescriptor-methods"></a>
+
+##### `Methods`
+
+```csharp
+IReadOnlyList<string> Methods { get; }
+```
+
+Gets the normalized request methods that this route should match.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigroutedescriptor-modernendpoint"></a>
+
+##### `ModernEndpoint`
+
+```csharp
+string ModernEndpoint { get; }
+```
+
+Gets the modern Cephalon boundary identifier or endpoint when one is configured.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigroutedescriptor-pathprefix"></a>
+
+##### `PathPrefix`
+
+```csharp
+string PathPrefix { get; }
+```
+
+Gets the rooted path prefix that should match this route.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigroutedescriptor-preferredtarget"></a>
+
+##### `PreferredTarget`
+
+```csharp
+StranglerFigTarget PreferredTarget { get; }
+```
+
+Gets the preferred boundary for matched requests.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigroutedescriptor-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; }
+```
+
+Gets the module that owns the modern Cephalon boundary for this route.
+
+<a id="type-cephalon-abstractions-patterns-stranglerfigrouteresolution"></a>
+
+### `StranglerFigRouteResolution`
+
+Describes the strangler-fig routing decision made for one request.
+
+#### Declaration
+```csharp
+public sealed class StranglerFigRouteResolution
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-patterns-stranglerfigrouteresolution-ctor-system-string-system-string-system-string-system-string-system-string-system-string-cephalon-abstractions-patterns-stranglerfigtarget-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `StranglerFigRouteResolution`
+
+```csharp
+StranglerFigRouteResolution(string RouteId, string RouteDisplayName, string SourceModuleId, string RequestedPath, string RequestedMethod, string MatchedPathPrefix, StranglerFigTarget SelectedTarget, string SelectedEndpoint, string LegacyEndpoint, string ModernEndpoint, string ResolutionMode, IReadOnlyDictionary<string, string> Metadata)
+```
+
+Describes the strangler-fig routing decision made for one request.
+
+Parameters:
+- `RouteId`: The matched route identifier.
+- `RouteDisplayName`: The operator-facing route name.
+- `SourceModuleId`: The Cephalon module that owns the modern boundary.
+- `RequestedPath`: The normalized request path that was evaluated.
+- `RequestedMethod`: The normalized request method that was evaluated.
+- `MatchedPathPrefix`: The normalized route prefix that matched the request.
+- `SelectedTarget`: The migration boundary chosen for the request.
+- `SelectedEndpoint`: The concrete endpoint or boundary identifier that should receive the request.
+- `LegacyEndpoint`: The configured legacy endpoint when one exists.
+- `ModernEndpoint`: The configured modern endpoint when one exists.
+- `ResolutionMode`: The reason the boundary was chosen, such as `preferred-target` or `fallback-target`.
+- `Metadata`: Additional route metadata that traveled with the decision.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigrouteresolution-legacyendpoint"></a>
+
+##### `LegacyEndpoint`
+
+```csharp
+string LegacyEndpoint { get; set; }
+```
+
+The configured legacy endpoint when one exists.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigrouteresolution-matchedpathprefix"></a>
+
+##### `MatchedPathPrefix`
+
+```csharp
+string MatchedPathPrefix { get; set; }
+```
+
+The normalized route prefix that matched the request.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigrouteresolution-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; set; }
+```
+
+Additional route metadata that traveled with the decision.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigrouteresolution-modernendpoint"></a>
+
+##### `ModernEndpoint`
+
+```csharp
+string ModernEndpoint { get; set; }
+```
+
+The configured modern endpoint when one exists.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigrouteresolution-requestedmethod"></a>
+
+##### `RequestedMethod`
+
+```csharp
+string RequestedMethod { get; set; }
+```
+
+The normalized request method that was evaluated.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigrouteresolution-requestedpath"></a>
+
+##### `RequestedPath`
+
+```csharp
+string RequestedPath { get; set; }
+```
+
+The normalized request path that was evaluated.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigrouteresolution-resolutionmode"></a>
+
+##### `ResolutionMode`
+
+```csharp
+string ResolutionMode { get; set; }
+```
+
+The reason the boundary was chosen, such as `preferred-target` or `fallback-target`.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigrouteresolution-routedisplayname"></a>
+
+##### `RouteDisplayName`
+
+```csharp
+string RouteDisplayName { get; set; }
+```
+
+The operator-facing route name.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigrouteresolution-routeid"></a>
+
+##### `RouteId`
+
+```csharp
+string RouteId { get; set; }
+```
+
+The matched route identifier.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigrouteresolution-selectedendpoint"></a>
+
+##### `SelectedEndpoint`
+
+```csharp
+string SelectedEndpoint { get; set; }
+```
+
+The concrete endpoint or boundary identifier that should receive the request.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigrouteresolution-selectedtarget"></a>
+
+##### `SelectedTarget`
+
+```csharp
+StranglerFigTarget SelectedTarget { get; set; }
+```
+
+The migration boundary chosen for the request.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigrouteresolution-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; set; }
+```
+
+The Cephalon module that owns the modern boundary.
+
+<a id="type-cephalon-abstractions-patterns-stranglerfigtarget"></a>
+
+### `StranglerFigTarget`
+
+Identifies which side of a strangler-fig migration boundary currently owns traffic.
+
+#### Declaration
+```csharp
+public enum StranglerFigTarget
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-patterns-stranglerfigtarget-legacy"></a>
+
+##### `Legacy`
+
+```csharp
+const StranglerFigTarget Legacy
+```
+
+Routes traffic to the legacy boundary.
+
+<a id="member-f-cephalon-abstractions-patterns-stranglerfigtarget-modern"></a>
+
+##### `Modern`
+
+```csharp
+const StranglerFigTarget Modern
+```
+
+Routes traffic to the modern Cephalon boundary.
 
 <a id="namespace-cephalon-abstractions-resilience"></a>
 
@@ -14516,6 +16719,4897 @@ Gets the resolved tenant context when resolution succeeded.
 <a id="namespace-cephalon-abstractions-transports"></a>
 
 ## Namespace Cephalon.Abstractions.Transports
+
+<a id="type-cephalon-abstractions-transports-irestendpointauthoringpolicyruntimecatalog"></a>
+
+### `IRestEndpointAuthoringPolicyRuntimeCatalog`
+
+Exposes behavior-level REST authoring-policy visibility for the current runtime.
+
+Remarks: This surface complements `IRestEndpointPublicationGroupRuntimeCatalog` by making authoring-policy intent plus authoring-policy-specific runtime effect readable without reopening grouped publication answers, while also keeping explicitly configured policies visible even when no current REST endpoint candidates match the behavior boundary.
+
+#### Declaration
+```csharp
+public interface IRestEndpointAuthoringPolicyRuntimeCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-irestendpointauthoringpolicyruntimecatalog-policies"></a>
+
+##### `Policies`
+
+```csharp
+IReadOnlyList<RestEndpointAuthoringPolicyDescriptor> Policies { get; }
+```
+
+Gets the behavior-level REST authoring-policy answers visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-transports-irestendpointauthoringpolicyruntimecatalog-getbybehaviorid-system-string"></a>
+
+##### `GetByBehaviorId`
+
+```csharp
+RestEndpointAuthoringPolicyDescriptor GetByBehaviorId(string behaviorId)
+```
+
+Gets one REST authoring-policy answer by behavior identifier.
+
+Returns: The matching authoring-policy descriptor, or `null` when it is not present.
+
+Parameters:
+- `behaviorId`: The stable behavior identifier to resolve.
+
+<a id="type-cephalon-abstractions-transports-irestendpointcandidateruntimecatalog"></a>
+
+### `IRestEndpointCandidateRuntimeCatalog`
+
+Exposes the module-owned REST endpoint candidates visible to the current runtime.
+
+Remarks: This surface complements `IRestEndpointRuntimeCatalog` by showing candidate projections that were published or suppressed after precedence resolution rather than only the final active public REST endpoints.
+
+#### Declaration
+```csharp
+public interface IRestEndpointCandidateRuntimeCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-irestendpointcandidateruntimecatalog-candidates"></a>
+
+##### `Candidates`
+
+```csharp
+IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> Candidates { get; }
+```
+
+Gets all REST endpoint candidates visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-transports-irestendpointcandidateruntimecatalog-getbybehaviorid-system-string"></a>
+
+##### `GetByBehaviorId`
+
+```csharp
+IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> GetByBehaviorId(string behaviorId)
+```
+
+Gets all REST endpoint candidates that target the requested behavior identifier.
+
+Returns: The matching candidate descriptors, or an empty list when no candidates exist.
+
+Parameters:
+- `behaviorId`: The stable behavior identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-transports-irestendpointcandidateruntimecatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+RestEndpointCandidateRuntimeDescriptor GetById(string candidateId)
+```
+
+Gets one REST endpoint candidate by its stable identifier.
+
+Returns: The matching candidate descriptor, or `null` when it is not present.
+
+Parameters:
+- `candidateId`: The candidate identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-transports-irestendpointcandidateruntimecatalog-getbysourcemodule-system-string"></a>
+
+##### `GetBySourceModule`
+
+```csharp
+IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> GetBySourceModule(string sourceModuleId)
+```
+
+Gets all REST endpoint candidates owned by the requested source module.
+
+Returns: The matching candidate descriptors, or an empty list when no candidates exist.
+
+Parameters:
+- `sourceModuleId`: The stable source-module identifier to filter by.
+
+<a id="type-cephalon-abstractions-transports-irestendpointcandidateruntimeregistry"></a>
+
+### `IRestEndpointCandidateRuntimeRegistry`
+
+Collects REST endpoint candidates while the active host resolves publication precedence.
+
+Remarks: Host adapters and transport helpers use this registry to publish candidate visibility into `IRestEndpointCandidateRuntimeCatalog`. Consumer code should normally read the catalog instead of mutating the registry directly.
+
+#### Declaration
+```csharp
+public interface IRestEndpointCandidateRuntimeRegistry
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-transports-irestendpointcandidateruntimeregistry-clear"></a>
+
+##### `Clear`
+
+```csharp
+void Clear()
+```
+
+Clears any previously registered runtime candidates before a host rematerializes its REST surface.
+
+<a id="member-m-cephalon-abstractions-transports-irestendpointcandidateruntimeregistry-register-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor"></a>
+
+##### `Register`
+
+```csharp
+void Register(RestEndpointCandidateRuntimeDescriptor candidate)
+```
+
+Registers one REST endpoint candidate with the runtime catalog.
+
+Parameters:
+- `candidate`: The candidate descriptor to register.
+
+<a id="type-cephalon-abstractions-transports-irestendpointoverrideruntimecatalog"></a>
+
+### `IRestEndpointOverrideRuntimeCatalog`
+
+Exposes the REST endpoint override rules visible to the current runtime.
+
+Remarks: This surface complements `IRestEndpointCandidateRuntimeCatalog` by publishing the configured host-level override rules that can rewrite descriptor-backed module-owned REST candidates that participate in host governance, including shorthand candidates and explicit module-DSL route groups that opted in, before precedence resolution selects the final public REST surface.
+
+#### Declaration
+```csharp
+public interface IRestEndpointOverrideRuntimeCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-irestendpointoverrideruntimecatalog-overriderules"></a>
+
+##### `OverrideRules`
+
+```csharp
+IReadOnlyList<RestEndpointOverrideDescriptor> OverrideRules { get; }
+```
+
+Gets all REST endpoint override rules visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-transports-irestendpointoverrideruntimecatalog-getbybehaviorid-system-string"></a>
+
+##### `GetByBehaviorId`
+
+```csharp
+IReadOnlyList<RestEndpointOverrideDescriptor> GetByBehaviorId(string behaviorId)
+```
+
+Gets all REST endpoint override rules that target the requested behavior identifier.
+
+Returns: The matching override descriptors, or an empty list when no rules exist.
+
+Parameters:
+- `behaviorId`: The stable behavior identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-transports-irestendpointoverrideruntimecatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+RestEndpointOverrideDescriptor GetById(string overrideId)
+```
+
+Gets one REST endpoint override rule by its stable identifier.
+
+Returns: The matching override descriptor, or `null` when it is not present.
+
+Parameters:
+- `overrideId`: The override identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-transports-irestendpointoverrideruntimecatalog-getbysourcemodule-system-string"></a>
+
+##### `GetBySourceModule`
+
+```csharp
+IReadOnlyList<RestEndpointOverrideDescriptor> GetBySourceModule(string sourceModuleId)
+```
+
+Gets all REST endpoint override rules that target the requested source module identifier.
+
+Returns: The matching override descriptors, or an empty list when no rules exist.
+
+Parameters:
+- `sourceModuleId`: The stable source-module identifier to filter by.
+
+<a id="type-cephalon-abstractions-transports-irestendpointpublicationgroupruntimecatalog"></a>
+
+### `IRestEndpointPublicationGroupRuntimeCatalog`
+
+Exposes grouped REST endpoint publication visibility for behavior-backed public REST candidates.
+
+Remarks: This surface complements `IRestEndpointCandidateRuntimeCatalog` by grouping the candidate-level truth per behavior so operators can inspect published, precedence-suppressed, and governance-suppressed shorthand outcomes without reconstructing that story manually.
+
+#### Declaration
+```csharp
+public interface IRestEndpointPublicationGroupRuntimeCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-irestendpointpublicationgroupruntimecatalog-groups"></a>
+
+##### `Groups`
+
+```csharp
+IReadOnlyList<RestEndpointPublicationGroupDescriptor> Groups { get; }
+```
+
+Gets the grouped REST endpoint publication answers visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-transports-irestendpointpublicationgroupruntimecatalog-getbybehaviorid-system-string"></a>
+
+##### `GetByBehaviorId`
+
+```csharp
+RestEndpointPublicationGroupDescriptor GetByBehaviorId(string behaviorId)
+```
+
+Gets one grouped REST endpoint publication answer by behavior identifier.
+
+Returns: The matching grouped publication answer, or `null` when it is not present.
+
+Parameters:
+- `behaviorId`: The stable behavior identifier to resolve.
+
+<a id="type-cephalon-abstractions-transports-irestendpointruntimecatalog"></a>
+
+### `IRestEndpointRuntimeCatalog`
+
+Exposes the resolved public REST endpoints visible to the current runtime.
+
+Remarks: This surface is runtime-facing rather than app-model-facing because it reflects the effective REST endpoints published by the active host adapter after route prefixes, API version defaults, and endpoint materialization have been resolved.
+
+#### Declaration
+```csharp
+public interface IRestEndpointRuntimeCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-irestendpointruntimecatalog-endpoints"></a>
+
+##### `Endpoints`
+
+```csharp
+IReadOnlyList<RestEndpointRuntimeDescriptor> Endpoints { get; }
+```
+
+Gets all resolved public REST endpoints visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-transports-irestendpointruntimecatalog-getbybehaviorid-system-string"></a>
+
+##### `GetByBehaviorId`
+
+```csharp
+IReadOnlyList<RestEndpointRuntimeDescriptor> GetByBehaviorId(string behaviorId)
+```
+
+Gets all resolved public REST endpoints that dispatch through the requested behavior identifier.
+
+Returns: The matching endpoint descriptors, or an empty list when the behavior is not exposed publicly.
+
+Parameters:
+- `behaviorId`: The stable behavior identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-transports-irestendpointruntimecatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+RestEndpointRuntimeDescriptor GetById(string endpointId)
+```
+
+Gets one resolved public REST endpoint by its stable identifier.
+
+Returns: The matching endpoint descriptor, or `null` when it is not active.
+
+Parameters:
+- `endpointId`: The endpoint identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-transports-irestendpointruntimecatalog-getbysourcemodule-system-string"></a>
+
+##### `GetBySourceModule`
+
+```csharp
+IReadOnlyList<RestEndpointRuntimeDescriptor> GetBySourceModule(string sourceModuleId)
+```
+
+Gets all resolved public REST endpoints owned by the requested source module.
+
+Returns: The matching endpoint descriptors, or an empty list when the module is not active.
+
+Parameters:
+- `sourceModuleId`: The stable source-module identifier to filter by.
+
+<a id="type-cephalon-abstractions-transports-irestendpointruntimeregistry"></a>
+
+### `IRestEndpointRuntimeRegistry`
+
+Collects resolved public REST endpoints while the active host materializes transport routes.
+
+Remarks: Host adapters and transport helpers use this registry to publish the resolved Cephalon-owned REST endpoint surface into `IRestEndpointRuntimeCatalog`. Consumer code should normally read the catalog instead of mutating the registry directly.
+
+#### Declaration
+```csharp
+public interface IRestEndpointRuntimeRegistry
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-transports-irestendpointruntimeregistry-clear"></a>
+
+##### `Clear`
+
+```csharp
+void Clear()
+```
+
+Clears any previously registered runtime endpoints before a host rematerializes its REST surface.
+
+<a id="member-m-cephalon-abstractions-transports-irestendpointruntimeregistry-register-cephalon-abstractions-transports-restendpointruntimedescriptor"></a>
+
+##### `Register`
+
+```csharp
+void Register(RestEndpointRuntimeDescriptor endpoint)
+```
+
+Registers one resolved public REST endpoint with the runtime catalog.
+
+Parameters:
+- `endpoint`: The resolved endpoint descriptor to register.
+
+<a id="type-cephalon-abstractions-transports-irestendpointsuppressionruntimecatalog"></a>
+
+### `IRestEndpointSuppressionRuntimeCatalog`
+
+Exposes the REST endpoint suppression rules visible to the current runtime.
+
+Remarks: This surface complements `IRestEndpointCandidateRuntimeCatalog` by publishing the configured host-level suppression rules that can hide descriptor-backed module-owned REST candidates that participate in host governance, including shorthand candidates and explicit module-DSL route groups that opted in, before precedence resolution selects the final public REST surface.
+
+#### Declaration
+```csharp
+public interface IRestEndpointSuppressionRuntimeCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-irestendpointsuppressionruntimecatalog-suppressions"></a>
+
+##### `Suppressions`
+
+```csharp
+IReadOnlyList<RestEndpointSuppressionDescriptor> Suppressions { get; }
+```
+
+Gets all REST endpoint suppression rules visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-transports-irestendpointsuppressionruntimecatalog-getbybehaviorid-system-string"></a>
+
+##### `GetByBehaviorId`
+
+```csharp
+IReadOnlyList<RestEndpointSuppressionDescriptor> GetByBehaviorId(string behaviorId)
+```
+
+Gets all REST endpoint suppression rules that target the requested behavior identifier.
+
+Returns: The matching suppression descriptors, or an empty list when no rules exist.
+
+Parameters:
+- `behaviorId`: The stable behavior identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-transports-irestendpointsuppressionruntimecatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+RestEndpointSuppressionDescriptor GetById(string suppressionId)
+```
+
+Gets one REST endpoint suppression rule by its stable identifier.
+
+Returns: The matching suppression descriptor, or `null` when it is not present.
+
+Parameters:
+- `suppressionId`: The suppression identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-transports-irestendpointsuppressionruntimecatalog-getbysourcemodule-system-string"></a>
+
+##### `GetBySourceModule`
+
+```csharp
+IReadOnlyList<RestEndpointSuppressionDescriptor> GetBySourceModule(string sourceModuleId)
+```
+
+Gets all REST endpoint suppression rules that target the requested source module identifier.
+
+Returns: The matching suppression descriptors, or an empty list when no rules exist.
+
+Parameters:
+- `sourceModuleId`: The stable source-module identifier to filter by.
+
+<a id="type-cephalon-abstractions-transports-restendpointauthoringpolicyauthoringstyledescriptor"></a>
+
+### `RestEndpointAuthoringPolicyAuthoringStyleDescriptor`
+
+Describes one authoring-style partition inside a rule-centric REST authoring-policy runtime answer.
+
+Remarks: This descriptor keeps one behavior-level authoring-policy answer readable without reopening the broader publication-group surface when operators need to understand how authoring-policy, precedence, and later governance outcomes distribute across authoring styles.
+
+#### Declaration
+```csharp
+public sealed class RestEndpointAuthoringPolicyAuthoringStyleDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-transports-restendpointauthoringpolicyauthoringstyledescriptor-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointauthoringpolicysuppressionkind-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointauthoringpolicysuppressionsummarydescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernancesuppressionsummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceoverridesummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceskippedsuppressionsummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceskippedoverridesummarydescriptor"></a>
+
+##### `RestEndpointAuthoringPolicyAuthoringStyleDescriptor`
+
+```csharp
+RestEndpointAuthoringPolicyAuthoringStyleDescriptor(string authoringStyle, IReadOnlyList<string> candidateIds, IReadOnlyList<string> retainedCandidateIds, IReadOnlyList<string> publishedCandidateIds, IReadOnlyList<string> precedenceSuppressedCandidateIds, IReadOnlyList<string> governanceSuppressedCandidateIds, IReadOnlyList<string> suppressedCandidateIds, IReadOnlyList<RestEndpointAuthoringPolicySuppressionKind> suppressionKinds, IReadOnlyList<RestEndpointAuthoringPolicySuppressionSummaryDescriptor> suppressionSummaries, IReadOnlyList<string> hostGovernanceEligibleCandidateIds, IReadOnlyList<string> hostGovernanceIneligibleCandidateIds, IReadOnlyList<string> skippedSuppressionIds, IReadOnlyList<string> skippedOverrideIds, IReadOnlyList<RestEndpointGovernanceSuppressionSummaryDescriptor> governanceSuppressionSummaries, IReadOnlyList<RestEndpointGovernanceOverrideSummaryDescriptor> governanceOverrideSummaries, IReadOnlyList<RestEndpointGovernanceSkippedSuppressionSummaryDescriptor> skippedSuppressionSummaries, IReadOnlyList<RestEndpointGovernanceSkippedOverrideSummaryDescriptor> skippedOverrideSummaries)
+```
+
+Creates an authoring-style partition for a rule-centric REST authoring-policy runtime answer.
+
+Parameters:
+- `authoringStyle`: The normalized authoring style summarized by this entry.
+- `candidateIds`: The ordered candidate identifiers contributed by this authoring style before authoring-policy enforcement is considered.
+- `retainedCandidateIds`: The ordered candidate identifiers that survived authoring-policy enforcement for this authoring style, even if later precedence or host governance suppressed them.
+- `publishedCandidateIds`: The ordered candidate identifiers that remain published after all runtime publication steps for this authoring style.
+- `precedenceSuppressedCandidateIds`: The ordered candidate identifiers that survived authoring policy but were later suppressed by candidate precedence for this authoring style.
+- `governanceSuppressedCandidateIds`: The ordered candidate identifiers that survived authoring policy but were later suppressed by host-level REST governance for this authoring style.
+- `suppressedCandidateIds`: The ordered candidate identifiers that were suppressed by behavior-level authoring-policy enforcement for this authoring style.
+- `suppressionKinds`: The grouped authoring-policy suppression kinds that appear in the runtime effect for this authoring style.
+- `suppressionSummaries`: The grouped authoring-policy suppression outcomes summarized by suppression kind for this authoring style.
+- `hostGovernanceEligibleCandidateIds`: The ordered candidate identifiers whose original projections allowed host governance to participate for this authoring style.
+- `hostGovernanceIneligibleCandidateIds`: The ordered candidate identifiers whose original projections kept host governance out of scope for this authoring style.
+- `skippedSuppressionIds`: The ordered suppression-rule identifiers that targeted host-governance-ineligible candidates for this authoring style.
+- `skippedOverrideIds`: The ordered override-rule identifiers that targeted host-governance-ineligible candidates for this authoring style.
+- `governanceSuppressionSummaries`: The grouped host-governance suppression-rule outcomes summarized by rule for this authoring style.
+- `governanceOverrideSummaries`: The grouped host-governance override-rule outcomes summarized by rule for this authoring style.
+- `skippedSuppressionSummaries`: The grouped host-governance-skipped suppression-rule outcomes summarized by rule for this authoring style.
+- `skippedOverrideSummaries`: The grouped host-governance-skipped override-rule outcomes summarized by rule for this authoring style.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicyauthoringstyledescriptor-authoringstyle"></a>
+
+##### `AuthoringStyle`
+
+```csharp
+string AuthoringStyle { get; }
+```
+
+Gets the normalized authoring style summarized by this entry.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicyauthoringstyledescriptor-candidateids"></a>
+
+##### `CandidateIds`
+
+```csharp
+IReadOnlyList<string> CandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers contributed by this authoring style.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicyauthoringstyledescriptor-governanceoverridesummaries"></a>
+
+##### `GovernanceOverrideSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointGovernanceOverrideSummaryDescriptor> GovernanceOverrideSummaries { get; }
+```
+
+Gets the grouped host-governance override-rule outcomes summarized by rule for this authoring style.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicyauthoringstyledescriptor-governancesuppressedcandidateids"></a>
+
+##### `GovernanceSuppressedCandidateIds`
+
+```csharp
+IReadOnlyList<string> GovernanceSuppressedCandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers that survived authoring policy but were later suppressed by host governance for this authoring style.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicyauthoringstyledescriptor-governancesuppressionsummaries"></a>
+
+##### `GovernanceSuppressionSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointGovernanceSuppressionSummaryDescriptor> GovernanceSuppressionSummaries { get; }
+```
+
+Gets the grouped host-governance suppression-rule outcomes summarized by rule for this authoring style.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicyauthoringstyledescriptor-hostgovernanceeligiblecandidateids"></a>
+
+##### `HostGovernanceEligibleCandidateIds`
+
+```csharp
+IReadOnlyList<string> HostGovernanceEligibleCandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers whose original projections allowed host governance to participate for this authoring style.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicyauthoringstyledescriptor-hostgovernanceineligiblecandidateids"></a>
+
+##### `HostGovernanceIneligibleCandidateIds`
+
+```csharp
+IReadOnlyList<string> HostGovernanceIneligibleCandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers whose original projections kept host governance out of scope for this authoring style.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicyauthoringstyledescriptor-precedencesuppressedcandidateids"></a>
+
+##### `PrecedenceSuppressedCandidateIds`
+
+```csharp
+IReadOnlyList<string> PrecedenceSuppressedCandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers that survived authoring policy but were later suppressed by precedence for this authoring style.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicyauthoringstyledescriptor-publishedcandidateids"></a>
+
+##### `PublishedCandidateIds`
+
+```csharp
+IReadOnlyList<string> PublishedCandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers that remain published after all runtime publication steps for this authoring style.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicyauthoringstyledescriptor-retainedcandidateids"></a>
+
+##### `RetainedCandidateIds`
+
+```csharp
+IReadOnlyList<string> RetainedCandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers that survived authoring-policy enforcement for this authoring style.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicyauthoringstyledescriptor-skippedoverrideids"></a>
+
+##### `SkippedOverrideIds`
+
+```csharp
+IReadOnlyList<string> SkippedOverrideIds { get; }
+```
+
+Gets the ordered override-rule identifiers that targeted host-governance-ineligible candidates for this authoring style.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicyauthoringstyledescriptor-skippedoverridesummaries"></a>
+
+##### `SkippedOverrideSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointGovernanceSkippedOverrideSummaryDescriptor> SkippedOverrideSummaries { get; }
+```
+
+Gets the grouped host-governance-skipped override-rule outcomes summarized by rule for this authoring style.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicyauthoringstyledescriptor-skippedsuppressionids"></a>
+
+##### `SkippedSuppressionIds`
+
+```csharp
+IReadOnlyList<string> SkippedSuppressionIds { get; }
+```
+
+Gets the ordered suppression-rule identifiers that targeted host-governance-ineligible candidates for this authoring style.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicyauthoringstyledescriptor-skippedsuppressionsummaries"></a>
+
+##### `SkippedSuppressionSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointGovernanceSkippedSuppressionSummaryDescriptor> SkippedSuppressionSummaries { get; }
+```
+
+Gets the grouped host-governance-skipped suppression-rule outcomes summarized by rule for this authoring style.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicyauthoringstyledescriptor-suppressedcandidateids"></a>
+
+##### `SuppressedCandidateIds`
+
+```csharp
+IReadOnlyList<string> SuppressedCandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers that were suppressed by behavior-level authoring-policy enforcement for this authoring style.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicyauthoringstyledescriptor-suppressionkinds"></a>
+
+##### `SuppressionKinds`
+
+```csharp
+IReadOnlyList<RestEndpointAuthoringPolicySuppressionKind> SuppressionKinds { get; }
+```
+
+Gets the grouped authoring-policy suppression kinds visible in the runtime effect for this authoring style.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicyauthoringstyledescriptor-suppressionsummaries"></a>
+
+##### `SuppressionSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointAuthoringPolicySuppressionSummaryDescriptor> SuppressionSummaries { get; }
+```
+
+Gets the grouped authoring-policy suppression outcomes summarized by suppression kind for this authoring style.
+
+<a id="type-cephalon-abstractions-transports-restendpointauthoringpolicydescriptor"></a>
+
+### `RestEndpointAuthoringPolicyDescriptor`
+
+Describes one behavior-level REST authoring policy together with its runtime effect.
+
+Remarks: This descriptor keeps authoring-policy intent readable as a first-class runtime answer while preserving separate buckets for authoring-policy suppression, later precedence suppression, and later governance suppression.
+
+#### Declaration
+```csharp
+public sealed class RestEndpointAuthoringPolicyDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-transports-restendpointauthoringpolicydescriptor-ctor-system-string-system-boolean-system-boolean-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointauthoringpolicysuppressionkind-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointauthoringpolicysuppressionsummarydescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointauthoringpolicyauthoringstyledescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernancesuppressionsummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceoverridesummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceskippedsuppressionsummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceskippedoverridesummarydescriptor"></a>
+
+##### `RestEndpointAuthoringPolicyDescriptor`
+
+```csharp
+RestEndpointAuthoringPolicyDescriptor(string behaviorId, bool isConfigured, bool allowMultiplePublishedCandidates, string preferredAuthoringStyle, IReadOnlyList<string> allowedAuthoringStyles, IReadOnlyList<string> disallowedAuthoringStyles, IReadOnlyList<string> candidateIds, IReadOnlyList<string> retainedCandidateIds, IReadOnlyList<string> publishedCandidateIds, IReadOnlyList<string> precedenceSuppressedCandidateIds, IReadOnlyList<string> governanceSuppressedCandidateIds, IReadOnlyList<string> suppressedCandidateIds, IReadOnlyList<RestEndpointAuthoringPolicySuppressionKind> suppressionKinds, IReadOnlyList<RestEndpointAuthoringPolicySuppressionSummaryDescriptor> suppressionSummaries, IReadOnlyList<string> hostGovernanceEligibleCandidateIds, IReadOnlyList<string> hostGovernanceIneligibleCandidateIds, IReadOnlyList<string> skippedSuppressionIds, IReadOnlyList<string> skippedOverrideIds, IReadOnlyList<RestEndpointAuthoringPolicyAuthoringStyleDescriptor> authoringStyleSummaries, IReadOnlyList<RestEndpointGovernanceSuppressionSummaryDescriptor> governanceSuppressionSummaries, IReadOnlyList<RestEndpointGovernanceOverrideSummaryDescriptor> governanceOverrideSummaries, IReadOnlyList<RestEndpointGovernanceSkippedSuppressionSummaryDescriptor> skippedSuppressionSummaries, IReadOnlyList<RestEndpointGovernanceSkippedOverrideSummaryDescriptor> skippedOverrideSummaries)
+```
+
+Creates a REST authoring-policy runtime descriptor.
+
+Parameters:
+- `behaviorId`: The stable behavior identifier that this policy applies to.
+- `isConfigured`: `true` when the policy was supplied through host configuration; otherwise `false` when the runtime is exposing the implicit default policy.
+- `allowMultiplePublishedCandidates`: `true` when the policy explicitly allows more than one projection candidate to remain published for the same behavior boundary after authoring-policy enforcement.
+- `preferredAuthoringStyle`: The normalized preferred authoring style when the policy declares one.
+- `allowedAuthoringStyles`: The normalized authoring styles that the policy explicitly allows for this behavior boundary when one or more are declared.
+- `disallowedAuthoringStyles`: The normalized authoring styles that the policy explicitly disallows for this behavior boundary when one or more are declared.
+- `candidateIds`: The ordered candidate identifiers visible for this behavior boundary before authoring-policy enforcement is considered.
+- `retainedCandidateIds`: The ordered candidate identifiers that survived authoring-policy enforcement, even if a later precedence or host-governance step suppressed them.
+- `publishedCandidateIds`: The ordered candidate identifiers that remain published after all runtime publication steps.
+- `precedenceSuppressedCandidateIds`: The ordered candidate identifiers that survived authoring policy but were later suppressed by candidate precedence.
+- `governanceSuppressedCandidateIds`: The ordered candidate identifiers that survived authoring policy but were later suppressed by host-level REST governance.
+- `suppressedCandidateIds`: The ordered candidate identifiers that were suppressed by behavior-level authoring-policy enforcement.
+- `suppressionKinds`: The grouped authoring-policy suppression kinds that appear in the runtime effect.
+- `suppressionSummaries`: The grouped authoring-policy suppression outcomes summarized by suppression kind.
+- `hostGovernanceEligibleCandidateIds`: The ordered candidate identifiers whose original projections allowed host governance to participate for this behavior boundary.
+- `hostGovernanceIneligibleCandidateIds`: The ordered candidate identifiers whose original projections kept host governance out of scope for this behavior boundary.
+- `skippedSuppressionIds`: The ordered suppression-rule identifiers that targeted host-governance-ineligible candidates in this behavior boundary.
+- `skippedOverrideIds`: The ordered override-rule identifiers that targeted host-governance-ineligible candidates in this behavior boundary.
+- `authoringStyleSummaries`: The per-authoring-style runtime buckets that explain how this policy's candidate, retained, published, precedence-suppressed, governance-suppressed, and authoring-policy-suppressed outcomes distribute across authoring styles.
+- `governanceSuppressionSummaries`: The grouped host-governance suppression-rule outcomes summarized by rule for this behavior boundary.
+- `governanceOverrideSummaries`: The grouped host-governance override-rule outcomes summarized by rule for this behavior boundary.
+- `skippedSuppressionSummaries`: The grouped host-governance-skipped suppression-rule outcomes summarized by rule for this behavior boundary.
+- `skippedOverrideSummaries`: The grouped host-governance-skipped override-rule outcomes summarized by rule for this behavior boundary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicydescriptor-allowedauthoringstyles"></a>
+
+##### `AllowedAuthoringStyles`
+
+```csharp
+IReadOnlyList<string> AllowedAuthoringStyles { get; }
+```
+
+Gets the normalized authoring styles that the policy explicitly allows.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicydescriptor-allowmultiplepublishedcandidates"></a>
+
+##### `AllowMultiplePublishedCandidates`
+
+```csharp
+bool AllowMultiplePublishedCandidates { get; }
+```
+
+Gets a value indicating whether the policy explicitly allows multiple published candidates for the same behavior boundary after authoring-policy enforcement.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicydescriptor-authoringstylesummaries"></a>
+
+##### `AuthoringStyleSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointAuthoringPolicyAuthoringStyleDescriptor> AuthoringStyleSummaries { get; }
+```
+
+Gets the per-authoring-style runtime buckets that explain how this policy's outcomes distribute across authoring styles.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicydescriptor-behaviorid"></a>
+
+##### `BehaviorId`
+
+```csharp
+string BehaviorId { get; }
+```
+
+Gets the stable behavior identifier that this authoring policy applies to.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicydescriptor-candidateids"></a>
+
+##### `CandidateIds`
+
+```csharp
+IReadOnlyList<string> CandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers visible for this behavior boundary.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicydescriptor-disallowedauthoringstyles"></a>
+
+##### `DisallowedAuthoringStyles`
+
+```csharp
+IReadOnlyList<string> DisallowedAuthoringStyles { get; }
+```
+
+Gets the normalized authoring styles that the policy explicitly disallows.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicydescriptor-governanceoverridesummaries"></a>
+
+##### `GovernanceOverrideSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointGovernanceOverrideSummaryDescriptor> GovernanceOverrideSummaries { get; }
+```
+
+Gets the grouped host-governance override-rule outcomes summarized by rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicydescriptor-governancesuppressedcandidateids"></a>
+
+##### `GovernanceSuppressedCandidateIds`
+
+```csharp
+IReadOnlyList<string> GovernanceSuppressedCandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers that survived authoring policy but were later suppressed by host governance.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicydescriptor-governancesuppressionsummaries"></a>
+
+##### `GovernanceSuppressionSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointGovernanceSuppressionSummaryDescriptor> GovernanceSuppressionSummaries { get; }
+```
+
+Gets the grouped host-governance suppression-rule outcomes summarized by rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicydescriptor-hostgovernanceeligiblecandidateids"></a>
+
+##### `HostGovernanceEligibleCandidateIds`
+
+```csharp
+IReadOnlyList<string> HostGovernanceEligibleCandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers whose original projections allowed host governance to participate.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicydescriptor-hostgovernanceineligiblecandidateids"></a>
+
+##### `HostGovernanceIneligibleCandidateIds`
+
+```csharp
+IReadOnlyList<string> HostGovernanceIneligibleCandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers whose original projections kept host governance out of scope.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicydescriptor-isconfigured"></a>
+
+##### `IsConfigured`
+
+```csharp
+bool IsConfigured { get; }
+```
+
+Gets a value indicating whether this authoring policy came from explicit host configuration.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicydescriptor-precedencesuppressedcandidateids"></a>
+
+##### `PrecedenceSuppressedCandidateIds`
+
+```csharp
+IReadOnlyList<string> PrecedenceSuppressedCandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers that survived authoring policy but were later suppressed by precedence.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicydescriptor-preferredauthoringstyle"></a>
+
+##### `PreferredAuthoringStyle`
+
+```csharp
+string PreferredAuthoringStyle { get; }
+```
+
+Gets the normalized preferred authoring style when the policy declares one.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicydescriptor-publishedcandidateids"></a>
+
+##### `PublishedCandidateIds`
+
+```csharp
+IReadOnlyList<string> PublishedCandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers that remain published after all runtime publication steps.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicydescriptor-retainedcandidateids"></a>
+
+##### `RetainedCandidateIds`
+
+```csharp
+IReadOnlyList<string> RetainedCandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers that survived authoring-policy enforcement.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicydescriptor-skippedoverrideids"></a>
+
+##### `SkippedOverrideIds`
+
+```csharp
+IReadOnlyList<string> SkippedOverrideIds { get; }
+```
+
+Gets the ordered override-rule identifiers that targeted host-governance-ineligible candidates in this behavior boundary.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicydescriptor-skippedoverridesummaries"></a>
+
+##### `SkippedOverrideSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointGovernanceSkippedOverrideSummaryDescriptor> SkippedOverrideSummaries { get; }
+```
+
+Gets the grouped host-governance-skipped override-rule outcomes summarized by rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicydescriptor-skippedsuppressionids"></a>
+
+##### `SkippedSuppressionIds`
+
+```csharp
+IReadOnlyList<string> SkippedSuppressionIds { get; }
+```
+
+Gets the ordered suppression-rule identifiers that targeted host-governance-ineligible candidates in this behavior boundary.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicydescriptor-skippedsuppressionsummaries"></a>
+
+##### `SkippedSuppressionSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointGovernanceSkippedSuppressionSummaryDescriptor> SkippedSuppressionSummaries { get; }
+```
+
+Gets the grouped host-governance-skipped suppression-rule outcomes summarized by rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicydescriptor-suppressedcandidateids"></a>
+
+##### `SuppressedCandidateIds`
+
+```csharp
+IReadOnlyList<string> SuppressedCandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers that were suppressed by behavior-level authoring-policy enforcement.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicydescriptor-suppressionkinds"></a>
+
+##### `SuppressionKinds`
+
+```csharp
+IReadOnlyList<RestEndpointAuthoringPolicySuppressionKind> SuppressionKinds { get; }
+```
+
+Gets the grouped authoring-policy suppression kinds visible in the runtime effect.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicydescriptor-suppressionsummaries"></a>
+
+##### `SuppressionSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointAuthoringPolicySuppressionSummaryDescriptor> SuppressionSummaries { get; }
+```
+
+Gets the grouped authoring-policy suppression outcomes summarized by suppression kind.
+
+<a id="type-cephalon-abstractions-transports-restendpointauthoringpolicysuppressionkind"></a>
+
+### `RestEndpointAuthoringPolicySuppressionKind`
+
+Describes why a REST endpoint candidate was suppressed by authoring-policy enforcement.
+
+#### Declaration
+```csharp
+public enum RestEndpointAuthoringPolicySuppressionKind
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-transports-restendpointauthoringpolicysuppressionkind-disallowedauthoringstyle"></a>
+
+##### `DisallowedAuthoringStyle`
+
+```csharp
+const RestEndpointAuthoringPolicySuppressionKind DisallowedAuthoringStyle
+```
+
+The candidate authoring style is explicitly disallowed by the behavior-level authoring policy.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointauthoringpolicysuppressionkind-notallowedauthoringstyle"></a>
+
+##### `NotAllowedAuthoringStyle`
+
+```csharp
+const RestEndpointAuthoringPolicySuppressionKind NotAllowedAuthoringStyle
+```
+
+The candidate authoring style is outside the explicitly allowed authoring-style set.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointauthoringpolicysuppressionkind-preferredauthoringstyleselected"></a>
+
+##### `PreferredAuthoringStyleSelected`
+
+```csharp
+const RestEndpointAuthoringPolicySuppressionKind PreferredAuthoringStyleSelected
+```
+
+The candidate was suppressed because a preferred authoring style is present for the behavior boundary.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointauthoringpolicysuppressionkind-unspecified"></a>
+
+##### `Unspecified`
+
+```csharp
+const RestEndpointAuthoringPolicySuppressionKind Unspecified
+```
+
+The candidate was not classified with an authoring-policy suppression kind.
+
+<a id="type-cephalon-abstractions-transports-restendpointauthoringpolicysuppressionkindextensions"></a>
+
+### `RestEndpointAuthoringPolicySuppressionKindExtensions`
+
+Provides canonical wire-name helpers for `RestEndpointAuthoringPolicySuppressionKind`.
+
+#### Declaration
+```csharp
+public static class RestEndpointAuthoringPolicySuppressionKindExtensions
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-transports-restendpointauthoringpolicysuppressionkindextensions-getwirename-cephalon-abstractions-transports-restendpointauthoringpolicysuppressionkind"></a>
+
+##### `GetWireName`
+
+```csharp
+string GetWireName(this RestEndpointAuthoringPolicySuppressionKind kind)
+```
+
+Gets the stable wire name used by JSON serialization and runtime introspection for the suppression kind.
+
+Returns: The stable wire name.
+
+Parameters:
+- `kind`: The suppression kind.
+
+<a id="member-m-cephalon-abstractions-transports-restendpointauthoringpolicysuppressionkindextensions-tryparsewirename-system-string-cephalon-abstractions-transports-restendpointauthoringpolicysuppressionkind"></a>
+
+##### `TryParseWireName`
+
+```csharp
+bool TryParseWireName(string value, out RestEndpointAuthoringPolicySuppressionKind kind)
+```
+
+Tries to parse the stable wire name used by JSON serialization and runtime introspection into a suppression kind.
+
+Returns: `true` when the wire name maps to a supported suppression kind; otherwise, `false`.
+
+Parameters:
+- `value`: The wire name to parse.
+- `kind`: The parsed suppression kind when the wire name is recognized.
+
+<a id="type-cephalon-abstractions-transports-restendpointauthoringpolicysuppressionsummarydescriptor"></a>
+
+### `RestEndpointAuthoringPolicySuppressionSummaryDescriptor`
+
+Describes one grouped authoring-policy suppression outcome for a rule-centric REST runtime answer.
+
+#### Declaration
+```csharp
+public sealed class RestEndpointAuthoringPolicySuppressionSummaryDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-transports-restendpointauthoringpolicysuppressionsummarydescriptor-ctor-cephalon-abstractions-transports-restendpointauthoringpolicysuppressionkind-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `RestEndpointAuthoringPolicySuppressionSummaryDescriptor`
+
+```csharp
+RestEndpointAuthoringPolicySuppressionSummaryDescriptor(RestEndpointAuthoringPolicySuppressionKind kind, IReadOnlyList<string> candidateIds)
+```
+
+Creates an authoring-policy suppression summary descriptor.
+
+Parameters:
+- `kind`: The authoring-policy suppression kind summarized by this entry.
+- `candidateIds`: The ordered candidate identifiers suppressed by this suppression kind.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicysuppressionsummarydescriptor-candidateids"></a>
+
+##### `CandidateIds`
+
+```csharp
+IReadOnlyList<string> CandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers suppressed by this suppression kind.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointauthoringpolicysuppressionsummarydescriptor-kind"></a>
+
+##### `Kind`
+
+```csharp
+RestEndpointAuthoringPolicySuppressionKind Kind { get; }
+```
+
+Gets the authoring-policy suppression kind summarized by this entry.
+
+<a id="type-cephalon-abstractions-transports-restendpointbindingdescriptor"></a>
+
+### `RestEndpointBindingDescriptor`
+
+Describes one resolved request-binding rule for a public REST endpoint.
+
+#### Declaration
+```csharp
+public sealed class RestEndpointBindingDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-transports-restendpointbindingdescriptor-ctor-system-string-cephalon-abstractions-transports-restendpointbindingsource-system-string"></a>
+
+##### `RestEndpointBindingDescriptor`
+
+```csharp
+RestEndpointBindingDescriptor(string propertyName, RestEndpointBindingSource source, string name)
+```
+
+Creates a resolved REST endpoint binding descriptor.
+
+Parameters:
+- `propertyName`: The target request-model property name.
+- `source`: The HTTP request source that supplies the value.
+- `name`: The route/query/header/body member name when one is available.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-restendpointbindingdescriptor-name"></a>
+
+##### `Name`
+
+```csharp
+string Name { get; }
+```
+
+Gets the route/query/header/body member name when one is available.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointbindingdescriptor-propertyname"></a>
+
+##### `PropertyName`
+
+```csharp
+string PropertyName { get; }
+```
+
+Gets the target request-model property name.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointbindingdescriptor-source"></a>
+
+##### `Source`
+
+```csharp
+RestEndpointBindingSource Source { get; }
+```
+
+Gets the HTTP request source that supplies the value.
+
+<a id="type-cephalon-abstractions-transports-restendpointbindingfallbackmode"></a>
+
+### `RestEndpointBindingFallbackMode`
+
+Describes a resolved REST request-binding fallback mode when the runtime preserves behavior beyond the explicit binding plan.
+
+#### Declaration
+```csharp
+public enum RestEndpointBindingFallbackMode
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-transports-restendpointbindingfallbackmode-preserveremainingbodyfallback"></a>
+
+##### `PreserveRemainingBodyFallback`
+
+```csharp
+const RestEndpointBindingFallbackMode PreserveRemainingBodyFallback
+```
+
+Preserves the deterministic remaining request-body fallback surface for unbound properties on body-capable endpoints that still expose an explicit binding plan.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointbindingfallbackmode-preservesourceimplicitfallback"></a>
+
+##### `PreserveSourceImplicitFallback`
+
+```csharp
+const RestEndpointBindingFallbackMode PreserveSourceImplicitFallback
+```
+
+Preserves the remaining implicit fallback surface from the source shorthand projection.
+
+<a id="type-cephalon-abstractions-transports-restendpointbindingfallbackmodeextensions"></a>
+
+### `RestEndpointBindingFallbackModeExtensions`
+
+Provides canonical wire-name helpers for `RestEndpointBindingFallbackMode`.
+
+#### Declaration
+```csharp
+public static class RestEndpointBindingFallbackModeExtensions
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-transports-restendpointbindingfallbackmodeextensions-getwirename-cephalon-abstractions-transports-restendpointbindingfallbackmode"></a>
+
+##### `GetWireName`
+
+```csharp
+string GetWireName(this RestEndpointBindingFallbackMode mode)
+```
+
+Gets the stable wire name used by JSON serialization and compatibility metadata for the fallback mode.
+
+Returns: The stable wire name.
+
+Parameters:
+- `mode`: The fallback mode.
+
+<a id="member-m-cephalon-abstractions-transports-restendpointbindingfallbackmodeextensions-tryparsewirename-system-string-cephalon-abstractions-transports-restendpointbindingfallbackmode"></a>
+
+##### `TryParseWireName`
+
+```csharp
+bool TryParseWireName(string value, out RestEndpointBindingFallbackMode mode)
+```
+
+Tries to parse the stable wire name used by JSON serialization and compatibility metadata into a fallback mode.
+
+Returns: `true` when the wire name maps to a supported fallback mode; otherwise, `false`.
+
+Parameters:
+- `value`: The wire name to parse.
+- `mode`: The parsed fallback mode when the wire name is recognized.
+
+<a id="type-cephalon-abstractions-transports-restendpointbindingsource"></a>
+
+### `RestEndpointBindingSource`
+
+Identifies which part of the HTTP request populates one resolved REST endpoint input binding.
+
+#### Declaration
+```csharp
+public enum RestEndpointBindingSource
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-transports-restendpointbindingsource-body"></a>
+
+##### `Body`
+
+```csharp
+const RestEndpointBindingSource Body
+```
+
+Reads the value from the JSON request body.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointbindingsource-header"></a>
+
+##### `Header`
+
+```csharp
+const RestEndpointBindingSource Header
+```
+
+Reads the value from an HTTP header.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointbindingsource-query"></a>
+
+##### `Query`
+
+```csharp
+const RestEndpointBindingSource Query
+```
+
+Reads the value from the query string.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointbindingsource-route"></a>
+
+##### `Route`
+
+```csharp
+const RestEndpointBindingSource Route
+```
+
+Reads the value from a route placeholder such as `{orderId}`.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointbindingsource-unspecified"></a>
+
+##### `Unspecified`
+
+```csharp
+const RestEndpointBindingSource Unspecified
+```
+
+No explicit source has been selected.
+
+<a id="type-cephalon-abstractions-transports-restendpointbindingsourceextensions"></a>
+
+### `RestEndpointBindingSourceExtensions`
+
+Provides canonical wire-name helpers for `RestEndpointBindingSource`.
+
+#### Declaration
+```csharp
+public static class RestEndpointBindingSourceExtensions
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-transports-restendpointbindingsourceextensions-getwirename-cephalon-abstractions-transports-restendpointbindingsource"></a>
+
+##### `GetWireName`
+
+```csharp
+string GetWireName(this RestEndpointBindingSource source)
+```
+
+Gets the stable wire name used by JSON serialization and REST governance config for the binding source.
+
+Returns: The stable wire name.
+
+Parameters:
+- `source`: The binding source.
+
+<a id="member-m-cephalon-abstractions-transports-restendpointbindingsourceextensions-tryparsewirename-system-string-cephalon-abstractions-transports-restendpointbindingsource"></a>
+
+##### `TryParseWireName`
+
+```csharp
+bool TryParseWireName(string value, out RestEndpointBindingSource source)
+```
+
+Tries to parse the stable wire name used by JSON serialization and REST governance config into a binding source.
+
+Returns: `true` when the wire name maps to a supported binding source; otherwise, `false`.
+
+Parameters:
+- `value`: The wire name to parse.
+- `source`: The parsed binding source when the wire name is recognized.
+
+<a id="type-cephalon-abstractions-transports-restendpointcandidateprojectiondescriptor"></a>
+
+### `RestEndpointCandidateProjectionDescriptor`
+
+Describes one module-owned REST candidate projection shape before publication precedence or host-level overrides are applied.
+
+#### Declaration
+```csharp
+public sealed class RestEndpointCandidateProjectionDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-transports-restendpointcandidateprojectiondescriptor-ctor-system-string-system-string-system-string-system-string-system-nullable-system-int32-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-nullable-cephalon-abstractions-transports-restendpointbindingfallbackmode-system-string-system-boolean-system-string"></a>
+
+##### `RestEndpointCandidateProjectionDescriptor`
+
+```csharp
+RestEndpointCandidateProjectionDescriptor(string method, string routePattern, string routeGroupPrefix, string relativePattern, int? apiVersionMajor, string openApiDocumentName, IReadOnlyList<RestEndpointBindingDescriptor> bindingDescriptors, RestEndpointBindingFallbackMode? bindingFallbackMode, string tagName, bool allowsHostGovernance, string hostGovernanceScope)
+```
+
+Creates a REST endpoint candidate projection descriptor.
+
+Parameters:
+- `method`: The projected HTTP method.
+- `routePattern`: The projected route pattern including the host REST prefix.
+- `routeGroupPrefix`: The projected route-group prefix including the host REST prefix.
+- `relativePattern`: The projected route pattern relative to the owning route group.
+- `apiVersionMajor`: The projected public API major version when one is available.
+- `openApiDocumentName`: The projected OpenAPI document name when one is available.
+- `bindingDescriptors`: The projected request-binding descriptors when the projection exposes an explicit binding plan.
+- `bindingFallbackMode`: The projected request-binding fallback mode when the projection preserves deterministic request-binding behavior beyond the explicit binding plan, such as preserved source implicit-query fallback or preserved remaining request-body fallback.
+- `tagName`: The projected primary OpenAPI tag name when one is available.
+- `allowsHostGovernance`: `true` when host-level REST suppression and override rules are allowed to govern this projection candidate; otherwise, `false`. Shorthand candidates typically enable this automatically, while explicit module-DSL candidates stay authoritative unless the owning route group opts into host governance.
+- `hostGovernanceScope`: The stable host-governance scope carried by the original authored route group when one is available.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateprojectiondescriptor-allowshostgovernance"></a>
+
+##### `AllowsHostGovernance`
+
+```csharp
+bool AllowsHostGovernance { get; }
+```
+
+Gets a value indicating whether host-level REST suppression and override rules are allowed to govern this projection candidate. Shorthand candidates typically enable this automatically, while explicit module-DSL candidates stay authoritative unless the owning route group opts into host governance.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateprojectiondescriptor-apiversionmajor"></a>
+
+##### `ApiVersionMajor`
+
+```csharp
+int? ApiVersionMajor { get; }
+```
+
+Gets the projected public API major version when one is available.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateprojectiondescriptor-bindingdescriptors"></a>
+
+##### `BindingDescriptors`
+
+```csharp
+IReadOnlyList<RestEndpointBindingDescriptor> BindingDescriptors { get; }
+```
+
+Gets the projected request-binding descriptors when the projection exposes an explicit binding plan.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateprojectiondescriptor-bindingfallbackmode"></a>
+
+##### `BindingFallbackMode`
+
+```csharp
+RestEndpointBindingFallbackMode? BindingFallbackMode { get; }
+```
+
+Gets the projected request-binding fallback mode when the projection preserves deterministic request-binding behavior beyond the explicit binding plan, such as preserved source implicit-query fallback or preserved remaining request-body fallback.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateprojectiondescriptor-hostgovernancescope"></a>
+
+##### `HostGovernanceScope`
+
+```csharp
+string HostGovernanceScope { get; }
+```
+
+Gets the stable host-governance scope carried by the original authored route group when one is available.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateprojectiondescriptor-method"></a>
+
+##### `Method`
+
+```csharp
+string Method { get; }
+```
+
+Gets the projected HTTP method.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateprojectiondescriptor-openapidocumentname"></a>
+
+##### `OpenApiDocumentName`
+
+```csharp
+string OpenApiDocumentName { get; }
+```
+
+Gets the projected OpenAPI document name when one is available.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateprojectiondescriptor-relativepattern"></a>
+
+##### `RelativePattern`
+
+```csharp
+string RelativePattern { get; }
+```
+
+Gets the projected route pattern relative to the owning route group.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateprojectiondescriptor-routegroupprefix"></a>
+
+##### `RouteGroupPrefix`
+
+```csharp
+string RouteGroupPrefix { get; }
+```
+
+Gets the projected route-group prefix including the host REST prefix.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateprojectiondescriptor-routepattern"></a>
+
+##### `RoutePattern`
+
+```csharp
+string RoutePattern { get; }
+```
+
+Gets the projected route pattern including the host REST prefix.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateprojectiondescriptor-tagname"></a>
+
+##### `TagName`
+
+```csharp
+string TagName { get; }
+```
+
+Gets the projected primary OpenAPI tag name when one is available.
+
+<a id="type-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor"></a>
+
+### `RestEndpointCandidateRuntimeDescriptor`
+
+Describes one module-owned REST endpoint candidate and whether it was published or suppressed.
+
+#### Declaration
+```csharp
+public sealed class RestEndpointCandidateRuntimeDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-ctor-system-string-cephalon-abstractions-transports-restendpointruntimedescriptor-cephalon-abstractions-transports-restendpointcandidateprojectiondescriptor-system-string-system-int32-cephalon-abstractions-transports-restendpointcandidatestatus-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-nullable-cephalon-abstractions-transports-restendpointauthoringpolicysuppressionkind-system-string-system-nullable-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-system-nullable-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointoverrideactionkind-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointoverrideactionkind"></a>
+
+##### `RestEndpointCandidateRuntimeDescriptor`
+
+```csharp
+RestEndpointCandidateRuntimeDescriptor(string id, RestEndpointRuntimeDescriptor projectedEndpoint, RestEndpointCandidateProjectionDescriptor originalProjection, string authoringStyle, int precedenceRank, RestEndpointCandidateStatus status, string suppressedByCandidateId, string suppressedBySuppressionId, string appliedOverrideId, IReadOnlyList<string> matchedSuppressionIds, IReadOnlyList<string> matchedOverrideIds, string suppressionReason, RestEndpointAuthoringPolicySuppressionKind? suppressedByAuthoringPolicyKind, string selectedOverrideId, RestEndpointGovernanceRuleSelectionBasis? suppressionSelectionBasis, RestEndpointGovernanceRuleSelectionBasis? overrideSelectionBasis, IReadOnlyList<string> skippedSuppressionIds, IReadOnlyList<string> skippedOverrideIds, IReadOnlyList<RestEndpointOverrideActionKind> selectedOverrideActionKinds, IReadOnlyList<RestEndpointOverrideActionKind> appliedOverrideActionKinds)
+```
+
+Creates a REST endpoint candidate runtime descriptor.
+
+Parameters:
+- `id`: The stable candidate identifier derived from the original projection before any host-level overrides are applied.
+- `projectedEndpoint`: The resolved endpoint shape the candidate would publish when it wins precedence.
+- `originalProjection`: The original projection shape contributed by the source authoring path before host-level overrides are applied.
+- `authoringStyle`: The normalized authoring style such as `behavior-module-dsl`.
+- `precedenceRank`: The precedence rank used during publication resolution. Lower values win.
+- `status`: The publication status assigned to the candidate.
+- `suppressedByCandidateId`: The winning candidate identifier when this candidate was suppressed.
+- `suppressedBySuppressionId`: The host-level suppression identifier when this candidate was suppressed by REST governance.
+- `appliedOverrideId`: The host-level override identifier when this candidate shape was rewritten by REST governance.
+- `matchedSuppressionIds`: The ordered suppression-rule identifiers that matched this candidate before one winner was selected.
+- `matchedOverrideIds`: The ordered override-rule identifiers that matched this candidate before one winner was selected.
+- `suppressionReason`: The operator-facing suppression reason when one is available.
+- `suppressedByAuthoringPolicyKind`: The authoring-policy suppression kind when this candidate was suppressed by behavior-level authoring-policy enforcement.
+- `selectedOverrideId`: The selected host-level override identifier when one winning override rule was resolved for this candidate, even if that winning rule became a runtime no-op.
+- `suppressionSelectionBasis`: The earliest decisive specificity rule that selected the winning suppression rule when this candidate was suppressed by REST governance.
+- `overrideSelectionBasis`: The earliest decisive specificity rule that selected the winning override rule when one was resolved for this candidate.
+- `skippedSuppressionIds`: The ordered suppression-rule identifiers that otherwise target this candidate but were skipped because the original projection did not allow host governance to participate.
+- `skippedOverrideIds`: The ordered override-rule identifiers that otherwise target this candidate but were skipped because the original projection did not allow host governance to participate.
+- `selectedOverrideActionKinds`: The normalized action dimensions declared by the selected override rule when one winning override rule was resolved for this candidate.
+- `appliedOverrideActionKinds`: The normalized action dimensions that materially changed the candidate's effective runtime answer when the selected override rule was not a runtime no-op.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-appliedoverrideactionkinds"></a>
+
+##### `AppliedOverrideActionKinds`
+
+```csharp
+IReadOnlyList<RestEndpointOverrideActionKind> AppliedOverrideActionKinds { get; }
+```
+
+Gets the normalized action dimensions that materially changed the candidate's effective runtime answer when the selected override rule was not a runtime no-op.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-appliedoverrideid"></a>
+
+##### `AppliedOverrideId`
+
+```csharp
+string AppliedOverrideId { get; }
+```
+
+Gets the host-level override identifier when this candidate shape was rewritten by REST governance.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-authoringstyle"></a>
+
+##### `AuthoringStyle`
+
+```csharp
+string AuthoringStyle { get; }
+```
+
+Gets the normalized authoring style used to produce the candidate.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable candidate identifier derived from the original projection before any host-level overrides are applied.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-matchedoverrideids"></a>
+
+##### `MatchedOverrideIds`
+
+```csharp
+IReadOnlyList<string> MatchedOverrideIds { get; }
+```
+
+Gets the ordered override-rule identifiers that matched this candidate before one winner was selected.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-matchedsuppressionids"></a>
+
+##### `MatchedSuppressionIds`
+
+```csharp
+IReadOnlyList<string> MatchedSuppressionIds { get; }
+```
+
+Gets the ordered suppression-rule identifiers that matched this candidate before one winner was selected.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-originalprojection"></a>
+
+##### `OriginalProjection`
+
+```csharp
+RestEndpointCandidateProjectionDescriptor OriginalProjection { get; }
+```
+
+Gets the original projection shape contributed by the source authoring path before host-level overrides are applied.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-overrideselectionbasis"></a>
+
+##### `OverrideSelectionBasis`
+
+```csharp
+RestEndpointGovernanceRuleSelectionBasis? OverrideSelectionBasis { get; }
+```
+
+Gets the earliest decisive specificity rule that selected the winning override rule when one was resolved for this candidate.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-precedencerank"></a>
+
+##### `PrecedenceRank`
+
+```csharp
+int PrecedenceRank { get; }
+```
+
+Gets the precedence rank used during publication resolution. Lower values win.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-projectedendpoint"></a>
+
+##### `ProjectedEndpoint`
+
+```csharp
+RestEndpointRuntimeDescriptor ProjectedEndpoint { get; }
+```
+
+Gets the resolved endpoint shape the candidate would publish when it wins precedence.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-selectedoverrideactionkinds"></a>
+
+##### `SelectedOverrideActionKinds`
+
+```csharp
+IReadOnlyList<RestEndpointOverrideActionKind> SelectedOverrideActionKinds { get; }
+```
+
+Gets the normalized action dimensions declared by the selected override rule when one winning override rule was resolved for this candidate.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-selectedoverrideid"></a>
+
+##### `SelectedOverrideId`
+
+```csharp
+string SelectedOverrideId { get; }
+```
+
+Gets the selected host-level override identifier when one winning override rule was resolved for this candidate, even if that winning rule became a runtime no-op.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-skippedoverrideids"></a>
+
+##### `SkippedOverrideIds`
+
+```csharp
+IReadOnlyList<string> SkippedOverrideIds { get; }
+```
+
+Gets the ordered override-rule identifiers that otherwise target this candidate but were skipped because the original projection did not allow host governance.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-skippedsuppressionids"></a>
+
+##### `SkippedSuppressionIds`
+
+```csharp
+IReadOnlyList<string> SkippedSuppressionIds { get; }
+```
+
+Gets the ordered suppression-rule identifiers that otherwise target this candidate but were skipped because the original projection did not allow host governance.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-status"></a>
+
+##### `Status`
+
+```csharp
+RestEndpointCandidateStatus Status { get; }
+```
+
+Gets whether the candidate is published or suppressed in the active runtime.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-suppressedbyauthoringpolicykind"></a>
+
+##### `SuppressedByAuthoringPolicyKind`
+
+```csharp
+RestEndpointAuthoringPolicySuppressionKind? SuppressedByAuthoringPolicyKind { get; }
+```
+
+Gets the authoring-policy suppression kind when this candidate was suppressed by behavior-level authoring-policy enforcement.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-suppressedbycandidateid"></a>
+
+##### `SuppressedByCandidateId`
+
+```csharp
+string SuppressedByCandidateId { get; }
+```
+
+Gets the winning candidate identifier when this candidate was suppressed.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-suppressedbysuppressionid"></a>
+
+##### `SuppressedBySuppressionId`
+
+```csharp
+string SuppressedBySuppressionId { get; }
+```
+
+Gets the host-level suppression identifier when this candidate was suppressed by REST governance.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-suppressionreason"></a>
+
+##### `SuppressionReason`
+
+```csharp
+string SuppressionReason { get; }
+```
+
+Gets the operator-facing suppression reason when one is available.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-suppressionselectionbasis"></a>
+
+##### `SuppressionSelectionBasis`
+
+```csharp
+RestEndpointGovernanceRuleSelectionBasis? SuppressionSelectionBasis { get; }
+```
+
+Gets the earliest decisive specificity rule that selected the winning suppression rule when this candidate was suppressed by REST governance.
+
+<a id="type-cephalon-abstractions-transports-restendpointcandidatestatus"></a>
+
+### `RestEndpointCandidateStatus`
+
+Describes whether a REST endpoint candidate is published or suppressed in the active runtime.
+
+#### Declaration
+```csharp
+public enum RestEndpointCandidateStatus
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-transports-restendpointcandidatestatus-published"></a>
+
+##### `Published`
+
+```csharp
+const RestEndpointCandidateStatus Published
+```
+
+The candidate is published into the active public REST surface.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointcandidatestatus-suppressed"></a>
+
+##### `Suppressed`
+
+```csharp
+const RestEndpointCandidateStatus Suppressed
+```
+
+The candidate was considered but suppressed from the active public REST surface.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointcandidatestatus-unspecified"></a>
+
+##### `Unspecified`
+
+```csharp
+const RestEndpointCandidateStatus Unspecified
+```
+
+The candidate has not been classified.
+
+<a id="type-cephalon-abstractions-transports-restendpointcandidatestatusextensions"></a>
+
+### `RestEndpointCandidateStatusExtensions`
+
+Provides canonical wire-name helpers for `RestEndpointCandidateStatus`.
+
+#### Declaration
+```csharp
+public static class RestEndpointCandidateStatusExtensions
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-transports-restendpointcandidatestatusextensions-getwirename-cephalon-abstractions-transports-restendpointcandidatestatus"></a>
+
+##### `GetWireName`
+
+```csharp
+string GetWireName(this RestEndpointCandidateStatus status)
+```
+
+Gets the stable wire name used by JSON serialization for the candidate status.
+
+Returns: The stable wire name.
+
+Parameters:
+- `status`: The candidate status.
+
+<a id="member-m-cephalon-abstractions-transports-restendpointcandidatestatusextensions-tryparsewirename-system-string-cephalon-abstractions-transports-restendpointcandidatestatus"></a>
+
+##### `TryParseWireName`
+
+```csharp
+bool TryParseWireName(string value, out RestEndpointCandidateStatus status)
+```
+
+Tries to parse the stable wire name used by JSON serialization into a candidate status.
+
+Returns: `true` when the wire name maps to a supported candidate status; otherwise, `false`.
+
+Parameters:
+- `value`: The wire name to parse.
+- `status`: The parsed candidate status when the wire name is recognized.
+
+<a id="type-cephalon-abstractions-transports-restendpointgovernanceoverrideactionkindsummarydescriptor"></a>
+
+### `RestEndpointGovernanceOverrideActionKindSummaryDescriptor`
+
+Describes one grouped override-action bucket within a rule-centric REST governance summary.
+
+#### Declaration
+```csharp
+public sealed class RestEndpointGovernanceOverrideActionKindSummaryDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-transports-restendpointgovernanceoverrideactionkindsummarydescriptor-ctor-cephalon-abstractions-transports-restendpointoverrideactionkind-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `RestEndpointGovernanceOverrideActionKindSummaryDescriptor`
+
+```csharp
+RestEndpointGovernanceOverrideActionKindSummaryDescriptor(RestEndpointOverrideActionKind actionKind, IReadOnlyList<string> candidateIds)
+```
+
+Creates a grouped override-action bucket for a rule-centric REST governance summary.
+
+Parameters:
+- `actionKind`: The override action dimension represented by this grouped bucket.
+- `candidateIds`: The ordered candidate identifiers that selected or materially applied this override action dimension.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-restendpointgovernanceoverrideactionkindsummarydescriptor-actionkind"></a>
+
+##### `ActionKind`
+
+```csharp
+RestEndpointOverrideActionKind ActionKind { get; }
+```
+
+Gets the override action dimension represented by this grouped bucket.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointgovernanceoverrideactionkindsummarydescriptor-candidateids"></a>
+
+##### `CandidateIds`
+
+```csharp
+IReadOnlyList<string> CandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers that selected or materially applied this override action dimension.
+
+<a id="type-cephalon-abstractions-transports-restendpointgovernanceoverridesummarydescriptor"></a>
+
+### `RestEndpointGovernanceOverrideSummaryDescriptor`
+
+Describes one grouped override-rule outcome within a rule-centric REST governance summary.
+
+#### Declaration
+```csharp
+public sealed class RestEndpointGovernanceOverrideSummaryDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-transports-restendpointgovernanceoverridesummarydescriptor-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceselectionbasissummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceoverrideactionkindsummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceoverrideactionkindsummarydescriptor"></a>
+
+##### `RestEndpointGovernanceOverrideSummaryDescriptor`
+
+```csharp
+RestEndpointGovernanceOverrideSummaryDescriptor(string ruleId, IReadOnlyList<string> matchedCandidateIds, IReadOnlyList<string> selectedCandidateIds, IReadOnlyList<string> appliedCandidateIds, IReadOnlyList<RestEndpointGovernanceSelectionBasisSummaryDescriptor> selectionBasisSummaries, IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor> selectedActionKindSummaries, IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor> appliedActionKindSummaries)
+```
+
+Creates a grouped override-rule summary.
+
+Parameters:
+- `ruleId`: The stable host-level override-rule identifier summarized by this entry.
+- `matchedCandidateIds`: The ordered candidate identifiers that matched this override rule before one winner was selected.
+- `selectedCandidateIds`: The ordered candidate identifiers that selected this override rule, including runtime no-op selections.
+- `appliedCandidateIds`: The ordered candidate identifiers whose effective runtime answer was materially changed by this override rule.
+- `selectionBasisSummaries`: The grouped decisive selection-basis buckets for the candidates that selected this override rule.
+- `selectedActionKindSummaries`: The grouped declared override-action buckets for the candidates that selected this override rule.
+- `appliedActionKindSummaries`: The grouped materially applied override-action buckets for the candidates this override rule changed.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-restendpointgovernanceoverridesummarydescriptor-appliedactionkindsummaries"></a>
+
+##### `AppliedActionKindSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor> AppliedActionKindSummaries { get; }
+```
+
+Gets the grouped materially applied override-action buckets for the candidates this override rule changed.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointgovernanceoverridesummarydescriptor-appliedcandidateids"></a>
+
+##### `AppliedCandidateIds`
+
+```csharp
+IReadOnlyList<string> AppliedCandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers whose effective runtime answer was materially changed by this override rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointgovernanceoverridesummarydescriptor-matchedcandidateids"></a>
+
+##### `MatchedCandidateIds`
+
+```csharp
+IReadOnlyList<string> MatchedCandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers that matched this override rule before one winner was selected.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointgovernanceoverridesummarydescriptor-ruleid"></a>
+
+##### `RuleId`
+
+```csharp
+string RuleId { get; }
+```
+
+Gets the stable host-level override-rule identifier summarized by this entry.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointgovernanceoverridesummarydescriptor-selectedactionkindsummaries"></a>
+
+##### `SelectedActionKindSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor> SelectedActionKindSummaries { get; }
+```
+
+Gets the grouped declared override-action buckets for the candidates that selected this override rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointgovernanceoverridesummarydescriptor-selectedcandidateids"></a>
+
+##### `SelectedCandidateIds`
+
+```csharp
+IReadOnlyList<string> SelectedCandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers that selected this override rule, including runtime no-op selections.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointgovernanceoverridesummarydescriptor-selectionbasissummaries"></a>
+
+##### `SelectionBasisSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointGovernanceSelectionBasisSummaryDescriptor> SelectionBasisSummaries { get; }
+```
+
+Gets the grouped decisive selection-basis buckets for the candidates that selected this override rule.
+
+<a id="type-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis"></a>
+
+### `RestEndpointGovernanceRuleSelectionBasis`
+
+Describes the earliest decisive specificity rule that selected one matching REST governance rule over another.
+
+#### Declaration
+```csharp
+public enum RestEndpointGovernanceRuleSelectionBasis
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-behaviortargeting"></a>
+
+##### `BehaviorTargeting`
+
+```csharp
+const RestEndpointGovernanceRuleSelectionBasis BehaviorTargeting
+```
+
+A rule that explicitly targeted behaviors won over a broader module-level rule.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-candidatetargeting"></a>
+
+##### `CandidateTargeting`
+
+```csharp
+const RestEndpointGovernanceRuleSelectionBasis CandidateTargeting
+```
+
+A rule that targeted explicit candidate ids won over a broader rule that did not.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-fewertargetvalues"></a>
+
+##### `FewerTargetValues`
+
+```csharp
+const RestEndpointGovernanceRuleSelectionBasis FewerTargetValues
+```
+
+A rule with fewer total selector values won over an otherwise equally ranked broader rule.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-moretargetdimensions"></a>
+
+##### `MoreTargetDimensions`
+
+```csharp
+const RestEndpointGovernanceRuleSelectionBasis MoreTargetDimensions
+```
+
+A rule that constrained more selector dimensions won over a less specific rule.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-narrowerauthoringstylescope"></a>
+
+##### `NarrowerAuthoringStyleScope`
+
+```csharp
+const RestEndpointGovernanceRuleSelectionBasis NarrowerAuthoringStyleScope
+```
+
+A rule that constrained fewer authoring styles won over a broader authoring-style scope.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-narrowercandidateset"></a>
+
+##### `NarrowerCandidateSet`
+
+```csharp
+const RestEndpointGovernanceRuleSelectionBasis NarrowerCandidateSet
+```
+
+A rule that targeted a smaller candidate-id set won over a broader candidate-targeted rule.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-singlematch"></a>
+
+##### `SingleMatch`
+
+```csharp
+const RestEndpointGovernanceRuleSelectionBasis SingleMatch
+```
+
+Only one governance rule matched the candidate, so no tie-breaker was required.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-stableruleid"></a>
+
+##### `StableRuleId`
+
+```csharp
+const RestEndpointGovernanceRuleSelectionBasis StableRuleId
+```
+
+The winning rule was selected by the final stable rule-id tie-breaker.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-unspecified"></a>
+
+##### `Unspecified`
+
+```csharp
+const RestEndpointGovernanceRuleSelectionBasis Unspecified
+```
+
+The selection basis was not classified.
+
+<a id="type-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasisextensions"></a>
+
+### `RestEndpointGovernanceRuleSelectionBasisExtensions`
+
+Provides canonical wire-name helpers for `RestEndpointGovernanceRuleSelectionBasis`.
+
+#### Declaration
+```csharp
+public static class RestEndpointGovernanceRuleSelectionBasisExtensions
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasisextensions-getwirename-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis"></a>
+
+##### `GetWireName`
+
+```csharp
+string GetWireName(this RestEndpointGovernanceRuleSelectionBasis basis)
+```
+
+Gets the stable wire name used by JSON serialization and runtime introspection for the selection basis.
+
+Returns: The stable wire name.
+
+Parameters:
+- `basis`: The selection basis.
+
+<a id="member-m-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasisextensions-tryparsewirename-system-string-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis"></a>
+
+##### `TryParseWireName`
+
+```csharp
+bool TryParseWireName(string value, out RestEndpointGovernanceRuleSelectionBasis basis)
+```
+
+Tries to parse the stable wire name used by JSON serialization and runtime introspection into a selection basis.
+
+Returns: `true` when the wire name maps to a supported selection basis; otherwise, `false`.
+
+Parameters:
+- `value`: The wire name to parse.
+- `basis`: The parsed selection basis when the wire name is recognized.
+
+<a id="type-cephalon-abstractions-transports-restendpointgovernanceselectionbasissummarydescriptor"></a>
+
+### `RestEndpointGovernanceSelectionBasisSummaryDescriptor`
+
+Describes one grouped selection-basis bucket within a rule-centric REST governance summary.
+
+#### Declaration
+```csharp
+public sealed class RestEndpointGovernanceSelectionBasisSummaryDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-transports-restendpointgovernanceselectionbasissummarydescriptor-ctor-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `RestEndpointGovernanceSelectionBasisSummaryDescriptor`
+
+```csharp
+RestEndpointGovernanceSelectionBasisSummaryDescriptor(RestEndpointGovernanceRuleSelectionBasis selectionBasis, IReadOnlyList<string> candidateIds)
+```
+
+Creates a grouped selection-basis bucket for a rule-centric REST governance summary.
+
+Parameters:
+- `selectionBasis`: The decisive specificity basis that selected the winning governance rule for the grouped candidates.
+- `candidateIds`: The ordered candidate identifiers that resolved the winning governance rule with this selection basis.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-restendpointgovernanceselectionbasissummarydescriptor-candidateids"></a>
+
+##### `CandidateIds`
+
+```csharp
+IReadOnlyList<string> CandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers that resolved the winning governance rule with this selection basis.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointgovernanceselectionbasissummarydescriptor-selectionbasis"></a>
+
+##### `SelectionBasis`
+
+```csharp
+RestEndpointGovernanceRuleSelectionBasis SelectionBasis { get; }
+```
+
+Gets the decisive specificity basis that selected the winning governance rule for the grouped candidates.
+
+<a id="type-cephalon-abstractions-transports-restendpointgovernanceskippedoverridesummarydescriptor"></a>
+
+### `RestEndpointGovernanceSkippedOverrideSummaryDescriptor`
+
+Describes one grouped governance-skipped override-rule outcome within a rule-centric REST governance summary.
+
+#### Declaration
+```csharp
+public sealed class RestEndpointGovernanceSkippedOverrideSummaryDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-transports-restendpointgovernanceskippedoverridesummarydescriptor-ctor-system-string-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `RestEndpointGovernanceSkippedOverrideSummaryDescriptor`
+
+```csharp
+RestEndpointGovernanceSkippedOverrideSummaryDescriptor(string ruleId, IReadOnlyList<string> candidateIds)
+```
+
+Creates a grouped governance-skipped override-rule summary.
+
+Parameters:
+- `ruleId`: The stable host-level override-rule identifier summarized by this entry.
+- `candidateIds`: The ordered candidate identifiers that this override rule targeted before host governance was skipped.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-restendpointgovernanceskippedoverridesummarydescriptor-candidateids"></a>
+
+##### `CandidateIds`
+
+```csharp
+IReadOnlyList<string> CandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers that this override rule targeted before host governance was skipped.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointgovernanceskippedoverridesummarydescriptor-ruleid"></a>
+
+##### `RuleId`
+
+```csharp
+string RuleId { get; }
+```
+
+Gets the stable host-level override-rule identifier summarized by this entry.
+
+<a id="type-cephalon-abstractions-transports-restendpointgovernanceskippedsuppressionsummarydescriptor"></a>
+
+### `RestEndpointGovernanceSkippedSuppressionSummaryDescriptor`
+
+Describes one grouped governance-skipped suppression-rule outcome within a rule-centric REST governance summary.
+
+#### Declaration
+```csharp
+public sealed class RestEndpointGovernanceSkippedSuppressionSummaryDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-transports-restendpointgovernanceskippedsuppressionsummarydescriptor-ctor-system-string-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `RestEndpointGovernanceSkippedSuppressionSummaryDescriptor`
+
+```csharp
+RestEndpointGovernanceSkippedSuppressionSummaryDescriptor(string ruleId, IReadOnlyList<string> candidateIds)
+```
+
+Creates a grouped governance-skipped suppression-rule summary.
+
+Parameters:
+- `ruleId`: The stable host-level suppression-rule identifier summarized by this entry.
+- `candidateIds`: The ordered candidate identifiers that this suppression rule targeted before host governance was skipped.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-restendpointgovernanceskippedsuppressionsummarydescriptor-candidateids"></a>
+
+##### `CandidateIds`
+
+```csharp
+IReadOnlyList<string> CandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers that this suppression rule targeted before host governance was skipped.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointgovernanceskippedsuppressionsummarydescriptor-ruleid"></a>
+
+##### `RuleId`
+
+```csharp
+string RuleId { get; }
+```
+
+Gets the stable host-level suppression-rule identifier summarized by this entry.
+
+<a id="type-cephalon-abstractions-transports-restendpointgovernancesuppressionsummarydescriptor"></a>
+
+### `RestEndpointGovernanceSuppressionSummaryDescriptor`
+
+Describes one grouped suppression-rule outcome within a rule-centric REST governance summary.
+
+#### Declaration
+```csharp
+public sealed class RestEndpointGovernanceSuppressionSummaryDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-transports-restendpointgovernancesuppressionsummarydescriptor-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceselectionbasissummarydescriptor"></a>
+
+##### `RestEndpointGovernanceSuppressionSummaryDescriptor`
+
+```csharp
+RestEndpointGovernanceSuppressionSummaryDescriptor(string ruleId, IReadOnlyList<string> matchedCandidateIds, IReadOnlyList<string> suppressedCandidateIds, IReadOnlyList<RestEndpointGovernanceSelectionBasisSummaryDescriptor> selectionBasisSummaries)
+```
+
+Creates a grouped suppression-rule summary.
+
+Parameters:
+- `ruleId`: The stable host-level suppression-rule identifier summarized by this entry.
+- `matchedCandidateIds`: The ordered candidate identifiers that matched this suppression rule before one winner was selected.
+- `suppressedCandidateIds`: The ordered candidate identifiers that this suppression rule ultimately suppressed.
+- `selectionBasisSummaries`: The grouped decisive selection-basis buckets for the candidates this suppression rule ultimately suppressed.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-restendpointgovernancesuppressionsummarydescriptor-matchedcandidateids"></a>
+
+##### `MatchedCandidateIds`
+
+```csharp
+IReadOnlyList<string> MatchedCandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers that matched this suppression rule before one winner was selected.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointgovernancesuppressionsummarydescriptor-ruleid"></a>
+
+##### `RuleId`
+
+```csharp
+string RuleId { get; }
+```
+
+Gets the stable host-level suppression-rule identifier summarized by this entry.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointgovernancesuppressionsummarydescriptor-selectionbasissummaries"></a>
+
+##### `SelectionBasisSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointGovernanceSelectionBasisSummaryDescriptor> SelectionBasisSummaries { get; }
+```
+
+Gets the grouped decisive selection-basis buckets for the candidates this suppression rule ultimately suppressed.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointgovernancesuppressionsummarydescriptor-suppressedcandidateids"></a>
+
+##### `SuppressedCandidateIds`
+
+```csharp
+IReadOnlyList<string> SuppressedCandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers that this suppression rule ultimately suppressed.
+
+<a id="type-cephalon-abstractions-transports-restendpointoverrideactionkind"></a>
+
+### `RestEndpointOverrideActionKind`
+
+Describes one configured or materially applied REST override action dimension.
+
+#### Declaration
+```csharp
+public enum RestEndpointOverrideActionKind
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-apiversionmajor"></a>
+
+##### `ApiVersionMajor`
+
+```csharp
+const RestEndpointOverrideActionKind ApiVersionMajor
+```
+
+The rule changes the effective public API major version.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-clearbindings"></a>
+
+##### `ClearBindings`
+
+```csharp
+const RestEndpointOverrideActionKind ClearBindings
+```
+
+The rule clears the explicit request-binding plan and returns to the implicit baseline.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-cleardescription"></a>
+
+##### `ClearDescription`
+
+```csharp
+const RestEndpointOverrideActionKind ClearDescription
+```
+
+The rule clears any previously declared endpoint description.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-clearendpointname"></a>
+
+##### `ClearEndpointName`
+
+```csharp
+const RestEndpointOverrideActionKind ClearEndpointName
+```
+
+The rule clears any previously declared endpoint name.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-clearrequiredcapability"></a>
+
+##### `ClearRequiredCapability`
+
+```csharp
+const RestEndpointOverrideActionKind ClearRequiredCapability
+```
+
+The rule clears any previously declared required Cephalon capability key.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-clearsummary"></a>
+
+##### `ClearSummary`
+
+```csharp
+const RestEndpointOverrideActionKind ClearSummary
+```
+
+The rule clears any previously declared endpoint summary.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-description"></a>
+
+##### `Description`
+
+```csharp
+const RestEndpointOverrideActionKind Description
+```
+
+The rule changes the effective endpoint description.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-endpointname"></a>
+
+##### `EndpointName`
+
+```csharp
+const RestEndpointOverrideActionKind EndpointName
+```
+
+The rule changes the effective endpoint name.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-mergebindings"></a>
+
+##### `MergeBindings`
+
+```csharp
+const RestEndpointOverrideActionKind MergeBindings
+```
+
+The rule merges changes into the explicit request-binding plan.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-method"></a>
+
+##### `Method`
+
+```csharp
+const RestEndpointOverrideActionKind Method
+```
+
+The rule changes the effective HTTP method.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-openapidocumentname"></a>
+
+##### `OpenApiDocumentName`
+
+```csharp
+const RestEndpointOverrideActionKind OpenApiDocumentName
+```
+
+The rule changes the effective OpenAPI document name.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-pattern"></a>
+
+##### `Pattern`
+
+```csharp
+const RestEndpointOverrideActionKind Pattern
+```
+
+The rule changes the effective relative route pattern.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-removebindingproperties"></a>
+
+##### `RemoveBindingProperties`
+
+```csharp
+const RestEndpointOverrideActionKind RemoveBindingProperties
+```
+
+The rule removes explicit request-binding properties from the source plan.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-replacebindings"></a>
+
+##### `ReplaceBindings`
+
+```csharp
+const RestEndpointOverrideActionKind ReplaceBindings
+```
+
+The rule replaces the explicit request-binding plan.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-requiredcapabilitykey"></a>
+
+##### `RequiredCapabilityKey`
+
+```csharp
+const RestEndpointOverrideActionKind RequiredCapabilityKey
+```
+
+The rule changes the required Cephalon capability key.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-routegroupprefix"></a>
+
+##### `RouteGroupPrefix`
+
+```csharp
+const RestEndpointOverrideActionKind RouteGroupPrefix
+```
+
+The rule changes the effective published route-group prefix.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-summary"></a>
+
+##### `Summary`
+
+```csharp
+const RestEndpointOverrideActionKind Summary
+```
+
+The rule changes the effective endpoint summary.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-tagname"></a>
+
+##### `TagName`
+
+```csharp
+const RestEndpointOverrideActionKind TagName
+```
+
+The rule changes the effective primary OpenAPI tag name.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-unspecified"></a>
+
+##### `Unspecified`
+
+```csharp
+const RestEndpointOverrideActionKind Unspecified
+```
+
+The action kind was not classified.
+
+<a id="type-cephalon-abstractions-transports-restendpointoverrideactionkindextensions"></a>
+
+### `RestEndpointOverrideActionKindExtensions`
+
+Provides canonical wire-name helpers for `RestEndpointOverrideActionKind`.
+
+#### Declaration
+```csharp
+public static class RestEndpointOverrideActionKindExtensions
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-transports-restendpointoverrideactionkindextensions-getwirename-cephalon-abstractions-transports-restendpointoverrideactionkind"></a>
+
+##### `GetWireName`
+
+```csharp
+string GetWireName(this RestEndpointOverrideActionKind actionKind)
+```
+
+Gets the stable wire name used by JSON serialization for the override action kind.
+
+Returns: The stable wire name.
+
+Parameters:
+- `actionKind`: The override action kind.
+
+<a id="member-m-cephalon-abstractions-transports-restendpointoverrideactionkindextensions-tryparsewirename-system-string-cephalon-abstractions-transports-restendpointoverrideactionkind"></a>
+
+##### `TryParseWireName`
+
+```csharp
+bool TryParseWireName(string value, out RestEndpointOverrideActionKind actionKind)
+```
+
+Tries to parse the stable wire name used by JSON serialization into an override action kind.
+
+Returns: `true` when the wire name maps to a supported override action kind; otherwise, `false`.
+
+Parameters:
+- `value`: The wire name to parse.
+- `actionKind`: The parsed override action kind when the wire name is recognized.
+
+<a id="type-cephalon-abstractions-transports-restendpointoverridebindingmode"></a>
+
+### `RestEndpointOverrideBindingMode`
+
+Describes how a REST endpoint override rule applies its explicit binding descriptors.
+
+#### Declaration
+```csharp
+public enum RestEndpointOverrideBindingMode
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-transports-restendpointoverridebindingmode-mergeexplicit"></a>
+
+##### `MergeExplicit`
+
+```csharp
+const RestEndpointOverrideBindingMode MergeExplicit
+```
+
+Merges configured binding descriptors into the candidate's explicit binding plan by property name and can also remove selected explicit bindings.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointoverridebindingmode-replaceexplicit"></a>
+
+##### `ReplaceExplicit`
+
+```csharp
+const RestEndpointOverrideBindingMode ReplaceExplicit
+```
+
+Replaces the candidate's explicit binding plan with the configured descriptors.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointoverridebindingmode-unspecified"></a>
+
+##### `Unspecified`
+
+```csharp
+const RestEndpointOverrideBindingMode Unspecified
+```
+
+No explicit binding-override mode has been selected.
+
+<a id="type-cephalon-abstractions-transports-restendpointoverridebindingmodeextensions"></a>
+
+### `RestEndpointOverrideBindingModeExtensions`
+
+Provides canonical wire-name helpers for `RestEndpointOverrideBindingMode`.
+
+#### Declaration
+```csharp
+public static class RestEndpointOverrideBindingModeExtensions
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-transports-restendpointoverridebindingmodeextensions-getwirename-cephalon-abstractions-transports-restendpointoverridebindingmode"></a>
+
+##### `GetWireName`
+
+```csharp
+string GetWireName(this RestEndpointOverrideBindingMode bindingMode)
+```
+
+Gets the stable wire name used by JSON serialization and compatibility metadata for the override binding mode.
+
+Returns: The stable wire name.
+
+Parameters:
+- `bindingMode`: The override binding mode.
+
+<a id="member-m-cephalon-abstractions-transports-restendpointoverridebindingmodeextensions-tryparsewirename-system-string-cephalon-abstractions-transports-restendpointoverridebindingmode"></a>
+
+##### `TryParseWireName`
+
+```csharp
+bool TryParseWireName(string value, out RestEndpointOverrideBindingMode bindingMode)
+```
+
+Tries to parse the stable wire name used by JSON serialization and compatibility metadata into an override binding mode.
+
+Returns: `true` when the wire name maps to a supported override binding mode; otherwise, `false`.
+
+Parameters:
+- `value`: The wire name to parse.
+- `bindingMode`: The parsed override binding mode when the wire name is recognized.
+
+<a id="type-cephalon-abstractions-transports-restendpointoverridedescriptor"></a>
+
+### `RestEndpointOverrideDescriptor`
+
+Describes one host-level REST endpoint override rule visible to the current runtime for module-owned REST candidates that participate in host governance.
+
+#### Declaration
+```csharp
+public sealed class RestEndpointOverrideDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-transports-restendpointoverridedescriptor-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-nullable-system-int32-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-boolean-cephalon-abstractions-transports-restendpointoverridebindingmode-system-boolean-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingfallbackmode-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointoverrideactionkind-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointoverrideactionkind-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceselectionbasissummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceoverrideactionkindsummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceoverrideactionkindsummarydescriptor-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `RestEndpointOverrideDescriptor`
+
+```csharp
+RestEndpointOverrideDescriptor(string id, IReadOnlyList<string> candidateIds, IReadOnlyList<string> behaviorIds, IReadOnlyList<string> sourceModuleIds, IReadOnlyList<string> authoringStyles, IReadOnlyList<int> apiVersionMajors, IReadOnlyList<string> methods, IReadOnlyList<string> relativePatterns, IReadOnlyList<string> routeGroupPrefixes, int? apiVersionMajor, string method, string pattern, string routeGroupPrefix, string openApiDocumentName, string tagName, string endpointName, string summary, string description, string requiredCapabilityKey, bool clearRequiredCapability, IReadOnlyList<RestEndpointBindingDescriptor> bindings, IReadOnlyList<string> removedBindingProperties, bool clearBindings, RestEndpointOverrideBindingMode bindingMode, bool clearEndpointName, bool clearSummary, bool clearDescription, IReadOnlyList<string> openApiDocumentNames, IReadOnlyList<string> tagNames, IReadOnlyList<string> endpointNames, IReadOnlyList<RestEndpointBindingFallbackMode> bindingFallbackModes, IReadOnlyList<RestEndpointBindingDescriptor> targetBindings, IReadOnlyList<string> matchedCandidateIds, IReadOnlyList<string> selectedCandidateIds, IReadOnlyList<string> appliedCandidateIds, IReadOnlyList<string> skippedCandidateIds, IReadOnlyList<RestEndpointGovernanceRuleSelectionBasis> selectionBases, IReadOnlyList<RestEndpointOverrideActionKind> selectedActionKinds, IReadOnlyList<RestEndpointOverrideActionKind> appliedActionKinds, IReadOnlyList<RestEndpointGovernanceSelectionBasisSummaryDescriptor> selectionBasisSummaries, IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor> selectedActionKindSummaries, IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor> appliedActionKindSummaries, IReadOnlyList<string> hostGovernanceScopes)
+```
+
+Creates a REST endpoint override descriptor.
+
+Parameters:
+- `id`: The stable override identifier.
+- `candidateIds`: The original candidate identifiers targeted by the override rule.
+- `behaviorIds`: The behavior identifiers targeted by the override rule.
+- `sourceModuleIds`: The source-module identifiers targeted by the override rule.
+- `authoringStyles`: The normalized authoring styles targeted by the override rule. Explicit module-DSL routes participate only when their owning route group opted into host governance.
+- `apiVersionMajors`: The effective API major versions targeted by the override rule.
+- `methods`: The effective HTTP methods targeted by the override rule.
+- `relativePatterns`: The shorthand relative route patterns targeted by the override rule.
+- `routeGroupPrefixes`: The published route-group prefixes targeted by the override rule.
+- `apiVersionMajor`: The effective API major version applied when the rule matches.
+- `method`: The effective HTTP method applied when the rule matches.
+- `pattern`: The effective relative route pattern applied when the rule matches.
+- `routeGroupPrefix`: The effective published route-group prefix applied when the rule matches.
+- `openApiDocumentName`: The effective OpenAPI document name applied when the rule matches.
+- `tagName`: The effective primary OpenAPI tag name applied when the rule matches.
+- `endpointName`: The effective endpoint name applied when the rule matches.
+- `summary`: The effective OpenAPI summary applied when the rule matches.
+- `description`: The effective OpenAPI description applied when the rule matches.
+- `requiredCapabilityKey`: The required Cephalon capability key enforced at the REST boundary when the rule matches.
+- `clearRequiredCapability`: `true` when the rule removes any previously declared Cephalon capability boundary from the matched candidate.
+- `bindings`: The effective explicit request-binding plan applied when the rule matches.
+- `removedBindingProperties`: The explicit binding properties removed from the source binding plan when the rule matches.
+- `clearBindings`: `true` when the rule removes the matched candidate's entire explicit binding plan and returns publication to the implicit request-binding baseline.
+- `bindingMode`: The mode used to apply `bindings` and `removedBindingProperties` to the candidate's explicit binding plan.
+- `clearEndpointName`: `true` when the rule removes any previously declared endpoint name from the matched candidate.
+- `clearSummary`: `true` when the rule removes any previously declared endpoint summary from the matched candidate.
+- `clearDescription`: `true` when the rule removes any previously declared endpoint description from the matched candidate.
+- `openApiDocumentNames`: The original candidate OpenAPI document names targeted by the override rule before override actions are applied.
+- `tagNames`: The original candidate primary OpenAPI tag names targeted by the override rule before override actions are applied.
+- `endpointNames`: The original candidate endpoint names targeted by the override rule before override actions are applied.
+- `hostGovernanceScopes`: The original candidate host-governance scopes targeted by the override rule before override actions are applied.
+- `bindingFallbackModes`: The original candidate request-binding fallback modes targeted by the override rule before override actions are applied.
+- `targetBindings`: The original candidate explicit binding descriptors targeted by the override rule before override actions are applied.
+- `matchedCandidateIds`: The runtime candidate identifiers that matched this override rule, including candidates where another override rule won selection.
+- `selectedCandidateIds`: The runtime candidate identifiers that selected this override rule as the winning rule, including runtime no-op selections.
+- `appliedCandidateIds`: The runtime candidate identifiers whose effective answer was materially changed by this override rule.
+- `skippedCandidateIds`: The runtime candidate identifiers that this rule would otherwise target but skipped because the original projection did not allow host governance to participate.
+- `selectionBases`: The union of decisive specificity rules that selected this override rule for one or more runtime candidates.
+- `selectedActionKinds`: The union of configured override action dimensions that were selected for one or more runtime candidates, including runtime no-op selections.
+- `appliedActionKinds`: The union of override action dimensions that materially changed one or more runtime candidates.
+- `selectionBasisSummaries`: The grouped selection-basis buckets for runtime candidates that selected this override rule, including runtime no-op selections.
+- `selectedActionKindSummaries`: The grouped override-action buckets for runtime candidates that selected this override rule, including runtime no-op selections.
+- `appliedActionKindSummaries`: The grouped override-action buckets for runtime candidates materially changed by this override rule.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-actionkinds"></a>
+
+##### `ActionKinds`
+
+```csharp
+IReadOnlyList<RestEndpointOverrideActionKind> ActionKinds { get; }
+```
+
+Gets the normalized action dimensions declared by this override rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-apiversionmajor"></a>
+
+##### `ApiVersionMajor`
+
+```csharp
+int? ApiVersionMajor { get; }
+```
+
+Gets the effective API major version applied when this override rule matches.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-apiversionmajors"></a>
+
+##### `ApiVersionMajors`
+
+```csharp
+IReadOnlyList<int> ApiVersionMajors { get; }
+```
+
+Gets the effective API major versions targeted by this override rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-appliedactionkinds"></a>
+
+##### `AppliedActionKinds`
+
+```csharp
+IReadOnlyList<RestEndpointOverrideActionKind> AppliedActionKinds { get; }
+```
+
+Gets the union of override action dimensions that materially changed one or more runtime candidates.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-appliedactionkindsummaries"></a>
+
+##### `AppliedActionKindSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor> AppliedActionKindSummaries { get; }
+```
+
+Gets the grouped override-action buckets for runtime candidates materially changed by this override rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-appliedcandidateids"></a>
+
+##### `AppliedCandidateIds`
+
+```csharp
+IReadOnlyList<string> AppliedCandidateIds { get; }
+```
+
+Gets the runtime candidate identifiers whose effective answer was materially changed by this override rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-authoringstyles"></a>
+
+##### `AuthoringStyles`
+
+```csharp
+IReadOnlyList<string> AuthoringStyles { get; }
+```
+
+Gets the normalized authoring styles targeted by this override rule. Explicit module-DSL routes participate only when their owning route group opted into host governance.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-behaviorids"></a>
+
+##### `BehaviorIds`
+
+```csharp
+IReadOnlyList<string> BehaviorIds { get; }
+```
+
+Gets the behavior identifiers targeted by this override rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-bindingfallbackmodes"></a>
+
+##### `BindingFallbackModes`
+
+```csharp
+IReadOnlyList<RestEndpointBindingFallbackMode> BindingFallbackModes { get; }
+```
+
+Gets the original candidate request-binding fallback modes targeted by this override rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-bindingmode"></a>
+
+##### `BindingMode`
+
+```csharp
+RestEndpointOverrideBindingMode BindingMode { get; }
+```
+
+Gets how `Bindings` and `RemovedBindingProperties` apply to the candidate's explicit binding plan.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-bindings"></a>
+
+##### `Bindings`
+
+```csharp
+IReadOnlyList<RestEndpointBindingDescriptor> Bindings { get; }
+```
+
+Gets the effective explicit request-binding plan applied when this override rule matches.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-candidateids"></a>
+
+##### `CandidateIds`
+
+```csharp
+IReadOnlyList<string> CandidateIds { get; }
+```
+
+Gets the original candidate identifiers targeted by this override rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-clearbindings"></a>
+
+##### `ClearBindings`
+
+```csharp
+bool ClearBindings { get; }
+```
+
+Gets a value indicating whether this override rule clears the matched candidate's entire explicit binding plan.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-cleardescription"></a>
+
+##### `ClearDescription`
+
+```csharp
+bool ClearDescription { get; }
+```
+
+Gets a value indicating whether this override rule clears any previously declared endpoint description from the matched candidate.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-clearendpointname"></a>
+
+##### `ClearEndpointName`
+
+```csharp
+bool ClearEndpointName { get; }
+```
+
+Gets a value indicating whether this override rule clears any previously declared endpoint name from the matched candidate.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-clearrequiredcapability"></a>
+
+##### `ClearRequiredCapability`
+
+```csharp
+bool ClearRequiredCapability { get; }
+```
+
+Gets a value indicating whether this override rule clears any previously declared Cephalon capability boundary from the matched candidate.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-clearsummary"></a>
+
+##### `ClearSummary`
+
+```csharp
+bool ClearSummary { get; }
+```
+
+Gets a value indicating whether this override rule clears any previously declared endpoint summary from the matched candidate.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the effective OpenAPI description applied when this override rule matches.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-endpointname"></a>
+
+##### `EndpointName`
+
+```csharp
+string EndpointName { get; }
+```
+
+Gets the effective endpoint name applied when this override rule matches.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-endpointnames"></a>
+
+##### `EndpointNames`
+
+```csharp
+IReadOnlyList<string> EndpointNames { get; }
+```
+
+Gets the original candidate endpoint names targeted by this override rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-hostgovernancescopes"></a>
+
+##### `HostGovernanceScopes`
+
+```csharp
+IReadOnlyList<string> HostGovernanceScopes { get; }
+```
+
+Gets the original candidate host-governance scopes targeted by this override rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable override identifier.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-matchedcandidateids"></a>
+
+##### `MatchedCandidateIds`
+
+```csharp
+IReadOnlyList<string> MatchedCandidateIds { get; }
+```
+
+Gets the runtime candidate identifiers that matched this override rule, including candidates where another override rule won selection.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-method"></a>
+
+##### `Method`
+
+```csharp
+string Method { get; }
+```
+
+Gets the effective HTTP method applied when this override rule matches.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-methods"></a>
+
+##### `Methods`
+
+```csharp
+IReadOnlyList<string> Methods { get; }
+```
+
+Gets the effective HTTP methods targeted by this override rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-openapidocumentname"></a>
+
+##### `OpenApiDocumentName`
+
+```csharp
+string OpenApiDocumentName { get; }
+```
+
+Gets the effective OpenAPI document name applied when this override rule matches.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-openapidocumentnames"></a>
+
+##### `OpenApiDocumentNames`
+
+```csharp
+IReadOnlyList<string> OpenApiDocumentNames { get; }
+```
+
+Gets the original candidate OpenAPI document names targeted by this override rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-pattern"></a>
+
+##### `Pattern`
+
+```csharp
+string Pattern { get; }
+```
+
+Gets the effective relative route pattern applied when this override rule matches.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-relativepatterns"></a>
+
+##### `RelativePatterns`
+
+```csharp
+IReadOnlyList<string> RelativePatterns { get; }
+```
+
+Gets the relative route patterns targeted by this override rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-removedbindingproperties"></a>
+
+##### `RemovedBindingProperties`
+
+```csharp
+IReadOnlyList<string> RemovedBindingProperties { get; }
+```
+
+Gets the explicit binding properties removed from the source binding plan when this override rule matches.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-requiredcapabilitykey"></a>
+
+##### `RequiredCapabilityKey`
+
+```csharp
+string RequiredCapabilityKey { get; }
+```
+
+Gets the required Cephalon capability key enforced at the REST boundary when this override rule matches.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-routegroupprefix"></a>
+
+##### `RouteGroupPrefix`
+
+```csharp
+string RouteGroupPrefix { get; }
+```
+
+Gets the effective published route-group prefix applied when this override rule matches.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-routegroupprefixes"></a>
+
+##### `RouteGroupPrefixes`
+
+```csharp
+IReadOnlyList<string> RouteGroupPrefixes { get; }
+```
+
+Gets the published route-group prefixes targeted by this override rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-selectedactionkinds"></a>
+
+##### `SelectedActionKinds`
+
+```csharp
+IReadOnlyList<RestEndpointOverrideActionKind> SelectedActionKinds { get; }
+```
+
+Gets the union of configured override action dimensions that were selected for one or more runtime candidates, including runtime no-op selections.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-selectedactionkindsummaries"></a>
+
+##### `SelectedActionKindSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor> SelectedActionKindSummaries { get; }
+```
+
+Gets the grouped override-action buckets for runtime candidates that selected this override rule, including runtime no-op selections.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-selectedcandidateids"></a>
+
+##### `SelectedCandidateIds`
+
+```csharp
+IReadOnlyList<string> SelectedCandidateIds { get; }
+```
+
+Gets the runtime candidate identifiers that selected this override rule as the winning rule, including runtime no-op selections.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-selectionbases"></a>
+
+##### `SelectionBases`
+
+```csharp
+IReadOnlyList<RestEndpointGovernanceRuleSelectionBasis> SelectionBases { get; }
+```
+
+Gets the union of decisive specificity rules that selected this override rule for one or more runtime candidates.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-selectionbasissummaries"></a>
+
+##### `SelectionBasisSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointGovernanceSelectionBasisSummaryDescriptor> SelectionBasisSummaries { get; }
+```
+
+Gets the grouped selection-basis buckets for runtime candidates that selected this override rule, including runtime no-op selections.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-skippedcandidateids"></a>
+
+##### `SkippedCandidateIds`
+
+```csharp
+IReadOnlyList<string> SkippedCandidateIds { get; }
+```
+
+Gets the runtime candidate identifiers that this rule would otherwise target but skipped because the original projection did not allow host governance to participate.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-sourcemoduleids"></a>
+
+##### `SourceModuleIds`
+
+```csharp
+IReadOnlyList<string> SourceModuleIds { get; }
+```
+
+Gets the source-module identifiers targeted by this override rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-summary"></a>
+
+##### `Summary`
+
+```csharp
+string Summary { get; }
+```
+
+Gets the effective OpenAPI summary applied when this override rule matches.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-tagname"></a>
+
+##### `TagName`
+
+```csharp
+string TagName { get; }
+```
+
+Gets the effective primary OpenAPI tag name applied when this override rule matches.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-tagnames"></a>
+
+##### `TagNames`
+
+```csharp
+IReadOnlyList<string> TagNames { get; }
+```
+
+Gets the original candidate primary OpenAPI tag names targeted by this override rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-targetbindings"></a>
+
+##### `TargetBindings`
+
+```csharp
+IReadOnlyList<RestEndpointBindingDescriptor> TargetBindings { get; }
+```
+
+Gets the original candidate explicit binding descriptors targeted by this override rule before override actions are applied.
+
+<a id="type-cephalon-abstractions-transports-restendpointpublicationgroupauthoringpolicydescriptor"></a>
+
+### `RestEndpointPublicationGroupAuthoringPolicyDescriptor`
+
+Describes the effective authoring-policy intent for one behavior-level REST publication group.
+
+Remarks: This descriptor captures authoring-policy intent, not the already-resolved publication outcome. The grouped publication answer remains authoritative for which candidates actually published or were suppressed at runtime.
+
+#### Declaration
+```csharp
+public sealed class RestEndpointPublicationGroupAuthoringPolicyDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-transports-restendpointpublicationgroupauthoringpolicydescriptor-ctor-system-string-system-boolean-system-boolean-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `RestEndpointPublicationGroupAuthoringPolicyDescriptor`
+
+```csharp
+RestEndpointPublicationGroupAuthoringPolicyDescriptor(string behaviorId, bool isConfigured, bool allowMultiplePublishedCandidates, string preferredAuthoringStyle, IReadOnlyList<string> allowedAuthoringStyles, IReadOnlyList<string> disallowedAuthoringStyles)
+```
+
+Creates a behavior-level REST publication-group authoring policy descriptor.
+
+Parameters:
+- `behaviorId`: The stable behavior identifier that this authoring policy applies to.
+- `isConfigured`: `true` when the policy was supplied through host configuration; otherwise `false` when the runtime is exposing the implicit default policy.
+- `allowMultiplePublishedCandidates`: `true` when the policy explicitly allows more than one projection candidate to remain published for the same behavior boundary after authoring-policy enforcement.
+- `preferredAuthoringStyle`: The normalized preferred authoring style when the policy declares one.
+- `allowedAuthoringStyles`: The normalized authoring styles that the policy explicitly allows for this behavior boundary when one or more are declared.
+- `disallowedAuthoringStyles`: The normalized authoring styles that the policy explicitly disallows for this behavior boundary when one or more are declared.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupauthoringpolicydescriptor-allowedauthoringstyles"></a>
+
+##### `AllowedAuthoringStyles`
+
+```csharp
+IReadOnlyList<string> AllowedAuthoringStyles { get; }
+```
+
+Gets the normalized authoring styles that the policy explicitly allows.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupauthoringpolicydescriptor-allowmultiplepublishedcandidates"></a>
+
+##### `AllowMultiplePublishedCandidates`
+
+```csharp
+bool AllowMultiplePublishedCandidates { get; }
+```
+
+Gets a value indicating whether the policy explicitly allows multiple published candidates for the same behavior boundary after authoring-policy enforcement.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupauthoringpolicydescriptor-behaviorid"></a>
+
+##### `BehaviorId`
+
+```csharp
+string BehaviorId { get; }
+```
+
+Gets the stable behavior identifier that this authoring policy applies to.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupauthoringpolicydescriptor-disallowedauthoringstyles"></a>
+
+##### `DisallowedAuthoringStyles`
+
+```csharp
+IReadOnlyList<string> DisallowedAuthoringStyles { get; }
+```
+
+Gets the normalized authoring styles that the policy explicitly disallows.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupauthoringpolicydescriptor-isconfigured"></a>
+
+##### `IsConfigured`
+
+```csharp
+bool IsConfigured { get; }
+```
+
+Gets a value indicating whether this authoring policy came from explicit host configuration.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupauthoringpolicydescriptor-preferredauthoringstyle"></a>
+
+##### `PreferredAuthoringStyle`
+
+```csharp
+string PreferredAuthoringStyle { get; }
+```
+
+Gets the normalized preferred authoring style when the policy declares one.
+
+<a id="type-cephalon-abstractions-transports-restendpointpublicationgroupauthoringpolicysuppressiondescriptor"></a>
+
+### `RestEndpointPublicationGroupAuthoringPolicySuppressionDescriptor`
+
+Describes one grouped authoring-policy suppression outcome within a REST publication-group answer.
+
+#### Declaration
+```csharp
+public sealed class RestEndpointPublicationGroupAuthoringPolicySuppressionDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-transports-restendpointpublicationgroupauthoringpolicysuppressiondescriptor-ctor-cephalon-abstractions-transports-restendpointauthoringpolicysuppressionkind-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `RestEndpointPublicationGroupAuthoringPolicySuppressionDescriptor`
+
+```csharp
+RestEndpointPublicationGroupAuthoringPolicySuppressionDescriptor(RestEndpointAuthoringPolicySuppressionKind kind, IReadOnlyList<string> candidateIds)
+```
+
+Creates a grouped authoring-policy suppression descriptor.
+
+Parameters:
+- `kind`: The authoring-policy suppression kind summarized by this entry.
+- `candidateIds`: The ordered candidate identifiers suppressed by this suppression kind.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupauthoringpolicysuppressiondescriptor-candidateids"></a>
+
+##### `CandidateIds`
+
+```csharp
+IReadOnlyList<string> CandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers suppressed by this suppression kind.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupauthoringpolicysuppressiondescriptor-kind"></a>
+
+##### `Kind`
+
+```csharp
+RestEndpointAuthoringPolicySuppressionKind Kind { get; }
+```
+
+Gets the authoring-policy suppression kind summarized by this entry.
+
+<a id="type-cephalon-abstractions-transports-restendpointpublicationgroupauthoringstyledescriptor"></a>
+
+### `RestEndpointPublicationGroupAuthoringStyleDescriptor`
+
+Describes the grouped publication outcome for one authoring style within a behavior-level REST publication group.
+
+#### Declaration
+```csharp
+public sealed class RestEndpointPublicationGroupAuthoringStyleDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-transports-restendpointpublicationgroupauthoringstyledescriptor-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointpublicationgroupauthoringpolicysuppressiondescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointpublicationgroupgovernancesuppressionsummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceoverridesummarydescriptor"></a>
+
+##### `RestEndpointPublicationGroupAuthoringStyleDescriptor`
+
+```csharp
+RestEndpointPublicationGroupAuthoringStyleDescriptor(string authoringStyle, IReadOnlyList<string> sourceModuleIds, IReadOnlyList<int> precedenceRanks, IReadOnlyList<string> candidateIds, IReadOnlyList<string> publishedCandidateIds, IReadOnlyList<string> precedenceSuppressedCandidateIds, IReadOnlyList<string> governanceSuppressedCandidateIds, IReadOnlyList<string> authoringPolicySuppressedCandidateIds, IReadOnlyList<RestEndpointPublicationGroupAuthoringPolicySuppressionDescriptor> authoringPolicySuppressionSummaries, IReadOnlyList<string> hostGovernanceEligibleCandidateIds, IReadOnlyList<string> hostGovernanceIneligibleCandidateIds, IReadOnlyList<string> skippedSuppressionIds, IReadOnlyList<string> skippedOverrideIds, IReadOnlyList<RestEndpointPublicationGroupGovernanceSuppressionSummaryDescriptor> governanceSuppressionSummaries, IReadOnlyList<RestEndpointPublicationGroupGovernanceOverrideSummaryDescriptor> governanceOverrideSummaries)
+```
+
+Creates a grouped publication descriptor for one authoring style.
+
+Parameters:
+- `authoringStyle`: The normalized authoring style that contributed the grouped candidates.
+- `sourceModuleIds`: The distinct source-module identifiers that contributed candidates for this authoring style.
+- `precedenceRanks`: The distinct precedence ranks visible for this authoring style within the group.
+- `candidateIds`: The ordered candidate identifiers contributed by this authoring style.
+- `publishedCandidateIds`: The ordered candidate identifiers that remain published for this authoring style.
+- `precedenceSuppressedCandidateIds`: The ordered candidate identifiers that were suppressed by another candidate through precedence resolution.
+- `governanceSuppressedCandidateIds`: The ordered candidate identifiers that were suppressed by host-level REST governance.
+- `authoringPolicySuppressedCandidateIds`: The ordered candidate identifiers that were suppressed by behavior-level authoring-policy enforcement.
+- `authoringPolicySuppressionSummaries`: The grouped authoring-policy suppression outcomes summarized by suppression kind for this authoring style.
+- `hostGovernanceEligibleCandidateIds`: The ordered candidate identifiers whose original projections allowed host governance to participate.
+- `hostGovernanceIneligibleCandidateIds`: The ordered candidate identifiers whose original projections kept host governance out of scope.
+- `skippedSuppressionIds`: The ordered suppression-rule identifiers that targeted ineligible candidates for this authoring style.
+- `skippedOverrideIds`: The ordered override-rule identifiers that targeted ineligible candidates for this authoring style.
+- `governanceSuppressionSummaries`: The grouped host-governance suppression-rule outcomes summarized by rule for this authoring style.
+- `governanceOverrideSummaries`: The grouped host-governance override-rule outcomes summarized by rule for this authoring style.
+
+<a id="member-m-cephalon-abstractions-transports-restendpointpublicationgroupauthoringstyledescriptor-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointpublicationgroupauthoringpolicysuppressiondescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointpublicationgroupgovernancesuppressionsummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceoverridesummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceskippedsuppressionsummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceskippedoverridesummarydescriptor"></a>
+
+##### `RestEndpointPublicationGroupAuthoringStyleDescriptor`
+
+```csharp
+RestEndpointPublicationGroupAuthoringStyleDescriptor(string authoringStyle, IReadOnlyList<string> sourceModuleIds, IReadOnlyList<int> precedenceRanks, IReadOnlyList<string> candidateIds, IReadOnlyList<string> publishedCandidateIds, IReadOnlyList<string> precedenceSuppressedCandidateIds, IReadOnlyList<string> governanceSuppressedCandidateIds, IReadOnlyList<string> authoringPolicySuppressedCandidateIds, IReadOnlyList<RestEndpointPublicationGroupAuthoringPolicySuppressionDescriptor> authoringPolicySuppressionSummaries, IReadOnlyList<string> hostGovernanceEligibleCandidateIds, IReadOnlyList<string> hostGovernanceIneligibleCandidateIds, IReadOnlyList<string> skippedSuppressionIds, IReadOnlyList<string> skippedOverrideIds, IReadOnlyList<RestEndpointPublicationGroupGovernanceSuppressionSummaryDescriptor> governanceSuppressionSummaries, IReadOnlyList<RestEndpointPublicationGroupGovernanceOverrideSummaryDescriptor> governanceOverrideSummaries, IReadOnlyList<RestEndpointPublicationGroupGovernanceSkippedSuppressionSummaryDescriptor> skippedSuppressionSummaries, IReadOnlyList<RestEndpointPublicationGroupGovernanceSkippedOverrideSummaryDescriptor> skippedOverrideSummaries)
+```
+
+Creates a grouped publication descriptor for one authoring style, including grouped skipped-governance summaries.
+
+Parameters:
+- `authoringStyle`: The normalized authoring style that contributed the grouped candidates.
+- `sourceModuleIds`: The distinct source-module identifiers that contributed candidates for this authoring style.
+- `precedenceRanks`: The distinct precedence ranks visible for this authoring style within the group.
+- `candidateIds`: The ordered candidate identifiers contributed by this authoring style.
+- `publishedCandidateIds`: The ordered candidate identifiers that remain published for this authoring style.
+- `precedenceSuppressedCandidateIds`: The ordered candidate identifiers that were suppressed by another candidate through precedence resolution.
+- `governanceSuppressedCandidateIds`: The ordered candidate identifiers that were suppressed by host-level REST governance.
+- `authoringPolicySuppressedCandidateIds`: The ordered candidate identifiers that were suppressed by behavior-level authoring-policy enforcement.
+- `authoringPolicySuppressionSummaries`: The grouped authoring-policy suppression outcomes summarized by suppression kind for this authoring style.
+- `hostGovernanceEligibleCandidateIds`: The ordered candidate identifiers whose original projections allowed host governance to participate.
+- `hostGovernanceIneligibleCandidateIds`: The ordered candidate identifiers whose original projections kept host governance out of scope.
+- `skippedSuppressionIds`: The ordered suppression-rule identifiers that targeted ineligible candidates for this authoring style.
+- `skippedOverrideIds`: The ordered override-rule identifiers that targeted ineligible candidates for this authoring style.
+- `governanceSuppressionSummaries`: The grouped host-governance suppression-rule outcomes summarized by rule for this authoring style.
+- `governanceOverrideSummaries`: The grouped host-governance override-rule outcomes summarized by rule for this authoring style.
+- `skippedSuppressionSummaries`: The grouped host-governance-skipped suppression-rule outcomes summarized by rule for this authoring style.
+- `skippedOverrideSummaries`: The grouped host-governance-skipped override-rule outcomes summarized by rule for this authoring style.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupauthoringstyledescriptor-authoringpolicysuppressedcandidateids"></a>
+
+##### `AuthoringPolicySuppressedCandidateIds`
+
+```csharp
+IReadOnlyList<string> AuthoringPolicySuppressedCandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers that were suppressed by behavior-level authoring-policy enforcement.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupauthoringstyledescriptor-authoringpolicysuppressionsummaries"></a>
+
+##### `AuthoringPolicySuppressionSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointPublicationGroupAuthoringPolicySuppressionDescriptor> AuthoringPolicySuppressionSummaries { get; }
+```
+
+Gets the grouped authoring-policy suppression outcomes summarized by suppression kind for this authoring style.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupauthoringstyledescriptor-authoringstyle"></a>
+
+##### `AuthoringStyle`
+
+```csharp
+string AuthoringStyle { get; }
+```
+
+Gets the normalized authoring style that contributed the grouped candidates.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupauthoringstyledescriptor-candidateids"></a>
+
+##### `CandidateIds`
+
+```csharp
+IReadOnlyList<string> CandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers contributed by this authoring style.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupauthoringstyledescriptor-governanceoverridesummaries"></a>
+
+##### `GovernanceOverrideSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointPublicationGroupGovernanceOverrideSummaryDescriptor> GovernanceOverrideSummaries { get; }
+```
+
+Gets the grouped host-governance override-rule outcomes summarized by rule for this authoring style.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupauthoringstyledescriptor-governancesuppressedcandidateids"></a>
+
+##### `GovernanceSuppressedCandidateIds`
+
+```csharp
+IReadOnlyList<string> GovernanceSuppressedCandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers that were suppressed by host-level REST governance.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupauthoringstyledescriptor-governancesuppressionsummaries"></a>
+
+##### `GovernanceSuppressionSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointPublicationGroupGovernanceSuppressionSummaryDescriptor> GovernanceSuppressionSummaries { get; }
+```
+
+Gets the grouped host-governance suppression-rule outcomes summarized by rule for this authoring style.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupauthoringstyledescriptor-hostgovernanceeligiblecandidateids"></a>
+
+##### `HostGovernanceEligibleCandidateIds`
+
+```csharp
+IReadOnlyList<string> HostGovernanceEligibleCandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers whose original projections allowed host governance to participate.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupauthoringstyledescriptor-hostgovernanceineligiblecandidateids"></a>
+
+##### `HostGovernanceIneligibleCandidateIds`
+
+```csharp
+IReadOnlyList<string> HostGovernanceIneligibleCandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers whose original projections kept host governance out of scope.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupauthoringstyledescriptor-precedenceranks"></a>
+
+##### `PrecedenceRanks`
+
+```csharp
+IReadOnlyList<int> PrecedenceRanks { get; }
+```
+
+Gets the distinct precedence ranks visible for this authoring style within the group.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupauthoringstyledescriptor-precedencesuppressedcandidateids"></a>
+
+##### `PrecedenceSuppressedCandidateIds`
+
+```csharp
+IReadOnlyList<string> PrecedenceSuppressedCandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers that were suppressed by precedence resolution.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupauthoringstyledescriptor-publishedcandidateids"></a>
+
+##### `PublishedCandidateIds`
+
+```csharp
+IReadOnlyList<string> PublishedCandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers that remain published for this authoring style.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupauthoringstyledescriptor-skippedoverrideids"></a>
+
+##### `SkippedOverrideIds`
+
+```csharp
+IReadOnlyList<string> SkippedOverrideIds { get; }
+```
+
+Gets the ordered override-rule identifiers that targeted ineligible candidates for this authoring style.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupauthoringstyledescriptor-skippedoverridesummaries"></a>
+
+##### `SkippedOverrideSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointPublicationGroupGovernanceSkippedOverrideSummaryDescriptor> SkippedOverrideSummaries { get; }
+```
+
+Gets the grouped host-governance-skipped override-rule outcomes summarized by rule for this authoring style.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupauthoringstyledescriptor-skippedsuppressionids"></a>
+
+##### `SkippedSuppressionIds`
+
+```csharp
+IReadOnlyList<string> SkippedSuppressionIds { get; }
+```
+
+Gets the ordered suppression-rule identifiers that targeted ineligible candidates for this authoring style.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupauthoringstyledescriptor-skippedsuppressionsummaries"></a>
+
+##### `SkippedSuppressionSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointPublicationGroupGovernanceSkippedSuppressionSummaryDescriptor> SkippedSuppressionSummaries { get; }
+```
+
+Gets the grouped host-governance-skipped suppression-rule outcomes summarized by rule for this authoring style.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupauthoringstyledescriptor-sourcemoduleids"></a>
+
+##### `SourceModuleIds`
+
+```csharp
+IReadOnlyList<string> SourceModuleIds { get; }
+```
+
+Gets the distinct source-module identifiers that contributed candidates for this authoring style.
+
+<a id="type-cephalon-abstractions-transports-restendpointpublicationgroupdescriptor"></a>
+
+### `RestEndpointPublicationGroupDescriptor`
+
+Describes the grouped public REST publication outcome for one behavior across all of its visible candidates.
+
+#### Declaration
+```csharp
+public sealed class RestEndpointPublicationGroupDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-transports-restendpointpublicationgroupdescriptor-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-nullable-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-cephalon-abstractions-transports-restendpointpublicationgroupauthoringpolicydescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointpublicationgroupauthoringpolicysuppressiondescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointpublicationgroupgovernancesuppressionsummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceoverridesummarydescriptor"></a>
+
+##### `RestEndpointPublicationGroupDescriptor`
+
+```csharp
+RestEndpointPublicationGroupDescriptor(string behaviorId, IReadOnlyList<string> sourceModuleIds, int? winningPrecedenceRank, IReadOnlyList<string> publishedCandidateIds, IReadOnlyList<string> precedenceSuppressedCandidateIds, IReadOnlyList<string> governanceSuppressedCandidateIds, IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> candidates, RestEndpointPublicationGroupAuthoringPolicyDescriptor authoringPolicy, IReadOnlyList<string> authoringPolicySuppressedCandidateIds, IReadOnlyList<RestEndpointPublicationGroupAuthoringPolicySuppressionDescriptor> authoringPolicySuppressionSummaries, IReadOnlyList<string> hostGovernanceEligibleCandidateIds, IReadOnlyList<string> hostGovernanceIneligibleCandidateIds, IReadOnlyList<string> skippedSuppressionIds, IReadOnlyList<string> skippedOverrideIds, IReadOnlyList<RestEndpointPublicationGroupGovernanceSuppressionSummaryDescriptor> governanceSuppressionSummaries, IReadOnlyList<RestEndpointPublicationGroupGovernanceOverrideSummaryDescriptor> governanceOverrideSummaries)
+```
+
+Creates a grouped REST endpoint publication descriptor.
+
+Parameters:
+- `behaviorId`: The stable behavior identifier for the grouped publication answer.
+- `sourceModuleIds`: The distinct source-module identifiers that contributed the grouped candidates.
+- `winningPrecedenceRank`: The winning precedence rank for the published candidates when one or more candidates remain published.
+- `publishedCandidateIds`: The candidate identifiers that remain published for this behavior.
+- `precedenceSuppressedCandidateIds`: The candidate identifiers that were suppressed by another candidate through precedence resolution.
+- `governanceSuppressedCandidateIds`: The candidate identifiers that were suppressed by host-level REST governance.
+- `candidates`: The ordered candidate set that produced this grouped publication answer.
+- `authoringPolicy`: The effective authoring-policy intent for this behavior-level publication group.
+- `authoringPolicySuppressedCandidateIds`: The candidate identifiers that were suppressed by behavior-level authoring-policy enforcement.
+- `authoringPolicySuppressionSummaries`: The grouped authoring-policy suppression outcomes summarized by suppression kind.
+- `hostGovernanceEligibleCandidateIds`: The candidate identifiers whose original projections allowed host governance to participate.
+- `hostGovernanceIneligibleCandidateIds`: The candidate identifiers whose original projections kept host governance out of scope.
+- `skippedSuppressionIds`: The ordered suppression-rule identifiers that targeted ineligible candidates in this behavior group.
+- `skippedOverrideIds`: The ordered override-rule identifiers that targeted ineligible candidates in this behavior group.
+- `governanceSuppressionSummaries`: The grouped host-governance suppression-rule outcomes summarized by rule.
+- `governanceOverrideSummaries`: The grouped host-governance override-rule outcomes summarized by rule.
+
+<a id="member-m-cephalon-abstractions-transports-restendpointpublicationgroupdescriptor-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-nullable-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-cephalon-abstractions-transports-restendpointpublicationgroupauthoringpolicydescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointpublicationgroupauthoringpolicysuppressiondescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointpublicationgroupgovernancesuppressionsummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceoverridesummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceskippedsuppressionsummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceskippedoverridesummarydescriptor"></a>
+
+##### `RestEndpointPublicationGroupDescriptor`
+
+```csharp
+RestEndpointPublicationGroupDescriptor(string behaviorId, IReadOnlyList<string> sourceModuleIds, int? winningPrecedenceRank, IReadOnlyList<string> publishedCandidateIds, IReadOnlyList<string> precedenceSuppressedCandidateIds, IReadOnlyList<string> governanceSuppressedCandidateIds, IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> candidates, RestEndpointPublicationGroupAuthoringPolicyDescriptor authoringPolicy, IReadOnlyList<string> authoringPolicySuppressedCandidateIds, IReadOnlyList<RestEndpointPublicationGroupAuthoringPolicySuppressionDescriptor> authoringPolicySuppressionSummaries, IReadOnlyList<string> hostGovernanceEligibleCandidateIds, IReadOnlyList<string> hostGovernanceIneligibleCandidateIds, IReadOnlyList<string> skippedSuppressionIds, IReadOnlyList<string> skippedOverrideIds, IReadOnlyList<RestEndpointPublicationGroupGovernanceSuppressionSummaryDescriptor> governanceSuppressionSummaries, IReadOnlyList<RestEndpointPublicationGroupGovernanceOverrideSummaryDescriptor> governanceOverrideSummaries, IReadOnlyList<RestEndpointPublicationGroupGovernanceSkippedSuppressionSummaryDescriptor> skippedSuppressionSummaries, IReadOnlyList<RestEndpointPublicationGroupGovernanceSkippedOverrideSummaryDescriptor> skippedOverrideSummaries)
+```
+
+Creates a grouped REST endpoint publication descriptor, including grouped skipped-governance summaries.
+
+Parameters:
+- `behaviorId`: The stable behavior identifier for the grouped publication answer.
+- `sourceModuleIds`: The distinct source-module identifiers that contributed the grouped candidates.
+- `winningPrecedenceRank`: The winning precedence rank for the published candidates when one or more candidates remain published.
+- `publishedCandidateIds`: The candidate identifiers that remain published for this behavior.
+- `precedenceSuppressedCandidateIds`: The candidate identifiers that were suppressed by another candidate through precedence resolution.
+- `governanceSuppressedCandidateIds`: The candidate identifiers that were suppressed by host-level REST governance.
+- `candidates`: The ordered candidate set that produced this grouped publication answer.
+- `authoringPolicy`: The effective authoring-policy intent for this behavior-level publication group.
+- `authoringPolicySuppressedCandidateIds`: The candidate identifiers that were suppressed by behavior-level authoring-policy enforcement.
+- `authoringPolicySuppressionSummaries`: The grouped authoring-policy suppression outcomes summarized by suppression kind.
+- `hostGovernanceEligibleCandidateIds`: The candidate identifiers whose original projections allowed host governance to participate.
+- `hostGovernanceIneligibleCandidateIds`: The candidate identifiers whose original projections kept host governance out of scope.
+- `skippedSuppressionIds`: The ordered suppression-rule identifiers that targeted ineligible candidates in this behavior group.
+- `skippedOverrideIds`: The ordered override-rule identifiers that targeted ineligible candidates in this behavior group.
+- `governanceSuppressionSummaries`: The grouped host-governance suppression-rule outcomes summarized by rule.
+- `governanceOverrideSummaries`: The grouped host-governance override-rule outcomes summarized by rule.
+- `skippedSuppressionSummaries`: The grouped host-governance-skipped suppression-rule outcomes summarized by rule.
+- `skippedOverrideSummaries`: The grouped host-governance-skipped override-rule outcomes summarized by rule.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupdescriptor-authoringpolicy"></a>
+
+##### `AuthoringPolicy`
+
+```csharp
+RestEndpointPublicationGroupAuthoringPolicyDescriptor AuthoringPolicy { get; }
+```
+
+Gets the effective authoring-policy intent for this behavior-level publication group.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupdescriptor-authoringpolicysuppressedcandidateids"></a>
+
+##### `AuthoringPolicySuppressedCandidateIds`
+
+```csharp
+IReadOnlyList<string> AuthoringPolicySuppressedCandidateIds { get; }
+```
+
+Gets the candidate identifiers that were suppressed by behavior-level authoring-policy enforcement.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupdescriptor-authoringpolicysuppressionsummaries"></a>
+
+##### `AuthoringPolicySuppressionSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointPublicationGroupAuthoringPolicySuppressionDescriptor> AuthoringPolicySuppressionSummaries { get; }
+```
+
+Gets the grouped authoring-policy suppression outcomes summarized by suppression kind.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupdescriptor-authoringstylesummaries"></a>
+
+##### `AuthoringStyleSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointPublicationGroupAuthoringStyleDescriptor> AuthoringStyleSummaries { get; }
+```
+
+Gets the grouped publication outcome summarized by authoring style for this behavior.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupdescriptor-behaviorid"></a>
+
+##### `BehaviorId`
+
+```csharp
+string BehaviorId { get; }
+```
+
+Gets the stable behavior identifier for the grouped publication answer.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupdescriptor-candidates"></a>
+
+##### `Candidates`
+
+```csharp
+IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> Candidates { get; }
+```
+
+Gets the ordered candidate set that produced this grouped publication answer.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupdescriptor-governanceoverridesummaries"></a>
+
+##### `GovernanceOverrideSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointPublicationGroupGovernanceOverrideSummaryDescriptor> GovernanceOverrideSummaries { get; }
+```
+
+Gets the grouped host-governance override-rule outcomes summarized by rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupdescriptor-governancesuppressedcandidateids"></a>
+
+##### `GovernanceSuppressedCandidateIds`
+
+```csharp
+IReadOnlyList<string> GovernanceSuppressedCandidateIds { get; }
+```
+
+Gets the candidate identifiers that were suppressed by host-level REST governance.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupdescriptor-governancesuppressionsummaries"></a>
+
+##### `GovernanceSuppressionSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointPublicationGroupGovernanceSuppressionSummaryDescriptor> GovernanceSuppressionSummaries { get; }
+```
+
+Gets the grouped host-governance suppression-rule outcomes summarized by rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupdescriptor-hostgovernanceeligiblecandidateids"></a>
+
+##### `HostGovernanceEligibleCandidateIds`
+
+```csharp
+IReadOnlyList<string> HostGovernanceEligibleCandidateIds { get; }
+```
+
+Gets the candidate identifiers whose original projections allowed host governance to participate.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupdescriptor-hostgovernanceineligiblecandidateids"></a>
+
+##### `HostGovernanceIneligibleCandidateIds`
+
+```csharp
+IReadOnlyList<string> HostGovernanceIneligibleCandidateIds { get; }
+```
+
+Gets the candidate identifiers whose original projections kept host governance out of scope.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupdescriptor-precedencesuppressedcandidateids"></a>
+
+##### `PrecedenceSuppressedCandidateIds`
+
+```csharp
+IReadOnlyList<string> PrecedenceSuppressedCandidateIds { get; }
+```
+
+Gets the candidate identifiers that were suppressed by precedence resolution.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupdescriptor-publishedcandidateids"></a>
+
+##### `PublishedCandidateIds`
+
+```csharp
+IReadOnlyList<string> PublishedCandidateIds { get; }
+```
+
+Gets the candidate identifiers that remain published for this behavior.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupdescriptor-skippedoverrideids"></a>
+
+##### `SkippedOverrideIds`
+
+```csharp
+IReadOnlyList<string> SkippedOverrideIds { get; }
+```
+
+Gets the ordered override-rule identifiers that targeted ineligible candidates in this behavior group.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupdescriptor-skippedoverridesummaries"></a>
+
+##### `SkippedOverrideSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointPublicationGroupGovernanceSkippedOverrideSummaryDescriptor> SkippedOverrideSummaries { get; }
+```
+
+Gets the grouped host-governance-skipped override-rule outcomes summarized by rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupdescriptor-skippedsuppressionids"></a>
+
+##### `SkippedSuppressionIds`
+
+```csharp
+IReadOnlyList<string> SkippedSuppressionIds { get; }
+```
+
+Gets the ordered suppression-rule identifiers that targeted ineligible candidates in this behavior group.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupdescriptor-skippedsuppressionsummaries"></a>
+
+##### `SkippedSuppressionSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointPublicationGroupGovernanceSkippedSuppressionSummaryDescriptor> SkippedSuppressionSummaries { get; }
+```
+
+Gets the grouped host-governance-skipped suppression-rule outcomes summarized by rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupdescriptor-sourcemoduleids"></a>
+
+##### `SourceModuleIds`
+
+```csharp
+IReadOnlyList<string> SourceModuleIds { get; }
+```
+
+Gets the distinct source-module identifiers that contributed the grouped candidates.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupdescriptor-winningprecedencerank"></a>
+
+##### `WinningPrecedenceRank`
+
+```csharp
+int? WinningPrecedenceRank { get; }
+```
+
+Gets the winning precedence rank for the published candidates when one or more remain published.
+
+<a id="type-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceoverrideactionkindsummarydescriptor"></a>
+
+### `RestEndpointPublicationGroupGovernanceOverrideActionKindSummaryDescriptor`
+
+Describes one grouped override-action bucket within a REST publication-group governance summary.
+
+#### Declaration
+```csharp
+public sealed class RestEndpointPublicationGroupGovernanceOverrideActionKindSummaryDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceoverrideactionkindsummarydescriptor-ctor-cephalon-abstractions-transports-restendpointoverrideactionkind-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `RestEndpointPublicationGroupGovernanceOverrideActionKindSummaryDescriptor`
+
+```csharp
+RestEndpointPublicationGroupGovernanceOverrideActionKindSummaryDescriptor(RestEndpointOverrideActionKind actionKind, IReadOnlyList<string> candidateIds)
+```
+
+Creates a grouped override-action bucket for a REST publication-group governance summary.
+
+Parameters:
+- `actionKind`: The override action dimension represented by this grouped bucket.
+- `candidateIds`: The ordered candidate identifiers that selected or materially applied this override action dimension.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceoverrideactionkindsummarydescriptor-actionkind"></a>
+
+##### `ActionKind`
+
+```csharp
+RestEndpointOverrideActionKind ActionKind { get; }
+```
+
+Gets the override action dimension represented by this grouped bucket.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceoverrideactionkindsummarydescriptor-candidateids"></a>
+
+##### `CandidateIds`
+
+```csharp
+IReadOnlyList<string> CandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers that selected or materially applied this override action dimension.
+
+<a id="type-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceoverridesummarydescriptor"></a>
+
+### `RestEndpointPublicationGroupGovernanceOverrideSummaryDescriptor`
+
+Describes one grouped host-governance override-rule outcome within a REST publication-group answer.
+
+#### Declaration
+```csharp
+public sealed class RestEndpointPublicationGroupGovernanceOverrideSummaryDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceoverridesummarydescriptor-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceselectionbasissummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceoverrideactionkindsummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceoverrideactionkindsummarydescriptor"></a>
+
+##### `RestEndpointPublicationGroupGovernanceOverrideSummaryDescriptor`
+
+```csharp
+RestEndpointPublicationGroupGovernanceOverrideSummaryDescriptor(string ruleId, IReadOnlyList<string> matchedCandidateIds, IReadOnlyList<string> selectedCandidateIds, IReadOnlyList<string> appliedCandidateIds, IReadOnlyList<RestEndpointPublicationGroupGovernanceSelectionBasisSummaryDescriptor> selectionBasisSummaries, IReadOnlyList<RestEndpointPublicationGroupGovernanceOverrideActionKindSummaryDescriptor> selectedActionKindSummaries, IReadOnlyList<RestEndpointPublicationGroupGovernanceOverrideActionKindSummaryDescriptor> appliedActionKindSummaries)
+```
+
+Creates a grouped host-governance override-rule summary.
+
+Parameters:
+- `ruleId`: The stable host-level override-rule identifier summarized by this entry.
+- `matchedCandidateIds`: The ordered candidate identifiers that matched this override rule before one winner was selected.
+- `selectedCandidateIds`: The ordered candidate identifiers that selected this override rule, including runtime no-op selections.
+- `appliedCandidateIds`: The ordered candidate identifiers whose effective runtime answer was materially changed by this override rule.
+- `selectionBasisSummaries`: The grouped decisive selection-basis buckets for the candidates that selected this override rule.
+- `selectedActionKindSummaries`: The grouped declared override-action buckets for the candidates that selected this override rule.
+- `appliedActionKindSummaries`: The grouped materially applied override-action buckets for the candidates this override rule changed.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceoverridesummarydescriptor-appliedactionkindsummaries"></a>
+
+##### `AppliedActionKindSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointPublicationGroupGovernanceOverrideActionKindSummaryDescriptor> AppliedActionKindSummaries { get; }
+```
+
+Gets the grouped materially applied override-action buckets for the candidates this override rule changed.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceoverridesummarydescriptor-appliedcandidateids"></a>
+
+##### `AppliedCandidateIds`
+
+```csharp
+IReadOnlyList<string> AppliedCandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers whose effective runtime answer was materially changed by this override rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceoverridesummarydescriptor-matchedcandidateids"></a>
+
+##### `MatchedCandidateIds`
+
+```csharp
+IReadOnlyList<string> MatchedCandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers that matched this override rule before one winner was selected.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceoverridesummarydescriptor-ruleid"></a>
+
+##### `RuleId`
+
+```csharp
+string RuleId { get; }
+```
+
+Gets the stable host-level override-rule identifier summarized by this entry.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceoverridesummarydescriptor-selectedactionkindsummaries"></a>
+
+##### `SelectedActionKindSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointPublicationGroupGovernanceOverrideActionKindSummaryDescriptor> SelectedActionKindSummaries { get; }
+```
+
+Gets the grouped declared override-action buckets for the candidates that selected this override rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceoverridesummarydescriptor-selectedcandidateids"></a>
+
+##### `SelectedCandidateIds`
+
+```csharp
+IReadOnlyList<string> SelectedCandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers that selected this override rule, including runtime no-op selections.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceoverridesummarydescriptor-selectionbasissummaries"></a>
+
+##### `SelectionBasisSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointPublicationGroupGovernanceSelectionBasisSummaryDescriptor> SelectionBasisSummaries { get; }
+```
+
+Gets the grouped decisive selection-basis buckets for the candidates that selected this override rule.
+
+<a id="type-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceselectionbasissummarydescriptor"></a>
+
+### `RestEndpointPublicationGroupGovernanceSelectionBasisSummaryDescriptor`
+
+Describes one grouped selection-basis bucket within a REST publication-group governance summary.
+
+#### Declaration
+```csharp
+public sealed class RestEndpointPublicationGroupGovernanceSelectionBasisSummaryDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceselectionbasissummarydescriptor-ctor-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `RestEndpointPublicationGroupGovernanceSelectionBasisSummaryDescriptor`
+
+```csharp
+RestEndpointPublicationGroupGovernanceSelectionBasisSummaryDescriptor(RestEndpointGovernanceRuleSelectionBasis selectionBasis, IReadOnlyList<string> candidateIds)
+```
+
+Creates a grouped selection-basis bucket for a REST publication-group governance summary.
+
+Parameters:
+- `selectionBasis`: The decisive specificity basis that selected the winning governance rule for the grouped candidates.
+- `candidateIds`: The ordered candidate identifiers that resolved the winning governance rule with this selection basis.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceselectionbasissummarydescriptor-candidateids"></a>
+
+##### `CandidateIds`
+
+```csharp
+IReadOnlyList<string> CandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers that resolved the winning governance rule with this selection basis.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceselectionbasissummarydescriptor-selectionbasis"></a>
+
+##### `SelectionBasis`
+
+```csharp
+RestEndpointGovernanceRuleSelectionBasis SelectionBasis { get; }
+```
+
+Gets the decisive specificity basis that selected the winning governance rule for the grouped candidates.
+
+<a id="type-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceskippedoverridesummarydescriptor"></a>
+
+### `RestEndpointPublicationGroupGovernanceSkippedOverrideSummaryDescriptor`
+
+Describes one grouped host-governance-skipped override-rule outcome within a REST publication-group answer.
+
+#### Declaration
+```csharp
+public sealed class RestEndpointPublicationGroupGovernanceSkippedOverrideSummaryDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceskippedoverridesummarydescriptor-ctor-system-string-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `RestEndpointPublicationGroupGovernanceSkippedOverrideSummaryDescriptor`
+
+```csharp
+RestEndpointPublicationGroupGovernanceSkippedOverrideSummaryDescriptor(string ruleId, IReadOnlyList<string> candidateIds)
+```
+
+Creates a grouped host-governance-skipped override-rule summary.
+
+Parameters:
+- `ruleId`: The stable host-level override-rule identifier summarized by this entry.
+- `candidateIds`: The ordered candidate identifiers that this override rule targeted before host governance was skipped.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceskippedoverridesummarydescriptor-candidateids"></a>
+
+##### `CandidateIds`
+
+```csharp
+IReadOnlyList<string> CandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers that this override rule targeted before host governance was skipped.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceskippedoverridesummarydescriptor-ruleid"></a>
+
+##### `RuleId`
+
+```csharp
+string RuleId { get; }
+```
+
+Gets the stable host-level override-rule identifier summarized by this entry.
+
+<a id="type-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceskippedsuppressionsummarydescriptor"></a>
+
+### `RestEndpointPublicationGroupGovernanceSkippedSuppressionSummaryDescriptor`
+
+Describes one grouped host-governance-skipped suppression-rule outcome within a REST publication-group answer.
+
+#### Declaration
+```csharp
+public sealed class RestEndpointPublicationGroupGovernanceSkippedSuppressionSummaryDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceskippedsuppressionsummarydescriptor-ctor-system-string-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `RestEndpointPublicationGroupGovernanceSkippedSuppressionSummaryDescriptor`
+
+```csharp
+RestEndpointPublicationGroupGovernanceSkippedSuppressionSummaryDescriptor(string ruleId, IReadOnlyList<string> candidateIds)
+```
+
+Creates a grouped host-governance-skipped suppression-rule summary.
+
+Parameters:
+- `ruleId`: The stable host-level suppression-rule identifier summarized by this entry.
+- `candidateIds`: The ordered candidate identifiers that this suppression rule targeted before host governance was skipped.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceskippedsuppressionsummarydescriptor-candidateids"></a>
+
+##### `CandidateIds`
+
+```csharp
+IReadOnlyList<string> CandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers that this suppression rule targeted before host governance was skipped.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceskippedsuppressionsummarydescriptor-ruleid"></a>
+
+##### `RuleId`
+
+```csharp
+string RuleId { get; }
+```
+
+Gets the stable host-level suppression-rule identifier summarized by this entry.
+
+<a id="type-cephalon-abstractions-transports-restendpointpublicationgroupgovernancesuppressionsummarydescriptor"></a>
+
+### `RestEndpointPublicationGroupGovernanceSuppressionSummaryDescriptor`
+
+Describes one grouped host-governance suppression-rule outcome within a REST publication-group answer.
+
+#### Declaration
+```csharp
+public sealed class RestEndpointPublicationGroupGovernanceSuppressionSummaryDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-transports-restendpointpublicationgroupgovernancesuppressionsummarydescriptor-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceselectionbasissummarydescriptor"></a>
+
+##### `RestEndpointPublicationGroupGovernanceSuppressionSummaryDescriptor`
+
+```csharp
+RestEndpointPublicationGroupGovernanceSuppressionSummaryDescriptor(string ruleId, IReadOnlyList<string> matchedCandidateIds, IReadOnlyList<string> suppressedCandidateIds, IReadOnlyList<RestEndpointPublicationGroupGovernanceSelectionBasisSummaryDescriptor> selectionBasisSummaries)
+```
+
+Creates a grouped host-governance suppression-rule summary.
+
+Parameters:
+- `ruleId`: The stable host-level suppression-rule identifier summarized by this entry.
+- `matchedCandidateIds`: The ordered candidate identifiers that matched this suppression rule before one winner was selected.
+- `suppressedCandidateIds`: The ordered candidate identifiers that this suppression rule ultimately suppressed.
+- `selectionBasisSummaries`: The grouped decisive selection-basis buckets for the candidates this suppression rule ultimately suppressed.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupgovernancesuppressionsummarydescriptor-matchedcandidateids"></a>
+
+##### `MatchedCandidateIds`
+
+```csharp
+IReadOnlyList<string> MatchedCandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers that matched this suppression rule before one winner was selected.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupgovernancesuppressionsummarydescriptor-ruleid"></a>
+
+##### `RuleId`
+
+```csharp
+string RuleId { get; }
+```
+
+Gets the stable host-level suppression-rule identifier summarized by this entry.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupgovernancesuppressionsummarydescriptor-selectionbasissummaries"></a>
+
+##### `SelectionBasisSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointPublicationGroupGovernanceSelectionBasisSummaryDescriptor> SelectionBasisSummaries { get; }
+```
+
+Gets the grouped decisive selection-basis buckets for the candidates this suppression rule ultimately suppressed.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointpublicationgroupgovernancesuppressionsummarydescriptor-suppressedcandidateids"></a>
+
+##### `SuppressedCandidateIds`
+
+```csharp
+IReadOnlyList<string> SuppressedCandidateIds { get; }
+```
+
+Gets the ordered candidate identifiers that this suppression rule ultimately suppressed.
+
+<a id="type-cephalon-abstractions-transports-restendpointruntimedescriptor"></a>
+
+### `RestEndpointRuntimeDescriptor`
+
+Describes one resolved public REST endpoint visible to the current runtime.
+
+#### Declaration
+```csharp
+public sealed class RestEndpointRuntimeDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-transports-restendpointruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-nullable-system-int32-system-string-system-string-system-string-system-nullable-system-int32-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-string-system-string-system-string-cephalon-abstractions-transports-restendpointcandidateprojectiondescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-nullable-cephalon-abstractions-transports-restendpointbindingfallbackmode-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-nullable-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointoverrideactionkind-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointoverrideactionkind"></a>
+
+##### `RestEndpointRuntimeDescriptor`
+
+```csharp
+RestEndpointRuntimeDescriptor(string id, string transportId, string sourceKind, string method, string routePattern, string sourceModuleId, string sourceModuleVersion, int? sourceModuleVersionMajor, string behaviorId, string endpointName, string openApiDocumentName, int? apiVersionMajor, IReadOnlyList<string> tags, string summary, string description, string originalEndpointName, string originalSummary, string originalDescription, string candidateId, RestEndpointCandidateProjectionDescriptor originalProjection, IReadOnlyList<RestEndpointBindingDescriptor> bindingDescriptors, RestEndpointBindingFallbackMode? bindingFallbackMode, IReadOnlyDictionary<string, string> metadata, string authoringStyle, string routeGroupPrefix, string relativePattern, string behaviorType, string sourceId, string requiredCapabilityKey, string originalRequiredCapabilityKey, string appliedOverrideId, IReadOnlyList<string> matchedOverrideIds, string selectedOverrideId, RestEndpointGovernanceRuleSelectionBasis? overrideSelectionBasis, IReadOnlyList<string> skippedSuppressionIds, IReadOnlyList<string> skippedOverrideIds, IReadOnlyList<RestEndpointOverrideActionKind> selectedOverrideActionKinds, IReadOnlyList<RestEndpointOverrideActionKind> appliedOverrideActionKinds)
+```
+
+Creates a resolved REST endpoint runtime descriptor.
+
+Parameters:
+- `id`: The stable endpoint identifier.
+- `transportId`: The stable transport identifier that published the endpoint.
+- `sourceKind`: The source kind that produced the endpoint, such as `module-dsl` or `manual`.
+- `method`: The resolved HTTP method.
+- `routePattern`: The resolved route pattern including the host REST prefix.
+- `sourceModuleId`: The stable source-module identifier when one is known.
+- `sourceModuleVersion`: The declared source-module version when one is available.
+- `sourceModuleVersionMajor`: The parsed source-module major version when one is available.
+- `behaviorId`: The stable behavior identifier when the endpoint dispatches through a Cephalon behavior.
+- `endpointName`: The resolved endpoint or operation name when one is available.
+- `openApiDocumentName`: The resolved OpenAPI document name when one is available.
+- `apiVersionMajor`: The resolved public API major version when one is available.
+- `tags`: The resolved OpenAPI tags when any are published.
+- `summary`: The resolved endpoint summary when one is available.
+- `description`: The resolved endpoint description when one is available.
+- `originalEndpointName`: The original endpoint or operation name before later endpoint-governance rewrites when the runtime can classify that source answer.
+- `originalSummary`: The original endpoint summary before later endpoint-governance rewrites when the runtime can classify that source answer.
+- `originalDescription`: The original endpoint description before later endpoint-governance rewrites when the runtime can classify that source answer.
+- `candidateId`: The stable originating candidate identifier when this endpoint was published from the module-owned behavior projection pipeline.
+- `originalProjection`: The original projection shape before later host-level overrides are applied when the endpoint was published from the module-owned behavior projection pipeline.
+- `bindingDescriptors`: The resolved request-binding descriptors when the endpoint exposes an explicit binding plan.
+- `bindingFallbackMode`: The resolved request-binding fallback mode when the endpoint preserves deterministic request-binding behavior beyond the explicit binding plan, such as preserved source implicit-query fallback or preserved remaining request-body fallback.
+- `metadata`: Optional additive metadata.
+- `authoringStyle`: The normalized authoring style such as `behavior-module-profile` or `minimal-api` when the runtime can classify how the endpoint was published.
+- `routeGroupPrefix`: The resolved route-group prefix including the host REST prefix when the runtime can classify the grouped publication boundary that produced the endpoint.
+- `relativePattern`: The resolved route pattern relative to the grouped publication boundary when the runtime can classify that source shape.
+- `behaviorType`: The concrete behavior implementation type name when the endpoint dispatches through a Cephalon behavior and the runtime can classify that implementation identity.
+- `sourceId`: The stable source identity for the published endpoint when the runtime can classify the authored source shape behind that publication.
+- `requiredCapabilityKey`: The required Cephalon capability key enforced at the REST boundary when one is available.
+- `originalRequiredCapabilityKey`: The original required Cephalon capability key before later endpoint-governance rewrites when the runtime can classify that source answer.
+- `appliedOverrideId`: The host-level override identifier when runtime governance actually changes the published endpoint answer.
+- `matchedOverrideIds`: The ordered override identifiers that matched this endpoint's originating candidate before one winner was selected.
+- `selectedOverrideId`: The selected override identifier when one winning override rule was resolved for this endpoint's originating candidate, even if that winning rule became a runtime no-op.
+- `overrideSelectionBasis`: The earliest decisive specificity rule that selected the winning override rule when one was resolved for this endpoint's originating candidate.
+- `skippedSuppressionIds`: The ordered suppression identifiers that otherwise target this endpoint's originating candidate but were skipped because the original projection did not allow host governance to participate.
+- `skippedOverrideIds`: The ordered override identifiers that otherwise target this endpoint's originating candidate but were skipped because the original projection did not allow host governance to participate.
+- `selectedOverrideActionKinds`: The normalized action dimensions declared by the selected override rule when one winning override rule was resolved for this endpoint's originating candidate.
+- `appliedOverrideActionKinds`: The normalized action dimensions that materially changed the published endpoint answer when the selected override rule was not a runtime no-op.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-apiversionmajor"></a>
+
+##### `ApiVersionMajor`
+
+```csharp
+int? ApiVersionMajor { get; }
+```
+
+Gets the resolved public API major version when one is available.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-appliedoverrideactionkinds"></a>
+
+##### `AppliedOverrideActionKinds`
+
+```csharp
+IReadOnlyList<RestEndpointOverrideActionKind> AppliedOverrideActionKinds { get; }
+```
+
+Gets the normalized action dimensions that materially changed the published endpoint answer when the selected override rule was not a runtime no-op.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-appliedoverrideid"></a>
+
+##### `AppliedOverrideId`
+
+```csharp
+string AppliedOverrideId { get; }
+```
+
+Gets the host-level override identifier when runtime governance actually changes the published endpoint answer.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-authoringstyle"></a>
+
+##### `AuthoringStyle`
+
+```csharp
+string AuthoringStyle { get; }
+```
+
+Gets the normalized authoring style such as `behavior-module-profile` or `minimal-api` when the runtime can classify how the endpoint was published.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-behaviorid"></a>
+
+##### `BehaviorId`
+
+```csharp
+string BehaviorId { get; }
+```
+
+Gets the stable behavior identifier when the endpoint dispatches through a Cephalon behavior.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-behaviortype"></a>
+
+##### `BehaviorType`
+
+```csharp
+string BehaviorType { get; }
+```
+
+Gets the concrete behavior implementation type name when the endpoint dispatches through a Cephalon behavior and the runtime can classify that implementation identity.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-bindingdescriptors"></a>
+
+##### `BindingDescriptors`
+
+```csharp
+IReadOnlyList<RestEndpointBindingDescriptor> BindingDescriptors { get; }
+```
+
+Gets the resolved request-binding descriptors when the endpoint exposes an explicit binding plan.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-bindingfallbackmode"></a>
+
+##### `BindingFallbackMode`
+
+```csharp
+RestEndpointBindingFallbackMode? BindingFallbackMode { get; }
+```
+
+Gets the resolved request-binding fallback mode when the endpoint preserves deterministic request-binding behavior beyond the explicit binding plan, such as preserved source implicit-query fallback or preserved remaining request-body fallback.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-candidateid"></a>
+
+##### `CandidateId`
+
+```csharp
+string CandidateId { get; }
+```
+
+Gets the stable originating candidate identifier when this endpoint was published from the module-owned behavior projection pipeline.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the resolved endpoint description when one is available.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-endpointname"></a>
+
+##### `EndpointName`
+
+```csharp
+string EndpointName { get; }
+```
+
+Gets the resolved endpoint or operation name when one is available.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable endpoint identifier.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-matchedoverrideids"></a>
+
+##### `MatchedOverrideIds`
+
+```csharp
+IReadOnlyList<string> MatchedOverrideIds { get; }
+```
+
+Gets the ordered override identifiers that matched this endpoint's originating candidate before one winner was selected.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional additive metadata.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-method"></a>
+
+##### `Method`
+
+```csharp
+string Method { get; }
+```
+
+Gets the resolved HTTP method.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-openapidocumentname"></a>
+
+##### `OpenApiDocumentName`
+
+```csharp
+string OpenApiDocumentName { get; }
+```
+
+Gets the resolved OpenAPI document name when one is available.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-originaldescription"></a>
+
+##### `OriginalDescription`
+
+```csharp
+string OriginalDescription { get; }
+```
+
+Gets the original endpoint description before later endpoint-governance rewrites when the runtime can classify that source answer.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-originalendpointname"></a>
+
+##### `OriginalEndpointName`
+
+```csharp
+string OriginalEndpointName { get; }
+```
+
+Gets the original endpoint or operation name before later endpoint-governance rewrites when the runtime can classify that source answer.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-originalprojection"></a>
+
+##### `OriginalProjection`
+
+```csharp
+RestEndpointCandidateProjectionDescriptor OriginalProjection { get; }
+```
+
+Gets the original projection shape before later host-level overrides are applied when the endpoint was published from the module-owned behavior projection pipeline, including whether host governance was allowed to participate for that source route.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-originalrequiredcapabilitykey"></a>
+
+##### `OriginalRequiredCapabilityKey`
+
+```csharp
+string OriginalRequiredCapabilityKey { get; }
+```
+
+Gets the original required Cephalon capability key before later endpoint-governance rewrites when the runtime can classify that source answer.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-originalsummary"></a>
+
+##### `OriginalSummary`
+
+```csharp
+string OriginalSummary { get; }
+```
+
+Gets the original endpoint summary before later endpoint-governance rewrites when the runtime can classify that source answer.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-overrideselectionbasis"></a>
+
+##### `OverrideSelectionBasis`
+
+```csharp
+RestEndpointGovernanceRuleSelectionBasis? OverrideSelectionBasis { get; }
+```
+
+Gets the earliest decisive specificity rule that selected the winning override rule when one was resolved for this endpoint's originating candidate.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-relativepattern"></a>
+
+##### `RelativePattern`
+
+```csharp
+string RelativePattern { get; }
+```
+
+Gets the resolved route pattern relative to the grouped publication boundary when the runtime can classify that source shape.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-requiredcapabilitykey"></a>
+
+##### `RequiredCapabilityKey`
+
+```csharp
+string RequiredCapabilityKey { get; }
+```
+
+Gets the required Cephalon capability key enforced at the REST boundary when one is available.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-routegroupprefix"></a>
+
+##### `RouteGroupPrefix`
+
+```csharp
+string RouteGroupPrefix { get; }
+```
+
+Gets the resolved route-group prefix including the host REST prefix when the runtime can classify the grouped publication boundary that produced the endpoint.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-routepattern"></a>
+
+##### `RoutePattern`
+
+```csharp
+string RoutePattern { get; }
+```
+
+Gets the resolved route pattern including the host REST prefix.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-selectedoverrideactionkinds"></a>
+
+##### `SelectedOverrideActionKinds`
+
+```csharp
+IReadOnlyList<RestEndpointOverrideActionKind> SelectedOverrideActionKinds { get; }
+```
+
+Gets the normalized action dimensions declared by the selected override rule when one winning override rule was resolved for this endpoint's originating candidate.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-selectedoverrideid"></a>
+
+##### `SelectedOverrideId`
+
+```csharp
+string SelectedOverrideId { get; }
+```
+
+Gets the selected override identifier when one winning override rule was resolved for this endpoint's originating candidate, even if that winning rule became a runtime no-op.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-skippedoverrideids"></a>
+
+##### `SkippedOverrideIds`
+
+```csharp
+IReadOnlyList<string> SkippedOverrideIds { get; }
+```
+
+Gets the ordered override identifiers that otherwise target this endpoint's originating candidate but were skipped because the original projection did not allow host governance.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-skippedsuppressionids"></a>
+
+##### `SkippedSuppressionIds`
+
+```csharp
+IReadOnlyList<string> SkippedSuppressionIds { get; }
+```
+
+Gets the ordered suppression identifiers that otherwise target this endpoint's originating candidate but were skipped because the original projection did not allow host governance.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-sourceid"></a>
+
+##### `SourceId`
+
+```csharp
+string SourceId { get; }
+```
+
+Gets the stable source identity for the published endpoint when the runtime can classify the authored source shape behind that publication.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-sourcekind"></a>
+
+##### `SourceKind`
+
+```csharp
+string SourceKind { get; }
+```
+
+Gets the source kind that produced the endpoint.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; }
+```
+
+Gets the stable source-module identifier when one is known.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-sourcemoduleversion"></a>
+
+##### `SourceModuleVersion`
+
+```csharp
+string SourceModuleVersion { get; }
+```
+
+Gets the declared source-module version when one is available.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-sourcemoduleversionmajor"></a>
+
+##### `SourceModuleVersionMajor`
+
+```csharp
+int? SourceModuleVersionMajor { get; }
+```
+
+Gets the parsed source-module major version when one is available.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-summary"></a>
+
+##### `Summary`
+
+```csharp
+string Summary { get; }
+```
+
+Gets the resolved endpoint summary when one is available.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-tags"></a>
+
+##### `Tags`
+
+```csharp
+IReadOnlyList<string> Tags { get; }
+```
+
+Gets the resolved OpenAPI tags when any are published.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-transportid"></a>
+
+##### `TransportId`
+
+```csharp
+string TransportId { get; }
+```
+
+Gets the stable transport identifier that published the endpoint.
+
+<a id="type-cephalon-abstractions-transports-restendpointsuppressiondescriptor"></a>
+
+### `RestEndpointSuppressionDescriptor`
+
+Describes one host-level REST endpoint suppression rule visible to the current runtime for module-owned REST candidates that participate in host governance.
+
+#### Declaration
+```csharp
+public sealed class RestEndpointSuppressionDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-transports-restendpointsuppressiondescriptor-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingfallbackmode-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceselectionbasissummarydescriptor-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `RestEndpointSuppressionDescriptor`
+
+```csharp
+RestEndpointSuppressionDescriptor(string id, IReadOnlyList<string> candidateIds, IReadOnlyList<string> behaviorIds, IReadOnlyList<string> sourceModuleIds, IReadOnlyList<string> authoringStyles, IReadOnlyList<int> apiVersionMajors, IReadOnlyList<string> methods, IReadOnlyList<string> relativePatterns, IReadOnlyList<string> routeGroupPrefixes, IReadOnlyList<string> openApiDocumentNames, IReadOnlyList<string> tagNames, IReadOnlyList<string> endpointNames, IReadOnlyList<RestEndpointBindingFallbackMode> bindingFallbackModes, IReadOnlyList<RestEndpointBindingDescriptor> targetBindings, IReadOnlyList<string> matchedCandidateIds, IReadOnlyList<string> suppressedCandidateIds, IReadOnlyList<string> skippedCandidateIds, IReadOnlyList<RestEndpointGovernanceRuleSelectionBasis> selectionBases, IReadOnlyList<RestEndpointGovernanceSelectionBasisSummaryDescriptor> selectionBasisSummaries, IReadOnlyList<string> hostGovernanceScopes)
+```
+
+Creates a REST endpoint suppression descriptor.
+
+Parameters:
+- `id`: The stable suppression identifier.
+- `candidateIds`: The original candidate identifiers targeted by the suppression rule.
+- `behaviorIds`: The behavior identifiers targeted by the suppression rule.
+- `sourceModuleIds`: The source-module identifiers targeted by the suppression rule.
+- `authoringStyles`: The normalized authoring styles targeted by the suppression rule. Explicit module-DSL routes participate only when their owning route group opted into host governance.
+- `apiVersionMajors`: The effective API major versions targeted by the suppression rule.
+- `methods`: The effective HTTP methods targeted by the suppression rule.
+- `relativePatterns`: The shorthand relative route patterns targeted by the suppression rule.
+- `routeGroupPrefixes`: The published route-group prefixes targeted by the suppression rule.
+- `openApiDocumentNames`: The original candidate OpenAPI document names targeted by the suppression rule.
+- `tagNames`: The original candidate primary OpenAPI tag names targeted by the suppression rule.
+- `endpointNames`: The original candidate endpoint names targeted by the suppression rule.
+- `hostGovernanceScopes`: The original candidate host-governance scopes targeted by the suppression rule.
+- `bindingFallbackModes`: The original candidate request-binding fallback modes targeted by the suppression rule.
+- `targetBindings`: The original candidate explicit binding descriptors targeted by the suppression rule before any override actions are applied.
+- `matchedCandidateIds`: The runtime candidate identifiers that matched this suppression rule, including candidates where another suppression rule won selection.
+- `suppressedCandidateIds`: The runtime candidate identifiers that were actually suppressed by this rule after governance selection completed.
+- `skippedCandidateIds`: The runtime candidate identifiers that this rule would otherwise target but skipped because the original projection did not allow host governance to participate.
+- `selectionBases`: The union of decisive specificity rules that selected this suppression rule for one or more runtime candidates.
+- `selectionBasisSummaries`: The grouped selection-basis buckets for runtime candidates that were actually suppressed by this rule.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-restendpointsuppressiondescriptor-apiversionmajors"></a>
+
+##### `ApiVersionMajors`
+
+```csharp
+IReadOnlyList<int> ApiVersionMajors { get; }
+```
+
+Gets the effective API major versions targeted by this suppression rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointsuppressiondescriptor-authoringstyles"></a>
+
+##### `AuthoringStyles`
+
+```csharp
+IReadOnlyList<string> AuthoringStyles { get; }
+```
+
+Gets the normalized authoring styles targeted by this suppression rule. Explicit module-DSL routes participate only when their owning route group opted into host governance.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointsuppressiondescriptor-behaviorids"></a>
+
+##### `BehaviorIds`
+
+```csharp
+IReadOnlyList<string> BehaviorIds { get; }
+```
+
+Gets the behavior identifiers targeted by this suppression rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointsuppressiondescriptor-bindingfallbackmodes"></a>
+
+##### `BindingFallbackModes`
+
+```csharp
+IReadOnlyList<RestEndpointBindingFallbackMode> BindingFallbackModes { get; }
+```
+
+Gets the original candidate request-binding fallback modes targeted by this suppression rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointsuppressiondescriptor-candidateids"></a>
+
+##### `CandidateIds`
+
+```csharp
+IReadOnlyList<string> CandidateIds { get; }
+```
+
+Gets the original candidate identifiers targeted by this suppression rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointsuppressiondescriptor-endpointnames"></a>
+
+##### `EndpointNames`
+
+```csharp
+IReadOnlyList<string> EndpointNames { get; }
+```
+
+Gets the original candidate endpoint names targeted by this suppression rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointsuppressiondescriptor-hostgovernancescopes"></a>
+
+##### `HostGovernanceScopes`
+
+```csharp
+IReadOnlyList<string> HostGovernanceScopes { get; }
+```
+
+Gets the original candidate host-governance scopes targeted by this suppression rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointsuppressiondescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable suppression identifier.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointsuppressiondescriptor-matchedcandidateids"></a>
+
+##### `MatchedCandidateIds`
+
+```csharp
+IReadOnlyList<string> MatchedCandidateIds { get; }
+```
+
+Gets the runtime candidate identifiers that matched this suppression rule, including candidates where another suppression rule won selection.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointsuppressiondescriptor-methods"></a>
+
+##### `Methods`
+
+```csharp
+IReadOnlyList<string> Methods { get; }
+```
+
+Gets the effective HTTP methods targeted by this suppression rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointsuppressiondescriptor-openapidocumentnames"></a>
+
+##### `OpenApiDocumentNames`
+
+```csharp
+IReadOnlyList<string> OpenApiDocumentNames { get; }
+```
+
+Gets the original candidate OpenAPI document names targeted by this suppression rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointsuppressiondescriptor-relativepatterns"></a>
+
+##### `RelativePatterns`
+
+```csharp
+IReadOnlyList<string> RelativePatterns { get; }
+```
+
+Gets the relative route patterns targeted by this suppression rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointsuppressiondescriptor-routegroupprefixes"></a>
+
+##### `RouteGroupPrefixes`
+
+```csharp
+IReadOnlyList<string> RouteGroupPrefixes { get; }
+```
+
+Gets the published route-group prefixes targeted by this suppression rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointsuppressiondescriptor-selectionbases"></a>
+
+##### `SelectionBases`
+
+```csharp
+IReadOnlyList<RestEndpointGovernanceRuleSelectionBasis> SelectionBases { get; }
+```
+
+Gets the union of decisive specificity rules that selected this suppression rule for one or more runtime candidates.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointsuppressiondescriptor-selectionbasissummaries"></a>
+
+##### `SelectionBasisSummaries`
+
+```csharp
+IReadOnlyList<RestEndpointGovernanceSelectionBasisSummaryDescriptor> SelectionBasisSummaries { get; }
+```
+
+Gets the grouped selection-basis buckets for runtime candidates that were actually suppressed by this rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointsuppressiondescriptor-skippedcandidateids"></a>
+
+##### `SkippedCandidateIds`
+
+```csharp
+IReadOnlyList<string> SkippedCandidateIds { get; }
+```
+
+Gets the runtime candidate identifiers that this rule would otherwise target but skipped because the original projection did not allow host governance to participate.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointsuppressiondescriptor-sourcemoduleids"></a>
+
+##### `SourceModuleIds`
+
+```csharp
+IReadOnlyList<string> SourceModuleIds { get; }
+```
+
+Gets the source-module identifiers targeted by this suppression rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointsuppressiondescriptor-suppressedcandidateids"></a>
+
+##### `SuppressedCandidateIds`
+
+```csharp
+IReadOnlyList<string> SuppressedCandidateIds { get; }
+```
+
+Gets the runtime candidate identifiers that were actually suppressed by this rule after governance selection completed.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointsuppressiondescriptor-tagnames"></a>
+
+##### `TagNames`
+
+```csharp
+IReadOnlyList<string> TagNames { get; }
+```
+
+Gets the original candidate primary OpenAPI tag names targeted by this suppression rule.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointsuppressiondescriptor-targetbindings"></a>
+
+##### `TargetBindings`
+
+```csharp
+IReadOnlyList<RestEndpointBindingDescriptor> TargetBindings { get; }
+```
+
+Gets the original candidate explicit binding descriptors targeted by this suppression rule before any override actions are applied.
 
 <a id="type-cephalon-abstractions-transports-transportdescriptor"></a>
 

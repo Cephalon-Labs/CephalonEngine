@@ -485,13 +485,18 @@ internal static class RestBehaviorProjectionCandidateResolver
             RestEndpointBindingDescriptorAdapter.ToRuntimeDescriptors(endpointProjection.Bindings),
             originalBindingFallbackMode,
             tagName,
-            AllowsHostGovernance(group, endpointProjection));
+            AllowsHostGovernance(group, endpointProjection),
+            group.HostGovernanceScope);
         var candidateId = BuildCandidateId(
             moduleDescriptor.Id,
             endpointProjection.BehaviorId,
             endpointProjection.AuthoringStyle,
             originalProjection.Method,
             originalProjection.RoutePattern);
+        var originalOperationName = RestBehaviorEndpointMetadataConventions.BuildOperationName(
+            moduleDescriptor.Id,
+            defaultApiVersionMajor,
+            endpointProjection.BehaviorId);
         var overrideDecision = ResolveOverrideDecision(
             moduleDescriptor.Id,
             candidateId,
@@ -503,6 +508,8 @@ internal static class RestBehaviorProjectionCandidateResolver
             originalProjection.BindingDescriptors,
             originalBindingFallbackMode,
             tagName,
+            originalOperationName,
+            originalProjection.HostGovernanceScope,
             originalProjection.AllowsHostGovernance,
             group,
             overrides);
@@ -527,10 +534,6 @@ internal static class RestBehaviorProjectionCandidateResolver
             effectiveEndpointProjection.Pattern,
             effectiveEndpointProjection.Bindings,
             effectiveEndpointProjection.PreserveImplicitQueryFallback);
-        var originalOperationName = RestBehaviorEndpointMetadataConventions.BuildOperationName(
-            moduleDescriptor.Id,
-            defaultApiVersionMajor,
-            endpointProjection.BehaviorId);
         var originalDocumentation = RestBehaviorEndpointMetadataConventions.ResolveOperationDocumentation(
             endpointProjection.BehaviorType,
             moduleDescriptor,
@@ -900,6 +903,8 @@ internal static class RestBehaviorProjectionCandidateResolver
         IReadOnlyList<RestEndpointBindingDescriptor> originalBindingDescriptors,
         RestEndpointBindingFallbackMode? originalBindingFallbackMode,
         string originalTagName,
+        string originalEndpointName,
+        string? originalHostGovernanceScope,
         bool allowsHostGovernance,
         RestBehaviorRouteGroupProjection group,
         IReadOnlyList<RestEndpointOverrideOptions>? overrides)
@@ -911,6 +916,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         ArgumentException.ThrowIfNullOrWhiteSpace(originalRouteGroupPrefix);
         ArgumentNullException.ThrowIfNull(originalBindingDescriptors);
         ArgumentException.ThrowIfNullOrWhiteSpace(originalTagName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(originalEndpointName);
         ArgumentNullException.ThrowIfNull(group);
 
         if (!allowsHostGovernance || overrides is null || overrides.Count == 0)
@@ -928,6 +934,8 @@ internal static class RestBehaviorProjectionCandidateResolver
             originalBindingDescriptors,
             originalBindingFallbackMode,
             originalTagName,
+            originalEndpointName,
+            originalHostGovernanceScope,
             allowsHostGovernance,
             overrides);
         var matchedOverride = matchedOverrides.FirstOrDefault();
@@ -1113,6 +1121,8 @@ internal static class RestBehaviorProjectionCandidateResolver
         IReadOnlyList<RestEndpointBindingDescriptor> originalBindingDescriptors,
         RestEndpointBindingFallbackMode? originalBindingFallbackMode,
         string originalTagName,
+        string originalEndpointName,
+        string? originalHostGovernanceScope,
         bool allowsHostGovernance,
         IReadOnlyList<RestEndpointOverrideOptions>? overrides)
     {
@@ -1123,6 +1133,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         ArgumentException.ThrowIfNullOrWhiteSpace(originalRouteGroupPrefix);
         ArgumentNullException.ThrowIfNull(originalBindingDescriptors);
         ArgumentException.ThrowIfNullOrWhiteSpace(originalTagName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(originalEndpointName);
 
         if (!allowsHostGovernance || overrides is null || overrides.Count == 0)
         {
@@ -1139,6 +1150,8 @@ internal static class RestBehaviorProjectionCandidateResolver
             originalBindingDescriptors,
             originalBindingFallbackMode,
             originalTagName,
+            originalEndpointName,
+            originalHostGovernanceScope,
             allowsHostGovernance,
             overrideOptions)));
     }
@@ -1163,7 +1176,8 @@ internal static class RestBehaviorProjectionCandidateResolver
                 $"REST endpoint candidate '{candidate.Candidate.Id}' is missing the source module id required to evaluate skipped governance rules.");
         if (string.IsNullOrWhiteSpace(originalProjection.OpenApiDocumentName) ||
             string.IsNullOrWhiteSpace(originalProjection.RouteGroupPrefix) ||
-            string.IsNullOrWhiteSpace(originalProjection.TagName))
+            string.IsNullOrWhiteSpace(originalProjection.TagName) ||
+            string.IsNullOrWhiteSpace(candidate.Candidate.ProjectedEndpoint.OriginalEndpointName))
         {
             return [];
         }
@@ -1178,6 +1192,8 @@ internal static class RestBehaviorProjectionCandidateResolver
                 originalProjection.BindingDescriptors,
                 originalProjection.BindingFallbackMode,
                 originalProjection.TagName,
+                candidate.Candidate.ProjectedEndpoint.OriginalEndpointName,
+                originalProjection.HostGovernanceScope,
                 overrideOptions)))
             .Select(static overrideOptions => overrideOptions.Id)
             .ToArray();
@@ -1786,6 +1802,26 @@ internal static class RestBehaviorProjectionCandidateResolver
             }
         }
 
+        if (suppression.EndpointNames.Count > 0)
+        {
+            var endpointName = candidate.Candidate.ProjectedEndpoint.OriginalEndpointName;
+            if (string.IsNullOrWhiteSpace(endpointName) ||
+                !suppression.EndpointNames.Contains(endpointName, StringComparer.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+        }
+
+        if (suppression.HostGovernanceScopes.Count > 0)
+        {
+            var hostGovernanceScope = candidate.Candidate.OriginalProjection.HostGovernanceScope;
+            if (string.IsNullOrWhiteSpace(hostGovernanceScope) ||
+                !suppression.HostGovernanceScopes.Contains(hostGovernanceScope, StringComparer.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+        }
+
         if (suppression.BindingFallbackModes.Count > 0)
         {
             var bindingFallbackMode = candidate.Candidate.OriginalProjection.BindingFallbackMode;
@@ -1817,6 +1853,8 @@ internal static class RestBehaviorProjectionCandidateResolver
         IReadOnlyList<RestEndpointBindingDescriptor> originalBindingDescriptors,
         RestEndpointBindingFallbackMode? originalBindingFallbackMode,
         string originalTagName,
+        string originalEndpointName,
+        string? originalHostGovernanceScope,
         bool allowsHostGovernance,
         RestEndpointOverrideOptions overrideOptions)
     {
@@ -1827,6 +1865,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         ArgumentException.ThrowIfNullOrWhiteSpace(originalRouteGroupPrefix);
         ArgumentNullException.ThrowIfNull(originalBindingDescriptors);
         ArgumentException.ThrowIfNullOrWhiteSpace(originalTagName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(originalEndpointName);
         ArgumentNullException.ThrowIfNull(overrideOptions);
 
         if (!allowsHostGovernance)
@@ -1844,6 +1883,8 @@ internal static class RestBehaviorProjectionCandidateResolver
             originalBindingDescriptors,
             originalBindingFallbackMode,
             originalTagName,
+            originalEndpointName,
+            originalHostGovernanceScope,
             overrideOptions);
     }
 
@@ -1857,6 +1898,8 @@ internal static class RestBehaviorProjectionCandidateResolver
         IReadOnlyList<RestEndpointBindingDescriptor> originalBindingDescriptors,
         RestEndpointBindingFallbackMode? originalBindingFallbackMode,
         string originalTagName,
+        string originalEndpointName,
+        string? originalHostGovernanceScope,
         RestEndpointOverrideOptions overrideOptions)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sourceModuleId);
@@ -1866,6 +1909,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         ArgumentException.ThrowIfNullOrWhiteSpace(originalRouteGroupPrefix);
         ArgumentNullException.ThrowIfNull(originalBindingDescriptors);
         ArgumentException.ThrowIfNullOrWhiteSpace(originalTagName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(originalEndpointName);
         ArgumentNullException.ThrowIfNull(overrideOptions);
 
         if (overrideOptions.CandidateIds.Count > 0 &&
@@ -1926,6 +1970,21 @@ internal static class RestBehaviorProjectionCandidateResolver
             !overrideOptions.TagNames.Contains(originalTagName, StringComparer.OrdinalIgnoreCase))
         {
             return false;
+        }
+
+        if (overrideOptions.EndpointNames.Count > 0 &&
+            !overrideOptions.EndpointNames.Contains(originalEndpointName, StringComparer.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        if (overrideOptions.HostGovernanceScopes.Count > 0)
+        {
+            if (string.IsNullOrWhiteSpace(originalHostGovernanceScope) ||
+                !overrideOptions.HostGovernanceScopes.Contains(originalHostGovernanceScope, StringComparer.OrdinalIgnoreCase))
+            {
+                return false;
+            }
         }
 
         if (overrideOptions.BindingFallbackModes.Count > 0 &&
@@ -2054,6 +2113,16 @@ internal static class RestBehaviorProjectionCandidateResolver
             count++;
         }
 
+        if (suppression.EndpointNames.Count > 0)
+        {
+            count++;
+        }
+
+        if (suppression.HostGovernanceScopes.Count > 0)
+        {
+            count++;
+        }
+
         if (suppression.BindingFallbackModes.Count > 0)
         {
             count++;
@@ -2113,6 +2182,16 @@ internal static class RestBehaviorProjectionCandidateResolver
         }
 
         if (overrideOptions.TagNames.Count > 0)
+        {
+            count++;
+        }
+
+        if (overrideOptions.EndpointNames.Count > 0)
+        {
+            count++;
+        }
+
+        if (overrideOptions.HostGovernanceScopes.Count > 0)
         {
             count++;
         }
@@ -2334,6 +2413,8 @@ internal static class RestBehaviorProjectionCandidateResolver
                suppression.RouteGroupPrefixes.Count +
                suppression.OpenApiDocumentNames.Count +
                suppression.TagNames.Count +
+               suppression.EndpointNames.Count +
+               suppression.HostGovernanceScopes.Count +
                suppression.BindingFallbackModes.Count +
                suppression.TargetBindings.Count;
     }
@@ -2351,6 +2432,8 @@ internal static class RestBehaviorProjectionCandidateResolver
                overrideOptions.RouteGroupPrefixes.Count +
                overrideOptions.OpenApiDocumentNames.Count +
                overrideOptions.TagNames.Count +
+               overrideOptions.EndpointNames.Count +
+               overrideOptions.HostGovernanceScopes.Count +
                overrideOptions.BindingFallbackModes.Count +
                overrideOptions.TargetBindings.Count;
     }
@@ -2488,7 +2571,8 @@ internal static class RestBehaviorProjectionCandidateResolver
         IReadOnlyList<RestEndpointBindingDescriptor> bindingDescriptors,
         RestEndpointBindingFallbackMode? bindingFallbackMode,
         string tagName,
-        bool allowsHostGovernance)
+        bool allowsHostGovernance,
+        string? hostGovernanceScope)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(method);
         ArgumentException.ThrowIfNullOrWhiteSpace(routeGroupPrefix);
@@ -2507,7 +2591,8 @@ internal static class RestBehaviorProjectionCandidateResolver
             bindingDescriptors,
             bindingFallbackMode,
             tagName,
-            allowsHostGovernance);
+            allowsHostGovernance,
+            hostGovernanceScope);
     }
 
     private static bool AllowsHostGovernance(

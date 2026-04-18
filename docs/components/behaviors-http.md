@@ -386,14 +386,13 @@ the host can still register an inline module explicitly:
 
 ```csharp
 engine.AddRestBehaviorModule<GetCartBehavior>(
-    new ModuleDescriptor(
-        "showcase.cart",
-        "Cart Module",
-        "Publishes the cart public REST surface without a dedicated module class.",
-        version: "1.0.0"),
+    "showcase.cart",
+    "Cart Module",
+    "Publishes the cart public REST surface without a dedicated module class.",
     behaviors => behaviors.Group("/showcase/cart")
         .WithTagName("Cart API")
-        .MapGeneratedProfiles("showcase.cart"));
+        .MapGeneratedProfiles("showcase.cart"),
+    version: "1.0.0");
 ```
 
 `AddRestBehaviorModule<TMarker>(...)` remains module-owned: it materializes a real Cephalon module,
@@ -402,29 +401,29 @@ REST from `[AppBehavior]` alone. The marker type should come from the same behav
 owns the published behaviors, especially when the inline module uses `MapGeneratedProfiles(...)`,
 because Cephalon resolves generated REST profile hints from that marker assembly. Use one stable
 marker type per inline module; if a module needs richer lifecycle hooks, extra services, or more
-advanced manual endpoints, prefer a dedicated `RestBehaviorModuleBase` subclass instead.
+advanced manual endpoints, prefer a dedicated `RestBehaviorModuleBase` subclass instead. The
+string-based overload keeps the common path low-ceremony; the `ModuleDescriptor` overload remains
+the advanced path when an inline module needs explicit dependency, tag, or metadata declarations.
 
 For the common generated-profile case where the route group should mirror the behavior-id prefix,
 the host can now use the lower-ceremony inline helper:
 
 ```csharp
 engine.AddGeneratedRestBehaviorModule<GetCartBehavior>(
-    new ModuleDescriptor(
-        "showcase.cart",
-        "Cart Module",
-        "Publishes the cart public REST surface through the generated inline helper.",
-        version: "1.0.0"),
-    group => group.WithTagName("Cart API"));
+    "showcase.cart",
+    "Cart Module",
+    "Publishes the cart public REST surface through the generated inline helper.",
+    group => group.WithTagName("Cart API"),
+    version: "1.0.0");
 ```
 
-`AddGeneratedRestBehaviorModule<TMarker>(descriptor, configureGroup?)` still creates a real
-module, still maps through the same generated-profile projection and runtime-catalog pipeline, and
-still never publishes public REST from `[AppBehavior]` alone. It derives the generated behavior-id
-prefix from `ModuleDescriptor.Id`, so keep the explicit
-`AddGeneratedRestBehaviorModule<TMarker>(descriptor, "prefix", ...)` overload when the inline
-module id and generated behavior-id prefix should differ. Keep `AddRestBehaviorModule<TMarker>(...)`
-when the route group should not mirror the behavior-id prefix or when the inline module needs more
-than one group.
+`AddGeneratedRestBehaviorModule<TMarker>(...)` still creates a real module, still maps through the
+same generated-profile projection and runtime-catalog pipeline, and still never publishes public
+REST from `[AppBehavior]` alone. The common string-based overload derives the generated behavior-id
+prefix from the inline module id, while the `ModuleDescriptor` and explicit `behaviorIdPrefix`
+overloads remain available when the inline module needs richer metadata or when module identity and
+generated ownership prefix should differ. Keep `AddRestBehaviorModule<TMarker>(...)` when the route
+group should not mirror the behavior-id prefix or when the inline module needs more than one group.
 
 Current helper behavior:
 
@@ -436,10 +435,10 @@ Current helper behavior:
   `AddRestBehaviorModule<TMarker>(...)` host helper instead of forcing authors to implement
   `IBehaviorOwnerModule` plus `IRestModule` manually
 - adds `GroupFromBehaviorIdPrefix(...)` plus
-  `AddGeneratedRestBehaviorModule<TMarker>(descriptor, configureGroup?)` for the common generated-
-  profile path where the route-group prefix, generated behavior-id prefix, and inline module id
-  should mirror one another while the explicit `behaviorIdPrefix` overload stays available when
-  they should differ
+  `AddGeneratedRestBehaviorModule<TMarker>(...)` for the common generated-profile path where the
+  route-group prefix, generated behavior-id prefix, and inline module id should mirror one another
+  while the explicit `behaviorIdPrefix` and `ModuleDescriptor` overloads stay available when they
+  should differ or the inline module needs richer metadata
 - treats the REST DSL as the primary authoring path, so public routes also imply module ownership
 - compiles author-facing REST group and endpoint declarations into a reusable internal projection
   model before the ASP.NET Core adapter materializes route groups and handlers
@@ -806,10 +805,11 @@ Current governance baseline:
   `RestApi:Overrides`
 - target one or more `CandidateIds`, `Behaviors`, `Modules`, and optional `AuthoringStyles`, then
   optionally refine that match with `ApiVersionMajors`, `Methods`, `RelativePatterns`,
-  `RouteGroupPrefixes`, `OpenApiDocumentNames`, `TagNames`, `BindingFallbackModes`, and exact
-  original explicit `TargetBindings`
-- rules that omit all of `CandidateIds`, `Behaviors`, and `Modules` now fail fast instead of
-  suppressing every shorthand candidate implicitly
+  `RouteGroupPrefixes`, `OpenApiDocumentNames`, `TagNames`, `EndpointNames`,
+  `BindingFallbackModes`, and exact original explicit `TargetBindings`
+- rules that omit all of `CandidateIds`, `Behaviors`, `Modules`, and `HostGovernanceScopes` now
+  still fail fast instead of suppressing every shorthand candidate implicitly, while one deliberate
+  `HostGovernanceScopes` selector can now stand in as the primary authored target
 - override rules must define at least one override action, require a positive `ApiVersionMajor`
   when that action is present, accept only `GET`, `POST`, `PUT`, `PATCH`, or `DELETE` for
   `Method`, require `Pattern` to be a valid relative ASP.NET Core route pattern, require
@@ -822,15 +822,21 @@ Current governance baseline:
 - explicit module-DSL routes never enter host governance accidentally: they require both
   `AllowHostGovernance()` on the owning route group and an explicit host rule target of
   `behavior-module-dsl`
+- `WithHostGovernanceScope("scope")` adds one stable original-projection governance scope that
+  `RestApi:Suppressions` and `RestApi:Overrides` can target without depending on rewritten route
+  shape, but that scope alone does not opt explicit module-DSL routes into host governance
 - exact `CandidateIds` reuse the stable ids published by `GET /engine/rest-endpoint-candidates`
 - the optional selector refiners and exact candidate ids all match the original shorthand
   candidate shape before override actions are applied, including the original shorthand OpenAPI
-  document name, primary tag name, typed binding-fallback identity, and exact original explicit
-  binding-plan identity, so governance can pick one of several shorthand candidates that share the
-  same behavior/module identity without relying on final rewritten route shape;
+  document name, primary tag name, original shorthand endpoint name through
+  `ProjectedEndpoint.OriginalEndpointName`, original route-group `HostGovernanceScope` through
+  `OriginalProjection.HostGovernanceScope`, typed binding-fallback identity, and exact original
+  explicit binding-plan identity, so governance can pick one of several shorthand candidates that
+  share the same behavior/module identity without relying on final rewritten route shape;
   `BindingFallbackModes` uses the stable wire names `preserve-source-implicit-fallback` and
-  `preserve-remaining-body-fallback`, while `TargetBindings` matches the full original explicit
-  descriptor set by property/source/name equivalence
+  `preserve-remaining-body-fallback`, `HostGovernanceScopes` matches the original authored scope
+  when one exists, and `TargetBindings` matches the full original explicit descriptor set by
+  property/source/name equivalence
 - when more than one rule matches, Cephalon prefers candidate-targeted rules first, then fewer
   targeted candidate ids, then the more specific rule by populated target dimensions, behavior-
   targeted scope, narrower authoring-style scope, fewer total selector values, and finally stable

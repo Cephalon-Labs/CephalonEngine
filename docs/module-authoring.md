@@ -562,20 +562,24 @@ Current helper behavior:
 
 When a host wants to suppress shorthand publication without removing the module-owned route group,
 use `RestApi:Suppressions`. That host-level governance surface can target exact `CandidateIds`,
-`Behaviors`, `Modules`, and optional `AuthoringStyles`, can refine that target further with
+`Behaviors`, `Modules`, optional `HostGovernanceScopes`, and optional `AuthoringStyles`, can
+refine that target further with
 `ApiVersionMajors`, `Methods`, `RelativePatterns`, `RouteGroupPrefixes`,
-`OpenApiDocumentNames`, `TagNames`, `BindingFallbackModes`, and exact original explicit
-`TargetBindings`, matches those selector refiners against the original shorthand candidate shape
-before override actions are applied, defaults to both shorthand styles when `AuthoringStyles` is
-omitted, fails fast when both `Behaviors` and `Modules` are missing, prefers the more specific
-matching rule deterministically by populated target dimensions first, then by behavior-targeted
-scope, narrower authoring-style scope, fewer total selector values, and stable rule id ordering,
-and intentionally suppresses only descriptor-backed shorthand candidates rather than rewriting
-explicit module DSL/manual routes. When more than one suppression rule matches, the suppressed
-candidate keeps the full ordered match set visible through `MatchedSuppressionIds` while
-`SuppressedBySuppressionId` keeps identifying the winning rule. `TargetBindings` matches the full
-original explicit descriptor set by property/source/name equivalence, so hosts can distinguish a
-route-only candidate from a richer explicitly bound sibling even when later overrides rewrite the
+`OpenApiDocumentNames`, `TagNames`, `EndpointNames`, `BindingFallbackModes`, exact original
+explicit `TargetBindings`, and additive `HostGovernanceScopes`, matches those selector refiners
+against the original shorthand candidate shape before override actions are applied, defaults to
+both shorthand styles when `AuthoringStyles` is omitted, fails fast only when all of
+`CandidateIds`, `Behaviors`, `Modules`, and `HostGovernanceScopes` are missing, prefers the more
+specific matching rule deterministically by populated target dimensions
+first, then by behavior-targeted scope, narrower authoring-style scope, fewer total selector
+values, and stable rule id ordering, and intentionally suppresses only descriptor-backed shorthand
+candidates rather than rewriting explicit module DSL/manual routes. When more than one suppression
+rule matches, the suppressed candidate keeps the full ordered match set visible through
+`MatchedSuppressionIds` while `SuppressedBySuppressionId` keeps identifying the winning rule.
+`TargetBindings` matches the full original explicit descriptor set by property/source/name
+equivalence, and `HostGovernanceScopes` matches the route group's preserved
+`OriginalProjection.HostGovernanceScope`, so hosts can distinguish a route-only candidate from a
+richer explicitly bound or explicitly scoped sibling even when later overrides rewrite the
 published route.
 
 If you want an explicit module-DSL route group to participate in that same host-governance
@@ -584,6 +588,10 @@ DSL authoritative by default while making the route group's original projection 
 `AllowsHostGovernance = true` when you intentionally opt in. Host rules still do not affect that
 group unless they also explicitly target `AuthoringStyles = [behavior-module-dsl]`; omitting
 `AuthoringStyles` continues to mean shorthand-only targeting.
+If you want that explicit route group to publish additive selector truth without entering host
+governance yet, call `WithHostGovernanceScope("orders-read")` on the group. That stamps
+`OriginalProjection.HostGovernanceScope` for runtime inspection and future host-rule targeting, but
+still leaves the explicit group authoritative until you also call `AllowHostGovernance()`.
 When you intentionally leave the group authoritative, runtime candidates and published behavior
 endpoints now surface ordered `SkippedSuppressionIds` and `SkippedOverrideIds` for any host rules
 that targeted the route but were skipped because the group never entered the governable surface.
@@ -630,17 +638,19 @@ different effective API major version, HTTP method, bounded published route-grou
 constrained relative route pattern, endpoint metadata, or explicit binding plan, use
 `RestApi:Overrides`. That
 host-level governance surface targets the same
-descriptor-backed shorthand candidates, also requires `Behaviors` or `Modules`, can refine that
-target further with exact `CandidateIds`, `ApiVersionMajors`, `Methods`, `RelativePatterns`,
-`RouteGroupPrefixes`, `OpenApiDocumentNames`, `TagNames`, `BindingFallbackModes`, and exact
-original explicit `TargetBindings`, matches those selector refiners against the original shorthand
-candidate shape before override actions are applied, now supports a positive `ApiVersionMajor`, a
-supported HTTP `Method`, a valid bounded `RouteGroupPrefix`, a valid relative `Pattern`,
-endpoint-metadata set actions `EndpointName`, `Summary`, and `Description`, endpoint-metadata clear
-actions `ClearEndpointName`, `ClearSummary`, and `ClearDescription`, and/or explicit `Bindings`;
-the winning rule is recorded through `AppliedOverrideId` in `/engine/rest-endpoint-candidates`
-when it materially changes the effective answer, while no-op winning rules still surface through
-`SelectedOverrideId` plus `OverrideSelectionBasis`,
+descriptor-backed shorthand candidates, can target them through `Behaviors`, `Modules`, or a
+deliberate primary `HostGovernanceScopes` selector, and can refine that target further with exact
+`CandidateIds`, `ApiVersionMajors`, `Methods`, `RelativePatterns`,
+`RouteGroupPrefixes`, `OpenApiDocumentNames`, `TagNames`, `EndpointNames`,
+`BindingFallbackModes`, exact original explicit `TargetBindings`, and additive
+`HostGovernanceScopes`, matches those selector refiners against the original shorthand candidate
+shape before override actions are applied, now supports a positive `ApiVersionMajor`, a supported
+HTTP `Method`, a valid bounded `RouteGroupPrefix`, a valid relative `Pattern`, endpoint-metadata
+set actions `EndpointName`, `Summary`, and `Description`, endpoint-metadata clear actions
+`ClearEndpointName`, `ClearSummary`, and `ClearDescription`, and/or explicit `Bindings`; the
+winning rule is recorded through `AppliedOverrideId` in
+`/engine/rest-endpoint-candidates` when it materially changes the effective answer, while no-op
+winning rules still surface through `SelectedOverrideId` plus `OverrideSelectionBasis`,
 while the runtime keeps the original shorthand source
 shape visible there through `OriginalProjection` while `ProjectedEndpoint` carries the final
 effective mapped answer, now also keeps original shorthand endpoint name plus summary/description

@@ -10,6 +10,48 @@ public static class RestBehaviorEngineBuilderExtensions
 {
     /// <summary>
     /// Adds a low-code behavior-backed REST module without requiring a dedicated
+    /// <see cref="RestBehaviorModuleBase" /> subclass or a manually constructed
+    /// <see cref="ModuleDescriptor" />.
+    /// </summary>
+    /// <typeparam name="TMarker">
+    /// A stable marker type from the module's behavior assembly. Cephalon uses this marker both to
+    /// create a distinct module type for engine validation and to resolve generated REST profile
+    /// hints from the correct assembly when <c>MapGeneratedProfiles(...)</c> is used.
+    /// </typeparam>
+    /// <param name="engine">The engine builder to extend.</param>
+    /// <param name="moduleId">The stable module identifier.</param>
+    /// <param name="displayName">The human-readable module name.</param>
+    /// <param name="description">The module description.</param>
+    /// <param name="configureRestBehaviors">
+    /// The callback that declares owned behaviors and their public REST surface.
+    /// </param>
+    /// <param name="version">The declared module version, when one is available.</param>
+    /// <returns>The same engine builder for fluent composition.</returns>
+    /// <remarks>
+    /// This helper keeps the common inline module path low-ceremony while still materializing a
+    /// real module descriptor and using the same projection, precedence, governance, and runtime
+    /// catalog pipeline as the descriptor-based overload. When a module needs explicit dependency,
+    /// tag, or metadata declarations, use the
+    /// <see cref="AddRestBehaviorModule{TMarker}(EngineBuilder, ModuleDescriptor, Action{IRestBehaviorModuleBuilder})" />
+    /// overload explicitly.
+    /// </remarks>
+    public static EngineBuilder AddRestBehaviorModule<TMarker>(
+        this EngineBuilder engine,
+        string moduleId,
+        string displayName,
+        string description,
+        Action<IRestBehaviorModuleBuilder> configureRestBehaviors,
+        string? version = null)
+        => engine.AddRestBehaviorModule<TMarker>(
+            CreateInlineModuleDescriptor(
+                moduleId,
+                displayName,
+                description,
+                version),
+            configureRestBehaviors);
+
+    /// <summary>
+    /// Adds a low-code behavior-backed REST module without requiring a dedicated
     /// <see cref="RestBehaviorModuleBase" /> subclass.
     /// </summary>
     /// <typeparam name="TMarker">
@@ -83,6 +125,45 @@ public static class RestBehaviorEngineBuilderExtensions
     }
 
     /// <summary>
+    /// Adds a low-code generated REST module whose generated behavior-id prefix is the inline
+    /// module id.
+    /// </summary>
+    /// <typeparam name="TMarker">
+    /// A stable marker type from the module's behavior assembly. Cephalon uses this marker both to
+    /// create a distinct module type for engine validation and to resolve generated REST profile
+    /// hints from the correct assembly.
+    /// </typeparam>
+    /// <param name="engine">The engine builder to extend.</param>
+    /// <param name="moduleId">The stable module identifier.</param>
+    /// <param name="displayName">The human-readable module name.</param>
+    /// <param name="description">The module description.</param>
+    /// <param name="configureGroup">
+    /// An optional callback that applies group-level conventions such as <c>ApiVersion(...)</c> or
+    /// <c>WithTagName(...)</c> before the generated profiles are mapped.
+    /// </param>
+    /// <param name="version">The declared module version, when one is available.</param>
+    /// <returns>The same engine builder for fluent composition.</returns>
+    /// <remarks>
+    /// Use this overload when the module id already matches the generated behavior-id prefix the
+    /// inline module should own. When the module needs explicit dependency, tag, or metadata
+    /// declarations, use the descriptor-based overload explicitly.
+    /// </remarks>
+    public static EngineBuilder AddGeneratedRestBehaviorModule<TMarker>(
+        this EngineBuilder engine,
+        string moduleId,
+        string displayName,
+        string description,
+        Action<IRestBehaviorEndpointGroupBuilder>? configureGroup = null,
+        string? version = null)
+        => engine.AddGeneratedRestBehaviorModule<TMarker>(
+            CreateInlineModuleDescriptor(
+                moduleId,
+                displayName,
+                description,
+                version),
+            configureGroup);
+
+    /// <summary>
     /// Adds a low-code generated REST module whose public route-group path is derived from a
     /// dot-separated behavior-id prefix.
     /// </summary>
@@ -127,6 +208,64 @@ public static class RestBehaviorEngineBuilderExtensions
                 group.MapGeneratedProfiles();
             });
     }
+
+    /// <summary>
+    /// Adds a low-code generated REST module whose public route-group path is derived from a
+    /// dot-separated behavior-id prefix without requiring a manually constructed
+    /// <see cref="ModuleDescriptor" />.
+    /// </summary>
+    /// <typeparam name="TMarker">
+    /// A stable marker type from the module's behavior assembly. Cephalon uses this marker both to
+    /// create a distinct module type for engine validation and to resolve generated REST profile
+    /// hints from the correct assembly.
+    /// </typeparam>
+    /// <param name="engine">The engine builder to extend.</param>
+    /// <param name="moduleId">The stable module identifier.</param>
+    /// <param name="displayName">The human-readable module name.</param>
+    /// <param name="description">The module description.</param>
+    /// <param name="behaviorIdPrefix">
+    /// The dot-separated behavior-id prefix whose segments become the route-group path. For
+    /// example, <c>showcase.cart</c> becomes <c>/showcase/cart</c>.
+    /// </param>
+    /// <param name="configureGroup">
+    /// An optional callback that applies group-level conventions such as <c>ApiVersion(...)</c> or
+    /// <c>WithTagName(...)</c> before the generated profiles are mapped.
+    /// </param>
+    /// <param name="version">The declared module version, when one is available.</param>
+    /// <returns>The same engine builder for fluent composition.</returns>
+    /// <remarks>
+    /// Use this overload when the inline module should keep the low-ceremony string-based module
+    /// descriptor path but its module id and generated behavior-id prefix should differ. When the
+    /// module needs explicit dependency, tag, or metadata declarations, use the descriptor-based
+    /// overload explicitly.
+    /// </remarks>
+    public static EngineBuilder AddGeneratedRestBehaviorModule<TMarker>(
+        this EngineBuilder engine,
+        string moduleId,
+        string displayName,
+        string description,
+        string behaviorIdPrefix,
+        Action<IRestBehaviorEndpointGroupBuilder>? configureGroup = null,
+        string? version = null)
+        => engine.AddGeneratedRestBehaviorModule<TMarker>(
+            CreateInlineModuleDescriptor(
+                moduleId,
+                displayName,
+                description,
+                version),
+            behaviorIdPrefix,
+            configureGroup);
+
+    private static ModuleDescriptor CreateInlineModuleDescriptor(
+        string moduleId,
+        string displayName,
+        string description,
+        string? version)
+        => new(
+            moduleId,
+            displayName,
+            description,
+            version: version);
 
     private static string ResolveGeneratedBehaviorIdPrefix(ModuleDescriptor descriptor)
     {

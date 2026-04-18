@@ -642,8 +642,11 @@ internal static class RestBehaviorProjectionMaterializer
                                       sourceDocumentationCapture.Description,
                                       effectiveDescription,
                                       StringComparison.Ordinal);
+            var evaluatesCapabilityChanges = candidate.AppliedCapabilityOverride is not null;
+            var evaluatesDocumentationChanges = candidate.AppliedMetadataOverride is not null;
 
-            if (capabilityChanged || metadataChanged)
+            if ((evaluatesCapabilityChanges && capabilityChanged) ||
+                (evaluatesDocumentationChanges && metadataChanged))
             {
                 endpointBuilder.Metadata.Add(new RestEndpointAppliedOverrideMetadata(
                     candidate.Candidate.AppliedOverrideId,

@@ -62,6 +62,22 @@ public interface IRestBehaviorEndpointGroupBuilder
     IRestBehaviorEndpointGroupBuilder AllowHostGovernance();
 
     /// <summary>
+    /// Tags the route group with a stable host-governance scope that suppression and override
+    /// selectors can target without changing the authored route shape.
+    /// </summary>
+    /// <param name="hostGovernanceScope">
+    /// The stable host-governance scope for the authored route group.
+    /// </param>
+    /// <returns>The same group builder for fluent configuration.</returns>
+    /// <remarks>
+    /// This scope contributes additional original-projection selector truth, but it does not opt
+    /// explicit module-DSL endpoints into host governance by itself. Use
+    /// <see cref="AllowHostGovernance()" /> when explicit module-DSL endpoints should allow host
+    /// governance to participate.
+    /// </remarks>
+    IRestBehaviorEndpointGroupBuilder WithHostGovernanceScope(string hostGovernanceScope);
+
+    /// <summary>
     /// Maps all generated REST profiles from the owning module assembly whose behavior ids match the
     /// route-group prefix convention.
     /// </summary>

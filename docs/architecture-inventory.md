@@ -1,6 +1,6 @@
 # Cephalon Engine Architecture Inventory
 
-Architecture inventory in this document reflects the repository state as of `April 13, 2026`.
+Architecture inventory in this document reflects the repository state as of `April 18, 2026`.
 
 Cross-references: `docs/architecture.md`, `docs/engine-roadmap.md`, `docs/engine-backlog.md`
 
@@ -490,6 +490,12 @@ The engine exposes operator-facing runtime information through these endpoints:
 - `/engine/package-policy` — package governance requirements
 - `/engine/execution-graphs` — execution graph descriptors
 - `/engine/hosted-executions` — hosted execution descriptors
+- `/engine/rest-endpoints` — final published REST endpoint catalog
+- `/engine/rest-endpoint-candidates` — authoring and governance-aware REST candidate catalog
+- `/engine/rest-endpoint-publication-groups` — grouped REST publication story per behavior and authoring style
+- `/engine/rest-endpoint-authoring-policies` — grouped shorthand authoring-policy answers
+- `/engine/rest-endpoint-suppressions` — active REST suppression rules with runtime outcomes
+- `/engine/rest-endpoint-overrides` — active REST override rules with selected-versus-applied outcomes
 - `/engine/projections` — projection descriptors
 - `/engine/inboxes` — inbox surfaces
 - `/engine/outboxes` — outbox surfaces
@@ -513,5 +519,5 @@ The engine exposes operator-facing runtime information through these endpoints:
 - Dependency health probes: **18**
 - Cloud/platform exporters: **14**
 - Host adapters: **6**
-- Runtime introspection endpoints: **25+**
+- Runtime introspection endpoints: **32+**
 - Sample applications: **5**

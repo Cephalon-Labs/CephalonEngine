@@ -69,6 +69,14 @@ public sealed class RestEndpointOverrideDescriptor
     /// The original candidate primary OpenAPI tag names targeted by the override rule before
     /// override actions are applied.
     /// </param>
+    /// <param name="endpointNames">
+    /// The original candidate endpoint names targeted by the override rule before override
+    /// actions are applied.
+    /// </param>
+    /// <param name="hostGovernanceScopes">
+    /// The original candidate host-governance scopes targeted by the override rule before
+    /// override actions are applied.
+    /// </param>
     /// <param name="bindingFallbackModes">
     /// The original candidate request-binding fallback modes targeted by the override rule before
     /// override actions are applied.
@@ -147,6 +155,7 @@ public sealed class RestEndpointOverrideDescriptor
         bool clearDescription = false,
         IReadOnlyList<string>? openApiDocumentNames = null,
         IReadOnlyList<string>? tagNames = null,
+        IReadOnlyList<string>? endpointNames = null,
         IReadOnlyList<RestEndpointBindingFallbackMode>? bindingFallbackModes = null,
         IReadOnlyList<RestEndpointBindingDescriptor>? targetBindings = null,
         IReadOnlyList<string>? matchedCandidateIds = null,
@@ -158,7 +167,8 @@ public sealed class RestEndpointOverrideDescriptor
         IReadOnlyList<RestEndpointOverrideActionKind>? appliedActionKinds = null,
         IReadOnlyList<RestEndpointGovernanceSelectionBasisSummaryDescriptor>? selectionBasisSummaries = null,
         IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor>? selectedActionKindSummaries = null,
-        IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor>? appliedActionKindSummaries = null)
+        IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor>? appliedActionKindSummaries = null,
+        IReadOnlyList<string>? hostGovernanceScopes = null)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -184,6 +194,8 @@ public sealed class RestEndpointOverrideDescriptor
         RouteGroupPrefixes = NormalizeList(routeGroupPrefixes);
         OpenApiDocumentNames = NormalizeList(openApiDocumentNames);
         TagNames = NormalizeList(tagNames);
+        EndpointNames = NormalizeList(endpointNames);
+        HostGovernanceScopes = NormalizeList(hostGovernanceScopes);
         BindingFallbackModes = NormalizeBindingFallbackModes(bindingFallbackModes);
         TargetBindings = NormalizeTargetBindings(targetBindings, nameof(targetBindings));
         ApiVersionMajor = apiVersionMajor;
@@ -468,6 +480,16 @@ public sealed class RestEndpointOverrideDescriptor
     /// Gets the original candidate primary OpenAPI tag names targeted by this override rule.
     /// </summary>
     public IReadOnlyList<string> TagNames { get; }
+
+    /// <summary>
+    /// Gets the original candidate endpoint names targeted by this override rule.
+    /// </summary>
+    public IReadOnlyList<string> EndpointNames { get; }
+
+    /// <summary>
+    /// Gets the original candidate host-governance scopes targeted by this override rule.
+    /// </summary>
+    public IReadOnlyList<string> HostGovernanceScopes { get; }
 
     /// <summary>
     /// Gets the original candidate request-binding fallback modes targeted by this override rule.

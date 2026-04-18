@@ -1041,14 +1041,14 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
-    public void RestEndpointSuppressionOptionsRejectRulesWithoutBehaviorOrModuleTargets()
+    public void RestEndpointSuppressionOptionsRejectRulesWithoutPrimaryTargetsOrGovernanceScopes()
     {
         var exception = Assert.Throws<ArgumentException>(() =>
             new RestEndpointSuppressionOptions(
                 id: "invalid",
                 authoringStyles: [RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle]));
 
-        Assert.Contains("candidate id, behavior id, or source module id", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("candidate id, behavior id, source module id, or host-governance scope", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -3322,14 +3322,14 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
-    public void RestEndpointOverrideOptionsRejectRulesWithoutBehaviorOrModuleTargets()
+    public void RestEndpointOverrideOptionsRejectRulesWithoutPrimaryTargetsOrGovernanceScopes()
     {
         var exception = Assert.Throws<ArgumentException>(() =>
             new RestEndpointOverrideOptions(
                 id: "invalid",
                 apiVersionMajor: 6));
 
-        Assert.Contains("candidate id, behavior id, or source module id", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("candidate id, behavior id, source module id, or host-governance scope", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -3381,6 +3381,17 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestEndpointSuppressionOptionsTreatHostGovernanceScopesAsPrimarySelectors()
+    {
+        var options = new RestEndpointSuppressionOptions(
+            id: "scope-only",
+            hostGovernanceScopes: ["secondary-scope"]);
+
+        Assert.Equal(["secondary-scope"], options.HostGovernanceScopes);
+        Assert.True(options.HasValues);
+    }
+
+    [Fact]
     public void RestEndpointOverrideOptionsTreatBindingFallbackModesAsSelectors()
     {
         var options = new RestEndpointOverrideOptions(
@@ -3392,6 +3403,18 @@ public sealed class BehaviorRestProjectionTests
         Assert.Equal(
             [RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback],
             options.BindingFallbackModes);
+        Assert.True(options.HasValues);
+    }
+
+    [Fact]
+    public void RestEndpointOverrideOptionsTreatHostGovernanceScopesAsPrimarySelectors()
+    {
+        var options = new RestEndpointOverrideOptions(
+            id: "scope-only",
+            hostGovernanceScopes: ["secondary-scope"],
+            pattern: "/lookup/{cartId}/items");
+
+        Assert.Equal(["secondary-scope"], options.HostGovernanceScopes);
         Assert.True(options.HasValues);
     }
 

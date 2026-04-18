@@ -38,6 +38,9 @@ The current shipped model is already opinionated:
 - host governance is still shorthand-first by default; explicit module-DSL route groups only
   participate when the owning group explicitly allows host governance and the matching host rule
   deliberately targets authoring style `behavior-module-dsl`
+- route groups can now also stamp an additive original-projection governance scope for selector
+  targeting and runtime truth, but that scope does not opt explicit module DSL into host
+  governance by itself
 
 That means Cephalon should not go back to a model where `[AppBehavior]` silently publishes a public
 REST boundary by default.
@@ -322,6 +325,16 @@ Status update:
   authors to repeat both the route path and the behavior-id prefix manually while still using the
   same module-owned projection/materialization/candidate/governance pipeline and still never
   publishing public REST from `[AppBehavior]` alone
+- the next low-ceremony inline descriptor follow-through is now shipped locally through
+  `ENG-058-T157`: `Cephalon.Behaviors.Http` now also exposes `moduleId` / `displayName` /
+  `description` convenience overloads for `AddRestBehaviorModule<TMarker>()`,
+  `AddGeneratedRestBehaviorModule<TMarker>(configureGroup?)`, and
+  `AddGeneratedRestBehaviorModule<TMarker>(behaviorIdPrefix, configureGroup?)` so hosts can keep
+  the inline module-owned path terse without manually constructing `ModuleDescriptor`; those
+  overloads delegate to the same descriptor-based helpers, preserve the same marker-based module
+  identity plus source-assembly semantics, keep the normalized
+  projection/materialization/candidate/governance pipeline unchanged, and still keep the explicit
+  `behaviorIdPrefix` escape hatch when inline module identity and generated ownership should differ
 - the next stable shorthand candidate-id governance follow-through is now shipped through
   `ENG-058-T85`: shorthand candidate ids now resolve from the original shorthand projection before
   host-level overrides are applied, `RestApi:Suppressions` and `RestApi:Overrides` now also accept
@@ -468,11 +481,12 @@ Status update:
   or addition attempts that would promote any other implicit property into the public route now
   fail fast
 - the selector-expansion follow-through is now shipped through `ENG-058-T77`,
-  `ENG-058-T109`, and `ENG-058-T118`: both
+  `ENG-058-T109`, `ENG-058-T118`, and `ENG-058-T156`: both
   `RestApi:Suppressions` and `RestApi:Overrides` can refine `Behaviors`/`Modules` targeting with
   `ApiVersionMajors`, `Methods`, `RelativePatterns`, `RouteGroupPrefixes`,
-  `OpenApiDocumentNames`, `TagNames`, and `BindingFallbackModes`; those selectors match the
-  original shorthand candidate shape before override actions are applied, suppression now preserves
+  `OpenApiDocumentNames`, `TagNames`, `EndpointNames`, and `BindingFallbackModes`; those selectors
+  match the original shorthand candidate shape before override actions are applied, with
+  `EndpointNames` targeting `ProjectedEndpoint.OriginalEndpointName`, suppression now preserves
   that same original-shape contract even when an override later rewrites the final published
   endpoint, rule specificity now also considers populated selector dimensions plus narrower
   selector sets, and the runtime suppression/override catalogs now expose the selector arrays
@@ -535,14 +549,15 @@ Current shipped follow-through:
 
 - `RestBehaviorModuleBase` remains the class-based path for dedicated module types
 - `AddRestBehaviorModule<TMarker>()` is now the lowest-ceremony explicit module-registration path
-  for straightforward hosts, but it still lands on this same layer instead of inventing a new
-  publication source
+  for straightforward hosts: the `moduleId` / `displayName` / `description` convenience overload
+  covers the common path, while the `ModuleDescriptor` overload remains available for richer inline
+  metadata, but both still land on this same layer instead of inventing a new publication source
 - `GroupFromBehaviorIdPrefix(...)` plus `AddGeneratedRestBehaviorModule<TMarker>(...)` now cover
   the common generated-profile cases where route-group path, generated behavior-id prefix, and
   inline module id intentionally mirror one another, while the explicit
-  `AddGeneratedRestBehaviorModule<TMarker>(descriptor, "prefix", ...)` overload remains available
-  when the inline module id and generated ownership prefix should differ, again without inventing a
-  new publication source
+  `AddGeneratedRestBehaviorModule<TMarker>(..., "prefix", ...)` and `ModuleDescriptor` overloads
+  remain available when the inline module id and generated ownership prefix should differ or the
+  inline module needs richer metadata, again without inventing a new publication source
 
 ### Layer 4: host- or app-level projection overrides
 
@@ -575,9 +590,9 @@ Current shipped baseline:
   `ApiVersionMajor`, declare an unsupported HTTP method, declare an invalid relative route
   pattern, or declare an invalid `RouteGroupPrefix`
 - both rule families can refine `Behaviors`/`Modules` targeting with `ApiVersionMajors`,
-  `Methods`, `RelativePatterns`, `RouteGroupPrefixes`, `OpenApiDocumentNames`, `TagNames`, and
-  `BindingFallbackModes`, and those selector refiners match the original shorthand candidate shape
-  before override actions are applied
+  `Methods`, `RelativePatterns`, `RouteGroupPrefixes`, `OpenApiDocumentNames`, `TagNames`,
+  `EndpointNames`, and `BindingFallbackModes`, and those selector refiners match the original
+  shorthand candidate shape before override actions are applied
 - when more than one rule matches, the host prefers the more specific rule deterministically by
   populated target dimensions first, then by behavior-targeted scope, narrower authoring-style
   scope, fewer total selector values, and finally stable rule-id ordering
@@ -812,7 +827,7 @@ That allow-list remains authoritative and must stay separate from endpoint autho
 
 The shipped configuration-driven override surface is still intentionally narrow: `RestApi:Overrides`
 can target the original shorthand candidate shape through `ApiVersionMajors`, `Methods`,
-`RelativePatterns`, `RouteGroupPrefixes`, `OpenApiDocumentNames`, `TagNames`, and
+`RelativePatterns`, `RouteGroupPrefixes`, `OpenApiDocumentNames`, `TagNames`, `EndpointNames`, and
 `BindingFallbackModes`, then change the effective shorthand candidate `ApiVersionMajor`,
 `OpenApiDocumentName`, HTTP `Method`, bounded published `RouteGroupPrefix`, relative `Pattern`,
 `RequiredCapabilityKey`, `ClearRequiredCapability`, `EndpointName`, `Summary`, `Description`,
@@ -1149,6 +1164,31 @@ Status:
   counts that extra dimension consistently, and hosts can target route-only versus richer explicit-
   binding shorthand candidates by their authored binding plan without depending on later rewritten
   published shape
+- the next original-endpoint-name selector-targeting follow-through is now shipped through
+  `ENG-058-T156`, so both `RestApi:Suppressions` and `RestApi:Overrides` can now refine original-
+  shape shorthand governance with exact `EndpointNames` selector sets, the runtime
+  suppression/override catalogs now publish those configured selectors directly, specificity now
+  counts that extra dimension consistently, and hosts can target the authored shorthand endpoint
+  name through `ProjectedEndpoint.OriginalEndpointName` without depending on later rewritten
+  published shape
+- the next route-group governance-scope selector follow-through is now shipped locally through
+  `ENG-058-T158`, so route groups can now publish one stable `HostGovernanceScope` through
+  `WithHostGovernanceScope(...)` and `OriginalProjection.HostGovernanceScope`, both
+  `RestApi:Suppressions` and `RestApi:Overrides` can target `HostGovernanceScopes` directly,
+  specificity now counts that extra original-shape dimension consistently, and explicit
+  module-DSL routes can carry a scope without entering host governance unless
+  `AllowHostGovernance()` still opts them in separately
+- the next scope-first governance-config follow-through is now shipped locally through
+  `ENG-058-T159`, so `HostGovernanceScopes` now also counts as a rule's primary selector beside
+  `CandidateIds`, `Behaviors`, and `Modules`; scope-only suppression and override rules no longer
+  fail fast just because they omit behavior or module ids, while empty-selector rules still do
+- the next scope-first runtime-parity follow-through is now shipped locally through
+  `ENG-058-T160`, so scope-only `HostGovernanceScopes` rules are now explicitly proven through the
+  suppression, override, publication-group, authoring-policy, and snapshot answers without
+  falling back to behavior-id selectors, and ASP.NET Core materialization now only stamps
+  `RestEndpointAppliedOverrideMetadata` when the selected rule's own capability or endpoint-
+  metadata action family materially changed the published answer, so capability-only no-op matches
+  remain selected-only instead of surfacing false applied provenance
 - the next metadata-authoring parity follow-through is now also shipped through `ENG-058-T119`, so
   that same `preserve-source-implicit-fallback` story is no longer limited to no-explicit-plan
   shorthand candidates plus later host overrides; explicit metadata-only profiles can now opt into
@@ -1277,11 +1317,14 @@ The following points are durable enough to keep outside thread-local context.
   request-binding baseline; neither surface rewrites explicit module DSL or manual routes
 - both rule families can now target exact original-shape shorthand candidates through
   `CandidateIds`, can also refine `Behaviors`/`Modules` targeting with `ApiVersionMajors`,
-  `Methods`, `RelativePatterns`, `RouteGroupPrefixes`, `OpenApiDocumentNames`, `TagNames`, and
-  `BindingFallbackModes`, and all of those selectors match the original shorthand candidate
-  identity before override actions are applied so suppression and override decisions do not depend
-  on already-rewritten final route shape; `BindingFallbackModes` uses the stable wire names
-  `preserve-source-implicit-fallback` and `preserve-remaining-body-fallback`
+  `Methods`, `RelativePatterns`, `RouteGroupPrefixes`, `OpenApiDocumentNames`, `TagNames`,
+  `EndpointNames`, `HostGovernanceScopes`, and `BindingFallbackModes`, and all of those selectors
+  match the original shorthand candidate identity before override actions are applied so
+  suppression and override decisions do not depend on already-rewritten final route shape;
+  `EndpointNames` targets `ProjectedEndpoint.OriginalEndpointName`,
+  `HostGovernanceScopes` targets `OriginalProjection.HostGovernanceScope`, and
+  `BindingFallbackModes` uses the stable wire names `preserve-source-implicit-fallback` and
+  `preserve-remaining-body-fallback`
 - `/engine/rest-endpoint-candidates` now publishes that same original-shape candidate identity
   through `RestEndpointCandidateRuntimeDescriptor.Id`, while `ProjectedEndpoint.Id` remains the
   effective mapped endpoint identity after override actions are applied
@@ -1333,6 +1376,12 @@ The following points are durable enough to keep outside thread-local context.
   endpoint-level `AppliedOverrideId` should remain `null` for capability-only no-op matches whose
   effective published capability answer does not change, while `SelectedOverrideId` plus
   `OverrideSelectionBasis` still answer which rule won and why
+- when ASP.NET Core materialization reconciles selected override truth against the actual endpoint
+  metadata it published, applied endpoint-level provenance should only be emitted when the winning
+  rule changed the published surface inside the same action family it targeted; capability-only
+  no-op matches should not start looking applied just because runtime documentation metadata was
+  normalized, and metadata-only no-op matches should not start looking applied just because
+  capability metadata was inspected
 - when published endpoint runtime truth needs to explain shorthand governance overlap directly,
   `/engine/rest-endpoints` and `snapshot.RestEndpoints` should also expose the ordered
   `MatchedOverrideIds` set from the originating shorthand candidate so operators can see matched
@@ -1368,6 +1417,38 @@ The following points are durable enough to keep outside thread-local context.
   runtime-catalog, and collision-validation pipeline instead of bypassing it
 - future agentic, AI, or multi-platform expansion should not outrun core engine contract quality,
   performance, security, and maintainability
+
+## Complete REST baseline
+
+For Cephalon, the engine-first REST baseline is now considered complete enough to ship when the
+following remain true together:
+
+- authoring stays module-owned: public REST comes from `RestBehaviorModuleBase`,
+  `MapProfile<TBehavior>()`, `MapGeneratedProfiles(...)`, or the explicit inline module helpers,
+  never from `[AppBehavior]` alone
+- low-ceremony authoring stays explicit and readable: inline helpers, route-group conventions,
+  `WithHostGovernanceScope(...)`, and `AllowHostGovernance()` can reduce host code, but they still
+  materialize the same normalized candidate/projection/publication pipeline
+- runtime truth stays unified: `OriginalProjection`, `ProjectedEndpoint`, candidate ids,
+  publication groups, authoring-policy answers, suppression catalogs, override catalogs, and
+  `snapshot` all describe the same winning-versus-skipped governance story without hidden host-only
+  state
+- operator surfaces stay first-class: `/engine/rest-endpoints`, `/engine/rest-endpoint-candidates`,
+  `/engine/rest-endpoint-publication-groups`, `/engine/rest-endpoint-authoring-policies`,
+  `/engine/rest-endpoint-suppressions`, `/engine/rest-endpoint-overrides`, and `snapshot` must be
+  enough to explain what published, what stayed suppressed, which rules matched, which rules were
+  skipped, and why
+- host governance stays explicit and bounded: shorthand candidates remain the default governance
+  target, explicit module-DSL routes only participate when the owning group opts in, and selectors
+  such as `EndpointNames`, `HostGovernanceScopes`, and `TargetBindings` keep matching the original
+  authored candidate identity rather than a later rewritten route shape
+- applied provenance stays truthful: matched and selected rule ids can stay visible for no-op
+  winners, but `AppliedOverrideId` and endpoint-level applied-override metadata should only appear
+  when the published route, document, tag, capability, metadata, or binding answer materially
+  changed
+- later follow-through stays additive: broader convention-backed publication, broader implicit-
+  property promotion, or richer binding evolution should only land through this same normalized
+  projection/runtime-catalog/materialization pipeline instead of inventing a parallel REST model
 
 ## Near-term follow-through candidates
 

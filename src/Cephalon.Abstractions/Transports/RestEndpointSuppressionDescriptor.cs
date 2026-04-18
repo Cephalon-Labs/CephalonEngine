@@ -27,6 +27,12 @@ public sealed class RestEndpointSuppressionDescriptor
     /// <param name="tagNames">
     /// The original candidate primary OpenAPI tag names targeted by the suppression rule.
     /// </param>
+    /// <param name="endpointNames">
+    /// The original candidate endpoint names targeted by the suppression rule.
+    /// </param>
+    /// <param name="hostGovernanceScopes">
+    /// The original candidate host-governance scopes targeted by the suppression rule.
+    /// </param>
     /// <param name="bindingFallbackModes">
     /// The original candidate request-binding fallback modes targeted by the suppression rule.
     /// </param>
@@ -66,13 +72,15 @@ public sealed class RestEndpointSuppressionDescriptor
         IReadOnlyList<string>? routeGroupPrefixes = null,
         IReadOnlyList<string>? openApiDocumentNames = null,
         IReadOnlyList<string>? tagNames = null,
+        IReadOnlyList<string>? endpointNames = null,
         IReadOnlyList<RestEndpointBindingFallbackMode>? bindingFallbackModes = null,
         IReadOnlyList<RestEndpointBindingDescriptor>? targetBindings = null,
         IReadOnlyList<string>? matchedCandidateIds = null,
         IReadOnlyList<string>? suppressedCandidateIds = null,
         IReadOnlyList<string>? skippedCandidateIds = null,
         IReadOnlyList<RestEndpointGovernanceRuleSelectionBasis>? selectionBases = null,
-        IReadOnlyList<RestEndpointGovernanceSelectionBasisSummaryDescriptor>? selectionBasisSummaries = null)
+        IReadOnlyList<RestEndpointGovernanceSelectionBasisSummaryDescriptor>? selectionBasisSummaries = null,
+        IReadOnlyList<string>? hostGovernanceScopes = null)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -90,6 +98,8 @@ public sealed class RestEndpointSuppressionDescriptor
         RouteGroupPrefixes = NormalizeList(routeGroupPrefixes);
         OpenApiDocumentNames = NormalizeList(openApiDocumentNames);
         TagNames = NormalizeList(tagNames);
+        EndpointNames = NormalizeList(endpointNames);
+        HostGovernanceScopes = NormalizeList(hostGovernanceScopes);
         BindingFallbackModes = NormalizeBindingFallbackModes(bindingFallbackModes);
         TargetBindings = NormalizeTargetBindings(targetBindings, nameof(targetBindings));
         MatchedCandidateIds = NormalizeOrderedList(matchedCandidateIds);
@@ -196,6 +206,16 @@ public sealed class RestEndpointSuppressionDescriptor
     /// Gets the original candidate primary OpenAPI tag names targeted by this suppression rule.
     /// </summary>
     public IReadOnlyList<string> TagNames { get; }
+
+    /// <summary>
+    /// Gets the original candidate endpoint names targeted by this suppression rule.
+    /// </summary>
+    public IReadOnlyList<string> EndpointNames { get; }
+
+    /// <summary>
+    /// Gets the original candidate host-governance scopes targeted by this suppression rule.
+    /// </summary>
+    public IReadOnlyList<string> HostGovernanceScopes { get; }
 
     /// <summary>
     /// Gets the original candidate request-binding fallback modes targeted by this suppression

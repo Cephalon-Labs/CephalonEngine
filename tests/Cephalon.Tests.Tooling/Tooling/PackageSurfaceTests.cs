@@ -896,6 +896,18 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void BehaviorsHttpRestBehaviorEndpointGroupBuilderExposesHostGovernanceScopeMethod()
+    {
+        var methods = typeof(global::Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder)
+            .GetMethods(BindingFlags.Instance | BindingFlags.Public);
+
+        Assert.Contains(methods, static method =>
+            method.Name == "WithHostGovernanceScope" &&
+            method.GetParameters() is [{ ParameterType: { } parameterType }] &&
+            parameterType == typeof(string));
+    }
+
+    [Fact]
     public void BehaviorsHttpRestBehaviorModuleBuilderExposesDerivedGeneratedGroupMethod()
     {
         var methods = typeof(global::Cephalon.Behaviors.Http.Hosting.IRestBehaviorModuleBuilder)
@@ -1024,6 +1036,25 @@ public sealed class PackageSurfaceTests
             descriptorType == typeof(global::Cephalon.Abstractions.Modules.ModuleDescriptor) &&
             configureType == typeof(Action<global::Cephalon.Behaviors.Http.Hosting.IRestBehaviorModuleBuilder>));
         Assert.Contains(methods, static method =>
+            method.Name == "AddRestBehaviorModule" &&
+            method.IsGenericMethodDefinition &&
+            method.GetGenericArguments().Length == 1 &&
+            method.GetParameters() is
+            [
+                { ParameterType: { } engineType },
+                { ParameterType: { } moduleIdType },
+                { ParameterType: { } displayNameType },
+                { ParameterType: { } descriptionType },
+                { ParameterType: { } configureType },
+                { ParameterType: { } versionType }
+            ] &&
+            engineType == typeof(global::Cephalon.Engine.Composition.EngineBuilder) &&
+            moduleIdType == typeof(string) &&
+            displayNameType == typeof(string) &&
+            descriptionType == typeof(string) &&
+            configureType == typeof(Action<global::Cephalon.Behaviors.Http.Hosting.IRestBehaviorModuleBuilder>) &&
+            versionType == typeof(string));
+        Assert.Contains(methods, static method =>
             method.Name == "AddGeneratedRestBehaviorModule" &&
             method.IsGenericMethodDefinition &&
             method.GetGenericArguments().Length == 1 &&
@@ -1043,6 +1074,25 @@ public sealed class PackageSurfaceTests
             method.GetParameters() is
             [
                 { ParameterType: { } engineType },
+                { ParameterType: { } moduleIdType },
+                { ParameterType: { } displayNameType },
+                { ParameterType: { } descriptionType },
+                { ParameterType: { } configureType },
+                { ParameterType: { } versionType }
+            ] &&
+            engineType == typeof(global::Cephalon.Engine.Composition.EngineBuilder) &&
+            moduleIdType == typeof(string) &&
+            displayNameType == typeof(string) &&
+            descriptionType == typeof(string) &&
+            configureType == typeof(Action<global::Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder>) &&
+            versionType == typeof(string));
+        Assert.Contains(methods, static method =>
+            method.Name == "AddGeneratedRestBehaviorModule" &&
+            method.IsGenericMethodDefinition &&
+            method.GetGenericArguments().Length == 1 &&
+            method.GetParameters() is
+            [
+                { ParameterType: { } engineType },
                 { ParameterType: { } descriptorType },
                 { ParameterType: { } prefixType },
                 { ParameterType: { } configureType }
@@ -1051,6 +1101,27 @@ public sealed class PackageSurfaceTests
             descriptorType == typeof(global::Cephalon.Abstractions.Modules.ModuleDescriptor) &&
             prefixType == typeof(string) &&
             configureType == typeof(Action<global::Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder>));
+        Assert.Contains(methods, static method =>
+            method.Name == "AddGeneratedRestBehaviorModule" &&
+            method.IsGenericMethodDefinition &&
+            method.GetGenericArguments().Length == 1 &&
+            method.GetParameters() is
+            [
+                { ParameterType: { } engineType },
+                { ParameterType: { } moduleIdType },
+                { ParameterType: { } displayNameType },
+                { ParameterType: { } descriptionType },
+                { ParameterType: { } prefixType },
+                { ParameterType: { } configureType },
+                { ParameterType: { } versionType }
+            ] &&
+            engineType == typeof(global::Cephalon.Engine.Composition.EngineBuilder) &&
+            moduleIdType == typeof(string) &&
+            displayNameType == typeof(string) &&
+            descriptionType == typeof(string) &&
+            prefixType == typeof(string) &&
+            configureType == typeof(Action<global::Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder>) &&
+            versionType == typeof(string));
     }
 
     [Fact]
@@ -1085,6 +1156,32 @@ public sealed class PackageSurfaceTests
             .GetProperty("OpenApiDocumentNames", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions)
             .GetProperty("TagNames", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void RestEndpointGovernanceContractsExposeEndpointNameSelectors()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointSuppressionDescriptor)
+            .GetProperty("EndpointNames", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideDescriptor)
+            .GetProperty("EndpointNames", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.AspNetCore.Hosting.RestEndpointSuppressionOptions)
+            .GetProperty("EndpointNames", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions)
+            .GetProperty("EndpointNames", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void RestEndpointGovernanceContractsExposeHostGovernanceScopeSelectors()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointSuppressionDescriptor)
+            .GetProperty("HostGovernanceScopes", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideDescriptor)
+            .GetProperty("HostGovernanceScopes", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.AspNetCore.Hosting.RestEndpointSuppressionOptions)
+            .GetProperty("HostGovernanceScopes", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions)
+            .GetProperty("HostGovernanceScopes", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]
@@ -1320,6 +1417,8 @@ public sealed class PackageSurfaceTests
     {
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateProjectionDescriptor)
             .GetProperty("AllowsHostGovernance", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateProjectionDescriptor)
+            .GetProperty("HostGovernanceScope", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

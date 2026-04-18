@@ -398,14 +398,13 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.AddCephalon(engine =>
         {
             engine.AddRestBehaviorModule<GetProfileRuntimeOrderBehavior>(
-                new ModuleDescriptor(
-                    "tests.rest.inline-profile-runtime",
-                    "Inline Profile Runtime Module",
-                    "Publishes profile-driven REST endpoints through inline module authoring.",
-                    version: "1.0.0"),
+                "tests.rest.inline-profile-runtime",
+                "Inline Profile Runtime Module",
+                "Publishes profile-driven REST endpoints through inline module authoring.",
                 behaviors => behaviors.Group("/tests/inline/profile-runtime/orders")
                     .WithTagName("Inline Profile Runtime API")
-                    .MapProfile<GetProfileRuntimeOrderBehavior>());
+                    .MapProfile<GetProfileRuntimeOrderBehavior>(),
+                version: "1.0.0");
             engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
             {
                 behaviors.AddHttpBehaviorBindings();
@@ -594,15 +593,14 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.AddCephalon(engine =>
         {
             engine.AddGeneratedRestBehaviorModule<GetGeneratedRuntimeOrderBehavior>(
-                new ModuleDescriptor(
-                    "tests.rest.inline-derived-generated-runtime",
-                    "Inline Derived Generated Runtime Module",
-                    "Publishes generated REST endpoints through the generated inline helper.",
-                    version: "1.0.0"),
+                "tests.rest.inline-derived-generated-runtime",
+                "Inline Derived Generated Runtime Module",
+                "Publishes generated REST endpoints through the generated inline helper.",
                 "tests.generated.runtime",
                 group => group
                     .ApiVersion(5)
-                    .WithTagName("Inline Derived Generated Runtime API"));
+                    .WithTagName("Inline Derived Generated Runtime API"),
+                version: "1.0.0");
             engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
             {
                 behaviors.AddHttpBehaviorBindings();
@@ -652,7 +650,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
-    public async Task AddGeneratedRestBehaviorModuleDerivesGeneratedPrefixFromDescriptorId()
+    public async Task AddGeneratedRestBehaviorModuleStringOverloadDerivesGeneratedPrefixFromModuleId()
     {
         var builder = WebApplication.CreateBuilder();
         builder.WebHost.UseTestServer();
@@ -664,14 +662,13 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.AddCephalon(engine =>
         {
             engine.AddGeneratedRestBehaviorModule<GetGeneratedRuntimeOrderBehavior>(
-                new ModuleDescriptor(
-                    "tests.generated.runtime",
-                    "Descriptor Id Generated Runtime Module",
-                    "Publishes generated REST endpoints through the descriptor-id inline helper.",
-                    version: "1.0.0"),
+                "tests.generated.runtime",
+                "Descriptor Id Generated Runtime Module",
+                "Publishes generated REST endpoints through the descriptor-id inline helper.",
                 group => group
                     .ApiVersion(6)
-                    .WithTagName("Descriptor Id Generated Runtime API"));
+                    .WithTagName("Descriptor Id Generated Runtime API"),
+                version: "1.0.0");
             engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
             {
                 behaviors.AddHttpBehaviorBindings();
@@ -875,8 +872,8 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Configuration["Engine:Transports:0"] = "RestApi";
         builder.Configuration["OpenApi:EnabledVersions:0"] = "9";
         builder.Configuration["OpenApi:DefaultVersion"] = "9";
-        builder.Configuration["RestApi:Overrides:govern-disabled-explicit:Behaviors:0"] = "tests.dsl.runtimeoverride.disabled.lookup";
         builder.Configuration["RestApi:Overrides:govern-disabled-explicit:AuthoringStyles:0"] = RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle;
+        builder.Configuration["RestApi:Overrides:govern-disabled-explicit:HostGovernanceScopes:0"] = "explicit-disabled";
         builder.Configuration["RestApi:Overrides:govern-disabled-explicit:Pattern"] = "/governed/{orderId}";
         builder.AddCephalon(engine =>
         {
@@ -906,6 +903,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Empty(endpoint.MatchedOverrideIds);
         Assert.NotNull(endpoint.OriginalProjection);
         Assert.False(endpoint.OriginalProjection!.AllowsHostGovernance);
+        Assert.Equal("explicit-disabled", endpoint.OriginalProjection.HostGovernanceScope);
         Assert.Equal(endpoint.RoutePattern, endpoint.OriginalProjection.RoutePattern);
 
         var candidate = Assert.Single(candidates, static item =>
@@ -914,6 +912,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Null(candidate.AppliedOverrideId);
         Assert.Empty(candidate.MatchedOverrideIds);
         Assert.False(candidate.OriginalProjection.AllowsHostGovernance);
+        Assert.Equal("explicit-disabled", candidate.OriginalProjection.HostGovernanceScope);
         Assert.Equal("/api/v9/tests/dsl/runtime/override-disabled/orders/{orderId}", candidate.OriginalProjection.RoutePattern);
         Assert.Equal(endpoint.Id, candidate.ProjectedEndpoint.Id);
 
@@ -935,10 +934,10 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Configuration["Engine:Transports:0"] = "RestApi";
         builder.Configuration["OpenApi:EnabledVersions:0"] = "9";
         builder.Configuration["OpenApi:DefaultVersion"] = "9";
-        builder.Configuration["RestApi:Suppressions:skip-disabled-explicit:Behaviors:0"] = "tests.dsl.runtimeoverride.disabled.lookup";
         builder.Configuration["RestApi:Suppressions:skip-disabled-explicit:AuthoringStyles:0"] = RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle;
-        builder.Configuration["RestApi:Overrides:rewrite-disabled-explicit:Behaviors:0"] = "tests.dsl.runtimeoverride.disabled.lookup";
+        builder.Configuration["RestApi:Suppressions:skip-disabled-explicit:HostGovernanceScopes:0"] = "explicit-disabled";
         builder.Configuration["RestApi:Overrides:rewrite-disabled-explicit:AuthoringStyles:0"] = RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle;
+        builder.Configuration["RestApi:Overrides:rewrite-disabled-explicit:HostGovernanceScopes:0"] = "explicit-disabled";
         builder.Configuration["RestApi:Overrides:rewrite-disabled-explicit:Pattern"] = "/governed/{orderId}";
         builder.AddCephalon(engine =>
         {
@@ -971,6 +970,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(["rewrite-disabled-explicit"], endpoint.SkippedOverrideIds);
         Assert.NotNull(endpoint.OriginalProjection);
         Assert.False(endpoint.OriginalProjection!.AllowsHostGovernance);
+        Assert.Equal("explicit-disabled", endpoint.OriginalProjection.HostGovernanceScope);
 
         var candidate = Assert.Single(candidates, static item =>
             string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.dsl.runtimeoverride.disabled.lookup", StringComparison.Ordinal));
@@ -980,6 +980,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(["skip-disabled-explicit"], candidate.SkippedSuppressionIds);
         Assert.Equal(["rewrite-disabled-explicit"], candidate.SkippedOverrideIds);
         Assert.False(candidate.OriginalProjection.AllowsHostGovernance);
+        Assert.Equal("explicit-disabled", candidate.OriginalProjection.HostGovernanceScope);
         Assert.Equal(["skip-disabled-explicit"], candidate.ProjectedEndpoint.SkippedSuppressionIds);
         Assert.Equal(["rewrite-disabled-explicit"], candidate.ProjectedEndpoint.SkippedOverrideIds);
         Assert.Contains(snapshot.RestEndpoints, item =>
@@ -1006,8 +1007,8 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Configuration["Engine:Transports:0"] = "RestApi";
         builder.Configuration["OpenApi:EnabledVersions:0"] = "9";
         builder.Configuration["OpenApi:DefaultVersion"] = "9";
-        builder.Configuration["RestApi:Overrides:govern-enabled-explicit:Behaviors:0"] = "tests.dsl.runtimeoverride.enabled.lookup";
         builder.Configuration["RestApi:Overrides:govern-enabled-explicit:AuthoringStyles:0"] = RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle;
+        builder.Configuration["RestApi:Overrides:govern-enabled-explicit:HostGovernanceScopes:0"] = "explicit-enabled";
         builder.Configuration["RestApi:Overrides:govern-enabled-explicit:Pattern"] = "/governed/{orderId}";
         builder.AddCephalon(engine =>
         {
@@ -1039,6 +1040,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(["govern-enabled-explicit"], endpoint.MatchedOverrideIds);
         Assert.NotNull(endpoint.OriginalProjection);
         Assert.True(endpoint.OriginalProjection!.AllowsHostGovernance);
+        Assert.Equal("explicit-enabled", endpoint.OriginalProjection.HostGovernanceScope);
         Assert.Equal("/api/v9/tests/dsl/runtime/override-enabled/orders/{orderId}", endpoint.OriginalProjection.RoutePattern);
 
         var candidate = Assert.Single(candidates, static item =>
@@ -1047,12 +1049,14 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("govern-enabled-explicit", candidate.AppliedOverrideId);
         Assert.Equal(["govern-enabled-explicit"], candidate.MatchedOverrideIds);
         Assert.True(candidate.OriginalProjection.AllowsHostGovernance);
+        Assert.Equal("explicit-enabled", candidate.OriginalProjection.HostGovernanceScope);
         Assert.Equal("/api/v9/tests/dsl/runtime/override-enabled/orders/{orderId}", candidate.OriginalProjection.RoutePattern);
         Assert.Equal(endpoint.Id, candidate.ProjectedEndpoint.Id);
 
         var rule = Assert.Single(overrides, static item => string.Equals(item.Id, "govern-enabled-explicit", StringComparison.Ordinal));
-        Assert.Contains("tests.dsl.runtimeoverride.enabled.lookup", rule.BehaviorIds);
+        Assert.Empty(rule.BehaviorIds);
         Assert.Contains(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle, rule.AuthoringStyles);
+        Assert.Contains("explicit-enabled", rule.HostGovernanceScopes, StringComparer.Ordinal);
 
         var governedPayload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>("/api/v9/tests/dsl/runtime/override-enabled/orders/governed/ord-enabled");
         Assert.NotNull(governedPayload);
@@ -1072,8 +1076,8 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Configuration["Engine:Transports:0"] = "RestApi";
         builder.Configuration["OpenApi:EnabledVersions:0"] = "9";
         builder.Configuration["OpenApi:DefaultVersion"] = "9";
-        builder.Configuration["RestApi:Suppressions:suppress-governed-explicit:Behaviors:0"] = "tests.dsl.runtimesuppression.enabled.lookup";
         builder.Configuration["RestApi:Suppressions:suppress-governed-explicit:AuthoringStyles:0"] = RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle;
+        builder.Configuration["RestApi:Suppressions:suppress-governed-explicit:HostGovernanceScopes:0"] = "explicit-suppression";
         builder.AddCephalon(engine =>
         {
             engine.AddModule(new ExplicitDslHostGovernanceSuppressionRuntimeCatalogModule());
@@ -1107,18 +1111,21 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal("suppress-governed-explicit", candidate.SuppressedBySuppressionId);
         Assert.Equal(["suppress-governed-explicit"], candidate.MatchedSuppressionIds);
         Assert.True(candidate.OriginalProjection.AllowsHostGovernance);
+        Assert.Equal("explicit-suppression", candidate.OriginalProjection.HostGovernanceScope);
         Assert.Equal("/api/v9/tests/dsl/runtime/suppression-enabled/orders/{orderId}", candidate.OriginalProjection.RoutePattern);
         Assert.Null(candidate.SuppressedByCandidateId);
 
         var suppression = Assert.Single(suppressions, static item => string.Equals(item.Id, "suppress-governed-explicit", StringComparison.Ordinal));
-        Assert.Contains("tests.dsl.runtimesuppression.enabled.lookup", suppression.BehaviorIds);
+        Assert.Empty(suppression.BehaviorIds);
         Assert.Contains(RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle, suppression.AuthoringStyles);
+        Assert.Contains("explicit-suppression", suppression.HostGovernanceScopes, StringComparer.Ordinal);
         Assert.Contains(snapshot.RestEndpointSuppressions, item =>
             string.Equals(item.Id, "suppress-governed-explicit", StringComparison.Ordinal));
         Assert.Contains(snapshot.RestEndpointCandidates, item =>
             string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
             string.Equals(item.SuppressedBySuppressionId, "suppress-governed-explicit", StringComparison.Ordinal) &&
-            item.OriginalProjection.AllowsHostGovernance);
+            item.OriginalProjection.AllowsHostGovernance &&
+            string.Equals(item.OriginalProjection.HostGovernanceScope, "explicit-suppression", StringComparison.Ordinal));
 
         var response = await client.GetAsync("/api/v9/tests/dsl/runtime/suppression-enabled/orders/ord-suppressed");
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
@@ -3516,6 +3523,417 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonAppliesEndpointNameOverrideSelectorsOnlyToTheMatchingCandidate()
+    {
+        const string moduleId = "tests.rest.profile-runtime.selectors";
+        const string behaviorId = "tests.rest.profile.selector.bindings";
+        const string primaryOriginalEndpointName = "tests_rest_profile_runtime_selectors.v6.tests_rest_profile_selector_bindings";
+        const string secondaryOriginalEndpointName = "tests_rest_profile_runtime_selectors.v7.tests_rest_profile_selector_bindings";
+
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:EnabledVersions:1"] = "7";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.Configuration["RestApi:Overrides:secondary-only:Modules:0"] = moduleId;
+        builder.Configuration["RestApi:Overrides:secondary-only:EndpointNames:0"] = secondaryOriginalEndpointName;
+        builder.Configuration["RestApi:Overrides:secondary-only:Pattern"] = "/lookup/original-endpoint-name/{orderId}/items";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileSelectorRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(overrides);
+        Assert.Equal(2, endpoints.Length);
+        Assert.Equal(2, candidates.Length);
+
+        var primaryEndpoint = Assert.Single(endpoints, static item =>
+            string.Equals(
+                item.RoutePattern,
+                "/api/v6/tests/profile-runtime/selectors/primary/orders/{orderId}/items",
+                StringComparison.Ordinal));
+        var secondaryEndpoint = Assert.Single(endpoints, static item =>
+            string.Equals(
+                item.RoutePattern,
+                "/api/v7/tests/profile-runtime/selectors/secondary/orders/lookup/original-endpoint-name/{orderId}/items",
+                StringComparison.Ordinal));
+
+        Assert.Equal(primaryOriginalEndpointName, primaryEndpoint.OriginalEndpointName);
+        Assert.Equal(secondaryOriginalEndpointName, secondaryEndpoint.OriginalEndpointName);
+
+        var primaryCandidate = Assert.Single(candidates, static item =>
+            string.Equals(
+                item.ProjectedEndpoint.RoutePattern,
+                "/api/v6/tests/profile-runtime/selectors/primary/orders/{orderId}/items",
+                StringComparison.Ordinal));
+        var secondaryCandidate = Assert.Single(candidates, static item =>
+            string.Equals(
+                item.ProjectedEndpoint.RoutePattern,
+                "/api/v7/tests/profile-runtime/selectors/secondary/orders/lookup/original-endpoint-name/{orderId}/items",
+                StringComparison.Ordinal));
+
+        Assert.Equal(behaviorId, primaryCandidate.ProjectedEndpoint.BehaviorId);
+        Assert.Equal(behaviorId, secondaryCandidate.ProjectedEndpoint.BehaviorId);
+        Assert.Equal(primaryOriginalEndpointName, primaryCandidate.ProjectedEndpoint.OriginalEndpointName);
+        Assert.Equal(secondaryOriginalEndpointName, secondaryCandidate.ProjectedEndpoint.OriginalEndpointName);
+        Assert.Empty(primaryCandidate.MatchedOverrideIds);
+        Assert.Null(primaryCandidate.AppliedOverrideId);
+        Assert.Equal("secondary-only", secondaryCandidate.AppliedOverrideId);
+        Assert.Equal(["secondary-only"], secondaryCandidate.MatchedOverrideIds);
+        Assert.Equal([RestEndpointOverrideActionKind.Pattern], secondaryCandidate.SelectedOverrideActionKinds);
+        Assert.Equal([RestEndpointOverrideActionKind.Pattern], secondaryCandidate.AppliedOverrideActionKinds);
+        Assert.Equal(RestEndpointGovernanceRuleSelectionBasis.SingleMatch, secondaryCandidate.OverrideSelectionBasis);
+
+        var rule = Assert.Single(overrides, static item => string.Equals(item.Id, "secondary-only", StringComparison.Ordinal));
+        Assert.Contains(moduleId, rule.SourceModuleIds, StringComparer.Ordinal);
+        Assert.Contains(secondaryOriginalEndpointName, rule.EndpointNames, StringComparer.Ordinal);
+        Assert.Equal("/lookup/original-endpoint-name/{orderId}/items", rule.Pattern);
+        Assert.Equal([secondaryCandidate.Id], rule.MatchedCandidateIds);
+        Assert.Equal([secondaryCandidate.Id], rule.SelectedCandidateIds);
+        Assert.Equal([secondaryCandidate.Id], rule.AppliedCandidateIds);
+        Assert.Empty(rule.SkippedCandidateIds);
+        Assert.Equal([RestEndpointGovernanceRuleSelectionBasis.SingleMatch], rule.SelectionBases);
+        Assert.Equal([RestEndpointOverrideActionKind.Pattern], rule.SelectedActionKinds);
+        Assert.Equal([RestEndpointOverrideActionKind.Pattern], rule.AppliedActionKinds);
+
+        using var primaryRequest = new HttpRequestMessage(
+            HttpMethod.Post,
+            "/api/v6/tests/profile-runtime/selectors/primary/orders/ord-115/items?quantity=4");
+        primaryRequest.Headers.Add("X-Correlation-Id", "corr-115");
+        primaryRequest.Content = JsonContent.Create(new
+        {
+            note = "primary"
+        });
+
+        var primaryResponse = await client.SendAsync(primaryRequest);
+        primaryResponse.EnsureSuccessStatusCode();
+
+        using var secondaryRequest = new HttpRequestMessage(
+            HttpMethod.Post,
+            "/api/v7/tests/profile-runtime/selectors/secondary/orders/lookup/original-endpoint-name/ord-116/items?quantity=5");
+        secondaryRequest.Headers.Add("X-Correlation-Id", "corr-116");
+        secondaryRequest.Content = JsonContent.Create(new
+        {
+            note = "secondary"
+        });
+
+        var secondaryResponse = await client.SendAsync(secondaryRequest);
+        secondaryResponse.EnsureSuccessStatusCode();
+    }
+
+    [Fact]
+    public async Task MapCephalonAppliesEndpointNameSuppressionSelectorsOnlyToTheMatchingCandidate()
+    {
+        const string moduleId = "tests.rest.profile-runtime.selectors";
+        const string behaviorId = "tests.rest.profile.selector.bindings";
+        const string primaryOriginalEndpointName = "tests_rest_profile_runtime_selectors.v6.tests_rest_profile_selector_bindings";
+        const string secondaryOriginalEndpointName = "tests_rest_profile_runtime_selectors.v7.tests_rest_profile_selector_bindings";
+
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:EnabledVersions:1"] = "7";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.Configuration["RestApi:Suppressions:hide-secondary-by-endpoint-name:Modules:0"] = moduleId;
+        builder.Configuration["RestApi:Suppressions:hide-secondary-by-endpoint-name:EndpointNames:0"] = secondaryOriginalEndpointName;
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileSelectorRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var suppressions = await client.GetFromJsonAsync<RestEndpointSuppressionDescriptor[]>("/engine/rest-endpoint-suppressions");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(suppressions);
+
+        var endpoint = Assert.Single(endpoints);
+        Assert.Equal("/api/v6/tests/profile-runtime/selectors/primary/orders/{orderId}/items", endpoint.RoutePattern);
+        Assert.Equal(primaryOriginalEndpointName, endpoint.OriginalEndpointName);
+
+        var published = Assert.Single(candidates, static item => item.Status == RestEndpointCandidateStatus.Published);
+        var suppressed = Assert.Single(candidates, static item => item.Status == RestEndpointCandidateStatus.Suppressed);
+
+        Assert.Equal(behaviorId, published.ProjectedEndpoint.BehaviorId);
+        Assert.Equal(behaviorId, suppressed.ProjectedEndpoint.BehaviorId);
+        Assert.Equal(primaryOriginalEndpointName, published.ProjectedEndpoint.OriginalEndpointName);
+        Assert.Equal(secondaryOriginalEndpointName, suppressed.ProjectedEndpoint.OriginalEndpointName);
+        Assert.Equal("/api/v7/tests/profile-runtime/selectors/secondary/orders/{orderId}/items", suppressed.ProjectedEndpoint.RoutePattern);
+        Assert.Equal("hide-secondary-by-endpoint-name", suppressed.SuppressedBySuppressionId);
+        Assert.Equal(["hide-secondary-by-endpoint-name"], suppressed.MatchedSuppressionIds);
+        Assert.Equal(RestEndpointGovernanceRuleSelectionBasis.SingleMatch, suppressed.SuppressionSelectionBasis);
+
+        var rule = Assert.Single(suppressions, static item => string.Equals(item.Id, "hide-secondary-by-endpoint-name", StringComparison.Ordinal));
+        Assert.Contains(moduleId, rule.SourceModuleIds, StringComparer.Ordinal);
+        Assert.Contains(secondaryOriginalEndpointName, rule.EndpointNames, StringComparer.Ordinal);
+        Assert.Equal([suppressed.Id], rule.MatchedCandidateIds);
+        Assert.Equal([suppressed.Id], rule.SuppressedCandidateIds);
+        Assert.Empty(rule.SkippedCandidateIds);
+        Assert.Equal([RestEndpointGovernanceRuleSelectionBasis.SingleMatch], rule.SelectionBases);
+
+        using var publishedRequest = new HttpRequestMessage(
+            HttpMethod.Post,
+            "/api/v6/tests/profile-runtime/selectors/primary/orders/ord-117/items?quantity=4");
+        publishedRequest.Headers.Add("X-Correlation-Id", "corr-117");
+        publishedRequest.Content = JsonContent.Create(new
+        {
+            note = "published"
+        });
+
+        var publishedResponse = await client.SendAsync(publishedRequest);
+        publishedResponse.EnsureSuccessStatusCode();
+
+        using var suppressedRequest = new HttpRequestMessage(
+            HttpMethod.Post,
+            "/api/v7/tests/profile-runtime/selectors/secondary/orders/ord-118/items?quantity=5");
+        suppressedRequest.Headers.Add("X-Correlation-Id", "corr-118");
+        suppressedRequest.Content = JsonContent.Create(new
+        {
+            note = "suppressed"
+        });
+
+        var suppressedResponse = await client.SendAsync(suppressedRequest);
+        Assert.Equal(System.Net.HttpStatusCode.NotFound, suppressedResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task MapCephalonAppliesHostGovernanceScopeOverrideSelectorsOnlyToTheMatchingCandidate()
+    {
+        const string behaviorId = "tests.rest.profile.selector.bindings";
+
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:EnabledVersions:1"] = "7";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.Configuration["RestApi:Overrides:secondary-scope-only:HostGovernanceScopes:0"] = "secondary-scope";
+        builder.Configuration["RestApi:Overrides:secondary-scope-only:Pattern"] = "/lookup/host-governance-scope/{orderId}/items";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileSelectorRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(overrides);
+        Assert.Equal(2, endpoints.Length);
+        Assert.Equal(2, candidates.Length);
+
+        var primaryEndpoint = Assert.Single(endpoints, static item =>
+            string.Equals(
+                item.RoutePattern,
+                "/api/v6/tests/profile-runtime/selectors/primary/orders/{orderId}/items",
+                StringComparison.Ordinal));
+        var secondaryEndpoint = Assert.Single(endpoints, static item =>
+            string.Equals(
+                item.RoutePattern,
+                "/api/v7/tests/profile-runtime/selectors/secondary/orders/lookup/host-governance-scope/{orderId}/items",
+                StringComparison.Ordinal));
+
+        Assert.NotNull(primaryEndpoint.OriginalProjection);
+        Assert.NotNull(secondaryEndpoint.OriginalProjection);
+        Assert.Equal("primary-scope", primaryEndpoint.OriginalProjection!.HostGovernanceScope);
+        Assert.Equal("secondary-scope", secondaryEndpoint.OriginalProjection!.HostGovernanceScope);
+
+        var primaryCandidate = Assert.Single(candidates, static item =>
+            string.Equals(
+                item.ProjectedEndpoint.RoutePattern,
+                "/api/v6/tests/profile-runtime/selectors/primary/orders/{orderId}/items",
+                StringComparison.Ordinal));
+        var secondaryCandidate = Assert.Single(candidates, static item =>
+            string.Equals(
+                item.ProjectedEndpoint.RoutePattern,
+                "/api/v7/tests/profile-runtime/selectors/secondary/orders/lookup/host-governance-scope/{orderId}/items",
+                StringComparison.Ordinal));
+
+        Assert.Equal(behaviorId, primaryCandidate.ProjectedEndpoint.BehaviorId);
+        Assert.Equal(behaviorId, secondaryCandidate.ProjectedEndpoint.BehaviorId);
+        Assert.Equal("primary-scope", primaryCandidate.OriginalProjection.HostGovernanceScope);
+        Assert.Equal("secondary-scope", secondaryCandidate.OriginalProjection.HostGovernanceScope);
+        Assert.Empty(primaryCandidate.MatchedOverrideIds);
+        Assert.Null(primaryCandidate.AppliedOverrideId);
+        Assert.Equal("secondary-scope-only", secondaryCandidate.AppliedOverrideId);
+        Assert.Equal(["secondary-scope-only"], secondaryCandidate.MatchedOverrideIds);
+        Assert.Equal([RestEndpointOverrideActionKind.Pattern], secondaryCandidate.SelectedOverrideActionKinds);
+        Assert.Equal([RestEndpointOverrideActionKind.Pattern], secondaryCandidate.AppliedOverrideActionKinds);
+        Assert.Equal(RestEndpointGovernanceRuleSelectionBasis.SingleMatch, secondaryCandidate.OverrideSelectionBasis);
+
+        var rule = Assert.Single(overrides, static item => string.Equals(item.Id, "secondary-scope-only", StringComparison.Ordinal));
+        Assert.Empty(rule.SourceModuleIds);
+        Assert.Contains("secondary-scope", rule.HostGovernanceScopes, StringComparer.Ordinal);
+        Assert.Equal("/lookup/host-governance-scope/{orderId}/items", rule.Pattern);
+        Assert.Equal([secondaryCandidate.Id], rule.MatchedCandidateIds);
+        Assert.Equal([secondaryCandidate.Id], rule.SelectedCandidateIds);
+        Assert.Equal([secondaryCandidate.Id], rule.AppliedCandidateIds);
+        Assert.Empty(rule.SkippedCandidateIds);
+        Assert.Equal([RestEndpointGovernanceRuleSelectionBasis.SingleMatch], rule.SelectionBases);
+        Assert.Equal([RestEndpointOverrideActionKind.Pattern], rule.SelectedActionKinds);
+        Assert.Equal([RestEndpointOverrideActionKind.Pattern], rule.AppliedActionKinds);
+
+        using var primaryRequest = new HttpRequestMessage(
+            HttpMethod.Post,
+            "/api/v6/tests/profile-runtime/selectors/primary/orders/ord-119/items?quantity=4");
+        primaryRequest.Headers.Add("X-Correlation-Id", "corr-119");
+        primaryRequest.Content = JsonContent.Create(new
+        {
+            note = "primary"
+        });
+
+        var primaryResponse = await client.SendAsync(primaryRequest);
+        primaryResponse.EnsureSuccessStatusCode();
+
+        using var secondaryRequest = new HttpRequestMessage(
+            HttpMethod.Post,
+            "/api/v7/tests/profile-runtime/selectors/secondary/orders/lookup/host-governance-scope/ord-120/items?quantity=5");
+        secondaryRequest.Headers.Add("X-Correlation-Id", "corr-120");
+        secondaryRequest.Content = JsonContent.Create(new
+        {
+            note = "secondary"
+        });
+
+        var secondaryResponse = await client.SendAsync(secondaryRequest);
+        secondaryResponse.EnsureSuccessStatusCode();
+    }
+
+    [Fact]
+    public async Task MapCephalonAppliesHostGovernanceScopeSuppressionSelectorsOnlyToTheMatchingCandidate()
+    {
+        const string behaviorId = "tests.rest.profile.selector.bindings";
+
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:EnabledVersions:1"] = "7";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.Configuration["RestApi:Suppressions:hide-secondary-by-scope:HostGovernanceScopes:0"] = "secondary-scope";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileSelectorRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var suppressions = await client.GetFromJsonAsync<RestEndpointSuppressionDescriptor[]>("/engine/rest-endpoint-suppressions");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(suppressions);
+
+        var endpoint = Assert.Single(endpoints);
+        Assert.Equal("/api/v6/tests/profile-runtime/selectors/primary/orders/{orderId}/items", endpoint.RoutePattern);
+        Assert.NotNull(endpoint.OriginalProjection);
+        Assert.Equal("primary-scope", endpoint.OriginalProjection!.HostGovernanceScope);
+
+        var published = Assert.Single(candidates, static item => item.Status == RestEndpointCandidateStatus.Published);
+        var suppressed = Assert.Single(candidates, static item => item.Status == RestEndpointCandidateStatus.Suppressed);
+
+        Assert.Equal(behaviorId, published.ProjectedEndpoint.BehaviorId);
+        Assert.Equal(behaviorId, suppressed.ProjectedEndpoint.BehaviorId);
+        Assert.Equal("primary-scope", published.OriginalProjection.HostGovernanceScope);
+        Assert.Equal("secondary-scope", suppressed.OriginalProjection.HostGovernanceScope);
+        Assert.Equal("/api/v7/tests/profile-runtime/selectors/secondary/orders/{orderId}/items", suppressed.ProjectedEndpoint.RoutePattern);
+        Assert.Equal("hide-secondary-by-scope", suppressed.SuppressedBySuppressionId);
+        Assert.Equal(["hide-secondary-by-scope"], suppressed.MatchedSuppressionIds);
+        Assert.Equal(RestEndpointGovernanceRuleSelectionBasis.SingleMatch, suppressed.SuppressionSelectionBasis);
+
+        var rule = Assert.Single(suppressions, static item => string.Equals(item.Id, "hide-secondary-by-scope", StringComparison.Ordinal));
+        Assert.Empty(rule.SourceModuleIds);
+        Assert.Contains("secondary-scope", rule.HostGovernanceScopes, StringComparer.Ordinal);
+        Assert.Equal([suppressed.Id], rule.MatchedCandidateIds);
+        Assert.Equal([suppressed.Id], rule.SuppressedCandidateIds);
+        Assert.Empty(rule.SkippedCandidateIds);
+        Assert.Equal([RestEndpointGovernanceRuleSelectionBasis.SingleMatch], rule.SelectionBases);
+
+        using var publishedRequest = new HttpRequestMessage(
+            HttpMethod.Post,
+            "/api/v6/tests/profile-runtime/selectors/primary/orders/ord-121/items?quantity=4");
+        publishedRequest.Headers.Add("X-Correlation-Id", "corr-121");
+        publishedRequest.Content = JsonContent.Create(new
+        {
+            note = "published"
+        });
+
+        var publishedResponse = await client.SendAsync(publishedRequest);
+        publishedResponse.EnsureSuccessStatusCode();
+
+        using var suppressedRequest = new HttpRequestMessage(
+            HttpMethod.Post,
+            "/api/v7/tests/profile-runtime/selectors/secondary/orders/ord-122/items?quantity=5");
+        suppressedRequest.Headers.Add("X-Correlation-Id", "corr-122");
+        suppressedRequest.Content = JsonContent.Create(new
+        {
+            note = "suppressed"
+        });
+
+        var suppressedResponse = await client.SendAsync(suppressedRequest);
+        Assert.Equal(System.Net.HttpStatusCode.NotFound, suppressedResponse.StatusCode);
+    }
+
+    [Fact]
     public async Task MapCephalonAppliesBindingFallbackOverrideSelectorsOnlyToTheMatchingCandidate()
     {
         var builder = WebApplication.CreateBuilder();
@@ -4161,7 +4579,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
-    public void AddCephalonRejectsRestApiSuppressionRulesWithoutBehaviorOrModuleTargets()
+    public void AddCephalonRejectsRestApiSuppressionRulesWithoutPrimaryTargetsOrGovernanceScopes()
     {
         var builder = WebApplication.CreateBuilder();
         builder.WebHost.UseTestServer();
@@ -4180,7 +4598,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
                 });
             }));
 
-        Assert.Contains("candidate id, behavior id, or source module id", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("candidate id, behavior id, source module id, or host-governance scope", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -5802,9 +6220,9 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Configuration["Engine:Transports:0"] = "RestApi";
         builder.Configuration["OpenApi:EnabledVersions:0"] = "9";
         builder.Configuration["OpenApi:DefaultVersion"] = "9";
-        builder.Configuration["RestApi:Suppressions:skip-disabled-explicit:Behaviors:0"] = "tests.dsl.runtimeoverride.disabled.lookup";
+        builder.Configuration["RestApi:Suppressions:skip-disabled-explicit:HostGovernanceScopes:0"] = "explicit-disabled";
         builder.Configuration["RestApi:Suppressions:skip-disabled-explicit:AuthoringStyles:0"] = RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle;
-        builder.Configuration["RestApi:Overrides:rewrite-disabled-explicit:Behaviors:0"] = "tests.dsl.runtimeoverride.disabled.lookup";
+        builder.Configuration["RestApi:Overrides:rewrite-disabled-explicit:HostGovernanceScopes:0"] = "explicit-disabled";
         builder.Configuration["RestApi:Overrides:rewrite-disabled-explicit:AuthoringStyles:0"] = RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle;
         builder.Configuration["RestApi:Overrides:rewrite-disabled-explicit:Pattern"] = "/governed/{orderId}";
         builder.AddCephalon(engine =>
@@ -5826,12 +6244,16 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         var policyByBehavior = await client.GetFromJsonAsync<RestEndpointAuthoringPolicyDescriptor>(
             "/engine/rest-endpoint-authoring-policies/tests.dsl.runtimeoverride.disabled.lookup");
         var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var suppressions = await client.GetFromJsonAsync<RestEndpointSuppressionDescriptor[]>("/engine/rest-endpoint-suppressions");
+        var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
         var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
         var policiesJson = await client.GetStringAsync("/engine/rest-endpoint-authoring-policies");
 
         Assert.NotNull(policies);
         Assert.NotNull(policyByBehavior);
         Assert.NotNull(candidates);
+        Assert.NotNull(suppressions);
+        Assert.NotNull(overrides);
         Assert.NotNull(snapshot);
 
         var candidate = Assert.Single(candidates, static item =>
@@ -5870,6 +6292,14 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Empty(explicitStyle.GovernanceOverrideSummaries);
         Assert.Equal("skip-disabled-explicit", Assert.Single(explicitStyle.SkippedSuppressionSummaries).RuleId);
         Assert.Equal("rewrite-disabled-explicit", Assert.Single(explicitStyle.SkippedOverrideSummaries).RuleId);
+        var skippedSuppressionRule = Assert.Single(suppressions, static item =>
+            string.Equals(item.Id, "skip-disabled-explicit", StringComparison.Ordinal));
+        Assert.Empty(skippedSuppressionRule.BehaviorIds);
+        Assert.Equal(["explicit-disabled"], skippedSuppressionRule.HostGovernanceScopes);
+        var skippedOverrideRule = Assert.Single(overrides, static item =>
+            string.Equals(item.Id, "rewrite-disabled-explicit", StringComparison.Ordinal));
+        Assert.Empty(skippedOverrideRule.BehaviorIds);
+        Assert.Equal(["explicit-disabled"], skippedOverrideRule.HostGovernanceScopes);
 
         Assert.Equal(policy.HostGovernanceEligibleCandidateIds, policyByBehavior.HostGovernanceEligibleCandidateIds);
         Assert.Equal(policy.HostGovernanceIneligibleCandidateIds, policyByBehavior.HostGovernanceIneligibleCandidateIds);
@@ -5906,7 +6336,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
         builder.Configuration["OpenApi:DefaultVersion"] = "6";
         builder.Configuration["RestApi:AuthoringPolicies:tests.rest.generated.threeway.lookup:AllowMultiplePublishedCandidates"] = "true";
-        builder.Configuration["RestApi:Overrides:split-generated:Behaviors:0"] = "tests.rest.generated.threeway.lookup";
+        builder.Configuration["RestApi:Overrides:split-generated:HostGovernanceScopes:0"] = "generated-governance";
         builder.Configuration["RestApi:Overrides:split-generated:AuthoringStyles:0"] =
             RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle;
         builder.Configuration["RestApi:Overrides:split-generated:Pattern"] = "/generated/{orderId}";
@@ -6044,6 +6474,8 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal(generatedCandidate.SelectedOverrideActionKinds, generatedOverrideSummary.SelectedActionKindSummaries.Select(static item => item.ActionKind).ToArray());
         Assert.Equal(generatedCandidate.AppliedOverrideActionKinds, generatedOverrideSummary.AppliedActionKindSummaries.Select(static item => item.ActionKind).ToArray());
         var overrideRule = Assert.Single(overrides, static item => string.Equals(item.Id, "split-generated", StringComparison.Ordinal));
+        Assert.Empty(overrideRule.BehaviorIds);
+        Assert.Equal(["generated-governance"], overrideRule.HostGovernanceScopes);
         Assert.Equal([generatedCandidate.Id], overrideRule.MatchedCandidateIds);
         Assert.Equal([generatedCandidate.Id], overrideRule.SelectedCandidateIds);
         Assert.Equal([generatedCandidate.Id], overrideRule.AppliedCandidateIds);
@@ -6104,7 +6536,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Configuration["Engine:Transports:0"] = "RestApi";
         builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
         builder.Configuration["OpenApi:DefaultVersion"] = "6";
-        builder.Configuration["RestApi:Suppressions:prefer-generated:Behaviors:0"] = "tests.rest.generated.threeway.lookup";
+        builder.Configuration["RestApi:Suppressions:prefer-generated:HostGovernanceScopes:0"] = "generated-governance";
         builder.Configuration["RestApi:Suppressions:prefer-generated:AuthoringStyles:0"] = RestEndpointRuntimeMetadata.BehaviorModuleProfileAuthoringStyle;
         builder.AddCephalon(engine =>
         {
@@ -6123,10 +6555,12 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
 
         var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
         var groups = await client.GetFromJsonAsync<RestEndpointPublicationGroupDescriptor[]>("/engine/rest-endpoint-publication-groups");
+        var suppressions = await client.GetFromJsonAsync<RestEndpointSuppressionDescriptor[]>("/engine/rest-endpoint-suppressions");
         var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
 
         Assert.NotNull(candidates);
         Assert.NotNull(groups);
+        Assert.NotNull(suppressions);
         Assert.NotNull(snapshot);
 
         var behaviorCandidates = candidates
@@ -6156,6 +6590,12 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         var suppressionSelectionBasisSummary = Assert.Single(suppressionSummary.SelectionBasisSummaries);
         Assert.Equal(governanceSuppressed.SuppressionSelectionBasis.Value, suppressionSelectionBasisSummary.SelectionBasis);
         Assert.Equal([governanceSuppressed.Id], suppressionSelectionBasisSummary.CandidateIds);
+        var suppressionRule = Assert.Single(suppressions, static item =>
+            string.Equals(item.Id, "prefer-generated", StringComparison.Ordinal));
+        Assert.Empty(suppressionRule.BehaviorIds);
+        Assert.Equal(["generated-governance"], suppressionRule.HostGovernanceScopes);
+        Assert.Equal([governanceSuppressed.Id], suppressionRule.MatchedCandidateIds);
+        Assert.Equal([governanceSuppressed.Id], suppressionRule.SuppressedCandidateIds);
         Assert.Equal(2, group.HostGovernanceEligibleCandidateIds.Count);
         Assert.Empty(group.HostGovernanceIneligibleCandidateIds);
         Assert.Empty(group.SkippedSuppressionIds);
@@ -6224,9 +6664,9 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         builder.Configuration["Engine:Transports:0"] = "RestApi";
         builder.Configuration["OpenApi:EnabledVersions:0"] = "9";
         builder.Configuration["OpenApi:DefaultVersion"] = "9";
-        builder.Configuration["RestApi:Suppressions:skip-disabled-explicit:Behaviors:0"] = "tests.dsl.runtimeoverride.disabled.lookup";
+        builder.Configuration["RestApi:Suppressions:skip-disabled-explicit:HostGovernanceScopes:0"] = "explicit-disabled";
         builder.Configuration["RestApi:Suppressions:skip-disabled-explicit:AuthoringStyles:0"] = RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle;
-        builder.Configuration["RestApi:Overrides:rewrite-disabled-explicit:Behaviors:0"] = "tests.dsl.runtimeoverride.disabled.lookup";
+        builder.Configuration["RestApi:Overrides:rewrite-disabled-explicit:HostGovernanceScopes:0"] = "explicit-disabled";
         builder.Configuration["RestApi:Overrides:rewrite-disabled-explicit:AuthoringStyles:0"] = RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle;
         builder.Configuration["RestApi:Overrides:rewrite-disabled-explicit:Pattern"] = "/governed/{orderId}";
         builder.AddCephalon(engine =>
@@ -6298,12 +6738,16 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Equal([candidate.Id], explicitStyleSkippedOverrideSummary.CandidateIds);
         var skippedSuppressionRule = Assert.Single(suppressions, static item =>
             string.Equals(item.Id, "skip-disabled-explicit", StringComparison.Ordinal));
+        Assert.Empty(skippedSuppressionRule.BehaviorIds);
+        Assert.Equal(["explicit-disabled"], skippedSuppressionRule.HostGovernanceScopes);
         Assert.Empty(skippedSuppressionRule.MatchedCandidateIds);
         Assert.Empty(skippedSuppressionRule.SuppressedCandidateIds);
         Assert.Equal([candidate.Id], skippedSuppressionRule.SkippedCandidateIds);
         Assert.Empty(skippedSuppressionRule.SelectionBases);
         var skippedOverrideRule = Assert.Single(overrides, static item =>
             string.Equals(item.Id, "rewrite-disabled-explicit", StringComparison.Ordinal));
+        Assert.Empty(skippedOverrideRule.BehaviorIds);
+        Assert.Equal(["explicit-disabled"], skippedOverrideRule.HostGovernanceScopes);
         Assert.Empty(skippedOverrideRule.MatchedCandidateIds);
         Assert.Empty(skippedOverrideRule.SelectedCandidateIds);
         Assert.Empty(skippedOverrideRule.AppliedCandidateIds);
@@ -8198,6 +8642,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             behaviors.Group("/tests/dsl/runtime/override-disabled/orders")
                 .ApiVersion(9)
                 .WithTagName("Explicit DSL Governance Disabled API")
+                .WithHostGovernanceScope("explicit-disabled")
                 .MapGet<GetExplicitDslHostGovernanceDisabledRuntimeOrderBehavior>("/{orderId}");
         }
     }
@@ -8215,6 +8660,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             behaviors.Group("/tests/dsl/runtime/override-enabled/orders")
                 .ApiVersion(9)
                 .WithTagName("Explicit DSL Governance Enabled API")
+                .WithHostGovernanceScope("explicit-enabled")
                 .AllowHostGovernance()
                 .MapGet<GetExplicitDslHostGovernanceEnabledRuntimeOrderBehavior>("/{orderId}");
         }
@@ -8233,6 +8679,7 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
             behaviors.Group("/tests/dsl/runtime/suppression-enabled/orders")
                 .ApiVersion(9)
                 .WithTagName("Explicit DSL Governance Suppression API")
+                .WithHostGovernanceScope("explicit-suppression")
                 .AllowHostGovernance()
                 .MapGet<GetExplicitDslHostGovernanceSuppressedRuntimeOrderBehavior>("/{orderId}");
         }
@@ -8405,7 +8852,8 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
         {
             var group = behaviors.Group("/tests/generated/runtime/governed/orders")
-                .WithTagName("Generated Governance API");
+                .WithTagName("Generated Governance API")
+                .WithHostGovernanceScope("generated-governance");
 
             group.MapGeneratedProfiles("tests.rest.generated.threeway");
             group.MapProfile<GetGeneratedThreeWayRuntimeOrderBehavior>();
@@ -8600,12 +9048,14 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
                 .ApiVersion(6)
                 .WithOpenApiDocumentName("public")
                 .WithTagName("Profile Selector Primary API")
+                .WithHostGovernanceScope("primary-scope")
                 .MapProfile<PostProfileSelectorRuntimeOrderBehavior>();
 
             behaviors.Group("/tests/profile-runtime/selectors/secondary/orders")
                 .ApiVersion(7)
                 .WithOpenApiDocumentName("internal")
                 .WithTagName("Profile Selector Secondary API")
+                .WithHostGovernanceScope("secondary-scope")
                 .MapProfile<PostProfileSelectorRuntimeOrderBehavior>();
         }
     }

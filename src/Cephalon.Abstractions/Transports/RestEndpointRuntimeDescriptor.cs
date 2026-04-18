@@ -572,7 +572,8 @@ public sealed class RestEndpointRuntimeDescriptor
                 value.BindingDescriptors,
                 value.BindingFallbackMode,
                 value.TagName,
-                value.AllowsHostGovernance);
+                value.AllowsHostGovernance,
+                value.HostGovernanceScope);
     }
 
     private static RestEndpointBindingFallbackMode? NormalizeBindingFallbackMode(

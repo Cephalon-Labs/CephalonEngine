@@ -30,7 +30,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Abstractions.Data`
 
-- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-data): 41 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data)
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-data): 54 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data)
 
 ## `Cephalon.Abstractions.EventSourcing`
 
@@ -58,7 +58,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Abstractions.Patterns`
 
-- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-patterns): 2 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns)
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-patterns): 10 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns)
 
 ## `Cephalon.Abstractions.Resilience`
 
@@ -74,7 +74,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Abstractions.Transports`
 
-- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-transports): 2 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports)
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-transports): 49 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports)
 
 ## `Cephalon.Agentics.Configuration`
 
@@ -118,7 +118,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.AspNetCore.Hosting`
 
-- [Cephalon.AspNetCore](cephalon-aspnetcore.md#namespace-cephalon-aspnetcore-hosting): 7 public types [Browse](browse.html?assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting)
+- [Cephalon.AspNetCore](cephalon-aspnetcore.md#namespace-cephalon-aspnetcore-hosting): 10 public types [Browse](browse.html?assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting)
 
 ## `Cephalon.AspNetCore.JsonRpc.Hosting`
 

@@ -126,13 +126,15 @@ internal sealed class AspNetCoreRestEndpointSuppressionRuntimeCatalog(
                     suppression.RouteGroupPrefixes,
                     suppression.OpenApiDocumentNames,
                     suppression.TagNames,
+                    suppression.EndpointNames,
                     suppression.BindingFallbackModes,
                     suppression.TargetBindings,
                     GetStringValues(matchedCandidateIdsByRule, suppression.Id),
                     GetStringValues(suppressedCandidateIdsByRule, suppression.Id),
                     GetStringValues(skippedCandidateIdsByRule, suppression.Id),
                     selectionBasisSummaries.Select(static summary => summary.SelectionBasis).ToArray(),
-                    selectionBasisSummaries);
+                    selectionBasisSummaries,
+                    hostGovernanceScopes: suppression.HostGovernanceScopes);
             })
             .OrderBy(static suppression => suppression.Id, Comparer)
             .ToArray();

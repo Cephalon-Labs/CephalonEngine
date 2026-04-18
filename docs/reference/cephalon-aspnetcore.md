@@ -1079,6 +1079,720 @@ Parameters:
 - `app`: The ASP.NET Core application to extend.
 - `runtime`: The runtime whose manifest and services back the mapped routes.
 
+<a id="type-cephalon-aspnetcore-hosting-restapigovernanceoptions"></a>
+
+### `RestApiGovernanceOptions`
+
+Configures host-level governance for public REST endpoint publication in Cephalon ASP.NET Core hosts.
+
+Remarks: These settings describe host-level publication governance for module-owned REST shorthand paths. They intentionally stay out of the engine core because they govern the ASP.NET Core public REST surface.
+
+#### Declaration
+```csharp
+public sealed class RestApiGovernanceOptions
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-aspnetcore-hosting-restapigovernanceoptions-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointpublicationgroupauthoringpolicydescriptor-system-collections-generic-ireadonlylist-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-system-collections-generic-ireadonlylist-cephalon-aspnetcore-hosting-restendpointoverrideoptions"></a>
+
+##### `RestApiGovernanceOptions`
+
+```csharp
+RestApiGovernanceOptions(IReadOnlyList<RestEndpointPublicationGroupAuthoringPolicyDescriptor> authoringPolicies, IReadOnlyList<RestEndpointSuppressionOptions> suppressions, IReadOnlyList<RestEndpointOverrideOptions> overrides)
+```
+
+Initializes a new instance of the `RestApiGovernanceOptions` class.
+
+Parameters:
+- `authoringPolicies`: The configured behavior-level authoring policies for REST publication groups.
+- `suppressions`: The configured suppression rules for shorthand REST candidates.
+- `overrides`: The configured override rules for shorthand REST candidates.
+
+#### Fields
+
+<a id="member-f-cephalon-aspnetcore-hosting-restapigovernanceoptions-sectionname"></a>
+
+##### `SectionName`
+
+```csharp
+const string SectionName
+```
+
+Gets the root configuration section used for REST API governance settings.
+
+#### Properties
+
+<a id="member-p-cephalon-aspnetcore-hosting-restapigovernanceoptions-authoringpolicies"></a>
+
+##### `AuthoringPolicies`
+
+```csharp
+IReadOnlyList<RestEndpointPublicationGroupAuthoringPolicyDescriptor> AuthoringPolicies { get; }
+```
+
+Gets the configured behavior-level authoring policies for REST publication groups.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restapigovernanceoptions-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any REST governance values were explicitly supplied.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restapigovernanceoptions-overrides"></a>
+
+##### `Overrides`
+
+```csharp
+IReadOnlyList<RestEndpointOverrideOptions> Overrides { get; }
+```
+
+Gets the configured override rules for descriptor-backed REST shorthand candidates.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restapigovernanceoptions-suppressions"></a>
+
+##### `Suppressions`
+
+```csharp
+IReadOnlyList<RestEndpointSuppressionOptions> Suppressions { get; }
+```
+
+Gets the configured suppression rules for descriptor-backed REST shorthand candidates.
+
+#### Methods
+
+<a id="member-m-cephalon-aspnetcore-hosting-restapigovernanceoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string"></a>
+
+##### `FromConfiguration`
+
+```csharp
+RestApiGovernanceOptions FromConfiguration(IConfiguration configuration, string sectionPath)
+```
+
+Binds and normalizes REST governance settings from configuration.
+
+Returns: The normalized REST governance settings.
+
+Parameters:
+- `configuration`: The application configuration root.
+- `sectionPath`: The configuration section path to bind.
+
+<a id="type-cephalon-aspnetcore-hosting-restendpointoverrideoptions"></a>
+
+### `RestEndpointOverrideOptions`
+
+Describes one host-level override rule for descriptor-backed REST shorthand candidates.
+
+#### Declaration
+```csharp
+public sealed class RestEndpointOverrideOptions
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-aspnetcore-hosting-restendpointoverrideoptions-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-nullable-system-int32-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-boolean-cephalon-abstractions-transports-restendpointoverridebindingmode-system-boolean-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingfallbackmode-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `RestEndpointOverrideOptions`
+
+```csharp
+RestEndpointOverrideOptions(string id, IReadOnlyList<string> candidateIds, IReadOnlyList<string> behaviorIds, IReadOnlyList<string> sourceModuleIds, IReadOnlyList<string> authoringStyles, IReadOnlyList<int> apiVersionMajors, IReadOnlyList<string> methods, IReadOnlyList<string> relativePatterns, IReadOnlyList<string> routeGroupPrefixes, int? apiVersionMajor, string method, string pattern, string routeGroupPrefix, string openApiDocumentName, string tagName, string endpointName, string summary, string description, string requiredCapabilityKey, bool clearRequiredCapability, IReadOnlyList<RestEndpointBindingDescriptor> bindings, IReadOnlyList<string> removedBindingProperties, bool clearBindings, RestEndpointOverrideBindingMode bindingMode, bool clearEndpointName, bool clearSummary, bool clearDescription, IReadOnlyList<string> openApiDocumentNames, IReadOnlyList<string> tagNames, IReadOnlyList<string> endpointNames, IReadOnlyList<RestEndpointBindingFallbackMode> bindingFallbackModes, IReadOnlyList<RestEndpointBindingDescriptor> targetBindings, IReadOnlyList<string> hostGovernanceScopes)
+```
+
+Initializes a new instance of the `RestEndpointOverrideOptions` class.
+
+Parameters:
+- `id`: The stable override identifier.
+- `candidateIds`: The original shorthand candidate identifiers targeted by the override rule.
+- `behaviorIds`: The behavior identifiers targeted by the override rule.
+- `sourceModuleIds`: The source-module identifiers targeted by the override rule.
+- `authoringStyles`: The module-owned REST authoring styles targeted by the override rule. When omitted, the rule targets only shorthand styles `behavior-module-profile` and `behavior-module-generated`. Explicit `behavior-module-dsl` routes participate only when the owning route group opted into host governance.
+- `apiVersionMajors`: The effective API major versions targeted by the override rule before any override actions are applied.
+- `methods`: The effective HTTP methods targeted by the override rule before any override actions are applied.
+- `relativePatterns`: The shorthand relative route patterns targeted by the override rule before any override actions are applied.
+- `routeGroupPrefixes`: The published route-group prefixes targeted by the override rule before any override actions are applied.
+- `apiVersionMajor`: The effective API major version applied when the rule matches a shorthand candidate.
+- `method`: The effective HTTP method applied when the rule matches a shorthand candidate.
+- `pattern`: The effective relative route pattern applied when the rule matches a shorthand candidate.
+- `routeGroupPrefix`: The effective published route-group prefix applied when the rule matches a shorthand candidate.
+- `openApiDocumentName`: The effective OpenAPI document name applied when the rule matches a shorthand candidate.
+- `tagName`: The effective primary OpenAPI tag name applied when the rule matches a shorthand candidate.
+- `endpointName`: The effective endpoint name applied when the rule matches a shorthand candidate.
+- `summary`: The effective OpenAPI summary applied when the rule matches a shorthand candidate.
+- `description`: The effective OpenAPI description applied when the rule matches a shorthand candidate.
+- `requiredCapabilityKey`: The required Cephalon capability key enforced at the REST boundary when the rule matches a shorthand candidate.
+- `clearRequiredCapability`: `true` when the rule removes any previously declared Cephalon capability boundary from the matched shorthand candidate.
+- `bindings`: The effective explicit request-binding plan applied when the rule matches a shorthand candidate.
+- `removedBindingProperties`: The explicit shorthand binding properties removed from the source binding plan when the rule matches.
+- `clearBindings`: `true` when the rule removes the matched shorthand candidate's entire explicit binding plan and returns publication to the implicit request-binding baseline.
+- `bindingMode`: The mode used to apply `bindings` and `removedBindingProperties` to the shorthand candidate's explicit binding plan.
+- `clearEndpointName`: `true` when the rule removes any previously declared shorthand endpoint name from the matched candidate.
+- `clearSummary`: `true` when the rule removes any previously declared shorthand endpoint summary from the matched candidate.
+- `clearDescription`: `true` when the rule removes any previously declared shorthand endpoint description from the matched candidate.
+- `openApiDocumentNames`: The original shorthand OpenAPI document names targeted by the override rule before any override actions are applied.
+- `tagNames`: The original shorthand primary OpenAPI tag names targeted by the override rule before any override actions are applied.
+- `endpointNames`: The original shorthand endpoint names targeted by the override rule before any override actions are applied.
+- `hostGovernanceScopes`: The original shorthand host-governance scopes targeted by the override rule before any override actions are applied. This selector can also serve as the rule's primary target when candidate, behavior, and source-module identifiers are intentionally omitted.
+- `bindingFallbackModes`: The original shorthand request-binding fallback modes targeted by the override rule before any override actions are applied.
+- `targetBindings`: The original shorthand explicit binding descriptors targeted by the override rule before any override actions are applied.
+
+#### Properties
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-actionkinds"></a>
+
+##### `ActionKinds`
+
+```csharp
+IReadOnlyList<RestEndpointOverrideActionKind> ActionKinds { get; }
+```
+
+Gets the normalized action dimensions declared by this override rule.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-apiversionmajor"></a>
+
+##### `ApiVersionMajor`
+
+```csharp
+int? ApiVersionMajor { get; }
+```
+
+Gets the effective API major version applied when this override rule matches.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-apiversionmajors"></a>
+
+##### `ApiVersionMajors`
+
+```csharp
+IReadOnlyList<int> ApiVersionMajors { get; }
+```
+
+Gets the effective API major versions targeted by this override rule before override actions are applied.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-authoringstyles"></a>
+
+##### `AuthoringStyles`
+
+```csharp
+IReadOnlyList<string> AuthoringStyles { get; }
+```
+
+Gets the normalized shorthand authoring styles targeted by this override rule.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-behaviorids"></a>
+
+##### `BehaviorIds`
+
+```csharp
+IReadOnlyList<string> BehaviorIds { get; }
+```
+
+Gets the behavior identifiers targeted by this override rule.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-bindingfallbackmodes"></a>
+
+##### `BindingFallbackModes`
+
+```csharp
+IReadOnlyList<RestEndpointBindingFallbackMode> BindingFallbackModes { get; }
+```
+
+Gets the original shorthand request-binding fallback modes targeted by this override rule before any override actions are applied.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-bindingmode"></a>
+
+##### `BindingMode`
+
+```csharp
+RestEndpointOverrideBindingMode BindingMode { get; }
+```
+
+Gets how `Bindings` and `RemovedBindingProperties` apply to the shorthand candidate's explicit binding plan.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-bindings"></a>
+
+##### `Bindings`
+
+```csharp
+IReadOnlyList<RestEndpointBindingDescriptor> Bindings { get; }
+```
+
+Gets the effective explicit request-binding plan applied when this override rule matches.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-candidateids"></a>
+
+##### `CandidateIds`
+
+```csharp
+IReadOnlyList<string> CandidateIds { get; }
+```
+
+Gets the original shorthand candidate identifiers targeted by this override rule.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-clearbindings"></a>
+
+##### `ClearBindings`
+
+```csharp
+bool ClearBindings { get; }
+```
+
+Gets a value indicating whether this override rule clears the matched shorthand candidate's entire explicit binding plan.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-cleardescription"></a>
+
+##### `ClearDescription`
+
+```csharp
+bool ClearDescription { get; }
+```
+
+Gets a value indicating whether this override rule clears any previously declared endpoint description from the matched shorthand candidate.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-clearendpointname"></a>
+
+##### `ClearEndpointName`
+
+```csharp
+bool ClearEndpointName { get; }
+```
+
+Gets a value indicating whether this override rule clears any previously declared endpoint name from the matched shorthand candidate.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-clearrequiredcapability"></a>
+
+##### `ClearRequiredCapability`
+
+```csharp
+bool ClearRequiredCapability { get; }
+```
+
+Gets a value indicating whether this override rule clears any previously declared Cephalon capability boundary from the matched shorthand candidate.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-clearsummary"></a>
+
+##### `ClearSummary`
+
+```csharp
+bool ClearSummary { get; }
+```
+
+Gets a value indicating whether this override rule clears any previously declared endpoint summary from the matched shorthand candidate.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the effective OpenAPI description applied when this override rule matches.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-endpointname"></a>
+
+##### `EndpointName`
+
+```csharp
+string EndpointName { get; }
+```
+
+Gets the effective endpoint name applied when this override rule matches.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-endpointnames"></a>
+
+##### `EndpointNames`
+
+```csharp
+IReadOnlyList<string> EndpointNames { get; }
+```
+
+Gets the original shorthand endpoint names targeted by this override rule before any override actions are applied.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any targeting values or override actions were explicitly supplied.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-hostgovernancescopes"></a>
+
+##### `HostGovernanceScopes`
+
+```csharp
+IReadOnlyList<string> HostGovernanceScopes { get; }
+```
+
+Gets the original shorthand host-governance scopes targeted by this override rule before any override actions are applied. These scopes can also act as the rule's primary target.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable override identifier.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-method"></a>
+
+##### `Method`
+
+```csharp
+string Method { get; }
+```
+
+Gets the effective HTTP method applied when this override rule matches.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-methods"></a>
+
+##### `Methods`
+
+```csharp
+IReadOnlyList<string> Methods { get; }
+```
+
+Gets the effective HTTP methods targeted by this override rule before override actions are applied.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-openapidocumentname"></a>
+
+##### `OpenApiDocumentName`
+
+```csharp
+string OpenApiDocumentName { get; }
+```
+
+Gets the effective OpenAPI document name applied when this override rule matches.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-openapidocumentnames"></a>
+
+##### `OpenApiDocumentNames`
+
+```csharp
+IReadOnlyList<string> OpenApiDocumentNames { get; }
+```
+
+Gets the original shorthand OpenAPI document names targeted by this override rule before any override actions are applied.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-pattern"></a>
+
+##### `Pattern`
+
+```csharp
+string Pattern { get; }
+```
+
+Gets the effective relative route pattern applied when this override rule matches.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-relativepatterns"></a>
+
+##### `RelativePatterns`
+
+```csharp
+IReadOnlyList<string> RelativePatterns { get; }
+```
+
+Gets the shorthand relative route patterns targeted by this override rule before override actions are applied.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-removedbindingproperties"></a>
+
+##### `RemovedBindingProperties`
+
+```csharp
+IReadOnlyList<string> RemovedBindingProperties { get; }
+```
+
+Gets the explicit shorthand binding properties removed from the source binding plan when this override rule matches.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-requiredcapabilitykey"></a>
+
+##### `RequiredCapabilityKey`
+
+```csharp
+string RequiredCapabilityKey { get; }
+```
+
+Gets the required Cephalon capability key enforced at the REST boundary when this override rule matches.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-routegroupprefix"></a>
+
+##### `RouteGroupPrefix`
+
+```csharp
+string RouteGroupPrefix { get; }
+```
+
+Gets the effective published route-group prefix applied when this override rule matches.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-routegroupprefixes"></a>
+
+##### `RouteGroupPrefixes`
+
+```csharp
+IReadOnlyList<string> RouteGroupPrefixes { get; }
+```
+
+Gets the published route-group prefixes targeted by this override rule before override actions are applied.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-sourcemoduleids"></a>
+
+##### `SourceModuleIds`
+
+```csharp
+IReadOnlyList<string> SourceModuleIds { get; }
+```
+
+Gets the source-module identifiers targeted by this override rule.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-summary"></a>
+
+##### `Summary`
+
+```csharp
+string Summary { get; }
+```
+
+Gets the effective OpenAPI summary applied when this override rule matches.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-tagname"></a>
+
+##### `TagName`
+
+```csharp
+string TagName { get; }
+```
+
+Gets the effective primary OpenAPI tag name applied when this override rule matches.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-tagnames"></a>
+
+##### `TagNames`
+
+```csharp
+IReadOnlyList<string> TagNames { get; }
+```
+
+Gets the original shorthand primary OpenAPI tag names targeted by this override rule before any override actions are applied.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-targetbindings"></a>
+
+##### `TargetBindings`
+
+```csharp
+IReadOnlyList<RestEndpointBindingDescriptor> TargetBindings { get; }
+```
+
+Gets the original shorthand explicit binding descriptors targeted by this override rule before any override actions are applied.
+
+<a id="type-cephalon-aspnetcore-hosting-restendpointsuppressionoptions"></a>
+
+### `RestEndpointSuppressionOptions`
+
+Describes one host-level suppression rule for descriptor-backed REST shorthand candidates.
+
+#### Declaration
+```csharp
+public sealed class RestEndpointSuppressionOptions
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingfallbackmode-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `RestEndpointSuppressionOptions`
+
+```csharp
+RestEndpointSuppressionOptions(string id, IReadOnlyList<string> candidateIds, IReadOnlyList<string> behaviorIds, IReadOnlyList<string> sourceModuleIds, IReadOnlyList<string> authoringStyles, IReadOnlyList<int> apiVersionMajors, IReadOnlyList<string> methods, IReadOnlyList<string> relativePatterns, IReadOnlyList<string> routeGroupPrefixes, IReadOnlyList<string> openApiDocumentNames, IReadOnlyList<string> tagNames, IReadOnlyList<string> endpointNames, IReadOnlyList<RestEndpointBindingFallbackMode> bindingFallbackModes, IReadOnlyList<RestEndpointBindingDescriptor> targetBindings, IReadOnlyList<string> hostGovernanceScopes)
+```
+
+Initializes a new instance of the `RestEndpointSuppressionOptions` class.
+
+Parameters:
+- `id`: The stable suppression identifier.
+- `candidateIds`: The original shorthand candidate identifiers targeted by the suppression rule.
+- `behaviorIds`: The behavior identifiers targeted by the suppression rule.
+- `sourceModuleIds`: The source-module identifiers targeted by the suppression rule.
+- `authoringStyles`: The module-owned REST authoring styles targeted by the suppression rule. When omitted, the rule targets only shorthand styles `behavior-module-profile` and `behavior-module-generated`. Explicit `behavior-module-dsl` routes participate only when the owning route group opted into host governance.
+- `apiVersionMajors`: The effective API major versions targeted by the suppression rule before any override actions are applied.
+- `methods`: The effective HTTP methods targeted by the suppression rule before any override actions are applied.
+- `relativePatterns`: The shorthand relative route patterns targeted by the suppression rule before any override actions are applied.
+- `routeGroupPrefixes`: The published route-group prefixes targeted by the suppression rule before any override actions are applied.
+- `openApiDocumentNames`: The original shorthand OpenAPI document names targeted by the suppression rule before any override actions are applied.
+- `tagNames`: The original shorthand primary OpenAPI tag names targeted by the suppression rule before any override actions are applied.
+- `endpointNames`: The original shorthand endpoint names targeted by the suppression rule before any override actions are applied.
+- `hostGovernanceScopes`: The original shorthand host-governance scopes targeted by the suppression rule before any override actions are applied. This selector can also serve as the rule's primary target when candidate, behavior, and source-module identifiers are intentionally omitted.
+- `bindingFallbackModes`: The original shorthand request-binding fallback modes targeted by the suppression rule before any override actions are applied.
+- `targetBindings`: The original shorthand explicit binding descriptors targeted by the suppression rule before any override actions are applied.
+
+#### Properties
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-apiversionmajors"></a>
+
+##### `ApiVersionMajors`
+
+```csharp
+IReadOnlyList<int> ApiVersionMajors { get; }
+```
+
+Gets the effective API major versions targeted by this suppression rule before override actions are applied.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-authoringstyles"></a>
+
+##### `AuthoringStyles`
+
+```csharp
+IReadOnlyList<string> AuthoringStyles { get; }
+```
+
+Gets the normalized shorthand authoring styles targeted by this suppression rule.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-behaviorids"></a>
+
+##### `BehaviorIds`
+
+```csharp
+IReadOnlyList<string> BehaviorIds { get; }
+```
+
+Gets the behavior identifiers targeted by this suppression rule.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-bindingfallbackmodes"></a>
+
+##### `BindingFallbackModes`
+
+```csharp
+IReadOnlyList<RestEndpointBindingFallbackMode> BindingFallbackModes { get; }
+```
+
+Gets the original shorthand request-binding fallback modes targeted by this suppression rule before override actions are applied.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-candidateids"></a>
+
+##### `CandidateIds`
+
+```csharp
+IReadOnlyList<string> CandidateIds { get; }
+```
+
+Gets the original shorthand candidate identifiers targeted by this suppression rule.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-endpointnames"></a>
+
+##### `EndpointNames`
+
+```csharp
+IReadOnlyList<string> EndpointNames { get; }
+```
+
+Gets the original shorthand endpoint names targeted by this suppression rule before override actions are applied.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any targeting values were explicitly supplied.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-hostgovernancescopes"></a>
+
+##### `HostGovernanceScopes`
+
+```csharp
+IReadOnlyList<string> HostGovernanceScopes { get; }
+```
+
+Gets the original shorthand host-governance scopes targeted by this suppression rule before override actions are applied. These scopes can also act as the rule's primary target.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable suppression identifier.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-methods"></a>
+
+##### `Methods`
+
+```csharp
+IReadOnlyList<string> Methods { get; }
+```
+
+Gets the effective HTTP methods targeted by this suppression rule before override actions are applied.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-openapidocumentnames"></a>
+
+##### `OpenApiDocumentNames`
+
+```csharp
+IReadOnlyList<string> OpenApiDocumentNames { get; }
+```
+
+Gets the original shorthand OpenAPI document names targeted by this suppression rule before override actions are applied.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-relativepatterns"></a>
+
+##### `RelativePatterns`
+
+```csharp
+IReadOnlyList<string> RelativePatterns { get; }
+```
+
+Gets the shorthand relative route patterns targeted by this suppression rule before override actions are applied.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-routegroupprefixes"></a>
+
+##### `RouteGroupPrefixes`
+
+```csharp
+IReadOnlyList<string> RouteGroupPrefixes { get; }
+```
+
+Gets the published route-group prefixes targeted by this suppression rule before override actions are applied.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-sourcemoduleids"></a>
+
+##### `SourceModuleIds`
+
+```csharp
+IReadOnlyList<string> SourceModuleIds { get; }
+```
+
+Gets the source-module identifiers targeted by this suppression rule.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-tagnames"></a>
+
+##### `TagNames`
+
+```csharp
+IReadOnlyList<string> TagNames { get; }
+```
+
+Gets the original shorthand primary OpenAPI tag names targeted by this suppression rule before override actions are applied.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-targetbindings"></a>
+
+##### `TargetBindings`
+
+```csharp
+IReadOnlyList<RestEndpointBindingDescriptor> TargetBindings { get; }
+```
+
+Gets the original shorthand explicit binding descriptors targeted by this suppression rule before override actions are applied.
+
 <a id="namespace-cephalon-aspnetcore-modules"></a>
 
 ## Namespace Cephalon.AspNetCore.Modules
@@ -1206,6 +1920,23 @@ public static class RestEndpointConventionBuilderExtensions
 ```
 
 #### Methods
+
+<a id="member-m-cephalon-aspnetcore-transports-rest-restendpointconventionbuilderextensions-clearrequiredcapability-microsoft-aspnetcore-builder-routehandlerbuilder"></a>
+
+##### `ClearRequiredCapability`
+
+```csharp
+RouteHandlerBuilder ClearRequiredCapability(this RouteHandlerBuilder builder)
+```
+
+Clears any previously declared Cephalon capability decision from a REST endpoint.
+
+Remarks: This uses the same last-declaration-wins model as `RequireCapability`. A later clear declaration suppresses earlier capability requirements for the same route.
+
+Returns: The same route handler builder for further convention chaining.
+
+Parameters:
+- `builder`: The route handler builder to update.
 
 <a id="member-m-cephalon-aspnetcore-transports-rest-restendpointconventionbuilderextensions-requirecapability-microsoft-aspnetcore-builder-routehandlerbuilder-system-string"></a>
 

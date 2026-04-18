@@ -160,6 +160,7 @@ internal sealed class AspNetCoreRestEndpointOverrideRuntimeCatalog(
                     item.ClearDescription,
                     item.OpenApiDocumentNames,
                     item.TagNames,
+                    item.EndpointNames,
                     item.BindingFallbackModes,
                     item.TargetBindings,
                     GetStringValues(matchedCandidateIdsByRule, item.Id),
@@ -171,7 +172,8 @@ internal sealed class AspNetCoreRestEndpointOverrideRuntimeCatalog(
                     appliedActionKindSummaries.Select(static summary => summary.ActionKind).ToArray(),
                     selectionBasisSummaries,
                     selectedActionKindSummaries,
-                    appliedActionKindSummaries);
+                    appliedActionKindSummaries,
+                    hostGovernanceScopes: item.HostGovernanceScopes);
             })
             .OrderBy(static item => item.Id, Comparer)
             .ToArray();

@@ -673,6 +673,36 @@ Returns: The same builder instance.
 Parameters:
 - `pattern`: The pattern descriptor to add.
 
+<a id="member-m-cephalon-engine-composition-enginebuilder-addstranglerfigroute-cephalon-abstractions-patterns-stranglerfigroutedescriptor"></a>
+
+##### `AddStranglerFigRoute`
+
+```csharp
+EngineBuilder AddStranglerFigRoute(StranglerFigRouteDescriptor route)
+```
+
+Adds a strangler-fig route to the current runtime composition.
+
+Returns: The same builder instance.
+
+Parameters:
+- `route`: The route descriptor to add.
+
+<a id="member-m-cephalon-engine-composition-enginebuilder-addstranglerfigroutes-system-collections-generic-ienumerable-cephalon-abstractions-patterns-stranglerfigroutedescriptor"></a>
+
+##### `AddStranglerFigRoutes`
+
+```csharp
+EngineBuilder AddStranglerFigRoutes(IEnumerable<StranglerFigRouteDescriptor> routes)
+```
+
+Adds multiple strangler-fig routes to the current runtime composition.
+
+Returns: The same builder instance.
+
+Parameters:
+- `routes`: The route descriptors to add.
+
 <a id="member-m-cephalon-engine-composition-enginebuilder-addtechnology-cephalon-abstractions-technologies-technologydescriptor"></a>
 
 ##### `AddTechnology`
@@ -1796,12 +1826,12 @@ public sealed class DatabaseRuntimeSettings
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-configuration-databaseruntimesettings-ctor-system-nullable-system-boolean-system-nullable-system-boolean-system-nullable-system-boolean-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32"></a>
+<a id="member-m-cephalon-engine-configuration-databaseruntimesettings-ctor-system-nullable-system-boolean-system-nullable-system-boolean-system-nullable-system-boolean-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-int32"></a>
 
 ##### `DatabaseRuntimeSettings`
 
 ```csharp
-DatabaseRuntimeSettings(bool? enableDetailedErrors, bool? enableSensitiveDataLogging, bool? enableRetryOnFailure, int? maxRetryCount, int? maxRetryDelaySeconds, int? commandTimeoutSeconds, int? maxBatchSize)
+DatabaseRuntimeSettings(bool? enableDetailedErrors, bool? enableSensitiveDataLogging, bool? enableRetryOnFailure, int? maxRetryCount, int? maxRetryDelaySeconds, int? commandTimeoutSeconds, int? maxBatchSize, int? roleProbeFreshnessSeconds)
 ```
 
 Initializes a new instance of the `DatabaseRuntimeSettings` class.
@@ -1897,6 +1927,16 @@ int? MaxRetryDelaySeconds { get; }
 ```
 
 Gets the maximum retry delay in seconds when transient-failure retries were configured.
+
+<a id="member-p-cephalon-engine-configuration-databaseruntimesettings-roleprobefreshnessseconds"></a>
+
+##### `RoleProbeFreshnessSeconds`
+
+```csharp
+int? RoleProbeFreshnessSeconds { get; }
+```
+
+Gets the freshness window in seconds for cached database-role probes when one was configured. A value of `0` disables probe-result caching.
 
 #### Methods
 
@@ -6193,6 +6233,16 @@ PatternDescriptor AntiCorruptionLayer { get; }
 
 Gets the anti-corruption-layer pattern.
 
+<a id="member-p-cephalon-engine-patterns-builtinpatterns-backendforfrontendpattern"></a>
+
+##### `BackendForFrontendPattern`
+
+```csharp
+PatternDescriptor BackendForFrontendPattern { get; }
+```
+
+Gets the backend-for-frontend pattern.
+
 <a id="member-p-cephalon-engine-patterns-builtinpatterns-cleanarchitecture"></a>
 
 ##### `CleanArchitecture`
@@ -6352,6 +6402,16 @@ PatternDescriptor SpecificationPattern { get; }
 ```
 
 Gets the specification design pattern.
+
+<a id="member-p-cephalon-engine-patterns-builtinpatterns-stranglerfigpattern"></a>
+
+##### `StranglerFigPattern`
+
+```csharp
+PatternDescriptor StranglerFigPattern { get; }
+```
+
+Gets the strangler-fig migration pattern.
 
 <a id="member-p-cephalon-engine-patterns-builtinpatterns-strategypattern"></a>
 
@@ -7550,7 +7610,7 @@ A value indicating whether the hosted execution is expected to become active whe
 
 Combines the main operator-facing runtime views into a single payload.
 
-Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, execution-graph details, hosted-execution details, technology-pack details, diagnostics conventions, data projection details, outbox details, inbox details, event-dispatch runtime details, authorization-policy details, and lifecycle story data.
+Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, execution-graph details, hosted-execution details, technology-pack details, diagnostics conventions, data projection details, outbox details, inbox details, event-dispatch runtime details, authorization-policy details, database-migration playbook details, database-topology posture details, and lifecycle story data.
 
 #### Declaration
 ```csharp
@@ -7569,7 +7629,7 @@ RuntimeIntrospectionSnapshot(RuntimeManifest Manifest, RuntimeStatusSnapshot Sta
 
 Combines the main operator-facing runtime views into a single payload.
 
-Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, execution-graph details, hosted-execution details, technology-pack details, diagnostics conventions, data projection details, outbox details, inbox details, event-dispatch runtime details, authorization-policy details, and lifecycle story data.
+Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, execution-graph details, hosted-execution details, technology-pack details, diagnostics conventions, data projection details, outbox details, inbox details, event-dispatch runtime details, authorization-policy details, database-migration playbook details, database-topology posture details, and lifecycle story data.
 
 Parameters:
 - `Manifest`: The immutable manifest that describes the built runtime shape.
@@ -7611,6 +7671,16 @@ IReadOnlyList<BehaviorResilienceRuntimeDescriptor> BehaviorResiliencePolicies { 
 
 Gets the effective behavior-execution resilience policies visible to the runtime at the time the snapshot was created.
 
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-databasemigrationplaybook"></a>
+
+##### `DatabaseMigrationPlaybook`
+
+```csharp
+DatabaseMigrationOperationalPlaybook DatabaseMigrationPlaybook { get; set; }
+```
+
+Gets the engine-owned ordered database-migration playbook visible to the runtime at the time the snapshot was created.
+
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-databasemigrations"></a>
 
 ##### `DatabaseMigrations`
@@ -7630,6 +7700,16 @@ IReadOnlyList<DatabaseRoleDescriptor> DatabaseRoles { get; set; }
 ```
 
 Gets the engine-owned database-role catalog visible to the runtime at the time the snapshot was created.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-databasetopology"></a>
+
+##### `DatabaseTopology`
+
+```csharp
+DatabaseTopologyOperationalSnapshot DatabaseTopology { get; set; }
+```
+
+Gets the engine-owned database-topology posture snapshot visible to the runtime at the time the snapshot was created.
 
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-diagnosticsconventions"></a>
 
@@ -7741,6 +7821,66 @@ IReadOnlyList<RateLimitingRuntimeDescriptor> RateLimitingPolicies { get; set; }
 
 Gets the effective rate-limiting policies visible to the runtime at the time the snapshot was created.
 
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-restendpointauthoringpolicies"></a>
+
+##### `RestEndpointAuthoringPolicies`
+
+```csharp
+IReadOnlyList<RestEndpointAuthoringPolicyDescriptor> RestEndpointAuthoringPolicies { get; set; }
+```
+
+Gets the behavior-level REST authoring-policy answers visible to the runtime at the time the snapshot was created.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-restendpointcandidates"></a>
+
+##### `RestEndpointCandidates`
+
+```csharp
+IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> RestEndpointCandidates { get; set; }
+```
+
+Gets the module-owned REST endpoint candidates visible to the runtime at the time the snapshot was created.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-restendpointoverrides"></a>
+
+##### `RestEndpointOverrides`
+
+```csharp
+IReadOnlyList<RestEndpointOverrideDescriptor> RestEndpointOverrides { get; set; }
+```
+
+Gets the host-level REST endpoint override rules visible to the runtime at the time the snapshot was created.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-restendpointpublicationgroups"></a>
+
+##### `RestEndpointPublicationGroups`
+
+```csharp
+IReadOnlyList<RestEndpointPublicationGroupDescriptor> RestEndpointPublicationGroups { get; set; }
+```
+
+Gets the grouped module-owned REST publication answers visible to the runtime at the time the snapshot was created.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-restendpoints"></a>
+
+##### `RestEndpoints`
+
+```csharp
+IReadOnlyList<RestEndpointRuntimeDescriptor> RestEndpoints { get; set; }
+```
+
+Gets the resolved public REST endpoints visible to the runtime at the time the snapshot was created.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-restendpointsuppressions"></a>
+
+##### `RestEndpointSuppressions`
+
+```csharp
+IReadOnlyList<RestEndpointSuppressionDescriptor> RestEndpointSuppressions { get; set; }
+```
+
+Gets the host-level REST endpoint suppression rules visible to the runtime at the time the snapshot was created.
+
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-status"></a>
 
 ##### `Status`
@@ -7750,6 +7890,16 @@ RuntimeStatusSnapshot Status { get; set; }
 ```
 
 The current lifecycle status of the runtime.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-stranglerfigroutes"></a>
+
+##### `StranglerFigRoutes`
+
+```csharp
+IReadOnlyList<StranglerFigRouteDescriptor> StranglerFigRoutes { get; set; }
+```
+
+Gets the strangler-fig migration routes visible to the runtime at the time the snapshot was created.
 
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-technologysurfaces"></a>
 

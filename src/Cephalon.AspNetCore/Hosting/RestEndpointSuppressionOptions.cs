@@ -61,6 +61,15 @@ public sealed class RestEndpointSuppressionOptions
     /// The original shorthand primary OpenAPI tag names targeted by the suppression rule before
     /// any override actions are applied.
     /// </param>
+    /// <param name="endpointNames">
+    /// The original shorthand endpoint names targeted by the suppression rule before any override
+    /// actions are applied.
+    /// </param>
+    /// <param name="hostGovernanceScopes">
+    /// The original shorthand host-governance scopes targeted by the suppression rule before any
+    /// override actions are applied. This selector can also serve as the rule's primary target
+    /// when candidate, behavior, and source-module identifiers are intentionally omitted.
+    /// </param>
     /// <param name="bindingFallbackModes">
     /// The original shorthand request-binding fallback modes targeted by the suppression rule
     /// before any override actions are applied.
@@ -81,8 +90,10 @@ public sealed class RestEndpointSuppressionOptions
         IReadOnlyList<string>? routeGroupPrefixes = null,
         IReadOnlyList<string>? openApiDocumentNames = null,
         IReadOnlyList<string>? tagNames = null,
+        IReadOnlyList<string>? endpointNames = null,
         IReadOnlyList<RestEndpointBindingFallbackMode>? bindingFallbackModes = null,
-        IReadOnlyList<RestEndpointBindingDescriptor>? targetBindings = null)
+        IReadOnlyList<RestEndpointBindingDescriptor>? targetBindings = null,
+        IReadOnlyList<string>? hostGovernanceScopes = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
 
@@ -109,15 +120,20 @@ public sealed class RestEndpointSuppressionOptions
             "REST endpoint suppression route-group prefix");
         OpenApiDocumentNames = NormalizeList(openApiDocumentNames);
         TagNames = NormalizeList(tagNames);
+        EndpointNames = NormalizeList(endpointNames);
+        HostGovernanceScopes = NormalizeList(hostGovernanceScopes);
         BindingFallbackModes = NormalizeBindingFallbackModes(
             bindingFallbackModes,
             nameof(bindingFallbackModes));
         TargetBindings = NormalizeTargetBindings(targetBindings, nameof(targetBindings));
 
-        if (CandidateIds.Count == 0 && BehaviorIds.Count == 0 && SourceModuleIds.Count == 0)
+        if (CandidateIds.Count == 0 &&
+            BehaviorIds.Count == 0 &&
+            SourceModuleIds.Count == 0 &&
+            HostGovernanceScopes.Count == 0)
         {
             throw new ArgumentException(
-                "REST endpoint suppression rules must target at least one candidate id, behavior id, or source module id.",
+                "REST endpoint suppression rules must target at least one candidate id, behavior id, source module id, or host-governance scope.",
                 nameof(candidateIds));
         }
     }
@@ -180,6 +196,18 @@ public sealed class RestEndpointSuppressionOptions
     public IReadOnlyList<string> TagNames { get; }
 
     /// <summary>
+    /// Gets the original shorthand endpoint names targeted by this suppression rule before
+    /// override actions are applied.
+    /// </summary>
+    public IReadOnlyList<string> EndpointNames { get; }
+
+    /// <summary>
+    /// Gets the original shorthand host-governance scopes targeted by this suppression rule
+    /// before override actions are applied. These scopes can also act as the rule's primary target.
+    /// </summary>
+    public IReadOnlyList<string> HostGovernanceScopes { get; }
+
+    /// <summary>
     /// Gets the original shorthand request-binding fallback modes targeted by this suppression rule
     /// before override actions are applied.
     /// </summary>
@@ -204,6 +232,8 @@ public sealed class RestEndpointSuppressionOptions
         RouteGroupPrefixes.Count > 0 ||
         OpenApiDocumentNames.Count > 0 ||
         TagNames.Count > 0 ||
+        EndpointNames.Count > 0 ||
+        HostGovernanceScopes.Count > 0 ||
         BindingFallbackModes.Count > 0 ||
         TargetBindings.Count > 0;
 

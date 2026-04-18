@@ -180,6 +180,13 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
             return this;
         }
 
+        public IRestBehaviorEndpointGroupBuilder WithHostGovernanceScope(string hostGovernanceScope)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(hostGovernanceScope);
+            state.HostGovernanceScope = hostGovernanceScope.Trim();
+            return this;
+        }
+
         public IRestBehaviorEndpointGroupBuilder MapGeneratedProfiles()
             => AddGeneratedProfiles(behaviorIdPrefix: null);
 
@@ -400,6 +407,8 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
 
         public bool AllowHostGovernance { get; set; }
 
+        public string? HostGovernanceScope { get; set; }
+
         public List<Action<RouteGroupBuilder>> GroupConventions { get; } = [];
 
         public List<RestBehaviorEndpointProjection> Endpoints { get; } = [];
@@ -417,6 +426,7 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
                 HasExplicitApiVersion,
                 ProfileApiVersionSourceBehaviorId,
                 AllowHostGovernance,
+                HostGovernanceScope,
                 [.. GroupConventions],
                 [.. Endpoints]);
         }

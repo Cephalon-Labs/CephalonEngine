@@ -102,13 +102,13 @@ internal sealed class AspNetCoreRestEndpointAuthoringPolicyRuntimeCatalog(
         var skippedOverrideIds = BuildOrderedSkippedRuleIds(
             orderedCandidates,
             static candidate => candidate.SkippedOverrideIds);
-        var governanceSuppressionSummaries = RestEndpointGovernanceSuppressionSummaryBuilder.BuildFromCandidates(
+        var governanceSuppressionSummaries = RestEndpointAuthoringPolicyRuntimeCatalogBuilders.BuildGovernanceSuppressionSummaries(
             orderedCandidates);
-        var governanceOverrideSummaries = RestEndpointGovernanceOverrideSummaryBuilder.BuildFromCandidates(
+        var governanceOverrideSummaries = RestEndpointAuthoringPolicyRuntimeCatalogBuilders.BuildGovernanceOverrideSummaries(
             orderedCandidates);
-        var skippedSuppressionSummaries = RestEndpointGovernanceSkippedSuppressionSummaryBuilder.BuildFromCandidates(
+        var skippedSuppressionSummaries = RestEndpointAuthoringPolicyRuntimeCatalogBuilders.BuildSkippedSuppressionSummaries(
             orderedCandidates);
-        var skippedOverrideSummaries = RestEndpointGovernanceSkippedOverrideSummaryBuilder.BuildFromCandidates(
+        var skippedOverrideSummaries = RestEndpointAuthoringPolicyRuntimeCatalogBuilders.BuildSkippedOverrideSummaries(
             orderedCandidates);
         var suppressedCandidateIds = orderedCandidates
             .Where(static candidate =>
@@ -122,9 +122,9 @@ internal sealed class AspNetCoreRestEndpointAuthoringPolicyRuntimeCatalog(
             .Distinct()
             .OrderBy(static kind => kind.GetWireName(), StringComparer.Ordinal)
             .ToArray();
-        var suppressionSummaries = RestEndpointAuthoringPolicySuppressionSummaryBuilder.BuildFromCandidates(
+        var suppressionSummaries = RestEndpointAuthoringPolicyRuntimeCatalogBuilders.BuildAuthoringPolicySuppressionSummaries(
             orderedCandidates);
-        var authoringStyleSummaries = RestEndpointAuthoringPolicyAuthoringStyleDescriptorBuilder.BuildFromCandidates(
+        var authoringStyleSummaries = RestEndpointAuthoringPolicyRuntimeCatalogBuilders.BuildAuthoringStyleSummaries(
             orderedCandidates);
         var authoringPolicy = ResolveAuthoringPolicy(behaviorId, authoringPoliciesByBehaviorId);
 

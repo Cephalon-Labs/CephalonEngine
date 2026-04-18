@@ -97,8 +97,10 @@ public sealed class RestApiGovernanceOptions
                 routeGroupPrefixes: ReadStringArray(child.GetSection("RouteGroupPrefixes")),
                 openApiDocumentNames: ReadStringArray(child.GetSection("OpenApiDocumentNames")),
                 tagNames: ReadStringArray(child.GetSection("TagNames")),
+                endpointNames: ReadStringArray(child.GetSection("EndpointNames")),
                 bindingFallbackModes: ReadBindingFallbackModeArray(child.GetSection("BindingFallbackModes")),
-                targetBindings: ReadBindings(child.GetSection("TargetBindings"))))
+                targetBindings: ReadBindings(child.GetSection("TargetBindings")),
+                hostGovernanceScopes: ReadStringArray(child.GetSection("HostGovernanceScopes"))))
             .ToArray();
         var overrides = configuration.GetSection(sectionPath)
             .GetSection("Overrides")
@@ -133,8 +135,10 @@ public sealed class RestApiGovernanceOptions
                 clearDescription: ReadBoolean(child, "ClearDescription"),
                 openApiDocumentNames: ReadStringArray(child.GetSection("OpenApiDocumentNames")),
                 tagNames: ReadStringArray(child.GetSection("TagNames")),
+                endpointNames: ReadStringArray(child.GetSection("EndpointNames")),
                 bindingFallbackModes: ReadBindingFallbackModeArray(child.GetSection("BindingFallbackModes")),
-                targetBindings: ReadBindings(child.GetSection("TargetBindings"))))
+                targetBindings: ReadBindings(child.GetSection("TargetBindings")),
+                hostGovernanceScopes: ReadStringArray(child.GetSection("HostGovernanceScopes"))))
             .ToArray();
 
         return new RestApiGovernanceOptions(authoringPolicies, suppressions, overrides);

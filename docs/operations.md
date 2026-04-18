@@ -1,6 +1,6 @@
 # Cephalon Operations
 
-This document captures the current operational surface for Cephalon as of `April 4, 2026`.
+This document captures the current operational surface for Cephalon as of `April 18, 2026`.
 
 For the active phase-2 follow-through inventory, see `docs/operational-hardening-gap-inventory.md`.
 
@@ -1132,6 +1132,58 @@ Current note:
 
 - hosted executions are descriptive operator-facing conventions on top of the existing Generic Host and module lifecycle model, not a replacement for `IHostedService`, `BackgroundService`, or module-owned runtime hooks
 - invalid hosted-execution ids, unknown source modules, or unknown cross-module execution-graph references fail at build time instead of leaking broken operator data
+
+## REST runtime surfaces
+
+Cephalon now keeps the full REST publication and governance story introspectable through a linked
+set of runtime endpoints:
+
+- `GET /engine/rest-endpoints` exposes the final published REST endpoint catalog that ASP.NET Core
+  actually mapped after shorthand authoring, authoring-policy filtering, suppression, and override
+  selection completed
+- `GET /engine/rest-endpoint-candidates` exposes the richer candidate catalog behind that final
+  answer, including original shorthand or module-DSL source shape, authoring style, grouped
+  publication ownership, original endpoint metadata, matched rule ids, and final selected/applied
+  governance results
+- `GET /engine/rest-endpoint-publication-groups` exposes the grouped publication story per
+  behavior and per authoring style so operators can see which styles published, which candidates
+  were suppressed, which explicit groups stayed authoritative, and which host rules were skipped
+  because the targeted route group never opted into host governance
+- `GET /engine/rest-endpoint-authoring-policies` exposes behavior-level shorthand authoring-policy
+  intent such as preferred style, allowed/disallowed styles, and multiple-published-candidate
+  answers without making that grouped summary itself another authoring input
+- `GET /engine/rest-endpoint-suppressions` exposes the active suppression-rule catalog together
+  with matched, suppressed, and skipped candidate outcomes plus grouped selection-basis summaries
+- `GET /engine/rest-endpoint-overrides` exposes the active override-rule catalog together with
+  matched, applied, and skipped candidate outcomes plus grouped selection-basis and
+  declared-versus-effective action summaries
+
+Current payload highlights:
+
+- the final `/engine/rest-endpoints` answer keeps `CandidateId`, `PublicationGroupId`,
+  `AuthoringStyle`, source behavior/module ownership, and original endpoint metadata lineage
+  visible so operators can jump back to the candidate that produced the published route
+- `HostGovernanceScopes`, `EndpointNames`, original explicit `TargetBindings`, route group
+  prefixes, OpenAPI document names, tag names, HTTP methods, and effective API major versions are
+  all part of the governable selector story across candidate, suppression, override, publication
+  group, and snapshot answers
+- explicit module DSL routes stay authoritative by default, but when a group uses
+  `WithHostGovernanceScope(...)` the scope still becomes visible for future host targeting even
+  before `AllowHostGovernance()` opts that route into suppressions or overrides
+- if a host rule wins selection but does not materially change the final published answer, the
+  runtime keeps the winning rule visible through `SelectedOverrideId` plus
+  `OverrideSelectionBasis` while leaving `AppliedOverrideId = null`; grouped runtime answers keep
+  the same selected-versus-applied truth so no-op governance does not look like a published change
+- the same REST publication, candidate, governance, and grouped summaries also flow through
+  `/engine/snapshot` so operators can choose one merged runtime answer without losing REST-specific
+  troubleshooting detail
+
+Current note:
+
+- these surfaces describe the governable runtime truth for REST publication, not a second
+  authoring system; module code and host configuration still remain the only authoring inputs
+- non-REST transports stay out of these REST catalogs and continue to surface through their own
+  transport-specific runtime contracts
 
 ## Projection surface
 

@@ -73,6 +73,8 @@
 - `Transports/RestEndpointBindingFallbackModeExtensions.cs`
 - `Transports/RestEndpointBindingSource.cs`
 - `Transports/RestEndpointOverrideBindingMode.cs`
+- `Transports/IRestEndpointSuppressionRuntimeCatalog.cs`
+- `Transports/RestEndpointSuppressionDescriptor.cs`
 - `Transports/IRestEndpointOverrideRuntimeCatalog.cs`
 - `Transports/RestEndpointOverrideDescriptor.cs`
 - `Transports/TransportDescriptor.cs`
@@ -215,10 +217,10 @@ explain decisive governance precedence and declared-versus-effective override ac
 without reopening the candidate catalog. The same
 transport namespace now also lets the rule catalogs publish the inverse view directly:
 `RestEndpointSuppressionDescriptor` now carries `MatchedCandidateIds`,
-`SuppressedCandidateIds`, `SkippedCandidateIds`, `SelectionBases`, and
-`SelectionBasisSummaries`, while
-`RestEndpointOverrideDescriptor` now carries `MatchedCandidateIds`, `SelectedCandidateIds`,
-`AppliedCandidateIds`, `SkippedCandidateIds`, `SelectionBases`, `SelectionBasisSummaries`,
+`SuppressedCandidateIds`, `SkippedCandidateIds`, `SelectionBases`, `SelectionBasisSummaries`, and
+additive `HostGovernanceScopes`, while `RestEndpointOverrideDescriptor` now carries
+`MatchedCandidateIds`, `SelectedCandidateIds`, `AppliedCandidateIds`, `SkippedCandidateIds`,
+`SelectionBases`, `SelectionBasisSummaries`, additive `HostGovernanceScopes`,
 `SelectedActionKinds`, `SelectedActionKindSummaries`, `AppliedActionKinds`, and
 `AppliedActionKindSummaries`, so callers can inspect one rule's runtime footprint and grouped
 provenance without rejoining the grouped or per-candidate answers first. The same transport
@@ -230,8 +232,10 @@ transport namespace now also owns `IRestEndpointOverrideRuntimeCatalog` plus
 `RestEndpointOverrideDescriptor`, including shorthand binding resets through `ClearBindings` plus
 the shorthand endpoint-metadata clear actions `ClearEndpointName`, `ClearSummary`, and
 `ClearDescription`, so hosts can publish set-or-clear governance truth without inventing ASP.NET
-Core-specific override DTOs. The same candidate/runtime descriptor family now also keeps original
-shorthand endpoint metadata visible on `ProjectedEndpoint` through `OriginalEndpointName`,
+Core-specific override DTOs. `RestEndpointCandidateProjectionDescriptor` now also carries optional
+`HostGovernanceScope`, and the same candidate/runtime descriptor family keeps that original
+selector truth visible through `OriginalProjection.HostGovernanceScope` alongside original
+shorthand endpoint metadata on `ProjectedEndpoint` through `OriginalEndpointName`,
 `OriginalSummary`, and `OriginalDescription`, keeps preserved shorthand fallback truth visible
 through typed `BindingFallbackMode` properties that distinguish preserved source implicit fallback
 from preserved remaining request-body fallback, and now also exposes

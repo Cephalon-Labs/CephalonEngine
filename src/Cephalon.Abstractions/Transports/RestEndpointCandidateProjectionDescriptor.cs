@@ -29,6 +29,10 @@ public sealed class RestEndpointCandidateProjectionDescriptor
     /// candidates typically enable this automatically, while explicit module-DSL candidates stay
     /// authoritative unless the owning route group opts into host governance.
     /// </param>
+    /// <param name="hostGovernanceScope">
+    /// The stable host-governance scope carried by the original authored route group when one is
+    /// available.
+    /// </param>
     public RestEndpointCandidateProjectionDescriptor(
         string method,
         string routePattern,
@@ -39,7 +43,8 @@ public sealed class RestEndpointCandidateProjectionDescriptor
         IReadOnlyList<RestEndpointBindingDescriptor>? bindingDescriptors = null,
         RestEndpointBindingFallbackMode? bindingFallbackMode = null,
         string? tagName = null,
-        bool allowsHostGovernance = true)
+        bool allowsHostGovernance = true,
+        string? hostGovernanceScope = null)
     {
         Method = NormalizeRequired(method, nameof(method)).ToUpperInvariant();
         RoutePattern = NormalizeRequired(routePattern, nameof(routePattern));
@@ -51,6 +56,7 @@ public sealed class RestEndpointCandidateProjectionDescriptor
         BindingFallbackMode = NormalizeBindingFallbackMode(bindingFallbackMode);
         TagName = NormalizeOptional(tagName);
         AllowsHostGovernance = allowsHostGovernance;
+        HostGovernanceScope = NormalizeOptional(hostGovernanceScope);
     }
 
     /// <summary>
@@ -109,6 +115,13 @@ public sealed class RestEndpointCandidateProjectionDescriptor
     /// route group opts into host governance.
     /// </summary>
     public bool AllowsHostGovernance { get; }
+
+    /// <summary>
+    /// Gets the stable host-governance scope carried by the original authored route group when
+    /// one is available.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? HostGovernanceScope { get; }
 
     private static string NormalizeRequired(string value, string paramName)
     {

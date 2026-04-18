@@ -144,7 +144,8 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
                 originalProjection.BindingDescriptors,
                 originalProjection.BindingFallbackMode,
                 originalProjection.TagName,
-                originalProjection.AllowsHostGovernance);
+                originalProjection.AllowsHostGovernance,
+                originalProjection.HostGovernanceScope);
     }
 
     internal void UseRuntimeOriginalEndpointMetadata(
