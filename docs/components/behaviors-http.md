@@ -224,6 +224,10 @@ Current profile behavior:
   setting `BehaviorRestProfile(PreserveImplicitQueryFallback = true)`, but that flag requires at
   least one explicit `BehaviorRestBindingAttribute`; build-time `ABT0027` and runtime profile
   normalization both fail fast when the flag appears without bindings
+- explicit profiles that preserve source implicit query fallback can now also promote that same
+  remaining query-bound property set into added route placeholders through host overrides, and the
+  projected plus published runtime fallback-mode answer now clears once the effective binding plan
+  fully consumes that preserved surface
 - when no explicit binding plan is present, shorthand candidates still use the implicit
   query-plus-route merge baseline, and bounded placeholder additions can promote from that original
   implicit query-fallback surface; once explicit bindings exist, the stricter explicit-binding path
@@ -487,7 +491,9 @@ Current helper behavior:
 - uses the implicit route/query/body merge baseline only when no explicit profile bindings are
   present; profile-driven bindings switch to the descriptor-aware override model instead, unless the
   profile explicitly preserves source implicit query fallback through
-  `BehaviorRestProfile(PreserveImplicitQueryFallback = true)`
+  `BehaviorRestProfile(PreserveImplicitQueryFallback = true)`, in which case later host overrides
+  can still promote only that remaining preserved query surface into added placeholders while the
+  runtime fallback-mode answer stays truthful to the effective binding plan
 - uses the owning module display name as the OpenAPI tag
 - lets the module override the published tag name and tag description through `.WithTagName(...)`
   and `.WithTagDescription(...)`
@@ -900,8 +906,8 @@ Current governance baseline:
   even when the equivalent reordered binding set comes from a later synthetic or future shorthand
   path
 - broader implicit-property promotion beyond that constrained body-fallback-plus-bounded-query-
-  fallback path plus broader binding-shape overrides beyond the current
-  replace-plus-merge-explicit upsert-plus-withdraw model remain later work
+  fallback-plus-preserved-explicit-query-fallback path plus broader binding-shape overrides beyond
+  the current replace-plus-merge-explicit upsert-plus-withdraw model remain later work
 
 Example:
 

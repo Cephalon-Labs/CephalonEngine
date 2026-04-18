@@ -1023,7 +1023,8 @@ internal static class RestBehaviorProjectionCandidateResolver
         }
 
         var preserveImplicitQueryFallback = shouldRevalidateBindings && normalizedBindings is not null
-            ? endpointProjection.Bindings.Count == 0 && normalizedBindings.Count > 0
+            ? normalizedBindings.Count > 0 &&
+              (endpointProjection.PreserveImplicitQueryFallback || endpointProjection.Bindings.Count == 0)
             : endpointProjection.PreserveImplicitQueryFallback;
         if (shouldRevalidateBindings && normalizedBindings is not null)
         {
@@ -1468,7 +1469,8 @@ internal static class RestBehaviorProjectionCandidateResolver
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
         }
 
-        if (endpointProjection.Method is not (RestBehaviorHttpMethod.Post or RestBehaviorHttpMethod.Put or RestBehaviorHttpMethod.Patch))
+        if (!endpointProjection.PreserveImplicitQueryFallback &&
+            endpointProjection.Method is not (RestBehaviorHttpMethod.Post or RestBehaviorHttpMethod.Put or RestBehaviorHttpMethod.Patch))
         {
             return [];
         }

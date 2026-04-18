@@ -45,17 +45,6 @@ internal static class RestBehaviorBindingFallbackModeResolver
         ArgumentException.ThrowIfNullOrWhiteSpace(pattern);
         ArgumentNullException.ThrowIfNull(bindings);
 
-        if (preserveImplicitQueryFallback && bindings.Count > 0)
-        {
-            return RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback;
-        }
-
-        if (bindings.Count == 0 ||
-            method is not (RestBehaviorHttpMethod.Post or RestBehaviorHttpMethod.Put or RestBehaviorHttpMethod.Patch))
-        {
-            return null;
-        }
-
         var effectiveInputType = Nullable.GetUnderlyingType(inputType) ?? inputType;
         if (IsSimpleInputType(effectiveInputType))
         {
@@ -80,9 +69,24 @@ internal static class RestBehaviorBindingFallbackModeResolver
             .Select(static parameter => parameter.Name)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-        return inputProperties.Any(propertyName =>
-                !explicitlyBoundProperties.Contains(propertyName) &&
-                !routePlaceholders.Contains(propertyName))
+        var hasRemainingImplicitFallbackSurface = inputProperties.Any(propertyName =>
+            !explicitlyBoundProperties.Contains(propertyName) &&
+            !routePlaceholders.Contains(propertyName));
+
+        if (preserveImplicitQueryFallback &&
+            bindings.Count > 0 &&
+            hasRemainingImplicitFallbackSurface)
+        {
+            return RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback;
+        }
+
+        if (bindings.Count == 0 ||
+            method is not (RestBehaviorHttpMethod.Post or RestBehaviorHttpMethod.Put or RestBehaviorHttpMethod.Patch))
+        {
+            return null;
+        }
+
+        return hasRemainingImplicitFallbackSurface
             ? RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback
             : null;
     }
