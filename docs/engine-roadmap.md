@@ -39,6 +39,7 @@ The foundation is no longer hypothetical. The repository already ships:
 - observability conventions for logs, metrics, tracing, and telemetry export guidance
 - a benchmark suite plus baseline guardrail validation for composition, strict trust-policy composition, runtime lifecycle, ASP.NET Core request logging, and scaffolding hot paths
 - a GitHub Actions release-validation workflow that runs the repo-native build, test, benchmark, and guardrail flow
+- a repo-native `.NET` readiness assessment flow plus a dedicated `.NET 11` workflow lane that keep future-SDK validation separate from the stable `net10.0` shipping baseline
 
 That changes the plan materially:
 
@@ -114,6 +115,7 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Sprint 38` follow-through: `ENG-094` is now shipped on top of the same database-topology baseline so the engine-owned migration playbook now also publishes combined production and manual command-batch templates per physical-target execution batch, and the showcase sample now consumes that engine-owned combined batch answer directly in `/showcase`, the operator brief, and the handoff package
 - `Sprint 38` follow-through: `ENG-095` is now shipped as the first phase 12 taxonomy slice so `BuiltInPatterns` now includes `strangler-fig` plus `backend-for-frontend`, configuration and `/engine/patterns` can express those architecture choices directly, and the remaining router/client-binding runtime follow-through stays planned
 - `Sprint 38` follow-through: `ENG-096` is now shipped as the first non-taxonomy strangler-fig slice so modules and hosts can contribute migration routes through host-agnostic route-contribution and router contracts, `/engine/strangler-fig` plus `snapshot.StranglerFigRoutes` now expose the live catalog, and `/engine/strangler-fig/resolve` can evaluate request ownership while migration progress/config and host-level cutover behavior remain planned
+- `Sprint 39`: `ENG-097` is now shipped as the framework-readiness baseline so `scripts/validate-dotnet-readiness.ps1` now records current-versus-readiness SDK selection, target-framework audit results, and deployment-mode claim status, `validate-release.ps1` now uses the split test projects plus emits readiness artifacts, the release-validation workflow now also proves a dedicated `.NET 11` lane, and scaffolding now keeps `net11.0` Dockerfile base images aligned with the requested target framework instead of freezing on `10.0`
 - `Sprint 36–37 (Phase 11)`: `ENG-076` now ships the contract-first resilience baseline — `Engine:Resilience`, `AppProfile.Resilience`, `/engine/resilience`, and the missing `onion-architecture` plus `anti-corruption-layer` pattern descriptors — `ENG-077` now ships the first transport-native follow-through through ASP.NET Core public-HTTP rate limiting plus `/engine/rate-limiting`, `ENG-078` now adds endpoint-scoped behavior/transport override modeling for ASP.NET Core HTTP surfaces, `ENG-079` now adds the first behavior-pipeline follow-through through shared timeout-plus-bulkhead enforcement plus `/engine/behavior-resilience`, `ENG-080` now adds behavior-execution override resolution with behavior/transport precedence plus route-truthful REST/OpenAPI answers, `ENG-081` now adds shared circuit-breaker enforcement plus live runtime state and truthful REST `503` answers for open circuits, `ENG-082` now adds behavior-authored idempotency plus retry-eligibility classification/runtime metadata for the same behavior-execution surface, `ENG-083` now closes the loop with idempotency-gated retry execution plus truthful retry runtime metadata in the shared behavior pipeline, `ENG-084` now splits the built-in ASP.NET Core GraphQL surface into explicit HTTP, schema, SSE, and WebSocket routes while `/engine/rate-limiting` now publishes truthful long-lived stream/connection metadata, and `ENG-085` now rounds out the shared GraphQL authoring baseline through `ConfigureGraphQLMutation(...)` plus `ConfigureGraphQLSubscription(...)` and protocol-level proof that configured schema, SSE, and WebSocket routes execute real SDL, `text/event-stream`, and `graphql-transport-ws` behavior; broader non-route or non-ASP.NET Core semantics remain planned follow-through
 - `Sprint 38–39 (Phase 12)`: planned migration and advanced coordination — the descriptor baseline for strangler fig plus BFF and the first strangler-fig runtime-contract slice are now shipped, while saga choreography, feature flags, durable execution, client-binding runtime, and richer migration-progress/cutover follow-through remain planned
 - `Sprint 40–41 (Phase 13)`: planned next-generation patterns — cell-based architecture, data mesh, CDC
@@ -724,7 +726,7 @@ Exit criteria:
 
 ## Recommended implementation order
 
-Updated priority order as of `April 7, 2026`:
+Updated priority order as of `April 18, 2026`:
 
 1. start phase 7 with `ENG-033` cross-platform validation and shell parity so the shipped build, test, publish, and install flows stop assuming Windows-specific shell behavior
 2. follow immediately with `ENG-034` first-run adoption and environment-doctor work so external teams have one clear install, validation, and runtime-smoke path
@@ -739,16 +741,17 @@ Updated priority order as of `April 7, 2026`:
 11. `ENG-043` is now complete, so newly scaffolded apps also carry Azure Container Apps source-deploy assets and a validated Dockerfile plus Azure CLI preview path that closes the hosted Azure container deployment gap from the generated app root
 12. `ENG-044` is now complete, so newly scaffolded apps also carry Kubernetes manifest/apply assets and a validated Dockerfile plus `kubectl kustomize` preview path that closes the platform-neutral cluster deployment gap from the generated app root
 13. `ENG-045` is now complete, so newly scaffolded apps also carry provider-neutral container-image build/tag/push assets and a validated local-registry smoke path that closes the remaining image-publication gap between local Dockerfile validation and hosted container deployment targets
-14. keep phase 6 in `later / Todo` until another explicit cloud or platform target becomes adoption-driven beyond the shipped self-hosted, Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, Kubernetes, Cloudflare/custom-provider guidance, Grafana Cloud, and New Relic baseline
-15. future solution-level expansion only when an explicit adoption scenario needs it
-16. open phase 8 with `ENG-046`, `ENG-047`, and `ENG-048` so ids, structured config sections, and host-agnostic contracts freeze before package implementations or template defaults drift
-17. follow with `ENG-049` and `ENG-050` so Cephalon proves a relational Entity Framework plus CQRS plus outbox plus eventing golden path before it claims broader provider breadth
-18. then deliver `ENG-051`, `ENG-052`, and `ENG-053` so identity/authorization, multi-tenancy/audit, and CLI/scaffolding/template/sample follow-through land on the same frozen phase-8 contract
-19. then deliver `ENG-055` and `ENG-056` so benchmarks, validation, docs, XML comments, and reference-doc alignment prove the phase-8 claims before the repo widens the public story
-20. `ENG-054` Track 1 (non-relational providers) and `ENG-057` (event-sourcing follow-through) are now complete; keep hybrid-cloud, service-mesh, and serverless expansion as explicit later slices until an adopter needs them beyond the proven golden path
-21. open phase 11 with resilience foundation (circuit breaker, retry/timeout/bulkhead, rate limiting) plus `onion-architecture` and `anti-corruption-layer` pattern descriptors so production microservice deployments have configuration-driven fault tolerance
-22. follow with phase 12 for migration and advanced coordination (strangler fig, saga choreography, BFF pattern, feature flags, durable execution) so enterprise adoption and distributed coordination stories are complete
-23. then phase 13 for next-generation patterns (cell-based architecture, data mesh, CDC) when explicit adoption scenarios justify the investment
+14. `ENG-097` is now complete, so the repo has an explicit `.NET 11` readiness lane, a dedicated readiness script, truthful deployment-mode claim language, and a higher-SDK workflow path before any default-target migration is considered
+15. keep phase 6 in `later / Todo` until another explicit cloud or platform target becomes adoption-driven beyond the shipped self-hosted, Azure Monitor, AWS, GCP, Huawei Cloud, Alibaba Cloud, Oracle Cloud, Red Hat OpenShift, DigitalOcean, VMware Tanzu, Kubernetes, Cloudflare/custom-provider guidance, Grafana Cloud, and New Relic baseline
+16. future solution-level expansion only when an explicit adoption scenario needs it
+17. open phase 8 with `ENG-046`, `ENG-047`, and `ENG-048` so ids, structured config sections, and host-agnostic contracts freeze before package implementations or template defaults drift
+18. follow with `ENG-049` and `ENG-050` so Cephalon proves a relational Entity Framework plus CQRS plus outbox plus eventing golden path before it claims broader provider breadth
+19. then deliver `ENG-051`, `ENG-052`, and `ENG-053` so identity/authorization, multi-tenancy/audit, and CLI/scaffolding/template/sample follow-through land on the same frozen phase-8 contract
+20. then deliver `ENG-055` and `ENG-056` so benchmarks, validation, docs, XML comments, and reference-doc alignment prove the phase-8 claims before the repo widens the public story
+21. `ENG-054` Track 1 (non-relational providers) and `ENG-057` (event-sourcing follow-through) are now complete; keep hybrid-cloud, service-mesh, and serverless expansion as explicit later slices until an adopter needs them beyond the proven golden path
+22. open phase 11 with resilience foundation (circuit breaker, retry/timeout/bulkhead, rate limiting) plus `onion-architecture` and `anti-corruption-layer` pattern descriptors so production microservice deployments have configuration-driven fault tolerance
+23. follow with phase 12 for migration and advanced coordination (strangler fig, saga choreography, BFF pattern, feature flags, durable execution) so enterprise adoption and distributed coordination stories are complete
+24. then phase 13 for next-generation patterns (cell-based architecture, data mesh, CDC) when explicit adoption scenarios justify the investment
 
 ## Phase 11: Resilience Foundation
 

@@ -163,7 +163,7 @@ public static class ScaffoldGenerator
         {
             files.Add(new(Path.Combine(".cephalon", "packages", "README.md"), BuildLocalPackageFeedReadme()));
             files.Add(new(".dockerignore", BuildDockerIgnore()));
-            files.Add(new("Dockerfile", BuildDockerfile(hostProject)));
+            files.Add(new("Dockerfile", BuildDockerfile(hostProject, request.TargetFramework)));
             files.Add(new("compose.yaml", BuildComposeFile(request)));
             files.Add(new("otel-collector-config.yaml", BuildOtelCollectorConfig()));
             files.Add(new(
@@ -3012,21 +3012,54 @@ ASPNETCORE_URLS=http://0.0.0.0:8080
             : $"{request.AppName}.Host";
     }
 
-    private static string BuildDockerfile(RenderedProject hostProject)
+    private static string BuildDockerfile(RenderedProject hostProject, string targetFramework)
     {
+        var imageTag = GetDotNetContainerImageTag(targetFramework);
+
         return $"""
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:{imageTag} AS build
 WORKDIR /src
 COPY . .
 RUN dotnet publish {hostProject.Path}/{hostProject.Name}.csproj -c Release -o /app/publish /p:UseAppHost=false
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:{imageTag} AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 ENV ASPNETCORE_HTTP_PORTS=8080
 EXPOSE 8080
 ENTRYPOINT ["dotnet", "{hostProject.Name}.dll"]
 """;
+    }
+
+    private static string GetDotNetContainerImageTag(string targetFramework)
+    {
+        if (string.IsNullOrWhiteSpace(targetFramework))
+        {
+            return "10.0";
+        }
+
+        var normalized = targetFramework.Trim();
+        if (!normalized.StartsWith("net", StringComparison.OrdinalIgnoreCase))
+        {
+            return "10.0";
+        }
+
+        normalized = normalized[3..];
+        var qualifierIndex = normalized.IndexOfAny(['-', '+']);
+        if (qualifierIndex >= 0)
+        {
+            normalized = normalized[..qualifierIndex];
+        }
+
+        var segments = normalized.Split('.', StringSplitOptions.RemoveEmptyEntries);
+        if (segments.Length >= 2 &&
+            int.TryParse(segments[0], out var major) &&
+            int.TryParse(segments[1], out var minor))
+        {
+            return $"{major}.{minor}";
+        }
+
+        return "10.0";
     }
 
     private static string BuildComposeFile(ScaffoldRequest request)

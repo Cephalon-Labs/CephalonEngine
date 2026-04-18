@@ -212,6 +212,7 @@ function Get-BacklogPhaseMap {
         "ENG-043" = 7
         "ENG-044" = 7
         "ENG-045" = 7
+        "ENG-097" = 1
     }
 }
 
@@ -367,7 +368,19 @@ query($owner: String!, $name: String!) {
 function Get-LabelState {
     param([Parameter(Mandatory = $true)]$RepositoryContext)
 
-    $labels = Invoke-GhApiJson -Route "repos/$($RepositoryContext.FullName)/labels?per_page=100"
+    $labels = @()
+    $page = 1
+    do {
+        $pageLabels = @(Invoke-GhApiJson -Route "repos/$($RepositoryContext.FullName)/labels?per_page=100&page=$page")
+        if ($pageLabels.Count -eq 0) {
+            break
+        }
+
+        $labels += $pageLabels
+        $page += 1
+    }
+    while ($pageLabels.Count -gt 0)
+
     $labelsByName = @{}
     foreach ($label in $labels) {
         $labelsByName[$label.name] = $label
@@ -412,7 +425,7 @@ function Ensure-ManagedPlanningLabels {
         [Parameter(Mandatory = $true)]$RepositoryContext,
         [Parameter(Mandatory = $true)]$LabelState,
         [Parameter(Mandatory = $true)]$DesiredIssues,
-        [Parameter(Mandatory = $true)][string[]]$DesiredIterationTitles
+        [Parameter(Mandatory = $true)][AllowEmptyCollection()][string[]]$DesiredIterationTitles
     )
 
     $baseLabels = @(
@@ -525,7 +538,7 @@ function Get-BacklogIterationMap {
     $content = Get-Content -LiteralPath $Path -Raw -Encoding utf8
     $sectionMatch = [regex]::Match(
         $content,
-        "(?ms)^##\s+(?:Sprint history and next 3 sprints|Recommended next 3 sprints)\r?\n(?<body>.*?)(?=^##\s+|\z)")
+        "(?ms)^##\s+(?:Sprint history and next 3 sprints|Sprint history and next 4 sprints|Recommended next 3 sprints)\r?\n(?<body>.*?)(?=^##\s+|\z)")
 
     $map = @{}
     if (-not $sectionMatch.Success) {
@@ -622,7 +635,7 @@ function Get-PlanningIterationTitles {
         }
     }
 
-    return @($titles)
+    return [string[]]$titles.ToArray()
 }
 
 function Parse-PlanningMetadataFromBody {
@@ -1485,7 +1498,7 @@ function Get-ManagedProjectStatusOptions {
 function Get-ProjectStatusSnapshot {
     param([Parameter(Mandatory = $true)][string]$Owner, [Parameter(Mandatory = $true)][int]$ProjectNumber)
 
-    $items = Invoke-GhJson -Arguments @("project", "item-list", $ProjectNumber.ToString(), "--owner", $Owner, "-L", "200", "--format", "json")
+    $items = Invoke-GhJson -Arguments @("project", "item-list", $ProjectNumber.ToString(), "--owner", $Owner, "-L", "1000", "--format", "json")
     $snapshots = [System.Collections.Generic.List[object]]::new()
     foreach ($item in $items.items) {
         $statusProperty = $item.PSObject.Properties["status"]
@@ -1884,7 +1897,7 @@ query($owner: String!, $number: Int!) {
         return Get-ProjectContext -Owner $Owner -ProjectNumber $ProjectNumber -SkipManagedFieldInitialization
     }
 
-    $items = Invoke-GhJson -Arguments @("project", "item-list", $ProjectNumber.ToString(), "--owner", $Owner, "-L", "200", "--format", "json")
+    $items = Invoke-GhJson -Arguments @("project", "item-list", $ProjectNumber.ToString(), "--owner", $Owner, "-L", "1000", "--format", "json")
 
     $statusField = $projectView.fields.nodes | Where-Object { $_.name -eq "Status" } | Select-Object -First 1
     if ($null -eq $statusField) {
@@ -2033,7 +2046,7 @@ function Ensure-ProjectIterations {
         [Parameter(Mandatory = $true)]$ProjectContext,
         [Parameter(Mandatory = $true)][string]$ProjectOwner,
         [Parameter(Mandatory = $true)][int]$ProjectNumber,
-        [Parameter(Mandatory = $true)][string[]]$DesiredIterationTitles
+        [Parameter(Mandatory = $true)][AllowEmptyCollection()][string[]]$DesiredIterationTitles
     )
 
     if ($null -eq $ProjectContext.IterationFieldId -or $null -eq $DesiredIterationTitles -or $DesiredIterationTitles.Count -eq 0) {
@@ -2144,11 +2157,17 @@ function Ensure-ProjectItem {
         "--url", (Get-IssueWebUrl -Issue $Issue)
     )
 
-    $refreshed = Invoke-GhJson -Arguments @("project", "item-list", $ProjectNumber.ToString(), "--owner", $ProjectOwner, "-L", "200", "--format", "json")
-    foreach ($item in $refreshed.items) {
-        if ($null -ne $item.content -and $item.content.type -eq "Issue" -and [int]$item.content.number -eq [int]$Issue.number) {
-            $ProjectContext.ItemsByIssueNumber[[int]$Issue.number] = $item
-            return $item
+    foreach ($attempt in 1..5) {
+        $refreshed = Invoke-GhJson -Arguments @("project", "item-list", $ProjectNumber.ToString(), "--owner", $ProjectOwner, "-L", "1000", "--format", "json")
+        foreach ($item in $refreshed.items) {
+            if ($null -ne $item.content -and $item.content.type -eq "Issue" -and [int]$item.content.number -eq [int]$Issue.number) {
+                $ProjectContext.ItemsByIssueNumber[[int]$Issue.number] = $item
+                return $item
+            }
+        }
+
+        if ($attempt -lt 5) {
+            Start-Sleep -Seconds 2
         }
     }
 
@@ -2891,7 +2910,7 @@ $backlogIssues = Get-BacklogIssueSpecs -Path $BacklogPath
 $roadmapIssues = Get-RoadmapIssueSpecs -RoadmapPhases $roadmapPhases -Path $RoadmapPath
 $desiredIssues = @($backlogIssues + $roadmapIssues)
 $topLevelIterationMap = Get-BacklogIterationMap -Path $BacklogPath
-$desiredIterationTitles = Get-PlanningIterationTitles -DesiredIssues $desiredIssues -TopLevelIterationMap $topLevelIterationMap
+$desiredIterationTitles = @(Get-PlanningIterationTitles -DesiredIssues $desiredIssues -TopLevelIterationMap $topLevelIterationMap)
 $labelState = Get-LabelState -RepositoryContext $repositoryContext
 Ensure-ManagedPlanningLabels -RepositoryContext $repositoryContext -LabelState $labelState -DesiredIssues $desiredIssues -DesiredIterationTitles $desiredIterationTitles
 
@@ -2919,7 +2938,7 @@ foreach ($phase in $roadmapPhases) {
 
 $existingIssues = Get-RepositoryIssues -RepositoryFullName $repo
 if ($null -ne $projectContext) {
-    $desiredIterationTitles = Get-DesiredProjectIterationTitles -DesiredIssues $desiredIssues -TopLevelIterationMap $topLevelIterationMap -ProjectContext $projectContext -ExistingIssues $existingIssues
+    $desiredIterationTitles = @(Get-DesiredProjectIterationTitles -DesiredIssues $desiredIssues -TopLevelIterationMap $topLevelIterationMap -ProjectContext $projectContext -ExistingIssues $existingIssues)
     $projectContext = Ensure-ProjectIterations -ProjectContext $projectContext -ProjectOwner $ProjectOwner -ProjectNumber $ProjectNumber -DesiredIterationTitles $desiredIterationTitles
 }
 

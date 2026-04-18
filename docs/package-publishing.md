@@ -118,11 +118,14 @@ The JSON manifest now carries:
 
 - solution build
 - test execution
+- framework-readiness audit output
 - operational convention validation
 - benchmark smoke coverage and guardrails
 - reference-doc publishing
 
 The GitHub Actions release-validation workflow now proves this package-publishing path on both Windows and Ubuntu through the same repo-native script entry point. The current Ubuntu leg uses `-SkipBenchmarks` while benchmark guardrails remain Windows-baselined.
+
+The same workflow also carries a dedicated `.NET 11` readiness lane through `scripts/validate-dotnet-readiness.ps1`. That lane exists to assess future-SDK compatibility without changing the stable `net10.0` shipping floor. When package publication quality or support claims need to be assessed under a higher SDK explicitly, use the readiness script directly so the output report and the package-publishing docs stay truthful about what was actually validated.
 
 ## Maintenance rules
 
@@ -133,3 +136,4 @@ The GitHub Actions release-validation workflow now proves this package-publishin
 - keep release checksum/provenance metadata aligned with the actual repository source revision and package file set
 - keep the published-module staging flow aligned with the CLI package-stage command and external package lifecycle guide
 - keep package-publishing docs, the publish script, and release-validation automation aligned when the package boundary changes
+- do not let package support or deployment-mode claims exceed what `validate-release.ps1` and `validate-dotnet-readiness.ps1` actually prove

@@ -1,6 +1,7 @@
 param(
     [string]$Configuration = "Release",
     [string]$OutputPath = "artifacts/packages-release",
+    [string]$DotNetWorkingDirectory,
     [switch]$SkipBuild
 )
 
@@ -8,6 +9,12 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
+$resolvedDotNetWorkingDirectory = if ([string]::IsNullOrWhiteSpace($DotNetWorkingDirectory)) {
+    $repoRoot
+}
+else {
+    [System.IO.Path]::GetFullPath($DotNetWorkingDirectory)
+}
 
 function Get-DirectoryUri {
     param(
@@ -166,7 +173,7 @@ $projects = Get-ReleasePackageProjects
 $sourceRepository = Invoke-Git -Arguments @("-C", $repoRoot, "remote", "get-url", "origin")
 $sourceRevision = Invoke-Git -Arguments @("-C", $repoRoot, "rev-parse", "HEAD")
 
-Push-Location $repoRoot
+Push-Location $resolvedDotNetWorkingDirectory
 try {
     foreach ($project in $projects) {
         $before = @(Get-ChildItem -LiteralPath $resolvedOutputPath -File -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName)

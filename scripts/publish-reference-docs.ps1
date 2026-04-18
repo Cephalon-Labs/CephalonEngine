@@ -2,6 +2,7 @@ param(
     [string]$Configuration = "Debug",
     [string]$TargetFramework = "net10.0",
     [string]$OutputPath,
+    [string]$DotNetWorkingDirectory,
     [string[]]$Assemblies = @(),
     [switch]$SkipBuild
 )
@@ -12,6 +13,12 @@ $ErrorActionPreference = "Stop"
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $solutionPath = Join-Path $repoRoot "CephalonEngine.slnx"
 $projectPath = [System.IO.Path]::Combine($repoRoot, "src", "Cephalon.ReferenceDocs", "Cephalon.ReferenceDocs.csproj")
+$resolvedDotNetWorkingDirectory = if ([string]::IsNullOrWhiteSpace($DotNetWorkingDirectory)) {
+    $repoRoot
+}
+else {
+    [System.IO.Path]::GetFullPath($DotNetWorkingDirectory)
+}
 $resolvedOutputPath = if ([string]::IsNullOrWhiteSpace($OutputPath)) {
     [System.IO.Path]::Combine($repoRoot, "docs", "reference")
 }
@@ -54,7 +61,7 @@ function Clear-OutputDirectory {
     }
 }
 
-Push-Location $repoRoot
+Push-Location $resolvedDotNetWorkingDirectory
 try {
     if (-not $SkipBuild) {
         Write-Host "==> Build solution ($Configuration)" -ForegroundColor Cyan

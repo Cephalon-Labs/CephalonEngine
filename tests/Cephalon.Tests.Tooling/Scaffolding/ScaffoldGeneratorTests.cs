@@ -383,6 +383,40 @@ public sealed class ScaffoldGeneratorTests
     }
 
     [Fact]
+    public void GenerateAllowsNet11TargetFrameworkOverridesAndAlignsContainerImages()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseSettings(new EngineSettings(
+            blueprint: "ModularMonolith",
+            transports: ["RestApi"]));
+
+        var runtime = builder.Build();
+        var scaffold = ScaffoldGenerator.Generate(
+            runtime.Manifest.AppProfile,
+            new ScaffoldRequest(
+                appName: "Acme.Readiness",
+                modules: ["Operations"],
+                targetFramework: "net11.0",
+                cephalonPackageVersion: "0.1.0-preview"));
+
+        var hostProject = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "src/Acme.Readiness.Host/Acme.Readiness.Host.csproj");
+        Assert.Contains("<TargetFramework>net11.0</TargetFramework>", hostProject.Contents, StringComparison.Ordinal);
+
+        var moduleManifest = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "src/Acme.Readiness.Modules.Operations/cephalon.package.json");
+        Assert.Contains("\"supportedTargetFrameworks\": [ \"net11.0\" ]", moduleManifest.Contents, StringComparison.Ordinal);
+
+        var dockerfile = Assert.Single(scaffold.Files, file => file.Path == "Dockerfile");
+        Assert.Contains("FROM mcr.microsoft.com/dotnet/sdk:11.0 AS build", dockerfile.Contents, StringComparison.Ordinal);
+        Assert.Contains("FROM mcr.microsoft.com/dotnet/aspnet:11.0 AS final", dockerfile.Contents, StringComparison.Ordinal);
+        Assert.DoesNotContain("mcr.microsoft.com/dotnet/sdk:10.0", dockerfile.Contents, StringComparison.Ordinal);
+        Assert.DoesNotContain("mcr.microsoft.com/dotnet/aspnet:10.0", dockerfile.Contents, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void GenerateAddsPhase8StarterConfigPackagesAndRegistrationsWhenSelectionsAreActive()
     {
         var builder = new EngineBuilder(new ServiceCollection());

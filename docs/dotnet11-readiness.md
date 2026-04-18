@@ -1,0 +1,120 @@
+# .NET 11 Readiness
+
+This guide records the current Cephalon truth for future-framework assessment without silently changing the shipping baseline.
+
+## Current repo truth
+
+- stable Cephalon packages still ship on `net10.0`
+- `global.json` still pins `.NET SDK 10.0.201`
+- the template-pack package and source-generator surface remain the two `netstandard2.0` exceptions
+- `.NET 11` is currently a readiness lane, not a default-target migration
+
+As of `April 18, 2026`, Microsoft has:
+
+- shipped `.NET 11 Preview 3` on `April 14, 2026`
+- published `11.0.100-preview.3` as the current SDK on the `.NET 11` download page
+- kept `.NET 10` in active LTS support through `November 14, 2028`
+
+Official sources:
+
+- [.NET 11 Preview 3 announcement](https://devblogs.microsoft.com/dotnet/dotnet-11-preview-3/)
+- [.NET 11 download page](https://dotnet.microsoft.com/en-us/download/dotnet/11.0)
+- [.NET support policy](https://dotnet.microsoft.com/en-us/platform/support/policy)
+- [`actions/setup-dotnet` version-channel guidance](https://github.com/actions/setup-dotnet)
+
+## Why Cephalon uses a readiness lane
+
+Cephalon is a framework, so a framework-baseline change is not the same thing as “the latest SDK happens to compile the repo once.”
+
+The readiness lane exists to keep these truths separate:
+
+- shipping floor: the baseline Cephalon packages, templates, samples, and docs intentionally support today
+- readiness surface: the newer SDK/runtime family that Cephalon is actively assessing for future adoption
+- support claims: deployment-mode promises such as trimming, Native AOT, and single-file, which require explicit proof before they become repo truth
+
+That split lets Cephalon learn early from preview analyzers and runtime changes without forcing adopters onto a preview-only baseline.
+
+## Repo-native validation flow
+
+Cephalon now ships `scripts/validate-dotnet-readiness.ps1`.
+
+The script:
+
+- records both the repo-selected SDK (`global.json`-aware) and the readiness SDK selected from a temporary working directory outside the repo root
+- audits project target frameworks across `src/`, `tests/`, `samples/`, `templates/`, and `benchmarks/`
+- confirms the shipped source baseline still stays on `net10.0`, with only the documented `netstandard2.0` exceptions
+- confirms starter template project files still align with the stable `net10.0` floor
+- fails if the repo starts using legacy `TargetFrameworkVersion`
+- records the current trim / Native AOT / single-file claim status
+- can optionally build, test, publish reference docs, and publish package artifacts under the readiness SDK without editing `global.json`
+
+Example audit-only run:
+
+```powershell
+pwsh ./scripts/validate-dotnet-readiness.ps1 `
+  -Configuration Release `
+  -SkipBuild `
+  -SkipTests `
+  -SkipReferenceDocs `
+  -SkipPackages
+```
+
+Example higher-SDK readiness run:
+
+```powershell
+pwsh ./scripts/validate-dotnet-readiness.ps1 -Configuration Release
+```
+
+The script writes:
+
+- `artifacts/dotnet-readiness-release/README.md`
+- `artifacts/dotnet-readiness-release/dotnet-readiness-report.json`
+
+## Release-validation contract
+
+`pwsh ./scripts/validate-release.ps1` now emits the `.NET readiness` report as part of the normal release-validation flow.
+
+That baseline report stays on the shipping toolchain and exists to keep framework, docs, package, and claim metadata honest.
+
+GitHub Actions now adds a dedicated `.NET 11` readiness job that:
+
+- installs the current `11.0.x` SDK channel
+- runs the readiness script from a temporary working directory so the repo root `global.json` does not force SDK 10 selection
+- uploads a dedicated `dotnet-readiness-sdk11` artifact
+
+The result is deliberate:
+
+- normal release validation keeps proving the stable shipping floor
+- the dedicated readiness job proves the future SDK path without pretending the repo has already migrated
+
+## Claim policy for trimming, Native AOT, and single-file
+
+Cephalon does **not** currently treat trim, Native AOT, or single-file support as shipped repo truth.
+
+For those claims to become real support statements, Cephalon must update all of the following together:
+
+- project properties that actually enable or declare the deployment mode
+- `scripts/validate-dotnet-readiness.ps1`
+- release-validation workflow coverage
+- compatibility docs
+- package-publishing docs
+- project memory
+- backlog and roadmap tracking
+
+Analyzer-only settings are useful readiness signals, but they are not support claims by themselves.
+
+## What this slice intentionally does not do
+
+- it does not move Cephalon's default target framework from `net10.0` to `net11.0`
+- it does not retarget the template-pack starters
+- it does not claim trim, Native AOT, or single-file compatibility yet
+- it does not treat `.NET 11` preview builds as a production dependency baseline
+
+## Next likely follow-through
+
+After this readiness baseline, the next framework-focused work should be deliberate and explicit:
+
+- analyzer drift review as new `.NET 11` previews and RCs arrive
+- package-surface review for Microsoft and ecosystem package compatibility under `.NET 11`
+- truthful deployment-mode validation before any trim / AOT / single-file claims are added
+- an eventual baseline-migration lane once `.NET 11` is stable enough for Cephalon's package, tooling, and template defaults

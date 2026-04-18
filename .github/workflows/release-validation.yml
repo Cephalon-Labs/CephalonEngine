@@ -4,6 +4,7 @@ on:
   pull_request:
   push:
     branches:
+      - master
       - main
   workflow_dispatch:
 
@@ -62,10 +63,50 @@ jobs:
           path: artifacts/reference-docs-release
           if-no-files-found: warn
 
+      - name: Upload .NET readiness report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dotnet-readiness-${{ matrix.benchmark_artifact_suffix }}
+          path: artifacts/dotnet-readiness-release
+          if-no-files-found: warn
+
       - name: Upload package artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: package-artifacts-${{ matrix.benchmark_artifact_suffix }}
           path: artifacts/packages-release
+          if-no-files-found: warn
+
+  dotnet11-readiness:
+    name: .NET 11 Readiness
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      DOTNET_NOLOGO: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 11 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+          dotnet-version: 11.0.x
+          cache: true
+
+      - name: Run .NET 11 readiness validation
+        shell: pwsh
+        run: ./scripts/validate-dotnet-readiness.ps1 -Configuration Release -OutputPath artifacts/dotnet-readiness-sdk11 -SkipReferenceDocs -SkipPackages
+
+      - name: Upload .NET 11 readiness report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dotnet-readiness-sdk11
+          path: artifacts/dotnet-readiness-sdk11
           if-no-files-found: warn

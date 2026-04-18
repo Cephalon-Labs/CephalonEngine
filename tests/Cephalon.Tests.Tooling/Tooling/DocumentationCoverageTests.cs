@@ -123,6 +123,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("[Architecture](architecture.md)", docsReadme, StringComparison.Ordinal);
         Assert.Contains("[Component catalog](components/README.md)", docsReadme, StringComparison.Ordinal);
         Assert.Contains("[App models](app-models.md)", docsReadme, StringComparison.Ordinal);
+        Assert.Contains("[.NET 11 readiness](dotnet11-readiness.md)", docsReadme, StringComparison.Ordinal);
         Assert.Contains("[Module authoring](module-authoring.md)", docsReadme, StringComparison.Ordinal);
         Assert.Contains("[Package publishing](package-publishing.md)", docsReadme, StringComparison.Ordinal);
         Assert.Contains("[External package lifecycle](external-package-lifecycle.md)", docsReadme, StringComparison.Ordinal);

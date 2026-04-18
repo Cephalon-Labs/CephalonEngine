@@ -125,6 +125,7 @@ Typical examples:
 - change in scope or direction: update [Project memory](project-memory.md)
 - change in task state, estimate, or sprint placement: update [Engine backlog](engine-backlog.md)
 - change in milestone or implementation order: update [Engine roadmap](engine-roadmap.md)
+- change in framework baseline or support-claim posture: update [Project memory](project-memory.md), [.NET 11 readiness](dotnet11-readiness.md), [Compatibility](compatibility.md), and [Package publishing](package-publishing.md)
 - change in shipped behavior: update affected feature or component docs
 - change in ops or adoption contract: update operations and getting-started docs
 
@@ -220,6 +221,7 @@ Before you consider a task ready, confirm:
 - roadmap truthful
 - backlog truthful
 - sprint or iteration truthful
+- framework and support claims truthful
 - GitHub Project card updated
 - required fields populated
 - tests and benchmarks noted

@@ -906,6 +906,36 @@ Completed work:
 - added `scripts/validate-generated-app-container-image.ps1` so the repo can scaffold a temporary app, seed local packages, preview the shipped build/push contract, build the generated image, and prove push through a local Docker registry backed by `registry:2`
 - extended scaffolding, CLI, template-pack, and documentation coverage for the generated container-image publishing contract, then verified a real smoke path through scaffold -> publish-package-artifacts into `./.cephalon/packages` -> generated `publish-image.ps1` -> local registry push
 
+### ENG-097 `.NET 11` readiness baseline
+
+Status: done
+Estimate: 5
+Completed: April 18, 2026
+
+Why:
+
+- Cephalon now ships enough packages, templates, samples, and tooling that a future framework migration can no longer be treated as a one-line target-framework edit
+- the repo needed one truthful way to assess `.NET 11` compatibility without silently changing the stable `net10.0` shipping floor enforced through `global.json`, scaffold defaults, templates, and docs
+- deployment-mode claims such as trimming, Native AOT, and single-file needed an explicit contract so future support statements cannot outrun validation
+- release validation still pointed at a deleted monolithic test project after the test-suite split, which left the current automation story out of sync with the real repo layout
+
+Acceptance:
+
+- the repo ships a dedicated `.NET` readiness script that records current SDK selection, higher-SDK readiness selection, target-framework audit results, and deployment-mode claim status
+- release validation uses the split test projects that actually exist in the repository and emits a `.NET readiness` artifact alongside the rest of the release-validation outputs
+- GitHub Actions includes a dedicated `.NET 11` readiness lane that can validate future-SDK compatibility without editing the repo-root `global.json`
+- scaffolding can round-trip a `net11.0` target-framework override truthfully, including generated module manifests and container-image base tags
+- docs, project memory, backlog, roadmap, package-publishing guidance, and support-claim language all stay aligned with the readiness-lane-not-baseline-shift model
+
+Delivered:
+
+- added `scripts/validate-dotnet-readiness.ps1`, which audits target frameworks, records repo-selected versus readiness-selected SDK versions, emits JSON plus Markdown reports, and can optionally build/test/publish from a temporary working directory outside the repo root so higher SDK validation does not inherit the `global.json` pin accidentally
+- updated `scripts/validate-release.ps1` to use the split `Cephalon.Tests.Composition`, `Cephalon.Tests.Hosting`, and `Cephalon.Tests.Tooling` projects, and to emit the readiness artifact as part of the repo-native release-validation flow
+- updated `.github/workflows/release-validation.yml` so `push` now matches `master` as well as `main`, the normal release-validation matrix uploads readiness artifacts, and a dedicated `.NET 11` readiness job now installs the `11.0.x` SDK channel and runs the readiness script separately
+- updated `publish-reference-docs.ps1` and `publish-package-artifacts.ps1` so higher-SDK readiness runs can execute their `dotnet` work from a temporary directory instead of always inheriting the repo-root SDK pin
+- updated `Cephalon.Scaffolding` plus tooling tests so a `net11.0` scaffold override now keeps the generated host project, module manifest, and Dockerfile base images aligned instead of freezing container images on `10.0`
+- added `.NET 11` readiness docs plus compatibility, planning, package-publishing, and project-memory updates so framework and deployment-mode claims stay explicit and truthful
+
 ## Next configurable application-platform work
 
 This feature wave is split into three non-overlapping workstreams so core contracts can freeze before package and generation follow-through:
@@ -2365,4 +2395,8 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-094 shared physical database migration execution-group command-batch follow-through: the engine-owned migration playbook now also publishes combined production and manual command-batch templates per physical-target batch, and the showcase sample now consumes that engine-owned combined batch answer directly in `/showcase`, the Markdown brief, and the handoff package — **Shipped** · composition tests 4/4 + hosting tests 60/60 + package-surface tests 52/52
 - ENG-095 phase 12 migration-pattern taxonomy baseline: the engine now ships `strangler-fig` plus `backend-for-frontend` as built-in architecture descriptors, and ASP.NET Core hosts now surface those phase 12 entries directly through `/engine/patterns` and the runtime app model while router/client-binding follow-through remains later — **Shipped** · composition tests 2/2 + hosting tests 1/1
 - ENG-096 phase 12 strangler-fig runtime contract baseline: the engine now composes host-added and module-contributed migration routes through host-agnostic strangler-fig contracts, projects them into `/engine/strangler-fig` plus `snapshot.StranglerFigRoutes`, and exposes request resolution through `/engine/strangler-fig/resolve` while configuration-driven progress and host-level cutover remain later — **Shipped** · composition tests 2/2 + hosting tests 1/1 + package-surface tests 1/1
+
+### Sprint 39
+
+- ENG-097 `.NET 11` readiness baseline: the repo now ships `scripts/validate-dotnet-readiness.ps1`, `validate-release.ps1` now uses the split test projects plus emits readiness artifacts, the release-validation workflow now includes a dedicated `.NET 11` lane, and scaffolding now keeps `net11.0` Dockerfile base images aligned with the requested target framework instead of freezing on `10.0` — **Shipped** · targeted tooling tests plus readiness-script contract coverage
 

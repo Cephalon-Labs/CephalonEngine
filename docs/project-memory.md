@@ -24,6 +24,7 @@ The repository is aiming at a modular .NET engine/framework foundation that is g
 - the repo is pinned to `.NET SDK 10.0.201` through `global.json`
 - the shipped project baseline is `net10.0`
 - notable packaging exceptions are the template pack and source generator surfaces that stay on `netstandard2.0`
+- repo-native framework assessment now lives in `scripts/validate-dotnet-readiness.ps1`, which keeps `global.json`-selected shipping truth separate from higher-SDK readiness checks
 - central package management is enabled through `Directory.Packages.props`
 - repo-wide build defaults enable nullable reference types, implicit usings, XML doc generation, and warnings-as-errors
 - the default Cephalon package version baseline is currently `0.1.0-preview`
@@ -33,6 +34,7 @@ The repository is aiming at a modular .NET engine/framework foundation that is g
 - Cephalon should continue evolving as a reusable engine/framework that developers install into many project shapes, not as a single opinionated app shell
 - current shipping should stay on `net10.0`, but official planning should assume Microsoft's annual November .NET cadence, `.NET 10` LTS support through `November 14, 2028`, and `.NET 11` as the next major release currently in preview on `April 18, 2026` with final release expected in `November 2026`
 - future-proofing should prefer a deliberate `.NET 11` readiness lane over premature preview-only adoption: keep `net10.0` as the stable shipping floor while reviewing new platform features, APIs, analyzers, and runtime behaviors early enough that Cephalon can migrate intentionally instead of reactively
+- release validation should continue emitting a framework-readiness report, while higher-SDK workflow lanes should validate future compatibility without mutating the repo-root `global.json` pin or silently changing the public baseline
 - treat the currently observed `.NET 11` preview wave as assessment-only input for framework planning, not as a stable dependency baseline; as of `April 18, 2026`, Microsoft has shipped Preview 1 on `February 10, 2026`, Preview 2 on `March 10, 2026`, and Preview 3 on `April 14, 2026`, while stable Cephalon packages should continue targeting `net10.0` until an intentional migration lane is validated
 - optimize for 3/5/8/10/15/20/30+ year adaptability by keeping the core host-agnostic, runtime truth introspectable, package boundaries explicit, and future workloads additive through companion packs instead of baking one architectural era directly into the engine
 - assume the next decades of software will keep pushing toward AI-assisted authoring, lower-ceremony application assembly, stronger policy/governance requirements, hybrid cloud plus edge execution, and deploy-anywhere constraints such as trimming, single-file, containers, and Native AOT; Cephalon should answer those shifts through additive runtime primitives, generated/projected surfaces, and introspectable policy contracts instead of one locked-in application style
@@ -368,7 +370,7 @@ If you need to resume deeper analysis later, the most likely next focus areas ar
 - `Cephalon.Engine` runtime, package, trust, and introspection internals
 - `Cephalon.Behaviors` and the ABT pipeline, strategies, and transport bindings
 - continued engine-first REST authoring follow-through, especially endpoint governance/config override modeling that preserves runtime truth after the shipped low-ceremony inline module-ownership baseline
-- deliberate `.NET 11` readiness, including analyzer drift, trim/AOT/single-file claims, and package-surface compatibility expectations for future Cephalon releases
+- continued `.NET 11` readiness follow-through, including analyzer drift, package-surface compatibility expectations, and the eventual deliberate migration from readiness lane to supported default baseline
 - `Cephalon.Data` plus provider families and event-sourcing follow-through
 - `Cephalon.Observability` plus dependency-health and exporter/provider conventions
 - CLI, scaffolding, template, sample, and NuGet publication alignment whenever app-model or package contracts change

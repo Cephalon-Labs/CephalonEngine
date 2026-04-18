@@ -1,6 +1,7 @@
 param(
     [switch]$SkipBuild,
     [switch]$SkipTests,
+    [switch]$SkipDotNetReadiness,
     [switch]$SkipOperationalConventions,
     [switch]$SkipPhase8Conventions,
     [switch]$SkipBenchmarks,
@@ -19,12 +20,18 @@ $ErrorActionPreference = "Stop"
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $solutionPath = Join-Path $repoRoot "CephalonEngine.slnx"
-$testsProjectPath = [System.IO.Path]::Combine($repoRoot, "tests", "Cephalon.Tests", "Cephalon.Tests.csproj")
+$testProjectPaths = @(
+    [System.IO.Path]::Combine($repoRoot, "tests", "Cephalon.Tests.Composition", "Cephalon.Tests.Composition.csproj"),
+    [System.IO.Path]::Combine($repoRoot, "tests", "Cephalon.Tests.Hosting", "Cephalon.Tests.Hosting.csproj"),
+    [System.IO.Path]::Combine($repoRoot, "tests", "Cephalon.Tests.Tooling", "Cephalon.Tests.Tooling.csproj")
+)
 $benchmarkProjectPath = [System.IO.Path]::Combine($repoRoot, "benchmarks", "Cephalon.Benchmarks", "Cephalon.Benchmarks.csproj")
+$dotNetReadinessScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "validate-dotnet-readiness.ps1")
 $referenceDocsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "publish-reference-docs.ps1")
 $packageArtifactsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "publish-package-artifacts.ps1")
 $operationalConventionsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "validate-operational-conventions.ps1")
 $phase8ConventionsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "validate-phase8-conventions.ps1")
+$dotNetReadinessOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "dotnet-readiness-release")
 $referenceDocsOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "reference-docs-release")
 $packageArtifactsOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "packages-release")
 
@@ -90,6 +97,12 @@ function Invoke-PowerShellScript {
 
 Push-Location $repoRoot
 try {
+    foreach ($testProjectPath in $testProjectPaths) {
+        if (-not (Test-Path -LiteralPath $testProjectPath)) {
+            throw "Expected test project '$testProjectPath' was not found."
+        }
+    }
+
     if (-not $SkipBuild) {
         Invoke-Step "Build solution (Release)" {
             Invoke-DotNet @("build", $solutionPath, "-c", "Release")
@@ -98,12 +111,27 @@ try {
 
     if (-not $SkipTests) {
         Invoke-Step "Run tests (Release)" {
-            $arguments = @("test", $testsProjectPath, "-c", "Release")
-            if (-not $SkipBuild) {
-                $arguments += "--no-build"
-            }
+            foreach ($testProjectPath in $testProjectPaths) {
+                $arguments = @("test", $testProjectPath, "-c", "Release")
+                if (-not $SkipBuild) {
+                    $arguments += @("--no-build", "--no-restore")
+                }
 
-            Invoke-DotNet $arguments
+                Invoke-DotNet $arguments
+            }
+        }
+    }
+
+    if (-not $SkipDotNetReadiness) {
+        Invoke-Step "Validate .NET readiness contract" {
+            Invoke-PowerShellScript -Path $dotNetReadinessScriptPath -Arguments @(
+                "-Configuration", "Release",
+                "-OutputPath", $dotNetReadinessOutputPath,
+                "-SkipBuild",
+                "-SkipTests",
+                "-SkipReferenceDocs",
+                "-SkipPackages"
+            )
         }
     }
 
