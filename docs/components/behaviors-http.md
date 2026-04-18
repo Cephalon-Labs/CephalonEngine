@@ -389,6 +389,37 @@ If the module wants to start from the behavior-id prefix instead, use
 the public route-group prefix as `/showcase/cart` and still keeps generated publication explicit
 and module-owned.
 
+When one module wants to fan one generated root prefix out into several owned public route groups,
+it can now stay on the same generated shorthand path through `MapGeneratedProfileGroups(...)`:
+
+```csharp
+public sealed class GeneratedCatalogModule : RestBehaviorModuleBase
+{
+    public override ModuleDescriptor Descriptor { get; } = new(
+        "showcase.generated",
+        "Generated Catalog Module",
+        "Publishes generated REST profiles across several derived route groups.",
+        version: "1.0.0");
+
+    public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+    {
+        behaviors.MapGeneratedProfileGroups(
+            "showcase.generated",
+            group => group
+                .WithTagName("Generated Catalog API")
+                .WithHostGovernanceScope("generated-catalog"));
+    }
+}
+```
+
+Cephalon groups matching behavior ids by their parent prefix before publication, so
+`showcase.generated.orders.lookup` and `showcase.generated.orders.create` share
+`/showcase/generated/orders`, while `showcase.generated.inventory.lookup` lands beneath
+`/showcase/generated/inventory`. The optional callback applies the same group-level conventions to
+each derived route group, and the generated endpoints still publish through the existing
+`behavior-module-generated` authoring-style and runtime-catalog pipeline instead of inventing a
+second generated publication source.
+
 When a project wants the same module-owned REST behavior without creating a dedicated module class,
 the host can still register an inline module explicitly:
 
@@ -460,6 +491,9 @@ Current helper behavior:
   descriptors, and optional preserved implicit query-fallback intent for explicitly bound profiles
 - adds `MapGeneratedProfiles()` and `MapGeneratedProfiles(string)` as explicit module-owned
   low-code shorthands that publish every matching profiled behavior beneath one owned route group
+- adds `MapGeneratedProfileGroups(string)` plus the shared-group-configuration overload on
+  `IRestBehaviorModuleBuilder` when one generated root prefix should fan out into several derived
+  owned route groups while preserving the same generated shorthand runtime truth
 - derives the default generated-selection prefix from the route-group path by trimming slashes and
   replacing `/` separators with `.`, while still allowing an explicit behavior-id prefix override
 - derives the common generated route-group path from a dot-separated behavior-id prefix when
@@ -543,8 +577,9 @@ Current helper behavior:
   explicit DSL route now wins by default and the lower-precedence shorthand candidate is suppressed
   instead of publishing side by side
 - if the same behavior is mapped through both `MapProfile<TBehavior>()` and
-  `MapGeneratedProfiles(...)`, the explicit per-behavior `MapProfile<TBehavior>()` route wins by
-  default and the generated candidate is suppressed
+  generated shorthand through `MapGeneratedProfiles(...)` or `MapGeneratedProfileGroups(...)`, the
+  explicit per-behavior `MapProfile<TBehavior>()` route wins by default and the generated
+  candidate is suppressed
 - ASP.NET Core hosts can now also suppress descriptor-backed shorthand candidates through
   `RestApi:Suppressions`, which runs before precedence resolution, records the governing rule id on
   the suppressed candidate through `SuppressedBySuppressionId`, and intentionally leaves explicit
@@ -787,7 +822,7 @@ full ordered match set visible through `MatchedSuppressionIds` and `MatchedOverr
 surface covers the normalized module-owned behavior projection path, including explicit module DSL
 mappings,
 `MapProfile<TBehavior>()` shorthand consumption, and
-`MapGeneratedProfiles(...)` shorthand consumption.
+`MapGeneratedProfiles(...)` / `MapGeneratedProfileGroups(...)` shorthand consumption.
 
 Publication-group entries now answer that same runtime truth one behavior at a time: the ordered
 candidate set, the published candidate ids that survived with the winning precedence rank, the

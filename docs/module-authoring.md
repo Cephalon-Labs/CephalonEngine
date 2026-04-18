@@ -365,6 +365,36 @@ When the module wants to start from the behavior-id prefix instead, use
 the public group path as `/showcase/cart` and still keeps generated publication explicit and
 module-owned.
 
+When one module wants to fan one generated root prefix out into several owned public route groups,
+use `MapGeneratedProfileGroups(...)` on the module builder:
+
+```csharp
+public sealed class GeneratedCatalogModule : RestBehaviorModuleBase
+{
+    public override ModuleDescriptor Descriptor { get; } = new(
+        "showcase.generated",
+        "Generated Catalog Module",
+        "Publishes generated REST profiles across several derived route groups.",
+        version: "1.0.0");
+
+    public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+    {
+        behaviors.MapGeneratedProfileGroups(
+            "showcase.generated",
+            group => group
+                .WithTagName("Generated Catalog API")
+                .WithHostGovernanceScope("generated-catalog"));
+    }
+}
+```
+
+Cephalon derives one public route group per parent behavior-id prefix, so
+`showcase.generated.orders.lookup` and `showcase.generated.orders.create` share
+`/showcase/generated/orders`, while `showcase.generated.inventory.lookup` lands beneath
+`/showcase/generated/inventory`. The generated endpoints stay on the same
+`behavior-module-generated` shorthand/runtime path and still never publish public REST from
+`[AppBehavior]` alone.
+
 When a project wants to stay explicit and module-owned without creating a dedicated module class,
 the host can still register the full group manually:
 
@@ -451,6 +481,9 @@ Current helper behavior:
 - adds `behaviors.Group(...).MapGeneratedProfiles()` and `MapGeneratedProfiles(string)` as the
   explicit low-code module-owned shorthand when a whole owned route group should publish every
   matching profiled behavior
+- adds `behaviors.MapGeneratedProfileGroups(string)` plus the shared-group-configuration overload
+  when one generated root prefix should fan out into several derived owned route groups without
+  inventing a second generated publication model
 - lets ASP.NET Core hosts suppress those shorthand candidates through `RestApi:Suppressions`
   without taking away module ownership, while explicit `MapGet/MapPost/...` routes and manual
   module-owned endpoints remain authoritative
@@ -552,9 +585,9 @@ Current helper behavior:
   `HostGovernanceEligibleCandidateIds`, `HostGovernanceIneligibleCandidateIds`,
   `SkippedSuppressionIds`, and `SkippedOverrideIds`.
 - when the same behavior is mapped through both `MapProfile<TBehavior>()` and
-  `MapGeneratedProfiles(...)`, the explicit per-behavior `MapProfile<TBehavior>()` route wins by
-  default while the generated candidate remains visible through the same candidate and grouped
-  publication catalogs
+  generated shorthand through `MapGeneratedProfiles(...)` or `MapGeneratedProfileGroups(...)`, the
+  explicit per-behavior `MapProfile<TBehavior>()` route wins by default while the generated
+  candidate remains visible through the same candidate and grouped publication catalogs
 - keeps `MapAdditionalEndpoints(...)` as the advanced escape hatch for manual Minimal API work that
   falls outside the default behavior REST DSL; custom endpoints should still declare ownership first
   through `behaviors.Internal<TBehavior>()`, and those manual module-owned routes now still join the

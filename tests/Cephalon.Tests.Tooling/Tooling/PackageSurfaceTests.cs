@@ -920,6 +920,27 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void BehaviorsHttpRestBehaviorModuleBuilderExposesGeneratedProfileGroupMethods()
+    {
+        var methods = typeof(global::Cephalon.Behaviors.Http.Hosting.IRestBehaviorModuleBuilder)
+            .GetMethods(BindingFlags.Instance | BindingFlags.Public);
+
+        Assert.Contains(methods, static method =>
+            method.Name == "MapGeneratedProfileGroups" &&
+            method.GetParameters() is [{ ParameterType: { } prefixType }] &&
+            prefixType == typeof(string));
+        Assert.Contains(methods, static method =>
+            method.Name == "MapGeneratedProfileGroups" &&
+            method.GetParameters() is
+            [
+                { ParameterType: { } prefixType },
+                { ParameterType: { } configureType }
+            ] &&
+            prefixType == typeof(string) &&
+            configureType == typeof(Action<global::Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder>));
+    }
+
+    [Fact]
     public void BehaviorsHttpRestProfileContractsExposePreservedImplicitQueryFallback()
     {
         Assert.NotNull(typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileAttribute)

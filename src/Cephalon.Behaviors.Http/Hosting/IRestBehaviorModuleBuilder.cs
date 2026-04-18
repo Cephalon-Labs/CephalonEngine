@@ -52,4 +52,41 @@ public interface IRestBehaviorModuleBuilder
     /// mirror the owning behavior-id prefix while remaining an explicit module-owned REST surface.
     /// </remarks>
     IRestBehaviorEndpointGroupBuilder GroupFromBehaviorIdPrefix(string behaviorIdPrefix);
+
+    /// <summary>
+    /// Maps matching generated REST profiles from the owning module assembly into one or more
+    /// derived route groups.
+    /// </summary>
+    /// <param name="behaviorIdPrefix">
+    /// The root behavior-id prefix used to select generated REST profiles from the owning module
+    /// assembly.
+    /// </param>
+    /// <returns>The same builder for fluent authoring.</returns>
+    /// <remarks>
+    /// This broader low-code opt-in remains explicit and module-owned. Cephalon groups matching
+    /// behavior ids by their parent prefix, so behaviors such as <c>showcase.orders.lookup</c> and
+    /// <c>showcase.orders.create</c> share one derived route group while
+    /// <c>showcase.inventory.lookup</c> lands in another. Use
+    /// <see cref="GroupFromBehaviorIdPrefix(string)" /> plus
+    /// <see cref="IRestBehaviorEndpointGroupBuilder.MapGeneratedProfiles(string)" /> when each
+    /// generated route group should still be declared manually.
+    /// </remarks>
+    IRestBehaviorModuleBuilder MapGeneratedProfileGroups(string behaviorIdPrefix);
+
+    /// <summary>
+    /// Maps matching generated REST profiles from the owning module assembly into one or more
+    /// derived route groups while applying shared group-level conventions.
+    /// </summary>
+    /// <param name="behaviorIdPrefix">
+    /// The root behavior-id prefix used to select generated REST profiles from the owning module
+    /// assembly.
+    /// </param>
+    /// <param name="configureGroup">
+    /// The optional callback applied to each derived route group before the generated profiles are
+    /// mapped.
+    /// </param>
+    /// <returns>The same builder for fluent authoring.</returns>
+    IRestBehaviorModuleBuilder MapGeneratedProfileGroups(
+        string behaviorIdPrefix,
+        Action<IRestBehaviorEndpointGroupBuilder> configureGroup);
 }

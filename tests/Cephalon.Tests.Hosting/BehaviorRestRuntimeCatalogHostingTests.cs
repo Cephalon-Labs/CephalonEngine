@@ -716,6 +716,115 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task MapGeneratedProfileGroupsDerivesMultipleGeneratedRouteGroupsAndPreservesModuleOwnership()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "7";
+        builder.Configuration["OpenApi:EnabledVersions:1"] = "8";
+        builder.Configuration["OpenApi:DefaultVersion"] = "7";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new GeneratedGroupedRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var publicationGroups = await client.GetFromJsonAsync<RestEndpointPublicationGroupDescriptor[]>("/engine/rest-endpoint-publication-groups");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(publicationGroups);
+        Assert.NotNull(snapshot);
+
+        var moduleEndpoints = endpoints
+            .Where(static endpoint =>
+                string.Equals(endpoint.SourceModuleId, "tests.rest.generated-grouped-runtime", StringComparison.Ordinal))
+            .ToArray();
+        Assert.Equal(3, moduleEndpoints.Length);
+
+        var inventoryEndpoint = Assert.Single(moduleEndpoints, static endpoint =>
+            string.Equals(endpoint.BehaviorId, "tests.generated.runtimegrouped.inventory.lookup", StringComparison.Ordinal));
+        Assert.Equal("/api/v8/tests/generated/runtimegrouped/inventory/{orderId}", inventoryEndpoint.RoutePattern);
+        Assert.Equal("/api/v8/tests/generated/runtimegrouped/inventory", inventoryEndpoint.RouteGroupPrefix);
+        Assert.Equal("v8", inventoryEndpoint.OpenApiDocumentName);
+        Assert.Equal(8, inventoryEndpoint.ApiVersionMajor);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, inventoryEndpoint.AuthoringStyle);
+
+        var ordersCreateEndpoint = Assert.Single(moduleEndpoints, static endpoint =>
+            string.Equals(endpoint.BehaviorId, "tests.generated.runtimegrouped.orders.create", StringComparison.Ordinal));
+        Assert.Equal("/api/v7/tests/generated/runtimegrouped/orders/{orderId}/items", ordersCreateEndpoint.RoutePattern);
+        Assert.Equal("/api/v7/tests/generated/runtimegrouped/orders", ordersCreateEndpoint.RouteGroupPrefix);
+        Assert.Equal("v7", ordersCreateEndpoint.OpenApiDocumentName);
+        Assert.Equal(7, ordersCreateEndpoint.ApiVersionMajor);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, ordersCreateEndpoint.AuthoringStyle);
+
+        var ordersLookupEndpoint = Assert.Single(moduleEndpoints, static endpoint =>
+            string.Equals(endpoint.BehaviorId, "tests.generated.runtimegrouped.orders.lookup", StringComparison.Ordinal));
+        Assert.Equal("/api/v7/tests/generated/runtimegrouped/orders/{orderId}", ordersLookupEndpoint.RoutePattern);
+        Assert.Equal("/api/v7/tests/generated/runtimegrouped/orders", ordersLookupEndpoint.RouteGroupPrefix);
+        Assert.Equal("v7", ordersLookupEndpoint.OpenApiDocumentName);
+        Assert.Equal(7, ordersLookupEndpoint.ApiVersionMajor);
+        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, ordersLookupEndpoint.AuthoringStyle);
+
+        var moduleCandidates = candidates
+            .Where(static candidate =>
+                string.Equals(candidate.ProjectedEndpoint.SourceModuleId, "tests.rest.generated-grouped-runtime", StringComparison.Ordinal))
+            .OrderBy(static candidate => candidate.ProjectedEndpoint.RoutePattern, StringComparer.Ordinal)
+            .ToArray();
+        Assert.Equal(3, moduleCandidates.Length);
+        Assert.All(
+            moduleCandidates,
+            candidate =>
+            {
+                Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+                Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, candidate.AuthoringStyle);
+                Assert.True(candidate.OriginalProjection.AllowsHostGovernance);
+                Assert.Equal("generated-grouped", candidate.OriginalProjection.HostGovernanceScope);
+            });
+
+        Assert.Contains(
+            publicationGroups,
+            group =>
+                string.Equals(group.BehaviorId, "tests.generated.runtimegrouped.orders.lookup", StringComparison.Ordinal) &&
+                group.SourceModuleIds.SequenceEqual(["tests.rest.generated-grouped-runtime"]) &&
+                group.PublishedCandidateIds.Count == 1 &&
+                group.Candidates.Count == 1 &&
+                group.HostGovernanceEligibleCandidateIds.Count == 1 &&
+                group.HostGovernanceIneligibleCandidateIds.Count == 0);
+        Assert.Contains(
+            snapshot.RestEndpointPublicationGroups,
+            group =>
+                string.Equals(group.BehaviorId, "tests.generated.runtimegrouped.inventory.lookup", StringComparison.Ordinal) &&
+                group.SourceModuleIds.SequenceEqual(["tests.rest.generated-grouped-runtime"]) &&
+                group.PublishedCandidateIds.Count == 1 &&
+                group.Candidates.Count == 1);
+
+        var ordersPayload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>(
+            "/api/v7/tests/generated/runtimegrouped/orders/ord-grouped");
+        var inventoryPayload = await client.GetFromJsonAsync<GeneratedRuntimeOrderOutput>(
+            "/api/v8/tests/generated/runtimegrouped/inventory/ord-inventory");
+        Assert.NotNull(ordersPayload);
+        Assert.NotNull(inventoryPayload);
+        Assert.Equal("ord-grouped", ordersPayload.OrderId);
+        Assert.Equal("ord-inventory", inventoryPayload.OrderId);
+    }
+
+    [Fact]
     public void AddGeneratedRestBehaviorModuleRejectsBehaviorIdPrefixesWithEmptySegments()
     {
         var builder = WebApplication.CreateBuilder();
@@ -8839,6 +8948,24 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         }
     }
 
+    private sealed class GeneratedGroupedRuntimeCatalogModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.generated-grouped-runtime",
+            "Generated Grouped Runtime Module",
+            "Publishes generated REST profiles across multiple derived route groups while preserving module ownership.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            behaviors.MapGeneratedProfileGroups(
+                "tests.generated.runtimegrouped",
+                group => group
+                    .WithTagName("Generated Grouped Runtime API")
+                    .WithHostGovernanceScope("generated-grouped"));
+        }
+    }
+
     private sealed class GeneratedVersionOverrideRuntimeCatalogModule : RestBehaviorModuleBase
     {
         public override ModuleDescriptor Descriptor { get; } = new(
@@ -9601,6 +9728,45 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     {
         public Task<GeneratedRuntimeOrderOutput> HandleAsync(
             GeneratedRuntimeOrderItemInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new GeneratedRuntimeOrderOutput(input.OrderId));
+        }
+    }
+
+    [AppBehavior("tests.generated.runtimegrouped.orders.lookup")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}", ApiVersionMajor = 7)]
+    private sealed class GetGeneratedGroupedRuntimeOrderBehavior : IAppBehavior<GeneratedRuntimeOrderInput, GeneratedRuntimeOrderOutput>
+    {
+        public Task<GeneratedRuntimeOrderOutput> HandleAsync(
+            GeneratedRuntimeOrderInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new GeneratedRuntimeOrderOutput(input.OrderId));
+        }
+    }
+
+    [AppBehavior("tests.generated.runtimegrouped.orders.create")]
+    [BehaviorRestProfile(BehaviorRestMethod.Post, "/{orderId}/items", ApiVersionMajor = 7)]
+    private sealed class CreateGeneratedGroupedRuntimeOrderItemBehavior : IAppBehavior<GeneratedRuntimeOrderItemInput, GeneratedRuntimeOrderOutput>
+    {
+        public Task<GeneratedRuntimeOrderOutput> HandleAsync(
+            GeneratedRuntimeOrderItemInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new GeneratedRuntimeOrderOutput(input.OrderId));
+        }
+    }
+
+    [AppBehavior("tests.generated.runtimegrouped.inventory.lookup")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}", ApiVersionMajor = 8)]
+    private sealed class GetGeneratedGroupedRuntimeInventoryBehavior : IAppBehavior<GeneratedRuntimeOrderInput, GeneratedRuntimeOrderOutput>
+    {
+        public Task<GeneratedRuntimeOrderOutput> HandleAsync(
+            GeneratedRuntimeOrderInput input,
             IBehaviorContext context,
             CancellationToken ct = default)
         {

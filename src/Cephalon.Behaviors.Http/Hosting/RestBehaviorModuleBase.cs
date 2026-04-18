@@ -45,7 +45,8 @@ public abstract class RestBehaviorModuleBase : BehaviorModuleBase, IRestModule
     /// </summary>
     /// <returns>
     /// The marker type whose assembly Cephalon should treat as the source for generated REST
-    /// profile hints when <c>MapGeneratedProfiles(...)</c> is used.
+    /// profile hints when <c>MapGeneratedProfiles(...)</c> or
+    /// <c>MapGeneratedProfileGroups(...)</c> is used.
     /// </returns>
     /// <remarks>
     /// Most modules should use the default implementation, which points at the concrete module

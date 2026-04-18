@@ -213,6 +213,71 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorModuleBuilderBuildMapsGeneratedProfileGroupsIntoDerivedProjections()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+
+        builder.MapGeneratedProfileGroups(
+            "tests.generated.projection.grouped",
+            group => group
+                .AllowHostGovernance()
+                .WithHostGovernanceScope("generated-grouped"));
+
+        var projection = builder.Build();
+
+        Assert.Equal(3, projection.OwnershipRegistrations.Count);
+        Assert.Equal(2, projection.Groups.Count);
+
+        Assert.Collection(
+            projection.Groups,
+            inventoryGroup =>
+            {
+                Assert.Equal("/tests/generated/projection/grouped/inventory", inventoryGroup.Prefix);
+                Assert.Equal("v13", inventoryGroup.OpenApiDocumentName);
+                Assert.False(inventoryGroup.HasExplicitOpenApiDocumentName);
+                Assert.Equal(13, inventoryGroup.ApiVersionMajor);
+                Assert.False(inventoryGroup.HasExplicitApiVersion);
+                Assert.Equal("tests.generated.projection.grouped.inventory.lookup", inventoryGroup.ProfileApiVersionSourceBehaviorId);
+                Assert.True(inventoryGroup.AllowHostGovernance);
+                Assert.Equal("generated-grouped", inventoryGroup.HostGovernanceScope);
+
+                var endpoint = Assert.Single(inventoryGroup.Endpoints);
+                Assert.Equal(RestBehaviorHttpMethod.Get, endpoint.Method);
+                Assert.Equal(typeof(GeneratedProjectionGroupedInventoryBehavior), endpoint.BehaviorType);
+                Assert.Equal("/{cartId}", endpoint.Pattern);
+                Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, endpoint.AuthoringStyle);
+            },
+            ordersGroup =>
+            {
+                Assert.Equal("/tests/generated/projection/grouped/orders", ordersGroup.Prefix);
+                Assert.Equal("v12", ordersGroup.OpenApiDocumentName);
+                Assert.False(ordersGroup.HasExplicitOpenApiDocumentName);
+                Assert.Equal(12, ordersGroup.ApiVersionMajor);
+                Assert.False(ordersGroup.HasExplicitApiVersion);
+                Assert.Equal("tests.generated.projection.grouped.orders.create", ordersGroup.ProfileApiVersionSourceBehaviorId);
+                Assert.True(ordersGroup.AllowHostGovernance);
+                Assert.Equal("generated-grouped", ordersGroup.HostGovernanceScope);
+
+                Assert.Collection(
+                    ordersGroup.Endpoints,
+                    createEndpoint =>
+                    {
+                        Assert.Equal(RestBehaviorHttpMethod.Post, createEndpoint.Method);
+                        Assert.Equal(typeof(GeneratedProjectionGroupedOrdersCreateBehavior), createEndpoint.BehaviorType);
+                        Assert.Equal("/{cartId}/items", createEndpoint.Pattern);
+                        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, createEndpoint.AuthoringStyle);
+                    },
+                    lookupEndpoint =>
+                    {
+                        Assert.Equal(RestBehaviorHttpMethod.Get, lookupEndpoint.Method);
+                        Assert.Equal(typeof(GeneratedProjectionGroupedOrdersLookupBehavior), lookupEndpoint.BehaviorType);
+                        Assert.Equal("/{cartId}", lookupEndpoint.Pattern);
+                        Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, lookupEndpoint.AuthoringStyle);
+                    });
+            });
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverPublishesHigherPrecedenceDslCandidateAndSuppressesProfileCandidate()
     {
         var builder = new RestBehaviorModuleBuilder();
@@ -5613,6 +5678,45 @@ public sealed class BehaviorRestProjectionTests
     [AppBehavior("tests.generated.projection.publish.post")]
     [BehaviorRestProfile(BehaviorRestMethod.Post, "/{cartId}/items", ApiVersionMajor = 9)]
     private sealed class GeneratedProjectionPostBehavior : IAppBehavior<ProjectionCartInput, ProjectionCartOutput>
+    {
+        public Task<ProjectionCartOutput> HandleAsync(
+            ProjectionCartInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProjectionCartOutput(input.CartId));
+        }
+    }
+
+    [AppBehavior("tests.generated.projection.grouped.orders.lookup")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/{cartId}", ApiVersionMajor = 12)]
+    private sealed class GeneratedProjectionGroupedOrdersLookupBehavior : IAppBehavior<ProjectionCartInput, ProjectionCartOutput>
+    {
+        public Task<ProjectionCartOutput> HandleAsync(
+            ProjectionCartInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProjectionCartOutput(input.CartId));
+        }
+    }
+
+    [AppBehavior("tests.generated.projection.grouped.orders.create")]
+    [BehaviorRestProfile(BehaviorRestMethod.Post, "/{cartId}/items", ApiVersionMajor = 12)]
+    private sealed class GeneratedProjectionGroupedOrdersCreateBehavior : IAppBehavior<ProjectionCartInput, ProjectionCartOutput>
+    {
+        public Task<ProjectionCartOutput> HandleAsync(
+            ProjectionCartInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProjectionCartOutput(input.CartId));
+        }
+    }
+
+    [AppBehavior("tests.generated.projection.grouped.inventory.lookup")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/{cartId}", ApiVersionMajor = 13)]
+    private sealed class GeneratedProjectionGroupedInventoryBehavior : IAppBehavior<ProjectionCartInput, ProjectionCartOutput>
     {
         public Task<ProjectionCartOutput> HandleAsync(
             ProjectionCartInput input,

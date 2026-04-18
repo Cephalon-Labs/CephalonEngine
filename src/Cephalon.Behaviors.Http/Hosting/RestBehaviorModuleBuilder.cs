@@ -59,10 +59,92 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
     public IRestBehaviorEndpointGroupBuilder GroupFromBehaviorIdPrefix(string behaviorIdPrefix)
         => Group(RestBehaviorAuthoringPathConventions.DeriveRouteGroupPrefixFromBehaviorIdPrefix(behaviorIdPrefix));
 
+    public IRestBehaviorModuleBuilder MapGeneratedProfileGroups(string behaviorIdPrefix)
+    {
+        AddGeneratedProfileGroups(
+            NormalizeGeneratedBehaviorIdPrefix(behaviorIdPrefix),
+            configureGroup: null);
+        return this;
+    }
+
+    public IRestBehaviorModuleBuilder MapGeneratedProfileGroups(
+        string behaviorIdPrefix,
+        Action<IRestBehaviorEndpointGroupBuilder> configureGroup)
+    {
+        ArgumentNullException.ThrowIfNull(configureGroup);
+
+        AddGeneratedProfileGroups(
+            NormalizeGeneratedBehaviorIdPrefix(behaviorIdPrefix),
+            configureGroup);
+        return this;
+    }
+
     internal RestBehaviorModuleProjection Build()
         => new(
             [.. ownershipRegistrations],
             [.. groups.Select(static state => state.ToProjection())]);
+
+    private void AddGeneratedProfileGroups(
+        string behaviorIdPrefix,
+        Action<IRestBehaviorEndpointGroupBuilder>? configureGroup)
+    {
+        var owningModuleType = ownerModuleType
+            ?? throw new InvalidOperationException(
+                "MapGeneratedProfileGroups() requires an owning RestBehaviorModuleBase context so Cephalon can resolve generated REST profiles from the module assembly.");
+        var generatedProfiles = BehaviorRestProfileResolver.ResolveGeneratedProfiles(
+            owningModuleType.Assembly,
+            behaviorIdPrefix);
+        if (generatedProfiles.Count == 0)
+        {
+            throw new InvalidOperationException(
+                $"REST behavior module did not find any generated REST profiles in assembly '{owningModuleType.Assembly.FullName}' that match behavior-id prefix '{behaviorIdPrefix}'.");
+        }
+
+        var groupBehaviorIdPrefixes = generatedProfiles
+            .Select(resolved => DeriveGeneratedGroupBehaviorIdPrefix(behaviorIdPrefix, resolved.Profile.BehaviorId))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static prefix => prefix, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+        foreach (var groupBehaviorIdPrefix in groupBehaviorIdPrefixes)
+        {
+            var group = (RestBehaviorEndpointGroupBuilder)GroupFromBehaviorIdPrefix(groupBehaviorIdPrefix);
+            configureGroup?.Invoke(group);
+            group.MapGeneratedProfilesCore(groupBehaviorIdPrefix);
+        }
+    }
+
+    private static string NormalizeGeneratedBehaviorIdPrefix(string behaviorIdPrefix)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorIdPrefix);
+        return behaviorIdPrefix.Trim();
+    }
+
+    private static string DeriveGeneratedGroupBehaviorIdPrefix(
+        string requestedBehaviorIdPrefix,
+        string behaviorId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(requestedBehaviorIdPrefix);
+        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
+
+        var derivedPrefix = RestBehaviorAuthoringPathConventions.DeriveBehaviorIdPrefixFromBehaviorId(behaviorId);
+        if (!BehaviorIdMatchesPrefix(derivedPrefix, requestedBehaviorIdPrefix))
+        {
+            throw new InvalidOperationException(
+                $"REST behavior module generated-profile groups for prefix '{requestedBehaviorIdPrefix}' cannot derive a stable owning route group from behavior '{behaviorId}'. Use behavior ids that include at least one segment beyond the requested prefix, or declare the generated route groups explicitly through GroupFromBehaviorIdPrefix(...).MapGeneratedProfiles(...).");
+        }
+
+        return derivedPrefix;
+    }
+
+    private static bool BehaviorIdMatchesPrefix(string behaviorId, string behaviorIdPrefix)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorIdPrefix);
+
+        return behaviorId.Equals(behaviorIdPrefix, StringComparison.OrdinalIgnoreCase) ||
+               behaviorId.StartsWith($"{behaviorIdPrefix}.", StringComparison.OrdinalIgnoreCase);
+    }
 
     private void RegisterOwnedBehavior<TBehavior>(Action<IBehaviorTopologyBuilder>? configureTopology)
         where TBehavior : class
@@ -188,12 +270,12 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
         }
 
         public IRestBehaviorEndpointGroupBuilder MapGeneratedProfiles()
-            => AddGeneratedProfiles(behaviorIdPrefix: null);
+            => MapGeneratedProfilesCore(behaviorIdPrefix: null);
 
         public IRestBehaviorEndpointGroupBuilder MapGeneratedProfiles(string behaviorIdPrefix)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(behaviorIdPrefix);
-            return AddGeneratedProfiles(behaviorIdPrefix.Trim());
+            return MapGeneratedProfilesCore(behaviorIdPrefix.Trim());
         }
 
         public IRestBehaviorEndpointGroupBuilder MapProfile<TBehavior>(
@@ -304,7 +386,7 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
             return this;
         }
 
-        private RestBehaviorEndpointGroupBuilder AddGeneratedProfiles(string? behaviorIdPrefix)
+        internal RestBehaviorEndpointGroupBuilder MapGeneratedProfilesCore(string? behaviorIdPrefix)
         {
             var owningModuleType = moduleBuilder.ownerModuleType
                 ?? throw new InvalidOperationException(

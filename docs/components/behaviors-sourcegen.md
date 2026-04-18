@@ -131,20 +131,21 @@ emits `GetRestProfiles()` hints, including explicit binding descriptors and
 the generated module-owned shorthand path, but that metadata still does not publish public REST
 routes by itself and does not override host OpenAPI document publication policy.
 `Cephalon.Behaviors.Http` now consumes those hints through the explicit module-owned
-`MapProfile<TBehavior>()` and `MapGeneratedProfiles(...)` shorthands on
-`IRestBehaviorEndpointGroupBuilder`, preferring the generated hints and falling back only to the
-explicitly targeted behavior type's attribute or to a bounded scan of the explicit owning module
-assembly when the current assembly lacks generated type hints. Generated REST profile and binding
-hints now resolve their enum member names from the actual attribute arguments instead of assuming
-fixed numeric ordinals.
+`MapProfile<TBehavior>()`, `MapGeneratedProfiles(...)`, and
+`IRestBehaviorModuleBuilder.MapGeneratedProfileGroups(...)` shorthands, preferring the generated
+hints and falling back only to the explicitly targeted behavior type's attribute or to a bounded
+scan of the explicit owning module assembly when the current assembly lacks generated type hints.
+Generated REST profile and binding hints now resolve their enum member names from the actual
+attribute arguments instead of assuming fixed numeric ordinals.
 The build now rejects unsupported binding sources, malformed route placeholder syntax, missing or
 duplicate input-property targets, scalar-input misuse, body-binding verb restrictions,
 route-placeholder mismatches, and preserved implicit-query fallback without any explicit bindings
 earlier, while `Cephalon.Behaviors.Http` still re-checks the same contract when the runtime falls
 back to direct attribute resolution for `MapProfile<TBehavior>()` or to the bounded owner-assembly
-scan used by `MapGeneratedProfiles(...)`. Runtime normalization still lets ASP.NET Core route
-parsing stay authoritative for the final route-shape truth even after the generator moves the most
-common placeholder-shape mistakes and preserved-fallback authoring errors to compile time.
+scan used by `MapGeneratedProfiles(...)` and `MapGeneratedProfileGroups(...)`. Runtime
+normalization still lets ASP.NET Core route parsing stay authoritative for the final route-shape
+truth even after the generator moves the most common placeholder-shape mistakes and preserved-
+fallback authoring errors to compile time.
 Likewise, explicit module ownership through `IBehaviorOwnerModule`, `BehaviorModuleBase`, or
 `RestBehaviorModuleBase` remains a runtime-composition concern rather than a source-generated
 topology concern: the generator still focuses on behavior shape and topology, while the engine owns

@@ -325,7 +325,7 @@ Status update:
   authors to repeat both the route path and the behavior-id prefix manually while still using the
   same module-owned projection/materialization/candidate/governance pipeline and still never
   publishing public REST from `[AppBehavior]` alone
-- the next low-ceremony inline descriptor follow-through is now shipped locally through
+- the next low-ceremony inline descriptor follow-through is now shipped through
   `ENG-058-T157`: `Cephalon.Behaviors.Http` now also exposes `moduleId` / `displayName` /
   `description` convenience overloads for `AddRestBehaviorModule<TMarker>()`,
   `AddGeneratedRestBehaviorModule<TMarker>(configureGroup?)`, and
@@ -967,11 +967,17 @@ Status:
   profile-backed behaviors beneath one owned route group without restating each behavior
   individually, while still keeping public REST explicit, module-owned, and visible through the
   same normalized projection plus candidate-catalog runtime surfaces
+- now also shipped through `ENG-058-T163`; `IRestBehaviorModuleBuilder.MapGeneratedProfileGroups(...)`
+  lets an owning module fan one generated behavior-id root prefix out into several derived owned
+  route groups, applies optional shared group-level conventions before publication, and still keeps
+  generated publication on the same normalized projection, candidate-catalog, publication-group,
+  and runtime-catalog path instead of inventing a new generated publication source
 
 Follow-through later:
 
-- allow low-code projects to opt into broader convention-backed module projection only when it can
-  preserve the same module-owned public-boundary model and operator truth
+- keep any further low-code shorthand additions on that same module-owned generated path only when
+  selector provenance and grouped runtime truth remain readable, then evaluate broader convention-
+  backed projection only if it still preserves the same public-boundary model and operator truth
 
 ### Step 5: add explicit input-binding descriptors, then controlled configuration overrides
 
@@ -987,8 +993,9 @@ Status:
   route-placeholder truth before endpoint materialization
 - suppression visibility plus explicit-DSL-over-profile precedence is now shipped through
   `ENG-058-T66`
-- generated module shorthand plus explicit `DSL > MapProfile<TBehavior>() > MapGeneratedProfiles(...)`
-  precedence is now shipped through `ENG-058-T67`
+- generated module shorthand plus explicit `DSL > MapProfile<TBehavior>() > generated shorthand`
+  precedence is now shipped through `ENG-058-T67`, where generated shorthand now includes both
+  `MapGeneratedProfiles(...)` and `MapGeneratedProfileGroups(...)`
 - the first controlled-governance follow-through is now shipped through `ENG-058-T68`, so
   ASP.NET Core hosts can suppress descriptor-backed shorthand candidates through
   `RestApi:Suppressions` while the runtime keeps both the configured suppression-rule catalog and
@@ -1199,31 +1206,31 @@ Status:
   counts that extra dimension consistently, and hosts can target the authored shorthand endpoint
   name through `ProjectedEndpoint.OriginalEndpointName` without depending on later rewritten
   published shape
-- the next route-group governance-scope selector follow-through is now shipped locally through
+- the next route-group governance-scope selector follow-through is now shipped through
   `ENG-058-T158`, so route groups can now publish one stable `HostGovernanceScope` through
   `WithHostGovernanceScope(...)` and `OriginalProjection.HostGovernanceScope`, both
   `RestApi:Suppressions` and `RestApi:Overrides` can target `HostGovernanceScopes` directly,
   specificity now counts that extra original-shape dimension consistently, and explicit
   module-DSL routes can carry a scope without entering host governance unless
   `AllowHostGovernance()` still opts them in separately
-- the next scope-first governance-config follow-through is now shipped locally through
+- the next scope-first governance-config follow-through is now shipped through
   `ENG-058-T159`, so `HostGovernanceScopes` now also counts as a rule's primary selector beside
   `CandidateIds`, `Behaviors`, and `Modules`; scope-only suppression and override rules no longer
   fail fast just because they omit behavior or module ids, while empty-selector rules still do
-- the next scope-first runtime-parity follow-through is now shipped locally through
+- the next scope-first runtime-parity follow-through is now shipped through
   `ENG-058-T160`, so scope-only `HostGovernanceScopes` rules are now explicitly proven through the
   suppression, override, publication-group, authoring-policy, and snapshot answers without
   falling back to behavior-id selectors, and ASP.NET Core materialization now only stamps
   `RestEndpointAppliedOverrideMetadata` when the selected rule's own capability or endpoint-
   metadata action family materially changed the published answer, so capability-only no-op matches
   remain selected-only instead of surfacing false applied provenance
-- the next explicit preserved-query-fallback route-promotion follow-through is now shipped locally
+- the next explicit preserved-query-fallback route-promotion follow-through is now shipped
   through `ENG-058-T161`, so shorthand profiles that already declare explicit bindings and
   intentionally preserve source implicit query fallback can now promote that remaining query
   surface into added route placeholders through host overrides, while candidate and published
   runtime truth now clear `BindingFallbackMode` once the effective binding plan fully consumes that
   preserved fallback surface
-- the next explicit-query withdrawal guardrail follow-through is now also shipped locally through
+- the next explicit-query withdrawal guardrail follow-through is now also shipped through
   `ENG-058-T162`, so merge-mode shorthand binding removals on non-body-capable methods now fail
   fast when they would stop explicitly binding a source query-bound property unless the source
   profile intentionally declared `BehaviorRestProfile(PreserveImplicitQueryFallback = true)` or
@@ -1231,6 +1238,12 @@ Status:
   valid after the rewrite, runtime truth also stays honest by allowing
   `OriginalProjection.BindingFallbackMode` to remain `null` while
   `ProjectedEndpoint.BindingFallbackMode` becomes `PreserveSourceImplicitFallback`
+- the next generated profile-group shorthand follow-through is now also shipped through
+  `ENG-058-T163`, so one `IRestBehaviorModuleBuilder.MapGeneratedProfileGroups(...)` call can
+  derive several owned route groups from one generated root prefix, apply one shared
+  group-level convention callback to each derived group, and still keep `behavior-module-generated`
+  authoring style, source-module ownership, publication-group answers, and candidate/runtime truth
+  on the same normalized module-owned path
 - the next metadata-authoring parity follow-through is now also shipped through `ENG-058-T119`, so
   that same `preserve-source-implicit-fallback` story is no longer limited to no-explicit-plan
   shorthand candidates plus later host overrides; explicit metadata-only profiles can now opt into
@@ -1470,8 +1483,9 @@ For Cephalon, the engine-first REST baseline is now considered complete enough t
 following remain true together:
 
 - authoring stays module-owned: public REST comes from `RestBehaviorModuleBase`,
-  `MapProfile<TBehavior>()`, `MapGeneratedProfiles(...)`, or the explicit inline module helpers,
-  never from `[AppBehavior]` alone
+  `MapProfile<TBehavior>()`, generated shorthand through `MapGeneratedProfiles(...)` or
+  `MapGeneratedProfileGroups(...)`, or the explicit inline module helpers, never from
+  `[AppBehavior]` alone
 - low-ceremony authoring stays explicit and readable: inline helpers, route-group conventions,
   `WithHostGovernanceScope(...)`, and `AllowHostGovernance()` can reduce host code, but they still
   materialize the same normalized candidate/projection/publication pipeline
@@ -1509,13 +1523,15 @@ following remain true together:
 Recommended implementation sequence after the shipped normalization, runtime-catalog,
 precedence-visibility, generated-module, and rule-centric authoring-policy follow-through slices:
 
-1. extend low-code module-owned shorthand only when the projected publication source still keeps
-   module ownership, candidate identity, and grouped runtime truth readable
+1. the next low-code generated follow-through is now shipped through
+   `MapGeneratedProfileGroups(...)`, which keeps module ownership, candidate identity, and grouped
+   runtime truth readable while one generated root prefix fans out into several derived route
+   groups
 2. extend the shipped suppression-plus-override governance baseline further only after safe
    merge-withdrawal guardrails and authored-versus-effective fallback truth stay readable, and only
    if those stronger contracts keep the runtime truth model understandable instead of introducing
    hidden rule layers
 3. only then evaluate whether any additional convention-backed publication sources are worth the
-   added complexity beyond the shipped `MapProfile<TBehavior>()` and `MapGeneratedProfiles(...)`
-   surfaces
+   added complexity beyond the shipped `MapProfile<TBehavior>()`,
+   `MapGeneratedProfiles(...)`, and `MapGeneratedProfileGroups(...)` surfaces
 
