@@ -259,6 +259,7 @@ dotnet new list cephalon
 The `dotnet new` app starters also emit the same `NuGet.config`, `./.cephalon/packages/README.md`, `deploy/windows-service/README.md`, `deploy/windows-service/install-service.ps1`, `deploy/windows-service/remove-service.ps1`, `deploy/iis/README.md`, `deploy/iis/install-site.ps1`, `deploy/iis/remove-site.ps1`, `deploy/azure-app-service/README.md`, `deploy/azure-app-service/deploy-zip.ps1`, `deploy/container-image/README.md`, `deploy/container-image/publish-image.ps1`, `deploy/azure-container-apps/README.md`, `deploy/azure-container-apps/deploy-up.ps1`, `deploy/kubernetes/README.md`, `deploy/kubernetes/apply.ps1`, `deploy/kubernetes/kustomization.yaml`, `deploy/kubernetes/namespace.yaml`, `deploy/kubernetes/deployment.yaml`, `deploy/kubernetes/service.yaml`, `deploy/linux/systemd/README.md`, `deploy/linux/systemd/<App>.service`, `deploy/linux/systemd/<App>.env`, `.dockerignore`, `Dockerfile`, `compose.yaml`, and `otel-collector-config.yaml` baseline.
 The template starters also emit the same structured phase-8 `Engine:Data`, `Engine:Identity`, `Engine:Tenancy`, `Engine:Audit`, and `Engine:Messaging` sections, using canonical ids and the same low-ceremony `Sfid` plus `Audit` starter path as `cephalon new`.
 The template pack also ships module starters, including `cephalon-module`, `cephalon-rest-module`, and `cephalon-rest-behavior-module`, so package authors can start from either a host-agnostic module, a generic REST module, or the recommended behavior-backed REST module path without leaving the `dotnet new` flow.
+For the settled engine-first REST baseline, start with `cephalon-rest-behavior-module` for behavior-backed public APIs, then continue with `docs/module-authoring.md` and `docs/architecture/rest-endpoint-authoring-strategy.md` so route ownership and host governance stay aligned with the shipped runtime model.
 
 ## Next Docs
 
@@ -273,5 +274,6 @@ The template pack also ships module starters, including `cephalon-module`, `ceph
 - [Linux systemd deployment](linux-systemd-deployment.md)
 - [App models](app-models.md)
 - [Module authoring](module-authoring.md)
+- [REST endpoint authoring strategy](architecture/rest-endpoint-authoring-strategy.md)
 - [Operations](operations.md)
 - [Package publishing](package-publishing.md)

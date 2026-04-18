@@ -154,8 +154,9 @@ That shape gives the runtime an attribute-only baseline: the single allowed patt
 the declared transports become the resolved behavior topology when no explicit topology override
 exists. Public REST is not part of that baseline; modules own REST explicitly.
 
-If a behavior wants to carry candidate REST shorthand metadata for a future generated module
-projection, keep that metadata in the HTTP package instead of overloading behavior topology:
+If a behavior wants to carry candidate REST shorthand metadata for the shipped module-owned
+profile/generated projection paths, keep that metadata in the HTTP package instead of overloading
+behavior topology:
 
 ```csharp
 using Cephalon.Behaviors.Http.Abstractions;
@@ -658,8 +659,8 @@ group unless they also explicitly target `AuthoringStyles = [behavior-module-dsl
 `AuthoringStyles` continues to mean shorthand-only targeting.
 If you want that explicit route group to publish additive selector truth without entering host
 governance yet, call `WithHostGovernanceScope("orders-read")` on the group. That stamps
-`OriginalProjection.HostGovernanceScope` for runtime inspection and future host-rule targeting, but
-still leaves the explicit group authoritative until you also call `AllowHostGovernance()`.
+`OriginalProjection.HostGovernanceScope` for runtime inspection and current host-rule targeting,
+but still leaves the explicit group authoritative until you also call `AllowHostGovernance()`.
 When you intentionally leave the group authoritative, runtime candidates and published behavior
 endpoints now surface ordered `SkippedSuppressionIds` and `SkippedOverrideIds` for any host rules
 that targeted the route but were skipped because the group never entered the governable surface.

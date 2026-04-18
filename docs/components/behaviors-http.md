@@ -100,7 +100,7 @@ Cephalon keeps public REST module-owned:
   `ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)`
 - keep behavior attributes and topology focused on interaction pattern plus non-REST transports
 - keep `WithApiSurface(...)` for the shared generic HTTP route surface, not for REST
-- if a behavior wants to describe a future low-ceremony REST projection, use
+- if a behavior wants to describe the shipped low-ceremony REST projection paths, use
   `BehaviorRestProfileAttribute` only as metadata; it does not publish public REST by itself
 
 When a behavior declares exactly one allowed pattern plus one or more allowed transports, the
@@ -141,10 +141,10 @@ the behavior id:
 
 ## Metadata-only REST profiles
 
-When a team wants lower-ceremony REST authoring later, the current shipped path is metadata first,
-not direct public route activation. `BehaviorRestProfileAttribute` lets a behavior declare a
-candidate REST method, relative pattern, and optional API major version for future module-owned
-generated projections:
+When a team wants lower-ceremony REST authoring, the shipped path is metadata first, not direct
+public route activation. `BehaviorRestProfileAttribute` lets a behavior declare a candidate REST
+method, relative pattern, and optional API major version for module-owned `MapProfile<TBehavior>()`,
+`MapGeneratedProfiles(...)`, and `MapGeneratedProfileGroups(...)` projections:
 
 ```csharp
 using Cephalon.Behaviors.Http.Abstractions;
