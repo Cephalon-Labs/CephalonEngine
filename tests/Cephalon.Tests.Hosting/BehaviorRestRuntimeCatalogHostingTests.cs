@@ -342,7 +342,6 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
         var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
         var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
-        var candidatesJson = await client.GetStringAsync("/engine/rest-endpoint-candidates");
 
         Assert.NotNull(endpoints);
         Assert.NotNull(candidates);
@@ -478,7 +477,6 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
         var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
         var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
-        var candidatesJson = await client.GetStringAsync("/engine/rest-endpoint-candidates");
 
         Assert.NotNull(endpoints);
         Assert.NotNull(candidates);
@@ -7755,6 +7753,128 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonAppliesMergeBindingRemovalAndPreservesImplicitQueryFallbackVisibilityForExplicitProfile()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.Configuration["RestApi:Overrides:withdraw-query-quantity:Behaviors:0"] = "tests.rest.profile.bindings.query.explicit.withdraw.preserved";
+        builder.Configuration["RestApi:Overrides:withdraw-query-quantity:RemovedBindingProperties:0"] = "Quantity";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileBindingExplicitQueryWithdrawalPreservedRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var runtimeCandidateCatalog = app.Services.GetService(typeof(IRestEndpointCandidateRuntimeCatalog)) as IRestEndpointCandidateRuntimeCatalog;
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(snapshot);
+
+        var endpoint = Assert.Single(endpoints, static item =>
+            string.Equals(item.BehaviorId, "tests.rest.profile.bindings.query.explicit.withdraw.preserved", StringComparison.Ordinal));
+        Assert.Equal("/api/v6/tests/profile-runtime/query-explicit-withdraw/orders/lookup/{orderId}", endpoint.RoutePattern);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback,
+            endpoint.BindingFallbackMode);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback.GetWireName(),
+            endpoint.Metadata["bindingFallbackMode"]);
+        Assert.Single(endpoint.BindingDescriptors);
+        Assert.Contains(endpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "OrderId" &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "orderId");
+
+        Assert.NotNull(runtimeCandidateCatalog);
+        var runtimeCandidate = Assert.Single(runtimeCandidateCatalog.Candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.profile.bindings.query.explicit.withdraw.preserved", StringComparison.Ordinal));
+        Assert.Null(runtimeCandidate.OriginalProjection.BindingFallbackMode);
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.profile.bindings.query.explicit.withdraw.preserved", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+        Assert.Equal("withdraw-query-quantity", candidate.AppliedOverrideId);
+        Assert.Null(candidate.OriginalProjection.BindingFallbackMode);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback,
+            candidate.ProjectedEndpoint.BindingFallbackMode);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback.GetWireName(),
+            candidate.ProjectedEndpoint.Metadata["bindingFallbackMode"]);
+
+        var response = await client.GetAsync("/api/v6/tests/profile-runtime/query-explicit-withdraw/orders/lookup/ord-71?quantity=14");
+        response.EnsureSuccessStatusCode();
+
+        var payload = await response.Content.ReadFromJsonAsync<ProfileBindingQueryFallbackPartialRuntimeOutput>();
+        Assert.NotNull(payload);
+        Assert.Equal("ord-71", payload.OrderId);
+        Assert.Equal(14, payload.Quantity);
+
+        Assert.Contains(snapshot.RestEndpoints, static item =>
+            string.Equals(item.BehaviorId, "tests.rest.profile.bindings.query.explicit.withdraw.preserved", StringComparison.Ordinal) &&
+            item.BindingFallbackMode == RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback &&
+            string.Equals(
+                item.Metadata["bindingFallbackMode"],
+                RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback.GetWireName(),
+                StringComparison.Ordinal));
+        Assert.Contains(snapshot.RestEndpointCandidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.rest.profile.bindings.query.explicit.withdraw.preserved", StringComparison.Ordinal) &&
+            item.ProjectedEndpoint.BindingFallbackMode == RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback &&
+            string.Equals(
+                item.ProjectedEndpoint.Metadata["bindingFallbackMode"],
+                RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback.GetWireName(),
+                StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void MapCephalonRejectsMergeBindingRemovalWhenExplicitQueryBindingWouldStopBindingWithoutPreserveFlag()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "6";
+        builder.Configuration["OpenApi:DefaultVersion"] = "6";
+        builder.Configuration["RestApi:Overrides:withdraw-query-quantity:Behaviors:0"] = "tests.rest.profile.bindings.query.explicit.withdraw";
+        builder.Configuration["RestApi:Overrides:withdraw-query-quantity:RemovedBindingProperties:0"] = "Quantity";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileBindingExplicitQueryWithdrawalRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        using var app = builder.Build();
+        var exception = Assert.Throws<InvalidOperationException>(() => app.MapCephalon());
+
+        Assert.Contains("withdraw-query-quantity", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(nameof(ProfileBindingQueryFallbackPartialRuntimeInput.Quantity), exception.Message, StringComparison.Ordinal);
+        Assert.Contains("PreserveImplicitQueryFallback", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("ClearBindings", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task MapCephalonAppliesClearBindingsOverridesAndReturnsToImplicitRequestBindingBaseline()
     {
         var builder = WebApplication.CreateBuilder();
@@ -9110,6 +9230,38 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         }
     }
 
+    private sealed class ProfileBindingExplicitQueryWithdrawalRuntimeCatalogModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.profile-runtime.bindings.query.explicit.withdraw",
+            "Profile Runtime Explicit Query Withdraw Module",
+            "Publishes a profile-driven REST endpoint whose host binding rewrite would otherwise stop binding a source explicit query property without preserve intent.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Group("/tests/profile-runtime/query-explicit-withdraw/orders")
+                .WithTagName("Profile Runtime Explicit Query Withdraw API")
+                .MapProfile<GetProfileBindingExplicitQueryWithdrawalRuntimeOrderBehavior>();
+        }
+    }
+
+    private sealed class ProfileBindingExplicitQueryWithdrawalPreservedRuntimeCatalogModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.profile-runtime.bindings.query.explicit.withdraw.preserved",
+            "Profile Runtime Explicit Query Withdraw Preserved Module",
+            "Publishes a profile-driven REST endpoint whose host binding rewrite keeps preserved implicit query fallback truthful after one explicit query binding is withdrawn.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Group("/tests/profile-runtime/query-explicit-withdraw/orders")
+                .WithTagName("Profile Runtime Explicit Query Withdraw API")
+                .MapProfile<GetProfileBindingExplicitQueryWithdrawalPreservedRuntimeOrderBehavior>();
+        }
+    }
+
     private static string BuildBehaviorProjectionCandidateId(
         string sourceModuleId,
         string behaviorId,
@@ -9627,6 +9779,40 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     [BehaviorRestProfile(BehaviorRestMethod.Get, "/lookup/{orderId}", ApiVersionMajor = 6, PreserveImplicitQueryFallback = true)]
     [BehaviorRestBinding(nameof(ProfileBindingQueryFallbackPartialRuntimeInput.OrderId), BehaviorRestBindingSource.Route, Name = "orderId")]
     private sealed class GetProfileBindingExplicitQueryFallbackRuntimeOrderBehavior : IAppBehavior<ProfileBindingQueryFallbackPartialRuntimeInput, ProfileBindingQueryFallbackPartialRuntimeOutput>
+    {
+        public Task<ProfileBindingQueryFallbackPartialRuntimeOutput> HandleAsync(
+            ProfileBindingQueryFallbackPartialRuntimeInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProfileBindingQueryFallbackPartialRuntimeOutput(
+                input.OrderId,
+                input.Quantity));
+        }
+    }
+
+    [AppBehavior("tests.rest.profile.bindings.query.explicit.withdraw")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/lookup/{orderId}", ApiVersionMajor = 6)]
+    [BehaviorRestBinding(nameof(ProfileBindingQueryFallbackPartialRuntimeInput.OrderId), BehaviorRestBindingSource.Route, Name = "orderId")]
+    [BehaviorRestBinding(nameof(ProfileBindingQueryFallbackPartialRuntimeInput.Quantity), BehaviorRestBindingSource.Query, Name = "quantity")]
+    private sealed class GetProfileBindingExplicitQueryWithdrawalRuntimeOrderBehavior : IAppBehavior<ProfileBindingQueryFallbackPartialRuntimeInput, ProfileBindingQueryFallbackPartialRuntimeOutput>
+    {
+        public Task<ProfileBindingQueryFallbackPartialRuntimeOutput> HandleAsync(
+            ProfileBindingQueryFallbackPartialRuntimeInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProfileBindingQueryFallbackPartialRuntimeOutput(
+                input.OrderId,
+                input.Quantity));
+        }
+    }
+
+    [AppBehavior("tests.rest.profile.bindings.query.explicit.withdraw.preserved")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/lookup/{orderId}", ApiVersionMajor = 6, PreserveImplicitQueryFallback = true)]
+    [BehaviorRestBinding(nameof(ProfileBindingQueryFallbackPartialRuntimeInput.OrderId), BehaviorRestBindingSource.Route, Name = "orderId")]
+    [BehaviorRestBinding(nameof(ProfileBindingQueryFallbackPartialRuntimeInput.Quantity), BehaviorRestBindingSource.Query, Name = "quantity")]
+    private sealed class GetProfileBindingExplicitQueryWithdrawalPreservedRuntimeOrderBehavior : IAppBehavior<ProfileBindingQueryFallbackPartialRuntimeInput, ProfileBindingQueryFallbackPartialRuntimeOutput>
     {
         public Task<ProfileBindingQueryFallbackPartialRuntimeOutput> HandleAsync(
             ProfileBindingQueryFallbackPartialRuntimeInput input,

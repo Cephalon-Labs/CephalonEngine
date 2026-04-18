@@ -2358,6 +2358,80 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverPreservesImplicitQueryFallbackWhenMergeBindingRemovalLeavesDeclaredQuerySurface()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-binding-explicit-query-withdraw")
+            .MapProfile<ProfileProjectionPreservedExplicitQueryBindingBehavior>();
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.profile-binding-explicit-query-withdraw",
+                "Profile Binding Explicit Query Withdraw Module",
+                "Exercises merge-mode query-binding withdrawal when an explicit shorthand profile already preserves the remaining implicit query fallback surface.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "withdraw-query-quantity",
+                    behaviorIds: ["tests.profile.projection.query.explicit.withdraw.preserved"],
+                    removedBindingProperties: [nameof(ProfileProjectionBoundInput.Quantity)])
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Equal("withdraw-query-quantity", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal("/api/v6/tests/profile-binding-explicit-query-withdraw/lookup/{cartId}", candidate.Candidate.ProjectedEndpoint.RoutePattern);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback,
+            candidate.Candidate.OriginalProjection.BindingFallbackMode);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback,
+            candidate.Candidate.ProjectedEndpoint.BindingFallbackMode);
+        Assert.Equal(
+            RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback.GetWireName(),
+            candidate.Candidate.ProjectedEndpoint.Metadata["bindingFallbackMode"]);
+        Assert.Equal(2, candidate.Candidate.OriginalProjection.BindingDescriptors.Count);
+        Assert.Single(candidate.Candidate.ProjectedEndpoint.BindingDescriptors);
+        Assert.Contains(candidate.Candidate.ProjectedEndpoint.BindingDescriptors, static binding =>
+            binding.PropertyName == "CartId" &&
+            binding.Source == RestEndpointBindingSource.Route &&
+            binding.Name == "cartId");
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverRejectsMergeBindingRemovalWhenExplicitQueryBindingWouldStopBindingWithoutPreserveFlag()
+    {
+        var builder = new RestBehaviorModuleBuilder();
+        builder.Group("/tests/profile-binding-explicit-query-invalid-withdraw")
+            .MapProfile<ProfileProjectionExplicitQueryBindingBehavior>();
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+                new ModuleDescriptor(
+                    "tests.rest.profile-binding-explicit-query-invalid-withdraw",
+                    "Profile Binding Explicit Query Invalid Withdraw Module",
+                    "Exercises fail-fast validation when a partial shorthand binding rewrite would stop binding a source explicit query property without preserve intent.",
+                    version: "1.0.0"),
+                new ApiRoutesOptions(),
+                builder.Build().Groups,
+                overrides:
+                [
+                    new RestEndpointOverrideOptions(
+                        id: "withdraw-query-quantity",
+                        behaviorIds: ["tests.profile.projection.query.explicit.withdraw"],
+                        removedBindingProperties: [nameof(ProfileProjectionBoundInput.Quantity)])
+                ]));
+
+        Assert.Contains("withdraw-query-quantity", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(nameof(ProfileProjectionBoundInput.Quantity), exception.Message, StringComparison.Ordinal);
+        Assert.Contains("PreserveImplicitQueryFallback", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("ClearBindings", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverAllowsPlaceholderRemovalWhenAffectedPropertiesStayExplicitlyBound()
     {
         var builder = new RestBehaviorModuleBuilder();
@@ -5682,6 +5756,36 @@ public sealed class BehaviorRestProjectionTests
     [BehaviorRestProfile(BehaviorRestMethod.Get, "/lookup/{cartId}", ApiVersionMajor = 6, PreserveImplicitQueryFallback = true)]
     [BehaviorRestBinding(nameof(ProfileProjectionBoundInput.CartId), BehaviorRestBindingSource.Route, Name = "cartId")]
     private sealed class ProfileProjectionPreservedQueryBindingBehavior : IAppBehavior<ProfileProjectionBoundInput, ProjectionCartOutput>
+    {
+        public Task<ProjectionCartOutput> HandleAsync(
+            ProfileProjectionBoundInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProjectionCartOutput(input.CartId));
+        }
+    }
+
+    [AppBehavior("tests.profile.projection.query.explicit.withdraw")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/lookup/{cartId}", ApiVersionMajor = 6)]
+    [BehaviorRestBinding(nameof(ProfileProjectionBoundInput.CartId), BehaviorRestBindingSource.Route, Name = "cartId")]
+    [BehaviorRestBinding(nameof(ProfileProjectionBoundInput.Quantity), BehaviorRestBindingSource.Query, Name = "quantity")]
+    private sealed class ProfileProjectionExplicitQueryBindingBehavior : IAppBehavior<ProfileProjectionBoundInput, ProjectionCartOutput>
+    {
+        public Task<ProjectionCartOutput> HandleAsync(
+            ProfileProjectionBoundInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new ProjectionCartOutput(input.CartId));
+        }
+    }
+
+    [AppBehavior("tests.profile.projection.query.explicit.withdraw.preserved")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/lookup/{cartId}", ApiVersionMajor = 6, PreserveImplicitQueryFallback = true)]
+    [BehaviorRestBinding(nameof(ProfileProjectionBoundInput.CartId), BehaviorRestBindingSource.Route, Name = "cartId")]
+    [BehaviorRestBinding(nameof(ProfileProjectionBoundInput.Quantity), BehaviorRestBindingSource.Query, Name = "quantity")]
+    private sealed class ProfileProjectionPreservedExplicitQueryBindingBehavior : IAppBehavior<ProfileProjectionBoundInput, ProjectionCartOutput>
     {
         public Task<ProjectionCartOutput> HandleAsync(
             ProfileProjectionBoundInput input,

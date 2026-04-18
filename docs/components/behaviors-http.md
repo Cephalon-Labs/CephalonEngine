@@ -194,6 +194,10 @@ Current profile behavior:
   the explicitly targeted behavior type's attribute only when generated hints are unavailable
 - valid profiles currently require a supported REST method, a non-empty leading-slash relative
   pattern such as `"/{cartId}"`, and a positive `ApiVersionMajor` when one is specified
+- when a profile declares explicit bindings, `BehaviorRestProfile(PreserveImplicitQueryFallback = true)`
+  is now the only author-side contract that allows a later host merge override to re-expose the
+  remaining source query surface without turning that rewrite into a fail-fast invalid binding
+  transition
 - `BehaviorRestMethod` now also exposes `BehaviorRestMethodExtensions` plus the same stable `get`,
   `post`, `put`, `patch`, and `delete` wire names that JSON serialization uses; source generation
   validates profile methods against that canonical vocabulary while still emitting the resolved enum
@@ -597,7 +601,10 @@ Current helper behavior:
   backed by `RestEndpointBindingFallbackMode`, additive
   `metadata.bindingFallbackMode = preserve-source-implicit-fallback` and
   `metadata.bindingFallbackMode = preserve-remaining-body-fallback` remain compatibility-only
-  metadata, `ClearBindings = true` can now also discard the source shorthand explicit binding plan
+  metadata, merge-mode removals on non-body-capable methods now also fail fast when they would
+  stop explicitly binding a source query-bound property unless that property still belongs to a
+  profile that intentionally preserved source implicit query fallback, `ClearBindings = true` can
+  now also discard the source shorthand explicit binding plan
   entirely and return the candidate to the implicit route/query/body baseline, but that clear
   fails fast if the effective route placeholders would only remain satisfiable through removed
   explicit route-binding aliases, and explicit module DSL/manual routes plus shorthand groups with explicit
@@ -638,6 +645,10 @@ candidate, the effective tag now flows through actual ASP.NET Core endpoint tag 
 candidate and published runtime catalogs while `OriginalProjection.TagName` preserves the source
 shorthand tag; if only some candidates in one authored group are retagged, materialization splits
 the effective published groups so runtime truth and actual tag metadata stay aligned.
+That same split now applies to binding fallback truth too: `OriginalProjection.BindingFallbackMode`
+stays the authored-source answer, while `ProjectedEndpoint.BindingFallbackMode` and the final
+published endpoint may surface `PreserveSourceImplicitFallback` only when a winning override
+legitimately re-exposes preserved remaining query surface after explicit binding withdrawal.
 `OriginalProjection` now also carries `AllowsHostGovernance`, so both candidate and published
 runtime answers show whether host suppression or override rules were even allowed to participate.
 Shorthand candidates publish that flag as `true` by default, while explicit module-DSL routes

@@ -1022,6 +1022,16 @@ internal static class RestBehaviorProjectionCandidateResolver
                 effectiveEndpointProjection.Pattern);
         }
 
+        if (shouldRevalidateBindings && normalizedBindings is not null)
+        {
+            ValidateExplicitQueryBindingRewrite(
+                matchedOverride.Id,
+                endpointProjection,
+                effectiveEndpointProjection.Method,
+                normalizedBindings,
+                matchedOverride.ClearBindings);
+        }
+
         var preserveImplicitQueryFallback = shouldRevalidateBindings && normalizedBindings is not null
             ? normalizedBindings.Count > 0 &&
               (endpointProjection.PreserveImplicitQueryFallback || endpointProjection.Bindings.Count == 0)
@@ -1479,6 +1489,53 @@ internal static class RestBehaviorProjectionCandidateResolver
             .Where(propertyName => !originalExplicitlyBoundProperties.Contains(propertyName))
             .Where(propertyName => !originalPlaceholders.Contains(propertyName))
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static void ValidateExplicitQueryBindingRewrite(
+        string overrideId,
+        RestBehaviorEndpointProjection sourceProjection,
+        RestBehaviorHttpMethod effectiveMethod,
+        IReadOnlyList<BehaviorRestBindingDescriptor> effectiveBindings,
+        bool clearBindings)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(overrideId);
+        ArgumentNullException.ThrowIfNull(sourceProjection);
+        ArgumentNullException.ThrowIfNull(effectiveBindings);
+
+        if (clearBindings ||
+            sourceProjection.PreserveImplicitQueryFallback ||
+            sourceProjection.Bindings.Count == 0 ||
+            effectiveMethod is RestBehaviorHttpMethod.Post or RestBehaviorHttpMethod.Put or RestBehaviorHttpMethod.Patch)
+        {
+            return;
+        }
+
+        var sourceExplicitQueryProperties = sourceProjection.Bindings
+            .Where(static binding => binding.Source == BehaviorRestBindingSource.Query)
+            .Select(static binding => binding.PropertyName.Trim())
+            .Where(static propertyName => !string.IsNullOrWhiteSpace(propertyName))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static propertyName => propertyName, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        if (sourceExplicitQueryProperties.Length == 0)
+        {
+            return;
+        }
+
+        var effectiveExplicitBoundProperties = effectiveBindings
+            .Where(static binding => binding is not null && !string.IsNullOrWhiteSpace(binding.PropertyName))
+            .Select(static binding => binding.PropertyName.Trim())
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var removedQueryProperties = sourceExplicitQueryProperties
+            .Where(propertyName => !effectiveExplicitBoundProperties.Contains(propertyName))
+            .ToArray();
+        if (removedQueryProperties.Length == 0)
+        {
+            return;
+        }
+
+        throw new InvalidOperationException(
+            $"REST endpoint override rule '{overrideId}' cannot rewrite explicit bindings for behavior '{sourceProjection.BehaviorId}' on {effectiveMethod.ToString().ToUpperInvariant()} so that source explicit query-bound propert{(removedQueryProperties.Length == 1 ? "y" : "ies")} '{string.Join("', '", removedQueryProperties)}' would stop binding explicitly while the source profile did not declare PreserveImplicitQueryFallback. Keep those properties explicitly bound, use ClearBindings to return the shorthand endpoint fully to the implicit baseline, or declare BehaviorRestProfile(PreserveImplicitQueryFallback = true) on the source profile before relying on that remaining query surface.");
     }
 
     private static List<BehaviorRestBindingDescriptor> MergeBindings(

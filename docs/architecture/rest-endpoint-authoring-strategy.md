@@ -631,6 +631,11 @@ Current shipped baseline:
   original explicit bindings through `RemovedBindingProperties`, while failing fast if a removal
   targets a property the source shorthand never bound explicitly or if one merge rule both removes
   and overrides the same property
+- on non-body-capable methods, merge-mode withdrawals now also fail fast when they would stop
+  explicitly binding a source query-bound property unless that property still belongs to a source
+  profile that intentionally declared
+  `BehaviorRestProfile(PreserveImplicitQueryFallback = true)` or the host intentionally resets the
+  whole authored plan through `ClearBindings = true`
 - `ClearBindings = true` can now discard the source shorthand explicit binding plan entirely and
   return the candidate to the implicit request-binding baseline, while failing fast if the
   effective route would only stay valid through explicit placeholder aliases that the clear
@@ -802,6 +807,15 @@ Current rule:
   still leaves unbound route placeholders and remaining request-body fields available for
   deterministic fallback, and still fails fast when the effective method-plus-binding plan is
   invalid
+- merge-mode withdrawals must not silently demote a source explicit query binding on
+  non-body-capable methods; that rewrite is valid only when the source explicit profile preserved
+  the remaining implicit query surface intentionally or the host resets the authored plan through
+  `ClearBindings`
+- runtime fallback truth is intentionally split between authored and effective answers:
+  `OriginalProjection.BindingFallbackMode` stays source-projection truth, while
+  `ProjectedEndpoint.BindingFallbackMode` may surface
+  `PreserveSourceImplicitFallback` only when an override legitimately re-exposes preserved
+  remaining query surface
 - broader configuration-driven binding overrides beyond that explicit-binding upsert-plus-withdraw
   model remain later work
 
@@ -1025,6 +1039,13 @@ Status:
   intentionally by setting `BehaviorRestProfile(PreserveImplicitQueryFallback = true)` when at
   least one explicit binding is present; build-time `ABT0027` and runtime profile normalization now
   both fail fast when that flag is declared without explicit bindings
+- the next merge-withdrawal safeguard follow-through is now also shipped through
+  `ENG-058-T162`, so merge-mode shorthand binding removals on non-body-capable methods now fail
+  fast when they would stop explicitly binding a source query-bound property unless the source
+  profile intentionally preserved implicit query fallback or the host intentionally resets the full
+  explicit plan through `ClearBindings`, and runtime truth now keeps authored-source versus
+  effective fallback answers separate when that preserved query surface is newly re-exposed by the
+  winning override
 - the next explicit-binding remaining-body-fallback truth follow-through is now shipped through
   `ENG-058-T114`, so body-capable shorthand candidates with explicit bindings now also publish
   typed `BindingFallbackMode = PreserveRemainingBodyFallback` when unbound properties still remain
@@ -1202,6 +1223,14 @@ Status:
   surface into added route placeholders through host overrides, while candidate and published
   runtime truth now clear `BindingFallbackMode` once the effective binding plan fully consumes that
   preserved fallback surface
+- the next explicit-query withdrawal guardrail follow-through is now also shipped locally through
+  `ENG-058-T162`, so merge-mode shorthand binding removals on non-body-capable methods now fail
+  fast when they would stop explicitly binding a source query-bound property unless the source
+  profile intentionally declared `BehaviorRestProfile(PreserveImplicitQueryFallback = true)` or
+  the host intentionally resets the plan through `ClearBindings`; when preserved fallback remains
+  valid after the rewrite, runtime truth also stays honest by allowing
+  `OriginalProjection.BindingFallbackMode` to remain `null` while
+  `ProjectedEndpoint.BindingFallbackMode` becomes `PreserveSourceImplicitFallback`
 - the next metadata-authoring parity follow-through is now also shipped through `ENG-058-T119`, so
   that same `preserve-source-implicit-fallback` story is no longer limited to no-explicit-plan
   shorthand candidates plus later host overrides; explicit metadata-only profiles can now opt into
@@ -1450,11 +1479,19 @@ following remain true together:
   publication groups, authoring-policy answers, suppression catalogs, override catalogs, and
   `snapshot` all describe the same winning-versus-skipped governance story without hidden host-only
   state
+- merge-mode shorthand binding withdrawals stay safe: on non-body-capable methods a host cannot
+  silently stop explicitly binding a source query-bound property unless the source profile
+  deliberately preserved that remaining implicit query surface or the host intentionally resets the
+  authored explicit plan through `ClearBindings`
 - operator surfaces stay first-class: `/engine/rest-endpoints`, `/engine/rest-endpoint-candidates`,
   `/engine/rest-endpoint-publication-groups`, `/engine/rest-endpoint-authoring-policies`,
   `/engine/rest-endpoint-suppressions`, `/engine/rest-endpoint-overrides`, and `snapshot` must be
   enough to explain what published, what stayed suppressed, which rules matched, which rules were
   skipped, and why
+- authored-versus-effective fallback truth stays explicit: `OriginalProjection.BindingFallbackMode`
+  remains the source projection answer, while `ProjectedEndpoint.BindingFallbackMode` and the final
+  published endpoint may surface preserved fallback only when an override legitimately re-exposes
+  that remaining source-owned query surface
 - host governance stays explicit and bounded: shorthand candidates remain the default governance
   target, explicit module-DSL routes only participate when the owning group opts in, and selectors
   such as `EndpointNames`, `HostGovernanceScopes`, and `TargetBindings` keep matching the original
@@ -1474,8 +1511,10 @@ precedence-visibility, generated-module, and rule-centric authoring-policy follo
 
 1. extend low-code module-owned shorthand only when the projected publication source still keeps
    module ownership, candidate identity, and grouped runtime truth readable
-2. extend the shipped suppression-plus-override governance baseline further only if those stronger
-   contracts keep the runtime truth model understandable instead of introducing hidden rule layers
+2. extend the shipped suppression-plus-override governance baseline further only after safe
+   merge-withdrawal guardrails and authored-versus-effective fallback truth stay readable, and only
+   if those stronger contracts keep the runtime truth model understandable instead of introducing
+   hidden rule layers
 3. only then evaluate whether any additional convention-backed publication sources are worth the
    added complexity beyond the shipped `MapProfile<TBehavior>()` and `MapGeneratedProfiles(...)`
    surfaces
