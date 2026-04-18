@@ -62,6 +62,22 @@ public sealed class RestEndpointAuthoringPolicyAuthoringStyleDescriptor
     /// The ordered override-rule identifiers that targeted host-governance-ineligible candidates
     /// for this authoring style.
     /// </param>
+    /// <param name="governanceSuppressionSummaries">
+    /// The grouped host-governance suppression-rule outcomes summarized by rule for this
+    /// authoring style.
+    /// </param>
+    /// <param name="governanceOverrideSummaries">
+    /// The grouped host-governance override-rule outcomes summarized by rule for this authoring
+    /// style.
+    /// </param>
+    /// <param name="skippedSuppressionSummaries">
+    /// The grouped host-governance-skipped suppression-rule outcomes summarized by rule for this
+    /// authoring style.
+    /// </param>
+    /// <param name="skippedOverrideSummaries">
+    /// The grouped host-governance-skipped override-rule outcomes summarized by rule for this
+    /// authoring style.
+    /// </param>
     public RestEndpointAuthoringPolicyAuthoringStyleDescriptor(
         string authoringStyle,
         IReadOnlyList<string>? candidateIds = null,
@@ -75,7 +91,11 @@ public sealed class RestEndpointAuthoringPolicyAuthoringStyleDescriptor
         IReadOnlyList<string>? hostGovernanceEligibleCandidateIds = null,
         IReadOnlyList<string>? hostGovernanceIneligibleCandidateIds = null,
         IReadOnlyList<string>? skippedSuppressionIds = null,
-        IReadOnlyList<string>? skippedOverrideIds = null)
+        IReadOnlyList<string>? skippedOverrideIds = null,
+        IReadOnlyList<RestEndpointGovernanceSuppressionSummaryDescriptor>? governanceSuppressionSummaries = null,
+        IReadOnlyList<RestEndpointGovernanceOverrideSummaryDescriptor>? governanceOverrideSummaries = null,
+        IReadOnlyList<RestEndpointGovernanceSkippedSuppressionSummaryDescriptor>? skippedSuppressionSummaries = null,
+        IReadOnlyList<RestEndpointGovernanceSkippedOverrideSummaryDescriptor>? skippedOverrideSummaries = null)
     {
         if (string.IsNullOrWhiteSpace(authoringStyle))
         {
@@ -126,6 +146,54 @@ public sealed class RestEndpointAuthoringPolicyAuthoringStyleDescriptor
         var normalizedHostGovernanceIneligibleCandidateIds = NormalizeOrderedList(hostGovernanceIneligibleCandidateIds);
         var normalizedSkippedSuppressionIds = NormalizeOrderedList(skippedSuppressionIds);
         var normalizedSkippedOverrideIds = NormalizeOrderedList(skippedOverrideIds);
+        var normalizedGovernanceSuppressionSummaries = governanceSuppressionSummaries is null
+            ? []
+            : RestEndpointGovernanceSuppressionSummaryBuilder.Normalize(
+                governanceSuppressionSummaries,
+                candidateIdSet,
+                nameof(governanceSuppressionSummaries));
+        var normalizedGovernanceOverrideSummaries = governanceOverrideSummaries is null
+            ? []
+            : RestEndpointGovernanceOverrideSummaryBuilder.Normalize(
+                governanceOverrideSummaries,
+                candidateIdSet,
+                nameof(governanceOverrideSummaries));
+        var normalizedSkippedSuppressionSummaries = skippedSuppressionSummaries is null
+            ? []
+            : RestEndpointGovernanceSkippedSuppressionSummaryBuilder.Normalize(
+                skippedSuppressionSummaries,
+                candidateIdSet,
+                nameof(skippedSuppressionSummaries));
+        var normalizedSkippedOverrideSummaries = skippedOverrideSummaries is null
+            ? []
+            : RestEndpointGovernanceSkippedOverrideSummaryBuilder.Normalize(
+                skippedOverrideSummaries,
+                candidateIdSet,
+                nameof(skippedOverrideSummaries));
+        if (normalizedGovernanceSuppressedCandidateIds.Length == 0 &&
+            normalizedGovernanceSuppressionSummaries.Length > 0)
+        {
+            normalizedGovernanceSuppressedCandidateIds =
+                RestEndpointGovernanceSuppressionSummaryBuilder.BuildSuppressedCandidateIds(
+                    normalizedGovernanceSuppressionSummaries);
+        }
+
+        if (normalizedSkippedSuppressionIds.Length == 0 &&
+            normalizedSkippedSuppressionSummaries.Length > 0)
+        {
+            normalizedSkippedSuppressionIds =
+                RestEndpointGovernanceSkippedSuppressionSummaryBuilder.BuildRuleIds(
+                    normalizedSkippedSuppressionSummaries);
+        }
+
+        if (normalizedSkippedOverrideIds.Length == 0 &&
+            normalizedSkippedOverrideSummaries.Length > 0)
+        {
+            normalizedSkippedOverrideIds =
+                RestEndpointGovernanceSkippedOverrideSummaryBuilder.BuildRuleIds(
+                    normalizedSkippedOverrideSummaries);
+        }
+
         var retainedCandidateIdSet = normalizedRetainedCandidateIds.ToHashSet(StringComparer.OrdinalIgnoreCase);
 
         if (normalizedSuppressionSummaries.Length > 0)
@@ -176,6 +244,16 @@ public sealed class RestEndpointAuthoringPolicyAuthoringStyleDescriptor
         {
             throw new ArgumentException(
                 "Governance-suppressed candidate ids must refer to candidates in the grouped authoring-style answer.",
+                nameof(governanceSuppressedCandidateIds));
+        }
+
+        if (normalizedGovernanceSuppressionSummaries.Length > 0 &&
+            !normalizedGovernanceSuppressedCandidateIds.ToHashSet(StringComparer.OrdinalIgnoreCase).SetEquals(
+                RestEndpointGovernanceSuppressionSummaryBuilder.BuildSuppressedCandidateIds(
+                    normalizedGovernanceSuppressionSummaries)))
+        {
+            throw new ArgumentException(
+                "Governance suppression summaries must describe the same candidate ids as the grouped authoring-style governance-suppressed candidate bucket.",
                 nameof(governanceSuppressedCandidateIds));
         }
 
@@ -242,6 +320,26 @@ public sealed class RestEndpointAuthoringPolicyAuthoringStyleDescriptor
                 nameof(hostGovernanceEligibleCandidateIds));
         }
 
+        if (normalizedSkippedSuppressionSummaries.Length > 0 &&
+            !normalizedSkippedSuppressionIds.SequenceEqual(
+                RestEndpointGovernanceSkippedSuppressionSummaryBuilder.BuildRuleIds(normalizedSkippedSuppressionSummaries),
+                StringComparer.OrdinalIgnoreCase))
+        {
+            throw new ArgumentException(
+                "Skipped suppression summaries must describe the same rule ids as the grouped authoring-style skipped suppression bucket.",
+                nameof(skippedSuppressionIds));
+        }
+
+        if (normalizedSkippedOverrideSummaries.Length > 0 &&
+            !normalizedSkippedOverrideIds.SequenceEqual(
+                RestEndpointGovernanceSkippedOverrideSummaryBuilder.BuildRuleIds(normalizedSkippedOverrideSummaries),
+                StringComparer.OrdinalIgnoreCase))
+        {
+            throw new ArgumentException(
+                "Skipped override summaries must describe the same rule ids as the grouped authoring-style skipped override bucket.",
+                nameof(skippedOverrideIds));
+        }
+
         AuthoringStyle = authoringStyle.Trim();
         CandidateIds = normalizedCandidateIds;
         RetainedCandidateIds = normalizedRetainedCandidateIds;
@@ -255,6 +353,10 @@ public sealed class RestEndpointAuthoringPolicyAuthoringStyleDescriptor
         HostGovernanceIneligibleCandidateIds = normalizedHostGovernanceIneligibleCandidateIds;
         SkippedSuppressionIds = normalizedSkippedSuppressionIds;
         SkippedOverrideIds = normalizedSkippedOverrideIds;
+        GovernanceSuppressionSummaries = normalizedGovernanceSuppressionSummaries;
+        GovernanceOverrideSummaries = normalizedGovernanceOverrideSummaries;
+        SkippedSuppressionSummaries = normalizedSkippedSuppressionSummaries;
+        SkippedOverrideSummaries = normalizedSkippedOverrideSummaries;
     }
 
     /// <summary>
@@ -321,6 +423,26 @@ public sealed class RestEndpointAuthoringPolicyAuthoringStyleDescriptor
     /// Gets the ordered override-rule identifiers that targeted host-governance-ineligible candidates for this authoring style.
     /// </summary>
     public IReadOnlyList<string> SkippedOverrideIds { get; }
+
+    /// <summary>
+    /// Gets the grouped host-governance suppression-rule outcomes summarized by rule for this authoring style.
+    /// </summary>
+    public IReadOnlyList<RestEndpointGovernanceSuppressionSummaryDescriptor> GovernanceSuppressionSummaries { get; }
+
+    /// <summary>
+    /// Gets the grouped host-governance override-rule outcomes summarized by rule for this authoring style.
+    /// </summary>
+    public IReadOnlyList<RestEndpointGovernanceOverrideSummaryDescriptor> GovernanceOverrideSummaries { get; }
+
+    /// <summary>
+    /// Gets the grouped host-governance-skipped suppression-rule outcomes summarized by rule for this authoring style.
+    /// </summary>
+    public IReadOnlyList<RestEndpointGovernanceSkippedSuppressionSummaryDescriptor> SkippedSuppressionSummaries { get; }
+
+    /// <summary>
+    /// Gets the grouped host-governance-skipped override-rule outcomes summarized by rule for this authoring style.
+    /// </summary>
+    public IReadOnlyList<RestEndpointGovernanceSkippedOverrideSummaryDescriptor> SkippedOverrideSummaries { get; }
 
     private static string[] NormalizeOrderedList(IReadOnlyList<string>? values)
     {
@@ -438,8 +560,55 @@ internal static class RestEndpointAuthoringPolicyAuthoringStyleDescriptorBuilder
                         .Select(static candidate => candidate.Id)
                         .ToArray(),
                     suppressionKinds: suppressionKinds,
-                    suppressionSummaries: suppressionSummaries);
+                    suppressionSummaries: suppressionSummaries,
+                    hostGovernanceEligibleCandidateIds: orderedCandidates
+                        .Where(static candidate => candidate.OriginalProjection.AllowsHostGovernance)
+                        .Select(static candidate => candidate.Id)
+                        .ToArray(),
+                    hostGovernanceIneligibleCandidateIds: orderedCandidates
+                        .Where(static candidate => !candidate.OriginalProjection.AllowsHostGovernance)
+                        .Select(static candidate => candidate.Id)
+                        .ToArray(),
+                    skippedSuppressionIds: BuildOrderedSkippedRuleIds(
+                        orderedCandidates,
+                        static candidate => candidate.SkippedSuppressionIds),
+                    skippedOverrideIds: BuildOrderedSkippedRuleIds(
+                        orderedCandidates,
+                        static candidate => candidate.SkippedOverrideIds),
+                    governanceSuppressionSummaries: RestEndpointGovernanceSuppressionSummaryBuilder.BuildFromCandidates(orderedCandidates),
+                    governanceOverrideSummaries: RestEndpointGovernanceOverrideSummaryBuilder.BuildFromCandidates(orderedCandidates),
+                    skippedSuppressionSummaries: RestEndpointGovernanceSkippedSuppressionSummaryBuilder.BuildFromCandidates(orderedCandidates),
+                    skippedOverrideSummaries: RestEndpointGovernanceSkippedOverrideSummaryBuilder.BuildFromCandidates(orderedCandidates));
             })
             .ToArray();
+    }
+
+    private static string[] BuildOrderedSkippedRuleIds(
+        IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> candidates,
+        Func<RestEndpointCandidateRuntimeDescriptor, IReadOnlyList<string>> selector)
+    {
+        ArgumentNullException.ThrowIfNull(candidates);
+        ArgumentNullException.ThrowIfNull(selector);
+
+        var ordered = new List<string>();
+        var seen = new HashSet<string>(Comparer);
+        foreach (var candidate in candidates)
+        {
+            foreach (var value in selector(candidate))
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    continue;
+                }
+
+                var trimmed = value.Trim();
+                if (seen.Add(trimmed))
+                {
+                    ordered.Add(trimmed);
+                }
+            }
+        }
+
+        return ordered.ToArray();
     }
 }

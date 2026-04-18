@@ -92,9 +92,12 @@ rule-centric policy payload can show which normalized authoring style contribute
 which survived authoring policy, which stayed published, and which later moved into precedence,
 governance, or authoring-policy suppression buckets without reopening publication-group payloads.
 That same authoring-policy answer now also keeps `HostGovernanceEligibleCandidateIds`,
-`HostGovernanceIneligibleCandidateIds`, `SkippedSuppressionIds`, and `SkippedOverrideIds`
-visible at both the behavior level and inside each authoring-style summary, so explicit DSL
-ownership that never entered host governance remains readable from the same rule-centric surface.
+`HostGovernanceIneligibleCandidateIds`, `SkippedSuppressionIds`, `SkippedOverrideIds`,
+`GovernanceSuppressionSummaries`, `GovernanceOverrideSummaries`, `SkippedSuppressionSummaries`,
+and `SkippedOverrideSummaries` visible at both the behavior level and inside each authoring-style
+summary, so explicit DSL ownership that never entered host governance remains readable from the
+same rule-centric surface and one payload can answer which host rules matched, suppressed,
+selected, applied, or stayed skipped.
 
 The rule catalogs themselves now mirror that same truth directly: `/engine/rest-endpoint-suppressions`
 and `snapshot.RestEndpointSuppressions` surface per-rule `MatchedCandidateIds`,

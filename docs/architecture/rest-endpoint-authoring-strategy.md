@@ -1222,6 +1222,12 @@ The following points are durable enough to keep outside thread-local context.
   `SkippedSuppressionIds`, and `SkippedOverrideIds` visible at both the behavior level and inside
   each authoring-style summary, so operators can confirm when explicit ownership stayed outside
   host governance without reopening publication-group-only answers
+- that same rule-centric authoring-policy answer now also exposes typed
+  `GovernanceSuppressionSummaries`, `GovernanceOverrideSummaries`,
+  `SkippedSuppressionSummaries`, and `SkippedOverrideSummaries` at both the behavior level and
+  inside each `AuthoringStyleSummaries` entry, using the generic `RestEndpointGovernance*SummaryDescriptor`
+  contracts so operators can inspect matched-versus-suppressed, selected-versus-applied, and
+  skipped-rule candidate mappings without reopening grouped publication answers
 - those grouped publication entries now also expose typed `GovernanceSuppressionSummaries` and
   `GovernanceOverrideSummaries` at both the grouped behavior level and inside each
   `AuthoringStyleSummaries` entry, so publication-group and snapshot payloads can answer which

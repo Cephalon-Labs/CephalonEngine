@@ -201,9 +201,11 @@ candidates plus separate `CandidateIds`, `RetainedCandidateIds`, `PublishedCandi
 `AuthoringStyleSummaries` that partition those same runtime buckets by normalized authoring style
 without reopening grouped publication answers first. That same authoring-policy contract now also
 keeps `HostGovernanceEligibleCandidateIds`, `HostGovernanceIneligibleCandidateIds`,
-`SkippedSuppressionIds`, and `SkippedOverrideIds` visible at both the behavior and per-style level
-so callers can see where explicit ownership kept host governance out of scope without reopening
-publication-group answers first. The same
+`SkippedSuppressionIds`, `SkippedOverrideIds`, `GovernanceSuppressionSummaries`,
+`GovernanceOverrideSummaries`, `SkippedSuppressionSummaries`, and
+`SkippedOverrideSummaries` visible at both the behavior and per-style level so callers can see
+where explicit ownership kept host governance out of scope and which rules matched, won, applied,
+or were skipped without reopening publication-group answers first. The same
 transport namespace now also exposes
 `RestEndpointPublicationGroupGovernanceSelectionBasisSummaryDescriptor` plus
 `RestEndpointPublicationGroupGovernanceOverrideActionKindSummaryDescriptor`, and grouped

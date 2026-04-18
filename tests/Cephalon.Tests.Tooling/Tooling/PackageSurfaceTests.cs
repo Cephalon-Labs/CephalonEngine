@@ -260,6 +260,10 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointBindingSourceExtensions),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasis),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasisExtensions),
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceSuppressionSummaryDescriptor),
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceOverrideSummaryDescriptor),
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceSkippedSuppressionSummaryDescriptor),
+            typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceSkippedOverrideSummaryDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceSelectionBasisSummaryDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceOverrideActionKindSummaryDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyAuthoringStyleDescriptor),
@@ -1547,6 +1551,14 @@ public sealed class PackageSurfaceTests
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyDescriptor)
             .GetProperty("SkippedOverrideIds", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyDescriptor)
+            .GetProperty("GovernanceSuppressionSummaries", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyDescriptor)
+            .GetProperty("GovernanceOverrideSummaries", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyDescriptor)
+            .GetProperty("SkippedSuppressionSummaries", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyDescriptor)
+            .GetProperty("SkippedOverrideSummaries", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyDescriptor)
             .GetProperty("AuthoringStyleSummaries", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot)
             .GetProperty("RestEndpointAuthoringPolicies", BindingFlags.Instance | BindingFlags.Public));
@@ -1581,6 +1593,14 @@ public sealed class PackageSurfaceTests
             .GetProperty("SkippedSuppressionIds", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyAuthoringStyleDescriptor)
             .GetProperty("SkippedOverrideIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyAuthoringStyleDescriptor)
+            .GetProperty("GovernanceSuppressionSummaries", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyAuthoringStyleDescriptor)
+            .GetProperty("GovernanceOverrideSummaries", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyAuthoringStyleDescriptor)
+            .GetProperty("SkippedSuppressionSummaries", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyAuthoringStyleDescriptor)
+            .GetProperty("SkippedOverrideSummaries", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]
@@ -1589,6 +1609,56 @@ public sealed class PackageSurfaceTests
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicySuppressionSummaryDescriptor)
             .GetProperty("Kind", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicySuppressionSummaryDescriptor)
+            .GetProperty("CandidateIds", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void RestEndpointGovernanceSuppressionSummaryContractsExposeRuleAndCandidateBuckets()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceSuppressionSummaryDescriptor)
+            .GetProperty("RuleId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceSuppressionSummaryDescriptor)
+            .GetProperty("MatchedCandidateIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceSuppressionSummaryDescriptor)
+            .GetProperty("SuppressedCandidateIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceSuppressionSummaryDescriptor)
+            .GetProperty("SelectionBasisSummaries", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void RestEndpointGovernanceOverrideSummaryContractsExposeRuleAndCandidateBuckets()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceOverrideSummaryDescriptor)
+            .GetProperty("RuleId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceOverrideSummaryDescriptor)
+            .GetProperty("MatchedCandidateIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceOverrideSummaryDescriptor)
+            .GetProperty("SelectedCandidateIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceOverrideSummaryDescriptor)
+            .GetProperty("AppliedCandidateIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceOverrideSummaryDescriptor)
+            .GetProperty("SelectionBasisSummaries", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceOverrideSummaryDescriptor)
+            .GetProperty("SelectedActionKindSummaries", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceOverrideSummaryDescriptor)
+            .GetProperty("AppliedActionKindSummaries", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void RestEndpointGovernanceSkippedSuppressionSummaryContractsExposeRuleAndCandidateBuckets()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceSkippedSuppressionSummaryDescriptor)
+            .GetProperty("RuleId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceSkippedSuppressionSummaryDescriptor)
+            .GetProperty("CandidateIds", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void RestEndpointGovernanceSkippedOverrideSummaryContractsExposeRuleAndCandidateBuckets()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceSkippedOverrideSummaryDescriptor)
+            .GetProperty("RuleId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceSkippedOverrideSummaryDescriptor)
             .GetProperty("CandidateIds", BindingFlags.Instance | BindingFlags.Public));
     }
 

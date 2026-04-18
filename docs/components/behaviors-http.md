@@ -674,9 +674,13 @@ payload can partition those candidate, retained, published, precedence-suppresse
 governance-suppressed, and authoring-policy-suppressed outcomes by normalized authoring style while
 still leaving explicitly configured-but-unmatched policies visible with an empty style-summary set.
 The same authoring-policy payload now also keeps `HostGovernanceEligibleCandidateIds`,
-`HostGovernanceIneligibleCandidateIds`, `SkippedSuppressionIds`, and `SkippedOverrideIds` visible
-at both the behavior level and inside each style summary, so explicit ownership that never entered
-host governance remains visible without reopening publication-group answers first.
+`HostGovernanceIneligibleCandidateIds`, `SkippedSuppressionIds`, `SkippedOverrideIds`,
+`GovernanceSuppressionSummaries`, `GovernanceOverrideSummaries`, `SkippedSuppressionSummaries`,
+and `SkippedOverrideSummaries` visible at both the behavior level and inside each style summary,
+so explicit ownership that never entered host governance remains visible without reopening
+publication-group answers first and operators can inspect matched-versus-suppressed,
+selected-versus-applied, and skipped-rule candidate mappings from that same authoring-policy
+payload.
 
 Those same candidates now also drive the inverse per-rule runtime answer for host governance:
 `/engine/rest-endpoint-suppressions` now shows `MatchedCandidateIds`,

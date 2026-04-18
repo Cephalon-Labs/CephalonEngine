@@ -102,6 +102,14 @@ internal sealed class AspNetCoreRestEndpointAuthoringPolicyRuntimeCatalog(
         var skippedOverrideIds = BuildOrderedSkippedRuleIds(
             orderedCandidates,
             static candidate => candidate.SkippedOverrideIds);
+        var governanceSuppressionSummaries = RestEndpointGovernanceSuppressionSummaryBuilder.BuildFromCandidates(
+            orderedCandidates);
+        var governanceOverrideSummaries = RestEndpointGovernanceOverrideSummaryBuilder.BuildFromCandidates(
+            orderedCandidates);
+        var skippedSuppressionSummaries = RestEndpointGovernanceSkippedSuppressionSummaryBuilder.BuildFromCandidates(
+            orderedCandidates);
+        var skippedOverrideSummaries = RestEndpointGovernanceSkippedOverrideSummaryBuilder.BuildFromCandidates(
+            orderedCandidates);
         var suppressedCandidateIds = orderedCandidates
             .Where(static candidate =>
                 candidate.Status == RestEndpointCandidateStatus.Suppressed &&
@@ -114,8 +122,10 @@ internal sealed class AspNetCoreRestEndpointAuthoringPolicyRuntimeCatalog(
             .Distinct()
             .OrderBy(static kind => kind.GetWireName(), StringComparer.Ordinal)
             .ToArray();
-        var suppressionSummaries = BuildSuppressionSummaries(orderedCandidates);
-        var authoringStyleSummaries = BuildAuthoringStyleSummaries(orderedCandidates);
+        var suppressionSummaries = RestEndpointAuthoringPolicySuppressionSummaryBuilder.BuildFromCandidates(
+            orderedCandidates);
+        var authoringStyleSummaries = RestEndpointAuthoringPolicyAuthoringStyleDescriptorBuilder.BuildFromCandidates(
+            orderedCandidates);
         var authoringPolicy = ResolveAuthoringPolicy(behaviorId, authoringPoliciesByBehaviorId);
 
         return new RestEndpointAuthoringPolicyDescriptor(
@@ -137,7 +147,11 @@ internal sealed class AspNetCoreRestEndpointAuthoringPolicyRuntimeCatalog(
             hostGovernanceIneligibleCandidateIds,
             skippedSuppressionIds,
             skippedOverrideIds,
-            authoringStyleSummaries);
+            authoringStyleSummaries,
+            governanceSuppressionSummaries,
+            governanceOverrideSummaries,
+            skippedSuppressionSummaries,
+            skippedOverrideSummaries);
     }
 
     private static RestEndpointPublicationGroupAuthoringPolicyDescriptor ResolveAuthoringPolicy(
@@ -159,115 +173,6 @@ internal sealed class AspNetCoreRestEndpointAuthoringPolicyRuntimeCatalog(
             authoringPolicy.PreferredAuthoringStyle,
             authoringPolicy.AllowedAuthoringStyles,
             authoringPolicy.DisallowedAuthoringStyles);
-    }
-
-    private static RestEndpointAuthoringPolicySuppressionSummaryDescriptor[] BuildSuppressionSummaries(
-        IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> candidates)
-    {
-        ArgumentNullException.ThrowIfNull(candidates);
-
-        var candidateIdsByKind = new Dictionary<RestEndpointAuthoringPolicySuppressionKind, List<string>>();
-        foreach (var candidate in candidates)
-        {
-            if (candidate.SuppressedByAuthoringPolicyKind is not { } kind)
-            {
-                continue;
-            }
-
-            if (!candidateIdsByKind.TryGetValue(kind, out var candidateIds))
-            {
-                candidateIds = [];
-                candidateIdsByKind[kind] = candidateIds;
-            }
-
-            candidateIds.Add(candidate.Id);
-        }
-
-        return candidateIdsByKind
-            .OrderBy(static pair => pair.Key.GetWireName(), StringComparer.Ordinal)
-            .Select(static pair => new RestEndpointAuthoringPolicySuppressionSummaryDescriptor(pair.Key, pair.Value))
-            .ToArray();
-    }
-
-    private static RestEndpointAuthoringPolicyAuthoringStyleDescriptor[] BuildAuthoringStyleSummaries(
-        IReadOnlyList<RestEndpointCandidateRuntimeDescriptor> candidates)
-    {
-        ArgumentNullException.ThrowIfNull(candidates);
-
-        return candidates
-            .GroupBy(static candidate => candidate.AuthoringStyle, Comparer)
-            .OrderBy(static group => group.Key, Comparer)
-            .Select(static group =>
-            {
-                if (string.IsNullOrWhiteSpace(group.Key))
-                {
-                    throw new InvalidOperationException(
-                        "REST endpoint authoring-policy style summaries require candidates to expose an authoring style.");
-                }
-
-                var orderedCandidates = group
-                    .OrderBy(static candidate => candidate.PrecedenceRank)
-                    .ThenBy(static candidate => candidate.Status == RestEndpointCandidateStatus.Published ? 0 : 1)
-                    .ThenBy(static candidate => candidate.ProjectedEndpoint.RoutePattern, Comparer)
-                    .ThenBy(static candidate => candidate.ProjectedEndpoint.Method, Comparer)
-                    .ThenBy(static candidate => candidate.Id, Comparer)
-                    .ToArray();
-                var suppressionSummaries = BuildSuppressionSummaries(orderedCandidates);
-                var suppressionKinds = suppressionSummaries.Length == 0
-                    ? []
-                    : suppressionSummaries
-                        .Select(static summary => summary.Kind)
-                        .Distinct()
-                        .OrderBy(static kind => kind.GetWireName(), StringComparer.Ordinal)
-                        .ToArray();
-
-                return new RestEndpointAuthoringPolicyAuthoringStyleDescriptor(
-                    group.Key,
-                    candidateIds: orderedCandidates
-                        .Select(static candidate => candidate.Id)
-                        .ToArray(),
-                    retainedCandidateIds: orderedCandidates
-                        .Where(static candidate => candidate.SuppressedByAuthoringPolicyKind is null)
-                        .Select(static candidate => candidate.Id)
-                        .ToArray(),
-                    publishedCandidateIds: orderedCandidates
-                        .Where(static candidate => candidate.Status == RestEndpointCandidateStatus.Published)
-                        .Select(static candidate => candidate.Id)
-                        .ToArray(),
-                    precedenceSuppressedCandidateIds: orderedCandidates
-                        .Where(static candidate =>
-                            candidate.Status == RestEndpointCandidateStatus.Suppressed &&
-                            !string.IsNullOrWhiteSpace(candidate.SuppressedByCandidateId))
-                        .Select(static candidate => candidate.Id)
-                        .ToArray(),
-                    governanceSuppressedCandidateIds: orderedCandidates
-                        .Where(static candidate =>
-                            candidate.Status == RestEndpointCandidateStatus.Suppressed &&
-                            !string.IsNullOrWhiteSpace(candidate.SuppressedBySuppressionId))
-                        .Select(static candidate => candidate.Id)
-                        .ToArray(),
-                    suppressedCandidateIds: orderedCandidates
-                        .Where(static candidate =>
-                            candidate.Status == RestEndpointCandidateStatus.Suppressed &&
-                            candidate.SuppressedByAuthoringPolicyKind.HasValue)
-                        .Select(static candidate => candidate.Id)
-                        .ToArray(),
-                    suppressionKinds: suppressionKinds,
-                    suppressionSummaries: suppressionSummaries,
-                    hostGovernanceEligibleCandidateIds: BuildHostGovernanceCandidateIds(
-                        orderedCandidates,
-                        allowsHostGovernance: true),
-                    hostGovernanceIneligibleCandidateIds: BuildHostGovernanceCandidateIds(
-                        orderedCandidates,
-                        allowsHostGovernance: false),
-                    skippedSuppressionIds: BuildOrderedSkippedRuleIds(
-                        orderedCandidates,
-                        static candidate => candidate.SkippedSuppressionIds),
-                    skippedOverrideIds: BuildOrderedSkippedRuleIds(
-                        orderedCandidates,
-                        static candidate => candidate.SkippedOverrideIds));
-            })
-            .ToArray();
     }
 
     private static string[] BuildHostGovernanceCandidateIds(

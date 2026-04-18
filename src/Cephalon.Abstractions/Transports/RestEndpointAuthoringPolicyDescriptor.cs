@@ -82,6 +82,22 @@ public sealed class RestEndpointAuthoringPolicyDescriptor
     /// retained, published, precedence-suppressed, governance-suppressed, and
     /// authoring-policy-suppressed outcomes distribute across authoring styles.
     /// </param>
+    /// <param name="governanceSuppressionSummaries">
+    /// The grouped host-governance suppression-rule outcomes summarized by rule for this behavior
+    /// boundary.
+    /// </param>
+    /// <param name="governanceOverrideSummaries">
+    /// The grouped host-governance override-rule outcomes summarized by rule for this behavior
+    /// boundary.
+    /// </param>
+    /// <param name="skippedSuppressionSummaries">
+    /// The grouped host-governance-skipped suppression-rule outcomes summarized by rule for this
+    /// behavior boundary.
+    /// </param>
+    /// <param name="skippedOverrideSummaries">
+    /// The grouped host-governance-skipped override-rule outcomes summarized by rule for this
+    /// behavior boundary.
+    /// </param>
     public RestEndpointAuthoringPolicyDescriptor(
         string behaviorId,
         bool isConfigured = false,
@@ -101,7 +117,11 @@ public sealed class RestEndpointAuthoringPolicyDescriptor
         IReadOnlyList<string>? hostGovernanceIneligibleCandidateIds = null,
         IReadOnlyList<string>? skippedSuppressionIds = null,
         IReadOnlyList<string>? skippedOverrideIds = null,
-        IReadOnlyList<RestEndpointAuthoringPolicyAuthoringStyleDescriptor>? authoringStyleSummaries = null)
+        IReadOnlyList<RestEndpointAuthoringPolicyAuthoringStyleDescriptor>? authoringStyleSummaries = null,
+        IReadOnlyList<RestEndpointGovernanceSuppressionSummaryDescriptor>? governanceSuppressionSummaries = null,
+        IReadOnlyList<RestEndpointGovernanceOverrideSummaryDescriptor>? governanceOverrideSummaries = null,
+        IReadOnlyList<RestEndpointGovernanceSkippedSuppressionSummaryDescriptor>? skippedSuppressionSummaries = null,
+        IReadOnlyList<RestEndpointGovernanceSkippedOverrideSummaryDescriptor>? skippedOverrideSummaries = null)
     {
         var normalizedPolicy = new RestEndpointPublicationGroupAuthoringPolicyDescriptor(
             behaviorId,
@@ -148,6 +168,54 @@ public sealed class RestEndpointAuthoringPolicyDescriptor
         var normalizedHostGovernanceIneligibleCandidateIds = NormalizeOrderedList(hostGovernanceIneligibleCandidateIds);
         var normalizedSkippedSuppressionIds = NormalizeOrderedList(skippedSuppressionIds);
         var normalizedSkippedOverrideIds = NormalizeOrderedList(skippedOverrideIds);
+        var normalizedGovernanceSuppressionSummaries = governanceSuppressionSummaries is null
+            ? []
+            : RestEndpointGovernanceSuppressionSummaryBuilder.Normalize(
+                governanceSuppressionSummaries,
+                candidateIdSet,
+                nameof(governanceSuppressionSummaries));
+        var normalizedGovernanceOverrideSummaries = governanceOverrideSummaries is null
+            ? []
+            : RestEndpointGovernanceOverrideSummaryBuilder.Normalize(
+                governanceOverrideSummaries,
+                candidateIdSet,
+                nameof(governanceOverrideSummaries));
+        var normalizedSkippedSuppressionSummaries = skippedSuppressionSummaries is null
+            ? []
+            : RestEndpointGovernanceSkippedSuppressionSummaryBuilder.Normalize(
+                skippedSuppressionSummaries,
+                candidateIdSet,
+                nameof(skippedSuppressionSummaries));
+        var normalizedSkippedOverrideSummaries = skippedOverrideSummaries is null
+            ? []
+            : RestEndpointGovernanceSkippedOverrideSummaryBuilder.Normalize(
+                skippedOverrideSummaries,
+                candidateIdSet,
+                nameof(skippedOverrideSummaries));
+        if (normalizedGovernanceSuppressedCandidateIds.Length == 0 &&
+            normalizedGovernanceSuppressionSummaries.Length > 0)
+        {
+            normalizedGovernanceSuppressedCandidateIds =
+                RestEndpointGovernanceSuppressionSummaryBuilder.BuildSuppressedCandidateIds(
+                    normalizedGovernanceSuppressionSummaries);
+        }
+
+        if (normalizedSkippedSuppressionIds.Length == 0 &&
+            normalizedSkippedSuppressionSummaries.Length > 0)
+        {
+            normalizedSkippedSuppressionIds =
+                RestEndpointGovernanceSkippedSuppressionSummaryBuilder.BuildRuleIds(
+                    normalizedSkippedSuppressionSummaries);
+        }
+
+        if (normalizedSkippedOverrideIds.Length == 0 &&
+            normalizedSkippedOverrideSummaries.Length > 0)
+        {
+            normalizedSkippedOverrideIds =
+                RestEndpointGovernanceSkippedOverrideSummaryBuilder.BuildRuleIds(
+                    normalizedSkippedOverrideSummaries);
+        }
+
         var retainedCandidateIdSet = normalizedRetainedCandidateIds.ToHashSet(StringComparer.OrdinalIgnoreCase);
         var normalizedAuthoringStyleSummaries = NormalizeAuthoringStyleSummaries(
             authoringStyleSummaries,
@@ -201,6 +269,16 @@ public sealed class RestEndpointAuthoringPolicyDescriptor
         {
             throw new ArgumentException(
                 "Governance-suppressed candidate ids must refer to candidates in the authoring-policy runtime answer.",
+                nameof(governanceSuppressedCandidateIds));
+        }
+
+        if (normalizedGovernanceSuppressionSummaries.Length > 0 &&
+            !normalizedGovernanceSuppressedCandidateIds.ToHashSet(StringComparer.OrdinalIgnoreCase).SetEquals(
+                RestEndpointGovernanceSuppressionSummaryBuilder.BuildSuppressedCandidateIds(
+                    normalizedGovernanceSuppressionSummaries)))
+        {
+            throw new ArgumentException(
+                "Governance suppression summaries must describe the same candidate ids as the governance-suppressed candidate bucket.",
                 nameof(governanceSuppressedCandidateIds));
         }
 
@@ -265,6 +343,26 @@ public sealed class RestEndpointAuthoringPolicyDescriptor
             throw new ArgumentException(
                 "A candidate cannot be both host-governance-eligible and host-governance-ineligible in the authoring-policy runtime answer.",
                 nameof(hostGovernanceEligibleCandidateIds));
+        }
+
+        if (normalizedSkippedSuppressionSummaries.Length > 0 &&
+            !normalizedSkippedSuppressionIds.SequenceEqual(
+                RestEndpointGovernanceSkippedSuppressionSummaryBuilder.BuildRuleIds(normalizedSkippedSuppressionSummaries),
+                StringComparer.OrdinalIgnoreCase))
+        {
+            throw new ArgumentException(
+                "Skipped suppression summaries must describe the same rule ids as the skipped suppression bucket.",
+                nameof(skippedSuppressionIds));
+        }
+
+        if (normalizedSkippedOverrideSummaries.Length > 0 &&
+            !normalizedSkippedOverrideIds.SequenceEqual(
+                RestEndpointGovernanceSkippedOverrideSummaryBuilder.BuildRuleIds(normalizedSkippedOverrideSummaries),
+                StringComparer.OrdinalIgnoreCase))
+        {
+            throw new ArgumentException(
+                "Skipped override summaries must describe the same rule ids as the skipped override bucket.",
+                nameof(skippedOverrideIds));
         }
 
         if (normalizedAuthoringStyleSummaries.Length > 0)
@@ -379,6 +477,62 @@ public sealed class RestEndpointAuthoringPolicyDescriptor
                         nameof(authoringStyleSummaries));
                 }
             }
+
+            if (normalizedGovernanceSuppressionSummaries.Length > 0)
+            {
+                var mergedGovernanceSuppressionSummaries = MergeAuthoringStyleGovernanceSuppressionSummaries(
+                    normalizedAuthoringStyleSummaries);
+                if (!GovernanceSuppressionSummariesMatch(
+                        normalizedGovernanceSuppressionSummaries,
+                        mergedGovernanceSuppressionSummaries))
+                {
+                    throw new ArgumentException(
+                        "Authoring-style summaries must describe the same grouped governance suppression outcomes as the authoring-policy runtime answer.",
+                        nameof(authoringStyleSummaries));
+                }
+            }
+
+            if (normalizedGovernanceOverrideSummaries.Length > 0)
+            {
+                var mergedGovernanceOverrideSummaries = MergeAuthoringStyleGovernanceOverrideSummaries(
+                    normalizedAuthoringStyleSummaries);
+                if (!GovernanceOverrideSummariesMatch(
+                        normalizedGovernanceOverrideSummaries,
+                        mergedGovernanceOverrideSummaries))
+                {
+                    throw new ArgumentException(
+                        "Authoring-style summaries must describe the same grouped governance override outcomes as the authoring-policy runtime answer.",
+                        nameof(authoringStyleSummaries));
+                }
+            }
+
+            if (normalizedSkippedSuppressionSummaries.Length > 0)
+            {
+                var mergedSkippedSuppressionSummaries = MergeAuthoringStyleSkippedSuppressionSummaries(
+                    normalizedAuthoringStyleSummaries);
+                if (!SkippedSuppressionSummariesMatch(
+                        normalizedSkippedSuppressionSummaries,
+                        mergedSkippedSuppressionSummaries))
+                {
+                    throw new ArgumentException(
+                        "Authoring-style summaries must describe the same grouped skipped suppression outcomes as the authoring-policy runtime answer.",
+                        nameof(authoringStyleSummaries));
+                }
+            }
+
+            if (normalizedSkippedOverrideSummaries.Length > 0)
+            {
+                var mergedSkippedOverrideSummaries = MergeAuthoringStyleSkippedOverrideSummaries(
+                    normalizedAuthoringStyleSummaries);
+                if (!SkippedOverrideSummariesMatch(
+                        normalizedSkippedOverrideSummaries,
+                        mergedSkippedOverrideSummaries))
+                {
+                    throw new ArgumentException(
+                        "Authoring-style summaries must describe the same grouped skipped override outcomes as the authoring-policy runtime answer.",
+                        nameof(authoringStyleSummaries));
+                }
+            }
         }
 
         BehaviorId = normalizedPolicy.BehaviorId;
@@ -400,6 +554,10 @@ public sealed class RestEndpointAuthoringPolicyDescriptor
         SkippedSuppressionIds = normalizedSkippedSuppressionIds;
         SkippedOverrideIds = normalizedSkippedOverrideIds;
         AuthoringStyleSummaries = normalizedAuthoringStyleSummaries;
+        GovernanceSuppressionSummaries = normalizedGovernanceSuppressionSummaries;
+        GovernanceOverrideSummaries = normalizedGovernanceOverrideSummaries;
+        SkippedSuppressionSummaries = normalizedSkippedSuppressionSummaries;
+        SkippedOverrideSummaries = normalizedSkippedOverrideSummaries;
     }
 
     /// <summary>
@@ -494,6 +652,26 @@ public sealed class RestEndpointAuthoringPolicyDescriptor
     public IReadOnlyList<string> SkippedOverrideIds { get; }
 
     /// <summary>
+    /// Gets the grouped host-governance suppression-rule outcomes summarized by rule.
+    /// </summary>
+    public IReadOnlyList<RestEndpointGovernanceSuppressionSummaryDescriptor> GovernanceSuppressionSummaries { get; }
+
+    /// <summary>
+    /// Gets the grouped host-governance override-rule outcomes summarized by rule.
+    /// </summary>
+    public IReadOnlyList<RestEndpointGovernanceOverrideSummaryDescriptor> GovernanceOverrideSummaries { get; }
+
+    /// <summary>
+    /// Gets the grouped host-governance-skipped suppression-rule outcomes summarized by rule.
+    /// </summary>
+    public IReadOnlyList<RestEndpointGovernanceSkippedSuppressionSummaryDescriptor> SkippedSuppressionSummaries { get; }
+
+    /// <summary>
+    /// Gets the grouped host-governance-skipped override-rule outcomes summarized by rule.
+    /// </summary>
+    public IReadOnlyList<RestEndpointGovernanceSkippedOverrideSummaryDescriptor> SkippedOverrideSummaries { get; }
+
+    /// <summary>
     /// Gets the per-authoring-style runtime buckets that explain how this policy's outcomes
     /// distribute across authoring styles.
     /// </summary>
@@ -580,7 +758,15 @@ public sealed class RestEndpointAuthoringPolicyDescriptor
                 value.GovernanceSuppressedCandidateIds,
                 value.SuppressedCandidateIds,
                 value.SuppressionKinds,
-                value.SuppressionSummaries));
+                value.SuppressionSummaries,
+                value.HostGovernanceEligibleCandidateIds,
+                value.HostGovernanceIneligibleCandidateIds,
+                value.SkippedSuppressionIds,
+                value.SkippedOverrideIds,
+                value.GovernanceSuppressionSummaries,
+                value.GovernanceOverrideSummaries,
+                value.SkippedSuppressionSummaries,
+                value.SkippedOverrideSummaries));
         }
 
         return result.ToArray();
@@ -609,6 +795,194 @@ public sealed class RestEndpointAuthoringPolicyDescriptor
         return candidateIdsByKind
             .OrderBy(static pair => pair.Key.GetWireName(), StringComparer.Ordinal)
             .Select(static pair => new RestEndpointAuthoringPolicySuppressionSummaryDescriptor(pair.Key, pair.Value))
+            .ToArray();
+    }
+
+    private static RestEndpointGovernanceSuppressionSummaryDescriptor[] MergeAuthoringStyleGovernanceSuppressionSummaries(
+        IReadOnlyList<RestEndpointAuthoringPolicyAuthoringStyleDescriptor> authoringStyleSummaries)
+    {
+        ArgumentNullException.ThrowIfNull(authoringStyleSummaries);
+
+        var matchedCandidateIdsByRuleId = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
+        var suppressedCandidateIdsByRuleId = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
+        var selectionBasisCandidateIdsByRuleId =
+            new Dictionary<string, Dictionary<RestEndpointGovernanceRuleSelectionBasis, List<string>>>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var authoringStyleSummary in authoringStyleSummaries)
+        {
+            foreach (var governanceSummary in authoringStyleSummary.GovernanceSuppressionSummaries)
+            {
+                AddCandidateIds(matchedCandidateIdsByRuleId, governanceSummary.RuleId, governanceSummary.MatchedCandidateIds);
+                AddCandidateIds(suppressedCandidateIdsByRuleId, governanceSummary.RuleId, governanceSummary.SuppressedCandidateIds);
+                foreach (var selectionBasisSummary in governanceSummary.SelectionBasisSummaries)
+                {
+                    AddCandidateIds(
+                        selectionBasisCandidateIdsByRuleId,
+                        governanceSummary.RuleId,
+                        selectionBasisSummary.SelectionBasis,
+                        selectionBasisSummary.CandidateIds);
+                }
+            }
+        }
+
+        return matchedCandidateIdsByRuleId
+            .OrderBy(static pair => pair.Key, StringComparer.OrdinalIgnoreCase)
+            .Select(pair =>
+            {
+                suppressedCandidateIdsByRuleId.TryGetValue(pair.Key, out var suppressedCandidateIds);
+                selectionBasisCandidateIdsByRuleId.TryGetValue(pair.Key, out var candidateIdsBySelectionBasis);
+
+                return new RestEndpointGovernanceSuppressionSummaryDescriptor(
+                    pair.Key,
+                    pair.Value,
+                    suppressedCandidateIds,
+                    candidateIdsBySelectionBasis is null
+                        ? []
+                        : candidateIdsBySelectionBasis
+                            .OrderBy(static item => item.Key)
+                            .Select(static item => new RestEndpointGovernanceSelectionBasisSummaryDescriptor(
+                                item.Key,
+                                item.Value))
+                            .ToArray());
+            })
+            .ToArray();
+    }
+
+    private static RestEndpointGovernanceOverrideSummaryDescriptor[] MergeAuthoringStyleGovernanceOverrideSummaries(
+        IReadOnlyList<RestEndpointAuthoringPolicyAuthoringStyleDescriptor> authoringStyleSummaries)
+    {
+        ArgumentNullException.ThrowIfNull(authoringStyleSummaries);
+
+        var matchedCandidateIdsByRuleId = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
+        var selectedCandidateIdsByRuleId = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
+        var appliedCandidateIdsByRuleId = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
+        var selectionBasisCandidateIdsByRuleId =
+            new Dictionary<string, Dictionary<RestEndpointGovernanceRuleSelectionBasis, List<string>>>(StringComparer.OrdinalIgnoreCase);
+        var selectedActionKindCandidateIdsByRuleId =
+            new Dictionary<string, Dictionary<RestEndpointOverrideActionKind, List<string>>>(StringComparer.OrdinalIgnoreCase);
+        var appliedActionKindCandidateIdsByRuleId =
+            new Dictionary<string, Dictionary<RestEndpointOverrideActionKind, List<string>>>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var authoringStyleSummary in authoringStyleSummaries)
+        {
+            foreach (var governanceSummary in authoringStyleSummary.GovernanceOverrideSummaries)
+            {
+                AddCandidateIds(matchedCandidateIdsByRuleId, governanceSummary.RuleId, governanceSummary.MatchedCandidateIds);
+                AddCandidateIds(selectedCandidateIdsByRuleId, governanceSummary.RuleId, governanceSummary.SelectedCandidateIds);
+                AddCandidateIds(appliedCandidateIdsByRuleId, governanceSummary.RuleId, governanceSummary.AppliedCandidateIds);
+                foreach (var selectionBasisSummary in governanceSummary.SelectionBasisSummaries)
+                {
+                    AddCandidateIds(
+                        selectionBasisCandidateIdsByRuleId,
+                        governanceSummary.RuleId,
+                        selectionBasisSummary.SelectionBasis,
+                        selectionBasisSummary.CandidateIds);
+                }
+
+                foreach (var actionKindSummary in governanceSummary.SelectedActionKindSummaries)
+                {
+                    AddCandidateIds(
+                        selectedActionKindCandidateIdsByRuleId,
+                        governanceSummary.RuleId,
+                        actionKindSummary.ActionKind,
+                        actionKindSummary.CandidateIds);
+                }
+
+                foreach (var actionKindSummary in governanceSummary.AppliedActionKindSummaries)
+                {
+                    AddCandidateIds(
+                        appliedActionKindCandidateIdsByRuleId,
+                        governanceSummary.RuleId,
+                        actionKindSummary.ActionKind,
+                        actionKindSummary.CandidateIds);
+                }
+            }
+        }
+
+        return matchedCandidateIdsByRuleId
+            .OrderBy(static pair => pair.Key, StringComparer.OrdinalIgnoreCase)
+            .Select(pair =>
+            {
+                selectedCandidateIdsByRuleId.TryGetValue(pair.Key, out var selectedCandidateIds);
+                appliedCandidateIdsByRuleId.TryGetValue(pair.Key, out var appliedCandidateIds);
+                selectionBasisCandidateIdsByRuleId.TryGetValue(pair.Key, out var candidateIdsBySelectionBasis);
+                selectedActionKindCandidateIdsByRuleId.TryGetValue(pair.Key, out var candidateIdsBySelectedActionKind);
+                appliedActionKindCandidateIdsByRuleId.TryGetValue(pair.Key, out var candidateIdsByAppliedActionKind);
+
+                return new RestEndpointGovernanceOverrideSummaryDescriptor(
+                    pair.Key,
+                    pair.Value,
+                    selectedCandidateIds,
+                    appliedCandidateIds,
+                    candidateIdsBySelectionBasis is null
+                        ? []
+                        : candidateIdsBySelectionBasis
+                            .OrderBy(static item => item.Key)
+                            .Select(static item => new RestEndpointGovernanceSelectionBasisSummaryDescriptor(
+                                item.Key,
+                                item.Value))
+                            .ToArray(),
+                    candidateIdsBySelectedActionKind is null
+                        ? []
+                        : candidateIdsBySelectedActionKind
+                            .OrderBy(static item => item.Key.GetWireName(), StringComparer.Ordinal)
+                            .Select(static item => new RestEndpointGovernanceOverrideActionKindSummaryDescriptor(
+                                item.Key,
+                                item.Value))
+                            .ToArray(),
+                    candidateIdsByAppliedActionKind is null
+                        ? []
+                        : candidateIdsByAppliedActionKind
+                            .OrderBy(static item => item.Key.GetWireName(), StringComparer.Ordinal)
+                            .Select(static item => new RestEndpointGovernanceOverrideActionKindSummaryDescriptor(
+                                item.Key,
+                                item.Value))
+                            .ToArray());
+            })
+            .ToArray();
+    }
+
+    private static RestEndpointGovernanceSkippedSuppressionSummaryDescriptor[] MergeAuthoringStyleSkippedSuppressionSummaries(
+        IReadOnlyList<RestEndpointAuthoringPolicyAuthoringStyleDescriptor> authoringStyleSummaries)
+    {
+        ArgumentNullException.ThrowIfNull(authoringStyleSummaries);
+
+        var candidateIdsByRuleId = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
+        foreach (var authoringStyleSummary in authoringStyleSummaries)
+        {
+            foreach (var skippedSummary in authoringStyleSummary.SkippedSuppressionSummaries)
+            {
+                AddCandidateIds(candidateIdsByRuleId, skippedSummary.RuleId, skippedSummary.CandidateIds);
+            }
+        }
+
+        return candidateIdsByRuleId
+            .OrderBy(static pair => pair.Key, StringComparer.OrdinalIgnoreCase)
+            .Select(static pair => new RestEndpointGovernanceSkippedSuppressionSummaryDescriptor(
+                pair.Key,
+                pair.Value))
+            .ToArray();
+    }
+
+    private static RestEndpointGovernanceSkippedOverrideSummaryDescriptor[] MergeAuthoringStyleSkippedOverrideSummaries(
+        IReadOnlyList<RestEndpointAuthoringPolicyAuthoringStyleDescriptor> authoringStyleSummaries)
+    {
+        ArgumentNullException.ThrowIfNull(authoringStyleSummaries);
+
+        var candidateIdsByRuleId = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
+        foreach (var authoringStyleSummary in authoringStyleSummaries)
+        {
+            foreach (var skippedSummary in authoringStyleSummary.SkippedOverrideSummaries)
+            {
+                AddCandidateIds(candidateIdsByRuleId, skippedSummary.RuleId, skippedSummary.CandidateIds);
+            }
+        }
+
+        return candidateIdsByRuleId
+            .OrderBy(static pair => pair.Key, StringComparer.OrdinalIgnoreCase)
+            .Select(static pair => new RestEndpointGovernanceSkippedOverrideSummaryDescriptor(
+                pair.Key,
+                pair.Value))
             .ToArray();
     }
 
@@ -669,5 +1043,251 @@ public sealed class RestEndpointAuthoringPolicyDescriptor
         }
 
         return true;
+    }
+
+    private static bool GovernanceSuppressionSummariesMatch(
+        RestEndpointGovernanceSuppressionSummaryDescriptor[] left,
+        RestEndpointGovernanceSuppressionSummaryDescriptor[] right)
+    {
+        ArgumentNullException.ThrowIfNull(left);
+        ArgumentNullException.ThrowIfNull(right);
+
+        if (left.Length != right.Length)
+        {
+            return false;
+        }
+
+        var rightByRuleId = right.ToDictionary(static summary => summary.RuleId, StringComparer.OrdinalIgnoreCase);
+        foreach (var summary in left)
+        {
+            if (!rightByRuleId.TryGetValue(summary.RuleId, out var other))
+            {
+                return false;
+            }
+
+            if (!summary.MatchedCandidateIds.ToHashSet(StringComparer.OrdinalIgnoreCase)
+                    .SetEquals(other.MatchedCandidateIds) ||
+                !summary.SuppressedCandidateIds.ToHashSet(StringComparer.OrdinalIgnoreCase)
+                    .SetEquals(other.SuppressedCandidateIds) ||
+                !GovernanceSelectionBasisSummariesMatch(summary.SelectionBasisSummaries, other.SelectionBasisSummaries))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool GovernanceOverrideSummariesMatch(
+        RestEndpointGovernanceOverrideSummaryDescriptor[] left,
+        RestEndpointGovernanceOverrideSummaryDescriptor[] right)
+    {
+        ArgumentNullException.ThrowIfNull(left);
+        ArgumentNullException.ThrowIfNull(right);
+
+        if (left.Length != right.Length)
+        {
+            return false;
+        }
+
+        var rightByRuleId = right.ToDictionary(static summary => summary.RuleId, StringComparer.OrdinalIgnoreCase);
+        foreach (var summary in left)
+        {
+            if (!rightByRuleId.TryGetValue(summary.RuleId, out var other))
+            {
+                return false;
+            }
+
+            if (!summary.MatchedCandidateIds.ToHashSet(StringComparer.OrdinalIgnoreCase)
+                    .SetEquals(other.MatchedCandidateIds) ||
+                !summary.SelectedCandidateIds.ToHashSet(StringComparer.OrdinalIgnoreCase)
+                    .SetEquals(other.SelectedCandidateIds) ||
+                !summary.AppliedCandidateIds.ToHashSet(StringComparer.OrdinalIgnoreCase)
+                    .SetEquals(other.AppliedCandidateIds) ||
+                !GovernanceSelectionBasisSummariesMatch(summary.SelectionBasisSummaries, other.SelectionBasisSummaries) ||
+                !GovernanceActionKindSummariesMatch(summary.SelectedActionKindSummaries, other.SelectedActionKindSummaries) ||
+                !GovernanceActionKindSummariesMatch(summary.AppliedActionKindSummaries, other.AppliedActionKindSummaries))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool SkippedSuppressionSummariesMatch(
+        RestEndpointGovernanceSkippedSuppressionSummaryDescriptor[] left,
+        RestEndpointGovernanceSkippedSuppressionSummaryDescriptor[] right)
+    {
+        ArgumentNullException.ThrowIfNull(left);
+        ArgumentNullException.ThrowIfNull(right);
+
+        if (left.Length != right.Length)
+        {
+            return false;
+        }
+
+        var rightByRuleId = right.ToDictionary(static summary => summary.RuleId, StringComparer.OrdinalIgnoreCase);
+        foreach (var summary in left)
+        {
+            if (!rightByRuleId.TryGetValue(summary.RuleId, out var other))
+            {
+                return false;
+            }
+
+            if (!summary.CandidateIds.ToHashSet(StringComparer.OrdinalIgnoreCase)
+                    .SetEquals(other.CandidateIds))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool SkippedOverrideSummariesMatch(
+        RestEndpointGovernanceSkippedOverrideSummaryDescriptor[] left,
+        RestEndpointGovernanceSkippedOverrideSummaryDescriptor[] right)
+    {
+        ArgumentNullException.ThrowIfNull(left);
+        ArgumentNullException.ThrowIfNull(right);
+
+        if (left.Length != right.Length)
+        {
+            return false;
+        }
+
+        var rightByRuleId = right.ToDictionary(static summary => summary.RuleId, StringComparer.OrdinalIgnoreCase);
+        foreach (var summary in left)
+        {
+            if (!rightByRuleId.TryGetValue(summary.RuleId, out var other))
+            {
+                return false;
+            }
+
+            if (!summary.CandidateIds.ToHashSet(StringComparer.OrdinalIgnoreCase)
+                    .SetEquals(other.CandidateIds))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool GovernanceSelectionBasisSummariesMatch(
+        IReadOnlyList<RestEndpointGovernanceSelectionBasisSummaryDescriptor> left,
+        IReadOnlyList<RestEndpointGovernanceSelectionBasisSummaryDescriptor> right)
+    {
+        ArgumentNullException.ThrowIfNull(left);
+        ArgumentNullException.ThrowIfNull(right);
+
+        if (left.Count != right.Count)
+        {
+            return false;
+        }
+
+        var rightByBasis = right.ToDictionary(static summary => summary.SelectionBasis);
+        foreach (var summary in left)
+        {
+            if (!rightByBasis.TryGetValue(summary.SelectionBasis, out var other))
+            {
+                return false;
+            }
+
+            if (!summary.CandidateIds.ToHashSet(StringComparer.OrdinalIgnoreCase)
+                    .SetEquals(other.CandidateIds))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool GovernanceActionKindSummariesMatch(
+        IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor> left,
+        IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor> right)
+    {
+        ArgumentNullException.ThrowIfNull(left);
+        ArgumentNullException.ThrowIfNull(right);
+
+        if (left.Count != right.Count)
+        {
+            return false;
+        }
+
+        var rightByActionKind = right.ToDictionary(static summary => summary.ActionKind);
+        foreach (var summary in left)
+        {
+            if (!rightByActionKind.TryGetValue(summary.ActionKind, out var other))
+            {
+                return false;
+            }
+
+            if (!summary.CandidateIds.ToHashSet(StringComparer.OrdinalIgnoreCase)
+                    .SetEquals(other.CandidateIds))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static void AddCandidateIds(
+        Dictionary<string, List<string>> candidateIdsByRuleId,
+        string ruleId,
+        IReadOnlyList<string> candidateIds)
+    {
+        ArgumentNullException.ThrowIfNull(candidateIdsByRuleId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(ruleId);
+        ArgumentNullException.ThrowIfNull(candidateIds);
+
+        if (!candidateIdsByRuleId.TryGetValue(ruleId.Trim(), out var values))
+        {
+            values = [];
+            candidateIdsByRuleId[ruleId.Trim()] = values;
+        }
+
+        foreach (var candidateId in candidateIds)
+        {
+            if (!values.Contains(candidateId, StringComparer.OrdinalIgnoreCase))
+            {
+                values.Add(candidateId);
+            }
+        }
+    }
+
+    private static void AddCandidateIds<TKey>(
+        Dictionary<string, Dictionary<TKey, List<string>>> candidateIdsByRuleId,
+        string ruleId,
+        TKey key,
+        IReadOnlyList<string> candidateIds)
+        where TKey : notnull
+    {
+        ArgumentNullException.ThrowIfNull(candidateIdsByRuleId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(ruleId);
+        ArgumentNullException.ThrowIfNull(candidateIds);
+
+        if (!candidateIdsByRuleId.TryGetValue(ruleId.Trim(), out var valuesByKey))
+        {
+            valuesByKey = [];
+            candidateIdsByRuleId[ruleId.Trim()] = valuesByKey;
+        }
+
+        if (!valuesByKey.TryGetValue(key, out var values))
+        {
+            values = [];
+            valuesByKey[key] = values;
+        }
+
+        foreach (var candidateId in candidateIds)
+        {
+            if (!values.Contains(candidateId, StringComparer.OrdinalIgnoreCase))
+            {
+                values.Add(candidateId);
+            }
+        }
     }
 }

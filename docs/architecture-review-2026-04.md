@@ -297,8 +297,10 @@ policies visible, separates authoring-policy-retained, published, precedence-sup
 governance-suppressed, and authoring-policy-suppressed candidate buckets, and now also partitions
 those same outcomes by normalized authoring style without forcing operators back through grouped
 publication joins first. It now also keeps host-governance eligibility and skipped-rule ids
-visible on that same rule-centric answer, so explicit ownership that never entered host governance
-does not disappear behind publication-group-only visibility.
+visible on that same rule-centric answer, and it now also derives grouped governance suppression,
+override, and skipped-rule summaries there directly, so explicit ownership that never entered host
+governance does not disappear behind publication-group-only visibility and operators no longer need
+to reopen grouped publication answers just to understand one behavior boundary's host-rule effects.
 
 The remaining gap is now narrower still: keep low-code shorthand growth, broader governance, and
 future projection sources on the same explicit ownership and runtime-truth model without
