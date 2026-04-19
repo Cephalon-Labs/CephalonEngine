@@ -38,6 +38,26 @@ Initializes a new instance of the `DataRuntimeOptions` class.
 
 #### Properties
 
+<a id="member-p-cephalon-data-configuration-dataruntimeoptions-cdcpollingintervalseconds"></a>
+
+##### `CdcPollingIntervalSeconds`
+
+```csharp
+int CdcPollingIntervalSeconds { get; set; }
+```
+
+Gets or sets the polling interval, in seconds, used by the shared CDC hosted execution pump.
+
+<a id="member-p-cephalon-data-configuration-dataruntimeoptions-enablecdcexecution"></a>
+
+##### `EnableCdcExecution`
+
+```csharp
+bool EnableCdcExecution { get; set; }
+```
+
+Gets or sets a value indicating whether the pack should register the shared CDC hosted execution pump.
+
 <a id="member-p-cephalon-data-configuration-dataruntimeoptions-registerreadstore"></a>
 
 ##### `RegisterReadStore`

@@ -243,6 +243,8 @@ internal sealed class InMemoryBenchmarkOutbox : IOutbox
 {
     private readonly List<OutboxMessage> _messages = [];
 
+    public string OutboxId => "benchmark-outbox";
+
     public ValueTask EnqueueAsync(OutboxMessage message, CancellationToken cancellationToken = default)
     {
         _messages.Add(message);

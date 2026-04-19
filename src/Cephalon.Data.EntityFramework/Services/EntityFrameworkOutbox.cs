@@ -9,6 +9,8 @@ internal sealed class EntityFrameworkOutbox(
     DbContext dbContext,
     IEntityFrameworkOutboxContext outboxContext) : IOutbox
 {
+    public string OutboxId => EntityFrameworkDataRuntimeIds.OutboxId;
+
     public async ValueTask EnqueueAsync(
         OutboxMessage message,
         CancellationToken cancellationToken = default)

@@ -53,6 +53,7 @@
 - `Data/DataProductDescriptor.cs`
 - `Data/IDataProductCatalog.cs`
 - `Data/ICdcCapture.cs`
+- `Data/CdcCaptureExecutionResult.cs`
 - `Data/CdcCaptureDescriptor.cs`
 - `Data/ICdcCaptureCatalog.cs`
 - `Data/ICdcCaptureContributor.cs`
@@ -156,11 +157,17 @@ The phase-8 families stay runtime-neutral on purpose:
 - `Audit` defines audit actors, entries, write/query/export contracts, and audit-store descriptors without hard-coding storage or observability sinks.
 - `Ids` defines identifier-generation hints and the generator contract without choosing a concrete strategy such as `Sfid`.
 
-That same data contract family now also keeps the first CDC live-state/operator answer host-agnostic.
-`CdcCaptureRuntimeState` plus `ICdcCaptureRuntimeStateCatalog` let provider packs and hosts report
-latest capture posture, totals, checkpoints, errors, typed freshness/lag/publication posture, and
-optional linked `EventDispatchRuntimeState` publication posture without turning CDC execution into
-an ASP.NET Core-only or provider-specific registry.
+That same data contract family now also keeps shared CDC execution and operator answers
+host-agnostic. `ICdcCapture` now returns `CdcCaptureExecutionResult` so provider packs can report
+one bounded capture batch, its outbox-ready publications, checkpoints, freshness/lag/publication
+posture, and additive metadata without hard-coding one hosting model. `IOutbox.OutboxId` keeps the
+durable delivery boundary explicit instead of collapsing CDC capture into broker or storage
+delivery.
+
+`CdcCaptureRuntimeState` plus `ICdcCaptureRuntimeStateCatalog` then let provider packs and hosts
+report latest capture posture, totals, checkpoints, errors, typed freshness/lag/publication
+posture, and optional linked `EventDispatchRuntimeState` publication posture without turning CDC
+execution into an ASP.NET Core-only or provider-specific registry.
 
 The app-model contract now also carries a contract-first resilience family through
 `ResilienceSelection`, `RetrySelection`, `TimeoutSelection`, `CircuitBreakerSelection`,

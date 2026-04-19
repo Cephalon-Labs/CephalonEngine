@@ -21,4 +21,14 @@ public sealed class DataRuntimeOptions
     /// Gets or sets a value indicating whether the pack should register the default write-store dispatcher.
     /// </summary>
     public bool RegisterWriteStore { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the pack should register the shared CDC hosted execution pump.
+    /// </summary>
+    public bool EnableCdcExecution { get; set; }
+
+    /// <summary>
+    /// Gets or sets the polling interval, in seconds, used by the shared CDC hosted execution pump.
+    /// </summary>
+    public int CdcPollingIntervalSeconds { get; set; } = 30;
 }

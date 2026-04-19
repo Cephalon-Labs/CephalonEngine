@@ -7795,6 +7795,131 @@ IReadOnlyList<string> Tags { get; }
 
 Gets descriptive tags associated with the CDC capture.
 
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionresult"></a>
+
+### `CdcCaptureExecutionResult`
+
+Describes one bounded CDC capture batch and the outbox publications it produced.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionResult
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionresult-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-data-outboxmessage-system-nullable-system-int32-system-string-system-string-cephalon-abstractions-data-cdccapturefreshnessstatus-cephalon-abstractions-data-cdccapturelagstatus-cephalon-abstractions-data-cdccapturepublicationstatus-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionResult`
+
+```csharp
+CdcCaptureExecutionResult(IReadOnlyList<OutboxMessage> messages, int? capturedChangeCount, string changeId, string checkpoint, CdcCaptureFreshnessStatus freshness, CdcCaptureLagStatus lag, CdcCapturePublicationStatus publication, IReadOnlyDictionary<string, string> metadata)
+```
+
+Initializes a new instance of the `CdcCaptureExecutionResult` class.
+
+Parameters:
+- `messages`: The outbox publications produced by the capture batch.
+- `capturedChangeCount`: The number of source changes observed by the capture batch. When omitted, Cephalon uses the produced-message count as the default captured-change answer for the batch.
+- `changeId`: The latest provider-facing change identifier when one is available.
+- `checkpoint`: The latest provider-facing checkpoint or cursor when one is available.
+- `freshness`: The optional typed freshness answer reported by the capture implementation.
+- `lag`: The optional typed lag answer reported by the capture implementation.
+- `publication`: The optional typed publication-posture answer reported by the capture implementation before any linked outbox-dispatch overlay is applied.
+- `metadata`: Optional operator-facing metadata captured alongside the batch.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionresult-capturedchangecount"></a>
+
+##### `CapturedChangeCount`
+
+```csharp
+int CapturedChangeCount { get; }
+```
+
+Gets the number of source changes observed by the capture batch.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionresult-changeid"></a>
+
+##### `ChangeId`
+
+```csharp
+string ChangeId { get; }
+```
+
+Gets the latest provider-facing change identifier when one was reported.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionresult-checkpoint"></a>
+
+##### `Checkpoint`
+
+```csharp
+string Checkpoint { get; }
+```
+
+Gets the latest provider-facing checkpoint or cursor when one was reported.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionresult-freshness"></a>
+
+##### `Freshness`
+
+```csharp
+CdcCaptureFreshnessStatus Freshness { get; }
+```
+
+Gets the typed freshness answer reported by the capture implementation when one was supplied.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionresult-lag"></a>
+
+##### `Lag`
+
+```csharp
+CdcCaptureLagStatus Lag { get; }
+```
+
+Gets the typed lag answer reported by the capture implementation when one was supplied.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionresult-messages"></a>
+
+##### `Messages`
+
+```csharp
+IReadOnlyList<OutboxMessage> Messages { get; }
+```
+
+Gets the outbox publications produced by the capture batch.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionresult-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional operator-facing metadata captured alongside the batch.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionresult-producedmessagecount"></a>
+
+##### `ProducedMessageCount`
+
+```csharp
+int ProducedMessageCount { get; }
+```
+
+Gets the number of outbox publications produced by the capture batch.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionresult-publication"></a>
+
+##### `Publication`
+
+```csharp
+CdcCapturePublicationStatus Publication { get; }
+```
+
+Gets the typed publication-posture answer reported by the capture implementation when one was supplied.
+
 <a id="type-cephalon-abstractions-data-cdccapturefreshnessstates"></a>
 
 ### `CdcCaptureFreshnessStates`
@@ -11573,12 +11698,24 @@ Gets the total number of reported observations across all owned outboxes.
 
 ### `ICdcCapture`
 
-Captures database changes and shapes them into outbox-ready publications.
+Captures database changes for one stable CDC surface and shapes them into outbox-ready publications.
 
 #### Declaration
 ```csharp
 public interface ICdcCapture
 ```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-icdccapture-cdccaptureid"></a>
+
+##### `CdcCaptureId`
+
+```csharp
+string CdcCaptureId { get; }
+```
+
+Gets the stable CDC capture identifier owned by this implementation.
 
 #### Methods
 
@@ -11587,12 +11724,12 @@ public interface ICdcCapture
 ##### `CaptureAsync`
 
 ```csharp
-IAsyncEnumerable<OutboxMessage> CaptureAsync(CancellationToken cancellationToken)
+ValueTask<CdcCaptureExecutionResult> CaptureAsync(CancellationToken cancellationToken)
 ```
 
-Reads captured database changes and yields the resulting outbox messages.
+Reads one bounded capture batch and returns the resulting outbox publications plus any provider-facing execution metadata.
 
-Returns: An async stream of outbox messages produced from the captured changes.
+Returns: The captured batch result for the active CDC surface.
 
 Parameters:
 - `cancellationToken`: The token that cancels the capture stream.
@@ -12885,6 +13022,18 @@ Stages messages for durable delivery after the current write-side operation comp
 ```csharp
 public interface IOutbox
 ```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-ioutbox-outboxid"></a>
+
+##### `OutboxId`
+
+```csharp
+string OutboxId { get; }
+```
+
+Gets the stable outbox identifier owned by this implementation.
 
 #### Methods
 

@@ -9,6 +9,9 @@ namespace Cephalon.Data.OpenSearch.Services;
 internal sealed class OpenSearchOutbox(OpenSearchClient client, string indexName) : IOutbox
 {
     /// <inheritdoc />
+    public string OutboxId => "opensearch-outbox";
+
+    /// <inheritdoc />
     public async ValueTask EnqueueAsync(OutboxMessage message, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(message);

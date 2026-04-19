@@ -166,6 +166,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Data.ICommandHandler<>),
             typeof(global::Cephalon.Abstractions.Data.ICommandHandler<,>),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureDescriptor),
+            typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionResult),
             typeof(global::Cephalon.Abstractions.Data.ICdcCapture),
             typeof(global::Cephalon.Abstractions.Data.ICdcCaptureCatalog),
             typeof(global::Cephalon.Abstractions.Data.ICdcCaptureContributor),
@@ -2527,7 +2528,19 @@ public sealed class PackageSurfaceTests
     public void CdcCaptureRuntimeContractsExposeSnapshotSurface()
     {
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCapture)
+            .GetProperty("CdcCaptureId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCapture)
             .GetMethod("CaptureAsync", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionResult)
+            .GetProperty("Messages", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionResult)
+            .GetProperty("CapturedChangeCount", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionResult)
+            .GetProperty("ProducedMessageCount", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionResult)
+            .GetProperty("Checkpoint", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.IOutbox)
+            .GetProperty("OutboxId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureCatalog)
             .GetProperty("CdcCaptures", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureCatalog)

@@ -2170,6 +2170,32 @@ Delivered:
 - `Cephalon.AspNetCore` now exposes `/engine/cell-traffic-automations`, `/engine/cell-traffic-automations/{automationId}`, `/engine/cell-traffic-automations/modules/{moduleId}`, `/engine/cell-traffic-automations/routes/{routeId}`, `/engine/cell-traffic-automations/source-cells/{cellId}`, `/engine/cell-traffic-automations/target-cells/{cellId}`, and `/engine/cell-traffic-automations/health-isolations/{healthIsolationId}` as the direct operator routes for the merged traffic-automation catalog
 - targeted coverage now proves catalog composition, invalid-route rejection, technology-surface projection, runtime-snapshot projection, ASP.NET Core route publication, and public package-surface alignment through composition tests `2/2`, hosting tests `1/1`, and tooling tests `169/169`
 
+### ENG-128 Phase 13 shared CDC hosted-execution substrate baseline
+
+Status: done
+Estimate: 5
+Completed: April 20, 2026
+
+Why:
+
+- `ENG-125` through `ENG-127` established CDC ownership, live runtime-state, and typed freshness/lag/publication posture, but Cephalon still had no shared execution substrate for actually running active captures through the same runtime contract
+- provider packs needed one bounded execution result shape and one in-process host loop that could resolve active capture implementations plus linked outboxes without inventing a second host-only registry
+- `/engine/execution-graphs`, `/engine/hosted-executions`, `/engine/runtime-story`, and `/engine/snapshot` could not yet tell the operational story for shared CDC execution even though the per-capture descriptor and runtime-state answers were already in place
+
+Acceptance:
+
+- `Cephalon.Abstractions` extends the CDC execution contract with a bounded batch result plus stable capture/outbox ids without pulling provider-specific source semantics into the engine core
+- `Cephalon.Data` ships an optional shared CDC hosted execution pump that resolves active `ICdcCapture` plus linked `IOutbox` implementations, stages outbox publications, and reports runtime posture through the existing shared CDC runtime-state catalog
+- the shared CDC pump surfaces through the existing execution/runtime-story contract with one capability, one execution graph, one hosted execution descriptor, and matching snapshot/runtime-story truth
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the shipped slice while remaining explicit that provider-specific capture implementations and alternate CDC execution topologies are still later work
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships `CdcCaptureExecutionResult`, `ICdcCapture.CdcCaptureId`, and `IOutbox.OutboxId`, and `ICdcCapture.CaptureAsync()` now returns one bounded batch result with produced `OutboxMessage` items plus checkpoint/freshness/lag/publication metadata
+- `Cephalon.Data` now ships `DataRuntimeOptions.EnableCdcExecution`, `DataRuntimeOptions.CdcPollingIntervalSeconds`, `CdcCaptureHostedService`, `data.cdc.execution`, `data-cdc-capture-flow`, and `data-cdc-capture-pump`, and the shared pump now stages active capture results through the matching outbox while reporting `started`, `captured`, `idle`, and failure outcomes back into the shared CDC runtime-state catalog
+- shared CDC execution is now visible through `IExecutionRuntimeCatalog`, `IHostedExecutionRuntimeCatalog`, `/engine/execution-graphs`, `/engine/hosted-executions`, `/engine/runtime-story`, and `/engine/snapshot` without replacing the existing `/engine/cdc-captures*` ownership/runtime-state surfaces
+- targeted coverage now proves shared CDC execution-surface publication, in-process outbox staging/reporting, runtime-story projection, and package-surface alignment through composition tests `6/6`, hosting tests `1/1`, and tooling tests `1/1`
+
 ### ENG-127 Phase 13 CDC freshness, lag, and publication posture baseline
 
 Status: done

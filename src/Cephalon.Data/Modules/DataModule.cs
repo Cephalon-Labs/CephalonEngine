@@ -1,13 +1,15 @@
 using Cephalon.Abstractions.Capabilities;
+using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Data.Configuration;
 using Cephalon.Data.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 
 namespace Cephalon.Data.Modules;
 
-internal sealed class DataModule(DataRuntimeOptions options) : ModuleBase
+internal sealed class DataModule(DataRuntimeOptions options) : ModuleBase, IExecutionGraphContributor, IHostedExecutionContributor
 {
     private static readonly ModuleDescriptor DescriptorInstance = new(
         id: "data-runtime",
@@ -43,6 +45,11 @@ internal sealed class DataModule(DataRuntimeOptions options) : ModuleBase
             serviceProvider.GetRequiredService<CdcCaptureRuntimeStateCatalog>());
         services.TryAddSingleton<ICdcCaptureRuntimeReporter>(static serviceProvider =>
             serviceProvider.GetRequiredService<CdcCaptureRuntimeStateCatalog>());
+
+        if (options.EnableCdcExecution)
+        {
+            services.AddHostedService<CdcCaptureHostedService>();
+        }
     }
 
     public override void RegisterCapabilities(ICapabilityRegistry capabilities)
@@ -72,5 +79,115 @@ internal sealed class DataModule(DataRuntimeOptions options) : ModuleBase
                     ["pack"] = "Cephalon.Data"
                 }));
         }
+
+        if (options.EnableCdcExecution)
+        {
+            capabilities.Add(new Capability(
+                key: "data.cdc.execution",
+                displayName: "Shared CDC Execution Pump",
+                description: "Runs the shared Cephalon.Data hosted execution pump for active CDC capture implementations.",
+                metadata: new Dictionary<string, string>
+                {
+                    ["pack"] = "Cephalon.Data",
+                    ["hostedExecutionId"] = DataRuntimeIds.CdcHostedExecutionId,
+                    ["executionGraphId"] = DataRuntimeIds.CdcExecutionGraphId
+                }));
+        }
+    }
+
+    public void RegisterExecutionGraphs(IExecutionGraphRegistry graphs)
+    {
+        ArgumentNullException.ThrowIfNull(graphs);
+
+        if (!options.EnableCdcExecution)
+        {
+            return;
+        }
+
+        graphs.Add(new ExecutionGraphDescriptor(
+            id: DataRuntimeIds.CdcExecutionGraphId,
+            displayName: "Shared CDC Capture Flow",
+            description: "Resolves active CDC capture implementations, reads one bounded capture batch, stages publications through the linked outbox, and reports runtime observations.",
+            sourceModuleId: Descriptor.Id,
+            entryNodeId: "resolve-cdc-captures",
+            nodes:
+            [
+                new ExecutionGraphNodeDescriptor(
+                    id: "resolve-cdc-captures",
+                    displayName: "Resolve CDC Captures",
+                    description: "Resolves active CDC capture implementations and their linked outbox bindings from the shared runtime services.",
+                    kind: "activity",
+                    moduleId: Descriptor.Id,
+                    capabilityKey: "data.cdc.execution",
+                    tags: ["data", "cdc", "runtime"]),
+                new ExecutionGraphNodeDescriptor(
+                    id: "capture-source-changes",
+                    displayName: "Capture Source Changes",
+                    description: "Executes one bounded capture batch for each active CDC implementation.",
+                    kind: "activity",
+                    moduleId: Descriptor.Id,
+                    capabilityKey: "data.cdc.execution",
+                    tags: ["data", "cdc", "capture"]),
+                new ExecutionGraphNodeDescriptor(
+                    id: "stage-outbox-publications",
+                    displayName: "Stage Outbox Publications",
+                    description: "Stages captured publications through the matching outbox implementation owned by the active runtime.",
+                    kind: "activity",
+                    moduleId: Descriptor.Id,
+                    capabilityKey: "data.cdc.execution",
+                    tags: ["data", "cdc", "outbox"]),
+                new ExecutionGraphNodeDescriptor(
+                    id: "report-cdc-runtime-observation",
+                    displayName: "Report CDC Runtime Observation",
+                    description: "Projects the latest capture outcome back into the shared CDC runtime-state catalog.",
+                    kind: "activity",
+                    moduleId: Descriptor.Id,
+                    capabilityKey: "data.cdc.execution",
+                    tags: ["data", "cdc", "runtime-state"])
+            ],
+            edges:
+            [
+                new ExecutionGraphEdgeDescriptor(
+                    fromNodeId: "resolve-cdc-captures",
+                    toNodeId: "capture-source-changes",
+                    displayName: "resolved"),
+                new ExecutionGraphEdgeDescriptor(
+                    fromNodeId: "capture-source-changes",
+                    toNodeId: "stage-outbox-publications",
+                    displayName: "captured"),
+                new ExecutionGraphEdgeDescriptor(
+                    fromNodeId: "stage-outbox-publications",
+                    toNodeId: "report-cdc-runtime-observation",
+                    displayName: "reported")
+            ],
+            tags: ["data", "cdc", "runtime"],
+            metadata: new Dictionary<string, string>
+            {
+                ["surface"] = "shared-cdc-execution"
+            }));
+    }
+
+    public void RegisterHostedExecutions(IHostedExecutionRegistry hostedExecutions)
+    {
+        ArgumentNullException.ThrowIfNull(hostedExecutions);
+
+        if (!options.EnableCdcExecution)
+        {
+            return;
+        }
+
+        hostedExecutions.Add(new HostedExecutionDescriptor(
+            id: DataRuntimeIds.CdcHostedExecutionId,
+            displayName: "Shared CDC Capture Pump",
+            description: "Runs the shared Cephalon.Data background pump for active CDC capture implementations.",
+            sourceModuleId: Descriptor.Id,
+            kind: "background-service",
+            executionGraphId: DataRuntimeIds.CdcExecutionGraphId,
+            startsWithHost: true,
+            tags: ["data", "cdc", "runtime"],
+            metadata: new Dictionary<string, string>
+            {
+                ["surface"] = "shared-cdc-execution"
+            }));
     }
 }

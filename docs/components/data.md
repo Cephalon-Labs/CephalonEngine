@@ -9,13 +9,16 @@
 - provides the first reusable bridge between phase-8 data contracts and future provider-specific packs such as `Cephalon.Data.EntityFramework`
 - provides the first reusable CDC runtime-state reporting/catalog bridge over `ICdcCaptureCatalog` plus optional linked outbox dispatch truth
 - extends that same CDC bridge with typed freshness, lag, and publication-posture reporting
+- provides an optional shared in-process CDC hosted-execution substrate that resolves active `ICdcCapture` plus `IOutbox` implementations, stages outbox publications, and reports lifecycle truth through the existing execution/runtime-story surfaces
 
 ## Main surfaces
 
 - `Configuration/DataRuntimeOptions.cs`
 - `Registration/DataEngineBuilderExtensions.cs`
 - `Services/CdcCaptureExecutionReport.cs`
+- `Services/CdcCaptureHostedService.cs`
 - `Services/CdcCaptureRuntimeStateCatalog.cs`
+- `Services/DataRuntimeIds.cs`
 - `Services/HandlerDispatchingReadStore.cs`
 - `Services/HandlerDispatchingWriteStore.cs`
 - `Services/ICdcCaptureRuntimeReporter.cs`
@@ -26,18 +29,29 @@ This package is intentionally the smallest honest first step for the broader dat
 
 That makes `Cephalon.Data` the runtime-neutral layer, while `Cephalon.Data.EntityFramework` now adds the first DbContext-backed companion-pack baseline on top of the same abstractions. The provider pack currently handles honest read/write DbContext registration, capability metadata, direct consumption of the engine-owned `Write` and optional `Read` database roles, explicit dependent `UseRole` references for `Outbox` and for `History` when a host deliberately aliases it to `write`, startup schema apply for those registered `DbContext` roles through a generic-host hosted service, opt-in Entity Framework-backed outbox and inbox paths, outbox descriptors that surface through `/engine/outboxes` and `/engine/snapshot`, inbox descriptors that surface through `/engine/inboxes` and `/engine/snapshot`, and event-driven technology-surface entries for staged outbox producers plus application-managed inbox stores when the eventing technology is active. Richer projection persistence, dedicated outbox execution, broader role graphs, subscription/runtime linkage, and fuller dispatch semantics remain open so the docs stay truthful about what is and is not shipped yet.
 
-The same package now also owns the first runtime-neutral CDC live-state bridge. `AddData()` wires
-`ICdcCaptureRuntimeReporter` plus `ICdcCaptureRuntimeStateCatalog` so provider packs, tests, or
-host code can report `started`, `captured`, `idle`, or `failed` observations against the active
-descriptor catalog without inventing a second runtime registry. The catalog projects every active
-capture even before the first report arrives, preserves descriptor ownership fields such as
-`sourceModuleId`, `provider`, `sourceId`, `outboxId`, `mode`, `eventFormat`, and `resourceIds`,
-tracks totals plus latest checkpoint/change-id/error metadata, and can now also carry typed
-freshness windows, lag posture, and pending-publication answers through
-`CdcCaptureExecutionReport`. When the outbox path already reports downstream runtime truth, the
-same catalog can conservatively merge that dispatch posture into `OutboxDispatchState` and the
-typed CDC publication answer. That keeps `Cephalon.Data` honest: it now owns the shared
-reporting/catalog surface, not provider-specific WAL or change-stream execution loops.
+The same package now also owns the first runtime-neutral CDC live-state bridge and shared
+in-process execution substrate. `AddData()` wires `ICdcCaptureRuntimeReporter` plus
+`ICdcCaptureRuntimeStateCatalog` so provider packs, tests, or host code can report `started`,
+`captured`, `idle`, or `failed` observations against the active descriptor catalog without
+inventing a second runtime registry. The catalog projects every active capture even before the
+first report arrives, preserves descriptor ownership fields such as `sourceModuleId`, `provider`,
+`sourceId`, `outboxId`, `mode`, `eventFormat`, and `resourceIds`, tracks totals plus latest
+checkpoint/change-id/error metadata, and can now also carry typed freshness windows, lag posture,
+and pending-publication answers through `CdcCaptureExecutionReport`.
+
+When `DataRuntimeOptions.EnableCdcExecution` is enabled, the same package now also registers a
+shared `BackgroundService` pump that resolves active `ICdcCapture` implementations by
+`CdcCaptureId`, reads one bounded `CdcCaptureExecutionResult`, stages the returned
+`OutboxMessage` publications through the matching `IOutbox.OutboxId`, and reports the resulting
+runtime posture back through the shared catalog. That pump stays introspectable through the
+`data.cdc.execution` capability, the `data-cdc-capture-flow` execution graph, the
+`data-cdc-capture-pump` hosted execution, and the existing runtime-story/snapshot surfaces.
+
+When the outbox path already reports downstream runtime truth, the same catalog can conservatively
+merge that dispatch posture into `OutboxDispatchState` and the typed CDC publication answer. That
+keeps `Cephalon.Data` honest: it now owns the shared in-process execution substrate plus the shared
+reporting/catalog surface, while provider packs or modules still own the actual WAL,
+change-stream, or source-specific capture semantics behind `ICdcCapture`.
 
 The engine-owned database-topology baseline is now in place through `Engine:Databases`, `AppProfile.Databases`, `/engine/databases`, the resolved `/engine/database-roles` operator catalog, and the resolved `/engine/database-migrations` operator catalog. That baseline makes shared runtime tuning, `Write` / `Read` / `Outbox` / `History` roles, migration policy, requested versus resolved role truth, role-consumer metadata, provider-contributed live role health, logical migration-target state, and provider-added deploy-time command templates introspectable without turning `Cephalon.Data` itself into a provider-specific pack. The next follow-through is deeper provider consumption of those roles rather than inventing a second topology model inside each pack. See [Database topology](../database-topology.md).
 

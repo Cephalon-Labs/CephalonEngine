@@ -35,6 +35,9 @@ internal sealed class CassandraOutbox : IOutbox, IDisposable, IAsyncDisposable
     }
 
     /// <inheritdoc />
+    public string OutboxId => "cassandra-outbox";
+
+    /// <inheritdoc />
     public async ValueTask EnqueueAsync(OutboxMessage message, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(message);

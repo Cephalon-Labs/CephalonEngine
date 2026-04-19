@@ -23,6 +23,9 @@ internal sealed class MongoDbOutbox : IOutbox
     }
 
     /// <inheritdoc />
+    public string OutboxId => "mongodb-outbox";
+
+    /// <inheritdoc />
     public async ValueTask EnqueueAsync(
         OutboxMessage message,
         CancellationToken cancellationToken = default)

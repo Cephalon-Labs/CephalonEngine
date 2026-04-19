@@ -35,6 +35,9 @@ internal sealed class ClickHouseOutbox : IOutbox, IDisposable
     }
 
     /// <inheritdoc />
+    public string OutboxId => "clickhouse-outbox";
+
+    /// <inheritdoc />
     public async ValueTask EnqueueAsync(OutboxMessage message, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(message);

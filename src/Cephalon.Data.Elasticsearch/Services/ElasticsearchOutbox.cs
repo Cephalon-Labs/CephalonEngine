@@ -8,6 +8,9 @@ namespace Cephalon.Data.Elasticsearch.Services;
 internal sealed class ElasticsearchOutbox(ElasticsearchClient client, string indexName) : IOutbox
 {
     /// <inheritdoc />
+    public string OutboxId => "elasticsearch-outbox";
+
+    /// <inheritdoc />
     public async ValueTask EnqueueAsync(OutboxMessage message, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(message);

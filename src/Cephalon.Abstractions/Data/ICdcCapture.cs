@@ -1,14 +1,20 @@
 namespace Cephalon.Abstractions.Data;
 
 /// <summary>
-/// Captures database changes and shapes them into outbox-ready publications.
+/// Captures database changes for one stable CDC surface and shapes them into outbox-ready publications.
 /// </summary>
 public interface ICdcCapture
 {
     /// <summary>
-    /// Reads captured database changes and yields the resulting outbox messages.
+    /// Gets the stable CDC capture identifier owned by this implementation.
+    /// </summary>
+    string CdcCaptureId { get; }
+
+    /// <summary>
+    /// Reads one bounded capture batch and returns the resulting outbox publications plus any
+    /// provider-facing execution metadata.
     /// </summary>
     /// <param name="cancellationToken">The token that cancels the capture stream.</param>
-    /// <returns>An async stream of outbox messages produced from the captured changes.</returns>
-    IAsyncEnumerable<OutboxMessage> CaptureAsync(CancellationToken cancellationToken = default);
+    /// <returns>The captured batch result for the active CDC surface.</returns>
+    ValueTask<CdcCaptureExecutionResult> CaptureAsync(CancellationToken cancellationToken = default);
 }

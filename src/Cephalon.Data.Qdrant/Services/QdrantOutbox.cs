@@ -33,6 +33,9 @@ internal sealed class QdrantOutbox : IOutbox, IDisposable
     }
 
     /// <inheritdoc />
+    public string OutboxId => "qdrant-outbox";
+
+    /// <inheritdoc />
     public async ValueTask EnqueueAsync(OutboxMessage message, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(message);

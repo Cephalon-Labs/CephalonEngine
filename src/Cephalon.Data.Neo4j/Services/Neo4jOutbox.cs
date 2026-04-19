@@ -29,6 +29,9 @@ internal sealed class Neo4jOutbox : IOutbox
     }
 
     /// <inheritdoc />
+    public string OutboxId => "neo4j-outbox";
+
+    /// <inheritdoc />
     public async ValueTask EnqueueAsync(OutboxMessage message, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(message);

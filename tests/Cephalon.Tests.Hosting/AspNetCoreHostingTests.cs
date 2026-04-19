@@ -3280,6 +3280,100 @@ note: visible
     }
 
     [Fact]
+    public async Task MapCephalonExposesSharedCdcExecutionSurfacesAndRuntimeStory()
+    {
+        var executionState = new TestCdcExecutionState();
+        executionState.EnqueueResult(new CdcCaptureExecutionResult(
+            messages:
+            [
+                new OutboxMessage(
+                    id: "cdc-msg-002",
+                    channelId: "tenant-events",
+                    messageType: "tenant.profile.changed",
+                    payload: """{"tenantId":"tenant-002"}""",
+                    occurredAtUtc: DateTimeOffset.Parse("2026-04-20T10:45:00Z", CultureInfo.InvariantCulture))
+            ],
+            freshness: new CdcCaptureFreshnessStatus(
+                CdcCaptureFreshnessStates.Fresh,
+                DateTimeOffset.Parse("2026-04-20T10:50:00Z", CultureInfo.InvariantCulture),
+                "The capture is still within the expected freshness window."),
+            lag: new CdcCaptureLagStatus(
+                CdcCaptureLagStates.Current,
+                pendingChangeCount: 0,
+                description: "The capture is caught up with the source stream."),
+            metadata: new Dictionary<string, string>
+            {
+                ["captureRuntime"] = "phase13-shared-hosting"
+            }));
+
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularVerticalSlice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Patterns:0"] = "CQRS";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.Services.AddSingleton(executionState);
+        builder.Services.AddScoped<ICdcCapture, TestCdcCapture>();
+        builder.Services.AddScoped<IOutbox, TestOutbox>();
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new Phase8CatalogModule());
+            cephalon.AddData(options =>
+            {
+                options.EnableCdcExecution = true;
+                options.CdcPollingIntervalSeconds = 600;
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        await executionState.WaitForStagedMessageAsync(timeout.Token);
+
+        var client = app.GetTestClient();
+        var hostedExecutions = await client.GetFromJsonAsync<HostedExecutionDescriptor[]>("/engine/hosted-executions");
+        var executionGraphs = await client.GetFromJsonAsync<ExecutionGraphDescriptor[]>("/engine/execution-graphs");
+        var story = await client.GetFromJsonAsync<RuntimeOperationalStory>("/engine/runtime-story");
+        var state = await client.GetFromJsonAsync<CdcCaptureRuntimeState>("/engine/cdc-captures/runtime/tenant-profile-cdc");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(hostedExecutions);
+        var hostedExecution = Assert.Single(hostedExecutions, item => item.Id == "data-cdc-capture-pump");
+        Assert.Equal("data-runtime", hostedExecution.SourceModuleId);
+        Assert.Equal("data-cdc-capture-flow", hostedExecution.ExecutionGraphId);
+
+        Assert.NotNull(executionGraphs);
+        var executionGraph = Assert.Single(executionGraphs, item => item.Id == "data-cdc-capture-flow");
+        Assert.Equal("data-runtime", executionGraph.SourceModuleId);
+        Assert.Equal("resolve-cdc-captures", executionGraph.EntryNodeId);
+        Assert.Equal(4, executionGraph.Nodes.Count);
+
+        Assert.NotNull(story);
+        var storyHostedExecution = Assert.Single(story.HostedExecutions, item => item.HostedExecutionId == "data-cdc-capture-pump");
+        Assert.True(storyHostedExecution.IsActive);
+        Assert.Equal("data-cdc-capture-flow", storyHostedExecution.ExecutionGraphId);
+        var storyExecutionGraph = Assert.Single(story.ExecutionGraphs, item => item.GraphId == "data-cdc-capture-flow");
+        Assert.True(storyExecutionGraph.IsActive);
+
+        Assert.NotNull(state);
+        Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, state.LastOutcome);
+        Assert.Equal(1, state.LastProducedMessageCount);
+        Assert.Equal("shared-data-runtime", state.Metadata["captureExecution"]);
+        Assert.Equal("phase13-shared-hosting", state.Metadata["captureRuntime"]);
+        Assert.Equal(CdcCapturePublicationStates.PendingPublication, state.Publication.State);
+        Assert.Equal(1, state.Publication.PendingPublicationCount);
+
+        Assert.NotNull(snapshot);
+        Assert.Contains(snapshot.HostedExecutions, item => item.Id == "data-cdc-capture-pump");
+        Assert.Contains(snapshot.ExecutionGraphs, item => item.Id == "data-cdc-capture-flow");
+        Assert.Contains(snapshot.OperationalStory.HostedExecutions, item => item.HostedExecutionId == "data-cdc-capture-pump" && item.IsActive);
+        Assert.Contains(snapshot.CdcCaptureStates, item => item.CdcCaptureId == "tenant-profile-cdc" && item.LastProducedMessageCount == 1);
+    }
+
+    [Fact]
     public async Task MapCephalonLoadsRestModulePackagesFromConfiguredPackageDirectories()
     {
         var builder = WebApplication.CreateSlimBuilder();

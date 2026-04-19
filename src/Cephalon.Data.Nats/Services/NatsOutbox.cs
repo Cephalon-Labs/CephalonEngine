@@ -30,6 +30,9 @@ internal sealed class NatsOutbox : IOutbox
     }
 
     /// <inheritdoc />
+    public string OutboxId => "nats-outbox";
+
+    /// <inheritdoc />
     public async ValueTask EnqueueAsync(OutboxMessage message, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(message);

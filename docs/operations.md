@@ -1265,6 +1265,11 @@ Current payload highlights:
 - when the linked publication path already reports runtime truth, `outboxDispatchState` carries the
   latest downstream dispatch posture directly on the same CDC runtime answer instead of forcing a
   second join back through `/engine/event-dispatches`
+- when `AddData()` enables the shared CDC execution substrate, the same runtime also exposes the
+  `data-cdc-capture-flow` execution graph plus the `data-cdc-capture-pump` hosted execution
+  through `/engine/execution-graphs`, `/engine/hosted-executions`, `/engine/runtime-story`, and
+  `/engine/snapshot`; the per-capture CDC routes remain the detailed ownership and runtime-state
+  truth for each active capture
 - the same runtime-state catalog is also available through `/engine/snapshot` in
   `CdcCaptureStates` when operators want one merged runtime answer
 - drill-down routes narrow the same runtime-state catalog by capture id, source module, provider,
@@ -1277,11 +1282,13 @@ Current payload highlights:
 
 Current note:
 
-- the shared runtime-state catalog is reporter-driven and descriptor-backed: it does not claim that
-  Cephalon already ships provider-native WAL or change-stream execution loops
-- provider packs can now project typed freshness, lag, and publication posture through the shared
-  contract today, while provider-native execution loops themselves remain later follow-through over
-  the same capture/runtime-state contract instead of a second host-only registry
+- the shared runtime-state catalog is reporter-driven and descriptor-backed, and the shared
+  `Cephalon.Data` pump is only the in-process execution substrate: provider-specific WAL or
+  change-stream semantics still belong to the active `ICdcCapture` implementation
+- provider packs can now project typed freshness, lag, publication posture, and bounded capture
+  batches through the shared contract today, while later out-of-process or edge-aware CDC execution
+  topologies should stay additive over the same capture/runtime-state and execution-runtime surfaces
+  instead of a second host-only registry
 
 ## Inbox surface
 

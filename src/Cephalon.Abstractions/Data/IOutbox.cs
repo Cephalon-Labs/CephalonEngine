@@ -6,6 +6,11 @@ namespace Cephalon.Abstractions.Data;
 public interface IOutbox
 {
     /// <summary>
+    /// Gets the stable outbox identifier owned by this implementation.
+    /// </summary>
+    string OutboxId { get; }
+
+    /// <summary>
     /// Enqueues one message for later delivery.
     /// </summary>
     /// <param name="message">The message to stage for later delivery.</param>

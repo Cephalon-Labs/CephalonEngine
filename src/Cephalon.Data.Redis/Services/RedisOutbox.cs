@@ -27,6 +27,9 @@ internal sealed class RedisOutbox : IOutbox
     }
 
     /// <inheritdoc />
+    public string OutboxId => "redis-outbox";
+
+    /// <inheritdoc />
     public async ValueTask EnqueueAsync(
         OutboxMessage message,
         CancellationToken cancellationToken = default)

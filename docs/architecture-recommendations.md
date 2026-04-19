@@ -301,39 +301,41 @@ Effort: small-to-medium for the remaining follow-through.
 
 ### Change Data Capture — CDC (event-driven data sync)
 
-Current state: the first CDC descriptor baseline, the first live runtime-state follow-through, and
-the first typed freshness/lag/publication follow-through are now shipped.
-`Cephalon.Abstractions` now exposes `ICdcCapture`, `CdcCaptureDescriptor`,
-`ICdcCaptureCatalog`, `ICdcCaptureContributor`, `ICdcCaptureRegistry`,
-`CdcCaptureRuntimeState`, `ICdcCaptureRuntimeStateCatalog`, `CdcCaptureFreshnessStatus`,
-`CdcCaptureLagStatus`, and `CdcCapturePublicationStatus`; `Cephalon.Engine` now projects both
-`snapshot.CdcCaptures` and `snapshot.CdcCaptureStates` while validating referenced
-`sourceModuleId` and `outboxId` values against the active runtime; `Cephalon.Data` now supplies
-the shared reporter/catalog path for latest capture observations plus typed freshness/lag/
-publication answers; and ASP.NET Core now exposes both `/engine/cdc-captures` and
-`/engine/cdc-captures/runtime` plus the same id/module/provider/outbox/source/resource drill-down
-routes so module-owned CDC descriptor truth and latest capture posture stay inspectable through the
-same runtime contract.
+Current state: the first CDC descriptor baseline, the first live runtime-state follow-through, the
+first typed freshness/lag/publication follow-through, and the first shared hosted-execution
+substrate are now shipped. `Cephalon.Abstractions` now exposes `ICdcCapture`,
+`CdcCaptureExecutionResult`, `CdcCaptureDescriptor`, `ICdcCaptureCatalog`,
+`ICdcCaptureContributor`, `ICdcCaptureRegistry`, `CdcCaptureRuntimeState`,
+`ICdcCaptureRuntimeStateCatalog`, `CdcCaptureFreshnessStatus`, `CdcCaptureLagStatus`, and
+`CdcCapturePublicationStatus`; `Cephalon.Engine` now projects both `snapshot.CdcCaptures` and
+`snapshot.CdcCaptureStates` while validating referenced `sourceModuleId` and `outboxId` values
+against the active runtime; `Cephalon.Data` now supplies the shared reporter/catalog path plus the
+shared in-process CDC pump; and ASP.NET Core now exposes both `/engine/cdc-captures` and
+`/engine/cdc-captures/runtime` while the broader runtime already exposes the same CDC execution
+substrate through `/engine/execution-graphs`, `/engine/hosted-executions`, `/engine/runtime-story`,
+and `/engine/snapshot`.
 
-Recommendation: keep the initial descriptor/runtime surface focused on module
-ownership, provider/source/outbox identity, capture mode, event format,
-resource ids, operator-facing metadata, and latest reported runtime posture so
-CDC stays host-agnostic and additive over explicit outbox descriptors instead of
-pulling provider-specific execution into the engine core too early.
+Recommendation: keep the shared CDC surface focused on module ownership,
+provider/source/outbox identity, capture mode, event format, resource ids,
+bounded batch results, operator-facing metadata, latest reported runtime posture,
+and generic-host lifecycle truth so CDC stays host-agnostic and additive over
+explicit outbox descriptors instead of pulling provider-specific source semantics
+or topology-specific scheduling into the engine core too early.
 
 Shipped baseline:
-- `ICdcCapture` — host-agnostic CDC execution contract for provider-specific implementations
+- `ICdcCapture` plus `CdcCaptureExecutionResult` — host-agnostic bounded CDC execution contract for provider-specific implementations
 - `CdcCaptureDescriptor` — operator-facing module/provider/source/outbox/mode/event-format metadata with resource ids, tags, and free-form metadata
 - CDC capture catalog in the runtime surface through `/engine/cdc-captures*` and `snapshot.CdcCaptures`
 - `CdcCaptureRuntimeState` plus `ICdcCaptureRuntimeStateCatalog` — operator-facing live CDC posture with latest outcome, totals, checkpoints, typed freshness/lag/publication status, and optional linked `OutboxDispatchState`
 - `CdcCaptureFreshnessStatus`, `CdcCaptureLagStatus`, and `CdcCapturePublicationStatus` — typed operator-facing freshness, lag, and publication-posture answers that provider packs can report without falling back to metadata-only semantics
 - CDC runtime-state catalog in the runtime surface through `/engine/cdc-captures/runtime*` and `snapshot.CdcCaptureStates`
+- shared `data.cdc.execution` capability plus the `data-cdc-capture-flow` execution graph and `data-cdc-capture-pump` hosted execution through `/engine/execution-graphs`, `/engine/hosted-executions`, `/engine/runtime-story`, and `snapshot.OperationalStory`
 - build-time validation that rejects missing source-module ownership or missing outbox references before broken operator metadata can ship
 
 Later follow-through:
-- provider-specific execution/runtime packs over the shipped contract, such as PostgreSQL WAL or MongoDB change streams
-- richer provider-native execution loops and deeper provider-specific semantics beyond the shipped typed freshness/lag/publication baseline
-- reconsider a dedicated `data.cdc` capability convention only if a truthful module-backed publication path exists
+- provider-specific capture implementations over the shipped `ICdcCapture` / `CdcCaptureExecutionResult` contract, such as PostgreSQL WAL or MongoDB change streams
+- richer provider-native execution semantics and deeper source-specific posture beyond the shipped typed freshness/lag/publication baseline
+- out-of-process or edge-aware CDC execution ownership only when a project truly needs topology beyond the shipped shared in-process host loop
 
 Effort: medium for the remaining provider-specific follow-through.
 
