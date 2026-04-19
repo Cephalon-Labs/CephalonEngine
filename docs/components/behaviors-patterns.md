@@ -118,6 +118,15 @@ publication ownership on the shared choreography execution path and reports only
 observations, so the optional `Cephalon.Eventing.Behaviors` bridge and downstream event-dispatch
 runtime can remain additive truth instead of being collapsed into one choreography registry.
 
+That same `AddBehaviorPatterns()` activation now also lets the owning `Cephalon.Behaviors` module
+publish `behaviors.saga-choreography.runtime-catalog` and
+`behaviors.saga-choreography.publication-state` through the runtime manifest and
+`/engine/capabilities`. Those entries appear only when the shared choreography runtime services are
+actually registered, and their metadata points back to the pattern pack, service contract,
+snapshot field, and ASP.NET Core route so operators can distinguish static choreography ownership,
+live publication-state observations, and the separate `eventing.behaviors.saga-choreography`
+bridge truth.
+
 ## Durable execution contract
 
 Durable workflows opt in explicitly through `IBehaviorTopologyBuilder.AsDurableExecution()` and the
@@ -189,7 +198,7 @@ and it only activates when the shared `Cephalon.Eventing` publication path is tr
 
 ## Status
 
-> Status: ✅ Shipped — M4 baseline plus later follow-through for saga choreography, the first saga choreography runtime catalog/operator surface, the first live saga choreography publication-state surface, higher-level saga choreography authoring helpers, durable execution, the first durable runtime catalog/operator surface, the first durable per-stream live-state/failure-posture surface, the first durable timer/signal coordination surface, and the first durable compensation-helper surface
+> Status: ✅ Shipped — M4 baseline plus later follow-through for saga choreography, the first saga choreography runtime catalog/operator surface, the first live saga choreography publication-state surface, the module-backed saga choreography capability-publication follow-through, higher-level saga choreography authoring helpers, durable execution, the first durable runtime catalog/operator surface, the first durable per-stream live-state/failure-posture surface, the first durable timer/signal coordination surface, and the first durable compensation-helper surface
 
 ## Related components
 

@@ -2,6 +2,7 @@ using System.Reflection;
 using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Capabilities;
+using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Resilience;
 using Cephalon.Abstractions.Technologies;
@@ -31,6 +32,9 @@ internal sealed class BehaviorModule(
     Action<IBehaviorCollectionBuilder>? configureBehaviors)
     : ModuleBase
 {
+    private bool publishesSagaChoreographyRuntimeCatalogCapability;
+    private bool publishesSagaChoreographyPublicationStateCapability;
+
     private static readonly ModuleDescriptor DescriptorInstance = new(
         id: "behaviors",
         displayName: "Behaviors",
@@ -131,6 +135,11 @@ internal sealed class BehaviorModule(
 
         // Runtime surface contributor — exposes behavior topology to /engine/snapshot
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, BehaviorRuntimeContributor>());
+
+        publishesSagaChoreographyRuntimeCatalogCapability =
+            IsServiceRegistered(services, typeof(ISagaChoreographyRuntimeCatalog));
+        publishesSagaChoreographyPublicationStateCapability =
+            IsServiceRegistered(services, typeof(ISagaChoreographyPublicationRuntimeStateCatalog));
     }
 
     private static void RegisterBehaviorResilienceServices(
@@ -236,6 +245,47 @@ internal sealed class BehaviorModule(
         }
 
         return null;
+    }
+
+    private static bool IsServiceRegistered(
+        IServiceCollection services,
+        Type serviceType)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(serviceType);
+
+        return services.Any(descriptor => descriptor.ServiceType == serviceType);
+    }
+
+    private static Dictionary<string, string> CreateSagaChoreographyRuntimeCatalogCapabilityMetadata()
+    {
+        return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["pack"] = "Cephalon.Behaviors.Patterns",
+            ["pattern"] = "saga-choreography",
+            ["surface"] = "runtime-catalog",
+            ["activation"] = "add-behavior-patterns",
+            ["serviceContract"] = typeof(ISagaChoreographyRuntimeCatalog).FullName ?? nameof(ISagaChoreographyRuntimeCatalog),
+            ["snapshotField"] = "SagaChoreographies",
+            ["aspNetCoreRoute"] = "/engine/saga-choreographies"
+        };
+    }
+
+    private static Dictionary<string, string> CreateSagaChoreographyPublicationStateCapabilityMetadata()
+    {
+        return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["pack"] = "Cephalon.Behaviors.Patterns",
+            ["pattern"] = "saga-choreography",
+            ["surface"] = "publication-state",
+            ["activation"] = "add-behavior-patterns",
+            ["serviceContract"] = typeof(ISagaChoreographyPublicationRuntimeStateCatalog).FullName ?? nameof(ISagaChoreographyPublicationRuntimeStateCatalog),
+            ["snapshotField"] = "SagaChoreographyPublicationStates",
+            ["aspNetCoreRoute"] = "/engine/saga-choreographies/runtime",
+            ["ownership"] = "choreography-strategy",
+            ["outcomes"] = "accepted,failed",
+            ["bridgeTruth"] = "separate"
+        };
     }
 
     private static readonly Type AppBehaviorOpenGeneric = typeof(IAppBehavior<,>);
@@ -480,6 +530,24 @@ internal sealed class BehaviorModule(
             key: "behaviors.saga-choreography",
             displayName: "Saga Choreography Behaviors",
             description: "Choreography-based saga behavior topology for event-reaction coordination."));
+
+        if (publishesSagaChoreographyRuntimeCatalogCapability)
+        {
+            capabilities.Add(new Capability(
+                key: "behaviors.saga-choreography.runtime-catalog",
+                displayName: "Saga Choreography Runtime Catalog",
+                description: "Publishes the operator-facing saga choreography runtime catalog for active behaviors, transports, feature gates, and result-contract shape.",
+                metadata: CreateSagaChoreographyRuntimeCatalogCapabilityMetadata()));
+        }
+
+        if (publishesSagaChoreographyPublicationStateCapability)
+        {
+            capabilities.Add(new Capability(
+                key: "behaviors.saga-choreography.publication-state",
+                displayName: "Saga Choreography Publication State",
+                description: "Publishes the latest accepted or failed saga choreography publication handoff observations for operator introspection.",
+                metadata: CreateSagaChoreographyPublicationStateCapabilityMetadata()));
+        }
 
         capabilities.Add(new Capability(
             key: "behaviors.process-manager",

@@ -13,6 +13,10 @@
 - **IBehaviorCatalog / IBehaviorRegistry** — populated by `IBehaviorContributor` implementations
 - **Hosting** — `IEngineBuilder.AddBehaviors(configure?)` extension + `BehaviorModule`
 - **Configuration** — `Engine:Behaviors` auto-registration controls
+- **Module-backed capability publication** — `BehaviorModule` publishes
+  `behaviors.saga-choreography.runtime-catalog` and
+  `behaviors.saga-choreography.publication-state` only when the shared choreography pattern
+  services are actually active
 - **Built-in compatibility rules** — startup guardrails covering saga, saga choreography,
   durable execution, process-manager, and CQRS constraints
 

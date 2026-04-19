@@ -108,8 +108,9 @@ Effort: small.
 
 Current state: the first host-agnostic choreography baseline, the first explicit eventing bridge,
 the first higher-level authoring-helper follow-through, the first choreography
-runtime/operator catalog follow-through, and the first live choreography publication-state
-follow-through are now shipped. `Cephalon.Behaviors.Patterns` exposes
+runtime/operator catalog follow-through, the first live choreography publication-state
+follow-through, and the first module-backed capability-publication follow-through are now shipped.
+`Cephalon.Behaviors.Patterns` exposes
 `ChoreographySagaExecutionStrategy`, `ISagaChoreographyPublisher`,
 `ISagaChoreographyStepResult`, `ISagaEventReactor<TEvent>`,
 `ISagaEventReactor<TEvent, TOutput>`, `SagaChoreographyPublication`,
@@ -125,6 +126,11 @@ also reports accepted or failed publication handoff observations directly from
 `snapshot.SagaChoreographies` and `snapshot.SagaChoreographyPublicationStates`, and ASP.NET Core
 now exposes `/engine/saga-choreographies` plus `/engine/saga-choreographies/runtime` with
 behavior/module/transport/channel/correlation/failure/compensation drill-down routes.
+`Cephalon.Behaviors` now also publishes
+`behaviors.saga-choreography.runtime-catalog` and
+`behaviors.saga-choreography.publication-state` through `/engine/capabilities` only when
+`AddBehaviorPatterns()` actually registers the shared choreography runtime services, so capability
+truth stays module-backed instead of inventing a synthetic engine or bridge source.
 `Cephalon.Eventing.Behaviors` still provides the explicit `AddBehaviorEventingBridge()`
 follow-through that stages those publications through the shared outbox-backed eventing publish
 path when that path is actually available.
@@ -132,8 +138,9 @@ path when that path is actually available.
 Recommendation: keep the host-agnostic choreography contracts stable, keep the bridge explicit
 through a dedicated companion pack rather than collapsing the behavior-pattern layer into
 `Cephalon.Eventing` or making choreography publication an ambient side effect of enabling the
-eventing technology pack, and keep strategy-owned publication handoff observations separate from
-provider-specific publish or downstream dispatch truth.
+eventing technology pack, keep module-backed capability publication derived from real pattern
+activation instead of synthetic engine ownership, and keep strategy-owned publication handoff
+observations separate from provider-specific publish or downstream dispatch truth.
 
 Implementation outline:
 - shipped baseline: `ChoreographySagaExecutionStrategy`, `ISagaChoreographyPublisher`,
@@ -166,9 +173,15 @@ Implementation outline:
   `/engine/saga-choreographies/runtime/failures` keep live handoff observations on the shared
   choreography execution path without pretending to replace downstream eventing or broker dispatch
   truth
+- shipped capability-publication follow-through:
+  `behaviors.saga-choreography.runtime-catalog` and
+  `behaviors.saga-choreography.publication-state` now publish through the `behaviors` module only
+  when `AddBehaviorPatterns()` actually activates `ISagaChoreographyRuntimeCatalog` and
+  `ISagaChoreographyPublicationRuntimeStateCatalog`, and their metadata points back to the pattern
+  pack, shared service contracts, snapshot fields, and ASP.NET Core routes without claiming
+  eventing-bridge ownership
 
-Effort: medium for any later capability-publication or provider-specific downstream choreography
-follow-through.
+Effort: medium for any later provider-specific downstream choreography follow-through.
 
 ### Backend for Frontend — BFF (explicit pattern)
 

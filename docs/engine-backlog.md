@@ -2603,6 +2603,56 @@ Delivered:
   catalog, snapshot projection, ASP.NET Core operator routes, and public package surface without
   collapsing downstream event-dispatch ownership into the choreography runtime answer
 
+### ENG-118 Phase 12 saga choreography capability-publication follow-through
+
+Status: done
+Estimate: 4
+Completed: April 19, 2026
+
+Why:
+
+- after `ENG-117`, operators could query the choreography runtime and publication-state surfaces
+  directly, but `/engine/capabilities` still exposed only the coarse
+  `behaviors.saga-choreography` baseline instead of telling them whether the static runtime catalog
+  and live publication-state services were actually active
+- choreography capability truth needed to stay module-backed and activation-driven; inventing a
+  synthetic engine-owned runtime capability would blur provenance, especially because the explicit
+  `Cephalon.Eventing.Behaviors` bridge already owns a separate durable handoff capability answer
+- hosts and low-ceremony consumers needed deterministic manifest metadata that reflected whether
+  `AddBehaviorPatterns()` had actually registered `ISagaChoreographyRuntimeCatalog` and
+  `ISagaChoreographyPublicationRuntimeStateCatalog`
+
+Acceptance:
+
+- `Cephalon.Behaviors` publishes `behaviors.saga-choreography.runtime-catalog` only when
+  `AddBehaviorPatterns()` activates `ISagaChoreographyRuntimeCatalog`
+- `Cephalon.Behaviors` publishes `behaviors.saga-choreography.publication-state` only when
+  `AddBehaviorPatterns()` activates `ISagaChoreographyPublicationRuntimeStateCatalog`
+- capability metadata explains pack, pattern, surface, activation, service contract, snapshot
+  field, ASP.NET Core route, and publication-state ownership truth without collapsing
+  eventing-bridge ownership into the choreography runtime answer
+- focused composition and hosting coverage lock the conditional capability-publication behavior
+  through both the runtime manifest and `/engine/capabilities`
+- docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the shipped
+  module-backed capability-publication follow-through
+
+Delivered:
+
+- `Cephalon.Behaviors` now inspects whether `AddBehaviorPatterns()` actually registered
+  `ISagaChoreographyRuntimeCatalog` and `ISagaChoreographyPublicationRuntimeStateCatalog` before it
+  publishes the additive `behaviors.saga-choreography.runtime-catalog` and
+  `behaviors.saga-choreography.publication-state` capabilities
+- both new capability entries stay sourced from the `behaviors` module and now publish stable
+  metadata for the owning pattern pack, service contract, snapshot field, activation path, and
+  ASP.NET Core route so `/engine/capabilities` explains which choreography operator surfaces are
+  active without inventing a synthetic engine runtime owner
+- the publication-state capability metadata now also records its choreography-strategy ownership,
+  accepted-versus-failed outcome scope, and explicit separation from the additive
+  `eventing.behaviors.saga-choreography` bridge capability
+- focused composition and hosting coverage now prove the positive and negative activation paths
+  through the runtime manifest and `/engine/capabilities` so the module-backed capability answer
+  stays truthful when pattern services are absent
+
 ### ENG-069 Event-dispatch runtime operator-surface baseline
 
 Status: done
@@ -3061,3 +3111,4 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-115 phase 12 saga choreography authoring helper baseline: `Cephalon.Behaviors.Patterns` now exposes `ISagaChoreographyStepResult`, `ISagaEventReactor<TEvent>`, `ISagaEventReactor<TEvent, TOutput>`, `SagaChoreographyStepResult<TOutput>`, and typed JSON helper factories on `SagaChoreographyPublication`, while `ChoreographySagaExecutionStrategy` now normalizes the shared result contract without changing the explicit `ISagaChoreographyPublisher` handoff or the opt-in `Cephalon.Eventing.Behaviors` bridge — **Shipped** · GitHub issue `#512` · composition tests 41/41 + tooling tests 188/188 + reference docs publish script
 - ENG-116 phase 12 saga choreography runtime catalog baseline: `Cephalon.Abstractions` now exposes `SagaChoreographyRuntimeDescriptor` plus `ISagaChoreographyRuntimeCatalog`, `Cephalon.Behaviors.Patterns` now derives the catalog from shared choreography behavior topology plus registered implementation types, `Cephalon.Engine` now projects `snapshot.SagaChoreographies`, and `Cephalon.AspNetCore` now exposes `/engine/saga-choreographies` plus behavior/module/transport drill-down routes while live publication-state tracking remains later — **Shipped** · GitHub issue `#513` · composition tests 1/1 + hosting tests 1/1 + package-surface tests 163/163
 - ENG-117 phase 12 saga choreography live publication-state baseline: `Cephalon.Abstractions` now exposes `SagaChoreographyPublicationRuntimeState` plus `ISagaChoreographyPublicationRuntimeStateCatalog`, `ChoreographySagaExecutionStrategy` now reports accepted and failed publication handoff observations directly from the shared choreography path, `Cephalon.Engine` now projects `snapshot.SagaChoreographyPublicationStates`, and `Cephalon.AspNetCore` now exposes `/engine/saga-choreographies/runtime*` operator routes for publication, behavior, module, transport, channel, correlation, compensation, and failure drill-downs while eventing-bridge and downstream dispatch truth remain separate — **Shipped** · GitHub issue `#514` · composition tests 8/8 + hosting tests 2/2 + tooling tests 190/190 + reference docs publish script
+- ENG-118 phase 12 saga choreography capability-publication follow-through: `Cephalon.Behaviors` now publishes `behaviors.saga-choreography.runtime-catalog` and `behaviors.saga-choreography.publication-state` only when `AddBehaviorPatterns()` activates the shared choreography runtime services, `/engine/capabilities` now exposes pack/service/snapshot/route ownership truth for those surfaces, and the explicit `eventing.behaviors.saga-choreography` bridge capability remains separate durable-handoff truth — **Shipped** · GitHub issue `#515` · composition tests 7/7 + hosting tests 2/2 + tooling tests 190/190

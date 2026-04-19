@@ -11,6 +11,7 @@ using Cephalon.Behaviors.Patterns.Hosting;
 using Cephalon.Behaviors.Patterns.Strategies;
 using Cephalon.Behaviors.Services;
 using Cephalon.Engine.Configuration;
+using Cephalon.Engine.Manifest;
 using Cephalon.Engine.Runtime;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.TestHost;
@@ -45,6 +46,7 @@ public sealed class SagaChoreographyHostingTests
         var byModule = await client.GetFromJsonAsync<SagaChoreographyRuntimeDescriptor[]>("/engine/saga-choreographies/modules/tests.saga-host");
         var byTransport = await client.GetFromJsonAsync<SagaChoreographyRuntimeDescriptor[]>("/engine/saga-choreographies/transports/rabbitmq");
         var reviewApproved = await client.GetFromJsonAsync<SagaChoreographyRuntimeDescriptor>("/engine/saga-choreographies/tests.sagas.hosted.review-approved");
+        var capabilities = await client.GetFromJsonAsync<CapabilityManifest[]>("/engine/capabilities");
         var missing = await client.GetAsync("/engine/saga-choreographies/tests.sagas.hosted.missing");
         var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
 
@@ -55,6 +57,7 @@ public sealed class SagaChoreographyHostingTests
         Assert.NotNull(byTransport);
         Assert.Single(byTransport);
         Assert.NotNull(reviewApproved);
+        Assert.NotNull(capabilities);
         Assert.NotNull(snapshot);
         Assert.Equal(HttpStatusCode.NotFound, missing.StatusCode);
 
@@ -77,6 +80,21 @@ public sealed class SagaChoreographyHostingTests
         Assert.Equal("typed-step-result", reviewApproved.Metadata["publicationResultShape"]);
         Assert.Equal("approval", reviewApproved.Metadata["lane"]);
         Assert.Equal("behaviors.saga-choreography", reviewApproved.Metadata["capabilityKey"]);
+
+        var runtimeCatalogCapability = Assert.Single(
+            capabilities!,
+            static capability => string.Equals(capability.Key, "behaviors.saga-choreography.runtime-catalog", StringComparison.Ordinal));
+        Assert.Equal("behaviors", runtimeCatalogCapability.SourceModuleId);
+        Assert.Equal("runtime-catalog", runtimeCatalogCapability.Metadata["surface"]);
+        Assert.Equal("/engine/saga-choreographies", runtimeCatalogCapability.Metadata["aspNetCoreRoute"]);
+
+        var publicationStateCapability = Assert.Single(
+            capabilities,
+            static capability => string.Equals(capability.Key, "behaviors.saga-choreography.publication-state", StringComparison.Ordinal));
+        Assert.Equal("behaviors", publicationStateCapability.SourceModuleId);
+        Assert.Equal("publication-state", publicationStateCapability.Metadata["surface"]);
+        Assert.Equal("/engine/saga-choreographies/runtime", publicationStateCapability.Metadata["aspNetCoreRoute"]);
+        Assert.Equal("choreography-strategy", publicationStateCapability.Metadata["ownership"]);
 
         Assert.Equal(2, snapshot!.SagaChoreographies.Count);
         var snapshotReviewApproved = Assert.Single(

@@ -94,6 +94,71 @@ public sealed class SagaChoreographyRuntimeCatalogTests
         Assert.Equal(reviewApproved.Metadata["authoringModel"], snapshotReviewApproved.Metadata["authoringModel"]);
     }
 
+    [Fact]
+    public void BuildPublishesSagaChoreographyRuntimeCapabilitiesOnlyWhenPatternSurfacesAreRegistered()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(blueprint: "ModularMonolith"));
+            engine.AddBehaviors(
+                configureOptions: options => options.AutoRegister = false,
+                configure: behaviors => behaviors.AddBehaviorPatterns());
+            engine.AddModule(new SagaChoreographyCatalogModule());
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var runtime = provider.GetRequiredService<IRuntime>();
+
+        var runtimeCatalogCapability = Assert.Single(
+            runtime.Manifest.Capabilities,
+            static capability => string.Equals(capability.Key, "behaviors.saga-choreography.runtime-catalog", StringComparison.Ordinal));
+        Assert.Equal("behaviors", runtimeCatalogCapability.SourceModuleId);
+        Assert.Equal("Cephalon.Behaviors.Patterns", runtimeCatalogCapability.Metadata["pack"]);
+        Assert.Equal("saga-choreography", runtimeCatalogCapability.Metadata["pattern"]);
+        Assert.Equal("runtime-catalog", runtimeCatalogCapability.Metadata["surface"]);
+        Assert.Equal("add-behavior-patterns", runtimeCatalogCapability.Metadata["activation"]);
+        Assert.Equal(typeof(ISagaChoreographyRuntimeCatalog).FullName, runtimeCatalogCapability.Metadata["serviceContract"]);
+        Assert.Equal("SagaChoreographies", runtimeCatalogCapability.Metadata["snapshotField"]);
+        Assert.Equal("/engine/saga-choreographies", runtimeCatalogCapability.Metadata["aspNetCoreRoute"]);
+
+        var publicationStateCapability = Assert.Single(
+            runtime.Manifest.Capabilities,
+            static capability => string.Equals(capability.Key, "behaviors.saga-choreography.publication-state", StringComparison.Ordinal));
+        Assert.Equal("behaviors", publicationStateCapability.SourceModuleId);
+        Assert.Equal("Cephalon.Behaviors.Patterns", publicationStateCapability.Metadata["pack"]);
+        Assert.Equal("saga-choreography", publicationStateCapability.Metadata["pattern"]);
+        Assert.Equal("publication-state", publicationStateCapability.Metadata["surface"]);
+        Assert.Equal("add-behavior-patterns", publicationStateCapability.Metadata["activation"]);
+        Assert.Equal(typeof(ISagaChoreographyPublicationRuntimeStateCatalog).FullName, publicationStateCapability.Metadata["serviceContract"]);
+        Assert.Equal("SagaChoreographyPublicationStates", publicationStateCapability.Metadata["snapshotField"]);
+        Assert.Equal("/engine/saga-choreographies/runtime", publicationStateCapability.Metadata["aspNetCoreRoute"]);
+        Assert.Equal("choreography-strategy", publicationStateCapability.Metadata["ownership"]);
+        Assert.Equal("accepted,failed", publicationStateCapability.Metadata["outcomes"]);
+        Assert.Equal("separate", publicationStateCapability.Metadata["bridgeTruth"]);
+    }
+
+    [Fact]
+    public void BuildDoesNotPublishSagaChoreographyRuntimeCapabilitiesWhenPatternSurfacesAreNotRegistered()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(blueprint: "ModularMonolith"));
+            engine.AddBehaviors(configureOptions: options => options.AutoRegister = false);
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var runtime = provider.GetRequiredService<IRuntime>();
+
+        Assert.DoesNotContain(
+            runtime.Manifest.Capabilities,
+            static capability => string.Equals(capability.Key, "behaviors.saga-choreography.runtime-catalog", StringComparison.Ordinal));
+        Assert.DoesNotContain(
+            runtime.Manifest.Capabilities,
+            static capability => string.Equals(capability.Key, "behaviors.saga-choreography.publication-state", StringComparison.Ordinal));
+    }
+
     private sealed class SagaChoreographyCatalogModule : BehaviorModuleBase
     {
         private static readonly ModuleDescriptor DescriptorInstance = new(
