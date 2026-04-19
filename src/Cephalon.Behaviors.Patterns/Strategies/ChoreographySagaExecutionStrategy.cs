@@ -38,7 +38,7 @@ public sealed class ChoreographySagaExecutionStrategy : IBehaviorExecutionStrate
     /// <summary>
     /// Invokes the behavior and stages any returned publications through the choreography publisher.
     /// Behaviors may return a single <see cref="SagaChoreographyPublication"/>, a sequence of them,
-    /// or a <see cref="SagaChoreographyStepResult"/> when they need both local output and
+    /// or any <see cref="ISagaChoreographyStepResult"/> when they need both local output and
     /// publications in the same step.
     /// </summary>
     /// <param name="context">The execution context for this invocation.</param>
@@ -82,7 +82,7 @@ public sealed class ChoreographySagaExecutionStrategy : IBehaviorExecutionStrate
     {
         return output switch
         {
-            SagaChoreographyStepResult stepResult => (
+            ISagaChoreographyStepResult stepResult => (
                 stepResult.Output,
                 stepResult.Publications.Count == 0
                     ? []

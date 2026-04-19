@@ -1,3 +1,5 @@
+using System.Text.Json;
+
 namespace Cephalon.Behaviors.Patterns.Abstractions;
 
 /// <summary>
@@ -5,6 +7,9 @@ namespace Cephalon.Behaviors.Patterns.Abstractions;
 /// </summary>
 public sealed class SagaChoreographyPublication
 {
+    private const string JsonContentType = "application/json";
+    private static readonly JsonSerializerOptions WebJsonSerializerOptions = new(JsonSerializerDefaults.Web);
+
     /// <summary>
     /// Initializes a new instance of <see cref="SagaChoreographyPublication"/>.
     /// </summary>
@@ -73,6 +78,92 @@ public sealed class SagaChoreographyPublication
             ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             : new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase);
     }
+
+    /// <summary>
+    /// Creates one choreography publication with a JSON-serialized payload.
+    /// </summary>
+    /// <typeparam name="TPayload">The payload type to serialize.</typeparam>
+    /// <param name="id">The stable publication identifier.</param>
+    /// <param name="channelId">The logical channel or destination identifier.</param>
+    /// <param name="eventType">The logical event type identifier.</param>
+    /// <param name="payload">The typed payload to serialize as JSON.</param>
+    /// <param name="occurredAtUtc">The time at which the publication occurred.</param>
+    /// <param name="correlationId">The correlation identifier associated with the publication.</param>
+    /// <param name="tenantId">The tenant identifier associated with the publication.</param>
+    /// <param name="isCompensation">Indicates whether the publication represents compensation work.</param>
+    /// <param name="headers">Optional event headers.</param>
+    /// <param name="metadata">Optional event metadata.</param>
+    /// <param name="serializerOptions">Optional JSON serializer options for the payload.</param>
+    /// <returns>The choreography publication with a JSON payload and <c>application/json</c> content type.</returns>
+    public static SagaChoreographyPublication CreateJson<TPayload>(
+        string id,
+        string channelId,
+        string eventType,
+        TPayload payload,
+        DateTimeOffset occurredAtUtc,
+        string? correlationId = null,
+        string? tenantId = null,
+        bool isCompensation = false,
+        IReadOnlyDictionary<string, string>? headers = null,
+        IReadOnlyDictionary<string, string>? metadata = null,
+        JsonSerializerOptions? serializerOptions = null)
+    {
+        var serializedPayload = JsonSerializer.Serialize(
+            payload,
+            serializerOptions ?? WebJsonSerializerOptions);
+
+        return new SagaChoreographyPublication(
+            id,
+            channelId,
+            eventType,
+            serializedPayload,
+            occurredAtUtc,
+            contentType: JsonContentType,
+            correlationId: correlationId,
+            tenantId: tenantId,
+            isCompensation: isCompensation,
+            headers: headers,
+            metadata: metadata);
+    }
+
+    /// <summary>
+    /// Creates one choreography publication with a JSON-serialized payload that is explicitly marked as compensation work.
+    /// </summary>
+    /// <typeparam name="TPayload">The payload type to serialize.</typeparam>
+    /// <param name="id">The stable publication identifier.</param>
+    /// <param name="channelId">The logical channel or destination identifier.</param>
+    /// <param name="eventType">The logical event type identifier.</param>
+    /// <param name="payload">The typed payload to serialize as JSON.</param>
+    /// <param name="occurredAtUtc">The time at which the publication occurred.</param>
+    /// <param name="correlationId">The correlation identifier associated with the publication.</param>
+    /// <param name="tenantId">The tenant identifier associated with the publication.</param>
+    /// <param name="headers">Optional event headers.</param>
+    /// <param name="metadata">Optional event metadata.</param>
+    /// <param name="serializerOptions">Optional JSON serializer options for the payload.</param>
+    /// <returns>The choreography publication with a JSON payload, compensation flag, and JSON content type.</returns>
+    public static SagaChoreographyPublication CreateCompensationJson<TPayload>(
+        string id,
+        string channelId,
+        string eventType,
+        TPayload payload,
+        DateTimeOffset occurredAtUtc,
+        string? correlationId = null,
+        string? tenantId = null,
+        IReadOnlyDictionary<string, string>? headers = null,
+        IReadOnlyDictionary<string, string>? metadata = null,
+        JsonSerializerOptions? serializerOptions = null)
+        => CreateJson(
+            id,
+            channelId,
+            eventType,
+            payload,
+            occurredAtUtc,
+            correlationId: correlationId,
+            tenantId: tenantId,
+            isCompensation: true,
+            headers: headers,
+            metadata: metadata,
+            serializerOptions: serializerOptions);
 
     /// <summary>Gets the stable publication identifier.</summary>
     public string Id { get; }

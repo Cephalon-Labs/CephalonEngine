@@ -22,7 +22,14 @@
 
 ## How it fits
 
-This package exists to keep both sides honest. `Cephalon.Behaviors.Patterns` still owns choreography authoring and the transport-neutral `ISagaChoreographyPublisher` contract. `Cephalon.Eventing` still owns channels, staged publication, outbox handoff, and event-driven runtime introspection. `Cephalon.Eventing.Behaviors` is the explicit handoff between those two worlds when a host wants saga choreography steps to stage durable publications through the same outbox-backed eventing path used elsewhere in the app.
+This package exists to keep both sides honest. `Cephalon.Behaviors.Patterns` still owns
+choreography authoring, the transport-neutral `ISagaChoreographyPublisher` contract, higher-level
+authoring helpers such as `ISagaEventReactor<TEvent>`, and typed output/publication helpers such as
+`ISagaChoreographyStepResult`, `SagaChoreographyStepResult<TOutput>`, and
+`SagaChoreographyPublication.CreateJson(...)`. `Cephalon.Eventing` still owns channels, staged
+publication, outbox handoff, and event-driven runtime introspection. `Cephalon.Eventing.Behaviors`
+is the explicit handoff between those two worlds when a host wants saga choreography steps to
+stage durable publications through the same outbox-backed eventing path used elsewhere in the app.
 
 That separation matters because Cephalon does not want the behavior-pattern layer to hard-depend on an eventing technology pack, and it also does not want `Cephalon.Eventing` to claim ownership of behavior choreography semantics that originate elsewhere. The bridge therefore stays opt-in through `AddBehaviorEventingBridge()`, activates only when `EventDrivenIntegration` is selected, and validates that the shared eventing publish path is real before it accepts choreography publications. If a host or consumer has already registered its own non-default `ISagaChoreographyPublisher`, the bridge leaves that choice alone and does not publish an engine-managed bridge capability or runtime-surface entry.
 

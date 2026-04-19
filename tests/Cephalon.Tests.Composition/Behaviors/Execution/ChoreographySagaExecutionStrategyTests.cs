@@ -10,6 +10,10 @@ namespace Cephalon.Tests.Behaviors.Execution;
 /// <summary>Tests for <see cref="ChoreographySagaExecutionStrategy"/>.</summary>
 public sealed class ChoreographySagaExecutionStrategyTests
 {
+    private sealed record OrderPlaced(string OrderId, decimal Amount);
+    private sealed record PaymentRequested(string OrderId, decimal Amount);
+    private sealed record OrderCancelled(string OrderId, string Reason);
+
     [AppBehavior("saga.choreography.single")]
     private sealed class SinglePublicationBehavior : IAppBehavior<string, SagaChoreographyPublication>
     {
@@ -55,6 +59,53 @@ public sealed class ChoreographySagaExecutionStrategyTests
     {
         public Task<string> HandleAsync(string input, IBehaviorContext context, CancellationToken cancellationToken = default)
             => Task.FromResult($"local:{input}");
+    }
+
+    [AppBehavior("saga.choreography.reactor")]
+    private sealed class ReactorBehavior : ISagaEventReactor<OrderPlaced>
+    {
+        public Task<SagaChoreographyStepResult> ReactAsync(
+            OrderPlaced input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new SagaChoreographyStepResult(
+                publications:
+                [
+                    SagaChoreographyPublication.CreateJson(
+                        id: $"publication-{input.OrderId}",
+                        channelId: "payments.events",
+                        eventType: "payment-requested",
+                        payload: new PaymentRequested(input.OrderId, input.Amount),
+                        occurredAtUtc: new DateTimeOffset(2026, 4, 19, 0, 0, 0, TimeSpan.Zero),
+                        metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                        {
+                            ["stage"] = "continuation"
+                        })
+                ]));
+        }
+    }
+
+    [AppBehavior("saga.choreography.reactor.output")]
+    private sealed class ReactorWithOutputBehavior : ISagaEventReactor<string, string>
+    {
+        public Task<SagaChoreographyStepResult<string>> ReactAsync(
+            string input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new SagaChoreographyStepResult<string>(
+                output: $"accepted:{input}",
+                publications:
+                [
+                    SagaChoreographyPublication.CreateCompensationJson(
+                        id: "publication-reactor-output",
+                        channelId: "orders.events",
+                        eventType: "order-cancelled",
+                        payload: new OrderCancelled(input, "payment-timeout"),
+                        occurredAtUtc: new DateTimeOffset(2026, 4, 19, 1, 0, 0, TimeSpan.Zero))
+                ]));
+        }
     }
 
     private static BehaviorExecutionContext MakeContext<TBehavior>(TBehavior behavior, object input, IBehaviorContext behaviorContext)
@@ -133,6 +184,76 @@ public sealed class ChoreographySagaExecutionStrategyTests
         Assert.Equal(200, result.HttpStatusCode);
         Assert.Equal("local:checkout", result.Output);
         Assert.Empty(publisher.PublishedPublications);
+    }
+
+    [Fact]
+    public async Task ChoreographySagaExecutionStrategy_ReactorContract_PublishesTypedJsonPayload()
+    {
+        var publisher = new InMemorySagaChoreographyPublisher();
+        var strategy = MakeStrategy(publisher);
+        var behaviorContext = new TestBehaviorContext(
+            "saga.choreography.reactor",
+            metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["tenant-id"] = "tenant-reactor"
+            },
+            correlationId: "corr-reactor");
+        var executionContext = MakeContext(
+            new ReactorBehavior(),
+            new OrderPlaced("order-42", 149.95m),
+            behaviorContext);
+
+        var result = await strategy.ExecuteAsync(executionContext);
+
+        Assert.Equal(202, result.HttpStatusCode);
+        Assert.Null(result.Output);
+
+        var published = Assert.Single(publisher.PublishedPublications);
+        Assert.Equal("application/json", published.ContentType);
+        Assert.Equal("corr-reactor", published.CorrelationId);
+        Assert.Equal("tenant-reactor", published.TenantId);
+        Assert.Contains("\"orderId\":\"order-42\"", published.Payload, StringComparison.Ordinal);
+        Assert.Contains("\"amount\":149.95", published.Payload, StringComparison.Ordinal);
+        Assert.Equal("continuation", published.Metadata["stage"]);
+    }
+
+    [Fact]
+    public async Task ChoreographySagaExecutionStrategy_TypedReactorOutput_PreservesOutputAndCompensationFlag()
+    {
+        var publisher = new InMemorySagaChoreographyPublisher();
+        var strategy = MakeStrategy(publisher);
+        var executionContext = MakeContext(
+            new ReactorWithOutputBehavior(),
+            "checkout-17",
+            new TestBehaviorContext("saga.choreography.reactor.output", correlationId: "corr-reactor-output"));
+
+        var result = await strategy.ExecuteAsync(executionContext);
+
+        Assert.Equal(202, result.HttpStatusCode);
+        Assert.Equal("accepted:checkout-17", result.Output);
+
+        var published = Assert.Single(publisher.PublishedPublications);
+        Assert.True(published.IsCompensation);
+        Assert.Equal("application/json", published.ContentType);
+        Assert.Equal("corr-reactor-output", published.CorrelationId);
+        Assert.Contains("\"orderId\":\"checkout-17\"", published.Payload, StringComparison.Ordinal);
+        Assert.Contains("\"reason\":\"payment-timeout\"", published.Payload, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void SagaChoreographyPublication_CreateCompensationJson_UsesJsonDefaults()
+    {
+        var publication = SagaChoreographyPublication.CreateCompensationJson(
+            id: "publication-contract",
+            channelId: "orders.events",
+            eventType: "order-cancelled",
+            payload: new OrderCancelled("order-77", "inventory-mismatch"),
+            occurredAtUtc: new DateTimeOffset(2026, 4, 19, 2, 0, 0, TimeSpan.Zero));
+
+        Assert.True(publication.IsCompensation);
+        Assert.Equal("application/json", publication.ContentType);
+        Assert.Contains("\"orderId\":\"order-77\"", publication.Payload, StringComparison.Ordinal);
+        Assert.Contains("\"reason\":\"inventory-mismatch\"", publication.Payload, StringComparison.Ordinal);
     }
 
     [Fact]

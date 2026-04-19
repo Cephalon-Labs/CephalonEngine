@@ -53,6 +53,7 @@ public sealed class BehaviorSourceGeneratorTests
             public interface IBehaviorTopologyBuilder
             {
                 IBehaviorTopologyBuilder AsDurableExecution();
+                IBehaviorTopologyBuilder AsSagaChoreography();
                 IBehaviorTopologyBuilder ViaHttpJsonRpc();
             }
         }
@@ -1100,6 +1101,54 @@ public sealed class BehaviorSourceGeneratorTests
         var autoRegistration = GetGeneratedAutoRegistrationSource(result);
         Assert.NotNull(autoRegistration);
         Assert.Contains("\"durable-execution\"", autoRegistration, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void BehaviorImplementingSagaEventReactorStillGeneratesCompileTimeDescriptor()
+    {
+        const string source = """
+            using Cephalon.Abstractions.Behaviors;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            namespace Cephalon.Behaviors.Patterns.Abstractions
+            {
+                public sealed class SagaChoreographyStepResult { }
+
+                public interface ISagaEventReactor<in TEvent> : IAppBehavior<TEvent, SagaChoreographyStepResult>
+                {
+                    Task<SagaChoreographyStepResult> ReactAsync(TEvent input, IBehaviorContext context, CancellationToken ct = default);
+
+                    Task<SagaChoreographyStepResult> IAppBehavior<TEvent, SagaChoreographyStepResult>.HandleAsync(
+                        TEvent input,
+                        IBehaviorContext context,
+                        CancellationToken ct)
+                        => ReactAsync(input, context, ct);
+                }
+            }
+
+            [AppBehavior("orders.choreography")]
+            public sealed class OrderPlacedReactor : Cephalon.Behaviors.Patterns.Abstractions.ISagaEventReactor<string>
+            {
+                public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
+                    => builder.AsSagaChoreography();
+
+                public Task<Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyStepResult> ReactAsync(
+                    string input,
+                    IBehaviorContext context,
+                    CancellationToken ct = default)
+                    => Task.FromResult(new Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyStepResult());
+            }
+            """;
+
+        var (result, diagnostics) = RunGenerator(source);
+
+        Assert.Empty(diagnostics);
+
+        var autoRegistration = GetGeneratedAutoRegistrationSource(result);
+        Assert.NotNull(autoRegistration);
+        Assert.Contains("\"orders.choreography\"", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("\"saga-choreography\"", autoRegistration, StringComparison.Ordinal);
     }
 
     [Fact]

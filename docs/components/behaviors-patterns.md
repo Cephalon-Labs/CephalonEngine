@@ -12,7 +12,9 @@ durable-execution replay are handled.
 - **BehaviorExecutionResult** — result envelope (output, HTTP status code, fire-and-forget flag)
 - **ISagaStateStore / IProcessCheckpointStore** — persistence contracts
 - **ISagaChoreographyPublisher** — host-agnostic publication handoff contract for choreography steps
-- **SagaChoreographyPublication / SagaChoreographyStepResult** — host-agnostic choreography output contracts
+- **ISagaChoreographyStepResult / SagaChoreographyStepResult / SagaChoreographyStepResult<TOutput>** — host-agnostic choreography output contracts for shared output-plus-publication normalization
+- **ISagaEventReactor<TEvent> / ISagaEventReactor<TEvent, TOutput>** — higher-level choreography authoring helpers that still compile down to the shared behavior contract
+- **SagaChoreographyPublication** — host-agnostic choreography publication contract plus typed JSON publication helpers
 - **IDurableExecution<TState> / IDurableExecution<TInput, TState, TOutput>** — host-agnostic durable workflow contract over `IEventStore` replay
 - **DurableExecutionState<TState> / DurableExecutionStepResult<TOutput>** — replay snapshot and step-result contracts for durable execution
 - **DurableExecutionPendingTimer / DurableExecutionPendingSignal** — host-agnostic coordination descriptors for pending durable timer and signal waits
@@ -72,7 +74,21 @@ Choreography-based saga steps can return:
 
 - one `SagaChoreographyPublication`
 - a sequence of `SagaChoreographyPublication`
-- one `SagaChoreographyStepResult` when the step needs both local output and publications
+- one `SagaChoreographyStepResult`
+- one `SagaChoreographyStepResult<TOutput>`
+- any `ISagaChoreographyStepResult` implementation when the step needs both local output and
+  publications but wants to preserve a custom output contract
+
+Authors who want a lower-ceremony path can implement `ISagaEventReactor<TEvent>` or
+`ISagaEventReactor<TEvent, TOutput>` instead of handling the choreography result-shaping
+themselves. Those helpers still ride the same `IAppBehavior<,>` topology and the same
+`ChoreographySagaExecutionStrategy`, so runtime truth, module ownership, transport projections, and
+the existing `200` / `202` / `204` semantics stay unchanged.
+
+`SagaChoreographyPublication.CreateJson(...)` and
+`SagaChoreographyPublication.CreateCompensationJson(...)` also let choreography steps publish typed
+JSON payloads without re-implementing `JsonSerializerDefaults.Web` handling or hard-depending on
+the eventing companion pack.
 
 The baseline stays host-agnostic on purpose. `Cephalon.Behaviors.Patterns` does not hard-depend on
 `Cephalon.Eventing`; instead, it exposes `ISagaChoreographyPublisher` plus an in-memory default so
@@ -150,7 +166,7 @@ and it only activates when the shared `Cephalon.Eventing` publication path is tr
 
 ## Status
 
-> Status: ✅ Shipped — M4 baseline plus later follow-through for saga choreography, durable execution, the first durable runtime catalog/operator surface, the first durable per-stream live-state/failure-posture surface, the first durable timer/signal coordination surface, and the first durable compensation-helper surface
+> Status: ✅ Shipped — M4 baseline plus later follow-through for saga choreography, higher-level saga choreography authoring helpers, durable execution, the first durable runtime catalog/operator surface, the first durable per-stream live-state/failure-posture surface, the first durable timer/signal coordination surface, and the first durable compensation-helper surface
 
 ## Related components
 

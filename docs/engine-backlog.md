@@ -2447,6 +2447,48 @@ Delivered:
   and reference-doc coverage now lock the durable compensation-helper contract plus the new public
   surface
 
+### ENG-115 Phase 12 saga choreography authoring helper baseline
+
+Status: done
+Estimate: 3
+Completed: April 19, 2026
+
+Why:
+
+- after `ENG-108` and `ENG-110`, the choreography runtime path existed, but behavior authors still
+  had to hand-shape `SagaChoreographyStepResult` and `SagaChoreographyPublication` details even for
+  common event-reactor flows
+- module authors still had no higher-level host-agnostic authoring path for choreography behaviors
+  that preserved the shared ABT contract without inventing a second choreography registry
+- the baseline still lacked a shared typed helper for JSON publications, which made it too easy for
+  hosts or modules to drift on serializer defaults or reach for `Cephalon.Eventing` directly
+
+Acceptance:
+
+- `Cephalon.Behaviors.Patterns` exposes additive choreography authoring-helper contracts while
+  staying host-agnostic
+- choreography authors can create typed JSON publications through shared helpers without replacing
+  the existing `SagaChoreographyPublication` contract or hard-depending on `Cephalon.Eventing`
+- `ChoreographySagaExecutionStrategy` accepts the new helper result contracts while preserving the
+  current `200` / `202` / `204` semantics and existing publisher handoff
+- docs, backlog, roadmap, project memory, reference docs, and focused composition/tooling coverage
+  stay aligned while the explicit eventing bridge remains optional and truthful
+
+Delivered:
+
+- `Cephalon.Behaviors.Patterns` now exposes `ISagaChoreographyStepResult`,
+  `ISagaEventReactor<TEvent>`, `ISagaEventReactor<TEvent, TOutput>`, and
+  `SagaChoreographyStepResult<TOutput>` so choreography authors can keep typed local output and
+  publication intent on the same shared ABT contract
+- `SagaChoreographyPublication` now exposes typed JSON helper factories for normal and compensation
+  publications, preserving `JsonSerializerDefaults.Web` without moving publication ownership into
+  `Cephalon.Eventing`
+- `ChoreographySagaExecutionStrategy` now normalizes any `ISagaChoreographyStepResult`, keeping the
+  runtime source of truth, publisher path, and existing HTTP posture unchanged
+- focused composition and tooling coverage now lock the authoring-helper surface, source-generator
+  compatibility, package-surface truth, and the shared choreography runtime contract without
+  introducing a second choreography registry
+
 ### ENG-069 Event-dispatch runtime operator-surface baseline
 
 Status: done
@@ -2902,3 +2944,4 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-112 phase 12 durable execution runtime state and failure-posture baseline: `Cephalon.Abstractions` now exposes `DurableExecutionRuntimeState` plus `IDurableExecutionRuntimeStateCatalog`, `Cephalon.Behaviors.Patterns` now reports per-stream durable observations from `DurableExecutionStrategy`, `Cephalon.Engine` now projects `snapshot.DurableExecutionStates`, and `Cephalon.AspNetCore` now exposes `/engine/durable-executions/runtime` plus stream/behavior/module/transport drill-down routes while higher-level timers/signals/compensation helpers remain later — **Shipped** · composition tests 2/2 + hosting tests 2/2 + package-surface tests 158/158
 - ENG-113 phase 12 durable execution timers and signals coordination baseline: `Cephalon.Abstractions` now exposes `DurableExecutionPendingTimer` plus `DurableExecutionPendingSignal`, `Cephalon.Behaviors.Patterns` now lets `DurableExecutionStepResult<TOutput>` and `DurableExecutionStrategy` surface durable `waiting` posture plus pending timer/signal coordination through the shared runtime state catalog, and `Cephalon.AspNetCore` now exposes `/engine/durable-executions/runtime/timers*` plus `/engine/durable-executions/runtime/signals*` while compensation helpers remain later — **Shipped** · GitHub issue `#510` · composition tests 2/2 + hosting tests 2/2 + package-surface tests 161/161
 - ENG-114 phase 12 durable execution compensation helper baseline: `Cephalon.Abstractions` now exposes `DurableExecutionCompensationAction`, `Cephalon.Behaviors.Patterns` now lets `DurableExecutionStepResult<TOutput>` and the shared durable runtime-state catalog surface operator-facing compensation actions without changing coordination semantics, and `Cephalon.AspNetCore` now exposes `/engine/durable-executions/runtime/compensations*` while any future auto-executing durable recovery remains later — **Shipped** · GitHub issue `#511` · composition tests 7/7 + hosting tests 2/2 + package-surface tests 161/161
+- ENG-115 phase 12 saga choreography authoring helper baseline: `Cephalon.Behaviors.Patterns` now exposes `ISagaChoreographyStepResult`, `ISagaEventReactor<TEvent>`, `ISagaEventReactor<TEvent, TOutput>`, `SagaChoreographyStepResult<TOutput>`, and typed JSON helper factories on `SagaChoreographyPublication`, while `ChoreographySagaExecutionStrategy` now normalizes the shared result contract without changing the explicit `ISagaChoreographyPublisher` handoff or the opt-in `Cephalon.Eventing.Behaviors` bridge — **Shipped** · GitHub issue `#512` · composition tests 41/41 + tooling tests 188/188 + reference docs publish script

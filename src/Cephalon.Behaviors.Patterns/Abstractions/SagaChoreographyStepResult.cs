@@ -3,7 +3,7 @@ namespace Cephalon.Behaviors.Patterns.Abstractions;
 /// <summary>
 /// Carries the local output and event publications produced by one choreography-based saga step.
 /// </summary>
-public sealed class SagaChoreographyStepResult
+public sealed class SagaChoreographyStepResult : ISagaChoreographyStepResult
 {
     /// <summary>
     /// Initializes a new instance of <see cref="SagaChoreographyStepResult"/>.

@@ -2355,6 +2355,23 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void SagaChoreographyHelperContractsExposeReactorAndTypedResultSurface()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Behaviors.Patterns.Abstractions.ISagaEventReactor<>)
+            .GetMethod("ReactAsync", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Behaviors.Patterns.Abstractions.ISagaEventReactor<,>)
+            .GetMethod("ReactAsync", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyStepResult<>)
+            .GetProperty("Output", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyStepResult<>)
+            .GetProperty("Publications", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyPublication)
+            .GetMethod("CreateJson", BindingFlags.Public | BindingFlags.Static));
+        Assert.NotNull(typeof(global::Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyPublication)
+            .GetMethod("CreateCompensationJson", BindingFlags.Public | BindingFlags.Static));
+    }
+
+    [Fact]
     public void BehaviorExecutionResilienceSelectionContractsExposeRateLimiting()
     {
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Resilience.BehaviorExecutionResilienceSelection)
@@ -2380,12 +2397,16 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Behaviors.Patterns.Abstractions.IBehaviorExecutionStrategy),
             typeof(global::Cephalon.Behaviors.Patterns.Abstractions.IDurableExecution<>),
             typeof(global::Cephalon.Behaviors.Patterns.Abstractions.IDurableExecution<,,>),
+            typeof(global::Cephalon.Behaviors.Patterns.Abstractions.ISagaChoreographyStepResult),
             typeof(global::Cephalon.Behaviors.Patterns.Abstractions.ISagaChoreographyPublisher),
+            typeof(global::Cephalon.Behaviors.Patterns.Abstractions.ISagaEventReactor<>),
+            typeof(global::Cephalon.Behaviors.Patterns.Abstractions.ISagaEventReactor<,>),
             typeof(global::Cephalon.Behaviors.Patterns.Abstractions.IProcessCheckpointStore),
             typeof(global::Cephalon.Behaviors.Patterns.Abstractions.ISagaStateStore),
             typeof(global::Cephalon.Behaviors.Patterns.Abstractions.ProcessCheckpoint),
             typeof(global::Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyPublication),
             typeof(global::Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyStepResult),
+            typeof(global::Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyStepResult<>),
             typeof(global::Cephalon.Behaviors.Patterns.Hosting.PatternBehaviorExtensions),
             typeof(global::Cephalon.Behaviors.Patterns.Publishers.InMemorySagaChoreographyPublisher),
             typeof(global::Cephalon.Behaviors.Patterns.Registry.ExecutionStrategyRegistry),

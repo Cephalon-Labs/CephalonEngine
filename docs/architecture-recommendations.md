@@ -106,14 +106,17 @@ Effort: small.
 
 ### Saga Choreography (event-driven saga variant)
 
-Current state: the first host-agnostic choreography baseline and the first explicit eventing
-bridge are now shipped. `Cephalon.Behaviors.Patterns` exposes
-`ChoreographySagaExecutionStrategy`, `ISagaChoreographyPublisher`,
-`SagaChoreographyPublication`, `SagaChoreographyStepResult`, and an in-memory default publisher so
-choreography steps can publish continuation or compensation work without forcing a hard dependency
-on `Cephalon.Eventing`, while `Cephalon.Eventing.Behaviors` now provides the explicit
-`AddBehaviorEventingBridge()` follow-through that stages those publications through the shared
-outbox-backed eventing publish path when that path is actually available.
+Current state: the first host-agnostic choreography baseline, the first explicit eventing bridge,
+and the first higher-level authoring-helper follow-through are now shipped.
+`Cephalon.Behaviors.Patterns` exposes `ChoreographySagaExecutionStrategy`,
+`ISagaChoreographyPublisher`, `ISagaChoreographyStepResult`, `ISagaEventReactor<TEvent>`,
+`ISagaEventReactor<TEvent, TOutput>`, `SagaChoreographyPublication`,
+`SagaChoreographyStepResult`, `SagaChoreographyStepResult<TOutput>`, and an in-memory default
+publisher so choreography steps can publish continuation or compensation work through typed helper
+contracts without forcing a hard dependency on `Cephalon.Eventing`, while
+`Cephalon.Eventing.Behaviors` now provides the explicit `AddBehaviorEventingBridge()`
+follow-through that stages those publications through the shared outbox-backed eventing publish
+path when that path is actually available.
 
 Recommendation: keep the host-agnostic choreography contracts stable and keep the bridge explicit
 through a dedicated companion pack rather than collapsing the behavior-pattern layer into
@@ -127,10 +130,13 @@ Implementation outline:
 - shipped follow-through: `Cephalon.Eventing.Behaviors`, `AddBehaviorEventingBridge()`, capability
   `eventing.behaviors.saga-choreography`, and the `saga-choreography-bridges` runtime surface for
   explicit handoff into the shared outbox-backed eventing publication runtime
-- optional later follow-through: higher-level authoring helpers such as `ISagaEventReactor<TEvent>`
-  when a concrete module-authoring workflow benefits from them
+- shipped authoring-helper follow-through: `ISagaChoreographyStepResult`,
+  `ISagaEventReactor<TEvent>`, `ISagaEventReactor<TEvent, TOutput>`,
+  `SagaChoreographyStepResult<TOutput>`, and typed JSON publication helpers on
+  `SagaChoreographyPublication` so choreography authors can stay on the shared execution contract
+  without inventing a second registry or hard-depending on `Cephalon.Eventing`
 
-Effort: small for the remaining authoring-helper follow-through.
+Effort: medium for any later capability-publication or provider-specific choreography follow-through.
 
 ### Backend for Frontend — BFF (explicit pattern)
 
