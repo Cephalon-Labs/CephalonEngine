@@ -12897,6 +12897,99 @@ Parameters:
 
 ## Namespace Cephalon.Abstractions.Execution
 
+<a id="type-cephalon-abstractions-execution-durableexecutioncompensationaction"></a>
+
+### `DurableExecutionCompensationAction`
+
+Describes one operator-facing durable-execution compensation action available for a workflow stream.
+
+#### Declaration
+```csharp
+public sealed class DurableExecutionCompensationAction
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-execution-durableexecutioncompensationaction-ctor-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `DurableExecutionCompensationAction`
+
+```csharp
+DurableExecutionCompensationAction(string id, string displayName, string description, string triggerKind, string compensationBehaviorId, IReadOnlyDictionary<string, string> metadata)
+```
+
+Initializes a new instance of the `DurableExecutionCompensationAction` class.
+
+Parameters:
+- `id`: The stable compensation-action identifier within the durable workflow.
+- `displayName`: The operator-facing compensation-action name.
+- `description`: A human-readable description of what the compensation action does.
+- `triggerKind`: The operator-facing trigger kind for the compensation action, such as `manual` or `on-failure`.
+- `compensationBehaviorId`: The stable behavior identifier to invoke when the compensation action maps to another Cephalon behavior.
+- `metadata`: Additional operator-facing metadata describing the compensation action.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutioncompensationaction-compensationbehaviorid"></a>
+
+##### `CompensationBehaviorId`
+
+```csharp
+string CompensationBehaviorId { get; }
+```
+
+Gets the stable behavior identifier to invoke when the compensation action maps to another Cephalon behavior.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutioncompensationaction-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable compensation-action description when one was supplied.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutioncompensationaction-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing compensation-action name.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutioncompensationaction-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable compensation-action identifier within the durable workflow.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutioncompensationaction-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets additional operator-facing metadata describing the compensation action.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutioncompensationaction-triggerkind"></a>
+
+##### `TriggerKind`
+
+```csharp
+string TriggerKind { get; }
+```
+
+Gets the operator-facing trigger kind for the compensation action.
+
 <a id="type-cephalon-abstractions-execution-durableexecutionpendingsignal"></a>
 
 ### `DurableExecutionPendingSignal`
@@ -13268,12 +13361,12 @@ public sealed class DurableExecutionRuntimeState
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-execution-durableexecutionruntimestate-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-int64-system-nullable-system-int64-system-nullable-system-int32-system-int32-system-boolean-system-boolean-system-int32-system-int32-system-int32-system-int32-system-int32-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-durableexecutionpendingtimer-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-durableexecutionpendingsignal-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+<a id="member-m-cephalon-abstractions-execution-durableexecutionruntimestate-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-int64-system-nullable-system-int64-system-nullable-system-int32-system-int32-system-boolean-system-boolean-system-int32-system-int32-system-int32-system-int32-system-int32-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-durableexecutionpendingtimer-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-durableexecutionpendingsignal-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-durableexecutioncompensationaction-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
 
 ##### `DurableExecutionRuntimeState`
 
 ```csharp
-DurableExecutionRuntimeState(string BehaviorId, string StreamId, string SourceModuleId, IReadOnlyList<string> TransportIds, string LastOutcome, string LastStage, DateTimeOffset? LastObservedAtUtc, long? LastReplayedVersion, long? LastKnownVersion, int? LastHttpStatusCode, int LastAppendedEventCount, bool LastStepProducedOutput, bool LastStepCompleted, int StartedCount, int SucceededCount, int ContinuationCount, int CompletedCount, int FailedCount, IReadOnlyList<DurableExecutionPendingTimer> PendingTimers, IReadOnlyList<DurableExecutionPendingSignal> PendingSignals, string LastError, IReadOnlyDictionary<string, string> Metadata)
+DurableExecutionRuntimeState(string BehaviorId, string StreamId, string SourceModuleId, IReadOnlyList<string> TransportIds, string LastOutcome, string LastStage, DateTimeOffset? LastObservedAtUtc, long? LastReplayedVersion, long? LastKnownVersion, int? LastHttpStatusCode, int LastAppendedEventCount, bool LastStepProducedOutput, bool LastStepCompleted, int StartedCount, int SucceededCount, int ContinuationCount, int CompletedCount, int FailedCount, IReadOnlyList<DurableExecutionPendingTimer> PendingTimers, IReadOnlyList<DurableExecutionPendingSignal> PendingSignals, IReadOnlyList<DurableExecutionCompensationAction> CompensationActions, string LastError, IReadOnlyDictionary<string, string> Metadata)
 ```
 
 Describes the latest operator-facing runtime state reported for one durable-execution stream.
@@ -13299,6 +13392,7 @@ Parameters:
 - `FailedCount`: The number of `failed` observations reported so far.
 - `PendingTimers`: The durable timers that are currently pending for this stream.
 - `PendingSignals`: The durable signals that are currently awaited for this stream.
+- `CompensationActions`: The operator-facing compensation actions currently available for this stream.
 - `LastError`: The latest operator-facing error summary when the durable step reported a failure.
 - `Metadata`: The operator-facing metadata captured by the latest report.
 
@@ -13313,6 +13407,16 @@ string BehaviorId { get; set; }
 ```
 
 The stable durable behavior identifier that owns the stream.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-compensationactions"></a>
+
+##### `CompensationActions`
+
+```csharp
+IReadOnlyList<DurableExecutionCompensationAction> CompensationActions { get; set; }
+```
+
+The operator-facing compensation actions currently available for this stream.
 
 <a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-completedcount"></a>
 
@@ -13363,6 +13467,16 @@ int FailedCount { get; set; }
 ```
 
 The number of `failed` observations reported so far.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-hascompensationactions"></a>
+
+##### `HasCompensationActions`
+
+```csharp
+bool HasCompensationActions { get; }
+```
+
+Gets a value indicating whether one or more operator-facing compensation actions are currently available for the stream.
 
 <a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-haspendingsignals"></a>
 
@@ -14153,6 +14267,21 @@ Returns: The matching state entries, or an empty list when the behavior has not 
 Parameters:
 - `behaviorId`: The stable durable behavior identifier to filter by.
 
+<a id="member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getbycompensationactionid-system-string"></a>
+
+##### `GetByCompensationActionId`
+
+```csharp
+IReadOnlyList<DurableExecutionRuntimeState> GetByCompensationActionId(string compensationActionId)
+```
+
+Gets the reported durable-execution state entries that currently include the requested compensation action.
+
+Returns: The matching state entries, or an empty list when no stream currently reports that compensation action.
+
+Parameters:
+- `compensationActionId`: The stable compensation-action identifier to filter by.
+
 <a id="member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getbypendingsignalid-system-string"></a>
 
 ##### `GetByPendingSignalId`
@@ -14227,6 +14356,18 @@ Returns: The matching state entries, or an empty list when none reported runtime
 
 Parameters:
 - `transportId`: The stable transport identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getwithcompensationactions"></a>
+
+##### `GetWithCompensationActions`
+
+```csharp
+IReadOnlyList<DurableExecutionRuntimeState> GetWithCompensationActions()
+```
+
+Gets the reported durable-execution state entries that currently expose one or more compensation actions.
+
+Returns: The matching state entries, or an empty list when no stream currently reports compensation actions.
 
 <a id="member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getwithpendingsignals"></a>
 

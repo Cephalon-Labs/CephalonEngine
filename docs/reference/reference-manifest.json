@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-19T11:11:49.9552781+00:00",
+  "GeneratedAtUtc": "2026-04-19T11:38:05.1795801+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 297
+      "TypeCount": 298
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -529,7 +529,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-execution",
-      "TypeCount": 16
+      "TypeCount": 17
     },
     {
       "NamespaceName": "Cephalon.Abstractions.Features",
@@ -3789,6 +3789,21 @@
       }
     },
     {
+      "DisplayName": "DurableExecutionCompensationAction",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-execution-durableexecutioncompensationaction",
+      "Declaration": "public sealed class DurableExecutionCompensationAction",
+      "Summary": "Describes one operator-facing durable-execution compensation action available for a workflow stream.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 6,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "DurableExecutionPendingSignal",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -3844,7 +3859,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 29,
+        "Properties": 31,
         "Methods": 0
       }
     },
@@ -5990,7 +6005,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 9
+        "Methods": 11
       }
     },
     {
@@ -17536,6 +17551,28 @@
       "Summary": "Gets the command timeout in seconds when one was configured."
     },
     {
+      "DisplayName": "CompensationActions",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-compensationactions",
+      "Signature": "IReadOnlyList\u003CDurableExecutionCompensationAction\u003E CompensationActions { get; set; }",
+      "Summary": "The operator-facing compensation actions currently available for this stream."
+    },
+    {
+      "DisplayName": "CompensationBehaviorId",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionCompensationAction",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutioncompensationaction-compensationbehaviorid",
+      "Signature": "string CompensationBehaviorId { get; }",
+      "Summary": "Gets the stable behavior identifier to invoke when the compensation action maps to another Cephalon behavior."
+    },
+    {
       "DisplayName": "CompletedAtUtc",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseMigrationDescriptor",
@@ -20211,6 +20248,17 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionCompensationAction",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutioncompensationaction-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the human-readable compensation-action description when one was supplied."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "DurableExecutionPendingSignal",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -21201,6 +21249,17 @@
     {
       "DisplayName": "DisplayName",
       "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionCompensationAction",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutioncompensationaction-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the operator-facing compensation-action name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
       "DeclaringTypeName": "DurableExecutionPendingSignal",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -21749,6 +21808,17 @@
       "Summary": "Indicates duplex-streaming interactions are supported."
     },
     {
+      "DisplayName": "DurableExecutionCompensationAction",
+      "Category": "Constructors",
+      "DeclaringTypeName": "DurableExecutionCompensationAction",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-durableexecutioncompensationaction-ctor-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "DurableExecutionCompensationAction(string id, string displayName, string description, string triggerKind, string compensationBehaviorId, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Initializes a new instance of the \u0060DurableExecutionCompensationAction\u0060 class."
+    },
+    {
       "DisplayName": "DurableExecutionPendingSignal",
       "Category": "Constructors",
       "DeclaringTypeName": "DurableExecutionPendingSignal",
@@ -21788,8 +21858,8 @@
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-execution-durableexecutionruntimestate-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-int64-system-nullable-system-int64-system-nullable-system-int32-system-int32-system-boolean-system-boolean-system-int32-system-int32-system-int32-system-int32-system-int32-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-durableexecutionpendingtimer-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-durableexecutionpendingsignal-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
-      "Signature": "DurableExecutionRuntimeState(string BehaviorId, string StreamId, string SourceModuleId, IReadOnlyList\u003Cstring\u003E TransportIds, string LastOutcome, string LastStage, DateTimeOffset? LastObservedAtUtc, long? LastReplayedVersion, long? LastKnownVersion, int? LastHttpStatusCode, int LastAppendedEventCount, bool LastStepProducedOutput, bool LastStepCompleted, int StartedCount, int SucceededCount, int ContinuationCount, int CompletedCount, int FailedCount, IReadOnlyList\u003CDurableExecutionPendingTimer\u003E PendingTimers, IReadOnlyList\u003CDurableExecutionPendingSignal\u003E PendingSignals, string LastError, IReadOnlyDictionary\u003Cstring, string\u003E Metadata)",
+      "AnchorId": "member-m-cephalon-abstractions-execution-durableexecutionruntimestate-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-int64-system-nullable-system-int64-system-nullable-system-int32-system-int32-system-boolean-system-boolean-system-int32-system-int32-system-int32-system-int32-system-int32-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-durableexecutionpendingtimer-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-durableexecutionpendingsignal-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-durableexecutioncompensationaction-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "DurableExecutionRuntimeState(string BehaviorId, string StreamId, string SourceModuleId, IReadOnlyList\u003Cstring\u003E TransportIds, string LastOutcome, string LastStage, DateTimeOffset? LastObservedAtUtc, long? LastReplayedVersion, long? LastKnownVersion, int? LastHttpStatusCode, int LastAppendedEventCount, bool LastStepProducedOutput, bool LastStepCompleted, int StartedCount, int SucceededCount, int ContinuationCount, int CompletedCount, int FailedCount, IReadOnlyList\u003CDurableExecutionPendingTimer\u003E PendingTimers, IReadOnlyList\u003CDurableExecutionPendingSignal\u003E PendingSignals, IReadOnlyList\u003CDurableExecutionCompensationAction\u003E CompensationActions, string LastError, IReadOnlyDictionary\u003Cstring, string\u003E Metadata)",
       "Summary": "Describes the latest operator-facing runtime state reported for one durable-execution stream."
     },
     {
@@ -26468,6 +26538,17 @@
       "Summary": "Gets all backend-for-frontend client bindings owned by the requested client identifier."
     },
     {
+      "DisplayName": "GetByCompensationActionId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IDurableExecutionRuntimeStateCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getbycompensationactionid-system-string",
+      "Signature": "IReadOnlyList\u003CDurableExecutionRuntimeState\u003E GetByCompensationActionId(string compensationActionId)",
+      "Summary": "Gets the reported durable-execution state entries that currently include the requested compensation action."
+    },
+    {
       "DisplayName": "GetByExecutionGraph",
       "Category": "Methods",
       "DeclaringTypeName": "IHostedExecutionRuntimeCatalog",
@@ -27359,6 +27440,17 @@
       "Summary": "Gets the stable wire name used by JSON serialization and compatibility metadata for the override binding mode."
     },
     {
+      "DisplayName": "GetWithCompensationActions",
+      "Category": "Methods",
+      "DeclaringTypeName": "IDurableExecutionRuntimeStateCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getwithcompensationactions",
+      "Signature": "IReadOnlyList\u003CDurableExecutionRuntimeState\u003E GetWithCompensationActions()",
+      "Summary": "Gets the reported durable-execution state entries that currently expose one or more compensation actions."
+    },
+    {
       "DisplayName": "GetWithPendingSignals",
       "Category": "Methods",
       "DeclaringTypeName": "IDurableExecutionRuntimeStateCatalog",
@@ -27709,6 +27801,17 @@
       "AnchorId": "member-m-cephalon-aspnetcore-hosting-cephalonratelimitingendpointconventionbuilderextensions-hascephalonratelimiting-system-iserviceprovider-system-string-system-string",
       "Signature": "bool HasCephalonRateLimiting(this IServiceProvider services, string transportId, string behaviorId)",
       "Summary": "Determines whether the effective Cephalon rate-limiting policy for the supplied transport and optional behavior identifier actively enforces a limiter."
+    },
+    {
+      "DisplayName": "HasCompensationActions",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-hascompensationactions",
+      "Signature": "bool HasCompensationActions { get; }",
+      "Summary": "Gets a value indicating whether one or more operator-facing compensation actions are currently available for the stream."
     },
     {
       "DisplayName": "HasManualCommandsForAllTargets",
@@ -29700,6 +29803,17 @@
       "AnchorId": "member-p-cephalon-engine-diagnostics-diagnosticeventdefinition-id",
       "Signature": "int Id { get; set; }",
       "Summary": "The stable numeric event identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionCompensationAction",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutioncompensationaction-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable compensation-action identifier within the durable workflow."
     },
     {
       "DisplayName": "Id",
@@ -33748,6 +33862,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databaseroleruntimedescriptor-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
       "Summary": "Gets optional runtime metadata associated with the role."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionCompensationAction",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutioncompensationaction-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets additional operator-facing metadata describing the compensation action."
     },
     {
       "DisplayName": "Metadata",
@@ -48972,6 +49097,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-enginesettings-transports",
       "Signature": "IReadOnlyList\u003Cstring\u003E Transports { get; }",
       "Summary": "Gets the selected transport identifiers."
+    },
+    {
+      "DisplayName": "TriggerKind",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionCompensationAction",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutioncompensationaction-triggerkind",
+      "Signature": "string TriggerKind { get; }",
+      "Summary": "Gets the operator-facing trigger kind for the compensation action."
     },
     {
       "DisplayName": "TripOnly",

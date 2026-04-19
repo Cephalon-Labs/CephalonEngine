@@ -21,6 +21,7 @@ internal sealed class DurableExecutionExecutionReport
         bool isCompleted = false,
         IReadOnlyList<DurableExecutionPendingTimer>? pendingTimers = null,
         IReadOnlyList<DurableExecutionPendingSignal>? pendingSignals = null,
+        IReadOnlyList<DurableExecutionCompensationAction>? compensationActions = null,
         string? error = null,
         IReadOnlyDictionary<string, string>? metadata = null)
     {
@@ -73,6 +74,7 @@ internal sealed class DurableExecutionExecutionReport
         IsCompleted = isCompleted;
         PendingTimers = NormalizePendingTimers(pendingTimers);
         PendingSignals = NormalizePendingSignals(pendingSignals);
+        CompensationActions = NormalizeCompensationActions(compensationActions);
         Error = string.IsNullOrWhiteSpace(error) ? null : error.Trim();
         Metadata = metadata is null
             ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -104,6 +106,8 @@ internal sealed class DurableExecutionExecutionReport
     public IReadOnlyList<DurableExecutionPendingTimer> PendingTimers { get; }
 
     public IReadOnlyList<DurableExecutionPendingSignal> PendingSignals { get; }
+
+    public IReadOnlyList<DurableExecutionCompensationAction> CompensationActions { get; }
 
     public string? Error { get; }
 
@@ -165,6 +169,37 @@ internal sealed class DurableExecutionExecutionReport
 
         return pendingSignals
             .OrderBy(static signal => signal.Id, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+    }
+
+    private static DurableExecutionCompensationAction[] NormalizeCompensationActions(
+        IReadOnlyList<DurableExecutionCompensationAction>? compensationActions)
+    {
+        if (compensationActions is null || compensationActions.Count == 0)
+        {
+            return [];
+        }
+
+        if (compensationActions.Any(static action => action is null))
+        {
+            throw new ArgumentException(
+                "Compensation actions cannot contain null entries.",
+                nameof(compensationActions));
+        }
+
+        var duplicateCompensationActionId = compensationActions
+            .GroupBy(static action => action.Id, StringComparer.OrdinalIgnoreCase)
+            .FirstOrDefault(static group => group.Count() > 1)?
+            .Key;
+        if (!string.IsNullOrWhiteSpace(duplicateCompensationActionId))
+        {
+            throw new ArgumentException(
+                $"Compensation action id '{duplicateCompensationActionId}' was declared more than once.",
+                nameof(compensationActions));
+        }
+
+        return compensationActions
+            .OrderBy(static action => action.Id, StringComparer.OrdinalIgnoreCase)
             .ToArray();
     }
 }

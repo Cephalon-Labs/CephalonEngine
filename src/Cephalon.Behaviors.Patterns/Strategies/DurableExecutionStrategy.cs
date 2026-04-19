@@ -194,6 +194,7 @@ public sealed class DurableExecutionStrategy : IBehaviorExecutionStrategy
                     isCompleted: step.IsCompleted,
                     pendingTimers: step.PendingTimers,
                     pendingSignals: step.PendingSignals,
+                    compensationActions: step.CompensationActions,
                     metadata: metadata),
                 ct)
             .ConfigureAwait(false);
@@ -449,7 +450,8 @@ public sealed class DurableExecutionStrategy : IBehaviorExecutionStrategy
                 result.Events,
                 result.IsCompleted,
                 result.PendingTimers,
-                result.PendingSignals);
+                result.PendingSignals,
+                result.CompensationActions);
         }
     }
 
@@ -460,13 +462,15 @@ public sealed class DurableExecutionStrategy : IBehaviorExecutionStrategy
             IReadOnlyList<IDomainEvent> events,
             bool isCompleted,
             IReadOnlyList<DurableExecutionPendingTimer> pendingTimers,
-            IReadOnlyList<DurableExecutionPendingSignal> pendingSignals)
+            IReadOnlyList<DurableExecutionPendingSignal> pendingSignals,
+            IReadOnlyList<DurableExecutionCompensationAction> compensationActions)
         {
             Output = output;
             Events = events;
             IsCompleted = isCompleted;
             PendingTimers = pendingTimers;
             PendingSignals = pendingSignals;
+            CompensationActions = compensationActions;
         }
 
         internal object? Output { get; }
@@ -478,5 +482,7 @@ public sealed class DurableExecutionStrategy : IBehaviorExecutionStrategy
         internal IReadOnlyList<DurableExecutionPendingTimer> PendingTimers { get; }
 
         internal IReadOnlyList<DurableExecutionPendingSignal> PendingSignals { get; }
+
+        internal IReadOnlyList<DurableExecutionCompensationAction> CompensationActions { get; }
     }
 }

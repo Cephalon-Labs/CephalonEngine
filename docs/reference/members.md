@@ -1842,6 +1842,12 @@ Browse the published API surface by public member.
 - [CommandTimeoutSeconds](cephalon-engine.md#member-p-cephalon-engine-configuration-databaseruntimesettings-commandtimeoutseconds): `Properties` on `DatabaseRuntimeSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=CommandTimeoutSeconds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the command timeout in seconds when one was configured.
   - `int? CommandTimeoutSeconds { get; }`
+- [CompensationActions](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-compensationactions): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=CompensationActions&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The operator-facing compensation actions currently available for this stream.
+  - `IReadOnlyList<DurableExecutionCompensationAction> CompensationActions { get; set; }`
+- [CompensationBehaviorId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutioncompensationaction-compensationbehaviorid): `Properties` on `DurableExecutionCompensationAction` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=CompensationBehaviorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the stable behavior identifier to invoke when the compensation action maps to another Cephalon behavior.
+  - `string CompensationBehaviorId { get; }`
 - [CompletedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-completedatutc): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CompletedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest completion time observed for this target.
   - `DateTimeOffset? CompletedAtUtc { get; }`
@@ -2574,6 +2580,9 @@ Browse the published API surface by public member.
 - [Description](cephalon-engine.md#member-p-cephalon-engine-diagnostics-diagnosticsconvention-description): `Properties` on `DiagnosticsConvention` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Description&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - The operator-facing explanation of what the convention covers.
   - `string Description { get; set; }`
+- [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutioncompensationaction-description): `Properties` on `DurableExecutionCompensationAction` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the human-readable compensation-action description when one was supplied.
+  - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionpendingsignal-description): `Properties` on `DurableExecutionPendingSignal` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the human-readable signal description when one was supplied.
   - `string Description { get; }`
@@ -2844,6 +2853,9 @@ Browse the published API surface by public member.
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-displayname): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - The human-readable dependency name.
   - `string DisplayName { get; set; }`
+- [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutioncompensationaction-displayname): `Properties` on `DurableExecutionCompensationAction` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the operator-facing compensation-action name.
+  - `string DisplayName { get; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionpendingsignal-displayname): `Properties` on `DurableExecutionPendingSignal` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the operator-facing signal name.
   - `string DisplayName { get; }`
@@ -2994,6 +3006,9 @@ Browse the published API surface by public member.
 - [DuplexStreaming](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-transportfeatures-duplexstreaming): `Fields` on `TransportFeatures` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=DuplexStreaming&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Indicates duplex-streaming interactions are supported.
   - `const TransportFeatures DuplexStreaming`
+- [DurableExecutionCompensationAction](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-durableexecutioncompensationaction-ctor-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `DurableExecutionCompensationAction` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DurableExecutionCompensationAction&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Initializes a new instance of the `DurableExecutionCompensationAction` class.
+  - `DurableExecutionCompensationAction(string id, string displayName, string description, string triggerKind, string compensationBehaviorId, IReadOnlyDictionary<string, string> metadata)`
 - [DurableExecutionPendingSignal](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-durableexecutionpendingsignal-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `DurableExecutionPendingSignal` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DurableExecutionPendingSignal&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Initializes a new instance of the `DurableExecutionPendingSignal` class.
   - `DurableExecutionPendingSignal(string id, string displayName, string description, string payloadType, IReadOnlyDictionary<string, string> metadata)`
@@ -3003,9 +3018,9 @@ Browse the published API surface by public member.
 - [DurableExecutionRuntimeDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-durableexecutionruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DurableExecutionRuntimeDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Creates a durable-execution runtime descriptor.
   - `DurableExecutionRuntimeDescriptor(string id, string displayName, string description, string behaviorType, string inputType, string stateType, string outputType, string executionMode, string sourceModuleId, IReadOnlyList<string> transportIds, IReadOnlyList<string> requiredFeatureFlagIds, bool eventSourcingEnabled, bool requiresEventStore, IReadOnlyList<int> successStatusCodes, IReadOnlyDictionary<string, string> metadata)`
-- [DurableExecutionRuntimeState](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-durableexecutionruntimestate-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-int64-system-nullable-system-int64-system-nullable-system-int32-system-int32-system-boolean-system-boolean-system-int32-system-int32-system-int32-system-int32-system-int32-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-durableexecutionpendingtimer-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-durableexecutionpendingsignal-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DurableExecutionRuntimeState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+- [DurableExecutionRuntimeState](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-durableexecutionruntimestate-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-int64-system-nullable-system-int64-system-nullable-system-int32-system-int32-system-boolean-system-boolean-system-int32-system-int32-system-int32-system-int32-system-int32-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-durableexecutionpendingtimer-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-durableexecutionpendingsignal-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-durableexecutioncompensationaction-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DurableExecutionRuntimeState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Describes the latest operator-facing runtime state reported for one durable-execution stream.
-  - `DurableExecutionRuntimeState(string BehaviorId, string StreamId, string SourceModuleId, IReadOnlyList<string> TransportIds, string LastOutcome, string LastStage, DateTimeOffset? LastObservedAtUtc, long? LastReplayedVersion, long? LastKnownVersion, int? LastHttpStatusCode, int LastAppendedEventCount, bool LastStepProducedOutput, bool LastStepCompleted, int StartedCount, int SucceededCount, int ContinuationCount, int CompletedCount, int FailedCount, IReadOnlyList<DurableExecutionPendingTimer> PendingTimers, IReadOnlyList<DurableExecutionPendingSignal> PendingSignals, string LastError, IReadOnlyDictionary<string, string> Metadata)`
+  - `DurableExecutionRuntimeState(string BehaviorId, string StreamId, string SourceModuleId, IReadOnlyList<string> TransportIds, string LastOutcome, string LastStage, DateTimeOffset? LastObservedAtUtc, long? LastReplayedVersion, long? LastKnownVersion, int? LastHttpStatusCode, int LastAppendedEventCount, bool LastStepProducedOutput, bool LastStepCompleted, int StartedCount, int SucceededCount, int ContinuationCount, int CompletedCount, int FailedCount, IReadOnlyList<DurableExecutionPendingTimer> PendingTimers, IReadOnlyList<DurableExecutionPendingSignal> PendingSignals, IReadOnlyList<DurableExecutionCompensationAction> CompensationActions, string LastError, IReadOnlyDictionary<string, string> Metadata)`
 - [DurableExecutions](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-idurableexecutionruntimecatalog-durableexecutions): `Properties` on `IDurableExecutionRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DurableExecutions&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets all active durable-execution workflows visible to the current runtime.
   - `IReadOnlyList<DurableExecutionRuntimeDescriptor> DurableExecutions { get; }`
@@ -4290,6 +4305,9 @@ Browse the published API surface by public member.
 - [GetByClientId](cephalon-abstractions.md#member-m-cephalon-abstractions-patterns-ibackendforfrontendruntimecatalog-getbyclientid-system-string): `Methods` on `IBackendForFrontendRuntimeCatalog` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByClientId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets all backend-for-frontend client bindings owned by the requested client identifier.
   - `IReadOnlyList<BackendForFrontendClientBindingDescriptor> GetByClientId(string clientId)`
+- [GetByCompensationActionId](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getbycompensationactionid-system-string): `Methods` on `IDurableExecutionRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByCompensationActionId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the reported durable-execution state entries that currently include the requested compensation action.
+  - `IReadOnlyList<DurableExecutionRuntimeState> GetByCompensationActionId(string compensationActionId)`
 - [GetByExecutionGraph](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-ihostedexecutionruntimecatalog-getbyexecutiongraph-system-string): `Methods` on `IHostedExecutionRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByExecutionGraph&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets all hosted executions linked to one execution graph.
   - `IReadOnlyList<HostedExecutionDescriptor> GetByExecutionGraph(string executionGraphId)`
@@ -4533,6 +4551,9 @@ Browse the published API surface by public member.
 - [GetWireName](cephalon-abstractions.md#member-m-cephalon-abstractions-transports-restendpointoverridebindingmodeextensions-getwirename-cephalon-abstractions-transports-restendpointoverridebindingmode): `Methods` on `RestEndpointOverrideBindingModeExtensions` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetWireName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the stable wire name used by JSON serialization and compatibility metadata for the override binding mode.
   - `string GetWireName(this RestEndpointOverrideBindingMode bindingMode)`
+- [GetWithCompensationActions](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getwithcompensationactions): `Methods` on `IDurableExecutionRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetWithCompensationActions&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the reported durable-execution state entries that currently expose one or more compensation actions.
+  - `IReadOnlyList<DurableExecutionRuntimeState> GetWithCompensationActions()`
 - [GetWithPendingSignals](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getwithpendingsignals): `Methods` on `IDurableExecutionRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetWithPendingSignals&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the reported durable-execution state entries that currently have one or more pending signals.
   - `IReadOnlyList<DurableExecutionRuntimeState> GetWithPendingSignals()`
@@ -4632,6 +4653,9 @@ Browse the published API surface by public member.
 - [HasCephalonRateLimiting](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-cephalonratelimitingendpointconventionbuilderextensions-hascephalonratelimiting-system-iserviceprovider-system-string-system-string): `Methods` on `CephalonRateLimitingEndpointConventionBuilderExtensions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=HasCephalonRateLimiting&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Determines whether the effective Cephalon rate-limiting policy for the supplied transport and optional behavior identifier actively enforces a limiter.
   - `bool HasCephalonRateLimiting(this IServiceProvider services, string transportId, string behaviorId)`
+- [HasCompensationActions](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-hascompensationactions): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasCompensationActions&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets a value indicating whether one or more operator-facing compensation actions are currently available for the stream.
+  - `bool HasCompensationActions { get; }`
 - [HasManualCommandsForAllTargets](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-hasmanualcommandsforalltargets): `Properties` on `DatabaseMigrationOperationalExecutionGroup` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasManualCommandsForAllTargets&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether every target in this group publishes a direct or manual command path.
   - `bool HasManualCommandsForAllTargets { get; }`
@@ -5178,6 +5202,9 @@ Browse the published API surface by public member.
 - [Id](cephalon-engine.md#member-p-cephalon-engine-diagnostics-diagnosticeventdefinition-id): `Properties` on `DiagnosticEventDefinition` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Id&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - The stable numeric event identifier.
   - `int Id { get; set; }`
+- [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutioncompensationaction-id): `Properties` on `DurableExecutionCompensationAction` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the stable compensation-action identifier within the durable workflow.
+  - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionpendingsignal-id): `Properties` on `DurableExecutionPendingSignal` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the stable signal identifier within the durable workflow.
   - `string Id { get; }`
@@ -6293,6 +6320,9 @@ Browse the published API surface by public member.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroleruntimedescriptor-metadata): `Properties` on `DatabaseRoleRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets optional runtime metadata associated with the role.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutioncompensationaction-metadata): `Properties` on `DurableExecutionCompensationAction` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets additional operator-facing metadata describing the compensation action.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionpendingsignal-metadata): `Properties` on `DurableExecutionPendingSignal` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets additional operator-facing metadata describing the signal.
@@ -10467,6 +10497,9 @@ Browse the published API surface by public member.
 - [Transports](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-transports): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Transports&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the selected transport identifiers.
   - `IReadOnlyList<string> Transports { get; }`
+- [TriggerKind](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutioncompensationaction-triggerkind): `Properties` on `DurableExecutionCompensationAction` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=TriggerKind&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the operator-facing trigger kind for the compensation action.
+  - `string TriggerKind { get; }`
 - [TripOnly](cephalon-abstractions.md#member-f-cephalon-abstractions-resilience-behaviorresilienceexceptionhandling-triponly): `Fields` on `BehaviorResilienceExceptionHandling` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=TripOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - Count the exception for circuit-breaker style failure accounting, but do not automatically retry it.
   - `const BehaviorResilienceExceptionHandling TripOnly`

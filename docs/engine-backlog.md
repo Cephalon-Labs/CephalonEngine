@@ -2402,6 +2402,51 @@ Delivered:
   and reference-doc coverage now lock the durable timer/signal coordination contract plus the new
   public surface
 
+### ENG-114 Phase 12 durable execution compensation helper baseline
+
+Status: done
+Estimate: 5
+Completed: April 19, 2026
+
+Why:
+
+- after `ENG-113`, operators could see pending durable timers/signals, but they still had no
+  engine-owned answer for which streams exposed operator-facing compensation actions
+- durable workflow authors still had no shared way to publish recovery guidance without inventing
+  a second workflow engine or host-only workflow registry beside the shared replay/runtime-state
+  truth
+- ASP.NET Core hosts still had no direct `/engine/*` filters for streams exposing the same durable
+  compensation action
+
+Acceptance:
+
+- `Cephalon.Abstractions` exposes host-agnostic durable compensation-helper contracts for
+  operator-facing recovery guidance
+- `DurableExecutionStepResult<TOutput>` and `DurableExecutionRuntimeState` can surface available
+  compensation actions while preserving the shared `IEventStore` replay contract and runtime-state
+  truth
+- `/engine/snapshot` and ASP.NET Core operator routes can filter active durable state by available
+  compensation action
+- docs, backlog, roadmap, project memory, reference docs, and focused composition/hosting/tooling
+  coverage stay aligned while compensation metadata remains additive instead of auto-executing it
+
+Delivered:
+
+- `Cephalon.Abstractions` now exposes `DurableExecutionCompensationAction`;
+  `DurableExecutionRuntimeState` now carries compensation actions plus derived helper-availability
+  posture; and `IDurableExecutionRuntimeStateCatalog` now adds compensation filter methods
+- `Cephalon.Behaviors.Patterns` now lets `DurableExecutionStepResult<TOutput>` declare
+  `compensationActions`, reports them through the shared durable runtime-state catalog, and keeps
+  them additive over the same replay/state truth instead of treating them as pending coordination
+- `Cephalon.Engine` continues projecting the same `snapshot.DurableExecutionStates` surface, now
+  with additive compensation-helper metadata instead of creating a second durable workflow answer
+- `Cephalon.AspNetCore` now exposes `/engine/durable-executions/runtime/compensations` and
+  `/engine/durable-executions/runtime/compensations/{compensationId}` as direct operator routes
+  derived from that same shared runtime truth
+- focused composition, hosting, package-surface, component-doc, roadmap, backlog, project-memory,
+  and reference-doc coverage now lock the durable compensation-helper contract plus the new public
+  surface
+
 ### ENG-069 Event-dispatch runtime operator-surface baseline
 
 Status: done
@@ -2856,3 +2901,4 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-111 phase 12 durable execution runtime catalog baseline: `Cephalon.Abstractions` now exposes `DurableExecutionRuntimeDescriptor` plus `IDurableExecutionRuntimeCatalog`, `Cephalon.Behaviors.Patterns` now derives the catalog from shared durable behavior topology plus registered implementation types, `Cephalon.Engine` now projects `snapshot.DurableExecutions`, and `Cephalon.AspNetCore` now exposes `/engine/durable-executions` plus behavior/module/transport drill-down routes while replay-progress and failure-posture follow-through remain later — **Shipped** · composition tests 1/1 + hosting tests 1/1 + package-surface tests 158/158
 - ENG-112 phase 12 durable execution runtime state and failure-posture baseline: `Cephalon.Abstractions` now exposes `DurableExecutionRuntimeState` plus `IDurableExecutionRuntimeStateCatalog`, `Cephalon.Behaviors.Patterns` now reports per-stream durable observations from `DurableExecutionStrategy`, `Cephalon.Engine` now projects `snapshot.DurableExecutionStates`, and `Cephalon.AspNetCore` now exposes `/engine/durable-executions/runtime` plus stream/behavior/module/transport drill-down routes while higher-level timers/signals/compensation helpers remain later — **Shipped** · composition tests 2/2 + hosting tests 2/2 + package-surface tests 158/158
 - ENG-113 phase 12 durable execution timers and signals coordination baseline: `Cephalon.Abstractions` now exposes `DurableExecutionPendingTimer` plus `DurableExecutionPendingSignal`, `Cephalon.Behaviors.Patterns` now lets `DurableExecutionStepResult<TOutput>` and `DurableExecutionStrategy` surface durable `waiting` posture plus pending timer/signal coordination through the shared runtime state catalog, and `Cephalon.AspNetCore` now exposes `/engine/durable-executions/runtime/timers*` plus `/engine/durable-executions/runtime/signals*` while compensation helpers remain later — **Shipped** · GitHub issue `#510` · composition tests 2/2 + hosting tests 2/2 + package-surface tests 161/161
+- ENG-114 phase 12 durable execution compensation helper baseline: `Cephalon.Abstractions` now exposes `DurableExecutionCompensationAction`, `Cephalon.Behaviors.Patterns` now lets `DurableExecutionStepResult<TOutput>` and the shared durable runtime-state catalog surface operator-facing compensation actions without changing coordination semantics, and `Cephalon.AspNetCore` now exposes `/engine/durable-executions/runtime/compensations*` while any future auto-executing durable recovery remains later — **Shipped** · GitHub issue `#511` · composition tests 7/7 + hosting tests 2/2 + package-surface tests 161/161

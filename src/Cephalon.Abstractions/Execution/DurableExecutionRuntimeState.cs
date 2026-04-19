@@ -37,6 +37,9 @@ namespace Cephalon.Abstractions.Execution;
 /// <param name="FailedCount">The number of <c>failed</c> observations reported so far.</param>
 /// <param name="PendingTimers">The durable timers that are currently pending for this stream.</param>
 /// <param name="PendingSignals">The durable signals that are currently awaited for this stream.</param>
+/// <param name="CompensationActions">
+/// The operator-facing compensation actions currently available for this stream.
+/// </param>
 /// <param name="LastError">
 /// The latest operator-facing error summary when the durable step reported a failure.
 /// </param>
@@ -62,6 +65,7 @@ public sealed record DurableExecutionRuntimeState(
     int FailedCount,
     IReadOnlyList<DurableExecutionPendingTimer> PendingTimers,
     IReadOnlyList<DurableExecutionPendingSignal> PendingSignals,
+    IReadOnlyList<DurableExecutionCompensationAction> CompensationActions,
     string? LastError,
     IReadOnlyDictionary<string, string> Metadata)
 {
@@ -84,6 +88,11 @@ public sealed record DurableExecutionRuntimeState(
     /// Gets a value indicating whether one or more durable signals are currently awaited for the stream.
     /// </summary>
     public bool HasPendingSignals => PendingSignals.Count > 0;
+
+    /// <summary>
+    /// Gets a value indicating whether one or more operator-facing compensation actions are currently available for the stream.
+    /// </summary>
+    public bool HasCompensationActions => CompensationActions.Count > 0;
 
     /// <summary>
     /// Gets the earliest UTC due timestamp across the currently pending timers when one exists.

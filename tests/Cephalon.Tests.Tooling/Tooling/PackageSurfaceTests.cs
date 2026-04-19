@@ -202,6 +202,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.EventSourcing.IEventStoreContributor),
             typeof(global::Cephalon.Abstractions.EventSourcing.IEventStoreRegistry),
             typeof(global::Cephalon.Abstractions.EventSourcing.ISnapshotStore),
+            typeof(global::Cephalon.Abstractions.Execution.DurableExecutionCompensationAction),
             typeof(global::Cephalon.Abstractions.Execution.DurableExecutionPendingSignal),
             typeof(global::Cephalon.Abstractions.Execution.DurableExecutionPendingTimer),
             typeof(global::Cephalon.Abstractions.Execution.DurableExecutionRuntimeDescriptor),
@@ -2312,9 +2313,13 @@ public sealed class PackageSurfaceTests
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.DurableExecutionRuntimeState)
             .GetProperty("PendingSignals", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.DurableExecutionRuntimeState)
+            .GetProperty("CompensationActions", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.DurableExecutionRuntimeState)
             .GetProperty("HasPendingTimers", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.DurableExecutionRuntimeState)
             .GetProperty("HasPendingSignals", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.DurableExecutionRuntimeState)
+            .GetProperty("HasCompensationActions", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.DurableExecutionRuntimeState)
             .GetProperty("NextTimerDueAtUtc", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.DurableExecutionRuntimeState)
@@ -2329,9 +2334,13 @@ public sealed class PackageSurfaceTests
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.IDurableExecutionRuntimeStateCatalog)
             .GetMethod("GetWithPendingSignals", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.IDurableExecutionRuntimeStateCatalog)
+            .GetMethod("GetWithCompensationActions", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.IDurableExecutionRuntimeStateCatalog)
             .GetMethod("GetByPendingTimerId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.IDurableExecutionRuntimeStateCatalog)
             .GetMethod("GetByPendingSignalId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.IDurableExecutionRuntimeStateCatalog)
+            .GetMethod("GetByCompensationActionId", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]
@@ -2341,6 +2350,8 @@ public sealed class PackageSurfaceTests
             .GetProperty("PendingTimers", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Behaviors.Patterns.Abstractions.DurableExecutionStepResult<>)
             .GetProperty("PendingSignals", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Behaviors.Patterns.Abstractions.DurableExecutionStepResult<>)
+            .GetProperty("CompensationActions", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

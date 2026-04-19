@@ -137,6 +137,34 @@ internal sealed class DurableExecutionRuntimeStateCatalog(
         }
     }
 
+    public IReadOnlyList<DurableExecutionRuntimeState> GetWithCompensationActions()
+    {
+        lock (gate)
+        {
+            return statesByStreamId.Values
+                .Where(static state => state.HasCompensationActions)
+                .OrderBy(static state => state.BehaviorId, Comparer)
+                .ThenBy(static state => state.StreamId, Comparer)
+                .ToArray();
+        }
+    }
+
+    public IReadOnlyList<DurableExecutionRuntimeState> GetByCompensationActionId(string compensationActionId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(compensationActionId);
+        var normalizedCompensationActionId = compensationActionId.Trim();
+
+        lock (gate)
+        {
+            return statesByStreamId.Values
+                .Where(state =>
+                    state.CompensationActions.Any(action => Comparer.Equals(action.Id, normalizedCompensationActionId)))
+                .OrderBy(static state => state.BehaviorId, Comparer)
+                .ThenBy(static state => state.StreamId, Comparer)
+                .ToArray();
+        }
+    }
+
     public bool TryGetByStreamId(string streamId, out DurableExecutionRuntimeState? state)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(streamId);
@@ -191,6 +219,7 @@ internal sealed class DurableExecutionRuntimeStateCatalog(
                     FailedCount: 0,
                     PendingTimers: [],
                     PendingSignals: [],
+                    CompensationActions: [],
                     LastError: null,
                     Metadata: EmptyMetadata);
 
@@ -225,6 +254,7 @@ internal sealed class DurableExecutionRuntimeStateCatalog(
                     SucceededCount = current.SucceededCount + 1,
                     PendingTimers = report.PendingTimers,
                     PendingSignals = report.PendingSignals,
+                    CompensationActions = report.CompensationActions,
                     LastError = null,
                     Metadata = metadata
                 },
@@ -242,6 +272,7 @@ internal sealed class DurableExecutionRuntimeStateCatalog(
                     ContinuationCount = current.ContinuationCount + 1,
                     PendingTimers = report.PendingTimers,
                     PendingSignals = report.PendingSignals,
+                    CompensationActions = report.CompensationActions,
                     LastError = null,
                     Metadata = metadata
                 },
@@ -259,6 +290,7 @@ internal sealed class DurableExecutionRuntimeStateCatalog(
                     ContinuationCount = current.ContinuationCount + 1,
                     PendingTimers = report.PendingTimers,
                     PendingSignals = report.PendingSignals,
+                    CompensationActions = report.CompensationActions,
                     LastError = null,
                     Metadata = metadata
                 },
@@ -276,6 +308,7 @@ internal sealed class DurableExecutionRuntimeStateCatalog(
                     CompletedCount = current.CompletedCount + 1,
                     PendingTimers = report.PendingTimers,
                     PendingSignals = report.PendingSignals,
+                    CompensationActions = report.CompensationActions,
                     LastError = null,
                     Metadata = metadata
                 },

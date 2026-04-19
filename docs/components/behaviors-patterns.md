@@ -16,8 +16,9 @@ durable-execution replay are handled.
 - **IDurableExecution<TState> / IDurableExecution<TInput, TState, TOutput>** — host-agnostic durable workflow contract over `IEventStore` replay
 - **DurableExecutionState<TState> / DurableExecutionStepResult<TOutput>** — replay snapshot and step-result contracts for durable execution
 - **DurableExecutionPendingTimer / DurableExecutionPendingSignal** — host-agnostic coordination descriptors for pending durable timer and signal waits
+- **DurableExecutionCompensationAction** — host-agnostic operator-facing compensation descriptor for durable workflow recovery guidance
 - **DurableExecutionRuntimeDescriptor / IDurableExecutionRuntimeCatalog** — operator-facing durable workflow catalog derived from shared behavior topology, ownership, transports, feature flags, and replay metadata
-- **DurableExecutionRuntimeState / IDurableExecutionRuntimeStateCatalog** — operator-facing per-stream durable runtime posture, including last outcome, stage, version progress, append count, pending timers/signals, completion state, and failure summary
+- **DurableExecutionRuntimeState / IDurableExecutionRuntimeStateCatalog** — operator-facing per-stream durable runtime posture, including last outcome, stage, version progress, append count, pending timers/signals, available compensation actions, completion state, and failure summary
 - **InMemorySagaStateStore** — `ConcurrentDictionary`-backed saga state with JSON serialization
 - **InMemoryProcessCheckpointStore** — `ConcurrentDictionary`-backed checkpoint store
 - **InMemorySagaChoreographyPublisher** — in-memory choreography publication collector for local development and tests
@@ -85,8 +86,9 @@ Durable workflows opt in explicitly through `IBehaviorTopologyBuilder.AsDurableE
 
 - `ResolveStreamId(...)` keeps stream ownership explicit instead of deriving it from ambient host state
 - `CreateInitialState()` seeds the replay state for new streams
-- `DurableExecutionStepResult<TOutput>` can now also carry `pendingTimers` and `pendingSignals` so
-  workflows can publish timer/signal coordination intent through the shared durable runtime state
+- `DurableExecutionStepResult<TOutput>` can now also carry `pendingTimers`, `pendingSignals`, and
+  `compensationActions` so workflows can publish coordination and operator-facing recovery guidance
+  through the shared durable runtime state
 - `DurableExecutionStrategy` replays current state from `IBehaviorContext.EventStore`, passes that
   snapshot to `ExecuteDurablyAsync(...)`, validates that returned events continue the stream with
   sequential versions, and appends them through `IEventStore.AppendAsync(...)`
@@ -113,11 +115,13 @@ Core exposes `/engine/durable-executions` plus `/engine/durable-executions/runti
 coordination filters `/engine/durable-executions/runtime/timers`,
 `/engine/durable-executions/runtime/timers/{timerId}`,
 `/engine/durable-executions/runtime/signals`, and
-`/engine/durable-executions/runtime/signals/{signalId}`. Those runtime surfaces preserve module
-ownership, transport ids, required feature ids, typed input/state/output contracts, the shared
-`200`/`202`/`204` success posture, replay/version progress, append counts, pending timer/signal
-coordination, and durable failure posture without inventing a second host-specific workflow
-registry.
+`/engine/durable-executions/runtime/signals/{signalId}` plus the compensation filters
+`/engine/durable-executions/runtime/compensations` and
+`/engine/durable-executions/runtime/compensations/{compensationId}`. Those runtime surfaces
+preserve module ownership, transport ids, required feature ids, typed input/state/output
+contracts, the shared `200`/`202`/`204` success posture, replay/version progress, append counts,
+pending timer/signal coordination, operator-facing compensation guidance, and durable failure
+posture without inventing a second host-specific workflow registry.
 
 ## Replacing the default stores
 
@@ -146,7 +150,7 @@ and it only activates when the shared `Cephalon.Eventing` publication path is tr
 
 ## Status
 
-> Status: ✅ Shipped — M4 baseline plus later follow-through for saga choreography, durable execution, the first durable runtime catalog/operator surface, the first durable per-stream live-state/failure-posture surface, and the first durable timer/signal coordination surface
+> Status: ✅ Shipped — M4 baseline plus later follow-through for saga choreography, durable execution, the first durable runtime catalog/operator surface, the first durable per-stream live-state/failure-posture surface, the first durable timer/signal coordination surface, and the first durable compensation-helper surface
 
 ## Related components
 

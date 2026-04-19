@@ -17,12 +17,16 @@ public sealed class DurableExecutionStepResult<TOutput>
     /// <param name="isCompleted">Marks the workflow as complete after this step.</param>
     /// <param name="pendingTimers">The durable timers that should remain pending after the step succeeds.</param>
     /// <param name="pendingSignals">The durable signals that should remain pending after the step succeeds.</param>
+    /// <param name="compensationActions">
+    /// The operator-facing compensation actions that should remain available after the step succeeds.
+    /// </param>
     public DurableExecutionStepResult(
         TOutput? output = default,
         IReadOnlyList<IDomainEvent>? events = null,
         bool isCompleted = false,
         IReadOnlyList<DurableExecutionPendingTimer>? pendingTimers = null,
-        IReadOnlyList<DurableExecutionPendingSignal>? pendingSignals = null)
+        IReadOnlyList<DurableExecutionPendingSignal>? pendingSignals = null,
+        IReadOnlyList<DurableExecutionCompensationAction>? compensationActions = null)
     {
         Output = output;
         Events = events is null
@@ -31,6 +35,7 @@ public sealed class DurableExecutionStepResult<TOutput>
         IsCompleted = isCompleted;
         PendingTimers = NormalizePendingTimers(pendingTimers);
         PendingSignals = NormalizePendingSignals(pendingSignals);
+        CompensationActions = NormalizeCompensationActions(compensationActions);
     }
 
     /// <summary>
@@ -57,6 +62,11 @@ public sealed class DurableExecutionStepResult<TOutput>
     /// Gets the durable signals that should remain pending after the step succeeds.
     /// </summary>
     public IReadOnlyList<DurableExecutionPendingSignal> PendingSignals { get; }
+
+    /// <summary>
+    /// Gets the operator-facing compensation actions that should remain available after the step succeeds.
+    /// </summary>
+    public IReadOnlyList<DurableExecutionCompensationAction> CompensationActions { get; }
 
     private static DurableExecutionPendingTimer[] NormalizePendingTimers(
         IReadOnlyList<DurableExecutionPendingTimer>? pendingTimers)
@@ -114,6 +124,37 @@ public sealed class DurableExecutionStepResult<TOutput>
 
         return pendingSignals
             .OrderBy(static signal => signal.Id, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+    }
+
+    private static DurableExecutionCompensationAction[] NormalizeCompensationActions(
+        IReadOnlyList<DurableExecutionCompensationAction>? compensationActions)
+    {
+        if (compensationActions is null || compensationActions.Count == 0)
+        {
+            return [];
+        }
+
+        if (compensationActions.Any(static action => action is null))
+        {
+            throw new ArgumentException(
+                "Compensation actions cannot contain null entries.",
+                nameof(compensationActions));
+        }
+
+        var duplicateCompensationActionId = compensationActions
+            .GroupBy(static action => action.Id, StringComparer.OrdinalIgnoreCase)
+            .FirstOrDefault(static group => group.Count() > 1)?
+            .Key;
+        if (!string.IsNullOrWhiteSpace(duplicateCompensationActionId))
+        {
+            throw new ArgumentException(
+                $"Compensation action id '{duplicateCompensationActionId}' was declared more than once.",
+                nameof(compensationActions));
+        }
+
+        return compensationActions
+            .OrderBy(static action => action.Id, StringComparer.OrdinalIgnoreCase)
             .ToArray();
     }
 }

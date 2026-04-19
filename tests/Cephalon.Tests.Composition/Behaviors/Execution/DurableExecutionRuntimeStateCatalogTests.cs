@@ -79,14 +79,23 @@ public sealed class DurableExecutionRuntimeStateCatalogTests
                 correlationId: "corr-complete",
                 eventStore: eventStore)));
 
+        await strategy.ExecuteAsync(MakeContext(
+            behaviorId: "tests.workflows.runtime.approvals.execute",
+            behavior: new ObservedApprovalWorkflowBehavior(),
+            input: new ObservedApprovalWorkflowInput("compensate", 5),
+            behaviorContext: new TestBehaviorContext(
+                "tests.workflows.runtime.approvals.execute",
+                correlationId: "corr-compensate",
+                eventStore: eventStore)));
+
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => strategy.ExecuteAsync(MakeContext(
             behaviorId: "tests.workflows.runtime.approvals.execute",
             behavior: new ObservedApprovalWorkflowBehavior(),
             input: new ObservedApprovalWorkflowInput("fail", 1),
             behaviorContext: new TestBehaviorContext(
                 "tests.workflows.runtime.approvals.execute",
-            correlationId: "corr-fail",
-            eventStore: eventStore))));
+                correlationId: "corr-compensate",
+                eventStore: eventStore))));
 
         Assert.Contains("stream version", exception.Message, StringComparison.OrdinalIgnoreCase);
 
@@ -96,8 +105,10 @@ public sealed class DurableExecutionRuntimeStateCatalogTests
         Assert.Equal(5, catalog.GetByTransportId("rabbitmq").Count);
         Assert.Single(catalog.GetWithPendingTimers());
         Assert.Single(catalog.GetWithPendingSignals());
+        Assert.Single(catalog.GetWithCompensationActions());
         Assert.Single(catalog.GetByPendingTimerId("approval-timeout"));
         Assert.Single(catalog.GetByPendingSignalId("approval-released"));
+        Assert.Single(catalog.GetByCompensationActionId("reverse-ledger"));
 
         Assert.True(catalog.TryGetByStreamId(
             "tests.workflows.runtime.approvals.execute:corr-success",
@@ -156,6 +167,7 @@ public sealed class DurableExecutionRuntimeStateCatalogTests
         Assert.False(waitingState.ContinuationPending);
         Assert.True(waitingState.HasPendingTimers);
         Assert.True(waitingState.HasPendingSignals);
+        Assert.False(waitingState.HasCompensationActions);
         Assert.True(waitingState.CoordinationPending);
         Assert.Equal(
             new DateTimeOffset(2026, 4, 19, 4, 0, 0, TimeSpan.Zero),
@@ -185,26 +197,36 @@ public sealed class DurableExecutionRuntimeStateCatalogTests
         Assert.False(completedState.IsFailed);
         Assert.False(completedState.CoordinationPending);
 
-        var failedState = catalog.GetByStreamId("tests.workflows.runtime.approvals.execute:corr-fail");
-        Assert.NotNull(failedState);
-        Assert.Equal("failed", failedState!.LastOutcome);
-        Assert.Equal("execute", failedState.LastStage);
-        Assert.Null(failedState.LastHttpStatusCode);
-        Assert.Equal(-1, failedState.LastReplayedVersion);
-        Assert.Equal(-1, failedState.LastKnownVersion);
-        Assert.Equal(0, failedState.LastAppendedEventCount);
-        Assert.False(failedState.LastStepProducedOutput);
-        Assert.False(failedState.LastStepCompleted);
-        Assert.Equal(1, failedState.StartedCount);
-        Assert.Equal(0, failedState.SucceededCount);
-        Assert.Equal(0, failedState.ContinuationCount);
-        Assert.Equal(0, failedState.CompletedCount);
-        Assert.Equal(1, failedState.FailedCount);
-        Assert.Equal(2, failedState.TotalReports);
-        Assert.True(failedState.IsFailed);
-        Assert.Contains("stream version", failedState.LastError, StringComparison.OrdinalIgnoreCase);
-        Assert.Equal("corr-fail", failedState.Metadata["correlationId"]);
-        Assert.Contains("InvalidOperationException", failedState.Metadata["exceptionType"], StringComparison.Ordinal);
+        var compensationState = catalog.GetByStreamId("tests.workflows.runtime.approvals.execute:corr-compensate");
+        Assert.NotNull(compensationState);
+        Assert.Equal("failed", compensationState!.LastOutcome);
+        Assert.Equal("execute", compensationState.LastStage);
+        Assert.Null(compensationState.LastHttpStatusCode);
+        Assert.Equal(0, compensationState.LastReplayedVersion);
+        Assert.Equal(0, compensationState.LastKnownVersion);
+        Assert.Equal(0, compensationState.LastAppendedEventCount);
+        Assert.False(compensationState.LastStepProducedOutput);
+        Assert.False(compensationState.LastStepCompleted);
+        Assert.Equal(2, compensationState.StartedCount);
+        Assert.Equal(1, compensationState.SucceededCount);
+        Assert.Equal(0, compensationState.ContinuationCount);
+        Assert.Equal(0, compensationState.CompletedCount);
+        Assert.Equal(1, compensationState.FailedCount);
+        Assert.Equal(4, compensationState.TotalReports);
+        Assert.True(compensationState.IsFailed);
+        Assert.False(compensationState.CoordinationPending);
+        Assert.True(compensationState.HasCompensationActions);
+        Assert.Contains("stream version", compensationState.LastError, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal("corr-compensate", compensationState.Metadata["correlationId"]);
+        Assert.Contains("InvalidOperationException", compensationState.Metadata["exceptionType"], StringComparison.Ordinal);
+        var compensationAction = Assert.Single(compensationState.CompensationActions);
+        Assert.Equal("reverse-ledger", compensationAction.Id);
+        Assert.Equal("Reverse Ledger Entry", compensationAction.DisplayName);
+        Assert.Equal("on-failure", compensationAction.TriggerKind);
+        Assert.Equal(
+            "tests.workflows.runtime.approvals.compensate",
+            compensationAction.CompensationBehaviorId);
+        Assert.Equal("approval", compensationAction.Metadata["lane"]);
 
         var snapshot = snapshotProvider.CreateSnapshot();
         Assert.Equal(5, snapshot.DurableExecutionStates.Count);
@@ -349,6 +371,31 @@ public sealed class DurableExecutionRuntimeStateCatalogTests
                             displayName: "Approval Released",
                             description: "Waits for the external release signal.",
                             payloadType: typeof(string).FullName,
+                            metadata: new Dictionary<string, string>
+                            {
+                                ["lane"] = "approval"
+                            })
+                    ]),
+                "compensate" => new DurableExecutionStepResult<string?>(
+                    output: $"recovery:{execution.State.Total + input.Amount}",
+                    events:
+                    [
+                        new ObservedApprovalAdvancedEvent(
+                            execution.StreamId,
+                            execution.Version + 1,
+                            new DateTime(2026, 4, 19, 1, 1, 30, DateTimeKind.Utc),
+                            input.Amount,
+                            IsCompleted: false)
+                    ],
+                    isCompleted: false,
+                    compensationActions:
+                    [
+                        new DurableExecutionCompensationAction(
+                            id: "reverse-ledger",
+                            displayName: "Reverse Ledger Entry",
+                            description: "Runs the reversal behavior when the approval must be undone.",
+                            triggerKind: "on-failure",
+                            compensationBehaviorId: "tests.workflows.runtime.approvals.compensate",
                             metadata: new Dictionary<string, string>
                             {
                                 ["lane"] = "approval"

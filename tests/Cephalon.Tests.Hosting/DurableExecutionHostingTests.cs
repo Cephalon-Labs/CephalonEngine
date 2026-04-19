@@ -97,6 +97,7 @@ public sealed class DurableExecutionHostingTests
         var initialStates = await client.GetFromJsonAsync<DurableExecutionRuntimeState[]>("/engine/durable-executions/runtime");
         var initialTimerStates = await client.GetFromJsonAsync<DurableExecutionRuntimeState[]>("/engine/durable-executions/runtime/timers");
         var initialSignalStates = await client.GetFromJsonAsync<DurableExecutionRuntimeState[]>("/engine/durable-executions/runtime/signals");
+        var initialCompensationStates = await client.GetFromJsonAsync<DurableExecutionRuntimeState[]>("/engine/durable-executions/runtime/compensations");
         var missingStateResponse = await client.GetAsync("/engine/durable-executions/runtime/streams/tests.workflows.hosted.approvals.start:missing");
 
         Assert.NotNull(initialStates);
@@ -105,6 +106,8 @@ public sealed class DurableExecutionHostingTests
         Assert.Empty(initialTimerStates);
         Assert.NotNull(initialSignalStates);
         Assert.Empty(initialSignalStates);
+        Assert.NotNull(initialCompensationStates);
+        Assert.Empty(initialCompensationStates);
         Assert.Equal(HttpStatusCode.NotFound, missingStateResponse.StatusCode);
 
         var strategy = app.Services.GetServices<IBehaviorExecutionStrategy>()
@@ -133,6 +136,15 @@ public sealed class DurableExecutionHostingTests
                 correlationId: "corr-wait",
                 eventStore: eventStore)));
 
+        await strategy.ExecuteAsync(MakeContext(
+            behaviorId: "tests.workflows.hosted.approvals.start",
+            behavior: new HostedApprovalWorkflowBehavior(),
+            input: new HostedApprovalWorkflowInput("APR-77", "compensate"),
+            behaviorContext: new HostingTestBehaviorContext(
+                "tests.workflows.hosted.approvals.start",
+                correlationId: "corr-compensate",
+                eventStore: eventStore)));
+
         var states = await client.GetFromJsonAsync<DurableExecutionRuntimeState[]>("/engine/durable-executions/runtime");
         var byBehavior = await client.GetFromJsonAsync<DurableExecutionRuntimeState[]>("/engine/durable-executions/runtime/behaviors/tests.workflows.hosted.approvals.start");
         var byModule = await client.GetFromJsonAsync<DurableExecutionRuntimeState[]>("/engine/durable-executions/runtime/modules/tests.durable-host");
@@ -141,21 +153,27 @@ public sealed class DurableExecutionHostingTests
         var byPendingTimerId = await client.GetFromJsonAsync<DurableExecutionRuntimeState[]>("/engine/durable-executions/runtime/timers/approval-timeout");
         var byPendingSignals = await client.GetFromJsonAsync<DurableExecutionRuntimeState[]>("/engine/durable-executions/runtime/signals");
         var byPendingSignalId = await client.GetFromJsonAsync<DurableExecutionRuntimeState[]>("/engine/durable-executions/runtime/signals/approval-released");
+        var byCompensations = await client.GetFromJsonAsync<DurableExecutionRuntimeState[]>("/engine/durable-executions/runtime/compensations");
+        var byCompensationId = await client.GetFromJsonAsync<DurableExecutionRuntimeState[]>("/engine/durable-executions/runtime/compensations/reverse-ledger");
         var state = await client.GetFromJsonAsync<DurableExecutionRuntimeState>("/engine/durable-executions/runtime/streams/tests.workflows.hosted.approvals.start:corr-hosted");
         var waitingState = await client.GetFromJsonAsync<DurableExecutionRuntimeState>("/engine/durable-executions/runtime/streams/tests.workflows.hosted.approvals.start:corr-wait");
+        var compensationState = await client.GetFromJsonAsync<DurableExecutionRuntimeState>("/engine/durable-executions/runtime/streams/tests.workflows.hosted.approvals.start:corr-compensate");
         var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
 
         Assert.NotNull(states);
-        Assert.Equal(2, states.Length);
-        Assert.Equal(2, byBehavior!.Length);
-        Assert.Equal(2, byModule!.Length);
-        Assert.Equal(2, byTransport!.Length);
+        Assert.Equal(3, states.Length);
+        Assert.Equal(3, byBehavior!.Length);
+        Assert.Equal(3, byModule!.Length);
+        Assert.Equal(3, byTransport!.Length);
         Assert.Single(byPendingTimers!);
         Assert.Single(byPendingTimerId!);
         Assert.Single(byPendingSignals!);
         Assert.Single(byPendingSignalId!);
+        Assert.Single(byCompensations!);
+        Assert.Single(byCompensationId!);
         Assert.NotNull(state);
         Assert.NotNull(waitingState);
+        Assert.NotNull(compensationState);
         Assert.NotNull(snapshot);
 
         var reportedState = Assert.Single(
@@ -193,6 +211,7 @@ public sealed class DurableExecutionHostingTests
         Assert.Equal(202, waitingState.LastHttpStatusCode);
         Assert.True(waitingState.HasPendingTimers);
         Assert.True(waitingState.HasPendingSignals);
+        Assert.False(waitingState.HasCompensationActions);
         Assert.True(waitingState.CoordinationPending);
         Assert.Equal(
             new DateTimeOffset(2026, 4, 19, 5, 0, 0, TimeSpan.Zero),
@@ -200,7 +219,20 @@ public sealed class DurableExecutionHostingTests
         Assert.Equal("approval-timeout", Assert.Single(waitingState.PendingTimers).Id);
         Assert.Equal("approval-released", Assert.Single(waitingState.PendingSignals).Id);
 
-        Assert.Equal(2, snapshot!.DurableExecutionStates.Count);
+        Assert.Equal("succeeded", compensationState!.LastOutcome);
+        Assert.Equal("append", compensationState.LastStage);
+        Assert.Equal(200, compensationState.LastHttpStatusCode);
+        Assert.True(compensationState.HasCompensationActions);
+        Assert.False(compensationState.CoordinationPending);
+        var compensationAction = Assert.Single(compensationState.CompensationActions);
+        Assert.Equal("reverse-ledger", compensationAction.Id);
+        Assert.Equal("Reverse Ledger Entry", compensationAction.DisplayName);
+        Assert.Equal("on-failure", compensationAction.TriggerKind);
+        Assert.Equal(
+            "tests.workflows.hosted.approvals.compensate",
+            compensationAction.CompensationBehaviorId);
+
+        Assert.Equal(3, snapshot!.DurableExecutionStates.Count);
         var snapshotState = Assert.Single(
             snapshot.DurableExecutionStates,
             static candidate => string.Equals(
@@ -212,6 +244,12 @@ public sealed class DurableExecutionHostingTests
         Assert.Equal(state.LastOutcome, snapshotState.LastOutcome);
         Assert.Equal(state.LastStage, snapshotState.LastStage);
         Assert.Equal(state.LastKnownVersion, snapshotState.LastKnownVersion);
+        Assert.Contains(
+            snapshot.DurableExecutionStates,
+            static candidate => string.Equals(
+                candidate.StreamId,
+                "tests.workflows.hosted.approvals.start:corr-compensate",
+                StringComparison.Ordinal));
     }
 
     private static BehaviorExecutionContext MakeContext<TBehavior>(
@@ -328,6 +366,25 @@ public sealed class DurableExecutionHostingTests
                             id: "approval-released",
                             displayName: "Approval Released",
                             payloadType: typeof(string).FullName)
+                    ]),
+                "compensate" => new DurableExecutionStepResult<HostedApprovalWorkflowOutput>(
+                    output: new HostedApprovalWorkflowOutput("recovery-armed"),
+                    events:
+                    [
+                        new HostedApprovalAcceptedEvent(
+                            execution.StreamId,
+                            execution.Version + 1,
+                            new DateTime(2026, 4, 19, 2, 1, 0, DateTimeKind.Utc))
+                    ],
+                    isCompleted: false,
+                    compensationActions:
+                    [
+                        new DurableExecutionCompensationAction(
+                            id: "reverse-ledger",
+                            displayName: "Reverse Ledger Entry",
+                            description: "Runs the compensating approval reversal behavior.",
+                            triggerKind: "on-failure",
+                            compensationBehaviorId: "tests.workflows.hosted.approvals.compensate")
                     ]),
                 _ => throw new InvalidOperationException($"Unknown hosted durable mode '{input.Mode}'.")
             });

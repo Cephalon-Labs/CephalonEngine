@@ -65,6 +65,23 @@ public interface IDurableExecutionRuntimeStateCatalog
     IReadOnlyList<DurableExecutionRuntimeState> GetByPendingSignalId(string signalId);
 
     /// <summary>
+    /// Gets the reported durable-execution state entries that currently expose one or more compensation actions.
+    /// </summary>
+    /// <returns>
+    /// The matching state entries, or an empty list when no stream currently reports compensation actions.
+    /// </returns>
+    IReadOnlyList<DurableExecutionRuntimeState> GetWithCompensationActions();
+
+    /// <summary>
+    /// Gets the reported durable-execution state entries that currently include the requested compensation action.
+    /// </summary>
+    /// <param name="compensationActionId">The stable compensation-action identifier to filter by.</param>
+    /// <returns>
+    /// The matching state entries, or an empty list when no stream currently reports that compensation action.
+    /// </returns>
+    IReadOnlyList<DurableExecutionRuntimeState> GetByCompensationActionId(string compensationActionId);
+
+    /// <summary>
     /// Tries to get the latest reported durable-execution state for one stream.
     /// </summary>
     /// <param name="streamId">The stable stream identifier to resolve.</param>

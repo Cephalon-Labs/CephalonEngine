@@ -202,6 +202,18 @@ public static class EngineWebApplicationExtensions
                 return TypedResults.Ok(catalog?.GetByPendingSignalId(signalId) ?? []);
             })
             .WithName("GetCephalonDurableExecutionStatesByPendingSignal");
+        engineGroup.MapGet("/durable-executions/runtime/compensations", (HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeStateCatalog>();
+                return TypedResults.Ok(catalog?.GetWithCompensationActions() ?? []);
+            })
+            .WithName("GetCephalonDurableExecutionStatesWithCompensationActions");
+        engineGroup.MapGet("/durable-executions/runtime/compensations/{compensationId}", (string compensationId, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeStateCatalog>();
+                return TypedResults.Ok(catalog?.GetByCompensationActionId(compensationId) ?? []);
+            })
+            .WithName("GetCephalonDurableExecutionStatesByCompensationAction");
         engineGroup.MapGet("/durable-executions/runtime/streams/{streamId}", (string streamId, HttpContext httpContext) =>
             {
                 var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeStateCatalog>();
