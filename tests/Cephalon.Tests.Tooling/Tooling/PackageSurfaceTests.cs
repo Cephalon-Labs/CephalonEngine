@@ -225,6 +225,11 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Modules.ModuleBase),
             typeof(global::Cephalon.Abstractions.Modules.ModuleContext),
             typeof(global::Cephalon.Abstractions.Modules.ModuleDescriptor),
+            typeof(global::Cephalon.Abstractions.Patterns.BackendForFrontendBehaviorFilterDescriptor),
+            typeof(global::Cephalon.Abstractions.Patterns.BackendForFrontendClientBindingDescriptor),
+            typeof(global::Cephalon.Abstractions.Patterns.IBackendForFrontendClientBindingContributor),
+            typeof(global::Cephalon.Abstractions.Patterns.IBackendForFrontendClientBindingRegistry),
+            typeof(global::Cephalon.Abstractions.Patterns.IBackendForFrontendRuntimeCatalog),
             typeof(global::Cephalon.Abstractions.Patterns.IStranglerFigRouteContributor),
             typeof(global::Cephalon.Abstractions.Patterns.IStranglerFigMigrationRuntimeCatalog),
             typeof(global::Cephalon.Abstractions.Patterns.IStranglerFigRouteRegistry),
@@ -1873,6 +1878,21 @@ public sealed class PackageSurfaceTests
             .GetProperty("AuthoringStyleSummaries", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot)
             .GetProperty("RestEndpointAuthoringPolicies", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void BackendForFrontendRuntimeContractsExposeSnapshotSurface()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Patterns.BackendForFrontendClientBindingDescriptor)
+            .GetProperty("ClientId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Patterns.BackendForFrontendClientBindingDescriptor)
+            .GetProperty("TransportId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Patterns.BackendForFrontendClientBindingDescriptor)
+            .GetProperty("EntryPoint", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Patterns.BackendForFrontendClientBindingDescriptor)
+            .GetProperty("BehaviorFilter", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot)
+            .GetProperty("BackendForFrontendBindings", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

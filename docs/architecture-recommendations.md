@@ -121,16 +121,18 @@ Effort: medium.
 
 ### Backend for Frontend — BFF (explicit pattern)
 
-Current state: shipped as a taxonomy descriptor. `BuiltInPatterns.cs` now includes `backend-for-frontend`, so the remaining work is explicit client-binding configuration and filtering guidance rather than descriptor registration.
+Current state: the contract-first client-binding runtime baseline is now shipped. `BuiltInPatterns.cs` still carries the `backend-for-frontend` descriptor, and `Cephalon.Abstractions` now also exports `BackendForFrontendBehaviorFilterDescriptor`, `BackendForFrontendClientBindingDescriptor`, `IBackendForFrontendClientBindingContributor`, `IBackendForFrontendClientBindingRegistry`, and `IBackendForFrontendRuntimeCatalog`. `Cephalon.Engine` now composes host-added, module-contributed, and `Engine:BackendForFrontend:Bindings` client bindings into one runtime catalog, auto-selects the `backend-for-frontend` pattern when bindings exist, and projects the merged answer through `snapshot.BackendForFrontendBindings`. ASP.NET Core now exposes `/engine/backend-for-frontend` plus client, module, and transport drill-down routes as the operator-facing surface. Remaining work is client-aware behavior filtering or endpoint materialization follow-through, not the first runtime truth layer.
 
-Recommendation: keep the descriptor stable and add per-client transport binding plus behavior-filtering follow-through only when a concrete frontend surface needs it.
+Recommendation: keep the host-agnostic client-binding contracts and runtime catalog stable, keep ASP.NET Core operator routes derived from that shared catalog, and add client-aware behavior filtering or transport-specific materialization only when a concrete frontend surface needs it.
 
 Implementation outline:
 - `PatternDescriptor` "backend-for-frontend" in `BuiltInPatterns.cs` with aliases `["BackendForFrontend", "BFF"]`
-- Per-client transport binding configuration
-- Client-aware behavior filtering
+- `BackendForFrontendClientBindingDescriptor`, `IBackendForFrontendClientBindingContributor`, `IBackendForFrontendClientBindingRegistry`, and `IBackendForFrontendRuntimeCatalog` for host-agnostic client-binding contribution and reads
+- `Engine:BackendForFrontend:Bindings` for configuration-driven binding contribution without inventing a host-only registry
+- `/engine/backend-for-frontend` plus `snapshot.BackendForFrontendBindings` for the shipped operator-facing runtime surface
+- Client-aware behavior filtering and transport-specific materialization as later follow-through
 
-Effort: small for the remaining non-descriptor work.
+Effort: small-to-medium for the remaining filtering and materialization follow-through.
 
 ### Feature Flags (progressive delivery)
 

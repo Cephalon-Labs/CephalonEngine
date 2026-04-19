@@ -54,6 +54,7 @@ public sealed class EngineBuilder
     private readonly List<IModule> modules = [];
     private readonly List<ModulePackageReference> packages = [];
     private readonly List<ModulePackageDirectory> packageDirectories = [];
+    private readonly List<BackendForFrontendClientBindingDescriptor> backendForFrontendBindings = [];
     private readonly List<StranglerFigRouteDescriptor> stranglerFigRoutes = [];
     private readonly AppProfileBuilder appProfileBuilder = new();
     private EngineOptions engineOptions = EngineOptions.Empty;
@@ -62,6 +63,7 @@ public sealed class EngineBuilder
     private TrustPolicy trustPolicy = TrustPolicy.Default;
     private PackagePolicy packagePolicy = PackagePolicy.Default;
     private MigrationSettings migrationSettings = MigrationSettings.Empty;
+    private BackendForFrontendSettings backendForFrontendSettings = BackendForFrontendSettings.Empty;
 
     /// <summary>
     /// Creates a new builder over the supplied service collection.
@@ -136,6 +138,7 @@ public sealed class EngineBuilder
         UseTrustPolicy(settings.TrustPolicy);
         UsePackagePolicy(settings.PackagePolicy);
         UseMigrationSettings(settings.Migration);
+        UseBackendForFrontendSettings(settings.BackendForFrontend);
 
         return this;
     }
@@ -181,6 +184,36 @@ public sealed class EngineBuilder
     public EngineBuilder AddTechnology(TechnologyDescriptor technology)
     {
         appProfileBuilder.AddTechnology(technology);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a backend-for-frontend client binding to the current runtime composition.
+    /// </summary>
+    /// <param name="binding">The client binding descriptor to add.</param>
+    /// <returns>The same builder instance.</returns>
+    public EngineBuilder AddBackendForFrontendClientBinding(BackendForFrontendClientBindingDescriptor binding)
+    {
+        ArgumentNullException.ThrowIfNull(binding);
+
+        backendForFrontendBindings.Add(binding);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds multiple backend-for-frontend client bindings to the current runtime composition.
+    /// </summary>
+    /// <param name="bindings">The client binding descriptors to add.</param>
+    /// <returns>The same builder instance.</returns>
+    public EngineBuilder AddBackendForFrontendClientBindings(IEnumerable<BackendForFrontendClientBindingDescriptor> bindings)
+    {
+        ArgumentNullException.ThrowIfNull(bindings);
+
+        foreach (var binding in bindings)
+        {
+            AddBackendForFrontendClientBinding(binding);
+        }
+
         return this;
     }
 
@@ -307,6 +340,19 @@ public sealed class EngineBuilder
         ArgumentNullException.ThrowIfNull(migration);
 
         migrationSettings = migration;
+        return this;
+    }
+
+    /// <summary>
+    /// Replaces the backend-for-frontend settings used by the runtime client-binding catalog.
+    /// </summary>
+    /// <param name="settings">The backend-for-frontend settings to apply.</param>
+    /// <returns>The same builder instance.</returns>
+    public EngineBuilder UseBackendForFrontendSettings(BackendForFrontendSettings settings)
+    {
+        ArgumentNullException.ThrowIfNull(settings);
+
+        backendForFrontendSettings = settings;
         return this;
     }
 
@@ -573,6 +619,7 @@ public sealed class EngineBuilder
             Services.AddSingleton(trustPolicy);
             Services.AddSingleton(packagePolicy);
             Services.AddSingleton(migrationSettings);
+            Services.AddSingleton(backendForFrontendSettings);
 
             var activeModules = ModuleActivation.ApplyOptions(allModules, engineOptions);
             var orderedModules = ModuleOrdering.Order(activeModules);
@@ -585,6 +632,7 @@ public sealed class EngineBuilder
             var inboxes = new List<InboxDescriptor>();
             var auditStores = new List<AuditStoreDescriptor>();
             var authorizationPolicies = new List<AuthorizationPolicyDescriptor>();
+            var activeBackendForFrontendBindings = new List<BackendForFrontendClientBindingDescriptor>(backendForFrontendBindings);
             var activeStranglerFigRoutes = new List<StranglerFigRouteDescriptor>(stranglerFigRoutes);
             var capabilities = new CapabilityManifestCollector();
             var technologyRegistry = new TechnologyRegistryAdapter(appProfileBuilder);
@@ -635,10 +683,24 @@ public sealed class EngineBuilder
                     new AuthorizationPolicyRegistryAdapter(module.Descriptor.Id, authorizationPolicies));
             }
 
+            foreach (var module in orderedModules.Where(static module => module is IBackendForFrontendClientBindingContributor))
+            {
+                ((IBackendForFrontendClientBindingContributor)module).RegisterClientBindings(
+                    new BackendForFrontendClientBindingRegistryAdapter(module.Descriptor.Id, activeBackendForFrontendBindings));
+            }
+
+            activeBackendForFrontendBindings.AddRange(
+                backendForFrontendSettings.Bindings.Select(CreateBackendForFrontendClientBindingDescriptor));
+
             foreach (var module in orderedModules.Where(static module => module is IStranglerFigRouteContributor))
             {
                 ((IStranglerFigRouteContributor)module).RegisterRoutes(
                     new StranglerFigRouteRegistryAdapter(module.Descriptor.Id, activeStranglerFigRoutes));
+            }
+
+            if (activeBackendForFrontendBindings.Count > 0)
+            {
+                appProfileBuilder.TryAddPattern(BuiltInPatterns.BackendForFrontendPattern);
             }
 
             if (activeStranglerFigRoutes.Count > 0)
@@ -663,6 +725,10 @@ public sealed class EngineBuilder
             Services.TryAddSingleton<IReadOnlyList<OwnedBehaviorRegistration>>(ownedBehaviorRegistrations);
             Services.TryAddSingleton<IReadOnlyList<AuditStoreDescriptor>>(_ => auditStores.ToArray());
             Services.TryAddSingleton<IReadOnlyList<OutboxDescriptor>>(_ => outboxes.ToArray());
+            Services.TryAddSingleton<BackendForFrontendRuntimeCatalogSnapshot>(_ =>
+                new BackendForFrontendRuntimeCatalogSnapshot(activeBackendForFrontendBindings));
+            Services.TryAddSingleton<IBackendForFrontendRuntimeCatalog>(serviceProvider =>
+                serviceProvider.GetRequiredService<BackendForFrontendRuntimeCatalogSnapshot>());
             Services.TryAddSingleton<StranglerFigRuntimeCatalogSnapshot>(_ =>
                 new StranglerFigRuntimeCatalogSnapshot(activeStranglerFigRoutes, migrationSettings.StranglerFig));
             Services.TryAddSingleton<IStranglerFigRuntimeCatalog>(serviceProvider =>
@@ -801,6 +867,29 @@ public sealed class EngineBuilder
         return capabilities
             .Where(capability => options.IsCapabilityEnabled(capability.Key))
             .ToArray();
+    }
+
+    private static BackendForFrontendClientBindingDescriptor CreateBackendForFrontendClientBindingDescriptor(
+        BackendForFrontendClientBindingSettings settings)
+    {
+        ArgumentNullException.ThrowIfNull(settings);
+
+        return new BackendForFrontendClientBindingDescriptor(
+            id: settings.Id,
+            clientId: settings.ClientId,
+            sourceModuleId: settings.SourceModuleId,
+            displayName: settings.DisplayName,
+            description: settings.Description,
+            transportId: settings.TransportId,
+            entryPoint: settings.EntryPoint,
+            behaviorFilter: new BackendForFrontendBehaviorFilterDescriptor(
+                includedBehaviorIds: settings.BehaviorFilter.IncludedBehaviorIds,
+                excludedBehaviorIds: settings.BehaviorFilter.ExcludedBehaviorIds,
+                includedCapabilityKeys: settings.BehaviorFilter.IncludedCapabilityKeys,
+                excludedCapabilityKeys: settings.BehaviorFilter.ExcludedCapabilityKeys,
+                includedTags: settings.BehaviorFilter.IncludedTags,
+                excludedTags: settings.BehaviorFilter.ExcludedTags),
+            metadata: settings.Metadata);
     }
 
     private static OwnedBehaviorRegistration[] CollectOwnedBehaviorRegistrations(

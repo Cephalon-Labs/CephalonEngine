@@ -2115,6 +2115,34 @@ Delivered:
 - targeted hosting coverage now proves local rewrite, absolute redirect, absolute proxy, and unsupported-target failure behavior while existing composition plus package-surface coverage proves the shared migration runtime truth remains intact through hosting tests `5/5`, composition tests `4/4`, and package-surface tests `153/153`
 - architecture recommendations, component docs, roadmap, backlog, and project memory now describe the shipped cutover baseline truthfully while keeping broader traffic-manager or ingress follow-through explicitly planned
 
+### ENG-103 Phase 12 backend-for-frontend client-binding runtime baseline
+
+Status: done
+Estimate: 5
+Completed: April 19, 2026
+
+Why:
+
+- after `ENG-095`, Cephalon could describe `backend-for-frontend` in the app-model taxonomy, but the runtime still had no engine-owned answer for which client-specific surfaces were active, who owned them, or which transport each client binding used
+- teams shaping one backend surface per client need configuration-driven and module-owned client-binding truth to stay inside the shared engine runtime instead of scattering per-host or per-project registries
+- the operator story was still incomplete because `/engine/snapshot` and ASP.NET Core hosts could not yet report one merged client-binding catalog or auto-select the BFF pattern when bindings existed
+
+Acceptance:
+
+- host-agnostic read and contribution contracts for backend-for-frontend client bindings live in `Cephalon.Abstractions`
+- `Cephalon.Engine` composes host-added, module-contributed, and configuration-driven client bindings into one runtime catalog and projects that answer into `/engine/snapshot`
+- `Engine:BackendForFrontend:Bindings` supports configuration-driven client-binding contribution without creating a separate host-only runtime truth
+- ASP.NET Core hosts expose direct operator routes for the merged backend-for-frontend client-binding catalog and its client/module/transport drill-down answers
+- docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the shipped runtime baseline while remaining honest that client-aware filtering or materialization follow-through is still later work
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships `BackendForFrontendBehaviorFilterDescriptor`, `BackendForFrontendClientBindingDescriptor`, `IBackendForFrontendClientBindingContributor`, `IBackendForFrontendClientBindingRegistry`, and `IBackendForFrontendRuntimeCatalog` as the host-agnostic client-binding contribution and read layer
+- `Cephalon.Engine` now binds `Engine:BackendForFrontend:Bindings` through typed settings, composes that configuration with host-added and module-contributed bindings, auto-selects the `backend-for-frontend` pattern when bindings exist, and projects the merged answer into `snapshot.BackendForFrontendBindings`
+- ASP.NET Core now exposes `/engine/backend-for-frontend`, `/engine/backend-for-frontend/{bindingId}`, `/engine/backend-for-frontend/clients/{clientId}`, `/engine/backend-for-frontend/modules/{moduleId}`, and `/engine/backend-for-frontend/transports/{transportId}` as the direct operator surface over the shared runtime catalog
+- targeted composition, hosting, and package-surface coverage now lock the new runtime truth through composition tests `3/3`, hosting tests `1/1`, and package-surface tests `1/1`
+- architecture recommendations, component docs, roadmap, backlog, and project memory now describe the shipped BFF runtime baseline truthfully while keeping client-aware filtering or transport-specific materialization explicitly planned
+
 ### ENG-069 Event-dispatch runtime operator-surface baseline
 
 Status: done
@@ -2556,3 +2584,4 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-100 generic behavior HTTP transport-native timeout and circuit-breaker envelopes: `Cephalon.Behaviors.Http` now shares one resilience-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution timeout and open-circuit rejections keep protocol-native error shapes with stable Cephalon codes plus `503` metadata and optional retry-after timing instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned timeout and circuit-breaker policy — **Shipped** · targeted hosting tests 25/25 + composition tests 28/28 + package-surface tests 153/153
 - ENG-101 phase 12 strangler-fig migration policy and progress baseline: `Cephalon.Abstractions` now exposes `IStranglerFigMigrationRuntimeCatalog` plus `StranglerFigMigrationRuntimeDescriptor`, `Cephalon.Engine` now binds deterministic `Engine:Migration:StranglerFig` default plus per-route overlays into `snapshot.StranglerFigRoutePolicies`, and `Cephalon.AspNetCore` now exposes `/engine/strangler-fig/runtime` plus `/engine/strangler-fig/runtime/{routeId}` while host-level cutover remains later — **Shipped** · composition tests 4/4 + hosting tests 1/1 + package-surface tests 153/153
 - ENG-102 phase 12 ASP.NET Core strangler-fig cutover runtime: `Cephalon.AspNetCore` now derives host cutover execution from `IStranglerFigMigrationRuntimeCatalog`, exposes `/engine/strangler-fig/cutover` plus `/engine/strangler-fig/cutover/resolve`, rewrites rooted local targets in-process, redirects or proxies absolute HTTP or HTTPS targets through `Engine:Migration:StranglerFig:AspNetCore`, and rejects unsupported selected endpoints truthfully with `502` while broader traffic-manager or ingress follow-through remains later — **Shipped** · hosting tests 5/5 + composition tests 4/4 + package-surface tests 153/153
+- ENG-103 phase 12 backend-for-frontend client-binding runtime baseline: `Cephalon.Abstractions` now exposes host-agnostic BFF client-binding contracts, `Cephalon.Engine` now composes host-added, module-contributed, and `Engine:BackendForFrontend:Bindings` entries into `snapshot.BackendForFrontendBindings` while auto-selecting `backend-for-frontend` when bindings exist, and `Cephalon.AspNetCore` now exposes `/engine/backend-for-frontend` plus client/module/transport drill-down routes while client-aware filtering or materialization remain later — **Shipped** · composition tests 3/3 + hosting tests 1/1 + package-surface tests 1/1

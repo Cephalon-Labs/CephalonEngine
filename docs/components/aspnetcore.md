@@ -10,6 +10,7 @@
 - `/engine/*` metadata, status, diagnostics, and policy endpoints
 - `/engine/resilience` when the engine-owned resilience contract is active
 - `/engine/strangler-fig`, `/engine/strangler-fig/runtime`, `/engine/strangler-fig/resolve`, and `/engine/strangler-fig/cutover` when the engine-owned strangler-fig route, migration-policy, and ASP.NET Core cutover catalogs are active
+- `/engine/backend-for-frontend` when the engine-owned backend-for-frontend client-binding catalog is active
 - `/engine/rate-limiting` when ASP.NET Core rate-limiting enforcement is active
 - `/engine/rest-endpoint-candidates` when the module-owned REST candidate catalog is active
 - `/engine/rest-endpoint-publication-groups` when grouped module-owned REST publication visibility and authoring-policy state are active
@@ -247,6 +248,15 @@ how ASP.NET Core will execute that shared migration truth: rooted local selected
 in-process before endpoint execution, absolute HTTP or HTTPS selected endpoints can redirect or
 proxy through the host-owned proxy client, and unsupported selected endpoints fail truthfully with
 `502` while broader traffic-manager or ingress follow-through stays outside the current baseline.
+
+The same operator surface now also exposes the shipped backend-for-frontend client-binding runtime.
+`/engine/backend-for-frontend` publishes the merged client-binding catalog composed by
+`Cephalon.Engine`, while `/engine/backend-for-frontend/{bindingId}` returns one binding by its
+stable identifier and the client/module/transport drill-down routes expose the same catalog through
+those narrower operator lenses. That host surface stays derived from the shared
+`IBackendForFrontendRuntimeCatalog` and `snapshot.BackendForFrontendBindings` contracts rather than
+inventing a second ASP.NET Core-only registry, which keeps later client-aware filtering or
+transport-specific materialization follow-through anchored to one runtime truth.
 
 The host now also exposes additive event-dispatch operator answers directly. When eventing packs
 register the corresponding catalogs, `/engine/event-dispatch-runtimes` and

@@ -33,6 +33,7 @@ public sealed class EngineSettings
     /// <param name="messaging">Configuration-driven messaging settings.</param>
     /// <param name="resilience">Configuration-driven resilience settings.</param>
     /// <param name="migration">Configuration-driven migration settings.</param>
+    /// <param name="backendForFrontend">Configuration-driven backend-for-frontend settings.</param>
     public EngineSettings(
         string? blueprint = null,
         IReadOnlyList<string>? patterns = null,
@@ -51,7 +52,8 @@ public sealed class EngineSettings
         AuditSettings? audit = null,
         MessagingSettings? messaging = null,
         ResilienceSettings? resilience = null,
-        MigrationSettings? migration = null)
+        MigrationSettings? migration = null,
+        BackendForFrontendSettings? backendForFrontend = null)
     {
         Blueprint = string.IsNullOrWhiteSpace(blueprint) ? null : blueprint.Trim();
         Patterns = patterns?
@@ -80,6 +82,7 @@ public sealed class EngineSettings
         Messaging = messaging ?? MessagingSettings.Empty;
         Resilience = resilience ?? ResilienceSettings.Empty;
         Migration = migration ?? MigrationSettings.Empty;
+        BackendForFrontend = backendForFrontend ?? BackendForFrontendSettings.Empty;
     }
 
     /// <summary>
@@ -173,6 +176,11 @@ public sealed class EngineSettings
     public MigrationSettings Migration { get; }
 
     /// <summary>
+    /// Gets configuration-driven backend-for-frontend settings.
+    /// </summary>
+    public BackendForFrontendSettings BackendForFrontend { get; }
+
+    /// <summary>
     /// Gets a value indicating whether any engine settings were explicitly supplied.
     /// </summary>
     public bool HasValues =>
@@ -193,7 +201,8 @@ public sealed class EngineSettings
         Audit.HasValues ||
         Messaging.HasValues ||
         Resilience.HasValues ||
-        Migration.HasValues;
+        Migration.HasValues ||
+        BackendForFrontend.HasValues;
 
     /// <summary>
     /// Reads engine settings from configuration.
@@ -245,6 +254,7 @@ public sealed class EngineSettings
             audit: AuditSettings.FromConfiguration(configuration, sectionPath),
             messaging: MessagingSettings.FromConfiguration(configuration, sectionPath),
             resilience: ResilienceSettings.FromConfiguration(configuration, sectionPath),
-            migration: MigrationSettings.FromConfiguration(configuration, sectionPath));
+            migration: MigrationSettings.FromConfiguration(configuration, sectionPath),
+            backendForFrontend: BackendForFrontendSettings.FromConfiguration(configuration, sectionPath));
     }
 }

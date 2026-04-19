@@ -502,6 +502,24 @@ public static class EngineWebApplicationExtensions
                 return route is null ? Results.NotFound() : Results.Ok(route);
             })
             .WithName("GetCephalonStranglerFigCutoverRoute");
+        engineGroup.MapGet("/backend-for-frontend", ([FromServices] IBackendForFrontendRuntimeCatalog catalog) => TypedResults.Ok(catalog.Bindings))
+            .WithName("GetCephalonBackendForFrontendBindings");
+        engineGroup.MapGet("/backend-for-frontend/clients/{clientId}", (string clientId, [FromServices] IBackendForFrontendRuntimeCatalog catalog) =>
+                TypedResults.Ok(catalog.GetByClientId(clientId)))
+            .WithName("GetCephalonBackendForFrontendBindingsByClient");
+        engineGroup.MapGet("/backend-for-frontend/modules/{moduleId}", (string moduleId, [FromServices] IBackendForFrontendRuntimeCatalog catalog) =>
+                TypedResults.Ok(catalog.GetBySourceModule(moduleId)))
+            .WithName("GetCephalonBackendForFrontendBindingsByModule");
+        engineGroup.MapGet("/backend-for-frontend/transports/{transportId}", (string transportId, [FromServices] IBackendForFrontendRuntimeCatalog catalog) =>
+                TypedResults.Ok(catalog.GetByTransportId(transportId)))
+            .WithName("GetCephalonBackendForFrontendBindingsByTransport");
+        engineGroup.MapGet("/backend-for-frontend/{bindingId}", (string bindingId, [FromServices] IBackendForFrontendRuntimeCatalog catalog) =>
+            {
+                var binding = catalog.GetById(bindingId);
+
+                return binding is null ? Results.NotFound() : Results.Ok(binding);
+            })
+            .WithName("GetCephalonBackendForFrontendBinding");
         engineGroup.MapGet("/patterns", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Patterns))
             .WithName("GetCephalonPatterns");
         engineGroup.MapGet("/technologies", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Technologies))

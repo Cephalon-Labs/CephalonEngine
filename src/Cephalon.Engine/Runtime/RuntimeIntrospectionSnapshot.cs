@@ -143,6 +143,11 @@ public sealed record RuntimeIntrospectionSnapshot(
     public IReadOnlyList<BehaviorResilienceRuntimeDescriptor> BehaviorResiliencePolicies { get; init; } = [];
 
     /// <summary>
+    /// Gets the backend-for-frontend client bindings visible to the runtime at the time the snapshot was created.
+    /// </summary>
+    public IReadOnlyList<BackendForFrontendClientBindingDescriptor> BackendForFrontendBindings { get; init; } = [];
+
+    /// <summary>
     /// Gets the strangler-fig migration routes visible to the runtime at the time the snapshot was created.
     /// </summary>
     public IReadOnlyList<StranglerFigRouteDescriptor> StranglerFigRoutes { get; init; } = [];

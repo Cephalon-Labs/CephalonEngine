@@ -13,6 +13,7 @@ using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Health;
 using Cephalon.Abstractions.Localization;
+using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Patterns;
 using Cephalon.Abstractions.Resilience;
 using Cephalon.Abstractions.Technologies;
@@ -235,6 +236,97 @@ public sealed class AspNetCoreHostingTests
         Assert.NotNull(patterns);
         Assert.Contains(patterns, pattern => pattern.Id == "strangler-fig");
         Assert.Contains(patterns, pattern => pattern.Id == "backend-for-frontend");
+    }
+
+    [Fact]
+    public async Task MapCephalonExposesBackendForFrontendBindingsAndSnapshot()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "Microservice";
+        builder.Configuration[$"{EngineSettings.SectionName}:BackendForFrontend:Bindings:0:Id"] = "mobile-rest";
+        builder.Configuration[$"{EngineSettings.SectionName}:BackendForFrontend:Bindings:0:ClientId"] = "mobile";
+        builder.Configuration[$"{EngineSettings.SectionName}:BackendForFrontend:Bindings:0:SourceModuleId"] = "platform";
+        builder.Configuration[$"{EngineSettings.SectionName}:BackendForFrontend:Bindings:0:DisplayName"] = "Mobile REST";
+        builder.Configuration[$"{EngineSettings.SectionName}:BackendForFrontend:Bindings:0:Description"] = "Projects the mobile REST experience through the platform module.";
+        builder.Configuration[$"{EngineSettings.SectionName}:BackendForFrontend:Bindings:0:TransportId"] = "rest-api";
+        builder.Configuration[$"{EngineSettings.SectionName}:BackendForFrontend:Bindings:0:EntryPoint"] = "/api/mobile";
+        builder.Configuration[$"{EngineSettings.SectionName}:BackendForFrontend:Bindings:0:BehaviorFilter:IncludedBehaviorIds:0"] = "tests.mobile.lookup";
+        builder.Configuration[$"{EngineSettings.SectionName}:BackendForFrontend:Bindings:0:BehaviorFilter:IncludedTags:0"] = "mobile";
+        builder.Configuration[$"{EngineSettings.SectionName}:BackendForFrontend:Bindings:0:Metadata:audience"] = "mobile";
+        builder.AddCephalon(engine =>
+        {
+            engine.UseConfiguration(builder.Configuration);
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new DiscoveryTestModule());
+            engine.AddModule(new BackendForFrontendHostingTestModule());
+            engine.AddBackendForFrontendClientBinding(new BackendForFrontendClientBindingDescriptor(
+                id: "storefront-rest",
+                clientId: "storefront",
+                sourceModuleId: "platform",
+                displayName: "Storefront REST",
+                description: "Projects the storefront REST surface through the platform module.",
+                transportId: "rest-api",
+                entryPoint: "/api/storefront",
+                behaviorFilter: new BackendForFrontendBehaviorFilterDescriptor(
+                    includedBehaviorIds: ["tests.storefront.lookup"],
+                    includedTags: ["storefront"]),
+                metadata: new Dictionary<string, string>
+                {
+                    ["audience"] = "public"
+                }));
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var appModel = await client.GetFromJsonAsync<AppProfile>("/engine/app-model");
+        var bindings = await client.GetFromJsonAsync<BackendForFrontendClientBindingDescriptor[]>("/engine/backend-for-frontend");
+        var binding = await client.GetFromJsonAsync<BackendForFrontendClientBindingDescriptor>("/engine/backend-for-frontend/storefront-rest");
+        var mobileBindings = await client.GetFromJsonAsync<BackendForFrontendClientBindingDescriptor[]>("/engine/backend-for-frontend/clients/mobile");
+        var moduleBindings = await client.GetFromJsonAsync<BackendForFrontendClientBindingDescriptor[]>("/engine/backend-for-frontend/modules/backend-for-frontend-hosting-tests");
+        var restBindings = await client.GetFromJsonAsync<BackendForFrontendClientBindingDescriptor[]>("/engine/backend-for-frontend/transports/rest-api");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(appModel);
+        Assert.Contains(appModel.Patterns, pattern => pattern.Id == "backend-for-frontend");
+
+        Assert.NotNull(bindings);
+        Assert.Equal(3, bindings.Length);
+        Assert.Contains(bindings, candidate => candidate.Id == "mobile-rest");
+        Assert.Contains(bindings, candidate => candidate.Id == "storefront-rest");
+        Assert.Contains(bindings, candidate => candidate.Id == "storefront-graphql");
+
+        Assert.NotNull(binding);
+        Assert.Equal("storefront", binding.ClientId);
+        Assert.Equal("rest-api", binding.TransportId);
+        Assert.Equal("/api/storefront", binding.EntryPoint);
+        Assert.Contains("tests.storefront.lookup", binding.BehaviorFilter.IncludedBehaviorIds);
+        Assert.Contains("storefront", binding.BehaviorFilter.IncludedTags);
+        Assert.Equal("public", binding.Metadata["audience"]);
+
+        Assert.NotNull(mobileBindings);
+        var mobileBinding = Assert.Single(mobileBindings);
+        Assert.Equal("mobile-rest", mobileBinding.Id);
+        Assert.Contains("tests.mobile.lookup", mobileBinding.BehaviorFilter.IncludedBehaviorIds);
+
+        Assert.NotNull(moduleBindings);
+        var moduleBinding = Assert.Single(moduleBindings);
+        Assert.Equal("storefront-graphql", moduleBinding.Id);
+        Assert.Contains("discovery.greetings", moduleBinding.BehaviorFilter.IncludedCapabilityKeys);
+        Assert.Contains("admin", moduleBinding.BehaviorFilter.ExcludedTags);
+
+        Assert.NotNull(restBindings);
+        Assert.Equal(2, restBindings.Length);
+        Assert.Contains(restBindings, candidate => candidate.Id == "mobile-rest");
+        Assert.Contains(restBindings, candidate => candidate.Id == "storefront-rest");
+
+        Assert.NotNull(snapshot);
+        Assert.Equal(3, snapshot.BackendForFrontendBindings.Count);
+        Assert.Contains(snapshot.BackendForFrontendBindings, candidate => candidate.Id == "storefront-graphql");
     }
 
     [Fact]
@@ -3334,6 +3426,34 @@ note: visible
         }
         catch (UnauthorizedAccessException)
         {
+        }
+    }
+
+    private sealed class BackendForFrontendHostingTestModule : ModuleBase, IBackendForFrontendClientBindingContributor
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            id: "backend-for-frontend-hosting-tests",
+            displayName: "Backend for Frontend Hosting Tests",
+            description: "Provides backend-for-frontend bindings for hosting tests.",
+            dependsOn: [typeof(PlatformTestModule), typeof(DiscoveryTestModule)]);
+
+        public void RegisterClientBindings(IBackendForFrontendClientBindingRegistry bindings)
+        {
+            bindings.Add(new BackendForFrontendClientBindingDescriptor(
+                id: "storefront-graphql",
+                clientId: "storefront",
+                sourceModuleId: "backend-for-frontend-hosting-tests",
+                displayName: "Storefront GraphQL",
+                description: "Projects the storefront GraphQL experience through the hosting test module.",
+                transportId: "graphql",
+                entryPoint: "/graphql/storefront",
+                behaviorFilter: new BackendForFrontendBehaviorFilterDescriptor(
+                    includedCapabilityKeys: ["discovery.greetings"],
+                    excludedTags: ["admin"]),
+                metadata: new Dictionary<string, string>
+                {
+                    ["document"] = "storefront"
+                }));
         }
     }
 
