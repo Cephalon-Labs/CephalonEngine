@@ -304,7 +304,9 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupAuthoringStyleDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointSuppressionDescriptor),
+            typeof(global::Cephalon.Abstractions.Transports.BackendForFrontendRestDocumentRuntimeDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.BackendForFrontendRestEndpointRuntimeDescriptor),
+            typeof(global::Cephalon.Abstractions.Transports.IBackendForFrontendRestDocumentRuntimeCatalog),
             typeof(global::Cephalon.Abstractions.Transports.IBackendForFrontendRestRuntimeCatalog),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.TransportDescriptor),
@@ -1914,6 +1916,31 @@ public sealed class PackageSurfaceTests
             .GetProperty("MatchedTags", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot)
             .GetProperty("BackendForFrontendRestEndpoints", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void BackendForFrontendRestDocumentRuntimeContractsExposeSnapshotSurface()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.BackendForFrontendRestDocumentRuntimeDescriptor)
+            .GetProperty("Kind", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.BackendForFrontendRestDocumentRuntimeDescriptor)
+            .GetProperty("ScopeId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.BackendForFrontendRestDocumentRuntimeDescriptor)
+            .GetProperty("ClientId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.BackendForFrontendRestDocumentRuntimeDescriptor)
+            .GetProperty("DocumentName", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.BackendForFrontendRestDocumentRuntimeDescriptor)
+            .GetProperty("OpenApiPath", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.BackendForFrontendRestDocumentRuntimeDescriptor)
+            .GetProperty("ScalarPath", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.BackendForFrontendRestDocumentRuntimeDescriptor)
+            .GetProperty("BindingIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.BackendForFrontendRestDocumentRuntimeDescriptor)
+            .GetProperty("RuntimeEndpointIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.BackendForFrontendRestDocumentRuntimeDescriptor)
+            .GetProperty("RestEndpointIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot)
+            .GetProperty("BackendForFrontendRestDocuments", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

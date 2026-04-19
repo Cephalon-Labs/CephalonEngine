@@ -535,6 +535,22 @@ public static class EngineWebApplicationExtensions
                 return runtimeEndpoint is null ? Results.NotFound() : Results.Ok(runtimeEndpoint);
             })
             .WithName("GetCephalonBackendForFrontendRestEndpoint");
+        engineGroup.MapGet("/backend-for-frontend/rest-documents", ([FromServices] IBackendForFrontendRestDocumentRuntimeCatalog catalog) =>
+                TypedResults.Ok(catalog.Documents))
+            .WithName("GetCephalonBackendForFrontendRestDocuments");
+        engineGroup.MapGet("/backend-for-frontend/rest-documents/bindings/{bindingId}", (string bindingId, [FromServices] IBackendForFrontendRestDocumentRuntimeCatalog catalog) =>
+                TypedResults.Ok(catalog.GetByBindingId(bindingId)))
+            .WithName("GetCephalonBackendForFrontendRestDocumentsByBinding");
+        engineGroup.MapGet("/backend-for-frontend/rest-documents/clients/{clientId}", (string clientId, [FromServices] IBackendForFrontendRestDocumentRuntimeCatalog catalog) =>
+                TypedResults.Ok(catalog.GetByClientId(clientId)))
+            .WithName("GetCephalonBackendForFrontendRestDocumentsByClient");
+        engineGroup.MapGet("/backend-for-frontend/rest-documents/{documentId}", (string documentId, [FromServices] IBackendForFrontendRestDocumentRuntimeCatalog catalog) =>
+            {
+                var document = catalog.GetById(documentId);
+
+                return document is null ? Results.NotFound() : Results.Ok(document);
+            })
+            .WithName("GetCephalonBackendForFrontendRestDocument");
         engineGroup.MapGet("/backend-for-frontend/{bindingId}", (string bindingId, [FromServices] IBackendForFrontendRuntimeCatalog catalog) =>
             {
                 var binding = catalog.GetById(bindingId);
@@ -728,6 +744,13 @@ public static class EngineWebApplicationExtensions
                 }
             })
             .DisableRateLimiting();
+
+            MapBackendForFrontendRestOpenApiDocuments(app, openApiEndpointOptions);
+            MapBackendForFrontendRestScalarSurfaces(
+                app,
+                openApiEndpointOptions,
+                configuration,
+                defaultOpenApiDocumentName);
         }
 
         MapReferenceDocs(app, referenceDocsOptions, referenceDocsSurface);
@@ -985,6 +1008,14 @@ public static class EngineWebApplicationExtensions
         return $"{scalarRoutePrefix}/{normalizedAssetPath}";
     }
 
+    private static string BuildVersionedScopedAssetReference(
+        string route,
+        string scopeParameterName,
+        string scopeId)
+    {
+        return $"{route}?v={DocumentationAssetVersion}&{Uri.EscapeDataString(scopeParameterName)}={Uri.EscapeDataString(scopeId)}";
+    }
+
     private static string RenderOpenApiToggleScript(
         string scalarRoutePrefix,
         IReadOnlyList<string> documentNames,
@@ -1008,6 +1039,209 @@ public static class EngineWebApplicationExtensions
             StringComparison.Ordinal);
 
         return rendered;
+    }
+
+    private static void MapBackendForFrontendRestOpenApiDocuments(
+        WebApplication app,
+        OpenApiEndpointOptions openApiEndpointOptions)
+    {
+        var bindingRoutePattern = BackendForFrontendRestDocumentRoutes.BuildBindingOpenApiRoutePattern(openApiEndpointOptions.RoutePattern);
+        var clientRoutePattern = BackendForFrontendRestDocumentRoutes.BuildClientOpenApiRoutePattern(openApiEndpointOptions.RoutePattern);
+
+        app.MapGet(bindingRoutePattern, async (
+                string bindingId,
+                string documentName,
+                [FromServices] AspNetCoreBackendForFrontendRestDocumentPublisher publisher,
+                CancellationToken cancellationToken) =>
+            {
+                var payload = await publisher
+                    .GenerateBindingDocumentAsync(bindingId, documentName, cancellationToken)
+                    .ConfigureAwait(false);
+
+                return payload is null
+                    ? Results.NotFound()
+                    : Results.Text(payload, "application/json");
+            })
+            .DisableRateLimiting()
+            .ExcludeFromDescription();
+
+        app.MapGet(clientRoutePattern, async (
+                string clientId,
+                string documentName,
+                [FromServices] AspNetCoreBackendForFrontendRestDocumentPublisher publisher,
+                CancellationToken cancellationToken) =>
+            {
+                var payload = await publisher
+                    .GenerateClientDocumentAsync(clientId, documentName, cancellationToken)
+                    .ConfigureAwait(false);
+
+                return payload is null
+                    ? Results.NotFound()
+                    : Results.Text(payload, "application/json");
+            })
+            .DisableRateLimiting()
+            .ExcludeFromDescription();
+    }
+
+    private static void MapBackendForFrontendRestScalarSurfaces(
+        WebApplication app,
+        OpenApiEndpointOptions openApiEndpointOptions,
+        IConfiguration configuration,
+        string defaultOpenApiDocumentName)
+    {
+        MapBackendForFrontendRestScalarSurface(
+            app,
+            openApiEndpointOptions,
+            configuration,
+            defaultOpenApiDocumentName,
+            scopeParameterName: "bindingId",
+            scalarRoutePrefix: BackendForFrontendRestDocumentRoutes.BuildBindingScalarPrefix(openApiEndpointOptions.ScalarRoutePrefix),
+            getDocuments: static (catalog, scopeId) => catalog.GetByBindingId(scopeId),
+            buildScopedOpenApiRoutePattern: static (routePattern, scopeId) =>
+                BackendForFrontendRestDocumentRoutes
+                    .BuildBindingOpenApiRoutePattern(routePattern)
+                    .Replace("{bindingId}", Uri.EscapeDataString(scopeId.Trim()), StringComparison.Ordinal),
+            resolveTitleSuffix: static (services, scopeId) =>
+            {
+                var bindings = services.GetRequiredService<IBackendForFrontendRuntimeCatalog>();
+                return bindings.GetById(scopeId)?.DisplayName ?? scopeId;
+            });
+
+        MapBackendForFrontendRestScalarSurface(
+            app,
+            openApiEndpointOptions,
+            configuration,
+            defaultOpenApiDocumentName,
+            scopeParameterName: "clientId",
+            scalarRoutePrefix: BackendForFrontendRestDocumentRoutes.BuildClientScalarPrefix(openApiEndpointOptions.ScalarRoutePrefix),
+            getDocuments: static (catalog, scopeId) => catalog.GetByClientId(scopeId),
+            buildScopedOpenApiRoutePattern: static (routePattern, scopeId) =>
+                BackendForFrontendRestDocumentRoutes
+                    .BuildClientOpenApiRoutePattern(routePattern)
+                    .Replace("{clientId}", Uri.EscapeDataString(scopeId.Trim()), StringComparison.Ordinal),
+            resolveTitleSuffix: static (_, scopeId) => scopeId);
+    }
+
+    private static void MapBackendForFrontendRestScalarSurface(
+        WebApplication app,
+        OpenApiEndpointOptions openApiEndpointOptions,
+        IConfiguration configuration,
+        string defaultOpenApiDocumentName,
+        string scopeParameterName,
+        string scalarRoutePrefix,
+        Func<IBackendForFrontendRestDocumentRuntimeCatalog, string, IReadOnlyList<BackendForFrontendRestDocumentRuntimeDescriptor>> getDocuments,
+        Func<string, string, string> buildScopedOpenApiRoutePattern,
+        Func<IServiceProvider, string, string> resolveTitleSuffix)
+    {
+        var openApiToggleScriptRoute = BuildScalarAssetRoute(scalarRoutePrefix, "openapi-toggle.js");
+        var scalarFaviconRoute = BuildScalarAssetRoute(scalarRoutePrefix, "assets/favicon.svg");
+        var scalarFaviconReference = BuildVersionedAssetReference(scalarFaviconRoute);
+
+        app.MapGet(
+                openApiToggleScriptRoute,
+                (HttpContext httpContext, [FromServices] IBackendForFrontendRestDocumentRuntimeCatalog catalog) =>
+                {
+                    var scopeId = httpContext.Request.Query[scopeParameterName].ToString();
+                    var documents = string.IsNullOrWhiteSpace(scopeId)
+                        ? []
+                        : getDocuments(catalog, scopeId);
+                    var defaultDocumentName = documents.Count > 0
+                        ? documents[0].DocumentName
+                        : defaultOpenApiDocumentName;
+                    var documentNames = documents
+                        .Select(static document => document.DocumentName)
+                        .ToArray();
+
+                    return Results.Text(
+                        RenderOpenApiToggleScript(
+                            scalarRoutePrefix,
+                            documentNames,
+                            defaultDocumentName),
+                        "application/javascript");
+                })
+            .DisableRateLimiting()
+            .ExcludeFromDescription();
+        app.MapGet(scalarFaviconRoute, () => Results.Text(ScalarFavicon.Value, "image/svg+xml"))
+            .DisableRateLimiting()
+            .ExcludeFromDescription();
+        app.UseWhen(
+            context =>
+                (HttpMethods.IsGet(context.Request.Method) || HttpMethods.IsHead(context.Request.Method)) &&
+                context.Request.Path == scalarRoutePrefix,
+            branch => branch.Run(context =>
+            {
+                var scopeId = context.Request.Query[scopeParameterName].ToString();
+                if (string.IsNullOrWhiteSpace(scopeId))
+                {
+                    context.Response.StatusCode = StatusCodes.Status404NotFound;
+                    return Task.CompletedTask;
+                }
+
+                var catalog = context.RequestServices.GetRequiredService<IBackendForFrontendRestDocumentRuntimeCatalog>();
+                var documents = getDocuments(catalog, scopeId);
+                if (documents.Count == 0)
+                {
+                    context.Response.StatusCode = StatusCodes.Status404NotFound;
+                    return Task.CompletedTask;
+                }
+
+                context.Response.Redirect(
+                    BackendForFrontendRestDocumentRoutes.AppendScopedQueryString(
+                        BuildScalarCanonicalPath(
+                            scalarRoutePrefix,
+                            documents[0].DocumentName,
+                            QueryString.Empty),
+                        scopeParameterName,
+                        scopeId,
+                        context.Request.QueryString));
+                return Task.CompletedTask;
+            }));
+        app.MapScalarApiReference(scalarRoutePrefix, (options, httpContext) =>
+        {
+            var scopeId = httpContext.Request.Query[scopeParameterName].ToString();
+            var catalog = httpContext.RequestServices.GetRequiredService<IBackendForFrontendRestDocumentRuntimeCatalog>();
+            var documents = string.IsNullOrWhiteSpace(scopeId)
+                ? []
+                : getDocuments(catalog, scopeId);
+            var defaultDocument = documents.Count > 0
+                ? documents[0].DocumentName
+                : defaultOpenApiDocumentName;
+            var title = ResolveRestDocsText(
+                httpContext.RequestServices,
+                configurationKey: "OpenApi:Title",
+                localizationKey: "engine.docs.scalar.title",
+                fallbackValue: "Cephalon REST API");
+
+            if (!string.IsNullOrWhiteSpace(scopeId))
+            {
+                title = $"{title} ({resolveTitleSuffix(httpContext.RequestServices, scopeId)})";
+                options.WithJavaScriptConfiguration(
+                    BuildVersionedScopedAssetReference(
+                        openApiToggleScriptRoute,
+                        scopeParameterName,
+                        scopeId.Trim()));
+                options.WithOpenApiRoutePattern(buildScopedOpenApiRoutePattern(openApiEndpointOptions.RoutePattern, scopeId));
+            }
+            else
+            {
+                options.WithJavaScriptConfiguration(BuildVersionedAssetReference(openApiToggleScriptRoute));
+                options.WithOpenApiRoutePattern(openApiEndpointOptions.RoutePattern);
+            }
+
+            options.WithTitle(title);
+            options.WithFavicon(scalarFaviconReference);
+
+            foreach (var document in documents)
+            {
+                options.AddDocument(
+                    document.DocumentName,
+                    isDefault: string.Equals(
+                        document.DocumentName,
+                        defaultDocument,
+                        StringComparison.OrdinalIgnoreCase));
+            }
+        })
+        .DisableRateLimiting();
     }
 
     private static HealthCheckOptions CreateHealthCheckOptions(Func<HealthCheckRegistration, bool> predicate)

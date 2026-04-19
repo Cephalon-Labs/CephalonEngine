@@ -2171,6 +2171,35 @@ Delivered:
 - targeted hosting and package-surface coverage now lock the new runtime truth through hosting tests `1/1` and package-surface tests `2/2`
 - architecture recommendations, component docs, roadmap, backlog, and project memory now describe the shipped BFF REST filtering runtime truthfully while keeping per-client OpenAPI/Scalar materialization explicitly planned
 
+### ENG-105 Phase 12 backend-for-frontend REST document materialization baseline
+
+Status: done
+Estimate: 5
+Completed: April 19, 2026
+
+Why:
+
+- after `ENG-104`, operators could inspect which published REST endpoints each client binding could see, but frontend teams still had no engine-owned answer for which OpenAPI and Scalar surfaces should actually be presented to one binding or one client
+- that documentation/materialization follow-through needed to stay derived from the shared BFF binding catalog plus the published REST runtime truth instead of inventing a second ASP.NET Core-only documentation registry that could drift from the runtime catalogs
+- host-level `OpenApi:*` configuration still needed to remain authoritative for route patterns, default document selection, and Scalar prefixes so BFF docs did not create a separate host configuration model
+
+Acceptance:
+
+- `Cephalon.Abstractions` exposes host-agnostic runtime contracts for materialized backend-for-frontend REST documents without leaking ASP.NET Core OpenAPI or Scalar types into the contract layer
+- ASP.NET Core derives per-binding and per-client document descriptors from `IBackendForFrontendRestRuntimeCatalog` plus the configured OpenAPI publication settings and projects that answer into `/engine/snapshot`
+- ASP.NET Core hosts expose direct operator routes for the derived document catalog plus scope-specific filtered OpenAPI JSON and Scalar surfaces aligned with the configured route pattern and Scalar prefix
+- docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the shipped materialization baseline while remaining honest that non-REST or broader frontend materialization is still later work
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships `BackendForFrontendRestDocumentRuntimeDescriptor` plus `IBackendForFrontendRestDocumentRuntimeCatalog` as the public scope-specific BFF REST document contract
+- `Cephalon.AspNetCore` now derives `AspNetCoreBackendForFrontendRestDocumentRuntimeCatalog` from the shared BFF REST runtime truth plus the host OpenAPI publication settings and uses `AspNetCoreBackendForFrontendRestDocumentPublisher` to filter documents from the keyed `IOpenApiDocumentProvider` surface instead of inventing a second source of documentation truth
+- `/engine/backend-for-frontend/rest-documents`, `/engine/backend-for-frontend/rest-documents/bindings/{bindingId}`, `/engine/backend-for-frontend/rest-documents/clients/{clientId}`, and `/engine/backend-for-frontend/rest-documents/{documentId}` now expose the derived document catalog directly
+- scope-specific filtered OpenAPI routes and Scalar pages now materialize under the configured OpenAPI and Scalar prefixes for both binding and client scopes, including custom route-pattern and Scalar-prefix host settings
+- `/engine/snapshot` now carries `BackendForFrontendRestDocuments` so operator tooling can read the same documentation/materialization truth without re-deriving host routes
+- targeted hosting and package-surface coverage now lock the new surface through hosting tests `2/2` and package-surface tests `2/2`
+- architecture recommendations, REST strategy docs, component docs, roadmap, backlog, and project memory now describe the shipped BFF REST document-materialization baseline truthfully while keeping non-REST or broader frontend materialization later
+
 ### ENG-069 Event-dispatch runtime operator-surface baseline
 
 Status: done
@@ -2614,3 +2643,4 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-102 phase 12 ASP.NET Core strangler-fig cutover runtime: `Cephalon.AspNetCore` now derives host cutover execution from `IStranglerFigMigrationRuntimeCatalog`, exposes `/engine/strangler-fig/cutover` plus `/engine/strangler-fig/cutover/resolve`, rewrites rooted local targets in-process, redirects or proxies absolute HTTP or HTTPS targets through `Engine:Migration:StranglerFig:AspNetCore`, and rejects unsupported selected endpoints truthfully with `502` while broader traffic-manager or ingress follow-through remains later — **Shipped** · hosting tests 5/5 + composition tests 4/4 + package-surface tests 153/153
 - ENG-103 phase 12 backend-for-frontend client-binding runtime baseline: `Cephalon.Abstractions` now exposes host-agnostic BFF client-binding contracts, `Cephalon.Engine` now composes host-added, module-contributed, and `Engine:BackendForFrontend:Bindings` entries into `snapshot.BackendForFrontendBindings` while auto-selecting `backend-for-frontend` when bindings exist, and `Cephalon.AspNetCore` now exposes `/engine/backend-for-frontend` plus client/module/transport drill-down routes while client-aware filtering or materialization remain later — **Shipped** · composition tests 3/3 + hosting tests 1/1 + package-surface tests 1/1
 - ENG-104 phase 12 backend-for-frontend client-aware REST filtering runtime baseline: `Cephalon.Abstractions` now exposes public client-aware BFF REST runtime contracts, `Cephalon.AspNetCore` now derives `IBackendForFrontendRestRuntimeCatalog` from the shared binding catalog plus published REST endpoint truth, `/engine/snapshot` now carries `BackendForFrontendRestEndpoints`, and `/engine/backend-for-frontend/rest-endpoints` now exposes binding/client/module/published-endpoint drill-down routes while per-client OpenAPI/Scalar materialization remains later — **Shipped** · hosting tests 1/1 + package-surface tests 2/2
+- ENG-105 phase 12 backend-for-frontend REST document materialization baseline: `Cephalon.Abstractions` now exposes scope-specific BFF REST document contracts, `Cephalon.AspNetCore` now derives `/engine/backend-for-frontend/rest-documents` plus filtered binding/client OpenAPI and Scalar surfaces from the shared BFF REST runtime truth and host OpenAPI settings, and `/engine/snapshot` now carries `BackendForFrontendRestDocuments` — **Shipped** · hosting tests 2/2 + package-surface tests 2/2

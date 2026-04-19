@@ -12,6 +12,7 @@
 - `/engine/strangler-fig`, `/engine/strangler-fig/runtime`, `/engine/strangler-fig/resolve`, and `/engine/strangler-fig/cutover` when the engine-owned strangler-fig route, migration-policy, and ASP.NET Core cutover catalogs are active
 - `/engine/backend-for-frontend` when the engine-owned backend-for-frontend client-binding catalog is active
 - `/engine/backend-for-frontend/rest-endpoints` when the client-aware backend-for-frontend REST runtime catalog is active
+- `/engine/backend-for-frontend/rest-documents` plus scope-specific filtered OpenAPI and Scalar materialization when the backend-for-frontend REST document catalog is active
 - `/engine/rate-limiting` when ASP.NET Core rate-limiting enforcement is active
 - `/engine/rest-endpoint-candidates` when the module-owned REST candidate catalog is active
 - `/engine/rest-endpoint-publication-groups` when grouped module-owned REST publication visibility and authoring-policy state are active
@@ -260,8 +261,19 @@ inventing a second ASP.NET Core-only registry. The same host now also derives
 `/engine/backend-for-frontend/rest-endpoints` plus its binding/client/module/published-endpoint/id
 drill-down routes from that shared binding catalog and the published `IRestEndpointRuntimeCatalog`,
 and `snapshot.BackendForFrontendRestEndpoints` carries the same derived client-aware REST truth for
-operators or tooling that want one snapshot payload. Later per-client OpenAPI/Scalar materialization
-can stay anchored to that same runtime truth instead of re-deriving it again.
+operators or tooling that want one snapshot payload. That same truth path now also powers the first
+scope-specific documentation/materialization follow-through: `/engine/backend-for-frontend/rest-documents`,
+`/engine/backend-for-frontend/rest-documents/bindings/{bindingId}`,
+`/engine/backend-for-frontend/rest-documents/clients/{clientId}`, and
+`/engine/backend-for-frontend/rest-documents/{documentId}` expose the derived document catalog,
+`snapshot.BackendForFrontendRestDocuments` carries the same materialized-document descriptors, and
+the host now serves filtered OpenAPI documents plus scope-aware Scalar pages under the configured
+OpenAPI and Scalar prefixes instead of inventing a BFF-only documentation registry. Binding routes
+materialize under the configured OpenAPI route root as
+`.../backend-for-frontend/bindings/{bindingId}/{documentName}.json`, client routes materialize as
+`.../backend-for-frontend/clients/{clientId}/{documentName}.json`, and the matching Scalar pages
+stay aligned with the configured Scalar prefix while keeping the selected `bindingId` or `clientId`
+in the query string so the document selector can remain truthful to the scoped document set.
 
 The host now also exposes additive event-dispatch operator answers directly. When eventing packs
 register the corresponding catalogs, `/engine/event-dispatch-runtimes` and

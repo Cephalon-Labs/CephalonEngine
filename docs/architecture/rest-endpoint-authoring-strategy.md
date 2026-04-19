@@ -1581,6 +1581,10 @@ following remain true together:
   `/engine/rest-endpoint-suppressions`, `/engine/rest-endpoint-overrides`, and `snapshot` must be
   enough to explain what published, what stayed suppressed, which rules matched, which rules were
   skipped, and why
+- BFF documentation materialization stays derived from runtime truth:
+  `/engine/backend-for-frontend/rest-documents`, scope-specific filtered OpenAPI routes, and
+  scope-aware Scalar pages must stay projections over the shared binding catalog plus published REST
+  endpoint catalog instead of inventing a separate documentation registry
 - authored-versus-effective fallback truth stays explicit: `OriginalProjection.BindingFallbackMode`
   remains the source projection answer, while `ProjectedEndpoint.BindingFallbackMode` and the final
   published endpoint may surface preserved fallback only when an override legitimately re-exposes
@@ -1620,4 +1624,6 @@ The core engine-first REST authoring model is now shipped. Recommended posture f
 6. evaluate any future convention-backed publication source only if it preserves module ownership,
    deterministic precedence, and the existing candidate/publication-group/runtime-catalog/operator
    story instead of inventing a parallel REST model
-
+7. treat the shipped backend-for-frontend REST document catalog plus filtered OpenAPI/Scalar
+   surfaces as the frontend-facing documentation baseline; future non-REST or low-code
+   materialization should extend the same runtime catalogs instead of bypassing them

@@ -154,6 +154,15 @@ talk about migration-boundary ownership, effective configuration-driven target s
 progress, and request resolution without leaking ASP.NET Core proxy behavior, YARP, or cloud
 traffic-manager types into `Cephalon.Abstractions`.
 
+The same phase 12 rule now also covers backend-for-frontend REST documentation materialization.
+`BackendForFrontendRestDocumentRuntimeDescriptor` and
+`IBackendForFrontendRestDocumentRuntimeCatalog` live in the `Transports` namespace so hosts,
+operator tooling, and companion packages can talk about one scope-specific REST document answer
+without leaking ASP.NET Core `IOpenApiDocumentProvider`, Scalar, or route-mapper types into
+`Cephalon.Abstractions`. Those contracts intentionally describe the derived runtime surface only:
+binding-versus-client scope kind, scope id, client id, document name, published OpenAPI and Scalar
+paths, and the binding/runtime/published-endpoint ids that justify that materialized document.
+
 The same transport-first rule also now covers the published REST runtime answer. The `Transports`
 namespace owns `IRestEndpointRuntimeCatalog`, `RestEndpointRuntimeDescriptor`,
 `RestEndpointBindingDescriptor`, `RestEndpointBindingFallbackMode`, and

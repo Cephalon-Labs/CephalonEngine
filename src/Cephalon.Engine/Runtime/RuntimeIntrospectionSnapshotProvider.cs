@@ -42,6 +42,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
         var restEndpointRuntimeCatalog = serviceProvider.GetService(typeof(IRestEndpointRuntimeCatalog)) as IRestEndpointRuntimeCatalog;
         var restEndpointSuppressionRuntimeCatalog = serviceProvider.GetService(typeof(IRestEndpointSuppressionRuntimeCatalog)) as IRestEndpointSuppressionRuntimeCatalog;
         var backendForFrontendRestRuntimeCatalog = serviceProvider.GetService(typeof(IBackendForFrontendRestRuntimeCatalog)) as IBackendForFrontendRestRuntimeCatalog;
+        var backendForFrontendRestDocumentRuntimeCatalog = serviceProvider.GetService(typeof(IBackendForFrontendRestDocumentRuntimeCatalog)) as IBackendForFrontendRestDocumentRuntimeCatalog;
         var behaviorResilienceRuntimeCatalog = serviceProvider.GetService(typeof(IBehaviorResilienceRuntimeCatalog)) as IBehaviorResilienceRuntimeCatalog;
 
         return new RuntimeIntrospectionSnapshot(
@@ -74,6 +75,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
             BehaviorResiliencePolicies = behaviorResilienceRuntimeCatalog?.Policies ?? [],
             BackendForFrontendBindings = backendForFrontendRuntimeCatalog.Bindings,
             BackendForFrontendRestEndpoints = backendForFrontendRestRuntimeCatalog?.Endpoints ?? [],
+            BackendForFrontendRestDocuments = backendForFrontendRestDocumentRuntimeCatalog?.Documents ?? [],
             StranglerFigRoutes = stranglerFigRuntimeCatalog.Routes,
             StranglerFigRoutePolicies = stranglerFigMigrationRuntimeCatalog.Routes
         };

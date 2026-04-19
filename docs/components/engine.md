@@ -121,8 +121,11 @@ Core `/engine/backend-for-frontend` surface. The first client-aware REST follow-
 shipped: host adapters can project `IBackendForFrontendRestRuntimeCatalog` into
 `snapshot.BackendForFrontendRestEndpoints` and ASP.NET Core now derives that runtime answer from the
 shared binding catalog plus the published REST endpoint catalog instead of inventing a second source
-of truth. Broader traffic-manager or ingress follow-through plus per-client documentation or
-non-REST materialization remain later slices. The new host-agnostic `IRateLimitingRuntimeCatalog` and
+of truth. The next documentation/materialization follow-through is now also shipped additively:
+when a host adapter registers `IBackendForFrontendRestDocumentRuntimeCatalog`,
+`snapshot.BackendForFrontendRestDocuments` can publish scope-specific OpenAPI and Scalar surfaces
+without moving OpenAPI generation or Scalar mapping into `Cephalon.Engine`. Broader traffic-manager
+or ingress follow-through plus non-REST materialization remain later slices. The new host-agnostic `IRateLimitingRuntimeCatalog` and
 `RateLimitingRuntimeDescriptor` contracts also let host adapters publish effective enforcement into
 `snapshot.RateLimitingPolicies` without pretending the engine core itself performs HTTP throttling.
 `RateLimitingSelection` now also carries additive `Overrides` projected as
