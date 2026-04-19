@@ -7636,6 +7636,165 @@ Parameters:
 
 ## Namespace Cephalon.Abstractions.Data
 
+<a id="type-cephalon-abstractions-data-cdccapturedescriptor"></a>
+
+### `CdcCaptureDescriptor`
+
+Describes one change-data-capture surface contributed to the active runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccapturedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `CdcCaptureDescriptor`
+
+```csharp
+CdcCaptureDescriptor(string id, string displayName, string description, string sourceModuleId, string provider, string sourceId, string outboxId, string mode, string eventFormat, IReadOnlyList<string> resourceIds, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new CDC capture descriptor.
+
+Parameters:
+- `id`: The stable CDC capture identifier.
+- `displayName`: The operator-facing CDC capture name.
+- `description`: The human-readable CDC capture description.
+- `sourceModuleId`: The module identifier that owns the CDC capture.
+- `provider`: The logical provider identifier that supplies the change feed.
+- `sourceId`: The logical source stream, database, or feed identifier.
+- `outboxId`: The outbox identifier that receives captured publications.
+- `mode`: The capture mode such as `wal`, `change-stream`, or `table-tail`.
+- `eventFormat`: The emitted change-event format such as `debezium-envelope`.
+- `resourceIds`: Optional resource identifiers such as tables, collections, or topics observed by the capture.
+- `tags`: Optional descriptive tags associated with the CDC capture.
+- `metadata`: Optional operator-facing metadata associated with the CDC capture.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccapturedescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable CDC capture description.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturedescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing CDC capture name.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturedescriptor-eventformat"></a>
+
+##### `EventFormat`
+
+```csharp
+string EventFormat { get; }
+```
+
+Gets the emitted change-event format.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturedescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable CDC capture identifier.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturedescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets operator-facing metadata associated with the CDC capture.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturedescriptor-mode"></a>
+
+##### `Mode`
+
+```csharp
+string Mode { get; }
+```
+
+Gets the capture mode.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturedescriptor-outboxid"></a>
+
+##### `OutboxId`
+
+```csharp
+string OutboxId { get; }
+```
+
+Gets the outbox identifier that receives captured publications.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturedescriptor-provider"></a>
+
+##### `Provider`
+
+```csharp
+string Provider { get; }
+```
+
+Gets the logical provider identifier that supplies the change feed.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturedescriptor-resourceids"></a>
+
+##### `ResourceIds`
+
+```csharp
+IReadOnlyList<string> ResourceIds { get; }
+```
+
+Gets the resource identifiers observed by the capture.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturedescriptor-sourceid"></a>
+
+##### `SourceId`
+
+```csharp
+string SourceId { get; }
+```
+
+Gets the logical source stream, database, or feed identifier.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturedescriptor-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; }
+```
+
+Gets the identifier of the module that owns the CDC capture.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturedescriptor-tags"></a>
+
+##### `Tags`
+
+```csharp
+IReadOnlyList<string> Tags { get; }
+```
+
+Gets descriptive tags associated with the CDC capture.
+
 <a id="type-cephalon-abstractions-data-databasemigrationcommanddescriptor"></a>
 
 ### `DatabaseMigrationCommandDescriptor`
@@ -10637,6 +10796,201 @@ int TotalReports { get; }
 ```
 
 Gets the total number of reported observations across all owned outboxes.
+
+<a id="type-cephalon-abstractions-data-icdccapture"></a>
+
+### `ICdcCapture`
+
+Captures database changes and shapes them into outbox-ready publications.
+
+#### Declaration
+```csharp
+public interface ICdcCapture
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-icdccapture-captureasync-system-threading-cancellationtoken"></a>
+
+##### `CaptureAsync`
+
+```csharp
+IAsyncEnumerable<OutboxMessage> CaptureAsync(CancellationToken cancellationToken)
+```
+
+Reads captured database changes and yields the resulting outbox messages.
+
+Returns: An async stream of outbox messages produced from the captured changes.
+
+Parameters:
+- `cancellationToken`: The token that cancels the capture stream.
+
+<a id="type-cephalon-abstractions-data-icdccapturecatalog"></a>
+
+### `ICdcCaptureCatalog`
+
+Exposes the CDC capture surfaces visible to the current runtime.
+
+#### Declaration
+```csharp
+public interface ICdcCaptureCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-icdccapturecatalog-cdccaptures"></a>
+
+##### `CdcCaptures`
+
+```csharp
+IReadOnlyList<CdcCaptureDescriptor> CdcCaptures { get; }
+```
+
+Gets all CDC capture surfaces visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-icdccapturecatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+CdcCaptureDescriptor GetById(string cdcCaptureId)
+```
+
+Gets one CDC capture by its stable identifier.
+
+Returns: The matching CDC capture, or `null` when it is not active.
+
+Parameters:
+- `cdcCaptureId`: The CDC capture identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-icdccapturecatalog-getbyoutboxid-system-string"></a>
+
+##### `GetByOutboxId`
+
+```csharp
+IReadOnlyList<CdcCaptureDescriptor> GetByOutboxId(string outboxId)
+```
+
+Gets all CDC captures that publish through the requested outbox.
+
+Returns: The matching CDC captures, or an empty list when no capture uses that outbox.
+
+Parameters:
+- `outboxId`: The outbox identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccapturecatalog-getbyprovider-system-string"></a>
+
+##### `GetByProvider`
+
+```csharp
+IReadOnlyList<CdcCaptureDescriptor> GetByProvider(string provider)
+```
+
+Gets all CDC captures backed by the requested provider identifier.
+
+Returns: The matching CDC captures, or an empty list when the provider contributes none.
+
+Parameters:
+- `provider`: The provider identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccapturecatalog-getbyresourceid-system-string"></a>
+
+##### `GetByResourceId`
+
+```csharp
+IReadOnlyList<CdcCaptureDescriptor> GetByResourceId(string resourceId)
+```
+
+Gets all CDC captures that explicitly observe the requested resource identifier.
+
+Returns: The matching CDC captures, or an empty list when no capture declares that resource.
+
+Parameters:
+- `resourceId`: The resource identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccapturecatalog-getbysourceid-system-string"></a>
+
+##### `GetBySourceId`
+
+```csharp
+IReadOnlyList<CdcCaptureDescriptor> GetBySourceId(string sourceId)
+```
+
+Gets all CDC captures that observe the requested logical source identifier.
+
+Returns: The matching CDC captures, or an empty list when no capture uses that source.
+
+Parameters:
+- `sourceId`: The source identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccapturecatalog-getbysourcemodule-system-string"></a>
+
+##### `GetBySourceModule`
+
+```csharp
+IReadOnlyList<CdcCaptureDescriptor> GetBySourceModule(string sourceModuleId)
+```
+
+Gets all CDC captures contributed by the requested module.
+
+Returns: The matching CDC captures, or an empty list when the module contributed none.
+
+Parameters:
+- `sourceModuleId`: The source module identifier to filter by.
+
+<a id="type-cephalon-abstractions-data-icdccapturecontributor"></a>
+
+### `ICdcCaptureContributor`
+
+Contributes one or more CDC capture descriptors to the active runtime.
+
+#### Declaration
+```csharp
+public interface ICdcCaptureContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-icdccapturecontributor-registercdccaptures-cephalon-abstractions-data-icdccaptureregistry"></a>
+
+##### `RegisterCdcCaptures`
+
+```csharp
+void RegisterCdcCaptures(ICdcCaptureRegistry cdcCaptures)
+```
+
+Registers one or more CDC capture descriptors with the supplied registry.
+
+Parameters:
+- `cdcCaptures`: The registry that collects contributed CDC capture descriptors.
+
+<a id="type-cephalon-abstractions-data-icdccaptureregistry"></a>
+
+### `ICdcCaptureRegistry`
+
+Receives CDC capture descriptors contributed by active modules or packages.
+
+#### Declaration
+```csharp
+public interface ICdcCaptureRegistry
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureregistry-add-cephalon-abstractions-data-cdccapturedescriptor"></a>
+
+##### `Add`
+
+```csharp
+void Add(CdcCaptureDescriptor cdcCapture)
+```
+
+Adds a CDC capture to the current runtime composition.
+
+Parameters:
+- `cdcCapture`: The CDC capture descriptor to register.
 
 <a id="type-cephalon-abstractions-data-icommand"></a>
 

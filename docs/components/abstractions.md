@@ -11,7 +11,7 @@
 - execution/runtime-catalog contracts such as `DurableExecutionRuntimeDescriptor`, `IDurableExecutionRuntimeCatalog`, `DurableExecutionRuntimeState`, `IDurableExecutionRuntimeStateCatalog`, `SagaChoreographyRuntimeDescriptor`, `ISagaChoreographyRuntimeCatalog`, `SagaChoreographyPublicationRuntimeState`, and `ISagaChoreographyPublicationRuntimeStateCatalog`
 - technology runtime contracts such as `CellBoundaryDescriptor`, `ICellBoundaryContributor`, `ICellBoundaryRegistry`, `ICellBoundaryCatalog`, `CellRouteDescriptor`, `ICellRouteContributor`, `ICellRouteRegistry`, `ICellRouteCatalog`, `CellHealthIsolationDescriptor`, `ICellHealthIsolationContributor`, `ICellHealthIsolationRegistry`, `ICellHealthIsolationCatalog`, `CellTrafficAutomationRuntimeDescriptor`, `ICellTrafficAutomationRuntimeCatalog`, `TechnologyDescriptor`, and `ITechnologyRuntimeCatalog`
 - app-model contracts such as `AppBlueprint`, `AppProfile`, resilience-selection types, and scaffold-plan types
-- phase-8 runtime-neutral contracts for data, authorization, tenancy, audit, and id generation
+- phase-8 and phase-13 runtime-neutral contracts for data, authorization, tenancy, audit, and id generation
 - health contracts used across hosts and packages
 - localization contracts used by engine resources and package language packs
 - pattern, migration-routing, technology, and transport contracts shared by the whole stack
@@ -52,6 +52,11 @@
 - `Data/IDataProduct.cs`
 - `Data/DataProductDescriptor.cs`
 - `Data/IDataProductCatalog.cs`
+- `Data/ICdcCapture.cs`
+- `Data/CdcCaptureDescriptor.cs`
+- `Data/ICdcCaptureCatalog.cs`
+- `Data/ICdcCaptureContributor.cs`
+- `Data/ICdcCaptureRegistry.cs`
 - `Data/IReadStore.cs`
 - `Data/ProjectionDescriptor.cs`
 - `Data/InboxDescriptor.cs`
@@ -140,7 +145,7 @@ The behavior ownership contracts now follow that rule directly:
 
 The phase-8 families stay runtime-neutral on purpose:
 
-- `Data` defines CQRS, data-product, projection, outbox/inbox, and outbox-catalog contracts without picking Entity Framework, Wolverine, or any storage engine.
+- `Data` defines CQRS, data-product, CDC capture, projection, outbox/inbox, and outbox-catalog contracts without picking Entity Framework, Wolverine, or any storage engine.
 - `Authorization` defines subjects, resources, policies, and evaluation contracts without binding to ASP.NET Core identity types.
 - `Tenancy` defines tenant context and resolution contracts without assuming HTTP, DNS, or a single tenancy topology.
 - `Audit` defines audit actors, entries, write/query/export contracts, and audit-store descriptors without hard-coding storage or observability sinks.

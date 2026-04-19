@@ -431,6 +431,30 @@ public static class EngineWebApplicationExtensions
                 return dataProduct is null ? Results.NotFound() : Results.Ok(dataProduct);
             })
             .WithName("GetCephalonDataProduct");
+        engineGroup.MapGet("/cdc-captures", ([FromServices] ICdcCaptureCatalog catalog) => TypedResults.Ok(catalog.CdcCaptures))
+            .WithName("GetCephalonCdcCaptures");
+        engineGroup.MapGet("/cdc-captures/{cdcCaptureId}", (string cdcCaptureId, [FromServices] ICdcCaptureCatalog catalog) =>
+            {
+                var cdcCapture = catalog.GetById(cdcCaptureId);
+
+                return cdcCapture is null ? Results.NotFound() : Results.Ok(cdcCapture);
+            })
+            .WithName("GetCephalonCdcCapture");
+        engineGroup.MapGet("/cdc-captures/modules/{moduleId}", (string moduleId, [FromServices] ICdcCaptureCatalog catalog) =>
+                TypedResults.Ok(catalog.GetBySourceModule(moduleId)))
+            .WithName("GetCephalonCdcCapturesByModule");
+        engineGroup.MapGet("/cdc-captures/providers/{provider}", (string provider, [FromServices] ICdcCaptureCatalog catalog) =>
+                TypedResults.Ok(catalog.GetByProvider(provider)))
+            .WithName("GetCephalonCdcCapturesByProvider");
+        engineGroup.MapGet("/cdc-captures/outboxes/{outboxId}", (string outboxId, [FromServices] ICdcCaptureCatalog catalog) =>
+                TypedResults.Ok(catalog.GetByOutboxId(outboxId)))
+            .WithName("GetCephalonCdcCapturesByOutbox");
+        engineGroup.MapGet("/cdc-captures/sources/{sourceId}", (string sourceId, [FromServices] ICdcCaptureCatalog catalog) =>
+                TypedResults.Ok(catalog.GetBySourceId(sourceId)))
+            .WithName("GetCephalonCdcCapturesBySource");
+        engineGroup.MapGet("/cdc-captures/resources/{resourceId}", (string resourceId, [FromServices] ICdcCaptureCatalog catalog) =>
+                TypedResults.Ok(catalog.GetByResourceId(resourceId)))
+            .WithName("GetCephalonCdcCapturesByResource");
         engineGroup.MapGet("/projections", ([FromServices] IProjectionCatalog catalog) => TypedResults.Ok(catalog.Projections))
             .WithName("GetCephalonProjections");
         engineGroup.MapGet("/projections/{projectionId}", (string projectionId, [FromServices] IProjectionCatalog catalog) =>

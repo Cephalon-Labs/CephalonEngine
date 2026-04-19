@@ -220,6 +220,7 @@ Once the app is running, inspect these routes:
 - `/engine/runtime-story`
 - `/engine/technology-surfaces`
 - `/engine/diagnostics`
+- `/engine/cdc-captures`
 - `/engine/modules`
 - `/engine/packages`
 - `/health`
@@ -227,7 +228,7 @@ Once the app is running, inspect these routes:
 - `/scalar`
 
 These routes give adopters an immediate answer for what loaded, what the runtime believes is active, and whether the host is healthy.
-When you later turn on broader phase-8 packs such as eventing, data persistence, or identity/tenancy, the same runtime surface family will also light up `/engine/data-products`, `/engine/inboxes`, `/engine/outboxes`, `/engine/projections`, and richer `event-driven-integration` entries inside `/engine/technology-surfaces` and `/engine/snapshot`.
+When you later turn on broader phase-8 and phase-13 packs such as eventing, data persistence, or richer module-owned data-sync conventions, the same runtime surface family will also light up `/engine/data-products`, `/engine/cdc-captures`, `/engine/inboxes`, `/engine/outboxes`, `/engine/projections`, and richer `event-driven-integration` entries inside `/engine/technology-surfaces` and `/engine/snapshot`.
 
 ## Optional Container Path
 

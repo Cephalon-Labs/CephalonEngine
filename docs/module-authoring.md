@@ -63,17 +63,18 @@ That keeps the authoring path close to the same module-first ideas used by Cepha
 11. Use `IExecutionGraphContributor` when the package needs to publish operator-facing workflow or execution-graph descriptors through `/engine/execution-graphs` and `/engine/snapshot`.
 12. Use `IHostedExecutionContributor` when the package needs to publish operator-facing hosted or background execution descriptors through `/engine/hosted-executions`, `/engine/runtime-story`, and `/engine/snapshot`.
 13. Use `IDataProductContributor` when the package needs to publish operator-facing data product descriptors through `/engine/data-products` and `/engine/snapshot`.
-14. Use `IProjectionContributor` when the package needs to publish operator-facing projection descriptors through `/engine/projections` and `/engine/snapshot`.
-15. Use `IInboxContributor` when the package needs to publish operator-facing inbox descriptors through `/engine/inboxes` and `/engine/snapshot`.
-16. Use `IOutboxContributor` when the package needs to publish operator-facing outbox descriptors through `/engine/outboxes` and `/engine/snapshot`.
-17. Use `IAuthorizationPolicyContributor` when the package needs to publish operator-facing authorization-policy descriptors through `/engine/authorization-policies` and `/engine/snapshot`.
-18. Add transport contribution interfaces only when the package really owns an external surface.
-19. When a module explicitly owns Cephalon behaviors, prefer `BehaviorModuleBase` so ownership stays
+14. Use `ICdcCaptureContributor` when the package needs to publish operator-facing CDC capture descriptors through `/engine/cdc-captures` and `/engine/snapshot`.
+15. Use `IProjectionContributor` when the package needs to publish operator-facing projection descriptors through `/engine/projections` and `/engine/snapshot`.
+16. Use `IInboxContributor` when the package needs to publish operator-facing inbox descriptors through `/engine/inboxes` and `/engine/snapshot`.
+17. Use `IOutboxContributor` when the package needs to publish operator-facing outbox descriptors through `/engine/outboxes` and `/engine/snapshot`.
+18. Use `IAuthorizationPolicyContributor` when the package needs to publish operator-facing authorization-policy descriptors through `/engine/authorization-policies` and `/engine/snapshot`.
+19. Add transport contribution interfaces only when the package really owns an external surface.
+20. When a module explicitly owns Cephalon behaviors, prefer `BehaviorModuleBase` so ownership stays
     host-agnostic and deterministic.
-20. When a behavior-owning module exposes REST endpoints, prefer `RestBehaviorModuleBase` so the same
+21. When a behavior-owning module exposes REST endpoints, prefer `RestBehaviorModuleBase` so the same
     module can own internal-only behaviors and public REST-backed behaviors without splitting the
     bounded context across multiple module classes.
-21. When a module exposes REST endpoints backed by behaviors, author that REST surface in
+22. When a module exposes REST endpoints backed by behaviors, author that REST surface in
     `ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)` and keep REST out of behavior
     topology.
 
@@ -917,6 +918,7 @@ Current baseline behavior:
 ## Data and authorization descriptors
 
 Packages that need to publish a module-owned query surface can implement `IDataProductContributor` and register one or more `DataProductDescriptor` entries.
+Packages that need to publish operator-facing CDC posture can implement `ICdcCaptureContributor` and register one or more `CdcCaptureDescriptor` entries linked to an owned outbox.
 Packages that need to publish read-model or projection shape can implement `IProjectionContributor` and register one or more `ProjectionDescriptor` entries.
 Packages that need to publish durable processed-message or idempotency-store shape can implement `IInboxContributor` and register one or more `InboxDescriptor` entries.
 Packages that need to publish durable outbound message staging shape can implement `IOutboxContributor` and register one or more `OutboxDescriptor` entries.
@@ -925,15 +927,19 @@ Packages that need to publish operator-facing authorization choices can implemen
 Current baseline behavior:
 
 - `/engine/data-products` exposes the merged data product catalog, and `/engine/snapshot` carries the same data product descriptors alongside manifest, diagnostics, and lifecycle data
+- `/engine/cdc-captures` exposes the merged CDC capture catalog, and `/engine/snapshot` carries the same CDC descriptors alongside manifest, diagnostics, and lifecycle data
 - `/engine/projections` exposes the merged projection catalog, and `/engine/snapshot` carries the same projection descriptors alongside manifest, diagnostics, and lifecycle data
 - `/engine/inboxes` exposes the merged inbox catalog, and `/engine/snapshot` carries the same inbox descriptors alongside manifest, diagnostics, and lifecycle data
 - `/engine/outboxes` exposes the merged outbox catalog, and `/engine/snapshot` carries the same outbox descriptors alongside manifest, diagnostics, and lifecycle data
 - `/engine/authorization-policies` exposes the merged authorization-policy catalog, and `/engine/snapshot` carries the same policy descriptors in the broader runtime answer
 - data product descriptors stay grounded in module ownership through `sourceModuleId`, domain ids, contract ids, mode, and operator-facing metadata such as freshness or classification
+- CDC capture descriptors stay grounded in module ownership through `sourceModuleId`, `provider`, `sourceId`, `outboxId`, `mode`, `eventFormat`, resource ids, and operator-facing metadata such as publication mode or freshness
 - projection descriptors stay grounded in module ownership through `sourceModuleId`, target store ids, and optional source contract metadata
 - inbox descriptors stay grounded in module ownership through `sourceModuleId`, provider, mode, optional channel ids, and operator-facing metadata such as idempotency scope
 - outbox descriptors stay grounded in module ownership through `sourceModuleId`, provider, mode, optional channel ids, and operator-facing metadata such as dispatch ownership
 - authorization-policy descriptors stay host-agnostic and can publish supported `RBAC`, `ABAC`, and `Policy` modes without leaking ASP.NET Core or identity-provider types into `Cephalon.Abstractions`
+- the CDC baseline is intentionally descriptor-first: provider-specific WAL/change-stream execution still belongs to the owning module or a future companion pack, while the engine owns the catalog, outbox linkage, and validation
+- invalid CDC capture source-module ownership or missing outbox references fail at build time instead of leaking broken operator metadata
 
 ## Package manifest contract
 

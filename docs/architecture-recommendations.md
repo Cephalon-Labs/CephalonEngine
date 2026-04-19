@@ -1,6 +1,6 @@
 # Cephalon Engine Architecture Recommendations
 
-Recommendations in this document reflect the repository state as of `April 19, 2026`.
+Recommendations in this document reflect the repository state as of `April 20, 2026`.
 
 Cross-references: `docs/architecture-inventory.md`, `docs/engine-roadmap.md`, `docs/engine-backlog.md`
 
@@ -301,18 +301,33 @@ Effort: small-to-medium for the remaining follow-through.
 
 ### Change Data Capture — CDC (event-driven data sync)
 
-Current state: outbox pattern handles explicit event staging, but CDC captures all database changes automatically.
+Current state: the first CDC capture runtime baseline is now shipped. `Cephalon.Abstractions`
+now exposes `ICdcCapture`, `CdcCaptureDescriptor`, `ICdcCaptureCatalog`,
+`ICdcCaptureContributor`, and `ICdcCaptureRegistry`; `Cephalon.Engine` now
+projects `snapshot.CdcCaptures` while validating referenced `sourceModuleId`
+and `outboxId` values against the active runtime; and ASP.NET Core now exposes
+`/engine/cdc-captures` plus id, module, provider, outbox, source, and resource
+drill-down routes so module-owned CDC posture is inspectable through the same
+runtime truth as other engine catalogs.
 
-Recommendation: add CDC abstraction for cross-service data synchronization and legacy integration.
+Recommendation: keep the initial descriptor/runtime surface focused on module
+ownership, provider/source/outbox identity, capture mode, event format,
+resource ids, and operator-facing metadata so CDC stays host-agnostic and
+additive over explicit outbox descriptors instead of pulling provider-specific
+execution into the engine core too early.
 
-Implementation outline:
-- `ICdcCapture` interface
-- Debezium-compatible event format
-- Integration with outbox for reliable publication
-- Provider-specific implementations (PostgreSQL WAL, MongoDB change streams)
-- Capability: `data.cdc`
+Shipped baseline:
+- `ICdcCapture` — host-agnostic CDC execution contract for provider-specific implementations
+- `CdcCaptureDescriptor` — operator-facing module/provider/source/outbox/mode/event-format metadata with resource ids, tags, and free-form metadata
+- CDC capture catalog in the runtime surface through `/engine/cdc-captures*` and `snapshot.CdcCaptures`
+- build-time validation that rejects missing source-module ownership or missing outbox references before broken operator metadata can ship
 
-Effort: large.
+Later follow-through:
+- provider-specific execution/runtime packs over the shipped contract, such as PostgreSQL WAL or MongoDB change streams
+- richer freshness, lag, and publish-state answers once provider execution exists
+- reconsider a dedicated `data.cdc` capability convention only if a truthful module-backed publication path exists
+
+Effort: medium for the remaining provider-specific follow-through.
 
 ## Planned phases
 
@@ -369,10 +384,10 @@ Target: Sprint 40–41
 
 Deliverables:
 - Cell-Based Architecture technology descriptor and boundary abstraction — shipped baseline
-- Data Mesh data product abstraction
-- CDC capture abstraction
+- Data Mesh data product abstraction — shipped baseline
+- CDC capture abstraction — shipped baseline
 
 Exit criteria:
 - modules can declare cell boundaries, governed cell routes, and cell health-isolation posture with explicit blast-radius isolation and operators can inspect the same answers through `/engine/cells`, `/engine/cell-routes`, `/engine/cell-health-isolations`, `/engine/technology-surfaces/cell-based-architecture`, and `/engine/snapshot`
 - modules can expose queryable data products through the runtime catalog
-- database changes can be captured and published through the outbox without explicit staging
+- modules can declare CDC captures linked to an outbox through the runtime catalog today, and later provider-specific execution can capture and publish those changes without inventing a second registry

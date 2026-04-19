@@ -1,6 +1,6 @@
 # Cephalon Engine Architecture Inventory
 
-Architecture inventory in this document reflects the repository state as of `April 19, 2026`.
+Architecture inventory in this document reflects the repository state as of `April 20, 2026`.
 
 Cross-references: `docs/architecture.md`, `docs/engine-roadmap.md`, `docs/engine-backlog.md`
 
@@ -369,6 +369,12 @@ Host-agnostic contracts defined in `Cephalon.Abstractions` for data workloads.
 - `IDataProductRegistry` / `IDataProductCatalog` / `IDataProductContributor` — registration and discovery
 - `DataProductDescriptor` — metadata for data-product implementations
 
+### CDC captures
+
+- `ICdcCapture` — host-agnostic CDC execution interface for provider-specific implementations
+- `ICdcCaptureRegistry` / `ICdcCaptureCatalog` / `ICdcCaptureContributor` — registration and discovery
+- `CdcCaptureDescriptor` — metadata for CDC capture implementations and outbox linkage
+
 ### Event sourcing
 
 - `IEventStore` — event stream persistence interface
@@ -514,6 +520,7 @@ The engine exposes operator-facing runtime information through these endpoints:
 - `/engine/rest-endpoint-suppressions` — active REST suppression rules with runtime outcomes
 - `/engine/rest-endpoint-overrides` — active REST override rules with selected-versus-applied outcomes
 - `/engine/data-products` — data product descriptors
+- `/engine/cdc-captures` — CDC capture descriptors
 - `/engine/projections` — projection descriptors
 - `/engine/inboxes` — inbox surfaces
 - `/engine/outboxes` — outbox surfaces

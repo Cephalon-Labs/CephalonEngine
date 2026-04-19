@@ -1,6 +1,6 @@
 # Cephalon Operations
 
-This document captures the current operational surface for Cephalon as of `April 19, 2026`.
+This document captures the current operational surface for Cephalon as of `April 20, 2026`.
 
 For the active phase-2 follow-through inventory, see `docs/operational-hardening-gap-inventory.md`.
 
@@ -1229,6 +1229,22 @@ Current note:
 
 - this is a descriptive runtime answer for durable outbound staging surfaces, not a claim that Cephalon already ships a full event dispatch bridge
 - invalid outbox source-module ownership fails at build time instead of leaking broken operator metadata
+
+## CDC capture surface
+
+`GET /engine/cdc-captures` exposes the operator-facing CDC capture catalog contributed by active modules.
+
+Current payload highlights:
+
+- each CDC capture carries a stable `id`, `displayName`, `description`, `sourceModuleId`, `provider`, `sourceId`, `outboxId`, `mode`, and `eventFormat`
+- `resourceIds`, `tags`, and free-form `metadata` let a module publish the table, collection, or resource scope plus operator-facing capture hints without tying the engine to one provider runtime
+- the same CDC capture catalog is also available through `/engine/snapshot` when operators want one merged runtime answer
+- drill-down routes narrow the same catalog by capture id, source module, provider, outbox, source, and resource through `/engine/cdc-captures/{cdcCaptureId}`, `/engine/cdc-captures/modules/{moduleId}`, `/engine/cdc-captures/providers/{provider}`, `/engine/cdc-captures/outboxes/{outboxId}`, `/engine/cdc-captures/sources/{sourceId}`, and `/engine/cdc-captures/resources/{resourceId}`
+
+Current note:
+
+- the baseline is intentionally descriptor-first: provider-specific WAL/change-stream execution still belongs to the owning module or a future companion pack, while the engine owns the catalog, outbox linkage, and validation
+- invalid CDC capture source-module ownership or missing outbox references fail at build time instead of leaking broken operator metadata
 
 ## Inbox surface
 

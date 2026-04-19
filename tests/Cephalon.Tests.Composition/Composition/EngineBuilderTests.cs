@@ -273,6 +273,8 @@ public sealed class EngineBuilderTests
                 ["Engine:Options:Modules:technology-catalog:Enabled"] = "false",
                 ["Engine:Options:Modules:phase8-runtime-catalogs:Enabled"] = "false",
                 ["Engine:Options:Modules:invalid-phase8-data-product:Enabled"] = "false",
+                ["Engine:Options:Modules:invalid-phase8-cdc:Enabled"] = "false",
+                ["Engine:Options:Modules:invalid-phase8-cdc-outbox:Enabled"] = "false",
                 ["Engine:Options:Modules:invalid-phase8-projection:Enabled"] = "false",
                 ["Engine:Options:Modules:invalid-phase8-outbox:Enabled"] = "false",
                 ["Engine:Options:Modules:invalid-phase8-inbox:Enabled"] = "false",
@@ -1700,7 +1702,7 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
-    public void BuildExposesPhase8DataProductProjectionInboxOutboxAndAuthorizationCatalogsThroughRuntimeSnapshot()
+    public void BuildExposesPhase8DataProductCdcProjectionInboxOutboxAndAuthorizationCatalogsThroughRuntimeSnapshot()
     {
         var services = new ServiceCollection();
         services.AddCephalon(engine =>
@@ -1716,6 +1718,7 @@ public sealed class EngineBuilderTests
 
         using var provider = services.BuildServiceProvider();
         var dataProductCatalog = provider.GetRequiredService<IDataProductCatalog>();
+        var cdcCaptureCatalog = provider.GetRequiredService<ICdcCaptureCatalog>();
         var projectionCatalog = provider.GetRequiredService<IProjectionCatalog>();
         var inboxCatalog = provider.GetRequiredService<IInboxCatalog>();
         var outboxCatalog = provider.GetRequiredService<IOutboxCatalog>();
@@ -1733,6 +1736,22 @@ public sealed class EngineBuilderTests
         Assert.Single(dataProductCatalog.GetBySourceModule("phase8-runtime-catalogs"));
         Assert.Single(dataProductCatalog.GetByDomainId("tenant-management"));
         Assert.Single(dataProductCatalog.GetByContractId("tenant-profile-v1"));
+
+        var cdcCapture = Assert.Single(cdcCaptureCatalog.CdcCaptures);
+        Assert.Equal("tenant-profile-cdc", cdcCapture.Id);
+        Assert.Equal("phase8-runtime-catalogs", cdcCapture.SourceModuleId);
+        Assert.Equal("postgresql", cdcCapture.Provider);
+        Assert.Equal("tenant-db", cdcCapture.SourceId);
+        Assert.Equal("tenant-event-outbox", cdcCapture.OutboxId);
+        Assert.Equal("wal", cdcCapture.Mode);
+        Assert.Equal("debezium-envelope", cdcCapture.EventFormat);
+        Assert.Equal("outbox", cdcCapture.Metadata["publicationMode"]);
+        Assert.Same(cdcCapture, cdcCaptureCatalog.GetById("tenant-profile-cdc"));
+        Assert.Single(cdcCaptureCatalog.GetBySourceModule("phase8-runtime-catalogs"));
+        Assert.Single(cdcCaptureCatalog.GetByProvider("postgresql"));
+        Assert.Single(cdcCaptureCatalog.GetByOutboxId("tenant-event-outbox"));
+        Assert.Single(cdcCaptureCatalog.GetBySourceId("tenant-db"));
+        Assert.Single(cdcCaptureCatalog.GetByResourceId("public.tenants"));
 
         var projection = Assert.Single(projectionCatalog.Projections);
         Assert.Equal("tenant-summary", projection.Id);
@@ -1783,12 +1802,14 @@ public sealed class EngineBuilderTests
         Assert.Equal(2, authorizationCatalog.GetByMode(AuthorizationMode.Policy).Count);
 
         Assert.Single(snapshot.DataProducts);
+        Assert.Single(snapshot.CdcCaptures);
         Assert.Single(snapshot.Projections);
         Assert.Single(snapshot.Inboxes);
         Assert.Single(snapshot.Outboxes);
         Assert.Single(snapshot.AuditStores);
         Assert.Equal(2, snapshot.AuthorizationPolicies.Count);
         Assert.Contains(snapshot.DataProducts, item => item.Id == "tenant-profile");
+        Assert.Contains(snapshot.CdcCaptures, item => item.Id == "tenant-profile-cdc");
         Assert.Contains(snapshot.Projections, item => item.Id == "tenant-summary");
         Assert.Contains(snapshot.Inboxes, item => item.Id == "tenant-event-inbox");
         Assert.Contains(snapshot.Outboxes, item => item.Id == "tenant-event-outbox");
@@ -1808,6 +1829,35 @@ public sealed class EngineBuilderTests
 
         Assert.Contains("broken-data-product", exception.Message, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("another-module", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void BuildRejectsPhase8CdcCaptureThatSpoofsItsSourceModule()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseSettings(new EngineSettings(blueprint: "ModularMonolith"));
+        builder.AddModule(new PlatformTestModule());
+        builder.AddModule(new Phase8CatalogModule());
+        builder.AddModule(new InvalidCdcCaptureSourceModule());
+
+        var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+        Assert.Contains("broken-cdc-capture", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("another-module", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void BuildRejectsPhase8CdcCaptureWhenReferencedOutboxIsMissing()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseSettings(new EngineSettings(blueprint: "ModularMonolith"));
+        builder.AddModule(new PlatformTestModule());
+        builder.AddModule(new InvalidCdcCaptureOutboxModule());
+
+        var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+        Assert.Contains("missing-outbox-cdc-capture", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("missing-outbox", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

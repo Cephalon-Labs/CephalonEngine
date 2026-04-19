@@ -2019,7 +2019,7 @@ public sealed class AspNetCoreHostingTests
     }
 
     [Fact]
-    public async Task MapCephalonExposesPhase8DataProductProjectionInboxOutboxAndAuthorizationCatalogs()
+    public async Task MapCephalonExposesPhase8DataProductCdcProjectionInboxOutboxAndAuthorizationCatalogs()
     {
         var builder = WebApplication.CreateSlimBuilder();
         builder.WebHost.UseTestServer();
@@ -2040,6 +2040,9 @@ public sealed class AspNetCoreHostingTests
         var client = app.GetTestClient();
         var dataProducts = await client.GetFromJsonAsync<DataProductDescriptor[]>("/engine/data-products");
         var dataProduct = await client.GetFromJsonAsync<DataProductDescriptor>("/engine/data-products/tenant-profile");
+        var cdcCaptures = await client.GetFromJsonAsync<CdcCaptureDescriptor[]>("/engine/cdc-captures");
+        var cdcCapture = await client.GetFromJsonAsync<CdcCaptureDescriptor>("/engine/cdc-captures/tenant-profile-cdc");
+        var cdcCapturesByOutbox = await client.GetFromJsonAsync<CdcCaptureDescriptor[]>("/engine/cdc-captures/outboxes/tenant-event-outbox");
         var projections = await client.GetFromJsonAsync<ProjectionDescriptor[]>("/engine/projections");
         var projection = await client.GetFromJsonAsync<ProjectionDescriptor>("/engine/projections/tenant-summary");
         var inboxes = await client.GetFromJsonAsync<InboxDescriptor[]>("/engine/inboxes");
@@ -2058,6 +2061,16 @@ public sealed class AspNetCoreHostingTests
         Assert.Equal("phase8-runtime-catalogs", dataProduct.SourceModuleId);
         Assert.Equal("tenant-management", dataProduct.DomainId);
         Assert.Equal("tenant-profile-v1", dataProduct.ContractId);
+
+        Assert.NotNull(cdcCaptures);
+        Assert.Single(cdcCaptures);
+        Assert.NotNull(cdcCapture);
+        Assert.Equal("phase8-runtime-catalogs", cdcCapture.SourceModuleId);
+        Assert.Equal("postgresql", cdcCapture.Provider);
+        Assert.Equal("tenant-event-outbox", cdcCapture.OutboxId);
+        Assert.Equal("debezium-envelope", cdcCapture.EventFormat);
+        Assert.NotNull(cdcCapturesByOutbox);
+        Assert.Single(cdcCapturesByOutbox);
 
         Assert.NotNull(projections);
         Assert.Single(projections);
@@ -2094,12 +2107,14 @@ public sealed class AspNetCoreHostingTests
 
         Assert.NotNull(snapshot);
         Assert.Single(snapshot.DataProducts);
+        Assert.Single(snapshot.CdcCaptures);
         Assert.Single(snapshot.Projections);
         Assert.Single(snapshot.Inboxes);
         Assert.Single(snapshot.Outboxes);
         Assert.Single(snapshot.AuditStores);
         Assert.Equal(2, snapshot.AuthorizationPolicies.Count);
         Assert.Contains(snapshot.DataProducts, item => item.Id == "tenant-profile");
+        Assert.Contains(snapshot.CdcCaptures, item => item.Id == "tenant-profile-cdc");
         Assert.Contains(snapshot.Inboxes, item => item.Id == "tenant-event-inbox");
         Assert.Contains(snapshot.Outboxes, item => item.Id == "tenant-event-outbox");
         Assert.Contains(snapshot.AuditStores, item => item.Id == "tenant-audit-store");

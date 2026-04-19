@@ -481,6 +481,36 @@ Returns: The same builder instance.
 Parameters:
 - `bindings`: The client binding descriptors to add.
 
+<a id="member-m-cephalon-engine-composition-enginebuilder-addcdccapture-cephalon-abstractions-data-cdccapturedescriptor"></a>
+
+##### `AddCdcCapture`
+
+```csharp
+EngineBuilder AddCdcCapture(CdcCaptureDescriptor cdcCapture)
+```
+
+Adds a CDC capture to the current runtime composition.
+
+Returns: The same builder instance.
+
+Parameters:
+- `cdcCapture`: The CDC capture descriptor to add.
+
+<a id="member-m-cephalon-engine-composition-enginebuilder-addcdccaptures-system-collections-generic-ienumerable-cephalon-abstractions-data-cdccapturedescriptor"></a>
+
+##### `AddCdcCaptures`
+
+```csharp
+EngineBuilder AddCdcCaptures(IEnumerable<CdcCaptureDescriptor> cdcCaptures)
+```
+
+Adds multiple CDC captures to the current runtime composition.
+
+Returns: The same builder instance.
+
+Parameters:
+- `cdcCaptures`: The CDC capture descriptors to add.
+
 <a id="member-m-cephalon-engine-composition-enginebuilder-addcellboundaries-system-collections-generic-ienumerable-cephalon-abstractions-technologies-cellboundarydescriptor"></a>
 
 ##### `AddCellBoundaries`
@@ -9414,7 +9444,7 @@ A value indicating whether the hosted execution is expected to become active whe
 
 Combines the main operator-facing runtime views into a single payload.
 
-Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, execution-graph details, hosted-execution details, technology-pack details, diagnostics conventions, data product details, data projection details, outbox details, inbox details, event-dispatch runtime details, durable-execution runtime details, authorization-policy details, database-migration playbook details, database-topology posture details, and lifecycle story data.
+Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, execution-graph details, hosted-execution details, technology-pack details, diagnostics conventions, data product details, CDC capture details, data projection details, outbox details, inbox details, event-dispatch runtime details, durable-execution runtime details, authorization-policy details, database-migration playbook details, database-topology posture details, and lifecycle story data.
 
 #### Declaration
 ```csharp
@@ -9433,7 +9463,7 @@ RuntimeIntrospectionSnapshot(RuntimeManifest Manifest, RuntimeStatusSnapshot Sta
 
 Combines the main operator-facing runtime views into a single payload.
 
-Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, execution-graph details, hosted-execution details, technology-pack details, diagnostics conventions, data product details, data projection details, outbox details, inbox details, event-dispatch runtime details, durable-execution runtime details, authorization-policy details, database-migration playbook details, database-topology posture details, and lifecycle story data.
+Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, execution-graph details, hosted-execution details, technology-pack details, diagnostics conventions, data product details, CDC capture details, data projection details, outbox details, inbox details, event-dispatch runtime details, durable-execution runtime details, authorization-policy details, database-migration playbook details, database-topology posture details, and lifecycle story data.
 
 Parameters:
 - `Manifest`: The immutable manifest that describes the built runtime shape.
@@ -9504,6 +9534,16 @@ IReadOnlyList<BehaviorResilienceRuntimeDescriptor> BehaviorResiliencePolicies { 
 ```
 
 Gets the effective behavior-execution resilience policies visible to the runtime at the time the snapshot was created.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-cdccaptures"></a>
+
+##### `CdcCaptures`
+
+```csharp
+IReadOnlyList<CdcCaptureDescriptor> CdcCaptures { get; set; }
+```
+
+Gets the CDC captures contributed by active modules and visible to the runtime at the time the snapshot was created.
 
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-cellboundaries"></a>
 

@@ -56,6 +56,7 @@ public sealed class EngineBuilder
     private readonly List<IModule> modules = [];
     private readonly List<ModulePackageReference> packages = [];
     private readonly List<ModulePackageDirectory> packageDirectories = [];
+    private readonly List<CdcCaptureDescriptor> cdcCaptures = [];
     private readonly List<CellBoundaryDescriptor> cellBoundaries = [];
     private readonly List<CellRouteDescriptor> cellRoutes = [];
     private readonly List<CellHealthIsolationDescriptor> cellHealthIsolations = [];
@@ -194,6 +195,36 @@ public sealed class EngineBuilder
     public EngineBuilder AddTechnology(TechnologyDescriptor technology)
     {
         appProfileBuilder.AddTechnology(technology);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a CDC capture to the current runtime composition.
+    /// </summary>
+    /// <param name="cdcCapture">The CDC capture descriptor to add.</param>
+    /// <returns>The same builder instance.</returns>
+    public EngineBuilder AddCdcCapture(CdcCaptureDescriptor cdcCapture)
+    {
+        ArgumentNullException.ThrowIfNull(cdcCapture);
+
+        cdcCaptures.Add(cdcCapture);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds multiple CDC captures to the current runtime composition.
+    /// </summary>
+    /// <param name="cdcCaptures">The CDC capture descriptors to add.</param>
+    /// <returns>The same builder instance.</returns>
+    public EngineBuilder AddCdcCaptures(IEnumerable<CdcCaptureDescriptor> cdcCaptures)
+    {
+        ArgumentNullException.ThrowIfNull(cdcCaptures);
+
+        foreach (var cdcCapture in cdcCaptures)
+        {
+            AddCdcCapture(cdcCapture);
+        }
+
         return this;
     }
 
@@ -835,6 +866,7 @@ public sealed class EngineBuilder
             var modulesByType = orderedModules.ToDictionary(module => module.GetType());
             var executionGraphs = new List<ExecutionGraphDescriptor>();
             var hostedExecutions = new List<HostedExecutionDescriptor>();
+            var activeCdcCaptures = new List<CdcCaptureDescriptor>(cdcCaptures);
             var dataProducts = new List<DataProductDescriptor>();
             var projections = new List<ProjectionDescriptor>();
             var outboxes = new List<OutboxDescriptor>();
@@ -870,6 +902,12 @@ public sealed class EngineBuilder
             {
                 ((IDataProductContributor)module).RegisterDataProducts(
                     new DataProductRegistryAdapter(module.Descriptor.Id, dataProducts));
+            }
+
+            foreach (var module in orderedModules.Where(static module => module is ICdcCaptureContributor))
+            {
+                ((ICdcCaptureContributor)module).RegisterCdcCaptures(
+                    new CdcCaptureRegistryAdapter(module.Descriptor.Id, activeCdcCaptures));
             }
 
             foreach (var module in orderedModules.Where(static module => module is IProjectionContributor))
@@ -953,6 +991,7 @@ public sealed class EngineBuilder
                 appProfileBuilder.TryAddPattern(BuiltInPatterns.StranglerFigPattern);
             }
 
+            ValidateCdcCaptures(activeCdcCaptures, outboxes, orderedModules);
             ValidateCellBoundaries(activeCellBoundaries, orderedModules);
             ValidateCellRoutes(activeCellRoutes, activeCellBoundaries, orderedModules);
             ValidateCellHealthIsolations(activeCellHealthIsolations, activeCellBoundaries, orderedModules);
@@ -982,8 +1021,13 @@ public sealed class EngineBuilder
             Services.TryAddSingleton(technologyCatalog);
             Services.TryAddSingleton(technologySelection);
             Services.TryAddSingleton<IReadOnlyList<OwnedBehaviorRegistration>>(ownedBehaviorRegistrations);
+            Services.TryAddSingleton<IReadOnlyList<CdcCaptureDescriptor>>(_ => activeCdcCaptures.ToArray());
             Services.TryAddSingleton<IReadOnlyList<AuditStoreDescriptor>>(_ => auditStores.ToArray());
             Services.TryAddSingleton<IReadOnlyList<OutboxDescriptor>>(_ => outboxes.ToArray());
+            Services.TryAddSingleton<CdcCaptureCatalogSnapshot>(_ =>
+                new CdcCaptureCatalogSnapshot(activeCdcCaptures));
+            Services.TryAddSingleton<ICdcCaptureCatalog>(serviceProvider =>
+                serviceProvider.GetRequiredService<CdcCaptureCatalogSnapshot>());
             Services.TryAddSingleton<CellBoundaryCatalogSnapshot>(_ =>
                 new CellBoundaryCatalogSnapshot(activeCellBoundaries));
             Services.TryAddSingleton<ICellBoundaryCatalog>(serviceProvider =>
@@ -1182,6 +1226,41 @@ public sealed class EngineBuilder
                     throw new InvalidOperationException(
                         $"Cell boundary '{cellBoundary.Id}' references unknown module '{moduleId}'.");
                 }
+            }
+        }
+    }
+
+    private static void ValidateCdcCaptures(
+        List<CdcCaptureDescriptor> cdcCaptures,
+        IReadOnlyList<OutboxDescriptor> outboxes,
+        IReadOnlyList<IModule> orderedModules)
+    {
+        ArgumentNullException.ThrowIfNull(cdcCaptures);
+        ArgumentNullException.ThrowIfNull(outboxes);
+        ArgumentNullException.ThrowIfNull(orderedModules);
+
+        if (cdcCaptures.Count == 0)
+        {
+            return;
+        }
+
+        var knownModuleIds = orderedModules
+            .Select(static module => module.Descriptor.Id)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var outboxesById = outboxes.ToDictionary(static outbox => outbox.Id, StringComparer.OrdinalIgnoreCase);
+
+        foreach (var cdcCapture in cdcCaptures)
+        {
+            if (!knownModuleIds.Contains(cdcCapture.SourceModuleId))
+            {
+                throw new InvalidOperationException(
+                    $"CDC capture '{cdcCapture.Id}' references source module '{cdcCapture.SourceModuleId}', but that module is not active in the runtime.");
+            }
+
+            if (!outboxesById.ContainsKey(cdcCapture.OutboxId))
+            {
+                throw new InvalidOperationException(
+                    $"CDC capture '{cdcCapture.Id}' references outbox '{cdcCapture.OutboxId}', but that outbox is not active in the runtime.");
             }
         }
     }

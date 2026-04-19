@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-19T18:14:25.0729855+00:00",
+  "GeneratedAtUtc": "2026-04-19T18:44:07.6575293+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 323
+      "TypeCount": 328
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -515,7 +515,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
-      "TypeCount": 59
+      "TypeCount": 64
     },
     {
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
@@ -2964,6 +2964,21 @@
       }
     },
     {
+      "DisplayName": "CdcCaptureDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccapturedescriptor",
+      "Declaration": "public sealed class CdcCaptureDescriptor",
+      "Summary": "Describes one change-data-capture surface contributed to the active runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 12,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "CellBoundaryDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Technologies",
       "AssemblyName": "Cephalon.Abstractions",
@@ -4085,7 +4100,7 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 45
+        "Methods": 47
       }
     },
     {
@@ -5746,6 +5761,66 @@
       "AnchorId": "type-cephalon-abstractions-capabilities-icapabilityregistry",
       "Declaration": "public interface ICapabilityRegistry",
       "Summary": "Registers capabilities exposed by modules and packages.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "ICdcCapture",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-icdccapture",
+      "Declaration": "public interface ICdcCapture",
+      "Summary": "Captures database changes and shapes them into outbox-ready publications.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "ICdcCaptureCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-icdccapturecatalog",
+      "Declaration": "public interface ICdcCaptureCatalog",
+      "Summary": "Exposes the CDC capture surfaces visible to the current runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 6
+      }
+    },
+    {
+      "DisplayName": "ICdcCaptureContributor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-icdccapturecontributor",
+      "Declaration": "public interface ICdcCaptureContributor",
+      "Summary": "Contributes one or more CDC capture descriptors to the active runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "ICdcCaptureRegistry",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-icdccaptureregistry",
+      "Declaration": "public interface ICdcCaptureRegistry",
+      "Summary": "Receives CDC capture descriptors contributed by active modules or packages.",
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
@@ -10324,7 +10399,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 42,
+        "Properties": 43,
         "Methods": 0
       }
     },
@@ -11846,6 +11921,17 @@
     {
       "DisplayName": "Add",
       "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureRegistry",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureregistry-add-cephalon-abstractions-data-cdccapturedescriptor",
+      "Signature": "void Add(CdcCaptureDescriptor cdcCapture)",
+      "Summary": "Adds a CDC capture to the current runtime composition."
+    },
+    {
+      "DisplayName": "Add",
+      "Category": "Methods",
       "DeclaringTypeName": "ICellBoundaryRegistry",
       "NamespaceName": "Cephalon.Abstractions.Technologies",
       "AssemblyName": "Cephalon.Abstractions",
@@ -12106,6 +12192,28 @@
       "AnchorId": "member-m-cephalon-eventing-behaviors-registration-behavioreventingenginebuilderextensions-addbehavioreventingbridge-cephalon-engine-composition-enginebuilder",
       "Signature": "EngineBuilder AddBehaviorEventingBridge(this EngineBuilder builder)",
       "Summary": "Adds the explicit saga-choreography bridge that stages behavior publications through the shared \u0060Cephalon.Eventing\u0060 publication path."
+    },
+    {
+      "DisplayName": "AddCdcCapture",
+      "Category": "Methods",
+      "DeclaringTypeName": "EngineBuilder",
+      "NamespaceName": "Cephalon.Engine.Composition",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-addcdccapture-cephalon-abstractions-data-cdccapturedescriptor",
+      "Signature": "EngineBuilder AddCdcCapture(CdcCaptureDescriptor cdcCapture)",
+      "Summary": "Adds a CDC capture to the current runtime composition."
+    },
+    {
+      "DisplayName": "AddCdcCaptures",
+      "Category": "Methods",
+      "DeclaringTypeName": "EngineBuilder",
+      "NamespaceName": "Cephalon.Engine.Composition",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-addcdccaptures-system-collections-generic-ienumerable-cephalon-abstractions-data-cdccapturedescriptor",
+      "Signature": "EngineBuilder AddCdcCaptures(IEnumerable\u003CCdcCaptureDescriptor\u003E cdcCaptures)",
+      "Summary": "Adds multiple CDC captures to the current runtime composition."
     },
     {
       "DisplayName": "AddCellBoundaries",
@@ -17025,6 +17133,17 @@
       "Summary": "Initializes a new instance of the \u0060CapabilityPolicyEvaluator\u0060 class."
     },
     {
+      "DisplayName": "CaptureAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCapture",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccapture-captureasync-system-threading-cancellationtoken",
+      "Signature": "IAsyncEnumerable\u003COutboxMessage\u003E CaptureAsync(CancellationToken cancellationToken)",
+      "Summary": "Reads captured database changes and yields the resulting outbox messages."
+    },
+    {
       "DisplayName": "CaptureOnly",
       "Category": "Fields",
       "DeclaringTypeName": "StartupFailureBehavior",
@@ -17144,6 +17263,39 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databasetopologyoperationalaction-category",
       "Signature": "string Category { get; }",
       "Summary": "Gets the stable machine-readable remediation category."
+    },
+    {
+      "DisplayName": "CdcCaptureDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CdcCaptureDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-cdccapturedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "CdcCaptureDescriptor(string id, string displayName, string description, string sourceModuleId, string provider, string sourceId, string outboxId, string mode, string eventFormat, IReadOnlyList\u003Cstring\u003E resourceIds, IReadOnlyList\u003Cstring\u003E tags, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a new CDC capture descriptor."
+    },
+    {
+      "DisplayName": "CdcCaptures",
+      "Category": "Properties",
+      "DeclaringTypeName": "ICdcCaptureCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-icdccapturecatalog-cdccaptures",
+      "Signature": "IReadOnlyList\u003CCdcCaptureDescriptor\u003E CdcCaptures { get; }",
+      "Summary": "Gets all CDC capture surfaces visible to the current runtime."
+    },
+    {
+      "DisplayName": "CdcCaptures",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-cdccaptures",
+      "Signature": "IReadOnlyList\u003CCdcCaptureDescriptor\u003E CdcCaptures { get; set; }",
+      "Summary": "Gets the CDC captures contributed by active modules and visible to the runtime at the time the snapshot was created."
     },
     {
       "DisplayName": "CellBasedArchitecture",
@@ -21119,6 +21271,17 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturedescriptor-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the human-readable CDC capture description."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "CellBoundaryDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Technologies",
       "AssemblyName": "Cephalon.Abstractions",
@@ -22215,6 +22378,17 @@
       "AnchorId": "member-p-cephalon-engine-manifest-capabilitymanifest-displayname",
       "Signature": "string DisplayName { get; }",
       "Summary": "Gets the operator-facing capability name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturedescriptor-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the operator-facing CDC capture name."
     },
     {
       "DisplayName": "DisplayName",
@@ -24987,6 +25161,17 @@
       "AnchorId": "member-p-cephalon-engine-technologies-builtintechnologies-eventdrivenintegration",
       "Signature": "TechnologyDescriptor EventDrivenIntegration { get; }",
       "Summary": "Gets the built-in event-driven-integration technology profile."
+    },
+    {
+      "DisplayName": "EventFormat",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturedescriptor-eventformat",
+      "Signature": "string EventFormat { get; }",
+      "Summary": "Gets the emitted change-event format."
     },
     {
       "DisplayName": "EventingOptions",
@@ -27928,6 +28113,17 @@
     {
       "DisplayName": "GetById",
       "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccapturecatalog-getbyid-system-string",
+      "Signature": "CdcCaptureDescriptor GetById(string cdcCaptureId)",
+      "Summary": "Gets one CDC capture by its stable identifier."
+    },
+    {
+      "DisplayName": "GetById",
+      "Category": "Methods",
       "DeclaringTypeName": "ICellBoundaryCatalog",
       "NamespaceName": "Cephalon.Abstractions.Technologies",
       "AssemblyName": "Cephalon.Abstractions",
@@ -28247,6 +28443,17 @@
     {
       "DisplayName": "GetByOutboxId",
       "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccapturecatalog-getbyoutboxid-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureDescriptor\u003E GetByOutboxId(string outboxId)",
+      "Summary": "Gets all CDC captures that publish through the requested outbox."
+    },
+    {
+      "DisplayName": "GetByOutboxId",
+      "Category": "Methods",
       "DeclaringTypeName": "IEventDispatchRuntimeCatalog",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -28324,6 +28531,17 @@
     {
       "DisplayName": "GetByProvider",
       "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccapturecatalog-getbyprovider-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureDescriptor\u003E GetByProvider(string provider)",
+      "Summary": "Gets all CDC captures backed by the requested provider identifier."
+    },
+    {
+      "DisplayName": "GetByProvider",
+      "Category": "Methods",
       "DeclaringTypeName": "IDatabaseRoleCatalog",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -28375,6 +28593,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-idatabaserolecatalog-getbyresolvedrole-system-string",
       "Signature": "IReadOnlyList\u003CDatabaseRoleDescriptor\u003E GetByResolvedRole(string resolvedRoleId)",
       "Summary": "Gets every database role that resolves to the supplied concrete role identifier."
+    },
+    {
+      "DisplayName": "GetByResourceId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccapturecatalog-getbyresourceid-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureDescriptor\u003E GetByResourceId(string resourceId)",
+      "Summary": "Gets all CDC captures that explicitly observe the requested resource identifier."
     },
     {
       "DisplayName": "GetByRestEndpointId",
@@ -28443,6 +28672,17 @@
       "Summary": "Gets all effective cell traffic-automation answers that originate from the requested source cell."
     },
     {
+      "DisplayName": "GetBySourceId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccapturecatalog-getbysourceid-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureDescriptor\u003E GetBySourceId(string sourceId)",
+      "Summary": "Gets all CDC captures that observe the requested logical source identifier."
+    },
+    {
       "DisplayName": "GetBySourceModule",
       "Category": "Methods",
       "DeclaringTypeName": "IAuditStoreCatalog",
@@ -28474,6 +28714,17 @@
       "AnchorId": "member-m-cephalon-abstractions-patterns-ibackendforfrontendruntimecatalog-getbysourcemodule-system-string",
       "Signature": "IReadOnlyList\u003CBackendForFrontendClientBindingDescriptor\u003E GetBySourceModule(string sourceModuleId)",
       "Summary": "Gets all backend-for-frontend client bindings owned by the requested module."
+    },
+    {
+      "DisplayName": "GetBySourceModule",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccapturecatalog-getbysourcemodule-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureDescriptor\u003E GetBySourceModule(string sourceModuleId)",
+      "Summary": "Gets all CDC captures contributed by the requested module."
     },
     {
       "DisplayName": "GetBySourceModule",
@@ -31356,6 +31607,17 @@
       "AnchorId": "member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the behavior identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturedescriptor-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable CDC capture identifier."
     },
     {
       "DisplayName": "Id",
@@ -35672,6 +35934,17 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturedescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets operator-facing metadata associated with the CDC capture."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "CellBoundaryDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Technologies",
       "AssemblyName": "Cephalon.Abstractions",
@@ -36812,6 +37085,17 @@
       "AnchorId": "member-p-cephalon-abstractions-behaviors-behavioridempotencyattribute-mode",
       "Signature": "BehaviorIdempotencyMode Mode { get; }",
       "Summary": "Gets the declared idempotency mode."
+    },
+    {
+      "DisplayName": "Mode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturedescriptor-mode",
+      "Signature": "string Mode { get; }",
+      "Summary": "Gets the capture mode."
     },
     {
       "DisplayName": "Mode",
@@ -38682,6 +38966,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-outboxes",
       "Signature": "IReadOnlyList\u003COutboxDescriptor\u003E Outboxes { get; set; }",
       "Summary": "Gets the outbox surfaces contributed by active modules and visible to the runtime at the time the snapshot was created."
+    },
+    {
+      "DisplayName": "OutboxId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturedescriptor-outboxid",
+      "Signature": "string OutboxId { get; }",
+      "Summary": "Gets the outbox identifier that receives captured publications."
     },
     {
       "DisplayName": "OutboxId",
@@ -40897,6 +41192,17 @@
     {
       "DisplayName": "Provider",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturedescriptor-provider",
+      "Signature": "string Provider { get; }",
+      "Summary": "Gets the logical provider identifier that supplies the change feed."
+    },
+    {
+      "DisplayName": "Provider",
+      "Category": "Properties",
       "DeclaringTypeName": "DatabaseMigrationDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -42125,6 +42431,17 @@
       "AnchorId": "member-m-cephalon-abstractions-modules-modulebase-registercapabilities-cephalon-abstractions-capabilities-icapabilityregistry",
       "Signature": "void RegisterCapabilities(ICapabilityRegistry capabilities)",
       "Summary": "Registers capabilities exposed by the module."
+    },
+    {
+      "DisplayName": "RegisterCdcCaptures",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureContributor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccapturecontributor-registercdccaptures-cephalon-abstractions-data-icdccaptureregistry",
+      "Signature": "void RegisterCdcCaptures(ICdcCaptureRegistry cdcCaptures)",
+      "Summary": "Registers one or more CDC capture descriptors with the supplied registry."
     },
     {
       "DisplayName": "RegisterCellBoundaries",
@@ -43918,6 +44235,17 @@
       "AnchorId": "member-p-cephalon-identity-aspnetcore-configuration-identityaspnetcoreoptions-resourceidroutekeys",
       "Signature": "List\u003Cstring\u003E ResourceIdRouteKeys { get; }",
       "Summary": "Gets the route-value keys that can provide the current resource identifier."
+    },
+    {
+      "DisplayName": "ResourceIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturedescriptor-resourceids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ResourceIds { get; }",
+      "Summary": "Gets the resource identifiers observed by the capture."
     },
     {
       "DisplayName": "Resources",
@@ -47486,6 +47814,17 @@
     {
       "DisplayName": "SourceId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturedescriptor-sourceid",
+      "Signature": "string SourceId { get; }",
+      "Summary": "Gets the logical source stream, database, or feed identifier."
+    },
+    {
+      "DisplayName": "SourceId",
+      "Category": "Properties",
       "DeclaringTypeName": "RestEndpointRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Transports",
       "AssemblyName": "Cephalon.Abstractions",
@@ -47658,6 +47997,17 @@
       "AnchorId": "member-p-cephalon-engine-trust-capabilitypolicydecision-sourcemoduleid",
       "Signature": "string SourceModuleId { get; set; }",
       "Summary": "The module that contributed the capability."
+    },
+    {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturedescriptor-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; }",
+      "Summary": "Gets the identifier of the module that owns the CDC capture."
     },
     {
       "DisplayName": "SourceModuleId",
@@ -50122,6 +50472,17 @@
       "AnchorId": "member-p-cephalon-abstractions-authorization-authorizationpolicydescriptor-tags",
       "Signature": "IReadOnlyList\u003Cstring\u003E Tags { get; }",
       "Summary": "Gets descriptive tags associated with the policy."
+    },
+    {
+      "DisplayName": "Tags",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturedescriptor-tags",
+      "Signature": "IReadOnlyList\u003Cstring\u003E Tags { get; }",
+      "Summary": "Gets descriptive tags associated with the CDC capture."
     },
     {
       "DisplayName": "Tags",

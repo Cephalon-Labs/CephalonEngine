@@ -2,7 +2,7 @@
 
 Editable roadmap diagram: `docs/cephalon-engine-roadmap.drawio`
 
-Planning baseline in this document reflects the repository state as of `April 19, 2026`.
+Planning baseline in this document reflects the repository state as of `April 20, 2026`.
 
 ## Target outcome
 
@@ -899,17 +899,18 @@ Shipped baseline:
 - `ENG-122` now extends that same phase-13 runtime truth with `CellHealthIsolationDescriptor`, `ICellHealthIsolationContributor`, `ICellHealthIsolationCatalog`, `engine.AddCellHealthIsolation(...)`, `/engine/cell-health-isolations*`, `snapshot.CellHealthIsolations`, and the `cell-health-isolations` technology runtime surface; active health-isolation answers validate module ownership against the same boundary graph instead of inventing a host-only health partition registry
 - `ENG-123` now extends that same phase-13 runtime truth with `Engine:Cells:TrafficAutomation`, `CellSettings`, `CellTrafficAutomationSettings`, `CellTrafficAutomationRouteSettings`, `ICellTrafficAutomationRuntimeCatalog`, `/engine/cell-traffic-automations*`, `snapshot.CellTrafficAutomations`, and the `cell-traffic-automations` technology runtime surface; effective automation answers stay derived from the existing route plus health-isolation graph so module ownership remains authoritative instead of inventing a second host-only traffic manager
 - `ENG-124` now ships the first data mesh runtime baseline through `IDataProduct<T>`, `DataProductDescriptor`, `IDataProductCatalog`, `IDataProductContributor`, `IDataProductRegistry`, `/engine/data-products*`, and `snapshot.DataProducts`; queryable data-product ownership now stays module-backed through `sourceModuleId`, `domainId`, `contractId`, and `mode` instead of requiring a host-only catalog or provider-specific runtime surface
+- `ENG-125` now ships the first CDC capture runtime baseline through `ICdcCapture`, `CdcCaptureDescriptor`, `ICdcCaptureCatalog`, `ICdcCaptureContributor`, `ICdcCaptureRegistry`, `/engine/cdc-captures*`, and `snapshot.CdcCaptures`; CDC capture ownership now stays module-backed through `sourceModuleId`, `provider`, `sourceId`, `outboxId`, `mode`, `eventFormat`, `resourceIds`, and metadata while engine composition validates referenced source modules and outboxes instead of inventing a host-only sync registry
 
 Remaining follow-through:
 
 - provider-specific or edge-aware traffic automation over the shipped boundary, route, health-isolation, and configuration-driven traffic-automation catalogs
-- change data capture `ICdcCapture` abstraction for automated database-change publication through the outbox without explicit staging
+- provider-specific CDC execution and richer publish-state/runtime answers over the shipped `ICdcCapture` plus outbox-linked catalog baseline
 
 Exit criteria:
 
 - modules can declare cell boundaries, governed cell routes, and cell health-isolation posture with explicit blast-radius isolation, project-level configuration can overlay deterministic automation policy through `Engine:Cells:TrafficAutomation`, and operators can inspect the same answers through `/engine/cells`, `/engine/cell-routes`, `/engine/cell-health-isolations`, `/engine/cell-traffic-automations`, `/engine/technology-surfaces/cell-based-architecture`, and `/engine/snapshot`
 - modules can expose queryable data products through the runtime catalog
-- database changes can be captured and published through the outbox without explicit staging
+- modules can declare CDC captures linked to an outbox through the runtime catalog today, and later provider-specific execution can capture and publish those changes without inventing a second registry
 
 ## Decision guardrails
 

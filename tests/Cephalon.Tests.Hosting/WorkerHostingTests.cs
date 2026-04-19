@@ -104,6 +104,9 @@ public sealed class WorkerHostingTests
         builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:stop-observer:Enabled"] = "false";
         builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:slow-stop:Enabled"] = "false";
         builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:phase8-runtime-catalogs:Enabled"] = "false";
+        builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:invalid-phase8-data-product:Enabled"] = "false";
+        builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:invalid-phase8-cdc:Enabled"] = "false";
+        builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:invalid-phase8-cdc-outbox:Enabled"] = "false";
         builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:invalid-phase8-projection:Enabled"] = "false";
         builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:invalid-phase8-outbox:Enabled"] = "false";
         builder.Configuration[$"{EngineSettings.SectionName}:Options:Modules:invalid-phase8-inbox:Enabled"] = "false";

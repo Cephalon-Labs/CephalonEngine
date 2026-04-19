@@ -6,7 +6,7 @@ using Cephalon.Abstractions.Modules;
 
 namespace Cephalon.Tests.Support;
 
-internal sealed class Phase8CatalogModule : ModuleBase, IDataProductContributor, IProjectionContributor, IOutboxContributor, IInboxContributor, IAuthorizationPolicyContributor, IAuditStoreContributor
+internal sealed class Phase8CatalogModule : ModuleBase, IDataProductContributor, ICdcCaptureContributor, IProjectionContributor, IOutboxContributor, IInboxContributor, IAuthorizationPolicyContributor, IAuditStoreContributor
 {
     private static readonly ModuleDescriptor DescriptorInstance = new(
         id: "phase8-runtime-catalogs",
@@ -40,6 +40,27 @@ internal sealed class Phase8CatalogModule : ModuleBase, IDataProductContributor,
             metadata: new Dictionary<string, string>
             {
                 ["classification"] = "internal",
+                ["freshness"] = "near-real-time"
+            }));
+    }
+
+    public void RegisterCdcCaptures(ICdcCaptureRegistry cdcCaptures)
+    {
+        cdcCaptures.Add(new CdcCaptureDescriptor(
+            id: "tenant-profile-cdc",
+            displayName: "Tenant Profile CDC",
+            description: "Captures tenant-profile changes and shapes them into outbox publications without explicit staging.",
+            sourceModuleId: Descriptor.Id,
+            provider: "postgresql",
+            sourceId: "tenant-db",
+            outboxId: "tenant-event-outbox",
+            mode: "wal",
+            eventFormat: "debezium-envelope",
+            resourceIds: ["public.tenants", "public.tenant_memberships"],
+            tags: ["cdc", "tenant"],
+            metadata: new Dictionary<string, string>
+            {
+                ["publicationMode"] = "outbox",
                 ["freshness"] = "near-real-time"
             }));
     }
@@ -217,6 +238,62 @@ internal sealed class InvalidOutboxSourceModule : ModuleBase, IOutboxContributor
             description: "Declares the wrong source module id.",
             sourceModuleId: "another-module",
             provider: "relational"));
+    }
+}
+
+internal sealed class InvalidCdcCaptureSourceModule : ModuleBase, ICdcCaptureContributor
+{
+    private static readonly ModuleDescriptor DescriptorInstance = new(
+        id: "invalid-phase8-cdc",
+        displayName: "Invalid Phase 8 CDC",
+        description: "Contributes an invalid CDC capture descriptor for test coverage.",
+        tags: ["phase8", "invalid"],
+        version: "1.0.0");
+
+    public override ModuleDescriptor Descriptor => DescriptorInstance;
+
+    public override void RegisterCapabilities(ICapabilityRegistry capabilities)
+    {
+    }
+
+    public void RegisterCdcCaptures(ICdcCaptureRegistry cdcCaptures)
+    {
+        cdcCaptures.Add(new CdcCaptureDescriptor(
+            id: "broken-cdc-capture",
+            displayName: "Broken CDC Capture",
+            description: "Declares the wrong source module id.",
+            sourceModuleId: "another-module",
+            provider: "postgresql",
+            sourceId: "tenant-db",
+            outboxId: "tenant-event-outbox"));
+    }
+}
+
+internal sealed class InvalidCdcCaptureOutboxModule : ModuleBase, ICdcCaptureContributor
+{
+    private static readonly ModuleDescriptor DescriptorInstance = new(
+        id: "invalid-phase8-cdc-outbox",
+        displayName: "Invalid Phase 8 CDC Outbox",
+        description: "Contributes a CDC capture that references a missing outbox for test coverage.",
+        tags: ["phase8", "invalid"],
+        version: "1.0.0");
+
+    public override ModuleDescriptor Descriptor => DescriptorInstance;
+
+    public override void RegisterCapabilities(ICapabilityRegistry capabilities)
+    {
+    }
+
+    public void RegisterCdcCaptures(ICdcCaptureRegistry cdcCaptures)
+    {
+        cdcCaptures.Add(new CdcCaptureDescriptor(
+            id: "missing-outbox-cdc-capture",
+            displayName: "Missing Outbox CDC Capture",
+            description: "References an outbox that is not active in the runtime.",
+            sourceModuleId: Descriptor.Id,
+            provider: "postgresql",
+            sourceId: "tenant-db",
+            outboxId: "missing-outbox"));
     }
 }
 
