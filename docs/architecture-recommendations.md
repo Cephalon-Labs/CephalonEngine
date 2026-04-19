@@ -301,30 +301,34 @@ Effort: small-to-medium for the remaining follow-through.
 
 ### Change Data Capture — CDC (event-driven data sync)
 
-Current state: the first CDC capture runtime baseline is now shipped. `Cephalon.Abstractions`
-now exposes `ICdcCapture`, `CdcCaptureDescriptor`, `ICdcCaptureCatalog`,
-`ICdcCaptureContributor`, and `ICdcCaptureRegistry`; `Cephalon.Engine` now
-projects `snapshot.CdcCaptures` while validating referenced `sourceModuleId`
-and `outboxId` values against the active runtime; and ASP.NET Core now exposes
-`/engine/cdc-captures` plus id, module, provider, outbox, source, and resource
-drill-down routes so module-owned CDC posture is inspectable through the same
-runtime truth as other engine catalogs.
+Current state: the first CDC descriptor baseline and the first live runtime-state follow-through are
+now shipped. `Cephalon.Abstractions` now exposes `ICdcCapture`, `CdcCaptureDescriptor`,
+`ICdcCaptureCatalog`, `ICdcCaptureContributor`, `ICdcCaptureRegistry`,
+`CdcCaptureRuntimeState`, and `ICdcCaptureRuntimeStateCatalog`; `Cephalon.Engine` now projects
+both `snapshot.CdcCaptures` and `snapshot.CdcCaptureStates` while validating referenced
+`sourceModuleId` and `outboxId` values against the active runtime; `Cephalon.Data` now supplies
+the shared reporter/catalog path for latest capture observations; and ASP.NET Core now exposes
+both `/engine/cdc-captures` and `/engine/cdc-captures/runtime` plus the same id/module/provider/
+outbox/source/resource drill-down routes so module-owned CDC descriptor truth and latest capture
+posture stay inspectable through the same runtime contract.
 
 Recommendation: keep the initial descriptor/runtime surface focused on module
 ownership, provider/source/outbox identity, capture mode, event format,
-resource ids, and operator-facing metadata so CDC stays host-agnostic and
-additive over explicit outbox descriptors instead of pulling provider-specific
-execution into the engine core too early.
+resource ids, operator-facing metadata, and latest reported runtime posture so
+CDC stays host-agnostic and additive over explicit outbox descriptors instead of
+pulling provider-specific execution into the engine core too early.
 
 Shipped baseline:
 - `ICdcCapture` — host-agnostic CDC execution contract for provider-specific implementations
 - `CdcCaptureDescriptor` — operator-facing module/provider/source/outbox/mode/event-format metadata with resource ids, tags, and free-form metadata
 - CDC capture catalog in the runtime surface through `/engine/cdc-captures*` and `snapshot.CdcCaptures`
+- `CdcCaptureRuntimeState` plus `ICdcCaptureRuntimeStateCatalog` — operator-facing live CDC posture with latest outcome, totals, checkpoints, errors, and optional linked `OutboxDispatchState`
+- CDC runtime-state catalog in the runtime surface through `/engine/cdc-captures/runtime*` and `snapshot.CdcCaptureStates`
 - build-time validation that rejects missing source-module ownership or missing outbox references before broken operator metadata can ship
 
 Later follow-through:
 - provider-specific execution/runtime packs over the shipped contract, such as PostgreSQL WAL or MongoDB change streams
-- richer freshness, lag, and publish-state answers once provider execution exists
+- richer provider-native freshness, lag, and publish-state answers once provider execution exists
 - reconsider a dedicated `data.cdc` capability convention only if a truthful module-backed publication path exists
 
 Effort: medium for the remaining provider-specific follow-through.
@@ -385,9 +389,9 @@ Target: Sprint 40–41
 Deliverables:
 - Cell-Based Architecture technology descriptor and boundary abstraction — shipped baseline
 - Data Mesh data product abstraction — shipped baseline
-- CDC capture abstraction — shipped baseline
+- CDC capture abstraction and runtime-state follow-through — shipped baseline
 
 Exit criteria:
 - modules can declare cell boundaries, governed cell routes, and cell health-isolation posture with explicit blast-radius isolation and operators can inspect the same answers through `/engine/cells`, `/engine/cell-routes`, `/engine/cell-health-isolations`, `/engine/technology-surfaces/cell-based-architecture`, and `/engine/snapshot`
 - modules can expose queryable data products through the runtime catalog
-- modules can declare CDC captures linked to an outbox through the runtime catalog today, and later provider-specific execution can capture and publish those changes without inventing a second registry
+- modules can declare CDC captures linked to an outbox through the runtime catalog today, operators can inspect latest capture/post-publication posture through `/engine/cdc-captures`, `/engine/cdc-captures/runtime`, and `/engine/snapshot`, and later provider-specific execution can capture and publish those changes without inventing a second registry

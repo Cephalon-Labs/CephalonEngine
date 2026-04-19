@@ -7795,6 +7795,326 @@ IReadOnlyList<string> Tags { get; }
 
 Gets descriptive tags associated with the CDC capture.
 
+<a id="type-cephalon-abstractions-data-cdccaptureruntimestate"></a>
+
+### `CdcCaptureRuntimeState`
+
+Describes the latest operator-facing runtime state visible for one active CDC capture.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureRuntimeState
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureruntimestate-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-nullable-system-datetimeoffset-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int64-system-int64-system-string-system-string-system-string-cephalon-abstractions-data-eventdispatchruntimestate-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `CdcCaptureRuntimeState`
+
+```csharp
+CdcCaptureRuntimeState(string CdcCaptureId, string SourceModuleId, string Provider, string SourceId, string OutboxId, string Mode, string EventFormat, IReadOnlyList<string> ResourceIds, string LastOutcome, DateTimeOffset? LastObservedAtUtc, int LastCapturedChangeCount, int LastProducedMessageCount, int StartedCount, int CapturedCount, int IdleCount, int FailedCount, long TotalCapturedChangeCount, long TotalProducedMessageCount, string LastChangeId, string LastCheckpoint, string LastError, EventDispatchRuntimeState OutboxDispatchState, IReadOnlyDictionary<string, string> Metadata)
+```
+
+Describes the latest operator-facing runtime state visible for one active CDC capture.
+
+Parameters:
+- `CdcCaptureId`: The stable CDC capture identifier.
+- `SourceModuleId`: The identifier of the module that owns the CDC capture.
+- `Provider`: The logical provider identifier that supplies the change feed.
+- `SourceId`: The logical source stream, database, or feed identifier.
+- `OutboxId`: The outbox identifier that receives captured publications.
+- `Mode`: The capture mode such as `wal`, `change-stream`, or `table-tail`.
+- `EventFormat`: The emitted change-event format such as `debezium-envelope`.
+- `ResourceIds`: The resource identifiers observed by the capture.
+- `LastOutcome`: The latest reported capture outcome identifier when one exists.
+- `LastObservedAtUtc`: The UTC timestamp when the latest capture observation was reported.
+- `LastCapturedChangeCount`: The number of source changes observed in the latest report.
+- `LastProducedMessageCount`: The number of outbox messages produced by the latest report.
+- `StartedCount`: The number of `started` observations reported so far.
+- `CapturedCount`: The number of `captured` observations reported so far.
+- `IdleCount`: The number of `idle` observations reported so far.
+- `FailedCount`: The number of `failed` observations reported so far.
+- `TotalCapturedChangeCount`: The total number of source changes reported so far.
+- `TotalProducedMessageCount`: The total number of outbox messages produced so far.
+- `LastChangeId`: The latest provider-facing change identifier when one was reported.
+- `LastCheckpoint`: The latest provider-facing checkpoint or cursor when one was reported.
+- `LastError`: The latest operator-facing error summary when one was reported.
+- `OutboxDispatchState`: The latest linked outbox dispatch state when the active runtime also reports publication posture for the capture's outbox.
+- `Metadata`: The operator-facing metadata captured by the latest report.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-capturedcount"></a>
+
+##### `CapturedCount`
+
+```csharp
+int CapturedCount { get; set; }
+```
+
+The number of `captured` observations reported so far.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-cdccaptureid"></a>
+
+##### `CdcCaptureId`
+
+```csharp
+string CdcCaptureId { get; set; }
+```
+
+The stable CDC capture identifier.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-eventformat"></a>
+
+##### `EventFormat`
+
+```csharp
+string EventFormat { get; set; }
+```
+
+The emitted change-event format such as `debezium-envelope`.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-failedcount"></a>
+
+##### `FailedCount`
+
+```csharp
+int FailedCount { get; set; }
+```
+
+The number of `failed` observations reported so far.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-hasdispatchreports"></a>
+
+##### `HasDispatchReports`
+
+```csharp
+bool HasDispatchReports { get; }
+```
+
+Gets a value indicating whether the linked outbox dispatch path has reported runtime state.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-hasreports"></a>
+
+##### `HasReports`
+
+```csharp
+bool HasReports { get; }
+```
+
+Gets a value indicating whether the capture has reported any runtime observations yet.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-idlecount"></a>
+
+##### `IdleCount`
+
+```csharp
+int IdleCount { get; set; }
+```
+
+The number of `idle` observations reported so far.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-isfailed"></a>
+
+##### `IsFailed`
+
+```csharp
+bool IsFailed { get; }
+```
+
+Gets a value indicating whether the latest reported capture posture is failed.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-lastcapturedchangecount"></a>
+
+##### `LastCapturedChangeCount`
+
+```csharp
+int LastCapturedChangeCount { get; set; }
+```
+
+The number of source changes observed in the latest report.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-lastchangeid"></a>
+
+##### `LastChangeId`
+
+```csharp
+string LastChangeId { get; set; }
+```
+
+The latest provider-facing change identifier when one was reported.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-lastcheckpoint"></a>
+
+##### `LastCheckpoint`
+
+```csharp
+string LastCheckpoint { get; set; }
+```
+
+The latest provider-facing checkpoint or cursor when one was reported.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-lasterror"></a>
+
+##### `LastError`
+
+```csharp
+string LastError { get; set; }
+```
+
+The latest operator-facing error summary when one was reported.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-lastobservedatutc"></a>
+
+##### `LastObservedAtUtc`
+
+```csharp
+DateTimeOffset? LastObservedAtUtc { get; set; }
+```
+
+The UTC timestamp when the latest capture observation was reported.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-lastoutcome"></a>
+
+##### `LastOutcome`
+
+```csharp
+string LastOutcome { get; set; }
+```
+
+The latest reported capture outcome identifier when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-lastproducedmessagecount"></a>
+
+##### `LastProducedMessageCount`
+
+```csharp
+int LastProducedMessageCount { get; set; }
+```
+
+The number of outbox messages produced by the latest report.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; set; }
+```
+
+The operator-facing metadata captured by the latest report.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-mode"></a>
+
+##### `Mode`
+
+```csharp
+string Mode { get; set; }
+```
+
+The capture mode such as `wal`, `change-stream`, or `table-tail`.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-outboxdispatchstate"></a>
+
+##### `OutboxDispatchState`
+
+```csharp
+EventDispatchRuntimeState OutboxDispatchState { get; set; }
+```
+
+The latest linked outbox dispatch state when the active runtime also reports publication posture for the capture's outbox.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-outboxid"></a>
+
+##### `OutboxId`
+
+```csharp
+string OutboxId { get; set; }
+```
+
+The outbox identifier that receives captured publications.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-provider"></a>
+
+##### `Provider`
+
+```csharp
+string Provider { get; set; }
+```
+
+The logical provider identifier that supplies the change feed.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-resourceids"></a>
+
+##### `ResourceIds`
+
+```csharp
+IReadOnlyList<string> ResourceIds { get; set; }
+```
+
+The resource identifiers observed by the capture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-sourceid"></a>
+
+##### `SourceId`
+
+```csharp
+string SourceId { get; set; }
+```
+
+The logical source stream, database, or feed identifier.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; set; }
+```
+
+The identifier of the module that owns the CDC capture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-startedcount"></a>
+
+##### `StartedCount`
+
+```csharp
+int StartedCount { get; set; }
+```
+
+The number of `started` observations reported so far.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-totalcapturedchangecount"></a>
+
+##### `TotalCapturedChangeCount`
+
+```csharp
+long TotalCapturedChangeCount { get; set; }
+```
+
+The total number of source changes reported so far.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-totalproducedmessagecount"></a>
+
+##### `TotalProducedMessageCount`
+
+```csharp
+long TotalProducedMessageCount { get; set; }
+```
+
+The total number of outbox messages produced so far.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-totalreports"></a>
+
+##### `TotalReports`
+
+```csharp
+int TotalReports { get; }
+```
+
+Gets the total number of capture observations reported for the CDC capture.
+
 <a id="type-cephalon-abstractions-data-databasemigrationcommanddescriptor"></a>
 
 ### `DatabaseMigrationCommandDescriptor`
@@ -10991,6 +11311,121 @@ Adds a CDC capture to the current runtime composition.
 
 Parameters:
 - `cdcCapture`: The CDC capture descriptor to register.
+
+<a id="type-cephalon-abstractions-data-icdccaptureruntimestatecatalog"></a>
+
+### `ICdcCaptureRuntimeStateCatalog`
+
+Exposes the operator-facing CDC runtime state currently visible for the active runtime.
+
+#### Declaration
+```csharp
+public interface ICdcCaptureRuntimeStateCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-icdccaptureruntimestatecatalog-states"></a>
+
+##### `States`
+
+```csharp
+IReadOnlyList<CdcCaptureRuntimeState> States { get; }
+```
+
+Gets the CDC runtime-state entries visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+CdcCaptureRuntimeState GetById(string cdcCaptureId)
+```
+
+Gets one CDC runtime-state entry by its stable capture identifier.
+
+Returns: The matching runtime state, or `null` when that capture is not active.
+
+Parameters:
+- `cdcCaptureId`: The CDC capture identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbyoutboxid-system-string"></a>
+
+##### `GetByOutboxId`
+
+```csharp
+IReadOnlyList<CdcCaptureRuntimeState> GetByOutboxId(string outboxId)
+```
+
+Gets the CDC runtime-state entries that publish through the requested outbox.
+
+Returns: The matching runtime states, or an empty list when no capture uses that outbox.
+
+Parameters:
+- `outboxId`: The outbox identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbyprovider-system-string"></a>
+
+##### `GetByProvider`
+
+```csharp
+IReadOnlyList<CdcCaptureRuntimeState> GetByProvider(string provider)
+```
+
+Gets the CDC runtime-state entries backed by the requested provider identifier.
+
+Returns: The matching runtime states, or an empty list when the provider contributes none.
+
+Parameters:
+- `provider`: The provider identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbyresourceid-system-string"></a>
+
+##### `GetByResourceId`
+
+```csharp
+IReadOnlyList<CdcCaptureRuntimeState> GetByResourceId(string resourceId)
+```
+
+Gets the CDC runtime-state entries that explicitly observe the requested resource identifier.
+
+Returns: The matching runtime states, or an empty list when no capture declares that resource.
+
+Parameters:
+- `resourceId`: The resource identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbysourceid-system-string"></a>
+
+##### `GetBySourceId`
+
+```csharp
+IReadOnlyList<CdcCaptureRuntimeState> GetBySourceId(string sourceId)
+```
+
+Gets the CDC runtime-state entries that observe the requested logical source identifier.
+
+Returns: The matching runtime states, or an empty list when no capture uses that source.
+
+Parameters:
+- `sourceId`: The source identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbysourcemodule-system-string"></a>
+
+##### `GetBySourceModule`
+
+```csharp
+IReadOnlyList<CdcCaptureRuntimeState> GetBySourceModule(string sourceModuleId)
+```
+
+Gets the CDC runtime-state entries contributed by the requested module.
+
+Returns: The matching runtime states, or an empty list when the module contributed none.
+
+Parameters:
+- `sourceModuleId`: The source module identifier to filter by.
 
 <a id="type-cephalon-abstractions-data-icommand"></a>
 

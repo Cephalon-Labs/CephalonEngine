@@ -37,6 +37,12 @@ internal sealed class DataModule(DataRuntimeOptions options) : ModuleBase
         {
             services.TryAddScoped<Abstractions.Data.IWriteStore, HandlerDispatchingWriteStore>();
         }
+
+        services.TryAddSingleton<CdcCaptureRuntimeStateCatalog>();
+        services.TryAddSingleton<Abstractions.Data.ICdcCaptureRuntimeStateCatalog>(static serviceProvider =>
+            serviceProvider.GetRequiredService<CdcCaptureRuntimeStateCatalog>());
+        services.TryAddSingleton<ICdcCaptureRuntimeReporter>(static serviceProvider =>
+            serviceProvider.GetRequiredService<CdcCaptureRuntimeStateCatalog>());
     }
 
     public override void RegisterCapabilities(ICapabilityRegistry capabilities)

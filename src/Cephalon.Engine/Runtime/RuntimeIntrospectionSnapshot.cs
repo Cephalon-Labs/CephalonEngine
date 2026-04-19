@@ -85,6 +85,11 @@ public sealed record RuntimeIntrospectionSnapshot(
     public IReadOnlyList<CdcCaptureDescriptor> CdcCaptures { get; init; } = [];
 
     /// <summary>
+    /// Gets the CDC runtime-state entries visible to the runtime at the time the snapshot was created.
+    /// </summary>
+    public IReadOnlyList<CdcCaptureRuntimeState> CdcCaptureStates { get; init; } = [];
+
+    /// <summary>
     /// Gets the outbox surfaces contributed by active modules and visible to the runtime at the time the snapshot was created.
     /// </summary>
     public IReadOnlyList<OutboxDescriptor> Outboxes { get; init; } = [];

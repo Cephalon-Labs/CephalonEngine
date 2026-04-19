@@ -9545,6 +9545,16 @@ IReadOnlyList<CdcCaptureDescriptor> CdcCaptures { get; set; }
 
 Gets the CDC captures contributed by active modules and visible to the runtime at the time the snapshot was created.
 
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-cdccapturestates"></a>
+
+##### `CdcCaptureStates`
+
+```csharp
+IReadOnlyList<CdcCaptureRuntimeState> CdcCaptureStates { get; set; }
+```
+
+Gets the CDC runtime-state entries visible to the runtime at the time the snapshot was created.
+
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-cellboundaries"></a>
 
 ##### `CellBoundaries`

@@ -42,6 +42,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
     {
         var eventDispatchRuntimeDescriptorCatalog = serviceProvider.GetService(typeof(IEventDispatchRuntimeDescriptorCatalog)) as IEventDispatchRuntimeDescriptorCatalog;
         var eventDispatchRuntimeCatalog = serviceProvider.GetService(typeof(IEventDispatchRuntimeCatalog)) as IEventDispatchRuntimeCatalog;
+        var cdcCaptureRuntimeStateCatalog = serviceProvider.GetService(typeof(ICdcCaptureRuntimeStateCatalog)) as ICdcCaptureRuntimeStateCatalog;
         var featureFlagRuntimeCatalog = serviceProvider.GetService(typeof(IFeatureFlagRuntimeCatalog)) as IFeatureFlagRuntimeCatalog;
         var sagaChoreographyRuntimeCatalog = serviceProvider.GetService(typeof(ISagaChoreographyRuntimeCatalog)) as ISagaChoreographyRuntimeCatalog;
         var sagaChoreographyPublicationRuntimeStateCatalog = serviceProvider.GetService(typeof(ISagaChoreographyPublicationRuntimeStateCatalog)) as ISagaChoreographyPublicationRuntimeStateCatalog;
@@ -73,6 +74,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
             HostedExecutions = hostedExecutionRuntimeCatalog.HostedExecutions,
             DataProducts = dataProductCatalog.DataProducts,
             CdcCaptures = cdcCaptureCatalog.CdcCaptures,
+            CdcCaptureStates = cdcCaptureRuntimeStateCatalog?.States ?? [],
             Projections = projectionCatalog.Projections,
             Outboxes = outboxCatalog.Outboxes,
             Inboxes = inboxCatalog.Inboxes,

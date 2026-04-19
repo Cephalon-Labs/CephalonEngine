@@ -1246,6 +1246,39 @@ Current note:
 - the baseline is intentionally descriptor-first: provider-specific WAL/change-stream execution still belongs to the owning module or a future companion pack, while the engine owns the catalog, outbox linkage, and validation
 - invalid CDC capture source-module ownership or missing outbox references fail at build time instead of leaking broken operator metadata
 
+## CDC capture runtime-state surface
+
+`GET /engine/cdc-captures/runtime` exposes the latest operator-facing CDC runtime-state catalog
+reported for active captures.
+
+Current payload highlights:
+
+- each runtime-state entry keeps the descriptor-owned identity (`cdcCaptureId`, `sourceModuleId`,
+  `provider`, `sourceId`, `outboxId`, `mode`, `eventFormat`, and `resourceIds`) alongside the
+  latest reported `lastOutcome`, `lastObservedAtUtc`, checkpoint/change-id/error details, and
+  latest/total captured-change plus produced-message counts
+- the catalog projects active captures even before the first provider report arrives, so operators
+  can still see declared ownership and linked outbox identity before execution starts
+- when the linked publication path already reports runtime truth, `outboxDispatchState` carries the
+  latest downstream dispatch posture directly on the same CDC runtime answer instead of forcing a
+  second join back through `/engine/event-dispatches`
+- the same runtime-state catalog is also available through `/engine/snapshot` in
+  `CdcCaptureStates` when operators want one merged runtime answer
+- drill-down routes narrow the same runtime-state catalog by capture id, source module, provider,
+  outbox, source, and resource through `/engine/cdc-captures/runtime/{cdcCaptureId}`,
+  `/engine/cdc-captures/runtime/modules/{moduleId}`,
+  `/engine/cdc-captures/runtime/providers/{provider}`,
+  `/engine/cdc-captures/runtime/outboxes/{outboxId}`,
+  `/engine/cdc-captures/runtime/sources/{sourceId}`, and
+  `/engine/cdc-captures/runtime/resources/{resourceId}`
+
+Current note:
+
+- the shared runtime-state catalog is reporter-driven and descriptor-backed: it does not claim that
+  Cephalon already ships provider-native WAL or change-stream execution loops
+- richer provider-native freshness, lag, and checkpoint semantics remain later follow-through over
+  the same capture/runtime-state contract instead of a second host-only registry
+
 ## Inbox surface
 
 `GET /engine/inboxes` exposes the operator-facing inbox catalog contributed by active modules and companion packs.

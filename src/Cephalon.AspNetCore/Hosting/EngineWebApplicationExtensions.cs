@@ -433,6 +433,50 @@ public static class EngineWebApplicationExtensions
             .WithName("GetCephalonDataProduct");
         engineGroup.MapGet("/cdc-captures", ([FromServices] ICdcCaptureCatalog catalog) => TypedResults.Ok(catalog.CdcCaptures))
             .WithName("GetCephalonCdcCaptures");
+        engineGroup.MapGet("/cdc-captures/runtime", (HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<ICdcCaptureRuntimeStateCatalog>();
+                return TypedResults.Ok(catalog?.States ?? []);
+            })
+            .WithName("GetCephalonCdcCaptureStates");
+        engineGroup.MapGet("/cdc-captures/runtime/{cdcCaptureId}", (string cdcCaptureId, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<ICdcCaptureRuntimeStateCatalog>();
+                var state = catalog?.GetById(cdcCaptureId);
+
+                return state is null ? Results.NotFound() : Results.Ok(state);
+            })
+            .WithName("GetCephalonCdcCaptureState");
+        engineGroup.MapGet("/cdc-captures/runtime/modules/{moduleId}", (string moduleId, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<ICdcCaptureRuntimeStateCatalog>();
+                return TypedResults.Ok(catalog?.GetBySourceModule(moduleId) ?? []);
+            })
+            .WithName("GetCephalonCdcCaptureStatesByModule");
+        engineGroup.MapGet("/cdc-captures/runtime/providers/{provider}", (string provider, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<ICdcCaptureRuntimeStateCatalog>();
+                return TypedResults.Ok(catalog?.GetByProvider(provider) ?? []);
+            })
+            .WithName("GetCephalonCdcCaptureStatesByProvider");
+        engineGroup.MapGet("/cdc-captures/runtime/outboxes/{outboxId}", (string outboxId, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<ICdcCaptureRuntimeStateCatalog>();
+                return TypedResults.Ok(catalog?.GetByOutboxId(outboxId) ?? []);
+            })
+            .WithName("GetCephalonCdcCaptureStatesByOutbox");
+        engineGroup.MapGet("/cdc-captures/runtime/sources/{sourceId}", (string sourceId, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<ICdcCaptureRuntimeStateCatalog>();
+                return TypedResults.Ok(catalog?.GetBySourceId(sourceId) ?? []);
+            })
+            .WithName("GetCephalonCdcCaptureStatesBySource");
+        engineGroup.MapGet("/cdc-captures/runtime/resources/{resourceId}", (string resourceId, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<ICdcCaptureRuntimeStateCatalog>();
+                return TypedResults.Ok(catalog?.GetByResourceId(resourceId) ?? []);
+            })
+            .WithName("GetCephalonCdcCaptureStatesByResource");
         engineGroup.MapGet("/cdc-captures/{cdcCaptureId}", (string cdcCaptureId, [FromServices] ICdcCaptureCatalog catalog) =>
             {
                 var cdcCapture = catalog.GetById(cdcCaptureId);

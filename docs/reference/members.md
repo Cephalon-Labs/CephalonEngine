@@ -1596,6 +1596,15 @@ Browse the published API surface by public member.
 - [CaptureAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccapture-captureasync-system-threading-cancellationtoken): `Methods` on `ICdcCapture` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CaptureAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Reads captured database changes and yields the resulting outbox messages.
   - `IAsyncEnumerable<OutboxMessage> CaptureAsync(CancellationToken cancellationToken)`
+- [Captured](cephalon-data.md#member-f-cephalon-data-services-cdccaptureruntimeoutcomes-captured): `Fields` on `CdcCaptureRuntimeOutcomes` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=Captured&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
+  - Gets the outcome identifier used when a capture observes one or more source changes.
+  - `const string Captured`
+- [CapturedChangeCount](cephalon-data.md#member-p-cephalon-data-services-cdccaptureexecutionreport-capturedchangecount): `Properties` on `CdcCaptureExecutionReport` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=CapturedChangeCount&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
+  - Gets the number of source changes observed by this report.
+  - `int CapturedChangeCount { get; }`
+- [CapturedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-capturedcount): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CapturedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The number of `captured` observations reported so far.
+  - `int CapturedCount { get; set; }`
 - [CaptureOnly](cephalon-engine.md#member-f-cephalon-engine-configuration-startupfailurebehavior-captureonly): `Fields` on `StartupFailureBehavior` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=CaptureOnly&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Capture the failure in runtime status without rethrowing it to the host.
   - `const StartupFailureBehavior CaptureOnly`
@@ -1632,12 +1641,27 @@ Browse the published API surface by public member.
 - [CdcCaptureDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccapturedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `CdcCaptureDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates a new CDC capture descriptor.
   - `CdcCaptureDescriptor(string id, string displayName, string description, string sourceModuleId, string provider, string sourceId, string outboxId, string mode, string eventFormat, IReadOnlyList<string> resourceIds, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
+- [CdcCaptureExecutionReport](cephalon-data.md#member-m-cephalon-data-services-cdccaptureexecutionreport-ctor-system-string-system-string-system-datetimeoffset-system-int32-system-int32-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `CdcCaptureExecutionReport` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=CdcCaptureExecutionReport&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
+  - Creates a new CDC capture runtime observation.
+  - `CdcCaptureExecutionReport(string cdcCaptureId, string outcome, DateTimeOffset observedAtUtc, int capturedChangeCount, int producedMessageCount, string changeId, string checkpoint, string error, IReadOnlyDictionary<string, string> metadata)`
+- [CdcCaptureId](cephalon-data.md#member-p-cephalon-data-services-cdccaptureexecutionreport-cdccaptureid): `Properties` on `CdcCaptureExecutionReport` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=CdcCaptureId&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
+  - Gets the stable CDC capture identifier that produced the observation.
+  - `string CdcCaptureId { get; }`
+- [CdcCaptureId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-cdccaptureid): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The stable CDC capture identifier.
+  - `string CdcCaptureId { get; set; }`
+- [CdcCaptureRuntimeState](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccaptureruntimestate-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-nullable-system-datetimeoffset-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int64-system-int64-system-string-system-string-system-string-cephalon-abstractions-data-eventdispatchruntimestate-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureRuntimeState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Describes the latest operator-facing runtime state visible for one active CDC capture.
+  - `CdcCaptureRuntimeState(string CdcCaptureId, string SourceModuleId, string Provider, string SourceId, string OutboxId, string Mode, string EventFormat, IReadOnlyList<string> ResourceIds, string LastOutcome, DateTimeOffset? LastObservedAtUtc, int LastCapturedChangeCount, int LastProducedMessageCount, int StartedCount, int CapturedCount, int IdleCount, int FailedCount, long TotalCapturedChangeCount, long TotalProducedMessageCount, string LastChangeId, string LastCheckpoint, string LastError, EventDispatchRuntimeState OutboxDispatchState, IReadOnlyDictionary<string, string> Metadata)`
 - [CdcCaptures](cephalon-abstractions.md#member-p-cephalon-abstractions-data-icdccapturecatalog-cdccaptures): `Properties` on `ICdcCaptureCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptures&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets all CDC capture surfaces visible to the current runtime.
   - `IReadOnlyList<CdcCaptureDescriptor> CdcCaptures { get; }`
 - [CdcCaptures](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-cdccaptures): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=CdcCaptures&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the CDC captures contributed by active modules and visible to the runtime at the time the snapshot was created.
   - `IReadOnlyList<CdcCaptureDescriptor> CdcCaptures { get; set; }`
+- [CdcCaptureStates](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-cdccapturestates): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=CdcCaptureStates&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the CDC runtime-state entries visible to the runtime at the time the snapshot was created.
+  - `IReadOnlyList<CdcCaptureRuntimeState> CdcCaptureStates { get; set; }`
 - [CellBasedArchitecture](cephalon-engine.md#member-p-cephalon-engine-technologies-builtintechnologies-cellbasedarchitecture): `Properties` on `BuiltInTechnologies` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=CellBasedArchitecture&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
   - Gets the built-in cell-based-architecture technology profile.
   - `TechnologyDescriptor CellBasedArchitecture { get; }`
@@ -1692,6 +1716,9 @@ Browse the published API surface by public member.
 - [CertificateThumbprint](cephalon-engine.md#member-p-cephalon-engine-trust-packagesignaturetrustdecision-certificatethumbprint): `Properties` on `PackageSignatureTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=CertificateThumbprint&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The signing certificate thumbprint used during verification, when certificate-backed trust was used.
   - `string CertificateThumbprint { get; set; }`
+- [ChangeId](cephalon-data.md#member-p-cephalon-data-services-cdccaptureexecutionreport-changeid): `Properties` on `CdcCaptureExecutionReport` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=ChangeId&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
+  - Gets the latest provider-facing change identifier when one was reported.
+  - `string ChangeId { get; }`
 - [Changes](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditentry-changes): `Properties` on `AuditEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Changes&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the field-level changes captured for the operation.
   - `IReadOnlyList<AuditChange> Changes { get; }`
@@ -1746,6 +1773,9 @@ Browse the published API surface by public member.
 - [Check](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviorcompatibilityrule-check-cephalon-abstractions-behaviors-behaviortopologydescriptor): `Methods` on `IBehaviorCompatibilityRule` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Check&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Checks the descriptor and returns a violation if the rule is violated, or `null` if valid.
   - `BehaviorCompatibilityViolation Check(BehaviorTopologyDescriptor descriptor)`
+- [Checkpoint](cephalon-data.md#member-p-cephalon-data-services-cdccaptureexecutionreport-checkpoint): `Properties` on `CdcCaptureExecutionReport` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=Checkpoint&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
+  - Gets the latest provider-facing checkpoint or cursor when one was reported.
+  - `string Checkpoint { get; }`
 - [ChecksumSha256](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-checksumsha256): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=ChecksumSha256&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the computed SHA-256 checksum of the resolved package assembly.
   - `string ChecksumSha256 { get; }`
@@ -3729,6 +3759,9 @@ Browse the published API surface by public member.
 - [Error](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behaviorfaultseverity-error): `Fields` on `BehaviorFaultSeverity` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Error&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Error-level fault details.
   - `const BehaviorFaultSeverity Error`
+- [Error](cephalon-data.md#member-p-cephalon-data-services-cdccaptureexecutionreport-error): `Properties` on `CdcCaptureExecutionReport` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=Error&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
+  - Gets the operator-facing error summary when the observation represents a failure.
+  - `string Error { get; }`
 - [Error](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-compatibilityseverity-error): `Fields` on `CompatibilitySeverity` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Error&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - The violation prevents application startup.
   - `const CompatibilitySeverity Error`
@@ -3792,6 +3825,9 @@ Browse the published API surface by public member.
 - [EventFormat](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturedescriptor-eventformat): `Properties` on `CdcCaptureDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventFormat&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the emitted change-event format.
   - `string EventFormat { get; }`
+- [EventFormat](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-eventformat): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventFormat&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The emitted change-event format such as `debezium-envelope`.
+  - `string EventFormat { get; set; }`
 - [EventingOptions](cephalon-eventing.md#member-m-cephalon-eventing-configuration-eventingoptions-ctor): `Constructors` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=EventingOptions&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
   - Creates eventing options with the default host-owned features enabled.
   - `EventingOptions()`
@@ -4050,6 +4086,9 @@ Browse the published API surface by public member.
 - [Failed](cephalon-abstractions.md#member-f-cephalon-abstractions-audit-auditoutcome-failed): `Fields` on `AuditOutcome` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Failed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Indicates the operation failed.
   - `const AuditOutcome Failed`
+- [Failed](cephalon-data.md#member-f-cephalon-data-services-cdccaptureruntimeoutcomes-failed): `Fields` on `CdcCaptureRuntimeOutcomes` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=Failed&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
+  - Gets the outcome identifier used when a capture fails.
+  - `const string Failed`
 - [Failed](cephalon-abstractions.md#member-f-cephalon-abstractions-data-databasemigrationstatus-failed): `Fields` on `DatabaseMigrationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Failed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The migration target failed during execution.
   - `const DatabaseMigrationStatus Failed`
@@ -4065,6 +4104,9 @@ Browse the published API surface by public member.
 - [Failed](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimestatus-failed): `Fields` on `RuntimeStatus` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Failed&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The runtime captured a lifecycle failure.
   - `const RuntimeStatus Failed`
+- [FailedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-failedcount): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=FailedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The number of `failed` observations reported so far.
+  - `int FailedCount { get; set; }`
 - [FailedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-failedcount): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=FailedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The number of `failed` observations reported so far.
   - `int FailedCount { get; set; }`
@@ -4602,6 +4644,9 @@ Browse the published API surface by public member.
 - [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccapturecatalog-getbyid-system-string): `Methods` on `ICdcCaptureCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets one CDC capture by its stable identifier.
   - `CdcCaptureDescriptor GetById(string cdcCaptureId)`
+- [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbyid-system-string): `Methods` on `ICdcCaptureRuntimeStateCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets one CDC runtime-state entry by its stable capture identifier.
+  - `CdcCaptureRuntimeState GetById(string cdcCaptureId)`
 - [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icellboundarycatalog-getbyid-system-string): `Methods` on `ICellBoundaryCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets one cell boundary by its stable identifier.
   - `CellBoundaryDescriptor GetById(string cellId)`
@@ -4692,6 +4737,9 @@ Browse the published API surface by public member.
 - [GetByOutboxId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccapturecatalog-getbyoutboxid-system-string): `Methods` on `ICdcCaptureCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByOutboxId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets all CDC captures that publish through the requested outbox.
   - `IReadOnlyList<CdcCaptureDescriptor> GetByOutboxId(string outboxId)`
+- [GetByOutboxId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbyoutboxid-system-string): `Methods` on `ICdcCaptureRuntimeStateCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByOutboxId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC runtime-state entries that publish through the requested outbox.
+  - `IReadOnlyList<CdcCaptureRuntimeState> GetByOutboxId(string outboxId)`
 - [GetByOutboxId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchruntimecatalog-getbyoutboxid-system-string): `Methods` on `IEventDispatchRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByOutboxId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest reported dispatch state for one outbox-backed publication path.
   - `EventDispatchRuntimeState GetByOutboxId(string outboxId)`
@@ -4716,6 +4764,9 @@ Browse the published API surface by public member.
 - [GetByProvider](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccapturecatalog-getbyprovider-system-string): `Methods` on `ICdcCaptureCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByProvider&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets all CDC captures backed by the requested provider identifier.
   - `IReadOnlyList<CdcCaptureDescriptor> GetByProvider(string provider)`
+- [GetByProvider](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbyprovider-system-string): `Methods` on `ICdcCaptureRuntimeStateCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByProvider&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC runtime-state entries backed by the requested provider identifier.
+  - `IReadOnlyList<CdcCaptureRuntimeState> GetByProvider(string provider)`
 - [GetByProvider](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idatabaserolecatalog-getbyprovider-system-string): `Methods` on `IDatabaseRoleCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByProvider&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets every database role backed by the supplied provider identifier.
   - `IReadOnlyList<DatabaseRoleDescriptor> GetByProvider(string provider)`
@@ -4734,6 +4785,9 @@ Browse the published API surface by public member.
 - [GetByResourceId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccapturecatalog-getbyresourceid-system-string): `Methods` on `ICdcCaptureCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByResourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets all CDC captures that explicitly observe the requested resource identifier.
   - `IReadOnlyList<CdcCaptureDescriptor> GetByResourceId(string resourceId)`
+- [GetByResourceId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbyresourceid-system-string): `Methods` on `ICdcCaptureRuntimeStateCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByResourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC runtime-state entries that explicitly observe the requested resource identifier.
+  - `IReadOnlyList<CdcCaptureRuntimeState> GetByResourceId(string resourceId)`
 - [GetByRestEndpointId](cephalon-abstractions.md#member-m-cephalon-abstractions-transports-ibackendforfrontendrestruntimecatalog-getbyrestendpointid-system-string): `Methods` on `IBackendForFrontendRestRuntimeCatalog` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByRestEndpointId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets all client-aware runtime projections that expose the requested published REST endpoint.
   - `IReadOnlyList<BackendForFrontendRestEndpointRuntimeDescriptor> GetByRestEndpointId(string restEndpointId)`
@@ -4755,6 +4809,9 @@ Browse the published API surface by public member.
 - [GetBySourceId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccapturecatalog-getbysourceid-system-string): `Methods` on `ICdcCaptureCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets all CDC captures that observe the requested logical source identifier.
   - `IReadOnlyList<CdcCaptureDescriptor> GetBySourceId(string sourceId)`
+- [GetBySourceId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbysourceid-system-string): `Methods` on `ICdcCaptureRuntimeStateCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC runtime-state entries that observe the requested logical source identifier.
+  - `IReadOnlyList<CdcCaptureRuntimeState> GetBySourceId(string sourceId)`
 - [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-audit-iauditstorecatalog-getbysourcemodule-system-string): `Methods` on `IAuditStoreCatalog` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets all audit stores contributed by the requested module.
   - `IReadOnlyList<AuditStoreDescriptor> GetBySourceModule(string sourceModuleId)`
@@ -4767,6 +4824,9 @@ Browse the published API surface by public member.
 - [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccapturecatalog-getbysourcemodule-system-string): `Methods` on `ICdcCaptureCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets all CDC captures contributed by the requested module.
   - `IReadOnlyList<CdcCaptureDescriptor> GetBySourceModule(string sourceModuleId)`
+- [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbysourcemodule-system-string): `Methods` on `ICdcCaptureRuntimeStateCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC runtime-state entries contributed by the requested module.
+  - `IReadOnlyList<CdcCaptureRuntimeState> GetBySourceModule(string sourceModuleId)`
 - [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icellhealthisolationcatalog-getbysourcemodule-system-string): `Methods` on `ICellHealthIsolationCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets all cell health-isolation answers owned by the requested source module.
   - `IReadOnlyList<CellHealthIsolationDescriptor> GetBySourceModule(string sourceModuleId)`
@@ -5028,6 +5088,9 @@ Browse the published API surface by public member.
 - [HasDefaultValues](cephalon-engine.md#member-p-cephalon-engine-configuration-celltrafficautomationsettings-hasdefaultvalues): `Properties` on `CellTrafficAutomationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasDefaultValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether any default traffic-automation values were explicitly supplied.
   - `bool HasDefaultValues { get; }`
+- [HasDispatchReports](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-hasdispatchreports): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasDispatchReports&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the linked outbox dispatch path has reported runtime state.
+  - `bool HasDispatchReports { get; }`
 - [HasManualCommandsForAllTargets](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-hasmanualcommandsforalltargets): `Properties` on `DatabaseMigrationOperationalExecutionGroup` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasManualCommandsForAllTargets&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether every target in this group publishes a direct or manual command path.
   - `bool HasManualCommandsForAllTargets { get; }`
@@ -5049,6 +5112,9 @@ Browse the published API surface by public member.
 - [HasProductionRecommendedCommandsForAllTargets](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-hasproductionrecommendedcommandsforalltargets): `Properties` on `DatabaseMigrationOperationalExecutionGroup` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasProductionRecommendedCommandsForAllTargets&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether every target in this group publishes a production-recommended command.
   - `bool HasProductionRecommendedCommandsForAllTargets { get; }`
+- [HasReports](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-hasreports): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasReports&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the capture has reported any runtime observations yet.
+  - `bool HasReports { get; }`
 - [HasReports](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-hasreports): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasReports&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the dispatch runtime has reported any observations yet.
   - `bool HasReports { get; }`
@@ -5787,6 +5853,12 @@ Browse the published API surface by public member.
 - [IdGenerator](cephalon-engine.md#member-p-cephalon-engine-configuration-datasettings-idgenerator): `Properties` on `DataSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=IdGenerator&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the selected identifier-generation strategy.
   - `string IdGenerator { get; }`
+- [Idle](cephalon-data.md#member-f-cephalon-data-services-cdccaptureruntimeoutcomes-idle): `Fields` on `CdcCaptureRuntimeOutcomes` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=Idle&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
+  - Gets the outcome identifier used when a capture polls successfully but finds no new changes.
+  - `const string Idle`
+- [IdleCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-idlecount): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IdleCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The number of `idle` observations reported so far.
+  - `int IdleCount { get; set; }`
 - [Ignore](cephalon-abstractions.md#member-f-cephalon-abstractions-resilience-behaviorresilienceexceptionhandling-ignore): `Fields` on `BehaviorResilienceExceptionHandling` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Ignore&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - Ignore the exception for resilience accounting.
   - `const BehaviorResilienceExceptionHandling Ignore`
@@ -6021,6 +6093,9 @@ Browse the published API surface by public member.
 - [IsEnabled](cephalon-abstractions.md#member-m-cephalon-abstractions-features-ifeaturetoggle-isenabled-system-string-cephalon-abstractions-features-featureflagevaluationcontext): `Methods` on `IFeatureToggle` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsEnabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
   - Evaluates whether the requested feature flag is enabled for the supplied context.
   - `bool IsEnabled(string featureFlagId, FeatureFlagEvaluationContext context)`
+- [IsFailed](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-isfailed): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsFailed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the latest reported capture posture is failed.
+  - `bool IsFailed { get; }`
 - [IsFailed](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-isfailed): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsFailed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets a value indicating whether the latest report says the durable stream is currently in a failed posture.
   - `bool IsFailed { get; }`
@@ -6195,12 +6270,24 @@ Browse the published API surface by public member.
 - [LastAttempt](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-lastattempt): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=LastAttempt&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The last reported application-managed attempt number.
   - `int LastAttempt { get; set; }`
+- [LastCapturedChangeCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-lastcapturedchangecount): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastCapturedChangeCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The number of source changes observed in the latest report.
+  - `int LastCapturedChangeCount { get; set; }`
+- [LastChangeId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-lastchangeid): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastChangeId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The latest provider-facing change identifier when one was reported.
+  - `string LastChangeId { get; set; }`
 - [LastChannelId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-lastchannelid): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastChannelId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The last stable channel identifier reported for this dispatch path.
   - `string LastChannelId { get; set; }`
 - [LastChannelId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lastchannelid): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastChannelId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest reported channel identifier when one exists.
   - `string LastChannelId { get; }`
+- [LastCheckpoint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-lastcheckpoint): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastCheckpoint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The latest provider-facing checkpoint or cursor when one was reported.
+  - `string LastCheckpoint { get; set; }`
+- [LastError](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-lasterror): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastError&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The latest operator-facing error summary when one was reported.
+  - `string LastError { get; set; }`
 - [LastError](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-lasterror): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastError&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest error observed for this target.
   - `string LastError { get; }`
@@ -6249,6 +6336,9 @@ Browse the published API surface by public member.
 - [LastMessageId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-lastmessageid): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=LastMessageId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The last stable inbound message identifier when one was reported.
   - `string LastMessageId { get; set; }`
+- [LastObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-lastobservedatutc): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The UTC timestamp when the latest capture observation was reported.
+  - `DateTimeOffset? LastObservedAtUtc { get; set; }`
 - [LastObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lastobservedatutc): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The UTC timestamp when the latest observation was reported.
   - `DateTimeOffset? LastObservedAtUtc { get; set; }`
@@ -6285,6 +6375,9 @@ Browse the published API surface by public member.
 - [LastOutboxId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lastoutboxid): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastOutboxId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the outbox identifier that produced the latest observation when one exists.
   - `string LastOutboxId { get; }`
+- [LastOutcome](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-lastoutcome): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastOutcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The latest reported capture outcome identifier when one exists.
+  - `string LastOutcome { get; set; }`
 - [LastOutcome](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lastoutcome): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastOutcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The last reported durable-execution outcome identifier when one exists.
   - `string LastOutcome { get; set; }`
@@ -6300,6 +6393,9 @@ Browse the published API surface by public member.
 - [LastOutcome](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-lastoutcome): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastOutcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The last reported publication outcome identifier when one exists.
   - `string LastOutcome { get; set; }`
+- [LastProducedMessageCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-lastproducedmessagecount): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastProducedMessageCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The number of outbox messages produced by the latest report.
+  - `int LastProducedMessageCount { get; set; }`
 - [LastPublisherType](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-lastpublishertype): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastPublisherType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The last concrete publisher implementation type that accepted or rejected the publication when one was reported.
   - `string LastPublisherType { get; set; }`
@@ -6753,6 +6849,12 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturedescriptor-metadata): `Properties` on `CdcCaptureDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets operator-facing metadata associated with the CDC capture.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-data.md#member-p-cephalon-data-services-cdccaptureexecutionreport-metadata): `Properties` on `CdcCaptureExecutionReport` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
+  - Gets optional operator-facing metadata captured alongside the observation.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-metadata): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The operator-facing metadata captured by the latest report.
+  - `IReadOnlyDictionary<string, string> Metadata { get; set; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellboundarydescriptor-metadata): `Properties` on `CellBoundaryDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets optional operator-facing metadata for this cell boundary.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -7068,6 +7170,9 @@ Browse the published API surface by public member.
 - [Mode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturedescriptor-mode): `Properties` on `CdcCaptureDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Mode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the capture mode.
   - `string Mode { get; }`
+- [Mode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-mode): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Mode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The capture mode such as `wal`, `change-stream`, or `table-tail`.
+  - `string Mode { get; set; }`
 - [Mode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-dataproductdescriptor-mode): `Properties` on `DataProductDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Mode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the declared access mode for the data product.
   - `string Mode { get; }`
@@ -7365,6 +7470,9 @@ Browse the published API surface by public member.
 - [ObservabilityOptions](cephalon-observability.md#member-m-cephalon-observability-configuration-observabilityoptions-ctor): `Constructors` on `ObservabilityOptions` in `Cephalon.Observability.Configuration` (`Cephalon.Observability`) [Browse](browse.html?q=ObservabilityOptions&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration&scope=members)
   - Creates observability options with the default startup diagnostics behavior.
   - `ObservabilityOptions()`
+- [ObservedAtUtc](cephalon-data.md#member-p-cephalon-data-services-cdccaptureexecutionreport-observedatutc): `Properties` on `CdcCaptureExecutionReport` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=ObservedAtUtc&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
+  - Gets the UTC timestamp when the observation occurred.
+  - `DateTimeOffset ObservedAtUtc { get; }`
 - [ObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-observedatutc): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the UTC timestamp when runtime state was last observed for the database role, when available.
   - `DateTimeOffset? ObservedAtUtc { get; }`
@@ -7566,6 +7674,9 @@ Browse the published API surface by public member.
 - [OutboxDispatchPolicyDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-data-outboxdispatchpolicydescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `OutboxDispatchPolicyDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OutboxDispatchPolicyDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates a new outbox dispatch-policy descriptor.
   - `OutboxDispatchPolicyDescriptor(string outboxId, string policyId, string displayName, string description, string executionMode, string runtimeId, IReadOnlyDictionary<string, string> metadata)`
+- [OutboxDispatchState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-outboxdispatchstate): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OutboxDispatchState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The latest linked outbox dispatch state when the active runtime also reports publication posture for the capture's outbox.
+  - `EventDispatchRuntimeState OutboxDispatchState { get; set; }`
 - [OutboxEnabled](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-outboxenabled): `Properties` on `BehaviorTopologyDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=OutboxEnabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets a value indicating whether outbox staging is enabled.
   - `bool OutboxEnabled { get; }`
@@ -7587,6 +7698,9 @@ Browse the published API surface by public member.
 - [OutboxId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturedescriptor-outboxid): `Properties` on `CdcCaptureDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OutboxId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the outbox identifier that receives captured publications.
   - `string OutboxId { get; }`
+- [OutboxId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-outboxid): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OutboxId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The outbox identifier that receives captured publications.
+  - `string OutboxId { get; set; }`
 - [OutboxId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchexecutionreport-outboxid): `Properties` on `EventDispatchExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=OutboxId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the stable outbox identifier that owns the dispatch path.
   - `string OutboxId { get; }`
@@ -7629,6 +7743,9 @@ Browse the published API surface by public member.
 - [Outcome](cephalon-audit.md#member-p-cephalon-audit-services-auditrecordrequest-outcome): `Properties` on `AuditRecordRequest` in `Cephalon.Audit.Services` (`Cephalon.Audit`) [Browse](browse.html?q=Outcome&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Services&scope=members)
   - Gets the outcome recorded for the audited operation.
   - `AuditOutcome Outcome { get; }`
+- [Outcome](cephalon-data.md#member-p-cephalon-data-services-cdccaptureexecutionreport-outcome): `Properties` on `CdcCaptureExecutionReport` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=Outcome&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
+  - Gets the stable outcome identifier for the observed CDC activity.
+  - `string Outcome { get; }`
 - [Outcome](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchexecutionreport-outcome): `Properties` on `EventDispatchExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Outcome&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the stable outcome identifier for the observed dispatch activity.
   - `string Outcome { get; }`
@@ -8106,6 +8223,9 @@ Browse the published API surface by public member.
 - [ProcessedAtUtc](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-modeling-entityframeworkinboxentry-processedatutc): `Properties` on `EntityFrameworkInboxEntry` in `Cephalon.Data.EntityFramework.Modeling` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=ProcessedAtUtc&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling&scope=members)
   - Gets or sets the time at which the inbox row was marked as processed.
   - `DateTimeOffset ProcessedAtUtc { get; set; }`
+- [ProducedMessageCount](cephalon-data.md#member-p-cephalon-data-services-cdccaptureexecutionreport-producedmessagecount): `Properties` on `CdcCaptureExecutionReport` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=ProducedMessageCount&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
+  - Gets the number of outbox messages produced by this report.
+  - `int ProducedMessageCount { get; }`
 - [ProductionCommand](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationoperationalstep-productioncommand): `Properties` on `DatabaseMigrationOperationalStep` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProductionCommand&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the primary production-recommended command selected for this step when available.
   - `DatabaseMigrationCommandDescriptor ProductionCommand { get; }`
@@ -8196,6 +8316,9 @@ Browse the published API surface by public member.
 - [Provider](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturedescriptor-provider): `Properties` on `CdcCaptureDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Provider&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the logical provider identifier that supplies the change feed.
   - `string Provider { get; }`
+- [Provider](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-provider): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Provider&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The logical provider identifier that supplies the change feed.
+  - `string Provider { get; set; }`
 - [Provider](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-provider): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Provider&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the effective provider identifier when known.
   - `string Provider { get; }`
@@ -8688,6 +8811,9 @@ Browse the published API surface by public member.
 - [ReplyAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviorcontext-replyasync-system-object-system-threading-cancellationtoken): `Methods` on `IBehaviorContext` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReplyAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Sends a reply message back to the caller through the active transport.
   - `Task ReplyAsync(object reply, CancellationToken cancellationToken)`
+- [ReportAsync](cephalon-data.md#member-m-cephalon-data-services-icdccaptureruntimereporter-reportasync-cephalon-data-services-cdccaptureexecutionreport-system-threading-cancellationtoken): `Methods` on `ICdcCaptureRuntimeReporter` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=ReportAsync&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
+  - Reports one CDC runtime observation for the active runtime.
+  - `ValueTask ReportAsync(CdcCaptureExecutionReport report, CancellationToken cancellationToken)`
 - [ReportAsync](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventdispatchruntimereporter-reportasync-cephalon-eventing-services-eventdispatchexecutionreport-system-threading-cancellationtoken): `Methods` on `IEventDispatchRuntimeReporter` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ReportAsync&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Reports one dispatch observation for the active eventing runtime.
   - `ValueTask ReportAsync(EventDispatchExecutionReport report, CancellationToken cancellationToken)`
@@ -9033,6 +9159,9 @@ Browse the published API surface by public member.
 - [ResourceIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturedescriptor-resourceids): `Properties` on `CdcCaptureDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ResourceIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the resource identifiers observed by the capture.
   - `IReadOnlyList<string> ResourceIds { get; }`
+- [ResourceIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-resourceids): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ResourceIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The resource identifiers observed by the capture.
+  - `IReadOnlyList<string> ResourceIds { get; set; }`
 - [Resources](cephalon-engine.md#member-p-cephalon-engine-configuration-localizationsettings-resources): `Properties` on `LocalizationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Resources&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets localized resource entries keyed by culture and resource key.
   - `IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> Resources { get; }`
@@ -10011,6 +10140,9 @@ Browse the published API surface by public member.
 - [SourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturedescriptor-sourceid): `Properties` on `CdcCaptureDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the logical source stream, database, or feed identifier.
   - `string SourceId { get; }`
+- [SourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-sourceid): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The logical source stream, database, or feed identifier.
+  - `string SourceId { get; set; }`
 - [SourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-sourceid): `Properties` on `RestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the stable source identity for the published endpoint when the runtime can classify the authored source shape behind that publication.
   - `string SourceId { get; }`
@@ -10062,6 +10194,9 @@ Browse the published API surface by public member.
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturedescriptor-sourcemoduleid): `Properties` on `CdcCaptureDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the identifier of the module that owns the CDC capture.
   - `string SourceModuleId { get; }`
+- [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-sourcemoduleid): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The identifier of the module that owns the CDC capture.
+  - `string SourceModuleId { get; set; }`
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellboundarydescriptor-sourcemoduleid): `Properties` on `CellBoundaryDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the module that owns this cell boundary.
   - `string SourceModuleId { get; }`
@@ -10233,6 +10368,9 @@ Browse the published API surface by public member.
 - [StartAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-modules-modulebase-startasync-cephalon-abstractions-modules-modulecontext-system-threading-cancellationtoken): `Methods` on `ModuleBase` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=StartAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
   - Starts the module after initialization has completed.
   - `Task StartAsync(ModuleContext context, CancellationToken cancellationToken)`
+- [Started](cephalon-data.md#member-f-cephalon-data-services-cdccaptureruntimeoutcomes-started): `Fields` on `CdcCaptureRuntimeOutcomes` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=Started&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
+  - Gets the outcome identifier used when a capture runtime starts or resumes work.
+  - `const string Started`
 - [Started](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchexecutionoutcomes-started): `Fields` on `EventDispatchExecutionOutcomes` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Started&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the outcome identifier used when dispatch begins for one staged message.
   - `const string Started`
@@ -10251,6 +10389,9 @@ Browse the published API surface by public member.
 - [StartedAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimestatussnapshot-startedatutc): `Properties` on `RuntimeStatusSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=StartedAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The UTC timestamp when startup completed, if it has completed.
   - `DateTimeOffset? StartedAtUtc { get; set; }`
+- [StartedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-startedcount): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=StartedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The number of `started` observations reported so far.
+  - `int StartedCount { get; set; }`
 - [StartedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-startedcount): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=StartedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The number of `started` observations reported so far.
   - `int StartedCount { get; set; }`
@@ -10290,6 +10431,9 @@ Browse the published API surface by public member.
 - [StatementUri](cephalon-engine.md#member-p-cephalon-engine-manifest-packageprovenancemanifest-statementuri): `Properties` on `PackageProvenanceManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=StatementUri&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the declared provenance statement or attestation URI, when available.
   - `string StatementUri { get; }`
+- [States](cephalon-abstractions.md#member-p-cephalon-abstractions-data-icdccaptureruntimestatecatalog-states): `Properties` on `ICdcCaptureRuntimeStateCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=States&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC runtime-state entries visible to the current runtime.
+  - `IReadOnlyList<CdcCaptureRuntimeState> States { get; }`
 - [States](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-states): `Properties` on `IDurableExecutionRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=States&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the reported durable-execution state entries visible to the current runtime.
   - `IReadOnlyList<DurableExecutionRuntimeState> States { get; }`
@@ -11094,9 +11238,18 @@ Browse the published API surface by public member.
 - [TotalActionCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasetopologyoperationalactionplan-totalactioncount): `Properties` on `DatabaseTopologyOperationalActionPlan` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalActionCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the total number of operator actions in the plan.
   - `int TotalActionCount { get; }`
+- [TotalCapturedChangeCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-totalcapturedchangecount): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalCapturedChangeCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The total number of source changes reported so far.
+  - `long TotalCapturedChangeCount { get; set; }`
 - [TotalCount](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryqueryresult-totalcount): `Properties` on `AuditHistoryQueryResult` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the total number of matching entries before paging was applied.
   - `int TotalCount { get; }`
+- [TotalProducedMessageCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-totalproducedmessagecount): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalProducedMessageCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The total number of outbox messages produced so far.
+  - `long TotalProducedMessageCount { get; set; }`
+- [TotalReports](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-totalreports): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalReports&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the total number of capture observations reported for the CDC capture.
+  - `int TotalReports { get; }`
 - [TotalReports](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-totalreports): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalReports&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the total number of observations reported for this durable-execution stream.
   - `int TotalReports { get; }`

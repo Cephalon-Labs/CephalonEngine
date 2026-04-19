@@ -1,7 +1,10 @@
+using System.Globalization;
 using Cephalon.Abstractions.Data;
 using Cephalon.Data.Registration;
+using Cephalon.Data.Services;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
+using Cephalon.Engine.Runtime;
 using Cephalon.Tests.Support;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -76,5 +79,94 @@ public sealed class DataRuntimePackTests
 
         Assert.Contains(nameof(MissingCommand), exception.Message, StringComparison.Ordinal);
         Assert.Contains(nameof(ICommandHandler<MissingCommand>), exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task AddDataExposesCdcCaptureRuntimeStateAndSnapshotTruth()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<IEventDispatchRuntimeCatalog>(new TestEventDispatchRuntimeCatalog(
+            new EventDispatchRuntimeState(
+                OutboxId: "tenant-event-outbox",
+                LastChannelId: "tenant-events",
+                LastOutcome: "retry-scheduled",
+                LastObservedAtUtc: DateTimeOffset.Parse("2026-04-20T09:30:00Z", CultureInfo.InvariantCulture),
+                LastMessageId: "dispatch-001",
+                LastAttempt: 2,
+                StartedCount: 1,
+                SucceededCount: 0,
+                FailedCount: 1,
+                RetryScheduledCount: 1,
+                SkippedCount: 0,
+                LastError: "dispatch failed",
+                Metadata: new Dictionary<string, string>
+                {
+                    ["dispatchRuntime"] = "phase13"
+                })));
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"],
+                transports: ["RestApi"]));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new Phase8CatalogModule());
+            engine.AddData();
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var catalog = provider.GetRequiredService<ICdcCaptureRuntimeStateCatalog>();
+        var reporter = provider.GetRequiredService<ICdcCaptureRuntimeReporter>();
+
+        var initial = catalog.GetById("tenant-profile-cdc");
+        Assert.NotNull(initial);
+        Assert.Equal("phase8-runtime-catalogs", initial.SourceModuleId);
+        Assert.Equal("postgresql", initial.Provider);
+        Assert.Equal("tenant-event-outbox", initial.OutboxId);
+        Assert.Null(initial.LastOutcome);
+        Assert.Equal(0, initial.TotalReports);
+        Assert.NotNull(initial.OutboxDispatchState);
+        Assert.Equal("retry-scheduled", initial.OutboxDispatchState!.LastOutcome);
+
+        await reporter.ReportAsync(new CdcCaptureExecutionReport(
+            cdcCaptureId: "tenant-profile-cdc",
+            outcome: CdcCaptureRuntimeOutcomes.Started,
+            observedAtUtc: DateTimeOffset.Parse("2026-04-20T10:00:00Z", CultureInfo.InvariantCulture)));
+        await reporter.ReportAsync(new CdcCaptureExecutionReport(
+            cdcCaptureId: "tenant-profile-cdc",
+            outcome: CdcCaptureRuntimeOutcomes.Captured,
+            observedAtUtc: DateTimeOffset.Parse("2026-04-20T10:05:00Z", CultureInfo.InvariantCulture),
+            capturedChangeCount: 3,
+            producedMessageCount: 2,
+            changeId: "lsn-0003",
+            checkpoint: "0/16B6C70",
+            metadata: new Dictionary<string, string>
+            {
+                ["captureRuntime"] = "phase13"
+            }));
+
+        var state = catalog.GetById("tenant-profile-cdc");
+        Assert.NotNull(state);
+        Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, state.LastOutcome);
+        Assert.Equal(1, state.StartedCount);
+        Assert.Equal(1, state.CapturedCount);
+        Assert.Equal(3, state.LastCapturedChangeCount);
+        Assert.Equal(2, state.LastProducedMessageCount);
+        Assert.Equal(3, state.TotalCapturedChangeCount);
+        Assert.Equal(2, state.TotalProducedMessageCount);
+        Assert.Equal("lsn-0003", state.LastChangeId);
+        Assert.Equal("0/16B6C70", state.LastCheckpoint);
+        Assert.Equal("phase13", state.Metadata["captureRuntime"]);
+        Assert.Single(catalog.GetBySourceModule("phase8-runtime-catalogs"));
+        Assert.Single(catalog.GetByProvider("postgresql"));
+        Assert.Single(catalog.GetByOutboxId("tenant-event-outbox"));
+        Assert.Single(catalog.GetBySourceId("tenant-db"));
+        Assert.Single(catalog.GetByResourceId("public.tenants"));
+
+        var snapshot = provider.GetRequiredService<IRuntimeIntrospectionSnapshotProvider>().CreateSnapshot();
+        var snapshotState = Assert.Single(snapshot.CdcCaptureStates);
+        Assert.Equal("tenant-profile-cdc", snapshotState.CdcCaptureId);
+        Assert.NotNull(snapshotState.OutboxDispatchState);
+        Assert.Equal("retry-scheduled", snapshotState.OutboxDispatchState!.LastOutcome);
     }
 }

@@ -15,7 +15,7 @@ Quick links:
 
 ### Core
 
-- [Cephalon.Abstractions](cephalon-abstractions.md): Host-agnostic contracts that module and package authors build against. Contains 19 namespaces and 328 public types. [Browse](browse.html?assembly=Cephalon.Abstractions)
+- [Cephalon.Abstractions](cephalon-abstractions.md): Host-agnostic contracts that module and package authors build against. Contains 19 namespaces and 330 public types. [Browse](browse.html?assembly=Cephalon.Abstractions)
 - [Cephalon.Engine](cephalon-engine.md): Composition, runtime, policy, manifest, and introspection services. Contains 12 namespaces and 98 public types. [Browse](browse.html?assembly=Cephalon.Engine)
 
 ### Technology Packs
@@ -69,7 +69,7 @@ Quick links:
 ### Phase 8 Companion Packs
 
 - [Cephalon.Audit](cephalon-audit.md): Host-agnostic audit recording baseline with audit-store cataloging for Cephalon runtimes. Contains 4 namespaces and 6 public types. [Browse](browse.html?assembly=Cephalon.Audit)
-- [Cephalon.Data](cephalon-data.md): Runtime-neutral data dispatching services for Cephalon workloads. Contains 2 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.Data)
+- [Cephalon.Data](cephalon-data.md): Runtime-neutral data dispatching services for Cephalon workloads. Contains 3 namespaces and 5 public types. [Browse](browse.html?assembly=Cephalon.Data)
 - [Cephalon.Data.EntityFramework](cephalon-data-entityframework.md): Entity Framework Core read/write, inbox, and outbox integration for Cephalon data workloads. Contains 4 namespaces and 11 public types. [Browse](browse.html?assembly=Cephalon.Data.EntityFramework)
 - [Cephalon.Eventing.Wolverine](cephalon-eventing-wolverine.md): Official Wolverine adapter and managed dispatch-loop integration for Cephalon eventing workloads. Contains 2 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.Eventing.Wolverine)
 - [Cephalon.Identity](cephalon-identity.md): Host-agnostic identity and authorization baseline for Cephalon runtimes. Contains 3 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Identity)

@@ -2,6 +2,7 @@ using System.Net.Http.Json;
 using System.Net.Http.Headers;
 using System.Net.WebSockets;
 using System.Net;
+using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
@@ -28,6 +29,8 @@ using Cephalon.AspNetCore.GraphQL.Hosting;
 using Cephalon.AspNetCore.Grpc.Contracts.Discovery;
 using Cephalon.AspNetCore.Grpc.Hosting;
 using Cephalon.AspNetCore.JsonRpc.Hosting;
+using Cephalon.Data.Registration;
+using Cephalon.Data.Services;
 using Cephalon.Edge.Registration;
 using Cephalon.Edge.Services;
 using Cephalon.Engine.AppModel;
@@ -3163,6 +3166,95 @@ note: visible
             module.Id == "operations" &&
             module.PackageId == "reference-operations");
         Assert.Contains("Operations module is running.", operationsStatus, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task MapCephalonExposesCdcCaptureRuntimeStateRoutesAndSnapshot()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularVerticalSlice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Patterns:0"] = "CQRS";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.Services.AddSingleton<IEventDispatchRuntimeCatalog>(new TestEventDispatchRuntimeCatalog(
+            new EventDispatchRuntimeState(
+                OutboxId: "tenant-event-outbox",
+                LastChannelId: "tenant-events",
+                LastOutcome: "succeeded",
+                LastObservedAtUtc: DateTimeOffset.Parse("2026-04-20T09:45:00Z", CultureInfo.InvariantCulture),
+                LastMessageId: "dispatch-002",
+                LastAttempt: 1,
+                StartedCount: 1,
+                SucceededCount: 1,
+                FailedCount: 0,
+                RetryScheduledCount: 0,
+                SkippedCount: 0,
+                LastError: null,
+                Metadata: new Dictionary<string, string>
+                {
+                    ["dispatchRuntime"] = "phase13"
+                })));
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new Phase8CatalogModule());
+            cephalon.AddData();
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var reporter = app.Services.GetRequiredService<ICdcCaptureRuntimeReporter>();
+        await reporter.ReportAsync(new CdcCaptureExecutionReport(
+            cdcCaptureId: "tenant-profile-cdc",
+            outcome: CdcCaptureRuntimeOutcomes.Captured,
+            observedAtUtc: DateTimeOffset.Parse("2026-04-20T10:15:00Z", CultureInfo.InvariantCulture),
+            capturedChangeCount: 4,
+            producedMessageCount: 4,
+            changeId: "lsn-0004",
+            checkpoint: "0/16B6C90",
+            metadata: new Dictionary<string, string>
+            {
+                ["captureRuntime"] = "phase13"
+            }));
+
+        var client = app.GetTestClient();
+        var states = await client.GetFromJsonAsync<CdcCaptureRuntimeState[]>("/engine/cdc-captures/runtime");
+        var state = await client.GetFromJsonAsync<CdcCaptureRuntimeState>("/engine/cdc-captures/runtime/tenant-profile-cdc");
+        var statesByModule = await client.GetFromJsonAsync<CdcCaptureRuntimeState[]>("/engine/cdc-captures/runtime/modules/phase8-runtime-catalogs");
+        var statesByProvider = await client.GetFromJsonAsync<CdcCaptureRuntimeState[]>("/engine/cdc-captures/runtime/providers/postgresql");
+        var statesByOutbox = await client.GetFromJsonAsync<CdcCaptureRuntimeState[]>("/engine/cdc-captures/runtime/outboxes/tenant-event-outbox");
+        var statesBySource = await client.GetFromJsonAsync<CdcCaptureRuntimeState[]>("/engine/cdc-captures/runtime/sources/tenant-db");
+        var statesByResource = await client.GetFromJsonAsync<CdcCaptureRuntimeState[]>("/engine/cdc-captures/runtime/resources/public.tenants");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(states);
+        var runtimeState = Assert.Single(states);
+        Assert.Equal("tenant-profile-cdc", runtimeState.CdcCaptureId);
+        Assert.NotNull(state);
+        Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, state.LastOutcome);
+        Assert.Equal(4, state.LastCapturedChangeCount);
+        Assert.Equal(4, state.TotalProducedMessageCount);
+        Assert.Equal("lsn-0004", state.LastChangeId);
+        Assert.Equal("0/16B6C90", state.LastCheckpoint);
+        Assert.Equal("phase13", state.Metadata["captureRuntime"]);
+        Assert.NotNull(state.OutboxDispatchState);
+        Assert.Equal("succeeded", state.OutboxDispatchState!.LastOutcome);
+        Assert.NotNull(statesByModule);
+        Assert.Single(statesByModule);
+        Assert.NotNull(statesByProvider);
+        Assert.Single(statesByProvider);
+        Assert.NotNull(statesByOutbox);
+        Assert.Single(statesByOutbox);
+        Assert.NotNull(statesBySource);
+        Assert.Single(statesBySource);
+        Assert.NotNull(statesByResource);
+        Assert.Single(statesByResource);
+        Assert.NotNull(snapshot);
+        var snapshotState = Assert.Single(snapshot.CdcCaptureStates);
+        Assert.Equal("tenant-profile-cdc", snapshotState.CdcCaptureId);
+        Assert.NotNull(snapshotState.OutboxDispatchState);
     }
 
     [Fact]
