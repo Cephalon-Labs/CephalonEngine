@@ -536,6 +536,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                 case "AsSaga": pattern = "saga-step"; break;
                 case "AsSagaChoreography": pattern = "saga-choreography"; break;
                 case "AsProcessManager": pattern = "process-manager"; break;
+                case "AsDurableExecution": pattern = "durable-execution"; break;
 
                 // Transport methods
                 case "ViaHttpJsonRpc": transports.Add("http.jsonrpc"); break;

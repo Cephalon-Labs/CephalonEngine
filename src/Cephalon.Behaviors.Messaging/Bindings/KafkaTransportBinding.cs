@@ -1,9 +1,11 @@
 using System.Text.Json;
 using Cephalon.Abstractions.Behaviors;
+using Cephalon.Abstractions.EventSourcing;
 using Cephalon.Behaviors.Messaging.Abstractions;
 using Cephalon.Behaviors.Messaging.Options;
 using Cephalon.Behaviors.Services;
 using Confluent.Kafka;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Behaviors.Messaging.Bindings;
@@ -70,6 +72,7 @@ public sealed class KafkaTransportBinding : IMessagingBehaviorBinding, IAsyncDis
 
     private readonly KafkaTransportOptions _options;
     private readonly ILogger<KafkaTransportBinding> _logger;
+    private readonly IServiceScopeFactory? _scopeFactory;
     private IConsumer<Ignore, string>? _consumer;
     private Task? _consumeTask;
     private CancellationTokenSource? _cts;
@@ -80,12 +83,19 @@ public sealed class KafkaTransportBinding : IMessagingBehaviorBinding, IAsyncDis
     /// </summary>
     /// <param name="options">The Kafka transport options.</param>
     /// <param name="logger">The logger for this binding.</param>
-    public KafkaTransportBinding(KafkaTransportOptions options, ILogger<KafkaTransportBinding> logger)
+    /// <param name="scopeFactory">
+    /// Optional scope factory used to resolve scoped services such as <see cref="IEventStore" /> per message.
+    /// </param>
+    public KafkaTransportBinding(
+        KafkaTransportOptions options,
+        ILogger<KafkaTransportBinding> logger,
+        IServiceScopeFactory? scopeFactory = null)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(logger);
         _options = options;
         _logger = logger;
+        _scopeFactory = scopeFactory;
     }
 
     /// <inheritdoc />
@@ -253,7 +263,9 @@ public sealed class KafkaTransportBinding : IMessagingBehaviorBinding, IAsyncDis
                 continue;
             }
 
-            var context = new KafkaBehaviorContext(behaviorId, result);
+            using var scope = _scopeFactory?.CreateScope();
+            var eventStore = scope?.ServiceProvider.GetService<IEventStore>();
+            var context = new KafkaBehaviorContext(behaviorId, result, eventStore);
 
             try
             {
@@ -293,9 +305,13 @@ public sealed class KafkaTransportBinding : IMessagingBehaviorBinding, IAsyncDis
     /// </summary>
     private sealed class KafkaBehaviorContext : IBehaviorContext
     {
-        internal KafkaBehaviorContext(string behaviorId, ConsumeResult<Ignore, string> result)
+        internal KafkaBehaviorContext(
+            string behaviorId,
+            ConsumeResult<Ignore, string> result,
+            IEventStore? eventStore)
         {
             BehaviorId = behaviorId;
+            EventStore = eventStore;
 
             var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
@@ -332,7 +348,7 @@ public sealed class KafkaTransportBinding : IMessagingBehaviorBinding, IAsyncDis
         public IReadOnlyDictionary<string, string> Metadata { get; }
 
         /// <inheritdoc />
-        public Cephalon.Abstractions.EventSourcing.IEventStore? EventStore => null;
+        public IEventStore? EventStore { get; }
 
         /// <inheritdoc />
         public Task ReplyAsync(object reply, CancellationToken cancellationToken = default)

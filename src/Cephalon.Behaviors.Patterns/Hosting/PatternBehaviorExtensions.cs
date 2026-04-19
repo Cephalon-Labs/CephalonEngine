@@ -36,6 +36,7 @@ public static class PatternBehaviorExtensions
         builder.Services.AddSingleton<IBehaviorExecutionStrategy, SagaExecutionStrategy>();
         builder.Services.AddSingleton<IBehaviorExecutionStrategy, ChoreographySagaExecutionStrategy>();
         builder.Services.AddSingleton<IBehaviorExecutionStrategy, ProcessManagerExecutionStrategy>();
+        builder.Services.AddSingleton<IBehaviorExecutionStrategy, DurableExecutionStrategy>();
         builder.Services.AddSingleton<IBehaviorExecutionStrategy, DirectExecutionStrategy>();
 
         // Register the registry — resolved from all IBehaviorExecutionStrategy registrations.

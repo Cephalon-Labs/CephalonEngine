@@ -118,6 +118,7 @@ internal sealed class BehaviorModule(
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IBehaviorCompatibilityRule, Abt003ProcessManagerRequiresInboxRule>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IBehaviorCompatibilityRule, Abt004CqrsMultipleTransportsRule>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IBehaviorCompatibilityRule, Abt005SagaChoreographyOutboxRule>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IBehaviorCompatibilityRule, Abt006DurableExecutionRequiresEventSourcingRule>());
 
         // Compatibility matrix
         services.TryAddSingleton<CompatibilityMatrix>();
@@ -453,7 +454,7 @@ internal sealed class BehaviorModule(
     }
 
     /// <summary>
-    /// Registers the five standard interaction pattern capabilities exposed by this module.
+    /// Registers the built-in interaction pattern capabilities exposed by this module.
     /// </summary>
     /// <param name="capabilities">The capability registry receiving module capabilities.</param>
     public override void RegisterCapabilities(ICapabilityRegistry capabilities)
@@ -484,6 +485,11 @@ internal sealed class BehaviorModule(
             key: "behaviors.process-manager",
             displayName: "Process Manager Behaviors",
             description: "Process manager behavior topology for long-running orchestrations."));
+
+        capabilities.Add(new Capability(
+            key: "behaviors.durable-execution",
+            displayName: "Durable Execution Behaviors",
+            description: "Replayable durable workflow behavior topology backed by event-store semantics."));
 
         capabilities.Add(new Capability(
             key: "behaviors.direct",

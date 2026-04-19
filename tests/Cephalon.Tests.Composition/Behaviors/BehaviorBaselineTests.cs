@@ -157,6 +157,16 @@ public sealed class BehaviorBaselineTests
         Assert.Equal("saga-choreography", desc.Pattern);
     }
 
+    [Fact]
+    public void BehaviorTopologyBuilderSupportsDurableExecutionPattern()
+    {
+        var desc = new BehaviorTopologyBuilder()
+            .AsDurableExecution()
+            .Build("x");
+
+        Assert.Equal("durable-execution", desc.Pattern);
+    }
+
     // BehaviorAllowlistValidator
     // ─────────────────────────────────────────────────────────────────────────
 
@@ -609,6 +619,19 @@ public sealed class BehaviorBaselineTests
         Assert.NotNull(violation);
         Assert.Equal(CompatibilitySeverity.Advisory, violation!.Severity);
         Assert.Equal("ABT-005", violation.RuleId);
+    }
+
+    [Fact]
+    public void CompatibilityMatrixAbt006DurableExecutionWithoutEventSourcingReturnsError()
+    {
+        var rule = new Abt006DurableExecutionRequiresEventSourcingRule();
+        var desc = new BehaviorTopologyDescriptor("order.workflow", "durable-execution", ["rabbitmq"]);
+
+        var violation = rule.Check(desc);
+
+        Assert.NotNull(violation);
+        Assert.Equal(CompatibilitySeverity.Error, violation!.Severity);
+        Assert.Equal("ABT-006", violation.RuleId);
     }
 
     // ─────────────────────────────────────────────────────────────────────────

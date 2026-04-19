@@ -1,6 +1,6 @@
 # Cephalon Engine Architecture Inventory
 
-Architecture inventory in this document reflects the repository state as of `April 18, 2026`.
+Architecture inventory in this document reflects the repository state as of `April 19, 2026`.
 
 Cross-references: `docs/architecture.md`, `docs/engine-roadmap.md`, `docs/engine-backlog.md`
 
@@ -141,7 +141,7 @@ Transports define the communication mechanism between client and server.
 
 Execution strategies define how behaviors execute under a given pattern.
 
-### Built-in strategies (6)
+### Built-in strategies (7)
 
 - `direct` — Direct: returns HTTP 200 when output is non-null, HTTP 204 when null. Synchronous request/response.
 - `cqrs` — CQRS: null output means command (HTTP 202 Accepted), non-null output means query (HTTP 200 OK). Read/write separation at the behavior level.
@@ -149,6 +149,7 @@ Execution strategies define how behaviors execute under a given pattern.
 - `saga-step` — Saga Step: loads saga state before invocation and persists it after successful execution. On exception, state is not saved so compensation logic can be applied. Saga identifier read from `IBehaviorContext.CorrelationId`.
 - `saga-choreography` — Saga Choreography: invokes one choreography step, stages returned `SagaChoreographyPublication` entries through `ISagaChoreographyPublisher`, and returns HTTP 202 when publications were accepted.
 - `process-manager` — Process Manager: loads process checkpoint before invocation, saves after successful step, deletes when process signals completion via `IProcessCompletion`. Process identifier read from `IBehaviorContext.CorrelationId`.
+- `durable-execution` — Durable Execution: replays state from `IEventStore`, validates sequential stream-version output from `IDurableExecution<TInput, TState, TOutput>`, appends continuation events, returns HTTP 200 with local output, HTTP 202 when continuation events were staged without local output, and HTTP 204 when the step completed without output.
 
 ## Modules
 
@@ -205,12 +206,14 @@ Modules are the primary composition unit. Each module registers services, capabi
 
 Capabilities are the fine-grained feature advertisements exposed by modules.
 
-### Behavior capabilities (5)
+### Behavior capabilities (7)
 
 - `behaviors.cqrs` — CQRS Behaviors
 - `behaviors.event-driven` — Event-Driven Behaviors
 - `behaviors.saga` — Saga Behaviors
+- `behaviors.saga-choreography` — Saga Choreography Behaviors
 - `behaviors.process-manager` — Process Manager Behaviors
+- `behaviors.durable-execution` — Durable Execution Behaviors
 - `behaviors.direct` — Direct Behaviors
 
 ### Data core capabilities (2)
@@ -509,12 +512,12 @@ The engine exposes operator-facing runtime information through these endpoints:
 ## Summary counts
 
 - Blueprints: 3 app + 1 suite = **4**
-- Patterns: **17**
+- Patterns: **21**
 - Technologies: **10**
 - Transports: **6** + 3 messaging bindings = **9**
-- Execution strategies: **5**
+- Execution strategies: **7**
 - Modules: 6 core + 10 data + 10 event-sourcing + 5 specialized + 1 identifier = **32**
-- Capabilities: **69+**
+- Capabilities: **71+**
 - Data abstractions: **24+** interfaces
 - Diagnostics sources: **9**
 - Dependency health probes: **18**

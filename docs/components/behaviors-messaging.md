@@ -31,6 +31,14 @@ services.AddCephalon(config, engine => engine
 );
 ```
 
+## EventStore handoff
+
+When `IEventStore` is registered, the Kafka and RabbitMQ bindings now create a per-message or
+per-delivery DI scope and flow the scoped store into `IBehaviorContext.EventStore`. That keeps
+durable execution and other replay-aware behavior patterns transport-neutral: the messaging pack
+does not own replay logic itself, but it does preserve the shared event-store truth when a
+messaging-triggered behavior needs it.
+
 ## Status
 
 > Status: ✅ Shipped — commit 9183407 · 527/527 tests
@@ -39,4 +47,4 @@ services.AddCephalon(config, engine => engine
 
 - `Cephalon.Behaviors` — dispatcher, catalog, resolver (M1)
 - `Cephalon.Behaviors.Http` — HTTP transport bindings (M2)
-- `Cephalon.Behaviors.Patterns` — pattern execution strategies (M4, upcoming)
+- `Cephalon.Behaviors.Patterns` — pattern execution strategies (M4, shipped)

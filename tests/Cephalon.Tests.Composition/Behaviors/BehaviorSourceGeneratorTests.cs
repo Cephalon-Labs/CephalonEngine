@@ -52,6 +52,7 @@ public sealed class BehaviorSourceGeneratorTests
 
             public interface IBehaviorTopologyBuilder
             {
+                IBehaviorTopologyBuilder AsDurableExecution();
                 IBehaviorTopologyBuilder ViaHttpJsonRpc();
             }
         }
@@ -1071,6 +1072,34 @@ public sealed class BehaviorSourceGeneratorTests
         Assert.NotNull(autoRegistration);
         Assert.Contains("new global::Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor(\"orders.lookup\"", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("\"http.jsonrpc\"", autoRegistration, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void ConfigureTopologyWithDurableExecutionPatternGeneratesCompileTimeDescriptor()
+    {
+        const string source = """
+            using Cephalon.Abstractions.Behaviors;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            [AppBehavior("orders.workflow")]
+            public sealed class OrderWorkflowBehavior : IAppBehavior<string, string>
+            {
+                public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
+                    => builder.AsDurableExecution();
+
+                public Task<string> HandleAsync(string input, IBehaviorContext ctx, CancellationToken ct = default)
+                    => Task.FromResult("ok");
+            }
+            """;
+
+        var (result, diagnostics) = RunGenerator(source);
+
+        Assert.Empty(diagnostics);
+
+        var autoRegistration = GetGeneratedAutoRegistrationSource(result);
+        Assert.NotNull(autoRegistration);
+        Assert.Contains("\"durable-execution\"", autoRegistration, StringComparison.Ordinal);
     }
 
     [Fact]

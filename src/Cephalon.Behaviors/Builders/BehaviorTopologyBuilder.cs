@@ -62,6 +62,13 @@ public sealed class BehaviorTopologyBuilder : IBehaviorTopologyBuilder
         return this;
     }
 
+    /// <inheritdoc />
+    public IBehaviorTopologyBuilder AsDurableExecution()
+    {
+        _pattern = "durable-execution";
+        return this;
+    }
+
     // ── Legacy pattern methods (With*Pattern — kept for backward compat) ─
 
     /// <summary>
@@ -121,6 +128,16 @@ public sealed class BehaviorTopologyBuilder : IBehaviorTopologyBuilder
     public BehaviorTopologyBuilder WithProcessManagerPattern()
     {
         _pattern = "process-manager";
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the interaction pattern to <c>durable-execution</c>.
+    /// </summary>
+    /// <returns>The same builder for fluent chaining.</returns>
+    public BehaviorTopologyBuilder WithDurableExecutionPattern()
+    {
+        _pattern = "durable-execution";
         return this;
     }
 

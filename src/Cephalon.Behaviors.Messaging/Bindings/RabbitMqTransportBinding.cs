@@ -1,9 +1,11 @@
 using System.Text;
 using System.Text.Json;
 using Cephalon.Abstractions.Behaviors;
+using Cephalon.Abstractions.EventSourcing;
 using Cephalon.Behaviors.Messaging.Abstractions;
 using Cephalon.Behaviors.Messaging.Options;
 using Cephalon.Behaviors.Services;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -96,6 +98,7 @@ public sealed class RabbitMqTransportBinding : IMessagingBehaviorBinding, IAsync
 
     private readonly RabbitMqTransportOptions _options;
     private readonly ILogger<RabbitMqTransportBinding> _logger;
+    private readonly IServiceScopeFactory? _scopeFactory;
     private readonly SemaphoreSlim _initLock = new(1, 1);
     private volatile bool _initialized;
     private IConnection? _connection;
@@ -110,12 +113,19 @@ public sealed class RabbitMqTransportBinding : IMessagingBehaviorBinding, IAsync
     /// </summary>
     /// <param name="options">The RabbitMQ transport options.</param>
     /// <param name="logger">The logger for this binding.</param>
-    public RabbitMqTransportBinding(RabbitMqTransportOptions options, ILogger<RabbitMqTransportBinding> logger)
+    /// <param name="scopeFactory">
+    /// Optional scope factory used to resolve scoped services such as <see cref="IEventStore" /> per delivery.
+    /// </param>
+    public RabbitMqTransportBinding(
+        RabbitMqTransportOptions options,
+        ILogger<RabbitMqTransportBinding> logger,
+        IServiceScopeFactory? scopeFactory = null)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(logger);
         _options = options;
         _logger = logger;
+        _scopeFactory = scopeFactory;
     }
 
     /// <inheritdoc />
@@ -282,7 +292,9 @@ public sealed class RabbitMqTransportBinding : IMessagingBehaviorBinding, IAsync
             return;
         }
 
-        var context = new RabbitMqBehaviorContext(behaviorId, ea);
+        using var scope = _scopeFactory?.CreateScope();
+        var eventStore = scope?.ServiceProvider.GetService<IEventStore>();
+        var context = new RabbitMqBehaviorContext(behaviorId, ea, eventStore);
 
         for (int attempt = 0; attempt < _options.MaxRetryAttempts; attempt++)
         {
@@ -380,9 +392,13 @@ public sealed class RabbitMqTransportBinding : IMessagingBehaviorBinding, IAsync
     /// </summary>
     private sealed class RabbitMqBehaviorContext : IBehaviorContext
     {
-        internal RabbitMqBehaviorContext(string behaviorId, BasicDeliverEventArgs ea)
+        internal RabbitMqBehaviorContext(
+            string behaviorId,
+            BasicDeliverEventArgs ea,
+            IEventStore? eventStore)
         {
             BehaviorId = behaviorId;
+            EventStore = eventStore;
 
             var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             metadata["TransportId"] = "rabbitmq";
@@ -416,7 +432,7 @@ public sealed class RabbitMqTransportBinding : IMessagingBehaviorBinding, IAsync
         public IReadOnlyDictionary<string, string> Metadata { get; }
 
         /// <inheritdoc />
-        public Cephalon.Abstractions.EventSourcing.IEventStore? EventStore => null;
+        public IEventStore? EventStore { get; }
 
         /// <inheritdoc />
         public Task ReplyAsync(object reply, CancellationToken cancellationToken = default)

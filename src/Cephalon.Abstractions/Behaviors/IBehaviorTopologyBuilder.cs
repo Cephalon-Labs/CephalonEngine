@@ -14,6 +14,8 @@ public interface IBehaviorTopologyBuilder
     IBehaviorTopologyBuilder AsSagaChoreography();
     /// <summary>Declares this behavior as a process manager step (long-running, durable checkpoint).</summary>
     IBehaviorTopologyBuilder AsProcessManager();
+    /// <summary>Declares this behavior as a durable execution workflow with event-store replay semantics.</summary>
+    IBehaviorTopologyBuilder AsDurableExecution();
     /// <summary>Declares this behavior as direct (no architectural pattern — input → handler → output, 200/204 HTTP).</summary>
     IBehaviorTopologyBuilder AsDirect();
 

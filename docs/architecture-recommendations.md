@@ -220,17 +220,16 @@ Effort: medium.
 
 ### Durable Execution (Temporal/Restate style)
 
-Current state: Process Manager is close but lacks replay semantics and automatic failure recovery. Durable execution provides long-running workflows that survive process restarts.
+Current state: the first durable-execution baseline is now shipped. `IBehaviorTopologyBuilder.AsDurableExecution()` plus source-generated `durable-execution` literals let behaviors opt into replay explicitly, and `Cephalon.Behaviors.Patterns` now exports `IDurableExecution<TState>`, `IDurableExecution<TInput, TState, TOutput>`, `DurableExecutionState<TState>`, `DurableExecutionStepResult<TOutput>`, and `DurableExecutionStrategy`. The shared strategy replays state from `IEventStore`, validates sequential stream versions before append, and returns truthful `200`, `202`, or `204` outcomes based on local output versus continuation-only work. `Cephalon.Behaviors` now also exposes capability `behaviors.durable-execution` plus rule `ABT-006`, and the Kafka, RabbitMQ, and test behavior contexts can now flow `IEventStore` into the shared pipeline for non-default-host execution.
 
-Recommendation: add durable execution infrastructure on top of the existing process-manager and event-sourcing foundations.
+Recommendation: keep the replay contract host-agnostic and `IEventStore`-backed, keep durable authoring explicit through `IDurableExecution` instead of hiding deterministic replay requirements behind generic behavior interfaces, and add richer operator/runtime surfaces only when they can stay derived from that same shared replay truth.
 
 Implementation outline:
-- `IDurableExecution<TState>` — workflow definition with replay semantics
-- Execution journal for deterministic replay
-- Integration with existing `IEventStore` for persistence
-- Capability: `behaviors.durable-execution`
+- shipped baseline: `IBehaviorTopologyBuilder.AsDurableExecution()`, source-generated `durable-execution` literals, `IDurableExecution<TState>`, `IDurableExecution<TInput, TState, TOutput>`, `DurableExecutionState<TState>`, `DurableExecutionStepResult<TOutput>`, `DurableExecutionStrategy`, capability `behaviors.durable-execution`, and compatibility rule `ABT-006`
+- next follow-through: operator-facing runtime/catalog answers for active durable executions, replay progress, or failure posture when a concrete host/operator workflow needs them
+- later follow-through: higher-level timers, signals, or compensation helpers only when they can remain additive over the shared replay contract instead of becoming a second workflow engine hidden inside `Cephalon.Behaviors`
 
-Effort: large.
+Effort: medium for the remaining follow-through.
 
 ### Change Data Capture — CDC (event-driven data sync)
 
@@ -267,7 +266,7 @@ Exit criteria:
 
 ### Phase 12 — Migration and Advanced Coordination
 
-Target: Sprint 36–37
+Target: Sprint 38–39
 
 Deliverables:
 - Strangler Fig migration pattern
@@ -278,17 +277,23 @@ Deliverables:
   `IFeatureFlagContributor`, `Engine:Features`, `/engine/features`,
   `/engine/features/{featureFlagId}/evaluate`, and `snapshot.FeatureFlags` while provider
   integration and any future capability publication remain later follow-through
-- Durable Execution foundations
+- Durable Execution foundations — shipped through `IBehaviorTopologyBuilder.AsDurableExecution()`,
+  source-generated `durable-execution` literals, `IDurableExecution<TState>`,
+  `IDurableExecution<TInput, TState, TOutput>`, `DurableExecutionState<TState>`,
+  `DurableExecutionStepResult<TOutput>`, `DurableExecutionStrategy`,
+  `behaviors.durable-execution`, and `ABT-006` while richer operator/runtime surfaces remain later
 
 Exit criteria:
 - a consumer app can migrate incrementally from a legacy system using the strangler fig router
 - sagas can coordinate through events (choreography) in addition to state (orchestration)
 - feature flags can gate behavior, module, transport, environment, tenant, subject, or tag-scoped
   availability through `IFeatureToggle` and `Engine:Features`
+- durable execution workflows can replay and append through `IEventStore` across process restarts
+  without a transport-specific workflow runner
 
 ### Phase 13 — Next-Generation Patterns
 
-Target: Sprint 38–39
+Target: Sprint 40–41
 
 Deliverables:
 - Cell-Based Architecture technology descriptor and boundary abstraction

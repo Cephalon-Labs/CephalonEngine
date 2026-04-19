@@ -2,7 +2,8 @@
 
 `Cephalon.Behaviors.Patterns` is the M4 pattern execution layer of the Adaptive Behavior Topology (ABT).
 It provides built-in strategies that govern how a behavior invocation is dispatched, what
-HTTP status code is returned, and how saga/process-manager state or choreography publications are handled.
+HTTP status code is returned, and how saga/process-manager state, choreography publications, or
+durable-execution replay are handled.
 
 ## What it owns
 
@@ -12,6 +13,8 @@ HTTP status code is returned, and how saga/process-manager state or choreography
 - **ISagaStateStore / IProcessCheckpointStore** — persistence contracts
 - **ISagaChoreographyPublisher** — host-agnostic publication handoff contract for choreography steps
 - **SagaChoreographyPublication / SagaChoreographyStepResult** — host-agnostic choreography output contracts
+- **IDurableExecution<TState> / IDurableExecution<TInput, TState, TOutput>** — host-agnostic durable workflow contract over `IEventStore` replay
+- **DurableExecutionState<TState> / DurableExecutionStepResult<TOutput>** — replay snapshot and step-result contracts for durable execution
 - **InMemorySagaStateStore** — `ConcurrentDictionary`-backed saga state with JSON serialization
 - **InMemoryProcessCheckpointStore** — `ConcurrentDictionary`-backed checkpoint store
 - **InMemorySagaChoreographyPublisher** — in-memory choreography publication collector for local development and tests
@@ -20,6 +23,7 @@ HTTP status code is returned, and how saga/process-manager state or choreography
 - **SagaExecutionStrategy** — pattern: `"saga-step"`, loads/saves saga state via `ISagaStateStore`
 - **ChoreographySagaExecutionStrategy** — pattern: `"saga-choreography"`, stages returned choreography publications through `ISagaChoreographyPublisher`
 - **ProcessManagerExecutionStrategy** — pattern: `"process-manager"`, checkpoint lifecycle management
+- **DurableExecutionStrategy** — pattern: `"durable-execution"`, replays state from `IEventStore` and appends deterministic continuation events
 - **DirectExecutionStrategy** — pattern: `"direct"`, 200 with output / 204 with null
 - **ExecutionStrategyRegistry** — `FrozenDictionary` O(1) registry for all strategies
 - **Hosting** — `AddBehaviorPatterns()` extension on `IBehaviorCollectionBuilder`
@@ -33,6 +37,7 @@ HTTP status code is returned, and how saga/process-manager state or choreography
 | `saga-step` | `SagaExecutionStrategy` | 200 | 200 | No |
 | `saga-choreography` | `ChoreographySagaExecutionStrategy` | 202 when publications exist, otherwise 200 | 204 | No |
 | `process-manager` | `ProcessManagerExecutionStrategy` | 200 | 200 | No |
+| `durable-execution` | `DurableExecutionStrategy` | 200 | 202 when continuation events were appended, otherwise 204 | No |
 | `direct` | `DirectExecutionStrategy` | 200 | 204 | No |
 
 ## Registration
@@ -68,6 +73,25 @@ The baseline stays host-agnostic on purpose. `Cephalon.Behaviors.Patterns` does 
 `Cephalon.Eventing`; instead, it exposes `ISagaChoreographyPublisher` plus an in-memory default so
 tests, local development, and future bridge packages can all use the same execution contract.
 
+## Durable execution contract
+
+Durable workflows opt in explicitly through `IBehaviorTopologyBuilder.AsDurableExecution()` and the
+`IDurableExecution<...>` contracts exported by `Cephalon.Behaviors.Patterns`.
+
+- `ResolveStreamId(...)` keeps stream ownership explicit instead of deriving it from ambient host state
+- `CreateInitialState()` seeds the replay state for new streams
+- `DurableExecutionStrategy` replays current state from `IBehaviorContext.EventStore`, passes that
+  snapshot to `ExecuteDurablyAsync(...)`, validates that returned events continue the stream with
+  sequential versions, and appends them through `IEventStore.AppendAsync(...)`
+- the strategy returns `200` when the step produced local output, `202` when it only staged
+  continuation events, and `204` when the step completed without output
+
+The durable baseline intentionally stays smaller than a full workflow engine. It does not add a
+second journal or a transport-specific runner; it reuses the existing `IEventStore` contract so
+HTTP, messaging, and tests can share the same replay truth. `Cephalon.Behaviors` also enforces
+`ABT-006`, which requires `EventSourcingEnabled = true` whenever a behavior declares the
+`durable-execution` pattern.
+
 ## Replacing the default stores
 
 Register your own `ISagaStateStore`, `IProcessCheckpointStore`, or `ISagaChoreographyPublisher`
@@ -81,7 +105,7 @@ builder.Services.AddSingleton<ISagaChoreographyPublisher, MySagaChoreographyPubl
 
 ## Status
 
-> Status: ✅ Shipped — commit cc2ab0a · 575/575 tests
+> Status: ✅ Shipped — M4 baseline plus later follow-through for saga choreography and durable execution
 
 ## Related components
 

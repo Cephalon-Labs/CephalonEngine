@@ -11,13 +11,20 @@ internal sealed class TestBehaviorContext : IBehaviorContext
 {
     private readonly bool _isDirect;
     private readonly List<object> _replies = [];
+    private readonly IEventStore? _eventStore;
 
-    internal TestBehaviorContext(string behaviorId, bool isDirect = false, IReadOnlyDictionary<string, string>? metadata = null, string? correlationId = null)
+    internal TestBehaviorContext(
+        string behaviorId,
+        bool isDirect = false,
+        IReadOnlyDictionary<string, string>? metadata = null,
+        string? correlationId = null,
+        IEventStore? eventStore = null)
     {
         BehaviorId = behaviorId;
         _isDirect = isDirect;
         Metadata = metadata ?? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         CorrelationId = correlationId;
+        _eventStore = eventStore;
     }
 
     public string BehaviorId { get; }
@@ -26,7 +33,7 @@ internal sealed class TestBehaviorContext : IBehaviorContext
 
     public IReadOnlyDictionary<string, string> Metadata { get; }
 
-    public IEventStore? EventStore => null;
+    public IEventStore? EventStore => _eventStore;
 
     public IReadOnlyList<object> Replies => _replies.AsReadOnly();
 

@@ -14,7 +14,7 @@
 - **Hosting** — `IEngineBuilder.AddBehaviors(configure?)` extension + `BehaviorModule`
 - **Configuration** — `Engine:Behaviors` auto-registration controls
 - **Built-in compatibility rules** — startup guardrails covering saga, saga choreography,
-  process-manager, and CQRS constraints
+  durable execution, process-manager, and CQRS constraints
 
 ## Key contracts (from `Cephalon.Abstractions.Behaviors`)
 
@@ -22,7 +22,7 @@
 |------|-------------|
 | `IAppBehavior<TIn, TOut>` | Single behavior interface — `HandleAsync` + optional `static virtual ConfigureTopology` |
 | `IBehaviorContext` | Transport-neutral ambient API: `BehaviorId`, `CorrelationId`, `Metadata`, optional `EventStore`, and `ReplyAsync(...)` |
-| `IBehaviorTopologyBuilder` | Fluent builder: `AsCqrs()`, `AsEventDriven()`, `AsSagaChoreography()`, `ViaHttpJsonRpc()`, `ViaRabbitMq()`, `RequireFeatureFlag(...)`, etc. |
+| `IBehaviorTopologyBuilder` | Fluent builder: `AsCqrs()`, `AsEventDriven()`, `AsSagaChoreography()`, `AsDurableExecution()`, `ViaHttpJsonRpc()`, `ViaRabbitMq()`, `RequireFeatureFlag(...)`, etc. |
 | `IBehaviorModuleBuilder` | Host-agnostic builder that lets a module declare which behaviors it owns |
 | `IBehaviorOwnerModule` | Module contract for explicit behavior ownership through `ConfigureBehaviors(...)` |
 | `OwnedBehaviorRegistration` | Runtime composition record describing one module-owned behavior registration |
@@ -82,6 +82,22 @@ HTTP transports, messaging, or background orchestration rather than a module-own
 Owned registrations now also preserve the owning module id on the resolved
 `BehaviorTopologyDescriptor`, which means runtime catalogs and transport faults can report both the
 behavior id and the owning module when a shared feature gate blocks execution.
+
+## Durable execution pattern
+
+Use `AsDurableExecution()` when a behavior should replay aggregate-like state from the shared
+event-sourcing baseline instead of only checkpointing one step at a time.
+
+- implement `IDurableExecution<TInput, TState, TOutput>` from `Cephalon.Behaviors.Patterns`
+- keep stream ownership explicit through `ResolveStreamId(...)` instead of relying on transport-only
+  identifiers
+- return `DurableExecutionStepResult<TOutput>` so the runtime can append deterministic continuation
+  events and distinguish `200`, `202`, and `204` outcomes truthfully
+- keep `EventSourcingEnabled = true`; built-in rule `ABT-006` fails fast when a behavior declares
+  `durable-execution` without the event-sourcing baseline
+
+That baseline intentionally reuses `IBehaviorContext.EventStore` rather than inventing a second
+workflow journal, which keeps HTTP, messaging, and tests aligned on the same replay contract.
 
 ## Feature-gated execution
 
@@ -267,7 +283,7 @@ Implements `ITechnologyRuntimeContributor` and reports the behavior subsystem su
 `/engine/snapshot`:
 
 - Total registered behavior count
-- Pattern distribution (cqrs / event-driven / saga-step / saga-choreography / process-manager / direct)
+- Pattern distribution (cqrs / event-driven / saga-step / saga-choreography / process-manager / durable-execution / direct)
 - Transport distribution across all registered behaviors
 - Feature-gated behavior count across the active catalog
 - Per-behavior required feature ids and owning module id when the resolved topology declares them
@@ -288,8 +304,8 @@ Implements `ITechnologyRuntimeContributor` and reports the behavior subsystem su
 `IEventStore` is registered:
 
 - `DefaultBehaviorContext` — resolves from DI
-- `KafkaBehaviorContext` — resolves from DI
-- `RabbitMqBehaviorContext` — resolves from DI
+- `KafkaBehaviorContext` — resolves from a per-message DI scope
+- `RabbitMqBehaviorContext` — resolves from a per-delivery DI scope
 - `TestBehaviorContext` — accepts injected `IEventStore?` for test scenarios
 
 `BehaviorExecutionSlot` now also deserializes `JsonElement` payloads with

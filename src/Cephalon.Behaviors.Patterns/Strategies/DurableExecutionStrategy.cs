@@ -1,0 +1,264 @@
+using System.Collections.Concurrent;
+using System.Text.Json;
+using Cephalon.Abstractions.Behaviors;
+using Cephalon.Abstractions.EventSourcing;
+using Cephalon.Behaviors.Patterns.Abstractions;
+
+namespace Cephalon.Behaviors.Patterns.Strategies;
+
+/// <summary>
+/// Executes replayable durable workflows by rebuilding state from an event-store stream,
+/// invoking the workflow step, and appending the emitted domain events with optimistic concurrency.
+/// </summary>
+public sealed class DurableExecutionStrategy : IBehaviorExecutionStrategy
+{
+    private static readonly JsonSerializerOptions WebJsonSerializerOptions = new(JsonSerializerDefaults.Web);
+    private static readonly ConcurrentDictionary<Type, IDurableExecutionAdapter> Adapters = new();
+
+    /// <summary>Gets the pattern identifier handled by this strategy.</summary>
+    public string Pattern => "durable-execution";
+
+    /// <summary>
+    /// Replays the durable workflow stream, executes one workflow step, validates the returned domain events,
+    /// and appends them through <see cref="IBehaviorContext.EventStore" />.
+    /// </summary>
+    /// <param name="context">The execution context for this invocation.</param>
+    /// <param name="ct">A token that cancels the execution.</param>
+    /// <returns>
+    /// A result with HTTP 200 when local output exists, HTTP 202 when only durable continuation events were staged,
+    /// or HTTP 204 when no local output remains and the step completed without follow-up events.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when durable execution is selected for a behavior that does not implement
+    /// <c>IDurableExecution&lt;TInput, TState, TOutput&gt;</c>, when the behavior context does not carry an event store,
+    /// or when the returned events do not match the expected stream identity or version sequence.
+    /// </exception>
+    public async Task<BehaviorExecutionResult> ExecuteAsync(
+        BehaviorExecutionContext context,
+        CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+
+        var adapter = Adapters.GetOrAdd(
+            context.BehaviorInstance.GetType(),
+            static behaviorType => DurableExecutionAdapterFactory.Create(behaviorType));
+        var eventStore = context.BehaviorContext.EventStore
+            ?? throw new InvalidOperationException(
+                $"DurableExecutionStrategy requires IBehaviorContext.EventStore for behavior '{context.Descriptor.Id}'.");
+        var streamId = adapter.ResolveStreamId(context.BehaviorInstance, context.Descriptor.Id, context.BehaviorContext);
+        if (string.IsNullOrWhiteSpace(streamId))
+        {
+            throw new InvalidOperationException(
+                $"Durable execution behavior '{context.Descriptor.Id}' returned an empty stream id.");
+        }
+
+        streamId = streamId.Trim();
+        var state = adapter.CreateInitialState(context.BehaviorInstance);
+        var version = await eventStore.GetVersionAsync(streamId, ct).ConfigureAwait(false);
+
+        if (version >= 0)
+        {
+            await foreach (var domainEvent in eventStore.ReadStreamAsync(streamId, 0, ct))
+            {
+                state = adapter.Apply(context.BehaviorInstance, state, domainEvent);
+            }
+        }
+
+        var step = await adapter.ExecuteAsync(
+                context.BehaviorInstance,
+                context.Input,
+                state,
+                streamId,
+                version,
+                context.BehaviorContext,
+                ct)
+            .ConfigureAwait(false);
+
+        ValidateReturnedEvents(
+            context.Descriptor.Id,
+            streamId,
+            version,
+            step.Events);
+
+        if (step.Events.Count > 0)
+        {
+            await eventStore.AppendAsync(streamId, step.Events, version, ct).ConfigureAwait(false);
+        }
+
+        return new BehaviorExecutionResult
+        {
+            Output = step.Output,
+            HttpStatusCode = ResolveHttpStatusCode(step),
+            IsFireAndForget = false
+        };
+    }
+
+    private static int ResolveHttpStatusCode(DurableExecutionStepEnvelope step)
+    {
+        ArgumentNullException.ThrowIfNull(step);
+
+        if (step.Output is not null)
+        {
+            return 200;
+        }
+
+        if (step.Events.Count > 0 && !step.IsCompleted)
+        {
+            return 202;
+        }
+
+        return 204;
+    }
+
+    private static void ValidateReturnedEvents(
+        string behaviorId,
+        string streamId,
+        long currentVersion,
+        IReadOnlyList<IDomainEvent> events)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(streamId);
+        ArgumentNullException.ThrowIfNull(events);
+
+        var expectedVersion = currentVersion + 1;
+        foreach (var domainEvent in events)
+        {
+            ArgumentNullException.ThrowIfNull(domainEvent);
+
+            if (!string.Equals(domainEvent.StreamId, streamId, StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException(
+                    $"Durable execution behavior '{behaviorId}' returned event '{domainEvent.GetType().Name}' for stream '{domainEvent.StreamId}', but '{streamId}' was expected.");
+            }
+
+            if (domainEvent.StreamVersion != expectedVersion)
+            {
+                throw new InvalidOperationException(
+                    $"Durable execution behavior '{behaviorId}' returned event '{domainEvent.GetType().Name}' with stream version {domainEvent.StreamVersion}, but {expectedVersion} was expected.");
+            }
+
+            expectedVersion++;
+        }
+    }
+
+    private interface IDurableExecutionAdapter
+    {
+        string ResolveStreamId(object behavior, string behaviorId, IBehaviorContext context);
+
+        object? CreateInitialState(object behavior);
+
+        object? Apply(object behavior, object? currentState, IDomainEvent domainEvent);
+
+        Task<DurableExecutionStepEnvelope> ExecuteAsync(
+            object behavior,
+            object input,
+            object? currentState,
+            string streamId,
+            long version,
+            IBehaviorContext context,
+            CancellationToken cancellationToken);
+    }
+
+    private static class DurableExecutionAdapterFactory
+    {
+        internal static IDurableExecutionAdapter Create(Type behaviorType)
+        {
+            ArgumentNullException.ThrowIfNull(behaviorType);
+
+            var durableInterface = behaviorType
+                .GetInterfaces()
+                .FirstOrDefault(static candidate =>
+                    candidate.IsGenericType &&
+                    candidate.GetGenericTypeDefinition() == typeof(IDurableExecution<,,>))
+                ?? throw new InvalidOperationException(
+                    $"Behavior type '{behaviorType.FullName}' selected the 'durable-execution' pattern but does not implement IDurableExecution<TInput, TState, TOutput>.");
+
+            var typeArguments = durableInterface.GetGenericArguments();
+            var adapterType = typeof(DurableExecutionAdapter<,,,>).MakeGenericType(
+                behaviorType,
+                typeArguments[0],
+                typeArguments[1],
+                typeArguments[2]);
+
+            return (IDurableExecutionAdapter)Activator.CreateInstance(adapterType)!;
+        }
+    }
+
+    private sealed class DurableExecutionAdapter<TBehavior, TInput, TState, TOutput> : IDurableExecutionAdapter
+        where TBehavior : class, IDurableExecution<TInput, TState, TOutput>
+    {
+        public string ResolveStreamId(object behavior, string behaviorId, IBehaviorContext context)
+        {
+            ArgumentNullException.ThrowIfNull(behavior);
+            ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
+            ArgumentNullException.ThrowIfNull(context);
+
+            return ((TBehavior)behavior).ResolveStreamId(behaviorId, context);
+        }
+
+        public object? CreateInitialState(object behavior)
+        {
+            ArgumentNullException.ThrowIfNull(behavior);
+            return ((TBehavior)behavior).CreateInitialState();
+        }
+
+        public object? Apply(object behavior, object? currentState, IDomainEvent domainEvent)
+        {
+            ArgumentNullException.ThrowIfNull(behavior);
+            ArgumentNullException.ThrowIfNull(domainEvent);
+
+            return ((TBehavior)behavior).Apply(
+                currentState is null ? default! : (TState)currentState,
+                domainEvent);
+        }
+
+        public async Task<DurableExecutionStepEnvelope> ExecuteAsync(
+            object behavior,
+            object input,
+            object? currentState,
+            string streamId,
+            long version,
+            IBehaviorContext context,
+            CancellationToken cancellationToken)
+        {
+            ArgumentNullException.ThrowIfNull(behavior);
+            ArgumentNullException.ThrowIfNull(context);
+            ArgumentException.ThrowIfNullOrWhiteSpace(streamId);
+
+            var typedInput = input is JsonElement jsonElement
+                ? JsonSerializer.Deserialize<TInput>(jsonElement.GetRawText(), WebJsonSerializerOptions)!
+                : (TInput)input;
+            var executionState = new DurableExecutionState<TState>(
+                streamId,
+                currentState is null ? default! : (TState)currentState,
+                version);
+            var result = await ((TBehavior)behavior)
+                .ExecuteDurablyAsync(typedInput, executionState, context, cancellationToken)
+                .ConfigureAwait(false);
+
+            return new DurableExecutionStepEnvelope(
+                result.Output,
+                result.Events,
+                result.IsCompleted);
+        }
+    }
+
+    private sealed class DurableExecutionStepEnvelope
+    {
+        internal DurableExecutionStepEnvelope(
+            object? output,
+            IReadOnlyList<IDomainEvent> events,
+            bool isCompleted)
+        {
+            Output = output;
+            Events = events;
+            IsCompleted = isCompleted;
+        }
+
+        internal object? Output { get; }
+
+        internal IReadOnlyList<IDomainEvent> Events { get; }
+
+        internal bool IsCompleted { get; }
+    }
+}
