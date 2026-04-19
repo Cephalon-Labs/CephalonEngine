@@ -13091,6 +13091,283 @@ IReadOnlyList<string> TransportIds { get; }
 
 Gets the transport identifiers that expose the durable workflow.
 
+<a id="type-cephalon-abstractions-execution-durableexecutionruntimestate"></a>
+
+### `DurableExecutionRuntimeState`
+
+Describes the latest operator-facing runtime state reported for one durable-execution stream.
+
+#### Declaration
+```csharp
+public sealed class DurableExecutionRuntimeState
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-execution-durableexecutionruntimestate-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-int64-system-nullable-system-int64-system-nullable-system-int32-system-int32-system-boolean-system-boolean-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `DurableExecutionRuntimeState`
+
+```csharp
+DurableExecutionRuntimeState(string BehaviorId, string StreamId, string SourceModuleId, IReadOnlyList<string> TransportIds, string LastOutcome, string LastStage, DateTimeOffset? LastObservedAtUtc, long? LastReplayedVersion, long? LastKnownVersion, int? LastHttpStatusCode, int LastAppendedEventCount, bool LastStepProducedOutput, bool LastStepCompleted, int StartedCount, int SucceededCount, int ContinuationCount, int CompletedCount, int FailedCount, string LastError, IReadOnlyDictionary<string, string> Metadata)
+```
+
+Describes the latest operator-facing runtime state reported for one durable-execution stream.
+
+Parameters:
+- `BehaviorId`: The stable durable behavior identifier that owns the stream.
+- `StreamId`: The stable event-stream identifier reported by the durable workflow.
+- `SourceModuleId`: The owning module identifier when one is known at runtime.
+- `TransportIds`: The transport identifiers that expose the durable workflow.
+- `LastOutcome`: The last reported durable-execution outcome identifier when one exists.
+- `LastStage`: The last reported durable-execution stage identifier when one exists.
+- `LastObservedAtUtc`: The UTC timestamp when the latest observation was reported.
+- `LastReplayedVersion`: The latest stream version that was fully replayed before the durable step executed.
+- `LastKnownVersion`: The latest stream version known after the reported durable step finished or failed.
+- `LastHttpStatusCode`: The latest HTTP success status code returned by the durable execution strategy when one was reported.
+- `LastAppendedEventCount`: The number of domain events appended by the latest successful durable step.
+- `LastStepProducedOutput`: Indicates whether the latest successful durable step produced local output.
+- `LastStepCompleted`: Indicates whether the latest reported durable step declared the workflow completed.
+- `StartedCount`: The number of `started` observations reported so far.
+- `SucceededCount`: The number of `succeeded` observations reported so far.
+- `ContinuationCount`: The number of `continuation-staged` observations reported so far.
+- `CompletedCount`: The number of `completed` observations reported so far.
+- `FailedCount`: The number of `failed` observations reported so far.
+- `LastError`: The latest operator-facing error summary when the durable step reported a failure.
+- `Metadata`: The operator-facing metadata captured by the latest report.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-behaviorid"></a>
+
+##### `BehaviorId`
+
+```csharp
+string BehaviorId { get; set; }
+```
+
+The stable durable behavior identifier that owns the stream.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-completedcount"></a>
+
+##### `CompletedCount`
+
+```csharp
+int CompletedCount { get; set; }
+```
+
+The number of `completed` observations reported so far.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-continuationcount"></a>
+
+##### `ContinuationCount`
+
+```csharp
+int ContinuationCount { get; set; }
+```
+
+The number of `continuation-staged` observations reported so far.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-continuationpending"></a>
+
+##### `ContinuationPending`
+
+```csharp
+bool ContinuationPending { get; }
+```
+
+Gets a value indicating whether the latest report says the workflow still has continuation work pending.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-failedcount"></a>
+
+##### `FailedCount`
+
+```csharp
+int FailedCount { get; set; }
+```
+
+The number of `failed` observations reported so far.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-isfailed"></a>
+
+##### `IsFailed`
+
+```csharp
+bool IsFailed { get; }
+```
+
+Gets a value indicating whether the latest report says the durable stream is currently in a failed posture.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lastappendedeventcount"></a>
+
+##### `LastAppendedEventCount`
+
+```csharp
+int LastAppendedEventCount { get; set; }
+```
+
+The number of domain events appended by the latest successful durable step.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lasterror"></a>
+
+##### `LastError`
+
+```csharp
+string LastError { get; set; }
+```
+
+The latest operator-facing error summary when the durable step reported a failure.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lasthttpstatuscode"></a>
+
+##### `LastHttpStatusCode`
+
+```csharp
+int? LastHttpStatusCode { get; set; }
+```
+
+The latest HTTP success status code returned by the durable execution strategy when one was reported.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lastknownversion"></a>
+
+##### `LastKnownVersion`
+
+```csharp
+long? LastKnownVersion { get; set; }
+```
+
+The latest stream version known after the reported durable step finished or failed.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lastobservedatutc"></a>
+
+##### `LastObservedAtUtc`
+
+```csharp
+DateTimeOffset? LastObservedAtUtc { get; set; }
+```
+
+The UTC timestamp when the latest observation was reported.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lastoutcome"></a>
+
+##### `LastOutcome`
+
+```csharp
+string LastOutcome { get; set; }
+```
+
+The last reported durable-execution outcome identifier when one exists.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lastreplayedversion"></a>
+
+##### `LastReplayedVersion`
+
+```csharp
+long? LastReplayedVersion { get; set; }
+```
+
+The latest stream version that was fully replayed before the durable step executed.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-laststage"></a>
+
+##### `LastStage`
+
+```csharp
+string LastStage { get; set; }
+```
+
+The last reported durable-execution stage identifier when one exists.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-laststepcompleted"></a>
+
+##### `LastStepCompleted`
+
+```csharp
+bool LastStepCompleted { get; set; }
+```
+
+Indicates whether the latest reported durable step declared the workflow completed.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-laststepproducedoutput"></a>
+
+##### `LastStepProducedOutput`
+
+```csharp
+bool LastStepProducedOutput { get; set; }
+```
+
+Indicates whether the latest successful durable step produced local output.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; set; }
+```
+
+The operator-facing metadata captured by the latest report.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; set; }
+```
+
+The owning module identifier when one is known at runtime.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-startedcount"></a>
+
+##### `StartedCount`
+
+```csharp
+int StartedCount { get; set; }
+```
+
+The number of `started` observations reported so far.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-streamid"></a>
+
+##### `StreamId`
+
+```csharp
+string StreamId { get; set; }
+```
+
+The stable event-stream identifier reported by the durable workflow.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-succeededcount"></a>
+
+##### `SucceededCount`
+
+```csharp
+int SucceededCount { get; set; }
+```
+
+The number of `succeeded` observations reported so far.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-totalreports"></a>
+
+##### `TotalReports`
+
+```csharp
+int TotalReports { get; }
+```
+
+Gets the total number of observations reported for this durable-execution stream.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-transportids"></a>
+
+##### `TransportIds`
+
+```csharp
+IReadOnlyList<string> TransportIds { get; set; }
+```
+
+The transport identifiers that expose the durable workflow.
+
 <a id="type-cephalon-abstractions-execution-executiongraphdescriptor"></a>
 
 ### `ExecutionGraphDescriptor`
@@ -13609,6 +13886,107 @@ Returns: The matching durable workflows, or an empty list when none expose that 
 
 Parameters:
 - `transportId`: The stable transport identifier to filter by.
+
+<a id="type-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog"></a>
+
+### `IDurableExecutionRuntimeStateCatalog`
+
+Exposes the operator-facing durable-execution runtime state currently reported for active streams.
+
+#### Declaration
+```csharp
+public interface IDurableExecutionRuntimeStateCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-states"></a>
+
+##### `States`
+
+```csharp
+IReadOnlyList<DurableExecutionRuntimeState> States { get; }
+```
+
+Gets the reported durable-execution state entries visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getbybehaviorid-system-string"></a>
+
+##### `GetByBehaviorId`
+
+```csharp
+IReadOnlyList<DurableExecutionRuntimeState> GetByBehaviorId(string behaviorId)
+```
+
+Gets the reported durable-execution state entries for one durable behavior.
+
+Returns: The matching state entries, or an empty list when the behavior has not reported runtime state.
+
+Parameters:
+- `behaviorId`: The stable durable behavior identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getbysourcemodule-system-string"></a>
+
+##### `GetBySourceModule`
+
+```csharp
+IReadOnlyList<DurableExecutionRuntimeState> GetBySourceModule(string sourceModuleId)
+```
+
+Gets the reported durable-execution state entries contributed by one source module.
+
+Returns: The matching state entries, or an empty list when the module has not reported runtime state.
+
+Parameters:
+- `sourceModuleId`: The source module identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getbystreamid-system-string"></a>
+
+##### `GetByStreamId`
+
+```csharp
+DurableExecutionRuntimeState GetByStreamId(string streamId)
+```
+
+Gets the latest reported durable-execution state for one stream.
+
+Returns: The latest reported state, or `null` when that stream has not reported runtime state.
+
+Parameters:
+- `streamId`: The stable stream identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getbytransportid-system-string"></a>
+
+##### `GetByTransportId`
+
+```csharp
+IReadOnlyList<DurableExecutionRuntimeState> GetByTransportId(string transportId)
+```
+
+Gets the reported durable-execution state entries exposed over one transport.
+
+Returns: The matching state entries, or an empty list when none reported runtime state for that transport.
+
+Parameters:
+- `transportId`: The stable transport identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-trygetbystreamid-system-string-cephalon-abstractions-execution-durableexecutionruntimestate"></a>
+
+##### `TryGetByStreamId`
+
+```csharp
+bool TryGetByStreamId(string streamId, out DurableExecutionRuntimeState state)
+```
+
+Tries to get the latest reported durable-execution state for one stream.
+
+Returns: `true` when a reported state exists; otherwise, `false`.
+
+Parameters:
+- `streamId`: The stable stream identifier to resolve.
+- `state`: Receives the latest reported state when the stream has reported one.
 
 <a id="type-cephalon-abstractions-execution-iexecutiongraphcontributor"></a>
 

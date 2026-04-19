@@ -154,6 +154,38 @@ public static class EngineWebApplicationExtensions
                 return durableExecution is null ? Results.NotFound() : Results.Ok(durableExecution);
             })
             .WithName("GetCephalonDurableExecution");
+        engineGroup.MapGet("/durable-executions/runtime", (HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeStateCatalog>();
+                return TypedResults.Ok(catalog?.States ?? []);
+            })
+            .WithName("GetCephalonDurableExecutionStates");
+        engineGroup.MapGet("/durable-executions/runtime/behaviors/{behaviorId}", (string behaviorId, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeStateCatalog>();
+                return TypedResults.Ok(catalog?.GetByBehaviorId(behaviorId) ?? []);
+            })
+            .WithName("GetCephalonDurableExecutionStatesByBehavior");
+        engineGroup.MapGet("/durable-executions/runtime/modules/{moduleId}", (string moduleId, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeStateCatalog>();
+                return TypedResults.Ok(catalog?.GetBySourceModule(moduleId) ?? []);
+            })
+            .WithName("GetCephalonDurableExecutionStatesByModule");
+        engineGroup.MapGet("/durable-executions/runtime/transports/{transportId}", (string transportId, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeStateCatalog>();
+                return TypedResults.Ok(catalog?.GetByTransportId(transportId) ?? []);
+            })
+            .WithName("GetCephalonDurableExecutionStatesByTransport");
+        engineGroup.MapGet("/durable-executions/runtime/streams/{streamId}", (string streamId, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeStateCatalog>();
+                var state = catalog?.GetByStreamId(streamId);
+
+                return state is null ? Results.NotFound() : Results.Ok(state);
+            })
+            .WithName("GetCephalonDurableExecutionState");
         engineGroup.MapGet("/rate-limiting", ([FromServices] IRateLimitingRuntimeCatalog catalog) => TypedResults.Ok(catalog.Policies))
             .WithName("GetCephalonRateLimiting");
         engineGroup.MapGet("/rate-limiting/{policyId}", (string policyId, [FromServices] IRateLimitingRuntimeCatalog catalog) =>

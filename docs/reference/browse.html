@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-19T10:00:20.9529096+00:00",
+  "GeneratedAtUtc": "2026-04-19T10:36:19.3055314+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -111,7 +111,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 293
+      "TypeCount": 295
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -632,7 +632,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-execution",
-      "TypeCount": 12
+      "TypeCount": 14
     },
     {
       "NamespaceName": "Cephalon.Abstractions.Features",
@@ -3907,6 +3907,21 @@
       }
     },
     {
+      "DisplayName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-execution-durableexecutionruntimestate",
+      "Declaration": "public sealed class DurableExecutionRuntimeState",
+      "Summary": "Describes the latest operator-facing runtime state reported for one durable-execution stream.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 23,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "EdgeEngineBuilderExtensions",
       "NamespaceName": "Cephalon.Edge.Registration",
       "AssemblyName": "Cephalon.Edge",
@@ -6034,6 +6049,21 @@
         "Fields": 0,
         "Properties": 1,
         "Methods": 3
+      }
+    },
+    {
+      "DisplayName": "IDurableExecutionRuntimeStateCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog",
+      "Declaration": "public interface IDurableExecutionRuntimeStateCatalog",
+      "Summary": "Exposes the operator-facing durable-execution runtime state currently reported for active streams.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 5
       }
     },
     {
@@ -9977,7 +10007,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 33,
+        "Properties": 34,
         "Methods": 0
       }
     },
@@ -15117,6 +15147,17 @@
     {
       "DisplayName": "BehaviorId",
       "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-behaviorid",
+      "Signature": "string BehaviorId { get; set; }",
+      "Summary": "The stable durable behavior identifier that owns the stream."
+    },
+    {
+      "DisplayName": "BehaviorId",
+      "Category": "Properties",
       "DeclaringTypeName": "FeatureFlagEvaluationContext",
       "NamespaceName": "Cephalon.Abstractions.Features",
       "AssemblyName": "Cephalon.Abstractions",
@@ -17579,6 +17620,17 @@
       "Summary": "Gets the latest completion time observed for this target."
     },
     {
+      "DisplayName": "CompletedCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-completedcount",
+      "Signature": "int CompletedCount { get; set; }",
+      "Summary": "The number of \u0060completed\u0060 observations reported so far."
+    },
+    {
       "DisplayName": "CompletionSignal",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseTopologyOperationalAction",
@@ -18237,6 +18289,28 @@
       "AnchorId": "member-f-cephalon-identity-policies-identitypolicymetadatakeys-contextattributeprefix",
       "Signature": "const string ContextAttributePrefix",
       "Summary": "The metadata key prefix for required evaluation-context attributes."
+    },
+    {
+      "DisplayName": "ContinuationCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-continuationcount",
+      "Signature": "int ContinuationCount { get; set; }",
+      "Summary": "The number of \u0060continuation-staged\u0060 observations reported so far."
+    },
+    {
+      "DisplayName": "ContinuationPending",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-continuationpending",
+      "Signature": "bool ContinuationPending { get; }",
+      "Summary": "Gets a value indicating whether the latest report says the workflow still has continuation work pending."
     },
     {
       "DisplayName": "Contracts",
@@ -21693,6 +21767,17 @@
       "Summary": "Creates a durable-execution runtime descriptor."
     },
     {
+      "DisplayName": "DurableExecutionRuntimeState",
+      "Category": "Constructors",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-durableexecutionruntimestate-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-int64-system-nullable-system-int64-system-nullable-system-int32-system-int32-system-boolean-system-boolean-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "DurableExecutionRuntimeState(string BehaviorId, string StreamId, string SourceModuleId, IReadOnlyList\u003Cstring\u003E TransportIds, string LastOutcome, string LastStage, DateTimeOffset? LastObservedAtUtc, long? LastReplayedVersion, long? LastKnownVersion, int? LastHttpStatusCode, int LastAppendedEventCount, bool LastStepProducedOutput, bool LastStepCompleted, int StartedCount, int SucceededCount, int ContinuationCount, int CompletedCount, int FailedCount, string LastError, IReadOnlyDictionary\u003Cstring, string\u003E Metadata)",
+      "Summary": "Describes the latest operator-facing runtime state reported for one durable-execution stream."
+    },
+    {
       "DisplayName": "DurableExecutions",
       "Category": "Properties",
       "DeclaringTypeName": "IDurableExecutionRuntimeCatalog",
@@ -21713,6 +21798,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-durableexecutions",
       "Signature": "IReadOnlyList\u003CDurableExecutionRuntimeDescriptor\u003E DurableExecutions { get; set; }",
       "Summary": "Gets the active durable-execution workflows visible to the runtime at the time the snapshot was created."
+    },
+    {
+      "DisplayName": "DurableExecutionStates",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-durableexecutionstates",
+      "Signature": "IReadOnlyList\u003CDurableExecutionRuntimeState\u003E DurableExecutionStates { get; set; }",
+      "Summary": "Gets the latest reported durable-execution runtime state entries visible to the runtime at the time the snapshot was created."
     },
     {
       "DisplayName": "EdgeNativeDelivery",
@@ -24643,6 +24739,17 @@
     {
       "DisplayName": "FailedCount",
       "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-failedcount",
+      "Signature": "int FailedCount { get; set; }",
+      "Summary": "The number of \u0060failed\u0060 observations reported so far."
+    },
+    {
+      "DisplayName": "FailedCount",
+      "Category": "Properties",
       "DeclaringTypeName": "EventDispatchRuntimeState",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -26183,6 +26290,17 @@
     {
       "DisplayName": "GetByBehaviorId",
       "Category": "Methods",
+      "DeclaringTypeName": "IDurableExecutionRuntimeStateCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getbybehaviorid-system-string",
+      "Signature": "IReadOnlyList\u003CDurableExecutionRuntimeState\u003E GetByBehaviorId(string behaviorId)",
+      "Summary": "Gets the reported durable-execution state entries for one durable behavior."
+    },
+    {
+      "DisplayName": "GetByBehaviorId",
+      "Category": "Methods",
       "DeclaringTypeName": "IRestEndpointAuthoringPolicyRuntimeCatalog",
       "NamespaceName": "Cephalon.Abstractions.Transports",
       "AssemblyName": "Cephalon.Abstractions",
@@ -26821,6 +26939,17 @@
     {
       "DisplayName": "GetBySourceModule",
       "Category": "Methods",
+      "DeclaringTypeName": "IDurableExecutionRuntimeStateCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getbysourcemodule-system-string",
+      "Signature": "IReadOnlyList\u003CDurableExecutionRuntimeState\u003E GetBySourceModule(string sourceModuleId)",
+      "Summary": "Gets the reported durable-execution state entries contributed by one source module."
+    },
+    {
+      "DisplayName": "GetBySourceModule",
+      "Category": "Methods",
       "DeclaringTypeName": "IExecutionRuntimeCatalog",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -26951,6 +27080,17 @@
       "Summary": "Gets all strangler-fig routes owned by the requested module."
     },
     {
+      "DisplayName": "GetByStreamId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IDurableExecutionRuntimeStateCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getbystreamid-system-string",
+      "Signature": "DurableExecutionRuntimeState GetByStreamId(string streamId)",
+      "Summary": "Gets the latest reported durable-execution state for one stream."
+    },
+    {
       "DisplayName": "GetByTargetStore",
       "Category": "Methods",
       "DeclaringTypeName": "IProjectionCatalog",
@@ -27015,6 +27155,17 @@
       "AnchorId": "member-m-cephalon-abstractions-execution-idurableexecutionruntimecatalog-getbytransportid-system-string",
       "Signature": "IReadOnlyList\u003CDurableExecutionRuntimeDescriptor\u003E GetByTransportId(string transportId)",
       "Summary": "Gets all durable-execution workflows exposed over the requested transport."
+    },
+    {
+      "DisplayName": "GetByTransportId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IDurableExecutionRuntimeStateCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getbytransportid-system-string",
+      "Signature": "IReadOnlyList\u003CDurableExecutionRuntimeState\u003E GetByTransportId(string transportId)",
+      "Summary": "Gets the reported durable-execution state entries exposed over one transport."
     },
     {
       "DisplayName": "GetByTransportId",
@@ -30911,6 +31062,17 @@
       "Summary": "Evaluates whether the requested feature flag is enabled for the supplied context."
     },
     {
+      "DisplayName": "IsFailed",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-isfailed",
+      "Signature": "bool IsFailed { get; }",
+      "Summary": "Gets a value indicating whether the latest report says the durable stream is currently in a failed posture."
+    },
+    {
       "DisplayName": "IsFallback",
       "Category": "Properties",
       "DeclaringTypeName": "EntityFrameworkDatabaseRoleContext",
@@ -31450,6 +31612,17 @@
       "Summary": "Initializes a new instance of the \u0060KubernetesTelemetryExportOptions\u0060 class."
     },
     {
+      "DisplayName": "LastAppendedEventCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lastappendedeventcount",
+      "Signature": "int LastAppendedEventCount { get; set; }",
+      "Summary": "The number of domain events appended by the latest successful durable step."
+    },
+    {
       "DisplayName": "LastAttempt",
       "Category": "Properties",
       "DeclaringTypeName": "EventDispatchRuntimeState",
@@ -31514,6 +31687,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databasemigrationdescriptor-lasterror",
       "Signature": "string LastError { get; }",
       "Summary": "Gets the latest error observed for this target."
+    },
+    {
+      "DisplayName": "LastError",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lasterror",
+      "Signature": "string LastError { get; set; }",
+      "Summary": "The latest operator-facing error summary when the durable step reported a failure."
     },
     {
       "DisplayName": "LastError",
@@ -31604,6 +31788,28 @@
       "Summary": "The last captured failure, if the runtime has faulted."
     },
     {
+      "DisplayName": "LastHttpStatusCode",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lasthttpstatuscode",
+      "Signature": "int? LastHttpStatusCode { get; set; }",
+      "Summary": "The latest HTTP success status code returned by the durable execution strategy when one was reported."
+    },
+    {
+      "DisplayName": "LastKnownVersion",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lastknownversion",
+      "Signature": "long? LastKnownVersion { get; set; }",
+      "Summary": "The latest stream version known after the reported durable step finished or failed."
+    },
+    {
       "DisplayName": "LastMessageId",
       "Category": "Properties",
       "DeclaringTypeName": "EventDispatchRuntimeState",
@@ -31635,6 +31841,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionruntimestate-lastmessageid",
       "Signature": "string LastMessageId { get; set; }",
       "Summary": "The last stable inbound message identifier when one was reported."
+    },
+    {
+      "DisplayName": "LastObservedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lastobservedatutc",
+      "Signature": "DateTimeOffset? LastObservedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the latest observation was reported."
     },
     {
       "DisplayName": "LastObservedAtUtc",
@@ -31749,6 +31966,17 @@
     {
       "DisplayName": "LastOutcome",
       "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lastoutcome",
+      "Signature": "string LastOutcome { get; set; }",
+      "Summary": "The last reported durable-execution outcome identifier when one exists."
+    },
+    {
+      "DisplayName": "LastOutcome",
+      "Category": "Properties",
       "DeclaringTypeName": "EventDispatchRuntimeState",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -31778,6 +32006,50 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionruntimestate-lastoutcome",
       "Signature": "string LastOutcome { get; set; }",
       "Summary": "The last reported outcome identifier when one exists."
+    },
+    {
+      "DisplayName": "LastReplayedVersion",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lastreplayedversion",
+      "Signature": "long? LastReplayedVersion { get; set; }",
+      "Summary": "The latest stream version that was fully replayed before the durable step executed."
+    },
+    {
+      "DisplayName": "LastStage",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-laststage",
+      "Signature": "string LastStage { get; set; }",
+      "Summary": "The last reported durable-execution stage identifier when one exists."
+    },
+    {
+      "DisplayName": "LastStepCompleted",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-laststepcompleted",
+      "Signature": "bool LastStepCompleted { get; set; }",
+      "Summary": "Indicates whether the latest reported durable step declared the workflow completed."
+    },
+    {
+      "DisplayName": "LastStepProducedOutput",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-laststepproducedoutput",
+      "Signature": "bool LastStepProducedOutput { get; set; }",
+      "Summary": "Indicates whether the latest successful durable step produced local output."
     },
     {
       "DisplayName": "LayeredArchitecture",
@@ -33384,6 +33656,17 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
       "Summary": "Gets additional operator-facing metadata describing replay semantics."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; set; }",
+      "Summary": "The operator-facing metadata captured by the latest report."
     },
     {
       "DisplayName": "Metadata",
@@ -44652,6 +44935,17 @@
     {
       "DisplayName": "SourceModuleId",
       "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; set; }",
+      "Summary": "The owning module identifier when one is known at runtime."
+    },
+    {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
       "DeclaringTypeName": "EventStreamDescriptor",
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
       "AssemblyName": "Cephalon.Abstractions",
@@ -45235,6 +45529,17 @@
     {
       "DisplayName": "StartedCount",
       "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-startedcount",
+      "Signature": "int StartedCount { get; set; }",
+      "Summary": "The number of \u0060started\u0060 observations reported so far."
+    },
+    {
+      "DisplayName": "StartedCount",
+      "Category": "Properties",
       "DeclaringTypeName": "EventDispatchRuntimeState",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -45363,6 +45668,17 @@
       "AnchorId": "member-p-cephalon-engine-manifest-packageprovenancemanifest-statementuri",
       "Signature": "string StatementUri { get; }",
       "Summary": "Gets the declared provenance statement or attestation URI, when available."
+    },
+    {
+      "DisplayName": "States",
+      "Category": "Properties",
+      "DeclaringTypeName": "IDurableExecutionRuntimeStateCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-states",
+      "Signature": "IReadOnlyList\u003CDurableExecutionRuntimeState\u003E States { get; }",
+      "Summary": "Gets the reported durable-execution state entries visible to the current runtime."
     },
     {
       "DisplayName": "States",
@@ -45873,6 +46189,17 @@
     {
       "DisplayName": "StreamId",
       "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-streamid",
+      "Signature": "string StreamId { get; set; }",
+      "Summary": "The stable event-stream identifier reported by the durable workflow."
+    },
+    {
+      "DisplayName": "StreamId",
+      "Category": "Properties",
       "DeclaringTypeName": "EntityFrameworkEventEntry",
       "NamespaceName": "Cephalon.EventSourcing.EntityFramework",
       "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
@@ -46265,6 +46592,17 @@
       "AnchorId": "member-f-cephalon-engine-runtime-runtimelifecycleeventoutcome-succeeded",
       "Signature": "const RuntimeLifecycleEventOutcome Succeeded",
       "Summary": "The lifecycle event completed successfully."
+    },
+    {
+      "DisplayName": "SucceededCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-succeededcount",
+      "Signature": "int SucceededCount { get; set; }",
+      "Summary": "The number of \u0060succeeded\u0060 observations reported so far."
     },
     {
       "DisplayName": "SucceededCount",
@@ -48139,6 +48477,17 @@
     {
       "DisplayName": "TotalReports",
       "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-totalreports",
+      "Signature": "int TotalReports { get; }",
+      "Summary": "Gets the total number of observations reported for this durable-execution stream."
+    },
+    {
+      "DisplayName": "TotalReports",
+      "Category": "Properties",
       "DeclaringTypeName": "EventDispatchRuntimeState",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -48377,6 +48726,17 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-transportids",
       "Signature": "IReadOnlyList\u003Cstring\u003E TransportIds { get; }",
       "Summary": "Gets the transport identifiers that expose the durable workflow."
+    },
+    {
+      "DisplayName": "TransportIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-transportids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E TransportIds { get; set; }",
+      "Summary": "The transport identifiers that expose the durable workflow."
     },
     {
       "DisplayName": "TransportIds",
@@ -48751,6 +49111,17 @@
       "AnchorId": "member-m-cephalon-abstractions-technologies-technologyselection-trygetavailable-system-string-cephalon-abstractions-technologies-technologydescriptor",
       "Signature": "bool TryGetAvailable(string value, out TechnologyDescriptor technology)",
       "Summary": "Attempts to resolve one available technology from the runtime catalog."
+    },
+    {
+      "DisplayName": "TryGetByStreamId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IDurableExecutionRuntimeStateCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-trygetbystreamid-system-string-cephalon-abstractions-execution-durableexecutionruntimestate",
+      "Signature": "bool TryGetByStreamId(string streamId, out DurableExecutionRuntimeState state)",
+      "Summary": "Tries to get the latest reported durable-execution state for one stream."
     },
     {
       "DisplayName": "TryGetDecision",

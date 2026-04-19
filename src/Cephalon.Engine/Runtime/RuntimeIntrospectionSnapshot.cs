@@ -33,7 +33,8 @@ namespace Cephalon.Engine.Runtime;
 /// This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime
 /// without issuing separate requests for manifest, status, execution-graph details, hosted-execution details, technology-pack details,
 /// diagnostics conventions, data projection details, outbox details, inbox details, event-dispatch runtime details,
-/// authorization-policy details, database-migration playbook details, database-topology posture details, and lifecycle story data.
+/// durable-execution runtime details, authorization-policy details, database-migration playbook details,
+/// database-topology posture details, and lifecycle story data.
 /// </remarks>
 public sealed record RuntimeIntrospectionSnapshot(
     RuntimeManifest Manifest,
@@ -152,6 +153,11 @@ public sealed record RuntimeIntrospectionSnapshot(
     /// Gets the active durable-execution workflows visible to the runtime at the time the snapshot was created.
     /// </summary>
     public IReadOnlyList<DurableExecutionRuntimeDescriptor> DurableExecutions { get; init; } = [];
+
+    /// <summary>
+    /// Gets the latest reported durable-execution runtime state entries visible to the runtime at the time the snapshot was created.
+    /// </summary>
+    public IReadOnlyList<DurableExecutionRuntimeState> DurableExecutionStates { get; init; } = [];
 
     /// <summary>
     /// Gets the backend-for-frontend client bindings visible to the runtime at the time the snapshot was created.

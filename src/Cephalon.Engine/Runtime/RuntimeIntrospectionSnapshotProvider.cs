@@ -47,6 +47,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
         var backendForFrontendRestDocumentRuntimeCatalog = serviceProvider.GetService(typeof(IBackendForFrontendRestDocumentRuntimeCatalog)) as IBackendForFrontendRestDocumentRuntimeCatalog;
         var behaviorResilienceRuntimeCatalog = serviceProvider.GetService(typeof(IBehaviorResilienceRuntimeCatalog)) as IBehaviorResilienceRuntimeCatalog;
         var durableExecutionRuntimeCatalog = serviceProvider.GetService(typeof(IDurableExecutionRuntimeCatalog)) as IDurableExecutionRuntimeCatalog;
+        var durableExecutionRuntimeStateCatalog = serviceProvider.GetService(typeof(IDurableExecutionRuntimeStateCatalog)) as IDurableExecutionRuntimeStateCatalog;
 
         return new RuntimeIntrospectionSnapshot(
             runtime.Manifest,
@@ -78,6 +79,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
             RestEndpointSuppressions = restEndpointSuppressionRuntimeCatalog?.Suppressions ?? [],
             BehaviorResiliencePolicies = behaviorResilienceRuntimeCatalog?.Policies ?? [],
             DurableExecutions = durableExecutionRuntimeCatalog?.DurableExecutions ?? [],
+            DurableExecutionStates = durableExecutionRuntimeStateCatalog?.States ?? [],
             BackendForFrontendBindings = backendForFrontendRuntimeCatalog.Bindings,
             BackendForFrontendRestEndpoints = backendForFrontendRestRuntimeCatalog?.Endpoints ?? [],
             BackendForFrontendRestDocuments = backendForFrontendRestDocumentRuntimeCatalog?.Documents ?? [],

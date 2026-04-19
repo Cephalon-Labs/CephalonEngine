@@ -70,6 +70,7 @@ public sealed class DurableExecutionRuntimeCatalogTests
         Assert.Equal(durableExecution.InputType, snapshotDescriptor.InputType);
         Assert.Equal(durableExecution.StateType, snapshotDescriptor.StateType);
         Assert.Equal(durableExecution.OutputType, snapshotDescriptor.OutputType);
+        Assert.Empty(snapshot.DurableExecutionStates);
     }
 
     private sealed class DurableExecutionCatalogModule : BehaviorModuleBase

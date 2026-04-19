@@ -2302,6 +2302,58 @@ Delivered:
 - focused composition, hosting, package-surface, component-doc, roadmap, backlog, project-memory,
   and reference-doc coverage now lock the durable operator contract plus the new public surface
 
+### ENG-112 Phase 12 durable execution runtime state and failure-posture baseline
+
+Status: done
+Estimate: 5
+Completed: April 19, 2026
+
+Why:
+
+- after `ENG-111`, Cephalon could answer which durable workflows were active, but operators still
+  had no engine-owned answer for which durable streams were currently in progress, which stage last
+  failed, whether continuation work was pending, or what stream version the runtime last replayed
+  or appended
+- `/engine/snapshot` still lacked a first-class durable-execution live-state surface even though
+  the same runtime already projected live event-dispatch state there
+- ASP.NET Core hosts still had no direct `/engine/*` routes for durable replay progress and
+  failure posture, which forced tooling to infer active stream state indirectly from lower-level
+  logs or event-store inspection
+
+Acceptance:
+
+- `Cephalon.Abstractions` exposes host-agnostic durable runtime-state read contracts
+- `Cephalon.Behaviors.Patterns` reports per-stream durable observations from the shared durable
+  strategy instead of introducing a host-only workflow-state registry
+- `/engine/snapshot` carries additive durable-execution runtime state when the catalog is active
+- ASP.NET Core exposes runtime list and drill-down routes for durable state by stream, behavior,
+  module, and transport
+- docs, backlog, roadmap, project memory, reference docs, and focused composition/hosting/tooling
+  coverage stay aligned with the shipped live-state scope while timers, signals, and compensation
+  helpers remain later work
+
+Delivered:
+
+- `Cephalon.Abstractions` now exposes `DurableExecutionRuntimeState` and
+  `IDurableExecutionRuntimeStateCatalog` as the host-agnostic read layer for active durable stream
+  posture
+- `Cephalon.Behaviors.Patterns` now registers a shared durable runtime-state catalog and
+  instruments `DurableExecutionStrategy` to report `started`, `succeeded`,
+  `continuation-staged`, `completed`, and `failed` observations together with execution stage,
+  replayed version, known version, appended event count, local-output posture, completion posture,
+  operator-facing error summaries, and contextual metadata
+- `Cephalon.Engine` now projects additive `snapshot.DurableExecutionStates` through optional
+  service resolution so the runtime snapshot can answer per-stream durable posture without forcing
+  the pattern pack into hosts that do not use it
+- `Cephalon.AspNetCore` now exposes `/engine/durable-executions/runtime`,
+  `/engine/durable-executions/runtime/streams/{streamId}`,
+  `/engine/durable-executions/runtime/behaviors/{behaviorId}`,
+  `/engine/durable-executions/runtime/modules/{moduleId}`, and
+  `/engine/durable-executions/runtime/transports/{transportId}` as direct operator routes derived
+  from the same shared runtime truth
+- focused composition, hosting, package-surface, component-doc, roadmap, backlog, project-memory,
+  and reference-doc coverage now lock the durable live-state contract plus the new public surface
+
 ### ENG-069 Event-dispatch runtime operator-surface baseline
 
 Status: done
@@ -2754,3 +2806,4 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-109 phase 12 durable execution baseline: `Cephalon.Abstractions` now lets behaviors declare `AsDurableExecution()` and carries the stable `durable-execution` pattern id through source-generated topology literals; `Cephalon.Behaviors.Patterns` now exposes `IDurableExecution<TState>`, `IDurableExecution<TInput, TState, TOutput>`, `DurableExecutionState<TState>`, `DurableExecutionStepResult<TOutput>`, and `DurableExecutionStrategy` so durable workflows can replay from `IEventStore`, validate sequential stream versions, append continuation events, and return `200` / `202` / `204` truthfully; `Cephalon.Behaviors` now exposes capability `behaviors.durable-execution` plus compatibility rule `ABT-006`, and Kafka/RabbitMQ/test behavior contexts now flow `IEventStore` into the shared pipeline for non-default-host execution — **Shipped** · composition tests 112/112 + package-surface tests 157/157
 - ENG-110 phase 12 explicit saga choreography eventing bridge baseline: `Cephalon.Eventing.Behaviors` now exposes `AddBehaviorEventingBridge()` as the explicit companion-pack bridge that swaps the fallback in-memory choreography publisher for an outbox-backed eventing handoff when `EventDrivenIntegration`, publishing, and a real `IOutbox` are all active; the bridge preserves explicit `ISagaChoreographyPublisher` overrides, projects capability `eventing.behaviors.saga-choreography` plus the `saga-choreography-bridges` runtime surface, and keeps choreography ownership in `Cephalon.Behaviors.Patterns` instead of collapsing it into the `Cephalon.Eventing` baseline — **Shipped** · targeted composition tests 25/25 + tooling tests 236/236
 - ENG-111 phase 12 durable execution runtime catalog baseline: `Cephalon.Abstractions` now exposes `DurableExecutionRuntimeDescriptor` plus `IDurableExecutionRuntimeCatalog`, `Cephalon.Behaviors.Patterns` now derives the catalog from shared durable behavior topology plus registered implementation types, `Cephalon.Engine` now projects `snapshot.DurableExecutions`, and `Cephalon.AspNetCore` now exposes `/engine/durable-executions` plus behavior/module/transport drill-down routes while replay-progress and failure-posture follow-through remain later — **Shipped** · composition tests 1/1 + hosting tests 1/1 + package-surface tests 158/158
+- ENG-112 phase 12 durable execution runtime state and failure-posture baseline: `Cephalon.Abstractions` now exposes `DurableExecutionRuntimeState` plus `IDurableExecutionRuntimeStateCatalog`, `Cephalon.Behaviors.Patterns` now reports per-stream durable observations from `DurableExecutionStrategy`, `Cephalon.Engine` now projects `snapshot.DurableExecutionStates`, and `Cephalon.AspNetCore` now exposes `/engine/durable-executions/runtime` plus stream/behavior/module/transport drill-down routes while higher-level timers/signals/compensation helpers remain later — **Shipped** · composition tests 2/2 + hosting tests 2/2 + package-surface tests 158/158

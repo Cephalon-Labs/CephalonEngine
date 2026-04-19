@@ -99,6 +99,11 @@ event-sourcing baseline instead of only checkpointing one step at a time.
 That baseline intentionally reuses `IBehaviorContext.EventStore` rather than inventing a second
 workflow journal, which keeps HTTP, messaging, and tests aligned on the same replay contract.
 
+The operator surface now follows the same shared runtime truth: `IDurableExecutionRuntimeCatalog`
+and `IDurableExecutionRuntimeStateCatalog` publish both the static durable workflow contract and
+the latest per-stream runtime posture through `/engine/durable-executions`,
+`/engine/durable-executions/runtime`, and the matching snapshot fields.
+
 ## Feature-gated execution
 
 Behaviors can now declare rollout gates in the shared topology itself instead of depending only on

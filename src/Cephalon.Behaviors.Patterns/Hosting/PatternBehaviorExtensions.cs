@@ -38,6 +38,11 @@ public static class PatternBehaviorExtensions
             new DurableExecutionRuntimeCatalogSnapshot(
                 serviceProvider.GetRequiredService<IBehaviorCatalog>(),
                 serviceProvider.GetRequiredService<IBehaviorTypeRegistry>()));
+        builder.Services.TryAddSingleton<DurableExecutionRuntimeStateCatalog>();
+        builder.Services.TryAddSingleton<IDurableExecutionRuntimeStateCatalog>(static serviceProvider =>
+            serviceProvider.GetRequiredService<DurableExecutionRuntimeStateCatalog>());
+        builder.Services.TryAddSingleton<IDurableExecutionRuntimeReporter>(static serviceProvider =>
+            serviceProvider.GetRequiredService<DurableExecutionRuntimeStateCatalog>());
 
         // Register the built-in strategies.
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IBehaviorExecutionStrategy, CqrsExecutionStrategy>());

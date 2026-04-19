@@ -2,7 +2,9 @@ using System.Collections.Concurrent;
 using System.Text.Json;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.EventSourcing;
+using Cephalon.Abstractions.Execution;
 using Cephalon.Behaviors.Patterns.Abstractions;
+using Cephalon.Behaviors.Patterns.Runtime;
 
 namespace Cephalon.Behaviors.Patterns.Strategies;
 
@@ -14,6 +16,18 @@ public sealed class DurableExecutionStrategy : IBehaviorExecutionStrategy
 {
     private static readonly JsonSerializerOptions WebJsonSerializerOptions = new(JsonSerializerDefaults.Web);
     private static readonly ConcurrentDictionary<Type, IDurableExecutionAdapter> Adapters = new();
+    private readonly IDurableExecutionRuntimeReporter? runtimeReporter;
+
+    /// <summary>
+    /// Creates a durable execution strategy.
+    /// </summary>
+    /// <param name="runtimeStateCatalog">
+    /// An optional runtime-state catalog that can also accept operator-facing observations for active durable streams.
+    /// </param>
+    public DurableExecutionStrategy(IDurableExecutionRuntimeStateCatalog? runtimeStateCatalog = null)
+    {
+        runtimeReporter = runtimeStateCatalog as IDurableExecutionRuntimeReporter;
+    }
 
     /// <summary>Gets the pattern identifier handled by this strategy.</summary>
     public string Pattern => "durable-execution";
@@ -54,41 +68,137 @@ public sealed class DurableExecutionStrategy : IBehaviorExecutionStrategy
 
         streamId = streamId.Trim();
         var state = adapter.CreateInitialState(context.BehaviorInstance);
-        var version = await eventStore.GetVersionAsync(streamId, ct).ConfigureAwait(false);
-
-        if (version >= 0)
+        var metadata = CreateReportMetadata(context.BehaviorContext);
+        long? version = null;
+        try
         {
-            await foreach (var domainEvent in eventStore.ReadStreamAsync(streamId, 0, ct))
+            version = await eventStore.GetVersionAsync(streamId, ct).ConfigureAwait(false);
+
+            if (version >= 0)
             {
-                state = adapter.Apply(context.BehaviorInstance, state, domainEvent);
+                await foreach (var domainEvent in eventStore.ReadStreamAsync(streamId, 0, ct))
+                {
+                    state = adapter.Apply(context.BehaviorInstance, state, domainEvent);
+                }
             }
         }
+        catch (Exception exception)
+        {
+            await ReportFailureAsync(
+                    context,
+                    streamId,
+                    DurableExecutionRuntimeStages.Replay,
+                    version,
+                    version,
+                    appendedEventCount: 0,
+                    producedOutput: false,
+                    isCompleted: false,
+                    exception,
+                    metadata,
+                    ct)
+                .ConfigureAwait(false);
+            throw;
+        }
 
-        var step = await adapter.ExecuteAsync(
-                context.BehaviorInstance,
-                context.Input,
-                state,
-                streamId,
-                version,
-                context.BehaviorContext,
+        await ReportAsync(
+                new DurableExecutionExecutionReport(
+                    context.Descriptor.Id,
+                    streamId,
+                    DurableExecutionRuntimeOutcomes.Started,
+                    DurableExecutionRuntimeStages.Execute,
+                    DateTimeOffset.UtcNow,
+                    replayedVersion: version,
+                    knownVersion: version,
+                    metadata: metadata),
                 ct)
             .ConfigureAwait(false);
 
-        ValidateReturnedEvents(
-            context.Descriptor.Id,
-            streamId,
-            version,
-            step.Events);
+        DurableExecutionStepEnvelope step;
+        try
+        {
+            step = await adapter.ExecuteAsync(
+                    context.BehaviorInstance,
+                    context.Input,
+                    state,
+                    streamId,
+                    version ?? -1,
+                    context.BehaviorContext,
+                    ct)
+                .ConfigureAwait(false);
 
+            ValidateReturnedEvents(
+                context.Descriptor.Id,
+                streamId,
+                version ?? -1,
+                step.Events);
+        }
+        catch (Exception exception)
+        {
+            await ReportFailureAsync(
+                    context,
+                    streamId,
+                    DurableExecutionRuntimeStages.Execute,
+                    version,
+                    version,
+                    appendedEventCount: 0,
+                    producedOutput: false,
+                    isCompleted: false,
+                    exception,
+                    metadata,
+                    ct)
+                .ConfigureAwait(false);
+            throw;
+        }
+
+        long? knownVersion = version;
         if (step.Events.Count > 0)
         {
-            await eventStore.AppendAsync(streamId, step.Events, version, ct).ConfigureAwait(false);
+            try
+            {
+                await eventStore.AppendAsync(streamId, step.Events, version ?? -1, ct).ConfigureAwait(false);
+                knownVersion = (version ?? -1) + step.Events.Count;
+            }
+            catch (Exception exception)
+            {
+                await ReportFailureAsync(
+                        context,
+                        streamId,
+                        DurableExecutionRuntimeStages.Append,
+                        version,
+                        knownVersion,
+                        appendedEventCount: step.Events.Count,
+                        producedOutput: step.Output is not null,
+                        isCompleted: step.IsCompleted,
+                        exception,
+                        metadata,
+                        ct)
+                    .ConfigureAwait(false);
+                throw;
+            }
         }
+
+        var httpStatusCode = ResolveHttpStatusCode(step);
+        await ReportAsync(
+                new DurableExecutionExecutionReport(
+                    context.Descriptor.Id,
+                    streamId,
+                    ResolveOutcome(step),
+                    step.Events.Count > 0 ? DurableExecutionRuntimeStages.Append : DurableExecutionRuntimeStages.Execute,
+                    DateTimeOffset.UtcNow,
+                    replayedVersion: version,
+                    knownVersion: knownVersion,
+                    httpStatusCode: httpStatusCode,
+                    appendedEventCount: step.Events.Count,
+                    producedOutput: step.Output is not null,
+                    isCompleted: step.IsCompleted,
+                    metadata: metadata),
+                ct)
+            .ConfigureAwait(false);
 
         return new BehaviorExecutionResult
         {
             Output = step.Output,
-            HttpStatusCode = ResolveHttpStatusCode(step),
+            HttpStatusCode = httpStatusCode,
             IsFireAndForget = false
         };
     }
@@ -108,6 +218,23 @@ public sealed class DurableExecutionStrategy : IBehaviorExecutionStrategy
         }
 
         return 204;
+    }
+
+    private static string ResolveOutcome(DurableExecutionStepEnvelope step)
+    {
+        ArgumentNullException.ThrowIfNull(step);
+
+        if (step.Output is null && step.Events.Count > 0 && !step.IsCompleted)
+        {
+            return DurableExecutionRuntimeOutcomes.ContinuationStaged;
+        }
+
+        if (step.Output is null && step.Events.Count == 0 && step.IsCompleted)
+        {
+            return DurableExecutionRuntimeOutcomes.Completed;
+        }
+
+        return DurableExecutionRuntimeOutcomes.Succeeded;
     }
 
     private static void ValidateReturnedEvents(
@@ -139,6 +266,78 @@ public sealed class DurableExecutionStrategy : IBehaviorExecutionStrategy
 
             expectedVersion++;
         }
+    }
+
+    private static Dictionary<string, string> CreateReportMetadata(IBehaviorContext context)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+
+        var metadata = new Dictionary<string, string>(context.Metadata, StringComparer.OrdinalIgnoreCase);
+        if (!string.IsNullOrWhiteSpace(context.CorrelationId))
+        {
+            metadata["correlationId"] = context.CorrelationId.Trim();
+        }
+
+        return metadata;
+    }
+
+    private async ValueTask ReportFailureAsync(
+        BehaviorExecutionContext context,
+        string streamId,
+        string stage,
+        long? replayedVersion,
+        long? knownVersion,
+        int appendedEventCount,
+        bool producedOutput,
+        bool isCompleted,
+        Exception exception,
+        IReadOnlyDictionary<string, string> metadata,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+        ArgumentException.ThrowIfNullOrWhiteSpace(streamId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(stage);
+        ArgumentNullException.ThrowIfNull(exception);
+        ArgumentNullException.ThrowIfNull(metadata);
+
+        var failureMetadata = new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase)
+        {
+            ["exceptionType"] = exception.GetType().FullName ?? exception.GetType().Name
+        };
+
+        await ReportAsync(
+                new DurableExecutionExecutionReport(
+                    context.Descriptor.Id,
+                    streamId,
+                    DurableExecutionRuntimeOutcomes.Failed,
+                    stage,
+                    DateTimeOffset.UtcNow,
+                    replayedVersion: replayedVersion,
+                    knownVersion: knownVersion,
+                    appendedEventCount: appendedEventCount,
+                    producedOutput: producedOutput,
+                    isCompleted: isCompleted,
+                    error: SummarizeException(exception),
+                    metadata: failureMetadata),
+                cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    private ValueTask ReportAsync(
+        DurableExecutionExecutionReport report,
+        CancellationToken cancellationToken)
+    {
+        return runtimeReporter is null
+            ? ValueTask.CompletedTask
+            : runtimeReporter.ReportAsync(report, cancellationToken);
+    }
+
+    private static string SummarizeException(Exception exception)
+    {
+        var message = exception.Message?.Trim();
+        return string.IsNullOrWhiteSpace(message)
+            ? exception.GetType().Name
+            : message;
     }
 
     private interface IDurableExecutionAdapter

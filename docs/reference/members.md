@@ -1167,6 +1167,9 @@ Browse the published API surface by public member.
 - [BehaviorId](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviorsecurityexception-behaviorid): `Properties` on `BehaviorSecurityException` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the behavior identifier that triggered the security violation.
   - `string BehaviorId { get; }`
+- [BehaviorId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-behaviorid): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The stable durable behavior identifier that owns the stream.
+  - `string BehaviorId { get; set; }`
 - [BehaviorId](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagevaluationcontext-behaviorid): `Properties` on `FeatureFlagEvaluationContext` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
   - Gets the current behavior identifier when one is known.
   - `string BehaviorId { get; }`
@@ -1842,6 +1845,9 @@ Browse the published API surface by public member.
 - [CompletedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-completedatutc): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CompletedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest completion time observed for this target.
   - `DateTimeOffset? CompletedAtUtc { get; }`
+- [CompletedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-completedcount): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=CompletedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The number of `completed` observations reported so far.
+  - `int CompletedCount { get; set; }`
 - [CompletionSignal](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasetopologyoperationalaction-completionsignal): `Properties` on `DatabaseTopologyOperationalAction` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CompletionSignal&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing signal that the action is complete.
   - `string CompletionSignal { get; }`
@@ -2022,6 +2028,12 @@ Browse the published API surface by public member.
 - [ContextAttributePrefix](cephalon-identity.md#member-f-cephalon-identity-policies-identitypolicymetadatakeys-contextattributeprefix): `Fields` on `IdentityPolicyMetadataKeys` in `Cephalon.Identity.Policies` (`Cephalon.Identity`) [Browse](browse.html?q=ContextAttributePrefix&assembly=Cephalon.Identity&namespace=Cephalon.Identity.Policies&scope=members)
   - The metadata key prefix for required evaluation-context attributes.
   - `const string ContextAttributePrefix`
+- [ContinuationCount](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-continuationcount): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=ContinuationCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The number of `continuation-staged` observations reported so far.
+  - `int ContinuationCount { get; set; }`
+- [ContinuationPending](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-continuationpending): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=ContinuationPending&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets a value indicating whether the latest report says the workflow still has continuation work pending.
+  - `bool ContinuationPending { get; }`
 - [Contracts](cephalon-abstractions.md#member-f-cephalon-abstractions-appmodel-scaffolding-projectroles-contracts): `Fields` on `ProjectRoles` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Contracts&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Identifies the contracts project.
   - `const string Contracts`
@@ -2967,12 +2979,18 @@ Browse the published API surface by public member.
 - [DurableExecutionRuntimeDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-durableexecutionruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DurableExecutionRuntimeDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Creates a durable-execution runtime descriptor.
   - `DurableExecutionRuntimeDescriptor(string id, string displayName, string description, string behaviorType, string inputType, string stateType, string outputType, string executionMode, string sourceModuleId, IReadOnlyList<string> transportIds, IReadOnlyList<string> requiredFeatureFlagIds, bool eventSourcingEnabled, bool requiresEventStore, IReadOnlyList<int> successStatusCodes, IReadOnlyDictionary<string, string> metadata)`
+- [DurableExecutionRuntimeState](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-durableexecutionruntimestate-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-int64-system-nullable-system-int64-system-nullable-system-int32-system-int32-system-boolean-system-boolean-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DurableExecutionRuntimeState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Describes the latest operator-facing runtime state reported for one durable-execution stream.
+  - `DurableExecutionRuntimeState(string BehaviorId, string StreamId, string SourceModuleId, IReadOnlyList<string> TransportIds, string LastOutcome, string LastStage, DateTimeOffset? LastObservedAtUtc, long? LastReplayedVersion, long? LastKnownVersion, int? LastHttpStatusCode, int LastAppendedEventCount, bool LastStepProducedOutput, bool LastStepCompleted, int StartedCount, int SucceededCount, int ContinuationCount, int CompletedCount, int FailedCount, string LastError, IReadOnlyDictionary<string, string> Metadata)`
 - [DurableExecutions](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-idurableexecutionruntimecatalog-durableexecutions): `Properties` on `IDurableExecutionRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DurableExecutions&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets all active durable-execution workflows visible to the current runtime.
   - `IReadOnlyList<DurableExecutionRuntimeDescriptor> DurableExecutions { get; }`
 - [DurableExecutions](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-durableexecutions): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=DurableExecutions&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the active durable-execution workflows visible to the runtime at the time the snapshot was created.
   - `IReadOnlyList<DurableExecutionRuntimeDescriptor> DurableExecutions { get; set; }`
+- [DurableExecutionStates](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-durableexecutionstates): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=DurableExecutionStates&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the latest reported durable-execution runtime state entries visible to the runtime at the time the snapshot was created.
+  - `IReadOnlyList<DurableExecutionRuntimeState> DurableExecutionStates { get; set; }`
 
 ## E
 
@@ -3777,6 +3795,9 @@ Browse the published API surface by public member.
 - [Failed](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimestatus-failed): `Fields` on `RuntimeStatus` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Failed&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The runtime captured a lifecycle failure.
   - `const RuntimeStatus Failed`
+- [FailedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-failedcount): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=FailedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The number of `failed` observations reported so far.
+  - `int FailedCount { get; set; }`
 - [FailedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-failedcount): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=FailedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The number of `failed` observations reported so far.
   - `int FailedCount { get; set; }`
@@ -4200,6 +4221,9 @@ Browse the published API surface by public member.
 - [GetByBehavior](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehavioradvisorycatalog-getbybehavior-system-string): `Methods` on `IBehaviorAdvisoryCatalog` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByBehavior&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets advisories for a specific behavior identifier.
   - `IReadOnlyList<IBehaviorAdvisory> GetByBehavior(string behaviorId)`
+- [GetByBehaviorId](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getbybehaviorid-system-string): `Methods` on `IDurableExecutionRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByBehaviorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the reported durable-execution state entries for one durable behavior.
+  - `IReadOnlyList<DurableExecutionRuntimeState> GetByBehaviorId(string behaviorId)`
 - [GetByBehaviorId](cephalon-abstractions.md#member-m-cephalon-abstractions-transports-irestendpointauthoringpolicyruntimecatalog-getbybehaviorid-system-string): `Methods` on `IRestEndpointAuthoringPolicyRuntimeCatalog` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByBehaviorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets one REST authoring-policy answer by behavior identifier.
   - `RestEndpointAuthoringPolicyDescriptor GetByBehaviorId(string behaviorId)`
@@ -4374,6 +4398,9 @@ Browse the published API surface by public member.
 - [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-idurableexecutionruntimecatalog-getbysourcemodule-system-string): `Methods` on `IDurableExecutionRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets all durable-execution workflows contributed by the requested module.
   - `IReadOnlyList<DurableExecutionRuntimeDescriptor> GetBySourceModule(string sourceModuleId)`
+- [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getbysourcemodule-system-string): `Methods` on `IDurableExecutionRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the reported durable-execution state entries contributed by one source module.
+  - `IReadOnlyList<DurableExecutionRuntimeState> GetBySourceModule(string sourceModuleId)`
 - [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-iexecutionruntimecatalog-getbysourcemodule-system-string): `Methods` on `IExecutionRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets all execution graphs contributed by the requested module.
   - `IReadOnlyList<ExecutionGraphDescriptor> GetBySourceModule(string sourceModuleId)`
@@ -4410,6 +4437,9 @@ Browse the published API surface by public member.
 - [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-patterns-istranglerfigruntimecatalog-getbysourcemodule-system-string): `Methods` on `IStranglerFigRuntimeCatalog` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets all strangler-fig routes owned by the requested module.
   - `IReadOnlyList<StranglerFigRouteDescriptor> GetBySourceModule(string sourceModuleId)`
+- [GetByStreamId](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getbystreamid-system-string): `Methods` on `IDurableExecutionRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByStreamId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the latest reported durable-execution state for one stream.
+  - `DurableExecutionRuntimeState GetByStreamId(string streamId)`
 - [GetByTargetStore](cephalon-abstractions.md#member-m-cephalon-abstractions-data-iprojectioncatalog-getbytargetstore-system-string): `Methods` on `IProjectionCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByTargetStore&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets all projections that target the requested store identifier.
   - `IReadOnlyList<ProjectionDescriptor> GetByTargetStore(string targetStoreId)`
@@ -4428,6 +4458,9 @@ Browse the published API surface by public member.
 - [GetByTransportId](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-idurableexecutionruntimecatalog-getbytransportid-system-string): `Methods` on `IDurableExecutionRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByTransportId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets all durable-execution workflows exposed over the requested transport.
   - `IReadOnlyList<DurableExecutionRuntimeDescriptor> GetByTransportId(string transportId)`
+- [GetByTransportId](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getbytransportid-system-string): `Methods` on `IDurableExecutionRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByTransportId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the reported durable-execution state entries exposed over one transport.
+  - `IReadOnlyList<DurableExecutionRuntimeState> GetByTransportId(string transportId)`
 - [GetByTransportId](cephalon-abstractions.md#member-m-cephalon-abstractions-resilience-iratelimitingruntimecatalog-getbytransportid-system-string): `Methods` on `IRateLimitingRuntimeCatalog` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByTransportId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - Gets all rate-limiting policies that apply to the requested transport identifier.
   - `IReadOnlyList<RateLimitingRuntimeDescriptor> GetByTransportId(string transportId)`
@@ -5496,6 +5529,9 @@ Browse the published API surface by public member.
 - [IsEnabled](cephalon-abstractions.md#member-m-cephalon-abstractions-features-ifeaturetoggle-isenabled-system-string-cephalon-abstractions-features-featureflagevaluationcontext): `Methods` on `IFeatureToggle` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsEnabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
   - Evaluates whether the requested feature flag is enabled for the supplied context.
   - `bool IsEnabled(string featureFlagId, FeatureFlagEvaluationContext context)`
+- [IsFailed](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-isfailed): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsFailed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets a value indicating whether the latest report says the durable stream is currently in a failed posture.
+  - `bool IsFailed { get; }`
 - [IsFallback](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-isfallback): `Properties` on `EntityFrameworkDatabaseRoleContext` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=IsFallback&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
   - Gets a value indicating whether the requested role resolved through another configured role.
   - `bool IsFallback { get; }`
@@ -5652,6 +5688,9 @@ Browse the published API surface by public member.
 
 ## L
 
+- [LastAppendedEventCount](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lastappendedeventcount): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastAppendedEventCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The number of domain events appended by the latest successful durable step.
+  - `int LastAppendedEventCount { get; set; }`
 - [LastAttempt](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-lastattempt): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastAttempt&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The last reported dispatch attempt number.
   - `int LastAttempt { get; set; }`
@@ -5670,6 +5709,9 @@ Browse the published API surface by public member.
 - [LastError](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-lasterror): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastError&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest error observed for this target.
   - `string LastError { get; }`
+- [LastError](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lasterror): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastError&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The latest operator-facing error summary when the durable step reported a failure.
+  - `string LastError { get; set; }`
 - [LastError](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-lasterror): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastError&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The last operator-facing error summary when a failure was reported.
   - `string LastError { get; set; }`
@@ -5694,6 +5736,12 @@ Browse the published API surface by public member.
 - [LastFailure](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimestatussnapshot-lastfailure): `Properties` on `RuntimeStatusSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=LastFailure&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The last captured failure, if the runtime has faulted.
   - `RuntimeFailureInfo LastFailure { get; set; }`
+- [LastHttpStatusCode](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lasthttpstatuscode): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastHttpStatusCode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The latest HTTP success status code returned by the durable execution strategy when one was reported.
+  - `int? LastHttpStatusCode { get; set; }`
+- [LastKnownVersion](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lastknownversion): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastKnownVersion&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The latest stream version known after the reported durable step finished or failed.
+  - `long? LastKnownVersion { get; set; }`
 - [LastMessageId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-lastmessageid): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastMessageId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The last stable outbound message identifier when one was reported.
   - `string LastMessageId { get; set; }`
@@ -5703,6 +5751,9 @@ Browse the published API surface by public member.
 - [LastMessageId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-lastmessageid): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=LastMessageId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The last stable inbound message identifier when one was reported.
   - `string LastMessageId { get; set; }`
+- [LastObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lastobservedatutc): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The UTC timestamp when the latest observation was reported.
+  - `DateTimeOffset? LastObservedAtUtc { get; set; }`
 - [LastObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-lastobservedatutc): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The UTC timestamp when the last observation was reported.
   - `DateTimeOffset? LastObservedAtUtc { get; set; }`
@@ -5733,6 +5784,9 @@ Browse the published API surface by public member.
 - [LastOutboxId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-lastoutboxid): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastOutboxId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the outbox identifier that produced the latest observation when one exists.
   - `string LastOutboxId { get; }`
+- [LastOutcome](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lastoutcome): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastOutcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The last reported durable-execution outcome identifier when one exists.
+  - `string LastOutcome { get; set; }`
 - [LastOutcome](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-lastoutcome): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastOutcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The last reported outcome identifier when one exists.
   - `string LastOutcome { get; set; }`
@@ -5742,6 +5796,18 @@ Browse the published API surface by public member.
 - [LastOutcome](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-lastoutcome): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=LastOutcome&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The last reported outcome identifier when one exists.
   - `string LastOutcome { get; set; }`
+- [LastReplayedVersion](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lastreplayedversion): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastReplayedVersion&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The latest stream version that was fully replayed before the durable step executed.
+  - `long? LastReplayedVersion { get; set; }`
+- [LastStage](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-laststage): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastStage&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The last reported durable-execution stage identifier when one exists.
+  - `string LastStage { get; set; }`
+- [LastStepCompleted](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-laststepcompleted): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastStepCompleted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Indicates whether the latest reported durable step declared the workflow completed.
+  - `bool LastStepCompleted { get; set; }`
+- [LastStepProducedOutput](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-laststepproducedoutput): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastStepProducedOutput&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Indicates whether the latest successful durable step produced local output.
+  - `bool LastStepProducedOutput { get; set; }`
 - [LayeredArchitecture](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-layeredarchitecture): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=LayeredArchitecture&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Gets the layered-architecture pattern.
   - `PatternDescriptor LayeredArchitecture { get; }`
@@ -6183,6 +6249,9 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-metadata): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets additional operator-facing metadata describing replay semantics.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-metadata): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The operator-facing metadata captured by the latest report.
+  - `IReadOnlyDictionary<string, string> Metadata { get; set; }`
 - [Metadata](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchexecutionreport-metadata): `Properties` on `EventDispatchExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets optional operator-facing metadata captured alongside the observation.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -9273,6 +9342,9 @@ Browse the published API surface by public member.
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-sourcemoduleid): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the owning module identifier when one is known at runtime.
   - `string SourceModuleId { get; }`
+- [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-sourcemoduleid): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The owning module identifier when one is known at runtime.
+  - `string SourceModuleId { get; set; }`
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-sourcemoduleid): `Properties` on `EventStreamDescriptor` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Gets the normalized source module identifier.
   - `string SourceModuleId { get; }`
@@ -9432,6 +9504,9 @@ Browse the published API surface by public member.
 - [StartedAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimestatussnapshot-startedatutc): `Properties` on `RuntimeStatusSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=StartedAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The UTC timestamp when startup completed, if it has completed.
   - `DateTimeOffset? StartedAtUtc { get; set; }`
+- [StartedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-startedcount): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=StartedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The number of `started` observations reported so far.
+  - `int StartedCount { get; set; }`
 - [StartedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-startedcount): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=StartedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The number of `started` observations reported so far.
   - `int StartedCount { get; set; }`
@@ -9468,6 +9543,9 @@ Browse the published API surface by public member.
 - [StatementUri](cephalon-engine.md#member-p-cephalon-engine-manifest-packageprovenancemanifest-statementuri): `Properties` on `PackageProvenanceManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=StatementUri&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the declared provenance statement or attestation URI, when available.
   - `string StatementUri { get; }`
+- [States](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-states): `Properties` on `IDurableExecutionRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=States&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the reported durable-execution state entries visible to the current runtime.
+  - `IReadOnlyList<DurableExecutionRuntimeState> States { get; }`
 - [States](cephalon-abstractions.md#member-p-cephalon-abstractions-data-ieventdispatchruntimecatalog-states): `Properties` on `IEventDispatchRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=States&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the reported dispatch state entries visible to the current runtime.
   - `IReadOnlyList<EventDispatchRuntimeState> States { get; }`
@@ -9606,6 +9684,9 @@ Browse the published API surface by public member.
 - [StreamId](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-domainevent-streamid): `Properties` on `DomainEvent` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=StreamId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Gets the stable stream identifier that owns the event.
   - `string StreamId { get; set; }`
+- [StreamId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-streamid): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=StreamId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The stable event-stream identifier reported by the durable workflow.
+  - `string StreamId { get; set; }`
 - [StreamId](cephalon-eventsourcing-entityframework.md#member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-streamid): `Properties` on `EntityFrameworkEventEntry` in `Cephalon.EventSourcing.EntityFramework` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=StreamId&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework&scope=members)
   - Gets or sets the stable logical stream identifier.
   - `string StreamId { get; set; }`
@@ -9714,6 +9795,9 @@ Browse the published API surface by public member.
 - [Succeeded](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimelifecycleeventoutcome-succeeded): `Fields` on `RuntimeLifecycleEventOutcome` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Succeeded&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The lifecycle event completed successfully.
   - `const RuntimeLifecycleEventOutcome Succeeded`
+- [SucceededCount](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-succeededcount): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=SucceededCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The number of `succeeded` observations reported so far.
+  - `int SucceededCount { get; set; }`
 - [SucceededCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-succeededcount): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SucceededCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The number of `succeeded` observations reported so far.
   - `int SucceededCount { get; set; }`
@@ -10227,6 +10311,9 @@ Browse the published API surface by public member.
 - [TotalCount](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryqueryresult-totalcount): `Properties` on `AuditHistoryQueryResult` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the total number of matching entries before paging was applied.
   - `int TotalCount { get; }`
+- [TotalReports](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-totalreports): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalReports&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the total number of observations reported for this durable-execution stream.
+  - `int TotalReports { get; }`
 - [TotalReports](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-totalreports): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalReports&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the total number of observations reported for this dispatch path.
   - `int TotalReports { get; }`
@@ -10293,6 +10380,9 @@ Browse the published API surface by public member.
 - [TransportIds](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-transportids): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the transport identifiers that expose the durable workflow.
   - `IReadOnlyList<string> TransportIds { get; }`
+- [TransportIds](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-transportids): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The transport identifiers that expose the durable workflow.
+  - `IReadOnlyList<string> TransportIds { get; set; }`
 - [TransportIds](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-transportids): `Properties` on `RateLimitingOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the transport identifiers targeted by this override.
   - `IReadOnlyList<string> TransportIds { get; }`
@@ -10395,6 +10485,9 @@ Browse the published API surface by public member.
 - [TryGetAvailable](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-technologyselection-trygetavailable-system-string-cephalon-abstractions-technologies-technologydescriptor): `Methods` on `TechnologySelection` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=TryGetAvailable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Attempts to resolve one available technology from the runtime catalog.
   - `bool TryGetAvailable(string value, out TechnologyDescriptor technology)`
+- [TryGetByStreamId](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-trygetbystreamid-system-string-cephalon-abstractions-execution-durableexecutionruntimestate): `Methods` on `IDurableExecutionRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=TryGetByStreamId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Tries to get the latest reported durable-execution state for one stream.
+  - `bool TryGetByStreamId(string streamId, out DurableExecutionRuntimeState state)`
 - [TryGetDecision](cephalon-engine.md#member-m-cephalon-engine-trust-capabilitypolicyevaluator-trygetdecision-system-string-cephalon-engine-trust-capabilitypolicydecision): `Methods` on `CapabilityPolicyEvaluator` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=TryGetDecision&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - Attempts to resolve the trust decision for a capability.
   - `bool TryGetDecision(string capabilityKey, out CapabilityPolicyDecision decision)`

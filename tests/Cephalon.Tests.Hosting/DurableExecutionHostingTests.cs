@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Json;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.EventSourcing;
@@ -8,10 +9,13 @@ using Cephalon.Behaviors.Hosting;
 using Cephalon.Behaviors.Modules;
 using Cephalon.Behaviors.Patterns.Abstractions;
 using Cephalon.Behaviors.Patterns.Hosting;
+using Cephalon.Behaviors.Patterns.Strategies;
+using Cephalon.Behaviors.Services;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Runtime;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Tests.Hosting;
 
@@ -70,6 +74,120 @@ public sealed class DurableExecutionHostingTests
         Assert.Equal(durableExecution.OutputType, snapshotDescriptor.OutputType);
     }
 
+    [Fact]
+    public async Task MapCephalonExposesDurableExecutionRuntimeStateAcrossRoutesAndSnapshot()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddBehaviors(
+                configureOptions: options => options.AutoRegister = false,
+                configure: behaviors => behaviors.AddBehaviorPatterns());
+            engine.AddModule(new DurableExecutionHostingModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var initialStates = await client.GetFromJsonAsync<DurableExecutionRuntimeState[]>("/engine/durable-executions/runtime");
+        var missingStateResponse = await client.GetAsync("/engine/durable-executions/runtime/streams/tests.workflows.hosted.approvals.start:missing");
+
+        Assert.NotNull(initialStates);
+        Assert.Empty(initialStates);
+        Assert.Equal(HttpStatusCode.NotFound, missingStateResponse.StatusCode);
+
+        var strategy = app.Services.GetServices<IBehaviorExecutionStrategy>()
+            .OfType<DurableExecutionStrategy>()
+            .Single();
+        var eventStore = new HostingRecordingEventStore();
+        await strategy.ExecuteAsync(MakeContext(
+            behaviorId: "tests.workflows.hosted.approvals.start",
+            behavior: new HostedApprovalWorkflowBehavior(),
+            input: new HostedApprovalWorkflowInput("APR-42"),
+            behaviorContext: new HostingTestBehaviorContext(
+                "tests.workflows.hosted.approvals.start",
+                correlationId: "corr-hosted",
+                eventStore: eventStore,
+                metadata: new Dictionary<string, string>
+                {
+                    ["tenantId"] = "tenant-7"
+                })));
+
+        var states = await client.GetFromJsonAsync<DurableExecutionRuntimeState[]>("/engine/durable-executions/runtime");
+        var byBehavior = await client.GetFromJsonAsync<DurableExecutionRuntimeState[]>("/engine/durable-executions/runtime/behaviors/tests.workflows.hosted.approvals.start");
+        var byModule = await client.GetFromJsonAsync<DurableExecutionRuntimeState[]>("/engine/durable-executions/runtime/modules/tests.durable-host");
+        var byTransport = await client.GetFromJsonAsync<DurableExecutionRuntimeState[]>("/engine/durable-executions/runtime/transports/in-memory");
+        var state = await client.GetFromJsonAsync<DurableExecutionRuntimeState>("/engine/durable-executions/runtime/streams/tests.workflows.hosted.approvals.start:corr-hosted");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(states);
+        var reportedState = Assert.Single(states);
+        Assert.Single(byBehavior!);
+        Assert.Single(byModule!);
+        Assert.Single(byTransport!);
+        Assert.NotNull(state);
+        Assert.NotNull(snapshot);
+
+        Assert.Equal(reportedState.StreamId, state!.StreamId);
+        Assert.Equal("tests.workflows.hosted.approvals.start", state.BehaviorId);
+        Assert.Equal("tests.durable-host", state.SourceModuleId);
+        Assert.Equal(["in-memory"], state.TransportIds);
+        Assert.Equal("succeeded", state.LastOutcome);
+        Assert.Equal("append", state.LastStage);
+        Assert.Equal(200, state.LastHttpStatusCode);
+        Assert.Equal(-1, state.LastReplayedVersion);
+        Assert.Equal(0, state.LastKnownVersion);
+        Assert.Equal(1, state.LastAppendedEventCount);
+        Assert.True(state.LastStepProducedOutput);
+        Assert.False(state.LastStepCompleted);
+        Assert.Equal(1, state.StartedCount);
+        Assert.Equal(1, state.SucceededCount);
+        Assert.Equal(0, state.ContinuationCount);
+        Assert.Equal(0, state.CompletedCount);
+        Assert.Equal(0, state.FailedCount);
+        Assert.Equal(2, state.TotalReports);
+        Assert.False(state.ContinuationPending);
+        Assert.False(state.IsFailed);
+        Assert.Equal("corr-hosted", state.Metadata["correlationId"]);
+        Assert.Equal("tenant-7", state.Metadata["tenantId"]);
+
+        var snapshotState = Assert.Single(snapshot!.DurableExecutionStates);
+        Assert.Equal(state.StreamId, snapshotState.StreamId);
+        Assert.Equal(state.BehaviorId, snapshotState.BehaviorId);
+        Assert.Equal(state.LastOutcome, snapshotState.LastOutcome);
+        Assert.Equal(state.LastStage, snapshotState.LastStage);
+        Assert.Equal(state.LastKnownVersion, snapshotState.LastKnownVersion);
+    }
+
+    private static BehaviorExecutionContext MakeContext<TBehavior>(
+        string behaviorId,
+        TBehavior behavior,
+        object input,
+        IBehaviorContext behaviorContext)
+        where TBehavior : class
+    {
+        var descriptor = new BehaviorTopologyDescriptor(
+            id: behaviorId,
+            pattern: "durable-execution",
+            transportIds: ["in-memory"],
+            eventSourcingEnabled: true,
+            sourceModuleId: "tests.durable-host");
+        var slot = BehaviorExecutionSlot.ForType(typeof(TBehavior));
+        return new BehaviorExecutionContext
+        {
+            Descriptor = descriptor,
+            BehaviorInstance = behavior,
+            Slot = slot,
+            Input = input,
+            BehaviorContext = behaviorContext
+        };
+    }
+
     private sealed class DurableExecutionHostingModule : BehaviorModuleBase
     {
         private static readonly ModuleDescriptor DescriptorInstance = new(
@@ -98,6 +216,11 @@ public sealed class DurableExecutionHostingTests
 
     private sealed record HostedApprovalWorkflowOutput(string Status);
 
+    private sealed record HostedApprovalAcceptedEvent(
+        string StreamId,
+        long StreamVersion,
+        DateTime OccurredAtUtc) : DomainEvent(StreamId, StreamVersion, OccurredAtUtc);
+
     [AppBehavior("tests.workflows.hosted.approvals.start")]
     private sealed class HostedApprovalWorkflowBehavior : IDurableExecution<HostedApprovalWorkflowInput, HostedApprovalWorkflowState, HostedApprovalWorkflowOutput>
     {
@@ -110,12 +233,14 @@ public sealed class DurableExecutionHostingTests
             HostedApprovalWorkflowState state,
             IDomainEvent domainEvent)
         {
-            return state;
+            return domainEvent is HostedApprovalAcceptedEvent
+                ? state with { ApprovedCount = state.ApprovedCount + 1 }
+                : state;
         }
 
         public string ResolveStreamId(string behaviorId, IBehaviorContext context)
         {
-            return $"{behaviorId}:hosted";
+            return $"{behaviorId}:{context.CorrelationId ?? "hosted"}";
         }
 
         public Task<DurableExecutionStepResult<HostedApprovalWorkflowOutput>> ExecuteDurablyAsync(
@@ -126,8 +251,124 @@ public sealed class DurableExecutionHostingTests
         {
             return Task.FromResult(new DurableExecutionStepResult<HostedApprovalWorkflowOutput>(
                 output: new HostedApprovalWorkflowOutput("accepted"),
-                events: [],
+                events:
+                [
+                    new HostedApprovalAcceptedEvent(
+                        execution.StreamId,
+                        execution.Version + 1,
+                        new DateTime(2026, 4, 19, 2, 0, 0, DateTimeKind.Utc))
+                ],
                 isCompleted: false));
+        }
+    }
+
+    private sealed class HostingTestBehaviorContext : IBehaviorContext
+    {
+        private readonly List<object> replies = [];
+
+        public HostingTestBehaviorContext(
+            string behaviorId,
+            string? correlationId = null,
+            IReadOnlyDictionary<string, string>? metadata = null,
+            IEventStore? eventStore = null)
+        {
+            BehaviorId = behaviorId;
+            CorrelationId = correlationId;
+            Metadata = metadata ?? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            EventStore = eventStore;
+        }
+
+        public string BehaviorId { get; }
+
+        public string? CorrelationId { get; }
+
+        public IReadOnlyDictionary<string, string> Metadata { get; }
+
+        public IEventStore? EventStore { get; }
+
+        public IReadOnlyList<object> Replies => replies.AsReadOnly();
+
+        public Task ReplyAsync(object reply, CancellationToken cancellationToken = default)
+        {
+            replies.Add(reply);
+            return Task.CompletedTask;
+        }
+    }
+
+    private sealed class HostingRecordingEventStore : IEventStore
+    {
+        private readonly Lock gate = new();
+        private readonly Dictionary<string, List<IDomainEvent>> streams = new(StringComparer.Ordinal);
+
+        public Task AppendAsync(
+            string streamId,
+            IReadOnlyCollection<IDomainEvent> events,
+            long expectedVersion,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(streamId);
+            ArgumentNullException.ThrowIfNull(events);
+
+            lock (gate)
+            {
+                if (!streams.TryGetValue(streamId, out var streamEvents))
+                {
+                    streamEvents = [];
+                    streams[streamId] = streamEvents;
+                }
+
+                var actualVersion = streamEvents.Count == 0
+                    ? -1
+                    : streamEvents[^1].StreamVersion;
+                if (actualVersion != expectedVersion)
+                {
+                    throw new EventStreamConcurrencyException(streamId, expectedVersion, actualVersion);
+                }
+
+                streamEvents.AddRange(events);
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public Task<long> GetVersionAsync(string streamId, CancellationToken cancellationToken = default)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(streamId);
+
+            lock (gate)
+            {
+                if (!streams.TryGetValue(streamId, out var streamEvents) || streamEvents.Count == 0)
+                {
+                    return Task.FromResult(-1L);
+                }
+
+                return Task.FromResult(streamEvents[^1].StreamVersion);
+            }
+        }
+
+        public async IAsyncEnumerable<IDomainEvent> ReadStreamAsync(
+            string streamId,
+            long fromVersion = 0,
+            [System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken cancellationToken = default)
+        {
+            List<IDomainEvent> snapshot;
+
+            lock (gate)
+            {
+                snapshot = streams.TryGetValue(streamId, out var streamEvents)
+                    ? streamEvents
+                        .Where(static evt => evt.StreamVersion >= 0)
+                        .OrderBy(static evt => evt.StreamVersion)
+                        .ToList()
+                    : [];
+            }
+
+            foreach (var domainEvent in snapshot.Where(evt => evt.StreamVersion >= fromVersion))
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                yield return domainEvent;
+                await Task.Yield();
+            }
         }
     }
 }

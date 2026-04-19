@@ -16,6 +16,7 @@ durable-execution replay are handled.
 - **IDurableExecution<TState> / IDurableExecution<TInput, TState, TOutput>** — host-agnostic durable workflow contract over `IEventStore` replay
 - **DurableExecutionState<TState> / DurableExecutionStepResult<TOutput>** — replay snapshot and step-result contracts for durable execution
 - **DurableExecutionRuntimeDescriptor / IDurableExecutionRuntimeCatalog** — operator-facing durable workflow catalog derived from shared behavior topology, ownership, transports, feature flags, and replay metadata
+- **DurableExecutionRuntimeState / IDurableExecutionRuntimeStateCatalog** — operator-facing per-stream durable runtime posture, including last outcome, stage, version progress, append count, completion state, and failure summary
 - **InMemorySagaStateStore** — `ConcurrentDictionary`-backed saga state with JSON serialization
 - **InMemoryProcessCheckpointStore** — `ConcurrentDictionary`-backed checkpoint store
 - **InMemorySagaChoreographyPublisher** — in-memory choreography publication collector for local development and tests
@@ -95,14 +96,19 @@ HTTP, messaging, and tests can share the same replay truth. `Cephalon.Behaviors`
 `ABT-006`, which requires `EventSourcingEnabled = true` whenever a behavior declares the
 `durable-execution` pattern.
 
-That same shared topology now also drives the first durable operator surface. `AddBehaviorPatterns()`
-registers `IDurableExecutionRuntimeCatalog`, `Cephalon.Engine` projects the merged answer into
-`snapshot.DurableExecutions`, and ASP.NET Core exposes `/engine/durable-executions` plus
-`/engine/durable-executions/{behaviorId}`, `/engine/durable-executions/modules/{moduleId}`, and
-`/engine/durable-executions/transports/{transportId}`. Those runtime descriptors preserve module
-ownership, transport ids, required feature ids, typed input/state/output contracts, the shared
-`200`/`202`/`204` success posture, and durable replay metadata without inventing a second
-host-specific workflow registry.
+That same shared topology now also drives the durable operator surface. `AddBehaviorPatterns()`
+registers `IDurableExecutionRuntimeCatalog` plus `IDurableExecutionRuntimeStateCatalog`,
+`DurableExecutionStrategy` reports per-stream `started`, `succeeded`, `continuation-staged`,
+`completed`, and `failed` observations into the shared state catalog, `Cephalon.Engine` projects
+both `snapshot.DurableExecutions` and `snapshot.DurableExecutionStates`, and ASP.NET Core exposes
+`/engine/durable-executions` plus `/engine/durable-executions/runtime`,
+`/engine/durable-executions/runtime/streams/{streamId}`,
+`/engine/durable-executions/runtime/behaviors/{behaviorId}`,
+`/engine/durable-executions/runtime/modules/{moduleId}`, and
+`/engine/durable-executions/runtime/transports/{transportId}`. Those runtime surfaces preserve
+module ownership, transport ids, required feature ids, typed input/state/output contracts, the
+shared `200`/`202`/`204` success posture, replay/version progress, append counts, and durable
+failure posture without inventing a second host-specific workflow registry.
 
 ## Replacing the default stores
 
@@ -131,7 +137,7 @@ and it only activates when the shared `Cephalon.Eventing` publication path is tr
 
 ## Status
 
-> Status: ✅ Shipped — M4 baseline plus later follow-through for saga choreography, durable execution, and the first durable runtime catalog/operator surface
+> Status: ✅ Shipped — M4 baseline plus later follow-through for saga choreography, durable execution, the first durable runtime catalog/operator surface, and the first durable per-stream live-state/failure-posture surface
 
 ## Related components
 
