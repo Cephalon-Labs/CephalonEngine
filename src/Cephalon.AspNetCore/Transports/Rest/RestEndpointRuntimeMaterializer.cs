@@ -88,6 +88,12 @@ internal static class RestEndpointRuntimeMaterializer
         var requiredCapabilityKey = RestEndpointRuntimeMetadata.ResolveEffectiveRequiredCapabilityKey(capabilityMetadata);
         var originalRequiredCapabilityKey = endpoint.Metadata.GetMetadata<RestEndpointSourceCapabilityMetadata>()?.RequiredCapabilityKey
             ?? RestEndpointRuntimeMetadata.ResolveLastDeclaredRequiredCapabilityKey(capabilityMetadata);
+        var featureMetadata = endpoint.Metadata
+            .OfType<RestEndpointFeatureFlagMetadata>()
+            .ToArray();
+        var requiredFeatureFlagIds = RestEndpointRuntimeMetadata.ResolveEffectiveRequiredFeatureFlagIds(featureMetadata);
+        var originalRequiredFeatureFlagIds = endpoint.Metadata.GetMetadata<RestEndpointSourceFeatureFlagMetadata>()?.RequiredFeatureFlagIds
+            ?? RestEndpointRuntimeMetadata.ResolveLastDeclaredRequiredFeatureFlagIds(featureMetadata);
         var appliedOverrideMetadata = endpoint.Metadata.GetMetadata<RestEndpointAppliedOverrideMetadata>();
         var appliedOverrideId = appliedOverrideMetadata?.OverrideId;
         var sourceKind = behaviorMetadata?.SourceKind
@@ -130,6 +136,8 @@ internal static class RestEndpointRuntimeMaterializer
                 bindingFallbackMode: behaviorMetadata.BindingFallbackMode,
                 requiredCapabilityKey: requiredCapabilityKey,
                 originalRequiredCapabilityKey: originalRequiredCapabilityKey,
+                requiredFeatureFlagIds: requiredFeatureFlagIds,
+                originalRequiredFeatureFlagIds: originalRequiredFeatureFlagIds,
                 appliedOverrideId: appliedOverrideId,
                 matchedOverrideIds: behaviorMetadata.MatchedOverrideIds,
                 selectedOverrideId: behaviorMetadata.SelectedOverrideId,
@@ -164,7 +172,8 @@ internal static class RestEndpointRuntimeMaterializer
                 method,
                 routePattern,
                 apiRoutesOptions,
-                requiredCapabilityKey),
+                requiredCapabilityKey,
+                requiredFeatureFlagIds),
             routeGroupPrefix: behaviorMetadata?.RouteGroupPrefix is null
                 ? null
                 : RestEndpointRuntimeDescriptorFactory.CombinePaths(apiRoutesOptions.RestPrefix, behaviorMetadata.RouteGroupPrefix),
@@ -172,7 +181,9 @@ internal static class RestEndpointRuntimeMaterializer
             sourceId: $"{moduleMetadata.ModuleId}:{method.Trim().ToUpperInvariant()}:{routePattern}",
             requiredCapabilityKey: requiredCapabilityKey,
             originalRequiredCapabilityKey: originalRequiredCapabilityKey,
-            appliedOverrideId: appliedOverrideId);
+            appliedOverrideId: appliedOverrideId,
+            requiredFeatureFlagIds: requiredFeatureFlagIds,
+            originalRequiredFeatureFlagIds: originalRequiredFeatureFlagIds);
     }
 
     private static string[] ResolveHttpMethods(RouteEndpoint endpoint)
@@ -214,15 +225,18 @@ internal static class RestEndpointRuntimeMaterializer
         string method,
         string routePattern,
         ApiRoutesOptions apiRoutesOptions,
-        string? requiredCapabilityKey)
+        string? requiredCapabilityKey,
+        IReadOnlyList<string> requiredFeatureFlagIds)
     {
         ArgumentNullException.ThrowIfNull(endpoint);
         ArgumentNullException.ThrowIfNull(moduleMetadata);
         ArgumentException.ThrowIfNullOrWhiteSpace(method);
         ArgumentException.ThrowIfNullOrWhiteSpace(routePattern);
         ArgumentNullException.ThrowIfNull(apiRoutesOptions);
+        ArgumentNullException.ThrowIfNull(requiredFeatureFlagIds);
 
         var normalizedMethod = method.Trim().ToUpperInvariant();
+        var normalizedRequiredFeatureFlagIds = RestEndpointRuntimeMetadata.NormalizeFeatureFlagIds(requiredFeatureFlagIds);
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["method"] = normalizedMethod
@@ -240,6 +254,12 @@ internal static class RestEndpointRuntimeMaterializer
                 metadata[RestEndpointRuntimeMetadata.RequiredCapabilityKeyMetadataKey] = requiredCapabilityKey.Trim();
             }
 
+            if (normalizedRequiredFeatureFlagIds.Length > 0)
+            {
+                metadata[RestEndpointRuntimeMetadata.RequiredFeatureFlagIdsMetadataKey] =
+                    string.Join(",", normalizedRequiredFeatureFlagIds);
+            }
+
             return metadata;
         }
 
@@ -248,6 +268,12 @@ internal static class RestEndpointRuntimeMaterializer
         if (!string.IsNullOrWhiteSpace(requiredCapabilityKey))
         {
             metadata[RestEndpointRuntimeMetadata.RequiredCapabilityKeyMetadataKey] = requiredCapabilityKey.Trim();
+        }
+
+        if (normalizedRequiredFeatureFlagIds.Length > 0)
+        {
+            metadata[RestEndpointRuntimeMetadata.RequiredFeatureFlagIdsMetadataKey] =
+                string.Join(",", normalizedRequiredFeatureFlagIds);
         }
 
         if (!string.IsNullOrWhiteSpace(endpoint.DisplayName))

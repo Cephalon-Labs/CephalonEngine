@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Json;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Modules;
@@ -3093,6 +3094,271 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         Assert.Null(routeEndpoint.Metadata.GetMetadata<RestEndpointAppliedOverrideMetadata>()?.OverrideId);
 
         var response = await client.GetAsync("/api/v4/tests/profile/runtime/override/capability/orders/ord-42");
+        response.EnsureSuccessStatusCode();
+        var payload = await response.Content.ReadFromJsonAsync<GeneratedRuntimeOrderOutput>();
+        Assert.NotNull(payload);
+        Assert.Equal("ord-42", payload.OrderId);
+    }
+
+    [Fact]
+    public async Task MapCephalonAppliesRequiredFeatureFlagOverridesAndExposesOverrideCatalog()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "4";
+        builder.Configuration["OpenApi:DefaultVersion"] = "4";
+        builder.Configuration["Engine:Features:Flags:0:Id"] = "host.orders-preview.original";
+        builder.Configuration["Engine:Features:Flags:0:DisplayName"] = "Orders Preview Original";
+        builder.Configuration["Engine:Features:Flags:0:Description"] = "Original feature-gated profile route.";
+        builder.Configuration["Engine:Features:Flags:0:Enabled"] = "false";
+        builder.Configuration["Engine:Features:Flags:1:Id"] = "host.orders-preview.override";
+        builder.Configuration["Engine:Features:Flags:1:DisplayName"] = "Orders Preview Override";
+        builder.Configuration["Engine:Features:Flags:1:Description"] = "Override feature-gated profile route.";
+        builder.Configuration["Engine:Features:Flags:1:Enabled"] = "true";
+        builder.Configuration["Engine:Features:Flags:1:Targeting:IncludedEnvironmentNames:0"] = "Production";
+        builder.Configuration["Engine:Features:Flags:1:Targeting:IncludedTransportIds:0"] = "rest-api";
+        builder.Configuration["RestApi:Overrides:prefer-public-feature-flags:Behaviors:0"] = "tests.profile.runtimeoverride.featureflags";
+        builder.Configuration["RestApi:Overrides:prefer-public-feature-flags:RequiredFeatureFlagIds:0"] = "host.orders-preview.override";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileFeatureFlagOverrideRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(overrides);
+        Assert.NotNull(snapshot);
+
+        var endpoint = Assert.Single(endpoints, static item =>
+            string.Equals(item.BehaviorId, "tests.profile.runtimeoverride.featureflags", StringComparison.Ordinal));
+        Assert.Equal("/api/v4/tests/profile/runtime/override/feature-flags/orders/{orderId}", endpoint.RoutePattern);
+        Assert.Equal(["host.orders-preview.override"], endpoint.RequiredFeatureFlagIds);
+        Assert.Equal(["host.orders-preview.original"], endpoint.OriginalRequiredFeatureFlagIds);
+        Assert.Equal("prefer-public-feature-flags", endpoint.AppliedOverrideId);
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.profile.runtimeoverride.featureflags", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+        Assert.Equal("prefer-public-feature-flags", candidate.AppliedOverrideId);
+        Assert.Equal(["host.orders-preview.override"], candidate.ProjectedEndpoint.RequiredFeatureFlagIds);
+
+        var rule = Assert.Single(overrides, static item => string.Equals(item.Id, "prefer-public-feature-flags", StringComparison.Ordinal));
+        Assert.Equal(["host.orders-preview.override"], rule.RequiredFeatureFlagIds);
+
+        Assert.Contains(snapshot.RestEndpointOverrides, item =>
+            string.Equals(item.Id, "prefer-public-feature-flags", StringComparison.Ordinal) &&
+            item.RequiredFeatureFlagIds.SequenceEqual(["host.orders-preview.override"], StringComparer.Ordinal));
+        Assert.Contains(snapshot.RestEndpointCandidates, item =>
+            string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
+            string.Equals(item.AppliedOverrideId, "prefer-public-feature-flags", StringComparison.Ordinal) &&
+            item.ProjectedEndpoint.RequiredFeatureFlagIds.SequenceEqual(["host.orders-preview.override"], StringComparer.Ordinal));
+        Assert.Contains(snapshot.RestEndpoints, item =>
+            string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal) &&
+            item.RequiredFeatureFlagIds.SequenceEqual(["host.orders-preview.override"], StringComparer.Ordinal) &&
+            item.OriginalRequiredFeatureFlagIds.SequenceEqual(["host.orders-preview.original"], StringComparer.Ordinal) &&
+            string.Equals(item.AppliedOverrideId, "prefer-public-feature-flags", StringComparison.Ordinal));
+
+        var routeEndpoint = Assert.Single(
+            ((IEndpointRouteBuilder)app).DataSources
+                .SelectMany(static dataSource => dataSource.Endpoints)
+                .OfType<RouteEndpoint>(),
+            static item => string.Equals(item.RoutePattern.RawText, "/api/v4/tests/profile/runtime/override/feature-flags/orders/{orderId}", StringComparison.Ordinal));
+        Assert.Equal(
+            ["host.orders-preview.override"],
+            routeEndpoint.Metadata.OfType<RestEndpointFeatureFlagMetadata>().LastOrDefault()?.FeatureFlagIds);
+
+        var response = await client.GetAsync("/api/v4/tests/profile/runtime/override/feature-flags/orders/ord-42");
+        var responseBody = await response.Content.ReadAsStringAsync();
+        Assert.True(
+            response.IsSuccessStatusCode,
+            $"Expected overridden feature-gated route to succeed but received {(int)response.StatusCode} {response.StatusCode}. Body: {responseBody}");
+        var payload = await response.Content.ReadFromJsonAsync<GeneratedRuntimeOrderOutput>();
+        Assert.NotNull(payload);
+        Assert.Equal("ord-42", payload.OrderId);
+    }
+
+    [Fact]
+    public async Task MapCephalonClearsRequiredFeatureFlagOverridesAndExposesOverrideCatalog()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "4";
+        builder.Configuration["OpenApi:DefaultVersion"] = "4";
+        builder.Configuration["Engine:Features:Flags:0:Id"] = "host.orders-preview.original";
+        builder.Configuration["Engine:Features:Flags:0:DisplayName"] = "Orders Preview Original";
+        builder.Configuration["Engine:Features:Flags:0:Description"] = "Original feature-gated profile route.";
+        builder.Configuration["Engine:Features:Flags:0:Enabled"] = "false";
+        builder.Configuration["RestApi:Overrides:clear-public-feature-flags:Behaviors:0"] = "tests.profile.runtimeclear.featureflags";
+        builder.Configuration["RestApi:Overrides:clear-public-feature-flags:ClearRequiredFeatureFlags"] = "true";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileFeatureFlagClearRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var overrides = await client.GetFromJsonAsync<RestEndpointOverrideDescriptor[]>("/engine/rest-endpoint-overrides");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(overrides);
+        Assert.NotNull(snapshot);
+
+        var endpoint = Assert.Single(endpoints, static item =>
+            string.Equals(item.BehaviorId, "tests.profile.runtimeclear.featureflags", StringComparison.Ordinal));
+        Assert.Equal("/api/v4/tests/profile/runtime/clear/feature-flags/orders/{orderId}", endpoint.RoutePattern);
+        Assert.Empty(endpoint.RequiredFeatureFlagIds);
+        Assert.Equal(["host.orders-preview.original"], endpoint.OriginalRequiredFeatureFlagIds);
+        Assert.Equal("clear-public-feature-flags", endpoint.AppliedOverrideId);
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.profile.runtimeclear.featureflags", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+        Assert.Equal("clear-public-feature-flags", candidate.AppliedOverrideId);
+        Assert.Empty(candidate.ProjectedEndpoint.RequiredFeatureFlagIds);
+
+        var rule = Assert.Single(overrides, static item => string.Equals(item.Id, "clear-public-feature-flags", StringComparison.Ordinal));
+        Assert.True(rule.ClearRequiredFeatureFlags);
+        Assert.Empty(rule.RequiredFeatureFlagIds);
+
+        Assert.Contains(snapshot.RestEndpointOverrides, item =>
+            string.Equals(item.Id, "clear-public-feature-flags", StringComparison.Ordinal) &&
+            item.ClearRequiredFeatureFlags &&
+            item.RequiredFeatureFlagIds.Count == 0);
+        Assert.Contains(snapshot.RestEndpointCandidates, item =>
+            string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
+            string.Equals(item.AppliedOverrideId, "clear-public-feature-flags", StringComparison.Ordinal) &&
+            item.ProjectedEndpoint.RequiredFeatureFlagIds.Count == 0);
+        Assert.Contains(snapshot.RestEndpoints, item =>
+            string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal) &&
+            item.RequiredFeatureFlagIds.Count == 0 &&
+            item.OriginalRequiredFeatureFlagIds.SequenceEqual(["host.orders-preview.original"], StringComparer.Ordinal) &&
+            string.Equals(item.AppliedOverrideId, "clear-public-feature-flags", StringComparison.Ordinal));
+
+        var routeEndpoint = Assert.Single(
+            ((IEndpointRouteBuilder)app).DataSources
+                .SelectMany(static dataSource => dataSource.Endpoints)
+                .OfType<RouteEndpoint>(),
+            static item => string.Equals(item.RoutePattern.RawText, "/api/v4/tests/profile/runtime/clear/feature-flags/orders/{orderId}", StringComparison.Ordinal));
+        var featureMetadata = routeEndpoint.Metadata.OfType<RestEndpointFeatureFlagMetadata>().LastOrDefault();
+        Assert.NotNull(featureMetadata);
+        Assert.True(featureMetadata.ClearsExisting);
+        Assert.Empty(featureMetadata.FeatureFlagIds);
+
+        var response = await client.GetAsync("/api/v4/tests/profile/runtime/clear/feature-flags/orders/ord-42");
+        response.EnsureSuccessStatusCode();
+        var payload = await response.Content.ReadFromJsonAsync<GeneratedRuntimeOrderOutput>();
+        Assert.NotNull(payload);
+        Assert.Equal("ord-42", payload.OrderId);
+    }
+
+    [Fact]
+    public async Task MapCephalonDoesNotExposeAppliedOverrideIdForNoOpFeatureFlagClearOnPublishedEndpoint()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["OpenApi:EnabledVersions:0"] = "4";
+        builder.Configuration["OpenApi:DefaultVersion"] = "4";
+        builder.Configuration["RestApi:Overrides:clear-public-feature-flags-noop:Behaviors:0"] = "tests.profile.runtimeclear.noop.featureflags";
+        builder.Configuration["RestApi:Overrides:clear-public-feature-flags-noop:ClearRequiredFeatureFlags"] = "true";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new ProfileFeatureFlagClearNoOpRuntimeCatalogModule());
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var candidates = await client.GetFromJsonAsync<RestEndpointCandidateRuntimeDescriptor[]>("/engine/rest-endpoint-candidates");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(endpoints);
+        Assert.NotNull(candidates);
+        Assert.NotNull(snapshot);
+
+        var endpoint = Assert.Single(endpoints, static item =>
+            string.Equals(item.BehaviorId, "tests.profile.runtimeclear.noop.featureflags", StringComparison.Ordinal));
+        Assert.Equal("/api/v4/tests/profile/runtime/clear/noop/feature-flags/orders/{orderId}", endpoint.RoutePattern);
+        Assert.Empty(endpoint.RequiredFeatureFlagIds);
+        Assert.Empty(endpoint.OriginalRequiredFeatureFlagIds);
+        Assert.Null(endpoint.AppliedOverrideId);
+        Assert.Equal("clear-public-feature-flags-noop", endpoint.SelectedOverrideId);
+        Assert.Contains("clear-public-feature-flags-noop", endpoint.MatchedOverrideIds);
+
+        Assert.Contains(snapshot.RestEndpoints, item =>
+            string.Equals(item.Id, endpoint.Id, StringComparison.Ordinal) &&
+            item.RequiredFeatureFlagIds.Count == 0 &&
+            item.OriginalRequiredFeatureFlagIds.Count == 0 &&
+            item.AppliedOverrideId is null &&
+            string.Equals(item.SelectedOverrideId, "clear-public-feature-flags-noop", StringComparison.Ordinal) &&
+            item.MatchedOverrideIds.Contains("clear-public-feature-flags-noop"));
+
+        var candidate = Assert.Single(candidates, static item =>
+            string.Equals(item.ProjectedEndpoint.BehaviorId, "tests.profile.runtimeclear.noop.featureflags", StringComparison.Ordinal));
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Status);
+        Assert.Null(candidate.AppliedOverrideId);
+        Assert.Equal("clear-public-feature-flags-noop", candidate.SelectedOverrideId);
+        Assert.Empty(candidate.ProjectedEndpoint.RequiredFeatureFlagIds);
+        Assert.Contains("clear-public-feature-flags-noop", candidate.MatchedOverrideIds);
+
+        Assert.Contains(snapshot.RestEndpointCandidates, item =>
+            string.Equals(item.Id, candidate.Id, StringComparison.Ordinal) &&
+            item.ProjectedEndpoint.RequiredFeatureFlagIds.Count == 0 &&
+            item.AppliedOverrideId is null &&
+            string.Equals(item.SelectedOverrideId, "clear-public-feature-flags-noop", StringComparison.Ordinal));
+
+        var routeEndpoint = Assert.Single(
+            ((IEndpointRouteBuilder)app).DataSources
+                .SelectMany(static dataSource => dataSource.Endpoints)
+                .OfType<RouteEndpoint>(),
+            static item => string.Equals(item.RoutePattern.RawText, "/api/v4/tests/profile/runtime/clear/noop/feature-flags/orders/{orderId}", StringComparison.Ordinal));
+        Assert.Empty(routeEndpoint.Metadata.GetMetadata<RestEndpointSourceFeatureFlagMetadata>()?.RequiredFeatureFlagIds ?? []);
+        Assert.Null(routeEndpoint.Metadata.GetMetadata<RestEndpointAppliedOverrideMetadata>()?.OverrideId);
+
+        var response = await client.GetAsync("/api/v4/tests/profile/runtime/clear/noop/feature-flags/orders/ord-42");
         response.EnsureSuccessStatusCode();
         var payload = await response.Content.ReadFromJsonAsync<GeneratedRuntimeOrderOutput>();
         Assert.NotNull(payload);
@@ -10366,6 +10632,56 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
         }
     }
 
+    private sealed class ProfileFeatureFlagOverrideRuntimeCatalogModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.profile-runtime.override.featureflags",
+            "Profile Runtime Feature Flag Override Module",
+            "Publishes a profile-backed route whose REST feature requirements are governed by a host override.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Group("/tests/profile/runtime/override/feature-flags/orders")
+                .WithTagName("Profile Feature Flag Override API")
+                .MapProfile<GetProfileFeatureFlagOverrideRuntimeOrderBehavior>(builder =>
+                    builder.RequireFeatureFlag("host.orders-preview.original"));
+        }
+    }
+
+    private sealed class ProfileFeatureFlagClearRuntimeCatalogModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.profile-runtime.clear.featureflags",
+            "Profile Runtime Feature Flag Clear Module",
+            "Publishes a profile-backed route whose REST feature requirements are cleared by a host override.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Group("/tests/profile/runtime/clear/feature-flags/orders")
+                .WithTagName("Profile Feature Flag Clear API")
+                .MapProfile<GetProfileFeatureFlagClearRuntimeOrderBehavior>(builder =>
+                    builder.RequireFeatureFlag("host.orders-preview.original"));
+        }
+    }
+
+    private sealed class ProfileFeatureFlagClearNoOpRuntimeCatalogModule : RestBehaviorModuleBase
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            "tests.rest.profile-runtime.clear.noop.featureflags",
+            "Profile Runtime Feature Flag Clear No-Op Module",
+            "Publishes a profile-backed route whose host clear rule leaves feature requirements unchanged.",
+            version: "1.0.0");
+
+        public override void ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Group("/tests/profile/runtime/clear/noop/feature-flags/orders")
+                .WithTagName("Profile Feature Flag Clear No-Op API")
+                .MapProfile<GetProfileFeatureFlagClearNoOpRuntimeOrderBehavior>();
+        }
+    }
+
     private sealed class ProfileMetadataRewriteNoOpRuntimeCatalogModule : RestBehaviorModuleBase
     {
         public override ModuleDescriptor Descriptor { get; } = new(
@@ -10930,6 +11246,45 @@ public sealed class BehaviorRestRuntimeCatalogHostingTests
     [AppBehavior("tests.profile.runtimeclear.noop.capability")]
     [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}", ApiVersionMajor = 4)]
     private sealed class GetProfileCapabilityClearNoOpRuntimeOrderBehavior : IAppBehavior<GeneratedRuntimeOrderInput, GeneratedRuntimeOrderOutput>
+    {
+        public Task<GeneratedRuntimeOrderOutput> HandleAsync(
+            GeneratedRuntimeOrderInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new GeneratedRuntimeOrderOutput(input.OrderId));
+        }
+    }
+
+    [AppBehavior("tests.profile.runtimeoverride.featureflags")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}", ApiVersionMajor = 4)]
+    private sealed class GetProfileFeatureFlagOverrideRuntimeOrderBehavior : IAppBehavior<GeneratedRuntimeOrderInput, GeneratedRuntimeOrderOutput>
+    {
+        public Task<GeneratedRuntimeOrderOutput> HandleAsync(
+            GeneratedRuntimeOrderInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new GeneratedRuntimeOrderOutput(input.OrderId));
+        }
+    }
+
+    [AppBehavior("tests.profile.runtimeclear.featureflags")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}", ApiVersionMajor = 4)]
+    private sealed class GetProfileFeatureFlagClearRuntimeOrderBehavior : IAppBehavior<GeneratedRuntimeOrderInput, GeneratedRuntimeOrderOutput>
+    {
+        public Task<GeneratedRuntimeOrderOutput> HandleAsync(
+            GeneratedRuntimeOrderInput input,
+            IBehaviorContext context,
+            CancellationToken ct = default)
+        {
+            return Task.FromResult(new GeneratedRuntimeOrderOutput(input.OrderId));
+        }
+    }
+
+    [AppBehavior("tests.profile.runtimeclear.noop.featureflags")]
+    [BehaviorRestProfile(BehaviorRestMethod.Get, "/{orderId}", ApiVersionMajor = 4)]
+    private sealed class GetProfileFeatureFlagClearNoOpRuntimeOrderBehavior : IAppBehavior<GeneratedRuntimeOrderInput, GeneratedRuntimeOrderOutput>
     {
         public Task<GeneratedRuntimeOrderOutput> HandleAsync(
             GeneratedRuntimeOrderInput input,

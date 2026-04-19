@@ -132,17 +132,20 @@ internal static class RestBehaviorProjectionMaterializer
                 group.UseRuntimeOverrideSelectionBasis(candidate.Candidate.OverrideSelectionBasis);
                 var builder = candidate.EffectiveEndpointProjection.Apply(group);
                 var sourceCapabilityCapture = CaptureSourceCapability(builder);
+                var sourceFeatureFlagCapture = CaptureSourceFeatureFlags(builder);
                 var sourceDocumentationCapture = CaptureSourceDocumentation(builder);
                 ApplyResolvedEndpointName(
                     builder,
                     candidate.Candidate.ProjectedEndpoint.EndpointName,
                     sourceDocumentationCapture.EndpointName);
                 ApplyRequiredCapabilityOverride(builder, candidate.AppliedCapabilityOverride);
+                ApplyRequiredFeatureFlagOverride(builder, candidate.AppliedFeatureFlagOverride);
                 ApplyEndpointMetadataOverride(builder, candidate.AppliedMetadataOverride);
                 ApplyPublishedOverrideProvenance(
                     builder,
                     candidate,
                     sourceCapabilityCapture,
+                    sourceFeatureFlagCapture,
                     sourceDocumentationCapture);
             }
         }
@@ -159,6 +162,22 @@ internal static class RestBehaviorProjectionMaterializer
                 endpointBuilder.Metadata.OfType<RestEndpointCapabilityMetadata>());
             capture.RequiredCapabilityKey = sourceRequiredCapabilityKey;
             endpointBuilder.Metadata.Add(new RestEndpointSourceCapabilityMetadata(sourceRequiredCapabilityKey));
+        });
+
+        return capture;
+    }
+
+    private static CapturedEndpointFeatureFlagState CaptureSourceFeatureFlags(RouteHandlerBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        var capture = new CapturedEndpointFeatureFlagState();
+        builder.Add(endpointBuilder =>
+        {
+            var sourceRequiredFeatureFlagIds = RestEndpointRuntimeMetadata.ResolveEffectiveRequiredFeatureFlagIds(
+                endpointBuilder.Metadata.OfType<RestEndpointFeatureFlagMetadata>());
+            capture.RequiredFeatureFlagIds = sourceRequiredFeatureFlagIds;
+            endpointBuilder.Metadata.Add(new RestEndpointSourceFeatureFlagMetadata(sourceRequiredFeatureFlagIds));
         });
 
         return capture;
@@ -526,6 +545,26 @@ internal static class RestBehaviorProjectionMaterializer
         builder.RequireCapability(capabilityOverride.RequiredCapabilityKey!);
     }
 
+    private static void ApplyRequiredFeatureFlagOverride(
+        RouteHandlerBuilder builder,
+        AppliedRestEndpointFeatureFlagOverride? featureFlagOverride)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        if (featureFlagOverride is null)
+        {
+            return;
+        }
+
+        if (featureFlagOverride.ClearRequiredFeatureFlags)
+        {
+            builder.ClearRequiredFeatureFlags();
+            return;
+        }
+
+        builder.RequireFeatureFlags(featureFlagOverride.RequiredFeatureFlagIds.ToArray());
+    }
+
     private static void ApplyEndpointMetadataOverride(
         RouteHandlerBuilder builder,
         AppliedRestEndpointMetadataOverride? metadataOverride)
@@ -599,11 +638,13 @@ internal static class RestBehaviorProjectionMaterializer
         RouteHandlerBuilder builder,
         ResolvedRestBehaviorEndpointProjectionCandidate candidate,
         CapturedEndpointCapabilityState sourceCapabilityCapture,
+        CapturedEndpointFeatureFlagState sourceFeatureFlagCapture,
         CapturedEndpointDocumentationState sourceDocumentationCapture)
     {
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentNullException.ThrowIfNull(candidate);
         ArgumentNullException.ThrowIfNull(sourceCapabilityCapture);
+        ArgumentNullException.ThrowIfNull(sourceFeatureFlagCapture);
         ArgumentNullException.ThrowIfNull(sourceDocumentationCapture);
 
         if (string.IsNullOrWhiteSpace(candidate.Candidate.AppliedOverrideId))
@@ -627,6 +668,11 @@ internal static class RestBehaviorProjectionMaterializer
                 sourceCapabilityCapture.RequiredCapabilityKey,
                 effectiveRequiredCapabilityKey,
                 StringComparison.Ordinal);
+            var effectiveRequiredFeatureFlagIds = RestEndpointRuntimeMetadata.ResolveEffectiveRequiredFeatureFlagIds(
+                endpointBuilder.Metadata.OfType<RestEndpointFeatureFlagMetadata>());
+            var featureFlagsChanged = !sourceFeatureFlagCapture.RequiredFeatureFlagIds.SequenceEqual(
+                effectiveRequiredFeatureFlagIds,
+                StringComparer.OrdinalIgnoreCase);
             var effectiveEndpointName = endpointBuilder.Metadata.OfType<EndpointNameMetadata>().LastOrDefault()?.EndpointName;
             var effectiveSummary = endpointBuilder.Metadata.OfType<IEndpointSummaryMetadata>().LastOrDefault()?.Summary;
             var effectiveDescription = endpointBuilder.Metadata.OfType<IEndpointDescriptionMetadata>().LastOrDefault()?.Description;
@@ -643,9 +689,11 @@ internal static class RestBehaviorProjectionMaterializer
                                       effectiveDescription,
                                       StringComparison.Ordinal);
             var evaluatesCapabilityChanges = candidate.AppliedCapabilityOverride is not null;
+            var evaluatesFeatureFlagChanges = candidate.AppliedFeatureFlagOverride is not null;
             var evaluatesDocumentationChanges = candidate.AppliedMetadataOverride is not null;
 
             if ((evaluatesCapabilityChanges && capabilityChanged) ||
+                (evaluatesFeatureFlagChanges && featureFlagsChanged) ||
                 (evaluatesDocumentationChanges && metadataChanged))
             {
                 endpointBuilder.Metadata.Add(new RestEndpointAppliedOverrideMetadata(
@@ -756,6 +804,11 @@ internal static class RestBehaviorProjectionMaterializer
     private sealed class CapturedEndpointCapabilityState
     {
         internal string? RequiredCapabilityKey { get; set; }
+    }
+
+    private sealed class CapturedEndpointFeatureFlagState
+    {
+        internal IReadOnlyList<string> RequiredFeatureFlagIds { get; set; } = [];
     }
 
     private sealed class CapturedEndpointDocumentationState

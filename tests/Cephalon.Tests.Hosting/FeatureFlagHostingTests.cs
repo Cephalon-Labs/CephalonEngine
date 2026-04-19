@@ -1,9 +1,15 @@
+using System.Net;
 using System.Net.Http.Json;
 using Cephalon.Abstractions.Features;
 using Cephalon.Abstractions.Modules;
+using Cephalon.Abstractions.Transports;
 using Cephalon.AspNetCore.Hosting;
+using Cephalon.AspNetCore.Modules;
+using Cephalon.AspNetCore.Transports.Rest;
 using Cephalon.Engine.Runtime;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.TestHost;
 
 namespace Cephalon.Tests.Hosting;
@@ -95,6 +101,68 @@ public sealed class FeatureFlagHostingTests
         Assert.False(blockedEvaluation.Matched);
     }
 
+    [Fact]
+    public async Task MapCephalonEnforcesRestFeatureRequirementsWhileKeepingPublishedEndpointTruthVisible()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.Configuration["Engine:Features:Flags:0:Id"] = "host.orders-preview";
+        builder.Configuration["Engine:Features:Flags:0:DisplayName"] = "Orders Preview";
+        builder.Configuration["Engine:Features:Flags:0:Description"] = "Enables the pilot orders endpoint.";
+        builder.Configuration["Engine:Features:Flags:0:Enabled"] = "true";
+        builder.Configuration["Engine:Features:Flags:0:Targeting:IncludedEnvironmentNames:0"] = "Production";
+        builder.Configuration["Engine:Features:Flags:0:Targeting:IncludedTransportIds:0"] = "rest-api";
+        builder.Configuration["Engine:Features:Flags:1:Id"] = "host.legacy-orders";
+        builder.Configuration["Engine:Features:Flags:1:DisplayName"] = "Legacy Orders";
+        builder.Configuration["Engine:Features:Flags:1:Description"] = "Keeps the legacy orders endpoint disabled.";
+        builder.Configuration["Engine:Features:Flags:1:Enabled"] = "false";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new FeatureFlagProtectedEndpointModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var previewResponse = await client.GetAsync("/api/feature-flags/orders/ord-42");
+        var legacyResponse = await client.GetAsync("/api/feature-flags/orders/legacy/ord-42");
+        var previewPayload = await previewResponse.Content.ReadAsStringAsync();
+        var legacyPayload = await legacyResponse.Content.ReadAsStringAsync();
+        var endpoints = await client.GetFromJsonAsync<RestEndpointRuntimeDescriptor[]>("/engine/rest-endpoints");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.True(
+            previewResponse.StatusCode == HttpStatusCode.OK,
+            $"Expected preview route to succeed but received {(int)previewResponse.StatusCode} {previewResponse.StatusCode}. Body: {previewPayload}");
+        Assert.Equal(HttpStatusCode.NotFound, legacyResponse.StatusCode);
+        Assert.Contains("Feature not available", legacyPayload, StringComparison.OrdinalIgnoreCase);
+        Assert.NotNull(endpoints);
+        Assert.NotNull(snapshot);
+
+        var previewEndpoint = Assert.Single(endpoints, static endpoint =>
+            string.Equals(endpoint.RoutePattern, "/api/feature-flags/orders/{orderId}", StringComparison.Ordinal));
+        Assert.Equal(["host.orders-preview"], previewEndpoint.RequiredFeatureFlagIds);
+        Assert.Equal(["host.orders-preview"], previewEndpoint.OriginalRequiredFeatureFlagIds);
+
+        var legacyEndpoint = Assert.Single(endpoints, static endpoint =>
+            string.Equals(endpoint.RoutePattern, "/api/feature-flags/orders/legacy/{orderId}", StringComparison.Ordinal));
+        Assert.Equal(["host.legacy-orders"], legacyEndpoint.RequiredFeatureFlagIds);
+        Assert.Equal(["host.legacy-orders"], legacyEndpoint.OriginalRequiredFeatureFlagIds);
+
+        Assert.Contains(snapshot.RestEndpoints, static endpoint =>
+            string.Equals(endpoint.RoutePattern, "/api/feature-flags/orders/{orderId}", StringComparison.Ordinal) &&
+            endpoint.RequiredFeatureFlagIds.SequenceEqual(["host.orders-preview"], StringComparer.Ordinal));
+        Assert.Contains(snapshot.RestEndpoints, static endpoint =>
+            string.Equals(endpoint.RoutePattern, "/api/feature-flags/orders/legacy/{orderId}", StringComparison.Ordinal) &&
+            endpoint.RequiredFeatureFlagIds.SequenceEqual(["host.legacy-orders"], StringComparer.Ordinal));
+    }
+
     private sealed class FeatureFlagHostingModule : ModuleBase, IFeatureFlagContributor
     {
         public override ModuleDescriptor Descriptor { get; } = new(
@@ -116,4 +184,29 @@ public sealed class FeatureFlagHostingTests
                     includedTags: ["analytics"])));
         }
     }
+
+    private sealed class FeatureFlagProtectedEndpointModule : ModuleBase, IEndpointModule
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            id: "feature-flags-rest-tests",
+            displayName: "Feature Flags REST Tests",
+            description: "Publishes REST endpoints protected by Cephalon feature requirements.");
+
+        public void MapEndpoints(IEndpointRouteBuilder endpoints)
+        {
+            endpoints.MapGet(
+                    "/feature-flags/orders/{orderId}",
+                    static (string orderId) => TypedResults.Ok(new FeatureFlagProtectedOrderOutput(orderId, "preview")))
+                .WithTags("Pilot Orders API")
+                .RequireFeatureFlag("host.orders-preview");
+
+            endpoints.MapGet(
+                    "/feature-flags/orders/legacy/{orderId}",
+                    static (string orderId) => TypedResults.Ok(new FeatureFlagProtectedOrderOutput(orderId, "legacy")))
+                .WithTags("Legacy Orders API")
+                .RequireFeatureFlag("host.legacy-orders");
+        }
+    }
+
+    private sealed record FeatureFlagProtectedOrderOutput(string OrderId, string Mode);
 }

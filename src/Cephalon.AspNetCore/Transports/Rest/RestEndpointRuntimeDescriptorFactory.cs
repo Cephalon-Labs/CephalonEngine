@@ -31,6 +31,8 @@ internal static class RestEndpointRuntimeDescriptorFactory
         RestEndpointBindingFallbackMode? bindingFallbackMode = null,
         string? requiredCapabilityKey = null,
         string? originalRequiredCapabilityKey = null,
+        IReadOnlyList<string>? requiredFeatureFlagIds = null,
+        IReadOnlyList<string>? originalRequiredFeatureFlagIds = null,
         string? appliedOverrideId = null,
         IReadOnlyList<string>? matchedOverrideIds = null,
         string? selectedOverrideId = null,
@@ -84,13 +86,16 @@ internal static class RestEndpointRuntimeDescriptorFactory
                 routeGroupPrefix,
                 relativePattern,
                 bindingFallbackMode,
-                requiredCapabilityKey),
+                requiredCapabilityKey,
+                requiredFeatureFlagIds),
             routeGroupPrefix: routeGroupPrefix,
             relativePattern: relativePattern,
             behaviorType: behaviorType,
             sourceId: sourceId,
             requiredCapabilityKey: requiredCapabilityKey,
             originalRequiredCapabilityKey: originalRequiredCapabilityKey,
+            requiredFeatureFlagIds: requiredFeatureFlagIds,
+            originalRequiredFeatureFlagIds: originalRequiredFeatureFlagIds,
             appliedOverrideId: appliedOverrideId,
             matchedOverrideIds: matchedOverrideIds,
             selectedOverrideId: selectedOverrideId,
@@ -147,8 +152,10 @@ internal static class RestEndpointRuntimeDescriptorFactory
         string routeGroupPrefix,
         string relativePattern,
         RestEndpointBindingFallbackMode? bindingFallbackMode,
-        string? requiredCapabilityKey)
+        string? requiredCapabilityKey,
+        IReadOnlyList<string>? requiredFeatureFlagIds)
     {
+        var normalizedRequiredFeatureFlagIds = RestEndpointRuntimeMetadata.NormalizeFeatureFlagIds(requiredFeatureFlagIds);
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["method"] = method,
@@ -168,6 +175,12 @@ internal static class RestEndpointRuntimeDescriptorFactory
         if (!string.IsNullOrWhiteSpace(requiredCapabilityKey))
         {
             metadata[RestEndpointRuntimeMetadata.RequiredCapabilityKeyMetadataKey] = requiredCapabilityKey.Trim();
+        }
+
+        if (normalizedRequiredFeatureFlagIds.Length > 0)
+        {
+            metadata[RestEndpointRuntimeMetadata.RequiredFeatureFlagIdsMetadataKey] =
+                string.Join(",", normalizedRequiredFeatureFlagIds);
         }
 
         return metadata;

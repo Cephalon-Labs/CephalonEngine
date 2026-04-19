@@ -155,6 +155,8 @@ internal sealed class AspNetCoreRestEndpointOverrideRuntimeCatalog(
                     item.Description,
                     item.RequiredCapabilityKey,
                     item.ClearRequiredCapability,
+                    item.RequiredFeatureFlagIds,
+                    item.ClearRequiredFeatureFlags,
                     item.Bindings,
                     item.RemovedBindingProperties,
                     item.ClearBindings,

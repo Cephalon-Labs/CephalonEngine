@@ -128,6 +128,8 @@ public sealed class RestApiGovernanceOptions
                 description: child["Description"]?.Trim(),
                 requiredCapabilityKey: child["RequiredCapabilityKey"]?.Trim(),
                 clearRequiredCapability: ReadBoolean(child, "ClearRequiredCapability"),
+                requiredFeatureFlagIds: ReadStringArray(child.GetSection("RequiredFeatureFlagIds")),
+                clearRequiredFeatureFlags: ReadBoolean(child, "ClearRequiredFeatureFlags"),
                 bindings: ReadBindings(child.GetSection("Bindings")),
                 removedBindingProperties: ReadStringArray(child.GetSection("RemovedBindingProperties")),
                 clearBindings: ReadBoolean(child, "ClearBindings"),

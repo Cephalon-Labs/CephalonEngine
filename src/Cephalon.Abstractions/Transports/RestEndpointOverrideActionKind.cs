@@ -125,5 +125,17 @@ public enum RestEndpointOverrideActionKind
     /// The rule opts the matched explicit-binding shorthand candidate into preserved implicit-query fallback.
     /// </summary>
     [JsonStringEnumMemberName("preserve-implicit-query-fallback")]
-    PreserveImplicitQueryFallback = 19
+    PreserveImplicitQueryFallback = 19,
+
+    /// <summary>
+    /// The rule changes the required Cephalon feature-flag identifiers.
+    /// </summary>
+    [JsonStringEnumMemberName("required-feature-flag-ids")]
+    RequiredFeatureFlagIds = 20,
+
+    /// <summary>
+    /// The rule clears any previously declared required Cephalon feature-flag identifiers.
+    /// </summary>
+    [JsonStringEnumMemberName("clear-required-feature-flags")]
+    ClearRequiredFeatureFlags = 21
 }

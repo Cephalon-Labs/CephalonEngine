@@ -1839,6 +1839,69 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestBehaviorProjectionCandidateResolverAppliesRequiredFeatureFlagOverrideToShorthandCandidates()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        builder.Group("/tests/generated-feature-flags-override")
+            .MapGeneratedProfiles("tests.generated.projection.precedence");
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.generated-feature-flags-override",
+                "Generated Feature Flags Override Module",
+                "Exercises shorthand feature-boundary override resolution.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "prefer-public-feature-flags",
+                    behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                    requiredFeatureFlagIds: ["host.orders-preview", "host.rollout"])
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Equal("prefer-public-feature-flags", candidate.Candidate.AppliedOverrideId);
+        Assert.Equal(["host.orders-preview", "host.rollout"], candidate.Candidate.ProjectedEndpoint.RequiredFeatureFlagIds);
+        Assert.NotNull(candidate.AppliedFeatureFlagOverride);
+        Assert.Equal(["host.orders-preview", "host.rollout"], candidate.AppliedFeatureFlagOverride.RequiredFeatureFlagIds);
+    }
+
+    [Fact]
+    public void RestBehaviorProjectionCandidateResolverAppliesClearRequiredFeatureFlagOverrideToShorthandCandidates()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
+        builder.Group("/tests/generated-feature-flags-clear")
+            .MapGeneratedProfiles("tests.generated.projection.precedence");
+
+        var candidates = RestBehaviorProjectionCandidateResolver.ResolveCandidates(
+            new ModuleDescriptor(
+                "tests.rest.generated-feature-flags-clear",
+                "Generated Feature Flags Clear Module",
+                "Exercises shorthand feature-boundary clearing through host governance.",
+                version: "1.0.0"),
+            new ApiRoutesOptions(),
+            builder.Build().Groups,
+            overrides:
+            [
+                new RestEndpointOverrideOptions(
+                    id: "clear-public-feature-flags",
+                    behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                    clearRequiredFeatureFlags: true)
+            ]);
+
+        var candidate = Assert.Single(candidates);
+        Assert.Equal(RestEndpointCandidateStatus.Published, candidate.Candidate.Status);
+        Assert.Equal("clear-public-feature-flags", candidate.Candidate.AppliedOverrideId);
+        Assert.Empty(candidate.Candidate.ProjectedEndpoint.RequiredFeatureFlagIds);
+        Assert.NotNull(candidate.AppliedFeatureFlagOverride);
+        Assert.True(candidate.AppliedFeatureFlagOverride.ClearRequiredFeatureFlags);
+        Assert.Empty(candidate.AppliedFeatureFlagOverride.RequiredFeatureFlagIds);
+    }
+
+    [Fact]
     public void RestBehaviorProjectionCandidateResolverAppliesRouteGroupPrefixOverrideAfterApiVersionRewrite()
     {
         var builder = new RestBehaviorModuleBuilder(typeof(GeneratedProjectionRestModule));
@@ -4094,6 +4157,30 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
+    public void RestEndpointOverrideOptionsTreatRequiredFeatureFlagIdsAsOverrideAction()
+    {
+        var options = new RestEndpointOverrideOptions(
+            id: "feature-flags-only",
+            behaviorIds: ["tests.generated.projection.precedence.lookup"],
+            requiredFeatureFlagIds: ["host.orders-preview", "host.rollout"]);
+
+        Assert.Equal(["host.orders-preview", "host.rollout"], options.RequiredFeatureFlagIds);
+        Assert.True(options.HasValues);
+    }
+
+    [Fact]
+    public void RestEndpointOverrideOptionsTreatClearRequiredFeatureFlagsAsOverrideAction()
+    {
+        var options = new RestEndpointOverrideOptions(
+            id: "feature-flags-clear-only",
+            behaviorIds: ["tests.generated.projection.precedence.lookup"],
+            clearRequiredFeatureFlags: true);
+
+        Assert.True(options.ClearRequiredFeatureFlags);
+        Assert.True(options.HasValues);
+    }
+
+    [Fact]
     public void RestEndpointOverrideOptionsTreatOpenApiDocumentNameAsOverrideAction()
     {
         var options = new RestEndpointOverrideOptions(
@@ -4116,6 +4203,19 @@ public sealed class BehaviorRestProjectionTests
                 clearRequiredCapability: true));
 
         Assert.Contains("cannot both set RequiredCapabilityKey and ClearRequiredCapability", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void RestEndpointOverrideOptionsRejectSettingAndClearingRequiredFeatureFlagsInSameRule()
+    {
+        var exception = Assert.Throws<ArgumentException>(() =>
+            new RestEndpointOverrideOptions(
+                id: "invalid-feature-flags-rule",
+                behaviorIds: ["tests.generated.projection.precedence.lookup"],
+                requiredFeatureFlagIds: ["host.orders-preview"],
+                clearRequiredFeatureFlags: true));
+
+        Assert.Contains("cannot both set RequiredFeatureFlagIds and ClearRequiredFeatureFlags", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

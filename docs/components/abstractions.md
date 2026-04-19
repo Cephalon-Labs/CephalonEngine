@@ -190,12 +190,14 @@ of behavior-package-owned and avoids treating `metadata` dictionaries as the can
 or binding-fallback surface. `RestEndpointRuntimeDescriptor` now also carries first-class
 `AuthoringStyle`, `RouteGroupPrefix`, `RelativePattern`, nullable `BehaviorType`, nullable
 `SourceId`, nullable `CandidateId`, and nullable `OriginalEndpointName` /
-`OriginalSummary` / `OriginalDescription`, plus ordered `SkippedSuppressionIds` /
+`OriginalSummary` / `OriginalDescription`, ordered `RequiredFeatureFlagIds`, ordered
+`OriginalRequiredFeatureFlagIds`, plus ordered `SkippedSuppressionIds` /
 `SkippedOverrideIds` for governance-ineligible explicit DSL routes, so published endpoints do not need
 `metadata.authoringStyle`, `metadata.routeGroupPrefix`, `metadata.relativePattern`,
 `metadata.behaviorType`, or `metadata.sourceId` as the canonical authored-route answer and
 published behavior-backed endpoints can still point back to the originating shorthand candidate
-and compare original-versus-effective endpoint metadata plus skipped-governance visibility without
+and compare original-versus-effective endpoint metadata, rollout boundaries, plus
+skipped-governance visibility without
 consumers reverse-engineering that join from route text, endpoint ids, or behavior docs. The same
 namespace now also owns
 `IRestEndpointCandidateRuntimeCatalog`,
@@ -257,7 +259,8 @@ governance answers reuse one stable candidate-bucket shape. The same
 transport namespace now also owns `IRestEndpointOverrideRuntimeCatalog` plus
 `RestEndpointOverrideDescriptor`, including shorthand binding resets through `ClearBindings` plus
 the shorthand endpoint-metadata clear actions `ClearEndpointName`, `ClearSummary`, and
-`ClearDescription`, so hosts can publish set-or-clear governance truth without inventing ASP.NET
+`ClearDescription`, plus feature-rollout actions `RequiredFeatureFlagIds` and
+`ClearRequiredFeatureFlags`, so hosts can publish set-or-clear governance truth without inventing ASP.NET
 Core-specific override DTOs. `RestEndpointCandidateProjectionDescriptor` now also carries optional
 `HostGovernanceScope`, and the same candidate/runtime descriptor family keeps that original
 selector truth visible through `OriginalProjection.HostGovernanceScope` alongside original

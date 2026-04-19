@@ -677,10 +677,11 @@ Current helper behavior:
   or by subtree `BehaviorIdPrefixes`
 - ASP.NET Core hosts can now also override the effective API major version, HTTP method, or
   bounded published route-group prefix, constrained relative route pattern, required capability
-  boundary, or explicit binding
+  boundary, ordered required feature-flag boundary, or explicit binding
   plan for descriptor-backed shorthand candidates through `RestApi:Overrides`, which now supports
   `ApiVersionMajor`, `OpenApiDocumentName`, `Method`, `RouteGroupPrefix`, `Pattern`, `RequiredCapabilityKey`,
-  `ClearRequiredCapability`, `Bindings`, `RemovedBindingProperties`, shorthand binding resets
+  `ClearRequiredCapability`, `RequiredFeatureFlagIds`, `ClearRequiredFeatureFlags`, `Bindings`,
+  `RemovedBindingProperties`, shorthand binding resets
   through `ClearBindings`, typed `BindingMode`, host-governed preserved query fallback through
   `PreserveImplicitQueryFallback`,
   shorthand endpoint metadata `EndpointName`, `Summary`, and `Description`, OpenAPI tag-name
@@ -1035,13 +1036,26 @@ Current governance baseline:
   ASP.NET Core endpoint metadata, `/engine/rest-endpoints`, and `snapshot.RestEndpoints` all keep
   `RequiredCapabilityKey = null`, and `RequireCapability(...)` plus `ClearRequiredCapability()`
   both follow last-declaration-wins semantics so the earlier shorthand guard does not linger
+- ordered `RequiredFeatureFlagIds` are now the explicit host answer for rewriting an inherited
+  shorthand REST rollout boundary, and `ClearRequiredFeatureFlags = true` is now the explicit host
+  answer for removing one; when either action wins, shorthand candidate projections, actual
+  ASP.NET Core endpoint metadata, `/engine/rest-endpoints`, and `snapshot.RestEndpoints` all keep
+  the same effective ordered feature ids, while `RequireFeatureFlag(...)`,
+  `RequireFeatureFlags(...)`, and `ClearRequiredFeatureFlags()` all follow last-declaration-wins so
+  a host can replace or remove an earlier shorthand feature gate without leaving stacked filters
+  behind
 - published endpoints now also expose nullable `OriginalRequiredCapabilityKey` plus
   `AppliedOverrideId`, so operators can read the source-versus-effective capability story directly
   from `/engine/rest-endpoints` when shorthand governance rewrites or clears a boundary; endpoint-
   level capability-only no-op clears now leave `AppliedOverrideId = null`
+- published endpoints now also expose ordered `OriginalRequiredFeatureFlagIds`, so operators can
+  read the source-versus-effective REST feature-rollout story directly from `/engine/rest-endpoints`
+  when shorthand governance rewrites or clears a boundary; endpoint-level feature-only no-op
+  rewrites or clears now also leave `AppliedOverrideId = null`
 - published endpoints now also expose ordered `MatchedOverrideIds`, so the final runtime answer can
   keep shorthand override matches visible, including capability-only no-op matches, endpoint-
-  metadata-only no-op matches, and reorder-only equivalent binding-plan rewrites that still leave
+  metadata-only no-op matches, feature-only no-op matches, and reorder-only equivalent
+  binding-plan rewrites that still leave
   `AppliedOverrideId = null`; those no-op wins now also surface the selected winning rule through
   `SelectedOverrideId` plus the decisive specificity answer through `OverrideSelectionBasis`; that
   same semantic binding-set comparison now also drives projection reuse and post-materialization

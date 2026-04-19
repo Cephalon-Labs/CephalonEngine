@@ -1161,6 +1161,16 @@ Status:
   plus `snapshot.RestEndpoints` now show both the original and effective capability answers
   directly, and capability-only no-op clear rules no longer claim an endpoint-level applied
   override when the published capability answer stays unchanged
+- the next shorthand feature-boundary governance follow-through is now also shipped through
+  `ENG-058-T174`, so `RestApi:Overrides` can now also rewrite shorthand
+  `RequiredFeatureFlagIds` or clear them through `ClearRequiredFeatureFlags`, that effective
+  ordered feature answer now flows through shorthand candidate truth, actual ASP.NET Core endpoint
+  metadata, `/engine/rest-endpoints`, and `snapshot.RestEndpoints`, `RequireFeatureFlag(...)`,
+  `RequireFeatureFlags(...)`, and `ClearRequiredFeatureFlags()` now all treat the last declared
+  feature registration as authoritative so later host governance can replace or intentionally
+  remove an earlier shorthand feature boundary, and published endpoints now also expose ordered
+  `OriginalRequiredFeatureFlagIds` so runtime truth can distinguish “never had a feature gate”
+  from “host cleared or rewrote the source feature gate”
 - the next published override-match visibility follow-through is now shipped through
   `ENG-058-T102`, so `RestEndpointRuntimeDescriptor` now also exposes ordered
   `MatchedOverrideIds`, shorthand materialization carries that same ordered match set onto the
@@ -1510,6 +1520,22 @@ The following points are durable enough to keep outside thread-local context.
   endpoint-level `AppliedOverrideId` should remain `null` for capability-only no-op matches whose
   effective published capability answer does not change, while `SelectedOverrideId` plus
   `OverrideSelectionBasis` still answer which rule won and why
+- when REST governance rewrites shorthand `RequiredFeatureFlagIds` or clears them through
+  `ClearRequiredFeatureFlags`, the same effective ordered answer must drive
+  `ProjectedEndpoint.RequiredFeatureFlagIds`, actual ASP.NET Core endpoint metadata,
+  `/engine/rest-endpoints`, and `snapshot.RestEndpoints`; `RequireFeatureFlag(...)`,
+  `RequireFeatureFlags(...)`, and `ClearRequiredFeatureFlags()` now all follow
+  last-declaration-wins so a host can intentionally replace or remove an earlier shorthand feature
+  boundary without leaving stacked or hidden gates behind
+- when published endpoint runtime truth needs to explain shorthand feature governance,
+  `/engine/rest-endpoints` and `snapshot.RestEndpoints` now also expose ordered
+  `OriginalRequiredFeatureFlagIds`, `AppliedOverrideId`, `SelectedOverrideId`, and
+  `OverrideSelectionBasis`, so the final published surface can distinguish “no feature boundary
+  ever existed” from “a source feature boundary was cleared or rewritten” without forcing
+  operators to reconstruct that answer only from candidate joins; the endpoint-level
+  `AppliedOverrideId` should remain `null` for feature-only no-op matches whose effective
+  published feature answer does not change, while `SelectedOverrideId` plus
+  `OverrideSelectionBasis` still answer which rule won and why
 - when ASP.NET Core materialization reconciles selected override truth against the actual endpoint
   metadata it published, applied endpoint-level provenance should only be emitted when the winning
   rule changed the published surface inside the same action family it targeted; capability-only
@@ -1519,7 +1545,7 @@ The following points are durable enough to keep outside thread-local context.
 - when published endpoint runtime truth needs to explain shorthand governance overlap directly,
   `/engine/rest-endpoints` and `snapshot.RestEndpoints` should also expose the ordered
   `MatchedOverrideIds` set from the originating shorthand candidate so operators can see matched
-  override rules, including capability-only no-op matches, without joining back to
+  override rules, including capability-only and feature-only no-op matches, without joining back to
   `/engine/rest-endpoint-candidates`
 - within that constrained pattern slice, placeholder-preserving rewrites stay the default and
   placeholder renames now also work when the effective explicit route-binding plan covers the

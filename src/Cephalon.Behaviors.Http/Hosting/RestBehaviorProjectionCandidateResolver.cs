@@ -302,7 +302,9 @@ internal static class RestBehaviorProjectionCandidateResolver
             candidate.Candidate.ProjectedEndpoint.SkippedSuppressionIds,
             candidate.Candidate.ProjectedEndpoint.SkippedOverrideIds,
             candidate.Candidate.ProjectedEndpoint.SelectedOverrideActionKinds,
-            candidate.Candidate.ProjectedEndpoint.AppliedOverrideActionKinds);
+            candidate.Candidate.ProjectedEndpoint.AppliedOverrideActionKinds,
+            candidate.Candidate.ProjectedEndpoint.RequiredFeatureFlagIds,
+            candidate.Candidate.ProjectedEndpoint.OriginalRequiredFeatureFlagIds);
 
         return candidate with
         {
@@ -383,7 +385,9 @@ internal static class RestBehaviorProjectionCandidateResolver
             normalizedSkippedSuppressionIds,
             normalizedSkippedOverrideIds,
             candidate.Candidate.ProjectedEndpoint.SelectedOverrideActionKinds,
-            candidate.Candidate.ProjectedEndpoint.AppliedOverrideActionKinds);
+            candidate.Candidate.ProjectedEndpoint.AppliedOverrideActionKinds,
+            candidate.Candidate.ProjectedEndpoint.RequiredFeatureFlagIds,
+            candidate.Candidate.ProjectedEndpoint.OriginalRequiredFeatureFlagIds);
 
         return candidate with
         {
@@ -552,11 +556,13 @@ internal static class RestBehaviorProjectionCandidateResolver
             documentation.Summary,
             documentation.Description);
         var appliedCapabilityOverride = CreateAppliedRequiredCapabilityOverride(selectedOverride);
+        var appliedFeatureFlagOverride = CreateAppliedRequiredFeatureFlagOverride(selectedOverride);
         var selectedOverrideActionKinds = selectedOverride?.ActionKinds ?? [];
         var appliedOverrideActionKinds = ResolveAppliedActionKinds(
             appliedOverride?.ActionKinds,
             appliedMetadataOverride?.ActionKinds,
-            appliedCapabilityOverride?.ActionKinds);
+            appliedCapabilityOverride?.ActionKinds,
+            appliedFeatureFlagOverride?.ActionKinds);
         var endpointName = ResolveEffectiveMetadataValue(
             selectedOverride?.EndpointName,
             selectedOverride?.ClearEndpointName == true,
@@ -597,7 +603,13 @@ internal static class RestBehaviorProjectionCandidateResolver
             requiredCapabilityKey: appliedCapabilityOverride?.ClearRequiredCapability == true
                 ? null
                 : appliedCapabilityOverride?.RequiredCapabilityKey,
-            appliedOverrideId: appliedOverride?.Id ?? appliedCapabilityOverride?.OverrideId ?? appliedMetadataOverride?.OverrideId,
+            requiredFeatureFlagIds: appliedFeatureFlagOverride?.ClearRequiredFeatureFlags == true
+                ? []
+                : appliedFeatureFlagOverride?.RequiredFeatureFlagIds,
+            appliedOverrideId: appliedOverride?.Id
+                ?? appliedCapabilityOverride?.OverrideId
+                ?? appliedFeatureFlagOverride?.OverrideId
+                ?? appliedMetadataOverride?.OverrideId,
             matchedOverrideIds: overrideDecision.MatchedOverrideIds,
             selectedOverrideId: selectedOverride?.Id,
             selectedOverrideActionKinds: selectedOverrideActionKinds,
@@ -615,14 +627,18 @@ internal static class RestBehaviorProjectionCandidateResolver
                 effectiveEndpointProjection.AuthoringStyle,
                 precedenceRank,
                 RestEndpointCandidateStatus.Published,
-                appliedOverrideId: appliedOverride?.Id ?? appliedCapabilityOverride?.OverrideId ?? appliedMetadataOverride?.OverrideId,
+                appliedOverrideId: appliedOverride?.Id
+                    ?? appliedCapabilityOverride?.OverrideId
+                    ?? appliedFeatureFlagOverride?.OverrideId
+                    ?? appliedMetadataOverride?.OverrideId,
                 matchedOverrideIds: overrideDecision.MatchedOverrideIds,
                 selectedOverrideId: selectedOverride?.Id,
                 selectedOverrideActionKinds: selectedOverrideActionKinds,
                 appliedOverrideActionKinds: appliedOverrideActionKinds,
                 overrideSelectionBasis: overrideDecision.SelectionBasis),
             appliedCapabilityOverride,
-            appliedMetadataOverride);
+            appliedMetadataOverride,
+            appliedFeatureFlagOverride);
     }
 
     private static ResolvedRestBehaviorEndpointProjectionCandidate ResolvePublication(
@@ -2542,6 +2558,29 @@ internal static class RestBehaviorProjectionCandidateResolver
                 : [RestEndpointOverrideActionKind.RequiredCapabilityKey]);
     }
 
+    private static AppliedRestEndpointFeatureFlagOverride? CreateAppliedRequiredFeatureFlagOverride(
+        RestEndpointOverrideOptions? selectedOverride)
+    {
+        if (selectedOverride is null)
+        {
+            return null;
+        }
+
+        var requiredFeatureFlagIds = NormalizeOrderedIdentifiers(selectedOverride.RequiredFeatureFlagIds);
+        if (requiredFeatureFlagIds.Length == 0 && !selectedOverride.ClearRequiredFeatureFlags)
+        {
+            return null;
+        }
+
+        return new AppliedRestEndpointFeatureFlagOverride(
+            selectedOverride.Id,
+            requiredFeatureFlagIds,
+            selectedOverride.ClearRequiredFeatureFlags,
+            selectedOverride.ClearRequiredFeatureFlags
+                ? [RestEndpointOverrideActionKind.ClearRequiredFeatureFlags]
+                : [RestEndpointOverrideActionKind.RequiredFeatureFlagIds]);
+    }
+
     private static RestEndpointOverrideActionKind[] ResolveAppliedMetadataActionKinds(
         bool endpointNameChanged,
         bool clearEndpointName,
@@ -2581,11 +2620,13 @@ internal static class RestBehaviorProjectionCandidateResolver
     private static RestEndpointOverrideActionKind[] ResolveAppliedActionKinds(
         IReadOnlyList<RestEndpointOverrideActionKind>? structuralActionKinds,
         IReadOnlyList<RestEndpointOverrideActionKind>? metadataActionKinds,
-        IReadOnlyList<RestEndpointOverrideActionKind>? capabilityActionKinds)
+        IReadOnlyList<RestEndpointOverrideActionKind>? capabilityActionKinds,
+        IReadOnlyList<RestEndpointOverrideActionKind>? featureFlagActionKinds)
     {
         return (structuralActionKinds ?? [])
             .Concat(metadataActionKinds ?? [])
             .Concat(capabilityActionKinds ?? [])
+            .Concat(featureFlagActionKinds ?? [])
             .Distinct()
             .OrderBy(static actionKind => actionKind)
             .ToArray();
@@ -2845,7 +2886,8 @@ internal sealed record ResolvedRestBehaviorEndpointProjectionCandidate(
     RestBehaviorEndpointProjection EffectiveEndpointProjection,
     RestEndpointCandidateRuntimeDescriptor Candidate,
     AppliedRestEndpointCapabilityOverride? AppliedCapabilityOverride = null,
-    AppliedRestEndpointMetadataOverride? AppliedMetadataOverride = null);
+    AppliedRestEndpointMetadataOverride? AppliedMetadataOverride = null,
+    AppliedRestEndpointFeatureFlagOverride? AppliedFeatureFlagOverride = null);
 
 internal sealed record AppliedRestEndpointOverride(
     string Id,
@@ -2870,6 +2912,12 @@ internal sealed record AppliedRestEndpointCapabilityOverride(
     string OverrideId,
     string? RequiredCapabilityKey,
     bool ClearRequiredCapability,
+    IReadOnlyList<RestEndpointOverrideActionKind> ActionKinds);
+
+internal sealed record AppliedRestEndpointFeatureFlagOverride(
+    string OverrideId,
+    IReadOnlyList<string> RequiredFeatureFlagIds,
+    bool ClearRequiredFeatureFlags,
     IReadOnlyList<RestEndpointOverrideActionKind> ActionKinds);
 
 internal sealed record ResolvedRestEndpointAuthoringPolicySuppression(

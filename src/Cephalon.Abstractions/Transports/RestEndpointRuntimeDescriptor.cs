@@ -113,6 +113,14 @@ public sealed class RestEndpointRuntimeDescriptor
     /// The normalized action dimensions that materially changed the published endpoint answer when
     /// the selected override rule was not a runtime no-op.
     /// </param>
+    /// <param name="requiredFeatureFlagIds">
+    /// The required Cephalon feature-flag identifiers enforced at the REST boundary when any are
+    /// available.
+    /// </param>
+    /// <param name="originalRequiredFeatureFlagIds">
+    /// The original required Cephalon feature-flag identifiers before later endpoint-governance
+    /// rewrites when the runtime can classify that source answer.
+    /// </param>
     public RestEndpointRuntimeDescriptor(
         string id,
         string transportId,
@@ -151,7 +159,9 @@ public sealed class RestEndpointRuntimeDescriptor
         IReadOnlyList<string>? skippedSuppressionIds = null,
         IReadOnlyList<string>? skippedOverrideIds = null,
         IReadOnlyList<RestEndpointOverrideActionKind>? selectedOverrideActionKinds = null,
-        IReadOnlyList<RestEndpointOverrideActionKind>? appliedOverrideActionKinds = null)
+        IReadOnlyList<RestEndpointOverrideActionKind>? appliedOverrideActionKinds = null,
+        IReadOnlyList<string>? requiredFeatureFlagIds = null,
+        IReadOnlyList<string>? originalRequiredFeatureFlagIds = null)
     {
         var normalizedMatchedOverrideIds = NormalizeOrderedList(matchedOverrideIds);
         var normalizedSkippedSuppressionIds = NormalizeOrderedList(skippedSuppressionIds);
@@ -273,6 +283,8 @@ public sealed class RestEndpointRuntimeDescriptor
         SourceId = NormalizeOptional(sourceId);
         RequiredCapabilityKey = NormalizeOptional(requiredCapabilityKey);
         OriginalRequiredCapabilityKey = NormalizeOptional(originalRequiredCapabilityKey);
+        RequiredFeatureFlagIds = NormalizeOrderedList(requiredFeatureFlagIds);
+        OriginalRequiredFeatureFlagIds = NormalizeOrderedList(originalRequiredFeatureFlagIds);
         AppliedOverrideId = normalizedAppliedOverrideId;
         MatchedOverrideIds = normalizedMatchedOverrideIds;
         SkippedSuppressionIds = normalizedSkippedSuppressionIds;
@@ -433,6 +445,18 @@ public sealed class RestEndpointRuntimeDescriptor
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? OriginalRequiredCapabilityKey { get; }
+
+    /// <summary>
+    /// Gets the required Cephalon feature-flag identifiers enforced at the REST boundary when any
+    /// are available.
+    /// </summary>
+    public IReadOnlyList<string> RequiredFeatureFlagIds { get; }
+
+    /// <summary>
+    /// Gets the original required Cephalon feature-flag identifiers before later
+    /// endpoint-governance rewrites when the runtime can classify that source answer.
+    /// </summary>
+    public IReadOnlyList<string> OriginalRequiredFeatureFlagIds { get; }
 
     /// <summary>
     /// Gets the host-level override identifier when runtime governance actually changes the

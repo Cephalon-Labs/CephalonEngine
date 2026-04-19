@@ -141,7 +141,13 @@ rather than hiding feature ownership inside host-only provider code. Module-cont
 remain `FeatureFlagSourceKind.Module` with a matching `SourceModuleId`, duplicate ids fail
 composition deterministically, and the current baseline intentionally stops short of advertising a
 separate `runtime.feature-flags` capability because runtime capability provenance is still
-module-based and the engine would otherwise need a synthetic source. The new host-agnostic `IRateLimitingRuntimeCatalog` and
+module-based and the engine would otherwise need a synthetic source.
+That same shared feature-flag runtime now also reaches the public REST boundary in ASP.NET Core:
+`RequireFeatureFlag(...)` / `RequireFeatureFlags(...)` can gate request execution while keeping the
+published endpoint visible through `/engine/rest-endpoints` and `snapshot.RestEndpoints`, and host
+governance can rewrite or clear shorthand REST feature requirements without inventing a second
+feature-rollout registry beside the engine-owned catalogs.
+The new host-agnostic `IRateLimitingRuntimeCatalog` and
 `RateLimitingRuntimeDescriptor` contracts also let host adapters publish effective enforcement into
 `snapshot.RateLimitingPolicies` without pretending the engine core itself performs HTTP throttling.
 `RateLimitingSelection` now also carries additive `Overrides` projected as

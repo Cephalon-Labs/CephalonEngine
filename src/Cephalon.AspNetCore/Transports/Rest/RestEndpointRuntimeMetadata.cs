@@ -13,6 +13,7 @@ internal static class RestEndpointRuntimeMetadata
     internal const string BehaviorModuleProfileAuthoringStyle = "behavior-module-profile";
     internal const string BindingFallbackModeMetadataKey = "bindingFallbackMode";
     internal const string RequiredCapabilityKeyMetadataKey = "requiredCapabilityKey";
+    internal const string RequiredFeatureFlagIdsMetadataKey = "requiredFeatureFlagIds";
     internal const int BehaviorModuleDslPrecedenceRank = 2;
     internal const int BehaviorModuleProfilePrecedenceRank = 3;
     internal const int BehaviorModuleGeneratedPrecedenceRank = 4;
@@ -58,6 +59,40 @@ internal static class RestEndpointRuntimeMetadata
                 !string.IsNullOrWhiteSpace(item.CapabilityKey))
             ?.CapabilityKey;
     }
+
+    internal static string[] NormalizeFeatureFlagIds(IReadOnlyList<string>? featureFlagIds)
+    {
+        return featureFlagIds?
+            .Where(static item => !string.IsNullOrWhiteSpace(item))
+            .Select(static item => item.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static item => item, StringComparer.OrdinalIgnoreCase)
+            .ToArray() ?? [];
+    }
+
+    internal static string[] ResolveEffectiveRequiredFeatureFlagIds(
+        IEnumerable<RestEndpointFeatureFlagMetadata> metadata)
+    {
+        ArgumentNullException.ThrowIfNull(metadata);
+
+        var requiredFeatureMetadata = metadata.LastOrDefault();
+        return requiredFeatureMetadata?.ClearsExisting == true
+            ? []
+            : NormalizeFeatureFlagIds(requiredFeatureMetadata?.FeatureFlagIds);
+    }
+
+    internal static string[] ResolveLastDeclaredRequiredFeatureFlagIds(
+        IEnumerable<RestEndpointFeatureFlagMetadata> metadata)
+    {
+        ArgumentNullException.ThrowIfNull(metadata);
+
+        return NormalizeFeatureFlagIds(
+            metadata
+                .LastOrDefault(static item =>
+                    !item.ClearsExisting &&
+                    item.FeatureFlagIds.Count > 0)
+                ?.FeatureFlagIds);
+    }
 }
 
 internal sealed record RestEndpointCapabilityMetadata(string? CapabilityKey, bool ClearsExisting = false);
@@ -65,6 +100,15 @@ internal sealed record RestEndpointCapabilityMetadata(string? CapabilityKey, boo
 internal sealed class RestEndpointCapabilityRegistration;
 
 internal sealed record RestEndpointSourceCapabilityMetadata(string? RequiredCapabilityKey);
+
+internal sealed record RestEndpointFeatureFlagMetadata(
+    IReadOnlyList<string> FeatureFlagIds,
+    bool ClearsExisting = false);
+
+internal sealed class RestEndpointFeatureFlagRegistration;
+
+internal sealed record RestEndpointSourceFeatureFlagMetadata(
+    IReadOnlyList<string> RequiredFeatureFlagIds);
 
 internal sealed record RestEndpointSourceDocumentationMetadata(
     string? EndpointName,

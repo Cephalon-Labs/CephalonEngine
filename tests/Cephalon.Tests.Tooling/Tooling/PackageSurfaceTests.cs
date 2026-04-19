@@ -1536,6 +1536,19 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void RestEndpointGovernanceContractsExposeFeatureBoundaryOverrides()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideDescriptor)
+            .GetProperty("RequiredFeatureFlagIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideDescriptor)
+            .GetProperty("ClearRequiredFeatureFlags", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions)
+            .GetProperty("RequiredFeatureFlagIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions)
+            .GetProperty("ClearRequiredFeatureFlags", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
     public void RestEndpointGovernanceContractsExposeClearBindingsOverrides()
     {
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointOverrideDescriptor)
@@ -2233,6 +2246,10 @@ public sealed class PackageSurfaceTests
     {
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor)
             .GetProperty("OriginalRequiredCapabilityKey", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor)
+            .GetProperty("RequiredFeatureFlagIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor)
+            .GetProperty("OriginalRequiredFeatureFlagIds", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor)
             .GetProperty("AppliedOverrideId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor)

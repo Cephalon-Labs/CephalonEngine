@@ -37,6 +37,14 @@ public sealed class RestEndpointOverrideDescriptor
     /// <see langword="true" /> when the rule removes any previously declared Cephalon capability
     /// boundary from the matched candidate.
     /// </param>
+    /// <param name="requiredFeatureFlagIds">
+    /// The required Cephalon feature-flag identifiers enforced at the REST boundary when the rule
+    /// matches.
+    /// </param>
+    /// <param name="clearRequiredFeatureFlags">
+    /// <see langword="true" /> when the rule removes any previously declared Cephalon feature-flag
+    /// requirements from the matched candidate.
+    /// </param>
     /// <param name="bindings">The effective explicit request-binding plan applied when the rule matches.</param>
     /// <param name="removedBindingProperties">
     /// The explicit binding properties removed from the source binding plan when the rule matches.
@@ -155,6 +163,8 @@ public sealed class RestEndpointOverrideDescriptor
         string? description = null,
         string? requiredCapabilityKey = null,
         bool clearRequiredCapability = false,
+        IReadOnlyList<string>? requiredFeatureFlagIds = null,
+        bool clearRequiredFeatureFlags = false,
         IReadOnlyList<RestEndpointBindingDescriptor>? bindings = null,
         IReadOnlyList<string>? removedBindingProperties = null,
         bool clearBindings = false,
@@ -221,6 +231,8 @@ public sealed class RestEndpointOverrideDescriptor
         Description = NormalizeNonEmptyValue(description);
         RequiredCapabilityKey = NormalizeNonEmptyValue(requiredCapabilityKey);
         ClearRequiredCapability = clearRequiredCapability;
+        RequiredFeatureFlagIds = NormalizeList(requiredFeatureFlagIds);
+        ClearRequiredFeatureFlags = clearRequiredFeatureFlags;
         ClearEndpointName = clearEndpointName;
         ClearSummary = clearSummary;
         ClearDescription = clearDescription;
@@ -253,6 +265,8 @@ public sealed class RestEndpointOverrideDescriptor
             ClearDescription,
             RequiredCapabilityKey,
             ClearRequiredCapability,
+            RequiredFeatureFlagIds,
+            ClearRequiredFeatureFlags,
             Bindings,
             RemovedBindingProperties,
             ClearBindings,
@@ -342,6 +356,13 @@ public sealed class RestEndpointOverrideDescriptor
                 nameof(clearRequiredCapability));
         }
 
+        if (ClearRequiredFeatureFlags && RequiredFeatureFlagIds.Count > 0)
+        {
+            throw new ArgumentException(
+                "REST endpoint override descriptors cannot both set RequiredFeatureFlagIds and ClearRequiredFeatureFlags in the same rule.",
+                nameof(clearRequiredFeatureFlags));
+        }
+
         if (ClearEndpointName && EndpointName is not null)
         {
             throw new ArgumentException(
@@ -373,7 +394,7 @@ public sealed class RestEndpointOverrideDescriptor
         if (ActionKinds.Count == 0)
         {
             throw new ArgumentException(
-                "REST endpoint override descriptors require at least one override action such as ApiVersionMajor, Method, Pattern, RouteGroupPrefix, OpenApiDocumentName, TagName, EndpointName, Summary, Description, ClearEndpointName, ClearSummary, ClearDescription, RequiredCapabilityKey, ClearRequiredCapability, ClearBindings, Bindings, or RemovedBindingProperties.",
+                "REST endpoint override descriptors require at least one override action such as ApiVersionMajor, Method, Pattern, RouteGroupPrefix, OpenApiDocumentName, TagName, EndpointName, Summary, Description, ClearEndpointName, ClearSummary, ClearDescription, RequiredCapabilityKey, ClearRequiredCapability, RequiredFeatureFlagIds, ClearRequiredFeatureFlags, ClearBindings, Bindings, or RemovedBindingProperties.",
                 nameof(apiVersionMajor));
         }
 
@@ -600,6 +621,18 @@ public sealed class RestEndpointOverrideDescriptor
     /// capability boundary from the matched candidate.
     /// </summary>
     public bool ClearRequiredCapability { get; }
+
+    /// <summary>
+    /// Gets the required Cephalon feature-flag identifiers enforced at the REST boundary when this
+    /// override rule matches.
+    /// </summary>
+    public IReadOnlyList<string> RequiredFeatureFlagIds { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether this override rule clears any previously declared
+    /// Cephalon feature-flag requirements from the matched candidate.
+    /// </summary>
+    public bool ClearRequiredFeatureFlags { get; }
 
     /// <summary>
     /// Gets the effective explicit request-binding plan applied when this override rule matches.
@@ -1003,6 +1036,8 @@ public sealed class RestEndpointOverrideDescriptor
         bool clearDescription,
         string? requiredCapabilityKey,
         bool clearRequiredCapability,
+        IReadOnlyList<string> requiredFeatureFlagIds,
+        bool clearRequiredFeatureFlags,
         IReadOnlyList<RestEndpointBindingDescriptor> bindings,
         IReadOnlyList<string> removedBindingProperties,
         bool clearBindings,
@@ -1011,6 +1046,7 @@ public sealed class RestEndpointOverrideDescriptor
     {
         ArgumentNullException.ThrowIfNull(bindings);
         ArgumentNullException.ThrowIfNull(removedBindingProperties);
+        ArgumentNullException.ThrowIfNull(requiredFeatureFlagIds);
 
         var actionKinds = new List<RestEndpointOverrideActionKind>(16);
         if (apiVersionMajor.HasValue)
@@ -1081,6 +1117,16 @@ public sealed class RestEndpointOverrideDescriptor
         if (clearRequiredCapability)
         {
             actionKinds.Add(RestEndpointOverrideActionKind.ClearRequiredCapability);
+        }
+
+        if (requiredFeatureFlagIds.Count > 0)
+        {
+            actionKinds.Add(RestEndpointOverrideActionKind.RequiredFeatureFlagIds);
+        }
+
+        if (clearRequiredFeatureFlags)
+        {
+            actionKinds.Add(RestEndpointOverrideActionKind.ClearRequiredFeatureFlags);
         }
 
         if (clearBindings)
