@@ -16,10 +16,10 @@ Technology profiles should not stop at documentation or scaffold hints. When a w
 That keeps the engine extensible without making every new trend a built-in subsystem.
 Some profiles can also start as engine-owned contract baselines before a dedicated companion pack
 exists. The new `cell-based-architecture` profile now follows that path: the engine ships
-`CellBoundaryDescriptor`, `CellRouteDescriptor`, `/engine/cells`, `/engine/cell-routes`, and the
-`cell-boundaries` plus `cell-routes` technology runtime surfaces today, while deeper
-traffic-management or health-isolation automation can still move into a future companion pack
-later.
+`CellBoundaryDescriptor`, `CellRouteDescriptor`, `CellHealthIsolationDescriptor`, `/engine/cells`,
+`/engine/cell-routes`, `/engine/cell-health-isolations`, and the `cell-boundaries`,
+`cell-routes`, plus `cell-health-isolations` technology runtime surfaces today, while deeper
+traffic-management automation can still move into a future companion pack later.
 
 ## Shipped baseline packs
 

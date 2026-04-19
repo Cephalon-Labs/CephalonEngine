@@ -19714,6 +19714,143 @@ string SourceModuleId { get; }
 
 Gets the module that owns this cell boundary.
 
+<a id="type-cephalon-abstractions-technologies-cellhealthisolationdescriptor"></a>
+
+### `CellHealthIsolationDescriptor`
+
+Describes one module-owned cell health-isolation answer visible to the active runtime.
+
+#### Declaration
+```csharp
+public sealed class CellHealthIsolationDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-technologies-cellhealthisolationdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `CellHealthIsolationDescriptor`
+
+```csharp
+CellHealthIsolationDescriptor(string id, string sourceModuleId, string cellId, string displayName, string description, string failureIsolationMode, string readinessScope, string restartScope, IReadOnlyList<string> dependencyIds, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a cell health-isolation descriptor.
+
+Parameters:
+- `id`: The stable health-isolation identifier.
+- `sourceModuleId`: The Cephalon module that owns this health-isolation answer.
+- `cellId`: The cell identifier governed by this health-isolation answer.
+- `displayName`: The operator-facing health-isolation name.
+- `description`: The human-readable description of the health-isolation posture.
+- `failureIsolationMode`: The operator-facing failure-isolation mode for this cell.
+- `readinessScope`: The operator-facing readiness scope used for this cell.
+- `restartScope`: The operator-facing restart scope used for this cell.
+- `dependencyIds`: Optional dependency identifiers associated with this health-isolation answer.
+- `metadata`: Optional operator-facing metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-cellid"></a>
+
+##### `CellId`
+
+```csharp
+string CellId { get; }
+```
+
+Gets the cell identifier governed by this health-isolation answer.
+
+<a id="member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-dependencyids"></a>
+
+##### `DependencyIds`
+
+```csharp
+IReadOnlyList<string> DependencyIds { get; }
+```
+
+Gets the normalized dependency identifiers associated with this health-isolation answer.
+
+<a id="member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable description of the health-isolation posture.
+
+<a id="member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing health-isolation name.
+
+<a id="member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-failureisolationmode"></a>
+
+##### `FailureIsolationMode`
+
+```csharp
+string FailureIsolationMode { get; }
+```
+
+Gets the operator-facing failure-isolation mode for this cell.
+
+<a id="member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable health-isolation identifier.
+
+<a id="member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional operator-facing metadata for this health-isolation answer.
+
+<a id="member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-readinessscope"></a>
+
+##### `ReadinessScope`
+
+```csharp
+string ReadinessScope { get; }
+```
+
+Gets the operator-facing readiness scope for this cell.
+
+<a id="member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-restartscope"></a>
+
+##### `RestartScope`
+
+```csharp
+string RestartScope { get; }
+```
+
+Gets the operator-facing restart scope for this cell.
+
+<a id="member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; }
+```
+
+Gets the module that owns this health-isolation answer.
+
 <a id="type-cephalon-abstractions-technologies-cellroutedescriptor"></a>
 
 ### `CellRouteDescriptor`
@@ -19968,6 +20105,143 @@ Adds one cell-boundary descriptor to the active runtime composition.
 
 Parameters:
 - `cellBoundary`: The cell-boundary descriptor to add.
+
+<a id="type-cephalon-abstractions-technologies-icellhealthisolationcatalog"></a>
+
+### `ICellHealthIsolationCatalog`
+
+Exposes the cell health-isolation answers visible to the current runtime.
+
+#### Declaration
+```csharp
+public interface ICellHealthIsolationCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-technologies-icellhealthisolationcatalog-healthisolations"></a>
+
+##### `HealthIsolations`
+
+```csharp
+IReadOnlyList<CellHealthIsolationDescriptor> HealthIsolations { get; }
+```
+
+Gets all cell health-isolation answers visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-technologies-icellhealthisolationcatalog-getbycellid-system-string"></a>
+
+##### `GetByCellId`
+
+```csharp
+IReadOnlyList<CellHealthIsolationDescriptor> GetByCellId(string cellId)
+```
+
+Gets all cell health-isolation answers that govern the requested cell.
+
+Returns: The matching cell health-isolation answers, or an empty list when none are active.
+
+Parameters:
+- `cellId`: The cell identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-technologies-icellhealthisolationcatalog-getbydependencyid-system-string"></a>
+
+##### `GetByDependencyId`
+
+```csharp
+IReadOnlyList<CellHealthIsolationDescriptor> GetByDependencyId(string dependencyId)
+```
+
+Gets all cell health-isolation answers that reference the requested dependency.
+
+Returns: The matching cell health-isolation answers, or an empty list when none are active.
+
+Parameters:
+- `dependencyId`: The dependency identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-technologies-icellhealthisolationcatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+CellHealthIsolationDescriptor GetById(string healthIsolationId)
+```
+
+Gets one cell health-isolation answer by its stable identifier.
+
+Returns: The matching cell health-isolation answer, or `null` when it is not active.
+
+Parameters:
+- `healthIsolationId`: The health-isolation identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-technologies-icellhealthisolationcatalog-getbysourcemodule-system-string"></a>
+
+##### `GetBySourceModule`
+
+```csharp
+IReadOnlyList<CellHealthIsolationDescriptor> GetBySourceModule(string sourceModuleId)
+```
+
+Gets all cell health-isolation answers owned by the requested source module.
+
+Returns: The matching cell health-isolation answers, or an empty list when none are active.
+
+Parameters:
+- `sourceModuleId`: The source-module identifier to filter by.
+
+<a id="type-cephalon-abstractions-technologies-icellhealthisolationcontributor"></a>
+
+### `ICellHealthIsolationContributor`
+
+Allows a module to contribute cell health-isolation answers to the active runtime.
+
+#### Declaration
+```csharp
+public interface ICellHealthIsolationContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-technologies-icellhealthisolationcontributor-registercellhealthisolations-cephalon-abstractions-technologies-icellhealthisolationregistry"></a>
+
+##### `RegisterCellHealthIsolations`
+
+```csharp
+void RegisterCellHealthIsolations(ICellHealthIsolationRegistry healthIsolations)
+```
+
+Registers the cell health-isolation answers owned by the contributing module.
+
+Parameters:
+- `healthIsolations`: The registry that receives cell health-isolation descriptors.
+
+<a id="type-cephalon-abstractions-technologies-icellhealthisolationregistry"></a>
+
+### `ICellHealthIsolationRegistry`
+
+Collects cell health-isolation descriptors during runtime composition.
+
+#### Declaration
+```csharp
+public interface ICellHealthIsolationRegistry
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-technologies-icellhealthisolationregistry-add-cephalon-abstractions-technologies-cellhealthisolationdescriptor"></a>
+
+##### `Add`
+
+```csharp
+void Add(CellHealthIsolationDescriptor healthIsolation)
+```
+
+Adds one cell health-isolation descriptor to the active runtime composition.
+
+Parameters:
+- `healthIsolation`: The cell health-isolation descriptor to add.
 
 <a id="type-cephalon-abstractions-technologies-icellroutecatalog"></a>
 

@@ -826,6 +826,24 @@ public static class EngineWebApplicationExtensions
                 return cellRoute is null ? Results.NotFound() : Results.Ok(cellRoute);
             })
             .WithName("GetCephalonCellRoute");
+        engineGroup.MapGet("/cell-health-isolations", ([FromServices] ICellHealthIsolationCatalog catalog) => TypedResults.Ok(catalog.HealthIsolations))
+            .WithName("GetCephalonCellHealthIsolations");
+        engineGroup.MapGet("/cell-health-isolations/modules/{moduleId}", (string moduleId, [FromServices] ICellHealthIsolationCatalog catalog) =>
+                TypedResults.Ok(catalog.GetBySourceModule(moduleId)))
+            .WithName("GetCephalonCellHealthIsolationsByModule");
+        engineGroup.MapGet("/cell-health-isolations/cells/{cellId}", (string cellId, [FromServices] ICellHealthIsolationCatalog catalog) =>
+                TypedResults.Ok(catalog.GetByCellId(cellId)))
+            .WithName("GetCephalonCellHealthIsolationsByCell");
+        engineGroup.MapGet("/cell-health-isolations/dependencies/{dependencyId}", (string dependencyId, [FromServices] ICellHealthIsolationCatalog catalog) =>
+                TypedResults.Ok(catalog.GetByDependencyId(dependencyId)))
+            .WithName("GetCephalonCellHealthIsolationsByDependency");
+        engineGroup.MapGet("/cell-health-isolations/{healthIsolationId}", (string healthIsolationId, [FromServices] ICellHealthIsolationCatalog catalog) =>
+            {
+                var healthIsolation = catalog.GetById(healthIsolationId);
+
+                return healthIsolation is null ? Results.NotFound() : Results.Ok(healthIsolation);
+            })
+            .WithName("GetCephalonCellHealthIsolation");
         engineGroup.MapGet("/technologies", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Technologies))
             .WithName("GetCephalonTechnologies");
         engineGroup.MapGet("/technology-catalog", ([FromServices] TechnologyCatalogSnapshot catalog) => TypedResults.Ok(catalog.Technologies))

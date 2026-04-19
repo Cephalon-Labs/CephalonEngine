@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-19T16:47:00.7241506+00:00",
+  "GeneratedAtUtc": "2026-04-19T17:05:37.0892086+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 312
+      "TypeCount": 316
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -585,7 +585,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-technologies",
-      "TypeCount": 19
+      "TypeCount": 23
     },
     {
       "NamespaceName": "Cephalon.Abstractions.Tenancy",
@@ -2979,6 +2979,21 @@
       }
     },
     {
+      "DisplayName": "CellHealthIsolationDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-technologies-cellhealthisolationdescriptor",
+      "Declaration": "public sealed class CellHealthIsolationDescriptor",
+      "Summary": "Describes one module-owned cell health-isolation answer visible to the active runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 10,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "CellRouteDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Technologies",
       "AssemblyName": "Cephalon.Abstractions",
@@ -3995,7 +4010,7 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 42
+        "Methods": 44
       }
     },
     {
@@ -5701,6 +5716,51 @@
       "AnchorId": "type-cephalon-abstractions-technologies-icellboundaryregistry",
       "Declaration": "public interface ICellBoundaryRegistry",
       "Summary": "Collects cell-boundary descriptors during runtime composition.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "ICellHealthIsolationCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-technologies-icellhealthisolationcatalog",
+      "Declaration": "public interface ICellHealthIsolationCatalog",
+      "Summary": "Exposes the cell health-isolation answers visible to the current runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 4
+      }
+    },
+    {
+      "DisplayName": "ICellHealthIsolationContributor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-technologies-icellhealthisolationcontributor",
+      "Declaration": "public interface ICellHealthIsolationContributor",
+      "Summary": "Allows a module to contribute cell health-isolation answers to the active runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "ICellHealthIsolationRegistry",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-technologies-icellhealthisolationregistry",
+      "Declaration": "public interface ICellHealthIsolationRegistry",
+      "Summary": "Collects cell health-isolation descriptors during runtime composition.",
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
@@ -10114,7 +10174,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 39,
+        "Properties": 40,
         "Methods": 0
       }
     },
@@ -11625,6 +11685,17 @@
     {
       "DisplayName": "Add",
       "Category": "Methods",
+      "DeclaringTypeName": "ICellHealthIsolationRegistry",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-icellhealthisolationregistry-add-cephalon-abstractions-technologies-cellhealthisolationdescriptor",
+      "Signature": "void Add(CellHealthIsolationDescriptor healthIsolation)",
+      "Summary": "Adds one cell health-isolation descriptor to the active runtime composition."
+    },
+    {
+      "DisplayName": "Add",
+      "Category": "Methods",
       "DeclaringTypeName": "ICellRouteRegistry",
       "NamespaceName": "Cephalon.Abstractions.Technologies",
       "AssemblyName": "Cephalon.Abstractions",
@@ -11874,6 +11945,28 @@
       "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-addcellboundary-cephalon-abstractions-technologies-cellboundarydescriptor",
       "Signature": "EngineBuilder AddCellBoundary(CellBoundaryDescriptor cellBoundary)",
       "Summary": "Adds a cell boundary to the current runtime composition."
+    },
+    {
+      "DisplayName": "AddCellHealthIsolation",
+      "Category": "Methods",
+      "DeclaringTypeName": "EngineBuilder",
+      "NamespaceName": "Cephalon.Engine.Composition",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-addcellhealthisolation-cephalon-abstractions-technologies-cellhealthisolationdescriptor",
+      "Signature": "EngineBuilder AddCellHealthIsolation(CellHealthIsolationDescriptor healthIsolation)",
+      "Summary": "Adds a cell health-isolation answer to the current runtime composition."
+    },
+    {
+      "DisplayName": "AddCellHealthIsolations",
+      "Category": "Methods",
+      "DeclaringTypeName": "EngineBuilder",
+      "NamespaceName": "Cephalon.Engine.Composition",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-addcellhealthisolations-system-collections-generic-ienumerable-cephalon-abstractions-technologies-cellhealthisolationdescriptor",
+      "Signature": "EngineBuilder AddCellHealthIsolations(IEnumerable\u003CCellHealthIsolationDescriptor\u003E healthIsolations)",
+      "Summary": "Adds multiple cell health-isolation answers to the current runtime composition."
     },
     {
       "DisplayName": "AddCellRoute",
@@ -16881,6 +16974,39 @@
       "Summary": "Creates a cell-boundary descriptor."
     },
     {
+      "DisplayName": "CellHealthIsolationDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CellHealthIsolationDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-cellhealthisolationdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "CellHealthIsolationDescriptor(string id, string sourceModuleId, string cellId, string displayName, string description, string failureIsolationMode, string readinessScope, string restartScope, IReadOnlyList\u003Cstring\u003E dependencyIds, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a cell health-isolation descriptor."
+    },
+    {
+      "DisplayName": "CellHealthIsolations",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-cellhealthisolations",
+      "Signature": "IReadOnlyList\u003CCellHealthIsolationDescriptor\u003E CellHealthIsolations { get; set; }",
+      "Summary": "Gets the cell health-isolation answers visible to the runtime at the time the snapshot was created."
+    },
+    {
+      "DisplayName": "CellId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellHealthIsolationDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-cellid",
+      "Signature": "string CellId { get; }",
+      "Summary": "Gets the cell identifier governed by this health-isolation answer."
+    },
+    {
       "DisplayName": "CellRouteDescriptor",
       "Category": "Constructors",
       "DeclaringTypeName": "CellRouteDescriptor",
@@ -20368,6 +20494,17 @@
       "Summary": "Describes the health state of one dependency surfaced by the runtime."
     },
     {
+      "DisplayName": "DependencyIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellHealthIsolationDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-dependencyids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E DependencyIds { get; }",
+      "Summary": "Gets the normalized dependency identifiers associated with this health-isolation answer."
+    },
+    {
       "DisplayName": "DependsOn",
       "Category": "Properties",
       "DeclaringTypeName": "ModuleDescriptor",
@@ -20608,6 +20745,17 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-cellboundarydescriptor-description",
       "Signature": "string Description { get; }",
       "Summary": "Gets the human-readable description of the cell boundary."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellHealthIsolationDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the human-readable description of the health-isolation posture."
     },
     {
       "DisplayName": "Description",
@@ -21675,6 +21823,17 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-cellboundarydescriptor-displayname",
       "Signature": "string DisplayName { get; }",
       "Summary": "Gets the operator-facing cell name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellHealthIsolationDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the operator-facing health-isolation name."
     },
     {
       "DisplayName": "DisplayName",
@@ -25450,6 +25609,17 @@
       "Summary": "Stop shutdown immediately and rethrow the failure."
     },
     {
+      "DisplayName": "FailureIsolationMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellHealthIsolationDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-failureisolationmode",
+      "Signature": "string FailureIsolationMode { get; }",
+      "Summary": "Gets the operator-facing failure-isolation mode for this cell."
+    },
+    {
       "DisplayName": "FailurePolicy",
       "Category": "Properties",
       "DeclaringTypeName": "EngineRuntime",
@@ -27034,6 +27204,17 @@
       "Summary": "Gets all client-aware published REST endpoint projections owned by the requested binding."
     },
     {
+      "DisplayName": "GetByCellId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICellHealthIsolationCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-icellhealthisolationcatalog-getbycellid-system-string",
+      "Signature": "IReadOnlyList\u003CCellHealthIsolationDescriptor\u003E GetByCellId(string cellId)",
+      "Summary": "Gets all cell health-isolation answers that govern the requested cell."
+    },
+    {
       "DisplayName": "GetByChannelId",
       "Category": "Methods",
       "DeclaringTypeName": "IEventSubscriptionCatalog",
@@ -27133,6 +27314,17 @@
       "Summary": "Gets the reported publication-state entries associated with one correlation identifier."
     },
     {
+      "DisplayName": "GetByDependencyId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICellHealthIsolationCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-icellhealthisolationcatalog-getbydependencyid-system-string",
+      "Signature": "IReadOnlyList\u003CCellHealthIsolationDescriptor\u003E GetByDependencyId(string dependencyId)",
+      "Summary": "Gets all cell health-isolation answers that reference the requested dependency."
+    },
+    {
       "DisplayName": "GetByExecutionGraph",
       "Category": "Methods",
       "DeclaringTypeName": "IHostedExecutionRuntimeCatalog",
@@ -27219,6 +27411,17 @@
       "AnchorId": "member-m-cephalon-abstractions-technologies-icellboundarycatalog-getbyid-system-string",
       "Signature": "CellBoundaryDescriptor GetById(string cellId)",
       "Summary": "Gets one cell boundary by its stable identifier."
+    },
+    {
+      "DisplayName": "GetById",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICellHealthIsolationCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-icellhealthisolationcatalog-getbyid-system-string",
+      "Signature": "CellHealthIsolationDescriptor GetById(string healthIsolationId)",
+      "Summary": "Gets one cell health-isolation answer by its stable identifier."
     },
     {
       "DisplayName": "GetById",
@@ -27703,6 +27906,17 @@
       "AnchorId": "member-m-cephalon-abstractions-patterns-ibackendforfrontendruntimecatalog-getbysourcemodule-system-string",
       "Signature": "IReadOnlyList\u003CBackendForFrontendClientBindingDescriptor\u003E GetBySourceModule(string sourceModuleId)",
       "Summary": "Gets all backend-for-frontend client bindings owned by the requested module."
+    },
+    {
+      "DisplayName": "GetBySourceModule",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICellHealthIsolationCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-icellhealthisolationcatalog-getbysourcemodule-system-string",
+      "Signature": "IReadOnlyList\u003CCellHealthIsolationDescriptor\u003E GetBySourceModule(string sourceModuleId)",
+      "Summary": "Gets all cell health-isolation answers owned by the requested source module."
     },
     {
       "DisplayName": "GetBySourceModule",
@@ -29575,6 +29789,17 @@
       "Summary": "Gets the operator-facing health description for the role, when known."
     },
     {
+      "DisplayName": "HealthIsolations",
+      "Category": "Properties",
+      "DeclaringTypeName": "ICellHealthIsolationCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-icellhealthisolationcatalog-healthisolations",
+      "Signature": "IReadOnlyList\u003CCellHealthIsolationDescriptor\u003E HealthIsolations { get; }",
+      "Summary": "Gets all cell health-isolation answers visible to the current runtime."
+    },
+    {
       "DisplayName": "HealthQuery",
       "Category": "Properties",
       "DeclaringTypeName": "CassandraDependencyDefinition",
@@ -30497,6 +30722,17 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-cellboundarydescriptor-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable cell identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellHealthIsolationDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable health-isolation identifier."
     },
     {
       "DisplayName": "Id",
@@ -34754,6 +34990,17 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-cellboundarydescriptor-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
       "Summary": "Gets optional operator-facing metadata for this cell boundary."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellHealthIsolationDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional operator-facing metadata for this health-isolation answer."
     },
     {
       "DisplayName": "Metadata",
@@ -40641,6 +40888,17 @@
       "Summary": "The readiness endpoint path."
     },
     {
+      "DisplayName": "ReadinessScope",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellHealthIsolationDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-readinessscope",
+      "Signature": "string ReadinessScope { get; }",
+      "Summary": "Gets the operator-facing readiness scope for this cell."
+    },
+    {
       "DisplayName": "ReadmePath",
       "Category": "Properties",
       "DeclaringTypeName": "ReferenceDocsSurface",
@@ -41112,6 +41370,17 @@
       "AnchorId": "member-m-cephalon-abstractions-technologies-icellboundarycontributor-registercellboundaries-cephalon-abstractions-technologies-icellboundaryregistry",
       "Signature": "void RegisterCellBoundaries(ICellBoundaryRegistry cells)",
       "Summary": "Registers the cell boundaries owned by the contributing module."
+    },
+    {
+      "DisplayName": "RegisterCellHealthIsolations",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICellHealthIsolationContributor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-icellhealthisolationcontributor-registercellhealthisolations-cephalon-abstractions-technologies-icellhealthisolationregistry",
+      "Signature": "void RegisterCellHealthIsolations(ICellHealthIsolationRegistry healthIsolations)",
+      "Summary": "Registers the cell health-isolation answers owned by the contributing module."
     },
     {
       "DisplayName": "RegisterCellRoutes",
@@ -43015,6 +43284,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimestatussnapshot-restartcount",
       "Signature": "int RestartCount { get; set; }",
       "Summary": "The number of completed manual restarts."
+    },
+    {
+      "DisplayName": "RestartScope",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellHealthIsolationDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-restartscope",
+      "Signature": "string RestartScope { get; }",
+      "Summary": "Gets the operator-facing restart scope for this cell."
     },
     {
       "DisplayName": "RestEndpointAuthoringPolicies",
@@ -46524,6 +46804,17 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-cellboundarydescriptor-sourcemoduleid",
       "Signature": "string SourceModuleId { get; }",
       "Summary": "Gets the module that owns this cell boundary."
+    },
+    {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellHealthIsolationDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; }",
+      "Summary": "Gets the module that owns this health-isolation answer."
     },
     {
       "DisplayName": "SourceModuleId",

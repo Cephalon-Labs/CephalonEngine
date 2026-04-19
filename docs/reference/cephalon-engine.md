@@ -511,6 +511,36 @@ Returns: The same builder instance.
 Parameters:
 - `cellBoundary`: The cell-boundary descriptor to add.
 
+<a id="member-m-cephalon-engine-composition-enginebuilder-addcellhealthisolation-cephalon-abstractions-technologies-cellhealthisolationdescriptor"></a>
+
+##### `AddCellHealthIsolation`
+
+```csharp
+EngineBuilder AddCellHealthIsolation(CellHealthIsolationDescriptor healthIsolation)
+```
+
+Adds a cell health-isolation answer to the current runtime composition.
+
+Returns: The same builder instance.
+
+Parameters:
+- `healthIsolation`: The cell health-isolation descriptor to add.
+
+<a id="member-m-cephalon-engine-composition-enginebuilder-addcellhealthisolations-system-collections-generic-ienumerable-cephalon-abstractions-technologies-cellhealthisolationdescriptor"></a>
+
+##### `AddCellHealthIsolations`
+
+```csharp
+EngineBuilder AddCellHealthIsolations(IEnumerable<CellHealthIsolationDescriptor> healthIsolations)
+```
+
+Adds multiple cell health-isolation answers to the current runtime composition.
+
+Returns: The same builder instance.
+
+Parameters:
+- `healthIsolations`: The cell health-isolation descriptors to add.
+
 <a id="member-m-cephalon-engine-composition-enginebuilder-addcellroute-cephalon-abstractions-technologies-cellroutedescriptor"></a>
 
 ##### `AddCellRoute`
@@ -9132,6 +9162,16 @@ IReadOnlyList<CellBoundaryDescriptor> CellBoundaries { get; set; }
 ```
 
 Gets the cell boundaries visible to the runtime at the time the snapshot was created.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-cellhealthisolations"></a>
+
+##### `CellHealthIsolations`
+
+```csharp
+IReadOnlyList<CellHealthIsolationDescriptor> CellHealthIsolations { get; set; }
+```
+
+Gets the cell health-isolation answers visible to the runtime at the time the snapshot was created.
 
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-cellroutes"></a>
 

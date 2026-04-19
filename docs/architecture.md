@@ -327,7 +327,7 @@ Companion adapter packages:
 - engine future-tech selection can be driven through `Engine:Technologies`
 - engine future-tech catalog can be extended through `ITechnologyContributor` or `engine.RegisterTechnology(...)`
 - active future-tech runtime surfaces can be inspected through `ITechnologyRuntimeContributor` and `/engine/technology-surfaces`
-- explicit cell boundaries and governed cell routes can be inspected through `ICellBoundaryCatalog`, `ICellRouteCatalog`, `/engine/cells`, `/engine/cell-routes`, and `/engine/snapshot`, and active boundaries or routes now auto-select `cell-based-architecture` without creating a second topology or traffic registry
+- explicit cell boundaries, governed cell routes, and cell health-isolation posture can be inspected through `ICellBoundaryCatalog`, `ICellRouteCatalog`, `ICellHealthIsolationCatalog`, `/engine/cells`, `/engine/cell-routes`, `/engine/cell-health-isolations`, and `/engine/snapshot`, and active boundaries, routes, or health-isolation answers now auto-select `cell-based-architecture` without creating a second topology, traffic, or health registry
 - merged operator-facing runtime introspection should come from `IRuntimeIntrospectionSnapshotProvider` and `/engine/snapshot` instead of recomposing manifest, status, technology surfaces, diagnostics conventions, and lifecycle story data ad hoc in hosts
 - future-tech runtime primitives should live in companion packages such as `Cephalon.Agentics`, `Cephalon.Eventing`, `Cephalon.Retrieval`, or `Cephalon.Edge`
 - installed modules should extend shipped technology packs through pack-specific contributor services instead of hardcoding host-owned descriptor lists
@@ -412,7 +412,7 @@ The first shipped follow-through on that rule is `Cephalon.Audit.EntityFramework
 - richer capability metadata and policy
 - startup hooks and lifecycle events
 - execution runners, lifecycle events, and event-bus coordination on top of the shipped execution-graph contract
-- deeper cell health-isolation plus configuration-driven/provider-aware traffic automation on top of the shipped cell-boundary and cell-route catalogs
+- configuration-driven/provider-aware traffic automation on top of the shipped cell-boundary, cell-route, and cell-health-isolation catalogs
 - richer operator-runtime answers, cloud-targeted tracing/export follow-through, and any additional provider-specific dependency-health packs only when concrete adoption needs justify expanding beyond the shipped Cassandra, ClickHouse, Consul, Elasticsearch, HTTP, Kafka, Memcached, MongoDB, MQTT, MySQL, NATS, Neo4j, OpenSearch, Oracle, Postgres, RabbitMQ, Redis, SQL Server, OpenTelemetry, AWS, and Azure Monitor observability companions
 - richer parameterized templates and generators driven by scaffold plans
 - richer localization catalogs and package-provided language packs

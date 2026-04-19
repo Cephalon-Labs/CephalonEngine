@@ -58,6 +58,7 @@ public sealed class EngineBuilder
     private readonly List<ModulePackageDirectory> packageDirectories = [];
     private readonly List<CellBoundaryDescriptor> cellBoundaries = [];
     private readonly List<CellRouteDescriptor> cellRoutes = [];
+    private readonly List<CellHealthIsolationDescriptor> cellHealthIsolations = [];
     private readonly List<BackendForFrontendClientBindingDescriptor> backendForFrontendBindings = [];
     private readonly List<StranglerFigRouteDescriptor> stranglerFigRoutes = [];
     private readonly List<FeatureFlagDescriptor> featureFlags = [];
@@ -249,6 +250,36 @@ public sealed class EngineBuilder
         foreach (var cellRoute in cellRoutes)
         {
             AddCellRoute(cellRoute);
+        }
+
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a cell health-isolation answer to the current runtime composition.
+    /// </summary>
+    /// <param name="healthIsolation">The cell health-isolation descriptor to add.</param>
+    /// <returns>The same builder instance.</returns>
+    public EngineBuilder AddCellHealthIsolation(CellHealthIsolationDescriptor healthIsolation)
+    {
+        ArgumentNullException.ThrowIfNull(healthIsolation);
+
+        cellHealthIsolations.Add(healthIsolation);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds multiple cell health-isolation answers to the current runtime composition.
+    /// </summary>
+    /// <param name="healthIsolations">The cell health-isolation descriptors to add.</param>
+    /// <returns>The same builder instance.</returns>
+    public EngineBuilder AddCellHealthIsolations(IEnumerable<CellHealthIsolationDescriptor> healthIsolations)
+    {
+        ArgumentNullException.ThrowIfNull(healthIsolations);
+
+        foreach (var healthIsolation in healthIsolations)
+        {
+            AddCellHealthIsolation(healthIsolation);
         }
 
         return this;
@@ -795,6 +826,7 @@ public sealed class EngineBuilder
             var authorizationPolicies = new List<AuthorizationPolicyDescriptor>();
             var activeCellBoundaries = new List<CellBoundaryDescriptor>(cellBoundaries);
             var activeCellRoutes = new List<CellRouteDescriptor>(cellRoutes);
+            var activeCellHealthIsolations = new List<CellHealthIsolationDescriptor>(cellHealthIsolations);
             var activeBackendForFrontendBindings = new List<BackendForFrontendClientBindingDescriptor>(backendForFrontendBindings);
             var activeStranglerFigRoutes = new List<StranglerFigRouteDescriptor>(stranglerFigRoutes);
             var activeFeatureFlags = new List<FeatureFlagDescriptor>(featureFlags);
@@ -859,6 +891,12 @@ public sealed class EngineBuilder
                     new CellRouteRegistryAdapter(module.Descriptor.Id, activeCellRoutes));
             }
 
+            foreach (var module in orderedModules.Where(static module => module is ICellHealthIsolationContributor))
+            {
+                ((ICellHealthIsolationContributor)module).RegisterCellHealthIsolations(
+                    new CellHealthIsolationRegistryAdapter(module.Descriptor.Id, activeCellHealthIsolations));
+            }
+
             foreach (var module in orderedModules.Where(static module => module is IFeatureFlagContributor))
             {
                 ((IFeatureFlagContributor)module).RegisterFeatureFlags(
@@ -894,11 +932,10 @@ public sealed class EngineBuilder
 
             ValidateCellBoundaries(activeCellBoundaries, orderedModules);
             ValidateCellRoutes(activeCellRoutes, activeCellBoundaries, orderedModules);
-            if (activeCellBoundaries.Count > 0)
-            {
-                appProfileBuilder.AddTechnology(BuiltInTechnologies.CellBasedArchitecture);
-            }
-            else if (activeCellRoutes.Count > 0)
+            ValidateCellHealthIsolations(activeCellHealthIsolations, activeCellBoundaries, orderedModules);
+            if (activeCellBoundaries.Count > 0 ||
+                activeCellRoutes.Count > 0 ||
+                activeCellHealthIsolations.Count > 0)
             {
                 appProfileBuilder.AddTechnology(BuiltInTechnologies.CellBasedArchitecture);
             }
@@ -928,6 +965,10 @@ public sealed class EngineBuilder
                 new CellRouteCatalogSnapshot(activeCellRoutes));
             Services.TryAddSingleton<ICellRouteCatalog>(serviceProvider =>
                 serviceProvider.GetRequiredService<CellRouteCatalogSnapshot>());
+            Services.TryAddSingleton<CellHealthIsolationCatalogSnapshot>(_ =>
+                new CellHealthIsolationCatalogSnapshot(activeCellHealthIsolations));
+            Services.TryAddSingleton<ICellHealthIsolationCatalog>(serviceProvider =>
+                serviceProvider.GetRequiredService<CellHealthIsolationCatalogSnapshot>());
             Services.TryAddSingleton<BackendForFrontendRuntimeCatalogSnapshot>(_ =>
                 new BackendForFrontendRuntimeCatalogSnapshot(activeBackendForFrontendBindings));
             Services.TryAddSingleton<IBackendForFrontendRuntimeCatalog>(serviceProvider =>
@@ -973,6 +1014,7 @@ public sealed class EngineBuilder
                     serviceProvider.GetServices<IFeatureFlagProvider>()));
             Services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, CellBoundaryTechnologyRuntimeContributor>());
             Services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, CellRouteTechnologyRuntimeContributor>());
+            Services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, CellHealthIsolationTechnologyRuntimeContributor>());
             Services.TryAddSingleton<TechnologyRuntimeCatalogSnapshot>(serviceProvider =>
                 new TechnologyRuntimeCatalogSnapshot(
                     serviceProvider.GetServices<ITechnologyRuntimeContributor>()));
@@ -1156,6 +1198,47 @@ public sealed class EngineBuilder
             {
                 throw new InvalidOperationException(
                     $"Cell route '{cellRoute.Id}' is owned by module '{cellRoute.SourceModuleId}', but source cell '{cellRoute.SourceCellId}' does not include that module.");
+            }
+        }
+    }
+
+    private static void ValidateCellHealthIsolations(
+        List<CellHealthIsolationDescriptor> healthIsolations,
+        IReadOnlyList<CellBoundaryDescriptor> cellBoundaries,
+        List<IModule> orderedModules)
+    {
+        ArgumentNullException.ThrowIfNull(healthIsolations);
+        ArgumentNullException.ThrowIfNull(cellBoundaries);
+        ArgumentNullException.ThrowIfNull(orderedModules);
+
+        if (healthIsolations.Count == 0)
+        {
+            return;
+        }
+
+        var knownModuleIds = orderedModules
+            .Select(static module => module.Descriptor.Id)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var cellBoundariesById = cellBoundaries.ToDictionary(static cell => cell.Id, StringComparer.OrdinalIgnoreCase);
+
+        foreach (var healthIsolation in healthIsolations)
+        {
+            if (!knownModuleIds.Contains(healthIsolation.SourceModuleId))
+            {
+                throw new InvalidOperationException(
+                    $"Cell health isolation '{healthIsolation.Id}' references unknown source module '{healthIsolation.SourceModuleId}'.");
+            }
+
+            if (!cellBoundariesById.TryGetValue(healthIsolation.CellId, out var cellBoundary))
+            {
+                throw new InvalidOperationException(
+                    $"Cell health isolation '{healthIsolation.Id}' references unknown cell '{healthIsolation.CellId}'.");
+            }
+
+            if (!cellBoundary.ModuleIds.Contains(healthIsolation.SourceModuleId, StringComparer.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException(
+                    $"Cell health isolation '{healthIsolation.Id}' is owned by module '{healthIsolation.SourceModuleId}', but cell '{healthIsolation.CellId}' does not include that module.");
             }
         }
     }

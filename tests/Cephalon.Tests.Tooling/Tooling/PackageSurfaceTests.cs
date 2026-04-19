@@ -269,10 +269,14 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Patterns.StranglerFigRouteResolution),
             typeof(global::Cephalon.Abstractions.Patterns.StranglerFigTarget),
             typeof(global::Cephalon.Abstractions.Technologies.CellBoundaryDescriptor),
+            typeof(global::Cephalon.Abstractions.Technologies.CellHealthIsolationDescriptor),
             typeof(global::Cephalon.Abstractions.Technologies.CellRouteDescriptor),
             typeof(global::Cephalon.Abstractions.Technologies.ICellBoundaryCatalog),
             typeof(global::Cephalon.Abstractions.Technologies.ICellBoundaryContributor),
             typeof(global::Cephalon.Abstractions.Technologies.ICellBoundaryRegistry),
+            typeof(global::Cephalon.Abstractions.Technologies.ICellHealthIsolationCatalog),
+            typeof(global::Cephalon.Abstractions.Technologies.ICellHealthIsolationContributor),
+            typeof(global::Cephalon.Abstractions.Technologies.ICellHealthIsolationRegistry),
             typeof(global::Cephalon.Abstractions.Technologies.ICellRouteCatalog),
             typeof(global::Cephalon.Abstractions.Technologies.ICellRouteContributor),
             typeof(global::Cephalon.Abstractions.Technologies.ICellRouteRegistry),
@@ -2518,6 +2522,39 @@ public sealed class PackageSurfaceTests
             .GetProperty("RequiredCapabilityKey", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot)
             .GetProperty("CellRoutes", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void CellHealthIsolationRuntimeContractsExposeSnapshotSurface()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Engine.Composition.EngineBuilder)
+            .GetMethod("AddCellHealthIsolation", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Engine.Composition.EngineBuilder)
+            .GetMethod("AddCellHealthIsolations", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.ICellHealthIsolationCatalog)
+            .GetProperty("HealthIsolations", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.ICellHealthIsolationCatalog)
+            .GetMethod("GetById", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.ICellHealthIsolationCatalog)
+            .GetMethod("GetBySourceModule", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.ICellHealthIsolationCatalog)
+            .GetMethod("GetByCellId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.ICellHealthIsolationCatalog)
+            .GetMethod("GetByDependencyId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellHealthIsolationDescriptor)
+            .GetProperty("SourceModuleId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellHealthIsolationDescriptor)
+            .GetProperty("CellId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellHealthIsolationDescriptor)
+            .GetProperty("FailureIsolationMode", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellHealthIsolationDescriptor)
+            .GetProperty("ReadinessScope", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellHealthIsolationDescriptor)
+            .GetProperty("RestartScope", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellHealthIsolationDescriptor)
+            .GetProperty("DependencyIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot)
+            .GetProperty("CellHealthIsolations", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

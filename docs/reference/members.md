@@ -162,6 +162,9 @@ Browse the published API surface by public member.
 - [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icellboundaryregistry-add-cephalon-abstractions-technologies-cellboundarydescriptor): `Methods` on `ICellBoundaryRegistry` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Adds one cell-boundary descriptor to the active runtime composition.
   - `void Add(CellBoundaryDescriptor cellBoundary)`
+- [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icellhealthisolationregistry-add-cephalon-abstractions-technologies-cellhealthisolationdescriptor): `Methods` on `ICellHealthIsolationRegistry` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Adds one cell health-isolation descriptor to the active runtime composition.
+  - `void Add(CellHealthIsolationDescriptor healthIsolation)`
 - [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icellrouteregistry-add-cephalon-abstractions-technologies-cellroutedescriptor): `Methods` on `ICellRouteRegistry` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Adds one cell-route descriptor to the active runtime composition.
   - `void Add(CellRouteDescriptor cellRoute)`
@@ -231,6 +234,12 @@ Browse the published API surface by public member.
 - [AddCellBoundary](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addcellboundary-cephalon-abstractions-technologies-cellboundarydescriptor): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddCellBoundary&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Adds a cell boundary to the current runtime composition.
   - `EngineBuilder AddCellBoundary(CellBoundaryDescriptor cellBoundary)`
+- [AddCellHealthIsolation](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addcellhealthisolation-cephalon-abstractions-technologies-cellhealthisolationdescriptor): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddCellHealthIsolation&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
+  - Adds a cell health-isolation answer to the current runtime composition.
+  - `EngineBuilder AddCellHealthIsolation(CellHealthIsolationDescriptor healthIsolation)`
+- [AddCellHealthIsolations](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addcellhealthisolations-system-collections-generic-ienumerable-cephalon-abstractions-technologies-cellhealthisolationdescriptor): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddCellHealthIsolations&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
+  - Adds multiple cell health-isolation answers to the current runtime composition.
+  - `EngineBuilder AddCellHealthIsolations(IEnumerable<CellHealthIsolationDescriptor> healthIsolations)`
 - [AddCellRoute](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addcellroute-cephalon-abstractions-technologies-cellroutedescriptor): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddCellRoute&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Adds a cell route to the current runtime composition.
   - `EngineBuilder AddCellRoute(CellRouteDescriptor cellRoute)`
@@ -1602,6 +1611,15 @@ Browse the published API surface by public member.
 - [CellBoundaryDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-cellboundarydescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `CellBoundaryDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=CellBoundaryDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Creates a cell-boundary descriptor.
   - `CellBoundaryDescriptor(string id, string sourceModuleId, string displayName, string description, string blastRadius, string routingStrategy, IReadOnlyList<string> moduleIds, IReadOnlyDictionary<string, string> metadata)`
+- [CellHealthIsolationDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-cellhealthisolationdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `CellHealthIsolationDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=CellHealthIsolationDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Creates a cell health-isolation descriptor.
+  - `CellHealthIsolationDescriptor(string id, string sourceModuleId, string cellId, string displayName, string description, string failureIsolationMode, string readinessScope, string restartScope, IReadOnlyList<string> dependencyIds, IReadOnlyDictionary<string, string> metadata)`
+- [CellHealthIsolations](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-cellhealthisolations): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=CellHealthIsolations&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the cell health-isolation answers visible to the runtime at the time the snapshot was created.
+  - `IReadOnlyList<CellHealthIsolationDescriptor> CellHealthIsolations { get; set; }`
+- [CellId](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-cellid): `Properties` on `CellHealthIsolationDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=CellId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the cell identifier governed by this health-isolation answer.
+  - `string CellId { get; }`
 - [CellRouteDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-cellroutedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `CellRouteDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=CellRouteDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Creates a cell-route descriptor.
   - `CellRouteDescriptor(string id, string sourceModuleId, string sourceCellId, string targetCellId, string displayName, string description, string routingStrategy, string governanceMode, IReadOnlyList<string> transportIds, string requiredCapabilityKey, IReadOnlyDictionary<string, string> metadata)`
@@ -2556,6 +2574,9 @@ Browse the published API surface by public member.
 - [DependencyHealthReport](cephalon-abstractions.md#member-m-cephalon-abstractions-health-dependencyhealthreport-ctor-system-string-system-string-cephalon-abstractions-health-healthstate-system-string-system-boolean-system-string): `Constructors` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=DependencyHealthReport&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - Describes the health state of one dependency surfaced by the runtime.
   - `DependencyHealthReport(string Id, string DisplayName, HealthState State, string Description, bool Required, string Source)`
+- [DependencyIds](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-dependencyids): `Properties` on `CellHealthIsolationDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=DependencyIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the normalized dependency identifiers associated with this health-isolation answer.
+  - `IReadOnlyList<string> DependencyIds { get; }`
 - [DependsOn](cephalon-abstractions.md#member-p-cephalon-abstractions-modules-moduledescriptor-dependson): `Properties` on `ModuleDescriptor` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=DependsOn&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
   - Gets the module types this module depends on.
   - `IReadOnlyList<Type> DependsOn { get; }`
@@ -2621,6 +2642,9 @@ Browse the published API surface by public member.
   - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellboundarydescriptor-description): `Properties` on `CellBoundaryDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the human-readable description of the cell boundary.
+  - `string Description { get; }`
+- [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-description): `Properties` on `CellHealthIsolationDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the human-readable description of the health-isolation posture.
   - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellroutedescriptor-description): `Properties` on `CellRouteDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the human-readable description of the cell route.
@@ -2912,6 +2936,9 @@ Browse the published API surface by public member.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellboundarydescriptor-displayname): `Properties` on `CellBoundaryDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the operator-facing cell name.
+  - `string DisplayName { get; }`
+- [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-displayname): `Properties` on `CellHealthIsolationDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the operator-facing health-isolation name.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellroutedescriptor-displayname): `Properties` on `CellRouteDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the operator-facing route name.
@@ -3948,6 +3975,9 @@ Browse the published API surface by public member.
 - [FailFast](cephalon-engine.md#member-f-cephalon-engine-configuration-stopfailurebehavior-failfast): `Fields` on `StopFailureBehavior` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FailFast&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Stop shutdown immediately and rethrow the failure.
   - `const StopFailureBehavior FailFast`
+- [FailureIsolationMode](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-failureisolationmode): `Properties` on `CellHealthIsolationDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=FailureIsolationMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the operator-facing failure-isolation mode for this cell.
+  - `string FailureIsolationMode { get; }`
 - [FailurePolicy](cephalon-engine.md#member-p-cephalon-engine-runtime-engineruntime-failurepolicy): `Properties` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=FailurePolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the failure policy that governs startup, stop, and restart behavior.
   - `FailurePolicy FailurePolicy { get; }`
@@ -4383,6 +4413,9 @@ Browse the published API surface by public member.
 - [GetByBindingId](cephalon-abstractions.md#member-m-cephalon-abstractions-transports-ibackendforfrontendrestruntimecatalog-getbybindingid-system-string): `Methods` on `IBackendForFrontendRestRuntimeCatalog` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByBindingId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets all client-aware published REST endpoint projections owned by the requested binding.
   - `IReadOnlyList<BackendForFrontendRestEndpointRuntimeDescriptor> GetByBindingId(string bindingId)`
+- [GetByCellId](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icellhealthisolationcatalog-getbycellid-system-string): `Methods` on `ICellHealthIsolationCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByCellId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets all cell health-isolation answers that govern the requested cell.
+  - `IReadOnlyList<CellHealthIsolationDescriptor> GetByCellId(string cellId)`
 - [GetByChannelId](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventsubscriptioncatalog-getbychannelid-system-string): `Methods` on `IEventSubscriptionCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=GetByChannelId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the subscriptions currently bound to one event channel identifier.
   - `IReadOnlyList<EventSubscriptionDescriptor> GetByChannelId(string channelId)`
@@ -4410,6 +4443,9 @@ Browse the published API surface by public member.
 - [GetByCorrelationId](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-getbycorrelationid-system-string): `Methods` on `ISagaChoreographyPublicationRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByCorrelationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the reported publication-state entries associated with one correlation identifier.
   - `IReadOnlyList<SagaChoreographyPublicationRuntimeState> GetByCorrelationId(string correlationId)`
+- [GetByDependencyId](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icellhealthisolationcatalog-getbydependencyid-system-string): `Methods` on `ICellHealthIsolationCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByDependencyId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets all cell health-isolation answers that reference the requested dependency.
+  - `IReadOnlyList<CellHealthIsolationDescriptor> GetByDependencyId(string dependencyId)`
 - [GetByExecutionGraph](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-ihostedexecutionruntimecatalog-getbyexecutiongraph-system-string): `Methods` on `IHostedExecutionRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByExecutionGraph&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets all hosted executions linked to one execution graph.
   - `IReadOnlyList<HostedExecutionDescriptor> GetByExecutionGraph(string executionGraphId)`
@@ -4434,6 +4470,9 @@ Browse the published API surface by public member.
 - [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icellboundarycatalog-getbyid-system-string): `Methods` on `ICellBoundaryCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets one cell boundary by its stable identifier.
   - `CellBoundaryDescriptor GetById(string cellId)`
+- [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icellhealthisolationcatalog-getbyid-system-string): `Methods` on `ICellHealthIsolationCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets one cell health-isolation answer by its stable identifier.
+  - `CellHealthIsolationDescriptor GetById(string healthIsolationId)`
 - [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icellroutecatalog-getbyid-system-string): `Methods` on `ICellRouteCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets one cell route by its stable identifier.
   - `CellRouteDescriptor GetById(string routeId)`
@@ -4566,6 +4605,9 @@ Browse the published API surface by public member.
 - [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-patterns-ibackendforfrontendruntimecatalog-getbysourcemodule-system-string): `Methods` on `IBackendForFrontendRuntimeCatalog` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets all backend-for-frontend client bindings owned by the requested module.
   - `IReadOnlyList<BackendForFrontendClientBindingDescriptor> GetBySourceModule(string sourceModuleId)`
+- [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icellhealthisolationcatalog-getbysourcemodule-system-string): `Methods` on `ICellHealthIsolationCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets all cell health-isolation answers owned by the requested source module.
+  - `IReadOnlyList<CellHealthIsolationDescriptor> GetBySourceModule(string sourceModuleId)`
 - [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icellroutecatalog-getbysourcemodule-system-string): `Methods` on `ICellRouteCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets all cell routes owned by the requested source module.
   - `IReadOnlyList<CellRouteDescriptor> GetBySourceModule(string sourceModuleId)`
@@ -5079,6 +5121,9 @@ Browse the published API surface by public member.
 - [HealthDescription](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroleruntimedescriptor-healthdescription): `Properties` on `DatabaseRoleRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HealthDescription&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing health description for the role, when known.
   - `string HealthDescription { get; }`
+- [HealthIsolations](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-icellhealthisolationcatalog-healthisolations): `Properties` on `ICellHealthIsolationCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=HealthIsolations&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets all cell health-isolation answers visible to the current runtime.
+  - `IReadOnlyList<CellHealthIsolationDescriptor> HealthIsolations { get; }`
 - [HealthQuery](cephalon-observability-cassandradependencies.md#member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-healthquery): `Properties` on `CassandraDependencyDefinition` in `Cephalon.Observability.CassandraDependencies.Configuration` (`Cephalon.Observability.CassandraDependencies`) [Browse](browse.html?q=HealthQuery&assembly=Cephalon.Observability.CassandraDependencies&namespace=Cephalon.Observability.CassandraDependencies.Configuration&scope=members)
   - Gets or sets the CQL statement executed to verify the dependency.
   - `string HealthQuery { get; set; }`
@@ -5333,6 +5378,9 @@ Browse the published API surface by public member.
   - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellboundarydescriptor-id): `Properties` on `CellBoundaryDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the stable cell identifier.
+  - `string Id { get; }`
+- [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-id): `Properties` on `CellHealthIsolationDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the stable health-isolation identifier.
   - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellroutedescriptor-id): `Properties` on `CellRouteDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the stable cell-route identifier.
@@ -6506,6 +6554,9 @@ Browse the published API surface by public member.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellboundarydescriptor-metadata): `Properties` on `CellBoundaryDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets optional operator-facing metadata for this cell boundary.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-metadata): `Properties` on `CellHealthIsolationDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets optional operator-facing metadata for this health-isolation answer.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellroutedescriptor-metadata): `Properties` on `CellRouteDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets optional operator-facing metadata for this route.
@@ -8127,6 +8178,9 @@ Browse the published API surface by public member.
 - [ReadinessPath](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-readinesspath): `Properties` on `DiagnosticsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ReadinessPath&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
   - The readiness endpoint path.
   - `string ReadinessPath { get; set; }`
+- [ReadinessScope](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-readinessscope): `Properties` on `CellHealthIsolationDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReadinessScope&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the operator-facing readiness scope for this cell.
+  - `string ReadinessScope { get; }`
 - [ReadmePath](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocssurface-readmepath): `Properties` on `ReferenceDocsSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ReadmePath&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - The hosted path to the reference-doc landing page.
   - `string ReadmePath { get; set; }`
@@ -8256,6 +8310,9 @@ Browse the published API surface by public member.
 - [RegisterCellBoundaries](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icellboundarycontributor-registercellboundaries-cephalon-abstractions-technologies-icellboundaryregistry): `Methods` on `ICellBoundaryContributor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=RegisterCellBoundaries&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Registers the cell boundaries owned by the contributing module.
   - `void RegisterCellBoundaries(ICellBoundaryRegistry cells)`
+- [RegisterCellHealthIsolations](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icellhealthisolationcontributor-registercellhealthisolations-cephalon-abstractions-technologies-icellhealthisolationregistry): `Methods` on `ICellHealthIsolationContributor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=RegisterCellHealthIsolations&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Registers the cell health-isolation answers owned by the contributing module.
+  - `void RegisterCellHealthIsolations(ICellHealthIsolationRegistry healthIsolations)`
 - [RegisterCellRoutes](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icellroutecontributor-registercellroutes-cephalon-abstractions-technologies-icellrouteregistry): `Methods` on `ICellRouteContributor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=RegisterCellRoutes&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Registers the cell routes owned by the contributing module.
   - `void RegisterCellRoutes(ICellRouteRegistry routes)`
@@ -8775,6 +8832,9 @@ Browse the published API surface by public member.
 - [RestartCount](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimestatussnapshot-restartcount): `Properties` on `RuntimeStatusSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RestartCount&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The number of completed manual restarts.
   - `int RestartCount { get; set; }`
+- [RestartScope](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-restartscope): `Properties` on `CellHealthIsolationDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=RestartScope&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the operator-facing restart scope for this cell.
+  - `string RestartScope { get; }`
 - [RestEndpointAuthoringPolicies](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-restendpointauthoringpolicies): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RestEndpointAuthoringPolicies&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the behavior-level REST authoring-policy answers visible to the runtime at the time the snapshot was created.
   - `IReadOnlyList<RestEndpointAuthoringPolicyDescriptor> RestEndpointAuthoringPolicies { get; set; }`
@@ -9734,6 +9794,9 @@ Browse the published API surface by public member.
   - `string SourceModuleId { get; set; }`
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellboundarydescriptor-sourcemoduleid): `Properties` on `CellBoundaryDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the module that owns this cell boundary.
+  - `string SourceModuleId { get; }`
+- [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-sourcemoduleid): `Properties` on `CellHealthIsolationDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the module that owns this health-isolation answer.
   - `string SourceModuleId { get; }`
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellroutedescriptor-sourcemoduleid): `Properties` on `CellRouteDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the module that owns this cell route.

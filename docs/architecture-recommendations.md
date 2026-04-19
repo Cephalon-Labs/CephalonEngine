@@ -247,13 +247,13 @@ These patterns would make CephalonEngine stand out among modern application fram
 
 ### Cell-Based Architecture
 
-Current state: the first explicit cell-boundary baseline and the first governed cell-route baseline are now shipped. `CellBoundaryDescriptor`, `ICellBoundaryContributor`, `ICellBoundaryRegistry`, `ICellBoundaryCatalog`, `CellRouteDescriptor`, `ICellRouteContributor`, `ICellRouteRegistry`, `ICellRouteCatalog`, `/engine/cells`, `/engine/cell-routes`, `snapshot.CellBoundaries`, `snapshot.CellRoutes`, and the `cell-boundaries` plus `cell-routes` technology runtime surfaces now make module-owned blast-radius posture plus cell-to-cell routing posture readable from one shared runtime truth. CephalonEngine's module system is now explicitly cell-shaped, but health isolation and configuration-driven/provider-aware traffic automation are not shipped yet.
+Current state: the first explicit cell-boundary baseline, the first governed cell-route baseline, and the first cell health-isolation baseline are now shipped. `CellBoundaryDescriptor`, `ICellBoundaryContributor`, `ICellBoundaryRegistry`, `ICellBoundaryCatalog`, `CellRouteDescriptor`, `ICellRouteContributor`, `ICellRouteRegistry`, `ICellRouteCatalog`, `CellHealthIsolationDescriptor`, `ICellHealthIsolationContributor`, `ICellHealthIsolationRegistry`, `ICellHealthIsolationCatalog`, `/engine/cells`, `/engine/cell-routes`, `/engine/cell-health-isolations`, `snapshot.CellBoundaries`, `snapshot.CellRoutes`, `snapshot.CellHealthIsolations`, and the `cell-boundaries`, `cell-routes`, plus `cell-health-isolations` technology runtime surfaces now make module-owned blast-radius posture, cell-to-cell routing posture, and cell health-isolation posture readable from one shared runtime truth. CephalonEngine's module system is now explicitly cell-shaped, and only configuration-driven/provider-aware traffic automation remains later on top of that baseline.
 
-Recommendation: keep cells as a technology/profile concern instead of a new blueprint, keep module ownership explicit at both boundary and route levels, and add health-isolation or configuration-driven/provider-aware traffic automation only as additive follow-through over the shipped boundary and route catalogs.
+Recommendation: keep cells as a technology/profile concern instead of a new blueprint, keep module ownership explicit at boundary, route, and health-isolation levels, and add configuration-driven/provider-aware traffic automation only as additive follow-through over the shipped cell catalogs.
 
 Implementation outline:
-- shipped baseline: built-in `TechnologyDescriptor` `cell-based-architecture`, `CellBoundaryDescriptor`, `ICellBoundaryContributor`, `ICellBoundaryCatalog`, `CellRouteDescriptor`, `ICellRouteContributor`, `ICellRouteCatalog`, `/engine/cells`, `/engine/cell-routes`, `snapshot.CellBoundaries`, `snapshot.CellRoutes`, and the `cell-boundaries` plus `cell-routes` technology runtime surfaces
-- later follow-through: cell health isolation plus configuration-driven/provider-aware traffic automation
+- shipped baseline: built-in `TechnologyDescriptor` `cell-based-architecture`, `CellBoundaryDescriptor`, `ICellBoundaryContributor`, `ICellBoundaryCatalog`, `CellRouteDescriptor`, `ICellRouteContributor`, `ICellRouteCatalog`, `CellHealthIsolationDescriptor`, `ICellHealthIsolationContributor`, `ICellHealthIsolationCatalog`, `/engine/cells`, `/engine/cell-routes`, `/engine/cell-health-isolations`, `snapshot.CellBoundaries`, `snapshot.CellRoutes`, `snapshot.CellHealthIsolations`, and the `cell-boundaries`, `cell-routes`, plus `cell-health-isolations` technology runtime surfaces
+- later follow-through: configuration-driven/provider-aware traffic automation
 - later follow-through: module-to-cell mapping through configuration when explicit operator scenarios justify that extra layer
 
 Effort: medium for the remaining follow-through.
@@ -362,6 +362,6 @@ Deliverables:
 - CDC capture abstraction
 
 Exit criteria:
-- modules can declare cell boundaries and governed cell routes with explicit blast-radius isolation and operators can inspect the same answers through `/engine/cells`, `/engine/cell-routes`, `/engine/technology-surfaces/cell-based-architecture`, and `/engine/snapshot`
+- modules can declare cell boundaries, governed cell routes, and cell health-isolation posture with explicit blast-radius isolation and operators can inspect the same answers through `/engine/cells`, `/engine/cell-routes`, `/engine/cell-health-isolations`, `/engine/technology-surfaces/cell-based-architecture`, and `/engine/snapshot`
 - modules can expose queryable data products through the runtime catalog
 - database changes can be captured and published through the outbox without explicit staging
