@@ -101,7 +101,7 @@ Technologies are additive workload profiles that prepare the runtime for specifi
 ### Built-in technology descriptors (11)
 
 - `agentic-workloads` — Agentic Workloads (Intelligence): prepares the app model for assistants, tool-using agents, and long-running autonomous workflows. Aliases: `AgenticWorkloads`, `Agentic`. Package hint: `Cephalon.Agentics`.
-- `cell-based-architecture` — Cell-Based Architecture (Platform): prepares the app for explicit module-owned cell boundaries, governed cell routes, cell health-isolation posture, and later traffic-automation follow-through. Aliases: `CellBasedArchitecture`, `CellBased`, `Cells`.
+- `cell-based-architecture` — Cell-Based Architecture (Platform): prepares the app for explicit module-owned cell boundaries, governed cell routes, cell health-isolation posture, and configuration-driven traffic-automation posture. Aliases: `CellBasedArchitecture`, `CellBased`, `Cells`.
 - `event-driven-integration` — Event-Driven Integration (Messaging): prepares modules for broker-backed events, asynchronous workflows, and eventually consistent integration flows. Aliases: `EventDrivenIntegration`, `EventDriven`. Package hint: `Cephalon.Eventing`.
 - `knowledge-retrieval` — Knowledge Retrieval (Data): prepares the app for semantic retrieval, indexing, search, and knowledge-backed experiences. Aliases: `KnowledgeRetrieval`, `Knowledge`. Package hint: `Cephalon.Retrieval`.
 - `realtime-experience` — Realtime Experience (Experience): prepares the app for live collaboration, presence, streaming updates, and reactive client experiences. Aliases: `RealtimeExperience`, `Realtime`.
@@ -486,6 +486,7 @@ The engine exposes operator-facing runtime information through these endpoints:
 - `/engine/cells` — active cell-boundary catalog
 - `/engine/cell-routes` — active governed cell-route catalog
 - `/engine/cell-health-isolations` — active cell health-isolation catalog
+- `/engine/cell-traffic-automations` — effective cell traffic-automation catalog
 - `/engine/technologies` — active technology selections
 - `/engine/technology-catalog` — full technology catalog
 - `/engine/technology-surfaces` — active technology runtime surfaces

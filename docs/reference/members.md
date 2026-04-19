@@ -75,6 +75,12 @@ Browse the published API surface by public member.
 - [ActionLabel](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasetopologyoperationalsummary-actionlabel): `Properties` on `DatabaseTopologyOperationalSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActionLabel&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the suggested operator action label.
   - `string ActionLabel { get; }`
+- [ActionMode](cephalon-engine.md#member-p-cephalon-engine-configuration-celltrafficautomationroutesettings-actionmode): `Properties` on `CellTrafficAutomationRouteSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ActionMode&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the optional normalized action posture for this route.
+  - `string ActionMode { get; }`
+- [ActionMode](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-actionmode): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActionMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the normalized action posture.
+  - `string ActionMode { get; }`
 - [ActionPath](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasetopologyoperationalaction-actionpath): `Properties` on `DatabaseTopologyOperationalAction` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActionPath&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the suggested operator action path.
   - `string ActionPath { get; }`
@@ -1071,6 +1077,15 @@ Browse the published API surface by public member.
 - [AuthSource](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-authsource): `Properties` on `MongoDbDependencyDefinition` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=AuthSource&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
   - Gets or sets the optional authentication source used when creating credentials from discrete settings.
   - `string AuthSource { get; set; }`
+- [AutomationMode](cephalon-engine.md#member-p-cephalon-engine-configuration-celltrafficautomationroutesettings-automationmode): `Properties` on `CellTrafficAutomationRouteSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=AutomationMode&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the optional normalized automation posture for this route.
+  - `string AutomationMode { get; }`
+- [AutomationMode](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-automationmode): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=AutomationMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the normalized automation posture.
+  - `string AutomationMode { get; }`
+- [Automations](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-automations): `Properties` on `ICellTrafficAutomationRuntimeCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Automations&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets all effective cell traffic-automation answers visible to the current runtime.
+  - `IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> Automations { get; }`
 - [Available](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocssurface-available): `Properties` on `ReferenceDocsSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Available&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - Whether the configured documentation directory and default document were found and mapped.
   - `bool Available { get; set; }`
@@ -1626,6 +1641,24 @@ Browse the published API surface by public member.
 - [CellRoutes](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-cellroutes): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=CellRoutes&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the cell-to-cell routing and governance answers visible to the runtime at the time the snapshot was created.
   - `IReadOnlyList<CellRouteDescriptor> CellRoutes { get; set; }`
+- [Cells](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-cells): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Cells&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets configuration-driven cell-based architecture settings.
+  - `CellSettings Cells { get; }`
+- [CellSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-cellsettings-ctor-cephalon-engine-configuration-celltrafficautomationsettings): `Constructors` on `CellSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=CellSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Creates cell settings.
+  - `CellSettings(CellTrafficAutomationSettings trafficAutomation)`
+- [CellTrafficAutomationRouteSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-celltrafficautomationroutesettings-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `CellTrafficAutomationRouteSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=CellTrafficAutomationRouteSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Creates cell traffic-automation route settings.
+  - `CellTrafficAutomationRouteSettings(string routeId, string automationMode, string triggerMode, string actionMode, string materializationMode, string notes, IReadOnlyDictionary<string, string> metadata)`
+- [CellTrafficAutomationRuntimeDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=CellTrafficAutomationRuntimeDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Creates a cell traffic-automation runtime descriptor.
+  - `CellTrafficAutomationRuntimeDescriptor(string id, string routeId, string sourceModuleId, string sourceCellId, string targetCellId, string displayName, string description, string routingStrategy, string governanceMode, string automationMode, string triggerMode, string actionMode, string materializationMode, string policySource, IReadOnlyList<string> transportIds, string requiredCapabilityKey, IReadOnlyList<string> sourceHealthIsolationIds, IReadOnlyList<string> targetHealthIsolationIds, IReadOnlyList<string> dependencyIds, IReadOnlyDictionary<string, string> metadata, IReadOnlyDictionary<string, string> runtimeMetadata)`
+- [CellTrafficAutomations](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-celltrafficautomations): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=CellTrafficAutomations&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the effective cell traffic-automation answers visible to the runtime at the time the snapshot was created.
+  - `IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> CellTrafficAutomations { get; set; }`
+- [CellTrafficAutomationSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-celltrafficautomationsettings-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-configuration-celltrafficautomationroutesettings): `Constructors` on `CellTrafficAutomationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=CellTrafficAutomationSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Creates cell traffic-automation settings.
+  - `CellTrafficAutomationSettings(string defaultAutomationMode, string defaultTriggerMode, string defaultActionMode, string defaultMaterializationMode, IReadOnlyList<CellTrafficAutomationRouteSettings> routes)`
 - [CephalonPackageVersion](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-scaffoldrequest-cephalonpackageversion): `Properties` on `ScaffoldRequest` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=CephalonPackageVersion&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the Cephalon package version written into the scaffold.
   - `string CephalonPackageVersion { get; }`
@@ -2475,6 +2508,12 @@ Browse the published API surface by public member.
 - [Default](cephalon-engine.md#member-p-cephalon-engine-configuration-trustpolicy-default): `Properties` on `TrustPolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Default&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the default trust policy.
   - `TrustPolicy Default { get; }`
+- [DefaultActionMode](cephalon-engine.md#member-p-cephalon-engine-configuration-celltrafficautomationsettings-defaultactionmode): `Properties` on `CellTrafficAutomationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=DefaultActionMode&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the default normalized action posture for active governed routes.
+  - `string DefaultActionMode { get; }`
+- [DefaultAutomationMode](cephalon-engine.md#member-p-cephalon-engine-configuration-celltrafficautomationsettings-defaultautomationmode): `Properties` on `CellTrafficAutomationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=DefaultAutomationMode&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the default normalized automation posture for active governed routes.
+  - `string DefaultAutomationMode { get; }`
 - [DefaultBehaviorDocumentName](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-apiroutesoptions-defaultbehaviordocumentname): `Properties` on `ApiRoutesOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=DefaultBehaviorDocumentName&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Gets or sets the default document/version segment projected into generic behavior transport routes.
   - `string DefaultBehaviorDocumentName { get; set; }`
@@ -2514,6 +2553,9 @@ Browse the published API surface by public member.
 - [DefaultManifestFileName](cephalon-engine.md#member-f-cephalon-engine-configuration-modulepackagedirectory-defaultmanifestfilename): `Fields` on `ModulePackageDirectory` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=DefaultManifestFileName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the default manifest file name expected inside package directories.
   - `const string DefaultManifestFileName`
+- [DefaultMaterializationMode](cephalon-engine.md#member-p-cephalon-engine-configuration-celltrafficautomationsettings-defaultmaterializationmode): `Properties` on `CellTrafficAutomationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=DefaultMaterializationMode&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the default normalized materialization posture for active governed routes.
+  - `string DefaultMaterializationMode { get; }`
 - [DefaultMaxEntries](cephalon-abstractions.md#member-f-cephalon-abstractions-audit-audithistoryexportrequest-defaultmaxentries): `Fields` on `AuditHistoryExportRequest` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=DefaultMaxEntries&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the default maximum number of audit-history entries exported when the caller does not supply one.
   - `const int DefaultMaxEntries`
@@ -2541,6 +2583,9 @@ Browse the published API surface by public member.
 - [DefaultTenantId](cephalon-multitenancy.md#member-p-cephalon-multitenancy-configuration-multitenancyruntimeoptions-defaulttenantid): `Properties` on `MultiTenancyRuntimeOptions` in `Cephalon.MultiTenancy.Configuration` (`Cephalon.MultiTenancy`) [Browse](browse.html?q=DefaultTenantId&assembly=Cephalon.MultiTenancy&namespace=Cephalon.MultiTenancy.Configuration&scope=members)
   - Gets or sets the default tenant identifier used when no explicit request hint resolves a tenant.
   - `string DefaultTenantId { get; set; }`
+- [DefaultTriggerMode](cephalon-engine.md#member-p-cephalon-engine-configuration-celltrafficautomationsettings-defaulttriggermode): `Properties` on `CellTrafficAutomationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=DefaultTriggerMode&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the default normalized trigger posture for active governed routes.
+  - `string DefaultTriggerMode { get; }`
 - [Degraded](cephalon-abstractions.md#member-f-cephalon-abstractions-health-healthstate-degraded): `Fields` on `HealthState` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=Degraded&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - Indicates the dependency is degraded but still available.
   - `const HealthState Degraded`
@@ -2576,6 +2621,9 @@ Browse the published API surface by public member.
   - `DependencyHealthReport(string Id, string DisplayName, HealthState State, string Description, bool Required, string Source)`
 - [DependencyIds](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-dependencyids): `Properties` on `CellHealthIsolationDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=DependencyIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the normalized dependency identifiers associated with this health-isolation answer.
+  - `IReadOnlyList<string> DependencyIds { get; }`
+- [DependencyIds](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-dependencyids): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=DependencyIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the normalized dependency identifiers observed across the related health-isolation answers.
   - `IReadOnlyList<string> DependencyIds { get; }`
 - [DependsOn](cephalon-abstractions.md#member-p-cephalon-abstractions-modules-moduledescriptor-dependson): `Properties` on `ModuleDescriptor` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=DependsOn&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
   - Gets the module types this module depends on.
@@ -2648,6 +2696,9 @@ Browse the published API surface by public member.
   - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellroutedescriptor-description): `Properties` on `CellRouteDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the human-readable description of the cell route.
+  - `string Description { get; }`
+- [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-description): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the human-readable description of the traffic-automation posture.
   - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-description): `Properties` on `DatabaseMigrationCommandDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the human-readable command description.
@@ -2943,6 +2994,9 @@ Browse the published API surface by public member.
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellroutedescriptor-displayname): `Properties` on `CellRouteDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the operator-facing route name.
   - `string DisplayName { get; }`
+- [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-displayname): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the operator-facing traffic-automation name.
+  - `string DisplayName { get; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-displayname): `Properties` on `DatabaseMigrationCommandDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing command name.
   - `string DisplayName { get; }`
@@ -3219,6 +3273,12 @@ Browse the published API surface by public member.
 - [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-bulkheadsettings-empty): `Properties` on `BulkheadSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets an empty bulkhead-settings instance.
   - `BulkheadSettings Empty { get; }`
+- [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-cellsettings-empty): `Properties` on `CellSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets an empty cell settings instance.
+  - `CellSettings Empty { get; }`
+- [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-celltrafficautomationsettings-empty): `Properties` on `CellTrafficAutomationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets an empty cell traffic-automation settings instance.
+  - `CellTrafficAutomationSettings Empty { get; }`
 - [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-circuitbreakerselection-empty): `Properties` on `CircuitBreakerSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets an empty circuit-breaker-selection instance.
   - `CircuitBreakerSelection Empty { get; }`
@@ -3561,9 +3621,9 @@ Browse the published API surface by public member.
 - [EngineRuntime](cephalon-engine.md#member-m-cephalon-engine-runtime-engineruntime-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-modules-imodule-cephalon-engine-manifest-runtimemanifest-cephalon-engine-configuration-failurepolicy-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-executiongraphdescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-hostedexecutiondescriptor): `Constructors` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=EngineRuntime&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Initializes a new instance of the `EngineRuntime` class.
   - `EngineRuntime(IReadOnlyList<IModule> modules, RuntimeManifest manifest, FailurePolicy failurePolicy, IReadOnlyList<ExecutionGraphDescriptor> executionGraphs, IReadOnlyList<HostedExecutionDescriptor> hostedExecutions)`
-- [EngineSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy-cephalon-engine-configuration-datasettings-cephalon-engine-configuration-databasetopologysettings-cephalon-engine-configuration-identitysettings-cephalon-engine-configuration-tenancysettings-cephalon-engine-configuration-auditsettings-cephalon-engine-configuration-messagingsettings-cephalon-engine-configuration-resiliencesettings-cephalon-engine-configuration-migrationsettings-cephalon-engine-configuration-backendforfrontendsettings-cephalon-engine-configuration-featuresettings): `Constructors` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=EngineSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+- [EngineSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy-cephalon-engine-configuration-datasettings-cephalon-engine-configuration-databasetopologysettings-cephalon-engine-configuration-identitysettings-cephalon-engine-configuration-tenancysettings-cephalon-engine-configuration-auditsettings-cephalon-engine-configuration-messagingsettings-cephalon-engine-configuration-resiliencesettings-cephalon-engine-configuration-migrationsettings-cephalon-engine-configuration-backendforfrontendsettings-cephalon-engine-configuration-featuresettings-cephalon-engine-configuration-cellsettings): `Constructors` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=EngineSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Initializes a new instance of the `EngineSettings` class.
-  - `EngineSettings(string blueprint, IReadOnlyList<string> patterns, IReadOnlyList<string> transports, IReadOnlyList<string> technologies, EngineOptions options, ModuleDiscoverySettings discovery, LocalizationSettings localization, FailurePolicy failurePolicy, TrustPolicy trustPolicy, PackagePolicy packagePolicy, DataSettings data, DatabaseTopologySettings databases, IdentitySettings identity, TenancySettings tenancy, AuditSettings audit, MessagingSettings messaging, ResilienceSettings resilience, MigrationSettings migration, BackendForFrontendSettings backendForFrontend, FeatureSettings features)`
+  - `EngineSettings(string blueprint, IReadOnlyList<string> patterns, IReadOnlyList<string> transports, IReadOnlyList<string> technologies, EngineOptions options, ModuleDiscoverySettings discovery, LocalizationSettings localization, FailurePolicy failurePolicy, TrustPolicy trustPolicy, PackagePolicy packagePolicy, DataSettings data, DatabaseTopologySettings databases, IdentitySettings identity, TenancySettings tenancy, AuditSettings audit, MessagingSettings messaging, ResilienceSettings resilience, MigrationSettings migration, BackendForFrontendSettings backendForFrontend, FeatureSettings features, CellSettings cells)`
 - [EngineVersion](cephalon-engine.md#member-p-cephalon-engine-manifest-runtimemanifest-engineversion): `Properties` on `RuntimeManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=EngineVersion&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the engine version that produced the manifest.
   - `string EngineVersion { get; }`
@@ -4149,6 +4209,9 @@ Browse the published API surface by public member.
 - [FromConfiguration](cephalon-observability-cassandradependencies.md#member-m-cephalon-observability-cassandradependencies-configuration-cassandradependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `CassandraDependencyHealthOptions` in `Cephalon.Observability.CassandraDependencies.Configuration` (`Cephalon.Observability.CassandraDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.CassandraDependencies&namespace=Cephalon.Observability.CassandraDependencies.Configuration&scope=members)
   - Binds Cassandra dependency-health options from configuration.
   - `CassandraDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
+- [FromConfiguration](cephalon-engine.md#member-m-cephalon-engine-configuration-cellsettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `CellSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Reads cell settings from configuration.
+  - `CellSettings FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-observability-clickhousedependencies.md#member-m-cephalon-observability-clickhousedependencies-configuration-clickhousedependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `ClickHouseDependencyHealthOptions` in `Cephalon.Observability.ClickHouseDependencies.Configuration` (`Cephalon.Observability.ClickHouseDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.ClickHouseDependencies&namespace=Cephalon.Observability.ClickHouseDependencies.Configuration&scope=members)
   - Binds ClickHouse dependency-health options from configuration.
   - `ClickHouseDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
@@ -4320,6 +4383,12 @@ Browse the published API surface by public member.
 - [FromSection](cephalon-engine.md#member-m-cephalon-engine-configuration-backendforfrontendclientbindingsettings-fromsection-microsoft-extensions-configuration-iconfigurationsection): `Methods` on `BackendForFrontendClientBindingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromSection&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Reads one backend-for-frontend client binding from configuration.
   - `BackendForFrontendClientBindingSettings FromSection(IConfigurationSection section)`
+- [FromSection](cephalon-engine.md#member-m-cephalon-engine-configuration-celltrafficautomationroutesettings-fromsection-microsoft-extensions-configuration-iconfigurationsection): `Methods` on `CellTrafficAutomationRouteSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromSection&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Reads one cell traffic-automation route override from configuration.
+  - `CellTrafficAutomationRouteSettings FromSection(IConfigurationSection section)`
+- [FromSection](cephalon-engine.md#member-m-cephalon-engine-configuration-celltrafficautomationsettings-fromsection-microsoft-extensions-configuration-iconfigurationsection): `Methods` on `CellTrafficAutomationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromSection&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Reads cell traffic-automation settings from the supplied configuration section.
+  - `CellTrafficAutomationSettings FromSection(IConfigurationSection section)`
 - [FromSection](cephalon-engine.md#member-m-cephalon-engine-configuration-databasemigrationssettings-fromsection-microsoft-extensions-configuration-iconfigurationsection): `Methods` on `DatabaseMigrationsSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromSection&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Reads database-migration settings from the supplied configuration section.
   - `DatabaseMigrationsSettings FromSection(IConfigurationSection section)`
@@ -4449,6 +4518,9 @@ Browse the published API surface by public member.
 - [GetByExecutionGraph](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-ihostedexecutionruntimecatalog-getbyexecutiongraph-system-string): `Methods` on `IHostedExecutionRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByExecutionGraph&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets all hosted executions linked to one execution graph.
   - `IReadOnlyList<HostedExecutionDescriptor> GetByExecutionGraph(string executionGraphId)`
+- [GetByHealthIsolationId](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbyhealthisolationid-system-string): `Methods` on `ICellTrafficAutomationRuntimeCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByHealthIsolationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets all effective cell traffic-automation answers that reference the requested health-isolation identifier.
+  - `IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> GetByHealthIsolationId(string healthIsolationId)`
 - [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-audit-iauditstorecatalog-getbyid-system-string): `Methods` on `IAuditStoreCatalog` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets one audit store by its stable identifier.
   - `AuditStoreDescriptor GetById(string auditStoreId)`
@@ -4476,6 +4548,9 @@ Browse the published API surface by public member.
 - [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icellroutecatalog-getbyid-system-string): `Methods` on `ICellRouteCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets one cell route by its stable identifier.
   - `CellRouteDescriptor GetById(string routeId)`
+- [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbyid-system-string): `Methods` on `ICellTrafficAutomationRuntimeCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets one effective cell traffic-automation answer by its stable identifier.
+  - `CellTrafficAutomationRuntimeDescriptor GetById(string automationId)`
 - [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idatabasemigrationcatalog-getbyid-system-string): `Methods` on `IDatabaseMigrationCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets one migration target by its logical identifier.
   - `DatabaseMigrationDescriptor GetById(string databaseMigrationId)`
@@ -4587,6 +4662,9 @@ Browse the published API surface by public member.
 - [GetByRestEndpointId](cephalon-abstractions.md#member-m-cephalon-abstractions-transports-ibackendforfrontendrestruntimecatalog-getbyrestendpointid-system-string): `Methods` on `IBackendForFrontendRestRuntimeCatalog` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByRestEndpointId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets all client-aware runtime projections that expose the requested published REST endpoint.
   - `IReadOnlyList<BackendForFrontendRestEndpointRuntimeDescriptor> GetByRestEndpointId(string restEndpointId)`
+- [GetByRouteId](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbyrouteid-system-string): `Methods` on `ICellTrafficAutomationRuntimeCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByRouteId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets one effective cell traffic-automation answer by its governed route identifier.
+  - `CellTrafficAutomationRuntimeDescriptor GetByRouteId(string routeId)`
 - [GetBySeverity](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehavioradvisorycatalog-getbyseverity-cephalon-abstractions-behaviors-behavioradvisoryseverity): `Methods` on `IBehaviorAdvisoryCatalog` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySeverity&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets advisories at or above the specified severity.
   - `IReadOnlyList<IBehaviorAdvisory> GetBySeverity(BehaviorAdvisorySeverity minimumSeverity)`
@@ -4596,6 +4674,9 @@ Browse the published API surface by public member.
 - [GetBySourceCellId](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icellroutecatalog-getbysourcecellid-system-string): `Methods` on `ICellRouteCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceCellId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets all cell routes that originate from the requested source cell.
   - `IReadOnlyList<CellRouteDescriptor> GetBySourceCellId(string sourceCellId)`
+- [GetBySourceCellId](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbysourcecellid-system-string): `Methods` on `ICellTrafficAutomationRuntimeCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceCellId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets all effective cell traffic-automation answers that originate from the requested source cell.
+  - `IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> GetBySourceCellId(string sourceCellId)`
 - [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-audit-iauditstorecatalog-getbysourcemodule-system-string): `Methods` on `IAuditStoreCatalog` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets all audit stores contributed by the requested module.
   - `IReadOnlyList<AuditStoreDescriptor> GetBySourceModule(string sourceModuleId)`
@@ -4611,6 +4692,9 @@ Browse the published API surface by public member.
 - [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icellroutecatalog-getbysourcemodule-system-string): `Methods` on `ICellRouteCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets all cell routes owned by the requested source module.
   - `IReadOnlyList<CellRouteDescriptor> GetBySourceModule(string sourceModuleId)`
+- [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbysourcemodule-system-string): `Methods` on `ICellTrafficAutomationRuntimeCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets all effective cell traffic-automation answers owned by the requested module.
+  - `IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> GetBySourceModule(string sourceModuleId)`
 - [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-idurableexecutionruntimecatalog-getbysourcemodule-system-string): `Methods` on `IDurableExecutionRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets all durable-execution workflows contributed by the requested module.
   - `IReadOnlyList<DurableExecutionRuntimeDescriptor> GetBySourceModule(string sourceModuleId)`
@@ -4668,6 +4752,9 @@ Browse the published API surface by public member.
 - [GetByTargetCellId](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icellroutecatalog-getbytargetcellid-system-string): `Methods` on `ICellRouteCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByTargetCellId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets all cell routes that target the requested cell.
   - `IReadOnlyList<CellRouteDescriptor> GetByTargetCellId(string targetCellId)`
+- [GetByTargetCellId](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbytargetcellid-system-string): `Methods` on `ICellTrafficAutomationRuntimeCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByTargetCellId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets all effective cell traffic-automation answers that target the requested cell.
+  - `IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> GetByTargetCellId(string targetCellId)`
 - [GetByTargetStore](cephalon-abstractions.md#member-m-cephalon-abstractions-data-iprojectioncatalog-getbytargetstore-system-string): `Methods` on `IProjectionCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByTargetStore&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets all projections that target the requested store identifier.
   - `IReadOnlyList<ProjectionDescriptor> GetByTargetStore(string targetStoreId)`
@@ -4754,6 +4841,9 @@ Browse the published API surface by public member.
   - `IReadOnlyList<DurableExecutionRuntimeState> GetWithPendingTimers()`
 - [GovernanceMode](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellroutedescriptor-governancemode): `Properties` on `CellRouteDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GovernanceMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the operator-facing governance posture applied to this route.
+  - `string GovernanceMode { get; }`
+- [GovernanceMode](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-governancemode): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GovernanceMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the governance posture inherited from the governed route.
   - `string GovernanceMode { get; }`
 - [GovernanceOverrideSummaries](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointauthoringpolicyauthoringstyledescriptor-governanceoverridesummaries): `Properties` on `RestEndpointAuthoringPolicyAuthoringStyleDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=GovernanceOverrideSummaries&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the grouped host-governance override-rule outcomes summarized by rule for this authoring style.
@@ -4851,6 +4941,9 @@ Browse the published API surface by public member.
 - [HasCompensationActions](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-hascompensationactions): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasCompensationActions&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets a value indicating whether one or more operator-facing compensation actions are currently available for the stream.
   - `bool HasCompensationActions { get; }`
+- [HasDefaultValues](cephalon-engine.md#member-p-cephalon-engine-configuration-celltrafficautomationsettings-hasdefaultvalues): `Properties` on `CellTrafficAutomationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasDefaultValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether any default traffic-automation values were explicitly supplied.
+  - `bool HasDefaultValues { get; }`
 - [HasManualCommandsForAllTargets](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-hasmanualcommandsforalltargets): `Properties` on `DatabaseMigrationOperationalExecutionGroup` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasManualCommandsForAllTargets&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether every target in this group publishes a direct or manual command path.
   - `bool HasManualCommandsForAllTargets { get; }`
@@ -4934,6 +5027,12 @@ Browse the published API surface by public member.
   - `bool HasValues { get; }`
 - [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-bulkheadsettings-hasvalues): `Properties` on `BulkheadSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether any bulkhead settings were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-cellsettings-hasvalues): `Properties` on `CellSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether any cell settings were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-celltrafficautomationsettings-hasvalues): `Properties` on `CellTrafficAutomationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether any cell traffic-automation settings were explicitly supplied.
   - `bool HasValues { get; }`
 - [HasValues](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-circuitbreakerselection-hasvalues): `Properties` on `CircuitBreakerSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets a value indicating whether any circuit-breaker-selection inputs were explicitly supplied.
@@ -5384,6 +5483,9 @@ Browse the published API surface by public member.
   - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellroutedescriptor-id): `Properties` on `CellRouteDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the stable cell-route identifier.
+  - `string Id { get; }`
+- [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-id): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the stable traffic-automation identifier.
   - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-id): `Properties` on `DatabaseMigrationCommandDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable command identifier.
@@ -6333,6 +6435,12 @@ Browse the published API surface by public member.
 - [MatchedTags](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-matchedtags): `Properties` on `BackendForFrontendRestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=MatchedTags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the included tags that matched the published endpoint.
   - `IReadOnlyList<string> MatchedTags { get; }`
+- [MaterializationMode](cephalon-engine.md#member-p-cephalon-engine-configuration-celltrafficautomationroutesettings-materializationmode): `Properties` on `CellTrafficAutomationRouteSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=MaterializationMode&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the optional normalized materialization posture for this route.
+  - `string MaterializationMode { get; }`
+- [MaterializationMode](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-materializationmode): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaterializationMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the normalized materialization posture.
+  - `string MaterializationMode { get; }`
 - [MaxAgeDays](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-audithistoryretentionselection-maxagedays): `Properties` on `AuditHistoryRetentionSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaxAgeDays&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the maximum age, in days, to retain durable audit rows.
   - `int? MaxAgeDays { get; }`
@@ -6560,6 +6668,12 @@ Browse the published API surface by public member.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellroutedescriptor-metadata): `Properties` on `CellRouteDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets optional operator-facing metadata for this route.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-engine.md#member-p-cephalon-engine-configuration-celltrafficautomationroutesettings-metadata): `Properties` on `CellTrafficAutomationRouteSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets optional route-specific runtime metadata.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-metadata): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the original authored route metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-metadata): `Properties` on `DatabaseMigrationCommandDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets optional operator-facing metadata associated with the command.
@@ -7122,6 +7236,9 @@ Browse the published API surface by public member.
 - [NotAllowedAuthoringStyle](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointauthoringpolicysuppressionkind-notallowedauthoringstyle): `Fields` on `RestEndpointAuthoringPolicySuppressionKind` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotAllowedAuthoringStyle&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - The candidate authoring style is outside the explicitly allowed authoring-style set.
   - `const RestEndpointAuthoringPolicySuppressionKind NotAllowedAuthoringStyle`
+- [Notes](cephalon-engine.md#member-p-cephalon-engine-configuration-celltrafficautomationroutesettings-notes): `Properties` on `CellTrafficAutomationRouteSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Notes&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets optional operator-facing notes for this route-specific overlay.
+  - `string Notes { get; }`
 - [Notes](cephalon-engine.md#member-p-cephalon-engine-configuration-stranglerfigroutepolicysettings-notes): `Properties` on `StranglerFigRoutePolicySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Notes&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets optional operator-facing notes that explain the route-specific override.
   - `string Notes { get; }`
@@ -7767,6 +7884,9 @@ Browse the published API surface by public member.
 - [PolicyId](cephalon-identity-aspnetcore.md#member-p-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-policyid): `Properties` on `RequireCephalonAuthorizationAttribute` in `Cephalon.Identity.AspNetCore.Transports.Rest` (`Cephalon.Identity.AspNetCore`) [Browse](browse.html?q=PolicyId&assembly=Cephalon.Identity.AspNetCore&namespace=Cephalon.Identity.AspNetCore.Transports.Rest&scope=members)
   - Gets the Cephalon authorization policy id that must allow the request.
   - `string PolicyId { get; }`
+- [PolicySource](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-policysource): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=PolicySource&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the source of the effective automation policy.
+  - `string PolicySource { get; }`
 - [Port](cephalon-observability-cassandradependencies.md#member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-port): `Properties` on `CassandraDependencyDefinition` in `Cephalon.Observability.CassandraDependencies.Configuration` (`Cephalon.Observability.CassandraDependencies`) [Browse](browse.html?q=Port&assembly=Cephalon.Observability.CassandraDependencies&namespace=Cephalon.Observability.CassandraDependencies.Configuration&scope=members)
   - Gets or sets the Cassandra native-protocol TCP port.
   - `int Port { get; set; }`
@@ -8547,6 +8667,9 @@ Browse the published API surface by public member.
 - [RequiredCapabilityKey](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellroutedescriptor-requiredcapabilitykey): `Properties` on `CellRouteDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiredCapabilityKey&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the optional capability key required to use this route.
   - `string RequiredCapabilityKey { get; }`
+- [RequiredCapabilityKey](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-requiredcapabilitykey): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiredCapabilityKey&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the optional capability key inherited from the governed route.
+  - `string RequiredCapabilityKey { get; }`
 - [RequiredCapabilityKey](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-requiredcapabilitykey): `Fields` on `RestEndpointOverrideActionKind` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiredCapabilityKey&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - The rule changes the required Cephalon capability key.
   - `const RestEndpointOverrideActionKind RequiredCapabilityKey`
@@ -9105,6 +9228,12 @@ Browse the published API surface by public member.
 - [RouteGroupPrefixes](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-routegroupprefixes): `Properties` on `RestEndpointSuppressionOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=RouteGroupPrefixes&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Gets the published route-group prefixes targeted by this suppression rule before override actions are applied.
   - `IReadOnlyList<string> RouteGroupPrefixes { get; }`
+- [RouteId](cephalon-engine.md#member-p-cephalon-engine-configuration-celltrafficautomationroutesettings-routeid): `Properties` on `CellTrafficAutomationRouteSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=RouteId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the stable governed route identifier.
+  - `string RouteId { get; }`
+- [RouteId](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-routeid): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=RouteId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the governed cell-route identifier that this automation answer applies to.
+  - `string RouteId { get; }`
 - [RouteId](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-routeid): `Properties` on `StranglerFigIngressRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=RouteId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the stable route identifier.
   - `string RouteId { get; }`
@@ -9132,6 +9261,9 @@ Browse the published API surface by public member.
 - [RoutePrefix](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocssurface-routeprefix): `Properties` on `ReferenceDocsSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=RoutePrefix&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - The route prefix where the documentation is served.
   - `string RoutePrefix { get; set; }`
+- [Routes](cephalon-engine.md#member-p-cephalon-engine-configuration-celltrafficautomationsettings-routes): `Properties` on `CellTrafficAutomationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Routes&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the route-specific cell traffic-automation overrides.
+  - `IReadOnlyList<CellTrafficAutomationRouteSettings> Routes { get; }`
 - [Routes](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-icellroutecatalog-routes): `Properties` on `ICellRouteCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Routes&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets all cell routes visible to the current runtime.
   - `IReadOnlyList<CellRouteDescriptor> Routes { get; }`
@@ -9152,6 +9284,9 @@ Browse the published API surface by public member.
   - `string RoutingStrategy { get; }`
 - [RoutingStrategy](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellroutedescriptor-routingstrategy): `Properties` on `CellRouteDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=RoutingStrategy&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the operator-facing routing strategy used for this route.
+  - `string RoutingStrategy { get; }`
+- [RoutingStrategy](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-routingstrategy): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=RoutingStrategy&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the routing strategy inherited from the governed route.
   - `string RoutingStrategy { get; }`
 - [RuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviorcompatibilityviolation-ruleid): `Properties` on `BehaviorCompatibilityViolation` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=RuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the rule identifier that was violated.
@@ -9252,6 +9387,9 @@ Browse the published API surface by public member.
 - [RuntimeManifest](cephalon-engine.md#member-m-cephalon-engine-manifest-runtimemanifest-ctor-system-string-system-string-system-datetimeoffset-cephalon-abstractions-appmodel-appprofile-system-collections-generic-ireadonlylist-cephalon-engine-manifest-modulemanifest-system-collections-generic-ireadonlylist-cephalon-engine-manifest-capabilitymanifest-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagemanifest): `Constructors` on `RuntimeManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Creates a new runtime manifest.
   - `RuntimeManifest(string manifestVersion, string engineVersion, DateTimeOffset generatedAtUtc, AppProfile appProfile, IReadOnlyList<ModuleManifest> modules, IReadOnlyList<CapabilityManifest> capabilities, IReadOnlyList<PackageManifest> packages)`
+- [RuntimeMetadata](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-runtimemetadata): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=RuntimeMetadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets runtime-only metadata such as policy notes or overlay provenance.
+  - `IReadOnlyDictionary<string, string> RuntimeMetadata { get; }`
 - [RuntimeMetadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-runtimemetadata): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RuntimeMetadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets optional runtime metadata associated with the database role.
   - `IReadOnlyDictionary<string, string> RuntimeMetadata { get; }`
@@ -9741,9 +9879,15 @@ Browse the published API surface by public member.
 - [SourceCellId](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellroutedescriptor-sourcecellid): `Properties` on `CellRouteDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceCellId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the source cell identifier.
   - `string SourceCellId { get; }`
+- [SourceCellId](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-sourcecellid): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceCellId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the source cell identifier.
+  - `string SourceCellId { get; }`
 - [SourceContracts](cephalon-abstractions.md#member-p-cephalon-abstractions-data-projectiondescriptor-sourcecontracts): `Properties` on `ProjectionDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceContracts&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the optional source contracts that can feed the projection.
   - `IReadOnlyList<string> SourceContracts { get; }`
+- [SourceHealthIsolationIds](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-sourcehealthisolationids): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceHealthIsolationIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the normalized source-cell health-isolation identifiers.
+  - `IReadOnlyList<string> SourceHealthIsolationIds { get; }`
 - [SourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-sourceid): `Properties` on `RestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the stable source identity for the published endpoint when the runtime can classify the authored source shape behind that publication.
   - `string SourceId { get; }`
@@ -9800,6 +9944,9 @@ Browse the published API surface by public member.
   - `string SourceModuleId { get; }`
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellroutedescriptor-sourcemoduleid): `Properties` on `CellRouteDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the module that owns this cell route.
+  - `string SourceModuleId { get; }`
+- [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-sourcemoduleid): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the module that owns the governed route.
   - `string SourceModuleId { get; }`
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-sourcemoduleid): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the owning module identifier when one is known at runtime.
@@ -10539,6 +10686,9 @@ Browse the published API surface by public member.
 - [TargetCellId](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellroutedescriptor-targetcellid): `Properties` on `CellRouteDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=TargetCellId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the target cell identifier.
   - `string TargetCellId { get; }`
+- [TargetCellId](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-targetcellid): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=TargetCellId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the target cell identifier.
+  - `string TargetCellId { get; }`
 - [TargetCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-targetcount): `Properties` on `DatabaseMigrationOperationalExecutionGroup` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TargetCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of logical migration targets represented in this group.
   - `int TargetCount { get; }`
@@ -10557,6 +10707,9 @@ Browse the published API surface by public member.
 - [TargetFramework](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-scaffoldrequest-targetframework): `Properties` on `ScaffoldRequest` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=TargetFramework&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the target framework for generated projects.
   - `string TargetFramework { get; }`
+- [TargetHealthIsolationIds](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-targethealthisolationids): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=TargetHealthIsolationIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the normalized target-cell health-isolation identifiers.
+  - `IReadOnlyList<string> TargetHealthIsolationIds { get; }`
 - [Targeting](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagdescriptor-targeting): `Properties` on `FeatureFlagDescriptor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=Targeting&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
   - Gets the optional targeting constraints attached to the feature flag.
   - `FeatureFlagTargetingDescriptor Targeting { get; }`
@@ -10836,6 +10989,9 @@ Browse the published API surface by public member.
 - [TraceDataKey](cephalon-observability-oraclecloud.md#member-p-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-tracedatakey): `Properties` on `OracleCloudTelemetryExportOptions` in `Cephalon.Observability.OracleCloud.Configuration` (`Cephalon.Observability.OracleCloud`) [Browse](browse.html?q=TraceDataKey&assembly=Cephalon.Observability.OracleCloud&namespace=Cephalon.Observability.OracleCloud.Configuration&scope=members)
   - Gets or sets the Oracle Cloud APM trace data key used for direct managed trace ingestion.
   - `string TraceDataKey { get; set; }`
+- [TrafficAutomation](cephalon-engine.md#member-p-cephalon-engine-configuration-cellsettings-trafficautomation): `Properties` on `CellSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=TrafficAutomation&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the configuration-driven traffic-automation settings for governed cell routes.
+  - `CellTrafficAutomationSettings TrafficAutomation { get; }`
 - [Traits](cephalon-aspnetcore-grpc.md#member-p-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-traits): `Properties` on `HelloReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=Traits&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - Additional traits or descriptors associated with the generated greeting.
   - `RepeatedField<string> Traits { get; }`
@@ -10881,6 +11037,9 @@ Browse the published API surface by public member.
 - [TransportIds](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellroutedescriptor-transportids): `Properties` on `CellRouteDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the normalized transport identifiers associated with this route.
   - `IReadOnlyList<string> TransportIds { get; }`
+- [TransportIds](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-transportids): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the normalized transport identifiers inherited from the governed route.
+  - `IReadOnlyList<string> TransportIds { get; }`
 - [TransportIds](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-transportids): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the transport identifiers that expose the durable workflow.
   - `IReadOnlyList<string> TransportIds { get; }`
@@ -10914,6 +11073,12 @@ Browse the published API surface by public member.
 - [TriggerKind](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutioncompensationaction-triggerkind): `Properties` on `DurableExecutionCompensationAction` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=TriggerKind&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the operator-facing trigger kind for the compensation action.
   - `string TriggerKind { get; }`
+- [TriggerMode](cephalon-engine.md#member-p-cephalon-engine-configuration-celltrafficautomationroutesettings-triggermode): `Properties` on `CellTrafficAutomationRouteSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=TriggerMode&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the optional normalized trigger posture for this route.
+  - `string TriggerMode { get; }`
+- [TriggerMode](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-triggermode): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=TriggerMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the normalized trigger posture.
+  - `string TriggerMode { get; }`
 - [TripOnly](cephalon-abstractions.md#member-f-cephalon-abstractions-resilience-behaviorresilienceexceptionhandling-triponly): `Fields` on `BehaviorResilienceExceptionHandling` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=TripOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - Count the exception for circuit-breaker style failure accounting, but do not automatically retry it.
   - `const BehaviorResilienceExceptionHandling TripOnly`
@@ -11127,6 +11292,9 @@ Browse the published API surface by public member.
 - [UseBlueprint](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-useblueprint-cephalon-abstractions-appmodel-appblueprint): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UseBlueprint&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Selects the base application blueprint that should shape the runtime.
   - `EngineBuilder UseBlueprint(AppBlueprint blueprint)`
+- [UseCellSettings](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-usecellsettings-cephalon-engine-configuration-cellsettings): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UseCellSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
+  - Replaces the cell-based architecture settings used by the runtime cell catalogs.
+  - `EngineBuilder UseCellSettings(CellSettings settings)`
 - [UseConfiguration](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-useconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UseConfiguration&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Reads engine settings from configuration and merges them into the current builder state.
   - `EngineBuilder UseConfiguration(IConfiguration configuration, string sectionPath)`

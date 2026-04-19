@@ -2143,6 +2143,33 @@ Delivered:
 - `Cephalon.AspNetCore` now exposes `/engine/cells`, `/engine/cells/{cellId}`, and `/engine/cells/modules/{moduleId}` as the direct operator routes for the merged cell-boundary catalog
 - targeted coverage now proves catalog composition, invalid-module rejection, runtime-snapshot projection, ASP.NET Core route publication, and public package-surface alignment through composition tests `2/2`, hosting tests `1/1`, and tooling tests `166/166`
 
+### ENG-123 Phase 13 configuration-driven cell traffic automation baseline
+
+Status: done
+Estimate: 5
+Completed: April 20, 2026
+
+Why:
+
+- `ENG-120`, `ENG-121`, and `ENG-122` established who owns each cell boundary, how cells route to one another, and how dependency failures isolate, but Cephalon still had no engine-owned answer for effective traffic automation policy without inventing a host-only traffic manager or service-mesh registry
+- phase 13 still needed one additive overlay that kept route and module ownership authoritative while letting projects express default or per-route automation posture through configuration
+- the operator story was still incomplete because `/engine/snapshot` and `/engine/technology-surfaces/cell-based-architecture` could not yet show effective automation, trigger, action, or materialization posture over the shipped route plus health-isolation graph
+
+Acceptance:
+
+- `Cephalon.Abstractions` exposes host-agnostic read contracts for effective cell traffic-automation answers
+- `Cephalon.Engine` binds `Engine:Cells:TrafficAutomation` into one runtime catalog, validates configured route overlays against active governed routes, projects the same answer into `snapshot.CellTrafficAutomations`, and surfaces the same posture through the technology runtime catalog without replacing route authorship truth
+- active traffic-automation answers keep the built-in `cell-based-architecture` profile truthful so operator tooling can read topology, routing, health-isolation, and automation posture from one runtime answer without extra host ceremony
+- ASP.NET Core hosts expose direct operator routes for the merged cell traffic-automation catalog and its automation/module/route/source-cell/target-cell/health-isolation drill-down answers
+- docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the shipped baseline while remaining honest that provider-specific or edge-aware traffic automation, data mesh, and CDC are still later work
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships `CellTrafficAutomationRuntimeDescriptor` and `ICellTrafficAutomationRuntimeCatalog` so hosts, modules, and tooling can read effective automation posture without referencing `Cephalon.Engine` concrete types
+- `Cephalon.Engine` now binds `Engine:Cells:TrafficAutomation` through `CellSettings`, `CellTrafficAutomationSettings`, and `CellTrafficAutomationRouteSettings`, validates configured route ids at build time, derives effective automation answers from the active route plus health-isolation graph through one `ICellTrafficAutomationRuntimeCatalog`, projects `snapshot.CellTrafficAutomations`, and publishes the same answer through the `cell-traffic-automations` technology runtime surface
+- `Cephalon.AspNetCore` now exposes `/engine/cell-traffic-automations`, `/engine/cell-traffic-automations/{automationId}`, `/engine/cell-traffic-automations/modules/{moduleId}`, `/engine/cell-traffic-automations/routes/{routeId}`, `/engine/cell-traffic-automations/source-cells/{cellId}`, `/engine/cell-traffic-automations/target-cells/{cellId}`, and `/engine/cell-traffic-automations/health-isolations/{healthIsolationId}` as the direct operator routes for the merged traffic-automation catalog
+- targeted coverage now proves catalog composition, invalid-route rejection, technology-surface projection, runtime-snapshot projection, ASP.NET Core route publication, and public package-surface alignment through composition tests `2/2`, hosting tests `1/1`, and tooling tests `169/169`
+
 ### ENG-122 Phase 13 cell-health-isolation runtime baseline
 
 Status: done
@@ -2161,7 +2188,7 @@ Acceptance:
 - `Cephalon.Engine` composes host-added and module-contributed cell health-isolation answers into one runtime catalog, validates isolation ownership against active module-owned cell boundaries, projects the same answer into `snapshot.CellHealthIsolations`, and surfaces the same posture through the technology runtime catalog without inventing a second registry
 - active cell health-isolation answers keep the built-in `cell-based-architecture` profile truthful so operator tooling can read one runtime answer for topology, routing, and health posture without extra host ceremony
 - ASP.NET Core hosts expose direct operator routes for the merged cell health-isolation catalog and its isolation/module/cell/dependency drill-down answers
-- docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the shipped baseline while remaining honest that configuration-driven/provider-aware traffic automation, data mesh, and CDC are still later work
+- docs, backlog, roadmap, project memory, and GitHub tracking stayed aligned with the shipped baseline while the then-open configuration-driven traffic automation, data mesh, and CDC follow-through remained separately planned
 
 Delivered:
 
@@ -2188,7 +2215,7 @@ Acceptance:
 - `Cephalon.Engine` composes host-added and module-contributed cell routes into one runtime catalog, validates route ownership against active module-owned cell boundaries, projects the same answer into `snapshot.CellRoutes`, and surfaces the same posture through the technology runtime catalog without inventing a second registry
 - active cell routes keep the built-in `cell-based-architecture` profile truthful so operator tooling can read one runtime answer for topology plus route posture without extra host ceremony
 - ASP.NET Core hosts expose direct operator routes for the merged cell-route catalog and its route/module/source-cell/target-cell drill-down answers
-- docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the shipped baseline while remaining honest that health isolation, configuration-driven/provider-aware traffic automation, data mesh, and CDC are still later work
+- docs, backlog, roadmap, project memory, and GitHub tracking stayed aligned with the shipped baseline while the then-open health-isolation, traffic-automation, data mesh, and CDC follow-through remained separately planned
 
 Delivered:
 
@@ -3205,6 +3232,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-100 generic behavior HTTP transport-native timeout and circuit-breaker envelopes: `Cephalon.Behaviors.Http` now shares one resilience-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution timeout and open-circuit rejections keep protocol-native error shapes with stable Cephalon codes plus `503` metadata and optional retry-after timing instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned timeout and circuit-breaker policy — **Shipped** · targeted hosting tests 25/25 + composition tests 28/28 + package-surface tests 153/153
 - ENG-101 phase 12 strangler-fig migration policy and progress baseline: `Cephalon.Abstractions` now exposes `IStranglerFigMigrationRuntimeCatalog` plus `StranglerFigMigrationRuntimeDescriptor`, `Cephalon.Engine` now binds deterministic `Engine:Migration:StranglerFig` default plus per-route overlays into `snapshot.StranglerFigRoutePolicies`, and `Cephalon.AspNetCore` now exposes `/engine/strangler-fig/runtime` plus `/engine/strangler-fig/runtime/{routeId}` while host-level cutover remains later — **Shipped** · composition tests 4/4 + hosting tests 1/1 + package-surface tests 153/153
 - ENG-102 phase 12 ASP.NET Core strangler-fig cutover runtime: `Cephalon.AspNetCore` now derives host cutover execution from `IStranglerFigMigrationRuntimeCatalog`, exposes `/engine/strangler-fig/cutover` plus `/engine/strangler-fig/cutover/resolve`, rewrites rooted local targets in-process, redirects or proxies absolute HTTP or HTTPS targets through `Engine:Migration:StranglerFig:AspNetCore`, and rejects unsupported selected endpoints truthfully with `502` while broader provider-specific ingress or edge automation remains later — **Shipped** · hosting tests 5/5 + composition tests 4/4 + package-surface tests 153/153
+- ENG-123 phase 13 configuration-driven cell traffic automation baseline: `Cephalon.Abstractions` now exposes `CellTrafficAutomationRuntimeDescriptor` plus `ICellTrafficAutomationRuntimeCatalog`, `Cephalon.Engine` now binds `Engine:Cells:TrafficAutomation` into `snapshot.CellTrafficAutomations` plus the `cell-traffic-automations` technology runtime surface while deriving automation truth from the active route plus health-isolation graph, and `Cephalon.AspNetCore` now exposes `/engine/cell-traffic-automations*` so the same automation posture stays operator-readable without a host-only traffic manager — **Shipped** · GitHub issue `#520` · composition tests 2/2 + hosting tests 1/1 + tooling tests 169/169
 - ENG-122 phase 13 cell-health-isolation runtime baseline: `Cephalon.Abstractions` now exposes `CellHealthIsolationDescriptor`, `ICellHealthIsolationContributor`, `ICellHealthIsolationRegistry`, and `ICellHealthIsolationCatalog`, `Cephalon.Engine` now projects `snapshot.CellHealthIsolations` plus the `cell-health-isolations` technology runtime surface while validating source-module ownership against active cells, and `Cephalon.AspNetCore` now exposes `/engine/cell-health-isolations*` so the same health-isolation posture stays operator-readable without a host-only partition registry — **Shipped** · GitHub issue `#519` · composition tests 2/2 + hosting tests 1/1 + tooling tests 168/168
 - ENG-121 phase 13 cell-route runtime governance baseline: `Cephalon.Abstractions` now exposes `CellRouteDescriptor`, `ICellRouteContributor`, `ICellRouteRegistry`, and `ICellRouteCatalog`, `Cephalon.Engine` now projects `snapshot.CellRoutes` plus the `cell-routes` technology runtime surface while validating source-module ownership against active cells, and `Cephalon.AspNetCore` now exposes `/engine/cell-routes*` so the same governed route posture stays operator-readable without a host-only traffic registry — **Shipped** · GitHub issue `#518` · composition tests 2/2 + hosting tests 1/1 + tooling tests 167/167
 - ENG-120 phase 13 cell-boundary contract baseline: `Cephalon.Abstractions` now exposes `CellBoundaryDescriptor`, `ICellBoundaryContributor`, `ICellBoundaryRegistry`, and `ICellBoundaryCatalog`, `Cephalon.Engine` now projects `snapshot.CellBoundaries` plus the `cell-boundaries` technology runtime surface while auto-selecting `cell-based-architecture` for active boundaries, and `Cephalon.AspNetCore` now exposes `/engine/cells*` so the same topology stays operator-readable without a host-only registry — **Shipped** · GitHub issue `#517` · composition tests 2/2 + hosting tests 1/1 + tooling tests 166/166

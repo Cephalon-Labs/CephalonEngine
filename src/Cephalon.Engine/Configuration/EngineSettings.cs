@@ -35,6 +35,7 @@ public sealed class EngineSettings
     /// <param name="migration">Configuration-driven migration settings.</param>
     /// <param name="backendForFrontend">Configuration-driven backend-for-frontend settings.</param>
     /// <param name="features">Configuration-driven feature-flag settings.</param>
+    /// <param name="cells">Configuration-driven cell-based architecture settings.</param>
     public EngineSettings(
         string? blueprint = null,
         IReadOnlyList<string>? patterns = null,
@@ -55,7 +56,8 @@ public sealed class EngineSettings
         ResilienceSettings? resilience = null,
         MigrationSettings? migration = null,
         BackendForFrontendSettings? backendForFrontend = null,
-        FeatureSettings? features = null)
+        FeatureSettings? features = null,
+        CellSettings? cells = null)
     {
         Blueprint = string.IsNullOrWhiteSpace(blueprint) ? null : blueprint.Trim();
         Patterns = patterns?
@@ -86,6 +88,7 @@ public sealed class EngineSettings
         Migration = migration ?? MigrationSettings.Empty;
         BackendForFrontend = backendForFrontend ?? BackendForFrontendSettings.Empty;
         Features = features ?? FeatureSettings.Empty;
+        Cells = cells ?? CellSettings.Empty;
     }
 
     /// <summary>
@@ -189,6 +192,11 @@ public sealed class EngineSettings
     public FeatureSettings Features { get; }
 
     /// <summary>
+    /// Gets configuration-driven cell-based architecture settings.
+    /// </summary>
+    public CellSettings Cells { get; }
+
+    /// <summary>
     /// Gets a value indicating whether any engine settings were explicitly supplied.
     /// </summary>
     public bool HasValues =>
@@ -211,7 +219,8 @@ public sealed class EngineSettings
         Resilience.HasValues ||
         Migration.HasValues ||
         BackendForFrontend.HasValues ||
-        Features.HasValues;
+        Features.HasValues ||
+        Cells.HasValues;
 
     /// <summary>
     /// Reads engine settings from configuration.
@@ -265,6 +274,7 @@ public sealed class EngineSettings
             resilience: ResilienceSettings.FromConfiguration(configuration, sectionPath),
             migration: MigrationSettings.FromConfiguration(configuration, sectionPath),
             backendForFrontend: BackendForFrontendSettings.FromConfiguration(configuration, sectionPath),
-            features: FeatureSettings.FromConfiguration(configuration, sectionPath));
+            features: FeatureSettings.FromConfiguration(configuration, sectionPath),
+            cells: CellSettings.FromConfiguration(configuration, sectionPath));
     }
 }

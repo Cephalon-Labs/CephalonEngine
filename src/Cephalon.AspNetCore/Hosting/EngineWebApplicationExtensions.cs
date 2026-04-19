@@ -844,6 +844,35 @@ public static class EngineWebApplicationExtensions
                 return healthIsolation is null ? Results.NotFound() : Results.Ok(healthIsolation);
             })
             .WithName("GetCephalonCellHealthIsolation");
+        engineGroup.MapGet("/cell-traffic-automations", ([FromServices] ICellTrafficAutomationRuntimeCatalog catalog) =>
+                TypedResults.Ok(catalog.Automations))
+            .WithName("GetCephalonCellTrafficAutomations");
+        engineGroup.MapGet("/cell-traffic-automations/modules/{moduleId}", (string moduleId, [FromServices] ICellTrafficAutomationRuntimeCatalog catalog) =>
+                TypedResults.Ok(catalog.GetBySourceModule(moduleId)))
+            .WithName("GetCephalonCellTrafficAutomationsByModule");
+        engineGroup.MapGet("/cell-traffic-automations/routes/{routeId}", (string routeId, [FromServices] ICellTrafficAutomationRuntimeCatalog catalog) =>
+            {
+                var automation = catalog.GetByRouteId(routeId);
+
+                return automation is null ? Results.NotFound() : Results.Ok(automation);
+            })
+            .WithName("GetCephalonCellTrafficAutomationByRoute");
+        engineGroup.MapGet("/cell-traffic-automations/source-cells/{cellId}", (string cellId, [FromServices] ICellTrafficAutomationRuntimeCatalog catalog) =>
+                TypedResults.Ok(catalog.GetBySourceCellId(cellId)))
+            .WithName("GetCephalonCellTrafficAutomationsBySourceCell");
+        engineGroup.MapGet("/cell-traffic-automations/target-cells/{cellId}", (string cellId, [FromServices] ICellTrafficAutomationRuntimeCatalog catalog) =>
+                TypedResults.Ok(catalog.GetByTargetCellId(cellId)))
+            .WithName("GetCephalonCellTrafficAutomationsByTargetCell");
+        engineGroup.MapGet("/cell-traffic-automations/health-isolations/{healthIsolationId}", (string healthIsolationId, [FromServices] ICellTrafficAutomationRuntimeCatalog catalog) =>
+                TypedResults.Ok(catalog.GetByHealthIsolationId(healthIsolationId)))
+            .WithName("GetCephalonCellTrafficAutomationsByHealthIsolation");
+        engineGroup.MapGet("/cell-traffic-automations/{automationId}", (string automationId, [FromServices] ICellTrafficAutomationRuntimeCatalog catalog) =>
+            {
+                var automation = catalog.GetById(automationId);
+
+                return automation is null ? Results.NotFound() : Results.Ok(automation);
+            })
+            .WithName("GetCephalonCellTrafficAutomation");
         engineGroup.MapGet("/technologies", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Technologies))
             .WithName("GetCephalonTechnologies");
         engineGroup.MapGet("/technology-catalog", ([FromServices] TechnologyCatalogSnapshot catalog) => TypedResults.Ok(catalog.Technologies))

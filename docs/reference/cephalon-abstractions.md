@@ -19999,6 +19999,264 @@ IReadOnlyList<string> TransportIds { get; }
 
 Gets the normalized transport identifiers associated with this route.
 
+<a id="type-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor"></a>
+
+### `CellTrafficAutomationRuntimeDescriptor`
+
+Describes the effective runtime traffic-automation answer for one governed cell route.
+
+#### Declaration
+```csharp
+public sealed class CellTrafficAutomationRuntimeDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `CellTrafficAutomationRuntimeDescriptor`
+
+```csharp
+CellTrafficAutomationRuntimeDescriptor(string id, string routeId, string sourceModuleId, string sourceCellId, string targetCellId, string displayName, string description, string routingStrategy, string governanceMode, string automationMode, string triggerMode, string actionMode, string materializationMode, string policySource, IReadOnlyList<string> transportIds, string requiredCapabilityKey, IReadOnlyList<string> sourceHealthIsolationIds, IReadOnlyList<string> targetHealthIsolationIds, IReadOnlyList<string> dependencyIds, IReadOnlyDictionary<string, string> metadata, IReadOnlyDictionary<string, string> runtimeMetadata)
+```
+
+Creates a cell traffic-automation runtime descriptor.
+
+Parameters:
+- `id`: The stable traffic-automation identifier.
+- `routeId`: The stable governed cell-route identifier that this automation answer applies to.
+- `sourceModuleId`: The Cephalon module that owns the governed route.
+- `sourceCellId`: The source cell identifier.
+- `targetCellId`: The target cell identifier.
+- `displayName`: The operator-facing traffic-automation name.
+- `description`: The human-readable description of the traffic-automation posture.
+- `routingStrategy`: The operator-facing routing strategy inherited from the governed route.
+- `governanceMode`: The operator-facing governance posture inherited from the governed route.
+- `automationMode`: The normalized automation posture, such as `advisory` or `automatic`.
+- `triggerMode`: The normalized trigger posture, such as `source-health` or `source-or-target-health`.
+- `actionMode`: The normalized action posture, such as `quarantine-route` or `shed-load`.
+- `materializationMode`: The normalized materialization posture, such as `runtime-catalog-only` or `provider-managed`.
+- `policySource`: The source of the effective automation policy, such as `cell-default` or `cell-route`.
+- `transportIds`: Optional transport identifiers inherited from the governed route.
+- `requiredCapabilityKey`: An optional capability key inherited from the governed route.
+- `sourceHealthIsolationIds`: The normalized health-isolation identifiers attached to the source cell.
+- `targetHealthIsolationIds`: The normalized health-isolation identifiers attached to the target cell.
+- `dependencyIds`: The normalized dependency identifiers observed across the related health-isolation answers.
+- `metadata`: The original authored route metadata.
+- `runtimeMetadata`: Additional runtime-only metadata such as policy notes or overlay provenance.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-actionmode"></a>
+
+##### `ActionMode`
+
+```csharp
+string ActionMode { get; }
+```
+
+Gets the normalized action posture.
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-automationmode"></a>
+
+##### `AutomationMode`
+
+```csharp
+string AutomationMode { get; }
+```
+
+Gets the normalized automation posture.
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-dependencyids"></a>
+
+##### `DependencyIds`
+
+```csharp
+IReadOnlyList<string> DependencyIds { get; }
+```
+
+Gets the normalized dependency identifiers observed across the related health-isolation answers.
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable description of the traffic-automation posture.
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing traffic-automation name.
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-governancemode"></a>
+
+##### `GovernanceMode`
+
+```csharp
+string GovernanceMode { get; }
+```
+
+Gets the governance posture inherited from the governed route.
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable traffic-automation identifier.
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-materializationmode"></a>
+
+##### `MaterializationMode`
+
+```csharp
+string MaterializationMode { get; }
+```
+
+Gets the normalized materialization posture.
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets the original authored route metadata.
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-policysource"></a>
+
+##### `PolicySource`
+
+```csharp
+string PolicySource { get; }
+```
+
+Gets the source of the effective automation policy.
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-requiredcapabilitykey"></a>
+
+##### `RequiredCapabilityKey`
+
+```csharp
+string RequiredCapabilityKey { get; }
+```
+
+Gets the optional capability key inherited from the governed route.
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-routeid"></a>
+
+##### `RouteId`
+
+```csharp
+string RouteId { get; }
+```
+
+Gets the governed cell-route identifier that this automation answer applies to.
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-routingstrategy"></a>
+
+##### `RoutingStrategy`
+
+```csharp
+string RoutingStrategy { get; }
+```
+
+Gets the routing strategy inherited from the governed route.
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-runtimemetadata"></a>
+
+##### `RuntimeMetadata`
+
+```csharp
+IReadOnlyDictionary<string, string> RuntimeMetadata { get; }
+```
+
+Gets runtime-only metadata such as policy notes or overlay provenance.
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-sourcecellid"></a>
+
+##### `SourceCellId`
+
+```csharp
+string SourceCellId { get; }
+```
+
+Gets the source cell identifier.
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-sourcehealthisolationids"></a>
+
+##### `SourceHealthIsolationIds`
+
+```csharp
+IReadOnlyList<string> SourceHealthIsolationIds { get; }
+```
+
+Gets the normalized source-cell health-isolation identifiers.
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; }
+```
+
+Gets the module that owns the governed route.
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-targetcellid"></a>
+
+##### `TargetCellId`
+
+```csharp
+string TargetCellId { get; }
+```
+
+Gets the target cell identifier.
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-targethealthisolationids"></a>
+
+##### `TargetHealthIsolationIds`
+
+```csharp
+IReadOnlyList<string> TargetHealthIsolationIds { get; }
+```
+
+Gets the normalized target-cell health-isolation identifiers.
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-transportids"></a>
+
+##### `TransportIds`
+
+```csharp
+IReadOnlyList<string> TransportIds { get; }
+```
+
+Gets the normalized transport identifiers inherited from the governed route.
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-triggermode"></a>
+
+##### `TriggerMode`
+
+```csharp
+string TriggerMode { get; }
+```
+
+Gets the normalized trigger posture.
+
 <a id="type-cephalon-abstractions-technologies-icellboundarycatalog"></a>
 
 ### `ICellBoundaryCatalog`
@@ -20379,6 +20637,121 @@ Adds one cell-route descriptor to the active runtime composition.
 
 Parameters:
 - `cellRoute`: The cell-route descriptor to add.
+
+<a id="type-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog"></a>
+
+### `ICellTrafficAutomationRuntimeCatalog`
+
+Exposes the effective cell traffic-automation answers visible to the current runtime.
+
+#### Declaration
+```csharp
+public interface ICellTrafficAutomationRuntimeCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-automations"></a>
+
+##### `Automations`
+
+```csharp
+IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> Automations { get; }
+```
+
+Gets all effective cell traffic-automation answers visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbyhealthisolationid-system-string"></a>
+
+##### `GetByHealthIsolationId`
+
+```csharp
+IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> GetByHealthIsolationId(string healthIsolationId)
+```
+
+Gets all effective cell traffic-automation answers that reference the requested health-isolation identifier.
+
+Returns: The matching runtime descriptors, or an empty list when none are active.
+
+Parameters:
+- `healthIsolationId`: The health-isolation identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+CellTrafficAutomationRuntimeDescriptor GetById(string automationId)
+```
+
+Gets one effective cell traffic-automation answer by its stable identifier.
+
+Returns: The matching runtime descriptor, or `null` when it is not active.
+
+Parameters:
+- `automationId`: The traffic-automation identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbyrouteid-system-string"></a>
+
+##### `GetByRouteId`
+
+```csharp
+CellTrafficAutomationRuntimeDescriptor GetByRouteId(string routeId)
+```
+
+Gets one effective cell traffic-automation answer by its governed route identifier.
+
+Returns: The matching runtime descriptor, or `null` when it is not active.
+
+Parameters:
+- `routeId`: The governed route identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbysourcecellid-system-string"></a>
+
+##### `GetBySourceCellId`
+
+```csharp
+IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> GetBySourceCellId(string sourceCellId)
+```
+
+Gets all effective cell traffic-automation answers that originate from the requested source cell.
+
+Returns: The matching runtime descriptors, or an empty list when none are active.
+
+Parameters:
+- `sourceCellId`: The source-cell identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbysourcemodule-system-string"></a>
+
+##### `GetBySourceModule`
+
+```csharp
+IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> GetBySourceModule(string sourceModuleId)
+```
+
+Gets all effective cell traffic-automation answers owned by the requested module.
+
+Returns: The matching runtime descriptors, or an empty list when none are active.
+
+Parameters:
+- `sourceModuleId`: The module identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbytargetcellid-system-string"></a>
+
+##### `GetByTargetCellId`
+
+```csharp
+IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> GetByTargetCellId(string targetCellId)
+```
+
+Gets all effective cell traffic-automation answers that target the requested cell.
+
+Returns: The matching runtime descriptors, or an empty list when none are active.
+
+Parameters:
+- `targetCellId`: The target-cell identifier to filter by.
 
 <a id="type-cephalon-abstractions-technologies-itechnologycapabilitycontributor"></a>
 

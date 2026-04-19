@@ -71,6 +71,7 @@ public sealed class EngineBuilder
     private MigrationSettings migrationSettings = MigrationSettings.Empty;
     private BackendForFrontendSettings backendForFrontendSettings = BackendForFrontendSettings.Empty;
     private FeatureSettings featureSettings = FeatureSettings.Empty;
+    private CellSettings cellSettings = CellSettings.Empty;
 
     /// <summary>
     /// Creates a new builder over the supplied service collection.
@@ -147,6 +148,7 @@ public sealed class EngineBuilder
         UseMigrationSettings(settings.Migration);
         UseBackendForFrontendSettings(settings.BackendForFrontend);
         UseFeatureSettings(settings.Features);
+        UseCellSettings(settings.Cells);
 
         return this;
     }
@@ -522,6 +524,19 @@ public sealed class EngineBuilder
     }
 
     /// <summary>
+    /// Replaces the cell-based architecture settings used by the runtime cell catalogs.
+    /// </summary>
+    /// <param name="settings">The cell settings to apply.</param>
+    /// <returns>The same builder instance.</returns>
+    public EngineBuilder UseCellSettings(CellSettings settings)
+    {
+        ArgumentNullException.ThrowIfNull(settings);
+
+        cellSettings = settings;
+        return this;
+    }
+
+    /// <summary>
     /// Replaces the migration-policy settings used by the runtime migration catalogs.
     /// </summary>
     /// <param name="migration">The migration settings to apply.</param>
@@ -812,6 +827,7 @@ public sealed class EngineBuilder
             Services.AddSingleton(migrationSettings);
             Services.AddSingleton(backendForFrontendSettings);
             Services.AddSingleton(featureSettings);
+            Services.AddSingleton(cellSettings);
 
             var activeModules = ModuleActivation.ApplyOptions(allModules, engineOptions);
             var orderedModules = ModuleOrdering.Order(activeModules);
@@ -943,6 +959,10 @@ public sealed class EngineBuilder
             var appProfile = appProfileBuilder.Build();
             var technologyCatalog = new TechnologyCatalogSnapshot(appProfileBuilder.GetTechnologyCatalog());
             var technologySelection = new TechnologySelection(appProfile.Technologies, technologyCatalog.Technologies);
+            var cellTrafficAutomationCatalog = new CellTrafficAutomationRuntimeCatalogSnapshot(
+                activeCellRoutes,
+                activeCellHealthIsolations,
+                cellSettings.TrafficAutomation);
             var localizedResources = new LocalizedResourceRegistry();
             foreach (var module in orderedModules.OfType<ILocalizedResourceContributor>())
             {
@@ -969,6 +989,8 @@ public sealed class EngineBuilder
                 new CellHealthIsolationCatalogSnapshot(activeCellHealthIsolations));
             Services.TryAddSingleton<ICellHealthIsolationCatalog>(serviceProvider =>
                 serviceProvider.GetRequiredService<CellHealthIsolationCatalogSnapshot>());
+            Services.TryAddSingleton(cellTrafficAutomationCatalog);
+            Services.TryAddSingleton<ICellTrafficAutomationRuntimeCatalog>(cellTrafficAutomationCatalog);
             Services.TryAddSingleton<BackendForFrontendRuntimeCatalogSnapshot>(_ =>
                 new BackendForFrontendRuntimeCatalogSnapshot(activeBackendForFrontendBindings));
             Services.TryAddSingleton<IBackendForFrontendRuntimeCatalog>(serviceProvider =>
@@ -1015,6 +1037,7 @@ public sealed class EngineBuilder
             Services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, CellBoundaryTechnologyRuntimeContributor>());
             Services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, CellRouteTechnologyRuntimeContributor>());
             Services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, CellHealthIsolationTechnologyRuntimeContributor>());
+            Services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, CellTrafficAutomationTechnologyRuntimeContributor>());
             Services.TryAddSingleton<TechnologyRuntimeCatalogSnapshot>(serviceProvider =>
                 new TechnologyRuntimeCatalogSnapshot(
                     serviceProvider.GetServices<ITechnologyRuntimeContributor>()));

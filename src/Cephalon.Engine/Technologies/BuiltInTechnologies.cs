@@ -189,15 +189,15 @@ public static class BuiltInTechnologies
     public static TechnologyDescriptor CellBasedArchitecture { get; } = new(
         id: "cell-based-architecture",
         displayName: "Cell-Based Architecture",
-        description: "Prepares the app for explicit module-owned cell boundaries, governed cell routes, health-isolation posture, and future traffic-automation follow-through.",
+        description: "Prepares the app for explicit module-owned cell boundaries, governed cell routes, health-isolation posture, and configuration-driven traffic-automation follow-through.",
         kind: TechnologyKind.Platform,
         aliases: ["CellBasedArchitecture", "CellBased", "Cells"],
         tags: ["cells", "blast-radius", "isolation", "routing"],
         guidance:
         [
             "Keep cell boundaries module-owned and explicit instead of hiding them in host startup or deployment notes.",
-            "Project blast-radius, routing, and health-isolation posture through runtime catalogs so operators can inspect the active cell topology directly.",
-            "Treat future traffic-management, failover, and health-isolation automation as additive follow-through over the boundary catalog instead of bespoke host logic."
+            "Project blast-radius, routing, health-isolation posture, and effective traffic-automation answers through runtime catalogs so operators can inspect the active cell topology directly.",
+            "Treat provider-specific traffic-management, failover, and health-isolation materialization as additive follow-through over the engine-owned boundary, route, and automation catalogs instead of bespoke host logic."
         ]);
 
     private static readonly TechnologyDescriptor[] Items =

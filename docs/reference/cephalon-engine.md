@@ -989,6 +989,21 @@ Returns: The same builder instance.
 Parameters:
 - `blueprint`: The blueprint descriptor to activate.
 
+<a id="member-m-cephalon-engine-composition-enginebuilder-usecellsettings-cephalon-engine-configuration-cellsettings"></a>
+
+##### `UseCellSettings`
+
+```csharp
+EngineBuilder UseCellSettings(CellSettings settings)
+```
+
+Replaces the cell-based architecture settings used by the runtime cell catalogs.
+
+Returns: The same builder instance.
+
+Parameters:
+- `settings`: The cell settings to apply.
+
 <a id="member-m-cephalon-engine-composition-enginebuilder-useconfiguration-microsoft-extensions-configuration-iconfiguration-system-string"></a>
 
 ##### `UseConfiguration`
@@ -2191,6 +2206,332 @@ int? MaxQueuedActions { get; }
 
 Gets the maximum queued actions allowed before rejection.
 
+<a id="type-cephalon-engine-configuration-cellsettings"></a>
+
+### `CellSettings`
+
+Describes configuration-driven cell-based architecture settings for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class CellSettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-cellsettings-ctor-cephalon-engine-configuration-celltrafficautomationsettings"></a>
+
+##### `CellSettings`
+
+```csharp
+CellSettings(CellTrafficAutomationSettings trafficAutomation)
+```
+
+Creates cell settings.
+
+Parameters:
+- `trafficAutomation`: The configuration-driven traffic-automation settings for governed cell routes.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-cellsettings-empty"></a>
+
+##### `Empty`
+
+```csharp
+CellSettings Empty { get; }
+```
+
+Gets an empty cell settings instance.
+
+<a id="member-p-cephalon-engine-configuration-cellsettings-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any cell settings were explicitly supplied.
+
+<a id="member-p-cephalon-engine-configuration-cellsettings-trafficautomation"></a>
+
+##### `TrafficAutomation`
+
+```csharp
+CellTrafficAutomationSettings TrafficAutomation { get; }
+```
+
+Gets the configuration-driven traffic-automation settings for governed cell routes.
+
+#### Methods
+
+<a id="member-m-cephalon-engine-configuration-cellsettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string"></a>
+
+##### `FromConfiguration`
+
+```csharp
+CellSettings FromConfiguration(IConfiguration configuration, string sectionPath)
+```
+
+Reads cell settings from configuration.
+
+Returns: The parsed cell settings.
+
+Parameters:
+- `configuration`: The configuration source that contains the engine section.
+- `sectionPath`: The root configuration section path to read from.
+
+<a id="type-cephalon-engine-configuration-celltrafficautomationroutesettings"></a>
+
+### `CellTrafficAutomationRouteSettings`
+
+Describes one configuration-driven cell traffic-automation route override.
+
+#### Declaration
+```csharp
+public sealed class CellTrafficAutomationRouteSettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-celltrafficautomationroutesettings-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `CellTrafficAutomationRouteSettings`
+
+```csharp
+CellTrafficAutomationRouteSettings(string routeId, string automationMode, string triggerMode, string actionMode, string materializationMode, string notes, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates cell traffic-automation route settings.
+
+Parameters:
+- `routeId`: The stable governed route identifier.
+- `automationMode`: The optional normalized automation posture for this route.
+- `triggerMode`: The optional normalized trigger posture for this route.
+- `actionMode`: The optional normalized action posture for this route.
+- `materializationMode`: The optional normalized materialization posture for this route.
+- `notes`: Optional operator-facing notes for this route-specific overlay.
+- `metadata`: Optional route-specific runtime metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-celltrafficautomationroutesettings-actionmode"></a>
+
+##### `ActionMode`
+
+```csharp
+string ActionMode { get; }
+```
+
+Gets the optional normalized action posture for this route.
+
+<a id="member-p-cephalon-engine-configuration-celltrafficautomationroutesettings-automationmode"></a>
+
+##### `AutomationMode`
+
+```csharp
+string AutomationMode { get; }
+```
+
+Gets the optional normalized automation posture for this route.
+
+<a id="member-p-cephalon-engine-configuration-celltrafficautomationroutesettings-materializationmode"></a>
+
+##### `MaterializationMode`
+
+```csharp
+string MaterializationMode { get; }
+```
+
+Gets the optional normalized materialization posture for this route.
+
+<a id="member-p-cephalon-engine-configuration-celltrafficautomationroutesettings-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional route-specific runtime metadata.
+
+<a id="member-p-cephalon-engine-configuration-celltrafficautomationroutesettings-notes"></a>
+
+##### `Notes`
+
+```csharp
+string Notes { get; }
+```
+
+Gets optional operator-facing notes for this route-specific overlay.
+
+<a id="member-p-cephalon-engine-configuration-celltrafficautomationroutesettings-routeid"></a>
+
+##### `RouteId`
+
+```csharp
+string RouteId { get; }
+```
+
+Gets the stable governed route identifier.
+
+<a id="member-p-cephalon-engine-configuration-celltrafficautomationroutesettings-triggermode"></a>
+
+##### `TriggerMode`
+
+```csharp
+string TriggerMode { get; }
+```
+
+Gets the optional normalized trigger posture for this route.
+
+#### Methods
+
+<a id="member-m-cephalon-engine-configuration-celltrafficautomationroutesettings-fromsection-microsoft-extensions-configuration-iconfigurationsection"></a>
+
+##### `FromSection`
+
+```csharp
+CellTrafficAutomationRouteSettings FromSection(IConfigurationSection section)
+```
+
+Reads one cell traffic-automation route override from configuration.
+
+Returns: The parsed route settings.
+
+Parameters:
+- `section`: The configuration section that contains the route override.
+
+<a id="type-cephalon-engine-configuration-celltrafficautomationsettings"></a>
+
+### `CellTrafficAutomationSettings`
+
+Describes configuration-driven cell traffic-automation settings for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class CellTrafficAutomationSettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-celltrafficautomationsettings-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-configuration-celltrafficautomationroutesettings"></a>
+
+##### `CellTrafficAutomationSettings`
+
+```csharp
+CellTrafficAutomationSettings(string defaultAutomationMode, string defaultTriggerMode, string defaultActionMode, string defaultMaterializationMode, IReadOnlyList<CellTrafficAutomationRouteSettings> routes)
+```
+
+Creates cell traffic-automation settings.
+
+Parameters:
+- `defaultAutomationMode`: The default normalized automation posture for active governed routes.
+- `defaultTriggerMode`: The default normalized trigger posture for active governed routes.
+- `defaultActionMode`: The default normalized action posture for active governed routes.
+- `defaultMaterializationMode`: The default normalized materialization posture for active governed routes.
+- `routes`: The route-specific cell traffic-automation overrides.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-celltrafficautomationsettings-defaultactionmode"></a>
+
+##### `DefaultActionMode`
+
+```csharp
+string DefaultActionMode { get; }
+```
+
+Gets the default normalized action posture for active governed routes.
+
+<a id="member-p-cephalon-engine-configuration-celltrafficautomationsettings-defaultautomationmode"></a>
+
+##### `DefaultAutomationMode`
+
+```csharp
+string DefaultAutomationMode { get; }
+```
+
+Gets the default normalized automation posture for active governed routes.
+
+<a id="member-p-cephalon-engine-configuration-celltrafficautomationsettings-defaultmaterializationmode"></a>
+
+##### `DefaultMaterializationMode`
+
+```csharp
+string DefaultMaterializationMode { get; }
+```
+
+Gets the default normalized materialization posture for active governed routes.
+
+<a id="member-p-cephalon-engine-configuration-celltrafficautomationsettings-defaulttriggermode"></a>
+
+##### `DefaultTriggerMode`
+
+```csharp
+string DefaultTriggerMode { get; }
+```
+
+Gets the default normalized trigger posture for active governed routes.
+
+<a id="member-p-cephalon-engine-configuration-celltrafficautomationsettings-empty"></a>
+
+##### `Empty`
+
+```csharp
+CellTrafficAutomationSettings Empty { get; }
+```
+
+Gets an empty cell traffic-automation settings instance.
+
+<a id="member-p-cephalon-engine-configuration-celltrafficautomationsettings-hasdefaultvalues"></a>
+
+##### `HasDefaultValues`
+
+```csharp
+bool HasDefaultValues { get; }
+```
+
+Gets a value indicating whether any default traffic-automation values were explicitly supplied.
+
+<a id="member-p-cephalon-engine-configuration-celltrafficautomationsettings-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any cell traffic-automation settings were explicitly supplied.
+
+<a id="member-p-cephalon-engine-configuration-celltrafficautomationsettings-routes"></a>
+
+##### `Routes`
+
+```csharp
+IReadOnlyList<CellTrafficAutomationRouteSettings> Routes { get; }
+```
+
+Gets the route-specific cell traffic-automation overrides.
+
+#### Methods
+
+<a id="member-m-cephalon-engine-configuration-celltrafficautomationsettings-fromsection-microsoft-extensions-configuration-iconfigurationsection"></a>
+
+##### `FromSection`
+
+```csharp
+CellTrafficAutomationSettings FromSection(IConfigurationSection section)
+```
+
+Reads cell traffic-automation settings from the supplied configuration section.
+
+Returns: The parsed cell traffic-automation settings.
+
+Parameters:
+- `section`: The configuration section that contains the cell traffic-automation settings.
+
 <a id="type-cephalon-engine-configuration-circuitbreakersettings"></a>
 
 ### `CircuitBreakerSettings`
@@ -3038,12 +3379,12 @@ public sealed class EngineSettings
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy-cephalon-engine-configuration-datasettings-cephalon-engine-configuration-databasetopologysettings-cephalon-engine-configuration-identitysettings-cephalon-engine-configuration-tenancysettings-cephalon-engine-configuration-auditsettings-cephalon-engine-configuration-messagingsettings-cephalon-engine-configuration-resiliencesettings-cephalon-engine-configuration-migrationsettings-cephalon-engine-configuration-backendforfrontendsettings-cephalon-engine-configuration-featuresettings"></a>
+<a id="member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy-cephalon-engine-configuration-datasettings-cephalon-engine-configuration-databasetopologysettings-cephalon-engine-configuration-identitysettings-cephalon-engine-configuration-tenancysettings-cephalon-engine-configuration-auditsettings-cephalon-engine-configuration-messagingsettings-cephalon-engine-configuration-resiliencesettings-cephalon-engine-configuration-migrationsettings-cephalon-engine-configuration-backendforfrontendsettings-cephalon-engine-configuration-featuresettings-cephalon-engine-configuration-cellsettings"></a>
 
 ##### `EngineSettings`
 
 ```csharp
-EngineSettings(string blueprint, IReadOnlyList<string> patterns, IReadOnlyList<string> transports, IReadOnlyList<string> technologies, EngineOptions options, ModuleDiscoverySettings discovery, LocalizationSettings localization, FailurePolicy failurePolicy, TrustPolicy trustPolicy, PackagePolicy packagePolicy, DataSettings data, DatabaseTopologySettings databases, IdentitySettings identity, TenancySettings tenancy, AuditSettings audit, MessagingSettings messaging, ResilienceSettings resilience, MigrationSettings migration, BackendForFrontendSettings backendForFrontend, FeatureSettings features)
+EngineSettings(string blueprint, IReadOnlyList<string> patterns, IReadOnlyList<string> transports, IReadOnlyList<string> technologies, EngineOptions options, ModuleDiscoverySettings discovery, LocalizationSettings localization, FailurePolicy failurePolicy, TrustPolicy trustPolicy, PackagePolicy packagePolicy, DataSettings data, DatabaseTopologySettings databases, IdentitySettings identity, TenancySettings tenancy, AuditSettings audit, MessagingSettings messaging, ResilienceSettings resilience, MigrationSettings migration, BackendForFrontendSettings backendForFrontend, FeatureSettings features, CellSettings cells)
 ```
 
 Initializes a new instance of the `EngineSettings` class.
@@ -3069,6 +3410,7 @@ Parameters:
 - `migration`: Configuration-driven migration settings.
 - `backendForFrontend`: Configuration-driven backend-for-frontend settings.
 - `features`: Configuration-driven feature-flag settings.
+- `cells`: Configuration-driven cell-based architecture settings.
 
 #### Fields
 
@@ -3113,6 +3455,16 @@ string Blueprint { get; }
 ```
 
 Gets the selected blueprint identifier.
+
+<a id="member-p-cephalon-engine-configuration-enginesettings-cells"></a>
+
+##### `Cells`
+
+```csharp
+CellSettings Cells { get; }
+```
+
+Gets configuration-driven cell-based architecture settings.
 
 <a id="member-p-cephalon-engine-configuration-enginesettings-data"></a>
 
@@ -9182,6 +9534,16 @@ IReadOnlyList<CellRouteDescriptor> CellRoutes { get; set; }
 ```
 
 Gets the cell-to-cell routing and governance answers visible to the runtime at the time the snapshot was created.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-celltrafficautomations"></a>
+
+##### `CellTrafficAutomations`
+
+```csharp
+IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> CellTrafficAutomations { get; set; }
+```
+
+Gets the effective cell traffic-automation answers visible to the runtime at the time the snapshot was created.
 
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-databasemigrationplaybook"></a>
 

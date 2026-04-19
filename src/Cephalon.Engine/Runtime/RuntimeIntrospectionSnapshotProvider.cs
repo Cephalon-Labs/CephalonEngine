@@ -32,6 +32,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
     ICellBoundaryCatalog cellBoundaryCatalog,
     ICellRouteCatalog cellRouteCatalog,
     ICellHealthIsolationCatalog cellHealthIsolationCatalog,
+    ICellTrafficAutomationRuntimeCatalog cellTrafficAutomationRuntimeCatalog,
     ITechnologyRuntimeCatalog technologyRuntimeCatalog,
     IRuntimeDiagnosticsCatalog diagnosticsCatalog) : IRuntimeIntrospectionSnapshotProvider
 {
@@ -66,6 +67,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
             CellBoundaries = cellBoundaryCatalog.CellBoundaries,
             CellRoutes = cellRouteCatalog.Routes,
             CellHealthIsolations = cellHealthIsolationCatalog.HealthIsolations,
+            CellTrafficAutomations = cellTrafficAutomationRuntimeCatalog.Automations,
             HostedExecutions = hostedExecutionRuntimeCatalog.HostedExecutions,
             Projections = projectionCatalog.Projections,
             Outboxes = outboxCatalog.Outboxes,

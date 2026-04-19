@@ -1255,7 +1255,7 @@ Current `Cephalon.Agentics` highlights:
 - linked `capabilityKeys`, `executionGraphId`, and `hostedExecutionId` now flow through the same surface when the tool declares them
 - linked execution-graph and hosted-execution entries also surface the current runtime-story phase and active/inactive state
 - invalid linked capability, execution-graph, or hosted-execution references fail when the agentic tool catalog is resolved instead of leaking broken operator metadata
-- the phase 13 `cell-based-architecture` baseline now also projects `cell-boundaries`, `cell-routes`, and `cell-health-isolations` surfaces whose entries stay aligned with `/engine/cells`, `/engine/cell-routes`, `/engine/cell-health-isolations`, `snapshot.CellBoundaries`, `snapshot.CellRoutes`, and `snapshot.CellHealthIsolations`, so operators can read module ownership, blast-radius posture, source-cell to target-cell routing posture, health-isolation posture, governance mode, required capability, dependency linkage, and transport hints from one shared runtime truth
+- the phase 13 `cell-based-architecture` baseline now also projects `cell-boundaries`, `cell-routes`, `cell-health-isolations`, and `cell-traffic-automations` surfaces whose entries stay aligned with `/engine/cells`, `/engine/cell-routes`, `/engine/cell-health-isolations`, `/engine/cell-traffic-automations`, `snapshot.CellBoundaries`, `snapshot.CellRoutes`, `snapshot.CellHealthIsolations`, and `snapshot.CellTrafficAutomations`, so operators can read module ownership, blast-radius posture, source-cell to target-cell routing posture, health-isolation posture, effective automation/trigger/action/materialization modes, policy source, dependency linkage, and transport hints from one shared runtime truth
 
 ## Trust surface
 

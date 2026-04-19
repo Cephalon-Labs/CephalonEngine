@@ -60,6 +60,11 @@ public sealed record RuntimeIntrospectionSnapshot(
     public IReadOnlyList<CellHealthIsolationDescriptor> CellHealthIsolations { get; init; } = [];
 
     /// <summary>
+    /// Gets the effective cell traffic-automation answers visible to the runtime at the time the snapshot was created.
+    /// </summary>
+    public IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> CellTrafficAutomations { get; init; } = [];
+
+    /// <summary>
     /// Gets the hosted executions contributed by active modules and visible to the runtime at the time the snapshot was created.
     /// </summary>
     public IReadOnlyList<HostedExecutionDescriptor> HostedExecutions { get; init; } = [];

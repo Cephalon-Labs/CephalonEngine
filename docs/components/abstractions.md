@@ -9,7 +9,7 @@
 - capability contracts such as `Capability`, `CapabilityAccess`, and `ICapabilityRegistry`
 - feature-flag contracts such as `FeatureFlagDescriptor`, `FeatureFlagProviderBindingDescriptor`, `FeatureFlagProviderEvaluationResult`, `FeatureFlagTargetingDescriptor`, `IFeatureToggle`, `IFeatureFlagProvider`, `IFeatureFlagRuntimeCatalog`, `IFeatureFlagContributor`, and `IFeatureFlagRegistry`
 - execution/runtime-catalog contracts such as `DurableExecutionRuntimeDescriptor`, `IDurableExecutionRuntimeCatalog`, `DurableExecutionRuntimeState`, `IDurableExecutionRuntimeStateCatalog`, `SagaChoreographyRuntimeDescriptor`, `ISagaChoreographyRuntimeCatalog`, `SagaChoreographyPublicationRuntimeState`, and `ISagaChoreographyPublicationRuntimeStateCatalog`
-- technology runtime contracts such as `CellBoundaryDescriptor`, `ICellBoundaryContributor`, `ICellBoundaryRegistry`, `ICellBoundaryCatalog`, `CellRouteDescriptor`, `ICellRouteContributor`, `ICellRouteRegistry`, `ICellRouteCatalog`, `CellHealthIsolationDescriptor`, `ICellHealthIsolationContributor`, `ICellHealthIsolationRegistry`, `ICellHealthIsolationCatalog`, `TechnologyDescriptor`, and `ITechnologyRuntimeCatalog`
+- technology runtime contracts such as `CellBoundaryDescriptor`, `ICellBoundaryContributor`, `ICellBoundaryRegistry`, `ICellBoundaryCatalog`, `CellRouteDescriptor`, `ICellRouteContributor`, `ICellRouteRegistry`, `ICellRouteCatalog`, `CellHealthIsolationDescriptor`, `ICellHealthIsolationContributor`, `ICellHealthIsolationRegistry`, `ICellHealthIsolationCatalog`, `CellTrafficAutomationRuntimeDescriptor`, `ICellTrafficAutomationRuntimeCatalog`, `TechnologyDescriptor`, and `ITechnologyRuntimeCatalog`
 - app-model contracts such as `AppBlueprint`, `AppProfile`, resilience-selection types, and scaffold-plan types
 - phase-8 runtime-neutral contracts for data, authorization, tenancy, audit, and id generation
 - health contracts used across hosts and packages
@@ -76,6 +76,8 @@
 - `Technologies/ICellBoundaryCatalog.cs`
 - `Technologies/CellHealthIsolationDescriptor.cs`
 - `Technologies/ICellHealthIsolationCatalog.cs`
+- `Technologies/CellTrafficAutomationRuntimeDescriptor.cs`
+- `Technologies/ICellTrafficAutomationRuntimeCatalog.cs`
 - `Technologies/CellRouteDescriptor.cs`
 - `Technologies/ICellRouteCatalog.cs`
 - `Technologies/ITechnologyRuntimeCatalog.cs`
@@ -185,10 +187,12 @@ namespace now carries `CellBoundaryDescriptor`, `ICellBoundaryContributor`,
 `ICellBoundaryRegistry`, `ICellBoundaryCatalog`, `CellRouteDescriptor`,
 `ICellRouteContributor`, `ICellRouteRegistry`, `ICellRouteCatalog`,
 `CellHealthIsolationDescriptor`, `ICellHealthIsolationContributor`,
-`ICellHealthIsolationRegistry`, and `ICellHealthIsolationCatalog` so modules, hosts, and operator
-tooling can talk about explicit module-owned blast-radius boundaries, governed cell-to-cell
-routing posture, and cell health-isolation posture without leaking ASP.NET Core ingress,
-service-mesh, or health-probe types into `Cephalon.Abstractions`.
+`ICellHealthIsolationRegistry`, `ICellHealthIsolationCatalog`,
+`CellTrafficAutomationRuntimeDescriptor`, and `ICellTrafficAutomationRuntimeCatalog` so modules,
+hosts, and operator tooling can talk about explicit module-owned blast-radius boundaries,
+governed cell-to-cell routing posture, cell health-isolation posture, and effective automation
+policy without leaking ASP.NET Core ingress, service-mesh, traffic-manager, or health-probe types
+into `Cephalon.Abstractions`.
 
 The same phase 12 rule now also covers backend-for-frontend REST documentation materialization.
 `BackendForFrontendRestDocumentRuntimeDescriptor` and

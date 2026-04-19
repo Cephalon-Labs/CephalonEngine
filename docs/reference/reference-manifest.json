@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-19T17:05:37.0892086+00:00",
+  "GeneratedAtUtc": "2026-04-19T17:47:43.314634+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 316
+      "TypeCount": 318
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -96,7 +96,7 @@
       "Description": "Composition, runtime, policy, manifest, and introspection services.",
       "FileName": "cephalon-engine.md",
       "NamespaceCount": 12,
-      "TypeCount": 95
+      "TypeCount": 98
     },
     {
       "AssemblyName": "Cephalon.Eventing",
@@ -585,7 +585,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-technologies",
-      "TypeCount": 23
+      "TypeCount": 25
     },
     {
       "NamespaceName": "Cephalon.Abstractions.Tenancy",
@@ -851,7 +851,7 @@
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
       "AnchorId": "namespace-cephalon-engine-configuration",
-      "TypeCount": 44
+      "TypeCount": 47
     },
     {
       "NamespaceName": "Cephalon.Engine.Diagnostics",
@@ -3009,6 +3009,66 @@
       }
     },
     {
+      "DisplayName": "CellSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-configuration-cellsettings",
+      "Declaration": "public sealed class CellSettings",
+      "Summary": "Describes configuration-driven cell-based architecture settings for a Cephalon app.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 3,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "CellTrafficAutomationRouteSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-configuration-celltrafficautomationroutesettings",
+      "Declaration": "public sealed class CellTrafficAutomationRouteSettings",
+      "Summary": "Describes one configuration-driven cell traffic-automation route override.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 7,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "CellTrafficAutomationRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor",
+      "Declaration": "public sealed class CellTrafficAutomationRuntimeDescriptor",
+      "Summary": "Describes the effective runtime traffic-automation answer for one governed cell route.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 21,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CellTrafficAutomationSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-configuration-celltrafficautomationsettings",
+      "Declaration": "public sealed class CellTrafficAutomationSettings",
+      "Summary": "Describes configuration-driven cell traffic-automation settings for a Cephalon app.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 8,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "CephalonRateLimitingEndpointConventionBuilderExtensions",
       "NamespaceName": "Cephalon.AspNetCore.Hosting",
       "AssemblyName": "Cephalon.AspNetCore",
@@ -4010,7 +4070,7 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 44
+        "Methods": 45
       }
     },
     {
@@ -4084,7 +4144,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 1,
-        "Properties": 21,
+        "Properties": 22,
         "Methods": 1
       }
     },
@@ -5811,6 +5871,21 @@
         "Fields": 0,
         "Properties": 0,
         "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "ICellTrafficAutomationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog",
+      "Declaration": "public interface ICellTrafficAutomationRuntimeCatalog",
+      "Summary": "Exposes the effective cell traffic-automation answers visible to the current runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 6
       }
     },
     {
@@ -10174,7 +10249,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 40,
+        "Properties": 41,
         "Methods": 0
       }
     },
@@ -11362,6 +11437,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databasetopologyoperationalsummary-actionlabel",
       "Signature": "string ActionLabel { get; }",
       "Summary": "Gets the suggested operator action label."
+    },
+    {
+      "DisplayName": "ActionMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRouteSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-celltrafficautomationroutesettings-actionmode",
+      "Signature": "string ActionMode { get; }",
+      "Summary": "Gets the optional normalized action posture for this route."
+    },
+    {
+      "DisplayName": "ActionMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-actionmode",
+      "Signature": "string ActionMode { get; }",
+      "Summary": "Gets the normalized action posture."
     },
     {
       "DisplayName": "ActionPath",
@@ -15016,6 +15113,39 @@
       "Summary": "Gets or sets the optional authentication source used when creating credentials from discrete settings."
     },
     {
+      "DisplayName": "AutomationMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRouteSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-celltrafficautomationroutesettings-automationmode",
+      "Signature": "string AutomationMode { get; }",
+      "Summary": "Gets the optional normalized automation posture for this route."
+    },
+    {
+      "DisplayName": "AutomationMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-automationmode",
+      "Signature": "string AutomationMode { get; }",
+      "Summary": "Gets the normalized automation posture."
+    },
+    {
+      "DisplayName": "Automations",
+      "Category": "Properties",
+      "DeclaringTypeName": "ICellTrafficAutomationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-automations",
+      "Signature": "IReadOnlyList\u003CCellTrafficAutomationRuntimeDescriptor\u003E Automations { get; }",
+      "Summary": "Gets all effective cell traffic-automation answers visible to the current runtime."
+    },
+    {
       "DisplayName": "Available",
       "Category": "Properties",
       "DeclaringTypeName": "ReferenceDocsSurface",
@@ -17027,6 +17157,72 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-cellroutes",
       "Signature": "IReadOnlyList\u003CCellRouteDescriptor\u003E CellRoutes { get; set; }",
       "Summary": "Gets the cell-to-cell routing and governance answers visible to the runtime at the time the snapshot was created."
+    },
+    {
+      "DisplayName": "Cells",
+      "Category": "Properties",
+      "DeclaringTypeName": "EngineSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-enginesettings-cells",
+      "Signature": "CellSettings Cells { get; }",
+      "Summary": "Gets configuration-driven cell-based architecture settings."
+    },
+    {
+      "DisplayName": "CellSettings",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CellSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-configuration-cellsettings-ctor-cephalon-engine-configuration-celltrafficautomationsettings",
+      "Signature": "CellSettings(CellTrafficAutomationSettings trafficAutomation)",
+      "Summary": "Creates cell settings."
+    },
+    {
+      "DisplayName": "CellTrafficAutomationRouteSettings",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CellTrafficAutomationRouteSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-configuration-celltrafficautomationroutesettings-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "CellTrafficAutomationRouteSettings(string routeId, string automationMode, string triggerMode, string actionMode, string materializationMode, string notes, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates cell traffic-automation route settings."
+    },
+    {
+      "DisplayName": "CellTrafficAutomationRuntimeDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CellTrafficAutomationRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "CellTrafficAutomationRuntimeDescriptor(string id, string routeId, string sourceModuleId, string sourceCellId, string targetCellId, string displayName, string description, string routingStrategy, string governanceMode, string automationMode, string triggerMode, string actionMode, string materializationMode, string policySource, IReadOnlyList\u003Cstring\u003E transportIds, string requiredCapabilityKey, IReadOnlyList\u003Cstring\u003E sourceHealthIsolationIds, IReadOnlyList\u003Cstring\u003E targetHealthIsolationIds, IReadOnlyList\u003Cstring\u003E dependencyIds, IReadOnlyDictionary\u003Cstring, string\u003E metadata, IReadOnlyDictionary\u003Cstring, string\u003E runtimeMetadata)",
+      "Summary": "Creates a cell traffic-automation runtime descriptor."
+    },
+    {
+      "DisplayName": "CellTrafficAutomations",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-celltrafficautomations",
+      "Signature": "IReadOnlyList\u003CCellTrafficAutomationRuntimeDescriptor\u003E CellTrafficAutomations { get; set; }",
+      "Summary": "Gets the effective cell traffic-automation answers visible to the runtime at the time the snapshot was created."
+    },
+    {
+      "DisplayName": "CellTrafficAutomationSettings",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CellTrafficAutomationSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-configuration-celltrafficautomationsettings-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-engine-configuration-celltrafficautomationroutesettings",
+      "Signature": "CellTrafficAutomationSettings(string defaultAutomationMode, string defaultTriggerMode, string defaultActionMode, string defaultMaterializationMode, IReadOnlyList\u003CCellTrafficAutomationRouteSettings\u003E routes)",
+      "Summary": "Creates cell traffic-automation settings."
     },
     {
       "DisplayName": "CephalonPackageVersion",
@@ -20131,6 +20327,28 @@
       "Summary": "Gets the default trust policy."
     },
     {
+      "DisplayName": "DefaultActionMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-celltrafficautomationsettings-defaultactionmode",
+      "Signature": "string DefaultActionMode { get; }",
+      "Summary": "Gets the default normalized action posture for active governed routes."
+    },
+    {
+      "DisplayName": "DefaultAutomationMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-celltrafficautomationsettings-defaultautomationmode",
+      "Signature": "string DefaultAutomationMode { get; }",
+      "Summary": "Gets the default normalized automation posture for active governed routes."
+    },
+    {
       "DisplayName": "DefaultBehaviorDocumentName",
       "Category": "Properties",
       "DeclaringTypeName": "ApiRoutesOptions",
@@ -20274,6 +20492,17 @@
       "Summary": "Gets the default manifest file name expected inside package directories."
     },
     {
+      "DisplayName": "DefaultMaterializationMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-celltrafficautomationsettings-defaultmaterializationmode",
+      "Signature": "string DefaultMaterializationMode { get; }",
+      "Summary": "Gets the default normalized materialization posture for active governed routes."
+    },
+    {
       "DisplayName": "DefaultMaxEntries",
       "Category": "Fields",
       "DeclaringTypeName": "AuditHistoryExportRequest",
@@ -20371,6 +20600,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-configuration-multitenancyruntimeoptions-defaulttenantid",
       "Signature": "string DefaultTenantId { get; set; }",
       "Summary": "Gets or sets the default tenant identifier used when no explicit request hint resolves a tenant."
+    },
+    {
+      "DisplayName": "DefaultTriggerMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-celltrafficautomationsettings-defaulttriggermode",
+      "Signature": "string DefaultTriggerMode { get; }",
+      "Summary": "Gets the default normalized trigger posture for active governed routes."
     },
     {
       "DisplayName": "Degraded",
@@ -20503,6 +20743,17 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-cellhealthisolationdescriptor-dependencyids",
       "Signature": "IReadOnlyList\u003Cstring\u003E DependencyIds { get; }",
       "Summary": "Gets the normalized dependency identifiers associated with this health-isolation answer."
+    },
+    {
+      "DisplayName": "DependencyIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-dependencyids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E DependencyIds { get; }",
+      "Summary": "Gets the normalized dependency identifiers observed across the related health-isolation answers."
     },
     {
       "DisplayName": "DependsOn",
@@ -20767,6 +21018,17 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-cellroutedescriptor-description",
       "Signature": "string Description { get; }",
       "Summary": "Gets the human-readable description of the cell route."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the human-readable description of the traffic-automation posture."
     },
     {
       "DisplayName": "Description",
@@ -21849,6 +22111,17 @@
     {
       "DisplayName": "DisplayName",
       "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the operator-facing traffic-automation name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
       "DeclaringTypeName": "DatabaseMigrationCommandDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -22846,6 +23119,28 @@
       "AnchorId": "member-p-cephalon-engine-configuration-bulkheadsettings-empty",
       "Signature": "BulkheadSettings Empty { get; }",
       "Summary": "Gets an empty bulkhead-settings instance."
+    },
+    {
+      "DisplayName": "Empty",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-cellsettings-empty",
+      "Signature": "CellSettings Empty { get; }",
+      "Summary": "Gets an empty cell settings instance."
+    },
+    {
+      "DisplayName": "Empty",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-celltrafficautomationsettings-empty",
+      "Signature": "CellTrafficAutomationSettings Empty { get; }",
+      "Summary": "Gets an empty cell traffic-automation settings instance."
     },
     {
       "DisplayName": "Empty",
@@ -24108,8 +24403,8 @@
       "NamespaceName": "Cephalon.Engine.Configuration",
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
-      "AnchorId": "member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy-cephalon-engine-configuration-datasettings-cephalon-engine-configuration-databasetopologysettings-cephalon-engine-configuration-identitysettings-cephalon-engine-configuration-tenancysettings-cephalon-engine-configuration-auditsettings-cephalon-engine-configuration-messagingsettings-cephalon-engine-configuration-resiliencesettings-cephalon-engine-configuration-migrationsettings-cephalon-engine-configuration-backendforfrontendsettings-cephalon-engine-configuration-featuresettings",
-      "Signature": "EngineSettings(string blueprint, IReadOnlyList\u003Cstring\u003E patterns, IReadOnlyList\u003Cstring\u003E transports, IReadOnlyList\u003Cstring\u003E technologies, EngineOptions options, ModuleDiscoverySettings discovery, LocalizationSettings localization, FailurePolicy failurePolicy, TrustPolicy trustPolicy, PackagePolicy packagePolicy, DataSettings data, DatabaseTopologySettings databases, IdentitySettings identity, TenancySettings tenancy, AuditSettings audit, MessagingSettings messaging, ResilienceSettings resilience, MigrationSettings migration, BackendForFrontendSettings backendForFrontend, FeatureSettings features)",
+      "AnchorId": "member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy-cephalon-engine-configuration-datasettings-cephalon-engine-configuration-databasetopologysettings-cephalon-engine-configuration-identitysettings-cephalon-engine-configuration-tenancysettings-cephalon-engine-configuration-auditsettings-cephalon-engine-configuration-messagingsettings-cephalon-engine-configuration-resiliencesettings-cephalon-engine-configuration-migrationsettings-cephalon-engine-configuration-backendforfrontendsettings-cephalon-engine-configuration-featuresettings-cephalon-engine-configuration-cellsettings",
+      "Signature": "EngineSettings(string blueprint, IReadOnlyList\u003Cstring\u003E patterns, IReadOnlyList\u003Cstring\u003E transports, IReadOnlyList\u003Cstring\u003E technologies, EngineOptions options, ModuleDiscoverySettings discovery, LocalizationSettings localization, FailurePolicy failurePolicy, TrustPolicy trustPolicy, PackagePolicy packagePolicy, DataSettings data, DatabaseTopologySettings databases, IdentitySettings identity, TenancySettings tenancy, AuditSettings audit, MessagingSettings messaging, ResilienceSettings resilience, MigrationSettings migration, BackendForFrontendSettings backendForFrontend, FeatureSettings features, CellSettings cells)",
       "Summary": "Initializes a new instance of the \u0060EngineSettings\u0060 class."
     },
     {
@@ -26249,6 +26544,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "CellSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-configuration-cellsettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "CellSettings FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Reads cell settings from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "ClickHouseDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.ClickHouseDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.ClickHouseDependencies",
@@ -26876,6 +27182,28 @@
     {
       "DisplayName": "FromSection",
       "Category": "Methods",
+      "DeclaringTypeName": "CellTrafficAutomationRouteSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-configuration-celltrafficautomationroutesettings-fromsection-microsoft-extensions-configuration-iconfigurationsection",
+      "Signature": "CellTrafficAutomationRouteSettings FromSection(IConfigurationSection section)",
+      "Summary": "Reads one cell traffic-automation route override from configuration."
+    },
+    {
+      "DisplayName": "FromSection",
+      "Category": "Methods",
+      "DeclaringTypeName": "CellTrafficAutomationSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-configuration-celltrafficautomationsettings-fromsection-microsoft-extensions-configuration-iconfigurationsection",
+      "Signature": "CellTrafficAutomationSettings FromSection(IConfigurationSection section)",
+      "Summary": "Reads cell traffic-automation settings from the supplied configuration section."
+    },
+    {
+      "DisplayName": "FromSection",
+      "Category": "Methods",
       "DeclaringTypeName": "DatabaseMigrationsSettings",
       "NamespaceName": "Cephalon.Engine.Configuration",
       "AssemblyName": "Cephalon.Engine",
@@ -27336,6 +27664,17 @@
       "Summary": "Gets all hosted executions linked to one execution graph."
     },
     {
+      "DisplayName": "GetByHealthIsolationId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICellTrafficAutomationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbyhealthisolationid-system-string",
+      "Signature": "IReadOnlyList\u003CCellTrafficAutomationRuntimeDescriptor\u003E GetByHealthIsolationId(string healthIsolationId)",
+      "Summary": "Gets all effective cell traffic-automation answers that reference the requested health-isolation identifier."
+    },
+    {
       "DisplayName": "GetById",
       "Category": "Methods",
       "DeclaringTypeName": "IAuditStoreCatalog",
@@ -27433,6 +27772,17 @@
       "AnchorId": "member-m-cephalon-abstractions-technologies-icellroutecatalog-getbyid-system-string",
       "Signature": "CellRouteDescriptor GetById(string routeId)",
       "Summary": "Gets one cell route by its stable identifier."
+    },
+    {
+      "DisplayName": "GetById",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICellTrafficAutomationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbyid-system-string",
+      "Signature": "CellTrafficAutomationRuntimeDescriptor GetById(string automationId)",
+      "Summary": "Gets one effective cell traffic-automation answer by its stable identifier."
     },
     {
       "DisplayName": "GetById",
@@ -27842,6 +28192,17 @@
       "Summary": "Gets all client-aware runtime projections that expose the requested published REST endpoint."
     },
     {
+      "DisplayName": "GetByRouteId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICellTrafficAutomationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbyrouteid-system-string",
+      "Signature": "CellTrafficAutomationRuntimeDescriptor GetByRouteId(string routeId)",
+      "Summary": "Gets one effective cell traffic-automation answer by its governed route identifier."
+    },
+    {
       "DisplayName": "GetBySeverity",
       "Category": "Methods",
       "DeclaringTypeName": "IBehaviorAdvisoryCatalog",
@@ -27873,6 +28234,17 @@
       "AnchorId": "member-m-cephalon-abstractions-technologies-icellroutecatalog-getbysourcecellid-system-string",
       "Signature": "IReadOnlyList\u003CCellRouteDescriptor\u003E GetBySourceCellId(string sourceCellId)",
       "Summary": "Gets all cell routes that originate from the requested source cell."
+    },
+    {
+      "DisplayName": "GetBySourceCellId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICellTrafficAutomationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbysourcecellid-system-string",
+      "Signature": "IReadOnlyList\u003CCellTrafficAutomationRuntimeDescriptor\u003E GetBySourceCellId(string sourceCellId)",
+      "Summary": "Gets all effective cell traffic-automation answers that originate from the requested source cell."
     },
     {
       "DisplayName": "GetBySourceModule",
@@ -27928,6 +28300,17 @@
       "AnchorId": "member-m-cephalon-abstractions-technologies-icellroutecatalog-getbysourcemodule-system-string",
       "Signature": "IReadOnlyList\u003CCellRouteDescriptor\u003E GetBySourceModule(string sourceModuleId)",
       "Summary": "Gets all cell routes owned by the requested source module."
+    },
+    {
+      "DisplayName": "GetBySourceModule",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICellTrafficAutomationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbysourcemodule-system-string",
+      "Signature": "IReadOnlyList\u003CCellTrafficAutomationRuntimeDescriptor\u003E GetBySourceModule(string sourceModuleId)",
+      "Summary": "Gets all effective cell traffic-automation answers owned by the requested module."
     },
     {
       "DisplayName": "GetBySourceModule",
@@ -28137,6 +28520,17 @@
       "AnchorId": "member-m-cephalon-abstractions-technologies-icellroutecatalog-getbytargetcellid-system-string",
       "Signature": "IReadOnlyList\u003CCellRouteDescriptor\u003E GetByTargetCellId(string targetCellId)",
       "Summary": "Gets all cell routes that target the requested cell."
+    },
+    {
+      "DisplayName": "GetByTargetCellId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICellTrafficAutomationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbytargetcellid-system-string",
+      "Signature": "IReadOnlyList\u003CCellTrafficAutomationRuntimeDescriptor\u003E GetByTargetCellId(string targetCellId)",
+      "Summary": "Gets all effective cell traffic-automation answers that target the requested cell."
     },
     {
       "DisplayName": "GetByTargetStore",
@@ -28456,6 +28850,17 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-cellroutedescriptor-governancemode",
       "Signature": "string GovernanceMode { get; }",
       "Summary": "Gets the operator-facing governance posture applied to this route."
+    },
+    {
+      "DisplayName": "GovernanceMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-governancemode",
+      "Signature": "string GovernanceMode { get; }",
+      "Summary": "Gets the governance posture inherited from the governed route."
     },
     {
       "DisplayName": "GovernanceOverrideSummaries",
@@ -28799,6 +29204,17 @@
       "Summary": "Gets a value indicating whether one or more operator-facing compensation actions are currently available for the stream."
     },
     {
+      "DisplayName": "HasDefaultValues",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-celltrafficautomationsettings-hasdefaultvalues",
+      "Signature": "bool HasDefaultValues { get; }",
+      "Summary": "Gets a value indicating whether any default traffic-automation values were explicitly supplied."
+    },
+    {
       "DisplayName": "HasManualCommandsForAllTargets",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseMigrationOperationalExecutionGroup",
@@ -29105,6 +29521,28 @@
       "AnchorId": "member-p-cephalon-engine-configuration-bulkheadsettings-hasvalues",
       "Signature": "bool HasValues { get; }",
       "Summary": "Gets a value indicating whether any bulkhead settings were explicitly supplied."
+    },
+    {
+      "DisplayName": "HasValues",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-cellsettings-hasvalues",
+      "Signature": "bool HasValues { get; }",
+      "Summary": "Gets a value indicating whether any cell settings were explicitly supplied."
+    },
+    {
+      "DisplayName": "HasValues",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-celltrafficautomationsettings-hasvalues",
+      "Signature": "bool HasValues { get; }",
+      "Summary": "Gets a value indicating whether any cell traffic-automation settings were explicitly supplied."
     },
     {
       "DisplayName": "HasValues",
@@ -30744,6 +31182,17 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-cellroutedescriptor-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable cell-route identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable traffic-automation identifier."
     },
     {
       "DisplayName": "Id",
@@ -34178,6 +34627,28 @@
       "Summary": "Gets the included tags that matched the published endpoint."
     },
     {
+      "DisplayName": "MaterializationMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRouteSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-celltrafficautomationroutesettings-materializationmode",
+      "Signature": "string MaterializationMode { get; }",
+      "Summary": "Gets the optional normalized materialization posture for this route."
+    },
+    {
+      "DisplayName": "MaterializationMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-materializationmode",
+      "Signature": "string MaterializationMode { get; }",
+      "Summary": "Gets the normalized materialization posture."
+    },
+    {
       "DisplayName": "MaxAgeDays",
       "Category": "Properties",
       "DeclaringTypeName": "AuditHistoryRetentionSelection",
@@ -35012,6 +35483,28 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-cellroutedescriptor-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
       "Summary": "Gets optional operator-facing metadata for this route."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRouteSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-celltrafficautomationroutesettings-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional route-specific runtime metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets the original authored route metadata."
     },
     {
       "DisplayName": "Metadata",
@@ -37058,6 +37551,17 @@
       "AnchorId": "member-f-cephalon-abstractions-transports-restendpointauthoringpolicysuppressionkind-notallowedauthoringstyle",
       "Signature": "const RestEndpointAuthoringPolicySuppressionKind NotAllowedAuthoringStyle",
       "Summary": "The candidate authoring style is outside the explicitly allowed authoring-style set."
+    },
+    {
+      "DisplayName": "Notes",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRouteSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-celltrafficautomationroutesettings-notes",
+      "Signature": "string Notes { get; }",
+      "Summary": "Gets optional operator-facing notes for this route-specific overlay."
     },
     {
       "DisplayName": "Notes",
@@ -39401,6 +39905,17 @@
       "AnchorId": "member-p-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-policyid",
       "Signature": "string PolicyId { get; }",
       "Summary": "Gets the Cephalon authorization policy id that must allow the request."
+    },
+    {
+      "DisplayName": "PolicySource",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-policysource",
+      "Signature": "string PolicySource { get; }",
+      "Summary": "Gets the source of the effective automation policy."
     },
     {
       "DisplayName": "Port",
@@ -42242,6 +42757,17 @@
     },
     {
       "DisplayName": "RequiredCapabilityKey",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-requiredcapabilitykey",
+      "Signature": "string RequiredCapabilityKey { get; }",
+      "Summary": "Gets the optional capability key inherited from the governed route."
+    },
+    {
+      "DisplayName": "RequiredCapabilityKey",
       "Category": "Fields",
       "DeclaringTypeName": "RestEndpointOverrideActionKind",
       "NamespaceName": "Cephalon.Abstractions.Transports",
@@ -44289,6 +44815,28 @@
     {
       "DisplayName": "RouteId",
       "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRouteSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-celltrafficautomationroutesettings-routeid",
+      "Signature": "string RouteId { get; }",
+      "Summary": "Gets the stable governed route identifier."
+    },
+    {
+      "DisplayName": "RouteId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-routeid",
+      "Signature": "string RouteId { get; }",
+      "Summary": "Gets the governed cell-route identifier that this automation answer applies to."
+    },
+    {
+      "DisplayName": "RouteId",
+      "Category": "Properties",
       "DeclaringTypeName": "StranglerFigIngressRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Patterns",
       "AssemblyName": "Cephalon.Abstractions",
@@ -44388,6 +44936,17 @@
     {
       "DisplayName": "Routes",
       "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-celltrafficautomationsettings-routes",
+      "Signature": "IReadOnlyList\u003CCellTrafficAutomationRouteSettings\u003E Routes { get; }",
+      "Summary": "Gets the route-specific cell traffic-automation overrides."
+    },
+    {
+      "DisplayName": "Routes",
+      "Category": "Properties",
       "DeclaringTypeName": "ICellRouteCatalog",
       "NamespaceName": "Cephalon.Abstractions.Technologies",
       "AssemblyName": "Cephalon.Abstractions",
@@ -44461,6 +45020,17 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-cellroutedescriptor-routingstrategy",
       "Signature": "string RoutingStrategy { get; }",
       "Summary": "Gets the operator-facing routing strategy used for this route."
+    },
+    {
+      "DisplayName": "RoutingStrategy",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-routingstrategy",
+      "Signature": "string RoutingStrategy { get; }",
+      "Summary": "Gets the routing strategy inherited from the governed route."
     },
     {
       "DisplayName": "RuleId",
@@ -44824,6 +45394,17 @@
       "AnchorId": "member-m-cephalon-engine-manifest-runtimemanifest-ctor-system-string-system-string-system-datetimeoffset-cephalon-abstractions-appmodel-appprofile-system-collections-generic-ireadonlylist-cephalon-engine-manifest-modulemanifest-system-collections-generic-ireadonlylist-cephalon-engine-manifest-capabilitymanifest-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagemanifest",
       "Signature": "RuntimeManifest(string manifestVersion, string engineVersion, DateTimeOffset generatedAtUtc, AppProfile appProfile, IReadOnlyList\u003CModuleManifest\u003E modules, IReadOnlyList\u003CCapabilityManifest\u003E capabilities, IReadOnlyList\u003CPackageManifest\u003E packages)",
       "Summary": "Creates a new runtime manifest."
+    },
+    {
+      "DisplayName": "RuntimeMetadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-runtimemetadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E RuntimeMetadata { get; }",
+      "Summary": "Gets runtime-only metadata such as policy notes or overlay provenance."
     },
     {
       "DisplayName": "RuntimeMetadata",
@@ -46608,6 +47189,17 @@
       "Summary": "Gets the source cell identifier."
     },
     {
+      "DisplayName": "SourceCellId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-sourcecellid",
+      "Signature": "string SourceCellId { get; }",
+      "Summary": "Gets the source cell identifier."
+    },
+    {
       "DisplayName": "SourceContracts",
       "Category": "Properties",
       "DeclaringTypeName": "ProjectionDescriptor",
@@ -46617,6 +47209,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-projectiondescriptor-sourcecontracts",
       "Signature": "IReadOnlyList\u003Cstring\u003E SourceContracts { get; }",
       "Summary": "Gets the optional source contracts that can feed the projection."
+    },
+    {
+      "DisplayName": "SourceHealthIsolationIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-sourcehealthisolationids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E SourceHealthIsolationIds { get; }",
+      "Summary": "Gets the normalized source-cell health-isolation identifiers."
     },
     {
       "DisplayName": "SourceId",
@@ -46826,6 +47429,17 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-cellroutedescriptor-sourcemoduleid",
       "Signature": "string SourceModuleId { get; }",
       "Summary": "Gets the module that owns this cell route."
+    },
+    {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; }",
+      "Summary": "Gets the module that owns the governed route."
     },
     {
       "DisplayName": "SourceModuleId",
@@ -49523,6 +50137,17 @@
       "Summary": "Gets the target cell identifier."
     },
     {
+      "DisplayName": "TargetCellId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-targetcellid",
+      "Signature": "string TargetCellId { get; }",
+      "Summary": "Gets the target cell identifier."
+    },
+    {
       "DisplayName": "TargetCount",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseMigrationOperationalExecutionGroup",
@@ -49587,6 +50212,17 @@
       "AnchorId": "member-p-cephalon-scaffolding-generation-scaffoldrequest-targetframework",
       "Signature": "string TargetFramework { get; }",
       "Summary": "Gets the target framework for generated projects."
+    },
+    {
+      "DisplayName": "TargetHealthIsolationIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-targethealthisolationids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E TargetHealthIsolationIds { get; }",
+      "Summary": "Gets the normalized target-cell health-isolation identifiers."
     },
     {
       "DisplayName": "Targeting",
@@ -50612,6 +51248,17 @@
       "Summary": "Gets or sets the Oracle Cloud APM trace data key used for direct managed trace ingestion."
     },
     {
+      "DisplayName": "TrafficAutomation",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-cellsettings-trafficautomation",
+      "Signature": "CellTrafficAutomationSettings TrafficAutomation { get; }",
+      "Summary": "Gets the configuration-driven traffic-automation settings for governed cell routes."
+    },
+    {
       "DisplayName": "Traits",
       "Category": "Properties",
       "DeclaringTypeName": "HelloReply",
@@ -50779,6 +51426,17 @@
     {
       "DisplayName": "TransportIds",
       "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-transportids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E TransportIds { get; }",
+      "Summary": "Gets the normalized transport identifiers inherited from the governed route."
+    },
+    {
+      "DisplayName": "TransportIds",
+      "Category": "Properties",
       "DeclaringTypeName": "DurableExecutionRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -50896,6 +51554,28 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutioncompensationaction-triggerkind",
       "Signature": "string TriggerKind { get; }",
       "Summary": "Gets the operator-facing trigger kind for the compensation action."
+    },
+    {
+      "DisplayName": "TriggerMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRouteSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-celltrafficautomationroutesettings-triggermode",
+      "Signature": "string TriggerMode { get; }",
+      "Summary": "Gets the optional normalized trigger posture for this route."
+    },
+    {
+      "DisplayName": "TriggerMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-triggermode",
+      "Signature": "string TriggerMode { get; }",
+      "Summary": "Gets the normalized trigger posture."
     },
     {
       "DisplayName": "TripOnly",
@@ -51666,6 +52346,17 @@
       "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-useblueprint-cephalon-abstractions-appmodel-appblueprint",
       "Signature": "EngineBuilder UseBlueprint(AppBlueprint blueprint)",
       "Summary": "Selects the base application blueprint that should shape the runtime."
+    },
+    {
+      "DisplayName": "UseCellSettings",
+      "Category": "Methods",
+      "DeclaringTypeName": "EngineBuilder",
+      "NamespaceName": "Cephalon.Engine.Composition",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-usecellsettings-cephalon-engine-configuration-cellsettings",
+      "Signature": "EngineBuilder UseCellSettings(CellSettings settings)",
+      "Summary": "Replaces the cell-based architecture settings used by the runtime cell catalogs."
     },
     {
       "DisplayName": "UseConfiguration",

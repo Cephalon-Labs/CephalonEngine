@@ -1,0 +1,244 @@
+using Cephalon.Abstractions.Modules;
+using Cephalon.Abstractions.Technologies;
+using Cephalon.Engine.Composition;
+using Cephalon.Engine.Configuration;
+using Cephalon.Engine.Runtime;
+using Cephalon.Tests.Support;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Cephalon.Tests.Composition;
+
+public sealed class CellTrafficAutomationRuntimeCatalogTests
+{
+    [Fact]
+    public void BuildCollectsCellTrafficAutomationsAndProjectsTechnologySurface()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                cells: new CellSettings(
+                    new CellTrafficAutomationSettings(
+                        defaultAutomationMode: "automatic",
+                        defaultActionMode: "shed-load",
+                        routes:
+                        [
+                            new CellTrafficAutomationRouteSettings(
+                                routeId: "orders-to-platform-control",
+                                automationMode: "advisory",
+                                triggerMode: "source-health",
+                                actionMode: "prefer-local-route",
+                                materializationMode: "provider-managed",
+                                notes: "Keep provider handoff explicit for control-plane traffic.",
+                                metadata: new Dictionary<string, string>
+                                {
+                                    ["handoff"] = "ingress-provider"
+                                })
+                        ]))));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new DiscoveryTestModule());
+            engine.AddModule(new CellTrafficAutomationCatalogTestModule());
+            engine.AddCellBoundary(new CellBoundaryDescriptor(
+                id: "platform-control",
+                sourceModuleId: "platform",
+                displayName: "Platform Control Cell",
+                description: "Keeps shared control-plane workflows in one boundary.",
+                blastRadius: "shared-control",
+                routingStrategy: "local-preferred",
+                moduleIds: ["platform"]));
+            engine.AddCellHealthIsolation(new CellHealthIsolationDescriptor(
+                id: "platform-control-health",
+                sourceModuleId: "platform",
+                cellId: "platform-control",
+                displayName: "Platform Control Health Isolation",
+                description: "Contains control-plane failures without leaking them into product cells.",
+                failureIsolationMode: "fail-closed",
+                readinessScope: "dependency-aware",
+                restartScope: "host-coordinated",
+                dependencyIds: ["consul-control", "postgres-control"]));
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var runtime = provider.GetRequiredService<IRuntime>();
+        var catalog = provider.GetRequiredService<ICellTrafficAutomationRuntimeCatalog>();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+        var snapshot = provider.GetRequiredService<IRuntimeIntrospectionSnapshotProvider>().CreateSnapshot();
+
+        Assert.Equal(2, catalog.Automations.Count);
+        Assert.Contains(runtime.Manifest.AppProfile.Technologies, technology => technology.Id == "cell-based-architecture");
+
+        var defaultAutomation = catalog.GetByRouteId("orders-to-reporting");
+        Assert.NotNull(defaultAutomation);
+        Assert.Equal("automatic", defaultAutomation.AutomationMode);
+        Assert.Equal("source-or-target-health", defaultAutomation.TriggerMode);
+        Assert.Equal("shed-load", defaultAutomation.ActionMode);
+        Assert.Equal("runtime-catalog-only", defaultAutomation.MaterializationMode);
+        Assert.Equal("cell-default", defaultAutomation.PolicySource);
+        Assert.Equal(["orders-cell-health"], defaultAutomation.SourceHealthIsolationIds);
+        Assert.Equal(["reporting-cell-health"], defaultAutomation.TargetHealthIsolationIds);
+        Assert.Equal(["orders-db", "reporting-replica"], defaultAutomation.DependencyIds);
+
+        var routedAutomation = catalog.GetById("orders-to-platform-control");
+        Assert.NotNull(routedAutomation);
+        Assert.Equal("advisory", routedAutomation.AutomationMode);
+        Assert.Equal("source-health", routedAutomation.TriggerMode);
+        Assert.Equal("prefer-local-route", routedAutomation.ActionMode);
+        Assert.Equal("provider-managed", routedAutomation.MaterializationMode);
+        Assert.Equal("cell-route", routedAutomation.PolicySource);
+        Assert.Equal(["orders-cell-health"], routedAutomation.SourceHealthIsolationIds);
+        Assert.Equal(["platform-control-health"], routedAutomation.TargetHealthIsolationIds);
+        Assert.Equal("Keep provider handoff explicit for control-plane traffic.", routedAutomation.RuntimeMetadata["note"]);
+        Assert.Equal("ingress-provider", routedAutomation.RuntimeMetadata["handoff"]);
+
+        var sourceModuleAutomations = catalog.GetBySourceModule("cell-traffic-tests");
+        Assert.Equal(2, sourceModuleAutomations.Count);
+
+        var targetCellAutomations = catalog.GetByTargetCellId("reporting-cell");
+        var reportingAutomation = Assert.Single(targetCellAutomations);
+        Assert.Equal("orders-to-reporting", reportingAutomation.RouteId);
+
+        var healthIsolationAutomations = catalog.GetByHealthIsolationId("orders-cell-health");
+        Assert.Equal(2, healthIsolationAutomations.Count);
+
+        Assert.Equal(2, snapshot.CellTrafficAutomations.Count);
+        Assert.Contains(snapshot.CellTrafficAutomations, automation =>
+            automation.RouteId == "orders-to-platform-control" &&
+            automation.MaterializationMode == "provider-managed");
+
+        var surface = Assert.Single(
+            technologyCatalog.GetByTechnology("cell-based-architecture"),
+            static candidate => candidate.SurfaceId == "cell-traffic-automations");
+        Assert.Contains(surface.Entries, entry =>
+            entry.Id == "orders-to-reporting" &&
+            entry.Metadata["policySource"] == "cell-default" &&
+            entry.Metadata["sourceHealthIsolationIds"] == "orders-cell-health" &&
+            entry.Metadata["targetHealthIsolationIds"] == "reporting-cell-health");
+        Assert.Contains(surface.Entries, entry =>
+            entry.Id == "orders-to-platform-control" &&
+            entry.Metadata["materializationMode"] == "provider-managed" &&
+            entry.Metadata["handoff"] == "ingress-provider");
+    }
+
+    [Fact]
+    public void BuildFailsWhenTrafficAutomationReferencesUnknownRoute()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseSettings(new EngineSettings(
+            blueprint: "Microservice",
+            cells: new CellSettings(
+                new CellTrafficAutomationSettings(
+                    routes:
+                    [
+                        new CellTrafficAutomationRouteSettings(
+                            routeId: "missing-route",
+                            automationMode: "automatic")
+                    ]))));
+        builder.AddModule(new PlatformTestModule());
+        builder.AddModule(new DiscoveryTestModule());
+        builder.AddModule(new CellTrafficAutomationCatalogTestModule());
+        builder.AddCellBoundary(new CellBoundaryDescriptor(
+            id: "platform-control",
+            sourceModuleId: "platform",
+            displayName: "Platform Control Cell",
+            description: "Keeps shared control-plane workflows in one boundary.",
+            blastRadius: "shared-control",
+            routingStrategy: "local-preferred",
+            moduleIds: ["platform"]));
+        builder.AddCellHealthIsolation(new CellHealthIsolationDescriptor(
+            id: "platform-control-health",
+            sourceModuleId: "platform",
+            cellId: "platform-control",
+            displayName: "Platform Control Health Isolation",
+            description: "Contains control-plane failures without leaking them into product cells.",
+            failureIsolationMode: "fail-closed",
+            readinessScope: "dependency-aware",
+            restartScope: "host-coordinated",
+            dependencyIds: ["consul-control"]));
+
+        var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+        Assert.Contains("missing-route", exception.Message, StringComparison.Ordinal);
+    }
+
+    private sealed class CellTrafficAutomationCatalogTestModule :
+        ModuleBase,
+        ICellBoundaryContributor,
+        ICellRouteContributor,
+        ICellHealthIsolationContributor
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            id: "cell-traffic-tests",
+            displayName: "Cell Traffic Tests",
+            description: "Provides cell topology, health isolation, and route governance for traffic automation tests.",
+            dependsOn: [typeof(PlatformTestModule), typeof(DiscoveryTestModule)]);
+
+        public void RegisterCellBoundaries(ICellBoundaryRegistry cells)
+        {
+            cells.Add(new CellBoundaryDescriptor(
+                id: "orders-cell",
+                sourceModuleId: "cell-traffic-tests",
+                displayName: "Orders Cell",
+                description: "Keeps order-serving workflows inside one cell.",
+                blastRadius: "regional",
+                routingStrategy: "local-first",
+                moduleIds: ["cell-traffic-tests", "discovery"]));
+            cells.Add(new CellBoundaryDescriptor(
+                id: "reporting-cell",
+                sourceModuleId: "cell-traffic-tests",
+                displayName: "Reporting Cell",
+                description: "Keeps reporting workloads away from interactive traffic.",
+                blastRadius: "analytics-only",
+                routingStrategy: "async-replica"));
+        }
+
+        public void RegisterCellRoutes(ICellRouteRegistry routes)
+        {
+            routes.Add(new CellRouteDescriptor(
+                id: "orders-to-reporting",
+                sourceModuleId: "cell-traffic-tests",
+                sourceCellId: "orders-cell",
+                targetCellId: "reporting-cell",
+                displayName: "Orders To Reporting",
+                description: "Moves order-serving traffic toward reporting projections when analytics paths stay healthy.",
+                routingStrategy: "replica-fanout",
+                governanceMode: "policy-guarded",
+                transportIds: ["rest-api"]));
+            routes.Add(new CellRouteDescriptor(
+                id: "orders-to-platform-control",
+                sourceModuleId: "cell-traffic-tests",
+                sourceCellId: "orders-cell",
+                targetCellId: "platform-control",
+                displayName: "Orders To Platform Control",
+                description: "Keeps orders cell coordination with the shared platform control cell explicit.",
+                routingStrategy: "control-plane",
+                governanceMode: "capability-gated",
+                transportIds: ["rest-api"],
+                requiredCapabilityKey: "platform.control-plane"));
+        }
+
+        public void RegisterCellHealthIsolations(ICellHealthIsolationRegistry healthIsolations)
+        {
+            healthIsolations.Add(new CellHealthIsolationDescriptor(
+                id: "orders-cell-health",
+                sourceModuleId: "cell-traffic-tests",
+                cellId: "orders-cell",
+                displayName: "Orders Cell Health Isolation",
+                description: "Contains order-serving failures to the orders cell.",
+                failureIsolationMode: "cell-quarantine",
+                readinessScope: "dependency-aware",
+                restartScope: "cell-only",
+                dependencyIds: ["orders-db"]));
+            healthIsolations.Add(new CellHealthIsolationDescriptor(
+                id: "reporting-cell-health",
+                sourceModuleId: "cell-traffic-tests",
+                cellId: "reporting-cell",
+                displayName: "Reporting Cell Health Isolation",
+                description: "Lets reporting workloads degrade without leaking into interactive cells.",
+                failureIsolationMode: "degraded-serving",
+                readinessScope: "best-effort",
+                restartScope: "manual",
+                dependencyIds: ["reporting-replica"]));
+        }
+    }
+}
