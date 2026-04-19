@@ -20,4 +20,10 @@ public sealed record FeatureFlagEvaluationResult(
     bool Matched,
     string Reason,
     FeatureFlagSourceKind? SourceKind = null,
-    string? SourceModuleId = null);
+    string? SourceModuleId = null)
+{
+    /// <summary>
+    /// Gets the external provider evaluation results that participated in the final answer.
+    /// </summary>
+    public IReadOnlyList<FeatureFlagProviderEvaluationResult> ProviderResults { get; init; } = [];
+}

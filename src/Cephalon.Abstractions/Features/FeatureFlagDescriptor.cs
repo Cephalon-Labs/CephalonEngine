@@ -20,6 +20,10 @@ public sealed class FeatureFlagDescriptor
     /// <see cref="FeatureFlagSourceKind.Module" />.
     /// </param>
     /// <param name="targeting">The optional targeting constraints attached to the feature flag.</param>
+    /// <param name="providerBindings">
+    /// Optional external provider bindings that can further gate the Cephalon-owned feature flag
+    /// without replacing the local runtime descriptor as the source of truth.
+    /// </param>
     /// <param name="metadata">Optional operator-facing metadata.</param>
     public FeatureFlagDescriptor(
         string id,
@@ -29,6 +33,7 @@ public sealed class FeatureFlagDescriptor
         FeatureFlagSourceKind sourceKind = FeatureFlagSourceKind.Host,
         string? sourceModuleId = null,
         FeatureFlagTargetingDescriptor? targeting = null,
+        IReadOnlyList<FeatureFlagProviderBindingDescriptor>? providerBindings = null,
         IReadOnlyDictionary<string, string>? metadata = null)
     {
         if (string.IsNullOrWhiteSpace(id))
@@ -70,6 +75,7 @@ public sealed class FeatureFlagDescriptor
         SourceKind = sourceKind;
         SourceModuleId = normalizedSourceModuleId;
         Targeting = targeting ?? FeatureFlagTargetingDescriptor.Empty;
+        ProviderBindings = NormalizeProviderBindings(providerBindings);
         Metadata = metadata is null
             ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             : new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase);
@@ -111,9 +117,38 @@ public sealed class FeatureFlagDescriptor
     public FeatureFlagTargetingDescriptor Targeting { get; }
 
     /// <summary>
+    /// Gets the optional external provider bindings attached to the feature flag.
+    /// </summary>
+    public IReadOnlyList<FeatureFlagProviderBindingDescriptor> ProviderBindings { get; }
+
+    /// <summary>
     /// Gets operator-facing metadata for the feature flag.
     /// </summary>
     public IReadOnlyDictionary<string, string> Metadata { get; }
+
+    private static FeatureFlagProviderBindingDescriptor[] NormalizeProviderBindings(
+        IReadOnlyList<FeatureFlagProviderBindingDescriptor>? providerBindings)
+    {
+        if (providerBindings is null || providerBindings.Count == 0)
+        {
+            return [];
+        }
+
+        var normalized = providerBindings.ToArray();
+        var duplicateBinding = normalized
+            .GroupBy(
+                static binding => $"{binding.ProviderId}\u001f{binding.ProviderFeatureId ?? string.Empty}",
+                StringComparer.OrdinalIgnoreCase)
+            .FirstOrDefault(static group => group.Count() > 1);
+        if (duplicateBinding is not null)
+        {
+            throw new ArgumentException(
+                "Feature flag provider bindings must be unique per provider/provider-feature pair.",
+                nameof(providerBindings));
+        }
+
+        return normalized;
+    }
 
     private static string? NormalizeOptional(string? value)
     {

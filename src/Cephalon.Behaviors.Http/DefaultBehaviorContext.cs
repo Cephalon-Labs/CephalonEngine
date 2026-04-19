@@ -1,5 +1,6 @@
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.EventSourcing;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,7 +40,9 @@ internal sealed class DefaultBehaviorContext : IBehaviorContext
         // access them uniformly through IBehaviorContext.Metadata.
         var correlationId = ctx.Request.Headers["X-Correlation-Id"].FirstOrDefault();
         var tenantId = ctx.Request.Headers["X-Tenant-Id"].FirstOrDefault();
-        var userId = ctx.User.FindFirst("sub")?.Value;
+        var userId = ctx.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+            ?? ctx.User.FindFirst("sub")?.Value
+            ?? ctx.User.Identity?.Name;
         var traceId = ctx.TraceIdentifier;
         var environmentName = ctx.RequestServices.GetService<IHostEnvironment>()?.EnvironmentName
             ?? ctx.RequestServices.GetService<IWebHostEnvironment>()?.EnvironmentName;

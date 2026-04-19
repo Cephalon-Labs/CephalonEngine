@@ -2,8 +2,12 @@ using Cephalon.Abstractions.Features;
 
 namespace Cephalon.Engine.Features;
 
-internal sealed class InMemoryFeatureToggle(IFeatureFlagRuntimeCatalog featureFlagCatalog) : IFeatureToggle
+internal sealed class InMemoryFeatureToggle(
+    IFeatureFlagRuntimeCatalog featureFlagCatalog,
+    IEnumerable<IFeatureFlagProvider> providers) : IFeatureToggle
 {
+    private readonly Dictionary<string, IFeatureFlagProvider> providersById = BuildProviderMap(providers);
+
     public bool IsEnabled(string featureFlagId, FeatureFlagEvaluationContext? context = null)
     {
         return Evaluate(featureFlagId, context).IsEnabled;
@@ -40,11 +44,10 @@ internal sealed class InMemoryFeatureToggle(IFeatureFlagRuntimeCatalog featureFl
         var effectiveContext = context ?? FeatureFlagEvaluationContext.Empty;
         if (!featureFlag.Targeting.HasValues)
         {
-            return CreateResult(
+            return CreateEnabledResult(
                 featureFlag,
-                isEnabled: true,
-                matched: true,
-                reason: "Feature flag is enabled without targeting constraints.");
+                effectiveContext,
+                "Feature flag is enabled without targeting constraints.");
         }
 
         if (TryMatchExclusion(featureFlag.Targeting, effectiveContext, out var exclusionReason))
@@ -65,18 +68,18 @@ internal sealed class InMemoryFeatureToggle(IFeatureFlagRuntimeCatalog featureFl
                 reason: inclusionFailureReason);
         }
 
-        return CreateResult(
+        return CreateEnabledResult(
             featureFlag,
-            isEnabled: true,
-            matched: true,
-            reason: "Feature flag is enabled for the supplied runtime context.");
+            effectiveContext,
+            "Feature flag is enabled for the supplied runtime context.");
     }
 
     private static FeatureFlagEvaluationResult CreateResult(
         FeatureFlagDescriptor featureFlag,
         bool isEnabled,
         bool matched,
-        string reason)
+        string reason,
+        IReadOnlyList<FeatureFlagProviderEvaluationResult>? providerResults = null)
     {
         return new FeatureFlagEvaluationResult(
             FeatureId: featureFlag.Id,
@@ -85,7 +88,121 @@ internal sealed class InMemoryFeatureToggle(IFeatureFlagRuntimeCatalog featureFl
             Matched: matched,
             Reason: reason,
             SourceKind: featureFlag.SourceKind,
-            SourceModuleId: featureFlag.SourceModuleId);
+            SourceModuleId: featureFlag.SourceModuleId)
+        {
+            ProviderResults = providerResults ?? []
+        };
+    }
+
+    private FeatureFlagEvaluationResult CreateEnabledResult(
+        FeatureFlagDescriptor featureFlag,
+        FeatureFlagEvaluationContext context,
+        string reason)
+    {
+        if (featureFlag.ProviderBindings.Count == 0)
+        {
+            return CreateResult(
+                featureFlag,
+                isEnabled: true,
+                matched: true,
+                reason: reason);
+        }
+
+        var providerResults = EvaluateProviderBindings(featureFlag, context);
+        var disabledProviderResult = providerResults.FirstOrDefault(static result => !result.IsEnabled);
+        if (disabledProviderResult is not null)
+        {
+            return CreateResult(
+                featureFlag,
+                isEnabled: false,
+                matched: false,
+                reason: disabledProviderResult.Reason,
+                providerResults: providerResults);
+        }
+
+        return CreateResult(
+            featureFlag,
+            isEnabled: true,
+            matched: true,
+            reason: "Feature flag is enabled for the supplied runtime context and provider bindings.",
+            providerResults: providerResults);
+    }
+
+    private FeatureFlagProviderEvaluationResult[] EvaluateProviderBindings(
+        FeatureFlagDescriptor featureFlag,
+        FeatureFlagEvaluationContext context)
+    {
+        var results = new List<FeatureFlagProviderEvaluationResult>(featureFlag.ProviderBindings.Count);
+        foreach (var binding in featureFlag.ProviderBindings)
+        {
+            var providerFeatureId = binding.ResolveProviderFeatureId(featureFlag.Id);
+            if (!providersById.TryGetValue(binding.ProviderId, out var provider))
+            {
+                results.Add(new FeatureFlagProviderEvaluationResult(
+                    ProviderId: binding.ProviderId,
+                    ProviderFeatureId: providerFeatureId,
+                    IsDefined: false,
+                    IsEnabled: false,
+                    Reason: $"Feature flag provider '{binding.ProviderId}' is not registered."));
+                continue;
+            }
+
+            try
+            {
+                var providerResult = provider.Evaluate(binding, featureFlag, context);
+                results.Add(NormalizeProviderResult(binding, providerFeatureId, providerResult));
+            }
+            catch (Exception exception)
+            {
+                results.Add(new FeatureFlagProviderEvaluationResult(
+                    ProviderId: binding.ProviderId,
+                    ProviderFeatureId: providerFeatureId,
+                    IsDefined: false,
+                    IsEnabled: false,
+                    Reason: $"Feature flag provider '{binding.ProviderId}' evaluation failed: {exception.Message}"));
+            }
+        }
+
+        return results.ToArray();
+    }
+
+    private static Dictionary<string, IFeatureFlagProvider> BuildProviderMap(
+        IEnumerable<IFeatureFlagProvider> providers)
+    {
+        ArgumentNullException.ThrowIfNull(providers);
+
+        var providerList = providers.ToArray();
+        var duplicateProvider = providerList
+            .GroupBy(static provider => provider.ProviderId, StringComparer.OrdinalIgnoreCase)
+            .FirstOrDefault(static group => group.Count() > 1);
+        if (duplicateProvider is not null)
+        {
+            throw new InvalidOperationException(
+                $"Feature flag provider '{duplicateProvider.Key}' is registered multiple times.");
+        }
+
+        return providerList.ToDictionary(static provider => provider.ProviderId, StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static FeatureFlagProviderEvaluationResult NormalizeProviderResult(
+        FeatureFlagProviderBindingDescriptor binding,
+        string providerFeatureId,
+        FeatureFlagProviderEvaluationResult providerResult)
+    {
+        ArgumentNullException.ThrowIfNull(providerResult);
+
+        return new FeatureFlagProviderEvaluationResult(
+            ProviderId: string.IsNullOrWhiteSpace(providerResult.ProviderId)
+                ? binding.ProviderId
+                : providerResult.ProviderId.Trim(),
+            ProviderFeatureId: string.IsNullOrWhiteSpace(providerResult.ProviderFeatureId)
+                ? providerFeatureId
+                : providerResult.ProviderFeatureId.Trim(),
+            IsDefined: providerResult.IsDefined,
+            IsEnabled: providerResult.IsEnabled,
+            Reason: string.IsNullOrWhiteSpace(providerResult.Reason)
+                ? "Feature flag provider returned no evaluation reason."
+                : providerResult.Reason.Trim());
     }
 
     private static bool TryMatchExclusion(

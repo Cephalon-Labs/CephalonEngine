@@ -279,12 +279,16 @@ in the query string so the document selector can remain truthful to the scoped d
 The same host surface now also exposes the shipped feature-flag runtime directly. When
 `IFeatureFlagRuntimeCatalog` is active, `/engine/features`, `/engine/features/enabled`,
 `/engine/features/disabled`, `/engine/features/modules/{moduleId}`, and
-`/engine/features/{featureFlagId}` project the merged host-owned plus module-owned catalog. The
-evaluation route `/engine/features/{featureFlagId}/evaluate` resolves the requested flag through the
-shared `IFeatureToggle` using query-string supplied environment, module, behavior, capability,
-transport, tenant, subject, and repeated `tag` inputs, and `/engine/snapshot` carries the same
-merged descriptor set through `FeatureFlags` so operators can compare catalog truth and evaluation
-answers without inventing host-only feature-flag state.
+`/engine/features/{featureFlagId}` project the merged host-owned plus module-owned catalog,
+including any typed `ProviderBindings` that keep external-provider bridges visible on the same
+runtime truth. The evaluation route `/engine/features/{featureFlagId}/evaluate` resolves the
+requested flag through the shared `IFeatureToggle` using query-string supplied environment, module,
+behavior, capability, transport, tenant, subject, and repeated `tag` inputs, now also returning
+provider-level gate answers through `ProviderResults` when one or more `IFeatureFlagProvider`
+bindings participated. `/engine/snapshot` carries that same merged descriptor set through
+`FeatureFlags`, and request-time REST or behavior execution keeps honoring the same provider-backed
+answer because transport gating still flows through the shared feature evaluator instead of a
+separate ASP.NET Core-only registry.
 
 The host now also exposes additive event-dispatch operator answers directly. When eventing packs
 register the corresponding catalogs, `/engine/event-dispatch-runtimes` and

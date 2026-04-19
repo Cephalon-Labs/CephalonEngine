@@ -157,6 +157,98 @@ public sealed class FeatureFlagRuntimeCatalogTests
         Assert.Contains("registered multiple times", exception.Message, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void BuildEvaluatesProviderBindingsWithoutReplacingDescriptorTruth()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(blueprint: "Microservice"));
+            engine.AddFeatureFlag(new FeatureFlagDescriptor(
+                id: "host.provider-preview",
+                displayName: "Provider Preview",
+                description: "Uses an external provider binding for the final rollout answer.",
+                enabled: true,
+                providerBindings:
+                [
+                    new FeatureFlagProviderBindingDescriptor(
+                        providerId: "subject-rollout",
+                        providerFeatureId: "provider-preview")
+                ]));
+            engine.AddFeatureFlagProvider(new SubjectScopedFeatureFlagProvider("subject-rollout", "user-42"));
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var catalog = provider.GetRequiredService<IFeatureFlagRuntimeCatalog>();
+        var featureToggle = provider.GetRequiredService<IFeatureToggle>();
+        var snapshot = provider.GetRequiredService<IRuntimeIntrospectionSnapshotProvider>().CreateSnapshot();
+
+        var descriptor = catalog.GetById("host.provider-preview");
+        Assert.NotNull(descriptor);
+        Assert.Single(descriptor!.ProviderBindings);
+        Assert.Equal("subject-rollout", descriptor.ProviderBindings[0].ProviderId);
+        Assert.Equal("provider-preview", descriptor.ProviderBindings[0].ProviderFeatureId);
+        Assert.Contains(snapshot.FeatureFlags, static featureFlag =>
+            string.Equals(featureFlag.Id, "host.provider-preview", StringComparison.Ordinal) &&
+            featureFlag.ProviderBindings.Count == 1 &&
+            string.Equals(featureFlag.ProviderBindings[0].ProviderId, "subject-rollout", StringComparison.Ordinal));
+
+        var enabledResult = featureToggle.Evaluate(
+            "host.provider-preview",
+            new FeatureFlagEvaluationContext(subjectId: "user-42"));
+        var disabledResult = featureToggle.Evaluate(
+            "host.provider-preview",
+            new FeatureFlagEvaluationContext(subjectId: "user-404"));
+
+        Assert.True(enabledResult.IsEnabled);
+        Assert.True(enabledResult.Matched);
+        var enabledProviderResult = Assert.Single(enabledResult.ProviderResults);
+        Assert.True(enabledProviderResult.IsDefined);
+        Assert.True(enabledProviderResult.IsEnabled);
+        Assert.Equal("subject-rollout", enabledProviderResult.ProviderId);
+        Assert.Equal("provider-preview", enabledProviderResult.ProviderFeatureId);
+
+        Assert.False(disabledResult.IsEnabled);
+        Assert.False(disabledResult.Matched);
+        var disabledProviderResult = Assert.Single(disabledResult.ProviderResults);
+        Assert.True(disabledProviderResult.IsDefined);
+        Assert.False(disabledProviderResult.IsEnabled);
+        Assert.Contains("subject", disabledProviderResult.Reason, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void BuildReturnsDisabledWhenProviderBindingHasNoRegisteredProvider()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(blueprint: "Microservice"));
+            engine.AddFeatureFlag(new FeatureFlagDescriptor(
+                id: "host.missing-provider",
+                displayName: "Missing Provider",
+                description: "Demonstrates the safe disabled answer when a provider binding is unresolved.",
+                enabled: true,
+                providerBindings:
+                [
+                    new FeatureFlagProviderBindingDescriptor(
+                        providerId: "missing-provider")
+                ]));
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var featureToggle = provider.GetRequiredService<IFeatureToggle>();
+
+        var result = featureToggle.Evaluate("host.missing-provider");
+
+        Assert.True(result.IsDefined);
+        Assert.False(result.IsEnabled);
+        Assert.False(result.Matched);
+        var providerResult = Assert.Single(result.ProviderResults);
+        Assert.False(providerResult.IsDefined);
+        Assert.False(providerResult.IsEnabled);
+        Assert.Contains("not registered", providerResult.Reason, StringComparison.OrdinalIgnoreCase);
+    }
+
     private sealed class FeatureFlagCatalogTestModule : ModuleBase, IFeatureFlagContributor
     {
         public override ModuleDescriptor Descriptor { get; } = new(
@@ -201,6 +293,37 @@ public sealed class FeatureFlagRuntimeCatalogTests
                 enabled: true,
                 sourceKind: FeatureFlagSourceKind.Module,
                 sourceModuleId: "different-module"));
+        }
+    }
+
+    private sealed class SubjectScopedFeatureFlagProvider(
+        string providerId,
+        string allowedSubjectId) : IFeatureFlagProvider
+    {
+        public string ProviderId { get; } = providerId;
+
+        public FeatureFlagProviderEvaluationResult Evaluate(
+            FeatureFlagProviderBindingDescriptor binding,
+            FeatureFlagDescriptor featureFlag,
+            FeatureFlagEvaluationContext? context = null)
+        {
+            var providerFeatureId = binding.ResolveProviderFeatureId(featureFlag.Id);
+            if (string.Equals(context?.SubjectId, allowedSubjectId, StringComparison.OrdinalIgnoreCase))
+            {
+                return new FeatureFlagProviderEvaluationResult(
+                    ProviderId,
+                    providerFeatureId,
+                    IsDefined: true,
+                    IsEnabled: true,
+                    Reason: "Provider allowed the supplied subject.");
+            }
+
+            return new FeatureFlagProviderEvaluationResult(
+                ProviderId,
+                providerFeatureId,
+                IsDefined: true,
+                IsEnabled: false,
+                Reason: "Provider rejected the supplied subject.");
         }
     }
 }

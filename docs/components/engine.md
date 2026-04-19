@@ -141,7 +141,13 @@ rather than hiding feature ownership inside host-only provider code. Module-cont
 remain `FeatureFlagSourceKind.Module` with a matching `SourceModuleId`, duplicate ids fail
 composition deterministically, and the current baseline intentionally stops short of advertising a
 separate `runtime.feature-flags` capability because runtime capability provenance is still
-module-based and the engine would otherwise need a synthetic source.
+module-based and the engine would otherwise need a synthetic source. The next bridge baseline is
+now also shipped there: `FeatureFlagDescriptor.ProviderBindings`,
+`Engine:Features:Flags:*:ProviderBindings`, `engine.AddFeatureFlagProvider(...)`, and
+`IFeatureFlagProvider` now let provider companion packs contribute additional rollout gates through
+the same shared evaluator without replacing the Cephalon-owned descriptor catalog. Missing or
+provider-disabled bindings now surface as disabled evaluation answers with provider details instead
+of silently inventing a second host-only feature registry.
 That same shared feature-flag runtime now also reaches the public REST boundary in ASP.NET Core:
 `RequireFeatureFlag(...)` / `RequireFeatureFlags(...)` can gate request execution while keeping the
 published endpoint visible through `/engine/rest-endpoints` and `snapshot.RestEndpoints`, and host

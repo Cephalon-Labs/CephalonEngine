@@ -7,7 +7,7 @@
 - module contracts such as `IModule`, `IModuleLifecycle`, `ModuleBase`, `ModuleDescriptor`, and `ModuleContext`
 - behavior contracts such as `IAppBehavior<TIn, TOut>`, `IBehaviorContext`, `IBehaviorTopologyBuilder`, `BehaviorTopologyDescriptor`, `BehaviorFeatureDisabledException`, `IBehaviorOwnerModule`, `IBehaviorModuleBuilder`, and `OwnedBehaviorRegistration`
 - capability contracts such as `Capability`, `CapabilityAccess`, and `ICapabilityRegistry`
-- feature-flag contracts such as `FeatureFlagDescriptor`, `FeatureFlagTargetingDescriptor`, `IFeatureToggle`, `IFeatureFlagRuntimeCatalog`, `IFeatureFlagContributor`, and `IFeatureFlagRegistry`
+- feature-flag contracts such as `FeatureFlagDescriptor`, `FeatureFlagProviderBindingDescriptor`, `FeatureFlagProviderEvaluationResult`, `FeatureFlagTargetingDescriptor`, `IFeatureToggle`, `IFeatureFlagProvider`, `IFeatureFlagRuntimeCatalog`, `IFeatureFlagContributor`, and `IFeatureFlagRegistry`
 - app-model contracts such as `AppBlueprint`, `AppProfile`, resilience-selection types, and scaffold-plan types
 - phase-8 runtime-neutral contracts for data, authorization, tenancy, audit, and id generation
 - health contracts used across hosts and packages
@@ -27,7 +27,10 @@
 - `Capabilities/Capability.cs`
 - `Capabilities/ICapabilityRegistry.cs`
 - `Features/FeatureFlagDescriptor.cs`
+- `Features/FeatureFlagProviderBindingDescriptor.cs`
+- `Features/FeatureFlagProviderEvaluationResult.cs`
 - `Features/FeatureFlagTargetingDescriptor.cs`
+- `Features/IFeatureFlagProvider.cs`
 - `Features/IFeatureToggle.cs`
 - `Features/IFeatureFlagRuntimeCatalog.cs`
 - `AppModel/AppProfile.cs`
@@ -170,14 +173,17 @@ binding-versus-client scope kind, scope id, client id, document name, published 
 paths, and the binding/runtime/published-endpoint ids that justify that materialized document.
 
 The same phase 12 rule now also covers progressive-delivery feature flags. The `Features`
-namespace now carries `FeatureFlagDescriptor`, `FeatureFlagTargetingDescriptor`,
+namespace now carries `FeatureFlagDescriptor`, `FeatureFlagProviderBindingDescriptor`,
+`FeatureFlagProviderEvaluationResult`, `FeatureFlagTargetingDescriptor`,
 `FeatureFlagEvaluationContext`, `FeatureFlagEvaluationResult`, `IFeatureToggle`,
-`IFeatureFlagRuntimeCatalog`, `IFeatureFlagContributor`, and `IFeatureFlagRegistry` so modules,
-hosts, and operator tooling can talk about feature ownership, targeting, merged runtime catalogs,
-and evaluation context without leaking ASP.NET Core route mappers or third-party provider SDK types
+`IFeatureFlagProvider`, `IFeatureFlagRuntimeCatalog`, `IFeatureFlagContributor`, and
+`IFeatureFlagRegistry` so modules, hosts, provider companion packs, and operator tooling can talk
+about feature ownership, targeting, provider-backed rollout gates, merged runtime catalogs, and
+evaluation context without leaking ASP.NET Core route mappers or third-party provider SDK types
 into `Cephalon.Abstractions`. Those contracts intentionally separate host-owned and module-owned
-flags through `FeatureFlagSourceKind`, which lets the engine preserve ownership truth when modules
-contribute flags into the shared runtime.
+flags through `FeatureFlagSourceKind`, let `FeatureFlagDescriptor.ProviderBindings` keep the local
+Cephalon descriptor as the source of runtime truth, and let `IFeatureFlagProvider` contribute
+additional gate decisions without claiming ownership of the flag itself.
 
 That same host-agnostic rule now also reaches shared behavior execution. The `Behaviors` namespace
 now keeps ordered `BehaviorTopologyDescriptor.RequiredFeatureFlagIds` plus

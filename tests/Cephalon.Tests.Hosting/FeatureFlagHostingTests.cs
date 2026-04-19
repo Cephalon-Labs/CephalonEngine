@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Security.Claims;
 using Cephalon.Abstractions.Features;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Transports;
@@ -163,6 +164,77 @@ public sealed class FeatureFlagHostingTests
             endpoint.RequiredFeatureFlagIds.SequenceEqual(["host.legacy-orders"], StringComparer.Ordinal));
     }
 
+    [Fact]
+    public async Task MapCephalonEnforcesProviderBackedFeatureRequirementsForRestEndpoints()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Environment.EnvironmentName = "Production";
+        builder.Configuration["Engine:Blueprint"] = "ModularMonolith";
+        builder.Configuration["Engine:Transports:0"] = "RestApi";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddFeatureFlag(new FeatureFlagDescriptor(
+                id: "host.provider-preview",
+                displayName: "Provider Preview",
+                description: "Enables the preview endpoint only for the provider-approved subject.",
+                enabled: true,
+                providerBindings:
+                [
+                    new FeatureFlagProviderBindingDescriptor(
+                        providerId: "subject-rollout",
+                        providerFeatureId: "orders-preview")
+                ]));
+            engine.AddFeatureFlagProvider(new SubjectScopedFeatureFlagProvider("subject-rollout", "user-42"));
+            engine.AddModule(new ProviderFeatureProtectedEndpointModule());
+        });
+
+        await using var app = builder.Build();
+        app.Use(async (context, next) =>
+        {
+            if (context.Request.Headers.TryGetValue("X-Subject-Id", out var subjectId) &&
+                !string.IsNullOrWhiteSpace(subjectId))
+            {
+                context.User = new ClaimsPrincipal(new ClaimsIdentity(
+                [
+                    new Claim(ClaimTypes.NameIdentifier, subjectId.ToString())
+                ], "test"));
+            }
+
+            await next(context);
+        });
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var allowedRequest = new HttpRequestMessage(HttpMethod.Get, "/api/provider-feature-flags/orders/ord-42");
+        allowedRequest.Headers.Add("X-Subject-Id", "user-42");
+        var blockedRequest = new HttpRequestMessage(HttpMethod.Get, "/api/provider-feature-flags/orders/ord-42");
+        blockedRequest.Headers.Add("X-Subject-Id", "user-404");
+
+        var allowedResponse = await client.SendAsync(allowedRequest);
+        var blockedResponse = await client.SendAsync(blockedRequest);
+        var blockedPayload = await blockedResponse.Content.ReadAsStringAsync();
+        var evaluation = await client.GetFromJsonAsync<FeatureFlagEvaluationResult>(
+            "/engine/features/host.provider-preview/evaluate?subjectId=user-42");
+        var descriptor = await client.GetFromJsonAsync<FeatureFlagDescriptor>("/engine/features/host.provider-preview");
+
+        Assert.Equal(HttpStatusCode.OK, allowedResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, blockedResponse.StatusCode);
+        Assert.Contains("Feature not available", blockedPayload, StringComparison.OrdinalIgnoreCase);
+        Assert.NotNull(evaluation);
+        Assert.NotNull(descriptor);
+        Assert.Single(descriptor!.ProviderBindings);
+        Assert.Equal("subject-rollout", descriptor.ProviderBindings[0].ProviderId);
+        Assert.True(evaluation!.IsEnabled);
+        var providerResult = Assert.Single(evaluation.ProviderResults);
+        Assert.True(providerResult.IsDefined);
+        Assert.True(providerResult.IsEnabled);
+        Assert.Equal("subject-rollout", providerResult.ProviderId);
+        Assert.Equal("orders-preview", providerResult.ProviderFeatureId);
+    }
+
     private sealed class FeatureFlagHostingModule : ModuleBase, IFeatureFlagContributor
     {
         public override ModuleDescriptor Descriptor { get; } = new(
@@ -205,6 +277,54 @@ public sealed class FeatureFlagHostingTests
                     static (string orderId) => TypedResults.Ok(new FeatureFlagProtectedOrderOutput(orderId, "legacy")))
                 .WithTags("Legacy Orders API")
                 .RequireFeatureFlag("host.legacy-orders");
+        }
+    }
+
+    private sealed class ProviderFeatureProtectedEndpointModule : ModuleBase, IEndpointModule
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            id: "feature-flags-provider-rest-tests",
+            displayName: "Feature Flags Provider REST Tests",
+            description: "Publishes REST endpoints protected by provider-backed Cephalon feature requirements.");
+
+        public void MapEndpoints(IEndpointRouteBuilder endpoints)
+        {
+            endpoints.MapGet(
+                    "/provider-feature-flags/orders/{orderId}",
+                    static (string orderId) => TypedResults.Ok(new FeatureFlagProtectedOrderOutput(orderId, "provider-preview")))
+                .WithTags("Provider Orders API")
+                .RequireFeatureFlag("host.provider-preview");
+        }
+    }
+
+    private sealed class SubjectScopedFeatureFlagProvider(
+        string providerId,
+        string allowedSubjectId) : IFeatureFlagProvider
+    {
+        public string ProviderId { get; } = providerId;
+
+        public FeatureFlagProviderEvaluationResult Evaluate(
+            FeatureFlagProviderBindingDescriptor binding,
+            FeatureFlagDescriptor featureFlag,
+            FeatureFlagEvaluationContext? context = null)
+        {
+            var providerFeatureId = binding.ResolveProviderFeatureId(featureFlag.Id);
+            if (string.Equals(context?.SubjectId, allowedSubjectId, StringComparison.OrdinalIgnoreCase))
+            {
+                return new FeatureFlagProviderEvaluationResult(
+                    ProviderId,
+                    providerFeatureId,
+                    IsDefined: true,
+                    IsEnabled: true,
+                    Reason: "Provider allowed the supplied subject.");
+            }
+
+            return new FeatureFlagProviderEvaluationResult(
+                ProviderId,
+                providerFeatureId,
+                IsDefined: true,
+                IsEnabled: false,
+                Reason: "Provider rejected the supplied subject.");
         }
     }
 

@@ -283,6 +283,48 @@ public sealed class EngineBuilder
     }
 
     /// <summary>
+    /// Registers one feature-flag provider in the engine service collection.
+    /// </summary>
+    /// <typeparam name="TProvider">The provider implementation type.</typeparam>
+    /// <returns>The same builder instance.</returns>
+    public EngineBuilder AddFeatureFlagProvider<TProvider>()
+        where TProvider : class, IFeatureFlagProvider
+    {
+        Services.TryAddEnumerable(ServiceDescriptor.Singleton<IFeatureFlagProvider, TProvider>());
+        return this;
+    }
+
+    /// <summary>
+    /// Registers one feature-flag provider instance in the engine service collection.
+    /// </summary>
+    /// <param name="provider">The provider instance to register.</param>
+    /// <returns>The same builder instance.</returns>
+    public EngineBuilder AddFeatureFlagProvider(IFeatureFlagProvider provider)
+    {
+        ArgumentNullException.ThrowIfNull(provider);
+
+        Services.TryAddEnumerable(ServiceDescriptor.Singleton<IFeatureFlagProvider>(provider));
+        return this;
+    }
+
+    /// <summary>
+    /// Registers multiple feature-flag provider instances in the engine service collection.
+    /// </summary>
+    /// <param name="providers">The provider instances to register.</param>
+    /// <returns>The same builder instance.</returns>
+    public EngineBuilder AddFeatureFlagProviders(IEnumerable<IFeatureFlagProvider> providers)
+    {
+        ArgumentNullException.ThrowIfNull(providers);
+
+        foreach (var provider in providers)
+        {
+            AddFeatureFlagProvider(provider);
+        }
+
+        return this;
+    }
+
+    /// <summary>
     /// Registers a technology descriptor in the available catalog without implicitly selecting it.
     /// </summary>
     /// <param name="technology">The technology descriptor to register.</param>
@@ -829,7 +871,9 @@ public sealed class EngineBuilder
             Services.TryAddSingleton<IFeatureFlagRuntimeCatalog>(serviceProvider =>
                 serviceProvider.GetRequiredService<FeatureFlagRuntimeCatalogSnapshot>());
             Services.TryAddSingleton<IFeatureToggle>(serviceProvider =>
-                new InMemoryFeatureToggle(serviceProvider.GetRequiredService<IFeatureFlagRuntimeCatalog>()));
+                new InMemoryFeatureToggle(
+                    serviceProvider.GetRequiredService<IFeatureFlagRuntimeCatalog>(),
+                    serviceProvider.GetServices<IFeatureFlagProvider>()));
             Services.TryAddSingleton<TechnologyRuntimeCatalogSnapshot>(serviceProvider =>
                 new TechnologyRuntimeCatalogSnapshot(
                     serviceProvider.GetServices<ITechnologyRuntimeContributor>()));
@@ -993,6 +1037,12 @@ public sealed class EngineBuilder
                 excludedSubjectIds: settings.Targeting.ExcludedSubjectIds,
                 includedTags: settings.Targeting.IncludedTags,
                 excludedTags: settings.Targeting.ExcludedTags),
+            providerBindings: settings.ProviderBindings
+                .Select(static binding => new FeatureFlagProviderBindingDescriptor(
+                    providerId: binding.ProviderId,
+                    providerFeatureId: binding.ProviderFeatureId,
+                    metadata: binding.Metadata))
+                .ToArray(),
             metadata: settings.Metadata);
     }
 

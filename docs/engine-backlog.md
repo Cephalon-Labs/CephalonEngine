@@ -2227,8 +2227,8 @@ Acceptance:
 - ASP.NET Core exposes operator routes for catalog, drill-down, and evaluation views without
   introducing host-only feature-flag truth
 - architecture recommendations, component docs, roadmap, backlog, and project memory describe the
-  shipped baseline truthfully while keeping external-provider bridges and any future capability
-  publication explicit follow-through work
+  shipped baseline truthfully while keeping provider-specific companion-pack integrations and any
+  future capability publication explicit follow-through work
 
 Delivered:
 
@@ -2242,6 +2242,11 @@ Delivered:
 - `InMemoryFeatureToggle` now evaluates host-owned or module-owned flags across environment, module,
   behavior, capability, transport, tenant, subject, and tag targeting with exclusion-wins
   precedence
+- `FeatureFlagDescriptor.ProviderBindings`, `FeatureFlagProviderBindingDescriptor`,
+  `FeatureFlagProviderEvaluationResult`, `IFeatureFlagProvider`,
+  `Engine:Features:Flags:*:ProviderBindings`, and `engine.AddFeatureFlagProvider(...)` now add the
+  generic external-provider bridge baseline while keeping the Cephalon-owned descriptor catalog as
+  the runtime source of truth
 - `Cephalon.AspNetCore` now exposes `/engine/features`, `/engine/features/enabled`,
   `/engine/features/disabled`, `/engine/features/modules/{moduleId}`,
   `/engine/features/{featureFlagId}`, and `/engine/features/{featureFlagId}/evaluate` off the
@@ -2696,4 +2701,5 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-103 phase 12 backend-for-frontend client-binding runtime baseline: `Cephalon.Abstractions` now exposes host-agnostic BFF client-binding contracts, `Cephalon.Engine` now composes host-added, module-contributed, and `Engine:BackendForFrontend:Bindings` entries into `snapshot.BackendForFrontendBindings` while auto-selecting `backend-for-frontend` when bindings exist, and `Cephalon.AspNetCore` now exposes `/engine/backend-for-frontend` plus client/module/transport drill-down routes while client-aware filtering or materialization remain later — **Shipped** · composition tests 3/3 + hosting tests 1/1 + package-surface tests 1/1
 - ENG-104 phase 12 backend-for-frontend client-aware REST filtering runtime baseline: `Cephalon.Abstractions` now exposes public client-aware BFF REST runtime contracts, `Cephalon.AspNetCore` now derives `IBackendForFrontendRestRuntimeCatalog` from the shared binding catalog plus published REST endpoint truth, `/engine/snapshot` now carries `BackendForFrontendRestEndpoints`, and `/engine/backend-for-frontend/rest-endpoints` now exposes binding/client/module/published-endpoint drill-down routes while per-client OpenAPI/Scalar materialization remains later — **Shipped** · hosting tests 1/1 + package-surface tests 2/2
 - ENG-105 phase 12 backend-for-frontend REST document materialization baseline: `Cephalon.Abstractions` now exposes scope-specific BFF REST document contracts, `Cephalon.AspNetCore` now derives `/engine/backend-for-frontend/rest-documents` plus filtered binding/client OpenAPI and Scalar surfaces from the shared BFF REST runtime truth and host OpenAPI settings, and `/engine/snapshot` now carries `BackendForFrontendRestDocuments` — **Shipped** · hosting tests 2/2 + package-surface tests 2/2
-- ENG-106 phase 12 feature-flag runtime baseline: `Cephalon.Abstractions` now exposes host-agnostic feature-flag contracts, `Cephalon.Engine` now composes code-first, configuration-driven, and module-contributed flags into `IFeatureFlagRuntimeCatalog`, `IFeatureToggle`, and `snapshot.FeatureFlags`, and `Cephalon.AspNetCore` now exposes `/engine/features` plus the shared evaluation route while external-provider bridges and any future capability publication remain later — **Shipped** · composition tests 3/3 + hosting tests 1/1 + package-surface tests 1/1
+- ENG-106 phase 12 feature-flag runtime baseline: `Cephalon.Abstractions` now exposes host-agnostic feature-flag contracts, `Cephalon.Engine` now composes code-first, configuration-driven, and module-contributed flags into `IFeatureFlagRuntimeCatalog`, `IFeatureToggle`, and `snapshot.FeatureFlags`, and `Cephalon.AspNetCore` now exposes `/engine/features` plus the shared evaluation route while the later generic provider bridge and any future capability publication remain separate follow-through — **Shipped** · composition tests 3/3 + hosting tests 1/1 + package-surface tests 1/1
+- ENG-107 phase 12 feature-flag external-provider bridge baseline: `Cephalon.Abstractions` now exposes `FeatureFlagProviderBindingDescriptor`, `FeatureFlagProviderEvaluationResult`, and `IFeatureFlagProvider`; `FeatureFlagDescriptor` plus `FeatureFlagEvaluationResult` now carry typed provider bindings and provider-result details; `Cephalon.Engine` now binds `Engine:Features:Flags:*:ProviderBindings`, adds `engine.AddFeatureFlagProvider(...)`, and lets registered providers further gate Cephalon-owned flags through the shared `IFeatureToggle` without replacing the runtime catalog; `Cephalon.Behaviors.Http` now keeps subject propagation aligned between REST and behavior-owned execution so provider-backed behavior gates can evaluate the same subject truth end-to-end — **Shipped** · composition tests 8/8 + hosting tests 6/6 + package-surface tests 157/157

@@ -18,6 +18,7 @@ public sealed class FeatureFlagSettings
     /// <param name="sourceKind">Identifies whether the feature flag is host-owned or module-owned.</param>
     /// <param name="sourceModuleId">The source-module identifier when the feature flag is module-owned.</param>
     /// <param name="targeting">The optional targeting settings attached to the feature flag.</param>
+    /// <param name="providerBindings">Optional external provider bindings attached to the feature flag.</param>
     /// <param name="metadata">Optional operator-facing metadata.</param>
     public FeatureFlagSettings(
         string id,
@@ -27,6 +28,7 @@ public sealed class FeatureFlagSettings
         FeatureFlagSourceKind sourceKind = FeatureFlagSourceKind.Host,
         string? sourceModuleId = null,
         FeatureFlagTargetingSettings? targeting = null,
+        IReadOnlyList<FeatureFlagProviderBindingSettings>? providerBindings = null,
         IReadOnlyDictionary<string, string>? metadata = null)
     {
         if (string.IsNullOrWhiteSpace(id))
@@ -70,6 +72,7 @@ public sealed class FeatureFlagSettings
         SourceKind = sourceKind;
         SourceModuleId = normalizedSourceModuleId;
         Targeting = targeting ?? FeatureFlagTargetingSettings.Empty;
+        ProviderBindings = providerBindings?.ToArray() ?? [];
         Metadata = metadata is null
             ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             : new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase);
@@ -111,6 +114,11 @@ public sealed class FeatureFlagSettings
     public FeatureFlagTargetingSettings Targeting { get; }
 
     /// <summary>
+    /// Gets the optional external provider bindings attached to the feature flag.
+    /// </summary>
+    public IReadOnlyList<FeatureFlagProviderBindingSettings> ProviderBindings { get; }
+
+    /// <summary>
     /// Gets optional operator-facing metadata.
     /// </summary>
     public IReadOnlyDictionary<string, string> Metadata { get; }
@@ -138,6 +146,7 @@ public sealed class FeatureFlagSettings
             sourceKind: sourceKind,
             sourceModuleId: sourceKind == FeatureFlagSourceKind.Module ? sourceModuleId : null,
             targeting: FeatureFlagTargetingSettings.FromSection(section.GetSection("Targeting")),
+            providerBindings: ReadProviderBindings(section.GetSection("ProviderBindings")),
             metadata: ReadMetadata(section.GetSection("Metadata")));
     }
 
@@ -173,5 +182,19 @@ public sealed class FeatureFlagSettings
                 static child => child.Key.Trim(),
                 static child => child.Value!.Trim(),
                 StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static FeatureFlagProviderBindingSettings[] ReadProviderBindings(IConfigurationSection section)
+    {
+        if (!section.Exists())
+        {
+            return [];
+        }
+
+        return section
+            .GetChildren()
+            .Where(static child => child.Exists())
+            .Select(FeatureFlagProviderBindingSettings.FromSection)
+            .ToArray();
     }
 }

@@ -97,6 +97,9 @@ transport-specific middleware:
 - the dispatcher pipeline evaluates those requirements through `IFeatureToggle` using behavior,
   module, transport, environment, tenant, subject, and tag context and throws
   `BehaviorFeatureDisabledException` when the active runtime context is not eligible
+- when one of those referenced feature flags also declares `ProviderBindings`, the same shared
+  behavior gate now honors the registered `IFeatureFlagProvider` answers without moving rollout
+  ownership out of the behavior topology or the Cephalon feature catalog
 - REST helper endpoints map that shared rejection to `404`, JSON-RPC maps it to `-32004`, and
   messaging bindings log and skip the disabled execution with transport-appropriate acknowledgement
   semantics instead of treating the rejection as a retryable failure
