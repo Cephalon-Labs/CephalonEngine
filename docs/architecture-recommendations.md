@@ -224,16 +224,16 @@ Effort: medium.
 
 ### Durable Execution (Temporal/Restate style)
 
-Current state: the first durable-execution baseline is now shipped. `IBehaviorTopologyBuilder.AsDurableExecution()` plus source-generated `durable-execution` literals let behaviors opt into replay explicitly, and `Cephalon.Behaviors.Patterns` now exports `IDurableExecution<TState>`, `IDurableExecution<TInput, TState, TOutput>`, `DurableExecutionState<TState>`, `DurableExecutionStepResult<TOutput>`, and `DurableExecutionStrategy`. The shared strategy replays state from `IEventStore`, validates sequential stream versions before append, and returns truthful `200`, `202`, or `204` outcomes based on local output versus continuation-only work. `Cephalon.Behaviors` now also exposes capability `behaviors.durable-execution` plus rule `ABT-006`, and the Kafka, RabbitMQ, and test behavior contexts can now flow `IEventStore` into the shared pipeline for non-default-host execution.
+Current state: the first durable-execution baseline and the first durable runtime/operator catalog follow-through are now shipped. `IBehaviorTopologyBuilder.AsDurableExecution()` plus source-generated `durable-execution` literals let behaviors opt into replay explicitly, and `Cephalon.Behaviors.Patterns` now exports `IDurableExecution<TState>`, `IDurableExecution<TInput, TState, TOutput>`, `DurableExecutionState<TState>`, `DurableExecutionStepResult<TOutput>`, and `DurableExecutionStrategy`. The shared strategy replays state from `IEventStore`, validates sequential stream versions before append, and returns truthful `200`, `202`, or `204` outcomes based on local output versus continuation-only work. `Cephalon.Behaviors` now also exposes capability `behaviors.durable-execution` plus rule `ABT-006`, and the Kafka, RabbitMQ, and test behavior contexts can now flow `IEventStore` into the shared pipeline for non-default-host execution. `Cephalon.Abstractions` now also exports `DurableExecutionRuntimeDescriptor` and `IDurableExecutionRuntimeCatalog`, `Cephalon.Behaviors.Patterns` derives that catalog from shared behavior topology plus registered durable behavior types, `Cephalon.Engine` projects `snapshot.DurableExecutions`, and ASP.NET Core now exposes `/engine/durable-executions` plus id, module, and transport drill-down routes.
 
-Recommendation: keep the replay contract host-agnostic and `IEventStore`-backed, keep durable authoring explicit through `IDurableExecution` instead of hiding deterministic replay requirements behind generic behavior interfaces, and add richer operator/runtime surfaces only when they can stay derived from that same shared replay truth.
+Recommendation: keep the replay contract host-agnostic and `IEventStore`-backed, keep durable authoring explicit through `IDurableExecution` instead of hiding deterministic replay requirements behind generic behavior interfaces, and keep the operator/runtime catalog derived from shared behavior topology plus registered behavior types instead of adding a second workflow registry beside the behavior system.
 
 Implementation outline:
 - shipped baseline: `IBehaviorTopologyBuilder.AsDurableExecution()`, source-generated `durable-execution` literals, `IDurableExecution<TState>`, `IDurableExecution<TInput, TState, TOutput>`, `DurableExecutionState<TState>`, `DurableExecutionStepResult<TOutput>`, `DurableExecutionStrategy`, capability `behaviors.durable-execution`, and compatibility rule `ABT-006`
-- next follow-through: operator-facing runtime/catalog answers for active durable executions, replay progress, or failure posture when a concrete host/operator workflow needs them
-- later follow-through: higher-level timers, signals, or compensation helpers only when they can remain additive over the shared replay contract instead of becoming a second workflow engine hidden inside `Cephalon.Behaviors`
+- shipped operator/runtime follow-through: `DurableExecutionRuntimeDescriptor`, `IDurableExecutionRuntimeCatalog`, `snapshot.DurableExecutions`, `/engine/durable-executions`, `/engine/durable-executions/{behaviorId}`, `/engine/durable-executions/modules/{moduleId}`, and `/engine/durable-executions/transports/{transportId}` all stay derived from the same shared durable behavior topology
+- later follow-through: replay progress, failure posture, timers, signals, or compensation helpers only when they can remain additive over the shared replay contract instead of becoming a second workflow engine hidden inside `Cephalon.Behaviors`
 
-Effort: medium for the remaining follow-through.
+Effort: small-to-medium for the remaining follow-through.
 
 ### Change Data Capture — CDC (event-driven data sync)
 
@@ -285,7 +285,11 @@ Deliverables:
   source-generated `durable-execution` literals, `IDurableExecution<TState>`,
   `IDurableExecution<TInput, TState, TOutput>`, `DurableExecutionState<TState>`,
   `DurableExecutionStepResult<TOutput>`, `DurableExecutionStrategy`,
-  `behaviors.durable-execution`, and `ABT-006` while richer operator/runtime surfaces remain later
+  `behaviors.durable-execution`, and `ABT-006`; the first durable runtime/operator follow-through
+  is now also shipped through `DurableExecutionRuntimeDescriptor`,
+  `IDurableExecutionRuntimeCatalog`, `/engine/durable-executions`, and
+  `snapshot.DurableExecutions`, while replay-progress/failure-posture and higher-level workflow
+  helpers remain later
 
 Exit criteria:
 - a consumer app can migrate incrementally from a legacy system using the strangler fig router

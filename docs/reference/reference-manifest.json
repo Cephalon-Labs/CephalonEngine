@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-19T09:17:07.8169695+00:00",
+  "GeneratedAtUtc": "2026-04-19T10:00:20.9529096+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 291
+      "TypeCount": 293
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -529,7 +529,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-execution",
-      "TypeCount": 10
+      "TypeCount": 12
     },
     {
       "NamespaceName": "Cephalon.Abstractions.Features",
@@ -3789,6 +3789,21 @@
       }
     },
     {
+      "DisplayName": "DurableExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-execution-durableexecutionruntimedescriptor",
+      "Declaration": "public sealed class DurableExecutionRuntimeDescriptor",
+      "Summary": "Describes one active durable-execution workflow visible to the current runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 15,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "EdgeEngineBuilderExtensions",
       "NamespaceName": "Cephalon.Edge.Registration",
       "AssemblyName": "Cephalon.Edge",
@@ -5901,6 +5916,21 @@
         "Fields": 0,
         "Properties": 3,
         "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "IDurableExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-execution-idurableexecutionruntimecatalog",
+      "Declaration": "public interface IDurableExecutionRuntimeCatalog",
+      "Summary": "Exposes the active durable-execution workflows visible to the current runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 3
       }
     },
     {
@@ -9844,7 +9874,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 32,
+        "Properties": 33,
         "Methods": 0
       }
     },
@@ -15369,6 +15399,17 @@
     {
       "DisplayName": "BehaviorType",
       "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-behaviortype",
+      "Signature": "string BehaviorType { get; }",
+      "Summary": "Gets the concrete durable behavior implementation type name."
+    },
+    {
+      "DisplayName": "BehaviorType",
+      "Category": "Properties",
       "DeclaringTypeName": "OwnedBehaviorRegistration",
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
       "AssemblyName": "Cephalon.Abstractions",
@@ -20055,6 +20096,17 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the human-readable durable workflow description."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "EdgeNodeDescriptor",
       "NamespaceName": "Cephalon.Edge.Services",
       "AssemblyName": "Cephalon.Edge",
@@ -21012,6 +21064,17 @@
     {
       "DisplayName": "DisplayName",
       "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the operator-facing durable workflow name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
       "DeclaringTypeName": "EdgeNodeDescriptor",
       "NamespaceName": "Cephalon.Edge.Services",
       "AssemblyName": "Cephalon.Edge",
@@ -21514,6 +21577,39 @@
       "AnchorId": "member-f-cephalon-abstractions-transports-transportfeatures-duplexstreaming",
       "Signature": "const TransportFeatures DuplexStreaming",
       "Summary": "Indicates duplex-streaming interactions are supported."
+    },
+    {
+      "DisplayName": "DurableExecutionRuntimeDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "DurableExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-durableexecutionruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "DurableExecutionRuntimeDescriptor(string id, string displayName, string description, string behaviorType, string inputType, string stateType, string outputType, string executionMode, string sourceModuleId, IReadOnlyList\u003Cstring\u003E transportIds, IReadOnlyList\u003Cstring\u003E requiredFeatureFlagIds, bool eventSourcingEnabled, bool requiresEventStore, IReadOnlyList\u003Cint\u003E successStatusCodes, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a durable-execution runtime descriptor."
+    },
+    {
+      "DisplayName": "DurableExecutions",
+      "Category": "Properties",
+      "DeclaringTypeName": "IDurableExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-idurableexecutionruntimecatalog-durableexecutions",
+      "Signature": "IReadOnlyList\u003CDurableExecutionRuntimeDescriptor\u003E DurableExecutions { get; }",
+      "Summary": "Gets all active durable-execution workflows visible to the current runtime."
+    },
+    {
+      "DisplayName": "DurableExecutions",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-durableexecutions",
+      "Signature": "IReadOnlyList\u003CDurableExecutionRuntimeDescriptor\u003E DurableExecutions { get; set; }",
+      "Summary": "Gets the active durable-execution workflows visible to the runtime at the time the snapshot was created."
     },
     {
       "DisplayName": "EdgeNativeDelivery",
@@ -23529,6 +23625,17 @@
       "Summary": "Gets or sets a value indicating whether event sourcing is wired into the behavior context."
     },
     {
+      "DisplayName": "EventSourcingEnabled",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-eventsourcingenabled",
+      "Signature": "bool EventSourcingEnabled { get; }",
+      "Summary": "Gets a value indicating whether the authored behavior topology explicitly enables event sourcing."
+    },
+    {
       "DisplayName": "EventSourcingOptions",
       "Category": "Constructors",
       "DeclaringTypeName": "EventSourcingOptions",
@@ -24198,6 +24305,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databasemigrationoperationalstep-executionmode",
       "Signature": "string ExecutionMode { get; }",
       "Summary": "Gets the execution mode for this step."
+    },
+    {
+      "DisplayName": "ExecutionMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-executionmode",
+      "Signature": "string ExecutionMode { get; }",
+      "Summary": "Gets the replay mode used by the active runtime."
     },
     {
       "DisplayName": "ExecutionMode",
@@ -26215,6 +26333,17 @@
     {
       "DisplayName": "GetById",
       "Category": "Methods",
+      "DeclaringTypeName": "IDurableExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-idurableexecutionruntimecatalog-getbyid-system-string",
+      "Signature": "DurableExecutionRuntimeDescriptor GetById(string behaviorId)",
+      "Summary": "Gets one durable-execution workflow by its stable behavior identifier."
+    },
+    {
+      "DisplayName": "GetById",
+      "Category": "Methods",
       "DeclaringTypeName": "IEventDispatchRuntimeDescriptorCatalog",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -26578,6 +26707,17 @@
     {
       "DisplayName": "GetBySourceModule",
       "Category": "Methods",
+      "DeclaringTypeName": "IDurableExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-idurableexecutionruntimecatalog-getbysourcemodule-system-string",
+      "Signature": "IReadOnlyList\u003CDurableExecutionRuntimeDescriptor\u003E GetBySourceModule(string sourceModuleId)",
+      "Summary": "Gets all durable-execution workflows contributed by the requested module."
+    },
+    {
+      "DisplayName": "GetBySourceModule",
+      "Category": "Methods",
       "DeclaringTypeName": "IExecutionRuntimeCatalog",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -26761,6 +26901,17 @@
       "AnchorId": "member-m-cephalon-abstractions-patterns-ibackendforfrontendruntimecatalog-getbytransportid-system-string",
       "Signature": "IReadOnlyList\u003CBackendForFrontendClientBindingDescriptor\u003E GetByTransportId(string transportId)",
       "Summary": "Gets all backend-for-frontend client bindings that target the requested transport."
+    },
+    {
+      "DisplayName": "GetByTransportId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IDurableExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-idurableexecutionruntimecatalog-getbytransportid-system-string",
+      "Signature": "IReadOnlyList\u003CDurableExecutionRuntimeDescriptor\u003E GetByTransportId(string transportId)",
+      "Summary": "Gets all durable-execution workflows exposed over the requested transport."
     },
     {
       "DisplayName": "GetByTransportId",
@@ -29218,6 +29369,17 @@
     {
       "DisplayName": "Id",
       "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable durable behavior identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
       "DeclaringTypeName": "EdgeNodeDescriptor",
       "NamespaceName": "Cephalon.Edge.Services",
       "AssemblyName": "Cephalon.Edge",
@@ -30369,6 +30531,17 @@
       "AnchorId": "member-p-cephalon-abstractions-behaviors-behaviorfault-innerfaults",
       "Signature": "IReadOnlyList\u003CBehaviorFault\u003E InnerFaults { get; set; }",
       "Summary": "Gets or sets nested faults."
+    },
+    {
+      "DisplayName": "InputType",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-inputtype",
+      "Signature": "string InputType { get; }",
+      "Summary": "Gets the durable workflow input type name."
     },
     {
       "DisplayName": "InstanceId",
@@ -33097,6 +33270,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databaseroleruntimedescriptor-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
       "Summary": "Gets optional runtime metadata associated with the role."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets additional operator-facing metadata describing replay semantics."
     },
     {
       "DisplayName": "Metadata",
@@ -36045,6 +36229,17 @@
       "AnchorId": "member-p-cephalon-referencedocs-generation-referencedocsrequest-outputpath",
       "Signature": "string OutputPath { get; }",
       "Summary": "Gets the output directory where reference docs should be written."
+    },
+    {
+      "DisplayName": "OutputType",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-outputtype",
+      "Signature": "string OutputType { get; }",
+      "Summary": "Gets the durable workflow local output type name."
     },
     {
       "DisplayName": "OverrideRules",
@@ -40052,6 +40247,17 @@
     },
     {
       "DisplayName": "RequiredFeatureFlagIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-requiredfeatureflagids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E RequiredFeatureFlagIds { get; }",
+      "Summary": "Gets the ordered feature-flag identifiers that gate workflow execution."
+    },
+    {
+      "DisplayName": "RequiredFeatureFlagIds",
       "Category": "Fields",
       "DeclaringTypeName": "RestEndpointOverrideActionKind",
       "NamespaceName": "Cephalon.Abstractions.Transports",
@@ -40258,6 +40464,17 @@
       "AnchorId": "member-p-cephalon-abstractions-patterns-patterndescriptor-requires",
       "Signature": "IReadOnlyList\u003Cstring\u003E Requires { get; }",
       "Summary": "Gets the pattern identifiers required by this pattern."
+    },
+    {
+      "DisplayName": "RequiresEventStore",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-requireseventstore",
+      "Signature": "bool RequiresEventStore { get; }",
+      "Summary": "Gets a value indicating whether the runtime contract requires an \u0060IEventStore\u0060."
     },
     {
       "DisplayName": "RequireSignatureFingerprint",
@@ -44321,6 +44538,17 @@
     {
       "DisplayName": "SourceModuleId",
       "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; }",
+      "Summary": "Gets the owning module identifier when one is known at runtime."
+    },
+    {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
       "DeclaringTypeName": "EventStreamDescriptor",
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
       "AssemblyName": "Cephalon.Abstractions",
@@ -45054,6 +45282,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-ieventsubscriptionruntimecatalog-states",
       "Signature": "IReadOnlyList\u003CEventSubscriptionRuntimeState\u003E States { get; }",
       "Summary": "Gets the currently known runtime-state entries ordered by subscription identifier."
+    },
+    {
+      "DisplayName": "StateType",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-statetype",
+      "Signature": "string StateType { get; }",
+      "Summary": "Gets the durable workflow replay-state type name."
     },
     {
       "DisplayName": "Status",
@@ -45978,6 +46217,17 @@
       "AnchorId": "member-p-cephalon-aspnetcore-transports-rest-resultmodel-1-success",
       "Signature": "bool Success { get; set; }",
       "Summary": "Gets or sets a value indicating whether the response is successful."
+    },
+    {
+      "DisplayName": "SuccessStatusCodes",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-successstatuscodes",
+      "Signature": "IReadOnlyList\u003Cint\u003E SuccessStatusCodes { get; }",
+      "Summary": "Gets the HTTP success status codes the shared durable strategy can return."
     },
     {
       "DisplayName": "Suite",
@@ -48013,6 +48263,17 @@
       "AnchorId": "member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-transportids",
       "Signature": "IReadOnlyList\u003Cstring\u003E TransportIds { get; }",
       "Summary": "Gets the transport identifiers configured for this behavior."
+    },
+    {
+      "DisplayName": "TransportIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-transportids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E TransportIds { get; }",
+      "Summary": "Gets the transport identifiers that expose the durable workflow."
     },
     {
       "DisplayName": "TransportIds",

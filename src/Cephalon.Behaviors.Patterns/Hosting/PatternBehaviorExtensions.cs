@@ -1,9 +1,12 @@
 using Cephalon.Behaviors.Patterns.Abstractions;
 using Cephalon.Behaviors.Patterns.Publishers;
 using Cephalon.Behaviors.Patterns.Registry;
+using Cephalon.Behaviors.Patterns.Runtime;
 using Cephalon.Behaviors.Patterns.Stores;
 using Cephalon.Behaviors.Patterns.Strategies;
 using Cephalon.Behaviors.Services;
+using Cephalon.Abstractions.Behaviors;
+using Cephalon.Abstractions.Execution;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -31,6 +34,10 @@ public static class PatternBehaviorExtensions
         builder.Services.TryAddSingleton<ISagaStateStore, InMemorySagaStateStore>();
         builder.Services.TryAddSingleton<IProcessCheckpointStore, InMemoryProcessCheckpointStore>();
         builder.Services.TryAddSingleton<ISagaChoreographyPublisher, InMemorySagaChoreographyPublisher>();
+        builder.Services.TryAddSingleton<IDurableExecutionRuntimeCatalog>(static serviceProvider =>
+            new DurableExecutionRuntimeCatalogSnapshot(
+                serviceProvider.GetRequiredService<IBehaviorCatalog>(),
+                serviceProvider.GetRequiredService<IBehaviorTypeRegistry>()));
 
         // Register the built-in strategies.
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IBehaviorExecutionStrategy, CqrsExecutionStrategy>());

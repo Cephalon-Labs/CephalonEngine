@@ -1272,6 +1272,9 @@ Browse the published API surface by public member.
 - [BehaviorTopologyOptions](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviortopologyoptions-ctor): `Constructors` on `BehaviorTopologyOptions` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorTopologyOptions&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Initializes a new instance of `BehaviorTopologyOptions`.
   - `BehaviorTopologyOptions()`
+- [BehaviorType](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-behaviortype): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the concrete durable behavior implementation type name.
+  - `string BehaviorType { get; }`
 - [BehaviorType](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ownedbehaviorregistration-behaviortype): `Properties` on `OwnedBehaviorRegistration` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the concrete behavior implementation type.
   - `Type BehaviorType { get; }`
@@ -2556,6 +2559,9 @@ Browse the published API surface by public member.
 - [Description](cephalon-engine.md#member-p-cephalon-engine-diagnostics-diagnosticsconvention-description): `Properties` on `DiagnosticsConvention` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Description&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - The operator-facing explanation of what the convention covers.
   - `string Description { get; set; }`
+- [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-description): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the human-readable durable workflow description.
+  - `string Description { get; }`
 - [Description](cephalon-edge.md#member-p-cephalon-edge-services-edgenodedescriptor-description): `Properties` on `EdgeNodeDescriptor` in `Cephalon.Edge.Services` (`Cephalon.Edge`) [Browse](browse.html?q=Description&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Services&scope=members)
   - Gets the human-readable description of the node.
   - `string Description { get; }`
@@ -2817,6 +2823,9 @@ Browse the published API surface by public member.
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-displayname): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - The human-readable dependency name.
   - `string DisplayName { get; set; }`
+- [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-displayname): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the operator-facing durable workflow name.
+  - `string DisplayName { get; }`
 - [DisplayName](cephalon-edge.md#member-p-cephalon-edge-services-edgenodedescriptor-displayname): `Properties` on `EdgeNodeDescriptor` in `Cephalon.Edge.Services` (`Cephalon.Edge`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Services&scope=members)
   - Gets the operator-facing display name for the node.
   - `string DisplayName { get; }`
@@ -2955,6 +2964,15 @@ Browse the published API surface by public member.
 - [DuplexStreaming](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-transportfeatures-duplexstreaming): `Fields` on `TransportFeatures` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=DuplexStreaming&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Indicates duplex-streaming interactions are supported.
   - `const TransportFeatures DuplexStreaming`
+- [DurableExecutionRuntimeDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-durableexecutionruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DurableExecutionRuntimeDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Creates a durable-execution runtime descriptor.
+  - `DurableExecutionRuntimeDescriptor(string id, string displayName, string description, string behaviorType, string inputType, string stateType, string outputType, string executionMode, string sourceModuleId, IReadOnlyList<string> transportIds, IReadOnlyList<string> requiredFeatureFlagIds, bool eventSourcingEnabled, bool requiresEventStore, IReadOnlyList<int> successStatusCodes, IReadOnlyDictionary<string, string> metadata)`
+- [DurableExecutions](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-idurableexecutionruntimecatalog-durableexecutions): `Properties` on `IDurableExecutionRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DurableExecutions&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets all active durable-execution workflows visible to the current runtime.
+  - `IReadOnlyList<DurableExecutionRuntimeDescriptor> DurableExecutions { get; }`
+- [DurableExecutions](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-durableexecutions): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=DurableExecutions&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the active durable-execution workflows visible to the runtime at the time the snapshot was created.
+  - `IReadOnlyList<DurableExecutionRuntimeDescriptor> DurableExecutions { get; set; }`
 
 ## E
 
@@ -3507,6 +3525,9 @@ Browse the published API surface by public member.
 - [EventSourcingEnabled](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviortopologyoptions-eventsourcingenabled): `Properties` on `BehaviorTopologyOptions` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventSourcingEnabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets or sets a value indicating whether event sourcing is wired into the behavior context.
   - `bool EventSourcingEnabled { get; set; }`
+- [EventSourcingEnabled](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-eventsourcingenabled): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventSourcingEnabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets a value indicating whether the authored behavior topology explicitly enables event sourcing.
+  - `bool EventSourcingEnabled { get; }`
 - [EventSourcingOptions](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-configuration-eventsourcingoptions-ctor): `Constructors` on `EventSourcingOptions` in `Cephalon.EventSourcing.Configuration` (`Cephalon.EventSourcing`) [Browse](browse.html?q=EventSourcingOptions&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Configuration&scope=members)
   - Initializes a new instance of the `EventSourcingOptions` class.
   - `EventSourcingOptions()`
@@ -3689,6 +3710,9 @@ Browse the published API surface by public member.
   - `string ExecutionMode { get; }`
 - [ExecutionMode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationoperationalstep-executionmode): `Properties` on `DatabaseMigrationOperationalStep` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the execution mode for this step.
+  - `string ExecutionMode { get; }`
+- [ExecutionMode](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-executionmode): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the replay mode used by the active runtime.
   - `string ExecutionMode { get; }`
 - [ExecutionMode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxdispatchpolicydescriptor-executionmode): `Properties` on `OutboxDispatchPolicyDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the execution ownership mode for the outbox.
@@ -4245,6 +4269,9 @@ Browse the published API surface by public member.
 - [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idatabaserolecatalog-getbyid-system-string): `Methods` on `IDatabaseRoleCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets one database role by its logical identifier.
   - `DatabaseRoleDescriptor GetById(string databaseRoleId)`
+- [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-idurableexecutionruntimecatalog-getbyid-system-string): `Methods` on `IDurableExecutionRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets one durable-execution workflow by its stable behavior identifier.
+  - `DurableExecutionRuntimeDescriptor GetById(string behaviorId)`
 - [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchruntimedescriptorcatalog-getbyid-system-string): `Methods` on `IEventDispatchRuntimeDescriptorCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets one dispatch runtime by its stable identifier.
   - `EventDispatchRuntimeDescriptor GetById(string dispatchRuntimeId)`
@@ -4344,6 +4371,9 @@ Browse the published API surface by public member.
 - [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-patterns-ibackendforfrontendruntimecatalog-getbysourcemodule-system-string): `Methods` on `IBackendForFrontendRuntimeCatalog` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets all backend-for-frontend client bindings owned by the requested module.
   - `IReadOnlyList<BackendForFrontendClientBindingDescriptor> GetBySourceModule(string sourceModuleId)`
+- [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-idurableexecutionruntimecatalog-getbysourcemodule-system-string): `Methods` on `IDurableExecutionRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets all durable-execution workflows contributed by the requested module.
+  - `IReadOnlyList<DurableExecutionRuntimeDescriptor> GetBySourceModule(string sourceModuleId)`
 - [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-iexecutionruntimecatalog-getbysourcemodule-system-string): `Methods` on `IExecutionRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets all execution graphs contributed by the requested module.
   - `IReadOnlyList<ExecutionGraphDescriptor> GetBySourceModule(string sourceModuleId)`
@@ -4395,6 +4425,9 @@ Browse the published API surface by public member.
 - [GetByTransportId](cephalon-abstractions.md#member-m-cephalon-abstractions-patterns-ibackendforfrontendruntimecatalog-getbytransportid-system-string): `Methods` on `IBackendForFrontendRuntimeCatalog` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByTransportId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets all backend-for-frontend client bindings that target the requested transport.
   - `IReadOnlyList<BackendForFrontendClientBindingDescriptor> GetByTransportId(string transportId)`
+- [GetByTransportId](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-idurableexecutionruntimecatalog-getbytransportid-system-string): `Methods` on `IDurableExecutionRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByTransportId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets all durable-execution workflows exposed over the requested transport.
+  - `IReadOnlyList<DurableExecutionRuntimeDescriptor> GetByTransportId(string transportId)`
 - [GetByTransportId](cephalon-abstractions.md#member-m-cephalon-abstractions-resilience-iratelimitingruntimecatalog-getbytransportid-system-string): `Methods` on `IRateLimitingRuntimeCatalog` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByTransportId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - Gets all rate-limiting policies that apply to the requested transport identifier.
   - `IReadOnlyList<RateLimitingRuntimeDescriptor> GetByTransportId(string transportId)`
@@ -5070,6 +5103,9 @@ Browse the published API surface by public member.
 - [Id](cephalon-engine.md#member-p-cephalon-engine-diagnostics-diagnosticeventdefinition-id): `Properties` on `DiagnosticEventDefinition` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Id&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - The stable numeric event identifier.
   - `int Id { get; set; }`
+- [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-id): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the stable durable behavior identifier.
+  - `string Id { get; }`
 - [Id](cephalon-edge.md#member-p-cephalon-edge-services-edgenodedescriptor-id): `Properties` on `EdgeNodeDescriptor` in `Cephalon.Edge.Services` (`Cephalon.Edge`) [Browse](browse.html?q=Id&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Services&scope=members)
   - Gets the stable node identifier.
   - `string Id { get; }`
@@ -5385,6 +5421,9 @@ Browse the published API surface by public member.
 - [InnerFaults](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviorfault-innerfaults): `Properties` on `BehaviorFault` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=InnerFaults&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets or sets nested faults.
   - `IReadOnlyList<BehaviorFault> InnerFaults { get; set; }`
+- [InputType](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-inputtype): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=InputType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the durable workflow input type name.
+  - `string InputType { get; }`
 - [InstanceId](cephalon-observability-grafanacloud.md#member-p-cephalon-observability-grafanacloud-configuration-grafanacloudtelemetryexportoptions-instanceid): `Properties` on `GrafanaCloudTelemetryExportOptions` in `Cephalon.Observability.GrafanaCloud.Configuration` (`Cephalon.Observability.GrafanaCloud`) [Browse](browse.html?q=InstanceId&assembly=Cephalon.Observability.GrafanaCloud&namespace=Cephalon.Observability.GrafanaCloud.Configuration&scope=members)
   - Gets or sets the Grafana Cloud instance identifier used as the Basic-auth username when the package should build the Authorization header from structured settings.
   - `string InstanceId { get; set; }`
@@ -6140,6 +6179,9 @@ Browse the published API surface by public member.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroleruntimedescriptor-metadata): `Properties` on `DatabaseRoleRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets optional runtime metadata associated with the role.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-metadata): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets additional operator-facing metadata describing replay semantics.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchexecutionreport-metadata): `Properties` on `EventDispatchExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets optional operator-facing metadata captured alongside the observation.
@@ -6951,6 +6993,9 @@ Browse the published API surface by public member.
 - [OutputPath](cephalon-referencedocs.md#member-p-cephalon-referencedocs-generation-referencedocsrequest-outputpath): `Properties` on `ReferenceDocsRequest` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=OutputPath&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Gets the output directory where reference docs should be written.
   - `string OutputPath { get; }`
+- [OutputType](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-outputtype): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=OutputType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the durable workflow local output type name.
+  - `string OutputType { get; }`
 - [OverrideRules](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-irestendpointoverrideruntimecatalog-overriderules): `Properties` on `IRestEndpointOverrideRuntimeCatalog` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=OverrideRules&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets all REST endpoint override rules visible to the current runtime.
   - `IReadOnlyList<RestEndpointOverrideDescriptor> OverrideRules { get; }`
@@ -8052,6 +8097,9 @@ Browse the published API surface by public member.
 - [RequiredFeatureFlagIds](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-requiredfeatureflagids): `Properties` on `BehaviorTopologyDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiredFeatureFlagIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the ordered feature-flag identifiers that must resolve to enabled before the behavior can execute.
   - `IReadOnlyList<string> RequiredFeatureFlagIds { get; }`
+- [RequiredFeatureFlagIds](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-requiredfeatureflagids): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiredFeatureFlagIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the ordered feature-flag identifiers that gate workflow execution.
+  - `IReadOnlyList<string> RequiredFeatureFlagIds { get; }`
 - [RequiredFeatureFlagIds](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-requiredfeatureflagids): `Fields` on `RestEndpointOverrideActionKind` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiredFeatureFlagIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - The rule changes the required Cephalon feature-flag identifiers.
   - `const RestEndpointOverrideActionKind RequiredFeatureFlagIds`
@@ -8109,6 +8157,9 @@ Browse the published API surface by public member.
 - [Requires](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-patterndescriptor-requires): `Properties` on `PatternDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Requires&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the pattern identifiers required by this pattern.
   - `IReadOnlyList<string> Requires { get; }`
+- [RequiresEventStore](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-requireseventstore): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiresEventStore&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets a value indicating whether the runtime contract requires an `IEventStore`.
+  - `bool RequiresEventStore { get; }`
 - [RequireSignatureFingerprint](cephalon-engine.md#member-p-cephalon-engine-configuration-packagepolicy-requiresignaturefingerprint): `Properties` on `PackagePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=RequireSignatureFingerprint&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether package manifests must declare a signer fingerprint on at least one signature entry.
   - `bool RequireSignatureFingerprint { get; }`
@@ -9219,6 +9270,9 @@ Browse the published API surface by public member.
 - [SourceModuleId](cephalon-engine.md#member-p-cephalon-engine-trust-capabilitypolicydecision-sourcemoduleid): `Properties` on `CapabilityPolicyDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The module that contributed the capability.
   - `string SourceModuleId { get; set; }`
+- [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-sourcemoduleid): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the owning module identifier when one is known at runtime.
+  - `string SourceModuleId { get; }`
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-sourcemoduleid): `Properties` on `EventStreamDescriptor` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Gets the normalized source module identifier.
   - `string SourceModuleId { get; }`
@@ -9420,6 +9474,9 @@ Browse the published API surface by public member.
 - [States](cephalon-eventing.md#member-p-cephalon-eventing-services-ieventsubscriptionruntimecatalog-states): `Properties` on `IEventSubscriptionRuntimeCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=States&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the currently known runtime-state entries ordered by subscription identifier.
   - `IReadOnlyList<EventSubscriptionRuntimeState> States { get; }`
+- [StateType](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-statetype): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=StateType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the durable workflow replay-state type name.
+  - `string StateType { get; }`
 - [Status](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviorresultdescriptor-status): `Properties` on `BehaviorResultDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Status&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the transport-neutral outcome status.
   - `BehaviorResultStatus Status { get; }`
@@ -9672,6 +9729,9 @@ Browse the published API surface by public member.
 - [Success](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-transports-rest-resultmodel-1-success): `Properties` on `ResultModel<TModel>` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Success&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
   - Gets or sets a value indicating whether the response is successful.
   - `bool Success { get; set; }`
+- [SuccessStatusCodes](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-successstatuscodes): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=SuccessStatusCodes&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the HTTP success status codes the shared durable strategy can return.
+  - `IReadOnlyList<int> SuccessStatusCodes { get; }`
 - [Suite](cephalon-abstractions.md#member-f-cephalon-abstractions-appmodel-scaffolding-scaffoldscopes-suite): `Fields` on `ScaffoldScopes` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Suite&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Identifies a suite-level scaffold scope.
   - `const string Suite`
@@ -10229,6 +10289,9 @@ Browse the published API surface by public member.
   - `IReadOnlyList<string> TransportIds { get; set; }`
 - [TransportIds](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-transportids): `Properties` on `BehaviorTopologyDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the transport identifiers configured for this behavior.
+  - `IReadOnlyList<string> TransportIds { get; }`
+- [TransportIds](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-transportids): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the transport identifiers that expose the durable workflow.
   - `IReadOnlyList<string> TransportIds { get; }`
 - [TransportIds](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-transportids): `Properties` on `RateLimitingOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the transport identifiers targeted by this override.

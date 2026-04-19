@@ -15,6 +15,7 @@ durable-execution replay are handled.
 - **SagaChoreographyPublication / SagaChoreographyStepResult** — host-agnostic choreography output contracts
 - **IDurableExecution<TState> / IDurableExecution<TInput, TState, TOutput>** — host-agnostic durable workflow contract over `IEventStore` replay
 - **DurableExecutionState<TState> / DurableExecutionStepResult<TOutput>** — replay snapshot and step-result contracts for durable execution
+- **DurableExecutionRuntimeDescriptor / IDurableExecutionRuntimeCatalog** — operator-facing durable workflow catalog derived from shared behavior topology, ownership, transports, feature flags, and replay metadata
 - **InMemorySagaStateStore** — `ConcurrentDictionary`-backed saga state with JSON serialization
 - **InMemoryProcessCheckpointStore** — `ConcurrentDictionary`-backed checkpoint store
 - **InMemorySagaChoreographyPublisher** — in-memory choreography publication collector for local development and tests
@@ -24,6 +25,7 @@ durable-execution replay are handled.
 - **ChoreographySagaExecutionStrategy** — pattern: `"saga-choreography"`, stages returned choreography publications through `ISagaChoreographyPublisher`
 - **ProcessManagerExecutionStrategy** — pattern: `"process-manager"`, checkpoint lifecycle management
 - **DurableExecutionStrategy** — pattern: `"durable-execution"`, replays state from `IEventStore` and appends deterministic continuation events
+- **DurableExecutionRuntimeCatalogSnapshot** — runtime projection used by `IDurableExecutionRuntimeCatalog`, `/engine/durable-executions`, and `snapshot.DurableExecutions`
 - **DirectExecutionStrategy** — pattern: `"direct"`, 200 with output / 204 with null
 - **ExecutionStrategyRegistry** — `FrozenDictionary` O(1) registry for all strategies
 - **Hosting** — `AddBehaviorPatterns()` extension on `IBehaviorCollectionBuilder`
@@ -93,6 +95,15 @@ HTTP, messaging, and tests can share the same replay truth. `Cephalon.Behaviors`
 `ABT-006`, which requires `EventSourcingEnabled = true` whenever a behavior declares the
 `durable-execution` pattern.
 
+That same shared topology now also drives the first durable operator surface. `AddBehaviorPatterns()`
+registers `IDurableExecutionRuntimeCatalog`, `Cephalon.Engine` projects the merged answer into
+`snapshot.DurableExecutions`, and ASP.NET Core exposes `/engine/durable-executions` plus
+`/engine/durable-executions/{behaviorId}`, `/engine/durable-executions/modules/{moduleId}`, and
+`/engine/durable-executions/transports/{transportId}`. Those runtime descriptors preserve module
+ownership, transport ids, required feature ids, typed input/state/output contracts, the shared
+`200`/`202`/`204` success posture, and durable replay metadata without inventing a second
+host-specific workflow registry.
+
 ## Replacing the default stores
 
 Register your own `ISagaStateStore`, `IProcessCheckpointStore`, or `ISagaChoreographyPublisher`
@@ -120,7 +131,7 @@ and it only activates when the shared `Cephalon.Eventing` publication path is tr
 
 ## Status
 
-> Status: ✅ Shipped — M4 baseline plus later follow-through for saga choreography and durable execution
+> Status: ✅ Shipped — M4 baseline plus later follow-through for saga choreography, durable execution, and the first durable runtime catalog/operator surface
 
 ## Related components
 

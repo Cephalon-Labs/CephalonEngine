@@ -12897,6 +12897,200 @@ Parameters:
 
 ## Namespace Cephalon.Abstractions.Execution
 
+<a id="type-cephalon-abstractions-execution-durableexecutionruntimedescriptor"></a>
+
+### `DurableExecutionRuntimeDescriptor`
+
+Describes one active durable-execution workflow visible to the current runtime.
+
+Remarks: This runtime-facing surface keeps durable workflow truth derived from the shared behavior topology and registered implementation types instead of inventing a host-only workflow registry. It is intentionally static and operator-facing: it describes the active durable contract shape, ownership, transports, and replay semantics rather than per-invocation state.
+
+#### Declaration
+```csharp
+public sealed class DurableExecutionRuntimeDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-execution-durableexecutionruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `DurableExecutionRuntimeDescriptor`
+
+```csharp
+DurableExecutionRuntimeDescriptor(string id, string displayName, string description, string behaviorType, string inputType, string stateType, string outputType, string executionMode, string sourceModuleId, IReadOnlyList<string> transportIds, IReadOnlyList<string> requiredFeatureFlagIds, bool eventSourcingEnabled, bool requiresEventStore, IReadOnlyList<int> successStatusCodes, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a durable-execution runtime descriptor.
+
+Parameters:
+- `id`: The stable durable behavior identifier.
+- `displayName`: The operator-facing durable workflow name.
+- `description`: A human-readable description of the durable workflow.
+- `behaviorType`: The concrete durable behavior implementation type name.
+- `inputType`: The durable workflow input type name.
+- `stateType`: The durable workflow replay-state type name.
+- `outputType`: The durable workflow local output type name.
+- `executionMode`: The replay mode used by the runtime, such as `event-store-replay`.
+- `sourceModuleId`: The owning module identifier when the workflow came from an explicit module-owned behavior.
+- `transportIds`: The transport identifiers that expose the durable workflow.
+- `requiredFeatureFlagIds`: The ordered feature-flag identifiers that must resolve to enabled before the workflow can execute.
+- `eventSourcingEnabled`: Indicates whether the authored behavior topology explicitly enables event sourcing for the workflow.
+- `requiresEventStore`: Indicates whether the runtime contract requires an `IEventStore` to execute truthfully.
+- `successStatusCodes`: The HTTP success status codes the shared durable execution strategy can return for local output, continuation-only work, or completion without output.
+- `metadata`: Additional operator-facing metadata describing replay semantics.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-behaviortype"></a>
+
+##### `BehaviorType`
+
+```csharp
+string BehaviorType { get; }
+```
+
+Gets the concrete durable behavior implementation type name.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable durable workflow description.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing durable workflow name.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-eventsourcingenabled"></a>
+
+##### `EventSourcingEnabled`
+
+```csharp
+bool EventSourcingEnabled { get; }
+```
+
+Gets a value indicating whether the authored behavior topology explicitly enables event sourcing.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-executionmode"></a>
+
+##### `ExecutionMode`
+
+```csharp
+string ExecutionMode { get; }
+```
+
+Gets the replay mode used by the active runtime.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable durable behavior identifier.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-inputtype"></a>
+
+##### `InputType`
+
+```csharp
+string InputType { get; }
+```
+
+Gets the durable workflow input type name.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets additional operator-facing metadata describing replay semantics.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-outputtype"></a>
+
+##### `OutputType`
+
+```csharp
+string OutputType { get; }
+```
+
+Gets the durable workflow local output type name.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-requiredfeatureflagids"></a>
+
+##### `RequiredFeatureFlagIds`
+
+```csharp
+IReadOnlyList<string> RequiredFeatureFlagIds { get; }
+```
+
+Gets the ordered feature-flag identifiers that gate workflow execution.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-requireseventstore"></a>
+
+##### `RequiresEventStore`
+
+```csharp
+bool RequiresEventStore { get; }
+```
+
+Gets a value indicating whether the runtime contract requires an `IEventStore`.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; }
+```
+
+Gets the owning module identifier when one is known at runtime.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-statetype"></a>
+
+##### `StateType`
+
+```csharp
+string StateType { get; }
+```
+
+Gets the durable workflow replay-state type name.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-successstatuscodes"></a>
+
+##### `SuccessStatusCodes`
+
+```csharp
+IReadOnlyList<int> SuccessStatusCodes { get; }
+```
+
+Gets the HTTP success status codes the shared durable strategy can return.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-transportids"></a>
+
+##### `TransportIds`
+
+```csharp
+IReadOnlyList<string> TransportIds { get; }
+```
+
+Gets the transport identifiers that expose the durable workflow.
+
 <a id="type-cephalon-abstractions-execution-executiongraphdescriptor"></a>
 
 ### `ExecutionGraphDescriptor`
@@ -13345,6 +13539,76 @@ IReadOnlyList<string> Tags { get; }
 ```
 
 Gets descriptive tags associated with the hosted execution.
+
+<a id="type-cephalon-abstractions-execution-idurableexecutionruntimecatalog"></a>
+
+### `IDurableExecutionRuntimeCatalog`
+
+Exposes the active durable-execution workflows visible to the current runtime.
+
+#### Declaration
+```csharp
+public interface IDurableExecutionRuntimeCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-execution-idurableexecutionruntimecatalog-durableexecutions"></a>
+
+##### `DurableExecutions`
+
+```csharp
+IReadOnlyList<DurableExecutionRuntimeDescriptor> DurableExecutions { get; }
+```
+
+Gets all active durable-execution workflows visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-execution-idurableexecutionruntimecatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+DurableExecutionRuntimeDescriptor GetById(string behaviorId)
+```
+
+Gets one durable-execution workflow by its stable behavior identifier.
+
+Returns: The matching durable workflow descriptor, or `null` when it is not active.
+
+Parameters:
+- `behaviorId`: The durable behavior identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-execution-idurableexecutionruntimecatalog-getbysourcemodule-system-string"></a>
+
+##### `GetBySourceModule`
+
+```csharp
+IReadOnlyList<DurableExecutionRuntimeDescriptor> GetBySourceModule(string sourceModuleId)
+```
+
+Gets all durable-execution workflows contributed by the requested module.
+
+Returns: The matching durable workflows, or an empty list when the module contributed none.
+
+Parameters:
+- `sourceModuleId`: The source module identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-execution-idurableexecutionruntimecatalog-getbytransportid-system-string"></a>
+
+##### `GetByTransportId`
+
+```csharp
+IReadOnlyList<DurableExecutionRuntimeDescriptor> GetByTransportId(string transportId)
+```
+
+Gets all durable-execution workflows exposed over the requested transport.
+
+Returns: The matching durable workflows, or an empty list when none expose that transport.
+
+Parameters:
+- `transportId`: The stable transport identifier to filter by.
 
 <a id="type-cephalon-abstractions-execution-iexecutiongraphcontributor"></a>
 

@@ -9113,6 +9113,16 @@ IReadOnlyList<DiagnosticsConvention> DiagnosticsConventions { get; set; }
 
 The diagnostics conventions and published event-id catalogs visible to the runtime at the time the snapshot was created.
 
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-durableexecutions"></a>
+
+##### `DurableExecutions`
+
+```csharp
+IReadOnlyList<DurableExecutionRuntimeDescriptor> DurableExecutions { get; set; }
+```
+
+Gets the active durable-execution workflows visible to the runtime at the time the snapshot was created.
+
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-eventdispatchruntimes"></a>
 
 ##### `EventDispatchRuntimes`

@@ -2255,6 +2255,53 @@ Delivered:
   advertising a separate `runtime.feature-flags` capability, because runtime capability provenance
   is still module-based
 
+### ENG-111 Phase 12 durable execution runtime catalog baseline
+
+Status: done
+Estimate: 3
+Completed: April 19, 2026
+
+Why:
+
+- after `ENG-109`, Cephalon could execute durable workflows through shared replay semantics, but
+  operators still had no engine-owned answer for which durable workflows were active, who owned
+  them, which transports exposed them, or which feature flags gated them
+- `/engine/snapshot` still lacked a first-class durable-execution catalog even though the same
+  runtime already projected other operator-facing execution surfaces there
+- ASP.NET Core hosts still had no direct `/engine/durable-executions` routes, which forced tooling
+  to infer durable workflow posture indirectly from lower-level behavior topology and capability
+  metadata
+
+Acceptance:
+
+- `Cephalon.Abstractions` exposes host-agnostic durable runtime descriptor and catalog contracts
+- the durable runtime catalog stays derived from the shared behavior catalog plus registered
+  durable behavior types instead of introducing a second workflow registry beside ABT
+- `/engine/snapshot` carries additive durable-execution answers when the catalog is active
+- ASP.NET Core exposes list, behavior-id, module, and transport drill-down routes for active
+  durable workflows without creating host-only truth
+- docs, backlog, roadmap, project memory, reference docs, and focused composition/hosting/tooling
+  coverage stay aligned with the shipped operator-surface scope while replay-progress and
+  failure-posture follow-through remain later work
+
+Delivered:
+
+- `Cephalon.Abstractions` now exposes `DurableExecutionRuntimeDescriptor` and
+  `IDurableExecutionRuntimeCatalog` as the host-agnostic durable workflow operator contract
+- `Cephalon.Behaviors.Patterns` now derives `IDurableExecutionRuntimeCatalog` from
+  `IBehaviorCatalog` plus `IBehaviorTypeRegistry` so active durable workflows preserve source
+  module ownership, transport ids, required feature flags, typed input/state/output contracts,
+  `200` / `202` / `204` success posture, and replay metadata from shared durable topology truth
+- `Cephalon.Engine` now projects additive `snapshot.DurableExecutions` through optional service
+  resolution so the runtime snapshot can answer durable workflow posture without forcing the pack
+  into hosts that do not use it
+- `Cephalon.AspNetCore` now exposes `/engine/durable-executions`,
+  `/engine/durable-executions/{behaviorId}`,
+  `/engine/durable-executions/modules/{moduleId}`, and
+  `/engine/durable-executions/transports/{transportId}` as direct operator routes
+- focused composition, hosting, package-surface, component-doc, roadmap, backlog, project-memory,
+  and reference-doc coverage now lock the durable operator contract plus the new public surface
+
 ### ENG-069 Event-dispatch runtime operator-surface baseline
 
 Status: done
@@ -2706,3 +2753,4 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-108 phase 12 saga choreography baseline: `Cephalon.Abstractions` now lets behaviors declare `AsSagaChoreography()` and carries the stable `saga-choreography` pattern id through source-generated topology literals; `Cephalon.Behaviors.Patterns` now exposes `ISagaChoreographyPublisher`, `SagaChoreographyPublication`, `SagaChoreographyStepResult`, `InMemorySagaChoreographyPublisher`, and `ChoreographySagaExecutionStrategy` so choreography steps can stage continuation or compensation publications through a host-agnostic contract; `Cephalon.Behaviors` now exposes capability `behaviors.saga-choreography` plus advisory `ABT-005` when choreography steps omit outbox staging — **Shipped** · composition tests 64/64 + package-surface tests 157/157
 - ENG-109 phase 12 durable execution baseline: `Cephalon.Abstractions` now lets behaviors declare `AsDurableExecution()` and carries the stable `durable-execution` pattern id through source-generated topology literals; `Cephalon.Behaviors.Patterns` now exposes `IDurableExecution<TState>`, `IDurableExecution<TInput, TState, TOutput>`, `DurableExecutionState<TState>`, `DurableExecutionStepResult<TOutput>`, and `DurableExecutionStrategy` so durable workflows can replay from `IEventStore`, validate sequential stream versions, append continuation events, and return `200` / `202` / `204` truthfully; `Cephalon.Behaviors` now exposes capability `behaviors.durable-execution` plus compatibility rule `ABT-006`, and Kafka/RabbitMQ/test behavior contexts now flow `IEventStore` into the shared pipeline for non-default-host execution — **Shipped** · composition tests 112/112 + package-surface tests 157/157
 - ENG-110 phase 12 explicit saga choreography eventing bridge baseline: `Cephalon.Eventing.Behaviors` now exposes `AddBehaviorEventingBridge()` as the explicit companion-pack bridge that swaps the fallback in-memory choreography publisher for an outbox-backed eventing handoff when `EventDrivenIntegration`, publishing, and a real `IOutbox` are all active; the bridge preserves explicit `ISagaChoreographyPublisher` overrides, projects capability `eventing.behaviors.saga-choreography` plus the `saga-choreography-bridges` runtime surface, and keeps choreography ownership in `Cephalon.Behaviors.Patterns` instead of collapsing it into the `Cephalon.Eventing` baseline — **Shipped** · targeted composition tests 25/25 + tooling tests 236/236
+- ENG-111 phase 12 durable execution runtime catalog baseline: `Cephalon.Abstractions` now exposes `DurableExecutionRuntimeDescriptor` plus `IDurableExecutionRuntimeCatalog`, `Cephalon.Behaviors.Patterns` now derives the catalog from shared durable behavior topology plus registered implementation types, `Cephalon.Engine` now projects `snapshot.DurableExecutions`, and `Cephalon.AspNetCore` now exposes `/engine/durable-executions` plus behavior/module/transport drill-down routes while replay-progress and failure-posture follow-through remain later — **Shipped** · composition tests 1/1 + hosting tests 1/1 + package-surface tests 158/158

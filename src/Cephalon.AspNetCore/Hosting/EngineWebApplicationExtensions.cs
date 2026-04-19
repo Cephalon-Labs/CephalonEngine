@@ -128,6 +128,32 @@ public static class EngineWebApplicationExtensions
                 return policy is null ? Results.NotFound() : Results.Ok(policy);
             })
             .WithName("GetCephalonBehaviorResiliencePolicy");
+        engineGroup.MapGet("/durable-executions", (HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeCatalog>();
+                return TypedResults.Ok(catalog?.DurableExecutions ?? []);
+            })
+            .WithName("GetCephalonDurableExecutions");
+        engineGroup.MapGet("/durable-executions/modules/{moduleId}", (string moduleId, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeCatalog>();
+                return TypedResults.Ok(catalog?.GetBySourceModule(moduleId) ?? []);
+            })
+            .WithName("GetCephalonDurableExecutionsByModule");
+        engineGroup.MapGet("/durable-executions/transports/{transportId}", (string transportId, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeCatalog>();
+                return TypedResults.Ok(catalog?.GetByTransportId(transportId) ?? []);
+            })
+            .WithName("GetCephalonDurableExecutionsByTransport");
+        engineGroup.MapGet("/durable-executions/{behaviorId}", (string behaviorId, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeCatalog>();
+                var durableExecution = catalog?.GetById(behaviorId);
+
+                return durableExecution is null ? Results.NotFound() : Results.Ok(durableExecution);
+            })
+            .WithName("GetCephalonDurableExecution");
         engineGroup.MapGet("/rate-limiting", ([FromServices] IRateLimitingRuntimeCatalog catalog) => TypedResults.Ok(catalog.Policies))
             .WithName("GetCephalonRateLimiting");
         engineGroup.MapGet("/rate-limiting/{policyId}", (string policyId, [FromServices] IRateLimitingRuntimeCatalog catalog) =>
