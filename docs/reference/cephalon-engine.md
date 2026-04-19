@@ -827,6 +827,21 @@ Returns: The same builder instance.
 Parameters:
 - `settings`: The localization settings to merge, including default culture, supported cultures, and per-culture resource overrides.
 
+<a id="member-m-cephalon-engine-composition-enginebuilder-usemigrationsettings-cephalon-engine-configuration-migrationsettings"></a>
+
+##### `UseMigrationSettings`
+
+```csharp
+EngineBuilder UseMigrationSettings(MigrationSettings migration)
+```
+
+Replaces the migration-policy settings used by the runtime migration catalogs.
+
+Returns: The same builder instance.
+
+Parameters:
+- `migration`: The migration settings to apply.
+
 <a id="member-m-cephalon-engine-composition-enginebuilder-useoptions-cephalon-engine-configuration-engineoptions"></a>
 
 ##### `UseOptions`
@@ -1400,12 +1415,12 @@ public sealed class BehaviorExecutionResilienceOverrideSettings
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-retrysettings-cephalon-engine-configuration-timeoutsettings-cephalon-engine-configuration-circuitbreakersettings-cephalon-engine-configuration-bulkheadsettings"></a>
+<a id="member-m-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-retrysettings-cephalon-engine-configuration-timeoutsettings-cephalon-engine-configuration-circuitbreakersettings-cephalon-engine-configuration-bulkheadsettings-cephalon-engine-configuration-ratelimitingsettings"></a>
 
 ##### `BehaviorExecutionResilienceOverrideSettings`
 
 ```csharp
-BehaviorExecutionResilienceOverrideSettings(string id, IReadOnlyList<string> behaviorIds, IReadOnlyList<string> transportIds, RetrySettings retry, TimeoutSettings timeout, CircuitBreakerSettings circuitBreaker, BulkheadSettings bulkhead)
+BehaviorExecutionResilienceOverrideSettings(string id, IReadOnlyList<string> behaviorIds, IReadOnlyList<string> transportIds, RetrySettings retry, TimeoutSettings timeout, CircuitBreakerSettings circuitBreaker, BulkheadSettings bulkhead, RateLimitingSettings rateLimiting)
 ```
 
 Initializes a new instance of the `BehaviorExecutionResilienceOverrideSettings` class.
@@ -1418,6 +1433,7 @@ Parameters:
 - `timeout`: The timeout override requested for the targeted surface.
 - `circuitBreaker`: The circuit-breaker override requested for the targeted surface.
 - `bulkhead`: The bulkhead override requested for the targeted surface.
+- `rateLimiting`: The rate-limiting override requested for the targeted surface.
 
 #### Properties
 
@@ -1480,6 +1496,16 @@ string Id { get; }
 ```
 
 Gets the stable override identifier.
+
+<a id="member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-ratelimiting"></a>
+
+##### `RateLimiting`
+
+```csharp
+RateLimitingSettings RateLimiting { get; }
+```
+
+Gets the rate-limiting override requested for the targeted surface.
 
 <a id="member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-retry"></a>
 
@@ -2438,12 +2464,12 @@ public sealed class EngineSettings
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy-cephalon-engine-configuration-datasettings-cephalon-engine-configuration-databasetopologysettings-cephalon-engine-configuration-identitysettings-cephalon-engine-configuration-tenancysettings-cephalon-engine-configuration-auditsettings-cephalon-engine-configuration-messagingsettings-cephalon-engine-configuration-resiliencesettings"></a>
+<a id="member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy-cephalon-engine-configuration-datasettings-cephalon-engine-configuration-databasetopologysettings-cephalon-engine-configuration-identitysettings-cephalon-engine-configuration-tenancysettings-cephalon-engine-configuration-auditsettings-cephalon-engine-configuration-messagingsettings-cephalon-engine-configuration-resiliencesettings-cephalon-engine-configuration-migrationsettings"></a>
 
 ##### `EngineSettings`
 
 ```csharp
-EngineSettings(string blueprint, IReadOnlyList<string> patterns, IReadOnlyList<string> transports, IReadOnlyList<string> technologies, EngineOptions options, ModuleDiscoverySettings discovery, LocalizationSettings localization, FailurePolicy failurePolicy, TrustPolicy trustPolicy, PackagePolicy packagePolicy, DataSettings data, DatabaseTopologySettings databases, IdentitySettings identity, TenancySettings tenancy, AuditSettings audit, MessagingSettings messaging, ResilienceSettings resilience)
+EngineSettings(string blueprint, IReadOnlyList<string> patterns, IReadOnlyList<string> transports, IReadOnlyList<string> technologies, EngineOptions options, ModuleDiscoverySettings discovery, LocalizationSettings localization, FailurePolicy failurePolicy, TrustPolicy trustPolicy, PackagePolicy packagePolicy, DataSettings data, DatabaseTopologySettings databases, IdentitySettings identity, TenancySettings tenancy, AuditSettings audit, MessagingSettings messaging, ResilienceSettings resilience, MigrationSettings migration)
 ```
 
 Initializes a new instance of the `EngineSettings` class.
@@ -2466,6 +2492,7 @@ Parameters:
 - `audit`: Configuration-driven audit settings.
 - `messaging`: Configuration-driven messaging settings.
 - `resilience`: Configuration-driven resilience settings.
+- `migration`: Configuration-driven migration settings.
 
 #### Fields
 
@@ -2580,6 +2607,16 @@ MessagingSettings Messaging { get; }
 ```
 
 Gets configuration-driven messaging settings.
+
+<a id="member-p-cephalon-engine-configuration-enginesettings-migration"></a>
+
+##### `Migration`
+
+```csharp
+MigrationSettings Migration { get; }
+```
+
+Gets configuration-driven migration settings.
 
 <a id="member-p-cephalon-engine-configuration-enginesettings-options"></a>
 
@@ -3092,6 +3129,82 @@ MessagingSettings FromConfiguration(IConfiguration configuration, string section
 Reads messaging settings from configuration.
 
 Returns: The parsed messaging settings.
+
+Parameters:
+- `configuration`: The configuration source that contains the engine section.
+- `sectionPath`: The root configuration section path to read from.
+
+<a id="type-cephalon-engine-configuration-migrationsettings"></a>
+
+### `MigrationSettings`
+
+Describes configuration-driven migration settings for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class MigrationSettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-migrationsettings-ctor-cephalon-engine-configuration-stranglerfigmigrationsettings"></a>
+
+##### `MigrationSettings`
+
+```csharp
+MigrationSettings(StranglerFigMigrationSettings stranglerFig)
+```
+
+Initializes a new instance of the `MigrationSettings` class.
+
+Parameters:
+- `stranglerFig`: The strangler-fig migration settings resolved for the app.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-migrationsettings-empty"></a>
+
+##### `Empty`
+
+```csharp
+MigrationSettings Empty { get; }
+```
+
+Gets an empty migration-settings instance.
+
+<a id="member-p-cephalon-engine-configuration-migrationsettings-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any migration settings were explicitly supplied.
+
+<a id="member-p-cephalon-engine-configuration-migrationsettings-stranglerfig"></a>
+
+##### `StranglerFig`
+
+```csharp
+StranglerFigMigrationSettings StranglerFig { get; }
+```
+
+Gets the strangler-fig migration settings resolved for the app.
+
+#### Methods
+
+<a id="member-m-cephalon-engine-configuration-migrationsettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string"></a>
+
+##### `FromConfiguration`
+
+```csharp
+MigrationSettings FromConfiguration(IConfiguration configuration, string sectionPath)
+```
+
+Reads migration settings from configuration.
+
+Returns: The parsed migration settings.
 
 Parameters:
 - `configuration`: The configuration source that contains the engine section.
@@ -4205,6 +4318,213 @@ const StopFailureBehavior FailFast
 ```
 
 Stop shutdown immediately and rethrow the failure.
+
+<a id="type-cephalon-engine-configuration-stranglerfigmigrationsettings"></a>
+
+### `StranglerFigMigrationSettings`
+
+Describes configuration-driven strangler-fig migration settings for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class StranglerFigMigrationSettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-stranglerfigmigrationsettings-ctor-system-nullable-cephalon-abstractions-patterns-stranglerfigtarget-system-string-system-nullable-system-int32-system-collections-generic-ireadonlylist-cephalon-engine-configuration-stranglerfigroutepolicysettings"></a>
+
+##### `StranglerFigMigrationSettings`
+
+```csharp
+StranglerFigMigrationSettings(StranglerFigTarget? defaultTarget, string defaultProgressState, int? defaultProgressPercent, IReadOnlyList<StranglerFigRoutePolicySettings> routes)
+```
+
+Initializes a new instance of the `StranglerFigMigrationSettings` class.
+
+Parameters:
+- `defaultTarget`: The default target to request for routes without an explicit route-level override.
+- `defaultProgressState`: The default normalized progress state for routes without an explicit route-level override.
+- `defaultProgressPercent`: The default normalized progress percent for routes without an explicit route-level override.
+- `routes`: The route-specific strangler-fig migration-policy entries.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-stranglerfigmigrationsettings-defaultprogresspercent"></a>
+
+##### `DefaultProgressPercent`
+
+```csharp
+int? DefaultProgressPercent { get; }
+```
+
+Gets the default normalized progress percent for routes without an explicit route-level override.
+
+<a id="member-p-cephalon-engine-configuration-stranglerfigmigrationsettings-defaultprogressstate"></a>
+
+##### `DefaultProgressState`
+
+```csharp
+string DefaultProgressState { get; }
+```
+
+Gets the default normalized progress state for routes without an explicit route-level override.
+
+<a id="member-p-cephalon-engine-configuration-stranglerfigmigrationsettings-defaulttarget"></a>
+
+##### `DefaultTarget`
+
+```csharp
+StranglerFigTarget? DefaultTarget { get; }
+```
+
+Gets the default target to request for routes without an explicit route-level override.
+
+<a id="member-p-cephalon-engine-configuration-stranglerfigmigrationsettings-empty"></a>
+
+##### `Empty`
+
+```csharp
+StranglerFigMigrationSettings Empty { get; }
+```
+
+Gets an empty strangler-fig migration-settings instance.
+
+<a id="member-p-cephalon-engine-configuration-stranglerfigmigrationsettings-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any strangler-fig migration settings were explicitly supplied.
+
+<a id="member-p-cephalon-engine-configuration-stranglerfigmigrationsettings-routes"></a>
+
+##### `Routes`
+
+```csharp
+IReadOnlyList<StranglerFigRoutePolicySettings> Routes { get; }
+```
+
+Gets the route-specific strangler-fig migration-policy entries.
+
+#### Methods
+
+<a id="member-m-cephalon-engine-configuration-stranglerfigmigrationsettings-fromsection-microsoft-extensions-configuration-iconfigurationsection"></a>
+
+##### `FromSection`
+
+```csharp
+StranglerFigMigrationSettings FromSection(IConfigurationSection section)
+```
+
+Reads strangler-fig migration settings from the supplied configuration section.
+
+Returns: The parsed strangler-fig migration settings.
+
+Parameters:
+- `section`: The configuration section that contains the strangler-fig migration settings.
+
+<a id="type-cephalon-engine-configuration-stranglerfigroutepolicysettings"></a>
+
+### `StranglerFigRoutePolicySettings`
+
+Describes one route-specific strangler-fig migration-policy override.
+
+#### Declaration
+```csharp
+public sealed class StranglerFigRoutePolicySettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-stranglerfigroutepolicysettings-ctor-system-string-system-nullable-cephalon-abstractions-patterns-stranglerfigtarget-system-string-system-nullable-system-int32-system-string"></a>
+
+##### `StranglerFigRoutePolicySettings`
+
+```csharp
+StranglerFigRoutePolicySettings(string routeId, StranglerFigTarget? target, string progressState, int? progressPercent, string notes)
+```
+
+Initializes a new instance of the `StranglerFigRoutePolicySettings` class.
+
+Parameters:
+- `routeId`: The stable strangler-fig route identifier to target.
+- `target`: The route-specific requested target override.
+- `progressState`: The route-specific normalized migration-progress state.
+- `progressPercent`: The route-specific normalized migration-progress percentage.
+- `notes`: Optional operator-facing notes that explain the route-specific override.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-stranglerfigroutepolicysettings-notes"></a>
+
+##### `Notes`
+
+```csharp
+string Notes { get; }
+```
+
+Gets optional operator-facing notes that explain the route-specific override.
+
+<a id="member-p-cephalon-engine-configuration-stranglerfigroutepolicysettings-progresspercent"></a>
+
+##### `ProgressPercent`
+
+```csharp
+int? ProgressPercent { get; }
+```
+
+Gets the route-specific normalized migration-progress percentage.
+
+<a id="member-p-cephalon-engine-configuration-stranglerfigroutepolicysettings-progressstate"></a>
+
+##### `ProgressState`
+
+```csharp
+string ProgressState { get; }
+```
+
+Gets the route-specific normalized migration-progress state.
+
+<a id="member-p-cephalon-engine-configuration-stranglerfigroutepolicysettings-routeid"></a>
+
+##### `RouteId`
+
+```csharp
+string RouteId { get; }
+```
+
+Gets the stable strangler-fig route identifier to target.
+
+<a id="member-p-cephalon-engine-configuration-stranglerfigroutepolicysettings-target"></a>
+
+##### `Target`
+
+```csharp
+StranglerFigTarget? Target { get; }
+```
+
+Gets the route-specific requested target override.
+
+#### Methods
+
+<a id="member-m-cephalon-engine-configuration-stranglerfigroutepolicysettings-fromsection-microsoft-extensions-configuration-iconfigurationsection"></a>
+
+##### `FromSection`
+
+```csharp
+StranglerFigRoutePolicySettings FromSection(IConfigurationSection section)
+```
+
+Reads one route-specific strangler-fig migration-policy override from configuration.
+
+Returns: The parsed route-policy settings.
+
+Parameters:
+- `section`: The configuration section to read.
 
 <a id="type-cephalon-engine-configuration-tenancysettings"></a>
 
@@ -7890,6 +8210,16 @@ RuntimeStatusSnapshot Status { get; set; }
 ```
 
 The current lifecycle status of the runtime.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-stranglerfigroutepolicies"></a>
+
+##### `StranglerFigRoutePolicies`
+
+```csharp
+IReadOnlyList<StranglerFigMigrationRuntimeDescriptor> StranglerFigRoutePolicies { get; set; }
+```
+
+Gets the effective strangler-fig migration-policy answers visible to the runtime at the time the snapshot was created.
 
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-stranglerfigroutes"></a>
 

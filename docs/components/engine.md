@@ -24,7 +24,7 @@
 - additive authorization-policy contracts and runtime authorization-policy catalogs
 - additive audit-store contracts and runtime audit-store catalogs
 - additive event-dispatch runtime descriptor and state catalogs
-- additive strangler-fig route-contribution contracts plus runtime route and request-resolution catalogs
+- additive strangler-fig route-contribution contracts plus runtime route, migration-policy, and request-resolution catalogs
 - manifest generation and runtime introspection snapshots
 - built-in blueprint, pattern, transport, and technology catalogs
 - trust and capability policy evaluation
@@ -105,9 +105,12 @@ strangler-fig follow-through is now also shipped: when modules or host code cont
 `StranglerFigRouteDescriptor` entries, the engine composes them through
 `IStranglerFigRuntimeCatalog`, resolves requests through `IStranglerFigRouter`, auto-selects the
 `strangler-fig` pattern in the app model, and projects the live route set into
-`snapshot.StranglerFigRoutes` and the ASP.NET Core `/engine/strangler-fig` surface. Host-specific
-proxy or cutover behavior, migration progress tracking, and the BFF client-binding runtime remain
-later slices. The new host-agnostic `IRateLimitingRuntimeCatalog` and
+`snapshot.StranglerFigRoutes` and the ASP.NET Core `/engine/strangler-fig` surface. The next
+policy/progress slice is now also shipped: `Engine:Migration:StranglerFig` overlays deterministic
+default plus per-route target and progress policy into `IStranglerFigMigrationRuntimeCatalog`,
+`snapshot.StranglerFigRoutePolicies`, and the ASP.NET Core `/engine/strangler-fig/runtime`
+surface without changing the authored route catalog. Host-specific proxy or cutover behavior and
+the BFF client-binding runtime remain later slices. The new host-agnostic `IRateLimitingRuntimeCatalog` and
 `RateLimitingRuntimeDescriptor` contracts also let host adapters publish effective enforcement into
 `snapshot.RateLimitingPolicies` without pretending the engine core itself performs HTTP throttling.
 `RateLimitingSelection` now also carries additive `Overrides` projected as

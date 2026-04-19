@@ -61,6 +61,7 @@ public sealed class EngineBuilder
     private FailurePolicy failurePolicy = FailurePolicy.Default;
     private TrustPolicy trustPolicy = TrustPolicy.Default;
     private PackagePolicy packagePolicy = PackagePolicy.Default;
+    private MigrationSettings migrationSettings = MigrationSettings.Empty;
 
     /// <summary>
     /// Creates a new builder over the supplied service collection.
@@ -134,6 +135,7 @@ public sealed class EngineBuilder
         UseFailurePolicy(settings.FailurePolicy);
         UseTrustPolicy(settings.TrustPolicy);
         UsePackagePolicy(settings.PackagePolicy);
+        UseMigrationSettings(settings.Migration);
 
         return this;
     }
@@ -292,6 +294,19 @@ public sealed class EngineBuilder
         ArgumentNullException.ThrowIfNull(policy);
 
         packagePolicy = policy;
+        return this;
+    }
+
+    /// <summary>
+    /// Replaces the migration-policy settings used by the runtime migration catalogs.
+    /// </summary>
+    /// <param name="migration">The migration settings to apply.</param>
+    /// <returns>The same builder instance.</returns>
+    public EngineBuilder UseMigrationSettings(MigrationSettings migration)
+    {
+        ArgumentNullException.ThrowIfNull(migration);
+
+        migrationSettings = migration;
         return this;
     }
 
@@ -557,6 +572,7 @@ public sealed class EngineBuilder
             Services.AddSingleton(failurePolicy);
             Services.AddSingleton(trustPolicy);
             Services.AddSingleton(packagePolicy);
+            Services.AddSingleton(migrationSettings);
 
             var activeModules = ModuleActivation.ApplyOptions(allModules, engineOptions);
             var orderedModules = ModuleOrdering.Order(activeModules);
@@ -648,8 +664,10 @@ public sealed class EngineBuilder
             Services.TryAddSingleton<IReadOnlyList<AuditStoreDescriptor>>(_ => auditStores.ToArray());
             Services.TryAddSingleton<IReadOnlyList<OutboxDescriptor>>(_ => outboxes.ToArray());
             Services.TryAddSingleton<StranglerFigRuntimeCatalogSnapshot>(_ =>
-                new StranglerFigRuntimeCatalogSnapshot(activeStranglerFigRoutes));
+                new StranglerFigRuntimeCatalogSnapshot(activeStranglerFigRoutes, migrationSettings.StranglerFig));
             Services.TryAddSingleton<IStranglerFigRuntimeCatalog>(serviceProvider =>
+                serviceProvider.GetRequiredService<StranglerFigRuntimeCatalogSnapshot>());
+            Services.TryAddSingleton<IStranglerFigMigrationRuntimeCatalog>(serviceProvider =>
                 serviceProvider.GetRequiredService<StranglerFigRuntimeCatalogSnapshot>());
             Services.TryAddSingleton<IStranglerFigRouter>(serviceProvider =>
                 serviceProvider.GetRequiredService<StranglerFigRuntimeCatalogSnapshot>());

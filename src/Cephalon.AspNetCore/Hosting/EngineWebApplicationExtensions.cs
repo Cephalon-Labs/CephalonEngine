@@ -439,6 +439,8 @@ public static class EngineWebApplicationExtensions
             .WithName("GetCephalonAuthorizationPolicy");
         engineGroup.MapGet("/strangler-fig", ([FromServices] IStranglerFigRuntimeCatalog catalog) => TypedResults.Ok(catalog.Routes))
             .WithName("GetCephalonStranglerFigRoutes");
+        engineGroup.MapGet("/strangler-fig/runtime", ([FromServices] IStranglerFigMigrationRuntimeCatalog catalog) => TypedResults.Ok(catalog.Routes))
+            .WithName("GetCephalonStranglerFigRuntimeRoutes");
         engineGroup.MapGet("/strangler-fig/resolve", async (
                 string path,
                 string? method,
@@ -461,6 +463,13 @@ public static class EngineWebApplicationExtensions
                 return route is null ? Results.NotFound() : Results.Ok(route);
             })
             .WithName("GetCephalonStranglerFigRoute");
+        engineGroup.MapGet("/strangler-fig/runtime/{routeId}", (string routeId, [FromServices] IStranglerFigMigrationRuntimeCatalog catalog) =>
+            {
+                var route = catalog.GetById(routeId);
+
+                return route is null ? Results.NotFound() : Results.Ok(route);
+            })
+            .WithName("GetCephalonStranglerFigRuntimeRoute");
         engineGroup.MapGet("/patterns", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Patterns))
             .WithName("GetCephalonPatterns");
         engineGroup.MapGet("/technologies", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Technologies))

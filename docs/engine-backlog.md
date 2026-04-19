@@ -2059,6 +2059,34 @@ Delivered:
 - targeted composition, hosting, and package-surface coverage now prove route collection, longest-prefix plus fallback request resolution, runtime snapshot projection, and the new abstraction-layer public surface
 - architecture recommendations, component docs, roadmap, backlog, and project memory now describe the shipped contract-first strangler-fig baseline truthfully while keeping progress tracking, `Engine:Migration` configuration, and host-specific cutover behavior explicitly planned
 
+### ENG-101 Phase 12 strangler-fig migration policy and progress baseline
+
+Status: done
+Estimate: 5
+Completed: April 19, 2026
+
+Why:
+
+- after `ENG-096`, operators could see the authored strangler-fig route catalog and probe request resolution, but the runtime still lacked one engine-owned answer for requested-versus-effective migration target policy and route-level progress
+- teams adopting Cephalon incrementally need migration policy to stay configuration-driven so target cutover defaults and route-specific overrides do not force project-local host code rewrites
+- the strangler-fig operator story was still incomplete because `/engine/snapshot` and ASP.NET Core hosts could not distinguish authored preference from configuration-driven target selection or report route-level migration progress truthfully
+
+Acceptance:
+
+- `Cephalon.Abstractions` exposes a host-agnostic strangler-fig migration-policy runtime catalog plus a typed runtime descriptor for effective target selection and progress answers
+- `Cephalon.Engine` binds `Engine:Migration:StranglerFig`, validates route-targeting truthfully, applies default plus per-route overlays deterministically, and projects the effective answer into `/engine/snapshot`
+- ASP.NET Core hosts expose direct operator routes for the effective strangler-fig migration-policy catalog without changing the existing authored route-catalog surface
+- docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the policy/progress scope while remaining honest that host-level cutover or proxy behavior is still later work
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships `IStranglerFigMigrationRuntimeCatalog` plus `StranglerFigMigrationRuntimeDescriptor` so hosts, tooling, and companion packs can read effective requested-versus-selected target answers and route-level migration progress without referencing `Cephalon.Engine` concrete types
+- `Cephalon.Engine` now binds `Engine:Migration:StranglerFig` through `MigrationSettings`, `StranglerFigMigrationSettings`, and `StranglerFigRoutePolicySettings`, validates unknown route-policy ids fail fast, and applies default plus per-route target/progress overlays deterministically in `StranglerFigRuntimeCatalogSnapshot`
+- `/engine/snapshot` now also projects `StranglerFigRoutePolicies`, while request resolution metadata now reports requested target, target source, selection mode, progress state, progress percent, and optional route notes truthfully for the matched route
+- `Cephalon.AspNetCore` now exposes `/engine/strangler-fig/runtime` and `/engine/strangler-fig/runtime/{routeId}` as the direct operator surface for effective strangler-fig migration policy answers while preserving `/engine/strangler-fig` as the authored route-catalog surface
+- targeted composition, hosting, and package-surface coverage now prove default plus per-route overlay behavior, snapshot/runtime-route projection, fail-fast validation for unknown route policies, and the new abstraction-layer public surface through composition tests `4/4`, hosting tests `1/1`, and package-surface tests `153/153`
+- architecture recommendations, component docs, roadmap, backlog, and project memory now describe the shipped policy/progress baseline truthfully while keeping host-level cutover and proxy behavior explicitly planned
+
 ### ENG-069 Event-dispatch runtime operator-surface baseline
 
 Status: done
@@ -2498,3 +2526,4 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-098 behavior-execution rate-limiting baseline: `Cephalon.Abstractions` now extends `BehaviorExecutionResilienceSelection` plus `BehaviorExecutionResilienceOverrideSelection` with rate-limiting inputs, `Cephalon.Engine` now binds and validates behavior-execution rate-limiting overrides, `Cephalon.Behaviors` now enforces shared execution rate limiting in the behavior-dispatch middleware while publishing truthful rate-limiting metadata through `/engine/behavior-resilience` plus `snapshot.BehaviorResiliencePolicies`, and `Cephalon.Behaviors.Http` now proves both REST `429` precedence paths: the host-owned ASP.NET Core limiter wins when both layers are active, while `Engine:Resilience:RateLimiting:Overrides` can disable the endpoint policy for a targeted behavior/transport pair so the behavior-owned `429` answer surfaces without breaking OpenAPI or runtime truth — **Shipped** · targeted composition tests 16/16 + hosting tests 8/8 + package-surface tests 153/153
 - ENG-099 generic behavior HTTP transport-native rate-limit envelopes: `Cephalon.Behaviors.Http` now shares one limiter-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution limiter rejections keep protocol-native error shapes with stable Cephalon codes plus `429` metadata instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned rate limiting — **Shipped** · targeted hosting tests 13/13 + composition tests 28/28 + package-surface tests 153/153
 - ENG-100 generic behavior HTTP transport-native timeout and circuit-breaker envelopes: `Cephalon.Behaviors.Http` now shares one resilience-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution timeout and open-circuit rejections keep protocol-native error shapes with stable Cephalon codes plus `503` metadata and optional retry-after timing instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned timeout and circuit-breaker policy — **Shipped** · targeted hosting tests 25/25 + composition tests 28/28 + package-surface tests 153/153
+- ENG-101 phase 12 strangler-fig migration policy and progress baseline: `Cephalon.Abstractions` now exposes `IStranglerFigMigrationRuntimeCatalog` plus `StranglerFigMigrationRuntimeDescriptor`, `Cephalon.Engine` now binds deterministic `Engine:Migration:StranglerFig` default plus per-route overlays into `snapshot.StranglerFigRoutePolicies`, and `Cephalon.AspNetCore` now exposes `/engine/strangler-fig/runtime` plus `/engine/strangler-fig/runtime/{routeId}` while host-level cutover remains later — **Shipped** · composition tests 4/4 + hosting tests 1/1 + package-surface tests 153/153

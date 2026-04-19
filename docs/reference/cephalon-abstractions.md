@@ -699,12 +699,12 @@ public sealed class BehaviorExecutionResilienceOverrideSelection
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-abstractions-appmodel-retryselection-cephalon-abstractions-appmodel-timeoutselection-cephalon-abstractions-appmodel-circuitbreakerselection-cephalon-abstractions-appmodel-bulkheadselection"></a>
+<a id="member-m-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-abstractions-appmodel-retryselection-cephalon-abstractions-appmodel-timeoutselection-cephalon-abstractions-appmodel-circuitbreakerselection-cephalon-abstractions-appmodel-bulkheadselection-cephalon-abstractions-appmodel-ratelimitingselection"></a>
 
 ##### `BehaviorExecutionResilienceOverrideSelection`
 
 ```csharp
-BehaviorExecutionResilienceOverrideSelection(string id, IReadOnlyList<string> behaviorIds, IReadOnlyList<string> transportIds, RetrySelection retry, TimeoutSelection timeout, CircuitBreakerSelection circuitBreaker, BulkheadSelection bulkhead)
+BehaviorExecutionResilienceOverrideSelection(string id, IReadOnlyList<string> behaviorIds, IReadOnlyList<string> transportIds, RetrySelection retry, TimeoutSelection timeout, CircuitBreakerSelection circuitBreaker, BulkheadSelection bulkhead, RateLimitingSelection rateLimiting)
 ```
 
 Initializes a new instance of the `BehaviorExecutionResilienceOverrideSelection` class.
@@ -717,6 +717,7 @@ Parameters:
 - `timeout`: The timeout override requested for the targeted surface.
 - `circuitBreaker`: The circuit-breaker override requested for the targeted surface.
 - `bulkhead`: The bulkhead override requested for the targeted surface.
+- `rateLimiting`: The rate-limiting override requested for the targeted surface.
 
 #### Properties
 
@@ -779,6 +780,16 @@ string Id { get; }
 ```
 
 Gets the stable override identifier.
+
+<a id="member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-ratelimiting"></a>
+
+##### `RateLimiting`
+
+```csharp
+RateLimitingSelection RateLimiting { get; }
+```
+
+Gets the rate-limiting override requested for the targeted surface.
 
 <a id="member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-retry"></a>
 
@@ -14294,6 +14305,61 @@ Gets the declared module version, when one is available.
 
 ## Namespace Cephalon.Abstractions.Patterns
 
+<a id="type-cephalon-abstractions-patterns-istranglerfigmigrationruntimecatalog"></a>
+
+### `IStranglerFigMigrationRuntimeCatalog`
+
+Exposes the effective strangler-fig migration policy visible to the current runtime.
+
+#### Declaration
+```csharp
+public interface IStranglerFigMigrationRuntimeCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-patterns-istranglerfigmigrationruntimecatalog-routes"></a>
+
+##### `Routes`
+
+```csharp
+IReadOnlyList<StranglerFigMigrationRuntimeDescriptor> Routes { get; }
+```
+
+Gets all effective strangler-fig migration-policy answers visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-patterns-istranglerfigmigrationruntimecatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+StranglerFigMigrationRuntimeDescriptor GetById(string routeId)
+```
+
+Gets one effective strangler-fig migration-policy answer by its stable route identifier.
+
+Returns: The matching runtime descriptor, or `null` when it is not active.
+
+Parameters:
+- `routeId`: The route identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-patterns-istranglerfigmigrationruntimecatalog-getbysourcemodule-system-string"></a>
+
+##### `GetBySourceModule`
+
+```csharp
+IReadOnlyList<StranglerFigMigrationRuntimeDescriptor> GetBySourceModule(string sourceModuleId)
+```
+
+Gets all effective strangler-fig migration-policy answers owned by the requested module.
+
+Returns: The matching runtime descriptors, or an empty list when none are active.
+
+Parameters:
+- `sourceModuleId`: The module identifier to filter by.
+
 <a id="type-cephalon-abstractions-patterns-istranglerfigroutecontributor"></a>
 
 ### `IStranglerFigRouteContributor`
@@ -14648,6 +14714,231 @@ const PatternKind Organization
 ```
 
 Identifies an organization pattern.
+
+<a id="type-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor"></a>
+
+### `StranglerFigMigrationRuntimeDescriptor`
+
+Describes the effective runtime migration policy for one strangler-fig route.
+
+#### Declaration
+```csharp
+public sealed class StranglerFigMigrationRuntimeDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-cephalon-abstractions-patterns-stranglerfigtarget-cephalon-abstractions-patterns-stranglerfigtarget-cephalon-abstractions-patterns-stranglerfigtarget-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `StranglerFigMigrationRuntimeDescriptor`
+
+```csharp
+StranglerFigMigrationRuntimeDescriptor(string routeId, string sourceModuleId, string displayName, string description, string pathPrefix, StranglerFigTarget authoredTarget, StranglerFigTarget requestedTarget, StranglerFigTarget effectiveTarget, string requestedTargetSource, string selectionMode, string selectedEndpoint, string legacyEndpoint, string modernEndpoint, IReadOnlyList<string> methods, string progressState, int progressPercent, IReadOnlyDictionary<string, string> metadata, IReadOnlyDictionary<string, string> runtimeMetadata)
+```
+
+Creates a strangler-fig runtime migration descriptor.
+
+Parameters:
+- `routeId`: The stable route identifier.
+- `sourceModuleId`: The Cephalon module that owns the modern boundary for this route.
+- `displayName`: The operator-facing route name.
+- `description`: The human-readable description of the migration boundary.
+- `pathPrefix`: The rooted path prefix that this route matches.
+- `authoredTarget`: The target preferred by the authored route descriptor.
+- `requestedTarget`: The target requested after applying migration-policy overlays.
+- `effectiveTarget`: The target that will actually receive traffic after endpoint fallback is considered.
+- `requestedTargetSource`: The source of the requested target, such as `authored-route` or `migration-route`.
+- `selectionMode`: The runtime selection result, such as `requested-target` or `fallback-target`.
+- `selectedEndpoint`: The concrete endpoint or boundary identifier that will receive traffic.
+- `legacyEndpoint`: The legacy boundary identifier or endpoint when one is configured.
+- `modernEndpoint`: The modern Cephalon boundary identifier or endpoint when one is configured.
+- `methods`: Optional request methods that this route matches.
+- `progressState`: The normalized migration-progress state for the route.
+- `progressPercent`: The normalized migration-progress percentage for the route.
+- `metadata`: The original authored route metadata.
+- `runtimeMetadata`: Additional runtime-only metadata such as notes or overlay provenance.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-authoredtarget"></a>
+
+##### `AuthoredTarget`
+
+```csharp
+StranglerFigTarget AuthoredTarget { get; }
+```
+
+Gets the target preferred by the authored route descriptor.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable description of the migration boundary.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing route name.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-effectivetarget"></a>
+
+##### `EffectiveTarget`
+
+```csharp
+StranglerFigTarget EffectiveTarget { get; }
+```
+
+Gets the target that will actually receive traffic after endpoint fallback is considered.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-legacyendpoint"></a>
+
+##### `LegacyEndpoint`
+
+```csharp
+string LegacyEndpoint { get; }
+```
+
+Gets the legacy boundary identifier or endpoint when one is configured.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets the original authored route metadata.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-methods"></a>
+
+##### `Methods`
+
+```csharp
+IReadOnlyList<string> Methods { get; }
+```
+
+Gets the normalized request methods that this route matches.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-modernendpoint"></a>
+
+##### `ModernEndpoint`
+
+```csharp
+string ModernEndpoint { get; }
+```
+
+Gets the modern Cephalon boundary identifier or endpoint when one is configured.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-pathprefix"></a>
+
+##### `PathPrefix`
+
+```csharp
+string PathPrefix { get; }
+```
+
+Gets the rooted path prefix that matches this route.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-progresspercent"></a>
+
+##### `ProgressPercent`
+
+```csharp
+int ProgressPercent { get; }
+```
+
+Gets the normalized migration-progress percentage for the route.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-progressstate"></a>
+
+##### `ProgressState`
+
+```csharp
+string ProgressState { get; }
+```
+
+Gets the normalized migration-progress state for the route.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-requestedtarget"></a>
+
+##### `RequestedTarget`
+
+```csharp
+StranglerFigTarget RequestedTarget { get; }
+```
+
+Gets the target requested after applying migration-policy overlays.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-requestedtargetsource"></a>
+
+##### `RequestedTargetSource`
+
+```csharp
+string RequestedTargetSource { get; }
+```
+
+Gets the source of the requested target, such as `authored-route`, `migration-default`, or `migration-route`.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-routeid"></a>
+
+##### `RouteId`
+
+```csharp
+string RouteId { get; }
+```
+
+Gets the stable route identifier.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-runtimemetadata"></a>
+
+##### `RuntimeMetadata`
+
+```csharp
+IReadOnlyDictionary<string, string> RuntimeMetadata { get; }
+```
+
+Gets runtime-only metadata such as notes or overlay provenance.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-selectedendpoint"></a>
+
+##### `SelectedEndpoint`
+
+```csharp
+string SelectedEndpoint { get; }
+```
+
+Gets the concrete endpoint or boundary identifier that will receive traffic.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-selectionmode"></a>
+
+##### `SelectionMode`
+
+```csharp
+string SelectionMode { get; }
+```
+
+Gets the runtime selection result, such as `requested-target` or `fallback-target`.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; }
+```
+
+Gets the module that owns the modern Cephalon boundary for this route.
 
 <a id="type-cephalon-abstractions-patterns-stranglerfigrequest"></a>
 
@@ -15055,12 +15346,12 @@ public sealed class BehaviorExecutionResilienceSelection
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-ctor-cephalon-abstractions-appmodel-retryselection-cephalon-abstractions-appmodel-timeoutselection-cephalon-abstractions-appmodel-circuitbreakerselection-cephalon-abstractions-appmodel-bulkheadselection"></a>
+<a id="member-m-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-ctor-cephalon-abstractions-appmodel-retryselection-cephalon-abstractions-appmodel-timeoutselection-cephalon-abstractions-appmodel-circuitbreakerselection-cephalon-abstractions-appmodel-bulkheadselection-cephalon-abstractions-appmodel-ratelimitingselection"></a>
 
 ##### `BehaviorExecutionResilienceSelection`
 
 ```csharp
-BehaviorExecutionResilienceSelection(RetrySelection retry, TimeoutSelection timeout, CircuitBreakerSelection circuitBreaker, BulkheadSelection bulkhead)
+BehaviorExecutionResilienceSelection(RetrySelection retry, TimeoutSelection timeout, CircuitBreakerSelection circuitBreaker, BulkheadSelection bulkhead, RateLimitingSelection rateLimiting)
 ```
 
 Initializes a new instance of the `BehaviorExecutionResilienceSelection` class.
@@ -15070,6 +15361,7 @@ Parameters:
 - `timeout`: The timeout selection that applies to behavior execution.
 - `circuitBreaker`: The circuit-breaker selection that applies to behavior execution.
 - `bulkhead`: The bulkhead selection that applies to behavior execution.
+- `rateLimiting`: The rate-limiting selection that applies to behavior execution.
 
 #### Properties
 
@@ -15112,6 +15404,16 @@ bool HasValues { get; }
 ```
 
 Gets a value indicating whether any behavior-execution resilience inputs were supplied.
+
+<a id="member-p-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-ratelimiting"></a>
+
+##### `RateLimiting`
+
+```csharp
+RateLimitingSelection RateLimiting { get; }
+```
+
+Gets the rate-limiting selection that applies to behavior execution.
 
 <a id="member-p-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-retry"></a>
 
@@ -16907,7 +17209,7 @@ Gets all REST endpoint override rules visible to the current runtime.
 IReadOnlyList<RestEndpointOverrideDescriptor> GetByBehaviorId(string behaviorId)
 ```
 
-Gets all REST endpoint override rules that target the requested behavior identifier.
+Gets all REST endpoint override rules that target the requested behavior identifier, either directly or through configured behavior-id prefixes.
 
 Returns: The matching override descriptors, or an empty list when no rules exist.
 
@@ -17131,7 +17433,7 @@ Gets all REST endpoint suppression rules visible to the current runtime.
 IReadOnlyList<RestEndpointSuppressionDescriptor> GetByBehaviorId(string behaviorId)
 ```
 
-Gets all REST endpoint suppression rules that target the requested behavior identifier.
+Gets all REST endpoint suppression rules that target the requested behavior identifier, either directly or through configured behavior-id prefixes.
 
 Returns: The matching suppression descriptors, or an empty list when no rules exist.
 
@@ -18754,6 +19056,16 @@ const RestEndpointGovernanceRuleSelectionBasis NarrowerAuthoringStyleScope
 
 A rule that constrained fewer authoring styles won over a broader authoring-style scope.
 
+<a id="member-f-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-narrowerbehaviorscope"></a>
+
+##### `NarrowerBehaviorScope`
+
+```csharp
+const RestEndpointGovernanceRuleSelectionBasis NarrowerBehaviorScope
+```
+
+A rule that targeted a narrower behavior-id scope won over a broader behavior-targeted rule.
+
 <a id="member-f-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-narrowercandidateset"></a>
 
 ##### `NarrowerCandidateSet`
@@ -19189,6 +19501,16 @@ const RestEndpointOverrideActionKind Pattern
 
 The rule changes the effective relative route pattern.
 
+<a id="member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-preserveimplicitqueryfallback"></a>
+
+##### `PreserveImplicitQueryFallback`
+
+```csharp
+const RestEndpointOverrideActionKind PreserveImplicitQueryFallback
+```
+
+The rule opts the matched explicit-binding shorthand candidate into preserved implicit-query fallback.
+
 <a id="member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-removebindingproperties"></a>
 
 ##### `RemoveBindingProperties`
@@ -19403,12 +19725,12 @@ public sealed class RestEndpointOverrideDescriptor
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-transports-restendpointoverridedescriptor-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-nullable-system-int32-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-boolean-cephalon-abstractions-transports-restendpointoverridebindingmode-system-boolean-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingfallbackmode-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointoverrideactionkind-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointoverrideactionkind-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceselectionbasissummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceoverrideactionkindsummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceoverrideactionkindsummarydescriptor-system-collections-generic-ireadonlylist-system-string"></a>
+<a id="member-m-cephalon-abstractions-transports-restendpointoverridedescriptor-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-nullable-system-int32-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-boolean-cephalon-abstractions-transports-restendpointoverridebindingmode-system-boolean-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingfallbackmode-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointoverrideactionkind-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointoverrideactionkind-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceselectionbasissummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceoverrideactionkindsummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceoverrideactionkindsummarydescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-boolean"></a>
 
 ##### `RestEndpointOverrideDescriptor`
 
 ```csharp
-RestEndpointOverrideDescriptor(string id, IReadOnlyList<string> candidateIds, IReadOnlyList<string> behaviorIds, IReadOnlyList<string> sourceModuleIds, IReadOnlyList<string> authoringStyles, IReadOnlyList<int> apiVersionMajors, IReadOnlyList<string> methods, IReadOnlyList<string> relativePatterns, IReadOnlyList<string> routeGroupPrefixes, int? apiVersionMajor, string method, string pattern, string routeGroupPrefix, string openApiDocumentName, string tagName, string endpointName, string summary, string description, string requiredCapabilityKey, bool clearRequiredCapability, IReadOnlyList<RestEndpointBindingDescriptor> bindings, IReadOnlyList<string> removedBindingProperties, bool clearBindings, RestEndpointOverrideBindingMode bindingMode, bool clearEndpointName, bool clearSummary, bool clearDescription, IReadOnlyList<string> openApiDocumentNames, IReadOnlyList<string> tagNames, IReadOnlyList<string> endpointNames, IReadOnlyList<RestEndpointBindingFallbackMode> bindingFallbackModes, IReadOnlyList<RestEndpointBindingDescriptor> targetBindings, IReadOnlyList<string> matchedCandidateIds, IReadOnlyList<string> selectedCandidateIds, IReadOnlyList<string> appliedCandidateIds, IReadOnlyList<string> skippedCandidateIds, IReadOnlyList<RestEndpointGovernanceRuleSelectionBasis> selectionBases, IReadOnlyList<RestEndpointOverrideActionKind> selectedActionKinds, IReadOnlyList<RestEndpointOverrideActionKind> appliedActionKinds, IReadOnlyList<RestEndpointGovernanceSelectionBasisSummaryDescriptor> selectionBasisSummaries, IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor> selectedActionKindSummaries, IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor> appliedActionKindSummaries, IReadOnlyList<string> hostGovernanceScopes)
+RestEndpointOverrideDescriptor(string id, IReadOnlyList<string> candidateIds, IReadOnlyList<string> behaviorIds, IReadOnlyList<string> sourceModuleIds, IReadOnlyList<string> authoringStyles, IReadOnlyList<int> apiVersionMajors, IReadOnlyList<string> methods, IReadOnlyList<string> relativePatterns, IReadOnlyList<string> routeGroupPrefixes, int? apiVersionMajor, string method, string pattern, string routeGroupPrefix, string openApiDocumentName, string tagName, string endpointName, string summary, string description, string requiredCapabilityKey, bool clearRequiredCapability, IReadOnlyList<RestEndpointBindingDescriptor> bindings, IReadOnlyList<string> removedBindingProperties, bool clearBindings, RestEndpointOverrideBindingMode bindingMode, bool clearEndpointName, bool clearSummary, bool clearDescription, IReadOnlyList<string> openApiDocumentNames, IReadOnlyList<string> tagNames, IReadOnlyList<string> endpointNames, IReadOnlyList<RestEndpointBindingFallbackMode> bindingFallbackModes, IReadOnlyList<RestEndpointBindingDescriptor> targetBindings, IReadOnlyList<string> matchedCandidateIds, IReadOnlyList<string> selectedCandidateIds, IReadOnlyList<string> appliedCandidateIds, IReadOnlyList<string> skippedCandidateIds, IReadOnlyList<RestEndpointGovernanceRuleSelectionBasis> selectionBases, IReadOnlyList<RestEndpointOverrideActionKind> selectedActionKinds, IReadOnlyList<RestEndpointOverrideActionKind> appliedActionKinds, IReadOnlyList<RestEndpointGovernanceSelectionBasisSummaryDescriptor> selectionBasisSummaries, IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor> selectedActionKindSummaries, IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor> appliedActionKindSummaries, IReadOnlyList<string> hostGovernanceScopes, IReadOnlyList<string> behaviorIdPrefixes, bool preserveImplicitQueryFallback)
 ```
 
 Creates a REST endpoint override descriptor.
@@ -19457,6 +19779,8 @@ Parameters:
 - `selectionBasisSummaries`: The grouped selection-basis buckets for runtime candidates that selected this override rule, including runtime no-op selections.
 - `selectedActionKindSummaries`: The grouped override-action buckets for runtime candidates that selected this override rule, including runtime no-op selections.
 - `appliedActionKindSummaries`: The grouped override-action buckets for runtime candidates materially changed by this override rule.
+- `behaviorIdPrefixes`: The behavior-id prefixes targeted by the override rule. Prefix matches use the stable dot-separated behavior-id hierarchy, so a prefix targets the exact behavior id and any descendant behavior ids beneath that prefix.
+- `preserveImplicitQueryFallback`: `true` when the rule opts the matched explicit-binding shorthand candidate into preserved implicit-query fallback for any remaining unbound query properties.
 
 #### Properties
 
@@ -19529,6 +19853,16 @@ IReadOnlyList<string> AuthoringStyles { get; }
 ```
 
 Gets the normalized authoring styles targeted by this override rule. Explicit module-DSL routes participate only when their owning route group opted into host governance.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-behavioridprefixes"></a>
+
+##### `BehaviorIdPrefixes`
+
+```csharp
+IReadOnlyList<string> BehaviorIdPrefixes { get; }
+```
+
+Gets the behavior-id prefixes targeted by this override rule.
 
 <a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-behaviorids"></a>
 
@@ -19739,6 +20073,16 @@ string Pattern { get; }
 ```
 
 Gets the effective relative route pattern applied when this override rule matches.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-preserveimplicitqueryfallback"></a>
+
+##### `PreserveImplicitQueryFallback`
+
+```csharp
+bool PreserveImplicitQueryFallback { get; }
+```
+
+Gets a value indicating whether this override rule opts the matched explicit-binding shorthand candidate into preserved implicit-query fallback for remaining unbound query properties.
 
 <a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-relativepatterns"></a>
 
@@ -21377,12 +21721,12 @@ public sealed class RestEndpointSuppressionDescriptor
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-transports-restendpointsuppressiondescriptor-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingfallbackmode-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceselectionbasissummarydescriptor-system-collections-generic-ireadonlylist-system-string"></a>
+<a id="member-m-cephalon-abstractions-transports-restendpointsuppressiondescriptor-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingfallbackmode-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceselectionbasissummarydescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string"></a>
 
 ##### `RestEndpointSuppressionDescriptor`
 
 ```csharp
-RestEndpointSuppressionDescriptor(string id, IReadOnlyList<string> candidateIds, IReadOnlyList<string> behaviorIds, IReadOnlyList<string> sourceModuleIds, IReadOnlyList<string> authoringStyles, IReadOnlyList<int> apiVersionMajors, IReadOnlyList<string> methods, IReadOnlyList<string> relativePatterns, IReadOnlyList<string> routeGroupPrefixes, IReadOnlyList<string> openApiDocumentNames, IReadOnlyList<string> tagNames, IReadOnlyList<string> endpointNames, IReadOnlyList<RestEndpointBindingFallbackMode> bindingFallbackModes, IReadOnlyList<RestEndpointBindingDescriptor> targetBindings, IReadOnlyList<string> matchedCandidateIds, IReadOnlyList<string> suppressedCandidateIds, IReadOnlyList<string> skippedCandidateIds, IReadOnlyList<RestEndpointGovernanceRuleSelectionBasis> selectionBases, IReadOnlyList<RestEndpointGovernanceSelectionBasisSummaryDescriptor> selectionBasisSummaries, IReadOnlyList<string> hostGovernanceScopes)
+RestEndpointSuppressionDescriptor(string id, IReadOnlyList<string> candidateIds, IReadOnlyList<string> behaviorIds, IReadOnlyList<string> sourceModuleIds, IReadOnlyList<string> authoringStyles, IReadOnlyList<int> apiVersionMajors, IReadOnlyList<string> methods, IReadOnlyList<string> relativePatterns, IReadOnlyList<string> routeGroupPrefixes, IReadOnlyList<string> openApiDocumentNames, IReadOnlyList<string> tagNames, IReadOnlyList<string> endpointNames, IReadOnlyList<RestEndpointBindingFallbackMode> bindingFallbackModes, IReadOnlyList<RestEndpointBindingDescriptor> targetBindings, IReadOnlyList<string> matchedCandidateIds, IReadOnlyList<string> suppressedCandidateIds, IReadOnlyList<string> skippedCandidateIds, IReadOnlyList<RestEndpointGovernanceRuleSelectionBasis> selectionBases, IReadOnlyList<RestEndpointGovernanceSelectionBasisSummaryDescriptor> selectionBasisSummaries, IReadOnlyList<string> hostGovernanceScopes, IReadOnlyList<string> behaviorIdPrefixes)
 ```
 
 Creates a REST endpoint suppression descriptor.
@@ -21408,6 +21752,7 @@ Parameters:
 - `skippedCandidateIds`: The runtime candidate identifiers that this rule would otherwise target but skipped because the original projection did not allow host governance to participate.
 - `selectionBases`: The union of decisive specificity rules that selected this suppression rule for one or more runtime candidates.
 - `selectionBasisSummaries`: The grouped selection-basis buckets for runtime candidates that were actually suppressed by this rule.
+- `behaviorIdPrefixes`: The behavior-id prefixes targeted by the suppression rule. Prefix matches use the stable dot-separated behavior-id hierarchy, so a prefix targets the exact behavior id and any descendant behavior ids beneath that prefix.
 
 #### Properties
 
@@ -21430,6 +21775,16 @@ IReadOnlyList<string> AuthoringStyles { get; }
 ```
 
 Gets the normalized authoring styles targeted by this suppression rule. Explicit module-DSL routes participate only when their owning route group opted into host governance.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointsuppressiondescriptor-behavioridprefixes"></a>
+
+##### `BehaviorIdPrefixes`
+
+```csharp
+IReadOnlyList<string> BehaviorIdPrefixes { get; }
+```
+
+Gets the behavior-id prefixes targeted by this suppression rule.
 
 <a id="member-p-cephalon-abstractions-transports-restendpointsuppressiondescriptor-behaviorids"></a>
 

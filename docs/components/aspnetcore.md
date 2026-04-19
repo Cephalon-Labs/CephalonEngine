@@ -9,7 +9,7 @@
 - runtime startup and shutdown integration through hosted services
 - `/engine/*` metadata, status, diagnostics, and policy endpoints
 - `/engine/resilience` when the engine-owned resilience contract is active
-- `/engine/strangler-fig` and `/engine/strangler-fig/resolve` when the engine-owned strangler-fig runtime catalog is active
+- `/engine/strangler-fig`, `/engine/strangler-fig/runtime`, and `/engine/strangler-fig/resolve` when the engine-owned strangler-fig route and migration-policy catalogs are active
 - `/engine/rate-limiting` when ASP.NET Core rate-limiting enforcement is active
 - `/engine/rest-endpoint-candidates` when the module-owned REST candidate catalog is active
 - `/engine/rest-endpoint-publication-groups` when grouped module-owned REST publication visibility and authoring-policy state are active
@@ -237,7 +237,12 @@ The same host surface now also exposes the first shipped strangler-fig runtime a
 catalog composed by `Cephalon.Engine`, while `/engine/strangler-fig/resolve` evaluates one
 request-shaped `path` plus `method` pair through the host-agnostic `IStranglerFigRouter`. That
 baseline keeps migration-route ownership and request-resolution truth operator-visible before
-Cephalon adds any host-specific proxy or traffic-manager behavior.
+Cephalon adds any host-specific proxy or traffic-manager behavior. The first configuration-driven
+policy/progress overlay is now also visible here: `/engine/strangler-fig/runtime` plus
+`/engine/strangler-fig/runtime/{routeId}` publish effective requested-versus-selected target
+answers, route-level progress state and percent, and optional route notes from
+`Engine:Migration:StranglerFig` through the host-agnostic `IStranglerFigMigrationRuntimeCatalog`
+without replacing the authored route catalog.
 
 The host now also exposes additive event-dispatch operator answers directly. When eventing packs
 register the corresponding catalogs, `/engine/event-dispatch-runtimes` and

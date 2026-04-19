@@ -32,6 +32,7 @@ public sealed class EngineSettings
     /// <param name="audit">Configuration-driven audit settings.</param>
     /// <param name="messaging">Configuration-driven messaging settings.</param>
     /// <param name="resilience">Configuration-driven resilience settings.</param>
+    /// <param name="migration">Configuration-driven migration settings.</param>
     public EngineSettings(
         string? blueprint = null,
         IReadOnlyList<string>? patterns = null,
@@ -49,7 +50,8 @@ public sealed class EngineSettings
         TenancySettings? tenancy = null,
         AuditSettings? audit = null,
         MessagingSettings? messaging = null,
-        ResilienceSettings? resilience = null)
+        ResilienceSettings? resilience = null,
+        MigrationSettings? migration = null)
     {
         Blueprint = string.IsNullOrWhiteSpace(blueprint) ? null : blueprint.Trim();
         Patterns = patterns?
@@ -77,6 +79,7 @@ public sealed class EngineSettings
         Audit = audit ?? AuditSettings.Empty;
         Messaging = messaging ?? MessagingSettings.Empty;
         Resilience = resilience ?? ResilienceSettings.Empty;
+        Migration = migration ?? MigrationSettings.Empty;
     }
 
     /// <summary>
@@ -165,6 +168,11 @@ public sealed class EngineSettings
     public ResilienceSettings Resilience { get; }
 
     /// <summary>
+    /// Gets configuration-driven migration settings.
+    /// </summary>
+    public MigrationSettings Migration { get; }
+
+    /// <summary>
     /// Gets a value indicating whether any engine settings were explicitly supplied.
     /// </summary>
     public bool HasValues =>
@@ -184,7 +192,8 @@ public sealed class EngineSettings
         Tenancy.HasValues ||
         Audit.HasValues ||
         Messaging.HasValues ||
-        Resilience.HasValues;
+        Resilience.HasValues ||
+        Migration.HasValues;
 
     /// <summary>
     /// Reads engine settings from configuration.
@@ -235,6 +244,7 @@ public sealed class EngineSettings
             tenancy: TenancySettings.FromConfiguration(configuration, sectionPath),
             audit: AuditSettings.FromConfiguration(configuration, sectionPath),
             messaging: MessagingSettings.FromConfiguration(configuration, sectionPath),
-            resilience: ResilienceSettings.FromConfiguration(configuration, sectionPath));
+            resilience: ResilienceSettings.FromConfiguration(configuration, sectionPath),
+            migration: MigrationSettings.FromConfiguration(configuration, sectionPath));
     }
 }

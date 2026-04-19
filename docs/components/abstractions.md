@@ -147,11 +147,12 @@ pretending that automatic retry is already enforced.
 
 The same contract-first rule now also covers the first phase 12 migration surface. The `Patterns`
 namespace now carries `IStranglerFigRouteContributor`, `IStranglerFigRouteRegistry`,
-`IStranglerFigRuntimeCatalog`, `IStranglerFigRouter`, `StranglerFigRequest`,
-`StranglerFigRouteDescriptor`, `StranglerFigRouteResolution`, and `StranglerFigTarget` so modules,
-hosts, and operator tooling can talk about migration-boundary ownership and request resolution
-without leaking ASP.NET Core proxy behavior, YARP, or cloud traffic-manager types into
-`Cephalon.Abstractions`.
+`IStranglerFigRuntimeCatalog`, `IStranglerFigMigrationRuntimeCatalog`, `IStranglerFigRouter`,
+`StranglerFigMigrationRuntimeDescriptor`, `StranglerFigRequest`, `StranglerFigRouteDescriptor`,
+`StranglerFigRouteResolution`, and `StranglerFigTarget` so modules, hosts, and operator tooling can
+talk about migration-boundary ownership, effective configuration-driven target selection, route-level
+progress, and request resolution without leaking ASP.NET Core proxy behavior, YARP, or cloud
+traffic-manager types into `Cephalon.Abstractions`.
 
 The same transport-first rule also now covers the published REST runtime answer. The `Transports`
 namespace owns `IRestEndpointRuntimeCatalog`, `RestEndpointRuntimeDescriptor`,

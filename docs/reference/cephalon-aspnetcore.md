@@ -1194,12 +1194,12 @@ public sealed class RestEndpointOverrideOptions
 
 #### Constructors
 
-<a id="member-m-cephalon-aspnetcore-hosting-restendpointoverrideoptions-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-nullable-system-int32-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-boolean-cephalon-abstractions-transports-restendpointoverridebindingmode-system-boolean-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingfallbackmode-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string"></a>
+<a id="member-m-cephalon-aspnetcore-hosting-restendpointoverrideoptions-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-nullable-system-int32-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-boolean-cephalon-abstractions-transports-restendpointoverridebindingmode-system-boolean-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingfallbackmode-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-boolean"></a>
 
 ##### `RestEndpointOverrideOptions`
 
 ```csharp
-RestEndpointOverrideOptions(string id, IReadOnlyList<string> candidateIds, IReadOnlyList<string> behaviorIds, IReadOnlyList<string> sourceModuleIds, IReadOnlyList<string> authoringStyles, IReadOnlyList<int> apiVersionMajors, IReadOnlyList<string> methods, IReadOnlyList<string> relativePatterns, IReadOnlyList<string> routeGroupPrefixes, int? apiVersionMajor, string method, string pattern, string routeGroupPrefix, string openApiDocumentName, string tagName, string endpointName, string summary, string description, string requiredCapabilityKey, bool clearRequiredCapability, IReadOnlyList<RestEndpointBindingDescriptor> bindings, IReadOnlyList<string> removedBindingProperties, bool clearBindings, RestEndpointOverrideBindingMode bindingMode, bool clearEndpointName, bool clearSummary, bool clearDescription, IReadOnlyList<string> openApiDocumentNames, IReadOnlyList<string> tagNames, IReadOnlyList<string> endpointNames, IReadOnlyList<RestEndpointBindingFallbackMode> bindingFallbackModes, IReadOnlyList<RestEndpointBindingDescriptor> targetBindings, IReadOnlyList<string> hostGovernanceScopes)
+RestEndpointOverrideOptions(string id, IReadOnlyList<string> candidateIds, IReadOnlyList<string> behaviorIds, IReadOnlyList<string> sourceModuleIds, IReadOnlyList<string> authoringStyles, IReadOnlyList<int> apiVersionMajors, IReadOnlyList<string> methods, IReadOnlyList<string> relativePatterns, IReadOnlyList<string> routeGroupPrefixes, int? apiVersionMajor, string method, string pattern, string routeGroupPrefix, string openApiDocumentName, string tagName, string endpointName, string summary, string description, string requiredCapabilityKey, bool clearRequiredCapability, IReadOnlyList<RestEndpointBindingDescriptor> bindings, IReadOnlyList<string> removedBindingProperties, bool clearBindings, RestEndpointOverrideBindingMode bindingMode, bool clearEndpointName, bool clearSummary, bool clearDescription, IReadOnlyList<string> openApiDocumentNames, IReadOnlyList<string> tagNames, IReadOnlyList<string> endpointNames, IReadOnlyList<RestEndpointBindingFallbackMode> bindingFallbackModes, IReadOnlyList<RestEndpointBindingDescriptor> targetBindings, IReadOnlyList<string> hostGovernanceScopes, IReadOnlyList<string> behaviorIdPrefixes, bool preserveImplicitQueryFallback)
 ```
 
 Initializes a new instance of the `RestEndpointOverrideOptions` class.
@@ -1238,6 +1238,8 @@ Parameters:
 - `hostGovernanceScopes`: The original shorthand host-governance scopes targeted by the override rule before any override actions are applied. This selector can also serve as the rule's primary target when candidate, behavior, and source-module identifiers are intentionally omitted.
 - `bindingFallbackModes`: The original shorthand request-binding fallback modes targeted by the override rule before any override actions are applied.
 - `targetBindings`: The original shorthand explicit binding descriptors targeted by the override rule before any override actions are applied.
+- `behaviorIdPrefixes`: The behavior-id prefixes targeted by the override rule. Prefix matches use the stable dot-separated behavior-id hierarchy, so a prefix targets the exact behavior id and any descendant behavior ids beneath that prefix.
+- `preserveImplicitQueryFallback`: `true` when the rule opts the matched explicit-binding shorthand candidate into preserved implicit-query fallback for any remaining unbound query properties.
 
 #### Properties
 
@@ -1280,6 +1282,16 @@ IReadOnlyList<string> AuthoringStyles { get; }
 ```
 
 Gets the normalized shorthand authoring styles targeted by this override rule.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-behavioridprefixes"></a>
+
+##### `BehaviorIdPrefixes`
+
+```csharp
+IReadOnlyList<string> BehaviorIdPrefixes { get; }
+```
+
+Gets the behavior-id prefixes targeted by this override rule.
 
 <a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-behaviorids"></a>
 
@@ -1491,6 +1503,16 @@ string Pattern { get; }
 
 Gets the effective relative route pattern applied when this override rule matches.
 
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-preserveimplicitqueryfallback"></a>
+
+##### `PreserveImplicitQueryFallback`
+
+```csharp
+bool PreserveImplicitQueryFallback { get; }
+```
+
+Gets a value indicating whether this override rule opts the matched explicit-binding shorthand candidate into preserved implicit-query fallback for remaining unbound query properties.
+
 <a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-relativepatterns"></a>
 
 ##### `RelativePatterns`
@@ -1604,12 +1626,12 @@ public sealed class RestEndpointSuppressionOptions
 
 #### Constructors
 
-<a id="member-m-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingfallbackmode-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string"></a>
+<a id="member-m-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingfallbackmode-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string"></a>
 
 ##### `RestEndpointSuppressionOptions`
 
 ```csharp
-RestEndpointSuppressionOptions(string id, IReadOnlyList<string> candidateIds, IReadOnlyList<string> behaviorIds, IReadOnlyList<string> sourceModuleIds, IReadOnlyList<string> authoringStyles, IReadOnlyList<int> apiVersionMajors, IReadOnlyList<string> methods, IReadOnlyList<string> relativePatterns, IReadOnlyList<string> routeGroupPrefixes, IReadOnlyList<string> openApiDocumentNames, IReadOnlyList<string> tagNames, IReadOnlyList<string> endpointNames, IReadOnlyList<RestEndpointBindingFallbackMode> bindingFallbackModes, IReadOnlyList<RestEndpointBindingDescriptor> targetBindings, IReadOnlyList<string> hostGovernanceScopes)
+RestEndpointSuppressionOptions(string id, IReadOnlyList<string> candidateIds, IReadOnlyList<string> behaviorIds, IReadOnlyList<string> sourceModuleIds, IReadOnlyList<string> authoringStyles, IReadOnlyList<int> apiVersionMajors, IReadOnlyList<string> methods, IReadOnlyList<string> relativePatterns, IReadOnlyList<string> routeGroupPrefixes, IReadOnlyList<string> openApiDocumentNames, IReadOnlyList<string> tagNames, IReadOnlyList<string> endpointNames, IReadOnlyList<RestEndpointBindingFallbackMode> bindingFallbackModes, IReadOnlyList<RestEndpointBindingDescriptor> targetBindings, IReadOnlyList<string> hostGovernanceScopes, IReadOnlyList<string> behaviorIdPrefixes)
 ```
 
 Initializes a new instance of the `RestEndpointSuppressionOptions` class.
@@ -1630,6 +1652,7 @@ Parameters:
 - `hostGovernanceScopes`: The original shorthand host-governance scopes targeted by the suppression rule before any override actions are applied. This selector can also serve as the rule's primary target when candidate, behavior, and source-module identifiers are intentionally omitted.
 - `bindingFallbackModes`: The original shorthand request-binding fallback modes targeted by the suppression rule before any override actions are applied.
 - `targetBindings`: The original shorthand explicit binding descriptors targeted by the suppression rule before any override actions are applied.
+- `behaviorIdPrefixes`: The behavior-id prefixes targeted by the suppression rule. Prefix matches use the stable dot-separated behavior-id hierarchy, so a prefix targets the exact behavior id and any descendant behavior ids beneath that prefix.
 
 #### Properties
 
@@ -1652,6 +1675,16 @@ IReadOnlyList<string> AuthoringStyles { get; }
 ```
 
 Gets the normalized shorthand authoring styles targeted by this suppression rule.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-behavioridprefixes"></a>
+
+##### `BehaviorIdPrefixes`
+
+```csharp
+IReadOnlyList<string> BehaviorIdPrefixes { get; }
+```
+
+Gets the behavior-id prefixes targeted by this suppression rule.
 
 <a id="member-p-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-behaviorids"></a>
 

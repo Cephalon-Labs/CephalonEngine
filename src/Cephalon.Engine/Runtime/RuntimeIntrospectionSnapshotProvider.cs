@@ -25,6 +25,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
     IAuditStoreCatalog auditStoreCatalog,
     IAuthorizationPolicyCatalog authorizationPolicyCatalog,
     IStranglerFigRuntimeCatalog stranglerFigRuntimeCatalog,
+    IStranglerFigMigrationRuntimeCatalog stranglerFigMigrationRuntimeCatalog,
     ITechnologyRuntimeCatalog technologyRuntimeCatalog,
     IRuntimeDiagnosticsCatalog diagnosticsCatalog) : IRuntimeIntrospectionSnapshotProvider
 {
@@ -69,7 +70,8 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
             RestEndpointOverrides = restEndpointOverrideRuntimeCatalog?.OverrideRules ?? [],
             RestEndpointSuppressions = restEndpointSuppressionRuntimeCatalog?.Suppressions ?? [],
             BehaviorResiliencePolicies = behaviorResilienceRuntimeCatalog?.Policies ?? [],
-            StranglerFigRoutes = stranglerFigRuntimeCatalog.Routes
+            StranglerFigRoutes = stranglerFigRuntimeCatalog.Routes,
+            StranglerFigRoutePolicies = stranglerFigMigrationRuntimeCatalog.Routes
         };
     }
 }

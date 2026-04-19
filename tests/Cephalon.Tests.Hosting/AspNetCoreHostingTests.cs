@@ -247,11 +247,22 @@ public sealed class AspNetCoreHostingTests
             .AddCheck("cephalon.liveness", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy(), tags: ["live", "engine"])
             .AddCheck("cephalon.readiness", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy(), tags: ["ready", "engine"]);
         builder.Services.AddSingleton<IRateLimitingRuntimeCatalog>(EmptyRateLimitingRuntimeCatalog.Instance);
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "Microservice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Patterns:0"] = "StranglerFig";
+        builder.Configuration[$"{EngineSettings.SectionName}:Migration:StranglerFig:DefaultTarget"] = "legacy";
+        builder.Configuration[$"{EngineSettings.SectionName}:Migration:StranglerFig:DefaultProgressState"] = "assessing";
+        builder.Configuration[$"{EngineSettings.SectionName}:Migration:StranglerFig:DefaultProgressPercent"] = "25";
+        builder.Configuration[$"{EngineSettings.SectionName}:Migration:StranglerFig:Routes:0:RouteId"] = "orders-modern";
+        builder.Configuration[$"{EngineSettings.SectionName}:Migration:StranglerFig:Routes:0:Target"] = "modern";
+        builder.Configuration[$"{EngineSettings.SectionName}:Migration:StranglerFig:Routes:0:ProgressState"] = "cutover";
+        builder.Configuration[$"{EngineSettings.SectionName}:Migration:StranglerFig:Routes:0:ProgressPercent"] = "90";
+        builder.Configuration[$"{EngineSettings.SectionName}:Migration:StranglerFig:Routes:0:Notes"] = "Ready for the final traffic shift.";
+        builder.Configuration[$"{EngineSettings.SectionName}:Migration:StranglerFig:Routes:1:RouteId"] = "reports-fallback";
+        builder.Configuration[$"{EngineSettings.SectionName}:Migration:StranglerFig:Routes:1:ProgressState"] = "validating";
+        builder.Configuration[$"{EngineSettings.SectionName}:Migration:StranglerFig:Routes:1:ProgressPercent"] = "40";
         builder.Services.AddCephalon(engine =>
         {
-            engine.UseSettings(new EngineSettings(
-                blueprint: "Microservice",
-                patterns: ["StranglerFig"]));
+            engine.UseConfiguration(builder.Configuration);
             engine.AddModule(new PlatformTestModule());
             engine.AddModule(new DiscoveryTestModule());
             engine.AddStranglerFigRoute(new StranglerFigRouteDescriptor(
@@ -281,6 +292,8 @@ public sealed class AspNetCoreHostingTests
 
         var routes = await client.GetFromJsonAsync<StranglerFigRouteDescriptor[]>("/engine/strangler-fig");
         var route = await client.GetFromJsonAsync<StranglerFigRouteDescriptor>("/engine/strangler-fig/orders-modern");
+        var runtimeRoutes = await client.GetFromJsonAsync<StranglerFigMigrationRuntimeDescriptor[]>("/engine/strangler-fig/runtime");
+        var runtimeRoute = await client.GetFromJsonAsync<StranglerFigMigrationRuntimeDescriptor>("/engine/strangler-fig/runtime/orders-modern");
         var resolution = await client.GetFromJsonAsync<StranglerFigRouteResolution>("/engine/strangler-fig/resolve?path=/checkout/orders/42&method=GET");
         var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
 
@@ -293,16 +306,55 @@ public sealed class AspNetCoreHostingTests
         Assert.Equal("/checkout/orders", route.PathPrefix);
         Assert.Equal("modern://orders", route.ModernEndpoint);
 
+        Assert.NotNull(runtimeRoutes);
+        Assert.Equal(2, runtimeRoutes.Length);
+        Assert.Contains(runtimeRoutes, candidate =>
+            candidate.RouteId == "orders-modern" &&
+            candidate.RequestedTargetSource == "migration-route" &&
+            candidate.ProgressState == "cutover" &&
+            candidate.ProgressPercent == 90);
+        Assert.Contains(runtimeRoutes, candidate =>
+            candidate.RouteId == "reports-fallback" &&
+            candidate.RequestedTargetSource == "migration-default" &&
+            candidate.EffectiveTarget == StranglerFigTarget.Legacy &&
+            candidate.ProgressState == "validating" &&
+            candidate.ProgressPercent == 40);
+
+        Assert.NotNull(runtimeRoute);
+        Assert.Equal("orders-modern", runtimeRoute.RouteId);
+        Assert.Equal(StranglerFigTarget.Modern, runtimeRoute.RequestedTarget);
+        Assert.Equal(StranglerFigTarget.Modern, runtimeRoute.EffectiveTarget);
+        Assert.Equal("migration-route", runtimeRoute.RequestedTargetSource);
+        Assert.Equal("cutover", runtimeRoute.ProgressState);
+        Assert.Equal(90, runtimeRoute.ProgressPercent);
+        Assert.Equal("Ready for the final traffic shift.", runtimeRoute.RuntimeMetadata["note"]);
+
         Assert.NotNull(resolution);
         Assert.Equal("orders-modern", resolution.RouteId);
         Assert.Equal("/checkout/orders/42", resolution.RequestedPath);
         Assert.Equal(StranglerFigTarget.Modern, resolution.SelectedTarget);
         Assert.Equal("modern://orders", resolution.SelectedEndpoint);
-        Assert.Equal("preferred-target", resolution.ResolutionMode);
+        Assert.Equal("configured-target", resolution.ResolutionMode);
+        Assert.Equal("modern", resolution.Metadata["migrationRequestedTarget"]);
+        Assert.Equal("migration-route", resolution.Metadata["migrationRequestedTargetSource"]);
+        Assert.Equal("cutover", resolution.Metadata["migrationProgressState"]);
+        Assert.Equal("90", resolution.Metadata["migrationProgressPercent"]);
+        Assert.Equal("Ready for the final traffic shift.", resolution.Metadata["migrationNote"]);
 
         Assert.NotNull(snapshot);
         Assert.Contains(snapshot.StranglerFigRoutes, candidate => candidate.Id == "orders-modern");
         Assert.Contains(snapshot.StranglerFigRoutes, candidate => candidate.Id == "reports-fallback");
+        Assert.Contains(snapshot.StranglerFigRoutePolicies, candidate =>
+            candidate.RouteId == "orders-modern" &&
+            candidate.RequestedTargetSource == "migration-route" &&
+            candidate.ProgressState == "cutover" &&
+            candidate.ProgressPercent == 90);
+        Assert.Contains(snapshot.StranglerFigRoutePolicies, candidate =>
+            candidate.RouteId == "reports-fallback" &&
+            candidate.RequestedTargetSource == "migration-default" &&
+            candidate.EffectiveTarget == StranglerFigTarget.Legacy &&
+            candidate.ProgressState == "validating" &&
+            candidate.ProgressPercent == 40);
     }
 
     private sealed class EmptyRateLimitingRuntimeCatalog : IRateLimitingRuntimeCatalog
