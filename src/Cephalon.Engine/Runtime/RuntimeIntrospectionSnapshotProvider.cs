@@ -37,6 +37,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
         var eventDispatchRuntimeCatalog = serviceProvider.GetService(typeof(IEventDispatchRuntimeCatalog)) as IEventDispatchRuntimeCatalog;
         var featureFlagRuntimeCatalog = serviceProvider.GetService(typeof(IFeatureFlagRuntimeCatalog)) as IFeatureFlagRuntimeCatalog;
         var sagaChoreographyRuntimeCatalog = serviceProvider.GetService(typeof(ISagaChoreographyRuntimeCatalog)) as ISagaChoreographyRuntimeCatalog;
+        var sagaChoreographyPublicationRuntimeStateCatalog = serviceProvider.GetService(typeof(ISagaChoreographyPublicationRuntimeStateCatalog)) as ISagaChoreographyPublicationRuntimeStateCatalog;
         var rateLimitingRuntimeCatalog = serviceProvider.GetService(typeof(IRateLimitingRuntimeCatalog)) as IRateLimitingRuntimeCatalog;
         var restEndpointCandidateRuntimeCatalog = serviceProvider.GetService(typeof(IRestEndpointCandidateRuntimeCatalog)) as IRestEndpointCandidateRuntimeCatalog;
         var restEndpointAuthoringPolicyRuntimeCatalog = serviceProvider.GetService(typeof(IRestEndpointAuthoringPolicyRuntimeCatalog)) as IRestEndpointAuthoringPolicyRuntimeCatalog;
@@ -72,6 +73,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
             AuthorizationPolicies = authorizationPolicyCatalog.Policies,
             FeatureFlags = featureFlagRuntimeCatalog?.FeatureFlags ?? [],
             SagaChoreographies = sagaChoreographyRuntimeCatalog?.SagaChoreographies ?? [],
+            SagaChoreographyPublicationStates = sagaChoreographyPublicationRuntimeStateCatalog?.States ?? [],
             RateLimitingPolicies = rateLimitingRuntimeCatalog?.Policies ?? [],
             RestEndpoints = restEndpointRuntimeCatalog?.Endpoints ?? [],
             RestEndpointCandidates = restEndpointCandidateRuntimeCatalog?.Candidates ?? [],

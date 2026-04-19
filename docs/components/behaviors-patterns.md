@@ -104,7 +104,19 @@ behavior from `IBehaviorCatalog` plus `IBehaviorTypeRegistry`, `Cephalon.Engine`
 answer through `snapshot.SagaChoreographies`, and ASP.NET Core exposes `/engine/saga-choreographies`
 plus id/module/transport drill-down routes. That runtime answer preserves module ownership,
 transport ids, required feature ids, typed input/result/local-output metadata, and authoring-model
-or publication-shape classification without pretending to be a live publication-state tracker.
+or publication-shape classification without pretending to be downstream publish or broker-dispatch
+truth.
+
+The same package now also owns the first live choreography publication-state follow-through.
+`AddBehaviorPatterns()` registers `ISagaChoreographyPublicationRuntimeStateCatalog`,
+`ChoreographySagaExecutionStrategy` reports `accepted` and `failed` handoff observations into that
+shared state catalog, `Cephalon.Engine` projects the same answer through
+`snapshot.SagaChoreographyPublicationStates`, and ASP.NET Core exposes
+`/engine/saga-choreographies/runtime` plus publication, behavior, module, transport, channel,
+correlation, compensation, and failure drill-down routes. That runtime-state answer keeps
+publication ownership on the shared choreography execution path and reports only the latest handoff
+observations, so the optional `Cephalon.Eventing.Behaviors` bridge and downstream event-dispatch
+runtime can remain additive truth instead of being collapsed into one choreography registry.
 
 ## Durable execution contract
 
@@ -177,7 +189,7 @@ and it only activates when the shared `Cephalon.Eventing` publication path is tr
 
 ## Status
 
-> Status: ✅ Shipped — M4 baseline plus later follow-through for saga choreography, the first saga choreography runtime catalog/operator surface, higher-level saga choreography authoring helpers, durable execution, the first durable runtime catalog/operator surface, the first durable per-stream live-state/failure-posture surface, the first durable timer/signal coordination surface, and the first durable compensation-helper surface
+> Status: ✅ Shipped — M4 baseline plus later follow-through for saga choreography, the first saga choreography runtime catalog/operator surface, the first live saga choreography publication-state surface, higher-level saga choreography authoring helpers, durable execution, the first durable runtime catalog/operator surface, the first durable per-stream live-state/failure-posture surface, the first durable timer/signal coordination surface, and the first durable compensation-helper surface
 
 ## Related components
 

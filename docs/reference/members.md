@@ -18,6 +18,9 @@ Browse the published API surface by public member.
 - [Accepted](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-result-accepted-1-0-system-string-system-string): `Methods` on `Result` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Accepted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Creates an accepted result with a payload value.
   - `Result<T> Accepted<T>(T value, string message, string code)`
+- [AcceptedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-acceptedcount): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=AcceptedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The number of `accepted` observations reported so far.
+  - `int AcceptedCount { get; set; }`
 - [Access](cephalon-engine.md#member-p-cephalon-engine-trust-capabilitypolicydecision-access): `Properties` on `CapabilityPolicyDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Access&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The effective access mode resolved from policy.
   - `CapabilityAccess Access { get; set; }`
@@ -1194,6 +1197,9 @@ Browse the published API surface by public member.
 - [BehaviorId](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-behaviorid): `Properties` on `RestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the stable behavior identifier when the endpoint dispatches through a Cephalon behavior.
   - `string BehaviorId { get; }`
+- [BehaviorId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-behaviorid): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The stable choreography behavior identifier that produced the publication.
+  - `string BehaviorId { get; set; }`
 - [BehaviorIdempotency](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext-behavioridempotency): `Properties` on `BehaviorResilienceExceptionContext` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorIdempotency&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - Gets the declared behavior idempotency mode when one is known.
   - `BehaviorIdempotencyMode BehaviorIdempotency { get; }`
@@ -1605,6 +1611,9 @@ Browse the published API surface by public member.
 - [ChannelId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxmessage-channelid): `Properties` on `OutboxMessage` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ChannelId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the logical channel or destination identifier.
   - `string ChannelId { get; }`
+- [ChannelId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-channelid): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=ChannelId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The logical channel or destination identifier used by the publication.
+  - `string ChannelId { get; set; }`
 - [ChannelIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-inboxdescriptor-channelids): `Properties` on `InboxDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ChannelIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the optional channel identifiers that this inbox is explicitly scoped to.
   - `IReadOnlyList<string> ChannelIds { get; }`
@@ -2034,6 +2043,9 @@ Browse the published API surface by public member.
 - [ContentType](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxmessage-contenttype): `Properties` on `OutboxMessage` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ContentType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the payload content type when one is known.
   - `string ContentType { get; }`
+- [ContentType](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-contenttype): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=ContentType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The payload content type when one is known.
+  - `string ContentType { get; set; }`
 - [ContextAttributePrefix](cephalon-identity.md#member-f-cephalon-identity-policies-identitypolicymetadatakeys-contextattributeprefix): `Fields` on `IdentityPolicyMetadataKeys` in `Cephalon.Identity.Policies` (`Cephalon.Identity`) [Browse](browse.html?q=ContextAttributePrefix&assembly=Cephalon.Identity&namespace=Cephalon.Identity.Policies&scope=members)
   - The metadata key prefix for required evaluation-context attributes.
   - `const string ContextAttributePrefix`
@@ -2133,6 +2145,9 @@ Browse the published API surface by public member.
 - [CorrelationId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxmessage-correlationid): `Properties` on `OutboxMessage` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the correlation identifier associated with the message.
   - `string CorrelationId { get; }`
+- [CorrelationId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-correlationid): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The correlation identifier associated with the publication when one exists.
+  - `string CorrelationId { get; set; }`
 - [Counters](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-counters): `Properties` on `DiagnosticsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Counters&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
   - The built-in counter names exposed by the engine.
   - `IReadOnlyList<string> Counters { get; set; }`
@@ -3633,6 +3648,9 @@ Browse the published API surface by public member.
 - [EventType](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-eventtype): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventType&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the logical event type identifier.
   - `string EventType { get; }`
+- [EventType](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-eventtype): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The logical event type identifier used by the publication.
+  - `string EventType { get; set; }`
 - [Exception](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext-exception): `Properties` on `BehaviorResilienceExceptionContext` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Exception&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - Gets the exception being classified.
   - `Exception Exception { get; }`
@@ -3853,6 +3871,9 @@ Browse the published API surface by public member.
   - Gets the total number of `failed` observations reported so far.
   - `int FailedCount { get; }`
 - [FailedCount](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-failedcount): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=FailedCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - The number of `failed` observations reported so far.
+  - `int FailedCount { get; set; }`
+- [FailedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-failedcount): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=FailedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The number of `failed` observations reported so far.
   - `int FailedCount { get; set; }`
 - [FailedMigrationTargetCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasetopologyoperationalsummary-failedmigrationtargetcount): `Properties` on `DatabaseTopologyOperationalSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=FailedMigrationTargetCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -4290,6 +4311,9 @@ Browse the published API surface by public member.
 - [GetByBehaviorId](cephalon-abstractions.md#member-m-cephalon-abstractions-transports-irestendpointsuppressionruntimecatalog-getbybehaviorid-system-string): `Methods` on `IRestEndpointSuppressionRuntimeCatalog` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByBehaviorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets all REST endpoint suppression rules that target the requested behavior identifier, either directly or through configured behavior-id prefixes.
   - `IReadOnlyList<RestEndpointSuppressionDescriptor> GetByBehaviorId(string behaviorId)`
+- [GetByBehaviorId](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-getbybehaviorid-system-string): `Methods` on `ISagaChoreographyPublicationRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByBehaviorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the reported publication-state entries for one choreography behavior.
+  - `IReadOnlyList<SagaChoreographyPublicationRuntimeState> GetByBehaviorId(string behaviorId)`
 - [GetByBindingId](cephalon-abstractions.md#member-m-cephalon-abstractions-transports-ibackendforfrontendrestdocumentruntimecatalog-getbybindingid-system-string): `Methods` on `IBackendForFrontendRestDocumentRuntimeCatalog` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByBindingId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets all binding-scoped REST documentation surfaces owned by the requested binding.
   - `IReadOnlyList<BackendForFrontendRestDocumentRuntimeDescriptor> GetByBindingId(string bindingId)`
@@ -4305,6 +4329,9 @@ Browse the published API surface by public member.
 - [GetByChannelId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ioutboxcatalog-getbychannelid-system-string): `Methods` on `IOutboxCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByChannelId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets all outboxes that explicitly declare the requested channel identifier.
   - `IReadOnlyList<OutboxDescriptor> GetByChannelId(string channelId)`
+- [GetByChannelId](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-getbychannelid-system-string): `Methods` on `ISagaChoreographyPublicationRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByChannelId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the reported publication-state entries that targeted the requested channel.
+  - `IReadOnlyList<SagaChoreographyPublicationRuntimeState> GetByChannelId(string channelId)`
 - [GetByClientId](cephalon-abstractions.md#member-m-cephalon-abstractions-transports-ibackendforfrontendrestdocumentruntimecatalog-getbyclientid-system-string): `Methods` on `IBackendForFrontendRestDocumentRuntimeCatalog` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByClientId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets all client-scoped REST documentation surfaces owned by the requested client.
   - `IReadOnlyList<BackendForFrontendRestDocumentRuntimeDescriptor> GetByClientId(string clientId)`
@@ -4317,6 +4344,9 @@ Browse the published API surface by public member.
 - [GetByCompensationActionId](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getbycompensationactionid-system-string): `Methods` on `IDurableExecutionRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByCompensationActionId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the reported durable-execution state entries that currently include the requested compensation action.
   - `IReadOnlyList<DurableExecutionRuntimeState> GetByCompensationActionId(string compensationActionId)`
+- [GetByCorrelationId](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-getbycorrelationid-system-string): `Methods` on `ISagaChoreographyPublicationRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByCorrelationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the reported publication-state entries associated with one correlation identifier.
+  - `IReadOnlyList<SagaChoreographyPublicationRuntimeState> GetByCorrelationId(string correlationId)`
 - [GetByExecutionGraph](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-ihostedexecutionruntimecatalog-getbyexecutiongraph-system-string): `Methods` on `IHostedExecutionRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByExecutionGraph&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets all hosted executions linked to one execution graph.
   - `IReadOnlyList<HostedExecutionDescriptor> GetByExecutionGraph(string executionGraphId)`
@@ -4386,6 +4416,9 @@ Browse the published API surface by public member.
 - [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-transports-irestendpointsuppressionruntimecatalog-getbyid-system-string): `Methods` on `IRestEndpointSuppressionRuntimeCatalog` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets one REST endpoint suppression rule by its stable identifier.
   - `RestEndpointSuppressionDescriptor GetById(string suppressionId)`
+- [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-getbyid-system-string): `Methods` on `ISagaChoreographyPublicationRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the latest reported publication state for one choreography publication path.
+  - `SagaChoreographyPublicationRuntimeState GetById(string id)`
 - [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-isagachoreographyruntimecatalog-getbyid-system-string): `Methods` on `ISagaChoreographyRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets one saga-choreography behavior by its stable behavior identifier.
   - `SagaChoreographyRuntimeDescriptor GetById(string behaviorId)`
@@ -4491,6 +4524,9 @@ Browse the published API surface by public member.
 - [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-transports-irestendpointsuppressionruntimecatalog-getbysourcemodule-system-string): `Methods` on `IRestEndpointSuppressionRuntimeCatalog` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets all REST endpoint suppression rules that target the requested source module identifier.
   - `IReadOnlyList<RestEndpointSuppressionDescriptor> GetBySourceModule(string sourceModuleId)`
+- [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-getbysourcemodule-system-string): `Methods` on `ISagaChoreographyPublicationRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the reported publication-state entries contributed by one source module.
+  - `IReadOnlyList<SagaChoreographyPublicationRuntimeState> GetBySourceModule(string sourceModuleId)`
 - [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-isagachoreographyruntimecatalog-getbysourcemodule-system-string): `Methods` on `ISagaChoreographyRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets all saga-choreography behaviors contributed by the requested module.
   - `IReadOnlyList<SagaChoreographyRuntimeDescriptor> GetBySourceModule(string sourceModuleId)`
@@ -4527,9 +4563,15 @@ Browse the published API surface by public member.
 - [GetByTransportId](cephalon-abstractions.md#member-m-cephalon-abstractions-resilience-iratelimitingruntimecatalog-getbytransportid-system-string): `Methods` on `IRateLimitingRuntimeCatalog` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByTransportId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - Gets all rate-limiting policies that apply to the requested transport identifier.
   - `IReadOnlyList<RateLimitingRuntimeDescriptor> GetByTransportId(string transportId)`
+- [GetByTransportId](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-getbytransportid-system-string): `Methods` on `ISagaChoreographyPublicationRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByTransportId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the reported publication-state entries exposed over one transport.
+  - `IReadOnlyList<SagaChoreographyPublicationRuntimeState> GetByTransportId(string transportId)`
 - [GetByTransportId](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-isagachoreographyruntimecatalog-getbytransportid-system-string): `Methods` on `ISagaChoreographyRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByTransportId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets all saga-choreography behaviors exposed over the requested transport.
   - `IReadOnlyList<SagaChoreographyRuntimeDescriptor> GetByTransportId(string transportId)`
+- [GetCompensationPublications](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-getcompensationpublications): `Methods` on `ISagaChoreographyPublicationRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetCompensationPublications&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the reported publication-state entries that currently represent compensation work.
+  - `IReadOnlyList<SagaChoreographyPublicationRuntimeState> GetCompensationPublications()`
 - [GetDependencyHealth](cephalon-abstractions.md#member-m-cephalon-abstractions-health-idependencyhealthcontributor-getdependencyhealth): `Methods` on `IDependencyHealthContributor` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetDependencyHealth&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - Returns the dependency-health reports currently known to the contributor.
   - `IReadOnlyList<DependencyHealthReport> GetDependencyHealth()`
@@ -4539,6 +4581,9 @@ Browse the published API surface by public member.
 - [GetEnabled](cephalon-abstractions.md#member-m-cephalon-abstractions-features-ifeatureflagruntimecatalog-getenabled): `Methods` on `IFeatureFlagRuntimeCatalog` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetEnabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
   - Gets all feature flags that are enabled before targeting is applied.
   - `IReadOnlyList<FeatureFlagDescriptor> GetEnabled()`
+- [GetFailedPublications](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-getfailedpublications): `Methods` on `ISagaChoreographyPublicationRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetFailedPublications&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the reported publication-state entries whose latest observation is failed.
+  - `IReadOnlyList<SagaChoreographyPublicationRuntimeState> GetFailedPublications()`
 - [GetResources](cephalon-abstractions.md#member-m-cephalon-abstractions-localization-ilocalizedtextcatalog-getresources-system-string): `Methods` on `ILocalizedTextCatalog` in `Cephalon.Abstractions.Localization` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetResources&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Localization&scope=members)
   - Returns the localized resources visible for one culture.
   - `IReadOnlyDictionary<string, string> GetResources(string culture)`
@@ -5340,6 +5385,9 @@ Browse the published API surface by public member.
 - [Id](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-id): `Properties` on `RestEndpointSuppressionOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Id&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Gets the stable suppression identifier.
   - `string Id { get; }`
+- [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-id): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The stable runtime-state identifier for this observed choreography publication path.
+  - `string Id { get; set; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-id): `Properties` on `SagaChoreographyRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the stable choreography behavior identifier.
   - `string Id { get; }`
@@ -5577,6 +5625,9 @@ Browse the published API surface by public member.
 - [Invalid](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-result-invalid-1-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault): `Methods` on `Result` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Invalid&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Creates an invalid-request result for the specified payload type.
   - `Result<T> Invalid<T>(string code, string message, BehaviorFault fault)`
+- [IsAccepted](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-isaccepted): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsAccepted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets a value indicating whether the latest report says the publication handoff succeeded.
+  - `bool IsAccepted { get; }`
 - [IsActive](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-isactive): `Properties` on `RuntimeExecutionGraphState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=IsActive&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets a value indicating whether the execution graph is currently active with the runtime.
   - `bool IsActive { get; }`
@@ -5601,6 +5652,9 @@ Browse the published API surface by public member.
 - [IsCapabilityEnabled](cephalon-engine.md#member-m-cephalon-engine-configuration-engineoptions-iscapabilityenabled-system-string): `Methods` on `EngineOptions` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=IsCapabilityEnabled&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Determines whether a capability is enabled under the current option set.
   - `bool IsCapabilityEnabled(string capabilityKey)`
+- [IsCompensation](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-iscompensation): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsCompensation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Indicates whether the publication represents compensation work.
+  - `bool IsCompensation { get; set; }`
 - [IsConfigured](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointauthoringpolicydescriptor-isconfigured): `Properties` on `RestEndpointAuthoringPolicyDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsConfigured&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets a value indicating whether this authoring policy came from explicit host configuration.
   - `bool IsConfigured { get; }`
@@ -5630,6 +5684,9 @@ Browse the published API surface by public member.
   - `bool IsEnabled(string featureFlagId, FeatureFlagEvaluationContext context)`
 - [IsFailed](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-isfailed): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsFailed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets a value indicating whether the latest report says the durable stream is currently in a failed posture.
+  - `bool IsFailed { get; }`
+- [IsFailed](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-isfailed): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsFailed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets a value indicating whether the latest report says the publication handoff failed.
   - `bool IsFailed { get; }`
 - [IsFallback](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-isfallback): `Properties` on `EntityFrameworkDatabaseRoleContext` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=IsFallback&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
   - Gets a value indicating whether the requested role resolved through another configured role.
@@ -5820,6 +5877,9 @@ Browse the published API surface by public member.
 - [LastError](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-lasterror): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=LastError&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The last operator-facing error summary when a failure was reported.
   - `string LastError { get; set; }`
+- [LastError](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-lasterror): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastError&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The latest operator-facing error summary when the publication handoff reported a failure.
+  - `string LastError { get; set; }`
 - [LastFailure](cephalon-engine.md#member-p-cephalon-engine-runtime-engineruntime-lastfailure): `Properties` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=LastFailure&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the last captured lifecycle failure when one is available.
   - `RuntimeFailureInfo LastFailure { get; }`
@@ -5871,6 +5931,9 @@ Browse the published API surface by public member.
 - [LastObservedAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-lastobservedatutc): `Properties` on `RuntimeModuleLifecycleState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=LastObservedAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The UTC timestamp when the last lifecycle phase was recorded for the module.
   - `DateTimeOffset? LastObservedAtUtc { get; set; }`
+- [LastObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-lastobservedatutc): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The UTC timestamp when the latest publication observation was reported.
+  - `DateTimeOffset? LastObservedAtUtc { get; set; }`
 - [LastObservedPhase](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-lastobservedphase): `Properties` on `RuntimeExecutionGraphState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=LastObservedPhase&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The last lifecycle phase recorded for the execution graph.
   - `string LastObservedPhase { get; set; }`
@@ -5895,6 +5958,12 @@ Browse the published API surface by public member.
 - [LastOutcome](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-lastoutcome): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=LastOutcome&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The last reported outcome identifier when one exists.
   - `string LastOutcome { get; set; }`
+- [LastOutcome](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-lastoutcome): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastOutcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The last reported publication outcome identifier when one exists.
+  - `string LastOutcome { get; set; }`
+- [LastPublisherType](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-lastpublishertype): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastPublisherType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The last concrete publisher implementation type that accepted or rejected the publication when one was reported.
+  - `string LastPublisherType { get; set; }`
 - [LastReplayedVersion](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lastreplayedversion): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastReplayedVersion&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The latest stream version that was fully replayed before the durable step executed.
   - `long? LastReplayedVersion { get; set; }`
@@ -6459,6 +6528,9 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-metadata): `Properties` on `RestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets optional additive metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-metadata): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The operator-facing metadata captured by the latest observation.
+  - `IReadOnlyDictionary<string, string> Metadata { get; set; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-metadata): `Properties` on `SagaChoreographyRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets additional operator-facing metadata describing choreography semantics.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -6956,6 +7028,9 @@ Browse the published API surface by public member.
   - `DateTimeOffset OccurredAtUtc { get; set; }`
 - [OccurredAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimelifecycleevent-occurredatutc): `Properties` on `RuntimeLifecycleEvent` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=OccurredAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The UTC timestamp when the event was recorded.
+  - `DateTimeOffset OccurredAtUtc { get; set; }`
+- [OccurredAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-occurredatutc): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=OccurredAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The UTC timestamp carried by the observed publication itself.
   - `DateTimeOffset OccurredAtUtc { get; set; }`
 - [OccurredFromUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryexportrequest-occurredfromutc): `Properties` on `AuditHistoryExportRequest` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=OccurredFromUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the optional inclusive lower occurrence bound.
@@ -7806,6 +7881,9 @@ Browse the published API surface by public member.
 - [ProxyServiceName](cephalon-observability-tanzu.md#member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-proxyservicename): `Properties` on `TanzuTelemetryExportOptions` in `Cephalon.Observability.Tanzu.Configuration` (`Cephalon.Observability.Tanzu`) [Browse](browse.html?q=ProxyServiceName&assembly=Cephalon.Observability.Tanzu&namespace=Cephalon.Observability.Tanzu.Configuration&scope=members)
   - Gets or sets the proxy service name used to build the in-cluster Tanzu proxy endpoint.
   - `string ProxyServiceName { get; set; }`
+- [PublicationId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-publicationid): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=PublicationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The stable publication identifier declared by the choreography step.
+  - `string PublicationId { get; set; }`
 - [PublishAsync](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventpublisher-publishasync-cephalon-eventing-services-eventpublication-system-threading-cancellationtoken): `Methods` on `IEventPublisher` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PublishAsync&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Publishes one integration event through the active eventing runtime.
   - `ValueTask PublishAsync(EventPublication publication, CancellationToken cancellationToken)`
@@ -9000,6 +9078,12 @@ Browse the published API surface by public member.
 - [SagaChoreographies](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-sagachoreographies): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=SagaChoreographies&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the active saga-choreography behaviors visible to the runtime at the time the snapshot was created.
   - `IReadOnlyList<SagaChoreographyRuntimeDescriptor> SagaChoreographies { get; set; }`
+- [SagaChoreographyPublicationRuntimeState](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-ctor-system-string-system-string-system-string-system-string-system-string-system-datetimeoffset-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-boolean-system-string-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=SagaChoreographyPublicationRuntimeState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Describes the latest operator-facing runtime state reported for one live saga-choreography publication path.
+  - `SagaChoreographyPublicationRuntimeState(string Id, string BehaviorId, string PublicationId, string ChannelId, string EventType, DateTimeOffset OccurredAtUtc, string SourceModuleId, IReadOnlyList<string> TransportIds, string CorrelationId, string TenantId, string ContentType, bool IsCompensation, string LastOutcome, DateTimeOffset? LastObservedAtUtc, string LastPublisherType, int AcceptedCount, int FailedCount, string LastError, IReadOnlyDictionary<string, string> Metadata)`
+- [SagaChoreographyPublicationStates](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-sagachoreographypublicationstates): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=SagaChoreographyPublicationStates&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the latest reported saga-choreography publication-state entries visible to the runtime at the time the snapshot was created.
+  - `IReadOnlyList<SagaChoreographyPublicationRuntimeState> SagaChoreographyPublicationStates { get; set; }`
 - [SagaChoreographyRuntimeDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `SagaChoreographyRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=SagaChoreographyRuntimeDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Creates a saga-choreography runtime descriptor.
   - `SagaChoreographyRuntimeDescriptor(string id, string displayName, string description, string behaviorType, string inputType, string resultType, string localOutputType, string sourceModuleId, IReadOnlyList<string> transportIds, IReadOnlyList<string> requiredFeatureFlagIds, IReadOnlyList<int> successStatusCodes, IReadOnlyDictionary<string, string> metadata)`
@@ -9525,6 +9609,9 @@ Browse the published API surface by public member.
 - [SourceModuleId](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehostedexecutionstate-sourcemoduleid): `Properties` on `RuntimeHostedExecutionState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The module that contributed the hosted execution.
   - `string SourceModuleId { get; set; }`
+- [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-sourcemoduleid): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The owning module identifier when one is known at runtime.
+  - `string SourceModuleId { get; set; }`
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-sourcemoduleid): `Properties` on `SagaChoreographyRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the owning module identifier when one is known at runtime.
   - `string SourceModuleId { get; }`
@@ -9696,6 +9783,9 @@ Browse the published API surface by public member.
 - [States](cephalon-eventing.md#member-p-cephalon-eventing-services-ieventsubscriptionruntimecatalog-states): `Properties` on `IEventSubscriptionRuntimeCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=States&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the currently known runtime-state entries ordered by subscription identifier.
   - `IReadOnlyList<EventSubscriptionRuntimeState> States { get; }`
+- [States](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-states): `Properties` on `ISagaChoreographyPublicationRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=States&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the reported choreography publication-state entries visible to the current runtime.
+  - `IReadOnlyList<SagaChoreographyPublicationRuntimeState> States { get; }`
 - [StateType](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-statetype): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=StateType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the durable workflow replay-state type name.
   - `string StateType { get; }`
@@ -10359,6 +10449,9 @@ Browse the published API surface by public member.
 - [TenantId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxmessage-tenantid): `Properties` on `OutboxMessage` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TenantId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the tenant identifier associated with the message.
   - `string TenantId { get; }`
+- [TenantId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-tenantid): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=TenantId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The tenant identifier associated with the publication when one exists.
+  - `string TenantId { get; set; }`
 - [TenantId](cephalon-abstractions.md#member-p-cephalon-abstractions-tenancy-tenantcontext-tenantid): `Properties` on `TenantContext` in `Cephalon.Abstractions.Tenancy` (`Cephalon.Abstractions`) [Browse](browse.html?q=TenantId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Tenancy&scope=members)
   - Gets the stable tenant identifier.
   - `string TenantId { get; }`
@@ -10470,6 +10563,9 @@ Browse the published API surface by public member.
 - [TotalReports](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-totalreports): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TotalReports&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the total number of observations reported for this subscription.
   - `int TotalReports { get; }`
+- [TotalReports](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-totalreports): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalReports&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the total number of publication observations reported for this runtime-state entry.
+  - `int TotalReports { get; }`
 - [TotalTimeoutSeconds](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-timeoutselection-totaltimeoutseconds): `Properties` on `TimeoutSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalTimeoutSeconds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the overall timeout in seconds requested for an execution.
   - `int? TotalTimeoutSeconds { get; }`
@@ -10538,6 +10634,9 @@ Browse the published API surface by public member.
   - `IReadOnlyList<string> TransportIds { get; }`
 - [TransportIds](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-transportids): `Properties` on `RateLimitingRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - The transport identifiers whose HTTP surfaces are covered by the policy.
+  - `IReadOnlyList<string> TransportIds { get; set; }`
+- [TransportIds](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-transportids): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The transport identifiers that expose the owning choreography behavior.
   - `IReadOnlyList<string> TransportIds { get; set; }`
 - [TransportIds](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-transportids): `Properties` on `SagaChoreographyRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the transport identifiers that expose the choreography.
@@ -10638,6 +10737,9 @@ Browse the published API surface by public member.
 - [TryGetAvailable](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-technologyselection-trygetavailable-system-string-cephalon-abstractions-technologies-technologydescriptor): `Methods` on `TechnologySelection` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=TryGetAvailable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Attempts to resolve one available technology from the runtime catalog.
   - `bool TryGetAvailable(string value, out TechnologyDescriptor technology)`
+- [TryGetById](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-trygetbyid-system-string-cephalon-abstractions-execution-sagachoreographypublicationruntimestate): `Methods` on `ISagaChoreographyPublicationRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=TryGetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Tries to get the latest reported publication state for one choreography publication path.
+  - `bool TryGetById(string id, out SagaChoreographyPublicationRuntimeState state)`
 - [TryGetByStreamId](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-trygetbystreamid-system-string-cephalon-abstractions-execution-durableexecutionruntimestate): `Methods` on `IDurableExecutionRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=TryGetByStreamId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Tries to get the latest reported durable-execution state for one stream.
   - `bool TryGetByStreamId(string streamId, out DurableExecutionRuntimeState state)`

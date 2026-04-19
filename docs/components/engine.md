@@ -25,7 +25,7 @@
 - additive authorization-policy contracts and runtime authorization-policy catalogs
 - additive audit-store contracts and runtime audit-store catalogs
 - additive event-dispatch runtime descriptor and state catalogs
-- additive saga choreography runtime catalogs and snapshot projection
+- additive saga choreography runtime catalogs, live publication-state catalogs, and snapshot projection
 - additive backend-for-frontend client-binding contribution contracts and runtime catalogs
 - additive strangler-fig route-contribution contracts plus runtime route, migration-policy, and request-resolution catalogs
 - additive feature-flag contribution contracts, runtime catalogs, and evaluation
@@ -98,7 +98,7 @@
 
 ## How it fits
 
-This package is the host-agnostic center of the framework. ASP.NET Core, worker hosts, CLI, scaffolding, and companion technology packs all consume this runtime model instead of rebuilding engine logic locally. That now includes the runtime diagnostics catalog that publishes stable event-id conventions for the active engine and companion packages, the execution-graph and hosted-execution transition counters exposed through the shared `Cephalon.Engine` meter, the runtime story contracts that explain what loaded, started, failed, and why in one ordered payload, the additive execution-graph catalog surfaced through `/engine/execution-graphs` and `/engine/snapshot`, the additive hosted-execution catalog surfaced through `/engine/hosted-executions` and `/engine/snapshot`, the additive projection catalog surfaced through `/engine/projections` and `/engine/snapshot`, the additive inbox catalog surfaced through `/engine/inboxes` and `/engine/snapshot`, the additive outbox catalog surfaced through `/engine/outboxes` and `/engine/snapshot`, the additive authorization-policy catalog surfaced through `/engine/authorization-policies` and `/engine/snapshot`, the additive audit-store catalog surfaced through `/engine/audit-stores` and `/engine/snapshot`, the additive event-dispatch runtime descriptor and state catalogs surfaced through `snapshot.EventDispatchRuntimes` and `snapshot.EventDispatchStates`, the additive rate-limiting runtime catalog surfaced through host-owned routes and `snapshot.RateLimitingPolicies`, the live aggregate `Summary` now carried by each dispatch-runtime descriptor so operator tooling has one canonical per-runtime answer, and the outbox-dispatch-policy enrichment that lets `/engine/outboxes` answer `disabled`, `consumer-managed`, or runtime-managed ownership without hardwiring provider or adapter logic into the engine core. The execution-graph and hosted-execution lifecycle state still surface through `/engine/runtime-story` and `/engine/snapshot`, and the configuration-driven failure-policy windows let hosts tune readiness warmup, shutdown drain, and manual restart backoff without hardwiring host-specific lifecycle logic. The technology-runtime catalog is also now projected on demand from active contributors when the engine builds it that way, so application-managed companion-pack state such as event-subscription runtime reporting and outbox-dispatch runtime reporting can stay fresh in `/engine/technology-surfaces` and `/engine/snapshot` instead of freezing at the first resolution.
+This package is the host-agnostic center of the framework. ASP.NET Core, worker hosts, CLI, scaffolding, and companion technology packs all consume this runtime model instead of rebuilding engine logic locally. That now includes the runtime diagnostics catalog that publishes stable event-id conventions for the active engine and companion packages, the execution-graph and hosted-execution transition counters exposed through the shared `Cephalon.Engine` meter, the runtime story contracts that explain what loaded, started, failed, and why in one ordered payload, the additive execution-graph catalog surfaced through `/engine/execution-graphs` and `/engine/snapshot`, the additive hosted-execution catalog surfaced through `/engine/hosted-executions` and `/engine/snapshot`, the additive projection catalog surfaced through `/engine/projections` and `/engine/snapshot`, the additive inbox catalog surfaced through `/engine/inboxes` and `/engine/snapshot`, the additive outbox catalog surfaced through `/engine/outboxes` and `/engine/snapshot`, the additive authorization-policy catalog surfaced through `/engine/authorization-policies` and `/engine/snapshot`, the additive audit-store catalog surfaced through `/engine/audit-stores` and `/engine/snapshot`, the additive event-dispatch runtime descriptor and state catalogs surfaced through `snapshot.EventDispatchRuntimes` and `snapshot.EventDispatchStates`, the additive choreography publication-state catalog surfaced through `snapshot.SagaChoreographyPublicationStates`, the additive rate-limiting runtime catalog surfaced through host-owned routes and `snapshot.RateLimitingPolicies`, the live aggregate `Summary` now carried by each dispatch-runtime descriptor so operator tooling has one canonical per-runtime answer, and the outbox-dispatch-policy enrichment that lets `/engine/outboxes` answer `disabled`, `consumer-managed`, or runtime-managed ownership without hardwiring provider or adapter logic into the engine core. The execution-graph and hosted-execution lifecycle state still surface through `/engine/runtime-story` and `/engine/snapshot`, and the configuration-driven failure-policy windows let hosts tune readiness warmup, shutdown drain, and manual restart backoff without hardwiring host-specific lifecycle logic. The technology-runtime catalog is also now projected on demand from active contributors when the engine builds it that way, so application-managed companion-pack state such as event-subscription runtime reporting and outbox-dispatch runtime reporting can stay fresh in `/engine/technology-surfaces` and `/engine/snapshot` instead of freezing at the first resolution.
 
 Just as importantly, this package exists to lower ceremony for consumer apps. The engine should absorb repetitive composition, configuration binding, runtime wiring, introspection, and companion-pack coordination so Cephalon-based apps spend less code on plumbing and declarations, emit less boilerplate, and stay focused on project-specific business logic.
 
@@ -149,14 +149,19 @@ now also shipped there: `FeatureFlagDescriptor.ProviderBindings`,
 the same shared evaluator without replacing the Cephalon-owned descriptor catalog. Missing or
 provider-disabled bindings now surface as disabled evaluation answers with provider details instead
 of silently inventing a second host-only feature registry.
-The same phase now also ships the first static saga choreography runtime/operator projection:
-`ISagaChoreographyRuntimeCatalog` stays host-agnostic in `Cephalon.Abstractions`,
-`Cephalon.Behaviors.Patterns` derives it from shared behavior topology plus registered
-implementation types, and `Cephalon.Engine` projects that answer into `snapshot.SagaChoreographies`
-without claiming live event-publication ownership. That keeps choreography ownership, transport
-exposure, feature gates, and result-shape metadata readable from one engine surface while the
-explicit `Cephalon.Eventing.Behaviors` bridge remains a separate additive runtime answer for
-durable publish handoff.
+The same phase now also ships the first static saga choreography runtime/operator projection plus
+the first live publication-state follow-through: `ISagaChoreographyRuntimeCatalog` stays
+host-agnostic in `Cephalon.Abstractions`, `Cephalon.Behaviors.Patterns` derives it from shared
+behavior topology plus registered implementation types, and `Cephalon.Engine` projects that answer
+into `snapshot.SagaChoreographies` without claiming live event-publication ownership. The same
+runtime now also projects `snapshot.SagaChoreographyPublicationStates` from
+`ISagaChoreographyPublicationRuntimeStateCatalog`, which keeps the latest accepted-or-failed
+choreography publication handoff observations readable from one engine surface by publication,
+behavior, module, transport, channel, correlation, compensation, and failure posture. That keeps
+choreography ownership, transport exposure, feature gates, result-shape metadata, and handoff
+observations readable from one engine surface while the explicit `Cephalon.Eventing.Behaviors`
+bridge remains a separate additive runtime answer for durable publish handoff and the downstream
+event-dispatch runtime remains the broker-delivery truth.
 That same shared feature-flag runtime now also reaches the public REST boundary in ASP.NET Core:
 `RequireFeatureFlag(...)` / `RequireFeatureFlags(...)` can gate request execution while keeping the
 published endpoint visible through `/engine/rest-endpoints` and `snapshot.RestEndpoints`, and host

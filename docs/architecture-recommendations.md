@@ -107,26 +107,33 @@ Effort: small.
 ### Saga Choreography (event-driven saga variant)
 
 Current state: the first host-agnostic choreography baseline, the first explicit eventing bridge,
-the first higher-level authoring-helper follow-through, and the first choreography
-runtime/operator catalog follow-through are now shipped. `Cephalon.Behaviors.Patterns` exposes
+the first higher-level authoring-helper follow-through, the first choreography
+runtime/operator catalog follow-through, and the first live choreography publication-state
+follow-through are now shipped. `Cephalon.Behaviors.Patterns` exposes
 `ChoreographySagaExecutionStrategy`, `ISagaChoreographyPublisher`,
 `ISagaChoreographyStepResult`, `ISagaEventReactor<TEvent>`,
 `ISagaEventReactor<TEvent, TOutput>`, `SagaChoreographyPublication`,
 `SagaChoreographyStepResult`, `SagaChoreographyStepResult<TOutput>`, and an in-memory default
 publisher so choreography steps can publish continuation or compensation work through typed helper
 contracts without forcing a hard dependency on `Cephalon.Eventing`. `Cephalon.Abstractions` now
-also exposes `SagaChoreographyRuntimeDescriptor` plus `ISagaChoreographyRuntimeCatalog`,
-`Cephalon.Behaviors.Patterns` derives that static operator surface from shared behavior topology
-plus registered implementation types, `Cephalon.Engine` projects the same answer through
-`snapshot.SagaChoreographies`, and ASP.NET Core now exposes `/engine/saga-choreographies` plus
-id/module/transport drill-down routes. `Cephalon.Eventing.Behaviors` still provides the explicit
-`AddBehaviorEventingBridge()` follow-through that stages those publications through the shared
-outbox-backed eventing publish path when that path is actually available.
+also exposes `SagaChoreographyRuntimeDescriptor`, `ISagaChoreographyRuntimeCatalog`,
+`SagaChoreographyPublicationRuntimeState`, and
+`ISagaChoreographyPublicationRuntimeStateCatalog`. `Cephalon.Behaviors.Patterns` derives the
+static operator surface from shared behavior topology plus registered implementation types and now
+also reports accepted or failed publication handoff observations directly from
+`ChoreographySagaExecutionStrategy`, `Cephalon.Engine` projects those answers through both
+`snapshot.SagaChoreographies` and `snapshot.SagaChoreographyPublicationStates`, and ASP.NET Core
+now exposes `/engine/saga-choreographies` plus `/engine/saga-choreographies/runtime` with
+behavior/module/transport/channel/correlation/failure/compensation drill-down routes.
+`Cephalon.Eventing.Behaviors` still provides the explicit `AddBehaviorEventingBridge()`
+follow-through that stages those publications through the shared outbox-backed eventing publish
+path when that path is actually available.
 
-Recommendation: keep the host-agnostic choreography contracts stable and keep the bridge explicit
+Recommendation: keep the host-agnostic choreography contracts stable, keep the bridge explicit
 through a dedicated companion pack rather than collapsing the behavior-pattern layer into
 `Cephalon.Eventing` or making choreography publication an ambient side effect of enabling the
-eventing technology pack.
+eventing technology pack, and keep strategy-owned publication handoff observations separate from
+provider-specific publish or downstream dispatch truth.
 
 Implementation outline:
 - shipped baseline: `ChoreographySagaExecutionStrategy`, `ISagaChoreographyPublisher`,
@@ -146,8 +153,22 @@ Implementation outline:
   `/engine/saga-choreographies/modules/{moduleId}`, and
   `/engine/saga-choreographies/transports/{transportId}` all stay derived from the same shared
   choreography behavior topology and registered implementation types
+- shipped live publication-state follow-through: `SagaChoreographyPublicationRuntimeState`,
+  `ISagaChoreographyPublicationRuntimeStateCatalog`,
+  `snapshot.SagaChoreographyPublicationStates`,
+  `/engine/saga-choreographies/runtime`,
+  `/engine/saga-choreographies/runtime/behaviors/{behaviorId}`,
+  `/engine/saga-choreographies/runtime/modules/{moduleId}`,
+  `/engine/saga-choreographies/runtime/transports/{transportId}`,
+  `/engine/saga-choreographies/runtime/channels/{channelId}`,
+  `/engine/saga-choreographies/runtime/correlations/{correlationId}`,
+  `/engine/saga-choreographies/runtime/compensations`, and
+  `/engine/saga-choreographies/runtime/failures` keep live handoff observations on the shared
+  choreography execution path without pretending to replace downstream eventing or broker dispatch
+  truth
 
-Effort: medium for any later capability-publication or provider-specific choreography follow-through.
+Effort: medium for any later capability-publication or provider-specific downstream choreography
+follow-through.
 
 ### Backend for Frontend — BFF (explicit pattern)
 

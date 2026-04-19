@@ -2540,6 +2540,69 @@ Delivered:
   live publication-state ownership or collapsing the explicit eventing bridge into the static
   choreography runtime answer
 
+### ENG-117 Phase 12 saga choreography live publication-state baseline
+
+Status: done
+Estimate: 4
+Completed: April 19, 2026
+
+Why:
+
+- after `ENG-116`, operators could query which choreography behaviors were active, but they still
+  could not see whether the shared choreography execution path had recently accepted or failed one
+  publication handoff, whether that publication was compensation work, or which channel,
+  correlation, and transport context it belonged to
+- `/engine/snapshot` still stopped short of carrying a first-class live choreography publication
+  answer even though durable execution already exposed both static runtime topology and live
+  runtime-state posture through one introspection payload
+- the explicit `Cephalon.Eventing.Behaviors` bridge and downstream event-dispatch runtime already
+  owned their own truth, so the missing slice was a choreography-owned publication-state surface
+  that reported handoff observations without pretending to replace eventing-bridge ownership or
+  downstream broker dispatch results
+
+Acceptance:
+
+- `Cephalon.Abstractions` exposes a host-agnostic choreography publication-state contract and
+  runtime-state catalog
+- `Cephalon.Behaviors.Patterns` reports accepted and failed publication handoff observations
+  directly from `ChoreographySagaExecutionStrategy` without inventing a second choreography
+  publisher registry
+- `Cephalon.Engine` projects additive `snapshot.SagaChoreographyPublicationStates` through optional
+  service resolution
+- ASP.NET Core hosts expose `/engine/saga-choreographies/runtime` plus publication, behavior,
+  module, transport, channel, correlation, compensation, and failure drill-down routes while
+  preserving eventing-bridge and downstream dispatch truth as separate surfaces
+- docs, backlog, roadmap, project memory, reference docs, and focused
+  composition/hosting/tooling coverage stay aligned with the shipped live publication-state answer
+
+Delivered:
+
+- `Cephalon.Abstractions` now exposes `SagaChoreographyPublicationRuntimeState` plus
+  `ISagaChoreographyPublicationRuntimeStateCatalog` as the host-agnostic read layer for the latest
+  accepted-or-failed choreography publication handoff observations, including source module,
+  transport ids, channel id, correlation, compensation posture, publisher type, counts, and
+  operator-facing error metadata
+- `Cephalon.Behaviors.Patterns` now reports live publication observations directly from
+  `ChoreographySagaExecutionStrategy`, keeping the shared strategy as the source of choreography
+  handoff truth while preserving explicit `ISagaChoreographyPublisher` replacements and the
+  separate `Cephalon.Eventing.Behaviors` bridge/runtime story
+- `Cephalon.Engine` now projects additive `snapshot.SagaChoreographyPublicationStates` through
+  optional service resolution so the engine core stays host-agnostic while exposing the merged
+  choreography publication-state answer
+- `Cephalon.AspNetCore` now exposes `/engine/saga-choreographies/runtime`,
+  `/engine/saga-choreographies/runtime/publications/{publicationStateId}`,
+  `/engine/saga-choreographies/runtime/behaviors/{behaviorId}`,
+  `/engine/saga-choreographies/runtime/modules/{moduleId}`,
+  `/engine/saga-choreographies/runtime/transports/{transportId}`,
+  `/engine/saga-choreographies/runtime/channels/{channelId}`,
+  `/engine/saga-choreographies/runtime/correlations/{correlationId}`,
+  `/engine/saga-choreographies/runtime/compensations`, and
+  `/engine/saga-choreographies/runtime/failures` as direct operator routes over the shared
+  choreography publication-state catalog
+- focused composition, hosting, and tooling coverage now lock the choreography publication-state
+  catalog, snapshot projection, ASP.NET Core operator routes, and public package surface without
+  collapsing downstream event-dispatch ownership into the choreography runtime answer
+
 ### ENG-069 Event-dispatch runtime operator-surface baseline
 
 Status: done
@@ -2997,3 +3060,4 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-114 phase 12 durable execution compensation helper baseline: `Cephalon.Abstractions` now exposes `DurableExecutionCompensationAction`, `Cephalon.Behaviors.Patterns` now lets `DurableExecutionStepResult<TOutput>` and the shared durable runtime-state catalog surface operator-facing compensation actions without changing coordination semantics, and `Cephalon.AspNetCore` now exposes `/engine/durable-executions/runtime/compensations*` while any future auto-executing durable recovery remains later — **Shipped** · GitHub issue `#511` · composition tests 7/7 + hosting tests 2/2 + package-surface tests 161/161
 - ENG-115 phase 12 saga choreography authoring helper baseline: `Cephalon.Behaviors.Patterns` now exposes `ISagaChoreographyStepResult`, `ISagaEventReactor<TEvent>`, `ISagaEventReactor<TEvent, TOutput>`, `SagaChoreographyStepResult<TOutput>`, and typed JSON helper factories on `SagaChoreographyPublication`, while `ChoreographySagaExecutionStrategy` now normalizes the shared result contract without changing the explicit `ISagaChoreographyPublisher` handoff or the opt-in `Cephalon.Eventing.Behaviors` bridge — **Shipped** · GitHub issue `#512` · composition tests 41/41 + tooling tests 188/188 + reference docs publish script
 - ENG-116 phase 12 saga choreography runtime catalog baseline: `Cephalon.Abstractions` now exposes `SagaChoreographyRuntimeDescriptor` plus `ISagaChoreographyRuntimeCatalog`, `Cephalon.Behaviors.Patterns` now derives the catalog from shared choreography behavior topology plus registered implementation types, `Cephalon.Engine` now projects `snapshot.SagaChoreographies`, and `Cephalon.AspNetCore` now exposes `/engine/saga-choreographies` plus behavior/module/transport drill-down routes while live publication-state tracking remains later — **Shipped** · GitHub issue `#513` · composition tests 1/1 + hosting tests 1/1 + package-surface tests 163/163
+- ENG-117 phase 12 saga choreography live publication-state baseline: `Cephalon.Abstractions` now exposes `SagaChoreographyPublicationRuntimeState` plus `ISagaChoreographyPublicationRuntimeStateCatalog`, `ChoreographySagaExecutionStrategy` now reports accepted and failed publication handoff observations directly from the shared choreography path, `Cephalon.Engine` now projects `snapshot.SagaChoreographyPublicationStates`, and `Cephalon.AspNetCore` now exposes `/engine/saga-choreographies/runtime*` operator routes for publication, behavior, module, transport, channel, correlation, compensation, and failure drill-downs while eventing-bridge and downstream dispatch truth remain separate — **Shipped** · GitHub issue `#514` · composition tests 8/8 + hosting tests 2/2 + tooling tests 190/190 + reference docs publish script

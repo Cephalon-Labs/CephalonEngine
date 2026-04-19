@@ -219,7 +219,9 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Execution.IHostedExecutionContributor),
             typeof(global::Cephalon.Abstractions.Execution.IHostedExecutionRegistry),
             typeof(global::Cephalon.Abstractions.Execution.IHostedExecutionRuntimeCatalog),
+            typeof(global::Cephalon.Abstractions.Execution.ISagaChoreographyPublicationRuntimeStateCatalog),
             typeof(global::Cephalon.Abstractions.Execution.ISagaChoreographyRuntimeCatalog),
+            typeof(global::Cephalon.Abstractions.Execution.SagaChoreographyPublicationRuntimeState),
             typeof(global::Cephalon.Abstractions.Execution.SagaChoreographyRuntimeDescriptor),
             typeof(global::Cephalon.Abstractions.Features.FeatureFlagDescriptor),
             typeof(global::Cephalon.Abstractions.Features.FeatureFlagEvaluationContext),
@@ -2392,6 +2394,45 @@ public sealed class PackageSurfaceTests
             .GetProperty("SuccessStatusCodes", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot)
             .GetProperty("SagaChoreographies", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void SagaChoreographyPublicationRuntimeStateContractsExposeRuntimeSurface()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.ISagaChoreographyPublicationRuntimeStateCatalog)
+            .GetProperty("States", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.ISagaChoreographyPublicationRuntimeStateCatalog)
+            .GetMethod("GetById", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.ISagaChoreographyPublicationRuntimeStateCatalog)
+            .GetMethod("GetByBehaviorId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.ISagaChoreographyPublicationRuntimeStateCatalog)
+            .GetMethod("GetBySourceModule", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.ISagaChoreographyPublicationRuntimeStateCatalog)
+            .GetMethod("GetByTransportId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.ISagaChoreographyPublicationRuntimeStateCatalog)
+            .GetMethod("GetByChannelId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.ISagaChoreographyPublicationRuntimeStateCatalog)
+            .GetMethod("GetByCorrelationId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.ISagaChoreographyPublicationRuntimeStateCatalog)
+            .GetMethod("GetCompensationPublications", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.ISagaChoreographyPublicationRuntimeStateCatalog)
+            .GetMethod("GetFailedPublications", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.ISagaChoreographyPublicationRuntimeStateCatalog)
+            .GetMethod("TryGetById", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.SagaChoreographyPublicationRuntimeState)
+            .GetProperty("PublicationId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.SagaChoreographyPublicationRuntimeState)
+            .GetProperty("CorrelationId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.SagaChoreographyPublicationRuntimeState)
+            .GetProperty("IsCompensation", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.SagaChoreographyPublicationRuntimeState)
+            .GetProperty("AcceptedCount", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.SagaChoreographyPublicationRuntimeState)
+            .GetProperty("FailedCount", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.SagaChoreographyPublicationRuntimeState)
+            .GetProperty("LastPublisherType", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot)
+            .GetProperty("SagaChoreographyPublicationStates", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

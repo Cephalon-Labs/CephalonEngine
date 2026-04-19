@@ -9313,6 +9313,16 @@ IReadOnlyList<SagaChoreographyRuntimeDescriptor> SagaChoreographies { get; set; 
 
 Gets the active saga-choreography behaviors visible to the runtime at the time the snapshot was created.
 
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-sagachoreographypublicationstates"></a>
+
+##### `SagaChoreographyPublicationStates`
+
+```csharp
+IReadOnlyList<SagaChoreographyPublicationRuntimeState> SagaChoreographyPublicationStates { get; set; }
+```
+
+Gets the latest reported saga-choreography publication-state entries visible to the runtime at the time the snapshot was created.
+
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-status"></a>
 
 ##### `Status`

@@ -14638,6 +14638,161 @@ Returns: The matching hosted executions, or an empty list when the module contri
 Parameters:
 - `sourceModuleId`: The source module identifier to filter by.
 
+<a id="type-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog"></a>
+
+### `ISagaChoreographyPublicationRuntimeStateCatalog`
+
+Exposes the operator-facing live saga-choreography publication state currently reported for the active runtime.
+
+#### Declaration
+```csharp
+public interface ISagaChoreographyPublicationRuntimeStateCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-states"></a>
+
+##### `States`
+
+```csharp
+IReadOnlyList<SagaChoreographyPublicationRuntimeState> States { get; }
+```
+
+Gets the reported choreography publication-state entries visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-getbybehaviorid-system-string"></a>
+
+##### `GetByBehaviorId`
+
+```csharp
+IReadOnlyList<SagaChoreographyPublicationRuntimeState> GetByBehaviorId(string behaviorId)
+```
+
+Gets the reported publication-state entries for one choreography behavior.
+
+Returns: The matching publication-state entries, or an empty list when the behavior has not reported live publication state.
+
+Parameters:
+- `behaviorId`: The stable choreography behavior identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-getbychannelid-system-string"></a>
+
+##### `GetByChannelId`
+
+```csharp
+IReadOnlyList<SagaChoreographyPublicationRuntimeState> GetByChannelId(string channelId)
+```
+
+Gets the reported publication-state entries that targeted the requested channel.
+
+Returns: The matching publication-state entries, or an empty list when no publication targeted that channel.
+
+Parameters:
+- `channelId`: The logical channel identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-getbycorrelationid-system-string"></a>
+
+##### `GetByCorrelationId`
+
+```csharp
+IReadOnlyList<SagaChoreographyPublicationRuntimeState> GetByCorrelationId(string correlationId)
+```
+
+Gets the reported publication-state entries associated with one correlation identifier.
+
+Returns: The matching publication-state entries, or an empty list when none reported that correlation.
+
+Parameters:
+- `correlationId`: The correlation identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+SagaChoreographyPublicationRuntimeState GetById(string id)
+```
+
+Gets the latest reported publication state for one choreography publication path.
+
+Returns: The latest reported publication state, or `null` when that identifier has not reported choreography runtime state.
+
+Parameters:
+- `id`: The stable runtime-state identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-getbysourcemodule-system-string"></a>
+
+##### `GetBySourceModule`
+
+```csharp
+IReadOnlyList<SagaChoreographyPublicationRuntimeState> GetBySourceModule(string sourceModuleId)
+```
+
+Gets the reported publication-state entries contributed by one source module.
+
+Returns: The matching publication-state entries, or an empty list when the module has not reported live publication state.
+
+Parameters:
+- `sourceModuleId`: The source module identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-getbytransportid-system-string"></a>
+
+##### `GetByTransportId`
+
+```csharp
+IReadOnlyList<SagaChoreographyPublicationRuntimeState> GetByTransportId(string transportId)
+```
+
+Gets the reported publication-state entries exposed over one transport.
+
+Returns: The matching publication-state entries, or an empty list when none reported live publication state for that transport.
+
+Parameters:
+- `transportId`: The stable transport identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-getcompensationpublications"></a>
+
+##### `GetCompensationPublications`
+
+```csharp
+IReadOnlyList<SagaChoreographyPublicationRuntimeState> GetCompensationPublications()
+```
+
+Gets the reported publication-state entries that currently represent compensation work.
+
+Returns: The matching compensation publication-state entries, or an empty list when none reported compensation posture.
+
+<a id="member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-getfailedpublications"></a>
+
+##### `GetFailedPublications`
+
+```csharp
+IReadOnlyList<SagaChoreographyPublicationRuntimeState> GetFailedPublications()
+```
+
+Gets the reported publication-state entries whose latest observation is failed.
+
+Returns: The matching failed publication-state entries, or an empty list when none currently report a failed posture.
+
+<a id="member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-trygetbyid-system-string-cephalon-abstractions-execution-sagachoreographypublicationruntimestate"></a>
+
+##### `TryGetById`
+
+```csharp
+bool TryGetById(string id, out SagaChoreographyPublicationRuntimeState state)
+```
+
+Tries to get the latest reported publication state for one choreography publication path.
+
+Returns: `true` when a reported state exists; otherwise, `false`.
+
+Parameters:
+- `id`: The stable runtime-state identifier to resolve.
+- `state`: Receives the latest reported publication state when that identifier has reported one.
+
 <a id="type-cephalon-abstractions-execution-isagachoreographyruntimecatalog"></a>
 
 ### `ISagaChoreographyRuntimeCatalog`
@@ -14707,6 +14862,272 @@ Returns: The matching choreographies, or an empty list when none expose that tra
 
 Parameters:
 - `transportId`: The stable transport identifier to filter by.
+
+<a id="type-cephalon-abstractions-execution-sagachoreographypublicationruntimestate"></a>
+
+### `SagaChoreographyPublicationRuntimeState`
+
+Describes the latest operator-facing runtime state reported for one live saga-choreography publication path.
+
+#### Declaration
+```csharp
+public sealed class SagaChoreographyPublicationRuntimeState
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-ctor-system-string-system-string-system-string-system-string-system-string-system-datetimeoffset-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-boolean-system-string-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `SagaChoreographyPublicationRuntimeState`
+
+```csharp
+SagaChoreographyPublicationRuntimeState(string Id, string BehaviorId, string PublicationId, string ChannelId, string EventType, DateTimeOffset OccurredAtUtc, string SourceModuleId, IReadOnlyList<string> TransportIds, string CorrelationId, string TenantId, string ContentType, bool IsCompensation, string LastOutcome, DateTimeOffset? LastObservedAtUtc, string LastPublisherType, int AcceptedCount, int FailedCount, string LastError, IReadOnlyDictionary<string, string> Metadata)
+```
+
+Describes the latest operator-facing runtime state reported for one live saga-choreography publication path.
+
+Parameters:
+- `Id`: The stable runtime-state identifier for this observed choreography publication path.
+- `BehaviorId`: The stable choreography behavior identifier that produced the publication.
+- `PublicationId`: The stable publication identifier declared by the choreography step.
+- `ChannelId`: The logical channel or destination identifier used by the publication.
+- `EventType`: The logical event type identifier used by the publication.
+- `OccurredAtUtc`: The UTC timestamp carried by the observed publication itself.
+- `SourceModuleId`: The owning module identifier when one is known at runtime.
+- `TransportIds`: The transport identifiers that expose the owning choreography behavior.
+- `CorrelationId`: The correlation identifier associated with the publication when one exists.
+- `TenantId`: The tenant identifier associated with the publication when one exists.
+- `ContentType`: The payload content type when one is known.
+- `IsCompensation`: Indicates whether the publication represents compensation work.
+- `LastOutcome`: The last reported publication outcome identifier when one exists.
+- `LastObservedAtUtc`: The UTC timestamp when the latest publication observation was reported.
+- `LastPublisherType`: The last concrete publisher implementation type that accepted or rejected the publication when one was reported.
+- `AcceptedCount`: The number of `accepted` observations reported so far.
+- `FailedCount`: The number of `failed` observations reported so far.
+- `LastError`: The latest operator-facing error summary when the publication handoff reported a failure.
+- `Metadata`: The operator-facing metadata captured by the latest observation.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-acceptedcount"></a>
+
+##### `AcceptedCount`
+
+```csharp
+int AcceptedCount { get; set; }
+```
+
+The number of `accepted` observations reported so far.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-behaviorid"></a>
+
+##### `BehaviorId`
+
+```csharp
+string BehaviorId { get; set; }
+```
+
+The stable choreography behavior identifier that produced the publication.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-channelid"></a>
+
+##### `ChannelId`
+
+```csharp
+string ChannelId { get; set; }
+```
+
+The logical channel or destination identifier used by the publication.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-contenttype"></a>
+
+##### `ContentType`
+
+```csharp
+string ContentType { get; set; }
+```
+
+The payload content type when one is known.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; set; }
+```
+
+The correlation identifier associated with the publication when one exists.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-eventtype"></a>
+
+##### `EventType`
+
+```csharp
+string EventType { get; set; }
+```
+
+The logical event type identifier used by the publication.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-failedcount"></a>
+
+##### `FailedCount`
+
+```csharp
+int FailedCount { get; set; }
+```
+
+The number of `failed` observations reported so far.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; set; }
+```
+
+The stable runtime-state identifier for this observed choreography publication path.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-isaccepted"></a>
+
+##### `IsAccepted`
+
+```csharp
+bool IsAccepted { get; }
+```
+
+Gets a value indicating whether the latest report says the publication handoff succeeded.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-iscompensation"></a>
+
+##### `IsCompensation`
+
+```csharp
+bool IsCompensation { get; set; }
+```
+
+Indicates whether the publication represents compensation work.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-isfailed"></a>
+
+##### `IsFailed`
+
+```csharp
+bool IsFailed { get; }
+```
+
+Gets a value indicating whether the latest report says the publication handoff failed.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-lasterror"></a>
+
+##### `LastError`
+
+```csharp
+string LastError { get; set; }
+```
+
+The latest operator-facing error summary when the publication handoff reported a failure.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-lastobservedatutc"></a>
+
+##### `LastObservedAtUtc`
+
+```csharp
+DateTimeOffset? LastObservedAtUtc { get; set; }
+```
+
+The UTC timestamp when the latest publication observation was reported.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-lastoutcome"></a>
+
+##### `LastOutcome`
+
+```csharp
+string LastOutcome { get; set; }
+```
+
+The last reported publication outcome identifier when one exists.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-lastpublishertype"></a>
+
+##### `LastPublisherType`
+
+```csharp
+string LastPublisherType { get; set; }
+```
+
+The last concrete publisher implementation type that accepted or rejected the publication when one was reported.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; set; }
+```
+
+The operator-facing metadata captured by the latest observation.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-occurredatutc"></a>
+
+##### `OccurredAtUtc`
+
+```csharp
+DateTimeOffset OccurredAtUtc { get; set; }
+```
+
+The UTC timestamp carried by the observed publication itself.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-publicationid"></a>
+
+##### `PublicationId`
+
+```csharp
+string PublicationId { get; set; }
+```
+
+The stable publication identifier declared by the choreography step.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; set; }
+```
+
+The owning module identifier when one is known at runtime.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; set; }
+```
+
+The tenant identifier associated with the publication when one exists.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-totalreports"></a>
+
+##### `TotalReports`
+
+```csharp
+int TotalReports { get; }
+```
+
+Gets the total number of publication observations reported for this runtime-state entry.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-transportids"></a>
+
+##### `TransportIds`
+
+```csharp
+IReadOnlyList<string> TransportIds { get; set; }
+```
+
+The transport identifiers that expose the owning choreography behavior.
 
 <a id="type-cephalon-abstractions-execution-sagachoreographyruntimedescriptor"></a>
 

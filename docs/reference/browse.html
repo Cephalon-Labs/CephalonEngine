@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-19T12:40:46.3378189+00:00",
+  "GeneratedAtUtc": "2026-04-19T14:27:33.5590006+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -111,7 +111,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 300
+      "TypeCount": 302
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -632,7 +632,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-execution",
-      "TypeCount": 19
+      "TypeCount": 21
     },
     {
       "NamespaceName": "Cephalon.Abstractions.Features",
@@ -7327,6 +7327,21 @@
       }
     },
     {
+      "DisplayName": "ISagaChoreographyPublicationRuntimeStateCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog",
+      "Declaration": "public interface ISagaChoreographyPublicationRuntimeStateCatalog",
+      "Summary": "Exposes the operator-facing live saga-choreography publication state currently reported for the active runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 9
+      }
+    },
+    {
       "DisplayName": "ISagaChoreographyRuntimeCatalog",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -10067,7 +10082,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 35,
+        "Properties": 36,
         "Methods": 0
       }
     },
@@ -10188,6 +10203,21 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 7,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "SagaChoreographyPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-execution-sagachoreographypublicationruntimestate",
+      "Declaration": "public sealed class SagaChoreographyPublicationRuntimeState",
+      "Summary": "Describes the latest operator-facing runtime state reported for one live saga-choreography publication path.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 22,
         "Methods": 0
       }
     },
@@ -11016,6 +11046,17 @@
       "AnchorId": "member-m-cephalon-abstractions-behaviors-result-accepted-1-0-system-string-system-string",
       "Signature": "Result\u003CT\u003E Accepted\u003CT\u003E(T value, string message, string code)",
       "Summary": "Creates an accepted result with a payload value."
+    },
+    {
+      "DisplayName": "AcceptedCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-acceptedcount",
+      "Signature": "int AcceptedCount { get; set; }",
+      "Summary": "The number of \u0060accepted\u0060 observations reported so far."
     },
     {
       "DisplayName": "Access",
@@ -15319,6 +15360,17 @@
       "Summary": "Gets the stable behavior identifier when the endpoint dispatches through a Cephalon behavior."
     },
     {
+      "DisplayName": "BehaviorId",
+      "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-behaviorid",
+      "Signature": "string BehaviorId { get; set; }",
+      "Summary": "The stable choreography behavior identifier that produced the publication."
+    },
+    {
       "DisplayName": "BehaviorIdempotency",
       "Category": "Properties",
       "DeclaringTypeName": "BehaviorResilienceExceptionContext",
@@ -16813,6 +16865,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-outboxmessage-channelid",
       "Signature": "string ChannelId { get; }",
       "Summary": "Gets the logical channel or destination identifier."
+    },
+    {
+      "DisplayName": "ChannelId",
+      "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-channelid",
+      "Signature": "string ChannelId { get; set; }",
+      "Summary": "The logical channel or destination identifier used by the publication."
     },
     {
       "DisplayName": "ChannelIds",
@@ -18388,6 +18451,17 @@
       "Summary": "Gets the payload content type when one is known."
     },
     {
+      "DisplayName": "ContentType",
+      "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-contenttype",
+      "Signature": "string ContentType { get; set; }",
+      "Summary": "The payload content type when one is known."
+    },
+    {
       "DisplayName": "ContextAttributePrefix",
       "Category": "Fields",
       "DeclaringTypeName": "IdentityPolicyMetadataKeys",
@@ -18749,6 +18823,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-outboxmessage-correlationid",
       "Signature": "string CorrelationId { get; }",
       "Summary": "Gets the correlation identifier associated with the message."
+    },
+    {
+      "DisplayName": "CorrelationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-correlationid",
+      "Signature": "string CorrelationId { get; set; }",
+      "Summary": "The correlation identifier associated with the publication when one exists."
     },
     {
       "DisplayName": "Counters",
@@ -24229,6 +24314,17 @@
       "Summary": "Gets the logical event type identifier."
     },
     {
+      "DisplayName": "EventType",
+      "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-eventtype",
+      "Signature": "string EventType { get; set; }",
+      "Summary": "The logical event type identifier used by the publication."
+    },
+    {
       "DisplayName": "Exception",
       "Category": "Properties",
       "DeclaringTypeName": "BehaviorResilienceExceptionContext",
@@ -25028,6 +25124,17 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionruntimestate-failedcount",
+      "Signature": "int FailedCount { get; set; }",
+      "Summary": "The number of \u0060failed\u0060 observations reported so far."
+    },
+    {
+      "DisplayName": "FailedCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-failedcount",
       "Signature": "int FailedCount { get; set; }",
       "Summary": "The number of \u0060failed\u0060 observations reported so far."
     },
@@ -26616,6 +26723,17 @@
       "Summary": "Gets all REST endpoint suppression rules that target the requested behavior identifier, either directly or through configured behavior-id prefixes."
     },
     {
+      "DisplayName": "GetByBehaviorId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ISagaChoreographyPublicationRuntimeStateCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-getbybehaviorid-system-string",
+      "Signature": "IReadOnlyList\u003CSagaChoreographyPublicationRuntimeState\u003E GetByBehaviorId(string behaviorId)",
+      "Summary": "Gets the reported publication-state entries for one choreography behavior."
+    },
+    {
       "DisplayName": "GetByBindingId",
       "Category": "Methods",
       "DeclaringTypeName": "IBackendForFrontendRestDocumentRuntimeCatalog",
@@ -26671,6 +26789,17 @@
       "Summary": "Gets all outboxes that explicitly declare the requested channel identifier."
     },
     {
+      "DisplayName": "GetByChannelId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ISagaChoreographyPublicationRuntimeStateCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-getbychannelid-system-string",
+      "Signature": "IReadOnlyList\u003CSagaChoreographyPublicationRuntimeState\u003E GetByChannelId(string channelId)",
+      "Summary": "Gets the reported publication-state entries that targeted the requested channel."
+    },
+    {
       "DisplayName": "GetByClientId",
       "Category": "Methods",
       "DeclaringTypeName": "IBackendForFrontendRestDocumentRuntimeCatalog",
@@ -26713,6 +26842,17 @@
       "AnchorId": "member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getbycompensationactionid-system-string",
       "Signature": "IReadOnlyList\u003CDurableExecutionRuntimeState\u003E GetByCompensationActionId(string compensationActionId)",
       "Summary": "Gets the reported durable-execution state entries that currently include the requested compensation action."
+    },
+    {
+      "DisplayName": "GetByCorrelationId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ISagaChoreographyPublicationRuntimeStateCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-getbycorrelationid-system-string",
+      "Signature": "IReadOnlyList\u003CSagaChoreographyPublicationRuntimeState\u003E GetByCorrelationId(string correlationId)",
+      "Summary": "Gets the reported publication-state entries associated with one correlation identifier."
     },
     {
       "DisplayName": "GetByExecutionGraph",
@@ -26966,6 +27106,17 @@
       "AnchorId": "member-m-cephalon-abstractions-transports-irestendpointsuppressionruntimecatalog-getbyid-system-string",
       "Signature": "RestEndpointSuppressionDescriptor GetById(string suppressionId)",
       "Summary": "Gets one REST endpoint suppression rule by its stable identifier."
+    },
+    {
+      "DisplayName": "GetById",
+      "Category": "Methods",
+      "DeclaringTypeName": "ISagaChoreographyPublicationRuntimeStateCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-getbyid-system-string",
+      "Signature": "SagaChoreographyPublicationRuntimeState GetById(string id)",
+      "Summary": "Gets the latest reported publication state for one choreography publication path."
     },
     {
       "DisplayName": "GetById",
@@ -27355,6 +27506,17 @@
     {
       "DisplayName": "GetBySourceModule",
       "Category": "Methods",
+      "DeclaringTypeName": "ISagaChoreographyPublicationRuntimeStateCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-getbysourcemodule-system-string",
+      "Signature": "IReadOnlyList\u003CSagaChoreographyPublicationRuntimeState\u003E GetBySourceModule(string sourceModuleId)",
+      "Summary": "Gets the reported publication-state entries contributed by one source module."
+    },
+    {
+      "DisplayName": "GetBySourceModule",
+      "Category": "Methods",
       "DeclaringTypeName": "ISagaChoreographyRuntimeCatalog",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -27487,6 +27649,17 @@
     {
       "DisplayName": "GetByTransportId",
       "Category": "Methods",
+      "DeclaringTypeName": "ISagaChoreographyPublicationRuntimeStateCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-getbytransportid-system-string",
+      "Signature": "IReadOnlyList\u003CSagaChoreographyPublicationRuntimeState\u003E GetByTransportId(string transportId)",
+      "Summary": "Gets the reported publication-state entries exposed over one transport."
+    },
+    {
+      "DisplayName": "GetByTransportId",
+      "Category": "Methods",
       "DeclaringTypeName": "ISagaChoreographyRuntimeCatalog",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -27494,6 +27667,17 @@
       "AnchorId": "member-m-cephalon-abstractions-execution-isagachoreographyruntimecatalog-getbytransportid-system-string",
       "Signature": "IReadOnlyList\u003CSagaChoreographyRuntimeDescriptor\u003E GetByTransportId(string transportId)",
       "Summary": "Gets all saga-choreography behaviors exposed over the requested transport."
+    },
+    {
+      "DisplayName": "GetCompensationPublications",
+      "Category": "Methods",
+      "DeclaringTypeName": "ISagaChoreographyPublicationRuntimeStateCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-getcompensationpublications",
+      "Signature": "IReadOnlyList\u003CSagaChoreographyPublicationRuntimeState\u003E GetCompensationPublications()",
+      "Summary": "Gets the reported publication-state entries that currently represent compensation work."
     },
     {
       "DisplayName": "GetDependencyHealth",
@@ -27527,6 +27711,17 @@
       "AnchorId": "member-m-cephalon-abstractions-features-ifeatureflagruntimecatalog-getenabled",
       "Signature": "IReadOnlyList\u003CFeatureFlagDescriptor\u003E GetEnabled()",
       "Summary": "Gets all feature flags that are enabled before targeting is applied."
+    },
+    {
+      "DisplayName": "GetFailedPublications",
+      "Category": "Methods",
+      "DeclaringTypeName": "ISagaChoreographyPublicationRuntimeStateCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-getfailedpublications",
+      "Signature": "IReadOnlyList\u003CSagaChoreographyPublicationRuntimeState\u003E GetFailedPublications()",
+      "Summary": "Gets the reported publication-state entries whose latest observation is failed."
     },
     {
       "DisplayName": "GetResources",
@@ -30446,6 +30641,17 @@
     {
       "DisplayName": "Id",
       "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-id",
+      "Signature": "string Id { get; set; }",
+      "Summary": "The stable runtime-state identifier for this observed choreography publication path."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
       "DeclaringTypeName": "SagaChoreographyRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -31313,6 +31519,17 @@
       "Summary": "Creates an invalid-request result for the specified payload type."
     },
     {
+      "DisplayName": "IsAccepted",
+      "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-isaccepted",
+      "Signature": "bool IsAccepted { get; }",
+      "Summary": "Gets a value indicating whether the latest report says the publication handoff succeeded."
+    },
+    {
       "DisplayName": "IsActive",
       "Category": "Properties",
       "DeclaringTypeName": "RuntimeExecutionGraphState",
@@ -31399,6 +31616,17 @@
       "AnchorId": "member-m-cephalon-engine-configuration-engineoptions-iscapabilityenabled-system-string",
       "Signature": "bool IsCapabilityEnabled(string capabilityKey)",
       "Summary": "Determines whether a capability is enabled under the current option set."
+    },
+    {
+      "DisplayName": "IsCompensation",
+      "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-iscompensation",
+      "Signature": "bool IsCompensation { get; set; }",
+      "Summary": "Indicates whether the publication represents compensation work."
     },
     {
       "DisplayName": "IsConfigured",
@@ -31509,6 +31737,17 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-isfailed",
       "Signature": "bool IsFailed { get; }",
       "Summary": "Gets a value indicating whether the latest report says the durable stream is currently in a failed posture."
+    },
+    {
+      "DisplayName": "IsFailed",
+      "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-isfailed",
+      "Signature": "bool IsFailed { get; }",
+      "Summary": "Gets a value indicating whether the latest report says the publication handoff failed."
     },
     {
       "DisplayName": "IsFallback",
@@ -32171,6 +32410,17 @@
       "Summary": "The last operator-facing error summary when a failure was reported."
     },
     {
+      "DisplayName": "LastError",
+      "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-lasterror",
+      "Signature": "string LastError { get; set; }",
+      "Summary": "The latest operator-facing error summary when the publication handoff reported a failure."
+    },
+    {
       "DisplayName": "LastFailure",
       "Category": "Properties",
       "DeclaringTypeName": "EngineRuntime",
@@ -32358,6 +32608,17 @@
       "Summary": "The UTC timestamp when the last lifecycle phase was recorded for the module."
     },
     {
+      "DisplayName": "LastObservedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-lastobservedatutc",
+      "Signature": "DateTimeOffset? LastObservedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the latest publication observation was reported."
+    },
+    {
       "DisplayName": "LastObservedPhase",
       "Category": "Properties",
       "DeclaringTypeName": "RuntimeExecutionGraphState",
@@ -32444,6 +32705,28 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionruntimestate-lastoutcome",
       "Signature": "string LastOutcome { get; set; }",
       "Summary": "The last reported outcome identifier when one exists."
+    },
+    {
+      "DisplayName": "LastOutcome",
+      "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-lastoutcome",
+      "Signature": "string LastOutcome { get; set; }",
+      "Summary": "The last reported publication outcome identifier when one exists."
+    },
+    {
+      "DisplayName": "LastPublisherType",
+      "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-lastpublishertype",
+      "Signature": "string LastPublisherType { get; set; }",
+      "Summary": "The last concrete publisher implementation type that accepted or rejected the publication when one was reported."
     },
     {
       "DisplayName": "LastReplayedVersion",
@@ -34505,6 +34788,17 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; set; }",
+      "Summary": "The operator-facing metadata captured by the latest observation."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "SagaChoreographyRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -36305,6 +36599,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimelifecycleevent-occurredatutc",
       "Signature": "DateTimeOffset OccurredAtUtc { get; set; }",
       "Summary": "The UTC timestamp when the event was recorded."
+    },
+    {
+      "DisplayName": "OccurredAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-occurredatutc",
+      "Signature": "DateTimeOffset OccurredAtUtc { get; set; }",
+      "Summary": "The UTC timestamp carried by the observed publication itself."
     },
     {
       "DisplayName": "OccurredFromUtc",
@@ -39407,6 +39712,17 @@
       "AnchorId": "member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-proxyservicename",
       "Signature": "string ProxyServiceName { get; set; }",
       "Summary": "Gets or sets the proxy service name used to build the in-cluster Tanzu proxy endpoint."
+    },
+    {
+      "DisplayName": "PublicationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-publicationid",
+      "Signature": "string PublicationId { get; set; }",
+      "Summary": "The stable publication identifier declared by the choreography step."
     },
     {
       "DisplayName": "PublishAsync",
@@ -43754,6 +44070,28 @@
       "Summary": "Gets the active saga-choreography behaviors visible to the runtime at the time the snapshot was created."
     },
     {
+      "DisplayName": "SagaChoreographyPublicationRuntimeState",
+      "Category": "Constructors",
+      "DeclaringTypeName": "SagaChoreographyPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-ctor-system-string-system-string-system-string-system-string-system-string-system-datetimeoffset-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-boolean-system-string-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "SagaChoreographyPublicationRuntimeState(string Id, string BehaviorId, string PublicationId, string ChannelId, string EventType, DateTimeOffset OccurredAtUtc, string SourceModuleId, IReadOnlyList\u003Cstring\u003E TransportIds, string CorrelationId, string TenantId, string ContentType, bool IsCompensation, string LastOutcome, DateTimeOffset? LastObservedAtUtc, string LastPublisherType, int AcceptedCount, int FailedCount, string LastError, IReadOnlyDictionary\u003Cstring, string\u003E Metadata)",
+      "Summary": "Describes the latest operator-facing runtime state reported for one live saga-choreography publication path."
+    },
+    {
+      "DisplayName": "SagaChoreographyPublicationStates",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-sagachoreographypublicationstates",
+      "Signature": "IReadOnlyList\u003CSagaChoreographyPublicationRuntimeState\u003E SagaChoreographyPublicationStates { get; set; }",
+      "Summary": "Gets the latest reported saga-choreography publication-state entries visible to the runtime at the time the snapshot was created."
+    },
+    {
       "DisplayName": "SagaChoreographyRuntimeDescriptor",
       "Category": "Constructors",
       "DeclaringTypeName": "SagaChoreographyRuntimeDescriptor",
@@ -45681,6 +46019,17 @@
     {
       "DisplayName": "SourceModuleId",
       "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; set; }",
+      "Summary": "The owning module identifier when one is known at runtime."
+    },
+    {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
       "DeclaringTypeName": "SagaChoreographyRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -46304,6 +46653,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-ieventsubscriptionruntimecatalog-states",
       "Signature": "IReadOnlyList\u003CEventSubscriptionRuntimeState\u003E States { get; }",
       "Summary": "Gets the currently known runtime-state entries ordered by subscription identifier."
+    },
+    {
+      "DisplayName": "States",
+      "Category": "Properties",
+      "DeclaringTypeName": "ISagaChoreographyPublicationRuntimeStateCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-states",
+      "Signature": "IReadOnlyList\u003CSagaChoreographyPublicationRuntimeState\u003E States { get; }",
+      "Summary": "Gets the reported choreography publication-state entries visible to the current runtime."
     },
     {
       "DisplayName": "StateType",
@@ -48728,6 +49088,17 @@
     {
       "DisplayName": "TenantId",
       "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-tenantid",
+      "Signature": "string TenantId { get; set; }",
+      "Summary": "The tenant identifier associated with the publication when one exists."
+    },
+    {
+      "DisplayName": "TenantId",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantContext",
       "NamespaceName": "Cephalon.Abstractions.Tenancy",
       "AssemblyName": "Cephalon.Abstractions",
@@ -49133,6 +49504,17 @@
       "Summary": "Gets the total number of observations reported for this subscription."
     },
     {
+      "DisplayName": "TotalReports",
+      "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-totalreports",
+      "Signature": "int TotalReports { get; }",
+      "Summary": "Gets the total number of publication observations reported for this runtime-state entry."
+    },
+    {
       "DisplayName": "TotalTimeoutSeconds",
       "Category": "Properties",
       "DeclaringTypeName": "TimeoutSelection",
@@ -49384,6 +49766,17 @@
       "AnchorId": "member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-transportids",
       "Signature": "IReadOnlyList\u003Cstring\u003E TransportIds { get; set; }",
       "Summary": "The transport identifiers whose HTTP surfaces are covered by the policy."
+    },
+    {
+      "DisplayName": "TransportIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyPublicationRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-transportids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E TransportIds { get; set; }",
+      "Summary": "The transport identifiers that expose the owning choreography behavior."
     },
     {
       "DisplayName": "TransportIds",
@@ -49747,6 +50140,17 @@
       "AnchorId": "member-m-cephalon-abstractions-technologies-technologyselection-trygetavailable-system-string-cephalon-abstractions-technologies-technologydescriptor",
       "Signature": "bool TryGetAvailable(string value, out TechnologyDescriptor technology)",
       "Summary": "Attempts to resolve one available technology from the runtime catalog."
+    },
+    {
+      "DisplayName": "TryGetById",
+      "Category": "Methods",
+      "DeclaringTypeName": "ISagaChoreographyPublicationRuntimeStateCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-trygetbyid-system-string-cephalon-abstractions-execution-sagachoreographypublicationruntimestate",
+      "Signature": "bool TryGetById(string id, out SagaChoreographyPublicationRuntimeState state)",
+      "Summary": "Tries to get the latest reported publication state for one choreography publication path."
     },
     {
       "DisplayName": "TryGetByStreamId",

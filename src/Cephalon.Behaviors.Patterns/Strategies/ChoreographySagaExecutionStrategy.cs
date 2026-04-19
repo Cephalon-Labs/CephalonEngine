@@ -1,4 +1,5 @@
 using Cephalon.Behaviors.Patterns.Abstractions;
+using Cephalon.Behaviors.Patterns.Runtime;
 using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Behaviors.Patterns.Strategies;
@@ -18,18 +19,25 @@ public sealed class ChoreographySagaExecutionStrategy : IBehaviorExecutionStrate
 
     private readonly ISagaChoreographyPublisher _publisher;
     private readonly ILogger<ChoreographySagaExecutionStrategy> _logger;
+    private readonly ISagaChoreographyPublicationRuntimeReporter? runtimeReporter;
 
     /// <summary>Initializes a new instance of <see cref="ChoreographySagaExecutionStrategy"/>.</summary>
     /// <param name="publisher">The publisher used to stage choreography publications.</param>
     /// <param name="logger">The logger used to report accepted publications.</param>
+    /// <param name="runtimeStateCatalog">
+    /// An optional runtime-state catalog that can also accept operator-facing live publication
+    /// observations for choreography execution.
+    /// </param>
     public ChoreographySagaExecutionStrategy(
         ISagaChoreographyPublisher publisher,
-        ILogger<ChoreographySagaExecutionStrategy> logger)
+        ILogger<ChoreographySagaExecutionStrategy> logger,
+        Cephalon.Abstractions.Execution.ISagaChoreographyPublicationRuntimeStateCatalog? runtimeStateCatalog = null)
     {
         ArgumentNullException.ThrowIfNull(publisher);
         ArgumentNullException.ThrowIfNull(logger);
         _publisher = publisher;
         _logger = logger;
+        runtimeReporter = runtimeStateCatalog as ISagaChoreographyPublicationRuntimeReporter;
     }
 
     /// <summary>Gets the pattern identifier handled by this strategy.</summary>
@@ -60,10 +68,37 @@ public sealed class ChoreographySagaExecutionStrategy : IBehaviorExecutionStrate
         var (output, publications) = NormalizeResult(rawOutput);
         if (publications.Length > 0)
         {
+            var publisherType = _publisher.GetType().FullName ?? _publisher.GetType().Name;
+
             foreach (var publication in publications)
             {
                 var normalizedPublication = NormalizePublication(publication, context.BehaviorContext);
-                await _publisher.PublishAsync(normalizedPublication, ct).ConfigureAwait(false);
+                try
+                {
+                    await _publisher.PublishAsync(normalizedPublication, ct).ConfigureAwait(false);
+                }
+                catch (Exception exception)
+                {
+                    await ReportFailureAsync(
+                            context,
+                            normalizedPublication,
+                            publisherType,
+                            exception,
+                            ct)
+                        .ConfigureAwait(false);
+                    throw;
+                }
+
+                await ReportAsync(
+                        new SagaChoreographyPublicationExecutionReport(
+                            context.Descriptor.Id,
+                            normalizedPublication,
+                            SagaChoreographyPublicationRuntimeOutcomes.Accepted,
+                            DateTimeOffset.UtcNow,
+                            publisherType: publisherType,
+                            metadata: normalizedPublication.Metadata),
+                        ct)
+                    .ConfigureAwait(false);
                 LogPublicationAccepted(_logger, normalizedPublication.Id, context.Descriptor.Id, null);
             }
         }
@@ -76,6 +111,45 @@ public sealed class ChoreographySagaExecutionStrategy : IBehaviorExecutionStrate
                 : output is null ? 204 : 200,
             IsFireAndForget = false
         };
+    }
+
+    private async ValueTask ReportFailureAsync(
+        BehaviorExecutionContext context,
+        SagaChoreographyPublication publication,
+        string publisherType,
+        Exception exception,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(publication);
+        ArgumentException.ThrowIfNullOrWhiteSpace(publisherType);
+        ArgumentNullException.ThrowIfNull(exception);
+
+        var metadata = publication.Metadata.Count == 0
+            ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            : new Dictionary<string, string>(publication.Metadata, StringComparer.OrdinalIgnoreCase);
+        metadata["exceptionType"] = exception.GetType().FullName ?? exception.GetType().Name;
+
+        await ReportAsync(
+                new SagaChoreographyPublicationExecutionReport(
+                    context.Descriptor.Id,
+                    publication,
+                    SagaChoreographyPublicationRuntimeOutcomes.Failed,
+                    DateTimeOffset.UtcNow,
+                    publisherType: publisherType,
+                    error: SummarizeException(exception),
+                    metadata: metadata),
+                cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    private ValueTask ReportAsync(
+        SagaChoreographyPublicationExecutionReport report,
+        CancellationToken cancellationToken)
+    {
+        return runtimeReporter is null
+            ? ValueTask.CompletedTask
+            : runtimeReporter.ReportAsync(report, cancellationToken);
     }
 
     private static (object? Output, SagaChoreographyPublication[] Publications) NormalizeResult(object? output)
@@ -134,6 +208,14 @@ public sealed class ChoreographySagaExecutionStrategy : IBehaviorExecutionStrate
             isCompensation: publication.IsCompensation,
             headers: publication.Headers,
             metadata: publication.Metadata);
+    }
+
+    private static string SummarizeException(Exception exception)
+    {
+        var message = exception.Message?.Trim();
+        return string.IsNullOrWhiteSpace(message)
+            ? exception.GetType().Name
+            : message;
     }
 
     private static string? ResolveMetadataValue(

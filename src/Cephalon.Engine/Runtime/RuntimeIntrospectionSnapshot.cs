@@ -120,6 +120,12 @@ public sealed record RuntimeIntrospectionSnapshot(
     public IReadOnlyList<SagaChoreographyRuntimeDescriptor> SagaChoreographies { get; init; } = [];
 
     /// <summary>
+    /// Gets the latest reported saga-choreography publication-state entries visible to the runtime at
+    /// the time the snapshot was created.
+    /// </summary>
+    public IReadOnlyList<SagaChoreographyPublicationRuntimeState> SagaChoreographyPublicationStates { get; init; } = [];
+
+    /// <summary>
     /// Gets the resolved public REST endpoints visible to the runtime at the time the snapshot was created.
     /// </summary>
     public IReadOnlyList<RestEndpointRuntimeDescriptor> RestEndpoints { get; init; } = [];

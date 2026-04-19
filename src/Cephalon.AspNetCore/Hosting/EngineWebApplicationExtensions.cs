@@ -154,6 +154,62 @@ public static class EngineWebApplicationExtensions
                 return choreography is null ? Results.NotFound() : Results.Ok(choreography);
             })
             .WithName("GetCephalonSagaChoreography");
+        engineGroup.MapGet("/saga-choreographies/runtime", (HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<ISagaChoreographyPublicationRuntimeStateCatalog>();
+                return TypedResults.Ok(catalog?.States ?? []);
+            })
+            .WithName("GetCephalonSagaChoreographyPublicationStates");
+        engineGroup.MapGet("/saga-choreographies/runtime/behaviors/{behaviorId}", (string behaviorId, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<ISagaChoreographyPublicationRuntimeStateCatalog>();
+                return TypedResults.Ok(catalog?.GetByBehaviorId(behaviorId) ?? []);
+            })
+            .WithName("GetCephalonSagaChoreographyPublicationStatesByBehavior");
+        engineGroup.MapGet("/saga-choreographies/runtime/modules/{moduleId}", (string moduleId, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<ISagaChoreographyPublicationRuntimeStateCatalog>();
+                return TypedResults.Ok(catalog?.GetBySourceModule(moduleId) ?? []);
+            })
+            .WithName("GetCephalonSagaChoreographyPublicationStatesByModule");
+        engineGroup.MapGet("/saga-choreographies/runtime/transports/{transportId}", (string transportId, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<ISagaChoreographyPublicationRuntimeStateCatalog>();
+                return TypedResults.Ok(catalog?.GetByTransportId(transportId) ?? []);
+            })
+            .WithName("GetCephalonSagaChoreographyPublicationStatesByTransport");
+        engineGroup.MapGet("/saga-choreographies/runtime/channels/{channelId}", (string channelId, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<ISagaChoreographyPublicationRuntimeStateCatalog>();
+                return TypedResults.Ok(catalog?.GetByChannelId(channelId) ?? []);
+            })
+            .WithName("GetCephalonSagaChoreographyPublicationStatesByChannel");
+        engineGroup.MapGet("/saga-choreographies/runtime/correlations/{correlationId}", (string correlationId, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<ISagaChoreographyPublicationRuntimeStateCatalog>();
+                return TypedResults.Ok(catalog?.GetByCorrelationId(correlationId) ?? []);
+            })
+            .WithName("GetCephalonSagaChoreographyPublicationStatesByCorrelation");
+        engineGroup.MapGet("/saga-choreographies/runtime/compensations", (HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<ISagaChoreographyPublicationRuntimeStateCatalog>();
+                return TypedResults.Ok(catalog?.GetCompensationPublications() ?? []);
+            })
+            .WithName("GetCephalonSagaChoreographyCompensationPublicationStates");
+        engineGroup.MapGet("/saga-choreographies/runtime/failures", (HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<ISagaChoreographyPublicationRuntimeStateCatalog>();
+                return TypedResults.Ok(catalog?.GetFailedPublications() ?? []);
+            })
+            .WithName("GetCephalonSagaChoreographyFailedPublicationStates");
+        engineGroup.MapGet("/saga-choreographies/runtime/publications/{publicationStateId}", (string publicationStateId, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<ISagaChoreographyPublicationRuntimeStateCatalog>();
+                var state = catalog?.GetById(publicationStateId);
+
+                return state is null ? Results.NotFound() : Results.Ok(state);
+            })
+            .WithName("GetCephalonSagaChoreographyPublicationState");
         engineGroup.MapGet("/durable-executions", (HttpContext httpContext) =>
             {
                 var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeCatalog>();

@@ -38,6 +38,11 @@ public static class PatternBehaviorExtensions
             new SagaChoreographyRuntimeCatalogSnapshot(
                 serviceProvider.GetRequiredService<IBehaviorCatalog>(),
                 serviceProvider.GetRequiredService<IBehaviorTypeRegistry>()));
+        builder.Services.TryAddSingleton<SagaChoreographyPublicationRuntimeStateCatalog>();
+        builder.Services.TryAddSingleton<ISagaChoreographyPublicationRuntimeStateCatalog>(static serviceProvider =>
+            serviceProvider.GetRequiredService<SagaChoreographyPublicationRuntimeStateCatalog>());
+        builder.Services.TryAddSingleton<ISagaChoreographyPublicationRuntimeReporter>(static serviceProvider =>
+            serviceProvider.GetRequiredService<SagaChoreographyPublicationRuntimeStateCatalog>());
         builder.Services.TryAddSingleton<IDurableExecutionRuntimeCatalog>(static serviceProvider =>
             new DurableExecutionRuntimeCatalogSnapshot(
                 serviceProvider.GetRequiredService<IBehaviorCatalog>(),
