@@ -374,6 +374,8 @@ Host-agnostic contracts defined in `Cephalon.Abstractions` for data workloads.
 - `ICdcCapture` — host-agnostic CDC execution interface for provider-specific implementations
 - `ICdcCaptureRegistry` / `ICdcCaptureCatalog` / `ICdcCaptureContributor` — registration and discovery
 - `CdcCaptureDescriptor` — metadata for CDC capture implementations and outbox linkage
+- `CdcCaptureFreshnessStatus` / `CdcCaptureLagStatus` / `CdcCapturePublicationStatus` — typed freshness, lag, and publication posture for operator/runtime reporting
+- `CdcCaptureRuntimeState` / `ICdcCaptureRuntimeStateCatalog` — latest capture outcome, totals, typed operational posture, and optional linked outbox dispatch truth
 
 ### Event sourcing
 

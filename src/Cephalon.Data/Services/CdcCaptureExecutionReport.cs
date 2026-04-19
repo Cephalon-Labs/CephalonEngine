@@ -1,3 +1,5 @@
+using Cephalon.Abstractions.Data;
+
 namespace Cephalon.Data.Services;
 
 /// <summary>
@@ -18,6 +20,9 @@ public sealed class CdcCaptureExecutionReport
     /// <param name="changeId">The latest provider-facing change identifier when available.</param>
     /// <param name="checkpoint">The latest provider-facing checkpoint or cursor when available.</param>
     /// <param name="error">The operator-facing error summary when the observation represents a failure.</param>
+    /// <param name="freshness">An optional typed freshness answer reported by the active provider/runtime.</param>
+    /// <param name="lag">An optional typed lag answer reported by the active provider/runtime.</param>
+    /// <param name="publication">An optional typed publication-posture answer reported by the active provider/runtime.</param>
     /// <param name="metadata">Optional operator-facing metadata captured alongside the observation.</param>
     public CdcCaptureExecutionReport(
         string cdcCaptureId,
@@ -28,6 +33,9 @@ public sealed class CdcCaptureExecutionReport
         string? changeId = null,
         string? checkpoint = null,
         string? error = null,
+        CdcCaptureFreshnessStatus? freshness = null,
+        CdcCaptureLagStatus? lag = null,
+        CdcCapturePublicationStatus? publication = null,
         IReadOnlyDictionary<string, string>? metadata = null)
     {
         if (string.IsNullOrWhiteSpace(cdcCaptureId))
@@ -58,6 +66,9 @@ public sealed class CdcCaptureExecutionReport
         ChangeId = string.IsNullOrWhiteSpace(changeId) ? null : changeId.Trim();
         Checkpoint = string.IsNullOrWhiteSpace(checkpoint) ? null : checkpoint.Trim();
         Error = string.IsNullOrWhiteSpace(error) ? null : error.Trim();
+        Freshness = freshness;
+        Lag = lag;
+        Publication = publication;
         Metadata = metadata is null
             ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             : new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase);
@@ -102,6 +113,21 @@ public sealed class CdcCaptureExecutionReport
     /// Gets the operator-facing error summary when the observation represents a failure.
     /// </summary>
     public string? Error { get; }
+
+    /// <summary>
+    /// Gets the typed freshness answer reported by the active provider/runtime when one was supplied.
+    /// </summary>
+    public CdcCaptureFreshnessStatus? Freshness { get; }
+
+    /// <summary>
+    /// Gets the typed lag answer reported by the active provider/runtime when one was supplied.
+    /// </summary>
+    public CdcCaptureLagStatus? Lag { get; }
+
+    /// <summary>
+    /// Gets the typed publication-posture answer reported by the active provider/runtime when one was supplied.
+    /// </summary>
+    public CdcCapturePublicationStatus? Publication { get; }
 
     /// <summary>
     /// Gets optional operator-facing metadata captured alongside the observation.

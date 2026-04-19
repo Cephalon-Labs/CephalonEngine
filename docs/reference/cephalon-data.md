@@ -108,12 +108,12 @@ public sealed class CdcCaptureExecutionReport
 
 #### Constructors
 
-<a id="member-m-cephalon-data-services-cdccaptureexecutionreport-ctor-system-string-system-string-system-datetimeoffset-system-int32-system-int32-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+<a id="member-m-cephalon-data-services-cdccaptureexecutionreport-ctor-system-string-system-string-system-datetimeoffset-system-int32-system-int32-system-string-system-string-system-string-cephalon-abstractions-data-cdccapturefreshnessstatus-cephalon-abstractions-data-cdccapturelagstatus-cephalon-abstractions-data-cdccapturepublicationstatus-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
 
 ##### `CdcCaptureExecutionReport`
 
 ```csharp
-CdcCaptureExecutionReport(string cdcCaptureId, string outcome, DateTimeOffset observedAtUtc, int capturedChangeCount, int producedMessageCount, string changeId, string checkpoint, string error, IReadOnlyDictionary<string, string> metadata)
+CdcCaptureExecutionReport(string cdcCaptureId, string outcome, DateTimeOffset observedAtUtc, int capturedChangeCount, int producedMessageCount, string changeId, string checkpoint, string error, CdcCaptureFreshnessStatus freshness, CdcCaptureLagStatus lag, CdcCapturePublicationStatus publication, IReadOnlyDictionary<string, string> metadata)
 ```
 
 Creates a new CDC capture runtime observation.
@@ -127,6 +127,9 @@ Parameters:
 - `changeId`: The latest provider-facing change identifier when available.
 - `checkpoint`: The latest provider-facing checkpoint or cursor when available.
 - `error`: The operator-facing error summary when the observation represents a failure.
+- `freshness`: An optional typed freshness answer reported by the active provider/runtime.
+- `lag`: An optional typed lag answer reported by the active provider/runtime.
+- `publication`: An optional typed publication-posture answer reported by the active provider/runtime.
 - `metadata`: Optional operator-facing metadata captured alongside the observation.
 
 #### Properties
@@ -181,6 +184,26 @@ string Error { get; }
 
 Gets the operator-facing error summary when the observation represents a failure.
 
+<a id="member-p-cephalon-data-services-cdccaptureexecutionreport-freshness"></a>
+
+##### `Freshness`
+
+```csharp
+CdcCaptureFreshnessStatus Freshness { get; }
+```
+
+Gets the typed freshness answer reported by the active provider/runtime when one was supplied.
+
+<a id="member-p-cephalon-data-services-cdccaptureexecutionreport-lag"></a>
+
+##### `Lag`
+
+```csharp
+CdcCaptureLagStatus Lag { get; }
+```
+
+Gets the typed lag answer reported by the active provider/runtime when one was supplied.
+
 <a id="member-p-cephalon-data-services-cdccaptureexecutionreport-metadata"></a>
 
 ##### `Metadata`
@@ -220,6 +243,16 @@ int ProducedMessageCount { get; }
 ```
 
 Gets the number of outbox messages produced by this report.
+
+<a id="member-p-cephalon-data-services-cdccaptureexecutionreport-publication"></a>
+
+##### `Publication`
+
+```csharp
+CdcCapturePublicationStatus Publication { get; }
+```
+
+Gets the typed publication-posture answer reported by the active provider/runtime when one was supplied.
 
 <a id="type-cephalon-data-services-cdccaptureruntimeoutcomes"></a>
 

@@ -171,6 +171,12 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Data.ICdcCaptureContributor),
             typeof(global::Cephalon.Abstractions.Data.ICdcCaptureRegistry),
             typeof(global::Cephalon.Abstractions.Data.ICdcCaptureRuntimeStateCatalog),
+            typeof(global::Cephalon.Abstractions.Data.CdcCaptureFreshnessStates),
+            typeof(global::Cephalon.Abstractions.Data.CdcCaptureFreshnessStatus),
+            typeof(global::Cephalon.Abstractions.Data.CdcCaptureLagStates),
+            typeof(global::Cephalon.Abstractions.Data.CdcCaptureLagStatus),
+            typeof(global::Cephalon.Abstractions.Data.CdcCapturePublicationStates),
+            typeof(global::Cephalon.Abstractions.Data.CdcCapturePublicationStatus),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureRuntimeState),
             typeof(global::Cephalon.Abstractions.Data.DataProductDescriptor),
             typeof(global::Cephalon.Abstractions.Data.IDataProduct<>),
@@ -2567,7 +2573,21 @@ public sealed class PackageSurfaceTests
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureDescriptor)
             .GetProperty("EventFormat", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureRuntimeState)
+            .GetProperty("Freshness", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureRuntimeState)
+            .GetProperty("Lag", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureRuntimeState)
+            .GetProperty("Publication", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureFreshnessStatus)
+            .GetProperty("FreshUntilUtc", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureLagStatus)
+            .GetProperty("PendingChangeCount", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCapturePublicationStatus)
+            .GetProperty("PendingPublicationCount", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureRuntimeState)
             .GetProperty("OutboxDispatchState", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureRuntimeState)
+            .GetProperty("HasPendingPublications", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureRuntimeState)
             .GetProperty("TotalCapturedChangeCount", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot)

@@ -7795,6 +7795,395 @@ IReadOnlyList<string> Tags { get; }
 
 Gets descriptive tags associated with the CDC capture.
 
+<a id="type-cephalon-abstractions-data-cdccapturefreshnessstates"></a>
+
+### `CdcCaptureFreshnessStates`
+
+Defines the recommended stable freshness-state identifiers for CDC runtime reporting.
+
+#### Declaration
+```csharp
+public static class CdcCaptureFreshnessStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccapturefreshnessstates-fresh"></a>
+
+##### `Fresh`
+
+```csharp
+const string Fresh
+```
+
+Indicates that the provider reports the capture as fresh.
+
+<a id="member-f-cephalon-abstractions-data-cdccapturefreshnessstates-stale"></a>
+
+##### `Stale`
+
+```csharp
+const string Stale
+```
+
+Indicates that the provider reports the capture as stale.
+
+<a id="member-f-cephalon-abstractions-data-cdccapturefreshnessstates-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+Indicates that the active runtime does not yet have a freshness answer.
+
+<a id="type-cephalon-abstractions-data-cdccapturefreshnessstatus"></a>
+
+### `CdcCaptureFreshnessStatus`
+
+Describes the provider-facing freshness posture currently visible for one CDC capture.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureFreshnessStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccapturefreshnessstatus-ctor-system-string-system-nullable-system-datetimeoffset-system-string"></a>
+
+##### `CdcCaptureFreshnessStatus`
+
+```csharp
+CdcCaptureFreshnessStatus(string state, DateTimeOffset? freshUntilUtc, string description)
+```
+
+Creates a new CDC freshness status.
+
+Parameters:
+- `state`: The stable freshness-state identifier, such as `unknown`, `fresh`, or `stale`.
+- `freshUntilUtc`: The UTC timestamp until which the active runtime expects the current observation to remain fresh when one is known.
+- `description`: An optional operator-facing freshness summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccapturefreshnessstatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing freshness summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturefreshnessstatus-freshuntilutc"></a>
+
+##### `FreshUntilUtc`
+
+```csharp
+DateTimeOffset? FreshUntilUtc { get; }
+```
+
+Gets the UTC timestamp until which the current capture observation remains fresh when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturefreshnessstatus-haswindow"></a>
+
+##### `HasWindow`
+
+```csharp
+bool HasWindow { get; }
+```
+
+Gets a value indicating whether a freshness window is currently known.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturefreshnessstatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable freshness-state identifier.
+
+<a id="type-cephalon-abstractions-data-cdccapturelagstates"></a>
+
+### `CdcCaptureLagStates`
+
+Defines the recommended stable lag-state identifiers for CDC runtime reporting.
+
+#### Declaration
+```csharp
+public static class CdcCaptureLagStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccapturelagstates-backfilling"></a>
+
+##### `Backfilling`
+
+```csharp
+const string Backfilling
+```
+
+Indicates that the provider reports the capture as intentionally backfilling older changes.
+
+<a id="member-f-cephalon-abstractions-data-cdccapturelagstates-current"></a>
+
+##### `Current`
+
+```csharp
+const string Current
+```
+
+Indicates that the provider reports the capture as caught up.
+
+<a id="member-f-cephalon-abstractions-data-cdccapturelagstates-lagging"></a>
+
+##### `Lagging`
+
+```csharp
+const string Lagging
+```
+
+Indicates that the provider reports the capture as lagging behind the source stream.
+
+<a id="member-f-cephalon-abstractions-data-cdccapturelagstates-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+Indicates that the active runtime does not yet have a lag answer.
+
+<a id="type-cephalon-abstractions-data-cdccapturelagstatus"></a>
+
+### `CdcCaptureLagStatus`
+
+Describes the provider-facing lag posture currently visible for one CDC capture.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureLagStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccapturelagstatus-ctor-system-string-system-nullable-system-int64-system-string"></a>
+
+##### `CdcCaptureLagStatus`
+
+```csharp
+CdcCaptureLagStatus(string state, long? pendingChangeCount, string description)
+```
+
+Creates a new CDC lag status.
+
+Parameters:
+- `state`: The stable lag-state identifier, such as `unknown`, `current`, `lagging`, or `backfilling`.
+- `pendingChangeCount`: The number of source-side changes still pending capture when the provider can report that answer.
+- `description`: An optional operator-facing lag summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccapturelagstatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing lag summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturelagstatus-haspendingchanges"></a>
+
+##### `HasPendingChanges`
+
+```csharp
+bool HasPendingChanges { get; }
+```
+
+Gets a value indicating whether the capture still has pending source-side changes.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturelagstatus-pendingchangecount"></a>
+
+##### `PendingChangeCount`
+
+```csharp
+long? PendingChangeCount { get; }
+```
+
+Gets the number of source-side changes still pending capture when the provider reports that answer.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturelagstatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable lag-state identifier.
+
+<a id="type-cephalon-abstractions-data-cdccapturepublicationstates"></a>
+
+### `CdcCapturePublicationStates`
+
+Defines the recommended stable publication-state identifiers for CDC runtime reporting.
+
+#### Declaration
+```csharp
+public static class CdcCapturePublicationStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccapturepublicationstates-capturefailed"></a>
+
+##### `CaptureFailed`
+
+```csharp
+const string CaptureFailed
+```
+
+Indicates that the capture itself last reported a failure before publication completed.
+
+<a id="member-f-cephalon-abstractions-data-cdccapturepublicationstates-current"></a>
+
+##### `Current`
+
+```csharp
+const string Current
+```
+
+Indicates that the capture is current through the linked publication path.
+
+<a id="member-f-cephalon-abstractions-data-cdccapturepublicationstates-dispatchfailed"></a>
+
+##### `DispatchFailed`
+
+```csharp
+const string DispatchFailed
+```
+
+Indicates that the linked outbox dispatch runtime last reported a failure.
+
+<a id="member-f-cephalon-abstractions-data-cdccapturepublicationstates-dispatching"></a>
+
+##### `Dispatching`
+
+```csharp
+const string Dispatching
+```
+
+Indicates that the linked outbox dispatch runtime is actively dispatching publications.
+
+<a id="member-f-cephalon-abstractions-data-cdccapturepublicationstates-dispatchretrypending"></a>
+
+##### `DispatchRetryPending`
+
+```csharp
+const string DispatchRetryPending
+```
+
+Indicates that the linked outbox dispatch runtime has a retry pending.
+
+<a id="member-f-cephalon-abstractions-data-cdccapturepublicationstates-pendingpublication"></a>
+
+##### `PendingPublication`
+
+```csharp
+const string PendingPublication
+```
+
+Indicates that the capture still has pending publications to push into or through the outbox.
+
+<a id="member-f-cephalon-abstractions-data-cdccapturepublicationstates-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+Indicates that the active runtime does not yet have a publication answer.
+
+<a id="type-cephalon-abstractions-data-cdccapturepublicationstatus"></a>
+
+### `CdcCapturePublicationStatus`
+
+Describes the publication posture currently visible for one CDC capture.
+
+#### Declaration
+```csharp
+public sealed class CdcCapturePublicationStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccapturepublicationstatus-ctor-system-string-system-nullable-system-int64-system-string"></a>
+
+##### `CdcCapturePublicationStatus`
+
+```csharp
+CdcCapturePublicationStatus(string state, long? pendingPublicationCount, string description)
+```
+
+Creates a new CDC publication status.
+
+Parameters:
+- `state`: The stable publication-state identifier, such as `unknown`, `pending-publication`, or `dispatch-retry-pending`.
+- `pendingPublicationCount`: The number of pending publications still waiting to flow through the linked outbox path when the provider can report that answer.
+- `description`: An optional operator-facing publication summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccapturepublicationstatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing publication summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturepublicationstatus-haspendingpublications"></a>
+
+##### `HasPendingPublications`
+
+```csharp
+bool HasPendingPublications { get; }
+```
+
+Gets a value indicating whether the capture still has pending publications.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturepublicationstatus-pendingpublicationcount"></a>
+
+##### `PendingPublicationCount`
+
+```csharp
+long? PendingPublicationCount { get; }
+```
+
+Gets the number of pending publications still waiting to flow through the linked outbox path when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturepublicationstatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable publication-state identifier.
+
 <a id="type-cephalon-abstractions-data-cdccaptureruntimestate"></a>
 
 ### `CdcCaptureRuntimeState`
@@ -7808,12 +8197,12 @@ public sealed class CdcCaptureRuntimeState
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-data-cdccaptureruntimestate-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-nullable-system-datetimeoffset-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int64-system-int64-system-string-system-string-system-string-cephalon-abstractions-data-eventdispatchruntimestate-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+<a id="member-m-cephalon-abstractions-data-cdccaptureruntimestate-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-nullable-system-datetimeoffset-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int64-system-int64-system-string-system-string-system-string-cephalon-abstractions-data-cdccapturefreshnessstatus-cephalon-abstractions-data-cdccapturelagstatus-cephalon-abstractions-data-cdccapturepublicationstatus-cephalon-abstractions-data-eventdispatchruntimestate-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
 
 ##### `CdcCaptureRuntimeState`
 
 ```csharp
-CdcCaptureRuntimeState(string CdcCaptureId, string SourceModuleId, string Provider, string SourceId, string OutboxId, string Mode, string EventFormat, IReadOnlyList<string> ResourceIds, string LastOutcome, DateTimeOffset? LastObservedAtUtc, int LastCapturedChangeCount, int LastProducedMessageCount, int StartedCount, int CapturedCount, int IdleCount, int FailedCount, long TotalCapturedChangeCount, long TotalProducedMessageCount, string LastChangeId, string LastCheckpoint, string LastError, EventDispatchRuntimeState OutboxDispatchState, IReadOnlyDictionary<string, string> Metadata)
+CdcCaptureRuntimeState(string CdcCaptureId, string SourceModuleId, string Provider, string SourceId, string OutboxId, string Mode, string EventFormat, IReadOnlyList<string> ResourceIds, string LastOutcome, DateTimeOffset? LastObservedAtUtc, int LastCapturedChangeCount, int LastProducedMessageCount, int StartedCount, int CapturedCount, int IdleCount, int FailedCount, long TotalCapturedChangeCount, long TotalProducedMessageCount, string LastChangeId, string LastCheckpoint, string LastError, CdcCaptureFreshnessStatus Freshness, CdcCaptureLagStatus Lag, CdcCapturePublicationStatus Publication, EventDispatchRuntimeState OutboxDispatchState, IReadOnlyDictionary<string, string> Metadata)
 ```
 
 Describes the latest operator-facing runtime state visible for one active CDC capture.
@@ -7840,6 +8229,9 @@ Parameters:
 - `LastChangeId`: The latest provider-facing change identifier when one was reported.
 - `LastCheckpoint`: The latest provider-facing checkpoint or cursor when one was reported.
 - `LastError`: The latest operator-facing error summary when one was reported.
+- `Freshness`: The latest provider-facing freshness answer reported for the capture.
+- `Lag`: The latest provider-facing lag answer reported for the capture.
+- `Publication`: The latest publication posture answer reported for the capture.
 - `OutboxDispatchState`: The latest linked outbox dispatch state when the active runtime also reports publication posture for the capture's outbox.
 - `Metadata`: The operator-facing metadata captured by the latest report.
 
@@ -7885,6 +8277,16 @@ int FailedCount { get; set; }
 
 The number of `failed` observations reported so far.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-freshness"></a>
+
+##### `Freshness`
+
+```csharp
+CdcCaptureFreshnessStatus Freshness { get; set; }
+```
+
+The latest provider-facing freshness answer reported for the capture.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-hasdispatchreports"></a>
 
 ##### `HasDispatchReports`
@@ -7894,6 +8296,36 @@ bool HasDispatchReports { get; }
 ```
 
 Gets a value indicating whether the linked outbox dispatch path has reported runtime state.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-hasfreshnesswindow"></a>
+
+##### `HasFreshnessWindow`
+
+```csharp
+bool HasFreshnessWindow { get; }
+```
+
+Gets a value indicating whether the capture still has a provider-reported freshness window.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-haspendingchanges"></a>
+
+##### `HasPendingChanges`
+
+```csharp
+bool HasPendingChanges { get; }
+```
+
+Gets a value indicating whether the capture still has provider-reported pending source changes.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-haspendingpublications"></a>
+
+##### `HasPendingPublications`
+
+```csharp
+bool HasPendingPublications { get; }
+```
+
+Gets a value indicating whether the capture still has provider-reported pending publications.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-hasreports"></a>
 
@@ -7924,6 +8356,16 @@ bool IsFailed { get; }
 ```
 
 Gets a value indicating whether the latest reported capture posture is failed.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-lag"></a>
+
+##### `Lag`
+
+```csharp
+CdcCaptureLagStatus Lag { get; set; }
+```
+
+The latest provider-facing lag answer reported for the capture.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-lastcapturedchangecount"></a>
 
@@ -8044,6 +8486,16 @@ string Provider { get; set; }
 ```
 
 The logical provider identifier that supplies the change feed.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-publication"></a>
+
+##### `Publication`
+
+```csharp
+CdcCapturePublicationStatus Publication { get; set; }
+```
+
+The latest publication posture answer reported for the capture.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-resourceids"></a>
 

@@ -24,6 +24,9 @@ namespace Cephalon.Abstractions.Data;
 /// <param name="LastChangeId">The latest provider-facing change identifier when one was reported.</param>
 /// <param name="LastCheckpoint">The latest provider-facing checkpoint or cursor when one was reported.</param>
 /// <param name="LastError">The latest operator-facing error summary when one was reported.</param>
+/// <param name="Freshness">The latest provider-facing freshness answer reported for the capture.</param>
+/// <param name="Lag">The latest provider-facing lag answer reported for the capture.</param>
+/// <param name="Publication">The latest publication posture answer reported for the capture.</param>
 /// <param name="OutboxDispatchState">
 /// The latest linked outbox dispatch state when the active runtime also reports publication posture for the capture's outbox.
 /// </param>
@@ -50,6 +53,9 @@ public sealed record CdcCaptureRuntimeState(
     string? LastChangeId,
     string? LastCheckpoint,
     string? LastError,
+    CdcCaptureFreshnessStatus Freshness,
+    CdcCaptureLagStatus Lag,
+    CdcCapturePublicationStatus Publication,
     EventDispatchRuntimeState? OutboxDispatchState,
     IReadOnlyDictionary<string, string> Metadata)
 {
@@ -67,6 +73,21 @@ public sealed record CdcCaptureRuntimeState(
     /// Gets a value indicating whether the latest reported capture posture is failed.
     /// </summary>
     public bool IsFailed => string.Equals(LastOutcome, "failed", StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Gets a value indicating whether the capture still has a provider-reported freshness window.
+    /// </summary>
+    public bool HasFreshnessWindow => Freshness.HasWindow;
+
+    /// <summary>
+    /// Gets a value indicating whether the capture still has provider-reported pending source changes.
+    /// </summary>
+    public bool HasPendingChanges => Lag.HasPendingChanges;
+
+    /// <summary>
+    /// Gets a value indicating whether the capture still has provider-reported pending publications.
+    /// </summary>
+    public bool HasPendingPublications => Publication.HasPendingPublications;
 
     /// <summary>
     /// Gets a value indicating whether the linked outbox dispatch path has reported runtime state.

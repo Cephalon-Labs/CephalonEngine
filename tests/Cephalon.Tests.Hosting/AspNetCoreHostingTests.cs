@@ -3214,6 +3214,18 @@ note: visible
             producedMessageCount: 4,
             changeId: "lsn-0004",
             checkpoint: "0/16B6C90",
+            freshness: new CdcCaptureFreshnessStatus(
+                CdcCaptureFreshnessStates.Fresh,
+                DateTimeOffset.Parse("2026-04-20T10:20:00Z", CultureInfo.InvariantCulture),
+                "The capture is still within the expected freshness window."),
+            lag: new CdcCaptureLagStatus(
+                CdcCaptureLagStates.Current,
+                pendingChangeCount: 0,
+                description: "The capture is caught up with the source stream."),
+            publication: new CdcCapturePublicationStatus(
+                CdcCapturePublicationStates.Current,
+                pendingPublicationCount: 0,
+                description: "The capture does not report any pending publications."),
             metadata: new Dictionary<string, string>
             {
                 ["captureRuntime"] = "phase13"
@@ -3239,6 +3251,15 @@ note: visible
         Assert.Equal("lsn-0004", state.LastChangeId);
         Assert.Equal("0/16B6C90", state.LastCheckpoint);
         Assert.Equal("phase13", state.Metadata["captureRuntime"]);
+        Assert.Equal(CdcCaptureFreshnessStates.Fresh, state.Freshness.State);
+        Assert.Equal(DateTimeOffset.Parse("2026-04-20T10:20:00Z", CultureInfo.InvariantCulture), state.Freshness.FreshUntilUtc);
+        Assert.Equal(CdcCaptureLagStates.Current, state.Lag.State);
+        Assert.Equal(0, state.Lag.PendingChangeCount);
+        Assert.Equal(CdcCapturePublicationStates.Current, state.Publication.State);
+        Assert.Equal(0, state.Publication.PendingPublicationCount);
+        Assert.True(state.HasFreshnessWindow);
+        Assert.False(state.HasPendingChanges);
+        Assert.False(state.HasPendingPublications);
         Assert.NotNull(state.OutboxDispatchState);
         Assert.Equal("succeeded", state.OutboxDispatchState!.LastOutcome);
         Assert.NotNull(statesByModule);
@@ -3254,6 +3275,7 @@ note: visible
         Assert.NotNull(snapshot);
         var snapshotState = Assert.Single(snapshot.CdcCaptureStates);
         Assert.Equal("tenant-profile-cdc", snapshotState.CdcCaptureId);
+        Assert.Equal(CdcCapturePublicationStates.Current, snapshotState.Publication.State);
         Assert.NotNull(snapshotState.OutboxDispatchState);
     }
 

@@ -57,6 +57,9 @@
 - `Data/ICdcCaptureCatalog.cs`
 - `Data/ICdcCaptureContributor.cs`
 - `Data/ICdcCaptureRegistry.cs`
+- `Data/CdcCaptureFreshnessStatus.cs`
+- `Data/CdcCaptureLagStatus.cs`
+- `Data/CdcCapturePublicationStatus.cs`
 - `Data/CdcCaptureRuntimeState.cs`
 - `Data/ICdcCaptureRuntimeStateCatalog.cs`
 - `Data/IReadStore.cs`
@@ -155,9 +158,9 @@ The phase-8 families stay runtime-neutral on purpose:
 
 That same data contract family now also keeps the first CDC live-state/operator answer host-agnostic.
 `CdcCaptureRuntimeState` plus `ICdcCaptureRuntimeStateCatalog` let provider packs and hosts report
-latest capture posture, totals, checkpoints, errors, and optional linked
-`EventDispatchRuntimeState` publication posture without turning CDC execution into an ASP.NET Core-
-only or provider-specific registry.
+latest capture posture, totals, checkpoints, errors, typed freshness/lag/publication posture, and
+optional linked `EventDispatchRuntimeState` publication posture without turning CDC execution into
+an ASP.NET Core-only or provider-specific registry.
 
 The app-model contract now also carries a contract-first resilience family through
 `ResilienceSelection`, `RetrySelection`, `TimeoutSelection`, `CircuitBreakerSelection`,

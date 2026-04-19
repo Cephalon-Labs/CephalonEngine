@@ -1146,6 +1146,9 @@ Browse the published API surface by public member.
 - [BackendForFrontendSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-backendforfrontendsettings-ctor-system-collections-generic-ireadonlylist-cephalon-engine-configuration-backendforfrontendclientbindingsettings): `Constructors` on `BackendForFrontendSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=BackendForFrontendSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Creates backend-for-frontend settings.
   - `BackendForFrontendSettings(IReadOnlyList<BackendForFrontendClientBindingSettings> bindings)`
+- [Backfilling](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturelagstates-backfilling): `Fields` on `CdcCaptureLagStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Backfilling&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Indicates that the provider reports the capture as intentionally backfilling older changes.
+  - `const string Backfilling`
 - [Backoff](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-retryselection-backoff): `Properties` on `RetrySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Backoff&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the requested backoff mode, such as `Exponential` or `Linear`.
   - `string Backoff { get; }`
@@ -1605,6 +1608,9 @@ Browse the published API surface by public member.
 - [CapturedCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-capturedcount): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CapturedCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The number of `captured` observations reported so far.
   - `int CapturedCount { get; set; }`
+- [CaptureFailed](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturepublicationstates-capturefailed): `Fields` on `CdcCapturePublicationStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CaptureFailed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Indicates that the capture itself last reported a failure before publication completed.
+  - `const string CaptureFailed`
 - [CaptureOnly](cephalon-engine.md#member-f-cephalon-engine-configuration-startupfailurebehavior-captureonly): `Fields` on `StartupFailureBehavior` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=CaptureOnly&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Capture the failure in runtime status without rethrowing it to the host.
   - `const StartupFailureBehavior CaptureOnly`
@@ -1641,18 +1647,27 @@ Browse the published API surface by public member.
 - [CdcCaptureDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccapturedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `CdcCaptureDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates a new CDC capture descriptor.
   - `CdcCaptureDescriptor(string id, string displayName, string description, string sourceModuleId, string provider, string sourceId, string outboxId, string mode, string eventFormat, IReadOnlyList<string> resourceIds, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
-- [CdcCaptureExecutionReport](cephalon-data.md#member-m-cephalon-data-services-cdccaptureexecutionreport-ctor-system-string-system-string-system-datetimeoffset-system-int32-system-int32-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `CdcCaptureExecutionReport` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=CdcCaptureExecutionReport&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
+- [CdcCaptureExecutionReport](cephalon-data.md#member-m-cephalon-data-services-cdccaptureexecutionreport-ctor-system-string-system-string-system-datetimeoffset-system-int32-system-int32-system-string-system-string-system-string-cephalon-abstractions-data-cdccapturefreshnessstatus-cephalon-abstractions-data-cdccapturelagstatus-cephalon-abstractions-data-cdccapturepublicationstatus-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `CdcCaptureExecutionReport` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=CdcCaptureExecutionReport&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
   - Creates a new CDC capture runtime observation.
-  - `CdcCaptureExecutionReport(string cdcCaptureId, string outcome, DateTimeOffset observedAtUtc, int capturedChangeCount, int producedMessageCount, string changeId, string checkpoint, string error, IReadOnlyDictionary<string, string> metadata)`
+  - `CdcCaptureExecutionReport(string cdcCaptureId, string outcome, DateTimeOffset observedAtUtc, int capturedChangeCount, int producedMessageCount, string changeId, string checkpoint, string error, CdcCaptureFreshnessStatus freshness, CdcCaptureLagStatus lag, CdcCapturePublicationStatus publication, IReadOnlyDictionary<string, string> metadata)`
+- [CdcCaptureFreshnessStatus](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccapturefreshnessstatus-ctor-system-string-system-nullable-system-datetimeoffset-system-string): `Constructors` on `CdcCaptureFreshnessStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureFreshnessStatus&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Creates a new CDC freshness status.
+  - `CdcCaptureFreshnessStatus(string state, DateTimeOffset? freshUntilUtc, string description)`
 - [CdcCaptureId](cephalon-data.md#member-p-cephalon-data-services-cdccaptureexecutionreport-cdccaptureid): `Properties` on `CdcCaptureExecutionReport` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=CdcCaptureId&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
   - Gets the stable CDC capture identifier that produced the observation.
   - `string CdcCaptureId { get; }`
 - [CdcCaptureId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-cdccaptureid): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The stable CDC capture identifier.
   - `string CdcCaptureId { get; set; }`
-- [CdcCaptureRuntimeState](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccaptureruntimestate-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-nullable-system-datetimeoffset-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int64-system-int64-system-string-system-string-system-string-cephalon-abstractions-data-eventdispatchruntimestate-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureRuntimeState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+- [CdcCaptureLagStatus](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccapturelagstatus-ctor-system-string-system-nullable-system-int64-system-string): `Constructors` on `CdcCaptureLagStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureLagStatus&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Creates a new CDC lag status.
+  - `CdcCaptureLagStatus(string state, long? pendingChangeCount, string description)`
+- [CdcCapturePublicationStatus](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccapturepublicationstatus-ctor-system-string-system-nullable-system-int64-system-string): `Constructors` on `CdcCapturePublicationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCapturePublicationStatus&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Creates a new CDC publication status.
+  - `CdcCapturePublicationStatus(string state, long? pendingPublicationCount, string description)`
+- [CdcCaptureRuntimeState](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccaptureruntimestate-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-nullable-system-datetimeoffset-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int64-system-int64-system-string-system-string-system-string-cephalon-abstractions-data-cdccapturefreshnessstatus-cephalon-abstractions-data-cdccapturelagstatus-cephalon-abstractions-data-cdccapturepublicationstatus-cephalon-abstractions-data-eventdispatchruntimestate-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureRuntimeState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Describes the latest operator-facing runtime state visible for one active CDC capture.
-  - `CdcCaptureRuntimeState(string CdcCaptureId, string SourceModuleId, string Provider, string SourceId, string OutboxId, string Mode, string EventFormat, IReadOnlyList<string> ResourceIds, string LastOutcome, DateTimeOffset? LastObservedAtUtc, int LastCapturedChangeCount, int LastProducedMessageCount, int StartedCount, int CapturedCount, int IdleCount, int FailedCount, long TotalCapturedChangeCount, long TotalProducedMessageCount, string LastChangeId, string LastCheckpoint, string LastError, EventDispatchRuntimeState OutboxDispatchState, IReadOnlyDictionary<string, string> Metadata)`
+  - `CdcCaptureRuntimeState(string CdcCaptureId, string SourceModuleId, string Provider, string SourceId, string OutboxId, string Mode, string EventFormat, IReadOnlyList<string> ResourceIds, string LastOutcome, DateTimeOffset? LastObservedAtUtc, int LastCapturedChangeCount, int LastProducedMessageCount, int StartedCount, int CapturedCount, int IdleCount, int FailedCount, long TotalCapturedChangeCount, long TotalProducedMessageCount, string LastChangeId, string LastCheckpoint, string LastError, CdcCaptureFreshnessStatus Freshness, CdcCaptureLagStatus Lag, CdcCapturePublicationStatus Publication, EventDispatchRuntimeState OutboxDispatchState, IReadOnlyDictionary<string, string> Metadata)`
 - [CdcCaptures](cephalon-abstractions.md#member-p-cephalon-abstractions-data-icdccapturecatalog-cdccaptures): `Properties` on `ICdcCaptureCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptures&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets all CDC capture surfaces visible to the current runtime.
   - `IReadOnlyList<CdcCaptureDescriptor> CdcCaptures { get; }`
@@ -2358,6 +2373,12 @@ Browse the published API surface by public member.
 - [Critical](cephalon-engine.md#member-f-cephalon-engine-diagnostics-diagnosticseverity-critical): `Fields` on `DiagnosticSeverity` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Critical&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - The event indicates a critical condition that usually requires immediate attention.
   - `const DiagnosticSeverity Critical`
+- [Current](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturelagstates-current): `Fields` on `CdcCaptureLagStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Current&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Indicates that the provider reports the capture as caught up.
+  - `const string Current`
+- [Current](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturepublicationstates-current): `Fields` on `CdcCapturePublicationStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Current&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Indicates that the capture is current through the linked publication path.
+  - `const string Current`
 - [Current](cephalon-audit.md#member-p-cephalon-audit-services-iauditactoraccessor-current): `Properties` on `IAuditActorAccessor` in `Cephalon.Audit.Services` (`Cephalon.Audit`) [Browse](browse.html?q=Current&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Services&scope=members)
   - Gets the audit actor currently associated with the ambient runtime scope when one is known.
   - `AuditActor Current { get; }`
@@ -2757,6 +2778,15 @@ Browse the published API surface by public member.
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturedescriptor-description): `Properties` on `CdcCaptureDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the human-readable CDC capture description.
   - `string Description { get; }`
+- [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturefreshnessstatus-description): `Properties` on `CdcCaptureFreshnessStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets an optional operator-facing freshness summary.
+  - `string Description { get; }`
+- [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturelagstatus-description): `Properties` on `CdcCaptureLagStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets an optional operator-facing lag summary.
+  - `string Description { get; }`
+- [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturepublicationstatus-description): `Properties` on `CdcCapturePublicationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets an optional operator-facing publication summary.
+  - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellboundarydescriptor-description): `Properties` on `CellBoundaryDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the human-readable description of the cell boundary.
   - `string Description { get; }`
@@ -3015,12 +3045,21 @@ Browse the published API surface by public member.
 - [DispatchedAtUtc](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-modeling-entityframeworkoutboxentry-dispatchedatutc): `Properties` on `EntityFrameworkOutboxEntry` in `Cephalon.Data.EntityFramework.Modeling` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=DispatchedAtUtc&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling&scope=members)
   - Gets or sets the time at which the outbox row was dispatched, when known.
   - `DateTimeOffset? DispatchedAtUtc { get; set; }`
+- [DispatchFailed](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturepublicationstates-dispatchfailed): `Fields` on `CdcCapturePublicationStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DispatchFailed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Indicates that the linked outbox dispatch runtime last reported a failure.
+  - `const string DispatchFailed`
+- [Dispatching](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturepublicationstates-dispatching): `Fields` on `CdcCapturePublicationStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Dispatching&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Indicates that the linked outbox dispatch runtime is actively dispatching publications.
+  - `const string Dispatching`
 - [DispatchPolicy](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxdescriptor-dispatchpolicy): `Properties` on `OutboxDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DispatchPolicy&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the effective dispatch-execution policy for the outbox.
   - `OutboxDispatchPolicyDescriptor DispatchPolicy { get; }`
 - [DispatchPollingIntervalSeconds](cephalon-eventing-wolverine.md#member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-dispatchpollingintervalseconds): `Properties` on `WolverineEventingOptions` in `Cephalon.Eventing.Wolverine.Configuration` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=DispatchPollingIntervalSeconds&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Configuration&scope=members)
   - Gets or sets the number of seconds the Wolverine-owned dispatch loop should wait between polling cycles.
   - `int DispatchPollingIntervalSeconds { get; set; }`
+- [DispatchRetryPending](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturepublicationstates-dispatchretrypending): `Fields` on `CdcCapturePublicationStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DispatchRetryPending&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Indicates that the linked outbox dispatch runtime has a retry pending.
+  - `const string DispatchRetryPending`
 - [DisplayName](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttooldescriptor-displayname): `Properties` on `AgentToolDescriptor` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the operator-facing display name for the tool.
   - `string DisplayName { get; }`
@@ -4272,12 +4311,24 @@ Browse the published API surface by public member.
 - [Foundation](cephalon-abstractions.md#member-f-cephalon-abstractions-appmodel-scaffolding-projectroles-foundation): `Fields` on `ProjectRoles` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Foundation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Identifies the shared foundation project.
   - `const string Foundation`
+- [Fresh](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturefreshnessstates-fresh): `Fields` on `CdcCaptureFreshnessStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Fresh&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Indicates that the provider reports the capture as fresh.
+  - `const string Fresh`
+- [Freshness](cephalon-data.md#member-p-cephalon-data-services-cdccaptureexecutionreport-freshness): `Properties` on `CdcCaptureExecutionReport` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=Freshness&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
+  - Gets the typed freshness answer reported by the active provider/runtime when one was supplied.
+  - `CdcCaptureFreshnessStatus Freshness { get; }`
+- [Freshness](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-freshness): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Freshness&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The latest provider-facing freshness answer reported for the capture.
+  - `CdcCaptureFreshnessStatus Freshness { get; set; }`
 - [FreshnessOrigin](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroleprobedescriptor-freshnessorigin): `Properties` on `DatabaseRoleProbeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=FreshnessOrigin&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the source of the effective freshness window, when known.
   - `string FreshnessOrigin { get; }`
 - [FreshnessSeconds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroleprobedescriptor-freshnessseconds): `Properties` on `DatabaseRoleProbeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=FreshnessSeconds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the configured or default freshness window in seconds.
   - `int FreshnessSeconds { get; }`
+- [FreshUntilUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturefreshnessstatus-freshuntilutc): `Properties` on `CdcCaptureFreshnessStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=FreshUntilUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the UTC timestamp until which the current capture observation remains fresh when one is known.
+  - `DateTimeOffset? FreshUntilUtc { get; }`
 - [FreshUntilUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroleprobedescriptor-freshuntilutc): `Properties` on `DatabaseRoleProbeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=FreshUntilUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the UTC timestamp until which the current answer remains fresh, when known.
   - `DateTimeOffset? FreshUntilUtc { get; }`
@@ -5091,12 +5142,27 @@ Browse the published API surface by public member.
 - [HasDispatchReports](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-hasdispatchreports): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasDispatchReports&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the linked outbox dispatch path has reported runtime state.
   - `bool HasDispatchReports { get; }`
+- [HasFreshnessWindow](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-hasfreshnesswindow): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasFreshnessWindow&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the capture still has a provider-reported freshness window.
+  - `bool HasFreshnessWindow { get; }`
 - [HasManualCommandsForAllTargets](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-hasmanualcommandsforalltargets): `Properties` on `DatabaseMigrationOperationalExecutionGroup` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasManualCommandsForAllTargets&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether every target in this group publishes a direct or manual command path.
   - `bool HasManualCommandsForAllTargets { get; }`
 - [HasMore](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryqueryresult-hasmore): `Properties` on `AuditHistoryQueryResult` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasMore&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets a value indicating whether more entries remain beyond this page.
   - `bool HasMore { get; }`
+- [HasPendingChanges](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturelagstatus-haspendingchanges): `Properties` on `CdcCaptureLagStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasPendingChanges&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the capture still has pending source-side changes.
+  - `bool HasPendingChanges { get; }`
+- [HasPendingChanges](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-haspendingchanges): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasPendingChanges&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the capture still has provider-reported pending source changes.
+  - `bool HasPendingChanges { get; }`
+- [HasPendingPublications](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturepublicationstatus-haspendingpublications): `Properties` on `CdcCapturePublicationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasPendingPublications&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the capture still has pending publications.
+  - `bool HasPendingPublications { get; }`
+- [HasPendingPublications](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-haspendingpublications): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasPendingPublications&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the capture still has provider-reported pending publications.
+  - `bool HasPendingPublications { get; }`
 - [HasPendingSignals](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-haspendingsignals): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasPendingSignals&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets a value indicating whether one or more durable signals are currently awaited for the stream.
   - `bool HasPendingSignals { get; }`
@@ -5319,6 +5385,9 @@ Browse the published API surface by public member.
 - [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-trustpolicy-hasvalues): `Properties` on `TrustPolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether the policy differs from the default baseline.
   - `bool HasValues { get; }`
+- [HasWindow](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturefreshnessstatus-haswindow): `Properties` on `CdcCaptureFreshnessStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasWindow&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether a freshness window is currently known.
+  - `bool HasWindow { get; }`
 - [Header](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointbindingsource-header): `Fields` on `RestEndpointBindingSource` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Header&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Reads the value from an HTTP header.
   - `const RestEndpointBindingSource Header`
@@ -6258,6 +6327,15 @@ Browse the published API surface by public member.
 
 ## L
 
+- [Lag](cephalon-data.md#member-p-cephalon-data-services-cdccaptureexecutionreport-lag): `Properties` on `CdcCaptureExecutionReport` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=Lag&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
+  - Gets the typed lag answer reported by the active provider/runtime when one was supplied.
+  - `CdcCaptureLagStatus Lag { get; }`
+- [Lag](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-lag): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Lag&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The latest provider-facing lag answer reported for the capture.
+  - `CdcCaptureLagStatus Lag { get; set; }`
+- [Lagging](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturelagstates-lagging): `Fields` on `CdcCaptureLagStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Lagging&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Indicates that the provider reports the capture as lagging behind the source stream.
+  - `const string Lagging`
 - [LastAppendedEventCount](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lastappendedeventcount): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastAppendedEventCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The number of domain events appended by the latest successful durable step.
   - `int LastAppendedEventCount { get; set; }`
@@ -8004,9 +8082,18 @@ Browse the published API surface by public member.
 - [PayloadType](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionpendingsignal-payloadtype): `Properties` on `DurableExecutionPendingSignal` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=PayloadType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the expected payload type name when the awaited signal declares one.
   - `string PayloadType { get; }`
+- [PendingChangeCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturelagstatus-pendingchangecount): `Properties` on `CdcCaptureLagStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PendingChangeCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the number of source-side changes still pending capture when the provider reports that answer.
+  - `long? PendingChangeCount { get; }`
 - [PendingMigrationTargetCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasetopologyoperationalsummary-pendingmigrationtargetcount): `Properties` on `DatabaseTopologyOperationalSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PendingMigrationTargetCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of migration targets that are not yet `Succeeded`.
   - `int PendingMigrationTargetCount { get; }`
+- [PendingPublication](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturepublicationstates-pendingpublication): `Fields` on `CdcCapturePublicationStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PendingPublication&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Indicates that the capture still has pending publications to push into or through the outbox.
+  - `const string PendingPublication`
+- [PendingPublicationCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturepublicationstatus-pendingpublicationcount): `Properties` on `CdcCapturePublicationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PendingPublicationCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the number of pending publications still waiting to flow through the linked outbox path when one is known.
+  - `long? PendingPublicationCount { get; }`
 - [PendingSignals](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-pendingsignals): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=PendingSignals&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The durable signals that are currently awaited for this stream.
   - `IReadOnlyList<DurableExecutionPendingSignal> PendingSignals { get; set; }`
@@ -8406,6 +8493,12 @@ Browse the published API surface by public member.
 - [ProxyServiceName](cephalon-observability-tanzu.md#member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-proxyservicename): `Properties` on `TanzuTelemetryExportOptions` in `Cephalon.Observability.Tanzu.Configuration` (`Cephalon.Observability.Tanzu`) [Browse](browse.html?q=ProxyServiceName&assembly=Cephalon.Observability.Tanzu&namespace=Cephalon.Observability.Tanzu.Configuration&scope=members)
   - Gets or sets the proxy service name used to build the in-cluster Tanzu proxy endpoint.
   - `string ProxyServiceName { get; set; }`
+- [Publication](cephalon-data.md#member-p-cephalon-data-services-cdccaptureexecutionreport-publication): `Properties` on `CdcCaptureExecutionReport` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=Publication&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
+  - Gets the typed publication-posture answer reported by the active provider/runtime when one was supplied.
+  - `CdcCapturePublicationStatus Publication { get; }`
+- [Publication](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-publication): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Publication&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The latest publication posture answer reported for the capture.
+  - `CdcCapturePublicationStatus Publication { get; set; }`
 - [PublicationId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-publicationid): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=PublicationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The stable publication identifier declared by the choreography step.
   - `string PublicationId { get; set; }`
@@ -10353,6 +10446,9 @@ Browse the published API surface by public member.
 - [StableRuleId](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-stableruleid): `Fields` on `RestEndpointGovernanceRuleSelectionBasis` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=StableRuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - The winning rule was selected by the final stable rule-id tie-breaker.
   - `const RestEndpointGovernanceRuleSelectionBasis StableRuleId`
+- [Stale](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturefreshnessstates-stale): `Fields` on `CdcCaptureFreshnessStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Stale&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Indicates that the provider reports the capture as stale.
+  - `const string Stale`
 - [StartAsync](cephalon-engine.md#member-m-cephalon-engine-runtime-engineruntime-startasync-system-iserviceprovider-system-threading-cancellationtoken): `Methods` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=StartAsync&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Starts the runtime and its modules.
   - `Task StartAsync(IServiceProvider services, CancellationToken cancellationToken)`
@@ -10422,6 +10518,15 @@ Browse the published API surface by public member.
 - [StartupReadinessDelay](cephalon-engine.md#member-p-cephalon-engine-configuration-failurepolicy-startupreadinessdelay): `Properties` on `FailurePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=StartupReadinessDelay&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the readiness warmup window that applies after startup succeeds.
   - `TimeSpan StartupReadinessDelay { get; }`
+- [State](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturefreshnessstatus-state): `Properties` on `CdcCaptureFreshnessStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=State&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable freshness-state identifier.
+  - `string State { get; }`
+- [State](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturelagstatus-state): `Properties` on `CdcCaptureLagStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=State&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable lag-state identifier.
+  - `string State { get; }`
+- [State](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturepublicationstatus-state): `Properties` on `CdcCapturePublicationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=State&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable publication-state identifier.
+  - `string State { get; }`
 - [State](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-state): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=State&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - The current health state.
   - `HealthState State { get; set; }`
@@ -11541,6 +11646,15 @@ Browse the published API surface by public member.
 - [Unknown](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behavioridempotencymode-unknown): `Fields` on `BehaviorIdempotencyMode` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unknown&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - No explicit idempotency contract was declared for the behavior.
   - `const BehaviorIdempotencyMode Unknown`
+- [Unknown](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturefreshnessstates-unknown): `Fields` on `CdcCaptureFreshnessStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unknown&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Indicates that the active runtime does not yet have a freshness answer.
+  - `const string Unknown`
+- [Unknown](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturelagstates-unknown): `Fields` on `CdcCaptureLagStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unknown&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Indicates that the active runtime does not yet have a lag answer.
+  - `const string Unknown`
+- [Unknown](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturepublicationstates-unknown): `Fields` on `CdcCapturePublicationStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unknown&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Indicates that the active runtime does not yet have a publication answer.
+  - `const string Unknown`
 - [Unspecified](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointauthoringpolicysuppressionkind-unspecified): `Fields` on `RestEndpointAuthoringPolicySuppressionKind` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unspecified&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - The candidate was not classified with an authoring-policy suppression kind.
   - `const RestEndpointAuthoringPolicySuppressionKind Unspecified`

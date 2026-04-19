@@ -1257,6 +1257,9 @@ Current payload highlights:
   `provider`, `sourceId`, `outboxId`, `mode`, `eventFormat`, and `resourceIds`) alongside the
   latest reported `lastOutcome`, `lastObservedAtUtc`, checkpoint/change-id/error details, and
   latest/total captured-change plus produced-message counts
+- each runtime-state entry now also carries typed `freshness`, `lag`, and `publication` answers so
+  provider packs can surface freshness windows, pending source-change counts, and pending
+  publication counts without forcing hosts or operators to parse ad-hoc metadata
 - the catalog projects active captures even before the first provider report arrives, so operators
   can still see declared ownership and linked outbox identity before execution starts
 - when the linked publication path already reports runtime truth, `outboxDispatchState` carries the
@@ -1276,7 +1279,8 @@ Current note:
 
 - the shared runtime-state catalog is reporter-driven and descriptor-backed: it does not claim that
   Cephalon already ships provider-native WAL or change-stream execution loops
-- richer provider-native freshness, lag, and checkpoint semantics remain later follow-through over
+- provider packs can now project typed freshness, lag, and publication posture through the shared
+  contract today, while provider-native execution loops themselves remain later follow-through over
   the same capture/runtime-state contract instead of a second host-only registry
 
 ## Inbox surface

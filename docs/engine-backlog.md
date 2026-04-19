@@ -2170,6 +2170,35 @@ Delivered:
 - `Cephalon.AspNetCore` now exposes `/engine/cell-traffic-automations`, `/engine/cell-traffic-automations/{automationId}`, `/engine/cell-traffic-automations/modules/{moduleId}`, `/engine/cell-traffic-automations/routes/{routeId}`, `/engine/cell-traffic-automations/source-cells/{cellId}`, `/engine/cell-traffic-automations/target-cells/{cellId}`, and `/engine/cell-traffic-automations/health-isolations/{healthIsolationId}` as the direct operator routes for the merged traffic-automation catalog
 - targeted coverage now proves catalog composition, invalid-route rejection, technology-surface projection, runtime-snapshot projection, ASP.NET Core route publication, and public package-surface alignment through composition tests `2/2`, hosting tests `1/1`, and tooling tests `169/169`
 
+### ENG-127 Phase 13 CDC freshness, lag, and publication posture baseline
+
+Status: done
+Estimate: 5
+Completed: April 20, 2026
+
+Why:
+
+- `ENG-126` shipped the first live CDC runtime-state baseline, but operators still could not read typed freshness, lag, or publication-posture answers without parsing ad-hoc metadata or inferring too much from raw counts
+- provider packs needed one additive reporter shape for freshness windows, lag posture, pending source-change counts, and pending publication counts that kept `CdcCaptureRuntimeState` host-agnostic and descriptor-backed
+- the linked outbox dispatch runtime was already available, but the CDC surface still lacked one normalized publication-posture answer that could reuse downstream dispatch truth without inventing a second host-only monitor
+
+Acceptance:
+
+- `Cephalon.Abstractions` exposes additive CDC runtime contracts for freshness, lag, and publication posture in a provider-friendly typed shape
+- `Cephalon.Data` extends `CdcCaptureExecutionReport` plus the shared runtime-state catalog so provider/runtime reporters can project freshness windows, lag posture, and pending publication counts without regressing the shipped `ENG-126` baseline
+- `CdcCaptureRuntimeState` and `snapshot.CdcCaptureStates` surface the richer operator answer while preserving optional linked `OutboxDispatchState`
+- ASP.NET Core keeps the same `/engine/cdc-captures/runtime*` routes and returns the richer typed runtime answer without introducing a second CDC route family
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the shipped slice while remaining explicit that provider-specific CDC execution loops themselves are still later work
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships `CdcCaptureFreshnessStatus`, `CdcCaptureLagStatus`, `CdcCapturePublicationStatus`, and their recommended stable state identifiers so provider packs can report freshness, lag, and publication posture through one typed host-agnostic contract
+- `Cephalon.Data` now extends `CdcCaptureExecutionReport` plus `CdcCaptureRuntimeStateCatalog` so capture observations can carry freshness windows, lag summaries, pending source-change counts, and pending publication counts without falling back to metadata-only parsing
+- `Cephalon.Data` now also applies a conservative linked-dispatch publication overlay so `CdcCaptureRuntimeState.Publication` can reflect retry/failure/in-flight/current posture from the existing outbox runtime truth when the linked dispatch path already reports it
+- `Cephalon.Engine` now projects the richer `snapshot.CdcCaptureStates` answer without changing the shipped descriptor/runtime route family
+- ASP.NET Core continues exposing `/engine/cdc-captures/runtime*`, now with typed freshness, lag, publication, and linked dispatch posture on the same runtime answer
+- targeted coverage now proves richer runtime-state projection, snapshot truth, ASP.NET Core route publication, and package-surface alignment through composition tests `1/1`, hosting tests `1/1`, and tooling tests `1/1`
+
 ### ENG-126 Phase 13 CDC runtime-state and publish-state follow-through
 
 Status: done
@@ -3261,6 +3290,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-100 generic behavior HTTP transport-native timeout and circuit-breaker envelopes: `Cephalon.Behaviors.Http` now shares one resilience-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution timeout and open-circuit rejections keep protocol-native error shapes with stable Cephalon codes plus `503` metadata and optional retry-after timing instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned timeout and circuit-breaker policy — **Shipped** · targeted hosting tests 25/25 + composition tests 28/28 + package-surface tests 153/153
 - ENG-101 phase 12 strangler-fig migration policy and progress baseline: `Cephalon.Abstractions` now exposes `IStranglerFigMigrationRuntimeCatalog` plus `StranglerFigMigrationRuntimeDescriptor`, `Cephalon.Engine` now binds deterministic `Engine:Migration:StranglerFig` default plus per-route overlays into `snapshot.StranglerFigRoutePolicies`, and `Cephalon.AspNetCore` now exposes `/engine/strangler-fig/runtime` plus `/engine/strangler-fig/runtime/{routeId}` while host-level cutover remains later — **Shipped** · composition tests 4/4 + hosting tests 1/1 + package-surface tests 153/153
 - ENG-102 phase 12 ASP.NET Core strangler-fig cutover runtime: `Cephalon.AspNetCore` now derives host cutover execution from `IStranglerFigMigrationRuntimeCatalog`, exposes `/engine/strangler-fig/cutover` plus `/engine/strangler-fig/cutover/resolve`, rewrites rooted local targets in-process, redirects or proxies absolute HTTP or HTTPS targets through `Engine:Migration:StranglerFig:AspNetCore`, and rejects unsupported selected endpoints truthfully with `502` while broader provider-specific ingress or edge automation remains later — **Shipped** · hosting tests 5/5 + composition tests 4/4 + package-surface tests 153/153
+- ENG-127 phase 13 CDC freshness, lag, and publication posture baseline: `Cephalon.Abstractions` now exposes typed CDC freshness/lag/publication status contracts, `Cephalon.Data` now lets runtime reports carry those answers and applies a conservative linked-dispatch publication overlay, `Cephalon.Engine` now projects the richer `snapshot.CdcCaptureStates`, and `Cephalon.AspNetCore` now keeps `/engine/cdc-captures/runtime*` truthful with the same typed operational posture — **Shipped** · GitHub issue `#524` · composition tests 1/1 + hosting tests 1/1 + tooling tests 1/1
 - ENG-126 phase 13 CDC runtime-state and publish-state follow-through: `Cephalon.Abstractions` now exposes `CdcCaptureRuntimeState` plus `ICdcCaptureRuntimeStateCatalog`, `Cephalon.Data` now reports descriptor-backed runtime state with optional linked `OutboxDispatchState`, `Cephalon.Engine` now projects `snapshot.CdcCaptureStates`, and `Cephalon.AspNetCore` now exposes `/engine/cdc-captures/runtime*` so operators can inspect latest capture posture without a host-only monitor — **Shipped** · GitHub issue `#523` · composition tests 1/1 + hosting tests 1/1 + tooling tests 1/1
 - ENG-124 phase 13 data product runtime baseline: `Cephalon.Abstractions` now exposes `IDataProduct<T>` plus `DataProductDescriptor`, `IDataProductCatalog`, `IDataProductContributor`, and `IDataProductRegistry`, `Cephalon.Engine` now projects `snapshot.DataProducts` through the same engine-owned runtime truth, and `Cephalon.AspNetCore` now exposes `/engine/data-products*` so module-owned data mesh descriptors stay operator-readable without a host-only catalog — **Shipped** · GitHub issue `#521` · composition tests 2/2 + hosting tests 1/1 + tooling tests 1/1
 - ENG-125 phase 13 CDC capture runtime baseline: `Cephalon.Abstractions` now exposes `ICdcCapture` plus `CdcCaptureDescriptor`, `ICdcCaptureCatalog`, `ICdcCaptureContributor`, and `ICdcCaptureRegistry`, `Cephalon.Engine` now projects `snapshot.CdcCaptures` while validating source-module and outbox references through the same engine-owned runtime truth, and `Cephalon.AspNetCore` now exposes `/engine/cdc-captures*` so module-owned CDC descriptors stay operator-readable without a host-only sync registry — **Shipped** · GitHub issue `#522` · composition tests 3/3 + hosting tests 1/1 + tooling tests 1/1

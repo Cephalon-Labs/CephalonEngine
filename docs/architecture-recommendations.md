@@ -301,16 +301,19 @@ Effort: small-to-medium for the remaining follow-through.
 
 ### Change Data Capture — CDC (event-driven data sync)
 
-Current state: the first CDC descriptor baseline and the first live runtime-state follow-through are
-now shipped. `Cephalon.Abstractions` now exposes `ICdcCapture`, `CdcCaptureDescriptor`,
+Current state: the first CDC descriptor baseline, the first live runtime-state follow-through, and
+the first typed freshness/lag/publication follow-through are now shipped.
+`Cephalon.Abstractions` now exposes `ICdcCapture`, `CdcCaptureDescriptor`,
 `ICdcCaptureCatalog`, `ICdcCaptureContributor`, `ICdcCaptureRegistry`,
-`CdcCaptureRuntimeState`, and `ICdcCaptureRuntimeStateCatalog`; `Cephalon.Engine` now projects
-both `snapshot.CdcCaptures` and `snapshot.CdcCaptureStates` while validating referenced
+`CdcCaptureRuntimeState`, `ICdcCaptureRuntimeStateCatalog`, `CdcCaptureFreshnessStatus`,
+`CdcCaptureLagStatus`, and `CdcCapturePublicationStatus`; `Cephalon.Engine` now projects both
+`snapshot.CdcCaptures` and `snapshot.CdcCaptureStates` while validating referenced
 `sourceModuleId` and `outboxId` values against the active runtime; `Cephalon.Data` now supplies
-the shared reporter/catalog path for latest capture observations; and ASP.NET Core now exposes
-both `/engine/cdc-captures` and `/engine/cdc-captures/runtime` plus the same id/module/provider/
-outbox/source/resource drill-down routes so module-owned CDC descriptor truth and latest capture
-posture stay inspectable through the same runtime contract.
+the shared reporter/catalog path for latest capture observations plus typed freshness/lag/
+publication answers; and ASP.NET Core now exposes both `/engine/cdc-captures` and
+`/engine/cdc-captures/runtime` plus the same id/module/provider/outbox/source/resource drill-down
+routes so module-owned CDC descriptor truth and latest capture posture stay inspectable through the
+same runtime contract.
 
 Recommendation: keep the initial descriptor/runtime surface focused on module
 ownership, provider/source/outbox identity, capture mode, event format,
@@ -322,13 +325,14 @@ Shipped baseline:
 - `ICdcCapture` — host-agnostic CDC execution contract for provider-specific implementations
 - `CdcCaptureDescriptor` — operator-facing module/provider/source/outbox/mode/event-format metadata with resource ids, tags, and free-form metadata
 - CDC capture catalog in the runtime surface through `/engine/cdc-captures*` and `snapshot.CdcCaptures`
-- `CdcCaptureRuntimeState` plus `ICdcCaptureRuntimeStateCatalog` — operator-facing live CDC posture with latest outcome, totals, checkpoints, errors, and optional linked `OutboxDispatchState`
+- `CdcCaptureRuntimeState` plus `ICdcCaptureRuntimeStateCatalog` — operator-facing live CDC posture with latest outcome, totals, checkpoints, typed freshness/lag/publication status, and optional linked `OutboxDispatchState`
+- `CdcCaptureFreshnessStatus`, `CdcCaptureLagStatus`, and `CdcCapturePublicationStatus` — typed operator-facing freshness, lag, and publication-posture answers that provider packs can report without falling back to metadata-only semantics
 - CDC runtime-state catalog in the runtime surface through `/engine/cdc-captures/runtime*` and `snapshot.CdcCaptureStates`
 - build-time validation that rejects missing source-module ownership or missing outbox references before broken operator metadata can ship
 
 Later follow-through:
 - provider-specific execution/runtime packs over the shipped contract, such as PostgreSQL WAL or MongoDB change streams
-- richer provider-native freshness, lag, and publish-state answers once provider execution exists
+- richer provider-native execution loops and deeper provider-specific semantics beyond the shipped typed freshness/lag/publication baseline
 - reconsider a dedicated `data.cdc` capability convention only if a truthful module-backed publication path exists
 
 Effort: medium for the remaining provider-specific follow-through.
@@ -389,9 +393,9 @@ Target: Sprint 40–41
 Deliverables:
 - Cell-Based Architecture technology descriptor and boundary abstraction — shipped baseline
 - Data Mesh data product abstraction — shipped baseline
-- CDC capture abstraction and runtime-state follow-through — shipped baseline
+- CDC capture abstraction plus typed runtime-state/freshness/lag/publication follow-through — shipped baseline
 
 Exit criteria:
 - modules can declare cell boundaries, governed cell routes, and cell health-isolation posture with explicit blast-radius isolation and operators can inspect the same answers through `/engine/cells`, `/engine/cell-routes`, `/engine/cell-health-isolations`, `/engine/technology-surfaces/cell-based-architecture`, and `/engine/snapshot`
 - modules can expose queryable data products through the runtime catalog
-- modules can declare CDC captures linked to an outbox through the runtime catalog today, operators can inspect latest capture/post-publication posture through `/engine/cdc-captures`, `/engine/cdc-captures/runtime`, and `/engine/snapshot`, and later provider-specific execution can capture and publish those changes without inventing a second registry
+- modules can declare CDC captures linked to an outbox through the runtime catalog today, operators can inspect latest capture/freshness/lag/post-publication posture through `/engine/cdc-captures`, `/engine/cdc-captures/runtime`, and `/engine/snapshot`, and later provider-specific execution can capture and publish those changes without inventing a second registry

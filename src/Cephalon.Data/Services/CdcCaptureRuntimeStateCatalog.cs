@@ -16,6 +16,13 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
         .ToDictionary(static descriptor => descriptor.Id, Comparer);
     private readonly Dictionary<string, CdcCaptureRuntimeState> reportedStatesById = new(Comparer);
 
+    private static readonly CdcCaptureFreshnessStatus UnknownFreshness =
+        new(CdcCaptureFreshnessStates.Unknown);
+    private static readonly CdcCaptureLagStatus UnknownLag =
+        new(CdcCaptureLagStates.Unknown);
+    private static readonly CdcCapturePublicationStatus UnknownPublication =
+        new(CdcCapturePublicationStates.Unknown);
+
     public IReadOnlyList<CdcCaptureRuntimeState> States
     {
         get
@@ -150,6 +157,8 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
             var totalCapturedChangeCount = current.TotalCapturedChangeCount + report.CapturedChangeCount;
             var totalProducedMessageCount = current.TotalProducedMessageCount + report.ProducedMessageCount;
             var dispatchState = dispatchRuntimeCatalog?.GetByOutboxId(descriptor.OutboxId);
+            var freshness = report.Freshness ?? current.Freshness;
+            var lag = report.Lag ?? current.Lag;
 
             current = normalizedOutcome switch
             {
@@ -165,6 +174,14 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                     LastChangeId = report.ChangeId,
                     LastCheckpoint = report.Checkpoint,
                     LastError = null,
+                    Freshness = freshness,
+                    Lag = lag,
+                    Publication = ResolvePublicationStatus(
+                        current.Publication,
+                        report.Publication,
+                        dispatchState,
+                        normalizedOutcome,
+                        error: null),
                     OutboxDispatchState = dispatchState,
                     Metadata = metadata
                 },
@@ -180,6 +197,14 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                     LastChangeId = report.ChangeId,
                     LastCheckpoint = report.Checkpoint,
                     LastError = null,
+                    Freshness = freshness,
+                    Lag = lag,
+                    Publication = ResolvePublicationStatus(
+                        current.Publication,
+                        report.Publication,
+                        dispatchState,
+                        normalizedOutcome,
+                        error: null),
                     OutboxDispatchState = dispatchState,
                     Metadata = metadata
                 },
@@ -195,6 +220,14 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                     LastChangeId = report.ChangeId,
                     LastCheckpoint = report.Checkpoint,
                     LastError = null,
+                    Freshness = freshness,
+                    Lag = lag,
+                    Publication = ResolvePublicationStatus(
+                        current.Publication,
+                        report.Publication,
+                        dispatchState,
+                        normalizedOutcome,
+                        error: null),
                     OutboxDispatchState = dispatchState,
                     Metadata = metadata
                 },
@@ -210,6 +243,14 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                     LastChangeId = report.ChangeId,
                     LastCheckpoint = report.Checkpoint,
                     LastError = report.Error,
+                    Freshness = freshness,
+                    Lag = lag,
+                    Publication = ResolvePublicationStatus(
+                        current.Publication,
+                        report.Publication,
+                        dispatchState,
+                        normalizedOutcome,
+                        report.Error),
                     OutboxDispatchState = dispatchState,
                     Metadata = metadata
                 },
@@ -225,9 +266,22 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
 
     private CdcCaptureRuntimeState CreateState(CdcCaptureDescriptor descriptor)
     {
-        return reportedStatesById.TryGetValue(descriptor.Id, out var existing)
-            ? existing with { OutboxDispatchState = dispatchRuntimeCatalog?.GetByOutboxId(descriptor.OutboxId) }
-            : CreateDefaultState(descriptor);
+        if (reportedStatesById.TryGetValue(descriptor.Id, out var existing))
+        {
+            var dispatchState = dispatchRuntimeCatalog?.GetByOutboxId(descriptor.OutboxId);
+            return existing with
+            {
+                Publication = ResolvePublicationStatus(
+                    existing.Publication,
+                    reportedPublication: null,
+                    dispatchState,
+                    existing.LastOutcome,
+                    existing.LastError),
+                OutboxDispatchState = dispatchState
+            };
+        }
+
+        return CreateDefaultState(descriptor);
     }
 
     private CdcCaptureRuntimeState CreateDefaultState(CdcCaptureDescriptor descriptor)
@@ -254,8 +308,66 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
             LastChangeId: null,
             LastCheckpoint: null,
             LastError: null,
+            Freshness: UnknownFreshness,
+            Lag: UnknownLag,
+            Publication: ResolvePublicationStatus(
+                UnknownPublication,
+                reportedPublication: null,
+                dispatchRuntimeCatalog?.GetByOutboxId(descriptor.OutboxId),
+                lastOutcome: null,
+                error: null),
             OutboxDispatchState: dispatchRuntimeCatalog?.GetByOutboxId(descriptor.OutboxId),
             Metadata: EmptyMetadata);
+    }
+
+    private static CdcCapturePublicationStatus ResolvePublicationStatus(
+        CdcCapturePublicationStatus currentPublication,
+        CdcCapturePublicationStatus? reportedPublication,
+        EventDispatchRuntimeState? dispatchState,
+        string? lastOutcome,
+        string? error)
+    {
+        var publication = reportedPublication ?? currentPublication ?? UnknownPublication;
+
+        if (Comparer.Equals(lastOutcome, CdcCaptureRuntimeOutcomes.Failed))
+        {
+            return new CdcCapturePublicationStatus(
+                CdcCapturePublicationStates.CaptureFailed,
+                publication.PendingPublicationCount,
+                string.IsNullOrWhiteSpace(error)
+                    ? "The CDC capture last reported a failure before publication completed."
+                    : error);
+        }
+
+        if (dispatchState is null)
+        {
+            return publication;
+        }
+
+        return dispatchState.LastOutcome switch
+        {
+            "retry-scheduled" => new CdcCapturePublicationStatus(
+                CdcCapturePublicationStates.DispatchRetryPending,
+                publication.PendingPublicationCount,
+                dispatchState.LastError ?? "The linked outbox dispatch runtime has a retry pending."),
+            "failed" => new CdcCapturePublicationStatus(
+                CdcCapturePublicationStates.DispatchFailed,
+                publication.PendingPublicationCount,
+                dispatchState.LastError ?? "The linked outbox dispatch runtime last reported a failure."),
+            "started" => new CdcCapturePublicationStatus(
+                CdcCapturePublicationStates.Dispatching,
+                publication.PendingPublicationCount,
+                "The linked outbox dispatch runtime is actively dispatching publications."),
+            "succeeded" when publication.PendingPublicationCount is 0 => new CdcCapturePublicationStatus(
+                CdcCapturePublicationStates.Current,
+                0,
+                "The capture does not report pending publications and the linked outbox dispatch runtime last succeeded."),
+            "skipped" when publication.PendingPublicationCount is 0 => new CdcCapturePublicationStatus(
+                CdcCapturePublicationStates.Current,
+                0,
+                "The capture does not report pending publications and the linked outbox dispatch runtime does not currently need to publish a message."),
+            _ => publication
+        };
     }
 
     private static string NormalizeOutcome(string outcome)

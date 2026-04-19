@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-19T19:43:33.8025325+00:00",
+  "GeneratedAtUtc": "2026-04-19T20:46:47.3362734+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 330
+      "TypeCount": 336
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -515,7 +515,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
-      "TypeCount": 66
+      "TypeCount": 72
     },
     {
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
@@ -2996,7 +2996,97 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 9,
+        "Properties": 12,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureFreshnessStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccapturefreshnessstates",
+      "Declaration": "public static class CdcCaptureFreshnessStates",
+      "Summary": "Defines the recommended stable freshness-state identifiers for CDC runtime reporting.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 3,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureFreshnessStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccapturefreshnessstatus",
+      "Declaration": "public sealed class CdcCaptureFreshnessStatus",
+      "Summary": "Describes the provider-facing freshness posture currently visible for one CDC capture.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 4,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureLagStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccapturelagstates",
+      "Declaration": "public static class CdcCaptureLagStates",
+      "Summary": "Defines the recommended stable lag-state identifiers for CDC runtime reporting.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 4,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureLagStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccapturelagstatus",
+      "Declaration": "public sealed class CdcCaptureLagStatus",
+      "Summary": "Describes the provider-facing lag posture currently visible for one CDC capture.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 4,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCapturePublicationStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccapturepublicationstates",
+      "Declaration": "public static class CdcCapturePublicationStates",
+      "Summary": "Defines the recommended stable publication-state identifiers for CDC runtime reporting.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 7,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCapturePublicationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccapturepublicationstatus",
+      "Declaration": "public sealed class CdcCapturePublicationStatus",
+      "Summary": "Describes the publication posture currently visible for one CDC capture.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 4,
         "Methods": 0
       }
     },
@@ -3026,7 +3116,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 27,
+        "Properties": 33,
         "Methods": 0
       }
     },
@@ -15587,6 +15677,17 @@
       "Summary": "Creates backend-for-frontend settings."
     },
     {
+      "DisplayName": "Backfilling",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureLagStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccapturelagstates-backfilling",
+      "Signature": "const string Backfilling",
+      "Summary": "Indicates that the provider reports the capture as intentionally backfilling older changes."
+    },
+    {
       "DisplayName": "Backoff",
       "Category": "Properties",
       "DeclaringTypeName": "RetrySelection",
@@ -17259,6 +17360,17 @@
       "Summary": "The number of \u0060captured\u0060 observations reported so far."
     },
     {
+      "DisplayName": "CaptureFailed",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCapturePublicationStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccapturepublicationstates-capturefailed",
+      "Signature": "const string CaptureFailed",
+      "Summary": "Indicates that the capture itself last reported a failure before publication completed."
+    },
+    {
       "DisplayName": "CaptureOnly",
       "Category": "Fields",
       "DeclaringTypeName": "StartupFailureBehavior",
@@ -17397,9 +17509,20 @@
       "NamespaceName": "Cephalon.Data.Services",
       "AssemblyName": "Cephalon.Data",
       "FileName": "cephalon-data.md",
-      "AnchorId": "member-m-cephalon-data-services-cdccaptureexecutionreport-ctor-system-string-system-string-system-datetimeoffset-system-int32-system-int32-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
-      "Signature": "CdcCaptureExecutionReport(string cdcCaptureId, string outcome, DateTimeOffset observedAtUtc, int capturedChangeCount, int producedMessageCount, string changeId, string checkpoint, string error, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "AnchorId": "member-m-cephalon-data-services-cdccaptureexecutionreport-ctor-system-string-system-string-system-datetimeoffset-system-int32-system-int32-system-string-system-string-system-string-cephalon-abstractions-data-cdccapturefreshnessstatus-cephalon-abstractions-data-cdccapturelagstatus-cephalon-abstractions-data-cdccapturepublicationstatus-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "CdcCaptureExecutionReport(string cdcCaptureId, string outcome, DateTimeOffset observedAtUtc, int capturedChangeCount, int producedMessageCount, string changeId, string checkpoint, string error, CdcCaptureFreshnessStatus freshness, CdcCaptureLagStatus lag, CdcCapturePublicationStatus publication, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
       "Summary": "Creates a new CDC capture runtime observation."
+    },
+    {
+      "DisplayName": "CdcCaptureFreshnessStatus",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CdcCaptureFreshnessStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-cdccapturefreshnessstatus-ctor-system-string-system-nullable-system-datetimeoffset-system-string",
+      "Signature": "CdcCaptureFreshnessStatus(string state, DateTimeOffset? freshUntilUtc, string description)",
+      "Summary": "Creates a new CDC freshness status."
     },
     {
       "DisplayName": "CdcCaptureId",
@@ -17424,14 +17547,36 @@
       "Summary": "The stable CDC capture identifier."
     },
     {
+      "DisplayName": "CdcCaptureLagStatus",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CdcCaptureLagStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-cdccapturelagstatus-ctor-system-string-system-nullable-system-int64-system-string",
+      "Signature": "CdcCaptureLagStatus(string state, long? pendingChangeCount, string description)",
+      "Summary": "Creates a new CDC lag status."
+    },
+    {
+      "DisplayName": "CdcCapturePublicationStatus",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CdcCapturePublicationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-cdccapturepublicationstatus-ctor-system-string-system-nullable-system-int64-system-string",
+      "Signature": "CdcCapturePublicationStatus(string state, long? pendingPublicationCount, string description)",
+      "Summary": "Creates a new CDC publication status."
+    },
+    {
       "DisplayName": "CdcCaptureRuntimeState",
       "Category": "Constructors",
       "DeclaringTypeName": "CdcCaptureRuntimeState",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-data-cdccaptureruntimestate-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-nullable-system-datetimeoffset-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int64-system-int64-system-string-system-string-system-string-cephalon-abstractions-data-eventdispatchruntimestate-system-collections-generic-ireadonlydictionary-system-string-system-string",
-      "Signature": "CdcCaptureRuntimeState(string CdcCaptureId, string SourceModuleId, string Provider, string SourceId, string OutboxId, string Mode, string EventFormat, IReadOnlyList\u003Cstring\u003E ResourceIds, string LastOutcome, DateTimeOffset? LastObservedAtUtc, int LastCapturedChangeCount, int LastProducedMessageCount, int StartedCount, int CapturedCount, int IdleCount, int FailedCount, long TotalCapturedChangeCount, long TotalProducedMessageCount, string LastChangeId, string LastCheckpoint, string LastError, EventDispatchRuntimeState OutboxDispatchState, IReadOnlyDictionary\u003Cstring, string\u003E Metadata)",
+      "AnchorId": "member-m-cephalon-abstractions-data-cdccaptureruntimestate-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-nullable-system-datetimeoffset-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int64-system-int64-system-string-system-string-system-string-cephalon-abstractions-data-cdccapturefreshnessstatus-cephalon-abstractions-data-cdccapturelagstatus-cephalon-abstractions-data-cdccapturepublicationstatus-cephalon-abstractions-data-eventdispatchruntimestate-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "CdcCaptureRuntimeState(string CdcCaptureId, string SourceModuleId, string Provider, string SourceId, string OutboxId, string Mode, string EventFormat, IReadOnlyList\u003Cstring\u003E ResourceIds, string LastOutcome, DateTimeOffset? LastObservedAtUtc, int LastCapturedChangeCount, int LastProducedMessageCount, int StartedCount, int CapturedCount, int IdleCount, int FailedCount, long TotalCapturedChangeCount, long TotalProducedMessageCount, string LastChangeId, string LastCheckpoint, string LastError, CdcCaptureFreshnessStatus Freshness, CdcCaptureLagStatus Lag, CdcCapturePublicationStatus Publication, EventDispatchRuntimeState OutboxDispatchState, IReadOnlyDictionary\u003Cstring, string\u003E Metadata)",
       "Summary": "Describes the latest operator-facing runtime state visible for one active CDC capture."
     },
     {
@@ -20021,6 +20166,28 @@
     },
     {
       "DisplayName": "Current",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureLagStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccapturelagstates-current",
+      "Signature": "const string Current",
+      "Summary": "Indicates that the provider reports the capture as caught up."
+    },
+    {
+      "DisplayName": "Current",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCapturePublicationStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccapturepublicationstates-current",
+      "Signature": "const string Current",
+      "Summary": "Indicates that the capture is current through the linked publication path."
+    },
+    {
+      "DisplayName": "Current",
       "Category": "Properties",
       "DeclaringTypeName": "IAuditActorAccessor",
       "NamespaceName": "Cephalon.Audit.Services",
@@ -21474,6 +21641,39 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureFreshnessStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturefreshnessstatus-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets an optional operator-facing freshness summary."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureLagStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturelagstatus-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets an optional operator-facing lag summary."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCapturePublicationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturepublicationstatus-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets an optional operator-facing publication summary."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "CellBoundaryDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Technologies",
       "AssemblyName": "Cephalon.Abstractions",
@@ -22418,6 +22618,28 @@
       "Summary": "Gets or sets the time at which the outbox row was dispatched, when known."
     },
     {
+      "DisplayName": "DispatchFailed",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCapturePublicationStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccapturepublicationstates-dispatchfailed",
+      "Signature": "const string DispatchFailed",
+      "Summary": "Indicates that the linked outbox dispatch runtime last reported a failure."
+    },
+    {
+      "DisplayName": "Dispatching",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCapturePublicationStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccapturepublicationstates-dispatching",
+      "Signature": "const string Dispatching",
+      "Summary": "Indicates that the linked outbox dispatch runtime is actively dispatching publications."
+    },
+    {
       "DisplayName": "DispatchPolicy",
       "Category": "Properties",
       "DeclaringTypeName": "OutboxDescriptor",
@@ -22438,6 +22660,17 @@
       "AnchorId": "member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-dispatchpollingintervalseconds",
       "Signature": "int DispatchPollingIntervalSeconds { get; set; }",
       "Summary": "Gets or sets the number of seconds the Wolverine-owned dispatch loop should wait between polling cycles."
+    },
+    {
+      "DisplayName": "DispatchRetryPending",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCapturePublicationStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccapturepublicationstates-dispatchretrypending",
+      "Signature": "const string DispatchRetryPending",
+      "Summary": "Indicates that the linked outbox dispatch runtime has a retry pending."
     },
     {
       "DisplayName": "DisplayName",
@@ -27005,6 +27238,39 @@
       "Summary": "Identifies the shared foundation project."
     },
     {
+      "DisplayName": "Fresh",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureFreshnessStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccapturefreshnessstates-fresh",
+      "Signature": "const string Fresh",
+      "Summary": "Indicates that the provider reports the capture as fresh."
+    },
+    {
+      "DisplayName": "Freshness",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionReport",
+      "NamespaceName": "Cephalon.Data.Services",
+      "AssemblyName": "Cephalon.Data",
+      "FileName": "cephalon-data.md",
+      "AnchorId": "member-p-cephalon-data-services-cdccaptureexecutionreport-freshness",
+      "Signature": "CdcCaptureFreshnessStatus Freshness { get; }",
+      "Summary": "Gets the typed freshness answer reported by the active provider/runtime when one was supplied."
+    },
+    {
+      "DisplayName": "Freshness",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimestate-freshness",
+      "Signature": "CdcCaptureFreshnessStatus Freshness { get; set; }",
+      "Summary": "The latest provider-facing freshness answer reported for the capture."
+    },
+    {
       "DisplayName": "FreshnessOrigin",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseRoleProbeDescriptor",
@@ -27025,6 +27291,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databaseroleprobedescriptor-freshnessseconds",
       "Signature": "int FreshnessSeconds { get; }",
       "Summary": "Gets the configured or default freshness window in seconds."
+    },
+    {
+      "DisplayName": "FreshUntilUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureFreshnessStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturefreshnessstatus-freshuntilutc",
+      "Signature": "DateTimeOffset? FreshUntilUtc { get; }",
+      "Summary": "Gets the UTC timestamp until which the current capture observation remains fresh when one is known."
     },
     {
       "DisplayName": "FreshUntilUtc",
@@ -29986,6 +30263,17 @@
       "Summary": "Gets a value indicating whether the linked outbox dispatch path has reported runtime state."
     },
     {
+      "DisplayName": "HasFreshnessWindow",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimestate-hasfreshnesswindow",
+      "Signature": "bool HasFreshnessWindow { get; }",
+      "Summary": "Gets a value indicating whether the capture still has a provider-reported freshness window."
+    },
+    {
       "DisplayName": "HasManualCommandsForAllTargets",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseMigrationOperationalExecutionGroup",
@@ -30006,6 +30294,50 @@
       "AnchorId": "member-p-cephalon-abstractions-audit-audithistoryqueryresult-hasmore",
       "Signature": "bool HasMore { get; }",
       "Summary": "Gets a value indicating whether more entries remain beyond this page."
+    },
+    {
+      "DisplayName": "HasPendingChanges",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureLagStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturelagstatus-haspendingchanges",
+      "Signature": "bool HasPendingChanges { get; }",
+      "Summary": "Gets a value indicating whether the capture still has pending source-side changes."
+    },
+    {
+      "DisplayName": "HasPendingChanges",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimestate-haspendingchanges",
+      "Signature": "bool HasPendingChanges { get; }",
+      "Summary": "Gets a value indicating whether the capture still has provider-reported pending source changes."
+    },
+    {
+      "DisplayName": "HasPendingPublications",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCapturePublicationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturepublicationstatus-haspendingpublications",
+      "Signature": "bool HasPendingPublications { get; }",
+      "Summary": "Gets a value indicating whether the capture still has pending publications."
+    },
+    {
+      "DisplayName": "HasPendingPublications",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimestate-haspendingpublications",
+      "Signature": "bool HasPendingPublications { get; }",
+      "Summary": "Gets a value indicating whether the capture still has provider-reported pending publications."
     },
     {
       "DisplayName": "HasPendingSignals",
@@ -30820,6 +31152,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-trustpolicy-hasvalues",
       "Signature": "bool HasValues { get; }",
       "Summary": "Gets a value indicating whether the policy differs from the default baseline."
+    },
+    {
+      "DisplayName": "HasWindow",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureFreshnessStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturefreshnessstatus-haswindow",
+      "Signature": "bool HasWindow { get; }",
+      "Summary": "Gets a value indicating whether a freshness window is currently known."
     },
     {
       "DisplayName": "Header",
@@ -34219,6 +34562,39 @@
       "AnchorId": "member-m-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-ctor",
       "Signature": "KubernetesTelemetryExportOptions()",
       "Summary": "Initializes a new instance of the \u0060KubernetesTelemetryExportOptions\u0060 class."
+    },
+    {
+      "DisplayName": "Lag",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionReport",
+      "NamespaceName": "Cephalon.Data.Services",
+      "AssemblyName": "Cephalon.Data",
+      "FileName": "cephalon-data.md",
+      "AnchorId": "member-p-cephalon-data-services-cdccaptureexecutionreport-lag",
+      "Signature": "CdcCaptureLagStatus Lag { get; }",
+      "Summary": "Gets the typed lag answer reported by the active provider/runtime when one was supplied."
+    },
+    {
+      "DisplayName": "Lag",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimestate-lag",
+      "Signature": "CdcCaptureLagStatus Lag { get; set; }",
+      "Summary": "The latest provider-facing lag answer reported for the capture."
+    },
+    {
+      "DisplayName": "Lagging",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureLagStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccapturelagstates-lagging",
+      "Signature": "const string Lagging",
+      "Summary": "Indicates that the provider reports the capture as lagging behind the source stream."
     },
     {
       "DisplayName": "LastAppendedEventCount",
@@ -40579,6 +40955,17 @@
       "Summary": "Gets the expected payload type name when the awaited signal declares one."
     },
     {
+      "DisplayName": "PendingChangeCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureLagStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturelagstatus-pendingchangecount",
+      "Signature": "long? PendingChangeCount { get; }",
+      "Summary": "Gets the number of source-side changes still pending capture when the provider reports that answer."
+    },
+    {
       "DisplayName": "PendingMigrationTargetCount",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseTopologyOperationalSummary",
@@ -40588,6 +40975,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databasetopologyoperationalsummary-pendingmigrationtargetcount",
       "Signature": "int PendingMigrationTargetCount { get; }",
       "Summary": "Gets the number of migration targets that are not yet \u0060Succeeded\u0060."
+    },
+    {
+      "DisplayName": "PendingPublication",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCapturePublicationStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccapturepublicationstates-pendingpublication",
+      "Signature": "const string PendingPublication",
+      "Summary": "Indicates that the capture still has pending publications to push into or through the outbox."
+    },
+    {
+      "DisplayName": "PendingPublicationCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCapturePublicationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturepublicationstatus-pendingpublicationcount",
+      "Signature": "long? PendingPublicationCount { get; }",
+      "Summary": "Gets the number of pending publications still waiting to flow through the linked outbox path when one is known."
     },
     {
       "DisplayName": "PendingSignals",
@@ -42051,6 +42460,28 @@
       "AnchorId": "member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-proxyservicename",
       "Signature": "string ProxyServiceName { get; set; }",
       "Summary": "Gets or sets the proxy service name used to build the in-cluster Tanzu proxy endpoint."
+    },
+    {
+      "DisplayName": "Publication",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionReport",
+      "NamespaceName": "Cephalon.Data.Services",
+      "AssemblyName": "Cephalon.Data",
+      "FileName": "cephalon-data.md",
+      "AnchorId": "member-p-cephalon-data-services-cdccaptureexecutionreport-publication",
+      "Signature": "CdcCapturePublicationStatus Publication { get; }",
+      "Summary": "Gets the typed publication-posture answer reported by the active provider/runtime when one was supplied."
+    },
+    {
+      "DisplayName": "Publication",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimestate-publication",
+      "Signature": "CdcCapturePublicationStatus Publication { get; set; }",
+      "Summary": "The latest publication posture answer reported for the capture."
     },
     {
       "DisplayName": "PublicationId",
@@ -49159,6 +49590,17 @@
       "Summary": "The winning rule was selected by the final stable rule-id tie-breaker."
     },
     {
+      "DisplayName": "Stale",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureFreshnessStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccapturefreshnessstates-stale",
+      "Signature": "const string Stale",
+      "Summary": "Indicates that the provider reports the capture as stale."
+    },
+    {
       "DisplayName": "StartAsync",
       "Category": "Methods",
       "DeclaringTypeName": "EngineRuntime",
@@ -49410,6 +49852,39 @@
       "AnchorId": "member-p-cephalon-engine-configuration-failurepolicy-startupreadinessdelay",
       "Signature": "TimeSpan StartupReadinessDelay { get; }",
       "Summary": "Gets the readiness warmup window that applies after startup succeeds."
+    },
+    {
+      "DisplayName": "State",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureFreshnessStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturefreshnessstatus-state",
+      "Signature": "string State { get; }",
+      "Summary": "Gets the stable freshness-state identifier."
+    },
+    {
+      "DisplayName": "State",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureLagStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturelagstatus-state",
+      "Signature": "string State { get; }",
+      "Summary": "Gets the stable lag-state identifier."
+    },
+    {
+      "DisplayName": "State",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCapturePublicationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturepublicationstatus-state",
+      "Signature": "string State { get; }",
+      "Summary": "Gets the stable publication-state identifier."
     },
     {
       "DisplayName": "State",
@@ -53491,6 +53966,39 @@
       "AnchorId": "member-f-cephalon-abstractions-behaviors-behavioridempotencymode-unknown",
       "Signature": "const BehaviorIdempotencyMode Unknown",
       "Summary": "No explicit idempotency contract was declared for the behavior."
+    },
+    {
+      "DisplayName": "Unknown",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureFreshnessStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccapturefreshnessstates-unknown",
+      "Signature": "const string Unknown",
+      "Summary": "Indicates that the active runtime does not yet have a freshness answer."
+    },
+    {
+      "DisplayName": "Unknown",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureLagStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccapturelagstates-unknown",
+      "Signature": "const string Unknown",
+      "Summary": "Indicates that the active runtime does not yet have a lag answer."
+    },
+    {
+      "DisplayName": "Unknown",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCapturePublicationStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccapturepublicationstates-unknown",
+      "Signature": "const string Unknown",
+      "Summary": "Indicates that the active runtime does not yet have a publication answer."
     },
     {
       "DisplayName": "Unspecified",

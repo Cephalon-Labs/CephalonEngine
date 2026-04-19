@@ -125,6 +125,12 @@ public sealed class DataRuntimePackTests
         Assert.Equal("tenant-event-outbox", initial.OutboxId);
         Assert.Null(initial.LastOutcome);
         Assert.Equal(0, initial.TotalReports);
+        Assert.Equal(CdcCaptureFreshnessStates.Unknown, initial.Freshness.State);
+        Assert.Equal(CdcCaptureLagStates.Unknown, initial.Lag.State);
+        Assert.Equal(CdcCapturePublicationStates.DispatchRetryPending, initial.Publication.State);
+        Assert.False(initial.HasFreshnessWindow);
+        Assert.False(initial.HasPendingChanges);
+        Assert.False(initial.HasPendingPublications);
         Assert.NotNull(initial.OutboxDispatchState);
         Assert.Equal("retry-scheduled", initial.OutboxDispatchState!.LastOutcome);
 
@@ -140,6 +146,18 @@ public sealed class DataRuntimePackTests
             producedMessageCount: 2,
             changeId: "lsn-0003",
             checkpoint: "0/16B6C70",
+            freshness: new CdcCaptureFreshnessStatus(
+                CdcCaptureFreshnessStates.Fresh,
+                DateTimeOffset.Parse("2026-04-20T10:10:00Z", CultureInfo.InvariantCulture),
+                "The capture is still within the expected freshness window."),
+            lag: new CdcCaptureLagStatus(
+                CdcCaptureLagStates.Lagging,
+                pendingChangeCount: 5,
+                description: "Five source changes are still waiting to be captured."),
+            publication: new CdcCapturePublicationStatus(
+                CdcCapturePublicationStates.PendingPublication,
+                pendingPublicationCount: 2,
+                description: "Two publications are still waiting to clear the outbox path."),
             metadata: new Dictionary<string, string>
             {
                 ["captureRuntime"] = "phase13"
@@ -157,6 +175,15 @@ public sealed class DataRuntimePackTests
         Assert.Equal("lsn-0003", state.LastChangeId);
         Assert.Equal("0/16B6C70", state.LastCheckpoint);
         Assert.Equal("phase13", state.Metadata["captureRuntime"]);
+        Assert.Equal(CdcCaptureFreshnessStates.Fresh, state.Freshness.State);
+        Assert.Equal(DateTimeOffset.Parse("2026-04-20T10:10:00Z", CultureInfo.InvariantCulture), state.Freshness.FreshUntilUtc);
+        Assert.Equal(CdcCaptureLagStates.Lagging, state.Lag.State);
+        Assert.Equal(5, state.Lag.PendingChangeCount);
+        Assert.Equal(CdcCapturePublicationStates.DispatchRetryPending, state.Publication.State);
+        Assert.Equal(2, state.Publication.PendingPublicationCount);
+        Assert.True(state.HasFreshnessWindow);
+        Assert.True(state.HasPendingChanges);
+        Assert.True(state.HasPendingPublications);
         Assert.Single(catalog.GetBySourceModule("phase8-runtime-catalogs"));
         Assert.Single(catalog.GetByProvider("postgresql"));
         Assert.Single(catalog.GetByOutboxId("tenant-event-outbox"));
@@ -166,6 +193,7 @@ public sealed class DataRuntimePackTests
         var snapshot = provider.GetRequiredService<IRuntimeIntrospectionSnapshotProvider>().CreateSnapshot();
         var snapshotState = Assert.Single(snapshot.CdcCaptureStates);
         Assert.Equal("tenant-profile-cdc", snapshotState.CdcCaptureId);
+        Assert.Equal(CdcCapturePublicationStates.DispatchRetryPending, snapshotState.Publication.State);
         Assert.NotNull(snapshotState.OutboxDispatchState);
         Assert.Equal("retry-scheduled", snapshotState.OutboxDispatchState!.LastOutcome);
     }

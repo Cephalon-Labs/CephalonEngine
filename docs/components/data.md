@@ -8,6 +8,7 @@
 - keeps command/query dispatching out of hosts so ASP.NET Core and worker apps stay thin
 - provides the first reusable bridge between phase-8 data contracts and future provider-specific packs such as `Cephalon.Data.EntityFramework`
 - provides the first reusable CDC runtime-state reporting/catalog bridge over `ICdcCaptureCatalog` plus optional linked outbox dispatch truth
+- extends that same CDC bridge with typed freshness, lag, and publication-posture reporting
 
 ## Main surfaces
 
@@ -31,9 +32,11 @@ host code can report `started`, `captured`, `idle`, or `failed` observations aga
 descriptor catalog without inventing a second runtime registry. The catalog projects every active
 capture even before the first report arrives, preserves descriptor ownership fields such as
 `sourceModuleId`, `provider`, `sourceId`, `outboxId`, `mode`, `eventFormat`, and `resourceIds`,
-tracks totals plus latest checkpoint/change-id/error metadata, and can merge linked
-`IEventDispatchRuntimeCatalog` truth into `OutboxDispatchState` when the outbox path already
-reports downstream publication posture. That keeps `Cephalon.Data` honest: it now owns the shared
+tracks totals plus latest checkpoint/change-id/error metadata, and can now also carry typed
+freshness windows, lag posture, and pending-publication answers through
+`CdcCaptureExecutionReport`. When the outbox path already reports downstream runtime truth, the
+same catalog can conservatively merge that dispatch posture into `OutboxDispatchState` and the
+typed CDC publication answer. That keeps `Cephalon.Data` honest: it now owns the shared
 reporting/catalog surface, not provider-specific WAL or change-stream execution loops.
 
 The engine-owned database-topology baseline is now in place through `Engine:Databases`, `AppProfile.Databases`, `/engine/databases`, the resolved `/engine/database-roles` operator catalog, and the resolved `/engine/database-migrations` operator catalog. That baseline makes shared runtime tuning, `Write` / `Read` / `Outbox` / `History` roles, migration policy, requested versus resolved role truth, role-consumer metadata, provider-contributed live role health, logical migration-target state, and provider-added deploy-time command templates introspectable without turning `Cephalon.Data` itself into a provider-specific pack. The next follow-through is deeper provider consumption of those roles rather than inventing a second topology model inside each pack. See [Database topology](../database-topology.md).
