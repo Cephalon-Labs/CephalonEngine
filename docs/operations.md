@@ -1,6 +1,6 @@
 # Cephalon Operations
 
-This document captures the current operational surface for Cephalon as of `April 18, 2026`.
+This document captures the current operational surface for Cephalon as of `April 19, 2026`.
 
 For the active phase-2 follow-through inventory, see `docs/operational-hardening-gap-inventory.md`.
 
@@ -1255,7 +1255,7 @@ Current `Cephalon.Agentics` highlights:
 - linked `capabilityKeys`, `executionGraphId`, and `hostedExecutionId` now flow through the same surface when the tool declares them
 - linked execution-graph and hosted-execution entries also surface the current runtime-story phase and active/inactive state
 - invalid linked capability, execution-graph, or hosted-execution references fail when the agentic tool catalog is resolved instead of leaking broken operator metadata
-- the phase 13 `cell-based-architecture` baseline now also projects a `cell-boundaries` surface whose entries stay aligned with `/engine/cells` and `snapshot.CellBoundaries`, so operators can read module ownership, blast-radius posture, routing strategy, and member modules from one shared runtime truth
+- the phase 13 `cell-based-architecture` baseline now also projects `cell-boundaries` plus `cell-routes` surfaces whose entries stay aligned with `/engine/cells`, `/engine/cell-routes`, `snapshot.CellBoundaries`, and `snapshot.CellRoutes`, so operators can read module ownership, blast-radius posture, source-cell to target-cell routing posture, governance mode, required capability, and transport hints from one shared runtime truth
 
 ## Trust surface
 

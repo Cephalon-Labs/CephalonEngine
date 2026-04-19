@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-19T16:08:31.1726272+00:00",
+  "GeneratedAtUtc": "2026-04-19T16:47:00.7241506+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -111,7 +111,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 308
+      "TypeCount": 312
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -688,7 +688,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-technologies",
-      "TypeCount": 15
+      "TypeCount": 19
     },
     {
       "NamespaceName": "Cephalon.Abstractions.Tenancy",
@@ -3082,6 +3082,21 @@
       }
     },
     {
+      "DisplayName": "CellRouteDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-technologies-cellroutedescriptor",
+      "Declaration": "public sealed class CellRouteDescriptor",
+      "Summary": "Describes one module-owned cell-to-cell routing and governance answer visible to the active runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 11,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "CephalonRateLimitingEndpointConventionBuilderExtensions",
       "NamespaceName": "Cephalon.AspNetCore.Hosting",
       "AssemblyName": "Cephalon.AspNetCore",
@@ -4083,7 +4098,7 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 40
+        "Methods": 42
       }
     },
     {
@@ -5789,6 +5804,51 @@
       "AnchorId": "type-cephalon-abstractions-technologies-icellboundaryregistry",
       "Declaration": "public interface ICellBoundaryRegistry",
       "Summary": "Collects cell-boundary descriptors during runtime composition.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "ICellRouteCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-technologies-icellroutecatalog",
+      "Declaration": "public interface ICellRouteCatalog",
+      "Summary": "Exposes the cell-to-cell routing and governance answers visible to the current runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 4
+      }
+    },
+    {
+      "DisplayName": "ICellRouteContributor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-technologies-icellroutecontributor",
+      "Declaration": "public interface ICellRouteContributor",
+      "Summary": "Allows a module to contribute cell routes to the active runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "ICellRouteRegistry",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-technologies-icellrouteregistry",
+      "Declaration": "public interface ICellRouteRegistry",
+      "Summary": "Collects cell-route descriptors during runtime composition.",
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
@@ -10157,7 +10217,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 38,
+        "Properties": 39,
         "Methods": 0
       }
     },
@@ -11668,6 +11728,17 @@
     {
       "DisplayName": "Add",
       "Category": "Methods",
+      "DeclaringTypeName": "ICellRouteRegistry",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-icellrouteregistry-add-cephalon-abstractions-technologies-cellroutedescriptor",
+      "Signature": "void Add(CellRouteDescriptor cellRoute)",
+      "Summary": "Adds one cell-route descriptor to the active runtime composition."
+    },
+    {
+      "DisplayName": "Add",
+      "Category": "Methods",
       "DeclaringTypeName": "IEdgeNodeRegistry",
       "NamespaceName": "Cephalon.Edge.Services",
       "AssemblyName": "Cephalon.Edge",
@@ -11906,6 +11977,28 @@
       "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-addcellboundary-cephalon-abstractions-technologies-cellboundarydescriptor",
       "Signature": "EngineBuilder AddCellBoundary(CellBoundaryDescriptor cellBoundary)",
       "Summary": "Adds a cell boundary to the current runtime composition."
+    },
+    {
+      "DisplayName": "AddCellRoute",
+      "Category": "Methods",
+      "DeclaringTypeName": "EngineBuilder",
+      "NamespaceName": "Cephalon.Engine.Composition",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-addcellroute-cephalon-abstractions-technologies-cellroutedescriptor",
+      "Signature": "EngineBuilder AddCellRoute(CellRouteDescriptor cellRoute)",
+      "Summary": "Adds a cell route to the current runtime composition."
+    },
+    {
+      "DisplayName": "AddCellRoutes",
+      "Category": "Methods",
+      "DeclaringTypeName": "EngineBuilder",
+      "NamespaceName": "Cephalon.Engine.Composition",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-addcellroutes-system-collections-generic-ienumerable-cephalon-abstractions-technologies-cellroutedescriptor",
+      "Signature": "EngineBuilder AddCellRoutes(IEnumerable\u003CCellRouteDescriptor\u003E cellRoutes)",
+      "Summary": "Adds multiple cell routes to the current runtime composition."
     },
     {
       "DisplayName": "AddCephalon",
@@ -16891,6 +16984,28 @@
       "Summary": "Creates a cell-boundary descriptor."
     },
     {
+      "DisplayName": "CellRouteDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CellRouteDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-cellroutedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "CellRouteDescriptor(string id, string sourceModuleId, string sourceCellId, string targetCellId, string displayName, string description, string routingStrategy, string governanceMode, IReadOnlyList\u003Cstring\u003E transportIds, string requiredCapabilityKey, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a cell-route descriptor."
+    },
+    {
+      "DisplayName": "CellRoutes",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-cellroutes",
+      "Signature": "IReadOnlyList\u003CCellRouteDescriptor\u003E CellRoutes { get; set; }",
+      "Summary": "Gets the cell-to-cell routing and governance answers visible to the runtime at the time the snapshot was created."
+    },
+    {
       "DisplayName": "CephalonPackageVersion",
       "Category": "Properties",
       "DeclaringTypeName": "ScaffoldRequest",
@@ -20600,6 +20715,17 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "CellRouteDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-cellroutedescriptor-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the human-readable description of the cell route."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "DatabaseMigrationCommandDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -21652,6 +21778,17 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-cellboundarydescriptor-displayname",
       "Signature": "string DisplayName { get; }",
       "Summary": "Gets the operator-facing cell name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellRouteDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-cellroutedescriptor-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the operator-facing route name."
     },
     {
       "DisplayName": "DisplayName",
@@ -27189,6 +27326,17 @@
     {
       "DisplayName": "GetById",
       "Category": "Methods",
+      "DeclaringTypeName": "ICellRouteCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-icellroutecatalog-getbyid-system-string",
+      "Signature": "CellRouteDescriptor GetById(string routeId)",
+      "Summary": "Gets one cell route by its stable identifier."
+    },
+    {
+      "DisplayName": "GetById",
+      "Category": "Methods",
       "DeclaringTypeName": "IDatabaseMigrationCatalog",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -27616,6 +27764,17 @@
       "Summary": "Gets the diagnostics conventions owned by the requested source."
     },
     {
+      "DisplayName": "GetBySourceCellId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICellRouteCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-icellroutecatalog-getbysourcecellid-system-string",
+      "Signature": "IReadOnlyList\u003CCellRouteDescriptor\u003E GetBySourceCellId(string sourceCellId)",
+      "Summary": "Gets all cell routes that originate from the requested source cell."
+    },
+    {
       "DisplayName": "GetBySourceModule",
       "Category": "Methods",
       "DeclaringTypeName": "IAuditStoreCatalog",
@@ -27647,6 +27806,17 @@
       "AnchorId": "member-m-cephalon-abstractions-patterns-ibackendforfrontendruntimecatalog-getbysourcemodule-system-string",
       "Signature": "IReadOnlyList\u003CBackendForFrontendClientBindingDescriptor\u003E GetBySourceModule(string sourceModuleId)",
       "Summary": "Gets all backend-for-frontend client bindings owned by the requested module."
+    },
+    {
+      "DisplayName": "GetBySourceModule",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICellRouteCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-icellroutecatalog-getbysourcemodule-system-string",
+      "Signature": "IReadOnlyList\u003CCellRouteDescriptor\u003E GetBySourceModule(string sourceModuleId)",
+      "Summary": "Gets all cell routes owned by the requested source module."
     },
     {
       "DisplayName": "GetBySourceModule",
@@ -27845,6 +28015,17 @@
       "AnchorId": "member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getbystreamid-system-string",
       "Signature": "DurableExecutionRuntimeState GetByStreamId(string streamId)",
       "Summary": "Gets the latest reported durable-execution state for one stream."
+    },
+    {
+      "DisplayName": "GetByTargetCellId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICellRouteCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-icellroutecatalog-getbytargetcellid-system-string",
+      "Signature": "IReadOnlyList\u003CCellRouteDescriptor\u003E GetByTargetCellId(string targetCellId)",
+      "Summary": "Gets all cell routes that target the requested cell."
     },
     {
       "DisplayName": "GetByTargetStore",
@@ -28153,6 +28334,17 @@
       "AnchorId": "member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getwithpendingtimers",
       "Signature": "IReadOnlyList\u003CDurableExecutionRuntimeState\u003E GetWithPendingTimers()",
       "Summary": "Gets the reported durable-execution state entries that currently have one or more pending timers."
+    },
+    {
+      "DisplayName": "GovernanceMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellRouteDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-cellroutedescriptor-governancemode",
+      "Signature": "string GovernanceMode { get; }",
+      "Summary": "Gets the operator-facing governance posture applied to this route."
     },
     {
       "DisplayName": "GovernanceOverrideSummaries",
@@ -30408,6 +30600,17 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-cellboundarydescriptor-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable cell identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellRouteDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-cellroutedescriptor-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable cell-route identifier."
     },
     {
       "DisplayName": "Id",
@@ -34654,6 +34857,17 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-cellboundarydescriptor-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
       "Summary": "Gets optional operator-facing metadata for this cell boundary."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellRouteDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-cellroutedescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional operator-facing metadata for this route."
     },
     {
       "DisplayName": "Metadata",
@@ -41003,6 +41217,17 @@
       "Summary": "Registers the cell boundaries owned by the contributing module."
     },
     {
+      "DisplayName": "RegisterCellRoutes",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICellRouteContributor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-icellroutecontributor-registercellroutes-cephalon-abstractions-technologies-icellrouteregistry",
+      "Signature": "void RegisterCellRoutes(ICellRouteRegistry routes)",
+      "Summary": "Registers the cell routes owned by the contributing module."
+    },
+    {
       "DisplayName": "RegisterChannels",
       "Category": "Methods",
       "DeclaringTypeName": "IEventChannelContributor",
@@ -41837,6 +42062,17 @@
       "AnchorId": "member-p-cephalon-abstractions-health-dependencyhealthreport-required",
       "Signature": "bool Required { get; set; }",
       "Summary": "Whether the dependency is required for readiness."
+    },
+    {
+      "DisplayName": "RequiredCapabilityKey",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellRouteDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-cellroutedescriptor-requiredcapabilitykey",
+      "Signature": "string RequiredCapabilityKey { get; }",
+      "Summary": "Gets the optional capability key required to use this route."
     },
     {
       "DisplayName": "RequiredCapabilityKey",
@@ -43975,6 +44211,17 @@
     {
       "DisplayName": "Routes",
       "Category": "Properties",
+      "DeclaringTypeName": "ICellRouteCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-icellroutecatalog-routes",
+      "Signature": "IReadOnlyList\u003CCellRouteDescriptor\u003E Routes { get; }",
+      "Summary": "Gets all cell routes visible to the current runtime."
+    },
+    {
+      "DisplayName": "Routes",
+      "Category": "Properties",
       "DeclaringTypeName": "IStranglerFigIngressRuntimeCatalog",
       "NamespaceName": "Cephalon.Abstractions.Patterns",
       "AssemblyName": "Cephalon.Abstractions",
@@ -44026,6 +44273,17 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-cellboundarydescriptor-routingstrategy",
       "Signature": "string RoutingStrategy { get; }",
       "Summary": "Gets the operator-facing routing strategy for this cell."
+    },
+    {
+      "DisplayName": "RoutingStrategy",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellRouteDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-cellroutedescriptor-routingstrategy",
+      "Signature": "string RoutingStrategy { get; }",
+      "Summary": "Gets the operator-facing routing strategy used for this route."
     },
     {
       "DisplayName": "RuleId",
@@ -46162,6 +46420,17 @@
       "Summary": "Gets the source or strategy that produced the result when one is known."
     },
     {
+      "DisplayName": "SourceCellId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellRouteDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-cellroutedescriptor-sourcecellid",
+      "Signature": "string SourceCellId { get; }",
+      "Summary": "Gets the source cell identifier."
+    },
+    {
       "DisplayName": "SourceContracts",
       "Category": "Properties",
       "DeclaringTypeName": "ProjectionDescriptor",
@@ -46358,6 +46627,17 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-cellboundarydescriptor-sourcemoduleid",
       "Signature": "string SourceModuleId { get; }",
       "Summary": "Gets the module that owns this cell boundary."
+    },
+    {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellRouteDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-cellroutedescriptor-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; }",
+      "Summary": "Gets the module that owns this cell route."
     },
     {
       "DisplayName": "SourceModuleId",
@@ -49044,6 +49324,17 @@
       "Summary": "Gets the original shorthand explicit binding descriptors targeted by this suppression rule before override actions are applied."
     },
     {
+      "DisplayName": "TargetCellId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellRouteDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-cellroutedescriptor-targetcellid",
+      "Signature": "string TargetCellId { get; }",
+      "Summary": "Gets the target cell identifier."
+    },
+    {
       "DisplayName": "TargetCount",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseMigrationOperationalExecutionGroup",
@@ -50285,6 +50576,17 @@
       "AnchorId": "member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-transportids",
       "Signature": "IReadOnlyList\u003Cstring\u003E TransportIds { get; }",
       "Summary": "Gets the transport identifiers configured for this behavior."
+    },
+    {
+      "DisplayName": "TransportIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellRouteDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-cellroutedescriptor-transportids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E TransportIds { get; }",
+      "Summary": "Gets the normalized transport identifiers associated with this route."
     },
     {
       "DisplayName": "TransportIds",

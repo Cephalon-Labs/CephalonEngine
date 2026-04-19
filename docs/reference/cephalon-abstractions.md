@@ -19714,6 +19714,154 @@ string SourceModuleId { get; }
 
 Gets the module that owns this cell boundary.
 
+<a id="type-cephalon-abstractions-technologies-cellroutedescriptor"></a>
+
+### `CellRouteDescriptor`
+
+Describes one module-owned cell-to-cell routing and governance answer visible to the active runtime.
+
+#### Declaration
+```csharp
+public sealed class CellRouteDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-technologies-cellroutedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `CellRouteDescriptor`
+
+```csharp
+CellRouteDescriptor(string id, string sourceModuleId, string sourceCellId, string targetCellId, string displayName, string description, string routingStrategy, string governanceMode, IReadOnlyList<string> transportIds, string requiredCapabilityKey, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a cell-route descriptor.
+
+Parameters:
+- `id`: The stable cell-route identifier.
+- `sourceModuleId`: The Cephalon module that owns this cell route.
+- `sourceCellId`: The source cell identifier.
+- `targetCellId`: The target cell identifier.
+- `displayName`: The operator-facing route name.
+- `description`: The human-readable description of the cell route.
+- `routingStrategy`: The operator-facing routing strategy used for this route.
+- `governanceMode`: The operator-facing governance posture applied to this route.
+- `transportIds`: Optional transport identifiers associated with this route.
+- `requiredCapabilityKey`: An optional capability key required to use this route.
+- `metadata`: Optional operator-facing metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-technologies-cellroutedescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable description of the cell route.
+
+<a id="member-p-cephalon-abstractions-technologies-cellroutedescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing route name.
+
+<a id="member-p-cephalon-abstractions-technologies-cellroutedescriptor-governancemode"></a>
+
+##### `GovernanceMode`
+
+```csharp
+string GovernanceMode { get; }
+```
+
+Gets the operator-facing governance posture applied to this route.
+
+<a id="member-p-cephalon-abstractions-technologies-cellroutedescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable cell-route identifier.
+
+<a id="member-p-cephalon-abstractions-technologies-cellroutedescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional operator-facing metadata for this route.
+
+<a id="member-p-cephalon-abstractions-technologies-cellroutedescriptor-requiredcapabilitykey"></a>
+
+##### `RequiredCapabilityKey`
+
+```csharp
+string RequiredCapabilityKey { get; }
+```
+
+Gets the optional capability key required to use this route.
+
+<a id="member-p-cephalon-abstractions-technologies-cellroutedescriptor-routingstrategy"></a>
+
+##### `RoutingStrategy`
+
+```csharp
+string RoutingStrategy { get; }
+```
+
+Gets the operator-facing routing strategy used for this route.
+
+<a id="member-p-cephalon-abstractions-technologies-cellroutedescriptor-sourcecellid"></a>
+
+##### `SourceCellId`
+
+```csharp
+string SourceCellId { get; }
+```
+
+Gets the source cell identifier.
+
+<a id="member-p-cephalon-abstractions-technologies-cellroutedescriptor-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; }
+```
+
+Gets the module that owns this cell route.
+
+<a id="member-p-cephalon-abstractions-technologies-cellroutedescriptor-targetcellid"></a>
+
+##### `TargetCellId`
+
+```csharp
+string TargetCellId { get; }
+```
+
+Gets the target cell identifier.
+
+<a id="member-p-cephalon-abstractions-technologies-cellroutedescriptor-transportids"></a>
+
+##### `TransportIds`
+
+```csharp
+IReadOnlyList<string> TransportIds { get; }
+```
+
+Gets the normalized transport identifiers associated with this route.
+
 <a id="type-cephalon-abstractions-technologies-icellboundarycatalog"></a>
 
 ### `ICellBoundaryCatalog`
@@ -19820,6 +19968,143 @@ Adds one cell-boundary descriptor to the active runtime composition.
 
 Parameters:
 - `cellBoundary`: The cell-boundary descriptor to add.
+
+<a id="type-cephalon-abstractions-technologies-icellroutecatalog"></a>
+
+### `ICellRouteCatalog`
+
+Exposes the cell-to-cell routing and governance answers visible to the current runtime.
+
+#### Declaration
+```csharp
+public interface ICellRouteCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-technologies-icellroutecatalog-routes"></a>
+
+##### `Routes`
+
+```csharp
+IReadOnlyList<CellRouteDescriptor> Routes { get; }
+```
+
+Gets all cell routes visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-technologies-icellroutecatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+CellRouteDescriptor GetById(string routeId)
+```
+
+Gets one cell route by its stable identifier.
+
+Returns: The matching cell route, or `null` when it is not active.
+
+Parameters:
+- `routeId`: The cell-route identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-technologies-icellroutecatalog-getbysourcecellid-system-string"></a>
+
+##### `GetBySourceCellId`
+
+```csharp
+IReadOnlyList<CellRouteDescriptor> GetBySourceCellId(string sourceCellId)
+```
+
+Gets all cell routes that originate from the requested source cell.
+
+Returns: The matching cell routes, or an empty list when none are active.
+
+Parameters:
+- `sourceCellId`: The source-cell identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-technologies-icellroutecatalog-getbysourcemodule-system-string"></a>
+
+##### `GetBySourceModule`
+
+```csharp
+IReadOnlyList<CellRouteDescriptor> GetBySourceModule(string sourceModuleId)
+```
+
+Gets all cell routes owned by the requested source module.
+
+Returns: The matching cell routes, or an empty list when none are active.
+
+Parameters:
+- `sourceModuleId`: The source-module identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-technologies-icellroutecatalog-getbytargetcellid-system-string"></a>
+
+##### `GetByTargetCellId`
+
+```csharp
+IReadOnlyList<CellRouteDescriptor> GetByTargetCellId(string targetCellId)
+```
+
+Gets all cell routes that target the requested cell.
+
+Returns: The matching cell routes, or an empty list when none are active.
+
+Parameters:
+- `targetCellId`: The target-cell identifier to filter by.
+
+<a id="type-cephalon-abstractions-technologies-icellroutecontributor"></a>
+
+### `ICellRouteContributor`
+
+Allows a module to contribute cell routes to the active runtime.
+
+#### Declaration
+```csharp
+public interface ICellRouteContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-technologies-icellroutecontributor-registercellroutes-cephalon-abstractions-technologies-icellrouteregistry"></a>
+
+##### `RegisterCellRoutes`
+
+```csharp
+void RegisterCellRoutes(ICellRouteRegistry routes)
+```
+
+Registers the cell routes owned by the contributing module.
+
+Parameters:
+- `routes`: The registry that receives cell-route descriptors.
+
+<a id="type-cephalon-abstractions-technologies-icellrouteregistry"></a>
+
+### `ICellRouteRegistry`
+
+Collects cell-route descriptors during runtime composition.
+
+#### Declaration
+```csharp
+public interface ICellRouteRegistry
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-technologies-icellrouteregistry-add-cephalon-abstractions-technologies-cellroutedescriptor"></a>
+
+##### `Add`
+
+```csharp
+void Add(CellRouteDescriptor cellRoute)
+```
+
+Adds one cell-route descriptor to the active runtime composition.
+
+Parameters:
+- `cellRoute`: The cell-route descriptor to add.
 
 <a id="type-cephalon-abstractions-technologies-itechnologycapabilitycontributor"></a>
 

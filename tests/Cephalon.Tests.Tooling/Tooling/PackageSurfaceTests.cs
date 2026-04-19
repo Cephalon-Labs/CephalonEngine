@@ -269,9 +269,13 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Patterns.StranglerFigRouteResolution),
             typeof(global::Cephalon.Abstractions.Patterns.StranglerFigTarget),
             typeof(global::Cephalon.Abstractions.Technologies.CellBoundaryDescriptor),
+            typeof(global::Cephalon.Abstractions.Technologies.CellRouteDescriptor),
             typeof(global::Cephalon.Abstractions.Technologies.ICellBoundaryCatalog),
             typeof(global::Cephalon.Abstractions.Technologies.ICellBoundaryContributor),
             typeof(global::Cephalon.Abstractions.Technologies.ICellBoundaryRegistry),
+            typeof(global::Cephalon.Abstractions.Technologies.ICellRouteCatalog),
+            typeof(global::Cephalon.Abstractions.Technologies.ICellRouteContributor),
+            typeof(global::Cephalon.Abstractions.Technologies.ICellRouteRegistry),
             typeof(global::Cephalon.Abstractions.Technologies.ITechnologyCapabilityContributor),
             typeof(global::Cephalon.Abstractions.Technologies.ITechnologyContributor),
             typeof(global::Cephalon.Abstractions.Technologies.ITechnologyRegistry),
@@ -2483,6 +2487,37 @@ public sealed class PackageSurfaceTests
             .GetProperty("ModuleIds", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot)
             .GetProperty("CellBoundaries", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void CellRouteRuntimeContractsExposeSnapshotSurface()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.ICellRouteCatalog)
+            .GetProperty("Routes", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.ICellRouteCatalog)
+            .GetMethod("GetById", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.ICellRouteCatalog)
+            .GetMethod("GetBySourceModule", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.ICellRouteCatalog)
+            .GetMethod("GetBySourceCellId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.ICellRouteCatalog)
+            .GetMethod("GetByTargetCellId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellRouteDescriptor)
+            .GetProperty("SourceModuleId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellRouteDescriptor)
+            .GetProperty("SourceCellId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellRouteDescriptor)
+            .GetProperty("TargetCellId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellRouteDescriptor)
+            .GetProperty("RoutingStrategy", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellRouteDescriptor)
+            .GetProperty("GovernanceMode", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellRouteDescriptor)
+            .GetProperty("TransportIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellRouteDescriptor)
+            .GetProperty("RequiredCapabilityKey", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot)
+            .GetProperty("CellRoutes", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

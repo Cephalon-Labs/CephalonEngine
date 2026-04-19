@@ -808,6 +808,24 @@ public static class EngineWebApplicationExtensions
                 return cellBoundary is null ? Results.NotFound() : Results.Ok(cellBoundary);
             })
             .WithName("GetCephalonCellBoundary");
+        engineGroup.MapGet("/cell-routes", ([FromServices] ICellRouteCatalog catalog) => TypedResults.Ok(catalog.Routes))
+            .WithName("GetCephalonCellRoutes");
+        engineGroup.MapGet("/cell-routes/modules/{moduleId}", (string moduleId, [FromServices] ICellRouteCatalog catalog) =>
+                TypedResults.Ok(catalog.GetBySourceModule(moduleId)))
+            .WithName("GetCephalonCellRoutesByModule");
+        engineGroup.MapGet("/cell-routes/source-cells/{cellId}", (string cellId, [FromServices] ICellRouteCatalog catalog) =>
+                TypedResults.Ok(catalog.GetBySourceCellId(cellId)))
+            .WithName("GetCephalonCellRoutesBySourceCell");
+        engineGroup.MapGet("/cell-routes/target-cells/{cellId}", (string cellId, [FromServices] ICellRouteCatalog catalog) =>
+                TypedResults.Ok(catalog.GetByTargetCellId(cellId)))
+            .WithName("GetCephalonCellRoutesByTargetCell");
+        engineGroup.MapGet("/cell-routes/{routeId}", (string routeId, [FromServices] ICellRouteCatalog catalog) =>
+            {
+                var cellRoute = catalog.GetById(routeId);
+
+                return cellRoute is null ? Results.NotFound() : Results.Ok(cellRoute);
+            })
+            .WithName("GetCephalonCellRoute");
         engineGroup.MapGet("/technologies", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Technologies))
             .WithName("GetCephalonTechnologies");
         engineGroup.MapGet("/technology-catalog", ([FromServices] TechnologyCatalogSnapshot catalog) => TypedResults.Ok(catalog.Technologies))

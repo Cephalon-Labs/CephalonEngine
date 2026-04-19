@@ -50,6 +50,11 @@ public sealed record RuntimeIntrospectionSnapshot(
     public IReadOnlyList<CellBoundaryDescriptor> CellBoundaries { get; init; } = [];
 
     /// <summary>
+    /// Gets the cell-to-cell routing and governance answers visible to the runtime at the time the snapshot was created.
+    /// </summary>
+    public IReadOnlyList<CellRouteDescriptor> CellRoutes { get; init; } = [];
+
+    /// <summary>
     /// Gets the hosted executions contributed by active modules and visible to the runtime at the time the snapshot was created.
     /// </summary>
     public IReadOnlyList<HostedExecutionDescriptor> HostedExecutions { get; init; } = [];

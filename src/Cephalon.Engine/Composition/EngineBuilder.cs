@@ -57,6 +57,7 @@ public sealed class EngineBuilder
     private readonly List<ModulePackageReference> packages = [];
     private readonly List<ModulePackageDirectory> packageDirectories = [];
     private readonly List<CellBoundaryDescriptor> cellBoundaries = [];
+    private readonly List<CellRouteDescriptor> cellRoutes = [];
     private readonly List<BackendForFrontendClientBindingDescriptor> backendForFrontendBindings = [];
     private readonly List<StranglerFigRouteDescriptor> stranglerFigRoutes = [];
     private readonly List<FeatureFlagDescriptor> featureFlags = [];
@@ -218,6 +219,36 @@ public sealed class EngineBuilder
         foreach (var cellBoundary in cellBoundaries)
         {
             AddCellBoundary(cellBoundary);
+        }
+
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a cell route to the current runtime composition.
+    /// </summary>
+    /// <param name="cellRoute">The cell-route descriptor to add.</param>
+    /// <returns>The same builder instance.</returns>
+    public EngineBuilder AddCellRoute(CellRouteDescriptor cellRoute)
+    {
+        ArgumentNullException.ThrowIfNull(cellRoute);
+
+        cellRoutes.Add(cellRoute);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds multiple cell routes to the current runtime composition.
+    /// </summary>
+    /// <param name="cellRoutes">The cell-route descriptors to add.</param>
+    /// <returns>The same builder instance.</returns>
+    public EngineBuilder AddCellRoutes(IEnumerable<CellRouteDescriptor> cellRoutes)
+    {
+        ArgumentNullException.ThrowIfNull(cellRoutes);
+
+        foreach (var cellRoute in cellRoutes)
+        {
+            AddCellRoute(cellRoute);
         }
 
         return this;
@@ -763,6 +794,7 @@ public sealed class EngineBuilder
             var auditStores = new List<AuditStoreDescriptor>();
             var authorizationPolicies = new List<AuthorizationPolicyDescriptor>();
             var activeCellBoundaries = new List<CellBoundaryDescriptor>(cellBoundaries);
+            var activeCellRoutes = new List<CellRouteDescriptor>(cellRoutes);
             var activeBackendForFrontendBindings = new List<BackendForFrontendClientBindingDescriptor>(backendForFrontendBindings);
             var activeStranglerFigRoutes = new List<StranglerFigRouteDescriptor>(stranglerFigRoutes);
             var activeFeatureFlags = new List<FeatureFlagDescriptor>(featureFlags);
@@ -821,6 +853,12 @@ public sealed class EngineBuilder
                     new CellBoundaryRegistryAdapter(module.Descriptor.Id, activeCellBoundaries));
             }
 
+            foreach (var module in orderedModules.Where(static module => module is ICellRouteContributor))
+            {
+                ((ICellRouteContributor)module).RegisterCellRoutes(
+                    new CellRouteRegistryAdapter(module.Descriptor.Id, activeCellRoutes));
+            }
+
             foreach (var module in orderedModules.Where(static module => module is IFeatureFlagContributor))
             {
                 ((IFeatureFlagContributor)module).RegisterFeatureFlags(
@@ -855,7 +893,12 @@ public sealed class EngineBuilder
             }
 
             ValidateCellBoundaries(activeCellBoundaries, orderedModules);
+            ValidateCellRoutes(activeCellRoutes, activeCellBoundaries, orderedModules);
             if (activeCellBoundaries.Count > 0)
+            {
+                appProfileBuilder.AddTechnology(BuiltInTechnologies.CellBasedArchitecture);
+            }
+            else if (activeCellRoutes.Count > 0)
             {
                 appProfileBuilder.AddTechnology(BuiltInTechnologies.CellBasedArchitecture);
             }
@@ -881,6 +924,10 @@ public sealed class EngineBuilder
                 new CellBoundaryCatalogSnapshot(activeCellBoundaries));
             Services.TryAddSingleton<ICellBoundaryCatalog>(serviceProvider =>
                 serviceProvider.GetRequiredService<CellBoundaryCatalogSnapshot>());
+            Services.TryAddSingleton<CellRouteCatalogSnapshot>(_ =>
+                new CellRouteCatalogSnapshot(activeCellRoutes));
+            Services.TryAddSingleton<ICellRouteCatalog>(serviceProvider =>
+                serviceProvider.GetRequiredService<CellRouteCatalogSnapshot>());
             Services.TryAddSingleton<BackendForFrontendRuntimeCatalogSnapshot>(_ =>
                 new BackendForFrontendRuntimeCatalogSnapshot(activeBackendForFrontendBindings));
             Services.TryAddSingleton<IBackendForFrontendRuntimeCatalog>(serviceProvider =>
@@ -925,6 +972,7 @@ public sealed class EngineBuilder
                     serviceProvider.GetRequiredService<IFeatureFlagRuntimeCatalog>(),
                     serviceProvider.GetServices<IFeatureFlagProvider>()));
             Services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, CellBoundaryTechnologyRuntimeContributor>());
+            Services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, CellRouteTechnologyRuntimeContributor>());
             Services.TryAddSingleton<TechnologyRuntimeCatalogSnapshot>(serviceProvider =>
                 new TechnologyRuntimeCatalogSnapshot(
                     serviceProvider.GetServices<ITechnologyRuntimeContributor>()));
@@ -1061,6 +1109,53 @@ public sealed class EngineBuilder
                     throw new InvalidOperationException(
                         $"Cell boundary '{cellBoundary.Id}' references unknown module '{moduleId}'.");
                 }
+            }
+        }
+    }
+
+    private static void ValidateCellRoutes(
+        List<CellRouteDescriptor> cellRoutes,
+        IReadOnlyList<CellBoundaryDescriptor> cellBoundaries,
+        List<IModule> orderedModules)
+    {
+        ArgumentNullException.ThrowIfNull(cellRoutes);
+        ArgumentNullException.ThrowIfNull(cellBoundaries);
+        ArgumentNullException.ThrowIfNull(orderedModules);
+
+        if (cellRoutes.Count == 0)
+        {
+            return;
+        }
+
+        var knownModuleIds = orderedModules
+            .Select(static module => module.Descriptor.Id)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var cellBoundariesById = cellBoundaries.ToDictionary(static cell => cell.Id, StringComparer.OrdinalIgnoreCase);
+
+        foreach (var cellRoute in cellRoutes)
+        {
+            if (!knownModuleIds.Contains(cellRoute.SourceModuleId))
+            {
+                throw new InvalidOperationException(
+                    $"Cell route '{cellRoute.Id}' references unknown source module '{cellRoute.SourceModuleId}'.");
+            }
+
+            if (!cellBoundariesById.TryGetValue(cellRoute.SourceCellId, out var sourceCell))
+            {
+                throw new InvalidOperationException(
+                    $"Cell route '{cellRoute.Id}' references unknown source cell '{cellRoute.SourceCellId}'.");
+            }
+
+            if (!cellBoundariesById.ContainsKey(cellRoute.TargetCellId))
+            {
+                throw new InvalidOperationException(
+                    $"Cell route '{cellRoute.Id}' references unknown target cell '{cellRoute.TargetCellId}'.");
+            }
+
+            if (!sourceCell.ModuleIds.Contains(cellRoute.SourceModuleId, StringComparer.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException(
+                    $"Cell route '{cellRoute.Id}' is owned by module '{cellRoute.SourceModuleId}', but source cell '{cellRoute.SourceCellId}' does not include that module.");
             }
         }
     }

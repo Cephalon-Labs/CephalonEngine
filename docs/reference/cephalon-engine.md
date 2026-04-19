@@ -511,6 +511,36 @@ Returns: The same builder instance.
 Parameters:
 - `cellBoundary`: The cell-boundary descriptor to add.
 
+<a id="member-m-cephalon-engine-composition-enginebuilder-addcellroute-cephalon-abstractions-technologies-cellroutedescriptor"></a>
+
+##### `AddCellRoute`
+
+```csharp
+EngineBuilder AddCellRoute(CellRouteDescriptor cellRoute)
+```
+
+Adds a cell route to the current runtime composition.
+
+Returns: The same builder instance.
+
+Parameters:
+- `cellRoute`: The cell-route descriptor to add.
+
+<a id="member-m-cephalon-engine-composition-enginebuilder-addcellroutes-system-collections-generic-ienumerable-cephalon-abstractions-technologies-cellroutedescriptor"></a>
+
+##### `AddCellRoutes`
+
+```csharp
+EngineBuilder AddCellRoutes(IEnumerable<CellRouteDescriptor> cellRoutes)
+```
+
+Adds multiple cell routes to the current runtime composition.
+
+Returns: The same builder instance.
+
+Parameters:
+- `cellRoutes`: The cell-route descriptors to add.
+
 <a id="member-m-cephalon-engine-composition-enginebuilder-addfeatureflag-cephalon-abstractions-features-featureflagdescriptor"></a>
 
 ##### `AddFeatureFlag`
@@ -9102,6 +9132,16 @@ IReadOnlyList<CellBoundaryDescriptor> CellBoundaries { get; set; }
 ```
 
 Gets the cell boundaries visible to the runtime at the time the snapshot was created.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-cellroutes"></a>
+
+##### `CellRoutes`
+
+```csharp
+IReadOnlyList<CellRouteDescriptor> CellRoutes { get; set; }
+```
+
+Gets the cell-to-cell routing and governance answers visible to the runtime at the time the snapshot was created.
 
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-databasemigrationplaybook"></a>
 
