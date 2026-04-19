@@ -8,6 +8,7 @@ using Cephalon.Abstractions.Technologies;
 using Cephalon.Behaviors.Builders;
 using Cephalon.Behaviors.Compatibility;
 using Cephalon.Behaviors.Configuration;
+using Cephalon.Behaviors.Features;
 using Cephalon.Behaviors.Resilience;
 using Cephalon.Behaviors.Runtime;
 using Cephalon.Behaviors.Services;
@@ -85,7 +86,10 @@ internal sealed class BehaviorModule(
             var builder = new BehaviorCollectionBuilder(services, typeRegistry);
             foreach (var registration in ownedBehaviorRegistrations)
             {
-                builder.Register(registration.BehaviorType, registration.ConfigureTopology);
+                builder.Register(
+                    registration.BehaviorType,
+                    registration.ConfigureTopology,
+                    registration.SourceModuleId);
             }
         }
 
@@ -100,6 +104,7 @@ internal sealed class BehaviorModule(
             configuration);
 
         services.TryAddSingleton(options);
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IBehaviorExecutionMiddleware, BehaviorFeatureFlagExecutionMiddleware>());
 
         // Catalog — collected from all IBehaviorContributor enumerations
         services.TryAddSingleton<IBehaviorCatalog>(static serviceProvider =>

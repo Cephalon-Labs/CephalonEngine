@@ -199,6 +199,10 @@ public sealed class JsonRpcHttpBehaviorBinding : IHttpBehaviorBinding
                     // G-RPC-07
                     return BuildErrorResult(id, -32003, "Security violation", ex.Message);
                 }
+                catch (BehaviorFeatureDisabledException ex)
+                {
+                    return BuildErrorResult(id, -32004, "Feature not available", ex.Reason);
+                }
                 catch (TimeoutRejectedException)
                 {
                     var rpcError = BehaviorTransportResilienceMapper.CreateJsonRpcServiceUnavailableError(

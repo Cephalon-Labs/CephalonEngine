@@ -675,6 +675,11 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             group.runtimeSkippedSuppressionIds,
             group.runtimeSkippedOverrideIds));
 
+        if (contract.RequiredFeatureFlagIds.Count > 0)
+        {
+            builder.RequireFeatureFlags(contract.RequiredFeatureFlagIds.ToArray());
+        }
+
         ApplyResponseConventions(builder, contract);
 
         if (acceptsBody)
@@ -877,6 +882,21 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             return BehaviorRestResponseMapper.MapNotFound(
                 "The requested resource was not found.",
                 context.RequestServices);
+        }
+        catch (BehaviorFeatureDisabledException ex)
+        {
+            return TypedResults.Problem(
+                statusCode: StatusCodes.Status404NotFound,
+                title: "Feature not available",
+                detail: ex.Reason,
+                extensions: new Dictionary<string, object?>
+                {
+                    ["behaviorId"] = ex.BehaviorId,
+                    ["featureFlagId"] = ex.FeatureFlagId,
+                    ["requiredFeatureFlagIds"] = ex.RequiredFeatureFlagIds.ToArray(),
+                    ["sourceKind"] = ex.SourceKind?.ToString(),
+                    ["sourceModuleId"] = ex.SourceModuleId
+                });
         }
         catch (JsonException ex)
         {
@@ -1110,6 +1130,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         bool ReturnsBehaviorResult,
         bool UseResultModelEnvelope,
         IReadOnlySet<int> DocumentedStatusCodes,
+        IReadOnlyList<string> RequiredFeatureFlagIds,
         IReadOnlyList<BehaviorRestBindingDescriptor> Bindings,
         RestEndpointBindingFallbackMode? BindingFallbackMode,
         bool PreserveImplicitQueryFallback)
@@ -1165,6 +1186,10 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             var useResultModelEnvelope = configuration is not null &&
                 ApiRoutesOptions.FromConfiguration(configuration).UseResultModelEnvelope;
             var documentedStatusCodes = ResolveDocumentedStatusCodes(services, "rest-api", behaviorId);
+            var requiredFeatureFlagIds = services.GetService<IBehaviorCatalog>()?
+                .FindById(behaviorId)?
+                .RequiredFeatureFlagIds
+                ?? [];
             var bindingFallbackMode = RestBehaviorBindingFallbackModeResolver.ResolveForInputType(
                 typeArguments[0],
                 method,
@@ -1189,6 +1214,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
                 returnsBehaviorResult,
                 useResultModelEnvelope,
                 documentedStatusCodes,
+                requiredFeatureFlagIds,
                 normalizedBindings,
                 bindingFallbackMode,
                 preserveImplicitQueryFallback);

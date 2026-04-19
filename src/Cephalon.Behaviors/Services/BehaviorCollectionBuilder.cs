@@ -65,7 +65,8 @@ public sealed class BehaviorCollectionBuilder : IBehaviorCollectionBuilder
 
     internal IBehaviorCollectionBuilder Register(
         Type behaviorType,
-        Action<IBehaviorTopologyBuilder>? configureTopology = null)
+        Action<IBehaviorTopologyBuilder>? configureTopology = null,
+        string? sourceModuleId = null)
     {
         ArgumentNullException.ThrowIfNull(behaviorType);
 
@@ -113,9 +114,37 @@ public sealed class BehaviorCollectionBuilder : IBehaviorCollectionBuilder
             defaultToDirect: true);
         if (descriptor is not null)
         {
+            descriptor = ApplySourceModuleId(descriptor, sourceModuleId);
             Services.AddSingleton<IBehaviorContributor>(new FluentBehaviorContributor(descriptor));
         }
 
         return this;
+    }
+
+    private static BehaviorTopologyDescriptor ApplySourceModuleId(
+        BehaviorTopologyDescriptor descriptor,
+        string? sourceModuleId)
+    {
+        ArgumentNullException.ThrowIfNull(descriptor);
+
+        if (string.IsNullOrWhiteSpace(sourceModuleId) ||
+            string.Equals(descriptor.SourceModuleId, sourceModuleId, StringComparison.OrdinalIgnoreCase))
+        {
+            return descriptor;
+        }
+
+        return new BehaviorTopologyDescriptor(
+            descriptor.Id,
+            descriptor.Pattern,
+            descriptor.TransportIds,
+            inboxEnabled: descriptor.InboxEnabled,
+            outboxEnabled: descriptor.OutboxEnabled,
+            eventSourcingEnabled: descriptor.EventSourcingEnabled,
+            apiSurface: descriptor.ApiSurface,
+            displayName: descriptor.DisplayName,
+            description: descriptor.Description,
+            requiredFeatureFlagIds: descriptor.RequiredFeatureFlagIds,
+            sourceModuleId: sourceModuleId,
+            metadata: descriptor.Metadata);
     }
 }

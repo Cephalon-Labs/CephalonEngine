@@ -49,6 +49,20 @@ public interface IBehaviorTopologyBuilder
     /// </remarks>
     IBehaviorTopologyBuilder WithApiSurface(string groupPath, string operationPath);
 
+    /// <summary>
+    /// Requires one Cephalon feature flag to be enabled before the behavior can execute.
+    /// </summary>
+    /// <param name="featureFlagId">The feature-flag identifier that must resolve to enabled.</param>
+    /// <returns>The same builder for fluent chaining.</returns>
+    IBehaviorTopologyBuilder RequireFeatureFlag(string featureFlagId);
+
+    /// <summary>
+    /// Requires all requested Cephalon feature flags to be enabled before the behavior can execute.
+    /// </summary>
+    /// <param name="featureFlagIds">The feature-flag identifiers that must resolve to enabled.</param>
+    /// <returns>The same builder for fluent chaining.</returns>
+    IBehaviorTopologyBuilder RequireFeatureFlags(params string[] featureFlagIds);
+
     /// <summary>Configures optional feature flags for this behavior (outbox, inbox, event sourcing).</summary>
     IBehaviorTopologyBuilder WithOptions(Action<BehaviorTopologyOptions> configure);
 

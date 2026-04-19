@@ -30,6 +30,11 @@ public sealed class InMemoryTransportBinding : IMessagingBehaviorBinding, IAsync
     private static readonly Action<ILogger, string, Exception?> LogConsumerFault =
         LoggerMessage.Define<string>(LogLevel.Error, default,
             "InMemory consumer loop for behavior '{BehaviorId}' encountered an unrecoverable error.");
+    private static readonly Action<ILogger, string, string, string, Exception?> LogFeatureDisabled =
+        LoggerMessage.Define<string, string, string>(
+            LogLevel.Warning,
+            default,
+            "InMemory message for behavior '{BehaviorId}' was skipped because feature flag '{FeatureFlagId}' was not available. {Reason}");
 
     private readonly InMemoryTransportOptions _options;
     private readonly ILogger<InMemoryTransportBinding> _logger;
@@ -177,7 +182,14 @@ public sealed class InMemoryTransportBinding : IMessagingBehaviorBinding, IAsync
         {
             await foreach (var (input, context) in reader.ReadAllAsync(ct).ConfigureAwait(false))
             {
-                await dispatcher.DispatchAsync(behaviorId, input, context, ct).ConfigureAwait(false);
+                try
+                {
+                    await dispatcher.DispatchAsync(behaviorId, input, context, ct).ConfigureAwait(false);
+                }
+                catch (BehaviorFeatureDisabledException ex)
+                {
+                    LogFeatureDisabled(_logger, ex.BehaviorId, ex.FeatureFlagId, ex.Reason, null);
+                }
             }
         }
         catch (OperationCanceledException)

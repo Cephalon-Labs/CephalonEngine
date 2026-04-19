@@ -5,7 +5,7 @@
 ## What it owns
 
 - module contracts such as `IModule`, `IModuleLifecycle`, `ModuleBase`, `ModuleDescriptor`, and `ModuleContext`
-- behavior contracts such as `IAppBehavior<TIn, TOut>`, `IBehaviorContext`, `IBehaviorTopologyBuilder`, `IBehaviorOwnerModule`, `IBehaviorModuleBuilder`, and `OwnedBehaviorRegistration`
+- behavior contracts such as `IAppBehavior<TIn, TOut>`, `IBehaviorContext`, `IBehaviorTopologyBuilder`, `BehaviorTopologyDescriptor`, `BehaviorFeatureDisabledException`, `IBehaviorOwnerModule`, `IBehaviorModuleBuilder`, and `OwnedBehaviorRegistration`
 - capability contracts such as `Capability`, `CapabilityAccess`, and `ICapabilityRegistry`
 - feature-flag contracts such as `FeatureFlagDescriptor`, `FeatureFlagTargetingDescriptor`, `IFeatureToggle`, `IFeatureFlagRuntimeCatalog`, `IFeatureFlagContributor`, and `IFeatureFlagRegistry`
 - app-model contracts such as `AppBlueprint`, `AppProfile`, resilience-selection types, and scaffold-plan types
@@ -178,6 +178,14 @@ and evaluation context without leaking ASP.NET Core route mappers or third-party
 into `Cephalon.Abstractions`. Those contracts intentionally separate host-owned and module-owned
 flags through `FeatureFlagSourceKind`, which lets the engine preserve ownership truth when modules
 contribute flags into the shared runtime.
+
+That same host-agnostic rule now also reaches shared behavior execution. The `Behaviors` namespace
+now keeps ordered `BehaviorTopologyDescriptor.RequiredFeatureFlagIds` plus
+`BehaviorTopologyDescriptor.SourceModuleId`, adds `IBehaviorTopologyBuilder.RequireFeatureFlag(...)`
+and `RequireFeatureFlags(...)`, and exposes `BehaviorFeatureDisabledException` so behavior authors,
+source generators, runtime catalogs, and transport adapters can share one behavior-owned
+feature-gating contract without leaking ASP.NET Core endpoint metadata or third-party provider SDKs
+into `Cephalon.Abstractions`.
 
 The same transport-first rule also now covers the published REST runtime answer. The `Transports`
 namespace owns `IRestEndpointRuntimeCatalog`, `RestEndpointRuntimeDescriptor`,

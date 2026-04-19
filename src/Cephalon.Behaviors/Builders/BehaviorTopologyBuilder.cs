@@ -12,6 +12,7 @@ public sealed class BehaviorTopologyBuilder : IBehaviorTopologyBuilder
 {
     private string _pattern = "direct";
     private readonly HashSet<string> _transportIds = new(StringComparer.OrdinalIgnoreCase);
+    private readonly List<string> _requiredFeatureFlagIds = [];
     private readonly BehaviorTopologyOptions _options = new();
     private readonly Dictionary<string, string> _metadata = new(StringComparer.Ordinal);
     private string? _apiSurfaceGroupPath;
@@ -143,6 +144,14 @@ public sealed class BehaviorTopologyBuilder : IBehaviorTopologyBuilder
         => WithApiSurface(groupPath, operationPath);
 
     /// <inheritdoc />
+    IBehaviorTopologyBuilder IBehaviorTopologyBuilder.RequireFeatureFlag(string featureFlagId)
+        => RequireFeatureFlag(featureFlagId);
+
+    /// <inheritdoc />
+    IBehaviorTopologyBuilder IBehaviorTopologyBuilder.RequireFeatureFlags(params string[] featureFlagIds)
+        => RequireFeatureFlags(featureFlagIds);
+
+    /// <inheritdoc />
     IBehaviorTopologyBuilder IBehaviorTopologyBuilder.WithMetadata(string key, string? value)
         => WithMetadata(key, value);
 
@@ -268,6 +277,50 @@ public sealed class BehaviorTopologyBuilder : IBehaviorTopologyBuilder
     }
 
     /// <summary>
+    /// Requires one Cephalon feature flag to be enabled before the behavior can execute.
+    /// </summary>
+    /// <param name="featureFlagId">The feature-flag identifier that must resolve to enabled.</param>
+    /// <returns>The same builder for fluent chaining.</returns>
+    public BehaviorTopologyBuilder RequireFeatureFlag(string featureFlagId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(featureFlagId);
+        return RequireFeatureFlags(featureFlagId);
+    }
+
+    /// <summary>
+    /// Requires all requested Cephalon feature flags to be enabled before the behavior can execute.
+    /// </summary>
+    /// <param name="featureFlagIds">The feature-flag identifiers that must resolve to enabled.</param>
+    /// <returns>The same builder for fluent chaining.</returns>
+    public BehaviorTopologyBuilder RequireFeatureFlags(params string[] featureFlagIds)
+    {
+        ArgumentNullException.ThrowIfNull(featureFlagIds);
+
+        foreach (var featureFlagId in featureFlagIds)
+        {
+            if (string.IsNullOrWhiteSpace(featureFlagId))
+            {
+                continue;
+            }
+
+            var normalizedFeatureFlagId = featureFlagId.Trim();
+            if (!_requiredFeatureFlagIds.Contains(normalizedFeatureFlagId, StringComparer.OrdinalIgnoreCase))
+            {
+                _requiredFeatureFlagIds.Add(normalizedFeatureFlagId);
+            }
+        }
+
+        if (_requiredFeatureFlagIds.Count == 0)
+        {
+            throw new ArgumentException(
+                "At least one non-empty feature flag id is required.",
+                nameof(featureFlagIds));
+        }
+
+        return this;
+    }
+
+    /// <summary>
     /// Adds or replaces descriptor metadata that companion packages can later project into
     /// adapter-specific runtime behavior.
     /// </summary>
@@ -323,6 +376,9 @@ public sealed class BehaviorTopologyBuilder : IBehaviorTopologyBuilder
             outboxEnabled: _options.OutboxEnabled,
             eventSourcingEnabled: _options.EventSourcingEnabled,
             apiSurface: apiSurface,
+            requiredFeatureFlagIds: _requiredFeatureFlagIds.Count == 0
+                ? null
+                : _requiredFeatureFlagIds.ToArray(),
             metadata: _metadata.Count == 0
                 ? null
                 : new Dictionary<string, string>(_metadata, StringComparer.Ordinal));

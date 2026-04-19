@@ -1044,6 +1044,11 @@ Current governance baseline:
   `RequireFeatureFlags(...)`, and `ClearRequiredFeatureFlags()` all follow last-declaration-wins so
   a host can replace or remove an earlier shorthand feature gate without leaving stacked filters
   behind
+- behavior-owned feature gates can now also come from `BehaviorTopologyDescriptor.RequiredFeatureFlagIds`;
+  `MapBehaviorGet(...)`, `MapBehaviorPost(...)`, and the other REST helper entry points read those
+  ids from `IBehaviorCatalog`, stamp the same ordered set onto the published REST endpoint, and
+  still leave authoritative execution gating in the shared behavior pipeline so transport-only REST
+  rewrites do not become the only rollout truth
 - published endpoints now also expose nullable `OriginalRequiredCapabilityKey` plus
   `AppliedOverrideId`, so operators can read the source-versus-effective capability story directly
   from `/engine/rest-endpoints` when shorthand governance rewrites or clears a boundary; endpoint-
@@ -1321,14 +1326,32 @@ projects to payloads such as:
 Keep that envelope as a REST host policy only. Messaging, events, GraphQL, and JSON-RPC should not
 reuse it as a universal engine contract.
 
-## DefaultBehaviorContext header conventions
+## Feature-gated behavior execution
 
-| Header | Maps to |
+- module-owned REST helper endpoints now project behavior-authored
+  `BehaviorTopologyDescriptor.RequiredFeatureFlagIds` into the published endpoint shape so
+  `/engine/rest-endpoints` and request execution keep the same ordered gate list when the behavior
+  catalog declares a rollout boundary
+- when shared behavior execution rejects a REST request with `BehaviorFeatureDisabledException`, the
+  helper returns `404 ProblemDetails` with `behaviorId`, the decisive `featureFlagId`, the full
+  ordered `requiredFeatureFlagIds`, and source ownership metadata instead of pretending the
+  endpoint disappeared from runtime truth
+- `JsonRpcHttpBehaviorBinding` keeps that same behavior-owned gate protocol-native through JSON-RPC
+  server error `-32004` with message `Feature not available`
+
+## DefaultBehaviorContext metadata conventions
+
+| Source | Maps to |
 |---|---|
 | `X-Correlation-Id` | `Metadata["CorrelationId"]` |
 | `X-Tenant-Id` | `Metadata["TenantId"]` |
-| `Authorization` (sub claim) | `Metadata["UserId"]` |
+| `Authorization` (sub claim) | `Metadata["UserId"]` and `Metadata["SubjectId"]` |
+| `IHostEnvironment.EnvironmentName` | `Metadata["EnvironmentName"]` |
+| Transport binding | `Metadata["TransportId"]` |
 | `X-Meta-*` | `Metadata[key-without-prefix]` |
+
+Those ambient values are also what the shared behavior feature-gate middleware uses when it builds
+the evaluation context for `IFeatureToggle`.
 
 > Status: ✅ Shipped — commit c957966 · 516/516 tests
 

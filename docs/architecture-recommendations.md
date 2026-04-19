@@ -146,19 +146,26 @@ now exports `FeatureFlagDescriptor`, `FeatureFlagTargetingDescriptor`,
 through `engine.AddFeatureFlag(...)`, `engine.AddFeatureFlags(...)`, `Engine:Features`, and
 `IFeatureFlagContributor`, projects the merged catalog into `snapshot.FeatureFlags`, and evaluates
 runtime answers through `IFeatureToggle`. ASP.NET Core now exposes `/engine/features` plus
-enabled/disabled/module/id drill-down routes and `/engine/features/{featureFlagId}/evaluate`.
+enabled/disabled/module/id drill-down routes and `/engine/features/{featureFlagId}/evaluate`. The
+next shared-consumption follow-through is also now shipped: `BehaviorTopologyDescriptor` carries
+ordered `RequiredFeatureFlagIds` plus `SourceModuleId`, `IBehaviorTopologyBuilder` exposes
+`RequireFeatureFlag(...)` / `RequireFeatureFlags(...)`, the shared `Cephalon.Behaviors` pipeline
+now evaluates those requirements through `IFeatureToggle`, source-generated topology literals keep
+the same declarations build-time aligned, and the behavior runtime surface now reports
+feature-gated behavior counts plus per-behavior ownership metadata. `Cephalon.Behaviors.Http` then
+projects that same behavior-owned gate into REST helper execution and JSON-RPC envelopes without
+turning transport middleware into the only source of rollout truth.
 
 Recommendation: keep the current host-agnostic descriptor/catalog/evaluator baseline stable, keep
 module ownership explicit by requiring module-contributed flags to stay
-`FeatureFlagSourceKind.Module` with a matching `SourceModuleId`, and add external-provider bridges
-only when they can preserve the same runtime truth instead of replacing it with opaque provider
-state.
+`FeatureFlagSourceKind.Module` with a matching `SourceModuleId`, keep behavior-owned execution
+gates in shared behavior topology instead of duplicating that truth in host-only middleware, and
+add external-provider bridges only when they can preserve the same runtime truth instead of
+replacing it with opaque provider state.
 
 Remaining follow-through:
 - external-provider integration paths for LaunchDarkly, Azure App Configuration, Unleash, or
   similar providers when the merged Cephalon runtime catalog can still stay introspectable
-- behavior- or pipeline-level convenience hooks that consume `IFeatureToggle` without moving
-  feature-flag truth into host-only middleware
 - reconsider a dedicated `runtime.feature-flags` capability only if runtime capability provenance
   expands beyond the current module-owned model or a truthful module-backed publication path exists
 

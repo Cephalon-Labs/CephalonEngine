@@ -486,6 +486,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         // Collect all method call names from the method body
         var invocations = method.DescendantNodes()
             .OfType<InvocationExpressionSyntax>()
+            .OrderBy(static invocation => invocation.Span.End)
             .ToArray();
 
         if (invocations.Length == 0)
@@ -498,6 +499,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         bool eventSourcingEnabled = false;
         string? apiSurfaceGroupPath = null;
         string? apiSurfaceOperationPath = null;
+        var requiredFeatureFlagIds = new List<string>();
         bool hasComplexLogic = false;
 
         // Check for any control flow that makes static analysis unreliable
@@ -551,6 +553,13 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                         return null;
                     }
                     break;
+                case "RequireFeatureFlag":
+                case "RequireFeatureFlags":
+                    if (!TryExtractRequiredFeatureFlagIds(invocation, requiredFeatureFlagIds))
+                    {
+                        return null;
+                    }
+                    break;
 
                 // WithOptions — analyze the lambda body
                 case "WithOptions":
@@ -568,7 +577,10 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             inboxEnabled: inboxEnabled,
             eventSourcingEnabled: eventSourcingEnabled,
             apiSurfaceGroupPath: apiSurfaceGroupPath,
-            apiSurfaceOperationPath: apiSurfaceOperationPath);
+            apiSurfaceOperationPath: apiSurfaceOperationPath,
+            requiredFeatureFlagIds: requiredFeatureFlagIds
+                .Distinct(System.StringComparer.OrdinalIgnoreCase)
+                .ToArray());
     }
 
     private static bool DeclaresRestTransportInConfigureMethod(ClassDeclarationSyntax classDecl)
@@ -640,6 +652,40 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                 }
             }
         }
+    }
+
+    private static bool TryExtractRequiredFeatureFlagIds(
+        InvocationExpressionSyntax invocation,
+        List<string> requiredFeatureFlagIds)
+    {
+        if (invocation is null)
+        {
+            throw new ArgumentNullException(nameof(invocation));
+        }
+
+        if (requiredFeatureFlagIds is null)
+        {
+            throw new ArgumentNullException(nameof(requiredFeatureFlagIds));
+        }
+
+        foreach (var argument in invocation.ArgumentList.Arguments)
+        {
+            if (argument.Expression is not LiteralExpressionSyntax literal ||
+                !literal.IsKind(SyntaxKind.StringLiteralExpression))
+            {
+                return false;
+            }
+
+            var value = literal.Token.ValueText;
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                continue;
+            }
+
+            requiredFeatureFlagIds.Add(value.Trim());
+        }
+
+        return true;
     }
 
     private static bool TryExtractApiSurfaceFromInvocation(
@@ -906,6 +952,12 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                 sb.Append($"\"{EscapeString(apiSurfaceGroupPath)}\", ");
                 sb.Append($"\"{EscapeString(apiSurfaceOperationPath!)}\")");
             }
+            if (t.RequiredFeatureFlagIds.Length > 0)
+            {
+                sb.Append(", requiredFeatureFlagIds: new string[] { ");
+                sb.Append(string.Join(", ", t.RequiredFeatureFlagIds.Select(featureFlagId => $"\"{EscapeString(featureFlagId)}\"")));
+                sb.Append(" }");
+            }
 
             sb.AppendLine("),");
         }
@@ -960,7 +1012,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
 
                     if (info.RestProfile.PreserveImplicitQueryFallback)
                     {
-                sb.Append(", PreserveImplicitQueryFallback: true");
+                        sb.Append(", PreserveImplicitQueryFallback: true");
                     }
                 }
                 sb.AppendLine("),");
@@ -1449,7 +1501,8 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             bool inboxEnabled,
             bool eventSourcingEnabled,
             string? apiSurfaceGroupPath,
-            string? apiSurfaceOperationPath)
+            string? apiSurfaceOperationPath,
+            string[] requiredFeatureFlagIds)
         {
             Pattern = pattern;
             Transports = transports;
@@ -1458,6 +1511,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             EventSourcingEnabled = eventSourcingEnabled;
             ApiSurfaceGroupPath = apiSurfaceGroupPath;
             ApiSurfaceOperationPath = apiSurfaceOperationPath;
+            RequiredFeatureFlagIds = requiredFeatureFlagIds;
         }
 
         public string Pattern { get; }
@@ -1467,6 +1521,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         public bool EventSourcingEnabled { get; }
         public string? ApiSurfaceGroupPath { get; }
         public string? ApiSurfaceOperationPath { get; }
+        public string[] RequiredFeatureFlagIds { get; }
     }
 
     private sealed class BehaviorInfo

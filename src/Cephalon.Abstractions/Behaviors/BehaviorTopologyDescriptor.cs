@@ -17,8 +17,22 @@ public sealed class BehaviorTopologyDescriptor
         BehaviorApiSurfaceDescriptor? apiSurface = null,
         string? displayName = null,
         string? description = null,
+        IReadOnlyList<string>? requiredFeatureFlagIds = null,
+        string? sourceModuleId = null,
         IReadOnlyDictionary<string, string>? metadata = null)
     {
+        if (string.IsNullOrWhiteSpace(id))
+        {
+            throw new ArgumentException("Behavior id is required.", nameof(id));
+        }
+
+        if (string.IsNullOrWhiteSpace(pattern))
+        {
+            throw new ArgumentException("Behavior pattern is required.", nameof(pattern));
+        }
+
+        ArgumentNullException.ThrowIfNull(transportIds);
+
         Id = id;
         Pattern = pattern;
         TransportIds = transportIds;
@@ -28,6 +42,8 @@ public sealed class BehaviorTopologyDescriptor
         ApiSurface = apiSurface ?? BehaviorApiSurfaceDescriptor.CreateDefault(id);
         DisplayName = displayName;
         Description = description;
+        RequiredFeatureFlagIds = NormalizeRequiredFeatureFlagIds(requiredFeatureFlagIds);
+        SourceModuleId = NormalizeOptional(sourceModuleId);
         Metadata = metadata ?? new Dictionary<string, string>();
     }
 
@@ -65,6 +81,53 @@ public sealed class BehaviorTopologyDescriptor
     /// <summary>Gets the optional description.</summary>
     public string? Description { get; }
 
+    /// <summary>
+    /// Gets the ordered feature-flag identifiers that must resolve to enabled before the behavior
+    /// can execute.
+    /// </summary>
+    public IReadOnlyList<string> RequiredFeatureFlagIds { get; }
+
+    /// <summary>
+    /// Gets the module identifier that owns this behavior when ownership is known at runtime.
+    /// </summary>
+    public string? SourceModuleId { get; }
+
     /// <summary>Gets additional metadata.</summary>
     public IReadOnlyDictionary<string, string> Metadata { get; }
+
+    private static string[] NormalizeRequiredFeatureFlagIds(
+        IReadOnlyList<string>? requiredFeatureFlagIds)
+    {
+        if (requiredFeatureFlagIds is null || requiredFeatureFlagIds.Count == 0)
+        {
+            return [];
+        }
+
+        var normalized = new List<string>(requiredFeatureFlagIds.Count);
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var featureFlagId in requiredFeatureFlagIds)
+        {
+            if (string.IsNullOrWhiteSpace(featureFlagId))
+            {
+                continue;
+            }
+
+            var candidate = featureFlagId.Trim();
+            if (seen.Add(candidate))
+            {
+                normalized.Add(candidate);
+            }
+        }
+
+        return normalized.Count == 0
+            ? []
+            : normalized.ToArray();
+    }
+
+    private static string? NormalizeOptional(string? value)
+    {
+        return string.IsNullOrWhiteSpace(value)
+            ? null
+            : value.Trim();
+    }
 }

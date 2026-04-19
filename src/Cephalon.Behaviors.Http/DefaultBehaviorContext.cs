@@ -1,7 +1,9 @@
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.EventSourcing;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Cephalon.Behaviors.Http;
 
@@ -39,11 +41,15 @@ internal sealed class DefaultBehaviorContext : IBehaviorContext
         var tenantId = ctx.Request.Headers["X-Tenant-Id"].FirstOrDefault();
         var userId = ctx.User.FindFirst("sub")?.Value;
         var traceId = ctx.TraceIdentifier;
+        var environmentName = ctx.RequestServices.GetService<IHostEnvironment>()?.EnvironmentName
+            ?? ctx.RequestServices.GetService<IWebHostEnvironment>()?.EnvironmentName;
 
         if (correlationId is not null) metadata["CorrelationId"] = correlationId;
         if (tenantId is not null) metadata["TenantId"] = tenantId;
         if (userId is not null) metadata["UserId"] = userId;
+        if (userId is not null) metadata["SubjectId"] = userId;
         if (traceId is not null) metadata["TraceId"] = traceId;
+        if (!string.IsNullOrWhiteSpace(environmentName)) metadata["EnvironmentName"] = environmentName.Trim();
         if (!string.IsNullOrWhiteSpace(transportId)) metadata["TransportId"] = transportId.Trim();
 
         return new DefaultBehaviorContext

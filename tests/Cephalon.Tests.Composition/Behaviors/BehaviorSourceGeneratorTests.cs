@@ -139,14 +139,14 @@ public sealed class BehaviorSourceGeneratorTests
                     string relativePattern,
                     int? apiVersionMajor,
                     System.Collections.Generic.IReadOnlyList<BehaviorRestBindingDescriptor>? bindings = null,
-                    bool preserveImplicitQueryFallback = false)
+                    bool PreserveImplicitQueryFallback = false)
                 {
                     BehaviorId = behaviorId;
                     Method = method;
                     RelativePattern = relativePattern;
                     ApiVersionMajor = apiVersionMajor;
                     Bindings = bindings;
-                    PreserveImplicitQueryFallback = preserveImplicitQueryFallback;
+                    this.PreserveImplicitQueryFallback = PreserveImplicitQueryFallback;
                 }
 
                 public string BehaviorId { get; }
@@ -328,7 +328,7 @@ public sealed class BehaviorSourceGeneratorTests
 
         var autoRegistration = GetGeneratedAutoRegistrationSource(result);
         Assert.NotNull(autoRegistration);
-        Assert.Contains("preserveImplicitQueryFallback: true", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("PreserveImplicitQueryFallback: true", autoRegistration, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1071,6 +1071,76 @@ public sealed class BehaviorSourceGeneratorTests
         Assert.NotNull(autoRegistration);
         Assert.Contains("new global::Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor(\"orders.lookup\"", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("\"http.jsonrpc\"", autoRegistration, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void ConfigureTopologyWithLiteralRequiredFeatureFlagsGeneratesCompileTimeDescriptor()
+    {
+        const string source = """
+            using Cephalon.Abstractions.Behaviors;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            [AppBehavior("orders.preview")]
+            public sealed class PreviewOrderBehavior : IAppBehavior<string, string>
+            {
+                public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
+                    => builder
+                        .ViaHttpJsonRpc()
+                        .RequireFeatureFlag("host.orders-preview")
+                        .RequireFeatureFlags("module.orders-rollout");
+
+                public Task<string> HandleAsync(string input, IBehaviorContext ctx, CancellationToken ct = default)
+                    => Task.FromResult("ok");
+            }
+            """;
+
+        const string stubs = """
+            namespace System.Text.Json.Serialization
+            {
+                [System.AttributeUsage(System.AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
+                public sealed class JsonStringEnumMemberNameAttribute : System.Attribute
+                {
+                    public JsonStringEnumMemberNameAttribute(string name) { Name = name; }
+                    public string Name { get; }
+                }
+            }
+
+            namespace Cephalon.Abstractions.Behaviors
+            {
+                [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+                public sealed class AppBehaviorAttribute : System.Attribute
+                {
+                    public AppBehaviorAttribute(string id) { Id = id; }
+                    public string Id { get; }
+                }
+
+                public interface IAppBehavior<in TIn, TOut>
+                {
+                    System.Threading.Tasks.Task<TOut> HandleAsync(
+                        TIn input,
+                        IBehaviorContext context,
+                        System.Threading.CancellationToken cancellationToken = default);
+                }
+
+                public interface IBehaviorContext { }
+
+                public interface IBehaviorTopologyBuilder
+                {
+                    IBehaviorTopologyBuilder ViaHttpJsonRpc();
+                    IBehaviorTopologyBuilder RequireFeatureFlag(string featureFlagId);
+                    IBehaviorTopologyBuilder RequireFeatureFlags(params string[] featureFlagIds);
+                }
+            }
+            """;
+
+        var (result, diagnostics) = RunGenerator(source, stubs);
+
+        Assert.Empty(diagnostics);
+
+        var autoRegistration = GetGeneratedAutoRegistrationSource(result);
+        Assert.NotNull(autoRegistration);
+        Assert.Contains("requiredFeatureFlagIds: new string[] { \"host.orders-preview\", \"module.orders-rollout\" }", autoRegistration, StringComparison.Ordinal);
     }
 
     [Fact]

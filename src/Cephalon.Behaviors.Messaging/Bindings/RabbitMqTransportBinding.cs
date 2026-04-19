@@ -68,6 +68,11 @@ public sealed class RabbitMqTransportBinding : IMessagingBehaviorBinding, IAsync
     private static readonly Action<ILogger, string, Exception?> LogBehaviorNotFound =
         LoggerMessage.Define<string>(LogLevel.Warning, default,
             "Behavior '{BehaviorId}' not found; nacking message without requeue.");
+    private static readonly Action<ILogger, string, ulong, string, string, Exception?> LogFeatureDisabled =
+        LoggerMessage.Define<string, ulong, string, string>(
+            LogLevel.Warning,
+            default,
+            "Behavior '{BehaviorId}' skipped RabbitMQ delivery {DeliveryTag} because feature flag '{FeatureFlagId}' was not available. {Reason}");
 
     private static readonly Action<ILogger, int, string, TimeSpan, Exception?> LogDispatchRetry =
         LoggerMessage.Define<int, string, TimeSpan>(LogLevel.Warning, default,
@@ -292,6 +297,19 @@ public sealed class RabbitMqTransportBinding : IMessagingBehaviorBinding, IAsync
             {
                 LogBehaviorNotFound(_logger, behaviorId, ex);
                 await _channel!.BasicNackAsync(deliveryTag, multiple: false, requeue: false, CancellationToken.None).ConfigureAwait(false);
+                return;
+            }
+            catch (BehaviorFeatureDisabledException ex)
+            {
+                LogFeatureDisabled(_logger, behaviorId, deliveryTag, ex.FeatureFlagId, ex.Reason, null);
+                var shouldDeadLetter = !string.IsNullOrEmpty(_options.DeadLetterExchange);
+                await _channel!.BasicNackAsync(deliveryTag, multiple: false, requeue: false, CancellationToken.None).ConfigureAwait(false);
+
+                if (shouldDeadLetter)
+                {
+                    LogDeadLettered(_logger, _options.DeadLetterExchange, deliveryTag, null);
+                }
+
                 return;
             }
             catch (Exception ex) when (attempt < _options.MaxRetryAttempts - 1)

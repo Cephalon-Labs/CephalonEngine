@@ -73,9 +73,30 @@ public sealed class BehaviorOwnerModuleTests
 
         Assert.NotNull(descriptor);
         Assert.Equal("cqrs", descriptor!.Pattern);
+        Assert.Equal("tests.showcase-owner", descriptor.SourceModuleId);
         Assert.Contains("http.ws", descriptor.TransportIds, StringComparer.OrdinalIgnoreCase);
         Assert.DoesNotContain("http.graphql", descriptor.TransportIds, StringComparer.OrdinalIgnoreCase);
         Assert.DoesNotContain("http.sse", descriptor.TransportIds, StringComparer.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void BehaviorModuleBaseOwnedTopologyPreservesRequiredFeatureFlags()
+    {
+        var services = new ServiceCollection();
+        var builder = new EngineBuilder(services);
+        builder.UseSettings(new EngineSettings(blueprint: "ModularMonolith"));
+        builder.AddBehaviors(options => options.AutoRegister = false);
+        builder.AddModule(new FeatureFlaggedOwnedBehaviorModule());
+
+        builder.Build();
+
+        using var provider = services.BuildServiceProvider();
+        var catalog = provider.GetRequiredService<IBehaviorCatalog>();
+        var descriptor = catalog.FindById("tests.owned.feature-flags.greeting");
+
+        Assert.NotNull(descriptor);
+        Assert.Equal("tests.feature-flags-owner", descriptor!.SourceModuleId);
+        Assert.Equal(["host.owned-greeting-preview"], descriptor.RequiredFeatureFlagIds);
     }
 
     [Fact]
@@ -118,6 +139,18 @@ public sealed class BehaviorOwnerModuleTests
     [BehaviorAllowedPatterns("direct")]
     [BehaviorAllowedTransports("http.jsonrpc", "http.sse")]
     private sealed class OwnedGreetingBehavior : IAppBehavior<string, string>
+    {
+        public Task<string> HandleAsync(
+            string input,
+            IBehaviorContext context,
+            CancellationToken cancellationToken = default)
+            => Task.FromResult($"Owned hello, {input}!");
+    }
+
+    [AppBehavior("tests.owned.feature-flags.greeting")]
+    [BehaviorAllowedPatterns("direct")]
+    [BehaviorAllowedTransports("in-memory")]
+    private sealed class FeatureFlaggedOwnedGreetingBehavior : IAppBehavior<string, string>
     {
         public Task<string> HandleAsync(
             string input,
@@ -254,6 +287,25 @@ public sealed class BehaviorOwnerModuleTests
             behaviors.Internal<OwnedRestInternalBehavior>(topology => topology
                 .AsDirect()
                 .ViaInMemory());
+        }
+    }
+
+    private sealed class FeatureFlaggedOwnedBehaviorModule : BehaviorModuleBase
+    {
+        private static readonly ModuleDescriptor DescriptorInstance = new(
+            id: "tests.feature-flags-owner",
+            displayName: "Feature Flags Owner",
+            description: "Owns a feature-gated behavior for tests.",
+            version: "1.0.0");
+
+        public override ModuleDescriptor Descriptor => DescriptorInstance;
+
+        public override void ConfigureBehaviors(IBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Add<FeatureFlaggedOwnedGreetingBehavior>(topology => topology
+                .AsDirect()
+                .ViaInMemory()
+                .RequireFeatureFlag("host.owned-greeting-preview"));
         }
     }
 }

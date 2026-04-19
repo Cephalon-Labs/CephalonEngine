@@ -53,6 +53,11 @@ public sealed class KafkaTransportBinding : IMessagingBehaviorBinding, IAsyncDis
 
     private static readonly Action<ILogger, string, string, long, Exception?> LogDispatchFailed =
         LoggerMessage.Define<string, string, long>(LogLevel.Error, default, "Kafka dispatch failed for behavior '{BehaviorId}' at topic '{Topic}' offset {Offset}.");
+    private static readonly Action<ILogger, string, string, long, string, string, Exception?> LogFeatureDisabled =
+        LoggerMessage.Define<string, string, long, string, string>(
+            LogLevel.Warning,
+            default,
+            "Behavior '{BehaviorId}' skipped Kafka message from topic '{Topic}' offset {Offset} because feature flag '{FeatureFlagId}' was not available. {Reason}");
 
     private static readonly Action<ILogger, string, Exception?> LogConsumeLoopExited =
         LoggerMessage.Define<string>(LogLevel.Information, default, "Kafka consumer loop exited for behavior '{BehaviorId}'.");
@@ -256,6 +261,18 @@ public sealed class KafkaTransportBinding : IMessagingBehaviorBinding, IAsyncDis
 
                 _consumer!.Commit(result);
                 LogOffsetCommitted(_logger, result.Topic, result.Partition.Value, result.Offset.Value, null);
+            }
+            catch (BehaviorFeatureDisabledException ex)
+            {
+                LogFeatureDisabled(
+                    _logger,
+                    behaviorId,
+                    result.Topic,
+                    result.Offset.Value,
+                    ex.FeatureFlagId,
+                    ex.Reason,
+                    null);
+                _consumer!.Commit(result);
             }
             catch (OperationCanceledException)
             {

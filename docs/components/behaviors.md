@@ -22,13 +22,14 @@
 |------|-------------|
 | `IAppBehavior<TIn, TOut>` | Single behavior interface — `HandleAsync` + optional `static virtual ConfigureTopology` |
 | `IBehaviorContext` | Transport-neutral ambient API: `PublishAsync`, `SendAsync`, `ReplyAsync`, saga state, correlation |
-| `IBehaviorTopologyBuilder` | Fluent builder: `AsCqrs()`, `AsEventDriven()`, `ViaHttpJsonRpc()`, `ViaRabbitMq()`, etc. |
+| `IBehaviorTopologyBuilder` | Fluent builder: `AsCqrs()`, `AsEventDriven()`, `ViaHttpJsonRpc()`, `ViaRabbitMq()`, `RequireFeatureFlag(...)`, etc. |
 | `IBehaviorModuleBuilder` | Host-agnostic builder that lets a module declare which behaviors it owns |
 | `IBehaviorOwnerModule` | Module contract for explicit behavior ownership through `ConfigureBehaviors(...)` |
 | `OwnedBehaviorRegistration` | Runtime composition record describing one module-owned behavior registration |
 | `BehaviorApiSurfaceDescriptor` | Shared logical route surface for route-shaped generic HTTP transports; defaulted from the behavior id and overrideable through `WithApiSurface(...)` |
 | `Result<T>` / `IBehaviorResult` | Preferred concise transport-neutral structured outcome for expected non-success branches without forcing HTTP or RPC envelopes into the core behavior contract |
-| `BehaviorTopologyDescriptor` | Resolved per-behavior config: pattern, transports, feature flags, and shared API surface |
+| `BehaviorTopologyDescriptor` | Resolved per-behavior config: pattern, transports, ordered required feature flags, shared API surface, and optional owning module id |
+| `BehaviorFeatureDisabledException` | Transport-neutral rejection raised when the active feature-toggle context does not satisfy a behavior-owned feature gate |
 | `[AppBehavior("id")]` | Declares a class as a named behavior |
 | `[BehaviorAllowedPatterns]` | Pattern allowlist; when no explicit topology exists, exactly one declared pattern also becomes the attribute-only runtime baseline |
 | `[BehaviorAllowedTransports]` | Transport allowlist; when no explicit topology exists, declared transports also become the attribute-only runtime transport baseline. Public REST is module-owned and must not appear here; `http.grpc` is accepted as an alias for canonical `grpc` |
@@ -69,13 +70,36 @@ public sealed class CartModule : BehaviorModuleBase
         behaviors.Add<RepriceCartBehavior>();
         behaviors.Add<CheckoutWorkflowBehavior>(topology => topology
             .AsProcessManager()
-            .ViaKafka());
+            .ViaKafka()
+            .RequireFeatureFlag("checkout-workflow"));
     }
 }
 ```
 
 Use that contract when ownership must be explicit even if the behavior still runs through generic
 HTTP transports, messaging, or background orchestration rather than a module-owned REST API.
+
+Owned registrations now also preserve the owning module id on the resolved
+`BehaviorTopologyDescriptor`, which means runtime catalogs and transport faults can report both the
+behavior id and the owning module when a shared feature gate blocks execution.
+
+## Feature-gated execution
+
+Behaviors can now declare rollout gates in the shared topology itself instead of depending only on
+transport-specific middleware:
+
+- use `RequireFeatureFlag(...)` or `RequireFeatureFlags(...)` in `ConfigureTopology(...)` or module
+  registration when a behavior should execute only behind one or more Cephalon feature flags
+- source-generated topology descriptors preserve those literal feature ids, so compile-time and
+  fluent-runtime topology paths stay aligned
+- resolved `BehaviorTopologyDescriptor` entries now keep both the ordered required feature ids and
+  optional `SourceModuleId` ownership metadata
+- the dispatcher pipeline evaluates those requirements through `IFeatureToggle` using behavior,
+  module, transport, environment, tenant, subject, and tag context and throws
+  `BehaviorFeatureDisabledException` when the active runtime context is not eligible
+- REST helper endpoints map that shared rejection to `404`, JSON-RPC maps it to `-32004`, and
+  messaging bindings log and skip the disabled execution with transport-appropriate acknowledgement
+  semantics instead of treating the rejection as a retryable failure
 
 ## Transport-neutral outcomes
 
@@ -242,6 +266,8 @@ Implements `ITechnologyRuntimeContributor` and reports the behavior subsystem su
 - Total registered behavior count
 - Pattern distribution (cqrs / event-driven / saga-step / process-manager / direct)
 - Transport distribution across all registered behaviors
+- Feature-gated behavior count across the active catalog
+- Per-behavior required feature ids and owning module id when the resolved topology declares them
 
 ### IBehaviorAdvisory system
 
