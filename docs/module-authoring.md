@@ -62,17 +62,18 @@ That keeps the authoring path close to the same module-first ideas used by Cepha
 10. Use `ICellBoundaryContributor`, `ICellRouteContributor`, and `ICellHealthIsolationContributor` when the package owns explicit cell topology, governed cell-to-cell paths, or cell health-isolation posture that operators should be able to inspect through `/engine/cells`, `/engine/cell-routes`, `/engine/cell-health-isolations`, `/engine/cell-traffic-automations`, `/engine/technology-surfaces/cell-based-architecture`, and `/engine/snapshot`; keep automation overlays in `Engine:Cells:TrafficAutomation` so route and module ownership stay authoritative.
 11. Use `IExecutionGraphContributor` when the package needs to publish operator-facing workflow or execution-graph descriptors through `/engine/execution-graphs` and `/engine/snapshot`.
 12. Use `IHostedExecutionContributor` when the package needs to publish operator-facing hosted or background execution descriptors through `/engine/hosted-executions`, `/engine/runtime-story`, and `/engine/snapshot`.
-13. Use `IProjectionContributor` when the package needs to publish operator-facing projection descriptors through `/engine/projections` and `/engine/snapshot`.
-14. Use `IInboxContributor` when the package needs to publish operator-facing inbox descriptors through `/engine/inboxes` and `/engine/snapshot`.
-15. Use `IOutboxContributor` when the package needs to publish operator-facing outbox descriptors through `/engine/outboxes` and `/engine/snapshot`.
-16. Use `IAuthorizationPolicyContributor` when the package needs to publish operator-facing authorization-policy descriptors through `/engine/authorization-policies` and `/engine/snapshot`.
-17. Add transport contribution interfaces only when the package really owns an external surface.
-18. When a module explicitly owns Cephalon behaviors, prefer `BehaviorModuleBase` so ownership stays
+13. Use `IDataProductContributor` when the package needs to publish operator-facing data product descriptors through `/engine/data-products` and `/engine/snapshot`.
+14. Use `IProjectionContributor` when the package needs to publish operator-facing projection descriptors through `/engine/projections` and `/engine/snapshot`.
+15. Use `IInboxContributor` when the package needs to publish operator-facing inbox descriptors through `/engine/inboxes` and `/engine/snapshot`.
+16. Use `IOutboxContributor` when the package needs to publish operator-facing outbox descriptors through `/engine/outboxes` and `/engine/snapshot`.
+17. Use `IAuthorizationPolicyContributor` when the package needs to publish operator-facing authorization-policy descriptors through `/engine/authorization-policies` and `/engine/snapshot`.
+18. Add transport contribution interfaces only when the package really owns an external surface.
+19. When a module explicitly owns Cephalon behaviors, prefer `BehaviorModuleBase` so ownership stays
     host-agnostic and deterministic.
-19. When a behavior-owning module exposes REST endpoints, prefer `RestBehaviorModuleBase` so the same
+20. When a behavior-owning module exposes REST endpoints, prefer `RestBehaviorModuleBase` so the same
     module can own internal-only behaviors and public REST-backed behaviors without splitting the
     bounded context across multiple module classes.
-20. When a module exposes REST endpoints backed by behaviors, author that REST surface in
+21. When a module exposes REST endpoints backed by behaviors, author that REST surface in
     `ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)` and keep REST out of behavior
     topology.
 
@@ -915,6 +916,7 @@ Current baseline behavior:
 
 ## Data and authorization descriptors
 
+Packages that need to publish a module-owned query surface can implement `IDataProductContributor` and register one or more `DataProductDescriptor` entries.
 Packages that need to publish read-model or projection shape can implement `IProjectionContributor` and register one or more `ProjectionDescriptor` entries.
 Packages that need to publish durable processed-message or idempotency-store shape can implement `IInboxContributor` and register one or more `InboxDescriptor` entries.
 Packages that need to publish durable outbound message staging shape can implement `IOutboxContributor` and register one or more `OutboxDescriptor` entries.
@@ -922,10 +924,12 @@ Packages that need to publish operator-facing authorization choices can implemen
 
 Current baseline behavior:
 
+- `/engine/data-products` exposes the merged data product catalog, and `/engine/snapshot` carries the same data product descriptors alongside manifest, diagnostics, and lifecycle data
 - `/engine/projections` exposes the merged projection catalog, and `/engine/snapshot` carries the same projection descriptors alongside manifest, diagnostics, and lifecycle data
 - `/engine/inboxes` exposes the merged inbox catalog, and `/engine/snapshot` carries the same inbox descriptors alongside manifest, diagnostics, and lifecycle data
 - `/engine/outboxes` exposes the merged outbox catalog, and `/engine/snapshot` carries the same outbox descriptors alongside manifest, diagnostics, and lifecycle data
 - `/engine/authorization-policies` exposes the merged authorization-policy catalog, and `/engine/snapshot` carries the same policy descriptors in the broader runtime answer
+- data product descriptors stay grounded in module ownership through `sourceModuleId`, domain ids, contract ids, mode, and operator-facing metadata such as freshness or classification
 - projection descriptors stay grounded in module ownership through `sourceModuleId`, target store ids, and optional source contract metadata
 - inbox descriptors stay grounded in module ownership through `sourceModuleId`, provider, mode, optional channel ids, and operator-facing metadata such as idempotency scope
 - outbox descriptors stay grounded in module ownership through `sourceModuleId`, provider, mode, optional channel ids, and operator-facing metadata such as dispatch ownership

@@ -10008,6 +10008,132 @@ int UnhealthyRoleCount { get; }
 
 Gets the number of roles currently reporting unhealthy runtime state.
 
+<a id="type-cephalon-abstractions-data-dataproductdescriptor"></a>
+
+### `DataProductDescriptor`
+
+Describes one module-owned data product surface contributed to the active runtime.
+
+#### Declaration
+```csharp
+public sealed class DataProductDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-dataproductdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `DataProductDescriptor`
+
+```csharp
+DataProductDescriptor(string id, string displayName, string description, string sourceModuleId, string domainId, string contractId, string mode, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new data product descriptor.
+
+Parameters:
+- `id`: The stable data product identifier.
+- `displayName`: The operator-facing data product name.
+- `description`: The human-readable data product description.
+- `sourceModuleId`: The module identifier that owns the data product.
+- `domainId`: The stable domain or bounded-context identifier for the data product.
+- `contractId`: The stable query or contract identifier exposed by the data product.
+- `mode`: The access mode such as `query`, `snapshot`, or `feed`.
+- `tags`: Optional descriptive tags associated with the data product.
+- `metadata`: Optional operator-facing metadata associated with the data product.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-dataproductdescriptor-contractid"></a>
+
+##### `ContractId`
+
+```csharp
+string ContractId { get; }
+```
+
+Gets the stable query or contract identifier exposed by the data product.
+
+<a id="member-p-cephalon-abstractions-data-dataproductdescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable data product description.
+
+<a id="member-p-cephalon-abstractions-data-dataproductdescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing data product name.
+
+<a id="member-p-cephalon-abstractions-data-dataproductdescriptor-domainid"></a>
+
+##### `DomainId`
+
+```csharp
+string DomainId { get; }
+```
+
+Gets the stable domain or bounded-context identifier for the data product.
+
+<a id="member-p-cephalon-abstractions-data-dataproductdescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable data product identifier.
+
+<a id="member-p-cephalon-abstractions-data-dataproductdescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets operator-facing metadata associated with the data product.
+
+<a id="member-p-cephalon-abstractions-data-dataproductdescriptor-mode"></a>
+
+##### `Mode`
+
+```csharp
+string Mode { get; }
+```
+
+Gets the declared access mode for the data product.
+
+<a id="member-p-cephalon-abstractions-data-dataproductdescriptor-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; }
+```
+
+Gets the identifier of the module that owns the data product.
+
+<a id="member-p-cephalon-abstractions-data-dataproductdescriptor-tags"></a>
+
+##### `Tags`
+
+```csharp
+IReadOnlyList<string> Tags { get; }
+```
+
+Gets descriptive tags associated with the data product.
+
 <a id="type-cephalon-abstractions-data-eventdispatchruntimedescriptor"></a>
 
 ### `EventDispatchRuntimeDescriptor`
@@ -10801,6 +10927,171 @@ DatabaseTopologyOperationalSnapshot CreateSnapshot()
 Creates the current database-topology posture snapshot.
 
 Returns: The current operator-facing database-topology posture snapshot.
+
+<a id="type-cephalon-abstractions-data-idataproductcatalog"></a>
+
+### `IDataProductCatalog`
+
+Exposes the data products visible to the current runtime.
+
+#### Declaration
+```csharp
+public interface IDataProductCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-idataproductcatalog-dataproducts"></a>
+
+##### `DataProducts`
+
+```csharp
+IReadOnlyList<DataProductDescriptor> DataProducts { get; }
+```
+
+Gets all data products visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-idataproductcatalog-getbycontractid-system-string"></a>
+
+##### `GetByContractId`
+
+```csharp
+IReadOnlyList<DataProductDescriptor> GetByContractId(string contractId)
+```
+
+Gets all data products that expose the requested contract identifier.
+
+Returns: The matching data products, or an empty list when no active data product exposes the contract.
+
+Parameters:
+- `contractId`: The contract identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-idataproductcatalog-getbydomainid-system-string"></a>
+
+##### `GetByDomainId`
+
+```csharp
+IReadOnlyList<DataProductDescriptor> GetByDomainId(string domainId)
+```
+
+Gets all data products that belong to the requested domain.
+
+Returns: The matching data products, or an empty list when the domain contributed none.
+
+Parameters:
+- `domainId`: The domain identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-idataproductcatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+DataProductDescriptor GetById(string dataProductId)
+```
+
+Gets one data product by its stable identifier.
+
+Returns: The matching data product, or `null` when it is not active.
+
+Parameters:
+- `dataProductId`: The data product identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-idataproductcatalog-getbysourcemodule-system-string"></a>
+
+##### `GetBySourceModule`
+
+```csharp
+IReadOnlyList<DataProductDescriptor> GetBySourceModule(string sourceModuleId)
+```
+
+Gets all data products contributed by the requested module.
+
+Returns: The matching data products, or an empty list when the module contributed none.
+
+Parameters:
+- `sourceModuleId`: The source module identifier to filter by.
+
+<a id="type-cephalon-abstractions-data-idataproductcontributor"></a>
+
+### `IDataProductContributor`
+
+Contributes one or more data product descriptors to the active runtime.
+
+#### Declaration
+```csharp
+public interface IDataProductContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-idataproductcontributor-registerdataproducts-cephalon-abstractions-data-idataproductregistry"></a>
+
+##### `RegisterDataProducts`
+
+```csharp
+void RegisterDataProducts(IDataProductRegistry dataProducts)
+```
+
+Registers one or more data product descriptors with the supplied registry.
+
+Parameters:
+- `dataProducts`: The registry that collects contributed data product descriptors.
+
+<a id="type-cephalon-abstractions-data-idataproductregistry"></a>
+
+### `IDataProductRegistry`
+
+Receives data product descriptors contributed by active modules or packages.
+
+#### Declaration
+```csharp
+public interface IDataProductRegistry
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-idataproductregistry-add-cephalon-abstractions-data-dataproductdescriptor"></a>
+
+##### `Add`
+
+```csharp
+void Add(DataProductDescriptor dataProduct)
+```
+
+Adds a data product to the current runtime composition.
+
+Parameters:
+- `dataProduct`: The data product descriptor to register.
+
+<a id="type-cephalon-abstractions-data-idataproduct-t"></a>
+
+### `IDataProduct<T>`
+
+Exposes a module-owned queryable data product.
+
+#### Declaration
+```csharp
+public interface IDataProduct<T>
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-idataproduct-1-queryasync-system-threading-cancellationtoken"></a>
+
+##### `QueryAsync`
+
+```csharp
+ValueTask<T> QueryAsync(CancellationToken cancellationToken)
+```
+
+Queries the current value of the data product.
+
+Returns: A task that completes with the current data product value.
+
+Parameters:
+- `cancellationToken`: The token that cancels the operation.
 
 <a id="type-cephalon-abstractions-data-ieventdispatchruntimecatalog"></a>
 

@@ -165,6 +165,11 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Data.ICommand<>),
             typeof(global::Cephalon.Abstractions.Data.ICommandHandler<>),
             typeof(global::Cephalon.Abstractions.Data.ICommandHandler<,>),
+            typeof(global::Cephalon.Abstractions.Data.DataProductDescriptor),
+            typeof(global::Cephalon.Abstractions.Data.IDataProduct<>),
+            typeof(global::Cephalon.Abstractions.Data.IDataProductCatalog),
+            typeof(global::Cephalon.Abstractions.Data.IDataProductContributor),
+            typeof(global::Cephalon.Abstractions.Data.IDataProductRegistry),
             typeof(global::Cephalon.Abstractions.Data.IEventDispatchRuntimeCatalog),
             typeof(global::Cephalon.Abstractions.Data.IEventDispatchRuntimeDescriptorCatalog),
             typeof(global::Cephalon.Abstractions.Data.IDatabaseRoleCatalog),
@@ -2472,6 +2477,37 @@ public sealed class PackageSurfaceTests
             .GetProperty("TargetUri", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot)
             .GetProperty("StranglerFigIngressRoutes", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void DataProductRuntimeContractsExposeSnapshotSurface()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.IDataProduct<>)
+            .GetMethod("QueryAsync", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.IDataProductCatalog)
+            .GetProperty("DataProducts", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.IDataProductCatalog)
+            .GetMethod("GetById", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.IDataProductCatalog)
+            .GetMethod("GetBySourceModule", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.IDataProductCatalog)
+            .GetMethod("GetByDomainId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.IDataProductCatalog)
+            .GetMethod("GetByContractId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.IDataProductContributor)
+            .GetMethod("RegisterDataProducts", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.IDataProductRegistry)
+            .GetMethod("Add", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.DataProductDescriptor)
+            .GetProperty("SourceModuleId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.DataProductDescriptor)
+            .GetProperty("DomainId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.DataProductDescriptor)
+            .GetProperty("ContractId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.DataProductDescriptor)
+            .GetProperty("Mode", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot)
+            .GetProperty("DataProducts", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

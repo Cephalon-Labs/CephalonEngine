@@ -1185,6 +1185,21 @@ Current note:
 - non-REST transports stay out of these REST catalogs and continue to surface through their own
   transport-specific runtime contracts
 
+## Data product surface
+
+`GET /engine/data-products` exposes the operator-facing data product catalog contributed by active modules.
+
+Current payload highlights:
+
+- each data product carries a stable `id`, `displayName`, `description`, `sourceModuleId`, `domainId`, `contractId`, and `mode`
+- `tags` and free-form `metadata` let a module publish freshness, classification, and other operator-facing data mesh hints without tying the engine to one provider or federation model
+- the same data product catalog is also available through `/engine/snapshot` when operators want one merged runtime answer
+
+Current note:
+
+- the baseline is intentionally descriptor-first: query execution still belongs to the owning module or data pack, while the engine owns the runtime catalog
+- invalid data-product source-module ownership fails at build time instead of leaking broken operator metadata
+
 ## Projection surface
 
 `GET /engine/projections` exposes the operator-facing projection catalog contributed by active modules.
@@ -2132,7 +2147,7 @@ Use `-SkipOperationalConventions` only when you intentionally want the wider rel
 It executes a curated suite that validates:
 
 - structured `Engine:Data`, `Engine:Identity`, `Engine:Tenancy`, `Engine:Audit`, and `Engine:Messaging` settings plus phase-8 app-profile truth
-- host-agnostic phase-8 contracts, runtime catalogs, and runtime-snapshot answers for projections, inboxes, outboxes, audit stores, and authorization policies
+- host-agnostic phase-8 contracts, runtime catalogs, and runtime-snapshot answers for data products, projections, inboxes, outboxes, audit stores, and authorization policies
 - `Cephalon.Data`, `Cephalon.Data.EntityFramework`, and `Cephalon.Ids.Sfid` through the shipped relational-first CQRS, inbox, outbox, and `Sfid` baseline
 - `Cephalon.Eventing` plus `Cephalon.Eventing.Wolverine` through the staged publication, declarative subscription, runtime-reporting, and adapter-surface path
 - `Cephalon.Identity`, `Cephalon.Identity.AspNetCore`, `Cephalon.MultiTenancy`, and `Cephalon.Audit` through their runtime surfaces, adapter behavior, and package/reference-doc truth

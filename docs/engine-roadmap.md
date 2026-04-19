@@ -898,11 +898,11 @@ Shipped baseline:
 - `ENG-121` now extends that same phase-13 runtime truth with `CellRouteDescriptor`, `ICellRouteContributor`, `ICellRouteCatalog`, `engine.AddCellRoute(...)`, `/engine/cell-routes*`, `snapshot.CellRoutes`, and the `cell-routes` technology runtime surface; active routes validate against the same boundary/module ownership graph instead of introducing a second host-only traffic registry
 - `ENG-122` now extends that same phase-13 runtime truth with `CellHealthIsolationDescriptor`, `ICellHealthIsolationContributor`, `ICellHealthIsolationCatalog`, `engine.AddCellHealthIsolation(...)`, `/engine/cell-health-isolations*`, `snapshot.CellHealthIsolations`, and the `cell-health-isolations` technology runtime surface; active health-isolation answers validate module ownership against the same boundary graph instead of inventing a host-only health partition registry
 - `ENG-123` now extends that same phase-13 runtime truth with `Engine:Cells:TrafficAutomation`, `CellSettings`, `CellTrafficAutomationSettings`, `CellTrafficAutomationRouteSettings`, `ICellTrafficAutomationRuntimeCatalog`, `/engine/cell-traffic-automations*`, `snapshot.CellTrafficAutomations`, and the `cell-traffic-automations` technology runtime surface; effective automation answers stay derived from the existing route plus health-isolation graph so module ownership remains authoritative instead of inventing a second host-only traffic manager
+- `ENG-124` now ships the first data mesh runtime baseline through `IDataProduct<T>`, `DataProductDescriptor`, `IDataProductCatalog`, `IDataProductContributor`, `IDataProductRegistry`, `/engine/data-products*`, and `snapshot.DataProducts`; queryable data-product ownership now stays module-backed through `sourceModuleId`, `domainId`, `contractId`, and `mode` instead of requiring a host-only catalog or provider-specific runtime surface
 
 Remaining follow-through:
 
 - provider-specific or edge-aware traffic automation over the shipped boundary, route, health-isolation, and configuration-driven traffic-automation catalogs
-- data mesh `IDataProduct<T>` abstraction where modules own queryable data products surfaced through the runtime catalog
 - change data capture `ICdcCapture` abstraction for automated database-change publication through the outbox without explicit staging
 
 Exit criteria:

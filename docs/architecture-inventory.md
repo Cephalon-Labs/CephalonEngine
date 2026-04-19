@@ -363,6 +363,12 @@ Host-agnostic contracts defined in `Cephalon.Abstractions` for data workloads.
 - `IProjectionRegistry` / `IProjectionCatalog` / `IProjectionContributor` — registration and discovery
 - `ProjectionDescriptor` — metadata for projection implementations
 
+### Data products
+
+- `IDataProduct<T>` — module-owned queryable data-product interface
+- `IDataProductRegistry` / `IDataProductCatalog` / `IDataProductContributor` — registration and discovery
+- `DataProductDescriptor` — metadata for data-product implementations
+
 ### Event sourcing
 
 - `IEventStore` — event stream persistence interface
@@ -507,6 +513,7 @@ The engine exposes operator-facing runtime information through these endpoints:
 - `/engine/rest-endpoint-authoring-policies` — grouped shorthand authoring-policy answers
 - `/engine/rest-endpoint-suppressions` — active REST suppression rules with runtime outcomes
 - `/engine/rest-endpoint-overrides` — active REST override rules with selected-versus-applied outcomes
+- `/engine/data-products` — data product descriptors
 - `/engine/projections` — projection descriptors
 - `/engine/inboxes` — inbox surfaces
 - `/engine/outboxes` — outbox surfaces

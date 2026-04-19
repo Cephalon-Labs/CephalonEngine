@@ -422,6 +422,15 @@ public static class EngineWebApplicationExtensions
                 return graph is null ? Results.NotFound() : Results.Ok(graph);
             })
             .WithName("GetCephalonExecutionGraph");
+        engineGroup.MapGet("/data-products", ([FromServices] IDataProductCatalog catalog) => TypedResults.Ok(catalog.DataProducts))
+            .WithName("GetCephalonDataProducts");
+        engineGroup.MapGet("/data-products/{dataProductId}", (string dataProductId, [FromServices] IDataProductCatalog catalog) =>
+            {
+                var dataProduct = catalog.GetById(dataProductId);
+
+                return dataProduct is null ? Results.NotFound() : Results.Ok(dataProduct);
+            })
+            .WithName("GetCephalonDataProduct");
         engineGroup.MapGet("/projections", ([FromServices] IProjectionCatalog catalog) => TypedResults.Ok(catalog.Projections))
             .WithName("GetCephalonProjections");
         engineGroup.MapGet("/projections/{projectionId}", (string projectionId, [FromServices] IProjectionCatalog catalog) =>

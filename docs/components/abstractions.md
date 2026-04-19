@@ -49,6 +49,9 @@
 - `AppModel/Scaffolding/SuiteScaffoldPlan.cs`
 - `AppModel/Scaffolding/SuiteScaffoldService.cs`
 - `Data/ICommand.cs`
+- `Data/IDataProduct.cs`
+- `Data/DataProductDescriptor.cs`
+- `Data/IDataProductCatalog.cs`
 - `Data/IReadStore.cs`
 - `Data/ProjectionDescriptor.cs`
 - `Data/InboxDescriptor.cs`
@@ -137,7 +140,7 @@ The behavior ownership contracts now follow that rule directly:
 
 The phase-8 families stay runtime-neutral on purpose:
 
-- `Data` defines CQRS, projection, outbox/inbox, and outbox-catalog contracts without picking Entity Framework, Wolverine, or any storage engine.
+- `Data` defines CQRS, data-product, projection, outbox/inbox, and outbox-catalog contracts without picking Entity Framework, Wolverine, or any storage engine.
 - `Authorization` defines subjects, resources, policies, and evaluation contracts without binding to ASP.NET Core identity types.
 - `Tenancy` defines tenant context and resolution contracts without assuming HTTP, DNS, or a single tenancy topology.
 - `Audit` defines audit actors, entries, write/query/export contracts, and audit-store descriptors without hard-coding storage or observability sinks.

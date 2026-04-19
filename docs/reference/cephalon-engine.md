@@ -9414,7 +9414,7 @@ A value indicating whether the hosted execution is expected to become active whe
 
 Combines the main operator-facing runtime views into a single payload.
 
-Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, execution-graph details, hosted-execution details, technology-pack details, diagnostics conventions, data projection details, outbox details, inbox details, event-dispatch runtime details, durable-execution runtime details, authorization-policy details, database-migration playbook details, database-topology posture details, and lifecycle story data.
+Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, execution-graph details, hosted-execution details, technology-pack details, diagnostics conventions, data product details, data projection details, outbox details, inbox details, event-dispatch runtime details, durable-execution runtime details, authorization-policy details, database-migration playbook details, database-topology posture details, and lifecycle story data.
 
 #### Declaration
 ```csharp
@@ -9433,7 +9433,7 @@ RuntimeIntrospectionSnapshot(RuntimeManifest Manifest, RuntimeStatusSnapshot Sta
 
 Combines the main operator-facing runtime views into a single payload.
 
-Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, execution-graph details, hosted-execution details, technology-pack details, diagnostics conventions, data projection details, outbox details, inbox details, event-dispatch runtime details, durable-execution runtime details, authorization-policy details, database-migration playbook details, database-topology posture details, and lifecycle story data.
+Remarks: This snapshot is intended for tooling and operator surfaces that need one coherent view of the runtime without issuing separate requests for manifest, status, execution-graph details, hosted-execution details, technology-pack details, diagnostics conventions, data product details, data projection details, outbox details, inbox details, event-dispatch runtime details, durable-execution runtime details, authorization-policy details, database-migration playbook details, database-topology posture details, and lifecycle story data.
 
 Parameters:
 - `Manifest`: The immutable manifest that describes the built runtime shape.
@@ -9584,6 +9584,16 @@ DatabaseTopologyOperationalSnapshot DatabaseTopology { get; set; }
 ```
 
 Gets the engine-owned database-topology posture snapshot visible to the runtime at the time the snapshot was created.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-dataproducts"></a>
+
+##### `DataProducts`
+
+```csharp
+IReadOnlyList<DataProductDescriptor> DataProducts { get; set; }
+```
+
+Gets the data products contributed by active modules and visible to the runtime at the time the snapshot was created.
 
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-diagnosticsconventions"></a>
 

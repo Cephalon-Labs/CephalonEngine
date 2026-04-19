@@ -260,17 +260,28 @@ Effort: medium for the remaining follow-through.
 
 ### Data Mesh (domain-owned data products)
 
-Current state: the module system and polyglot persistence are a natural fit for data mesh, but there is no explicit data product concept.
+Current state: the first data-product baseline is now shipped. `Cephalon.Abstractions` now exposes
+`IDataProduct<T>`, `DataProductDescriptor`, `IDataProductCatalog`,
+`IDataProductContributor`, and `IDataProductRegistry`; `Cephalon.Engine` now
+projects `snapshot.DataProducts`; and ASP.NET Core now exposes `/engine/data-products`
+plus `/engine/data-products/{dataProductId}` so module-owned query surfaces are
+inspectable through the same runtime truth as other engine catalogs.
 
-Recommendation: add `IDataProduct<T>` abstraction where each module owns its queryable data product.
+Recommendation: keep the initial descriptor/runtime surface focused on module ownership,
+domain identity, contract identity, and access mode so data mesh stays host-agnostic
+without freezing provider or federation decisions too early.
 
-Implementation outline:
+Shipped baseline:
 - `IDataProduct<T>` — module-owned, queryable data product
-- Data product catalog in runtime surface
-- Self-serve data infrastructure via module capabilities
-- Capability: `data.data-product`
+- `DataProductDescriptor` — operator-facing module/domain/contract/mode metadata
+- data product catalog in runtime surface through `/engine/data-products` and `snapshot.DataProducts`
 
-Effort: medium.
+Later follow-through:
+- self-serve data infrastructure via module capabilities
+- capability convention: `data.data-product`
+- provider-specific federation, freshness, and governance follow-through over the shipped catalog
+
+Effort: medium for the remaining follow-through.
 
 ### Durable Execution (Temporal/Restate style)
 

@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-19T17:47:43.314634+00:00",
+  "GeneratedAtUtc": "2026-04-19T18:14:25.0729855+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 318
+      "TypeCount": 323
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -515,7 +515,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
-      "TypeCount": 54
+      "TypeCount": 59
     },
     {
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
@@ -3669,6 +3669,21 @@
       }
     },
     {
+      "DisplayName": "DataProductDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-dataproductdescriptor",
+      "Declaration": "public sealed class DataProductDescriptor",
+      "Summary": "Describes one module-owned data product surface contributed to the active runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 9,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "DataRuntimeOptions",
       "NamespaceName": "Cephalon.Data.Configuration",
       "AssemblyName": "Cephalon.Data",
@@ -6031,6 +6046,66 @@
       "AnchorId": "type-cephalon-abstractions-data-idatabasetopologyoperationalsnapshotprovider",
       "Declaration": "public interface IDatabaseTopologyOperationalSnapshotProvider",
       "Summary": "Creates the engine-owned operator-facing database-topology posture snapshot for the current runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IDataProduct\u003CT\u003E",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-idataproduct-t",
+      "Declaration": "public interface IDataProduct\u003CT\u003E",
+      "Summary": "Exposes a module-owned queryable data product.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IDataProductCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-idataproductcatalog",
+      "Declaration": "public interface IDataProductCatalog",
+      "Summary": "Exposes the data products visible to the current runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 4
+      }
+    },
+    {
+      "DisplayName": "IDataProductContributor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-idataproductcontributor",
+      "Declaration": "public interface IDataProductContributor",
+      "Summary": "Contributes one or more data product descriptors to the active runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IDataProductRegistry",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-idataproductregistry",
+      "Declaration": "public interface IDataProductRegistry",
+      "Summary": "Receives data product descriptors contributed by active modules or packages.",
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
@@ -10249,7 +10324,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 41,
+        "Properties": 42,
         "Methods": 0
       }
     },
@@ -11800,6 +11875,17 @@
       "AnchorId": "member-m-cephalon-abstractions-technologies-icellrouteregistry-add-cephalon-abstractions-technologies-cellroutedescriptor",
       "Signature": "void Add(CellRouteDescriptor cellRoute)",
       "Summary": "Adds one cell-route descriptor to the active runtime composition."
+    },
+    {
+      "DisplayName": "Add",
+      "Category": "Methods",
+      "DeclaringTypeName": "IDataProductRegistry",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-idataproductregistry-add-cephalon-abstractions-data-dataproductdescriptor",
+      "Signature": "void Add(DataProductDescriptor dataProduct)",
+      "Summary": "Adds a data product to the current runtime composition."
     },
     {
       "DisplayName": "Add",
@@ -19018,6 +19104,17 @@
       "Summary": "Gets a value indicating whether the latest report says the workflow still has continuation work pending."
     },
     {
+      "DisplayName": "ContractId",
+      "Category": "Properties",
+      "DeclaringTypeName": "DataProductDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-dataproductdescriptor-contractid",
+      "Signature": "string ContractId { get; }",
+      "Summary": "Gets the stable query or contract identifier exposed by the data product."
+    },
+    {
       "DisplayName": "Contracts",
       "Category": "Fields",
       "DeclaringTypeName": "ProjectRoles",
@@ -20195,6 +20292,39 @@
       "Summary": "Gets the datacenter identifier supplied to the generator."
     },
     {
+      "DisplayName": "DataProductDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "DataProductDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-dataproductdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "DataProductDescriptor(string id, string displayName, string description, string sourceModuleId, string domainId, string contractId, string mode, IReadOnlyList\u003Cstring\u003E tags, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a new data product descriptor."
+    },
+    {
+      "DisplayName": "DataProducts",
+      "Category": "Properties",
+      "DeclaringTypeName": "IDataProductCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-idataproductcatalog-dataproducts",
+      "Signature": "IReadOnlyList\u003CDataProductDescriptor\u003E DataProducts { get; }",
+      "Summary": "Gets all data products visible to the current runtime."
+    },
+    {
+      "DisplayName": "DataProducts",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-dataproducts",
+      "Signature": "IReadOnlyList\u003CDataProductDescriptor\u003E DataProducts { get; set; }",
+      "Summary": "Gets the data products contributed by active modules and visible to the runtime at the time the snapshot was created."
+    },
+    {
       "DisplayName": "DataRuntimeOptions",
       "Category": "Constructors",
       "DeclaringTypeName": "DataRuntimeOptions",
@@ -21073,6 +21203,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databaseroledescriptor-description",
       "Signature": "string Description { get; }",
       "Summary": "Gets the human-readable database-role description."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "DataProductDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-dataproductdescriptor-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the human-readable data product description."
     },
     {
       "DisplayName": "Description",
@@ -22166,6 +22307,17 @@
     {
       "DisplayName": "DisplayName",
       "Category": "Properties",
+      "DeclaringTypeName": "DataProductDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-dataproductdescriptor-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the operator-facing data product name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
       "DeclaringTypeName": "DependencyHealthReport",
       "NamespaceName": "Cephalon.Abstractions.Health",
       "AssemblyName": "Cephalon.Abstractions",
@@ -22701,6 +22853,17 @@
       "AnchorId": "member-p-cephalon-engine-patterns-builtinpatterns-domaindrivendesign",
       "Signature": "PatternDescriptor DomainDrivenDesign { get; }",
       "Summary": "Gets the domain-driven-design pattern."
+    },
+    {
+      "DisplayName": "DomainId",
+      "Category": "Properties",
+      "DeclaringTypeName": "DataProductDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-dataproductdescriptor-domainid",
+      "Signature": "string DomainId { get; }",
+      "Summary": "Gets the stable domain or bounded-context identifier for the data product."
     },
     {
       "DisplayName": "Domains",
@@ -27631,6 +27794,17 @@
       "Summary": "Gets the reported durable-execution state entries that currently include the requested compensation action."
     },
     {
+      "DisplayName": "GetByContractId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IDataProductCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-idataproductcatalog-getbycontractid-system-string",
+      "Signature": "IReadOnlyList\u003CDataProductDescriptor\u003E GetByContractId(string contractId)",
+      "Summary": "Gets all data products that expose the requested contract identifier."
+    },
+    {
       "DisplayName": "GetByCorrelationId",
       "Category": "Methods",
       "DeclaringTypeName": "ISagaChoreographyPublicationRuntimeStateCatalog",
@@ -27651,6 +27825,17 @@
       "AnchorId": "member-m-cephalon-abstractions-technologies-icellhealthisolationcatalog-getbydependencyid-system-string",
       "Signature": "IReadOnlyList\u003CCellHealthIsolationDescriptor\u003E GetByDependencyId(string dependencyId)",
       "Summary": "Gets all cell health-isolation answers that reference the requested dependency."
+    },
+    {
+      "DisplayName": "GetByDomainId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IDataProductCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-idataproductcatalog-getbydomainid-system-string",
+      "Signature": "IReadOnlyList\u003CDataProductDescriptor\u003E GetByDomainId(string domainId)",
+      "Summary": "Gets all data products that belong to the requested domain."
     },
     {
       "DisplayName": "GetByExecutionGraph",
@@ -27805,6 +27990,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-idatabaserolecatalog-getbyid-system-string",
       "Signature": "DatabaseRoleDescriptor GetById(string databaseRoleId)",
       "Summary": "Gets one database role by its logical identifier."
+    },
+    {
+      "DisplayName": "GetById",
+      "Category": "Methods",
+      "DeclaringTypeName": "IDataProductCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-idataproductcatalog-getbyid-system-string",
+      "Signature": "DataProductDescriptor GetById(string dataProductId)",
+      "Summary": "Gets one data product by its stable identifier."
     },
     {
       "DisplayName": "GetById",
@@ -28311,6 +28507,17 @@
       "AnchorId": "member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbysourcemodule-system-string",
       "Signature": "IReadOnlyList\u003CCellTrafficAutomationRuntimeDescriptor\u003E GetBySourceModule(string sourceModuleId)",
       "Summary": "Gets all effective cell traffic-automation answers owned by the requested module."
+    },
+    {
+      "DisplayName": "GetBySourceModule",
+      "Category": "Methods",
+      "DeclaringTypeName": "IDataProductCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-idataproductcatalog-getbysourcemodule-system-string",
+      "Signature": "IReadOnlyList\u003CDataProductDescriptor\u003E GetBySourceModule(string sourceModuleId)",
+      "Summary": "Gets all data products contributed by the requested module."
     },
     {
       "DisplayName": "GetBySourceModule",
@@ -31259,6 +31466,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databasetopologyoperationaladvisory-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable advisory identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "DataProductDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-dataproductdescriptor-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable data product identifier."
     },
     {
       "DisplayName": "Id",
@@ -35553,6 +35771,17 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "DataProductDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-dataproductdescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets operator-facing metadata associated with the data product."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "DurableExecutionCompensationAction",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -36583,6 +36812,17 @@
       "AnchorId": "member-p-cephalon-abstractions-behaviors-behavioridempotencyattribute-mode",
       "Signature": "BehaviorIdempotencyMode Mode { get; }",
       "Summary": "Gets the declared idempotency mode."
+    },
+    {
+      "DisplayName": "Mode",
+      "Category": "Properties",
+      "DeclaringTypeName": "DataProductDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-dataproductdescriptor-mode",
+      "Signature": "string Mode { get; }",
+      "Summary": "Gets the declared access mode for the data product."
     },
     {
       "DisplayName": "Mode",
@@ -41139,6 +41379,17 @@
       "Summary": "Queries audit-history entries using the supplied host-agnostic filter set."
     },
     {
+      "DisplayName": "QueryAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "IDataProduct\u003CT\u003E",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-idataproduct-1-queryasync-system-threading-cancellationtoken",
+      "Signature": "ValueTask\u003CT\u003E QueryAsync(CancellationToken cancellationToken)",
+      "Summary": "Queries the current value of the data product."
+    },
+    {
       "DisplayName": "QueueLimit",
       "Category": "Properties",
       "DeclaringTypeName": "RateLimitingOverrideSelection",
@@ -41940,6 +42191,17 @@
       "AnchorId": "member-m-cephalon-retrieval-services-iknowledgecollectioncontributor-registercollections-cephalon-retrieval-services-iknowledgecollectionregistry",
       "Signature": "void RegisterCollections(IKnowledgeCollectionRegistry collections)",
       "Summary": "Registers one or more knowledge collection descriptors with the supplied registry."
+    },
+    {
+      "DisplayName": "RegisterDataProducts",
+      "Category": "Methods",
+      "DeclaringTypeName": "IDataProductContributor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-idataproductcontributor-registerdataproducts-cephalon-abstractions-data-idataproductregistry",
+      "Signature": "void RegisterDataProducts(IDataProductRegistry dataProducts)",
+      "Summary": "Registers one or more data product descriptors with the supplied registry."
     },
     {
       "DisplayName": "RegisterDbContextCapabilities",
@@ -47444,6 +47706,17 @@
     {
       "DisplayName": "SourceModuleId",
       "Category": "Properties",
+      "DeclaringTypeName": "DataProductDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-dataproductdescriptor-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; }",
+      "Summary": "Gets the identifier of the module that owns the data product."
+    },
+    {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
       "DeclaringTypeName": "DurableExecutionRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -49849,6 +50122,17 @@
       "AnchorId": "member-p-cephalon-abstractions-authorization-authorizationpolicydescriptor-tags",
       "Signature": "IReadOnlyList\u003Cstring\u003E Tags { get; }",
       "Summary": "Gets descriptive tags associated with the policy."
+    },
+    {
+      "DisplayName": "Tags",
+      "Category": "Properties",
+      "DeclaringTypeName": "DataProductDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-dataproductdescriptor-tags",
+      "Signature": "IReadOnlyList\u003Cstring\u003E Tags { get; }",
+      "Summary": "Gets descriptive tags associated with the data product."
     },
     {
       "DisplayName": "Tags",

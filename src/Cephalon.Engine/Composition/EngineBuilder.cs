@@ -835,6 +835,7 @@ public sealed class EngineBuilder
             var modulesByType = orderedModules.ToDictionary(module => module.GetType());
             var executionGraphs = new List<ExecutionGraphDescriptor>();
             var hostedExecutions = new List<HostedExecutionDescriptor>();
+            var dataProducts = new List<DataProductDescriptor>();
             var projections = new List<ProjectionDescriptor>();
             var outboxes = new List<OutboxDescriptor>();
             var inboxes = new List<InboxDescriptor>();
@@ -863,6 +864,12 @@ public sealed class EngineBuilder
             {
                 ((IHostedExecutionContributor)module).RegisterHostedExecutions(
                     new HostedExecutionRegistryAdapter(module.Descriptor.Id, hostedExecutions));
+            }
+
+            foreach (var module in orderedModules.Where(static module => module is IDataProductContributor))
+            {
+                ((IDataProductContributor)module).RegisterDataProducts(
+                    new DataProductRegistryAdapter(module.Descriptor.Id, dataProducts));
             }
 
             foreach (var module in orderedModules.Where(static module => module is IProjectionContributor))
@@ -1018,6 +1025,7 @@ public sealed class EngineBuilder
                 serviceProvider.GetRequiredService<DatabaseMigrationCatalogSnapshot>());
             Services.TryAddSingleton<IDatabaseMigrationOperationalPlaybookProvider, DatabaseMigrationOperationalPlaybookProvider>();
             Services.TryAddSingleton<IDatabaseTopologyOperationalSnapshotProvider, DatabaseTopologyOperationalSnapshotProvider>();
+            Services.TryAddSingleton<IDataProductCatalog>(_ => new DataProductCatalogSnapshot(dataProducts));
             Services.TryAddSingleton<IProjectionCatalog>(_ => new ProjectionCatalogSnapshot(projections));
             Services.TryAddSingleton<IOutboxCatalog>(serviceProvider =>
                 new OutboxCatalogSnapshot(

@@ -174,6 +174,9 @@ Browse the published API surface by public member.
 - [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icellrouteregistry-add-cephalon-abstractions-technologies-cellroutedescriptor): `Methods` on `ICellRouteRegistry` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Adds one cell-route descriptor to the active runtime composition.
   - `void Add(CellRouteDescriptor cellRoute)`
+- [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idataproductregistry-add-cephalon-abstractions-data-dataproductdescriptor): `Methods` on `IDataProductRegistry` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Adds a data product to the current runtime composition.
+  - `void Add(DataProductDescriptor dataProduct)`
 - [Add](cephalon-edge.md#member-m-cephalon-edge-services-iedgenoderegistry-add-cephalon-edge-services-edgenodedescriptor): `Methods` on `IEdgeNodeRegistry` in `Cephalon.Edge.Services` (`Cephalon.Edge`) [Browse](browse.html?q=Add&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Services&scope=members)
   - Adds an edge node descriptor to the registry.
   - `void Add(EdgeNodeDescriptor node)`
@@ -2148,6 +2151,9 @@ Browse the published API surface by public member.
 - [ContinuationPending](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-continuationpending): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=ContinuationPending&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets a value indicating whether the latest report says the workflow still has continuation work pending.
   - `bool ContinuationPending { get; }`
+- [ContractId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-dataproductdescriptor-contractid): `Properties` on `DataProductDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ContractId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable query or contract identifier exposed by the data product.
+  - `string ContractId { get; }`
 - [Contracts](cephalon-abstractions.md#member-f-cephalon-abstractions-appmodel-scaffolding-projectroles-contracts): `Fields` on `ProjectRoles` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Contracts&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Identifies the contracts project.
   - `const string Contracts`
@@ -2472,6 +2478,15 @@ Browse the published API surface by public member.
 - [DatacenterId](cephalon-ids-sfid.md#member-p-cephalon-ids-sfid-configuration-sfididoptions-datacenterid): `Properties` on `SfidIdOptions` in `Cephalon.Ids.Sfid.Configuration` (`Cephalon.Ids.Sfid`) [Browse](browse.html?q=DatacenterId&assembly=Cephalon.Ids.Sfid&namespace=Cephalon.Ids.Sfid.Configuration&scope=members)
   - Gets the datacenter identifier supplied to the generator.
   - `int? DatacenterId { get; set; }`
+- [DataProductDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-data-dataproductdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `DataProductDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DataProductDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Creates a new data product descriptor.
+  - `DataProductDescriptor(string id, string displayName, string description, string sourceModuleId, string domainId, string contractId, string mode, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
+- [DataProducts](cephalon-abstractions.md#member-p-cephalon-abstractions-data-idataproductcatalog-dataproducts): `Properties` on `IDataProductCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DataProducts&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets all data products visible to the current runtime.
+  - `IReadOnlyList<DataProductDescriptor> DataProducts { get; }`
+- [DataProducts](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-dataproducts): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=DataProducts&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the data products contributed by active modules and visible to the runtime at the time the snapshot was created.
+  - `IReadOnlyList<DataProductDescriptor> DataProducts { get; set; }`
 - [DataRuntimeOptions](cephalon-data.md#member-m-cephalon-data-configuration-dataruntimeoptions-ctor): `Constructors` on `DataRuntimeOptions` in `Cephalon.Data.Configuration` (`Cephalon.Data`) [Browse](browse.html?q=DataRuntimeOptions&assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration&scope=members)
   - Initializes a new instance of the `DataRuntimeOptions` class.
   - `DataRuntimeOptions()`
@@ -2711,6 +2726,9 @@ Browse the published API surface by public member.
   - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-description): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the human-readable database-role description.
+  - `string Description { get; }`
+- [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-dataproductdescriptor-description): `Properties` on `DataProductDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the human-readable data product description.
   - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-description): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - The operator-facing health description.
@@ -3009,6 +3027,9 @@ Browse the published API surface by public member.
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-displayname): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing database-role name.
   - `string DisplayName { get; }`
+- [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-data-dataproductdescriptor-displayname): `Properties` on `DataProductDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the operator-facing data product name.
+  - `string DisplayName { get; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-displayname): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - The human-readable dependency name.
   - `string DisplayName { get; set; }`
@@ -3156,6 +3177,9 @@ Browse the published API surface by public member.
 - [DomainDrivenDesign](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-domaindrivendesign): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=DomainDrivenDesign&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Gets the domain-driven-design pattern.
   - `PatternDescriptor DomainDrivenDesign { get; }`
+- [DomainId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-dataproductdescriptor-domainid): `Properties` on `DataProductDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DomainId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable domain or bounded-context identifier for the data product.
+  - `string DomainId { get; }`
 - [Domains](cephalon-abstractions.md#member-p-cephalon-abstractions-tenancy-tenantcontext-domains): `Properties` on `TenantContext` in `Cephalon.Abstractions.Tenancy` (`Cephalon.Abstractions`) [Browse](browse.html?q=Domains&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Tenancy&scope=members)
   - Gets the domains associated with the tenant.
   - `IReadOnlyList<string> Domains { get; }`
@@ -4509,12 +4533,18 @@ Browse the published API surface by public member.
 - [GetByCompensationActionId](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getbycompensationactionid-system-string): `Methods` on `IDurableExecutionRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByCompensationActionId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the reported durable-execution state entries that currently include the requested compensation action.
   - `IReadOnlyList<DurableExecutionRuntimeState> GetByCompensationActionId(string compensationActionId)`
+- [GetByContractId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idataproductcatalog-getbycontractid-system-string): `Methods` on `IDataProductCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByContractId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets all data products that expose the requested contract identifier.
+  - `IReadOnlyList<DataProductDescriptor> GetByContractId(string contractId)`
 - [GetByCorrelationId](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-getbycorrelationid-system-string): `Methods` on `ISagaChoreographyPublicationRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByCorrelationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the reported publication-state entries associated with one correlation identifier.
   - `IReadOnlyList<SagaChoreographyPublicationRuntimeState> GetByCorrelationId(string correlationId)`
 - [GetByDependencyId](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icellhealthisolationcatalog-getbydependencyid-system-string): `Methods` on `ICellHealthIsolationCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByDependencyId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets all cell health-isolation answers that reference the requested dependency.
   - `IReadOnlyList<CellHealthIsolationDescriptor> GetByDependencyId(string dependencyId)`
+- [GetByDomainId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idataproductcatalog-getbydomainid-system-string): `Methods` on `IDataProductCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByDomainId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets all data products that belong to the requested domain.
+  - `IReadOnlyList<DataProductDescriptor> GetByDomainId(string domainId)`
 - [GetByExecutionGraph](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-ihostedexecutionruntimecatalog-getbyexecutiongraph-system-string): `Methods` on `IHostedExecutionRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByExecutionGraph&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets all hosted executions linked to one execution graph.
   - `IReadOnlyList<HostedExecutionDescriptor> GetByExecutionGraph(string executionGraphId)`
@@ -4557,6 +4587,9 @@ Browse the published API surface by public member.
 - [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idatabaserolecatalog-getbyid-system-string): `Methods` on `IDatabaseRoleCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets one database role by its logical identifier.
   - `DatabaseRoleDescriptor GetById(string databaseRoleId)`
+- [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idataproductcatalog-getbyid-system-string): `Methods` on `IDataProductCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets one data product by its stable identifier.
+  - `DataProductDescriptor GetById(string dataProductId)`
 - [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-idurableexecutionruntimecatalog-getbyid-system-string): `Methods` on `IDurableExecutionRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets one durable-execution workflow by its stable behavior identifier.
   - `DurableExecutionRuntimeDescriptor GetById(string behaviorId)`
@@ -4695,6 +4728,9 @@ Browse the published API surface by public member.
 - [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbysourcemodule-system-string): `Methods` on `ICellTrafficAutomationRuntimeCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets all effective cell traffic-automation answers owned by the requested module.
   - `IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> GetBySourceModule(string sourceModuleId)`
+- [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idataproductcatalog-getbysourcemodule-system-string): `Methods` on `IDataProductCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets all data products contributed by the requested module.
+  - `IReadOnlyList<DataProductDescriptor> GetBySourceModule(string sourceModuleId)`
 - [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-idurableexecutionruntimecatalog-getbysourcemodule-system-string): `Methods` on `IDurableExecutionRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets all durable-execution workflows contributed by the requested module.
   - `IReadOnlyList<DurableExecutionRuntimeDescriptor> GetBySourceModule(string sourceModuleId)`
@@ -5504,6 +5540,9 @@ Browse the published API surface by public member.
   - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasetopologyoperationaladvisory-id): `Properties` on `DatabaseTopologyOperationalAdvisory` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable advisory identifier.
+  - `string Id { get; }`
+- [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-data-dataproductdescriptor-id): `Properties` on `DataProductDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable data product identifier.
   - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-id): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - The stable dependency identifier.
@@ -6687,6 +6726,9 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroleruntimedescriptor-metadata): `Properties` on `DatabaseRoleRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets optional runtime metadata associated with the role.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-dataproductdescriptor-metadata): `Properties` on `DataProductDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets operator-facing metadata associated with the data product.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutioncompensationaction-metadata): `Properties` on `DurableExecutionCompensationAction` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets additional operator-facing metadata describing the compensation action.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -6969,6 +7011,9 @@ Browse the published API surface by public member.
 - [Mode](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behavioridempotencyattribute-mode): `Properties` on `BehaviorIdempotencyAttribute` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Mode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the declared idempotency mode.
   - `BehaviorIdempotencyMode Mode { get; }`
+- [Mode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-dataproductdescriptor-mode): `Properties` on `DataProductDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Mode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the declared access mode for the data product.
+  - `string Mode { get; }`
 - [Mode](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-mode): `Properties` on `EventStreamDescriptor` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=Mode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Gets the normalized stream persistence mode.
   - `string Mode { get; }`
@@ -8223,6 +8268,9 @@ Browse the published API surface by public member.
 - [QueryAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-audit-iaudithistoryreader-queryasync-cephalon-abstractions-audit-audithistoryquery-system-threading-cancellationtoken): `Methods` on `IAuditHistoryReader` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=QueryAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Queries audit-history entries using the supplied host-agnostic filter set.
   - `ValueTask<AuditHistoryQueryResult> QueryAsync(AuditHistoryQuery query, CancellationToken cancellationToken)`
+- [QueryAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idataproduct-1-queryasync-system-threading-cancellationtoken): `Methods` on `IDataProduct<T>` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=QueryAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Queries the current value of the data product.
+  - `ValueTask<T> QueryAsync(CancellationToken cancellationToken)`
 - [QueueLimit](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-queuelimit): `Properties` on `RateLimitingOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=QueueLimit&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the maximum queued requests allowed before rejection.
   - `int? QueueLimit { get; }`
@@ -8445,6 +8493,9 @@ Browse the published API surface by public member.
 - [RegisterCollections](cephalon-retrieval.md#member-m-cephalon-retrieval-services-iknowledgecollectioncontributor-registercollections-cephalon-retrieval-services-iknowledgecollectionregistry): `Methods` on `IKnowledgeCollectionContributor` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=RegisterCollections&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Registers one or more knowledge collection descriptors with the supplied registry.
   - `void RegisterCollections(IKnowledgeCollectionRegistry collections)`
+- [RegisterDataProducts](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idataproductcontributor-registerdataproducts-cephalon-abstractions-data-idataproductregistry): `Methods` on `IDataProductContributor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RegisterDataProducts&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Registers one or more data product descriptors with the supplied registry.
+  - `void RegisterDataProducts(IDataProductRegistry dataProducts)`
 - [RegisterDbContextCapabilities](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdataoptions-registerdbcontextcapabilities): `Properties` on `EntityFrameworkDataOptions` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=RegisterDbContextCapabilities&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
   - Gets or sets a value indicating whether the pack should publish read/write `DbContext` role capabilities.
   - `bool RegisterDbContextCapabilities { get; set; }`
@@ -9948,6 +9999,9 @@ Browse the published API surface by public member.
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-sourcemoduleid): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the module that owns the governed route.
   - `string SourceModuleId { get; }`
+- [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-dataproductdescriptor-sourcemoduleid): `Properties` on `DataProductDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the identifier of the module that owns the data product.
+  - `string SourceModuleId { get; }`
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-sourcemoduleid): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the owning module identifier when one is known at runtime.
   - `string SourceModuleId { get; }`
@@ -10607,6 +10661,9 @@ Browse the published API surface by public member.
   - `IReadOnlyList<string> Tags { get; }`
 - [Tags](cephalon-abstractions.md#member-p-cephalon-abstractions-authorization-authorizationpolicydescriptor-tags): `Properties` on `AuthorizationPolicyDescriptor` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets descriptive tags associated with the policy.
+  - `IReadOnlyList<string> Tags { get; }`
+- [Tags](cephalon-abstractions.md#member-p-cephalon-abstractions-data-dataproductdescriptor-tags): `Properties` on `DataProductDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets descriptive tags associated with the data product.
   - `IReadOnlyList<string> Tags { get; }`
 - [Tags](cephalon-edge.md#member-p-cephalon-edge-services-edgenodedescriptor-tags): `Properties` on `EdgeNodeDescriptor` in `Cephalon.Edge.Services` (`Cephalon.Edge`) [Browse](browse.html?q=Tags&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Services&scope=members)
   - Gets the normalized tag set associated with the node.

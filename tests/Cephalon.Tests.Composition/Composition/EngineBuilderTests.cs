@@ -272,6 +272,7 @@ public sealed class EngineBuilderTests
                 ["Engine:Options:Modules:restricted:Enabled"] = "false",
                 ["Engine:Options:Modules:technology-catalog:Enabled"] = "false",
                 ["Engine:Options:Modules:phase8-runtime-catalogs:Enabled"] = "false",
+                ["Engine:Options:Modules:invalid-phase8-data-product:Enabled"] = "false",
                 ["Engine:Options:Modules:invalid-phase8-projection:Enabled"] = "false",
                 ["Engine:Options:Modules:invalid-phase8-outbox:Enabled"] = "false",
                 ["Engine:Options:Modules:invalid-phase8-inbox:Enabled"] = "false",
@@ -1699,7 +1700,7 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
-    public void BuildExposesPhase8ProjectionInboxOutboxAndAuthorizationCatalogsThroughRuntimeSnapshot()
+    public void BuildExposesPhase8DataProductProjectionInboxOutboxAndAuthorizationCatalogsThroughRuntimeSnapshot()
     {
         var services = new ServiceCollection();
         services.AddCephalon(engine =>
@@ -1714,12 +1715,24 @@ public sealed class EngineBuilderTests
         });
 
         using var provider = services.BuildServiceProvider();
+        var dataProductCatalog = provider.GetRequiredService<IDataProductCatalog>();
         var projectionCatalog = provider.GetRequiredService<IProjectionCatalog>();
         var inboxCatalog = provider.GetRequiredService<IInboxCatalog>();
         var outboxCatalog = provider.GetRequiredService<IOutboxCatalog>();
         var auditStoreCatalog = provider.GetRequiredService<IAuditStoreCatalog>();
         var authorizationCatalog = provider.GetRequiredService<IAuthorizationPolicyCatalog>();
         var snapshot = provider.GetRequiredService<IRuntimeIntrospectionSnapshotProvider>().CreateSnapshot();
+
+        var dataProduct = Assert.Single(dataProductCatalog.DataProducts);
+        Assert.Equal("tenant-profile", dataProduct.Id);
+        Assert.Equal("phase8-runtime-catalogs", dataProduct.SourceModuleId);
+        Assert.Equal("tenant-management", dataProduct.DomainId);
+        Assert.Equal("tenant-profile-v1", dataProduct.ContractId);
+        Assert.Equal("near-real-time", dataProduct.Metadata["freshness"]);
+        Assert.Same(dataProduct, dataProductCatalog.GetById("tenant-profile"));
+        Assert.Single(dataProductCatalog.GetBySourceModule("phase8-runtime-catalogs"));
+        Assert.Single(dataProductCatalog.GetByDomainId("tenant-management"));
+        Assert.Single(dataProductCatalog.GetByContractId("tenant-profile-v1"));
 
         var projection = Assert.Single(projectionCatalog.Projections);
         Assert.Equal("tenant-summary", projection.Id);
@@ -1769,16 +1782,32 @@ public sealed class EngineBuilderTests
         Assert.Single(authorizationCatalog.GetByMode(AuthorizationMode.Rbac));
         Assert.Equal(2, authorizationCatalog.GetByMode(AuthorizationMode.Policy).Count);
 
+        Assert.Single(snapshot.DataProducts);
         Assert.Single(snapshot.Projections);
         Assert.Single(snapshot.Inboxes);
         Assert.Single(snapshot.Outboxes);
         Assert.Single(snapshot.AuditStores);
         Assert.Equal(2, snapshot.AuthorizationPolicies.Count);
+        Assert.Contains(snapshot.DataProducts, item => item.Id == "tenant-profile");
         Assert.Contains(snapshot.Projections, item => item.Id == "tenant-summary");
         Assert.Contains(snapshot.Inboxes, item => item.Id == "tenant-event-inbox");
         Assert.Contains(snapshot.Outboxes, item => item.Id == "tenant-event-outbox");
         Assert.Contains(snapshot.AuditStores, item => item.Id == "tenant-audit-store");
         Assert.Contains(snapshot.AuthorizationPolicies, item => item.Id == "tenant-boundary");
+    }
+
+    [Fact]
+    public void BuildRejectsPhase8DataProductThatSpoofsItsSourceModule()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseSettings(new EngineSettings(blueprint: "ModularMonolith"));
+        builder.AddModule(new PlatformTestModule());
+        builder.AddModule(new InvalidDataProductSourceModule());
+
+        var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+        Assert.Contains("broken-data-product", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("another-module", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
