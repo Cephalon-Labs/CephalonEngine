@@ -395,6 +395,7 @@ If you need to resume deeper analysis later, the most likely next focus areas ar
 - `Cephalon.Engine` runtime, package, trust, and introspection internals
 - `Cephalon.Behaviors` and the ABT pipeline, strategies, and transport bindings
 - REST authoring is now mostly in adoption and closeout mode: keep the engine-first module-owned strategy, grouped shorthand/runtime-truth surfaces, and the `cephalon-rest-behavior-module` starter stable, and only revisit new publication sources when they preserve ownership, deterministic precedence, and the existing runtime-catalog/operator-story contract
+- the 2026-04-19 repo-truth audit confirmed the remaining historically open pre-`ENG-058-T78` REST cards (`#324`, `#325`, `#326`, `#327`, `#329`, `#331`, `#337`, `#338`, `#339`, `#340`, `#341`, and `#342`) were GitHub tracking drift rather than missing implementation work: the shipped backlog/roadmap/docs already describe those slices, focused validation passed through `BehaviorRestRuntimeCatalogHostingTests` (`122/122`) plus tooling/reference-doc suites (`178/178`), and GitHub project state should stay aligned with the repo-owned closeout posture instead of reopening those older REST baselines
 - continued `.NET 11` readiness follow-through, including analyzer drift, package-surface compatibility expectations, and the eventual deliberate migration from readiness lane to supported default baseline
 - `Cephalon.Data` plus provider families and event-sourcing follow-through
 - `Cephalon.Observability` plus dependency-health and exporter/provider conventions
