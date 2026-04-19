@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-19T03:38:10.8386887+00:00",
+  "GeneratedAtUtc": "2026-04-19T09:17:07.8169695+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -111,7 +111,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 287
+      "TypeCount": 291
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -199,7 +199,7 @@
       "Description": "Composition, runtime, policy, manifest, and introspection services.",
       "FileName": "cephalon-engine.md",
       "NamespaceCount": 12,
-      "TypeCount": 94
+      "TypeCount": 95
     },
     {
       "AssemblyName": "Cephalon.Eventing",
@@ -208,6 +208,14 @@
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 3,
       "TypeCount": 24
+    },
+    {
+      "AssemblyName": "Cephalon.Eventing.Behaviors",
+      "Category": "Phase 12 Companion Packs",
+      "Description": "Explicit bridge that routes behavior saga choreography publications through the shared Cephalon eventing publish path.",
+      "FileName": "cephalon-eventing-behaviors.md",
+      "NamespaceCount": 1,
+      "TypeCount": 1
     },
     {
       "AssemblyName": "Cephalon.Eventing.Wolverine",
@@ -596,7 +604,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-behaviors",
-      "TypeCount": 37
+      "TypeCount": 38
     },
     {
       "NamespaceName": "Cephalon.Abstractions.Capabilities",
@@ -631,7 +639,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-features",
-      "TypeCount": 9
+      "TypeCount": 12
     },
     {
       "NamespaceName": "Cephalon.Abstractions.Health",
@@ -946,7 +954,7 @@
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
       "AnchorId": "namespace-cephalon-engine-configuration",
-      "TypeCount": 43
+      "TypeCount": 44
     },
     {
       "NamespaceName": "Cephalon.Engine.Diagnostics",
@@ -1003,6 +1011,13 @@
       "FileName": "cephalon-engine.md",
       "AnchorId": "namespace-cephalon-engine-trust",
       "TypeCount": 5
+    },
+    {
+      "NamespaceName": "Cephalon.Eventing.Behaviors.Registration",
+      "AssemblyName": "Cephalon.Eventing.Behaviors",
+      "FileName": "cephalon-eventing-behaviors.md",
+      "AnchorId": "namespace-cephalon-eventing-behaviors-registration",
+      "TypeCount": 1
     },
     {
       "NamespaceName": "Cephalon.Eventing.Configuration",
@@ -2497,6 +2512,21 @@
       }
     },
     {
+      "DisplayName": "BehaviorEventingEngineBuilderExtensions",
+      "NamespaceName": "Cephalon.Eventing.Behaviors.Registration",
+      "AssemblyName": "Cephalon.Eventing.Behaviors",
+      "FileName": "cephalon-eventing-behaviors.md",
+      "AnchorId": "type-cephalon-eventing-behaviors-registration-behavioreventingenginebuilderextensions",
+      "Declaration": "public static class BehaviorEventingEngineBuilderExtensions",
+      "Summary": "Registers the optional behavior-to-eventing choreography bridge with an \u0060EngineBuilder\u0060.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "BehaviorExecutionResilienceOverrideSelection",
       "NamespaceName": "Cephalon.Abstractions.AppModel",
       "AssemblyName": "Cephalon.Abstractions",
@@ -2568,6 +2598,21 @@
         "Constructors": 0,
         "Fields": 4,
         "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "BehaviorFeatureDisabledException",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-behaviors-behaviorfeaturedisabledexception",
+      "Declaration": "public sealed class BehaviorFeatureDisabledException",
+      "Summary": "Thrown when a behavior declares one or more required feature flags and the active runtime evaluation context does not satisfy one of them.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 6,
         "Methods": 0
       }
     },
@@ -2747,7 +2792,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 10,
+        "Properties": 12,
         "Methods": 0
       }
     },
@@ -3948,7 +3993,7 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 35
+        "Methods": 38
       }
     },
     {
@@ -4637,7 +4682,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 8,
+        "Properties": 9,
         "Methods": 0
       }
     },
@@ -4667,7 +4712,52 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 7,
+        "Properties": 8,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "FeatureFlagProviderBindingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-features-featureflagproviderbindingdescriptor",
+      "Declaration": "public sealed class FeatureFlagProviderBindingDescriptor",
+      "Summary": "Describes one external provider binding attached to a Cephalon-owned feature flag.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 3,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "FeatureFlagProviderBindingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-configuration-featureflagproviderbindingsettings",
+      "Declaration": "public sealed class FeatureFlagProviderBindingSettings",
+      "Summary": "Describes one configuration-driven external provider binding for a feature flag.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 3,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "FeatureFlagProviderEvaluationResult",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-features-featureflagproviderevaluationresult",
+      "Declaration": "public sealed class FeatureFlagProviderEvaluationResult",
+      "Summary": "Describes the result of evaluating one feature-flag provider binding.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 5,
         "Methods": 0
       }
     },
@@ -4682,7 +4772,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 8,
+        "Properties": 9,
         "Methods": 1
       }
     },
@@ -5553,7 +5643,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 0,
-        "Methods": 19
+        "Methods": 23
       }
     },
     {
@@ -6363,6 +6453,21 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IFeatureFlagProvider",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-features-ifeatureflagprovider",
+      "Declaration": "public interface IFeatureFlagProvider",
+      "Summary": "Evaluates Cephalon feature-flag provider bindings against external or provider-owned state.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
         "Methods": 1
       }
     },
@@ -9198,7 +9303,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 0,
-        "Methods": 2
+        "Methods": 5
       }
     },
     {
@@ -9331,7 +9436,7 @@
       "Summary": "Describes one configured or materially applied REST override action dimension.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 20,
+        "Fields": 22,
         "Properties": 0,
         "Methods": 0
       }
@@ -9392,7 +9497,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 46,
+        "Properties": 48,
         "Methods": 0
       }
     },
@@ -9407,7 +9512,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 37,
+        "Properties": 39,
         "Methods": 0
       }
     },
@@ -9572,7 +9677,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 38,
+        "Properties": 40,
         "Methods": 0
       }
     },
@@ -11493,6 +11598,17 @@
       "Summary": "Adds multiple backend-for-frontend client bindings to the current runtime composition."
     },
     {
+      "DisplayName": "AddBehaviorEventingBridge",
+      "Category": "Methods",
+      "DeclaringTypeName": "BehaviorEventingEngineBuilderExtensions",
+      "NamespaceName": "Cephalon.Eventing.Behaviors.Registration",
+      "AssemblyName": "Cephalon.Eventing.Behaviors",
+      "FileName": "cephalon-eventing-behaviors.md",
+      "AnchorId": "member-m-cephalon-eventing-behaviors-registration-behavioreventingenginebuilderextensions-addbehavioreventingbridge-cephalon-engine-composition-enginebuilder",
+      "Signature": "EngineBuilder AddBehaviorEventingBridge(this EngineBuilder builder)",
+      "Summary": "Adds the explicit saga-choreography bridge that stages behavior publications through the shared \u0060Cephalon.Eventing\u0060 publication path."
+    },
+    {
       "DisplayName": "AddCephalon",
       "Category": "Methods",
       "DeclaringTypeName": "EngineServiceCollectionExtensions",
@@ -12349,6 +12465,39 @@
       "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-addfeatureflag-cephalon-abstractions-features-featureflagdescriptor",
       "Signature": "EngineBuilder AddFeatureFlag(FeatureFlagDescriptor featureFlag)",
       "Summary": "Adds a feature flag to the current runtime composition."
+    },
+    {
+      "DisplayName": "AddFeatureFlagProvider",
+      "Category": "Methods",
+      "DeclaringTypeName": "EngineBuilder",
+      "NamespaceName": "Cephalon.Engine.Composition",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-addfeatureflagprovider-1",
+      "Signature": "EngineBuilder AddFeatureFlagProvider\u003CTProvider\u003E()",
+      "Summary": "Registers one feature-flag provider in the engine service collection."
+    },
+    {
+      "DisplayName": "AddFeatureFlagProvider",
+      "Category": "Methods",
+      "DeclaringTypeName": "EngineBuilder",
+      "NamespaceName": "Cephalon.Engine.Composition",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-addfeatureflagprovider-cephalon-abstractions-features-ifeatureflagprovider",
+      "Signature": "EngineBuilder AddFeatureFlagProvider(IFeatureFlagProvider provider)",
+      "Summary": "Registers one feature-flag provider instance in the engine service collection."
+    },
+    {
+      "DisplayName": "AddFeatureFlagProviders",
+      "Category": "Methods",
+      "DeclaringTypeName": "EngineBuilder",
+      "NamespaceName": "Cephalon.Engine.Composition",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-addfeatureflagproviders-system-collections-generic-ienumerable-cephalon-abstractions-features-ifeatureflagprovider",
+      "Signature": "EngineBuilder AddFeatureFlagProviders(IEnumerable\u003CIFeatureFlagProvider\u003E providers)",
+      "Summary": "Registers multiple feature-flag provider instances in the engine service collection."
     },
     {
       "DisplayName": "AddFeatureFlags",
@@ -13660,6 +13809,17 @@
       "Summary": "Declares this behavior as direct (no architectural pattern \u2014 input \u2192 handler \u2192 output, 200/204 HTTP)."
     },
     {
+      "DisplayName": "AsDurableExecution",
+      "Category": "Methods",
+      "DeclaringTypeName": "IBehaviorTopologyBuilder",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-asdurableexecution",
+      "Signature": "IBehaviorTopologyBuilder AsDurableExecution()",
+      "Summary": "Declares this behavior as a durable execution workflow with event-store replay semantics."
+    },
+    {
       "DisplayName": "AsEventDriven",
       "Category": "Methods",
       "DeclaringTypeName": "IBehaviorTopologyBuilder",
@@ -13691,6 +13851,17 @@
       "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-assaga",
       "Signature": "IBehaviorTopologyBuilder AsSaga()",
       "Summary": "Declares this behavior as a saga step (stateful, compensation chain)."
+    },
+    {
+      "DisplayName": "AsSagaChoreography",
+      "Category": "Methods",
+      "DeclaringTypeName": "IBehaviorTopologyBuilder",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-assagachoreography",
+      "Signature": "IBehaviorTopologyBuilder AsSagaChoreography()",
+      "Summary": "Declares this behavior as a choreography-based saga step (event-reaction coordination)."
     },
     {
       "DisplayName": "Assemblies",
@@ -14804,6 +14975,17 @@
       "Summary": "Initializes a new instance of \u0060BehaviorFault\u0060."
     },
     {
+      "DisplayName": "BehaviorFeatureDisabledException",
+      "Category": "Constructors",
+      "DeclaringTypeName": "BehaviorFeatureDisabledException",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-behaviorfeaturedisabledexception-ctor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-nullable-cephalon-abstractions-features-featureflagsourcekind-system-string",
+      "Signature": "BehaviorFeatureDisabledException(string behaviorId, string featureFlagId, IReadOnlyList\u003Cstring\u003E requiredFeatureFlagIds, string reason, FeatureFlagSourceKind? sourceKind, string sourceModuleId)",
+      "Summary": "Initializes a new instance of \u0060BehaviorFeatureDisabledException\u0060."
+    },
+    {
       "DisplayName": "BehaviorFilter",
       "Category": "Properties",
       "DeclaringTypeName": "BackendForFrontendClientBindingDescriptor",
@@ -14857,6 +15039,17 @@
       "AnchorId": "member-p-cephalon-abstractions-behaviors-behaviorcompatibilityviolation-behaviorid",
       "Signature": "string BehaviorId { get; }",
       "Summary": "Gets the behavior identifier that triggered the violation."
+    },
+    {
+      "DisplayName": "BehaviorId",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorFeatureDisabledException",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-behaviors-behaviorfeaturedisabledexception-behaviorid",
+      "Signature": "string BehaviorId { get; }",
+      "Summary": "Gets the behavior identifier that was blocked."
     },
     {
       "DisplayName": "BehaviorId",
@@ -15261,8 +15454,8 @@
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-behaviors-behaviortopologydescriptor-ctor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-boolean-system-boolean-system-boolean-cephalon-abstractions-behaviors-behaviorapisurfacedescriptor-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
-      "Signature": "BehaviorTopologyDescriptor(string id, string pattern, IReadOnlyList\u003Cstring\u003E transportIds, bool inboxEnabled, bool outboxEnabled, bool eventSourcingEnabled, BehaviorApiSurfaceDescriptor apiSurface, string displayName, string description, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-behaviortopologydescriptor-ctor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-boolean-system-boolean-system-boolean-cephalon-abstractions-behaviors-behaviorapisurfacedescriptor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "BehaviorTopologyDescriptor(string id, string pattern, IReadOnlyList\u003Cstring\u003E transportIds, bool inboxEnabled, bool outboxEnabled, bool eventSourcingEnabled, BehaviorApiSurfaceDescriptor apiSurface, string displayName, string description, IReadOnlyList\u003Cstring\u003E requiredFeatureFlagIds, string sourceModuleId, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
       "Summary": "Initializes a new instance of \u0060BehaviorTopologyDescriptor\u0060."
     },
     {
@@ -16782,6 +16975,50 @@
       "AnchorId": "member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-clearrequiredcapability",
       "Signature": "bool ClearRequiredCapability { get; }",
       "Summary": "Gets a value indicating whether this override rule clears any previously declared Cephalon capability boundary from the matched shorthand candidate."
+    },
+    {
+      "DisplayName": "ClearRequiredFeatureFlags",
+      "Category": "Methods",
+      "DeclaringTypeName": "RestEndpointConventionBuilderExtensions",
+      "NamespaceName": "Cephalon.AspNetCore.Transports.Rest",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-transports-rest-restendpointconventionbuilderextensions-clearrequiredfeatureflags-microsoft-aspnetcore-builder-routehandlerbuilder",
+      "Signature": "RouteHandlerBuilder ClearRequiredFeatureFlags(this RouteHandlerBuilder builder)",
+      "Summary": "Clears any previously declared Cephalon feature-flag requirements from a REST endpoint."
+    },
+    {
+      "DisplayName": "ClearRequiredFeatureFlags",
+      "Category": "Fields",
+      "DeclaringTypeName": "RestEndpointOverrideActionKind",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-clearrequiredfeatureflags",
+      "Signature": "const RestEndpointOverrideActionKind ClearRequiredFeatureFlags",
+      "Summary": "The rule clears any previously declared required Cephalon feature-flag identifiers."
+    },
+    {
+      "DisplayName": "ClearRequiredFeatureFlags",
+      "Category": "Properties",
+      "DeclaringTypeName": "RestEndpointOverrideDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-clearrequiredfeatureflags",
+      "Signature": "bool ClearRequiredFeatureFlags { get; }",
+      "Summary": "Gets a value indicating whether this override rule clears any previously declared Cephalon feature-flag requirements from the matched candidate."
+    },
+    {
+      "DisplayName": "ClearRequiredFeatureFlags",
+      "Category": "Properties",
+      "DeclaringTypeName": "RestEndpointOverrideOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-clearrequiredfeatureflags",
+      "Signature": "bool ClearRequiredFeatureFlags { get; }",
+      "Summary": "Gets a value indicating whether this override rule clears any previously declared Cephalon feature-flag requirements from the matched shorthand candidate."
     },
     {
       "DisplayName": "ClearSummary",
@@ -23166,6 +23403,17 @@
     {
       "DisplayName": "Evaluate",
       "Category": "Methods",
+      "DeclaringTypeName": "IFeatureFlagProvider",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-features-ifeatureflagprovider-evaluate-cephalon-abstractions-features-featureflagproviderbindingdescriptor-cephalon-abstractions-features-featureflagdescriptor-cephalon-abstractions-features-featureflagevaluationcontext",
+      "Signature": "FeatureFlagProviderEvaluationResult Evaluate(FeatureFlagProviderBindingDescriptor binding, FeatureFlagDescriptor featureFlag, FeatureFlagEvaluationContext context)",
+      "Summary": "Evaluates one provider binding for the supplied Cephalon feature flag and runtime context."
+    },
+    {
+      "DisplayName": "Evaluate",
+      "Category": "Methods",
       "DeclaringTypeName": "IFeatureToggle",
       "NamespaceName": "Cephalon.Abstractions.Features",
       "AssemblyName": "Cephalon.Abstractions",
@@ -24457,8 +24705,8 @@
       "NamespaceName": "Cephalon.Abstractions.Features",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-features-featureflagdescriptor-ctor-system-string-system-string-system-string-system-boolean-cephalon-abstractions-features-featureflagsourcekind-system-string-cephalon-abstractions-features-featureflagtargetingdescriptor-system-collections-generic-ireadonlydictionary-system-string-system-string",
-      "Signature": "FeatureFlagDescriptor(string id, string displayName, string description, bool enabled, FeatureFlagSourceKind sourceKind, string sourceModuleId, FeatureFlagTargetingDescriptor targeting, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "AnchorId": "member-m-cephalon-abstractions-features-featureflagdescriptor-ctor-system-string-system-string-system-string-system-boolean-cephalon-abstractions-features-featureflagsourcekind-system-string-cephalon-abstractions-features-featureflagtargetingdescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-features-featureflagproviderbindingdescriptor-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "FeatureFlagDescriptor(string id, string displayName, string description, bool enabled, FeatureFlagSourceKind sourceKind, string sourceModuleId, FeatureFlagTargetingDescriptor targeting, IReadOnlyList\u003CFeatureFlagProviderBindingDescriptor\u003E providerBindings, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
       "Summary": "Creates a feature-flag descriptor."
     },
     {
@@ -24482,6 +24730,50 @@
       "AnchorId": "member-m-cephalon-abstractions-features-featureflagevaluationresult-ctor-system-string-system-boolean-system-boolean-system-boolean-system-string-system-nullable-cephalon-abstractions-features-featureflagsourcekind-system-string",
       "Signature": "FeatureFlagEvaluationResult(string FeatureId, bool IsDefined, bool IsEnabled, bool Matched, string Reason, FeatureFlagSourceKind? SourceKind, string SourceModuleId)",
       "Summary": "Describes the result of evaluating a feature flag for a specific runtime context."
+    },
+    {
+      "DisplayName": "FeatureFlagId",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorFeatureDisabledException",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-behaviors-behaviorfeaturedisabledexception-featureflagid",
+      "Signature": "string FeatureFlagId { get; }",
+      "Summary": "Gets the required feature flag that evaluated to disabled for the active runtime context."
+    },
+    {
+      "DisplayName": "FeatureFlagProviderBindingDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "FeatureFlagProviderBindingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-features-featureflagproviderbindingdescriptor-ctor-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "FeatureFlagProviderBindingDescriptor(string providerId, string providerFeatureId, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a feature-flag provider binding."
+    },
+    {
+      "DisplayName": "FeatureFlagProviderBindingSettings",
+      "Category": "Constructors",
+      "DeclaringTypeName": "FeatureFlagProviderBindingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-configuration-featureflagproviderbindingsettings-ctor-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "FeatureFlagProviderBindingSettings(string providerId, string providerFeatureId, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates provider-binding settings."
+    },
+    {
+      "DisplayName": "FeatureFlagProviderEvaluationResult",
+      "Category": "Constructors",
+      "DeclaringTypeName": "FeatureFlagProviderEvaluationResult",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-features-featureflagproviderevaluationresult-ctor-system-string-system-string-system-boolean-system-boolean-system-string",
+      "Signature": "FeatureFlagProviderEvaluationResult(string ProviderId, string ProviderFeatureId, bool IsDefined, bool IsEnabled, string Reason)",
+      "Summary": "Describes the result of evaluating one feature-flag provider binding."
     },
     {
       "DisplayName": "FeatureFlags",
@@ -24512,8 +24804,8 @@
       "NamespaceName": "Cephalon.Engine.Configuration",
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
-      "AnchorId": "member-m-cephalon-engine-configuration-featureflagsettings-ctor-system-string-system-string-system-string-system-boolean-cephalon-abstractions-features-featureflagsourcekind-system-string-cephalon-engine-configuration-featureflagtargetingsettings-system-collections-generic-ireadonlydictionary-system-string-system-string",
-      "Signature": "FeatureFlagSettings(string id, string displayName, string description, bool enabled, FeatureFlagSourceKind sourceKind, string sourceModuleId, FeatureFlagTargetingSettings targeting, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "AnchorId": "member-m-cephalon-engine-configuration-featureflagsettings-ctor-system-string-system-string-system-string-system-boolean-cephalon-abstractions-features-featureflagsourcekind-system-string-cephalon-engine-configuration-featureflagtargetingsettings-system-collections-generic-ireadonlylist-cephalon-engine-configuration-featureflagproviderbindingsettings-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "FeatureFlagSettings(string id, string displayName, string description, bool enabled, FeatureFlagSourceKind sourceKind, string sourceModuleId, FeatureFlagTargetingSettings targeting, IReadOnlyList\u003CFeatureFlagProviderBindingSettings\u003E providerBindings, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
       "Summary": "Creates feature-flag settings."
     },
     {
@@ -25582,6 +25874,17 @@
       "AnchorId": "member-m-cephalon-engine-configuration-databasetargetsettings-fromsection-microsoft-extensions-configuration-iconfigurationsection",
       "Signature": "DatabaseTargetSettings FromSection(IConfigurationSection section)",
       "Summary": "Reads database-target settings from the supplied configuration section."
+    },
+    {
+      "DisplayName": "FromSection",
+      "Category": "Methods",
+      "DeclaringTypeName": "FeatureFlagProviderBindingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-configuration-featureflagproviderbindingsettings-fromsection-microsoft-extensions-configuration-iconfigurationsection",
+      "Signature": "FeatureFlagProviderBindingSettings FromSection(IConfigurationSection section)",
+      "Summary": "Reads one provider binding from configuration."
     },
     {
       "DisplayName": "FromSection",
@@ -30391,6 +30694,17 @@
       "Summary": "Indicates whether the feature flag exists in the active runtime."
     },
     {
+      "DisplayName": "IsDefined",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagProviderEvaluationResult",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagproviderevaluationresult-isdefined",
+      "Signature": "bool IsDefined { get; set; }",
+      "Summary": "Indicates whether the provider recognizes the requested feature."
+    },
+    {
       "DisplayName": "IsEnabled",
       "Category": "Properties",
       "DeclaringTypeName": "FeatureFlagEvaluationResult",
@@ -30400,6 +30714,17 @@
       "AnchorId": "member-p-cephalon-abstractions-features-featureflagevaluationresult-isenabled",
       "Signature": "bool IsEnabled { get; set; }",
       "Summary": "Indicates whether the feature flag resolved to enabled."
+    },
+    {
+      "DisplayName": "IsEnabled",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagProviderEvaluationResult",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagproviderevaluationresult-isenabled",
+      "Signature": "bool IsEnabled { get; set; }",
+      "Summary": "Indicates whether the provider resolved the feature to enabled."
     },
     {
       "DisplayName": "IsEnabled",
@@ -33033,6 +33358,28 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagProviderBindingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagproviderbindingdescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets provider-specific binding metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagProviderBindingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featureflagproviderbindingsettings-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets provider-specific binding metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "FeatureFlagSettings",
       "NamespaceName": "Cephalon.Engine.Configuration",
       "AssemblyName": "Cephalon.Engine",
@@ -35473,6 +35820,17 @@
       "Summary": "Gets the original required Cephalon capability key before later endpoint-governance rewrites when the runtime can classify that source answer."
     },
     {
+      "DisplayName": "OriginalRequiredFeatureFlagIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "RestEndpointRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-originalrequiredfeatureflagids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E OriginalRequiredFeatureFlagIds { get; }",
+      "Summary": "Gets the original required Cephalon feature-flag identifiers before later endpoint-governance rewrites when the runtime can classify that source answer."
+    },
+    {
       "DisplayName": "OriginalSummary",
       "Category": "Properties",
       "DeclaringTypeName": "RestEndpointRuntimeDescriptor",
@@ -36482,7 +36840,7 @@
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-pattern",
       "Signature": "string Pattern { get; }",
-      "Summary": "Gets the pattern identifier (e.g. \u0022cqrs\u0022, \u0022event-driven\u0022, \u0022saga-step\u0022, \u0022process-manager\u0022, \u0022direct\u0022)."
+      "Summary": "Gets the pattern identifier (e.g. \u0022cqrs\u0022, \u0022event-driven\u0022, \u0022saga-step\u0022, \u0022saga-choreography\u0022, \u0022process-manager\u0022, \u0022durable-execution\u0022, \u0022direct\u0022)."
     },
     {
       "DisplayName": "Pattern",
@@ -37860,6 +38218,61 @@
       "Summary": "Gets or sets the telemetry provider name, such as \u0060OpenTelemetry\u0060."
     },
     {
+      "DisplayName": "ProviderBindings",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagdescriptor-providerbindings",
+      "Signature": "IReadOnlyList\u003CFeatureFlagProviderBindingDescriptor\u003E ProviderBindings { get; }",
+      "Summary": "Gets the optional external provider bindings attached to the feature flag."
+    },
+    {
+      "DisplayName": "ProviderBindings",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featureflagsettings-providerbindings",
+      "Signature": "IReadOnlyList\u003CFeatureFlagProviderBindingSettings\u003E ProviderBindings { get; }",
+      "Summary": "Gets the optional external provider bindings attached to the feature flag."
+    },
+    {
+      "DisplayName": "ProviderFeatureId",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagProviderBindingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagproviderbindingdescriptor-providerfeatureid",
+      "Signature": "string ProviderFeatureId { get; }",
+      "Summary": "Gets the provider-specific feature identifier when one was supplied."
+    },
+    {
+      "DisplayName": "ProviderFeatureId",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagProviderBindingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featureflagproviderbindingsettings-providerfeatureid",
+      "Signature": "string ProviderFeatureId { get; }",
+      "Summary": "Gets the provider-specific feature identifier when one was supplied."
+    },
+    {
+      "DisplayName": "ProviderFeatureId",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagProviderEvaluationResult",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagproviderevaluationresult-providerfeatureid",
+      "Signature": "string ProviderFeatureId { get; set; }",
+      "Summary": "The provider-side feature identifier."
+    },
+    {
       "DisplayName": "ProviderId",
       "Category": "Fields",
       "DeclaringTypeName": "EntityFrameworkDataOptions",
@@ -37869,6 +38282,61 @@
       "AnchorId": "member-f-cephalon-data-entityframework-configuration-entityframeworkdataoptions-providerid",
       "Signature": "const string ProviderId",
       "Summary": "Gets the canonical provider identifier emitted by the pack."
+    },
+    {
+      "DisplayName": "ProviderId",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagProviderBindingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagproviderbindingdescriptor-providerid",
+      "Signature": "string ProviderId { get; }",
+      "Summary": "Gets the stable external provider identifier."
+    },
+    {
+      "DisplayName": "ProviderId",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagProviderBindingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featureflagproviderbindingsettings-providerid",
+      "Signature": "string ProviderId { get; }",
+      "Summary": "Gets the stable external provider identifier."
+    },
+    {
+      "DisplayName": "ProviderId",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagProviderEvaluationResult",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagproviderevaluationresult-providerid",
+      "Signature": "string ProviderId { get; set; }",
+      "Summary": "The external provider identifier."
+    },
+    {
+      "DisplayName": "ProviderId",
+      "Category": "Properties",
+      "DeclaringTypeName": "IFeatureFlagProvider",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-ifeatureflagprovider-providerid",
+      "Signature": "string ProviderId { get; }",
+      "Summary": "Gets the stable provider identifier used by feature-flag bindings."
+    },
+    {
+      "DisplayName": "ProviderResults",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagEvaluationResult",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagevaluationresult-providerresults",
+      "Signature": "IReadOnlyList\u003CFeatureFlagProviderEvaluationResult\u003E ProviderResults { get; set; }",
+      "Summary": "Gets the external provider evaluation results that participated in the final answer."
     },
     {
       "DisplayName": "ProxyNamespace",
@@ -38434,6 +38902,17 @@
     {
       "DisplayName": "Reason",
       "Category": "Properties",
+      "DeclaringTypeName": "BehaviorFeatureDisabledException",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-behaviors-behaviorfeaturedisabledexception-reason",
+      "Signature": "string Reason { get; }",
+      "Summary": "Gets the operator-facing evaluation reason that explained why the feature flag was not available for the current runtime context."
+    },
+    {
+      "DisplayName": "Reason",
+      "Category": "Properties",
       "DeclaringTypeName": "CapabilityPolicyDecision",
       "NamespaceName": "Cephalon.Engine.Trust",
       "AssemblyName": "Cephalon.Engine",
@@ -38452,6 +38931,17 @@
       "AnchorId": "member-p-cephalon-abstractions-features-featureflagevaluationresult-reason",
       "Signature": "string Reason { get; set; }",
       "Summary": "The operator-facing explanation for the evaluation result."
+    },
+    {
+      "DisplayName": "Reason",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagProviderEvaluationResult",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagproviderevaluationresult-reason",
+      "Signature": "string Reason { get; set; }",
+      "Summary": "The operator-facing explanation for the provider evaluation result."
     },
     {
       "DisplayName": "Reason",
@@ -39642,6 +40132,72 @@
       "Summary": "Gets the required Cephalon capability key enforced at the REST boundary when one is available."
     },
     {
+      "DisplayName": "RequiredFeatureFlagIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorFeatureDisabledException",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-behaviors-behaviorfeaturedisabledexception-requiredfeatureflagids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E RequiredFeatureFlagIds { get; }",
+      "Summary": "Gets the full ordered set of required feature flags declared by the behavior."
+    },
+    {
+      "DisplayName": "RequiredFeatureFlagIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorTopologyDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-requiredfeatureflagids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E RequiredFeatureFlagIds { get; }",
+      "Summary": "Gets the ordered feature-flag identifiers that must resolve to enabled before the behavior can execute."
+    },
+    {
+      "DisplayName": "RequiredFeatureFlagIds",
+      "Category": "Fields",
+      "DeclaringTypeName": "RestEndpointOverrideActionKind",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-requiredfeatureflagids",
+      "Signature": "const RestEndpointOverrideActionKind RequiredFeatureFlagIds",
+      "Summary": "The rule changes the required Cephalon feature-flag identifiers."
+    },
+    {
+      "DisplayName": "RequiredFeatureFlagIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "RestEndpointOverrideDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-requiredfeatureflagids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E RequiredFeatureFlagIds { get; }",
+      "Summary": "Gets the required Cephalon feature-flag identifiers enforced at the REST boundary when this override rule matches."
+    },
+    {
+      "DisplayName": "RequiredFeatureFlagIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "RestEndpointOverrideOptions",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-requiredfeatureflagids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E RequiredFeatureFlagIds { get; }",
+      "Summary": "Gets the required Cephalon feature-flag identifiers enforced at the REST boundary when this override rule matches."
+    },
+    {
+      "DisplayName": "RequiredFeatureFlagIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "RestEndpointRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-requiredfeatureflagids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E RequiredFeatureFlagIds { get; }",
+      "Summary": "Gets the required Cephalon feature-flag identifiers enforced at the REST boundary when any are available."
+    },
+    {
       "DisplayName": "RequiredRoleMatch",
       "Category": "Fields",
       "DeclaringTypeName": "IdentityPolicyMetadataKeys",
@@ -39695,6 +40251,50 @@
       "AnchorId": "member-p-cephalon-identity-configuration-identityruntimeoptions-requireexplicitpolicy",
       "Signature": "bool RequireExplicitPolicy { get; set; }",
       "Summary": "Gets or sets a value indicating whether authorization calls must provide an explicit policy identifier."
+    },
+    {
+      "DisplayName": "RequireFeatureFlag",
+      "Category": "Methods",
+      "DeclaringTypeName": "IBehaviorTopologyBuilder",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-requirefeatureflag-system-string",
+      "Signature": "IBehaviorTopologyBuilder RequireFeatureFlag(string featureFlagId)",
+      "Summary": "Requires one Cephalon feature flag to be enabled before the behavior can execute."
+    },
+    {
+      "DisplayName": "RequireFeatureFlag",
+      "Category": "Methods",
+      "DeclaringTypeName": "RestEndpointConventionBuilderExtensions",
+      "NamespaceName": "Cephalon.AspNetCore.Transports.Rest",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-transports-rest-restendpointconventionbuilderextensions-requirefeatureflag-microsoft-aspnetcore-builder-routehandlerbuilder-system-string",
+      "Signature": "RouteHandlerBuilder RequireFeatureFlag(this RouteHandlerBuilder builder, string featureFlagId)",
+      "Summary": "Requires one Cephalon feature flag to be enabled before a REST endpoint can execute."
+    },
+    {
+      "DisplayName": "RequireFeatureFlags",
+      "Category": "Methods",
+      "DeclaringTypeName": "IBehaviorTopologyBuilder",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-requirefeatureflags-system-string",
+      "Signature": "IBehaviorTopologyBuilder RequireFeatureFlags(string[] featureFlagIds)",
+      "Summary": "Requires all requested Cephalon feature flags to be enabled before the behavior can execute."
+    },
+    {
+      "DisplayName": "RequireFeatureFlags",
+      "Category": "Methods",
+      "DeclaringTypeName": "RestEndpointConventionBuilderExtensions",
+      "NamespaceName": "Cephalon.AspNetCore.Transports.Rest",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-transports-rest-restendpointconventionbuilderextensions-requirefeatureflags-microsoft-aspnetcore-builder-routehandlerbuilder-system-string",
+      "Signature": "RouteHandlerBuilder RequireFeatureFlags(this RouteHandlerBuilder builder, string[] featureFlagIds)",
+      "Summary": "Requires all requested Cephalon feature flags to be enabled before a REST endpoint can execute."
     },
     {
       "DisplayName": "RequireIntegritySha256",
@@ -40225,6 +40825,17 @@
       "Summary": "Resolves the outbox database role, falling back to the write role when a dedicated outbox role is not configured."
     },
     {
+      "DisplayName": "ResolveProviderFeatureId",
+      "Category": "Methods",
+      "DeclaringTypeName": "FeatureFlagProviderBindingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-features-featureflagproviderbindingdescriptor-resolveproviderfeatureid-system-string",
+      "Signature": "string ResolveProviderFeatureId(string featureFlagId)",
+      "Summary": "Resolves the provider-side feature identifier for the supplied Cephalon feature flag."
+    },
+    {
       "DisplayName": "ResolveRead",
       "Category": "Methods",
       "DeclaringTypeName": "EntityFrameworkDatabaseRoleResolver",
@@ -40671,8 +41282,8 @@
       "NamespaceName": "Cephalon.Abstractions.Transports",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-transports-restendpointoverridedescriptor-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-nullable-system-int32-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-boolean-cephalon-abstractions-transports-restendpointoverridebindingmode-system-boolean-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingfallbackmode-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointoverrideactionkind-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointoverrideactionkind-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceselectionbasissummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceoverrideactionkindsummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceoverrideactionkindsummarydescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-boolean",
-      "Signature": "RestEndpointOverrideDescriptor(string id, IReadOnlyList\u003Cstring\u003E candidateIds, IReadOnlyList\u003Cstring\u003E behaviorIds, IReadOnlyList\u003Cstring\u003E sourceModuleIds, IReadOnlyList\u003Cstring\u003E authoringStyles, IReadOnlyList\u003Cint\u003E apiVersionMajors, IReadOnlyList\u003Cstring\u003E methods, IReadOnlyList\u003Cstring\u003E relativePatterns, IReadOnlyList\u003Cstring\u003E routeGroupPrefixes, int? apiVersionMajor, string method, string pattern, string routeGroupPrefix, string openApiDocumentName, string tagName, string endpointName, string summary, string description, string requiredCapabilityKey, bool clearRequiredCapability, IReadOnlyList\u003CRestEndpointBindingDescriptor\u003E bindings, IReadOnlyList\u003Cstring\u003E removedBindingProperties, bool clearBindings, RestEndpointOverrideBindingMode bindingMode, bool clearEndpointName, bool clearSummary, bool clearDescription, IReadOnlyList\u003Cstring\u003E openApiDocumentNames, IReadOnlyList\u003Cstring\u003E tagNames, IReadOnlyList\u003Cstring\u003E endpointNames, IReadOnlyList\u003CRestEndpointBindingFallbackMode\u003E bindingFallbackModes, IReadOnlyList\u003CRestEndpointBindingDescriptor\u003E targetBindings, IReadOnlyList\u003Cstring\u003E matchedCandidateIds, IReadOnlyList\u003Cstring\u003E selectedCandidateIds, IReadOnlyList\u003Cstring\u003E appliedCandidateIds, IReadOnlyList\u003Cstring\u003E skippedCandidateIds, IReadOnlyList\u003CRestEndpointGovernanceRuleSelectionBasis\u003E selectionBases, IReadOnlyList\u003CRestEndpointOverrideActionKind\u003E selectedActionKinds, IReadOnlyList\u003CRestEndpointOverrideActionKind\u003E appliedActionKinds, IReadOnlyList\u003CRestEndpointGovernanceSelectionBasisSummaryDescriptor\u003E selectionBasisSummaries, IReadOnlyList\u003CRestEndpointGovernanceOverrideActionKindSummaryDescriptor\u003E selectedActionKindSummaries, IReadOnlyList\u003CRestEndpointGovernanceOverrideActionKindSummaryDescriptor\u003E appliedActionKindSummaries, IReadOnlyList\u003Cstring\u003E hostGovernanceScopes, IReadOnlyList\u003Cstring\u003E behaviorIdPrefixes, bool preserveImplicitQueryFallback)",
+      "AnchorId": "member-m-cephalon-abstractions-transports-restendpointoverridedescriptor-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-nullable-system-int32-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-collections-generic-ireadonlylist-system-string-system-boolean-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-boolean-cephalon-abstractions-transports-restendpointoverridebindingmode-system-boolean-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingfallbackmode-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointoverrideactionkind-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointoverrideactionkind-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceselectionbasissummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceoverrideactionkindsummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceoverrideactionkindsummarydescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-boolean",
+      "Signature": "RestEndpointOverrideDescriptor(string id, IReadOnlyList\u003Cstring\u003E candidateIds, IReadOnlyList\u003Cstring\u003E behaviorIds, IReadOnlyList\u003Cstring\u003E sourceModuleIds, IReadOnlyList\u003Cstring\u003E authoringStyles, IReadOnlyList\u003Cint\u003E apiVersionMajors, IReadOnlyList\u003Cstring\u003E methods, IReadOnlyList\u003Cstring\u003E relativePatterns, IReadOnlyList\u003Cstring\u003E routeGroupPrefixes, int? apiVersionMajor, string method, string pattern, string routeGroupPrefix, string openApiDocumentName, string tagName, string endpointName, string summary, string description, string requiredCapabilityKey, bool clearRequiredCapability, IReadOnlyList\u003Cstring\u003E requiredFeatureFlagIds, bool clearRequiredFeatureFlags, IReadOnlyList\u003CRestEndpointBindingDescriptor\u003E bindings, IReadOnlyList\u003Cstring\u003E removedBindingProperties, bool clearBindings, RestEndpointOverrideBindingMode bindingMode, bool clearEndpointName, bool clearSummary, bool clearDescription, IReadOnlyList\u003Cstring\u003E openApiDocumentNames, IReadOnlyList\u003Cstring\u003E tagNames, IReadOnlyList\u003Cstring\u003E endpointNames, IReadOnlyList\u003CRestEndpointBindingFallbackMode\u003E bindingFallbackModes, IReadOnlyList\u003CRestEndpointBindingDescriptor\u003E targetBindings, IReadOnlyList\u003Cstring\u003E matchedCandidateIds, IReadOnlyList\u003Cstring\u003E selectedCandidateIds, IReadOnlyList\u003Cstring\u003E appliedCandidateIds, IReadOnlyList\u003Cstring\u003E skippedCandidateIds, IReadOnlyList\u003CRestEndpointGovernanceRuleSelectionBasis\u003E selectionBases, IReadOnlyList\u003CRestEndpointOverrideActionKind\u003E selectedActionKinds, IReadOnlyList\u003CRestEndpointOverrideActionKind\u003E appliedActionKinds, IReadOnlyList\u003CRestEndpointGovernanceSelectionBasisSummaryDescriptor\u003E selectionBasisSummaries, IReadOnlyList\u003CRestEndpointGovernanceOverrideActionKindSummaryDescriptor\u003E selectedActionKindSummaries, IReadOnlyList\u003CRestEndpointGovernanceOverrideActionKindSummaryDescriptor\u003E appliedActionKindSummaries, IReadOnlyList\u003Cstring\u003E hostGovernanceScopes, IReadOnlyList\u003Cstring\u003E behaviorIdPrefixes, bool preserveImplicitQueryFallback)",
       "Summary": "Creates a REST endpoint override descriptor."
     },
     {
@@ -40682,8 +41293,8 @@
       "NamespaceName": "Cephalon.AspNetCore.Hosting",
       "AssemblyName": "Cephalon.AspNetCore",
       "FileName": "cephalon-aspnetcore.md",
-      "AnchorId": "member-m-cephalon-aspnetcore-hosting-restendpointoverrideoptions-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-nullable-system-int32-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-boolean-cephalon-abstractions-transports-restendpointoverridebindingmode-system-boolean-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingfallbackmode-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-boolean",
-      "Signature": "RestEndpointOverrideOptions(string id, IReadOnlyList\u003Cstring\u003E candidateIds, IReadOnlyList\u003Cstring\u003E behaviorIds, IReadOnlyList\u003Cstring\u003E sourceModuleIds, IReadOnlyList\u003Cstring\u003E authoringStyles, IReadOnlyList\u003Cint\u003E apiVersionMajors, IReadOnlyList\u003Cstring\u003E methods, IReadOnlyList\u003Cstring\u003E relativePatterns, IReadOnlyList\u003Cstring\u003E routeGroupPrefixes, int? apiVersionMajor, string method, string pattern, string routeGroupPrefix, string openApiDocumentName, string tagName, string endpointName, string summary, string description, string requiredCapabilityKey, bool clearRequiredCapability, IReadOnlyList\u003CRestEndpointBindingDescriptor\u003E bindings, IReadOnlyList\u003Cstring\u003E removedBindingProperties, bool clearBindings, RestEndpointOverrideBindingMode bindingMode, bool clearEndpointName, bool clearSummary, bool clearDescription, IReadOnlyList\u003Cstring\u003E openApiDocumentNames, IReadOnlyList\u003Cstring\u003E tagNames, IReadOnlyList\u003Cstring\u003E endpointNames, IReadOnlyList\u003CRestEndpointBindingFallbackMode\u003E bindingFallbackModes, IReadOnlyList\u003CRestEndpointBindingDescriptor\u003E targetBindings, IReadOnlyList\u003Cstring\u003E hostGovernanceScopes, IReadOnlyList\u003Cstring\u003E behaviorIdPrefixes, bool preserveImplicitQueryFallback)",
+      "AnchorId": "member-m-cephalon-aspnetcore-hosting-restendpointoverrideoptions-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-nullable-system-int32-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-collections-generic-ireadonlylist-system-string-system-boolean-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-boolean-cephalon-abstractions-transports-restendpointoverridebindingmode-system-boolean-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingfallbackmode-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-boolean",
+      "Signature": "RestEndpointOverrideOptions(string id, IReadOnlyList\u003Cstring\u003E candidateIds, IReadOnlyList\u003Cstring\u003E behaviorIds, IReadOnlyList\u003Cstring\u003E sourceModuleIds, IReadOnlyList\u003Cstring\u003E authoringStyles, IReadOnlyList\u003Cint\u003E apiVersionMajors, IReadOnlyList\u003Cstring\u003E methods, IReadOnlyList\u003Cstring\u003E relativePatterns, IReadOnlyList\u003Cstring\u003E routeGroupPrefixes, int? apiVersionMajor, string method, string pattern, string routeGroupPrefix, string openApiDocumentName, string tagName, string endpointName, string summary, string description, string requiredCapabilityKey, bool clearRequiredCapability, IReadOnlyList\u003Cstring\u003E requiredFeatureFlagIds, bool clearRequiredFeatureFlags, IReadOnlyList\u003CRestEndpointBindingDescriptor\u003E bindings, IReadOnlyList\u003Cstring\u003E removedBindingProperties, bool clearBindings, RestEndpointOverrideBindingMode bindingMode, bool clearEndpointName, bool clearSummary, bool clearDescription, IReadOnlyList\u003Cstring\u003E openApiDocumentNames, IReadOnlyList\u003Cstring\u003E tagNames, IReadOnlyList\u003Cstring\u003E endpointNames, IReadOnlyList\u003CRestEndpointBindingFallbackMode\u003E bindingFallbackModes, IReadOnlyList\u003CRestEndpointBindingDescriptor\u003E targetBindings, IReadOnlyList\u003Cstring\u003E hostGovernanceScopes, IReadOnlyList\u003Cstring\u003E behaviorIdPrefixes, bool preserveImplicitQueryFallback)",
       "Summary": "Initializes a new instance of the \u0060RestEndpointOverrideOptions\u0060 class."
     },
     {
@@ -40847,8 +41458,8 @@
       "NamespaceName": "Cephalon.Abstractions.Transports",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-transports-restendpointruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-nullable-system-int32-system-string-system-string-system-string-system-nullable-system-int32-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-string-system-string-system-string-cephalon-abstractions-transports-restendpointcandidateprojectiondescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-nullable-cephalon-abstractions-transports-restendpointbindingfallbackmode-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-nullable-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointoverrideactionkind-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointoverrideactionkind",
-      "Signature": "RestEndpointRuntimeDescriptor(string id, string transportId, string sourceKind, string method, string routePattern, string sourceModuleId, string sourceModuleVersion, int? sourceModuleVersionMajor, string behaviorId, string endpointName, string openApiDocumentName, int? apiVersionMajor, IReadOnlyList\u003Cstring\u003E tags, string summary, string description, string originalEndpointName, string originalSummary, string originalDescription, string candidateId, RestEndpointCandidateProjectionDescriptor originalProjection, IReadOnlyList\u003CRestEndpointBindingDescriptor\u003E bindingDescriptors, RestEndpointBindingFallbackMode? bindingFallbackMode, IReadOnlyDictionary\u003Cstring, string\u003E metadata, string authoringStyle, string routeGroupPrefix, string relativePattern, string behaviorType, string sourceId, string requiredCapabilityKey, string originalRequiredCapabilityKey, string appliedOverrideId, IReadOnlyList\u003Cstring\u003E matchedOverrideIds, string selectedOverrideId, RestEndpointGovernanceRuleSelectionBasis? overrideSelectionBasis, IReadOnlyList\u003Cstring\u003E skippedSuppressionIds, IReadOnlyList\u003Cstring\u003E skippedOverrideIds, IReadOnlyList\u003CRestEndpointOverrideActionKind\u003E selectedOverrideActionKinds, IReadOnlyList\u003CRestEndpointOverrideActionKind\u003E appliedOverrideActionKinds)",
+      "AnchorId": "member-m-cephalon-abstractions-transports-restendpointruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-nullable-system-int32-system-string-system-string-system-string-system-nullable-system-int32-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-string-system-string-system-string-cephalon-abstractions-transports-restendpointcandidateprojectiondescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-nullable-cephalon-abstractions-transports-restendpointbindingfallbackmode-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-nullable-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointoverrideactionkind-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointoverrideactionkind-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string",
+      "Signature": "RestEndpointRuntimeDescriptor(string id, string transportId, string sourceKind, string method, string routePattern, string sourceModuleId, string sourceModuleVersion, int? sourceModuleVersionMajor, string behaviorId, string endpointName, string openApiDocumentName, int? apiVersionMajor, IReadOnlyList\u003Cstring\u003E tags, string summary, string description, string originalEndpointName, string originalSummary, string originalDescription, string candidateId, RestEndpointCandidateProjectionDescriptor originalProjection, IReadOnlyList\u003CRestEndpointBindingDescriptor\u003E bindingDescriptors, RestEndpointBindingFallbackMode? bindingFallbackMode, IReadOnlyDictionary\u003Cstring, string\u003E metadata, string authoringStyle, string routeGroupPrefix, string relativePattern, string behaviorType, string sourceId, string requiredCapabilityKey, string originalRequiredCapabilityKey, string appliedOverrideId, IReadOnlyList\u003Cstring\u003E matchedOverrideIds, string selectedOverrideId, RestEndpointGovernanceRuleSelectionBasis? overrideSelectionBasis, IReadOnlyList\u003Cstring\u003E skippedSuppressionIds, IReadOnlyList\u003Cstring\u003E skippedOverrideIds, IReadOnlyList\u003CRestEndpointOverrideActionKind\u003E selectedOverrideActionKinds, IReadOnlyList\u003CRestEndpointOverrideActionKind\u003E appliedOverrideActionKinds, IReadOnlyList\u003Cstring\u003E requiredFeatureFlagIds, IReadOnlyList\u003Cstring\u003E originalRequiredFeatureFlagIds)",
       "Summary": "Creates a resolved REST endpoint runtime descriptor."
     },
     {
@@ -43648,6 +44259,17 @@
     {
       "DisplayName": "SourceKind",
       "Category": "Properties",
+      "DeclaringTypeName": "BehaviorFeatureDisabledException",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-behaviors-behaviorfeaturedisabledexception-sourcekind",
+      "Signature": "FeatureFlagSourceKind? SourceKind { get; }",
+      "Summary": "Gets the ownership kind of the resolved feature flag when one exists."
+    },
+    {
+      "DisplayName": "SourceKind",
+      "Category": "Properties",
       "DeclaringTypeName": "FeatureFlagDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Features",
       "AssemblyName": "Cephalon.Abstractions",
@@ -43754,6 +44376,28 @@
       "AnchorId": "member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-sourcemoduleid",
       "Signature": "string SourceModuleId { get; }",
       "Summary": "Gets the binding-owner module identifier."
+    },
+    {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorFeatureDisabledException",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-behaviors-behaviorfeaturedisabledexception-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; }",
+      "Summary": "Gets the owning module identifier when the resolved feature flag is module-owned."
+    },
+    {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
+      "DeclaringTypeName": "BehaviorTopologyDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; }",
+      "Summary": "Gets the module identifier that owns this behavior when ownership is known at runtime."
     },
     {
       "DisplayName": "SourceModuleId",

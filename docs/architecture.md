@@ -167,7 +167,7 @@ GraphQL prefix family (`/graphql`, `/graphql/schema`, `/graphql-sse`, `/graphql-
 
 `Cephalon.Cli` is the user-facing shell over scaffolding and documentation workflows. `CliApplication` is the stable entry point, while the individual command handlers and option objects remain internal implementation details. It parses blueprint, transport, pattern, module, and feature selections for app generation, and it also publishes, enables, validates, and opens generated reference-doc surfaces.
 
-`Cephalon.Agentics`, `Cephalon.Eventing`, `Cephalon.Retrieval`, and `Cephalon.Edge` are the current baseline technology companion packages. They show the preferred pattern for future workloads that need reusable runtime services without bloating the engine core.
+`Cephalon.Agentics`, `Cephalon.Eventing`, `Cephalon.Retrieval`, and `Cephalon.Edge` are the current baseline technology companion packages. They show the preferred pattern for future workloads that need reusable runtime services without bloating the engine core. `Cephalon.Eventing.Behaviors` now sits beside that baseline as an explicit bridge companion pack: it lets behavior-authored saga choreography hand off into the shared eventing publish path without making either baseline package absorb the other's contract ownership.
 
 `templates/Cephalon.TemplatePack` is the installable `dotnet new` companion surface. It packages the current shipped blueprint starters as lightweight templates for teams that want a fast entry point without using the repo-local CLI.
 
@@ -282,6 +282,9 @@ Companion adapter packages:
 - `src/Cephalon.Edge/Modules` -> `Cephalon.Edge.Modules`
 - `src/Cephalon.Edge/Registration` -> `Cephalon.Edge.Registration`
 - `src/Cephalon.Edge/Services` -> `Cephalon.Edge.Services`
+- `src/Cephalon.Eventing.Behaviors/Modules` -> `Cephalon.Eventing.Behaviors.Modules`
+- `src/Cephalon.Eventing.Behaviors/Registration` -> `Cephalon.Eventing.Behaviors.Registration`
+- `src/Cephalon.Eventing.Behaviors/Services` -> `Cephalon.Eventing.Behaviors.Services`
 - `src/Cephalon.Eventing/Configuration` -> `Cephalon.Eventing.Configuration`
 - `src/Cephalon.Eventing/Modules` -> `Cephalon.Eventing.Modules`
 - `src/Cephalon.Eventing/Registration` -> `Cephalon.Eventing.Registration`

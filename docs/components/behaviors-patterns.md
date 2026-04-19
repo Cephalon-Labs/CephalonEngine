@@ -71,7 +71,8 @@ Choreography-based saga steps can return:
 
 The baseline stays host-agnostic on purpose. `Cephalon.Behaviors.Patterns` does not hard-depend on
 `Cephalon.Eventing`; instead, it exposes `ISagaChoreographyPublisher` plus an in-memory default so
-tests, local development, and future bridge packages can all use the same execution contract.
+tests, local development, and explicit bridge packages such as `Cephalon.Eventing.Behaviors` can
+all use the same execution contract.
 
 ## Durable execution contract
 
@@ -95,13 +96,27 @@ HTTP, messaging, and tests can share the same replay truth. `Cephalon.Behaviors`
 ## Replacing the default stores
 
 Register your own `ISagaStateStore`, `IProcessCheckpointStore`, or `ISagaChoreographyPublisher`
-after calling `AddBehaviorPatterns()`:
+when the defaults are not enough. `AddBehaviorPatterns()` now uses fallback registrations, so
+explicit replacements can safely be registered either before or after the built-in pattern pack:
 
 ```csharp
 behaviors.AddBehaviorPatterns();
 builder.Services.AddSingleton<ISagaStateStore, MyDatabaseSagaStateStore>();
 builder.Services.AddSingleton<ISagaChoreographyPublisher, MySagaChoreographyPublisher>();
 ```
+
+If the app already uses `Cephalon.Eventing` with a durable outbox-backed publish path, the
+preferred low-ceremony bridge is the explicit companion pack:
+
+```csharp
+services.AddCephalon(config, engine => engine
+    .AddBehaviors(behaviors => behaviors.AddBehaviorPatterns())
+    .AddEventing(eventing => eventing.AddChannel("catalog-events", "Catalog Events"))
+    .AddBehaviorEventingBridge());
+```
+
+That bridge preserves explicit `ISagaChoreographyPublisher` overrides instead of replacing them,
+and it only activates when the shared `Cephalon.Eventing` publication path is truthful.
 
 ## Status
 
@@ -112,5 +127,6 @@ builder.Services.AddSingleton<ISagaChoreographyPublisher, MySagaChoreographyPubl
 - `Cephalon.Behaviors` — dispatcher, catalog, resolver (M1)
 - `Cephalon.Behaviors.Http` — HTTP transport bindings (M2)
 - `Cephalon.Behaviors.Messaging` — messaging transport bindings (M3)
-- `Cephalon.Eventing` — future bridge target when choreography publications should map onto the
-  shared outbox-backed eventing runtime instead of the default in-memory publisher
+- `Cephalon.Eventing.Behaviors` — explicit saga choreography bridge into the shared outbox-backed
+  eventing publish path
+- `Cephalon.Eventing` — shared event-driven publication/runtime baseline consumed by the bridge

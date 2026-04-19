@@ -496,6 +496,51 @@ Returns: The same builder instance.
 Parameters:
 - `featureFlag`: The feature-flag descriptor to add.
 
+<a id="member-m-cephalon-engine-composition-enginebuilder-addfeatureflagprovider-1"></a>
+
+##### `AddFeatureFlagProvider`
+
+```csharp
+EngineBuilder AddFeatureFlagProvider<TProvider>()
+```
+
+Registers one feature-flag provider in the engine service collection.
+
+Returns: The same builder instance.
+
+Type parameters:
+- `TProvider`: The provider implementation type.
+
+<a id="member-m-cephalon-engine-composition-enginebuilder-addfeatureflagprovider-cephalon-abstractions-features-ifeatureflagprovider"></a>
+
+##### `AddFeatureFlagProvider`
+
+```csharp
+EngineBuilder AddFeatureFlagProvider(IFeatureFlagProvider provider)
+```
+
+Registers one feature-flag provider instance in the engine service collection.
+
+Returns: The same builder instance.
+
+Parameters:
+- `provider`: The provider instance to register.
+
+<a id="member-m-cephalon-engine-composition-enginebuilder-addfeatureflagproviders-system-collections-generic-ienumerable-cephalon-abstractions-features-ifeatureflagprovider"></a>
+
+##### `AddFeatureFlagProviders`
+
+```csharp
+EngineBuilder AddFeatureFlagProviders(IEnumerable<IFeatureFlagProvider> providers)
+```
+
+Registers multiple feature-flag provider instances in the engine service collection.
+
+Returns: The same builder instance.
+
+Parameters:
+- `providers`: The provider instances to register.
+
 <a id="member-m-cephalon-engine-composition-enginebuilder-addfeatureflags-system-collections-generic-ienumerable-cephalon-abstractions-features-featureflagdescriptor"></a>
 
 ##### `AddFeatureFlags`
@@ -3319,6 +3364,83 @@ Parameters:
 - `configuration`: The configuration source that contains the engine section.
 - `sectionPath`: The root configuration section path to read from.
 
+<a id="type-cephalon-engine-configuration-featureflagproviderbindingsettings"></a>
+
+### `FeatureFlagProviderBindingSettings`
+
+Describes one configuration-driven external provider binding for a feature flag.
+
+#### Declaration
+```csharp
+public sealed class FeatureFlagProviderBindingSettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-featureflagproviderbindingsettings-ctor-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `FeatureFlagProviderBindingSettings`
+
+```csharp
+FeatureFlagProviderBindingSettings(string providerId, string providerFeatureId, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates provider-binding settings.
+
+Parameters:
+- `providerId`: The stable external provider identifier.
+- `providerFeatureId`: The provider-specific feature identifier.
+- `metadata`: Optional provider-specific binding metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-featureflagproviderbindingsettings-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets provider-specific binding metadata.
+
+<a id="member-p-cephalon-engine-configuration-featureflagproviderbindingsettings-providerfeatureid"></a>
+
+##### `ProviderFeatureId`
+
+```csharp
+string ProviderFeatureId { get; }
+```
+
+Gets the provider-specific feature identifier when one was supplied.
+
+<a id="member-p-cephalon-engine-configuration-featureflagproviderbindingsettings-providerid"></a>
+
+##### `ProviderId`
+
+```csharp
+string ProviderId { get; }
+```
+
+Gets the stable external provider identifier.
+
+#### Methods
+
+<a id="member-m-cephalon-engine-configuration-featureflagproviderbindingsettings-fromsection-microsoft-extensions-configuration-iconfigurationsection"></a>
+
+##### `FromSection`
+
+```csharp
+FeatureFlagProviderBindingSettings FromSection(IConfigurationSection section)
+```
+
+Reads one provider binding from configuration.
+
+Returns: The parsed provider binding settings.
+
+Parameters:
+- `section`: The configuration section that contains the provider binding.
+
 <a id="type-cephalon-engine-configuration-featureflagsettings"></a>
 
 ### `FeatureFlagSettings`
@@ -3332,12 +3454,12 @@ public sealed class FeatureFlagSettings
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-configuration-featureflagsettings-ctor-system-string-system-string-system-string-system-boolean-cephalon-abstractions-features-featureflagsourcekind-system-string-cephalon-engine-configuration-featureflagtargetingsettings-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+<a id="member-m-cephalon-engine-configuration-featureflagsettings-ctor-system-string-system-string-system-string-system-boolean-cephalon-abstractions-features-featureflagsourcekind-system-string-cephalon-engine-configuration-featureflagtargetingsettings-system-collections-generic-ireadonlylist-cephalon-engine-configuration-featureflagproviderbindingsettings-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
 
 ##### `FeatureFlagSettings`
 
 ```csharp
-FeatureFlagSettings(string id, string displayName, string description, bool enabled, FeatureFlagSourceKind sourceKind, string sourceModuleId, FeatureFlagTargetingSettings targeting, IReadOnlyDictionary<string, string> metadata)
+FeatureFlagSettings(string id, string displayName, string description, bool enabled, FeatureFlagSourceKind sourceKind, string sourceModuleId, FeatureFlagTargetingSettings targeting, IReadOnlyList<FeatureFlagProviderBindingSettings> providerBindings, IReadOnlyDictionary<string, string> metadata)
 ```
 
 Creates feature-flag settings.
@@ -3350,6 +3472,7 @@ Parameters:
 - `sourceKind`: Identifies whether the feature flag is host-owned or module-owned.
 - `sourceModuleId`: The source-module identifier when the feature flag is module-owned.
 - `targeting`: The optional targeting settings attached to the feature flag.
+- `providerBindings`: Optional external provider bindings attached to the feature flag.
 - `metadata`: Optional operator-facing metadata.
 
 #### Properties
@@ -3403,6 +3526,16 @@ IReadOnlyDictionary<string, string> Metadata { get; }
 ```
 
 Gets optional operator-facing metadata.
+
+<a id="member-p-cephalon-engine-configuration-featureflagsettings-providerbindings"></a>
+
+##### `ProviderBindings`
+
+```csharp
+IReadOnlyList<FeatureFlagProviderBindingSettings> ProviderBindings { get; }
+```
+
+Gets the optional external provider bindings attached to the feature flag.
 
 <a id="member-p-cephalon-engine-configuration-featureflagsettings-sourcekind"></a>
 

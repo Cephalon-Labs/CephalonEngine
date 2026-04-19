@@ -727,6 +727,14 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void BehaviorEventingBridgeAssemblyExposesOnlyTheDocumentedPackContracts()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Eventing.Behaviors.Registration.BehaviorEventingEngineBuilderExtensions).Assembly,
+            typeof(global::Cephalon.Eventing.Behaviors.Registration.BehaviorEventingEngineBuilderExtensions));
+    }
+
+    [Fact]
     public void DataAssemblyExposesOnlyTheDocumentedPackContracts()
     {
         AssertExportedTypes(

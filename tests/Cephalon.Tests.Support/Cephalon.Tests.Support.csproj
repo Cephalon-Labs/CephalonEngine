@@ -37,6 +37,7 @@
     <ProjectReference Include="..\..\src\Cephalon.Edge\Cephalon.Edge.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Engine\Cephalon.Engine.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Eventing\Cephalon.Eventing.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Eventing.Behaviors\Cephalon.Eventing.Behaviors.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Eventing.Wolverine\Cephalon.Eventing.Wolverine.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Identity\Cephalon.Identity.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Identity.AspNetCore\Cephalon.Identity.AspNetCore.csproj" />

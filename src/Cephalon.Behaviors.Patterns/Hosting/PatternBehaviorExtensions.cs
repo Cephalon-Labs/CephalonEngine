@@ -5,6 +5,7 @@ using Cephalon.Behaviors.Patterns.Stores;
 using Cephalon.Behaviors.Patterns.Strategies;
 using Cephalon.Behaviors.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Cephalon.Behaviors.Patterns.Hosting;
 
@@ -15,8 +16,8 @@ public static class PatternBehaviorExtensions
 {
     /// <summary>
     /// Registers all built-in pattern execution strategies, their default in-memory stores,
-    /// the default in-memory choreography publisher,
-    /// and the <see cref="ExecutionStrategyRegistry"/> as singletons on the service collection.
+    /// the default in-memory choreography publisher fallback,
+    /// and the <see cref="ExecutionStrategyRegistry"/> on the service collection.
     /// </summary>
     /// <param name="builder">The behavior collection builder to configure.</param>
     /// <returns>The same builder for fluent chaining.</returns>
@@ -25,22 +26,23 @@ public static class PatternBehaviorExtensions
     {
         ArgumentNullException.ThrowIfNull(builder);
 
-        // Register default stores.
-        builder.Services.AddSingleton<ISagaStateStore, InMemorySagaStateStore>();
-        builder.Services.AddSingleton<IProcessCheckpointStore, InMemoryProcessCheckpointStore>();
-        builder.Services.AddSingleton<ISagaChoreographyPublisher, InMemorySagaChoreographyPublisher>();
+        // Register default stores and the in-memory choreography publisher only as fallbacks so
+        // explicit host registrations or bridge packages can remain authoritative.
+        builder.Services.TryAddSingleton<ISagaStateStore, InMemorySagaStateStore>();
+        builder.Services.TryAddSingleton<IProcessCheckpointStore, InMemoryProcessCheckpointStore>();
+        builder.Services.TryAddSingleton<ISagaChoreographyPublisher, InMemorySagaChoreographyPublisher>();
 
         // Register the built-in strategies.
-        builder.Services.AddSingleton<IBehaviorExecutionStrategy, CqrsExecutionStrategy>();
-        builder.Services.AddSingleton<IBehaviorExecutionStrategy, EventDrivenExecutionStrategy>();
-        builder.Services.AddSingleton<IBehaviorExecutionStrategy, SagaExecutionStrategy>();
-        builder.Services.AddSingleton<IBehaviorExecutionStrategy, ChoreographySagaExecutionStrategy>();
-        builder.Services.AddSingleton<IBehaviorExecutionStrategy, ProcessManagerExecutionStrategy>();
-        builder.Services.AddSingleton<IBehaviorExecutionStrategy, DurableExecutionStrategy>();
-        builder.Services.AddSingleton<IBehaviorExecutionStrategy, DirectExecutionStrategy>();
+        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IBehaviorExecutionStrategy, CqrsExecutionStrategy>());
+        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IBehaviorExecutionStrategy, EventDrivenExecutionStrategy>());
+        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IBehaviorExecutionStrategy, SagaExecutionStrategy>());
+        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IBehaviorExecutionStrategy, ChoreographySagaExecutionStrategy>());
+        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IBehaviorExecutionStrategy, ProcessManagerExecutionStrategy>());
+        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IBehaviorExecutionStrategy, DurableExecutionStrategy>());
+        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IBehaviorExecutionStrategy, DirectExecutionStrategy>());
 
         // Register the registry — resolved from all IBehaviorExecutionStrategy registrations.
-        builder.Services.AddSingleton<ExecutionStrategyRegistry>(sp =>
+        builder.Services.TryAddSingleton<ExecutionStrategyRegistry>(sp =>
         {
             var strategies = sp.GetServices<IBehaviorExecutionStrategy>();
             return new ExecutionStrategyRegistry(strategies);

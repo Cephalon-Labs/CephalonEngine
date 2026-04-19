@@ -190,9 +190,10 @@ Modules are the primary composition unit. Each module registers services, capabi
 - `Cephalon.EventSourcing.Qdrant`
 - `Cephalon.EventSourcing.Nats`
 
-### Specialized runtime modules (5)
+### Specialized runtime modules (6)
 
 - `eventing-runtime` — Eventing Runtime (`Cephalon.Eventing`): companion runtime services for event-driven integration workloads.
+- `eventing-behaviors` — Eventing Behaviors (`Cephalon.Eventing.Behaviors`): explicit saga choreography bridge into the shared eventing publish path.
 - `wolverine-eventing` — Wolverine Eventing (`Cephalon.Eventing.Wolverine`): official Wolverine host wiring for event-driven integration workloads.
 - `agentics-runtime` — Agentics Runtime (`Cephalon.Agentics`): companion runtime services for agentic workloads.
 - `edge-runtime` — Edge Runtime (`Cephalon.Edge`): companion runtime services for edge-native delivery workloads.
@@ -293,11 +294,12 @@ Capabilities are the fine-grained feature advertisements exposed by modules.
 - `data.outbox.nats` — NATS Outbox
 - `data.inbox.nats` — NATS Inbox
 
-### Eventing capabilities (5)
+### Eventing capabilities (6)
 
 - `eventing.publish` — Event Publishing
 - `eventing.subscriptions` — Event Subscription Descriptors
 - `eventing.channels` — Event Channels
+- `eventing.behaviors.saga-choreography` — Saga Choreography Eventing Bridge
 - `eventing.wolverine` — Wolverine Eventing Adapter
 - `eventing.wolverine.dispatch` — Wolverine Dispatch Loop
 

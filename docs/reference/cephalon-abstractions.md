@@ -5438,6 +5438,99 @@ const BehaviorFaultSeverity Warning
 
 Warning-level fault details.
 
+<a id="type-cephalon-abstractions-behaviors-behaviorfeaturedisabledexception"></a>
+
+### `BehaviorFeatureDisabledException`
+
+Thrown when a behavior declares one or more required feature flags and the active runtime evaluation context does not satisfy one of them.
+
+#### Declaration
+```csharp
+public sealed class BehaviorFeatureDisabledException
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-behaviors-behaviorfeaturedisabledexception-ctor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-nullable-cephalon-abstractions-features-featureflagsourcekind-system-string"></a>
+
+##### `BehaviorFeatureDisabledException`
+
+```csharp
+BehaviorFeatureDisabledException(string behaviorId, string featureFlagId, IReadOnlyList<string> requiredFeatureFlagIds, string reason, FeatureFlagSourceKind? sourceKind, string sourceModuleId)
+```
+
+Initializes a new instance of `BehaviorFeatureDisabledException`.
+
+Parameters:
+- `behaviorId`: The behavior identifier that was blocked.
+- `featureFlagId`: The specific required feature flag that evaluated to disabled.
+- `requiredFeatureFlagIds`: The full ordered set of required feature flags.
+- `reason`: The evaluation reason returned by the feature-toggle runtime.
+- `sourceKind`: The ownership kind of the resolved feature flag when one exists.
+- `sourceModuleId`: The owning module identifier when the resolved feature flag is module-owned.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviorfeaturedisabledexception-behaviorid"></a>
+
+##### `BehaviorId`
+
+```csharp
+string BehaviorId { get; }
+```
+
+Gets the behavior identifier that was blocked.
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviorfeaturedisabledexception-featureflagid"></a>
+
+##### `FeatureFlagId`
+
+```csharp
+string FeatureFlagId { get; }
+```
+
+Gets the required feature flag that evaluated to disabled for the active runtime context.
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviorfeaturedisabledexception-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; }
+```
+
+Gets the operator-facing evaluation reason that explained why the feature flag was not available for the current runtime context.
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviorfeaturedisabledexception-requiredfeatureflagids"></a>
+
+##### `RequiredFeatureFlagIds`
+
+```csharp
+IReadOnlyList<string> RequiredFeatureFlagIds { get; }
+```
+
+Gets the full ordered set of required feature flags declared by the behavior.
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviorfeaturedisabledexception-sourcekind"></a>
+
+##### `SourceKind`
+
+```csharp
+FeatureFlagSourceKind? SourceKind { get; }
+```
+
+Gets the ownership kind of the resolved feature flag when one exists.
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviorfeaturedisabledexception-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; }
+```
+
+Gets the owning module identifier when the resolved feature flag is module-owned.
+
 <a id="type-cephalon-abstractions-behaviors-behavioridempotencyattribute"></a>
 
 ### `BehaviorIdempotencyAttribute`
@@ -5984,12 +6077,12 @@ public sealed class BehaviorTopologyDescriptor
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-behaviors-behaviortopologydescriptor-ctor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-boolean-system-boolean-system-boolean-cephalon-abstractions-behaviors-behaviorapisurfacedescriptor-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+<a id="member-m-cephalon-abstractions-behaviors-behaviortopologydescriptor-ctor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-boolean-system-boolean-system-boolean-cephalon-abstractions-behaviors-behaviorapisurfacedescriptor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
 
 ##### `BehaviorTopologyDescriptor`
 
 ```csharp
-BehaviorTopologyDescriptor(string id, string pattern, IReadOnlyList<string> transportIds, bool inboxEnabled, bool outboxEnabled, bool eventSourcingEnabled, BehaviorApiSurfaceDescriptor apiSurface, string displayName, string description, IReadOnlyDictionary<string, string> metadata)
+BehaviorTopologyDescriptor(string id, string pattern, IReadOnlyList<string> transportIds, bool inboxEnabled, bool outboxEnabled, bool eventSourcingEnabled, BehaviorApiSurfaceDescriptor apiSurface, string displayName, string description, IReadOnlyList<string> requiredFeatureFlagIds, string sourceModuleId, IReadOnlyDictionary<string, string> metadata)
 ```
 
 Initializes a new instance of `BehaviorTopologyDescriptor`.
@@ -6086,7 +6179,27 @@ Gets a value indicating whether outbox staging is enabled.
 string Pattern { get; }
 ```
 
-Gets the pattern identifier (e.g. "cqrs", "event-driven", "saga-step", "process-manager", "direct").
+Gets the pattern identifier (e.g. "cqrs", "event-driven", "saga-step", "saga-choreography", "process-manager", "durable-execution", "direct").
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-requiredfeatureflagids"></a>
+
+##### `RequiredFeatureFlagIds`
+
+```csharp
+IReadOnlyList<string> RequiredFeatureFlagIds { get; }
+```
+
+Gets the ordered feature-flag identifiers that must resolve to enabled before the behavior can execute.
+
+<a id="member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; }
+```
+
+Gets the module identifier that owns this behavior when ownership is known at runtime.
 
 <a id="member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-transportids"></a>
 
@@ -6817,6 +6930,16 @@ IBehaviorTopologyBuilder AsDirect()
 
 Declares this behavior as direct (no architectural pattern — input → handler → output, 200/204 HTTP).
 
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-asdurableexecution"></a>
+
+##### `AsDurableExecution`
+
+```csharp
+IBehaviorTopologyBuilder AsDurableExecution()
+```
+
+Declares this behavior as a durable execution workflow with event-store replay semantics.
+
 <a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-aseventdriven"></a>
 
 ##### `AsEventDriven`
@@ -6847,6 +6970,16 @@ IBehaviorTopologyBuilder AsSaga()
 
 Declares this behavior as a saga step (stateful, compensation chain).
 
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-assagachoreography"></a>
+
+##### `AsSagaChoreography`
+
+```csharp
+IBehaviorTopologyBuilder AsSagaChoreography()
+```
+
+Declares this behavior as a choreography-based saga step (event-reaction coordination).
+
 <a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-build-system-string"></a>
 
 ##### `Build`
@@ -6856,6 +6989,36 @@ BehaviorTopologyDescriptor Build(string behaviorId)
 ```
 
 Builds the final descriptor. Called internally by the engine — do not call directly.
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-requirefeatureflag-system-string"></a>
+
+##### `RequireFeatureFlag`
+
+```csharp
+IBehaviorTopologyBuilder RequireFeatureFlag(string featureFlagId)
+```
+
+Requires one Cephalon feature flag to be enabled before the behavior can execute.
+
+Returns: The same builder for fluent chaining.
+
+Parameters:
+- `featureFlagId`: The feature-flag identifier that must resolve to enabled.
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-requirefeatureflags-system-string"></a>
+
+##### `RequireFeatureFlags`
+
+```csharp
+IBehaviorTopologyBuilder RequireFeatureFlags(string[] featureFlagIds)
+```
+
+Requires all requested Cephalon feature flags to be enabled before the behavior can execute.
+
+Returns: The same builder for fluent chaining.
+
+Parameters:
+- `featureFlagIds`: The feature-flag identifiers that must resolve to enabled.
 
 <a id="member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-viagrpc"></a>
 
@@ -13429,12 +13592,12 @@ public sealed class FeatureFlagDescriptor
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-features-featureflagdescriptor-ctor-system-string-system-string-system-string-system-boolean-cephalon-abstractions-features-featureflagsourcekind-system-string-cephalon-abstractions-features-featureflagtargetingdescriptor-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+<a id="member-m-cephalon-abstractions-features-featureflagdescriptor-ctor-system-string-system-string-system-string-system-boolean-cephalon-abstractions-features-featureflagsourcekind-system-string-cephalon-abstractions-features-featureflagtargetingdescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-features-featureflagproviderbindingdescriptor-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
 
 ##### `FeatureFlagDescriptor`
 
 ```csharp
-FeatureFlagDescriptor(string id, string displayName, string description, bool enabled, FeatureFlagSourceKind sourceKind, string sourceModuleId, FeatureFlagTargetingDescriptor targeting, IReadOnlyDictionary<string, string> metadata)
+FeatureFlagDescriptor(string id, string displayName, string description, bool enabled, FeatureFlagSourceKind sourceKind, string sourceModuleId, FeatureFlagTargetingDescriptor targeting, IReadOnlyList<FeatureFlagProviderBindingDescriptor> providerBindings, IReadOnlyDictionary<string, string> metadata)
 ```
 
 Creates a feature-flag descriptor.
@@ -13447,6 +13610,7 @@ Parameters:
 - `sourceKind`: Identifies whether the feature flag is host-owned or module-owned.
 - `sourceModuleId`: The module identifier that owns this feature flag when `sourceKind` is `Module`.
 - `targeting`: The optional targeting constraints attached to the feature flag.
+- `providerBindings`: Optional external provider bindings that can further gate the Cephalon-owned feature flag without replacing the local runtime descriptor as the source of truth.
 - `metadata`: Optional operator-facing metadata.
 
 #### Properties
@@ -13500,6 +13664,16 @@ IReadOnlyDictionary<string, string> Metadata { get; }
 ```
 
 Gets operator-facing metadata for the feature flag.
+
+<a id="member-p-cephalon-abstractions-features-featureflagdescriptor-providerbindings"></a>
+
+##### `ProviderBindings`
+
+```csharp
+IReadOnlyList<FeatureFlagProviderBindingDescriptor> ProviderBindings { get; }
+```
+
+Gets the optional external provider bindings attached to the feature flag.
 
 <a id="member-p-cephalon-abstractions-features-featureflagdescriptor-sourcekind"></a>
 
@@ -13741,6 +13915,16 @@ bool Matched { get; set; }
 
 Indicates whether the supplied evaluation context matched the targeting constraints for the feature flag.
 
+<a id="member-p-cephalon-abstractions-features-featureflagevaluationresult-providerresults"></a>
+
+##### `ProviderResults`
+
+```csharp
+IReadOnlyList<FeatureFlagProviderEvaluationResult> ProviderResults { get; set; }
+```
+
+Gets the external provider evaluation results that participated in the final answer.
+
 <a id="member-p-cephalon-abstractions-features-featureflagevaluationresult-reason"></a>
 
 ##### `Reason`
@@ -13770,6 +13954,165 @@ string SourceModuleId { get; set; }
 ```
 
 The owning module identifier when the feature flag is module-owned.
+
+<a id="type-cephalon-abstractions-features-featureflagproviderbindingdescriptor"></a>
+
+### `FeatureFlagProviderBindingDescriptor`
+
+Describes one external provider binding attached to a Cephalon-owned feature flag.
+
+#### Declaration
+```csharp
+public sealed class FeatureFlagProviderBindingDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-features-featureflagproviderbindingdescriptor-ctor-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `FeatureFlagProviderBindingDescriptor`
+
+```csharp
+FeatureFlagProviderBindingDescriptor(string providerId, string providerFeatureId, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a feature-flag provider binding.
+
+Parameters:
+- `providerId`: The stable external provider identifier.
+- `providerFeatureId`: The provider-specific feature identifier. When omitted, the owning Cephalon feature-flag id is used.
+- `metadata`: Optional provider-specific binding metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-features-featureflagproviderbindingdescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets provider-specific binding metadata.
+
+<a id="member-p-cephalon-abstractions-features-featureflagproviderbindingdescriptor-providerfeatureid"></a>
+
+##### `ProviderFeatureId`
+
+```csharp
+string ProviderFeatureId { get; }
+```
+
+Gets the provider-specific feature identifier when one was supplied.
+
+<a id="member-p-cephalon-abstractions-features-featureflagproviderbindingdescriptor-providerid"></a>
+
+##### `ProviderId`
+
+```csharp
+string ProviderId { get; }
+```
+
+Gets the stable external provider identifier.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-features-featureflagproviderbindingdescriptor-resolveproviderfeatureid-system-string"></a>
+
+##### `ResolveProviderFeatureId`
+
+```csharp
+string ResolveProviderFeatureId(string featureFlagId)
+```
+
+Resolves the provider-side feature identifier for the supplied Cephalon feature flag.
+
+Returns: The provider-side feature identifier.
+
+Parameters:
+- `featureFlagId`: The owning Cephalon feature-flag identifier.
+
+<a id="type-cephalon-abstractions-features-featureflagproviderevaluationresult"></a>
+
+### `FeatureFlagProviderEvaluationResult`
+
+Describes the result of evaluating one feature-flag provider binding.
+
+#### Declaration
+```csharp
+public sealed class FeatureFlagProviderEvaluationResult
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-features-featureflagproviderevaluationresult-ctor-system-string-system-string-system-boolean-system-boolean-system-string"></a>
+
+##### `FeatureFlagProviderEvaluationResult`
+
+```csharp
+FeatureFlagProviderEvaluationResult(string ProviderId, string ProviderFeatureId, bool IsDefined, bool IsEnabled, string Reason)
+```
+
+Describes the result of evaluating one feature-flag provider binding.
+
+Parameters:
+- `ProviderId`: The external provider identifier.
+- `ProviderFeatureId`: The provider-side feature identifier.
+- `IsDefined`: Indicates whether the provider recognizes the requested feature.
+- `IsEnabled`: Indicates whether the provider resolved the feature to enabled.
+- `Reason`: The operator-facing explanation for the provider evaluation result.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-features-featureflagproviderevaluationresult-isdefined"></a>
+
+##### `IsDefined`
+
+```csharp
+bool IsDefined { get; set; }
+```
+
+Indicates whether the provider recognizes the requested feature.
+
+<a id="member-p-cephalon-abstractions-features-featureflagproviderevaluationresult-isenabled"></a>
+
+##### `IsEnabled`
+
+```csharp
+bool IsEnabled { get; set; }
+```
+
+Indicates whether the provider resolved the feature to enabled.
+
+<a id="member-p-cephalon-abstractions-features-featureflagproviderevaluationresult-providerfeatureid"></a>
+
+##### `ProviderFeatureId`
+
+```csharp
+string ProviderFeatureId { get; set; }
+```
+
+The provider-side feature identifier.
+
+<a id="member-p-cephalon-abstractions-features-featureflagproviderevaluationresult-providerid"></a>
+
+##### `ProviderId`
+
+```csharp
+string ProviderId { get; set; }
+```
+
+The external provider identifier.
+
+<a id="member-p-cephalon-abstractions-features-featureflagproviderevaluationresult-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; set; }
+```
+
+The operator-facing explanation for the provider evaluation result.
 
 <a id="type-cephalon-abstractions-features-featureflagsourcekind"></a>
 
@@ -14052,6 +14395,50 @@ Registers the feature flags owned by the contributing module.
 
 Parameters:
 - `registry`: The registry that receives feature-flag descriptors.
+
+<a id="type-cephalon-abstractions-features-ifeatureflagprovider"></a>
+
+### `IFeatureFlagProvider`
+
+Evaluates Cephalon feature-flag provider bindings against external or provider-owned state.
+
+Remarks: Implementations are expected to answer from cached or in-memory provider state rather than performing network I/O on the hot execution path.
+
+#### Declaration
+```csharp
+public interface IFeatureFlagProvider
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-features-ifeatureflagprovider-providerid"></a>
+
+##### `ProviderId`
+
+```csharp
+string ProviderId { get; }
+```
+
+Gets the stable provider identifier used by feature-flag bindings.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-features-ifeatureflagprovider-evaluate-cephalon-abstractions-features-featureflagproviderbindingdescriptor-cephalon-abstractions-features-featureflagdescriptor-cephalon-abstractions-features-featureflagevaluationcontext"></a>
+
+##### `Evaluate`
+
+```csharp
+FeatureFlagProviderEvaluationResult Evaluate(FeatureFlagProviderBindingDescriptor binding, FeatureFlagDescriptor featureFlag, FeatureFlagEvaluationContext context)
+```
+
+Evaluates one provider binding for the supplied Cephalon feature flag and runtime context.
+
+Returns: The provider evaluation result.
+
+Parameters:
+- `binding`: The provider binding attached to the Cephalon feature flag.
+- `featureFlag`: The owning Cephalon feature-flag descriptor.
+- `context`: The optional runtime context used for evaluation.
 
 <a id="type-cephalon-abstractions-features-ifeatureflagregistry"></a>
 
@@ -21101,6 +21488,16 @@ const RestEndpointOverrideActionKind ClearRequiredCapability
 
 The rule clears any previously declared required Cephalon capability key.
 
+<a id="member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-clearrequiredfeatureflags"></a>
+
+##### `ClearRequiredFeatureFlags`
+
+```csharp
+const RestEndpointOverrideActionKind ClearRequiredFeatureFlags
+```
+
+The rule clears any previously declared required Cephalon feature-flag identifiers.
+
 <a id="member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-clearsummary"></a>
 
 ##### `ClearSummary`
@@ -21210,6 +21607,16 @@ const RestEndpointOverrideActionKind RequiredCapabilityKey
 ```
 
 The rule changes the required Cephalon capability key.
+
+<a id="member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-requiredfeatureflagids"></a>
+
+##### `RequiredFeatureFlagIds`
+
+```csharp
+const RestEndpointOverrideActionKind RequiredFeatureFlagIds
+```
+
+The rule changes the required Cephalon feature-flag identifiers.
 
 <a id="member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-routegroupprefix"></a>
 
@@ -21395,12 +21802,12 @@ public sealed class RestEndpointOverrideDescriptor
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-transports-restendpointoverridedescriptor-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-nullable-system-int32-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-boolean-cephalon-abstractions-transports-restendpointoverridebindingmode-system-boolean-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingfallbackmode-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointoverrideactionkind-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointoverrideactionkind-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceselectionbasissummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceoverrideactionkindsummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceoverrideactionkindsummarydescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-boolean"></a>
+<a id="member-m-cephalon-abstractions-transports-restendpointoverridedescriptor-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-nullable-system-int32-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-collections-generic-ireadonlylist-system-string-system-boolean-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-boolean-cephalon-abstractions-transports-restendpointoverridebindingmode-system-boolean-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingfallbackmode-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointoverrideactionkind-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointoverrideactionkind-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceselectionbasissummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceoverrideactionkindsummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceoverrideactionkindsummarydescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-boolean"></a>
 
 ##### `RestEndpointOverrideDescriptor`
 
 ```csharp
-RestEndpointOverrideDescriptor(string id, IReadOnlyList<string> candidateIds, IReadOnlyList<string> behaviorIds, IReadOnlyList<string> sourceModuleIds, IReadOnlyList<string> authoringStyles, IReadOnlyList<int> apiVersionMajors, IReadOnlyList<string> methods, IReadOnlyList<string> relativePatterns, IReadOnlyList<string> routeGroupPrefixes, int? apiVersionMajor, string method, string pattern, string routeGroupPrefix, string openApiDocumentName, string tagName, string endpointName, string summary, string description, string requiredCapabilityKey, bool clearRequiredCapability, IReadOnlyList<RestEndpointBindingDescriptor> bindings, IReadOnlyList<string> removedBindingProperties, bool clearBindings, RestEndpointOverrideBindingMode bindingMode, bool clearEndpointName, bool clearSummary, bool clearDescription, IReadOnlyList<string> openApiDocumentNames, IReadOnlyList<string> tagNames, IReadOnlyList<string> endpointNames, IReadOnlyList<RestEndpointBindingFallbackMode> bindingFallbackModes, IReadOnlyList<RestEndpointBindingDescriptor> targetBindings, IReadOnlyList<string> matchedCandidateIds, IReadOnlyList<string> selectedCandidateIds, IReadOnlyList<string> appliedCandidateIds, IReadOnlyList<string> skippedCandidateIds, IReadOnlyList<RestEndpointGovernanceRuleSelectionBasis> selectionBases, IReadOnlyList<RestEndpointOverrideActionKind> selectedActionKinds, IReadOnlyList<RestEndpointOverrideActionKind> appliedActionKinds, IReadOnlyList<RestEndpointGovernanceSelectionBasisSummaryDescriptor> selectionBasisSummaries, IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor> selectedActionKindSummaries, IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor> appliedActionKindSummaries, IReadOnlyList<string> hostGovernanceScopes, IReadOnlyList<string> behaviorIdPrefixes, bool preserveImplicitQueryFallback)
+RestEndpointOverrideDescriptor(string id, IReadOnlyList<string> candidateIds, IReadOnlyList<string> behaviorIds, IReadOnlyList<string> sourceModuleIds, IReadOnlyList<string> authoringStyles, IReadOnlyList<int> apiVersionMajors, IReadOnlyList<string> methods, IReadOnlyList<string> relativePatterns, IReadOnlyList<string> routeGroupPrefixes, int? apiVersionMajor, string method, string pattern, string routeGroupPrefix, string openApiDocumentName, string tagName, string endpointName, string summary, string description, string requiredCapabilityKey, bool clearRequiredCapability, IReadOnlyList<string> requiredFeatureFlagIds, bool clearRequiredFeatureFlags, IReadOnlyList<RestEndpointBindingDescriptor> bindings, IReadOnlyList<string> removedBindingProperties, bool clearBindings, RestEndpointOverrideBindingMode bindingMode, bool clearEndpointName, bool clearSummary, bool clearDescription, IReadOnlyList<string> openApiDocumentNames, IReadOnlyList<string> tagNames, IReadOnlyList<string> endpointNames, IReadOnlyList<RestEndpointBindingFallbackMode> bindingFallbackModes, IReadOnlyList<RestEndpointBindingDescriptor> targetBindings, IReadOnlyList<string> matchedCandidateIds, IReadOnlyList<string> selectedCandidateIds, IReadOnlyList<string> appliedCandidateIds, IReadOnlyList<string> skippedCandidateIds, IReadOnlyList<RestEndpointGovernanceRuleSelectionBasis> selectionBases, IReadOnlyList<RestEndpointOverrideActionKind> selectedActionKinds, IReadOnlyList<RestEndpointOverrideActionKind> appliedActionKinds, IReadOnlyList<RestEndpointGovernanceSelectionBasisSummaryDescriptor> selectionBasisSummaries, IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor> selectedActionKindSummaries, IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor> appliedActionKindSummaries, IReadOnlyList<string> hostGovernanceScopes, IReadOnlyList<string> behaviorIdPrefixes, bool preserveImplicitQueryFallback)
 ```
 
 Creates a REST endpoint override descriptor.
@@ -21426,6 +21833,8 @@ Parameters:
 - `description`: The effective OpenAPI description applied when the rule matches.
 - `requiredCapabilityKey`: The required Cephalon capability key enforced at the REST boundary when the rule matches.
 - `clearRequiredCapability`: `true` when the rule removes any previously declared Cephalon capability boundary from the matched candidate.
+- `requiredFeatureFlagIds`: The required Cephalon feature-flag identifiers enforced at the REST boundary when the rule matches.
+- `clearRequiredFeatureFlags`: `true` when the rule removes any previously declared Cephalon feature-flag requirements from the matched candidate.
 - `bindings`: The effective explicit request-binding plan applied when the rule matches.
 - `removedBindingProperties`: The explicit binding properties removed from the source binding plan when the rule matches.
 - `clearBindings`: `true` when the rule removes the matched candidate's entire explicit binding plan and returns publication to the implicit request-binding baseline.
@@ -21624,6 +22033,16 @@ bool ClearRequiredCapability { get; }
 
 Gets a value indicating whether this override rule clears any previously declared Cephalon capability boundary from the matched candidate.
 
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-clearrequiredfeatureflags"></a>
+
+##### `ClearRequiredFeatureFlags`
+
+```csharp
+bool ClearRequiredFeatureFlags { get; }
+```
+
+Gets a value indicating whether this override rule clears any previously declared Cephalon feature-flag requirements from the matched candidate.
+
 <a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-clearsummary"></a>
 
 ##### `ClearSummary`
@@ -21783,6 +22202,16 @@ string RequiredCapabilityKey { get; }
 ```
 
 Gets the required Cephalon capability key enforced at the REST boundary when this override rule matches.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-requiredfeatureflagids"></a>
+
+##### `RequiredFeatureFlagIds`
+
+```csharp
+IReadOnlyList<string> RequiredFeatureFlagIds { get; }
+```
+
+Gets the required Cephalon feature-flag identifiers enforced at the REST boundary when this override rule matches.
 
 <a id="member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-routegroupprefix"></a>
 
@@ -22946,12 +23375,12 @@ public sealed class RestEndpointRuntimeDescriptor
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-transports-restendpointruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-nullable-system-int32-system-string-system-string-system-string-system-nullable-system-int32-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-string-system-string-system-string-cephalon-abstractions-transports-restendpointcandidateprojectiondescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-nullable-cephalon-abstractions-transports-restendpointbindingfallbackmode-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-nullable-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointoverrideactionkind-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointoverrideactionkind"></a>
+<a id="member-m-cephalon-abstractions-transports-restendpointruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-nullable-system-int32-system-string-system-string-system-string-system-nullable-system-int32-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-string-system-string-system-string-system-string-cephalon-abstractions-transports-restendpointcandidateprojectiondescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-nullable-cephalon-abstractions-transports-restendpointbindingfallbackmode-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-nullable-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointoverrideactionkind-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointoverrideactionkind-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string"></a>
 
 ##### `RestEndpointRuntimeDescriptor`
 
 ```csharp
-RestEndpointRuntimeDescriptor(string id, string transportId, string sourceKind, string method, string routePattern, string sourceModuleId, string sourceModuleVersion, int? sourceModuleVersionMajor, string behaviorId, string endpointName, string openApiDocumentName, int? apiVersionMajor, IReadOnlyList<string> tags, string summary, string description, string originalEndpointName, string originalSummary, string originalDescription, string candidateId, RestEndpointCandidateProjectionDescriptor originalProjection, IReadOnlyList<RestEndpointBindingDescriptor> bindingDescriptors, RestEndpointBindingFallbackMode? bindingFallbackMode, IReadOnlyDictionary<string, string> metadata, string authoringStyle, string routeGroupPrefix, string relativePattern, string behaviorType, string sourceId, string requiredCapabilityKey, string originalRequiredCapabilityKey, string appliedOverrideId, IReadOnlyList<string> matchedOverrideIds, string selectedOverrideId, RestEndpointGovernanceRuleSelectionBasis? overrideSelectionBasis, IReadOnlyList<string> skippedSuppressionIds, IReadOnlyList<string> skippedOverrideIds, IReadOnlyList<RestEndpointOverrideActionKind> selectedOverrideActionKinds, IReadOnlyList<RestEndpointOverrideActionKind> appliedOverrideActionKinds)
+RestEndpointRuntimeDescriptor(string id, string transportId, string sourceKind, string method, string routePattern, string sourceModuleId, string sourceModuleVersion, int? sourceModuleVersionMajor, string behaviorId, string endpointName, string openApiDocumentName, int? apiVersionMajor, IReadOnlyList<string> tags, string summary, string description, string originalEndpointName, string originalSummary, string originalDescription, string candidateId, RestEndpointCandidateProjectionDescriptor originalProjection, IReadOnlyList<RestEndpointBindingDescriptor> bindingDescriptors, RestEndpointBindingFallbackMode? bindingFallbackMode, IReadOnlyDictionary<string, string> metadata, string authoringStyle, string routeGroupPrefix, string relativePattern, string behaviorType, string sourceId, string requiredCapabilityKey, string originalRequiredCapabilityKey, string appliedOverrideId, IReadOnlyList<string> matchedOverrideIds, string selectedOverrideId, RestEndpointGovernanceRuleSelectionBasis? overrideSelectionBasis, IReadOnlyList<string> skippedSuppressionIds, IReadOnlyList<string> skippedOverrideIds, IReadOnlyList<RestEndpointOverrideActionKind> selectedOverrideActionKinds, IReadOnlyList<RestEndpointOverrideActionKind> appliedOverrideActionKinds, IReadOnlyList<string> requiredFeatureFlagIds, IReadOnlyList<string> originalRequiredFeatureFlagIds)
 ```
 
 Creates a resolved REST endpoint runtime descriptor.
@@ -22995,6 +23424,8 @@ Parameters:
 - `skippedOverrideIds`: The ordered override identifiers that otherwise target this endpoint's originating candidate but were skipped because the original projection did not allow host governance to participate.
 - `selectedOverrideActionKinds`: The normalized action dimensions declared by the selected override rule when one winning override rule was resolved for this endpoint's originating candidate.
 - `appliedOverrideActionKinds`: The normalized action dimensions that materially changed the published endpoint answer when the selected override rule was not a runtime no-op.
+- `requiredFeatureFlagIds`: The required Cephalon feature-flag identifiers enforced at the REST boundary when any are available.
+- `originalRequiredFeatureFlagIds`: The original required Cephalon feature-flag identifiers before later endpoint-governance rewrites when the runtime can classify that source answer.
 
 #### Properties
 
@@ -23198,6 +23629,16 @@ string OriginalRequiredCapabilityKey { get; }
 
 Gets the original required Cephalon capability key before later endpoint-governance rewrites when the runtime can classify that source answer.
 
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-originalrequiredfeatureflagids"></a>
+
+##### `OriginalRequiredFeatureFlagIds`
+
+```csharp
+IReadOnlyList<string> OriginalRequiredFeatureFlagIds { get; }
+```
+
+Gets the original required Cephalon feature-flag identifiers before later endpoint-governance rewrites when the runtime can classify that source answer.
+
 <a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-originalsummary"></a>
 
 ##### `OriginalSummary`
@@ -23237,6 +23678,16 @@ string RequiredCapabilityKey { get; }
 ```
 
 Gets the required Cephalon capability key enforced at the REST boundary when one is available.
+
+<a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-requiredfeatureflagids"></a>
+
+##### `RequiredFeatureFlagIds`
+
+```csharp
+IReadOnlyList<string> RequiredFeatureFlagIds { get; }
+```
+
+Gets the required Cephalon feature-flag identifiers enforced at the REST boundary when any are available.
 
 <a id="member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-routegroupprefix"></a>
 

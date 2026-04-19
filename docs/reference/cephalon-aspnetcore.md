@@ -1194,12 +1194,12 @@ public sealed class RestEndpointOverrideOptions
 
 #### Constructors
 
-<a id="member-m-cephalon-aspnetcore-hosting-restendpointoverrideoptions-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-nullable-system-int32-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-boolean-cephalon-abstractions-transports-restendpointoverridebindingmode-system-boolean-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingfallbackmode-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-boolean"></a>
+<a id="member-m-cephalon-aspnetcore-hosting-restendpointoverrideoptions-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-nullable-system-int32-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-collections-generic-ireadonlylist-system-string-system-boolean-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-boolean-cephalon-abstractions-transports-restendpointoverridebindingmode-system-boolean-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingfallbackmode-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-boolean"></a>
 
 ##### `RestEndpointOverrideOptions`
 
 ```csharp
-RestEndpointOverrideOptions(string id, IReadOnlyList<string> candidateIds, IReadOnlyList<string> behaviorIds, IReadOnlyList<string> sourceModuleIds, IReadOnlyList<string> authoringStyles, IReadOnlyList<int> apiVersionMajors, IReadOnlyList<string> methods, IReadOnlyList<string> relativePatterns, IReadOnlyList<string> routeGroupPrefixes, int? apiVersionMajor, string method, string pattern, string routeGroupPrefix, string openApiDocumentName, string tagName, string endpointName, string summary, string description, string requiredCapabilityKey, bool clearRequiredCapability, IReadOnlyList<RestEndpointBindingDescriptor> bindings, IReadOnlyList<string> removedBindingProperties, bool clearBindings, RestEndpointOverrideBindingMode bindingMode, bool clearEndpointName, bool clearSummary, bool clearDescription, IReadOnlyList<string> openApiDocumentNames, IReadOnlyList<string> tagNames, IReadOnlyList<string> endpointNames, IReadOnlyList<RestEndpointBindingFallbackMode> bindingFallbackModes, IReadOnlyList<RestEndpointBindingDescriptor> targetBindings, IReadOnlyList<string> hostGovernanceScopes, IReadOnlyList<string> behaviorIdPrefixes, bool preserveImplicitQueryFallback)
+RestEndpointOverrideOptions(string id, IReadOnlyList<string> candidateIds, IReadOnlyList<string> behaviorIds, IReadOnlyList<string> sourceModuleIds, IReadOnlyList<string> authoringStyles, IReadOnlyList<int> apiVersionMajors, IReadOnlyList<string> methods, IReadOnlyList<string> relativePatterns, IReadOnlyList<string> routeGroupPrefixes, int? apiVersionMajor, string method, string pattern, string routeGroupPrefix, string openApiDocumentName, string tagName, string endpointName, string summary, string description, string requiredCapabilityKey, bool clearRequiredCapability, IReadOnlyList<string> requiredFeatureFlagIds, bool clearRequiredFeatureFlags, IReadOnlyList<RestEndpointBindingDescriptor> bindings, IReadOnlyList<string> removedBindingProperties, bool clearBindings, RestEndpointOverrideBindingMode bindingMode, bool clearEndpointName, bool clearSummary, bool clearDescription, IReadOnlyList<string> openApiDocumentNames, IReadOnlyList<string> tagNames, IReadOnlyList<string> endpointNames, IReadOnlyList<RestEndpointBindingFallbackMode> bindingFallbackModes, IReadOnlyList<RestEndpointBindingDescriptor> targetBindings, IReadOnlyList<string> hostGovernanceScopes, IReadOnlyList<string> behaviorIdPrefixes, bool preserveImplicitQueryFallback)
 ```
 
 Initializes a new instance of the `RestEndpointOverrideOptions` class.
@@ -1225,6 +1225,8 @@ Parameters:
 - `description`: The effective OpenAPI description applied when the rule matches a shorthand candidate.
 - `requiredCapabilityKey`: The required Cephalon capability key enforced at the REST boundary when the rule matches a shorthand candidate.
 - `clearRequiredCapability`: `true` when the rule removes any previously declared Cephalon capability boundary from the matched shorthand candidate.
+- `requiredFeatureFlagIds`: The required Cephalon feature-flag identifiers enforced at the REST boundary when the rule matches a shorthand candidate.
+- `clearRequiredFeatureFlags`: `true` when the rule removes any previously declared Cephalon feature-flag requirements from the matched shorthand candidate.
 - `bindings`: The effective explicit request-binding plan applied when the rule matches a shorthand candidate.
 - `removedBindingProperties`: The explicit shorthand binding properties removed from the source binding plan when the rule matches.
 - `clearBindings`: `true` when the rule removes the matched shorthand candidate's entire explicit binding plan and returns publication to the implicit request-binding baseline.
@@ -1382,6 +1384,16 @@ bool ClearRequiredCapability { get; }
 ```
 
 Gets a value indicating whether this override rule clears any previously declared Cephalon capability boundary from the matched shorthand candidate.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-clearrequiredfeatureflags"></a>
+
+##### `ClearRequiredFeatureFlags`
+
+```csharp
+bool ClearRequiredFeatureFlags { get; }
+```
+
+Gets a value indicating whether this override rule clears any previously declared Cephalon feature-flag requirements from the matched shorthand candidate.
 
 <a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-clearsummary"></a>
 
@@ -1542,6 +1554,16 @@ string RequiredCapabilityKey { get; }
 ```
 
 Gets the required Cephalon capability key enforced at the REST boundary when this override rule matches.
+
+<a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-requiredfeatureflagids"></a>
+
+##### `RequiredFeatureFlagIds`
+
+```csharp
+IReadOnlyList<string> RequiredFeatureFlagIds { get; }
+```
+
+Gets the required Cephalon feature-flag identifiers enforced at the REST boundary when this override rule matches.
 
 <a id="member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-routegroupprefix"></a>
 
@@ -1971,6 +1993,23 @@ Returns: The same route handler builder for further convention chaining.
 Parameters:
 - `builder`: The route handler builder to update.
 
+<a id="member-m-cephalon-aspnetcore-transports-rest-restendpointconventionbuilderextensions-clearrequiredfeatureflags-microsoft-aspnetcore-builder-routehandlerbuilder"></a>
+
+##### `ClearRequiredFeatureFlags`
+
+```csharp
+RouteHandlerBuilder ClearRequiredFeatureFlags(this RouteHandlerBuilder builder)
+```
+
+Clears any previously declared Cephalon feature-flag requirements from a REST endpoint.
+
+Remarks: This uses the same last-declaration-wins model as `RequireFeatureFlags`. A later clear declaration suppresses earlier feature requirements for the same route.
+
+Returns: The same route handler builder for further convention chaining.
+
+Parameters:
+- `builder`: The route handler builder to update.
+
 <a id="member-m-cephalon-aspnetcore-transports-rest-restendpointconventionbuilderextensions-requirecapability-microsoft-aspnetcore-builder-routehandlerbuilder-system-string"></a>
 
 ##### `RequireCapability`
@@ -1988,6 +2027,40 @@ Returns: The same route handler builder for further convention chaining.
 Parameters:
 - `builder`: The route handler builder to protect.
 - `capabilityKey`: The capability key that must be allowed for the request.
+
+<a id="member-m-cephalon-aspnetcore-transports-rest-restendpointconventionbuilderextensions-requirefeatureflag-microsoft-aspnetcore-builder-routehandlerbuilder-system-string"></a>
+
+##### `RequireFeatureFlag`
+
+```csharp
+RouteHandlerBuilder RequireFeatureFlag(this RouteHandlerBuilder builder, string featureFlagId)
+```
+
+Requires one Cephalon feature flag to be enabled before a REST endpoint can execute.
+
+Returns: The same route handler builder for further convention chaining.
+
+Parameters:
+- `builder`: The route handler builder to protect.
+- `featureFlagId`: The feature-flag identifier that must resolve to enabled.
+
+<a id="member-m-cephalon-aspnetcore-transports-rest-restendpointconventionbuilderextensions-requirefeatureflags-microsoft-aspnetcore-builder-routehandlerbuilder-system-string"></a>
+
+##### `RequireFeatureFlags`
+
+```csharp
+RouteHandlerBuilder RequireFeatureFlags(this RouteHandlerBuilder builder, string[] featureFlagIds)
+```
+
+Requires all requested Cephalon feature flags to be enabled before a REST endpoint can execute.
+
+Remarks: This guard keeps the endpoint published and introspectable while shifting rollout decisions to runtime evaluation at the HTTP boundary. If any required feature flag is unavailable for the request context, the endpoint returns a `404 Not Found` problem response.
+
+Returns: The same route handler builder for further convention chaining.
+
+Parameters:
+- `builder`: The route handler builder to protect.
+- `featureFlagIds`: The feature-flag identifiers that must resolve to enabled.
 
 <a id="type-cephalon-aspnetcore-transports-rest-resultmodelerror"></a>
 

@@ -297,6 +297,22 @@ public sealed class ReferenceDocsGeneratorTests
     }
 
     [Fact]
+    public void GenerateBuildsPageForBehaviorEventingBridgeAssembly()
+    {
+        var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-reference-docs-eventing-behaviors-{Guid.NewGuid():N}");
+        var request = new ReferenceDocsRequest(
+            rootPath: GetRepositoryRoot(),
+            outputPath: outputPath,
+            configuration: GetCurrentBuildConfiguration(),
+            assemblies: ["Cephalon.Eventing.Behaviors"]);
+
+        var rendered = ReferenceDocsGenerator.Generate(request);
+        var bridgePage = Assert.Single(rendered.Files, file => file.Path == "cephalon-eventing-behaviors.md");
+
+        Assert.Contains("BehaviorEventingEngineBuilderExtensions", bridgePage.Contents, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void GenerateBuildsPageForIdentityAssembly()
     {
         var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-reference-docs-identity-{Guid.NewGuid():N}");
@@ -396,6 +412,7 @@ public sealed class ReferenceDocsGeneratorTests
                 "Cephalon.EventSourcing",
                 "Cephalon.EventSourcing.EntityFramework",
                 "Cephalon.Eventing",
+                "Cephalon.Eventing.Behaviors",
                 "Cephalon.Eventing.Wolverine",
                 "Cephalon.Identity",
                 "Cephalon.Identity.AspNetCore",

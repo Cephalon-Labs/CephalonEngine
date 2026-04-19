@@ -1,11 +1,17 @@
+using System.Text.Json;
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Health;
+using Cephalon.Behaviors.Hosting;
+using Cephalon.Behaviors.Patterns.Abstractions;
+using Cephalon.Behaviors.Patterns.Hosting;
 using Cephalon.Data.EntityFramework.Configuration;
 using Cephalon.Data.EntityFramework.Registration;
 using Cephalon.Data.Registration;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Diagnostics;
+using Cephalon.Engine.Runtime;
+using Cephalon.Eventing.Behaviors.Registration;
 using Cephalon.Eventing.Registration;
 using Cephalon.Eventing.Services;
 using Cephalon.Ids.Sfid.Registration;
@@ -1258,6 +1264,151 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Empty(await dispatchStore.ReadPendingAsync(10));
     }
 
+    [Fact]
+    public async Task AddBehaviorEventingBridgeCanStageSagaChoreographyPublicationsThroughOutbox()
+    {
+        var databaseName = $"cephalon-data-ef-saga-choreography-{Guid.NewGuid():N}";
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"],
+                data: new DataSettings(
+                    provider: "EntityFramework",
+                    outboxEnabled: true),
+                messaging: new MessagingSettings(provider: "InMemoryChannels")));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddBehaviors(behaviors => behaviors.AddBehaviorPatterns());
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "catalog-events",
+                    displayName: "Catalog Events",
+                    description: "Catalog integration events."));
+            });
+            engine.AddBehaviorEventingBridge();
+            engine.AddEntityFrameworkData<OutboxCatalogDbContext>(
+                options => options.UseInMemoryDatabase(databaseName),
+                configure: options => options.RegisterOutbox = true);
+        });
+
+        using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+        var runtime = scope.ServiceProvider.GetRequiredService<IRuntime>();
+        var publisher = scope.ServiceProvider.GetRequiredService<ISagaChoreographyPublisher>();
+        var dbContext = scope.ServiceProvider.GetRequiredService<OutboxCatalogDbContext>();
+
+        await publisher.PublishAsync(new SagaChoreographyPublication(
+            id: "evt-choreo-001",
+            channelId: "catalog-events",
+            eventType: "catalog.inventory.reserved",
+            payload: "{\"reservationId\":\"res-001\"}",
+            occurredAtUtc: DateTimeOffset.UtcNow,
+            correlationId: "corr-saga-001",
+            tenantId: "tenant-001",
+            isCompensation: true,
+            headers: new Dictionary<string, string>
+            {
+                ["X-Saga-Id"] = "saga-001"
+            },
+            metadata: new Dictionary<string, string>
+            {
+                ["step"] = "reserve-inventory"
+            }));
+
+        var outboxEntry = await dbContext.OutboxMessages.SingleAsync();
+        var headers = JsonSerializer.Deserialize<Dictionary<string, string>>(outboxEntry.HeadersJson);
+        var metadata = JsonSerializer.Deserialize<Dictionary<string, string>>(outboxEntry.MetadataJson);
+
+        Assert.Equal("evt-choreo-001", outboxEntry.Id);
+        Assert.Equal("catalog-events", outboxEntry.ChannelId);
+        Assert.Equal("catalog.inventory.reserved", outboxEntry.MessageType);
+        Assert.Equal("corr-saga-001", outboxEntry.CorrelationId);
+        Assert.Equal("tenant-001", outboxEntry.TenantId);
+        Assert.NotNull(headers);
+        Assert.NotNull(metadata);
+        Assert.Equal("saga-001", headers["X-Saga-Id"]);
+        Assert.Equal("reserve-inventory", metadata["step"]);
+        Assert.Equal("saga-choreography", metadata["cephalon.pattern"]);
+        Assert.Equal("eventing.behaviors", metadata["cephalon.publisherBridge"]);
+        Assert.Equal("true", metadata["cephalon.isCompensation"]);
+        Assert.Contains(
+            runtime.Manifest.Capabilities,
+            capability => capability.Key == "eventing.behaviors.saga-choreography" &&
+                capability.Metadata["handoff"] == "eventing.publish");
+    }
+
+    [Fact]
+    public void AddBehaviorEventingBridgePreservesExplicitSagaChoreographyPublisherOverrides()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<ISagaChoreographyPublisher, TestSagaChoreographyPublisher>();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"],
+                messaging: new MessagingSettings(provider: "InMemoryChannels")));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddBehaviors(behaviors => behaviors.AddBehaviorPatterns());
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "catalog-events",
+                    displayName: "Catalog Events",
+                    description: "Catalog integration events."));
+            });
+            engine.AddBehaviorEventingBridge();
+        });
+
+        using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+        var publisher = scope.ServiceProvider.GetRequiredService<ISagaChoreographyPublisher>();
+        var runtime = scope.ServiceProvider.GetRequiredService<IRuntime>();
+
+        Assert.IsType<TestSagaChoreographyPublisher>(publisher);
+        Assert.DoesNotContain(
+            runtime.Manifest.Capabilities,
+            capability => capability.Key == "eventing.behaviors.saga-choreography");
+    }
+
+    [Fact]
+    public void AddBehaviorEventingBridgeRequiresActiveEventingPublishingPath()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"],
+                messaging: new MessagingSettings(provider: "InMemoryChannels")));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddBehaviors(behaviors => behaviors.AddBehaviorPatterns());
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "catalog-events",
+                    displayName: "Catalog Events",
+                    description: "Catalog integration events."));
+            });
+            engine.AddBehaviorEventingBridge();
+        });
+
+        using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            scope.ServiceProvider.GetRequiredService<ISagaChoreographyPublisher>());
+
+        Assert.Contains("Cephalon.Eventing.Behaviors requires the Cephalon.Eventing publishing path", exception.Message, StringComparison.Ordinal);
+    }
+
     private sealed class MutableTimeProvider(DateTimeOffset now) : TimeProvider
     {
         private DateTimeOffset now = now;
@@ -1270,6 +1421,16 @@ public sealed class EntityFrameworkDataPackTests
         public void Advance(TimeSpan duration)
         {
             now = now.Add(duration);
+        }
+    }
+
+    private sealed class TestSagaChoreographyPublisher : ISagaChoreographyPublisher
+    {
+        public ValueTask PublishAsync(SagaChoreographyPublication publication, CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(publication);
+            cancellationToken.ThrowIfCancellationRequested();
+            return ValueTask.CompletedTask;
         }
     }
 }

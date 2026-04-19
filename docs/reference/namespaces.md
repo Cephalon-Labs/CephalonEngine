@@ -22,7 +22,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Abstractions.Behaviors`
 
-- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-behaviors): 37 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors)
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-behaviors): 38 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors)
 
 ## `Cephalon.Abstractions.Capabilities`
 
@@ -42,7 +42,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Abstractions.Features`
 
-- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-features): 9 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features)
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-features): 12 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features)
 
 ## `Cephalon.Abstractions.Health`
 
@@ -222,7 +222,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Engine.Configuration`
 
-- [Cephalon.Engine](cephalon-engine.md#namespace-cephalon-engine-configuration): 43 public types [Browse](browse.html?assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration)
+- [Cephalon.Engine](cephalon-engine.md#namespace-cephalon-engine-configuration): 44 public types [Browse](browse.html?assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration)
 
 ## `Cephalon.Engine.Diagnostics`
 
@@ -255,6 +255,10 @@ Browse the published API surface by namespace.
 ## `Cephalon.Engine.Trust`
 
 - [Cephalon.Engine](cephalon-engine.md#namespace-cephalon-engine-trust): 5 public types [Browse](browse.html?assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust)
+
+## `Cephalon.Eventing.Behaviors.Registration`
+
+- [Cephalon.Eventing.Behaviors](cephalon-eventing-behaviors.md#namespace-cephalon-eventing-behaviors-registration): 1 public types [Browse](browse.html?assembly=Cephalon.Eventing.Behaviors&namespace=Cephalon.Eventing.Behaviors.Registration)
 
 ## `Cephalon.Eventing.Configuration`
 

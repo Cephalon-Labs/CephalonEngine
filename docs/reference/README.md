@@ -15,8 +15,8 @@ Quick links:
 
 ### Core
 
-- [Cephalon.Abstractions](cephalon-abstractions.md): Host-agnostic contracts that module and package authors build against. Contains 19 namespaces and 287 public types. [Browse](browse.html?assembly=Cephalon.Abstractions)
-- [Cephalon.Engine](cephalon-engine.md): Composition, runtime, policy, manifest, and introspection services. Contains 12 namespaces and 94 public types. [Browse](browse.html?assembly=Cephalon.Engine)
+- [Cephalon.Abstractions](cephalon-abstractions.md): Host-agnostic contracts that module and package authors build against. Contains 19 namespaces and 291 public types. [Browse](browse.html?assembly=Cephalon.Abstractions)
+- [Cephalon.Engine](cephalon-engine.md): Composition, runtime, policy, manifest, and introspection services. Contains 12 namespaces and 95 public types. [Browse](browse.html?assembly=Cephalon.Engine)
 
 ### Technology Packs
 
@@ -82,6 +82,10 @@ Quick links:
 - [Cephalon.Cli](cephalon-cli.md): Command-line surface for blueprint-aware generation. Contains 1 namespaces and 1 public types. [Browse](browse.html?assembly=Cephalon.Cli)
 - [Cephalon.ReferenceDocs](cephalon-referencedocs.md): Reference-doc generation pipeline for XML comments and public APIs. Contains 3 namespaces and 6 public types. [Browse](browse.html?assembly=Cephalon.ReferenceDocs)
 - [Cephalon.Scaffolding](cephalon-scaffolding.md): Blueprint scaffold generation primitives and filesystem output. Contains 2 namespaces and 7 public types. [Browse](browse.html?assembly=Cephalon.Scaffolding)
+
+### Phase 12 Companion Packs
+
+- [Cephalon.Eventing.Behaviors](cephalon-eventing-behaviors.md): Explicit bridge that routes behavior saga choreography publications through the shared Cephalon eventing publish path. Contains 1 namespaces and 1 public types. [Browse](browse.html?assembly=Cephalon.Eventing.Behaviors)
 
 ### Event-Sourcing Companion Packs
 

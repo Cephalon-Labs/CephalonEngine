@@ -57,6 +57,10 @@ See also: [Docs hub](../README.md)
 - [Cephalon.Data.Nats](data-nats.md)
 - [Cephalon.EventSourcing.Nats](event-sourcing-nats.md)
 
+## Phase 12 companion packs
+
+- [Cephalon.Eventing.Behaviors](eventing-behaviors.md)
+
 ## Phase 8 companion packs
 
 - [Cephalon.Audit](audit.md)
