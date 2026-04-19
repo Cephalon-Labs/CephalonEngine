@@ -40,6 +40,10 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-execution): 10 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution)
 
+## `Cephalon.Abstractions.Features`
+
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-features): 9 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features)
+
 ## `Cephalon.Abstractions.Health`
 
 - [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-health): 3 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health)
@@ -58,7 +62,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Abstractions.Patterns`
 
-- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-patterns): 12 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns)
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-patterns): 17 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns)
 
 ## `Cephalon.Abstractions.Resilience`
 
@@ -74,7 +78,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Abstractions.Transports`
 
-- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-transports): 49 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports)
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-transports): 53 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports)
 
 ## `Cephalon.Agentics.Configuration`
 
@@ -218,7 +222,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Engine.Configuration`
 
-- [Cephalon.Engine](cephalon-engine.md#namespace-cephalon-engine-configuration): 37 public types [Browse](browse.html?assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration)
+- [Cephalon.Engine](cephalon-engine.md#namespace-cephalon-engine-configuration): 43 public types [Browse](browse.html?assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration)
 
 ## `Cephalon.Engine.Diagnostics`
 

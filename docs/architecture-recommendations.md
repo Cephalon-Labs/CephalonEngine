@@ -1,6 +1,6 @@
 # Cephalon Engine Architecture Recommendations
 
-Recommendations in this document reflect the repository state as of `April 13, 2026`.
+Recommendations in this document reflect the repository state as of `April 19, 2026`.
 
 Cross-references: `docs/architecture-inventory.md`, `docs/engine-roadmap.md`, `docs/engine-backlog.md`
 
@@ -138,17 +138,29 @@ Effort: small for the remaining non-REST transport-materialization follow-throug
 
 ### Feature Flags (progressive delivery)
 
-Current state: no feature flag infrastructure exists. Essential for trunk-based development and progressive rollout.
+Current state: the first contract-first feature-flag baseline is now shipped. `Cephalon.Abstractions`
+now exports `FeatureFlagDescriptor`, `FeatureFlagTargetingDescriptor`,
+`FeatureFlagEvaluationContext`, `FeatureFlagEvaluationResult`, `IFeatureToggle`,
+`IFeatureFlagRuntimeCatalog`, `IFeatureFlagContributor`, and `IFeatureFlagRegistry`.
+`Cephalon.Engine` now merges host-added, configuration-driven, and module-contributed flags
+through `engine.AddFeatureFlag(...)`, `engine.AddFeatureFlags(...)`, `Engine:Features`, and
+`IFeatureFlagContributor`, projects the merged catalog into `snapshot.FeatureFlags`, and evaluates
+runtime answers through `IFeatureToggle`. ASP.NET Core now exposes `/engine/features` plus
+enabled/disabled/module/id drill-down routes and `/engine/features/{featureFlagId}/evaluate`.
 
-Recommendation: add `IFeatureToggle` abstraction with per-behavior, per-module, and per-tenant evaluation.
+Recommendation: keep the current host-agnostic descriptor/catalog/evaluator baseline stable, keep
+module ownership explicit by requiring module-contributed flags to stay
+`FeatureFlagSourceKind.Module` with a matching `SourceModuleId`, and add external-provider bridges
+only when they can preserve the same runtime truth instead of replacing it with opaque provider
+state.
 
-Implementation outline:
-- `IFeatureToggle` abstraction in `Cephalon.Abstractions`
-- In-memory default implementation
-- Integration points for external providers (LaunchDarkly, Azure App Configuration, Unleash)
-- Per-behavior and per-module feature evaluation middleware
-- Configuration: `Engine:Features` section
-- Capability: `runtime.feature-flags`
+Remaining follow-through:
+- external-provider integration paths for LaunchDarkly, Azure App Configuration, Unleash, or
+  similar providers when the merged Cephalon runtime catalog can still stay introspectable
+- behavior- or pipeline-level convenience hooks that consume `IFeatureToggle` without moving
+  feature-flag truth into host-only middleware
+- reconsider a dedicated `runtime.feature-flags` capability only if runtime capability provenance
+  expands beyond the current module-owned model or a truthful module-backed publication path exists
 
 Effort: medium.
 
@@ -239,13 +251,18 @@ Deliverables:
 - Strangler Fig migration pattern
 - Saga Choreography execution strategy
 - Backend for Frontend explicit pattern
-- Feature Flags abstraction and middleware
+- Feature flags runtime baseline — shipped through `FeatureFlagDescriptor`,
+  `FeatureFlagTargetingDescriptor`, `IFeatureToggle`, `IFeatureFlagRuntimeCatalog`,
+  `IFeatureFlagContributor`, `Engine:Features`, `/engine/features`,
+  `/engine/features/{featureFlagId}/evaluate`, and `snapshot.FeatureFlags` while provider
+  integration and any future capability publication remain later follow-through
 - Durable Execution foundations
 
 Exit criteria:
 - a consumer app can migrate incrementally from a legacy system using the strangler fig router
 - sagas can coordinate through events (choreography) in addition to state (orchestration)
-- feature flags can gate behavior availability per tenant
+- feature flags can gate behavior, module, transport, environment, tenant, subject, or tag-scoped
+  availability through `IFeatureToggle` and `Engine:Features`
 
 ### Phase 13 — Next-Generation Patterns
 

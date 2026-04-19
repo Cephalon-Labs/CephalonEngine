@@ -11,6 +11,7 @@
 - package publisher and signature provenance metadata carried through trust and manifest surfaces
 - trusted public-key resolution for cryptographic package signature verification across declared signers
 - configuration binding for engine, trust, localization, failure policy, options, the phase-8 `Data`, `Databases`, `Identity`, `Tenancy`, `Audit`, and `Messaging` sections, and the phase-11 contract-first `Resilience` section, including `Engine:Audit:History:Export` and `Engine:Audit:History:Retention`
+- configuration binding for the phase-12 `Features` section through `Engine:Features`
 - runtime lifecycle, failure capture, restart policy, and health evaluation
 - additive execution-graph contracts and runtime execution-graph catalogs
 - additive hosted-execution contracts and runtime hosted-execution catalogs
@@ -26,6 +27,7 @@
 - additive event-dispatch runtime descriptor and state catalogs
 - additive backend-for-frontend client-binding contribution contracts and runtime catalogs
 - additive strangler-fig route-contribution contracts plus runtime route, migration-policy, and request-resolution catalogs
+- additive feature-flag contribution contracts, runtime catalogs, and evaluation
 - manifest generation and runtime introspection snapshots
 - built-in blueprint, pattern, transport, and technology catalogs
 - trust and capability policy evaluation
@@ -51,6 +53,9 @@
 - `Authorization/AuthorizationPolicyCatalogSnapshot.cs`
 - `Audit/AuditStoreCatalogSnapshot.cs`
 - `Patterns/StranglerFigRuntimeCatalogSnapshot.cs`
+- `Features/FeatureFlagRegistryAdapter.cs`
+- `Features/FeatureFlagRuntimeCatalogSnapshot.cs`
+- `Features/InMemoryFeatureToggle.cs`
 - `Runtime/RuntimeIntrospectionSnapshotProvider.cs`
 - `Runtime/EngineRuntime.cs`
 - `Runtime/IRuntime.cs`
@@ -64,6 +69,7 @@
 - `Manifest/RuntimeManifest.cs`
 - `Manifest/PackageManifest.cs`
 - `Configuration/EngineSettings.cs`
+- `Configuration/FeatureSettings.cs`
 - `Configuration/EngineOptions.cs`
 - `Configuration/FailurePolicy.cs`
 - `Configuration/PackagePolicy.cs`
@@ -79,6 +85,7 @@
 - `Composition/Packages`
 - `Configuration`
 - `Diagnostics`
+- `Features`
 - `Execution`
 - `Localization`
 - `Manifest`
@@ -125,7 +132,16 @@ of truth. The next documentation/materialization follow-through is now also ship
 when a host adapter registers `IBackendForFrontendRestDocumentRuntimeCatalog`,
 `snapshot.BackendForFrontendRestDocuments` can publish scope-specific OpenAPI and Scalar surfaces
 without moving OpenAPI generation or Scalar mapping into `Cephalon.Engine`. Broader traffic-manager
-or ingress follow-through plus non-REST materialization remain later slices. The new host-agnostic `IRateLimitingRuntimeCatalog` and
+or ingress follow-through plus non-REST materialization remain later slices. The same phase now
+also ships the first feature-flag baseline: `Engine:Features`, `engine.AddFeatureFlag(...)`,
+`engine.AddFeatureFlags(...)`, and module-owned `IFeatureFlagContributor` inputs now merge into one
+`IFeatureFlagRuntimeCatalog` plus `IFeatureToggle` runtime, `snapshot.FeatureFlags` now publishes
+the merged descriptor set, and ASP.NET Core can project that same truth through `/engine/features`
+rather than hiding feature ownership inside host-only provider code. Module-contributed flags must
+remain `FeatureFlagSourceKind.Module` with a matching `SourceModuleId`, duplicate ids fail
+composition deterministically, and the current baseline intentionally stops short of advertising a
+separate `runtime.feature-flags` capability because runtime capability provenance is still
+module-based and the engine would otherwise need a synthetic source. The new host-agnostic `IRateLimitingRuntimeCatalog` and
 `RateLimitingRuntimeDescriptor` contracts also let host adapters publish effective enforcement into
 `snapshot.RateLimitingPolicies` without pretending the engine core itself performs HTTP throttling.
 `RateLimitingSelection` now also carries additive `Overrides` projected as

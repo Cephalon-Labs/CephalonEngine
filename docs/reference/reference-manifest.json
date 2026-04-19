@@ -1,14 +1,14 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-19T00:12:45.7722658+00:00",
+  "GeneratedAtUtc": "2026-04-19T03:38:10.8386887+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
       "Category": "Core",
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
-      "NamespaceCount": 18,
-      "TypeCount": 269
+      "NamespaceCount": 19,
+      "TypeCount": 287
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -96,7 +96,7 @@
       "Description": "Composition, runtime, policy, manifest, and introspection services.",
       "FileName": "cephalon-engine.md",
       "NamespaceCount": 12,
-      "TypeCount": 88
+      "TypeCount": 94
     },
     {
       "AssemblyName": "Cephalon.Eventing",
@@ -524,6 +524,13 @@
       "TypeCount": 10
     },
     {
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "namespace-cephalon-abstractions-features",
+      "TypeCount": 9
+    },
+    {
       "NamespaceName": "Cephalon.Abstractions.Health",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
@@ -556,7 +563,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-patterns",
-      "TypeCount": 12
+      "TypeCount": 17
     },
     {
       "NamespaceName": "Cephalon.Abstractions.Resilience",
@@ -584,7 +591,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-transports",
-      "TypeCount": 49
+      "TypeCount": 53
     },
     {
       "NamespaceName": "Cephalon.Agentics.Configuration",
@@ -836,7 +843,7 @@
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
       "AnchorId": "namespace-cephalon-engine-configuration",
-      "TypeCount": 37
+      "TypeCount": 43
     },
     {
       "NamespaceName": "Cephalon.Engine.Diagnostics",
@@ -2203,6 +2210,111 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "BackendForFrontendBehaviorFilterDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor",
+      "Declaration": "public sealed class BackendForFrontendBehaviorFilterDescriptor",
+      "Summary": "Describes behavior, capability, and tag-selection hints for one backend-for-frontend binding.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 8,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "BackendForFrontendBehaviorFilterSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings",
+      "Declaration": "public sealed class BackendForFrontendBehaviorFilterSettings",
+      "Summary": "Describes configuration-driven behavior-filter hints for one backend-for-frontend binding.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 8,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "BackendForFrontendClientBindingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor",
+      "Declaration": "public sealed class BackendForFrontendClientBindingDescriptor",
+      "Summary": "Describes one client-specific transport binding owned by a Cephalon module.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 9,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "BackendForFrontendClientBindingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-configuration-backendforfrontendclientbindingsettings",
+      "Declaration": "public sealed class BackendForFrontendClientBindingSettings",
+      "Summary": "Describes one configuration-driven backend-for-frontend client binding.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 9,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "BackendForFrontendRestDocumentRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor",
+      "Declaration": "public sealed class BackendForFrontendRestDocumentRuntimeDescriptor",
+      "Summary": "Describes one backend-for-frontend REST documentation surface materialized for one scope and one published OpenAPI document.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 2,
+        "Properties": 12,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "BackendForFrontendRestEndpointRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor",
+      "Declaration": "public sealed class BackendForFrontendRestEndpointRuntimeDescriptor",
+      "Summary": "Describes one backend-for-frontend client binding matched to one published REST endpoint.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 11,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "BackendForFrontendSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-configuration-backendforfrontendsettings",
+      "Declaration": "public sealed class BackendForFrontendSettings",
+      "Summary": "Describes configuration-driven backend-for-frontend settings for a Cephalon app.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 3,
         "Methods": 1
       }
     },
@@ -3733,7 +3845,7 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 29
+        "Methods": 35
       }
     },
     {
@@ -3807,7 +3919,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 1,
-        "Properties": 19,
+        "Properties": 21,
         "Methods": 1
       }
     },
@@ -4412,6 +4524,126 @@
       }
     },
     {
+      "DisplayName": "FeatureFlagDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-features-featureflagdescriptor",
+      "Declaration": "public sealed class FeatureFlagDescriptor",
+      "Summary": "Describes one feature flag visible to the active Cephalon runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 8,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "FeatureFlagEvaluationContext",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-features-featureflagevaluationcontext",
+      "Declaration": "public sealed class FeatureFlagEvaluationContext",
+      "Summary": "Supplies contextual information for evaluating a feature flag at runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 10,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "FeatureFlagEvaluationResult",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-features-featureflagevaluationresult",
+      "Declaration": "public sealed class FeatureFlagEvaluationResult",
+      "Summary": "Describes the result of evaluating a feature flag for a specific runtime context.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 7,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "FeatureFlagSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-configuration-featureflagsettings",
+      "Declaration": "public sealed class FeatureFlagSettings",
+      "Summary": "Describes one configuration-driven feature flag.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 8,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "FeatureFlagSourceKind",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-features-featureflagsourcekind",
+      "Declaration": "public enum FeatureFlagSourceKind",
+      "Summary": "Identifies who owns a feature flag visible to the active runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 2,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "FeatureFlagTargetingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-features-featureflagtargetingdescriptor",
+      "Declaration": "public sealed class FeatureFlagTargetingDescriptor",
+      "Summary": "Describes the optional targeting constraints that govern when a feature flag is considered active for a given runtime evaluation context.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 18,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "FeatureFlagTargetingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-configuration-featureflagtargetingsettings",
+      "Declaration": "public sealed class FeatureFlagTargetingSettings",
+      "Summary": "Describes configuration-driven targeting constraints for one feature flag.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 18,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "FeatureSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "type-cephalon-engine-configuration-featuresettings",
+      "Declaration": "public sealed class FeatureSettings",
+      "Summary": "Describes configuration-driven feature-flag settings for a Cephalon app.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 3,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "FileSystemScaffoldWriter",
       "NamespaceName": "Cephalon.Scaffolding.IO",
       "AssemblyName": "Cephalon.Scaffolding",
@@ -4934,6 +5166,81 @@
         "Fields": 0,
         "Properties": 0,
         "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IBackendForFrontendClientBindingContributor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-patterns-ibackendforfrontendclientbindingcontributor",
+      "Declaration": "public interface IBackendForFrontendClientBindingContributor",
+      "Summary": "Allows a module to contribute backend-for-frontend client bindings into the active runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IBackendForFrontendClientBindingRegistry",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-patterns-ibackendforfrontendclientbindingregistry",
+      "Declaration": "public interface IBackendForFrontendClientBindingRegistry",
+      "Summary": "Collects backend-for-frontend client binding descriptors contributed to the active runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IBackendForFrontendRestDocumentRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-transports-ibackendforfrontendrestdocumentruntimecatalog",
+      "Declaration": "public interface IBackendForFrontendRestDocumentRuntimeCatalog",
+      "Summary": "Exposes the client-aware REST documentation surfaces derived from the active backend-for-frontend bindings and published REST endpoint catalog.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 3
+      }
+    },
+    {
+      "DisplayName": "IBackendForFrontendRestRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-transports-ibackendforfrontendrestruntimecatalog",
+      "Declaration": "public interface IBackendForFrontendRestRuntimeCatalog",
+      "Summary": "Exposes the client-aware published REST endpoint projections derived from the active backend-for-frontend bindings.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 5
+      }
+    },
+    {
+      "DisplayName": "IBackendForFrontendRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-patterns-ibackendforfrontendruntimecatalog",
+      "Declaration": "public interface IBackendForFrontendRuntimeCatalog",
+      "Summary": "Exposes the backend-for-frontend client bindings visible to the current runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 4
       }
     },
     {
@@ -5938,6 +6245,66 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 1,
+        "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "IFeatureFlagContributor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-features-ifeatureflagcontributor",
+      "Declaration": "public interface IFeatureFlagContributor",
+      "Summary": "Allows a module to contribute feature flags to the active runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IFeatureFlagRegistry",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-features-ifeatureflagregistry",
+      "Declaration": "public interface IFeatureFlagRegistry",
+      "Summary": "Collects feature flags contributed to the active runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IFeatureFlagRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-features-ifeatureflagruntimecatalog",
+      "Declaration": "public interface IFeatureFlagRuntimeCatalog",
+      "Summary": "Exposes the feature flags visible to the current runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 4
+      }
+    },
+    {
+      "DisplayName": "IFeatureToggle",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-features-ifeaturetoggle",
+      "Declaration": "public interface IFeatureToggle",
+      "Summary": "Evaluates runtime feature flags against an optional evaluation context.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
         "Methods": 2
       }
     },
@@ -9372,7 +9739,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 28,
+        "Properties": 32,
         "Methods": 0
       }
     },
@@ -10761,6 +11128,17 @@
     {
       "DisplayName": "Add",
       "Category": "Methods",
+      "DeclaringTypeName": "IBackendForFrontendClientBindingRegistry",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-patterns-ibackendforfrontendclientbindingregistry-add-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor",
+      "Signature": "void Add(BackendForFrontendClientBindingDescriptor binding)",
+      "Summary": "Adds a backend-for-frontend client binding descriptor to the current runtime composition."
+    },
+    {
+      "DisplayName": "Add",
+      "Category": "Methods",
       "DeclaringTypeName": "IBehaviorModuleBuilder",
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
       "AssemblyName": "Cephalon.Abstractions",
@@ -10856,6 +11234,17 @@
       "AnchorId": "member-m-cephalon-abstractions-execution-iexecutiongraphregistry-add-cephalon-abstractions-execution-executiongraphdescriptor",
       "Signature": "void Add(ExecutionGraphDescriptor graph)",
       "Summary": "Adds an execution graph to the current runtime composition."
+    },
+    {
+      "DisplayName": "Add",
+      "Category": "Methods",
+      "DeclaringTypeName": "IFeatureFlagRegistry",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-features-ifeatureflagregistry-add-cephalon-abstractions-features-featureflagdescriptor",
+      "Signature": "void Add(FeatureFlagDescriptor featureFlag)",
+      "Summary": "Adds a feature-flag descriptor to the current runtime composition."
     },
     {
       "DisplayName": "Add",
@@ -10977,6 +11366,28 @@
       "AnchorId": "member-m-cephalon-audit-registration-auditenginebuilderextensions-addaudit-cephalon-engine-composition-enginebuilder-system-action-cephalon-audit-configuration-auditruntimeoptions",
       "Signature": "EngineBuilder AddAudit(this EngineBuilder builder, Action\u003CAuditRuntimeOptions\u003E configure)",
       "Summary": "Adds the Cephalon audit companion pack to the engine."
+    },
+    {
+      "DisplayName": "AddBackendForFrontendClientBinding",
+      "Category": "Methods",
+      "DeclaringTypeName": "EngineBuilder",
+      "NamespaceName": "Cephalon.Engine.Composition",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-addbackendforfrontendclientbinding-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor",
+      "Signature": "EngineBuilder AddBackendForFrontendClientBinding(BackendForFrontendClientBindingDescriptor binding)",
+      "Summary": "Adds a backend-for-frontend client binding to the current runtime composition."
+    },
+    {
+      "DisplayName": "AddBackendForFrontendClientBindings",
+      "Category": "Methods",
+      "DeclaringTypeName": "EngineBuilder",
+      "NamespaceName": "Cephalon.Engine.Composition",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-addbackendforfrontendclientbindings-system-collections-generic-ienumerable-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor",
+      "Signature": "EngineBuilder AddBackendForFrontendClientBindings(IEnumerable\u003CBackendForFrontendClientBindingDescriptor\u003E bindings)",
+      "Summary": "Adds multiple backend-for-frontend client bindings to the current runtime composition."
     },
     {
       "DisplayName": "AddCephalon",
@@ -11824,6 +12235,28 @@
       "AnchorId": "member-m-cephalon-eventsourcing-registration-eventsourcingenginebuilderextensions-addeventsourcing-cephalon-engine-composition-enginebuilder-system-action-cephalon-eventsourcing-configuration-eventsourcingoptions",
       "Signature": "EngineBuilder AddEventSourcing(this EngineBuilder builder, Action\u003CEventSourcingOptions\u003E configure)",
       "Summary": "Adds the Cephalon event-sourcing companion pack to the engine."
+    },
+    {
+      "DisplayName": "AddFeatureFlag",
+      "Category": "Methods",
+      "DeclaringTypeName": "EngineBuilder",
+      "NamespaceName": "Cephalon.Engine.Composition",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-addfeatureflag-cephalon-abstractions-features-featureflagdescriptor",
+      "Signature": "EngineBuilder AddFeatureFlag(FeatureFlagDescriptor featureFlag)",
+      "Summary": "Adds a feature flag to the current runtime composition."
+    },
+    {
+      "DisplayName": "AddFeatureFlags",
+      "Category": "Methods",
+      "DeclaringTypeName": "EngineBuilder",
+      "NamespaceName": "Cephalon.Engine.Composition",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-addfeatureflags-system-collections-generic-ienumerable-cephalon-abstractions-features-featureflagdescriptor",
+      "Signature": "EngineBuilder AddFeatureFlags(IEnumerable\u003CFeatureFlagDescriptor\u003E featureFlags)",
+      "Summary": "Adds multiple feature flags to the current runtime composition."
     },
     {
       "DisplayName": "AddGraphQLTransport",
@@ -13960,6 +14393,72 @@
       "Summary": "Initializes a new instance of the \u0060AzureMonitorExportOptions\u0060 class."
     },
     {
+      "DisplayName": "BackendForFrontend",
+      "Category": "Properties",
+      "DeclaringTypeName": "EngineSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-enginesettings-backendforfrontend",
+      "Signature": "BackendForFrontendSettings BackendForFrontend { get; }",
+      "Summary": "Gets configuration-driven backend-for-frontend settings."
+    },
+    {
+      "DisplayName": "BackendForFrontendBehaviorFilterDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "BackendForFrontendBehaviorFilterDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-ctor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string",
+      "Signature": "BackendForFrontendBehaviorFilterDescriptor(IReadOnlyList\u003Cstring\u003E includedBehaviorIds, IReadOnlyList\u003Cstring\u003E excludedBehaviorIds, IReadOnlyList\u003Cstring\u003E includedCapabilityKeys, IReadOnlyList\u003Cstring\u003E excludedCapabilityKeys, IReadOnlyList\u003Cstring\u003E includedTags, IReadOnlyList\u003Cstring\u003E excludedTags)",
+      "Summary": "Creates a backend-for-frontend behavior filter descriptor."
+    },
+    {
+      "DisplayName": "BackendForFrontendBehaviorFilterSettings",
+      "Category": "Constructors",
+      "DeclaringTypeName": "BackendForFrontendBehaviorFilterSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-ctor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string",
+      "Signature": "BackendForFrontendBehaviorFilterSettings(IReadOnlyList\u003Cstring\u003E includedBehaviorIds, IReadOnlyList\u003Cstring\u003E excludedBehaviorIds, IReadOnlyList\u003Cstring\u003E includedCapabilityKeys, IReadOnlyList\u003Cstring\u003E excludedCapabilityKeys, IReadOnlyList\u003Cstring\u003E includedTags, IReadOnlyList\u003Cstring\u003E excludedTags)",
+      "Summary": "Creates backend-for-frontend behavior-filter settings."
+    },
+    {
+      "DisplayName": "BackendForFrontendBindings",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-backendforfrontendbindings",
+      "Signature": "IReadOnlyList\u003CBackendForFrontendClientBindingDescriptor\u003E BackendForFrontendBindings { get; set; }",
+      "Summary": "Gets the backend-for-frontend client bindings visible to the runtime at the time the snapshot was created."
+    },
+    {
+      "DisplayName": "BackendForFrontendClientBindingDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "BackendForFrontendClientBindingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "BackendForFrontendClientBindingDescriptor(string id, string clientId, string sourceModuleId, string displayName, string description, string transportId, string entryPoint, BackendForFrontendBehaviorFilterDescriptor behaviorFilter, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a backend-for-frontend client binding descriptor."
+    },
+    {
+      "DisplayName": "BackendForFrontendClientBindingSettings",
+      "Category": "Constructors",
+      "DeclaringTypeName": "BackendForFrontendClientBindingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-configuration-backendforfrontendclientbindingsettings-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "BackendForFrontendClientBindingSettings(string id, string clientId, string sourceModuleId, string displayName, string description, string transportId, string entryPoint, BackendForFrontendBehaviorFilterSettings behaviorFilter, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates backend-for-frontend client binding settings."
+    },
+    {
       "DisplayName": "BackendForFrontendPattern",
       "Category": "Properties",
       "DeclaringTypeName": "BuiltInPatterns",
@@ -13969,6 +14468,61 @@
       "AnchorId": "member-p-cephalon-engine-patterns-builtinpatterns-backendforfrontendpattern",
       "Signature": "PatternDescriptor BackendForFrontendPattern { get; }",
       "Summary": "Gets the backend-for-frontend pattern."
+    },
+    {
+      "DisplayName": "BackendForFrontendRestDocumentRuntimeDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "BackendForFrontendRestDocumentRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string",
+      "Signature": "BackendForFrontendRestDocumentRuntimeDescriptor(string id, string kind, string scopeId, string clientId, string documentName, string openApiPath, string scalarPath, IReadOnlyList\u003Cstring\u003E bindingIds, IReadOnlyList\u003Cstring\u003E sourceModuleIds, IReadOnlyList\u003Cstring\u003E runtimeEndpointIds, IReadOnlyList\u003Cstring\u003E restEndpointIds)",
+      "Summary": "Creates a backend-for-frontend REST documentation runtime descriptor."
+    },
+    {
+      "DisplayName": "BackendForFrontendRestDocuments",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-backendforfrontendrestdocuments",
+      "Signature": "IReadOnlyList\u003CBackendForFrontendRestDocumentRuntimeDescriptor\u003E BackendForFrontendRestDocuments { get; set; }",
+      "Summary": "Gets the client-aware REST documentation surfaces derived from the active backend-for-frontend bindings and visible to the runtime at the time the snapshot was created."
+    },
+    {
+      "DisplayName": "BackendForFrontendRestEndpointRuntimeDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "BackendForFrontendRestEndpointRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-ctor-system-string-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-cephalon-abstractions-transports-restendpointruntimedescriptor-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string",
+      "Signature": "BackendForFrontendRestEndpointRuntimeDescriptor(string id, BackendForFrontendClientBindingDescriptor binding, RestEndpointRuntimeDescriptor endpoint, bool matchedByDefault, IReadOnlyList\u003Cstring\u003E matchedBehaviorIds, IReadOnlyList\u003Cstring\u003E matchedCapabilityKeys, IReadOnlyList\u003Cstring\u003E matchedTags)",
+      "Summary": "Creates a backend-for-frontend REST endpoint runtime descriptor."
+    },
+    {
+      "DisplayName": "BackendForFrontendRestEndpoints",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-backendforfrontendrestendpoints",
+      "Signature": "IReadOnlyList\u003CBackendForFrontendRestEndpointRuntimeDescriptor\u003E BackendForFrontendRestEndpoints { get; set; }",
+      "Summary": "Gets the client-aware published REST endpoint projections derived from the active backend-for-frontend bindings and visible to the runtime at the time the snapshot was created."
+    },
+    {
+      "DisplayName": "BackendForFrontendSettings",
+      "Category": "Constructors",
+      "DeclaringTypeName": "BackendForFrontendSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-configuration-backendforfrontendsettings-ctor-system-collections-generic-ireadonlylist-cephalon-engine-configuration-backendforfrontendclientbindingsettings",
+      "Signature": "BackendForFrontendSettings(IReadOnlyList\u003CBackendForFrontendClientBindingSettings\u003E bindings)",
+      "Summary": "Creates backend-for-frontend settings."
     },
     {
       "DisplayName": "Backoff",
@@ -14147,6 +14701,28 @@
       "Summary": "Initializes a new instance of \u0060BehaviorFault\u0060."
     },
     {
+      "DisplayName": "BehaviorFilter",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendClientBindingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-behaviorfilter",
+      "Signature": "BackendForFrontendBehaviorFilterDescriptor BehaviorFilter { get; }",
+      "Summary": "Gets the behavior, capability, and tag-selection hints attached to this client binding."
+    },
+    {
+      "DisplayName": "BehaviorFilter",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendClientBindingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-backendforfrontendclientbindingsettings-behaviorfilter",
+      "Signature": "BackendForFrontendBehaviorFilterSettings BehaviorFilter { get; }",
+      "Summary": "Gets the behavior, capability, and tag-selection hints attached to this client binding."
+    },
+    {
       "DisplayName": "BehaviorHttp",
       "Category": "Properties",
       "DeclaringTypeName": "BuiltInTransports",
@@ -14211,6 +14787,17 @@
       "AnchorId": "member-p-cephalon-abstractions-behaviors-behaviorsecurityexception-behaviorid",
       "Signature": "string BehaviorId { get; }",
       "Summary": "Gets the behavior identifier that triggered the security violation."
+    },
+    {
+      "DisplayName": "BehaviorId",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagEvaluationContext",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagevaluationcontext-behaviorid",
+      "Signature": "string BehaviorId { get; }",
+      "Summary": "Gets the current behavior identifier when one is known."
     },
     {
       "DisplayName": "BehaviorId",
@@ -14620,6 +15207,17 @@
       "Summary": "Continue stopping remaining modules and report failures afterward."
     },
     {
+      "DisplayName": "Binding",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendRestEndpointRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-binding",
+      "Signature": "BackendForFrontendClientBindingDescriptor Binding { get; }",
+      "Summary": "Gets the backend-for-frontend client binding that selected the endpoint."
+    },
+    {
       "DisplayName": "BindingDescriptors",
       "Category": "Properties",
       "DeclaringTypeName": "RestEndpointCandidateProjectionDescriptor",
@@ -14708,6 +15306,50 @@
       "Summary": "Gets the original shorthand request-binding fallback modes targeted by this suppression rule before override actions are applied."
     },
     {
+      "DisplayName": "BindingId",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendRestDocumentRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-bindingid",
+      "Signature": "string BindingId { get; }",
+      "Summary": "Gets the binding identifier when the surface is scoped to one binding."
+    },
+    {
+      "DisplayName": "BindingId",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendRestEndpointRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-bindingid",
+      "Signature": "string BindingId { get; }",
+      "Summary": "Gets the stable backend-for-frontend binding identifier."
+    },
+    {
+      "DisplayName": "BindingIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendRestDocumentRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-bindingids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E BindingIds { get; }",
+      "Summary": "Gets the contributing backend-for-frontend binding identifiers."
+    },
+    {
+      "DisplayName": "BindingKind",
+      "Category": "Fields",
+      "DeclaringTypeName": "BackendForFrontendRestDocumentRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-bindingkind",
+      "Signature": "const string BindingKind",
+      "Summary": "The stable kind identifier used when the documentation surface is scoped to one binding."
+    },
+    {
       "DisplayName": "BindingMode",
       "Category": "Properties",
       "DeclaringTypeName": "RestEndpointOverrideDescriptor",
@@ -14728,6 +15370,28 @@
       "AnchorId": "member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-bindingmode",
       "Signature": "RestEndpointOverrideBindingMode BindingMode { get; }",
       "Summary": "Gets how \u0060Bindings\u0060 and \u0060RemovedBindingProperties\u0060 apply to the shorthand candidate\u0027s explicit binding plan."
+    },
+    {
+      "DisplayName": "Bindings",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-backendforfrontendsettings-bindings",
+      "Signature": "IReadOnlyList\u003CBackendForFrontendClientBindingSettings\u003E Bindings { get; }",
+      "Summary": "Gets the client-specific transport bindings configured for the app."
+    },
+    {
+      "DisplayName": "Bindings",
+      "Category": "Properties",
+      "DeclaringTypeName": "IBackendForFrontendRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-ibackendforfrontendruntimecatalog-bindings",
+      "Signature": "IReadOnlyList\u003CBackendForFrontendClientBindingDescriptor\u003E Bindings { get; }",
+      "Summary": "Gets all backend-for-frontend client bindings visible to the current runtime."
     },
     {
       "DisplayName": "Bindings",
@@ -15344,6 +16008,17 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-capabilitykey",
       "Signature": "string CapabilityKey { get; }",
       "Summary": "Gets the capability key the node intends to drive, when one was declared."
+    },
+    {
+      "DisplayName": "CapabilityKey",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagEvaluationContext",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagevaluationcontext-capabilitykey",
+      "Signature": "string CapabilityKey { get; }",
+      "Summary": "Gets the current capability key when one is known."
     },
     {
       "DisplayName": "CapabilityKeys",
@@ -16063,6 +16738,50 @@
     {
       "DisplayName": "ClientId",
       "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendClientBindingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-clientid",
+      "Signature": "string ClientId { get; }",
+      "Summary": "Gets the stable client identifier."
+    },
+    {
+      "DisplayName": "ClientId",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendClientBindingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-backendforfrontendclientbindingsettings-clientid",
+      "Signature": "string ClientId { get; }",
+      "Summary": "Gets the stable client identifier."
+    },
+    {
+      "DisplayName": "ClientId",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendRestDocumentRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-clientid",
+      "Signature": "string ClientId { get; }",
+      "Summary": "Gets the stable client identifier represented by the materialized document."
+    },
+    {
+      "DisplayName": "ClientId",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendRestEndpointRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-clientid",
+      "Signature": "string ClientId { get; }",
+      "Summary": "Gets the stable client identifier."
+    },
+    {
+      "DisplayName": "ClientId",
+      "Category": "Properties",
       "DeclaringTypeName": "KafkaDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.KafkaDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.KafkaDependencies",
@@ -16081,6 +16800,17 @@
       "AnchorId": "member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-clientid",
       "Signature": "string ClientId { get; set; }",
       "Summary": "Gets or sets the MQTT client identifier sent in the \u0060CONNECT\u0060 packet."
+    },
+    {
+      "DisplayName": "ClientKind",
+      "Category": "Fields",
+      "DeclaringTypeName": "BackendForFrontendRestDocumentRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-clientkind",
+      "Signature": "const string ClientKind",
+      "Summary": "The stable kind identifier used when the documentation surface is scoped to one client."
     },
     {
       "DisplayName": "ClientName",
@@ -18945,6 +19675,28 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendClientBindingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the human-readable description of the client-specific surface."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendClientBindingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-backendforfrontendclientbindingsettings-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the human-readable description of the client-specific surface."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "BehaviorResilienceRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Resilience",
       "AssemblyName": "Cephalon.Abstractions",
@@ -19139,6 +19891,28 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-description",
       "Signature": "string Description { get; }",
       "Summary": "Gets the human-readable description of the node."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagdescriptor-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the human-readable description of the gated behavior."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featureflagsettings-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the human-readable feature-flag description."
     },
     {
       "DisplayName": "Description",
@@ -19880,6 +20654,28 @@
     {
       "DisplayName": "DisplayName",
       "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendClientBindingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the operator-facing binding name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendClientBindingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-backendforfrontendclientbindingsettings-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the operator-facing binding name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
       "DeclaringTypeName": "BehaviorResilienceRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Resilience",
       "AssemblyName": "Cephalon.Abstractions",
@@ -20063,6 +20859,28 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-displayname",
       "Signature": "string DisplayName { get; }",
       "Summary": "Gets the operator-facing node name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagdescriptor-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the operator-facing feature-flag name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featureflagsettings-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the operator-facing feature-flag name."
     },
     {
       "DisplayName": "DisplayName",
@@ -20373,6 +21191,28 @@
       "Summary": "Gets the external distribution metadata declared by the package manifest, when available."
     },
     {
+      "DisplayName": "DocumentName",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendRestDocumentRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-documentname",
+      "Signature": "string DocumentName { get; }",
+      "Summary": "Gets the resolved OpenAPI document name."
+    },
+    {
+      "DisplayName": "Documents",
+      "Category": "Properties",
+      "DeclaringTypeName": "IBackendForFrontendRestDocumentRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-transports-ibackendforfrontendrestdocumentruntimecatalog-documents",
+      "Signature": "IReadOnlyList\u003CBackendForFrontendRestDocumentRuntimeDescriptor\u003E Documents { get; }",
+      "Summary": "Gets all client-aware REST documentation surfaces visible to the current runtime."
+    },
+    {
       "DisplayName": "Domain",
       "Category": "Fields",
       "DeclaringTypeName": "PatternKind",
@@ -20639,6 +21479,39 @@
     {
       "DisplayName": "Empty",
       "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendBehaviorFilterDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-empty",
+      "Signature": "BackendForFrontendBehaviorFilterDescriptor Empty { get; }",
+      "Summary": "Gets an empty backend-for-frontend behavior filter."
+    },
+    {
+      "DisplayName": "Empty",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendBehaviorFilterSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-empty",
+      "Signature": "BackendForFrontendBehaviorFilterSettings Empty { get; }",
+      "Summary": "Gets an empty backend-for-frontend behavior-filter settings instance."
+    },
+    {
+      "DisplayName": "Empty",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-backendforfrontendsettings-empty",
+      "Signature": "BackendForFrontendSettings Empty { get; }",
+      "Summary": "Gets an empty backend-for-frontend settings instance."
+    },
+    {
+      "DisplayName": "Empty",
+      "Category": "Properties",
       "DeclaringTypeName": "BehaviorExecutionResilienceSelection",
       "NamespaceName": "Cephalon.Abstractions.Resilience",
       "AssemblyName": "Cephalon.Abstractions",
@@ -20822,6 +21695,50 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimesummary-empty",
       "Signature": "EventDispatchRuntimeSummary Empty { get; }",
       "Summary": "Gets an empty runtime summary when no dispatch observations have been reported yet."
+    },
+    {
+      "DisplayName": "Empty",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagEvaluationContext",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagevaluationcontext-empty",
+      "Signature": "FeatureFlagEvaluationContext Empty { get; }",
+      "Summary": "Gets an empty feature-flag evaluation context."
+    },
+    {
+      "DisplayName": "Empty",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-empty",
+      "Signature": "FeatureFlagTargetingDescriptor Empty { get; }",
+      "Summary": "Gets an empty targeting descriptor with no constraints."
+    },
+    {
+      "DisplayName": "Empty",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featureflagtargetingsettings-empty",
+      "Signature": "FeatureFlagTargetingSettings Empty { get; }",
+      "Summary": "Gets an empty feature-flag targeting settings instance."
+    },
+    {
+      "DisplayName": "Empty",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featuresettings-empty",
+      "Signature": "FeatureSettings Empty { get; }",
+      "Summary": "Gets an empty feature settings instance."
     },
     {
       "DisplayName": "Empty",
@@ -21174,6 +22091,28 @@
       "AnchorId": "member-p-cephalon-engine-configuration-circuitbreakersettings-enabled",
       "Signature": "bool? Enabled { get; }",
       "Summary": "Gets a value indicating whether circuit-breaker support was explicitly enabled."
+    },
+    {
+      "DisplayName": "Enabled",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagdescriptor-enabled",
+      "Signature": "bool Enabled { get; }",
+      "Summary": "Gets a value indicating whether the feature flag is enabled before targeting is applied."
+    },
+    {
+      "DisplayName": "Enabled",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featureflagsettings-enabled",
+      "Signature": "bool Enabled { get; }",
+      "Summary": "Gets a value indicating whether the feature flag is enabled before targeting is applied."
     },
     {
       "DisplayName": "Enabled",
@@ -21618,6 +22557,17 @@
     {
       "DisplayName": "Endpoint",
       "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendRestEndpointRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-endpoint",
+      "Signature": "RestEndpointRuntimeDescriptor Endpoint { get; }",
+      "Summary": "Gets the published REST endpoint selected for that binding."
+    },
+    {
+      "DisplayName": "Endpoint",
+      "Category": "Properties",
       "DeclaringTypeName": "ConsulDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.ConsulDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.ConsulDependencies",
@@ -21783,6 +22733,17 @@
     {
       "DisplayName": "Endpoints",
       "Category": "Properties",
+      "DeclaringTypeName": "IBackendForFrontendRestRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-transports-ibackendforfrontendrestruntimecatalog-endpoints",
+      "Signature": "IReadOnlyList\u003CBackendForFrontendRestEndpointRuntimeDescriptor\u003E Endpoints { get; }",
+      "Summary": "Gets all client-aware published REST endpoint projections visible to the current runtime."
+    },
+    {
+      "DisplayName": "Endpoints",
+      "Category": "Properties",
       "DeclaringTypeName": "IRestEndpointRuntimeCatalog",
       "NamespaceName": "Cephalon.Abstractions.Transports",
       "AssemblyName": "Cephalon.Abstractions",
@@ -21842,8 +22803,8 @@
       "NamespaceName": "Cephalon.Engine.Configuration",
       "AssemblyName": "Cephalon.Engine",
       "FileName": "cephalon-engine.md",
-      "AnchorId": "member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy-cephalon-engine-configuration-datasettings-cephalon-engine-configuration-databasetopologysettings-cephalon-engine-configuration-identitysettings-cephalon-engine-configuration-tenancysettings-cephalon-engine-configuration-auditsettings-cephalon-engine-configuration-messagingsettings-cephalon-engine-configuration-resiliencesettings-cephalon-engine-configuration-migrationsettings",
-      "Signature": "EngineSettings(string blueprint, IReadOnlyList\u003Cstring\u003E patterns, IReadOnlyList\u003Cstring\u003E transports, IReadOnlyList\u003Cstring\u003E technologies, EngineOptions options, ModuleDiscoverySettings discovery, LocalizationSettings localization, FailurePolicy failurePolicy, TrustPolicy trustPolicy, PackagePolicy packagePolicy, DataSettings data, DatabaseTopologySettings databases, IdentitySettings identity, TenancySettings tenancy, AuditSettings audit, MessagingSettings messaging, ResilienceSettings resilience, MigrationSettings migration)",
+      "AnchorId": "member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy-cephalon-engine-configuration-datasettings-cephalon-engine-configuration-databasetopologysettings-cephalon-engine-configuration-identitysettings-cephalon-engine-configuration-tenancysettings-cephalon-engine-configuration-auditsettings-cephalon-engine-configuration-messagingsettings-cephalon-engine-configuration-resiliencesettings-cephalon-engine-configuration-migrationsettings-cephalon-engine-configuration-backendforfrontendsettings-cephalon-engine-configuration-featuresettings",
+      "Signature": "EngineSettings(string blueprint, IReadOnlyList\u003Cstring\u003E patterns, IReadOnlyList\u003Cstring\u003E transports, IReadOnlyList\u003Cstring\u003E technologies, EngineOptions options, ModuleDiscoverySettings discovery, LocalizationSettings localization, FailurePolicy failurePolicy, TrustPolicy trustPolicy, PackagePolicy packagePolicy, DataSettings data, DatabaseTopologySettings databases, IdentitySettings identity, TenancySettings tenancy, AuditSettings audit, MessagingSettings messaging, ResilienceSettings resilience, MigrationSettings migration, BackendForFrontendSettings backendForFrontend, FeatureSettings features)",
       "Summary": "Initializes a new instance of the \u0060EngineSettings\u0060 class."
     },
     {
@@ -22001,6 +22962,39 @@
       "Summary": "The entry node used when the graph begins execution."
     },
     {
+      "DisplayName": "EntryPoint",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendClientBindingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-entrypoint",
+      "Signature": "string EntryPoint { get; }",
+      "Summary": "Gets the transport-specific entry point, route prefix, or endpoint handle when one is known."
+    },
+    {
+      "DisplayName": "EntryPoint",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendClientBindingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-backendforfrontendclientbindingsettings-entrypoint",
+      "Signature": "string EntryPoint { get; }",
+      "Summary": "Gets the transport-specific entry point, route prefix, or endpoint handle when one is known."
+    },
+    {
+      "DisplayName": "EnvironmentName",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagEvaluationContext",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagevaluationcontext-environmentname",
+      "Signature": "string EnvironmentName { get; }",
+      "Summary": "Gets the active hosting environment name."
+    },
+    {
       "DisplayName": "Error",
       "Category": "Fields",
       "DeclaringTypeName": "BehaviorFaultSeverity",
@@ -22065,6 +23059,17 @@
       "AnchorId": "member-p-cephalon-aspnetcore-transports-rest-resultmodel-1-errors",
       "Signature": "List\u003CResultModelErrorDetail\u003E Errors { get; set; }",
       "Summary": "Gets or sets the structured error details when the response is not successful."
+    },
+    {
+      "DisplayName": "Evaluate",
+      "Category": "Methods",
+      "DeclaringTypeName": "IFeatureToggle",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-features-ifeaturetoggle-evaluate-system-string-cephalon-abstractions-features-featureflagevaluationcontext",
+      "Signature": "FeatureFlagEvaluationResult Evaluate(string featureFlagId, FeatureFlagEvaluationContext context)",
+      "Summary": "Evaluates the requested feature flag and returns a richer operator-facing result."
     },
     {
       "DisplayName": "EvaluateAsync",
@@ -22485,6 +23490,138 @@
       "Summary": "Exchanges greeting messages bidirectionally to validate duplex streaming support."
     },
     {
+      "DisplayName": "ExcludedBehaviorIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendBehaviorFilterDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-excludedbehaviorids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ExcludedBehaviorIds { get; }",
+      "Summary": "Gets the explicit behavior identifiers that should be hidden from the client."
+    },
+    {
+      "DisplayName": "ExcludedBehaviorIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendBehaviorFilterSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-excludedbehaviorids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ExcludedBehaviorIds { get; }",
+      "Summary": "Gets the explicit behavior identifiers that should be hidden from the client."
+    },
+    {
+      "DisplayName": "ExcludedBehaviorIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-excludedbehaviorids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ExcludedBehaviorIds { get; }",
+      "Summary": "Gets the explicitly excluded behavior identifiers."
+    },
+    {
+      "DisplayName": "ExcludedBehaviorIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featureflagtargetingsettings-excludedbehaviorids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ExcludedBehaviorIds { get; }",
+      "Summary": "Gets the explicitly excluded behavior identifiers."
+    },
+    {
+      "DisplayName": "ExcludedCapabilityKeys",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendBehaviorFilterDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-excludedcapabilitykeys",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ExcludedCapabilityKeys { get; }",
+      "Summary": "Gets the explicit capability keys that should be hidden from the client."
+    },
+    {
+      "DisplayName": "ExcludedCapabilityKeys",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendBehaviorFilterSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-excludedcapabilitykeys",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ExcludedCapabilityKeys { get; }",
+      "Summary": "Gets the explicit capability keys that should be hidden from the client."
+    },
+    {
+      "DisplayName": "ExcludedCapabilityKeys",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-excludedcapabilitykeys",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ExcludedCapabilityKeys { get; }",
+      "Summary": "Gets the explicitly excluded capability keys."
+    },
+    {
+      "DisplayName": "ExcludedCapabilityKeys",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featureflagtargetingsettings-excludedcapabilitykeys",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ExcludedCapabilityKeys { get; }",
+      "Summary": "Gets the explicitly excluded capability keys."
+    },
+    {
+      "DisplayName": "ExcludedEnvironmentNames",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-excludedenvironmentnames",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ExcludedEnvironmentNames { get; }",
+      "Summary": "Gets the explicitly excluded environment names."
+    },
+    {
+      "DisplayName": "ExcludedEnvironmentNames",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featureflagtargetingsettings-excludedenvironmentnames",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ExcludedEnvironmentNames { get; }",
+      "Summary": "Gets the explicitly excluded environment names."
+    },
+    {
+      "DisplayName": "ExcludedModuleIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-excludedmoduleids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ExcludedModuleIds { get; }",
+      "Summary": "Gets the explicitly excluded module identifiers."
+    },
+    {
+      "DisplayName": "ExcludedModuleIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featureflagtargetingsettings-excludedmoduleids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ExcludedModuleIds { get; }",
+      "Summary": "Gets the explicitly excluded module identifiers."
+    },
+    {
       "DisplayName": "ExcludedPathPrefixes",
       "Category": "Properties",
       "DeclaringTypeName": "RateLimitingRuntimeDescriptor",
@@ -22494,6 +23631,116 @@
       "AnchorId": "member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-excludedpathprefixes",
       "Signature": "IReadOnlyList\u003Cstring\u003E ExcludedPathPrefixes { get; set; }",
       "Summary": "The rooted path prefixes intentionally excluded from enforcement, such as operator or documentation routes."
+    },
+    {
+      "DisplayName": "ExcludedSubjectIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-excludedsubjectids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ExcludedSubjectIds { get; }",
+      "Summary": "Gets the explicitly excluded subject identifiers."
+    },
+    {
+      "DisplayName": "ExcludedSubjectIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featureflagtargetingsettings-excludedsubjectids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ExcludedSubjectIds { get; }",
+      "Summary": "Gets the explicitly excluded subject identifiers."
+    },
+    {
+      "DisplayName": "ExcludedTags",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendBehaviorFilterDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-excludedtags",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ExcludedTags { get; }",
+      "Summary": "Gets the behavior or endpoint tags that should be hidden from the client."
+    },
+    {
+      "DisplayName": "ExcludedTags",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendBehaviorFilterSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-excludedtags",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ExcludedTags { get; }",
+      "Summary": "Gets the behavior or endpoint tags that should be hidden from the client."
+    },
+    {
+      "DisplayName": "ExcludedTags",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-excludedtags",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ExcludedTags { get; }",
+      "Summary": "Gets the explicitly excluded descriptive tags."
+    },
+    {
+      "DisplayName": "ExcludedTags",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featureflagtargetingsettings-excludedtags",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ExcludedTags { get; }",
+      "Summary": "Gets the explicitly excluded descriptive tags."
+    },
+    {
+      "DisplayName": "ExcludedTenantIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-excludedtenantids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ExcludedTenantIds { get; }",
+      "Summary": "Gets the explicitly excluded tenant identifiers."
+    },
+    {
+      "DisplayName": "ExcludedTenantIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featureflagtargetingsettings-excludedtenantids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ExcludedTenantIds { get; }",
+      "Summary": "Gets the explicitly excluded tenant identifiers."
+    },
+    {
+      "DisplayName": "ExcludedTransportIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-excludedtransportids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ExcludedTransportIds { get; }",
+      "Summary": "Gets the explicitly excluded transport identifiers."
+    },
+    {
+      "DisplayName": "ExcludedTransportIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featureflagtargetingsettings-excludedtransportids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ExcludedTransportIds { get; }",
+      "Summary": "Gets the explicitly excluded transport identifiers."
     },
     {
       "DisplayName": "ExecuteAsync",
@@ -23101,6 +24348,116 @@
       "Summary": "Identifies a feature-level scaffold scope."
     },
     {
+      "DisplayName": "FeatureFlagDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "FeatureFlagDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-features-featureflagdescriptor-ctor-system-string-system-string-system-string-system-boolean-cephalon-abstractions-features-featureflagsourcekind-system-string-cephalon-abstractions-features-featureflagtargetingdescriptor-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "FeatureFlagDescriptor(string id, string displayName, string description, bool enabled, FeatureFlagSourceKind sourceKind, string sourceModuleId, FeatureFlagTargetingDescriptor targeting, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a feature-flag descriptor."
+    },
+    {
+      "DisplayName": "FeatureFlagEvaluationContext",
+      "Category": "Constructors",
+      "DeclaringTypeName": "FeatureFlagEvaluationContext",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-features-featureflagevaluationcontext-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "FeatureFlagEvaluationContext(string environmentName, string moduleId, string behaviorId, string capabilityKey, string transportId, string tenantId, string subjectId, IReadOnlyList\u003Cstring\u003E tags, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a feature-flag evaluation context."
+    },
+    {
+      "DisplayName": "FeatureFlagEvaluationResult",
+      "Category": "Constructors",
+      "DeclaringTypeName": "FeatureFlagEvaluationResult",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-features-featureflagevaluationresult-ctor-system-string-system-boolean-system-boolean-system-boolean-system-string-system-nullable-cephalon-abstractions-features-featureflagsourcekind-system-string",
+      "Signature": "FeatureFlagEvaluationResult(string FeatureId, bool IsDefined, bool IsEnabled, bool Matched, string Reason, FeatureFlagSourceKind? SourceKind, string SourceModuleId)",
+      "Summary": "Describes the result of evaluating a feature flag for a specific runtime context."
+    },
+    {
+      "DisplayName": "FeatureFlags",
+      "Category": "Properties",
+      "DeclaringTypeName": "IFeatureFlagRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-ifeatureflagruntimecatalog-featureflags",
+      "Signature": "IReadOnlyList\u003CFeatureFlagDescriptor\u003E FeatureFlags { get; }",
+      "Summary": "Gets all feature flags visible to the current runtime."
+    },
+    {
+      "DisplayName": "FeatureFlags",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-featureflags",
+      "Signature": "IReadOnlyList\u003CFeatureFlagDescriptor\u003E FeatureFlags { get; set; }",
+      "Summary": "Gets the feature flags visible to the runtime at the time the snapshot was created."
+    },
+    {
+      "DisplayName": "FeatureFlagSettings",
+      "Category": "Constructors",
+      "DeclaringTypeName": "FeatureFlagSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-configuration-featureflagsettings-ctor-system-string-system-string-system-string-system-boolean-cephalon-abstractions-features-featureflagsourcekind-system-string-cephalon-engine-configuration-featureflagtargetingsettings-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "FeatureFlagSettings(string id, string displayName, string description, bool enabled, FeatureFlagSourceKind sourceKind, string sourceModuleId, FeatureFlagTargetingSettings targeting, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates feature-flag settings."
+    },
+    {
+      "DisplayName": "FeatureFlagTargetingDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "FeatureFlagTargetingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-features-featureflagtargetingdescriptor-ctor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string",
+      "Signature": "FeatureFlagTargetingDescriptor(IReadOnlyList\u003Cstring\u003E includedModuleIds, IReadOnlyList\u003Cstring\u003E excludedModuleIds, IReadOnlyList\u003Cstring\u003E includedBehaviorIds, IReadOnlyList\u003Cstring\u003E excludedBehaviorIds, IReadOnlyList\u003Cstring\u003E includedCapabilityKeys, IReadOnlyList\u003Cstring\u003E excludedCapabilityKeys, IReadOnlyList\u003Cstring\u003E includedTransportIds, IReadOnlyList\u003Cstring\u003E excludedTransportIds, IReadOnlyList\u003Cstring\u003E includedEnvironmentNames, IReadOnlyList\u003Cstring\u003E excludedEnvironmentNames, IReadOnlyList\u003Cstring\u003E includedTenantIds, IReadOnlyList\u003Cstring\u003E excludedTenantIds, IReadOnlyList\u003Cstring\u003E includedSubjectIds, IReadOnlyList\u003Cstring\u003E excludedSubjectIds, IReadOnlyList\u003Cstring\u003E includedTags, IReadOnlyList\u003Cstring\u003E excludedTags)",
+      "Summary": "Creates feature-flag targeting constraints."
+    },
+    {
+      "DisplayName": "FeatureFlagTargetingSettings",
+      "Category": "Constructors",
+      "DeclaringTypeName": "FeatureFlagTargetingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-configuration-featureflagtargetingsettings-ctor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string",
+      "Signature": "FeatureFlagTargetingSettings(IReadOnlyList\u003Cstring\u003E includedModuleIds, IReadOnlyList\u003Cstring\u003E excludedModuleIds, IReadOnlyList\u003Cstring\u003E includedBehaviorIds, IReadOnlyList\u003Cstring\u003E excludedBehaviorIds, IReadOnlyList\u003Cstring\u003E includedCapabilityKeys, IReadOnlyList\u003Cstring\u003E excludedCapabilityKeys, IReadOnlyList\u003Cstring\u003E includedTransportIds, IReadOnlyList\u003Cstring\u003E excludedTransportIds, IReadOnlyList\u003Cstring\u003E includedEnvironmentNames, IReadOnlyList\u003Cstring\u003E excludedEnvironmentNames, IReadOnlyList\u003Cstring\u003E includedTenantIds, IReadOnlyList\u003Cstring\u003E excludedTenantIds, IReadOnlyList\u003Cstring\u003E includedSubjectIds, IReadOnlyList\u003Cstring\u003E excludedSubjectIds, IReadOnlyList\u003Cstring\u003E includedTags, IReadOnlyList\u003Cstring\u003E excludedTags)",
+      "Summary": "Creates feature-flag targeting settings."
+    },
+    {
+      "DisplayName": "FeatureId",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagEvaluationResult",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagevaluationresult-featureid",
+      "Signature": "string FeatureId { get; set; }",
+      "Summary": "The evaluated feature-flag identifier."
+    },
+    {
+      "DisplayName": "Features",
+      "Category": "Properties",
+      "DeclaringTypeName": "EngineSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-enginesettings-features",
+      "Signature": "FeatureSettings Features { get; }",
+      "Summary": "Gets configuration-driven feature-flag settings."
+    },
+    {
       "DisplayName": "Features",
       "Category": "Properties",
       "DeclaringTypeName": "ScaffoldRequest",
@@ -23121,6 +24478,17 @@
       "AnchorId": "member-p-cephalon-abstractions-transports-transportdescriptor-features",
       "Signature": "TransportFeatures Features { get; }",
       "Summary": "Gets the features supported by the transport."
+    },
+    {
+      "DisplayName": "FeatureSettings",
+      "Category": "Constructors",
+      "DeclaringTypeName": "FeatureSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-configuration-featuresettings-ctor-system-collections-generic-ireadonlylist-cephalon-engine-configuration-featureflagsettings",
+      "Signature": "FeatureSettings(IReadOnlyList\u003CFeatureFlagSettings\u003E flags)",
+      "Summary": "Creates feature settings."
     },
     {
       "DisplayName": "FewerTargetValues",
@@ -23220,6 +24588,17 @@
       "AnchorId": "member-p-cephalon-engine-trust-packagesignaturetrustdecision-fingerprint",
       "Signature": "string Fingerprint { get; set; }",
       "Summary": "The declared signer fingerprint, when available."
+    },
+    {
+      "DisplayName": "Flags",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featuresettings-flags",
+      "Signature": "IReadOnlyList\u003CFeatureFlagSettings\u003E Flags { get; }",
+      "Summary": "Gets the feature flags configured for the app."
     },
     {
       "DisplayName": "Folders",
@@ -23422,6 +24801,17 @@
     {
       "DisplayName": "FromConfiguration",
       "Category": "Methods",
+      "DeclaringTypeName": "BackendForFrontendSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-configuration-backendforfrontendsettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "BackendForFrontendSettings FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Reads backend-for-frontend settings from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
       "DeclaringTypeName": "CassandraDependencyHealthOptions",
       "NamespaceName": "Cephalon.Observability.CassandraDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.CassandraDependencies",
@@ -23528,6 +24918,17 @@
       "AnchorId": "member-m-cephalon-engine-configuration-failurepolicy-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
       "Signature": "FailurePolicy FromConfiguration(IConfiguration configuration, string sectionPath)",
       "Summary": "Reads the failure policy from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
+      "DeclaringTypeName": "FeatureSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-configuration-featuresettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "FeatureSettings FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Reads feature settings from configuration."
     },
     {
       "DisplayName": "FromConfiguration",
@@ -24027,6 +25428,28 @@
     {
       "DisplayName": "FromSection",
       "Category": "Methods",
+      "DeclaringTypeName": "BackendForFrontendBehaviorFilterSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-fromsection-microsoft-extensions-configuration-iconfigurationsection",
+      "Signature": "BackendForFrontendBehaviorFilterSettings FromSection(IConfigurationSection section)",
+      "Summary": "Reads backend-for-frontend behavior-filter settings from the supplied configuration section."
+    },
+    {
+      "DisplayName": "FromSection",
+      "Category": "Methods",
+      "DeclaringTypeName": "BackendForFrontendClientBindingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-configuration-backendforfrontendclientbindingsettings-fromsection-microsoft-extensions-configuration-iconfigurationsection",
+      "Signature": "BackendForFrontendClientBindingSettings FromSection(IConfigurationSection section)",
+      "Summary": "Reads one backend-for-frontend client binding from configuration."
+    },
+    {
+      "DisplayName": "FromSection",
+      "Category": "Methods",
       "DeclaringTypeName": "DatabaseMigrationsSettings",
       "NamespaceName": "Cephalon.Engine.Configuration",
       "AssemblyName": "Cephalon.Engine",
@@ -24056,6 +25479,28 @@
       "AnchorId": "member-m-cephalon-engine-configuration-databasetargetsettings-fromsection-microsoft-extensions-configuration-iconfigurationsection",
       "Signature": "DatabaseTargetSettings FromSection(IConfigurationSection section)",
       "Summary": "Reads database-target settings from the supplied configuration section."
+    },
+    {
+      "DisplayName": "FromSection",
+      "Category": "Methods",
+      "DeclaringTypeName": "FeatureFlagSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-configuration-featureflagsettings-fromsection-microsoft-extensions-configuration-iconfigurationsection",
+      "Signature": "FeatureFlagSettings FromSection(IConfigurationSection section)",
+      "Summary": "Reads one feature flag from configuration."
+    },
+    {
+      "DisplayName": "FromSection",
+      "Category": "Methods",
+      "DeclaringTypeName": "FeatureFlagTargetingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-configuration-featureflagtargetingsettings-fromsection-microsoft-extensions-configuration-iconfigurationsection",
+      "Signature": "FeatureFlagTargetingSettings FromSection(IConfigurationSection section)",
+      "Summary": "Reads feature-flag targeting settings from the supplied configuration section."
     },
     {
       "DisplayName": "FromSection",
@@ -24278,6 +25723,28 @@
       "Summary": "Gets all REST endpoint suppression rules that target the requested behavior identifier, either directly or through configured behavior-id prefixes."
     },
     {
+      "DisplayName": "GetByBindingId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IBackendForFrontendRestDocumentRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-transports-ibackendforfrontendrestdocumentruntimecatalog-getbybindingid-system-string",
+      "Signature": "IReadOnlyList\u003CBackendForFrontendRestDocumentRuntimeDescriptor\u003E GetByBindingId(string bindingId)",
+      "Summary": "Gets all binding-scoped REST documentation surfaces owned by the requested binding."
+    },
+    {
+      "DisplayName": "GetByBindingId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IBackendForFrontendRestRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-transports-ibackendforfrontendrestruntimecatalog-getbybindingid-system-string",
+      "Signature": "IReadOnlyList\u003CBackendForFrontendRestEndpointRuntimeDescriptor\u003E GetByBindingId(string bindingId)",
+      "Summary": "Gets all client-aware published REST endpoint projections owned by the requested binding."
+    },
+    {
       "DisplayName": "GetByChannelId",
       "Category": "Methods",
       "DeclaringTypeName": "IEventSubscriptionCatalog",
@@ -24311,6 +25778,39 @@
       "Summary": "Gets all outboxes that explicitly declare the requested channel identifier."
     },
     {
+      "DisplayName": "GetByClientId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IBackendForFrontendRestDocumentRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-transports-ibackendforfrontendrestdocumentruntimecatalog-getbyclientid-system-string",
+      "Signature": "IReadOnlyList\u003CBackendForFrontendRestDocumentRuntimeDescriptor\u003E GetByClientId(string clientId)",
+      "Summary": "Gets all client-scoped REST documentation surfaces owned by the requested client."
+    },
+    {
+      "DisplayName": "GetByClientId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IBackendForFrontendRestRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-transports-ibackendforfrontendrestruntimecatalog-getbyclientid-system-string",
+      "Signature": "IReadOnlyList\u003CBackendForFrontendRestEndpointRuntimeDescriptor\u003E GetByClientId(string clientId)",
+      "Summary": "Gets all client-aware published REST endpoint projections owned by the requested client."
+    },
+    {
+      "DisplayName": "GetByClientId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IBackendForFrontendRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-patterns-ibackendforfrontendruntimecatalog-getbyclientid-system-string",
+      "Signature": "IReadOnlyList\u003CBackendForFrontendClientBindingDescriptor\u003E GetByClientId(string clientId)",
+      "Summary": "Gets all backend-for-frontend client bindings owned by the requested client identifier."
+    },
+    {
       "DisplayName": "GetByExecutionGraph",
       "Category": "Methods",
       "DeclaringTypeName": "IHostedExecutionRuntimeCatalog",
@@ -24342,6 +25842,39 @@
       "AnchorId": "member-m-cephalon-abstractions-authorization-iauthorizationpolicycatalog-getbyid-system-string",
       "Signature": "AuthorizationPolicyDescriptor GetById(string policyId)",
       "Summary": "Gets one authorization policy by its stable identifier."
+    },
+    {
+      "DisplayName": "GetById",
+      "Category": "Methods",
+      "DeclaringTypeName": "IBackendForFrontendRestDocumentRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-transports-ibackendforfrontendrestdocumentruntimecatalog-getbyid-system-string",
+      "Signature": "BackendForFrontendRestDocumentRuntimeDescriptor GetById(string documentId)",
+      "Summary": "Gets one client-aware REST documentation surface by its stable identifier."
+    },
+    {
+      "DisplayName": "GetById",
+      "Category": "Methods",
+      "DeclaringTypeName": "IBackendForFrontendRestRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-transports-ibackendforfrontendrestruntimecatalog-getbyid-system-string",
+      "Signature": "BackendForFrontendRestEndpointRuntimeDescriptor GetById(string runtimeEndpointId)",
+      "Summary": "Gets one client-aware published REST endpoint projection by its stable identifier."
+    },
+    {
+      "DisplayName": "GetById",
+      "Category": "Methods",
+      "DeclaringTypeName": "IBackendForFrontendRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-patterns-ibackendforfrontendruntimecatalog-getbyid-system-string",
+      "Signature": "BackendForFrontendClientBindingDescriptor GetById(string bindingId)",
+      "Summary": "Gets one backend-for-frontend client binding by its stable identifier."
     },
     {
       "DisplayName": "GetById",
@@ -24408,6 +25941,17 @@
       "AnchorId": "member-m-cephalon-abstractions-execution-iexecutionruntimecatalog-getbyid-system-string",
       "Signature": "ExecutionGraphDescriptor GetById(string graphId)",
       "Summary": "Gets one execution graph by its stable identifier."
+    },
+    {
+      "DisplayName": "GetById",
+      "Category": "Methods",
+      "DeclaringTypeName": "IFeatureFlagRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-features-ifeatureflagruntimecatalog-getbyid-system-string",
+      "Signature": "FeatureFlagDescriptor GetById(string featureFlagId)",
+      "Summary": "Gets one feature flag by its stable identifier."
     },
     {
       "DisplayName": "GetById",
@@ -24663,6 +26207,17 @@
       "Summary": "Gets every database role that resolves to the supplied concrete role identifier."
     },
     {
+      "DisplayName": "GetByRestEndpointId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IBackendForFrontendRestRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-transports-ibackendforfrontendrestruntimecatalog-getbyrestendpointid-system-string",
+      "Signature": "IReadOnlyList\u003CBackendForFrontendRestEndpointRuntimeDescriptor\u003E GetByRestEndpointId(string restEndpointId)",
+      "Summary": "Gets all client-aware runtime projections that expose the requested published REST endpoint."
+    },
+    {
       "DisplayName": "GetBySeverity",
       "Category": "Methods",
       "DeclaringTypeName": "IBehaviorAdvisoryCatalog",
@@ -24698,6 +26253,28 @@
     {
       "DisplayName": "GetBySourceModule",
       "Category": "Methods",
+      "DeclaringTypeName": "IBackendForFrontendRestRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-transports-ibackendforfrontendrestruntimecatalog-getbysourcemodule-system-string",
+      "Signature": "IReadOnlyList\u003CBackendForFrontendRestEndpointRuntimeDescriptor\u003E GetBySourceModule(string sourceModuleId)",
+      "Summary": "Gets all client-aware published REST endpoint projections contributed by the requested binding-owner module."
+    },
+    {
+      "DisplayName": "GetBySourceModule",
+      "Category": "Methods",
+      "DeclaringTypeName": "IBackendForFrontendRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-patterns-ibackendforfrontendruntimecatalog-getbysourcemodule-system-string",
+      "Signature": "IReadOnlyList\u003CBackendForFrontendClientBindingDescriptor\u003E GetBySourceModule(string sourceModuleId)",
+      "Summary": "Gets all backend-for-frontend client bindings owned by the requested module."
+    },
+    {
+      "DisplayName": "GetBySourceModule",
+      "Category": "Methods",
       "DeclaringTypeName": "IExecutionRuntimeCatalog",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -24705,6 +26282,17 @@
       "AnchorId": "member-m-cephalon-abstractions-execution-iexecutionruntimecatalog-getbysourcemodule-system-string",
       "Signature": "IReadOnlyList\u003CExecutionGraphDescriptor\u003E GetBySourceModule(string sourceModuleId)",
       "Summary": "Gets all execution graphs contributed by the requested module."
+    },
+    {
+      "DisplayName": "GetBySourceModule",
+      "Category": "Methods",
+      "DeclaringTypeName": "IFeatureFlagRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-features-ifeatureflagruntimecatalog-getbysourcemodule-system-string",
+      "Signature": "IReadOnlyList\u003CFeatureFlagDescriptor\u003E GetBySourceModule(string sourceModuleId)",
+      "Summary": "Gets all module-owned feature flags contributed by the requested source module."
     },
     {
       "DisplayName": "GetBySourceModule",
@@ -24863,6 +26451,17 @@
     {
       "DisplayName": "GetByTransportId",
       "Category": "Methods",
+      "DeclaringTypeName": "IBackendForFrontendRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-patterns-ibackendforfrontendruntimecatalog-getbytransportid-system-string",
+      "Signature": "IReadOnlyList\u003CBackendForFrontendClientBindingDescriptor\u003E GetByTransportId(string transportId)",
+      "Summary": "Gets all backend-for-frontend client bindings that target the requested transport."
+    },
+    {
+      "DisplayName": "GetByTransportId",
+      "Category": "Methods",
       "DeclaringTypeName": "IRateLimitingRuntimeCatalog",
       "NamespaceName": "Cephalon.Abstractions.Resilience",
       "AssemblyName": "Cephalon.Abstractions",
@@ -24881,6 +26480,28 @@
       "AnchorId": "member-m-cephalon-abstractions-health-idependencyhealthcontributor-getdependencyhealth",
       "Signature": "IReadOnlyList\u003CDependencyHealthReport\u003E GetDependencyHealth()",
       "Summary": "Returns the dependency-health reports currently known to the contributor."
+    },
+    {
+      "DisplayName": "GetDisabled",
+      "Category": "Methods",
+      "DeclaringTypeName": "IFeatureFlagRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-features-ifeatureflagruntimecatalog-getdisabled",
+      "Signature": "IReadOnlyList\u003CFeatureFlagDescriptor\u003E GetDisabled()",
+      "Summary": "Gets all feature flags that are disabled before targeting is applied."
+    },
+    {
+      "DisplayName": "GetEnabled",
+      "Category": "Methods",
+      "DeclaringTypeName": "IFeatureFlagRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-features-ifeatureflagruntimecatalog-getenabled",
+      "Signature": "IReadOnlyList\u003CFeatureFlagDescriptor\u003E GetEnabled()",
+      "Summary": "Gets all feature flags that are enabled before targeting is applied."
     },
     {
       "DisplayName": "GetResources",
@@ -25523,6 +27144,39 @@
     {
       "DisplayName": "HasValues",
       "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendBehaviorFilterDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-hasvalues",
+      "Signature": "bool HasValues { get; }",
+      "Summary": "Gets a value indicating whether any behavior-filter hints were explicitly supplied."
+    },
+    {
+      "DisplayName": "HasValues",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendBehaviorFilterSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-hasvalues",
+      "Signature": "bool HasValues { get; }",
+      "Summary": "Gets a value indicating whether any backend-for-frontend behavior-filter settings were explicitly supplied."
+    },
+    {
+      "DisplayName": "HasValues",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-backendforfrontendsettings-hasvalues",
+      "Signature": "bool HasValues { get; }",
+      "Summary": "Gets a value indicating whether any backend-for-frontend settings were explicitly supplied."
+    },
+    {
+      "DisplayName": "HasValues",
+      "Category": "Properties",
       "DeclaringTypeName": "BehaviorExecutionResilienceOverrideSelection",
       "NamespaceName": "Cephalon.Abstractions.AppModel",
       "AssemblyName": "Cephalon.Abstractions",
@@ -25739,6 +27393,39 @@
       "AnchorId": "member-p-cephalon-engine-configuration-failurepolicy-hasvalues",
       "Signature": "bool HasValues { get; }",
       "Summary": "Gets a value indicating whether this policy differs from \u0060Default\u0060."
+    },
+    {
+      "DisplayName": "HasValues",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-hasvalues",
+      "Signature": "bool HasValues { get; }",
+      "Summary": "Gets a value indicating whether any targeting constraint was supplied."
+    },
+    {
+      "DisplayName": "HasValues",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featureflagtargetingsettings-hasvalues",
+      "Signature": "bool HasValues { get; }",
+      "Summary": "Gets a value indicating whether any targeting constraint was supplied."
+    },
+    {
+      "DisplayName": "HasValues",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featuresettings-hasvalues",
+      "Signature": "bool HasValues { get; }",
+      "Summary": "Gets a value indicating whether any feature settings were explicitly supplied."
     },
     {
       "DisplayName": "HasValues",
@@ -26424,6 +28111,17 @@
     },
     {
       "DisplayName": "Host",
+      "Category": "Fields",
+      "DeclaringTypeName": "FeatureFlagSourceKind",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-features-featureflagsourcekind-host",
+      "Signature": "const FeatureFlagSourceKind Host",
+      "Summary": "Indicates the feature flag is host-owned and was configured directly by the app."
+    },
+    {
+      "DisplayName": "Host",
       "Category": "Properties",
       "DeclaringTypeName": "MemcachedDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.MemcachedDependencies.Configuration",
@@ -27041,6 +28739,50 @@
     {
       "DisplayName": "Id",
       "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendClientBindingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable binding identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendClientBindingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-backendforfrontendclientbindingsettings-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable binding identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendRestDocumentRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable documentation-surface identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendRestEndpointRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable binding-plus-endpoint identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
       "DeclaringTypeName": "BehaviorExecutionResilienceOverrideSelection",
       "NamespaceName": "Cephalon.Abstractions.AppModel",
       "AssemblyName": "Cephalon.Abstractions",
@@ -27290,6 +29032,28 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable node identifier within the graph."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagdescriptor-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable feature-flag identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featureflagsettings-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable feature-flag identifier."
     },
     {
       "DisplayName": "Id",
@@ -27864,6 +29628,248 @@
       "Summary": "Gets or sets a value indicating whether unmatched claims should be projected into \u0060Attributes\u0060."
     },
     {
+      "DisplayName": "IncludedBehaviorIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendBehaviorFilterDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-includedbehaviorids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E IncludedBehaviorIds { get; }",
+      "Summary": "Gets the explicit behavior identifiers that should stay visible to the client."
+    },
+    {
+      "DisplayName": "IncludedBehaviorIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendBehaviorFilterSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-includedbehaviorids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E IncludedBehaviorIds { get; }",
+      "Summary": "Gets the explicit behavior identifiers that should stay visible to the client."
+    },
+    {
+      "DisplayName": "IncludedBehaviorIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-includedbehaviorids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E IncludedBehaviorIds { get; }",
+      "Summary": "Gets the explicitly included behavior identifiers."
+    },
+    {
+      "DisplayName": "IncludedBehaviorIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featureflagtargetingsettings-includedbehaviorids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E IncludedBehaviorIds { get; }",
+      "Summary": "Gets the explicitly included behavior identifiers."
+    },
+    {
+      "DisplayName": "IncludedCapabilityKeys",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendBehaviorFilterDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-includedcapabilitykeys",
+      "Signature": "IReadOnlyList\u003Cstring\u003E IncludedCapabilityKeys { get; }",
+      "Summary": "Gets the explicit capability keys that should stay visible to the client."
+    },
+    {
+      "DisplayName": "IncludedCapabilityKeys",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendBehaviorFilterSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-includedcapabilitykeys",
+      "Signature": "IReadOnlyList\u003Cstring\u003E IncludedCapabilityKeys { get; }",
+      "Summary": "Gets the explicit capability keys that should stay visible to the client."
+    },
+    {
+      "DisplayName": "IncludedCapabilityKeys",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-includedcapabilitykeys",
+      "Signature": "IReadOnlyList\u003Cstring\u003E IncludedCapabilityKeys { get; }",
+      "Summary": "Gets the explicitly included capability keys."
+    },
+    {
+      "DisplayName": "IncludedCapabilityKeys",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featureflagtargetingsettings-includedcapabilitykeys",
+      "Signature": "IReadOnlyList\u003Cstring\u003E IncludedCapabilityKeys { get; }",
+      "Summary": "Gets the explicitly included capability keys."
+    },
+    {
+      "DisplayName": "IncludedEnvironmentNames",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-includedenvironmentnames",
+      "Signature": "IReadOnlyList\u003Cstring\u003E IncludedEnvironmentNames { get; }",
+      "Summary": "Gets the explicitly included environment names."
+    },
+    {
+      "DisplayName": "IncludedEnvironmentNames",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featureflagtargetingsettings-includedenvironmentnames",
+      "Signature": "IReadOnlyList\u003Cstring\u003E IncludedEnvironmentNames { get; }",
+      "Summary": "Gets the explicitly included environment names."
+    },
+    {
+      "DisplayName": "IncludedModuleIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-includedmoduleids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E IncludedModuleIds { get; }",
+      "Summary": "Gets the explicitly included module identifiers."
+    },
+    {
+      "DisplayName": "IncludedModuleIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featureflagtargetingsettings-includedmoduleids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E IncludedModuleIds { get; }",
+      "Summary": "Gets the explicitly included module identifiers."
+    },
+    {
+      "DisplayName": "IncludedSubjectIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-includedsubjectids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E IncludedSubjectIds { get; }",
+      "Summary": "Gets the explicitly included subject identifiers."
+    },
+    {
+      "DisplayName": "IncludedSubjectIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featureflagtargetingsettings-includedsubjectids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E IncludedSubjectIds { get; }",
+      "Summary": "Gets the explicitly included subject identifiers."
+    },
+    {
+      "DisplayName": "IncludedTags",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendBehaviorFilterDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-includedtags",
+      "Signature": "IReadOnlyList\u003Cstring\u003E IncludedTags { get; }",
+      "Summary": "Gets the behavior or endpoint tags that should stay visible to the client."
+    },
+    {
+      "DisplayName": "IncludedTags",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendBehaviorFilterSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-includedtags",
+      "Signature": "IReadOnlyList\u003Cstring\u003E IncludedTags { get; }",
+      "Summary": "Gets the behavior or endpoint tags that should stay visible to the client."
+    },
+    {
+      "DisplayName": "IncludedTags",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-includedtags",
+      "Signature": "IReadOnlyList\u003Cstring\u003E IncludedTags { get; }",
+      "Summary": "Gets the explicitly included descriptive tags."
+    },
+    {
+      "DisplayName": "IncludedTags",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featureflagtargetingsettings-includedtags",
+      "Signature": "IReadOnlyList\u003Cstring\u003E IncludedTags { get; }",
+      "Summary": "Gets the explicitly included descriptive tags."
+    },
+    {
+      "DisplayName": "IncludedTenantIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-includedtenantids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E IncludedTenantIds { get; }",
+      "Summary": "Gets the explicitly included tenant identifiers."
+    },
+    {
+      "DisplayName": "IncludedTenantIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featureflagtargetingsettings-includedtenantids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E IncludedTenantIds { get; }",
+      "Summary": "Gets the explicitly included tenant identifiers."
+    },
+    {
+      "DisplayName": "IncludedTransportIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-includedtransportids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E IncludedTransportIds { get; }",
+      "Summary": "Gets the explicitly included transport identifiers."
+    },
+    {
+      "DisplayName": "IncludedTransportIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagTargetingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featureflagtargetingsettings-includedtransportids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E IncludedTransportIds { get; }",
+      "Summary": "Gets the explicitly included transport identifiers."
+    },
+    {
       "DisplayName": "IncludeHeadersAsContextAttributes",
       "Category": "Properties",
       "DeclaringTypeName": "IdentityAspNetCoreOptions",
@@ -28271,6 +30277,39 @@
       "Summary": "Gets a value indicating whether the hosted execution most recently observed a deactivation event."
     },
     {
+      "DisplayName": "IsDefined",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagEvaluationResult",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagevaluationresult-isdefined",
+      "Signature": "bool IsDefined { get; set; }",
+      "Summary": "Indicates whether the feature flag exists in the active runtime."
+    },
+    {
+      "DisplayName": "IsEnabled",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagEvaluationResult",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagevaluationresult-isenabled",
+      "Signature": "bool IsEnabled { get; set; }",
+      "Summary": "Indicates whether the feature flag resolved to enabled."
+    },
+    {
+      "DisplayName": "IsEnabled",
+      "Category": "Methods",
+      "DeclaringTypeName": "IFeatureToggle",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-features-ifeaturetoggle-isenabled-system-string-cephalon-abstractions-features-featureflagevaluationcontext",
+      "Signature": "bool IsEnabled(string featureFlagId, FeatureFlagEvaluationContext context)",
+      "Summary": "Evaluates whether the requested feature flag is enabled for the supplied context."
+    },
+    {
       "DisplayName": "IsFallback",
       "Category": "Properties",
       "DeclaringTypeName": "EntityFrameworkDatabaseRoleContext",
@@ -28654,6 +30693,17 @@
       "AnchorId": "member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-keyspace",
       "Signature": "string Keyspace { get; set; }",
       "Summary": "Gets or sets the optional Cassandra keyspace used when opening the probe session."
+    },
+    {
+      "DisplayName": "Kind",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendRestDocumentRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-kind",
+      "Signature": "string Kind { get; }",
+      "Summary": "Gets the stable scope kind."
     },
     {
       "DisplayName": "Kind",
@@ -29712,6 +31762,39 @@
       "Summary": "Records one inbound message as processed."
     },
     {
+      "DisplayName": "Matched",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagEvaluationResult",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagevaluationresult-matched",
+      "Signature": "bool Matched { get; set; }",
+      "Summary": "Indicates whether the supplied evaluation context matched the targeting constraints for the feature flag."
+    },
+    {
+      "DisplayName": "MatchedBehaviorIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendRestEndpointRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-matchedbehaviorids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E MatchedBehaviorIds { get; }",
+      "Summary": "Gets the included behavior identifiers that matched the published endpoint."
+    },
+    {
+      "DisplayName": "MatchedByDefault",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendRestEndpointRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-matchedbydefault",
+      "Signature": "bool MatchedByDefault { get; }",
+      "Summary": "Gets a value indicating whether the endpoint stayed visible because the binding declared no positive include filters and the endpoint was not excluded."
+    },
+    {
       "DisplayName": "MatchedCandidateIds",
       "Category": "Properties",
       "DeclaringTypeName": "RestEndpointGovernanceOverrideSummaryDescriptor",
@@ -29778,6 +31861,17 @@
       "Summary": "Gets the runtime candidate identifiers that matched this suppression rule, including candidates where another suppression rule won selection."
     },
     {
+      "DisplayName": "MatchedCapabilityKeys",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendRestEndpointRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-matchedcapabilitykeys",
+      "Signature": "IReadOnlyList\u003Cstring\u003E MatchedCapabilityKeys { get; }",
+      "Summary": "Gets the included required-capability keys that matched the published endpoint."
+    },
+    {
       "DisplayName": "MatchedOverrideIds",
       "Category": "Properties",
       "DeclaringTypeName": "RestEndpointCandidateRuntimeDescriptor",
@@ -29820,6 +31914,17 @@
       "AnchorId": "member-p-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-matchedsuppressionids",
       "Signature": "IReadOnlyList\u003Cstring\u003E MatchedSuppressionIds { get; }",
       "Summary": "Gets the ordered suppression-rule identifiers that matched this candidate before one winner was selected."
+    },
+    {
+      "DisplayName": "MatchedTags",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendRestEndpointRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-matchedtags",
+      "Signature": "IReadOnlyList\u003Cstring\u003E MatchedTags { get; }",
+      "Summary": "Gets the included tags that matched the published endpoint."
     },
     {
       "DisplayName": "MaxAgeDays",
@@ -30561,6 +32666,28 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendClientBindingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional binding metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendClientBindingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-backendforfrontendclientbindingsettings-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional binding metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "BehaviorResilienceRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Resilience",
       "AssemblyName": "Cephalon.Abstractions",
@@ -30777,6 +32904,39 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
       "Summary": "Gets operator-facing metadata associated with the node."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagdescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets operator-facing metadata for the feature flag."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagEvaluationContext",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagevaluationcontext-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets additional evaluation metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featureflagsettings-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional operator-facing metadata."
     },
     {
       "DisplayName": "Metadata",
@@ -31716,6 +33876,17 @@
     {
       "DisplayName": "Module",
       "Category": "Fields",
+      "DeclaringTypeName": "FeatureFlagSourceKind",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-features-featureflagsourcekind-module",
+      "Signature": "const FeatureFlagSourceKind Module",
+      "Summary": "Indicates the feature flag is module-owned and was contributed by a Cephalon module."
+    },
+    {
+      "DisplayName": "Module",
+      "Category": "Fields",
       "DeclaringTypeName": "ProjectRoles",
       "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
       "AssemblyName": "Cephalon.Abstractions",
@@ -31811,6 +33982,17 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-moduleid",
       "Signature": "string ModuleId { get; }",
       "Summary": "Gets the module identifier that primarily owns the node, when one was declared."
+    },
+    {
+      "DisplayName": "ModuleId",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagEvaluationContext",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagevaluationcontext-moduleid",
+      "Signature": "string ModuleId { get; }",
+      "Summary": "Gets the current module identifier when one is known."
     },
     {
       "DisplayName": "ModuleId",
@@ -32933,6 +35115,17 @@
       "AnchorId": "member-m-cephalon-aspnetcore-documentation-openapiendpointoptions-ctor",
       "Signature": "OpenApiEndpointOptions()",
       "Summary": "Initializes a new \u0060OpenApiEndpointOptions\u0060 with the canonical Cephalon OpenAPI and Scalar routes."
+    },
+    {
+      "DisplayName": "OpenApiPath",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendRestDocumentRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-openapipath",
+      "Signature": "string OpenApiPath { get; }",
+      "Summary": "Gets the rooted OpenAPI JSON path for the filtered document."
     },
     {
       "DisplayName": "OpenApiTagMetadata",
@@ -36149,6 +38342,17 @@
     {
       "DisplayName": "Reason",
       "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagEvaluationResult",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagevaluationresult-reason",
+      "Signature": "string Reason { get; set; }",
+      "Summary": "The operator-facing explanation for the evaluation result."
+    },
+    {
+      "DisplayName": "Reason",
+      "Category": "Properties",
       "DeclaringTypeName": "PackageSignatureTrustDecision",
       "NamespaceName": "Cephalon.Engine.Trust",
       "AssemblyName": "Cephalon.Engine",
@@ -36488,6 +38692,17 @@
       "Summary": "Registers one or more event channel descriptors with the supplied registry."
     },
     {
+      "DisplayName": "RegisterClientBindings",
+      "Category": "Methods",
+      "DeclaringTypeName": "IBackendForFrontendClientBindingContributor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-patterns-ibackendforfrontendclientbindingcontributor-registerclientbindings-cephalon-abstractions-patterns-ibackendforfrontendclientbindingregistry",
+      "Signature": "void RegisterClientBindings(IBackendForFrontendClientBindingRegistry bindings)",
+      "Summary": "Registers one or more backend-for-frontend client bindings with the supplied registry."
+    },
+    {
       "DisplayName": "RegisterCollections",
       "Category": "Methods",
       "DeclaringTypeName": "IKnowledgeCollectionContributor",
@@ -36530,6 +38745,17 @@
       "AnchorId": "member-m-cephalon-abstractions-execution-iexecutiongraphcontributor-registerexecutiongraphs-cephalon-abstractions-execution-iexecutiongraphregistry",
       "Signature": "void RegisterExecutionGraphs(IExecutionGraphRegistry graphs)",
       "Summary": "Registers one or more execution graphs owned by the contributor."
+    },
+    {
+      "DisplayName": "RegisterFeatureFlags",
+      "Category": "Methods",
+      "DeclaringTypeName": "IFeatureFlagContributor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-features-ifeatureflagcontributor-registerfeatureflags-cephalon-abstractions-features-ifeatureflagregistry",
+      "Signature": "void RegisterFeatureFlags(IFeatureFlagRegistry registry)",
+      "Summary": "Registers the feature flags owned by the contributing module."
     },
     {
       "DisplayName": "RegisterHostedExecutions",
@@ -38314,6 +40540,28 @@
       "Summary": "Creates a grouped suppression-rule summary."
     },
     {
+      "DisplayName": "RestEndpointId",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendRestEndpointRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-restendpointid",
+      "Signature": "string RestEndpointId { get; }",
+      "Summary": "Gets the stable published REST endpoint identifier."
+    },
+    {
+      "DisplayName": "RestEndpointIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendRestDocumentRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-restendpointids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E RestEndpointIds { get; }",
+      "Summary": "Gets the included published REST endpoint identifiers."
+    },
+    {
       "DisplayName": "RestEndpointOverrideDescriptor",
       "Category": "Constructors",
       "DeclaringTypeName": "RestEndpointOverrideDescriptor",
@@ -39480,6 +41728,17 @@
       "Summary": "The event belongs to the overall runtime lifecycle."
     },
     {
+      "DisplayName": "RuntimeEndpointIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendRestDocumentRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-runtimeendpointids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E RuntimeEndpointIds { get; }",
+      "Summary": "Gets the included client-aware runtime endpoint identifiers."
+    },
+    {
       "DisplayName": "RuntimeExecutionGraphState",
       "Category": "Constructors",
       "DeclaringTypeName": "RuntimeExecutionGraphState",
@@ -39876,6 +42135,17 @@
       "Summary": "Creates a new scaffold request."
     },
     {
+      "DisplayName": "ScalarPath",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendRestDocumentRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-scalarpath",
+      "Signature": "string ScalarPath { get; }",
+      "Summary": "Gets the rooted Scalar page path for the filtered document."
+    },
+    {
       "DisplayName": "ScalarRoutePrefix",
       "Category": "Properties",
       "DeclaringTypeName": "OpenApiEndpointOptions",
@@ -40028,6 +42298,17 @@
       "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-scope",
       "Signature": "string Scope { get; }",
       "Summary": "Gets the scaffold scope that owns the project."
+    },
+    {
+      "DisplayName": "ScopeId",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendRestDocumentRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-scopeid",
+      "Signature": "string ScopeId { get; }",
+      "Summary": "Gets the stable scope identifier."
     },
     {
       "DisplayName": "SectionName",
@@ -41264,6 +43545,39 @@
     {
       "DisplayName": "SourceKind",
       "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagdescriptor-sourcekind",
+      "Signature": "FeatureFlagSourceKind SourceKind { get; }",
+      "Summary": "Gets the ownership kind for this feature flag."
+    },
+    {
+      "DisplayName": "SourceKind",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagEvaluationResult",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagevaluationresult-sourcekind",
+      "Signature": "FeatureFlagSourceKind? SourceKind { get; set; }",
+      "Summary": "The ownership kind for the resolved feature flag when one exists."
+    },
+    {
+      "DisplayName": "SourceKind",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featureflagsettings-sourcekind",
+      "Signature": "FeatureFlagSourceKind SourceKind { get; }",
+      "Summary": "Gets the ownership kind for this feature flag."
+    },
+    {
+      "DisplayName": "SourceKind",
+      "Category": "Properties",
       "DeclaringTypeName": "RestEndpointRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Transports",
       "AssemblyName": "Cephalon.Abstractions",
@@ -41308,6 +43622,39 @@
     {
       "DisplayName": "SourceModuleId",
       "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendClientBindingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; }",
+      "Summary": "Gets the module that owns this client-specific binding."
+    },
+    {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendClientBindingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-backendforfrontendclientbindingsettings-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; }",
+      "Summary": "Gets the module that owns this client-specific binding."
+    },
+    {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendRestEndpointRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; }",
+      "Summary": "Gets the binding-owner module identifier."
+    },
+    {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
       "DeclaringTypeName": "CapabilityManifest",
       "NamespaceName": "Cephalon.Engine.Manifest",
       "AssemblyName": "Cephalon.Engine",
@@ -41348,6 +43695,39 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphdescriptor-sourcemoduleid",
       "Signature": "string SourceModuleId { get; }",
       "Summary": "Gets the identifier of the module that contributed the graph."
+    },
+    {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagdescriptor-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; }",
+      "Summary": "Gets the owning module identifier when the feature flag is module-owned."
+    },
+    {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagEvaluationResult",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagevaluationresult-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; set; }",
+      "Summary": "The owning module identifier when the feature flag is module-owned."
+    },
+    {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featureflagsettings-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; }",
+      "Summary": "Gets the source-module identifier when the feature flag is module-owned."
     },
     {
       "DisplayName": "SourceModuleId",
@@ -41469,6 +43849,17 @@
       "AnchorId": "member-p-cephalon-abstractions-patterns-stranglerfigrouteresolution-sourcemoduleid",
       "Signature": "string SourceModuleId { get; set; }",
       "Summary": "The Cephalon module that owns the modern boundary."
+    },
+    {
+      "DisplayName": "SourceModuleIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendRestDocumentRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Transports",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-sourcemoduleids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E SourceModuleIds { get; }",
+      "Summary": "Gets the published-endpoint source-module identifiers represented in the materialized document."
     },
     {
       "DisplayName": "SourceModuleIds",
@@ -42683,6 +45074,17 @@
     {
       "DisplayName": "SubjectId",
       "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagEvaluationContext",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagevaluationcontext-subjectid",
+      "Signature": "string SubjectId { get; }",
+      "Summary": "Gets the current subject identifier when one is known."
+    },
+    {
+      "DisplayName": "SubjectId",
+      "Category": "Properties",
       "DeclaringTypeName": "RuntimeLifecycleEvent",
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
@@ -43585,6 +45987,17 @@
     {
       "DisplayName": "Tags",
       "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagEvaluationContext",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagevaluationcontext-tags",
+      "Signature": "IReadOnlyList\u003Cstring\u003E Tags { get; }",
+      "Summary": "Gets the descriptive tags associated with the current request or workload."
+    },
+    {
+      "DisplayName": "Tags",
+      "Category": "Properties",
       "DeclaringTypeName": "HostedExecutionDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -43845,6 +46258,28 @@
       "AnchorId": "member-p-cephalon-scaffolding-generation-scaffoldrequest-targetframework",
       "Signature": "string TargetFramework { get; }",
       "Summary": "Gets the target framework for generated projects."
+    },
+    {
+      "DisplayName": "Targeting",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagdescriptor-targeting",
+      "Signature": "FeatureFlagTargetingDescriptor Targeting { get; }",
+      "Summary": "Gets the optional targeting constraints attached to the feature flag."
+    },
+    {
+      "DisplayName": "Targeting",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-featureflagsettings-targeting",
+      "Signature": "FeatureFlagTargetingSettings Targeting { get; }",
+      "Summary": "Gets the optional targeting settings attached to the feature flag."
     },
     {
       "DisplayName": "TargetRoleIds",
@@ -44296,6 +46731,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventpublication-tenantid",
       "Signature": "string TenantId { get; }",
       "Summary": "Gets the tenant identifier associated with the event."
+    },
+    {
+      "DisplayName": "TenantId",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagEvaluationContext",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagevaluationcontext-tenantid",
+      "Signature": "string TenantId { get; }",
+      "Summary": "Gets the current tenant identifier when one is known."
     },
     {
       "DisplayName": "TenantId",
@@ -44817,11 +47263,44 @@
     {
       "DisplayName": "TransportId",
       "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendClientBindingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-transportid",
+      "Signature": "string TransportId { get; }",
+      "Summary": "Gets the transport identifier used by this client-specific surface."
+    },
+    {
+      "DisplayName": "TransportId",
+      "Category": "Properties",
+      "DeclaringTypeName": "BackendForFrontendClientBindingSettings",
+      "NamespaceName": "Cephalon.Engine.Configuration",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-configuration-backendforfrontendclientbindingsettings-transportid",
+      "Signature": "string TransportId { get; }",
+      "Summary": "Gets the transport identifier used by this client-specific surface."
+    },
+    {
+      "DisplayName": "TransportId",
+      "Category": "Properties",
       "DeclaringTypeName": "BehaviorResilienceExceptionContext",
       "NamespaceName": "Cephalon.Abstractions.Resilience",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext-transportid",
+      "Signature": "string TransportId { get; }",
+      "Summary": "Gets the active transport identifier when one is known."
+    },
+    {
+      "DisplayName": "TransportId",
+      "Category": "Properties",
+      "DeclaringTypeName": "FeatureFlagEvaluationContext",
+      "NamespaceName": "Cephalon.Abstractions.Features",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-features-featureflagevaluationcontext-transportid",
       "Signature": "string TransportId { get; }",
       "Summary": "Gets the active transport identifier when one is known."
     },
@@ -45684,6 +48163,17 @@
       "Summary": "Gets or sets a value indicating whether Google-managed ingestion should authenticate by using Application Default Credentials."
     },
     {
+      "DisplayName": "UseBackendForFrontendSettings",
+      "Category": "Methods",
+      "DeclaringTypeName": "EngineBuilder",
+      "NamespaceName": "Cephalon.Engine.Composition",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-usebackendforfrontendsettings-cephalon-engine-configuration-backendforfrontendsettings",
+      "Signature": "EngineBuilder UseBackendForFrontendSettings(BackendForFrontendSettings settings)",
+      "Summary": "Replaces the backend-for-frontend settings used by the runtime client-binding catalog."
+    },
+    {
       "DisplayName": "UseBlueprint",
       "Category": "Methods",
       "DeclaringTypeName": "EngineBuilder",
@@ -45748,6 +48238,17 @@
       "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-usefailurepolicy-cephalon-engine-configuration-failurepolicy",
       "Signature": "EngineBuilder UseFailurePolicy(FailurePolicy policy)",
       "Summary": "Replaces the failure policy used by the runtime lifecycle state machine."
+    },
+    {
+      "DisplayName": "UseFeatureSettings",
+      "Category": "Methods",
+      "DeclaringTypeName": "EngineBuilder",
+      "NamespaceName": "Cephalon.Engine.Composition",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-usefeaturesettings-cephalon-engine-configuration-featuresettings",
+      "Signature": "EngineBuilder UseFeatureSettings(FeatureSettings settings)",
+      "Summary": "Merges feature-flag settings into the current builder state."
     },
     {
       "DisplayName": "UseGoogleManagedIngestion",

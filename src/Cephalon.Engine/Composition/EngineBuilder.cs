@@ -5,6 +5,7 @@ using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Execution;
+using Cephalon.Abstractions.Features;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Patterns;
 using Cephalon.Abstractions.Technologies;
@@ -16,6 +17,7 @@ using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Data;
 using Cephalon.Engine.Diagnostics;
 using Cephalon.Engine.Execution;
+using Cephalon.Engine.Features;
 using Cephalon.Engine.Localization;
 using Cephalon.Engine.Manifest;
 using Cephalon.Engine.Composition.Packages;
@@ -56,6 +58,7 @@ public sealed class EngineBuilder
     private readonly List<ModulePackageDirectory> packageDirectories = [];
     private readonly List<BackendForFrontendClientBindingDescriptor> backendForFrontendBindings = [];
     private readonly List<StranglerFigRouteDescriptor> stranglerFigRoutes = [];
+    private readonly List<FeatureFlagDescriptor> featureFlags = [];
     private readonly AppProfileBuilder appProfileBuilder = new();
     private EngineOptions engineOptions = EngineOptions.Empty;
     private LocalizationSettings localizationSettings = LocalizationSettings.Empty;
@@ -64,6 +67,7 @@ public sealed class EngineBuilder
     private PackagePolicy packagePolicy = PackagePolicy.Default;
     private MigrationSettings migrationSettings = MigrationSettings.Empty;
     private BackendForFrontendSettings backendForFrontendSettings = BackendForFrontendSettings.Empty;
+    private FeatureSettings featureSettings = FeatureSettings.Empty;
 
     /// <summary>
     /// Creates a new builder over the supplied service collection.
@@ -139,6 +143,7 @@ public sealed class EngineBuilder
         UsePackagePolicy(settings.PackagePolicy);
         UseMigrationSettings(settings.Migration);
         UseBackendForFrontendSettings(settings.BackendForFrontend);
+        UseFeatureSettings(settings.Features);
 
         return this;
     }
@@ -248,6 +253,36 @@ public sealed class EngineBuilder
     }
 
     /// <summary>
+    /// Adds a feature flag to the current runtime composition.
+    /// </summary>
+    /// <param name="featureFlag">The feature-flag descriptor to add.</param>
+    /// <returns>The same builder instance.</returns>
+    public EngineBuilder AddFeatureFlag(FeatureFlagDescriptor featureFlag)
+    {
+        ArgumentNullException.ThrowIfNull(featureFlag);
+
+        featureFlags.Add(featureFlag);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds multiple feature flags to the current runtime composition.
+    /// </summary>
+    /// <param name="featureFlags">The feature-flag descriptors to add.</param>
+    /// <returns>The same builder instance.</returns>
+    public EngineBuilder AddFeatureFlags(IEnumerable<FeatureFlagDescriptor> featureFlags)
+    {
+        ArgumentNullException.ThrowIfNull(featureFlags);
+
+        foreach (var featureFlag in featureFlags)
+        {
+            AddFeatureFlag(featureFlag);
+        }
+
+        return this;
+    }
+
+    /// <summary>
     /// Registers a technology descriptor in the available catalog without implicitly selecting it.
     /// </summary>
     /// <param name="technology">The technology descriptor to register.</param>
@@ -327,6 +362,27 @@ public sealed class EngineBuilder
         ArgumentNullException.ThrowIfNull(policy);
 
         packagePolicy = policy;
+        return this;
+    }
+
+    /// <summary>
+    /// Merges feature-flag settings into the current builder state.
+    /// </summary>
+    /// <param name="settings">The feature-flag settings to merge.</param>
+    /// <returns>The same builder instance.</returns>
+    public EngineBuilder UseFeatureSettings(FeatureSettings settings)
+    {
+        ArgumentNullException.ThrowIfNull(settings);
+
+        if (!settings.HasValues)
+        {
+            return this;
+        }
+
+        featureSettings = new FeatureSettings(
+            featureSettings.Flags
+                .Concat(settings.Flags)
+                .ToArray());
         return this;
     }
 
@@ -620,6 +676,7 @@ public sealed class EngineBuilder
             Services.AddSingleton(packagePolicy);
             Services.AddSingleton(migrationSettings);
             Services.AddSingleton(backendForFrontendSettings);
+            Services.AddSingleton(featureSettings);
 
             var activeModules = ModuleActivation.ApplyOptions(allModules, engineOptions);
             var orderedModules = ModuleOrdering.Order(activeModules);
@@ -634,6 +691,7 @@ public sealed class EngineBuilder
             var authorizationPolicies = new List<AuthorizationPolicyDescriptor>();
             var activeBackendForFrontendBindings = new List<BackendForFrontendClientBindingDescriptor>(backendForFrontendBindings);
             var activeStranglerFigRoutes = new List<StranglerFigRouteDescriptor>(stranglerFigRoutes);
+            var activeFeatureFlags = new List<FeatureFlagDescriptor>(featureFlags);
             var capabilities = new CapabilityManifestCollector();
             var technologyRegistry = new TechnologyRegistryAdapter(appProfileBuilder);
             foreach (var module in orderedModules.OfType<ITechnologyContributor>())
@@ -683,6 +741,12 @@ public sealed class EngineBuilder
                     new AuthorizationPolicyRegistryAdapter(module.Descriptor.Id, authorizationPolicies));
             }
 
+            foreach (var module in orderedModules.Where(static module => module is IFeatureFlagContributor))
+            {
+                ((IFeatureFlagContributor)module).RegisterFeatureFlags(
+                    new FeatureFlagRegistryAdapter(module.Descriptor.Id, activeFeatureFlags));
+            }
+
             foreach (var module in orderedModules.Where(static module => module is IBackendForFrontendClientBindingContributor))
             {
                 ((IBackendForFrontendClientBindingContributor)module).RegisterClientBindings(
@@ -691,6 +755,8 @@ public sealed class EngineBuilder
 
             activeBackendForFrontendBindings.AddRange(
                 backendForFrontendSettings.Bindings.Select(CreateBackendForFrontendClientBindingDescriptor));
+            activeFeatureFlags.AddRange(
+                featureSettings.Flags.Select(CreateFeatureFlagDescriptor));
 
             foreach (var module in orderedModules.Where(static module => module is IStranglerFigRouteContributor))
             {
@@ -758,6 +824,12 @@ public sealed class EngineBuilder
             Services.TryAddSingleton<IInboxCatalog>(_ => new InboxCatalogSnapshot(inboxes));
             Services.TryAddSingleton<IAuditStoreCatalog>(_ => new AuditStoreCatalogSnapshot(auditStores));
             Services.TryAddSingleton<IAuthorizationPolicyCatalog>(_ => new AuthorizationPolicyCatalogSnapshot(authorizationPolicies));
+            Services.TryAddSingleton<FeatureFlagRuntimeCatalogSnapshot>(_ =>
+                new FeatureFlagRuntimeCatalogSnapshot(activeFeatureFlags));
+            Services.TryAddSingleton<IFeatureFlagRuntimeCatalog>(serviceProvider =>
+                serviceProvider.GetRequiredService<FeatureFlagRuntimeCatalogSnapshot>());
+            Services.TryAddSingleton<IFeatureToggle>(serviceProvider =>
+                new InMemoryFeatureToggle(serviceProvider.GetRequiredService<IFeatureFlagRuntimeCatalog>()));
             Services.TryAddSingleton<TechnologyRuntimeCatalogSnapshot>(serviceProvider =>
                 new TechnologyRuntimeCatalogSnapshot(
                     serviceProvider.GetServices<ITechnologyRuntimeContributor>()));
@@ -889,6 +961,38 @@ public sealed class EngineBuilder
                 excludedCapabilityKeys: settings.BehaviorFilter.ExcludedCapabilityKeys,
                 includedTags: settings.BehaviorFilter.IncludedTags,
                 excludedTags: settings.BehaviorFilter.ExcludedTags),
+            metadata: settings.Metadata);
+    }
+
+    private static FeatureFlagDescriptor CreateFeatureFlagDescriptor(
+        FeatureFlagSettings settings)
+    {
+        ArgumentNullException.ThrowIfNull(settings);
+
+        return new FeatureFlagDescriptor(
+            id: settings.Id,
+            displayName: settings.DisplayName,
+            description: settings.Description,
+            enabled: settings.Enabled,
+            sourceKind: settings.SourceKind,
+            sourceModuleId: settings.SourceModuleId,
+            targeting: new FeatureFlagTargetingDescriptor(
+                includedModuleIds: settings.Targeting.IncludedModuleIds,
+                excludedModuleIds: settings.Targeting.ExcludedModuleIds,
+                includedBehaviorIds: settings.Targeting.IncludedBehaviorIds,
+                excludedBehaviorIds: settings.Targeting.ExcludedBehaviorIds,
+                includedCapabilityKeys: settings.Targeting.IncludedCapabilityKeys,
+                excludedCapabilityKeys: settings.Targeting.ExcludedCapabilityKeys,
+                includedTransportIds: settings.Targeting.IncludedTransportIds,
+                excludedTransportIds: settings.Targeting.ExcludedTransportIds,
+                includedEnvironmentNames: settings.Targeting.IncludedEnvironmentNames,
+                excludedEnvironmentNames: settings.Targeting.ExcludedEnvironmentNames,
+                includedTenantIds: settings.Targeting.IncludedTenantIds,
+                excludedTenantIds: settings.Targeting.ExcludedTenantIds,
+                includedSubjectIds: settings.Targeting.IncludedSubjectIds,
+                excludedSubjectIds: settings.Targeting.ExcludedSubjectIds,
+                includedTags: settings.Targeting.IncludedTags,
+                excludedTags: settings.Targeting.ExcludedTags),
             metadata: settings.Metadata);
     }
 

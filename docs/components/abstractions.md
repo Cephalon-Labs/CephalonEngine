@@ -7,6 +7,7 @@
 - module contracts such as `IModule`, `IModuleLifecycle`, `ModuleBase`, `ModuleDescriptor`, and `ModuleContext`
 - behavior contracts such as `IAppBehavior<TIn, TOut>`, `IBehaviorContext`, `IBehaviorTopologyBuilder`, `IBehaviorOwnerModule`, `IBehaviorModuleBuilder`, and `OwnedBehaviorRegistration`
 - capability contracts such as `Capability`, `CapabilityAccess`, and `ICapabilityRegistry`
+- feature-flag contracts such as `FeatureFlagDescriptor`, `FeatureFlagTargetingDescriptor`, `IFeatureToggle`, `IFeatureFlagRuntimeCatalog`, `IFeatureFlagContributor`, and `IFeatureFlagRegistry`
 - app-model contracts such as `AppBlueprint`, `AppProfile`, resilience-selection types, and scaffold-plan types
 - phase-8 runtime-neutral contracts for data, authorization, tenancy, audit, and id generation
 - health contracts used across hosts and packages
@@ -25,6 +26,10 @@
 - `Behaviors/OwnedBehaviorRegistration.cs`
 - `Capabilities/Capability.cs`
 - `Capabilities/ICapabilityRegistry.cs`
+- `Features/FeatureFlagDescriptor.cs`
+- `Features/FeatureFlagTargetingDescriptor.cs`
+- `Features/IFeatureToggle.cs`
+- `Features/IFeatureFlagRuntimeCatalog.cs`
 - `AppModel/AppProfile.cs`
 - `AppModel/SuiteBlueprint.cs`
 - `AppModel/Scaffolding/ScaffoldPlan.cs`
@@ -88,6 +93,7 @@
 - `Behaviors`
 - `Capabilities`
 - `Data`
+- `Features`
 - `Health`
 - `Ids`
 - `Localization`
@@ -162,6 +168,16 @@ without leaking ASP.NET Core `IOpenApiDocumentProvider`, Scalar, or route-mapper
 `Cephalon.Abstractions`. Those contracts intentionally describe the derived runtime surface only:
 binding-versus-client scope kind, scope id, client id, document name, published OpenAPI and Scalar
 paths, and the binding/runtime/published-endpoint ids that justify that materialized document.
+
+The same phase 12 rule now also covers progressive-delivery feature flags. The `Features`
+namespace now carries `FeatureFlagDescriptor`, `FeatureFlagTargetingDescriptor`,
+`FeatureFlagEvaluationContext`, `FeatureFlagEvaluationResult`, `IFeatureToggle`,
+`IFeatureFlagRuntimeCatalog`, `IFeatureFlagContributor`, and `IFeatureFlagRegistry` so modules,
+hosts, and operator tooling can talk about feature ownership, targeting, merged runtime catalogs,
+and evaluation context without leaking ASP.NET Core route mappers or third-party provider SDK types
+into `Cephalon.Abstractions`. Those contracts intentionally separate host-owned and module-owned
+flags through `FeatureFlagSourceKind`, which lets the engine preserve ownership truth when modules
+contribute flags into the shared runtime.
 
 The same transport-first rule also now covers the published REST runtime answer. The `Transports`
 namespace owns `IRestEndpointRuntimeCatalog`, `RestEndpointRuntimeDescriptor`,

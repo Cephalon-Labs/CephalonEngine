@@ -6,6 +6,7 @@ using Cephalon.Abstractions.Audit;
 using Cephalon.Abstractions.Authorization;
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Execution;
+using Cephalon.Abstractions.Features;
 using Cephalon.Abstractions.Localization;
 using Cephalon.Abstractions.Patterns;
 using Cephalon.Abstractions.Resilience;
@@ -317,6 +318,51 @@ public static class EngineWebApplicationExtensions
                 return auditStore is null ? Results.NotFound() : Results.Ok(auditStore);
             })
             .WithName("GetCephalonAuditStore");
+        engineGroup.MapGet("/features", ([FromServices] IFeatureFlagRuntimeCatalog catalog) => TypedResults.Ok(catalog.FeatureFlags))
+            .WithName("GetCephalonFeatures");
+        engineGroup.MapGet("/features/enabled", ([FromServices] IFeatureFlagRuntimeCatalog catalog) => TypedResults.Ok(catalog.GetEnabled()))
+            .WithName("GetCephalonEnabledFeatures");
+        engineGroup.MapGet("/features/disabled", ([FromServices] IFeatureFlagRuntimeCatalog catalog) => TypedResults.Ok(catalog.GetDisabled()))
+            .WithName("GetCephalonDisabledFeatures");
+        engineGroup.MapGet("/features/modules/{moduleId}", (string moduleId, [FromServices] IFeatureFlagRuntimeCatalog catalog) =>
+                TypedResults.Ok(catalog.GetBySourceModule(moduleId)))
+            .WithName("GetCephalonFeaturesByModule");
+        engineGroup.MapGet("/features/{featureFlagId}/evaluate", (
+                string featureFlagId,
+                string? environmentName,
+                string? moduleId,
+                string? behaviorId,
+                string? capabilityKey,
+                string? transportId,
+                string? tenantId,
+                string? subjectId,
+                HttpRequest request,
+                [FromServices] IFeatureToggle featureToggle) =>
+            {
+                var context = new FeatureFlagEvaluationContext(
+                    environmentName: environmentName,
+                    moduleId: moduleId,
+                    behaviorId: behaviorId,
+                    capabilityKey: capabilityKey,
+                    transportId: transportId,
+                    tenantId: tenantId,
+                    subjectId: subjectId,
+                    tags: request.Query["tag"]
+                        .Select(static value => value?.ToString())
+                        .Where(static value => !string.IsNullOrWhiteSpace(value))
+                        .Select(static value => value!)
+                        .ToArray());
+
+                return TypedResults.Ok(featureToggle.Evaluate(featureFlagId, context));
+            })
+            .WithName("EvaluateCephalonFeature");
+        engineGroup.MapGet("/features/{featureFlagId}", (string featureFlagId, [FromServices] IFeatureFlagRuntimeCatalog catalog) =>
+            {
+                var featureFlag = catalog.GetById(featureFlagId);
+
+                return featureFlag is null ? Results.NotFound() : Results.Ok(featureFlag);
+            })
+            .WithName("GetCephalonFeature");
         engineGroup.MapGet("/audit-history", async (
                 string? category,
                 string? action,

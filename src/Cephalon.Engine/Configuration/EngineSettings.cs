@@ -34,6 +34,7 @@ public sealed class EngineSettings
     /// <param name="resilience">Configuration-driven resilience settings.</param>
     /// <param name="migration">Configuration-driven migration settings.</param>
     /// <param name="backendForFrontend">Configuration-driven backend-for-frontend settings.</param>
+    /// <param name="features">Configuration-driven feature-flag settings.</param>
     public EngineSettings(
         string? blueprint = null,
         IReadOnlyList<string>? patterns = null,
@@ -53,7 +54,8 @@ public sealed class EngineSettings
         MessagingSettings? messaging = null,
         ResilienceSettings? resilience = null,
         MigrationSettings? migration = null,
-        BackendForFrontendSettings? backendForFrontend = null)
+        BackendForFrontendSettings? backendForFrontend = null,
+        FeatureSettings? features = null)
     {
         Blueprint = string.IsNullOrWhiteSpace(blueprint) ? null : blueprint.Trim();
         Patterns = patterns?
@@ -83,6 +85,7 @@ public sealed class EngineSettings
         Resilience = resilience ?? ResilienceSettings.Empty;
         Migration = migration ?? MigrationSettings.Empty;
         BackendForFrontend = backendForFrontend ?? BackendForFrontendSettings.Empty;
+        Features = features ?? FeatureSettings.Empty;
     }
 
     /// <summary>
@@ -181,6 +184,11 @@ public sealed class EngineSettings
     public BackendForFrontendSettings BackendForFrontend { get; }
 
     /// <summary>
+    /// Gets configuration-driven feature-flag settings.
+    /// </summary>
+    public FeatureSettings Features { get; }
+
+    /// <summary>
     /// Gets a value indicating whether any engine settings were explicitly supplied.
     /// </summary>
     public bool HasValues =>
@@ -202,7 +210,8 @@ public sealed class EngineSettings
         Messaging.HasValues ||
         Resilience.HasValues ||
         Migration.HasValues ||
-        BackendForFrontend.HasValues;
+        BackendForFrontend.HasValues ||
+        Features.HasValues;
 
     /// <summary>
     /// Reads engine settings from configuration.
@@ -255,6 +264,7 @@ public sealed class EngineSettings
             messaging: MessagingSettings.FromConfiguration(configuration, sectionPath),
             resilience: ResilienceSettings.FromConfiguration(configuration, sectionPath),
             migration: MigrationSettings.FromConfiguration(configuration, sectionPath),
-            backendForFrontend: BackendForFrontendSettings.FromConfiguration(configuration, sectionPath));
+            backendForFrontend: BackendForFrontendSettings.FromConfiguration(configuration, sectionPath),
+            features: FeatureSettings.FromConfiguration(configuration, sectionPath));
     }
 }

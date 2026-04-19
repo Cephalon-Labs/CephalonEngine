@@ -2,6 +2,7 @@ using Cephalon.Abstractions.Audit;
 using Cephalon.Abstractions.Authorization;
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Execution;
+using Cephalon.Abstractions.Features;
 using Cephalon.Abstractions.Patterns;
 using Cephalon.Abstractions.Resilience;
 using Cephalon.Abstractions.Technologies;
@@ -106,6 +107,11 @@ public sealed record RuntimeIntrospectionSnapshot(
     /// Gets the effective rate-limiting policies visible to the runtime at the time the snapshot was created.
     /// </summary>
     public IReadOnlyList<RateLimitingRuntimeDescriptor> RateLimitingPolicies { get; init; } = [];
+
+    /// <summary>
+    /// Gets the feature flags visible to the runtime at the time the snapshot was created.
+    /// </summary>
+    public IReadOnlyList<FeatureFlagDescriptor> FeatureFlags { get; init; } = [];
 
     /// <summary>
     /// Gets the resolved public REST endpoints visible to the runtime at the time the snapshot was created.

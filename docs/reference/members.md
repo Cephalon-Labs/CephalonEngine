@@ -141,6 +141,9 @@ Browse the published API surface by public member.
 - [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-authorization-iauthorizationpolicyregistry-add-cephalon-abstractions-authorization-authorizationpolicydescriptor): `Methods` on `IAuthorizationPolicyRegistry` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Adds an authorization policy to the current runtime composition.
   - `void Add(AuthorizationPolicyDescriptor policy)`
+- [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-patterns-ibackendforfrontendclientbindingregistry-add-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor): `Methods` on `IBackendForFrontendClientBindingRegistry` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Adds a backend-for-frontend client binding descriptor to the current runtime composition.
+  - `void Add(BackendForFrontendClientBindingDescriptor binding)`
 - [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-1): `Methods` on `IBehaviorModuleBuilder` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Declares that the current module owns the specified behavior.
   - `IBehaviorModuleBuilder Add<TBehavior>()`
@@ -168,6 +171,9 @@ Browse the published API surface by public member.
 - [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-iexecutiongraphregistry-add-cephalon-abstractions-execution-executiongraphdescriptor): `Methods` on `IExecutionGraphRegistry` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Adds an execution graph to the current runtime composition.
   - `void Add(ExecutionGraphDescriptor graph)`
+- [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-features-ifeatureflagregistry-add-cephalon-abstractions-features-featureflagdescriptor): `Methods` on `IFeatureFlagRegistry` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Adds a feature-flag descriptor to the current runtime composition.
+  - `void Add(FeatureFlagDescriptor featureFlag)`
 - [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-ihostedexecutionregistry-add-cephalon-abstractions-execution-hostedexecutiondescriptor): `Methods` on `IHostedExecutionRegistry` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Adds a hosted execution to the current runtime composition.
   - `void Add(HostedExecutionDescriptor hostedExecution)`
@@ -201,6 +207,12 @@ Browse the published API surface by public member.
 - [AddAudit](cephalon-audit.md#member-m-cephalon-audit-registration-auditenginebuilderextensions-addaudit-cephalon-engine-composition-enginebuilder-system-action-cephalon-audit-configuration-auditruntimeoptions): `Methods` on `AuditEngineBuilderExtensions` in `Cephalon.Audit.Registration` (`Cephalon.Audit`) [Browse](browse.html?q=AddAudit&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Registration&scope=members)
   - Adds the Cephalon audit companion pack to the engine.
   - `EngineBuilder AddAudit(this EngineBuilder builder, Action<AuditRuntimeOptions> configure)`
+- [AddBackendForFrontendClientBinding](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addbackendforfrontendclientbinding-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddBackendForFrontendClientBinding&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
+  - Adds a backend-for-frontend client binding to the current runtime composition.
+  - `EngineBuilder AddBackendForFrontendClientBinding(BackendForFrontendClientBindingDescriptor binding)`
+- [AddBackendForFrontendClientBindings](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addbackendforfrontendclientbindings-system-collections-generic-ienumerable-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddBackendForFrontendClientBindings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
+  - Adds multiple backend-for-frontend client bindings to the current runtime composition.
+  - `EngineBuilder AddBackendForFrontendClientBindings(IEnumerable<BackendForFrontendClientBindingDescriptor> bindings)`
 - [AddCephalon](cephalon-engine.md#member-m-cephalon-engine-composition-engineservicecollectionextensions-addcephalon-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-engine-composition-enginebuilder): `Methods` on `EngineServiceCollectionExtensions` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddCephalon&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Adds Cephalon using code-first configuration.
   - `IServiceCollection AddCephalon(this IServiceCollection services, Action<EngineBuilder> configure)`
@@ -432,6 +444,12 @@ Browse the published API surface by public member.
 - [AddEventSourcing](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-registration-eventsourcingenginebuilderextensions-addeventsourcing-cephalon-engine-composition-enginebuilder-system-action-cephalon-eventsourcing-configuration-eventsourcingoptions): `Methods` on `EventSourcingEngineBuilderExtensions` in `Cephalon.EventSourcing.Registration` (`Cephalon.EventSourcing`) [Browse](browse.html?q=AddEventSourcing&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Registration&scope=members)
   - Adds the Cephalon event-sourcing companion pack to the engine.
   - `EngineBuilder AddEventSourcing(this EngineBuilder builder, Action<EventSourcingOptions> configure)`
+- [AddFeatureFlag](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addfeatureflag-cephalon-abstractions-features-featureflagdescriptor): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddFeatureFlag&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
+  - Adds a feature flag to the current runtime composition.
+  - `EngineBuilder AddFeatureFlag(FeatureFlagDescriptor featureFlag)`
+- [AddFeatureFlags](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addfeatureflags-system-collections-generic-ienumerable-cephalon-abstractions-features-featureflagdescriptor): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddFeatureFlags&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
+  - Adds multiple feature flags to the current runtime composition.
+  - `EngineBuilder AddFeatureFlags(IEnumerable<FeatureFlagDescriptor> featureFlags)`
 - [AddGraphQLTransport](cephalon-aspnetcore-graphql.md#member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-addgraphqltransport-microsoft-extensions-dependencyinjection-iservicecollection): `Methods` on `GraphQLTransportServiceCollectionExtensions` in `Cephalon.AspNetCore.GraphQL.Hosting` (`Cephalon.AspNetCore.GraphQL`) [Browse](browse.html?q=AddGraphQLTransport&assembly=Cephalon.AspNetCore.GraphQL&namespace=Cephalon.AspNetCore.GraphQL.Hosting&scope=members)
   - Adds the GraphQL transport mapper and GraphQL server services to the service collection.
   - `IServiceCollection AddGraphQLTransport(this IServiceCollection services)`
@@ -1017,9 +1035,42 @@ Browse the published API surface by public member.
 
 ## B
 
+- [BackendForFrontend](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-backendforfrontend): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=BackendForFrontend&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets configuration-driven backend-for-frontend settings.
+  - `BackendForFrontendSettings BackendForFrontend { get; }`
+- [BackendForFrontendBehaviorFilterDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-ctor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string): `Constructors` on `BackendForFrontendBehaviorFilterDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=BackendForFrontendBehaviorFilterDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Creates a backend-for-frontend behavior filter descriptor.
+  - `BackendForFrontendBehaviorFilterDescriptor(IReadOnlyList<string> includedBehaviorIds, IReadOnlyList<string> excludedBehaviorIds, IReadOnlyList<string> includedCapabilityKeys, IReadOnlyList<string> excludedCapabilityKeys, IReadOnlyList<string> includedTags, IReadOnlyList<string> excludedTags)`
+- [BackendForFrontendBehaviorFilterSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-ctor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string): `Constructors` on `BackendForFrontendBehaviorFilterSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=BackendForFrontendBehaviorFilterSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Creates backend-for-frontend behavior-filter settings.
+  - `BackendForFrontendBehaviorFilterSettings(IReadOnlyList<string> includedBehaviorIds, IReadOnlyList<string> excludedBehaviorIds, IReadOnlyList<string> includedCapabilityKeys, IReadOnlyList<string> excludedCapabilityKeys, IReadOnlyList<string> includedTags, IReadOnlyList<string> excludedTags)`
+- [BackendForFrontendBindings](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-backendforfrontendbindings): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=BackendForFrontendBindings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the backend-for-frontend client bindings visible to the runtime at the time the snapshot was created.
+  - `IReadOnlyList<BackendForFrontendClientBindingDescriptor> BackendForFrontendBindings { get; set; }`
+- [BackendForFrontendClientBindingDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `BackendForFrontendClientBindingDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=BackendForFrontendClientBindingDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Creates a backend-for-frontend client binding descriptor.
+  - `BackendForFrontendClientBindingDescriptor(string id, string clientId, string sourceModuleId, string displayName, string description, string transportId, string entryPoint, BackendForFrontendBehaviorFilterDescriptor behaviorFilter, IReadOnlyDictionary<string, string> metadata)`
+- [BackendForFrontendClientBindingSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-backendforfrontendclientbindingsettings-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `BackendForFrontendClientBindingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=BackendForFrontendClientBindingSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Creates backend-for-frontend client binding settings.
+  - `BackendForFrontendClientBindingSettings(string id, string clientId, string sourceModuleId, string displayName, string description, string transportId, string entryPoint, BackendForFrontendBehaviorFilterSettings behaviorFilter, IReadOnlyDictionary<string, string> metadata)`
 - [BackendForFrontendPattern](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-backendforfrontendpattern): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=BackendForFrontendPattern&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Gets the backend-for-frontend pattern.
   - `PatternDescriptor BackendForFrontendPattern { get; }`
+- [BackendForFrontendRestDocumentRuntimeDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string): `Constructors` on `BackendForFrontendRestDocumentRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=BackendForFrontendRestDocumentRuntimeDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Creates a backend-for-frontend REST documentation runtime descriptor.
+  - `BackendForFrontendRestDocumentRuntimeDescriptor(string id, string kind, string scopeId, string clientId, string documentName, string openApiPath, string scalarPath, IReadOnlyList<string> bindingIds, IReadOnlyList<string> sourceModuleIds, IReadOnlyList<string> runtimeEndpointIds, IReadOnlyList<string> restEndpointIds)`
+- [BackendForFrontendRestDocuments](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-backendforfrontendrestdocuments): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=BackendForFrontendRestDocuments&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the client-aware REST documentation surfaces derived from the active backend-for-frontend bindings and visible to the runtime at the time the snapshot was created.
+  - `IReadOnlyList<BackendForFrontendRestDocumentRuntimeDescriptor> BackendForFrontendRestDocuments { get; set; }`
+- [BackendForFrontendRestEndpointRuntimeDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-ctor-system-string-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-cephalon-abstractions-transports-restendpointruntimedescriptor-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string): `Constructors` on `BackendForFrontendRestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=BackendForFrontendRestEndpointRuntimeDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Creates a backend-for-frontend REST endpoint runtime descriptor.
+  - `BackendForFrontendRestEndpointRuntimeDescriptor(string id, BackendForFrontendClientBindingDescriptor binding, RestEndpointRuntimeDescriptor endpoint, bool matchedByDefault, IReadOnlyList<string> matchedBehaviorIds, IReadOnlyList<string> matchedCapabilityKeys, IReadOnlyList<string> matchedTags)`
+- [BackendForFrontendRestEndpoints](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-backendforfrontendrestendpoints): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=BackendForFrontendRestEndpoints&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the client-aware published REST endpoint projections derived from the active backend-for-frontend bindings and visible to the runtime at the time the snapshot was created.
+  - `IReadOnlyList<BackendForFrontendRestEndpointRuntimeDescriptor> BackendForFrontendRestEndpoints { get; set; }`
+- [BackendForFrontendSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-backendforfrontendsettings-ctor-system-collections-generic-ireadonlylist-cephalon-engine-configuration-backendforfrontendclientbindingsettings): `Constructors` on `BackendForFrontendSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=BackendForFrontendSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Creates backend-for-frontend settings.
+  - `BackendForFrontendSettings(IReadOnlyList<BackendForFrontendClientBindingSettings> bindings)`
 - [Backoff](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-retryselection-backoff): `Properties` on `RetrySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Backoff&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the requested backoff mode, such as `Exponential` or `Linear`.
   - `string Backoff { get; }`
@@ -1068,6 +1119,12 @@ Browse the published API surface by public member.
 - [BehaviorFault](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorfault-ctor): `Constructors` on `BehaviorFault` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorFault&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Initializes a new instance of `BehaviorFault`.
   - `BehaviorFault()`
+- [BehaviorFilter](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-behaviorfilter): `Properties` on `BackendForFrontendClientBindingDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorFilter&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the behavior, capability, and tag-selection hints attached to this client binding.
+  - `BackendForFrontendBehaviorFilterDescriptor BehaviorFilter { get; }`
+- [BehaviorFilter](cephalon-engine.md#member-p-cephalon-engine-configuration-backendforfrontendclientbindingsettings-behaviorfilter): `Properties` on `BackendForFrontendClientBindingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=BehaviorFilter&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the behavior, capability, and tag-selection hints attached to this client binding.
+  - `BackendForFrontendBehaviorFilterSettings BehaviorFilter { get; }`
 - [BehaviorHttp](cephalon-engine.md#member-p-cephalon-engine-transports-builtintransports-behaviorhttp): `Properties` on `BuiltInTransports` in `Cephalon.Engine.Transports` (`Cephalon.Engine`) [Browse](browse.html?q=BehaviorHttp&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Transports&scope=members)
   - Gets the built-in behavior HTTP transport descriptor that bridges behavior topology bindings to ASP.NET Core endpoints, including canonical versioned routes for route-shaped transports without the older `/behaviors/{id}` compatibility aliases.
   - `TransportDescriptor BehaviorHttp { get; }`
@@ -1085,6 +1142,9 @@ Browse the published API surface by public member.
   - `string BehaviorId { get; }`
 - [BehaviorId](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviorsecurityexception-behaviorid): `Properties` on `BehaviorSecurityException` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the behavior identifier that triggered the security violation.
+  - `string BehaviorId { get; }`
+- [BehaviorId](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagevaluationcontext-behaviorid): `Properties` on `FeatureFlagEvaluationContext` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets the current behavior identifier when one is known.
   - `string BehaviorId { get; }`
 - [BehaviorId](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehavioradvisory-behaviorid): `Properties` on `IBehaviorAdvisory` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=BehaviorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the behavior identifier this advisory applies to, or `null` if global.
@@ -1197,6 +1257,9 @@ Browse the published API surface by public member.
 - [BestEffortContinue](cephalon-engine.md#member-f-cephalon-engine-configuration-stopfailurebehavior-besteffortcontinue): `Fields` on `StopFailureBehavior` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=BestEffortContinue&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Continue stopping remaining modules and report failures afterward.
   - `const StopFailureBehavior BestEffortContinue`
+- [Binding](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-binding): `Properties` on `BackendForFrontendRestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Binding&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets the backend-for-frontend client binding that selected the endpoint.
+  - `BackendForFrontendClientBindingDescriptor Binding { get; }`
 - [BindingDescriptors](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointcandidateprojectiondescriptor-bindingdescriptors): `Properties` on `RestEndpointCandidateProjectionDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=BindingDescriptors&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the projected request-binding descriptors when the projection exposes an explicit binding plan.
   - `IReadOnlyList<RestEndpointBindingDescriptor> BindingDescriptors { get; }`
@@ -1221,12 +1284,30 @@ Browse the published API surface by public member.
 - [BindingFallbackModes](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-bindingfallbackmodes): `Properties` on `RestEndpointSuppressionOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=BindingFallbackModes&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Gets the original shorthand request-binding fallback modes targeted by this suppression rule before override actions are applied.
   - `IReadOnlyList<RestEndpointBindingFallbackMode> BindingFallbackModes { get; }`
+- [BindingId](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-bindingid): `Properties` on `BackendForFrontendRestDocumentRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=BindingId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets the binding identifier when the surface is scoped to one binding.
+  - `string BindingId { get; }`
+- [BindingId](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-bindingid): `Properties` on `BackendForFrontendRestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=BindingId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets the stable backend-for-frontend binding identifier.
+  - `string BindingId { get; }`
+- [BindingIds](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-bindingids): `Properties` on `BackendForFrontendRestDocumentRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=BindingIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets the contributing backend-for-frontend binding identifiers.
+  - `IReadOnlyList<string> BindingIds { get; }`
+- [BindingKind](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-bindingkind): `Fields` on `BackendForFrontendRestDocumentRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=BindingKind&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - The stable kind identifier used when the documentation surface is scoped to one binding.
+  - `const string BindingKind`
 - [BindingMode](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-bindingmode): `Properties` on `RestEndpointOverrideDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=BindingMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets how `Bindings` and `RemovedBindingProperties` apply to the candidate's explicit binding plan.
   - `RestEndpointOverrideBindingMode BindingMode { get; }`
 - [BindingMode](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-restendpointoverrideoptions-bindingmode): `Properties` on `RestEndpointOverrideOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=BindingMode&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Gets how `Bindings` and `RemovedBindingProperties` apply to the shorthand candidate's explicit binding plan.
   - `RestEndpointOverrideBindingMode BindingMode { get; }`
+- [Bindings](cephalon-engine.md#member-p-cephalon-engine-configuration-backendforfrontendsettings-bindings): `Properties` on `BackendForFrontendSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Bindings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the client-specific transport bindings configured for the app.
+  - `IReadOnlyList<BackendForFrontendClientBindingSettings> Bindings { get; }`
+- [Bindings](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-ibackendforfrontendruntimecatalog-bindings): `Properties` on `IBackendForFrontendRuntimeCatalog` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Bindings&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets all backend-for-frontend client bindings visible to the current runtime.
+  - `IReadOnlyList<BackendForFrontendClientBindingDescriptor> Bindings { get; }`
 - [Bindings](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-bindings): `Properties` on `RestEndpointOverrideDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Bindings&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the effective explicit request-binding plan applied when this override rule matches.
   - `IReadOnlyList<RestEndpointBindingDescriptor> Bindings { get; }`
@@ -1397,6 +1478,9 @@ Browse the published API surface by public member.
   - `string CapabilityKey { get; set; }`
 - [CapabilityKey](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-capabilitykey): `Properties` on `ExecutionGraphNodeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=CapabilityKey&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the capability key the node intends to drive, when one was declared.
+  - `string CapabilityKey { get; }`
+- [CapabilityKey](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagevaluationcontext-capabilitykey): `Properties` on `FeatureFlagEvaluationContext` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=CapabilityKey&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets the current capability key when one is known.
   - `string CapabilityKey { get; }`
 - [CapabilityKeys](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttooldescriptor-capabilitykeys): `Properties` on `AgentToolDescriptor` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=CapabilityKeys&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the capability keys that the tool expects to use through the active runtime.
@@ -1593,12 +1677,27 @@ Browse the published API surface by public member.
 - [ClickHouseDependencyHealthOptions](cephalon-observability-clickhousedependencies.md#member-m-cephalon-observability-clickhousedependencies-configuration-clickhousedependencyhealthoptions-ctor): `Constructors` on `ClickHouseDependencyHealthOptions` in `Cephalon.Observability.ClickHouseDependencies.Configuration` (`Cephalon.Observability.ClickHouseDependencies`) [Browse](browse.html?q=ClickHouseDependencyHealthOptions&assembly=Cephalon.Observability.ClickHouseDependencies&namespace=Cephalon.Observability.ClickHouseDependencies.Configuration&scope=members)
   - Initializes a new instance of the `ClickHouseDependencyHealthOptions` class.
   - `ClickHouseDependencyHealthOptions()`
+- [ClientId](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-clientid): `Properties` on `BackendForFrontendClientBindingDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=ClientId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the stable client identifier.
+  - `string ClientId { get; }`
+- [ClientId](cephalon-engine.md#member-p-cephalon-engine-configuration-backendforfrontendclientbindingsettings-clientid): `Properties` on `BackendForFrontendClientBindingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ClientId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the stable client identifier.
+  - `string ClientId { get; }`
+- [ClientId](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-clientid): `Properties` on `BackendForFrontendRestDocumentRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=ClientId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets the stable client identifier represented by the materialized document.
+  - `string ClientId { get; }`
+- [ClientId](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-clientid): `Properties` on `BackendForFrontendRestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=ClientId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets the stable client identifier.
+  - `string ClientId { get; }`
 - [ClientId](cephalon-observability-kafkadependencies.md#member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-clientid): `Properties` on `KafkaDependencyDefinition` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=ClientId&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
   - Gets or sets the optional client identifier sent to the Kafka cluster.
   - `string ClientId { get; set; }`
 - [ClientId](cephalon-observability-mqttdependencies.md#member-p-cephalon-observability-mqttdependencies-configuration-mqttdependencydefinition-clientid): `Properties` on `MqttDependencyDefinition` in `Cephalon.Observability.MqttDependencies.Configuration` (`Cephalon.Observability.MqttDependencies`) [Browse](browse.html?q=ClientId&assembly=Cephalon.Observability.MqttDependencies&namespace=Cephalon.Observability.MqttDependencies.Configuration&scope=members)
   - Gets or sets the MQTT client identifier sent in the `CONNECT` packet.
   - `string ClientId { get; set; }`
+- [ClientKind](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-clientkind): `Fields` on `BackendForFrontendRestDocumentRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=ClientKind&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - The stable kind identifier used when the documentation surface is scoped to one client.
+  - `const string ClientKind`
 - [ClientName](cephalon-observability-natsdependencies.md#member-p-cephalon-observability-natsdependencies-configuration-natsdependencydefinition-clientname): `Properties` on `NatsDependencyDefinition` in `Cephalon.Observability.NatsDependencies.Configuration` (`Cephalon.Observability.NatsDependencies`) [Browse](browse.html?q=ClientName&assembly=Cephalon.Observability.NatsDependencies&namespace=Cephalon.Observability.NatsDependencies.Configuration&scope=members)
   - Gets or sets the optional client name sent in the NATS `CONNECT` payload.
   - `string ClientName { get; set; }`
@@ -2382,6 +2481,12 @@ Browse the published API surface by public member.
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-authorization-authorizationpolicydescriptor-description): `Properties` on `AuthorizationPolicyDescriptor` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets the human-readable authorization-policy description.
   - `string Description { get; }`
+- [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-description): `Properties` on `BackendForFrontendClientBindingDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the human-readable description of the client-specific surface.
+  - `string Description { get; }`
+- [Description](cephalon-engine.md#member-p-cephalon-engine-configuration-backendforfrontendclientbindingsettings-description): `Properties` on `BackendForFrontendClientBindingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Description&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the human-readable description of the client-specific surface.
+  - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-description): `Properties` on `BehaviorResilienceRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - The human-readable policy description.
   - `string Description { get; set; }`
@@ -2435,6 +2540,12 @@ Browse the published API surface by public member.
   - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-description): `Properties` on `ExecutionGraphNodeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the human-readable description of the node.
+  - `string Description { get; }`
+- [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagdescriptor-description): `Properties` on `FeatureFlagDescriptor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets the human-readable description of the gated behavior.
+  - `string Description { get; }`
+- [Description](cephalon-engine.md#member-p-cephalon-engine-configuration-featureflagsettings-description): `Properties` on `FeatureFlagSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Description&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the human-readable feature-flag description.
   - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-hostedexecutiondescriptor-description): `Properties` on `HostedExecutionDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the human-readable description of the hosted execution.
@@ -2637,6 +2748,12 @@ Browse the published API surface by public member.
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-authorization-authorizationsubject-displayname): `Properties` on `AuthorizationSubject` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets the human-readable subject name when one is known.
   - `string DisplayName { get; }`
+- [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-displayname): `Properties` on `BackendForFrontendClientBindingDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the operator-facing binding name.
+  - `string DisplayName { get; }`
+- [DisplayName](cephalon-engine.md#member-p-cephalon-engine-configuration-backendforfrontendclientbindingsettings-displayname): `Properties` on `BackendForFrontendClientBindingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the operator-facing binding name.
+  - `string DisplayName { get; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-displayname): `Properties` on `BehaviorResilienceRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - The human-readable policy name.
   - `string DisplayName { get; set; }`
@@ -2687,6 +2804,12 @@ Browse the published API surface by public member.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-displayname): `Properties` on `ExecutionGraphNodeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the operator-facing node name.
+  - `string DisplayName { get; }`
+- [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagdescriptor-displayname): `Properties` on `FeatureFlagDescriptor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets the operator-facing feature-flag name.
+  - `string DisplayName { get; }`
+- [DisplayName](cephalon-engine.md#member-p-cephalon-engine-configuration-featureflagsettings-displayname): `Properties` on `FeatureFlagSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the operator-facing feature-flag name.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-hostedexecutiondescriptor-displayname): `Properties` on `HostedExecutionDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the operator-facing hosted-execution name.
@@ -2772,6 +2895,12 @@ Browse the published API surface by public member.
 - [Distribution](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-distribution): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Distribution&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the external distribution metadata declared by the package manifest, when available.
   - `PackageDistributionManifest Distribution { get; }`
+- [DocumentName](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-documentname): `Properties` on `BackendForFrontendRestDocumentRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=DocumentName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets the resolved OpenAPI document name.
+  - `string DocumentName { get; }`
+- [Documents](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-ibackendforfrontendrestdocumentruntimecatalog-documents): `Properties` on `IBackendForFrontendRestDocumentRuntimeCatalog` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Documents&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets all client-aware REST documentation surfaces visible to the current runtime.
+  - `IReadOnlyList<BackendForFrontendRestDocumentRuntimeDescriptor> Documents { get; }`
 - [Domain](cephalon-abstractions.md#member-f-cephalon-abstractions-patterns-patternkind-domain): `Fields` on `PatternKind` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Domain&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Identifies a domain-modeling pattern.
   - `const PatternKind Domain`
@@ -2847,6 +2976,15 @@ Browse the published API surface by public member.
 - [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-auditsettings-empty): `Properties` on `AuditSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets an empty audit-settings instance.
   - `AuditSettings Empty { get; }`
+- [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-empty): `Properties` on `BackendForFrontendBehaviorFilterDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets an empty backend-for-frontend behavior filter.
+  - `BackendForFrontendBehaviorFilterDescriptor Empty { get; }`
+- [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-empty): `Properties` on `BackendForFrontendBehaviorFilterSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets an empty backend-for-frontend behavior-filter settings instance.
+  - `BackendForFrontendBehaviorFilterSettings Empty { get; }`
+- [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-backendforfrontendsettings-empty): `Properties` on `BackendForFrontendSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets an empty backend-for-frontend settings instance.
+  - `BackendForFrontendSettings Empty { get; }`
 - [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorexecutionresilienceselection-empty): `Properties` on `BehaviorExecutionResilienceSelection` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - Gets an empty behavior-execution resilience selection.
   - `BehaviorExecutionResilienceSelection Empty { get; }`
@@ -2898,6 +3036,18 @@ Browse the published API surface by public member.
 - [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-empty): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets an empty runtime summary when no dispatch observations have been reported yet.
   - `EventDispatchRuntimeSummary Empty { get; }`
+- [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagevaluationcontext-empty): `Properties` on `FeatureFlagEvaluationContext` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets an empty feature-flag evaluation context.
+  - `FeatureFlagEvaluationContext Empty { get; }`
+- [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-empty): `Properties` on `FeatureFlagTargetingDescriptor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets an empty targeting descriptor with no constraints.
+  - `FeatureFlagTargetingDescriptor Empty { get; }`
+- [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-featureflagtargetingsettings-empty): `Properties` on `FeatureFlagTargetingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets an empty feature-flag targeting settings instance.
+  - `FeatureFlagTargetingSettings Empty { get; }`
+- [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-featuresettings-empty): `Properties` on `FeatureSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets an empty feature settings instance.
+  - `FeatureSettings Empty { get; }`
 - [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-identityselection-empty): `Properties` on `IdentitySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets an empty identity-selection instance.
   - `IdentitySelection Empty { get; }`
@@ -2994,6 +3144,12 @@ Browse the published API surface by public member.
 - [Enabled](cephalon-engine.md#member-p-cephalon-engine-configuration-circuitbreakersettings-enabled): `Properties` on `CircuitBreakerSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether circuit-breaker support was explicitly enabled.
   - `bool? Enabled { get; }`
+- [Enabled](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagdescriptor-enabled): `Properties` on `FeatureFlagDescriptor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets a value indicating whether the feature flag is enabled before targeting is applied.
+  - `bool Enabled { get; }`
+- [Enabled](cephalon-engine.md#member-p-cephalon-engine-configuration-featureflagsettings-enabled): `Properties` on `FeatureFlagSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether the feature flag is enabled before targeting is applied.
+  - `bool Enabled { get; }`
 - [Enabled](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-enabled): `Properties` on `HttpRequestResponseLoggingOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Enabled&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Gets or sets a value indicating whether the ASP.NET Core host should log request and response summaries.
   - `bool Enabled { get; set; }`
@@ -3114,6 +3270,9 @@ Browse the published API surface by public member.
 - [Encrypt](cephalon-observability-sqlserverdependencies.md#member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-encrypt): `Properties` on `SqlServerDependencyDefinition` in `Cephalon.Observability.SqlServerDependencies.Configuration` (`Cephalon.Observability.SqlServerDependencies`) [Browse](browse.html?q=Encrypt&assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Configuration&scope=members)
   - Gets or sets the optional SQL Server encryption mode such as `Optional`, `Mandatory`, or `Strict`.
   - `string Encrypt { get; set; }`
+- [Endpoint](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-endpoint): `Properties` on `BackendForFrontendRestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Endpoint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets the published REST endpoint selected for that binding.
+  - `RestEndpointRuntimeDescriptor Endpoint { get; }`
 - [Endpoint](cephalon-observability-consuldependencies.md#member-p-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-endpoint): `Properties` on `ConsulDependencyDefinition` in `Cephalon.Observability.ConsulDependencies.Configuration` (`Cephalon.Observability.ConsulDependencies`) [Browse](browse.html?q=Endpoint&assembly=Cephalon.Observability.ConsulDependencies&namespace=Cephalon.Observability.ConsulDependencies.Configuration&scope=members)
   - Gets or sets the absolute Consul base URL or status endpoint that should be probed.
   - `string Endpoint { get; set; }`
@@ -3159,6 +3318,9 @@ Browse the published API surface by public member.
 - [EndpointNames](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-endpointnames): `Properties` on `RestEndpointSuppressionOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=EndpointNames&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Gets the original shorthand endpoint names targeted by this suppression rule before override actions are applied.
   - `IReadOnlyList<string> EndpointNames { get; }`
+- [Endpoints](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-ibackendforfrontendrestruntimecatalog-endpoints): `Properties` on `IBackendForFrontendRestRuntimeCatalog` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Endpoints&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets all client-aware published REST endpoint projections visible to the current runtime.
+  - `IReadOnlyList<BackendForFrontendRestEndpointRuntimeDescriptor> Endpoints { get; }`
 - [Endpoints](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-irestendpointruntimecatalog-endpoints): `Properties` on `IRestEndpointRuntimeCatalog` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Endpoints&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets all resolved public REST endpoints visible to the current runtime.
   - `IReadOnlyList<RestEndpointRuntimeDescriptor> Endpoints { get; }`
@@ -3174,9 +3336,9 @@ Browse the published API surface by public member.
 - [EngineRuntime](cephalon-engine.md#member-m-cephalon-engine-runtime-engineruntime-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-modules-imodule-cephalon-engine-manifest-runtimemanifest-cephalon-engine-configuration-failurepolicy-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-executiongraphdescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-hostedexecutiondescriptor): `Constructors` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=EngineRuntime&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Initializes a new instance of the `EngineRuntime` class.
   - `EngineRuntime(IReadOnlyList<IModule> modules, RuntimeManifest manifest, FailurePolicy failurePolicy, IReadOnlyList<ExecutionGraphDescriptor> executionGraphs, IReadOnlyList<HostedExecutionDescriptor> hostedExecutions)`
-- [EngineSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy-cephalon-engine-configuration-datasettings-cephalon-engine-configuration-databasetopologysettings-cephalon-engine-configuration-identitysettings-cephalon-engine-configuration-tenancysettings-cephalon-engine-configuration-auditsettings-cephalon-engine-configuration-messagingsettings-cephalon-engine-configuration-resiliencesettings-cephalon-engine-configuration-migrationsettings): `Constructors` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=EngineSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+- [EngineSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy-cephalon-engine-configuration-datasettings-cephalon-engine-configuration-databasetopologysettings-cephalon-engine-configuration-identitysettings-cephalon-engine-configuration-tenancysettings-cephalon-engine-configuration-auditsettings-cephalon-engine-configuration-messagingsettings-cephalon-engine-configuration-resiliencesettings-cephalon-engine-configuration-migrationsettings-cephalon-engine-configuration-backendforfrontendsettings-cephalon-engine-configuration-featuresettings): `Constructors` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=EngineSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Initializes a new instance of the `EngineSettings` class.
-  - `EngineSettings(string blueprint, IReadOnlyList<string> patterns, IReadOnlyList<string> transports, IReadOnlyList<string> technologies, EngineOptions options, ModuleDiscoverySettings discovery, LocalizationSettings localization, FailurePolicy failurePolicy, TrustPolicy trustPolicy, PackagePolicy packagePolicy, DataSettings data, DatabaseTopologySettings databases, IdentitySettings identity, TenancySettings tenancy, AuditSettings audit, MessagingSettings messaging, ResilienceSettings resilience, MigrationSettings migration)`
+  - `EngineSettings(string blueprint, IReadOnlyList<string> patterns, IReadOnlyList<string> transports, IReadOnlyList<string> technologies, EngineOptions options, ModuleDiscoverySettings discovery, LocalizationSettings localization, FailurePolicy failurePolicy, TrustPolicy trustPolicy, PackagePolicy packagePolicy, DataSettings data, DatabaseTopologySettings databases, IdentitySettings identity, TenancySettings tenancy, AuditSettings audit, MessagingSettings messaging, ResilienceSettings resilience, MigrationSettings migration, BackendForFrontendSettings backendForFrontend, FeatureSettings features)`
 - [EngineVersion](cephalon-engine.md#member-p-cephalon-engine-manifest-runtimemanifest-engineversion): `Properties` on `RuntimeManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=EngineVersion&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the engine version that produced the manifest.
   - `string EngineVersion { get; }`
@@ -3219,6 +3381,15 @@ Browse the published API surface by public member.
 - [EntryNodeId](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeexecutiongraphstate-entrynodeid): `Properties` on `RuntimeExecutionGraphState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=EntryNodeId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The entry node used when the graph begins execution.
   - `string EntryNodeId { get; set; }`
+- [EntryPoint](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-entrypoint): `Properties` on `BackendForFrontendClientBindingDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=EntryPoint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the transport-specific entry point, route prefix, or endpoint handle when one is known.
+  - `string EntryPoint { get; }`
+- [EntryPoint](cephalon-engine.md#member-p-cephalon-engine-configuration-backendforfrontendclientbindingsettings-entrypoint): `Properties` on `BackendForFrontendClientBindingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=EntryPoint&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the transport-specific entry point, route prefix, or endpoint handle when one is known.
+  - `string EntryPoint { get; }`
+- [EnvironmentName](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagevaluationcontext-environmentname): `Properties` on `FeatureFlagEvaluationContext` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=EnvironmentName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets the active hosting environment name.
+  - `string EnvironmentName { get; }`
 - [Error](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behaviorfaultseverity-error): `Fields` on `BehaviorFaultSeverity` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Error&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Error-level fault details.
   - `const BehaviorFaultSeverity Error`
@@ -3237,6 +3408,9 @@ Browse the published API surface by public member.
 - [Errors](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-transports-rest-resultmodel-1-errors): `Properties` on `ResultModel<TModel>` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Errors&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
   - Gets or sets the structured error details when the response is not successful.
   - `List<ResultModelErrorDetail> Errors { get; set; }`
+- [Evaluate](cephalon-abstractions.md#member-m-cephalon-abstractions-features-ifeaturetoggle-evaluate-system-string-cephalon-abstractions-features-featureflagevaluationcontext): `Methods` on `IFeatureToggle` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=Evaluate&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Evaluates the requested feature flag and returns a richer operator-facing result.
+  - `FeatureFlagEvaluationResult Evaluate(string featureFlagId, FeatureFlagEvaluationContext context)`
 - [EvaluateAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-authorization-iauthorizationevaluator-evaluateasync-cephalon-abstractions-authorization-authorizationsubject-cephalon-abstractions-authorization-authorizationresource-cephalon-abstractions-authorization-authorizationcontext-system-threading-cancellationtoken): `Methods` on `IAuthorizationEvaluator` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=EvaluateAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Evaluates one authorization request.
   - `ValueTask<AuthorizationDecision> EvaluateAsync(AuthorizationSubject subject, AuthorizationResource resource, AuthorizationContext context, CancellationToken cancellationToken)`
@@ -3351,9 +3525,75 @@ Browse the published API surface by public member.
 - [ExchangeGreetings](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-exchangegreetings-grpc-core-metadata-system-nullable-system-datetime-system-threading-cancellationtoken): `Methods` on `DiscoveryServiceClient` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=ExchangeGreetings&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - Exchanges greeting messages bidirectionally to validate duplex streaming support.
   - `AsyncDuplexStreamingCall<HelloRequest, HelloReply> ExchangeGreetings(Metadata headers, DateTime? deadline, CancellationToken cancellationToken)`
+- [ExcludedBehaviorIds](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-excludedbehaviorids): `Properties` on `BackendForFrontendBehaviorFilterDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExcludedBehaviorIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the explicit behavior identifiers that should be hidden from the client.
+  - `IReadOnlyList<string> ExcludedBehaviorIds { get; }`
+- [ExcludedBehaviorIds](cephalon-engine.md#member-p-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-excludedbehaviorids): `Properties` on `BackendForFrontendBehaviorFilterSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ExcludedBehaviorIds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the explicit behavior identifiers that should be hidden from the client.
+  - `IReadOnlyList<string> ExcludedBehaviorIds { get; }`
+- [ExcludedBehaviorIds](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-excludedbehaviorids): `Properties` on `FeatureFlagTargetingDescriptor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExcludedBehaviorIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets the explicitly excluded behavior identifiers.
+  - `IReadOnlyList<string> ExcludedBehaviorIds { get; }`
+- [ExcludedBehaviorIds](cephalon-engine.md#member-p-cephalon-engine-configuration-featureflagtargetingsettings-excludedbehaviorids): `Properties` on `FeatureFlagTargetingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ExcludedBehaviorIds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the explicitly excluded behavior identifiers.
+  - `IReadOnlyList<string> ExcludedBehaviorIds { get; }`
+- [ExcludedCapabilityKeys](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-excludedcapabilitykeys): `Properties` on `BackendForFrontendBehaviorFilterDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExcludedCapabilityKeys&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the explicit capability keys that should be hidden from the client.
+  - `IReadOnlyList<string> ExcludedCapabilityKeys { get; }`
+- [ExcludedCapabilityKeys](cephalon-engine.md#member-p-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-excludedcapabilitykeys): `Properties` on `BackendForFrontendBehaviorFilterSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ExcludedCapabilityKeys&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the explicit capability keys that should be hidden from the client.
+  - `IReadOnlyList<string> ExcludedCapabilityKeys { get; }`
+- [ExcludedCapabilityKeys](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-excludedcapabilitykeys): `Properties` on `FeatureFlagTargetingDescriptor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExcludedCapabilityKeys&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets the explicitly excluded capability keys.
+  - `IReadOnlyList<string> ExcludedCapabilityKeys { get; }`
+- [ExcludedCapabilityKeys](cephalon-engine.md#member-p-cephalon-engine-configuration-featureflagtargetingsettings-excludedcapabilitykeys): `Properties` on `FeatureFlagTargetingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ExcludedCapabilityKeys&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the explicitly excluded capability keys.
+  - `IReadOnlyList<string> ExcludedCapabilityKeys { get; }`
+- [ExcludedEnvironmentNames](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-excludedenvironmentnames): `Properties` on `FeatureFlagTargetingDescriptor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExcludedEnvironmentNames&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets the explicitly excluded environment names.
+  - `IReadOnlyList<string> ExcludedEnvironmentNames { get; }`
+- [ExcludedEnvironmentNames](cephalon-engine.md#member-p-cephalon-engine-configuration-featureflagtargetingsettings-excludedenvironmentnames): `Properties` on `FeatureFlagTargetingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ExcludedEnvironmentNames&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the explicitly excluded environment names.
+  - `IReadOnlyList<string> ExcludedEnvironmentNames { get; }`
+- [ExcludedModuleIds](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-excludedmoduleids): `Properties` on `FeatureFlagTargetingDescriptor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExcludedModuleIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets the explicitly excluded module identifiers.
+  - `IReadOnlyList<string> ExcludedModuleIds { get; }`
+- [ExcludedModuleIds](cephalon-engine.md#member-p-cephalon-engine-configuration-featureflagtargetingsettings-excludedmoduleids): `Properties` on `FeatureFlagTargetingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ExcludedModuleIds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the explicitly excluded module identifiers.
+  - `IReadOnlyList<string> ExcludedModuleIds { get; }`
 - [ExcludedPathPrefixes](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-excludedpathprefixes): `Properties` on `RateLimitingRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExcludedPathPrefixes&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - The rooted path prefixes intentionally excluded from enforcement, such as operator or documentation routes.
   - `IReadOnlyList<string> ExcludedPathPrefixes { get; set; }`
+- [ExcludedSubjectIds](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-excludedsubjectids): `Properties` on `FeatureFlagTargetingDescriptor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExcludedSubjectIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets the explicitly excluded subject identifiers.
+  - `IReadOnlyList<string> ExcludedSubjectIds { get; }`
+- [ExcludedSubjectIds](cephalon-engine.md#member-p-cephalon-engine-configuration-featureflagtargetingsettings-excludedsubjectids): `Properties` on `FeatureFlagTargetingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ExcludedSubjectIds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the explicitly excluded subject identifiers.
+  - `IReadOnlyList<string> ExcludedSubjectIds { get; }`
+- [ExcludedTags](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-excludedtags): `Properties` on `BackendForFrontendBehaviorFilterDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExcludedTags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the behavior or endpoint tags that should be hidden from the client.
+  - `IReadOnlyList<string> ExcludedTags { get; }`
+- [ExcludedTags](cephalon-engine.md#member-p-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-excludedtags): `Properties` on `BackendForFrontendBehaviorFilterSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ExcludedTags&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the behavior or endpoint tags that should be hidden from the client.
+  - `IReadOnlyList<string> ExcludedTags { get; }`
+- [ExcludedTags](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-excludedtags): `Properties` on `FeatureFlagTargetingDescriptor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExcludedTags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets the explicitly excluded descriptive tags.
+  - `IReadOnlyList<string> ExcludedTags { get; }`
+- [ExcludedTags](cephalon-engine.md#member-p-cephalon-engine-configuration-featureflagtargetingsettings-excludedtags): `Properties` on `FeatureFlagTargetingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ExcludedTags&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the explicitly excluded descriptive tags.
+  - `IReadOnlyList<string> ExcludedTags { get; }`
+- [ExcludedTenantIds](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-excludedtenantids): `Properties` on `FeatureFlagTargetingDescriptor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExcludedTenantIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets the explicitly excluded tenant identifiers.
+  - `IReadOnlyList<string> ExcludedTenantIds { get; }`
+- [ExcludedTenantIds](cephalon-engine.md#member-p-cephalon-engine-configuration-featureflagtargetingsettings-excludedtenantids): `Properties` on `FeatureFlagTargetingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ExcludedTenantIds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the explicitly excluded tenant identifiers.
+  - `IReadOnlyList<string> ExcludedTenantIds { get; }`
+- [ExcludedTransportIds](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-excludedtransportids): `Properties` on `FeatureFlagTargetingDescriptor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExcludedTransportIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets the explicitly excluded transport identifiers.
+  - `IReadOnlyList<string> ExcludedTransportIds { get; }`
+- [ExcludedTransportIds](cephalon-engine.md#member-p-cephalon-engine-configuration-featureflagtargetingsettings-excludedtransportids): `Properties` on `FeatureFlagTargetingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ExcludedTransportIds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the explicitly excluded transport identifiers.
+  - `IReadOnlyList<string> ExcludedTransportIds { get; }`
 - [ExecuteAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ireadstore-executeasync-1-cephalon-abstractions-data-iquery-0-system-threading-cancellationtoken): `Methods` on `IReadStore` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecuteAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Executes the supplied query on the read side.
   - `ValueTask<TResult> ExecuteAsync<TResult>(IQuery<TResult> query, CancellationToken cancellationToken)`
@@ -3522,12 +3762,45 @@ Browse the published API surface by public member.
 - [Feature](cephalon-abstractions.md#member-f-cephalon-abstractions-appmodel-scaffolding-scaffoldscopes-feature): `Fields` on `ScaffoldScopes` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Feature&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Identifies a feature-level scaffold scope.
   - `const string Feature`
+- [FeatureFlagDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-features-featureflagdescriptor-ctor-system-string-system-string-system-string-system-boolean-cephalon-abstractions-features-featureflagsourcekind-system-string-cephalon-abstractions-features-featureflagtargetingdescriptor-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `FeatureFlagDescriptor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=FeatureFlagDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Creates a feature-flag descriptor.
+  - `FeatureFlagDescriptor(string id, string displayName, string description, bool enabled, FeatureFlagSourceKind sourceKind, string sourceModuleId, FeatureFlagTargetingDescriptor targeting, IReadOnlyDictionary<string, string> metadata)`
+- [FeatureFlagEvaluationContext](cephalon-abstractions.md#member-m-cephalon-abstractions-features-featureflagevaluationcontext-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `FeatureFlagEvaluationContext` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=FeatureFlagEvaluationContext&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Creates a feature-flag evaluation context.
+  - `FeatureFlagEvaluationContext(string environmentName, string moduleId, string behaviorId, string capabilityKey, string transportId, string tenantId, string subjectId, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
+- [FeatureFlagEvaluationResult](cephalon-abstractions.md#member-m-cephalon-abstractions-features-featureflagevaluationresult-ctor-system-string-system-boolean-system-boolean-system-boolean-system-string-system-nullable-cephalon-abstractions-features-featureflagsourcekind-system-string): `Constructors` on `FeatureFlagEvaluationResult` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=FeatureFlagEvaluationResult&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Describes the result of evaluating a feature flag for a specific runtime context.
+  - `FeatureFlagEvaluationResult(string FeatureId, bool IsDefined, bool IsEnabled, bool Matched, string Reason, FeatureFlagSourceKind? SourceKind, string SourceModuleId)`
+- [FeatureFlags](cephalon-abstractions.md#member-p-cephalon-abstractions-features-ifeatureflagruntimecatalog-featureflags): `Properties` on `IFeatureFlagRuntimeCatalog` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=FeatureFlags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets all feature flags visible to the current runtime.
+  - `IReadOnlyList<FeatureFlagDescriptor> FeatureFlags { get; }`
+- [FeatureFlags](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-featureflags): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=FeatureFlags&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the feature flags visible to the runtime at the time the snapshot was created.
+  - `IReadOnlyList<FeatureFlagDescriptor> FeatureFlags { get; set; }`
+- [FeatureFlagSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-featureflagsettings-ctor-system-string-system-string-system-string-system-boolean-cephalon-abstractions-features-featureflagsourcekind-system-string-cephalon-engine-configuration-featureflagtargetingsettings-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `FeatureFlagSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FeatureFlagSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Creates feature-flag settings.
+  - `FeatureFlagSettings(string id, string displayName, string description, bool enabled, FeatureFlagSourceKind sourceKind, string sourceModuleId, FeatureFlagTargetingSettings targeting, IReadOnlyDictionary<string, string> metadata)`
+- [FeatureFlagTargetingDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-features-featureflagtargetingdescriptor-ctor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string): `Constructors` on `FeatureFlagTargetingDescriptor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=FeatureFlagTargetingDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Creates feature-flag targeting constraints.
+  - `FeatureFlagTargetingDescriptor(IReadOnlyList<string> includedModuleIds, IReadOnlyList<string> excludedModuleIds, IReadOnlyList<string> includedBehaviorIds, IReadOnlyList<string> excludedBehaviorIds, IReadOnlyList<string> includedCapabilityKeys, IReadOnlyList<string> excludedCapabilityKeys, IReadOnlyList<string> includedTransportIds, IReadOnlyList<string> excludedTransportIds, IReadOnlyList<string> includedEnvironmentNames, IReadOnlyList<string> excludedEnvironmentNames, IReadOnlyList<string> includedTenantIds, IReadOnlyList<string> excludedTenantIds, IReadOnlyList<string> includedSubjectIds, IReadOnlyList<string> excludedSubjectIds, IReadOnlyList<string> includedTags, IReadOnlyList<string> excludedTags)`
+- [FeatureFlagTargetingSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-featureflagtargetingsettings-ctor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string): `Constructors` on `FeatureFlagTargetingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FeatureFlagTargetingSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Creates feature-flag targeting settings.
+  - `FeatureFlagTargetingSettings(IReadOnlyList<string> includedModuleIds, IReadOnlyList<string> excludedModuleIds, IReadOnlyList<string> includedBehaviorIds, IReadOnlyList<string> excludedBehaviorIds, IReadOnlyList<string> includedCapabilityKeys, IReadOnlyList<string> excludedCapabilityKeys, IReadOnlyList<string> includedTransportIds, IReadOnlyList<string> excludedTransportIds, IReadOnlyList<string> includedEnvironmentNames, IReadOnlyList<string> excludedEnvironmentNames, IReadOnlyList<string> includedTenantIds, IReadOnlyList<string> excludedTenantIds, IReadOnlyList<string> includedSubjectIds, IReadOnlyList<string> excludedSubjectIds, IReadOnlyList<string> includedTags, IReadOnlyList<string> excludedTags)`
+- [FeatureId](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagevaluationresult-featureid): `Properties` on `FeatureFlagEvaluationResult` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=FeatureId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - The evaluated feature-flag identifier.
+  - `string FeatureId { get; set; }`
+- [Features](cephalon-engine.md#member-p-cephalon-engine-configuration-enginesettings-features): `Properties` on `EngineSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Features&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets configuration-driven feature-flag settings.
+  - `FeatureSettings Features { get; }`
 - [Features](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-scaffoldrequest-features): `Properties` on `ScaffoldRequest` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=Features&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the feature or slice names to materialize in the scaffold.
   - `IReadOnlyList<string> Features { get; }`
 - [Features](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-transportdescriptor-features): `Properties` on `TransportDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Features&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the features supported by the transport.
   - `TransportFeatures Features { get; }`
+- [FeatureSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-featuresettings-ctor-system-collections-generic-ireadonlylist-cephalon-engine-configuration-featureflagsettings): `Constructors` on `FeatureSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FeatureSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Creates feature settings.
+  - `FeatureSettings(IReadOnlyList<FeatureFlagSettings> flags)`
 - [FewerTargetValues](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-fewertargetvalues): `Fields` on `RestEndpointGovernanceRuleSelectionBasis` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=FewerTargetValues&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - A rule with fewer total selector values won over an otherwise equally ranked broader rule.
   - `const RestEndpointGovernanceRuleSelectionBasis FewerTargetValues`
@@ -3555,6 +3828,9 @@ Browse the published API surface by public member.
 - [Fingerprint](cephalon-engine.md#member-p-cephalon-engine-trust-packagesignaturetrustdecision-fingerprint): `Properties` on `PackageSignatureTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Fingerprint&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The declared signer fingerprint, when available.
   - `string Fingerprint { get; set; }`
+- [Flags](cephalon-engine.md#member-p-cephalon-engine-configuration-featuresettings-flags): `Properties` on `FeatureSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Flags&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the feature flags configured for the app.
+  - `IReadOnlyList<FeatureFlagSettings> Flags { get; }`
 - [Folders](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-renderedscaffold-folders): `Properties` on `RenderedScaffold` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=Folders&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the rendered folders.
   - `IReadOnlyList<RenderedFolder> Folders { get; }`
@@ -3609,6 +3885,9 @@ Browse the published API surface by public member.
 - [FromConfiguration](cephalon-observability-azuremonitor.md#member-m-cephalon-observability-azuremonitor-configuration-azuremonitorexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `AzureMonitorExportOptions` in `Cephalon.Observability.AzureMonitor.Configuration` (`Cephalon.Observability.AzureMonitor`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.AzureMonitor&namespace=Cephalon.Observability.AzureMonitor.Configuration&scope=members)
   - Binds Azure Monitor export options from configuration.
   - `AzureMonitorExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
+- [FromConfiguration](cephalon-engine.md#member-m-cephalon-engine-configuration-backendforfrontendsettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `BackendForFrontendSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Reads backend-for-frontend settings from configuration.
+  - `BackendForFrontendSettings FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-observability-cassandradependencies.md#member-m-cephalon-observability-cassandradependencies-configuration-cassandradependencyhealthoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `CassandraDependencyHealthOptions` in `Cephalon.Observability.CassandraDependencies.Configuration` (`Cephalon.Observability.CassandraDependencies`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.CassandraDependencies&namespace=Cephalon.Observability.CassandraDependencies.Configuration&scope=members)
   - Binds Cassandra dependency-health options from configuration.
   - `CassandraDependencyHealthOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
@@ -3639,6 +3918,9 @@ Browse the published API surface by public member.
 - [FromConfiguration](cephalon-engine.md#member-m-cephalon-engine-configuration-failurepolicy-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `FailurePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Reads the failure policy from configuration.
   - `FailurePolicy FromConfiguration(IConfiguration configuration, string sectionPath)`
+- [FromConfiguration](cephalon-engine.md#member-m-cephalon-engine-configuration-featuresettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `FeatureSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Reads feature settings from configuration.
+  - `FeatureSettings FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-observability-gcp.md#member-m-cephalon-observability-gcp-configuration-gcptelemetryexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `GcpTelemetryExportOptions` in `Cephalon.Observability.Gcp.Configuration` (`Cephalon.Observability.Gcp`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.Gcp&namespace=Cephalon.Observability.Gcp.Configuration&scope=members)
   - Binds GCP telemetry export options from configuration.
   - `GcpTelemetryExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
@@ -3774,6 +4056,12 @@ Browse the published API surface by public member.
 - [FromSection](cephalon-engine.md#member-m-cephalon-engine-configuration-audithistorysettings-fromsection-microsoft-extensions-configuration-iconfigurationsection): `Methods` on `AuditHistorySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromSection&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Reads durable audit-history settings from the supplied configuration section.
   - `AuditHistorySettings FromSection(IConfigurationSection section)`
+- [FromSection](cephalon-engine.md#member-m-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-fromsection-microsoft-extensions-configuration-iconfigurationsection): `Methods` on `BackendForFrontendBehaviorFilterSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromSection&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Reads backend-for-frontend behavior-filter settings from the supplied configuration section.
+  - `BackendForFrontendBehaviorFilterSettings FromSection(IConfigurationSection section)`
+- [FromSection](cephalon-engine.md#member-m-cephalon-engine-configuration-backendforfrontendclientbindingsettings-fromsection-microsoft-extensions-configuration-iconfigurationsection): `Methods` on `BackendForFrontendClientBindingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromSection&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Reads one backend-for-frontend client binding from configuration.
+  - `BackendForFrontendClientBindingSettings FromSection(IConfigurationSection section)`
 - [FromSection](cephalon-engine.md#member-m-cephalon-engine-configuration-databasemigrationssettings-fromsection-microsoft-extensions-configuration-iconfigurationsection): `Methods` on `DatabaseMigrationsSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromSection&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Reads database-migration settings from the supplied configuration section.
   - `DatabaseMigrationsSettings FromSection(IConfigurationSection section)`
@@ -3783,6 +4071,12 @@ Browse the published API surface by public member.
 - [FromSection](cephalon-engine.md#member-m-cephalon-engine-configuration-databasetargetsettings-fromsection-microsoft-extensions-configuration-iconfigurationsection): `Methods` on `DatabaseTargetSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromSection&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Reads database-target settings from the supplied configuration section.
   - `DatabaseTargetSettings FromSection(IConfigurationSection section)`
+- [FromSection](cephalon-engine.md#member-m-cephalon-engine-configuration-featureflagsettings-fromsection-microsoft-extensions-configuration-iconfigurationsection): `Methods` on `FeatureFlagSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromSection&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Reads one feature flag from configuration.
+  - `FeatureFlagSettings FromSection(IConfigurationSection section)`
+- [FromSection](cephalon-engine.md#member-m-cephalon-engine-configuration-featureflagtargetingsettings-fromsection-microsoft-extensions-configuration-iconfigurationsection): `Methods` on `FeatureFlagTargetingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromSection&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Reads feature-flag targeting settings from the supplied configuration section.
+  - `FeatureFlagTargetingSettings FromSection(IConfigurationSection section)`
 - [FromSection](cephalon-engine.md#member-m-cephalon-engine-configuration-stranglerfigmigrationsettings-fromsection-microsoft-extensions-configuration-iconfigurationsection): `Methods` on `StranglerFigMigrationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromSection&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Reads strangler-fig migration settings from the supplied configuration section.
   - `StranglerFigMigrationSettings FromSection(IConfigurationSection section)`
@@ -3846,6 +4140,12 @@ Browse the published API surface by public member.
 - [GetByBehaviorId](cephalon-abstractions.md#member-m-cephalon-abstractions-transports-irestendpointsuppressionruntimecatalog-getbybehaviorid-system-string): `Methods` on `IRestEndpointSuppressionRuntimeCatalog` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByBehaviorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets all REST endpoint suppression rules that target the requested behavior identifier, either directly or through configured behavior-id prefixes.
   - `IReadOnlyList<RestEndpointSuppressionDescriptor> GetByBehaviorId(string behaviorId)`
+- [GetByBindingId](cephalon-abstractions.md#member-m-cephalon-abstractions-transports-ibackendforfrontendrestdocumentruntimecatalog-getbybindingid-system-string): `Methods` on `IBackendForFrontendRestDocumentRuntimeCatalog` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByBindingId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets all binding-scoped REST documentation surfaces owned by the requested binding.
+  - `IReadOnlyList<BackendForFrontendRestDocumentRuntimeDescriptor> GetByBindingId(string bindingId)`
+- [GetByBindingId](cephalon-abstractions.md#member-m-cephalon-abstractions-transports-ibackendforfrontendrestruntimecatalog-getbybindingid-system-string): `Methods` on `IBackendForFrontendRestRuntimeCatalog` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByBindingId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets all client-aware published REST endpoint projections owned by the requested binding.
+  - `IReadOnlyList<BackendForFrontendRestEndpointRuntimeDescriptor> GetByBindingId(string bindingId)`
 - [GetByChannelId](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventsubscriptioncatalog-getbychannelid-system-string): `Methods` on `IEventSubscriptionCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=GetByChannelId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the subscriptions currently bound to one event channel identifier.
   - `IReadOnlyList<EventSubscriptionDescriptor> GetByChannelId(string channelId)`
@@ -3855,6 +4155,15 @@ Browse the published API surface by public member.
 - [GetByChannelId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ioutboxcatalog-getbychannelid-system-string): `Methods` on `IOutboxCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByChannelId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets all outboxes that explicitly declare the requested channel identifier.
   - `IReadOnlyList<OutboxDescriptor> GetByChannelId(string channelId)`
+- [GetByClientId](cephalon-abstractions.md#member-m-cephalon-abstractions-transports-ibackendforfrontendrestdocumentruntimecatalog-getbyclientid-system-string): `Methods` on `IBackendForFrontendRestDocumentRuntimeCatalog` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByClientId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets all client-scoped REST documentation surfaces owned by the requested client.
+  - `IReadOnlyList<BackendForFrontendRestDocumentRuntimeDescriptor> GetByClientId(string clientId)`
+- [GetByClientId](cephalon-abstractions.md#member-m-cephalon-abstractions-transports-ibackendforfrontendrestruntimecatalog-getbyclientid-system-string): `Methods` on `IBackendForFrontendRestRuntimeCatalog` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByClientId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets all client-aware published REST endpoint projections owned by the requested client.
+  - `IReadOnlyList<BackendForFrontendRestEndpointRuntimeDescriptor> GetByClientId(string clientId)`
+- [GetByClientId](cephalon-abstractions.md#member-m-cephalon-abstractions-patterns-ibackendforfrontendruntimecatalog-getbyclientid-system-string): `Methods` on `IBackendForFrontendRuntimeCatalog` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByClientId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets all backend-for-frontend client bindings owned by the requested client identifier.
+  - `IReadOnlyList<BackendForFrontendClientBindingDescriptor> GetByClientId(string clientId)`
 - [GetByExecutionGraph](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-ihostedexecutionruntimecatalog-getbyexecutiongraph-system-string): `Methods` on `IHostedExecutionRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByExecutionGraph&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets all hosted executions linked to one execution graph.
   - `IReadOnlyList<HostedExecutionDescriptor> GetByExecutionGraph(string executionGraphId)`
@@ -3864,6 +4173,15 @@ Browse the published API surface by public member.
 - [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-authorization-iauthorizationpolicycatalog-getbyid-system-string): `Methods` on `IAuthorizationPolicyCatalog` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets one authorization policy by its stable identifier.
   - `AuthorizationPolicyDescriptor GetById(string policyId)`
+- [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-transports-ibackendforfrontendrestdocumentruntimecatalog-getbyid-system-string): `Methods` on `IBackendForFrontendRestDocumentRuntimeCatalog` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets one client-aware REST documentation surface by its stable identifier.
+  - `BackendForFrontendRestDocumentRuntimeDescriptor GetById(string documentId)`
+- [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-transports-ibackendforfrontendrestruntimecatalog-getbyid-system-string): `Methods` on `IBackendForFrontendRestRuntimeCatalog` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets one client-aware published REST endpoint projection by its stable identifier.
+  - `BackendForFrontendRestEndpointRuntimeDescriptor GetById(string runtimeEndpointId)`
+- [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-patterns-ibackendforfrontendruntimecatalog-getbyid-system-string): `Methods` on `IBackendForFrontendRuntimeCatalog` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets one backend-for-frontend client binding by its stable identifier.
+  - `BackendForFrontendClientBindingDescriptor GetById(string bindingId)`
 - [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-resilience-ibehaviorresilienceruntimecatalog-getbyid-system-string): `Methods` on `IBehaviorResilienceRuntimeCatalog` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - Gets one behavior-execution resilience policy by its stable identifier.
   - `BehaviorResilienceRuntimeDescriptor GetById(string policyId)`
@@ -3882,6 +4200,9 @@ Browse the published API surface by public member.
 - [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-iexecutionruntimecatalog-getbyid-system-string): `Methods` on `IExecutionRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets one execution graph by its stable identifier.
   - `ExecutionGraphDescriptor GetById(string graphId)`
+- [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-features-ifeatureflagruntimecatalog-getbyid-system-string): `Methods` on `IFeatureFlagRuntimeCatalog` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets one feature flag by its stable identifier.
+  - `FeatureFlagDescriptor GetById(string featureFlagId)`
 - [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-ihostedexecutionruntimecatalog-getbyid-system-string): `Methods` on `IHostedExecutionRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets one hosted execution by its stable identifier.
   - `HostedExecutionDescriptor GetById(string hostedExecutionId)`
@@ -3951,6 +4272,9 @@ Browse the published API surface by public member.
 - [GetByResolvedRole](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idatabaserolecatalog-getbyresolvedrole-system-string): `Methods` on `IDatabaseRoleCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByResolvedRole&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets every database role that resolves to the supplied concrete role identifier.
   - `IReadOnlyList<DatabaseRoleDescriptor> GetByResolvedRole(string resolvedRoleId)`
+- [GetByRestEndpointId](cephalon-abstractions.md#member-m-cephalon-abstractions-transports-ibackendforfrontendrestruntimecatalog-getbyrestendpointid-system-string): `Methods` on `IBackendForFrontendRestRuntimeCatalog` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByRestEndpointId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets all client-aware runtime projections that expose the requested published REST endpoint.
+  - `IReadOnlyList<BackendForFrontendRestEndpointRuntimeDescriptor> GetByRestEndpointId(string restEndpointId)`
 - [GetBySeverity](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehavioradvisorycatalog-getbyseverity-cephalon-abstractions-behaviors-behavioradvisoryseverity): `Methods` on `IBehaviorAdvisoryCatalog` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySeverity&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets advisories at or above the specified severity.
   - `IReadOnlyList<IBehaviorAdvisory> GetBySeverity(BehaviorAdvisorySeverity minimumSeverity)`
@@ -3960,9 +4284,18 @@ Browse the published API surface by public member.
 - [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-audit-iauditstorecatalog-getbysourcemodule-system-string): `Methods` on `IAuditStoreCatalog` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets all audit stores contributed by the requested module.
   - `IReadOnlyList<AuditStoreDescriptor> GetBySourceModule(string sourceModuleId)`
+- [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-transports-ibackendforfrontendrestruntimecatalog-getbysourcemodule-system-string): `Methods` on `IBackendForFrontendRestRuntimeCatalog` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets all client-aware published REST endpoint projections contributed by the requested binding-owner module.
+  - `IReadOnlyList<BackendForFrontendRestEndpointRuntimeDescriptor> GetBySourceModule(string sourceModuleId)`
+- [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-patterns-ibackendforfrontendruntimecatalog-getbysourcemodule-system-string): `Methods` on `IBackendForFrontendRuntimeCatalog` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets all backend-for-frontend client bindings owned by the requested module.
+  - `IReadOnlyList<BackendForFrontendClientBindingDescriptor> GetBySourceModule(string sourceModuleId)`
 - [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-iexecutionruntimecatalog-getbysourcemodule-system-string): `Methods` on `IExecutionRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets all execution graphs contributed by the requested module.
   - `IReadOnlyList<ExecutionGraphDescriptor> GetBySourceModule(string sourceModuleId)`
+- [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-features-ifeatureflagruntimecatalog-getbysourcemodule-system-string): `Methods` on `IFeatureFlagRuntimeCatalog` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets all module-owned feature flags contributed by the requested source module.
+  - `IReadOnlyList<FeatureFlagDescriptor> GetBySourceModule(string sourceModuleId)`
 - [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-ihostedexecutionruntimecatalog-getbysourcemodule-system-string): `Methods` on `IHostedExecutionRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets all hosted executions contributed by the requested module.
   - `IReadOnlyList<HostedExecutionDescriptor> GetBySourceModule(string sourceModuleId)`
@@ -4005,12 +4338,21 @@ Browse the published API surface by public member.
 - [GetByTransport](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviorcatalog-getbytransport-system-string): `Methods` on `IBehaviorCatalog` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByTransport&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets all behaviors registered with the specified transport.
   - `IReadOnlyList<BehaviorTopologyDescriptor> GetByTransport(string transportId)`
+- [GetByTransportId](cephalon-abstractions.md#member-m-cephalon-abstractions-patterns-ibackendforfrontendruntimecatalog-getbytransportid-system-string): `Methods` on `IBackendForFrontendRuntimeCatalog` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByTransportId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets all backend-for-frontend client bindings that target the requested transport.
+  - `IReadOnlyList<BackendForFrontendClientBindingDescriptor> GetByTransportId(string transportId)`
 - [GetByTransportId](cephalon-abstractions.md#member-m-cephalon-abstractions-resilience-iratelimitingruntimecatalog-getbytransportid-system-string): `Methods` on `IRateLimitingRuntimeCatalog` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByTransportId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - Gets all rate-limiting policies that apply to the requested transport identifier.
   - `IReadOnlyList<RateLimitingRuntimeDescriptor> GetByTransportId(string transportId)`
 - [GetDependencyHealth](cephalon-abstractions.md#member-m-cephalon-abstractions-health-idependencyhealthcontributor-getdependencyhealth): `Methods` on `IDependencyHealthContributor` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetDependencyHealth&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - Returns the dependency-health reports currently known to the contributor.
   - `IReadOnlyList<DependencyHealthReport> GetDependencyHealth()`
+- [GetDisabled](cephalon-abstractions.md#member-m-cephalon-abstractions-features-ifeatureflagruntimecatalog-getdisabled): `Methods` on `IFeatureFlagRuntimeCatalog` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetDisabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets all feature flags that are disabled before targeting is applied.
+  - `IReadOnlyList<FeatureFlagDescriptor> GetDisabled()`
+- [GetEnabled](cephalon-abstractions.md#member-m-cephalon-abstractions-features-ifeatureflagruntimecatalog-getenabled): `Methods` on `IFeatureFlagRuntimeCatalog` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetEnabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets all feature flags that are enabled before targeting is applied.
+  - `IReadOnlyList<FeatureFlagDescriptor> GetEnabled()`
 - [GetResources](cephalon-abstractions.md#member-m-cephalon-abstractions-localization-ilocalizedtextcatalog-getresources-system-string): `Methods` on `ILocalizedTextCatalog` in `Cephalon.Abstractions.Localization` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetResources&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Localization&scope=members)
   - Returns the localized resources visible for one culture.
   - `IReadOnlyDictionary<string, string> GetResources(string culture)`
@@ -4188,6 +4530,15 @@ Browse the published API surface by public member.
 - [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-auditsettings-hasvalues): `Properties` on `AuditSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether any audit settings were explicitly supplied.
   - `bool HasValues { get; }`
+- [HasValues](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-hasvalues): `Properties` on `BackendForFrontendBehaviorFilterDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets a value indicating whether any behavior-filter hints were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-hasvalues): `Properties` on `BackendForFrontendBehaviorFilterSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether any backend-for-frontend behavior-filter settings were explicitly supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-backendforfrontendsettings-hasvalues): `Properties` on `BackendForFrontendSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether any backend-for-frontend settings were explicitly supplied.
+  - `bool HasValues { get; }`
 - [HasValues](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-hasvalues): `Properties` on `BehaviorExecutionResilienceOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets a value indicating whether any override values were explicitly supplied.
   - `bool HasValues { get; }`
@@ -4247,6 +4598,15 @@ Browse the published API surface by public member.
   - `bool HasValues { get; }`
 - [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-failurepolicy-hasvalues): `Properties` on `FailurePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether this policy differs from `Default`.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-hasvalues): `Properties` on `FeatureFlagTargetingDescriptor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets a value indicating whether any targeting constraint was supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-featureflagtargetingsettings-hasvalues): `Properties` on `FeatureFlagTargetingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether any targeting constraint was supplied.
+  - `bool HasValues { get; }`
+- [HasValues](cephalon-engine.md#member-p-cephalon-engine-configuration-featuresettings-hasvalues): `Properties` on `FeatureSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets a value indicating whether any feature settings were explicitly supplied.
   - `bool HasValues { get; }`
 - [HasValues](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-identityselection-hasvalues): `Properties` on `IdentitySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValues&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets a value indicating whether any identity-selection inputs were explicitly supplied.
@@ -4434,6 +4794,9 @@ Browse the published API surface by public member.
 - [Host](cephalon-observability-clickhousedependencies.md#member-p-cephalon-observability-clickhousedependencies-configuration-clickhousedependencydefinition-host): `Properties` on `ClickHouseDependencyDefinition` in `Cephalon.Observability.ClickHouseDependencies.Configuration` (`Cephalon.Observability.ClickHouseDependencies`) [Browse](browse.html?q=Host&assembly=Cephalon.Observability.ClickHouseDependencies&namespace=Cephalon.Observability.ClickHouseDependencies.Configuration&scope=members)
   - Gets or sets the ClickHouse host name or IP address to probe when no full connection string is supplied.
   - `string Host { get; set; }`
+- [Host](cephalon-abstractions.md#member-f-cephalon-abstractions-features-featureflagsourcekind-host): `Fields` on `FeatureFlagSourceKind` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=Host&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Indicates the feature flag is host-owned and was configured directly by the app.
+  - `const FeatureFlagSourceKind Host`
 - [Host](cephalon-observability-memcacheddependencies.md#member-p-cephalon-observability-memcacheddependencies-configuration-memcacheddependencydefinition-host): `Properties` on `MemcachedDependencyDefinition` in `Cephalon.Observability.MemcachedDependencies.Configuration` (`Cephalon.Observability.MemcachedDependencies`) [Browse](browse.html?q=Host&assembly=Cephalon.Observability.MemcachedDependencies&namespace=Cephalon.Observability.MemcachedDependencies.Configuration&scope=members)
   - Gets or sets the Memcached host name or IP address to probe.
   - `string Host { get; set; }`
@@ -4605,6 +4968,18 @@ Browse the published API surface by public member.
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-authorization-authorizationpolicydescriptor-id): `Properties` on `AuthorizationPolicyDescriptor` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets the stable authorization-policy identifier.
   - `string Id { get; }`
+- [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-id): `Properties` on `BackendForFrontendClientBindingDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the stable binding identifier.
+  - `string Id { get; }`
+- [Id](cephalon-engine.md#member-p-cephalon-engine-configuration-backendforfrontendclientbindingsettings-id): `Properties` on `BackendForFrontendClientBindingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Id&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the stable binding identifier.
+  - `string Id { get; }`
+- [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-id): `Properties` on `BackendForFrontendRestDocumentRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets the stable documentation-surface identifier.
+  - `string Id { get; }`
+- [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-id): `Properties` on `BackendForFrontendRestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets the stable binding-plus-endpoint identifier.
+  - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-id): `Properties` on `BehaviorExecutionResilienceOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the stable override identifier.
   - `string Id { get; }`
@@ -4673,6 +5048,12 @@ Browse the published API surface by public member.
   - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-id): `Properties` on `ExecutionGraphNodeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the stable node identifier within the graph.
+  - `string Id { get; }`
+- [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagdescriptor-id): `Properties` on `FeatureFlagDescriptor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets the stable feature-flag identifier.
+  - `string Id { get; }`
+- [Id](cephalon-engine.md#member-p-cephalon-engine-configuration-featureflagsettings-id): `Properties` on `FeatureFlagSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Id&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the stable feature-flag identifier.
   - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-hostedexecutiondescriptor-id): `Properties` on `HostedExecutionDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the stable hosted-execution identifier.
@@ -4830,6 +5211,72 @@ Browse the published API surface by public member.
 - [IncludeAllClaimsAsSubjectAttributes](cephalon-identity-aspnetcore.md#member-p-cephalon-identity-aspnetcore-configuration-identityaspnetcoreoptions-includeallclaimsassubjectattributes): `Properties` on `IdentityAspNetCoreOptions` in `Cephalon.Identity.AspNetCore.Configuration` (`Cephalon.Identity.AspNetCore`) [Browse](browse.html?q=IncludeAllClaimsAsSubjectAttributes&assembly=Cephalon.Identity.AspNetCore&namespace=Cephalon.Identity.AspNetCore.Configuration&scope=members)
   - Gets or sets a value indicating whether unmatched claims should be projected into `Attributes`.
   - `bool IncludeAllClaimsAsSubjectAttributes { get; set; }`
+- [IncludedBehaviorIds](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-includedbehaviorids): `Properties` on `BackendForFrontendBehaviorFilterDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=IncludedBehaviorIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the explicit behavior identifiers that should stay visible to the client.
+  - `IReadOnlyList<string> IncludedBehaviorIds { get; }`
+- [IncludedBehaviorIds](cephalon-engine.md#member-p-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-includedbehaviorids): `Properties` on `BackendForFrontendBehaviorFilterSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=IncludedBehaviorIds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the explicit behavior identifiers that should stay visible to the client.
+  - `IReadOnlyList<string> IncludedBehaviorIds { get; }`
+- [IncludedBehaviorIds](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-includedbehaviorids): `Properties` on `FeatureFlagTargetingDescriptor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=IncludedBehaviorIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets the explicitly included behavior identifiers.
+  - `IReadOnlyList<string> IncludedBehaviorIds { get; }`
+- [IncludedBehaviorIds](cephalon-engine.md#member-p-cephalon-engine-configuration-featureflagtargetingsettings-includedbehaviorids): `Properties` on `FeatureFlagTargetingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=IncludedBehaviorIds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the explicitly included behavior identifiers.
+  - `IReadOnlyList<string> IncludedBehaviorIds { get; }`
+- [IncludedCapabilityKeys](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-includedcapabilitykeys): `Properties` on `BackendForFrontendBehaviorFilterDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=IncludedCapabilityKeys&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the explicit capability keys that should stay visible to the client.
+  - `IReadOnlyList<string> IncludedCapabilityKeys { get; }`
+- [IncludedCapabilityKeys](cephalon-engine.md#member-p-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-includedcapabilitykeys): `Properties` on `BackendForFrontendBehaviorFilterSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=IncludedCapabilityKeys&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the explicit capability keys that should stay visible to the client.
+  - `IReadOnlyList<string> IncludedCapabilityKeys { get; }`
+- [IncludedCapabilityKeys](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-includedcapabilitykeys): `Properties` on `FeatureFlagTargetingDescriptor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=IncludedCapabilityKeys&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets the explicitly included capability keys.
+  - `IReadOnlyList<string> IncludedCapabilityKeys { get; }`
+- [IncludedCapabilityKeys](cephalon-engine.md#member-p-cephalon-engine-configuration-featureflagtargetingsettings-includedcapabilitykeys): `Properties` on `FeatureFlagTargetingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=IncludedCapabilityKeys&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the explicitly included capability keys.
+  - `IReadOnlyList<string> IncludedCapabilityKeys { get; }`
+- [IncludedEnvironmentNames](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-includedenvironmentnames): `Properties` on `FeatureFlagTargetingDescriptor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=IncludedEnvironmentNames&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets the explicitly included environment names.
+  - `IReadOnlyList<string> IncludedEnvironmentNames { get; }`
+- [IncludedEnvironmentNames](cephalon-engine.md#member-p-cephalon-engine-configuration-featureflagtargetingsettings-includedenvironmentnames): `Properties` on `FeatureFlagTargetingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=IncludedEnvironmentNames&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the explicitly included environment names.
+  - `IReadOnlyList<string> IncludedEnvironmentNames { get; }`
+- [IncludedModuleIds](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-includedmoduleids): `Properties` on `FeatureFlagTargetingDescriptor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=IncludedModuleIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets the explicitly included module identifiers.
+  - `IReadOnlyList<string> IncludedModuleIds { get; }`
+- [IncludedModuleIds](cephalon-engine.md#member-p-cephalon-engine-configuration-featureflagtargetingsettings-includedmoduleids): `Properties` on `FeatureFlagTargetingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=IncludedModuleIds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the explicitly included module identifiers.
+  - `IReadOnlyList<string> IncludedModuleIds { get; }`
+- [IncludedSubjectIds](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-includedsubjectids): `Properties` on `FeatureFlagTargetingDescriptor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=IncludedSubjectIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets the explicitly included subject identifiers.
+  - `IReadOnlyList<string> IncludedSubjectIds { get; }`
+- [IncludedSubjectIds](cephalon-engine.md#member-p-cephalon-engine-configuration-featureflagtargetingsettings-includedsubjectids): `Properties` on `FeatureFlagTargetingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=IncludedSubjectIds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the explicitly included subject identifiers.
+  - `IReadOnlyList<string> IncludedSubjectIds { get; }`
+- [IncludedTags](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-includedtags): `Properties` on `BackendForFrontendBehaviorFilterDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=IncludedTags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the behavior or endpoint tags that should stay visible to the client.
+  - `IReadOnlyList<string> IncludedTags { get; }`
+- [IncludedTags](cephalon-engine.md#member-p-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-includedtags): `Properties` on `BackendForFrontendBehaviorFilterSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=IncludedTags&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the behavior or endpoint tags that should stay visible to the client.
+  - `IReadOnlyList<string> IncludedTags { get; }`
+- [IncludedTags](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-includedtags): `Properties` on `FeatureFlagTargetingDescriptor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=IncludedTags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets the explicitly included descriptive tags.
+  - `IReadOnlyList<string> IncludedTags { get; }`
+- [IncludedTags](cephalon-engine.md#member-p-cephalon-engine-configuration-featureflagtargetingsettings-includedtags): `Properties` on `FeatureFlagTargetingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=IncludedTags&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the explicitly included descriptive tags.
+  - `IReadOnlyList<string> IncludedTags { get; }`
+- [IncludedTenantIds](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-includedtenantids): `Properties` on `FeatureFlagTargetingDescriptor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=IncludedTenantIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets the explicitly included tenant identifiers.
+  - `IReadOnlyList<string> IncludedTenantIds { get; }`
+- [IncludedTenantIds](cephalon-engine.md#member-p-cephalon-engine-configuration-featureflagtargetingsettings-includedtenantids): `Properties` on `FeatureFlagTargetingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=IncludedTenantIds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the explicitly included tenant identifiers.
+  - `IReadOnlyList<string> IncludedTenantIds { get; }`
+- [IncludedTransportIds](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-includedtransportids): `Properties` on `FeatureFlagTargetingDescriptor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=IncludedTransportIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets the explicitly included transport identifiers.
+  - `IReadOnlyList<string> IncludedTransportIds { get; }`
+- [IncludedTransportIds](cephalon-engine.md#member-p-cephalon-engine-configuration-featureflagtargetingsettings-includedtransportids): `Properties` on `FeatureFlagTargetingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=IncludedTransportIds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the explicitly included transport identifiers.
+  - `IReadOnlyList<string> IncludedTransportIds { get; }`
 - [IncludeHeadersAsContextAttributes](cephalon-identity-aspnetcore.md#member-p-cephalon-identity-aspnetcore-configuration-identityaspnetcoreoptions-includeheadersascontextattributes): `Properties` on `IdentityAspNetCoreOptions` in `Cephalon.Identity.AspNetCore.Configuration` (`Cephalon.Identity.AspNetCore`) [Browse](browse.html?q=IncludeHeadersAsContextAttributes&assembly=Cephalon.Identity.AspNetCore&namespace=Cephalon.Identity.AspNetCore.Configuration&scope=members)
   - Gets or sets a value indicating whether request headers should be projected into `Attributes`.
   - `bool IncludeHeadersAsContextAttributes { get; set; }`
@@ -4941,6 +5388,15 @@ Browse the published API surface by public member.
 - [IsDeactivated](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehostedexecutionstate-isdeactivated): `Properties` on `RuntimeHostedExecutionState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=IsDeactivated&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets a value indicating whether the hosted execution most recently observed a deactivation event.
   - `bool IsDeactivated { get; }`
+- [IsDefined](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagevaluationresult-isdefined): `Properties` on `FeatureFlagEvaluationResult` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsDefined&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Indicates whether the feature flag exists in the active runtime.
+  - `bool IsDefined { get; set; }`
+- [IsEnabled](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagevaluationresult-isenabled): `Properties` on `FeatureFlagEvaluationResult` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsEnabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Indicates whether the feature flag resolved to enabled.
+  - `bool IsEnabled { get; set; }`
+- [IsEnabled](cephalon-abstractions.md#member-m-cephalon-abstractions-features-ifeaturetoggle-isenabled-system-string-cephalon-abstractions-features-featureflagevaluationcontext): `Methods` on `IFeatureToggle` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsEnabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Evaluates whether the requested feature flag is enabled for the supplied context.
+  - `bool IsEnabled(string featureFlagId, FeatureFlagEvaluationContext context)`
 - [IsFallback](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-isfallback): `Properties` on `EntityFrameworkDatabaseRoleContext` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=IsFallback&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
   - Gets a value indicating whether the requested role resolved through another configured role.
   - `bool IsFallback { get; }`
@@ -5052,6 +5508,9 @@ Browse the published API surface by public member.
 - [Keyspace](cephalon-observability-cassandradependencies.md#member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-keyspace): `Properties` on `CassandraDependencyDefinition` in `Cephalon.Observability.CassandraDependencies.Configuration` (`Cephalon.Observability.CassandraDependencies`) [Browse](browse.html?q=Keyspace&assembly=Cephalon.Observability.CassandraDependencies&namespace=Cephalon.Observability.CassandraDependencies.Configuration&scope=members)
   - Gets or sets the optional Cassandra keyspace used when opening the probe session.
   - `string Keyspace { get; set; }`
+- [Kind](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-kind): `Properties` on `BackendForFrontendRestDocumentRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Kind&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets the stable scope kind.
+  - `string Kind { get; }`
 - [Kind](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-kind): `Properties` on `ExecutionGraphNodeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Kind&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the node kind.
   - `string Kind { get; }`
@@ -5346,6 +5805,15 @@ Browse the published API surface by public member.
 - [MarkProcessedAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-data-iinbox-markprocessedasync-cephalon-abstractions-data-inboxmessage-system-threading-cancellationtoken): `Methods` on `IInbox` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MarkProcessedAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Records one inbound message as processed.
   - `ValueTask MarkProcessedAsync(InboxMessage message, CancellationToken cancellationToken)`
+- [Matched](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagevaluationresult-matched): `Properties` on `FeatureFlagEvaluationResult` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=Matched&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Indicates whether the supplied evaluation context matched the targeting constraints for the feature flag.
+  - `bool Matched { get; set; }`
+- [MatchedBehaviorIds](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-matchedbehaviorids): `Properties` on `BackendForFrontendRestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=MatchedBehaviorIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets the included behavior identifiers that matched the published endpoint.
+  - `IReadOnlyList<string> MatchedBehaviorIds { get; }`
+- [MatchedByDefault](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-matchedbydefault): `Properties` on `BackendForFrontendRestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=MatchedByDefault&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets a value indicating whether the endpoint stayed visible because the binding declared no positive include filters and the endpoint was not excluded.
+  - `bool MatchedByDefault { get; }`
 - [MatchedCandidateIds](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointgovernanceoverridesummarydescriptor-matchedcandidateids): `Properties` on `RestEndpointGovernanceOverrideSummaryDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=MatchedCandidateIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the ordered candidate identifiers that matched this override rule before one winner was selected.
   - `IReadOnlyList<string> MatchedCandidateIds { get; }`
@@ -5364,6 +5832,9 @@ Browse the published API surface by public member.
 - [MatchedCandidateIds](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointsuppressiondescriptor-matchedcandidateids): `Properties` on `RestEndpointSuppressionDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=MatchedCandidateIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the runtime candidate identifiers that matched this suppression rule, including candidates where another suppression rule won selection.
   - `IReadOnlyList<string> MatchedCandidateIds { get; }`
+- [MatchedCapabilityKeys](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-matchedcapabilitykeys): `Properties` on `BackendForFrontendRestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=MatchedCapabilityKeys&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets the included required-capability keys that matched the published endpoint.
+  - `IReadOnlyList<string> MatchedCapabilityKeys { get; }`
 - [MatchedOverrideIds](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-matchedoverrideids): `Properties` on `RestEndpointCandidateRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=MatchedOverrideIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the ordered override-rule identifiers that matched this candidate before one winner was selected.
   - `IReadOnlyList<string> MatchedOverrideIds { get; }`
@@ -5376,6 +5847,9 @@ Browse the published API surface by public member.
 - [MatchedSuppressionIds](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-matchedsuppressionids): `Properties` on `RestEndpointCandidateRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=MatchedSuppressionIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the ordered suppression-rule identifiers that matched this candidate before one winner was selected.
   - `IReadOnlyList<string> MatchedSuppressionIds { get; }`
+- [MatchedTags](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-matchedtags): `Properties` on `BackendForFrontendRestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=MatchedTags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets the included tags that matched the published endpoint.
+  - `IReadOnlyList<string> MatchedTags { get; }`
 - [MaxAgeDays](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-audithistoryretentionselection-maxagedays): `Properties` on `AuditHistoryRetentionSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaxAgeDays&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the maximum age, in days, to retain durable audit rows.
   - `int? MaxAgeDays { get; }`
@@ -5577,6 +6051,12 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-authorization-authorizationpolicydescriptor-metadata): `Properties` on `AuthorizationPolicyDescriptor` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets operator-facing metadata associated with the policy.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-metadata): `Properties` on `BackendForFrontendClientBindingDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets optional binding metadata.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-engine.md#member-p-cephalon-engine-configuration-backendforfrontendclientbindingsettings-metadata): `Properties` on `BackendForFrontendClientBindingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets optional binding metadata.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-metadata): `Properties` on `BehaviorResilienceRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - Additional runtime-specific metadata describing the policy.
   - `IReadOnlyDictionary<string, string> Metadata { get; set; }`
@@ -5636,6 +6116,15 @@ Browse the published API surface by public member.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-metadata): `Properties` on `ExecutionGraphNodeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets operator-facing metadata associated with the node.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagdescriptor-metadata): `Properties` on `FeatureFlagDescriptor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets operator-facing metadata for the feature flag.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagevaluationcontext-metadata): `Properties` on `FeatureFlagEvaluationContext` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets additional evaluation metadata.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-engine.md#member-p-cephalon-engine-configuration-featureflagsettings-metadata): `Properties` on `FeatureFlagSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets optional operator-facing metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-hostedexecutiondescriptor-metadata): `Properties` on `HostedExecutionDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets operator-facing metadata associated with the hosted execution.
@@ -5892,6 +6381,9 @@ Browse the published API surface by public member.
 - [ModularVerticalSlice](cephalon-engine.md#member-p-cephalon-engine-appmodel-scaffolding-builtinscaffolds-modularverticalslice): `Properties` on `BuiltInScaffolds` in `Cephalon.Engine.AppModel.Scaffolding` (`Cephalon.Engine`) [Browse](browse.html?q=ModularVerticalSlice&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel.Scaffolding&scope=members)
   - Gets the scaffold plan for the modular-vertical-slice blueprint.
   - `ScaffoldPlan ModularVerticalSlice { get; }`
+- [Module](cephalon-abstractions.md#member-f-cephalon-abstractions-features-featureflagsourcekind-module): `Fields` on `FeatureFlagSourceKind` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=Module&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Indicates the feature flag is module-owned and was contributed by a Cephalon module.
+  - `const FeatureFlagSourceKind Module`
 - [Module](cephalon-abstractions.md#member-f-cephalon-abstractions-appmodel-scaffolding-projectroles-module): `Fields` on `ProjectRoles` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Module&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Identifies a module project.
   - `const string Module`
@@ -5918,6 +6410,9 @@ Browse the published API surface by public member.
   - `PatternDescriptor ModuleFirstOrganization { get; }`
 - [ModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-moduleid): `Properties` on `ExecutionGraphNodeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=ModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the module identifier that primarily owns the node, when one was declared.
+  - `string ModuleId { get; }`
+- [ModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagevaluationcontext-moduleid): `Properties` on `FeatureFlagEvaluationContext` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=ModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets the current module identifier when one is known.
   - `string ModuleId { get; }`
 - [ModuleId](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimefailureinfo-moduleid): `Properties` on `RuntimeFailureInfo` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=ModuleId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The module identifier that triggered the failure when available.
@@ -6231,6 +6726,9 @@ Browse the published API surface by public member.
 - [OpenApiEndpointOptions](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-documentation-openapiendpointoptions-ctor): `Constructors` on `OpenApiEndpointOptions` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=OpenApiEndpointOptions&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - Initializes a new `OpenApiEndpointOptions` with the canonical Cephalon OpenAPI and Scalar routes.
   - `OpenApiEndpointOptions()`
+- [OpenApiPath](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-openapipath): `Properties` on `BackendForFrontendRestDocumentRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=OpenApiPath&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets the rooted OpenAPI JSON path for the filtered document.
+  - `string OpenApiPath { get; }`
 - [OpenApiTagMetadata](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-documentation-openapitagmetadata-ctor-system-string-system-string): `Constructors` on `OpenApiTagMetadata` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=OpenApiTagMetadata&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - Describes OpenAPI tag metadata projected from ASP.NET Core route groups or endpoints.
   - `OpenApiTagMetadata(string Name, string Description)`
@@ -7116,6 +7614,9 @@ Browse the published API surface by public member.
 - [Reason](cephalon-engine.md#member-p-cephalon-engine-trust-capabilitypolicydecision-reason): `Properties` on `CapabilityPolicyDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Reason&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The human-readable reason for the decision.
   - `string Reason { get; set; }`
+- [Reason](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagevaluationresult-reason): `Properties` on `FeatureFlagEvaluationResult` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=Reason&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - The operator-facing explanation for the evaluation result.
+  - `string Reason { get; set; }`
 - [Reason](cephalon-engine.md#member-p-cephalon-engine-trust-packagesignaturetrustdecision-reason): `Properties` on `PackageSignatureTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Reason&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The verification outcome or failure reason for this signature.
   - `string Reason { get; set; }`
@@ -7209,6 +7710,9 @@ Browse the published API surface by public member.
 - [RegisterChannels](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventchannelcontributor-registerchannels-cephalon-eventing-services-ieventchannelregistry): `Methods` on `IEventChannelContributor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RegisterChannels&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Registers one or more event channel descriptors with the supplied registry.
   - `void RegisterChannels(IEventChannelRegistry channels)`
+- [RegisterClientBindings](cephalon-abstractions.md#member-m-cephalon-abstractions-patterns-ibackendforfrontendclientbindingcontributor-registerclientbindings-cephalon-abstractions-patterns-ibackendforfrontendclientbindingregistry): `Methods` on `IBackendForFrontendClientBindingContributor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=RegisterClientBindings&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Registers one or more backend-for-frontend client bindings with the supplied registry.
+  - `void RegisterClientBindings(IBackendForFrontendClientBindingRegistry bindings)`
 - [RegisterCollections](cephalon-retrieval.md#member-m-cephalon-retrieval-services-iknowledgecollectioncontributor-registercollections-cephalon-retrieval-services-iknowledgecollectionregistry): `Methods` on `IKnowledgeCollectionContributor` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=RegisterCollections&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Registers one or more knowledge collection descriptors with the supplied registry.
   - `void RegisterCollections(IKnowledgeCollectionRegistry collections)`
@@ -7221,6 +7725,9 @@ Browse the published API surface by public member.
 - [RegisterExecutionGraphs](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-iexecutiongraphcontributor-registerexecutiongraphs-cephalon-abstractions-execution-iexecutiongraphregistry): `Methods` on `IExecutionGraphContributor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=RegisterExecutionGraphs&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Registers one or more execution graphs owned by the contributor.
   - `void RegisterExecutionGraphs(IExecutionGraphRegistry graphs)`
+- [RegisterFeatureFlags](cephalon-abstractions.md#member-m-cephalon-abstractions-features-ifeatureflagcontributor-registerfeatureflags-cephalon-abstractions-features-ifeatureflagregistry): `Methods` on `IFeatureFlagContributor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=RegisterFeatureFlags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Registers the feature flags owned by the contributing module.
+  - `void RegisterFeatureFlags(IFeatureFlagRegistry registry)`
 - [RegisterHostedExecutions](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-ihostedexecutioncontributor-registerhostedexecutions-cephalon-abstractions-execution-ihostedexecutionregistry): `Methods` on `IHostedExecutionContributor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=RegisterHostedExecutions&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Registers one or more hosted execution descriptors owned by the contributor.
   - `void RegisterHostedExecutions(IHostedExecutionRegistry hostedExecutions)`
@@ -7707,6 +8214,12 @@ Browse the published API surface by public member.
 - [RestEndpointGovernanceSuppressionSummaryDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-transports-restendpointgovernancesuppressionsummarydescriptor-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceselectionbasissummarydescriptor): `Constructors` on `RestEndpointGovernanceSuppressionSummaryDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=RestEndpointGovernanceSuppressionSummaryDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Creates a grouped suppression-rule summary.
   - `RestEndpointGovernanceSuppressionSummaryDescriptor(string ruleId, IReadOnlyList<string> matchedCandidateIds, IReadOnlyList<string> suppressedCandidateIds, IReadOnlyList<RestEndpointGovernanceSelectionBasisSummaryDescriptor> selectionBasisSummaries)`
+- [RestEndpointId](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-restendpointid): `Properties` on `BackendForFrontendRestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=RestEndpointId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets the stable published REST endpoint identifier.
+  - `string RestEndpointId { get; }`
+- [RestEndpointIds](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-restendpointids): `Properties` on `BackendForFrontendRestDocumentRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=RestEndpointIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets the included published REST endpoint identifiers.
+  - `IReadOnlyList<string> RestEndpointIds { get; }`
 - [RestEndpointOverrideDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-transports-restendpointoverridedescriptor-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-nullable-system-int32-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-boolean-cephalon-abstractions-transports-restendpointoverridebindingmode-system-boolean-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingfallbackmode-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointbindingdescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointoverrideactionkind-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointoverrideactionkind-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceselectionbasissummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceoverrideactionkindsummarydescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-transports-restendpointgovernanceoverrideactionkindsummarydescriptor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-boolean): `Constructors` on `RestEndpointOverrideDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=RestEndpointOverrideDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Creates a REST endpoint override descriptor.
   - `RestEndpointOverrideDescriptor(string id, IReadOnlyList<string> candidateIds, IReadOnlyList<string> behaviorIds, IReadOnlyList<string> sourceModuleIds, IReadOnlyList<string> authoringStyles, IReadOnlyList<int> apiVersionMajors, IReadOnlyList<string> methods, IReadOnlyList<string> relativePatterns, IReadOnlyList<string> routeGroupPrefixes, int? apiVersionMajor, string method, string pattern, string routeGroupPrefix, string openApiDocumentName, string tagName, string endpointName, string summary, string description, string requiredCapabilityKey, bool clearRequiredCapability, IReadOnlyList<RestEndpointBindingDescriptor> bindings, IReadOnlyList<string> removedBindingProperties, bool clearBindings, RestEndpointOverrideBindingMode bindingMode, bool clearEndpointName, bool clearSummary, bool clearDescription, IReadOnlyList<string> openApiDocumentNames, IReadOnlyList<string> tagNames, IReadOnlyList<string> endpointNames, IReadOnlyList<RestEndpointBindingFallbackMode> bindingFallbackModes, IReadOnlyList<RestEndpointBindingDescriptor> targetBindings, IReadOnlyList<string> matchedCandidateIds, IReadOnlyList<string> selectedCandidateIds, IReadOnlyList<string> appliedCandidateIds, IReadOnlyList<string> skippedCandidateIds, IReadOnlyList<RestEndpointGovernanceRuleSelectionBasis> selectionBases, IReadOnlyList<RestEndpointOverrideActionKind> selectedActionKinds, IReadOnlyList<RestEndpointOverrideActionKind> appliedActionKinds, IReadOnlyList<RestEndpointGovernanceSelectionBasisSummaryDescriptor> selectionBasisSummaries, IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor> selectedActionKindSummaries, IReadOnlyList<RestEndpointGovernanceOverrideActionKindSummaryDescriptor> appliedActionKindSummaries, IReadOnlyList<string> hostGovernanceScopes, IReadOnlyList<string> behaviorIdPrefixes, bool preserveImplicitQueryFallback)`
@@ -8025,6 +8538,9 @@ Browse the published API surface by public member.
 - [Runtime](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimelifecycleeventscope-runtime): `Fields` on `RuntimeLifecycleEventScope` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Runtime&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The event belongs to the overall runtime lifecycle.
   - `const RuntimeLifecycleEventScope Runtime`
+- [RuntimeEndpointIds](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-runtimeendpointids): `Properties` on `BackendForFrontendRestDocumentRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=RuntimeEndpointIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets the included client-aware runtime endpoint identifiers.
+  - `IReadOnlyList<string> RuntimeEndpointIds { get; }`
 - [RuntimeExecutionGraphState](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimeexecutiongraphstate-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-nullable-system-datetimeoffset): `Constructors` on `RuntimeExecutionGraphState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeExecutionGraphState&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Describes the current operator-facing lifecycle state for one execution graph visible to the runtime.
   - `RuntimeExecutionGraphState(string GraphId, string DisplayName, string Description, string SourceModuleId, string SourceModuleVersion, string EntryNodeId, DateTimeOffset? LoadedAtUtc, DateTimeOffset? ActivatedAtUtc, DateTimeOffset? DeactivatedAtUtc, string LastObservedPhase, DateTimeOffset? LastObservedAtUtc)`
@@ -8136,6 +8652,9 @@ Browse the published API surface by public member.
 - [ScaffoldRequest](cephalon-scaffolding.md#member-m-cephalon-scaffolding-generation-scaffoldrequest-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string): `Constructors` on `ScaffoldRequest` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=ScaffoldRequest&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Creates a new scaffold request.
   - `ScaffoldRequest(string appName, IReadOnlyList<string> modules, IReadOnlyList<string> features, string targetFramework, string cephalonPackageVersion)`
+- [ScalarPath](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-scalarpath): `Properties` on `BackendForFrontendRestDocumentRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=ScalarPath&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets the rooted Scalar page path for the filtered document.
+  - `string ScalarPath { get; }`
 - [ScalarRoutePrefix](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-openapiendpointoptions-scalarrouteprefix): `Properties` on `OpenApiEndpointOptions` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ScalarRoutePrefix&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - Gets or sets the route prefix used by the Scalar UI.
   - `string ScalarRoutePrefix { get; set; }`
@@ -8178,6 +8697,9 @@ Browse the published API surface by public member.
 - [Scope](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-scope): `Properties` on `ScaffoldProject` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Scope&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Gets the scaffold scope that owns the project.
   - `string Scope { get; }`
+- [ScopeId](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-scopeid): `Properties` on `BackendForFrontendRestDocumentRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=ScopeId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets the stable scope identifier.
+  - `string ScopeId { get; }`
 - [SectionName](cephalon-aspnetcore.md#member-f-cephalon-aspnetcore-hosting-apiroutesoptions-sectionname): `Fields` on `ApiRoutesOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=SectionName&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Gets the configuration section used for API route settings.
   - `const string SectionName`
@@ -8514,6 +9036,15 @@ Browse the published API surface by public member.
 - [SourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-sourceid): `Properties` on `RestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the stable source identity for the published endpoint when the runtime can classify the authored source shape behind that publication.
   - `string SourceId { get; }`
+- [SourceKind](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagdescriptor-sourcekind): `Properties` on `FeatureFlagDescriptor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceKind&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets the ownership kind for this feature flag.
+  - `FeatureFlagSourceKind SourceKind { get; }`
+- [SourceKind](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagevaluationresult-sourcekind): `Properties` on `FeatureFlagEvaluationResult` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceKind&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - The ownership kind for the resolved feature flag when one exists.
+  - `FeatureFlagSourceKind? SourceKind { get; set; }`
+- [SourceKind](cephalon-engine.md#member-p-cephalon-engine-configuration-featureflagsettings-sourcekind): `Properties` on `FeatureFlagSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=SourceKind&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the ownership kind for this feature flag.
+  - `FeatureFlagSourceKind SourceKind { get; }`
 - [SourceKind](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-sourcekind): `Properties` on `RestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceKind&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the source kind that produced the endpoint.
   - `string SourceKind { get; }`
@@ -8526,6 +9057,15 @@ Browse the published API surface by public member.
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditstoredescriptor-sourcemoduleid): `Properties` on `AuditStoreDescriptor` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the identifier of the module that owns the audit-store surface.
   - `string SourceModuleId { get; }`
+- [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-sourcemoduleid): `Properties` on `BackendForFrontendClientBindingDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the module that owns this client-specific binding.
+  - `string SourceModuleId { get; }`
+- [SourceModuleId](cephalon-engine.md#member-p-cephalon-engine-configuration-backendforfrontendclientbindingsettings-sourcemoduleid): `Properties` on `BackendForFrontendClientBindingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the module that owns this client-specific binding.
+  - `string SourceModuleId { get; }`
+- [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-sourcemoduleid): `Properties` on `BackendForFrontendRestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets the binding-owner module identifier.
+  - `string SourceModuleId { get; }`
 - [SourceModuleId](cephalon-engine.md#member-p-cephalon-engine-manifest-capabilitymanifest-sourcemoduleid): `Properties` on `CapabilityManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the identifier of the module that contributed the capability.
   - `string SourceModuleId { get; }`
@@ -8537,6 +9077,15 @@ Browse the published API surface by public member.
   - `string SourceModuleId { get; }`
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-executiongraphdescriptor-sourcemoduleid): `Properties` on `ExecutionGraphDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the identifier of the module that contributed the graph.
+  - `string SourceModuleId { get; }`
+- [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagdescriptor-sourcemoduleid): `Properties` on `FeatureFlagDescriptor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets the owning module identifier when the feature flag is module-owned.
+  - `string SourceModuleId { get; }`
+- [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagevaluationresult-sourcemoduleid): `Properties` on `FeatureFlagEvaluationResult` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - The owning module identifier when the feature flag is module-owned.
+  - `string SourceModuleId { get; set; }`
+- [SourceModuleId](cephalon-engine.md#member-p-cephalon-engine-configuration-featureflagsettings-sourcemoduleid): `Properties` on `FeatureFlagSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the source-module identifier when the feature flag is module-owned.
   - `string SourceModuleId { get; }`
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-hostedexecutiondescriptor-sourcemoduleid): `Properties` on `HostedExecutionDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the identifier of the module that contributed the hosted execution.
@@ -8571,6 +9120,9 @@ Browse the published API surface by public member.
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigrouteresolution-sourcemoduleid): `Properties` on `StranglerFigRouteResolution` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - The Cephalon module that owns the modern boundary.
   - `string SourceModuleId { get; set; }`
+- [SourceModuleIds](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-sourcemoduleids): `Properties` on `BackendForFrontendRestDocumentRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
+  - Gets the published-endpoint source-module identifiers represented in the materialized document.
+  - `IReadOnlyList<string> SourceModuleIds { get; }`
 - [SourceModuleIds](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-sourcemoduleids): `Properties` on `RestEndpointOverrideDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the source-module identifiers targeted by this override rule.
   - `IReadOnlyList<string> SourceModuleIds { get; }`
@@ -8901,6 +9453,9 @@ Browse the published API surface by public member.
 - [SubjectId](cephalon-abstractions.md#member-p-cephalon-abstractions-authorization-authorizationsubject-subjectid): `Properties` on `AuthorizationSubject` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=SubjectId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets the stable subject identifier.
   - `string SubjectId { get; }`
+- [SubjectId](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagevaluationcontext-subjectid): `Properties` on `FeatureFlagEvaluationContext` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=SubjectId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets the current subject identifier when one is known.
+  - `string SubjectId { get; }`
 - [SubjectId](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimelifecycleevent-subjectid): `Properties` on `RuntimeLifecycleEvent` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=SubjectId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The runtime, module, package, execution-graph, or hosted-execution identifier associated with the event when available.
   - `string SubjectId { get; set; }`
@@ -9150,6 +9705,9 @@ Browse the published API surface by public member.
 - [Tags](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-executiongraphnodedescriptor-tags): `Properties` on `ExecutionGraphNodeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets descriptive tags associated with the node.
   - `IReadOnlyList<string> Tags { get; }`
+- [Tags](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagevaluationcontext-tags): `Properties` on `FeatureFlagEvaluationContext` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets the descriptive tags associated with the current request or workload.
+  - `IReadOnlyList<string> Tags { get; }`
 - [Tags](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-hostedexecutiondescriptor-tags): `Properties` on `HostedExecutionDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets descriptive tags associated with the hosted execution.
   - `IReadOnlyList<string> Tags { get; }`
@@ -9222,6 +9780,12 @@ Browse the published API surface by public member.
 - [TargetFramework](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-scaffoldrequest-targetframework): `Properties` on `ScaffoldRequest` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=TargetFramework&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the target framework for generated projects.
   - `string TargetFramework { get; }`
+- [Targeting](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagdescriptor-targeting): `Properties` on `FeatureFlagDescriptor` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=Targeting&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets the optional targeting constraints attached to the feature flag.
+  - `FeatureFlagTargetingDescriptor Targeting { get; }`
+- [Targeting](cephalon-engine.md#member-p-cephalon-engine-configuration-featureflagsettings-targeting): `Properties` on `FeatureFlagSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Targeting&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the optional targeting settings attached to the feature flag.
+  - `FeatureFlagTargetingSettings Targeting { get; }`
 - [TargetRoleIds](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-services-entityframeworkdatabasemigrationregistration-targetroleids): `Properties` on `EntityFrameworkDatabaseMigrationRegistration` in `Cephalon.Data.EntityFramework.Services` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=TargetRoleIds&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Services&scope=members)
   - Gets the logical migration targets satisfied by the context.
   - `IReadOnlyList<string> TargetRoleIds { get; }`
@@ -9344,6 +9908,9 @@ Browse the published API surface by public member.
   - `string TenantId { get; }`
 - [TenantId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-tenantid): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TenantId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the tenant identifier associated with the event.
+  - `string TenantId { get; }`
+- [TenantId](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagevaluationcontext-tenantid): `Properties` on `FeatureFlagEvaluationContext` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=TenantId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
+  - Gets the current tenant identifier when one is known.
   - `string TenantId { get; }`
 - [TenantId](cephalon-abstractions.md#member-p-cephalon-abstractions-ids-idgenerationrequest-tenantid): `Properties` on `IdGenerationRequest` in `Cephalon.Abstractions.Ids` (`Cephalon.Abstractions`) [Browse](browse.html?q=TenantId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Ids&scope=members)
   - Gets the tenant identifier associated with the requested identifier when one is known.
@@ -9486,7 +10053,16 @@ Browse the published API surface by public member.
 - [TransportDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-transports-transportdescriptor-ctor-system-string-system-string-system-string-cephalon-abstractions-transports-transportfeatures-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `TransportDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Creates a transport descriptor.
   - `TransportDescriptor(string id, string displayName, string description, TransportFeatures features, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
+- [TransportId](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-transportid): `Properties` on `BackendForFrontendClientBindingDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the transport identifier used by this client-specific surface.
+  - `string TransportId { get; }`
+- [TransportId](cephalon-engine.md#member-p-cephalon-engine-configuration-backendforfrontendclientbindingsettings-transportid): `Properties` on `BackendForFrontendClientBindingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=TransportId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
+  - Gets the transport identifier used by this client-specific surface.
+  - `string TransportId { get; }`
 - [TransportId](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorresilienceexceptioncontext-transportid): `Properties` on `BehaviorResilienceExceptionContext` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
+  - Gets the active transport identifier when one is known.
+  - `string TransportId { get; }`
+- [TransportId](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagevaluationcontext-transportid): `Properties` on `FeatureFlagEvaluationContext` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=TransportId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
   - Gets the active transport identifier when one is known.
   - `string TransportId { get; }`
 - [TransportId](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-itransportroutemapper-transportid): `Properties` on `ITransportRouteMapper` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=TransportId&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
@@ -9726,6 +10302,9 @@ Browse the published API surface by public member.
 - [UseApplicationDefaultCredentials](cephalon-observability-gcp.md#member-p-cephalon-observability-gcp-configuration-gcptelemetryexportoptions-useapplicationdefaultcredentials): `Properties` on `GcpTelemetryExportOptions` in `Cephalon.Observability.Gcp.Configuration` (`Cephalon.Observability.Gcp`) [Browse](browse.html?q=UseApplicationDefaultCredentials&assembly=Cephalon.Observability.Gcp&namespace=Cephalon.Observability.Gcp.Configuration&scope=members)
   - Gets or sets a value indicating whether Google-managed ingestion should authenticate by using Application Default Credentials.
   - `bool UseApplicationDefaultCredentials { get; set; }`
+- [UseBackendForFrontendSettings](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-usebackendforfrontendsettings-cephalon-engine-configuration-backendforfrontendsettings): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UseBackendForFrontendSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
+  - Replaces the backend-for-frontend settings used by the runtime client-binding catalog.
+  - `EngineBuilder UseBackendForFrontendSettings(BackendForFrontendSettings settings)`
 - [UseBlueprint](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-useblueprint-cephalon-abstractions-appmodel-appblueprint): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UseBlueprint&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Selects the base application blueprint that should shape the runtime.
   - `EngineBuilder UseBlueprint(AppBlueprint blueprint)`
@@ -9744,6 +10323,9 @@ Browse the published API surface by public member.
 - [UseFailurePolicy](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-usefailurepolicy-cephalon-engine-configuration-failurepolicy): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UseFailurePolicy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Replaces the failure policy used by the runtime lifecycle state machine.
   - `EngineBuilder UseFailurePolicy(FailurePolicy policy)`
+- [UseFeatureSettings](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-usefeaturesettings-cephalon-engine-configuration-featuresettings): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=UseFeatureSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
+  - Merges feature-flag settings into the current builder state.
+  - `EngineBuilder UseFeatureSettings(FeatureSettings settings)`
 - [UseGoogleManagedIngestion](cephalon-observability-gcp.md#member-p-cephalon-observability-gcp-configuration-gcptelemetryexportoptions-usegooglemanagedingestion): `Properties` on `GcpTelemetryExportOptions` in `Cephalon.Observability.Gcp.Configuration` (`Cephalon.Observability.Gcp`) [Browse](browse.html?q=UseGoogleManagedIngestion&assembly=Cephalon.Observability.Gcp&namespace=Cephalon.Observability.Gcp.Configuration&scope=members)
   - Gets or sets a value indicating whether the package should use Google-managed OTLP ingestion for traces and metrics when no shared collector endpoint is configured.
   - `bool UseGoogleManagedIngestion { get; set; }`

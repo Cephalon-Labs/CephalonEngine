@@ -2200,6 +2200,56 @@ Delivered:
 - targeted hosting and package-surface coverage now lock the new surface through hosting tests `2/2` and package-surface tests `2/2`
 - architecture recommendations, REST strategy docs, component docs, roadmap, backlog, and project memory now describe the shipped BFF REST document-materialization baseline truthfully while keeping non-REST or broader frontend materialization later
 
+### ENG-106 Phase 12 feature-flag runtime baseline
+
+Status: done
+Estimate: 5
+Completed: April 19, 2026
+
+Why:
+
+- after the first strangler-fig and backend-for-frontend slices, phase 12 still had no engine-owned
+  progressive-delivery contract even though the architecture guidance already called for feature
+  flags
+- modules and hosts still lacked a shared, host-agnostic way to declare which feature flags
+  existed, who owned them, and which runtime-context dimensions they targeted
+- operator tooling had no truthful runtime answer for the merged feature-flag catalog or a shared
+  evaluation surface aligned with `/engine/snapshot`
+
+Acceptance:
+
+- `Cephalon.Abstractions` exposes host-agnostic feature-flag contracts for descriptors, targeting,
+  contributors, runtime catalogs, evaluation context, and evaluation results
+- `Cephalon.Engine` composes code-first, configuration-driven, and module-contributed flags into one
+  deterministic runtime catalog plus evaluation service
+- module-contributed flags preserve module ownership and fail composition when source metadata does
+  not match the contributing module
+- ASP.NET Core exposes operator routes for catalog, drill-down, and evaluation views without
+  introducing host-only feature-flag truth
+- architecture recommendations, component docs, roadmap, backlog, and project memory describe the
+  shipped baseline truthfully while keeping external-provider bridges and any future capability
+  publication explicit follow-through work
+
+Delivered:
+
+- `Cephalon.Abstractions` now exposes `FeatureFlagDescriptor`,
+  `FeatureFlagTargetingDescriptor`, `FeatureFlagEvaluationContext`,
+  `FeatureFlagEvaluationResult`, `FeatureFlagSourceKind`, `IFeatureToggle`,
+  `IFeatureFlagRuntimeCatalog`, `IFeatureFlagContributor`, and `IFeatureFlagRegistry`
+- `Engine:Features:Flags`, `engine.AddFeatureFlag(...)`, `engine.AddFeatureFlags(...)`, and
+  module-level `IFeatureFlagContributor` inputs now merge into `IFeatureFlagRuntimeCatalog` and
+  `snapshot.FeatureFlags` through deterministic duplicate-id and ownership validation
+- `InMemoryFeatureToggle` now evaluates host-owned or module-owned flags across environment, module,
+  behavior, capability, transport, tenant, subject, and tag targeting with exclusion-wins
+  precedence
+- `Cephalon.AspNetCore` now exposes `/engine/features`, `/engine/features/enabled`,
+  `/engine/features/disabled`, `/engine/features/modules/{moduleId}`,
+  `/engine/features/{featureFlagId}`, and `/engine/features/{featureFlagId}/evaluate` off the
+  shared runtime truth
+- the current baseline intentionally keeps feature-flag ownership in the catalog instead of
+  advertising a separate `runtime.feature-flags` capability, because runtime capability provenance
+  is still module-based
+
 ### ENG-069 Event-dispatch runtime operator-surface baseline
 
 Status: done
@@ -2644,3 +2694,4 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-103 phase 12 backend-for-frontend client-binding runtime baseline: `Cephalon.Abstractions` now exposes host-agnostic BFF client-binding contracts, `Cephalon.Engine` now composes host-added, module-contributed, and `Engine:BackendForFrontend:Bindings` entries into `snapshot.BackendForFrontendBindings` while auto-selecting `backend-for-frontend` when bindings exist, and `Cephalon.AspNetCore` now exposes `/engine/backend-for-frontend` plus client/module/transport drill-down routes while client-aware filtering or materialization remain later — **Shipped** · composition tests 3/3 + hosting tests 1/1 + package-surface tests 1/1
 - ENG-104 phase 12 backend-for-frontend client-aware REST filtering runtime baseline: `Cephalon.Abstractions` now exposes public client-aware BFF REST runtime contracts, `Cephalon.AspNetCore` now derives `IBackendForFrontendRestRuntimeCatalog` from the shared binding catalog plus published REST endpoint truth, `/engine/snapshot` now carries `BackendForFrontendRestEndpoints`, and `/engine/backend-for-frontend/rest-endpoints` now exposes binding/client/module/published-endpoint drill-down routes while per-client OpenAPI/Scalar materialization remains later — **Shipped** · hosting tests 1/1 + package-surface tests 2/2
 - ENG-105 phase 12 backend-for-frontend REST document materialization baseline: `Cephalon.Abstractions` now exposes scope-specific BFF REST document contracts, `Cephalon.AspNetCore` now derives `/engine/backend-for-frontend/rest-documents` plus filtered binding/client OpenAPI and Scalar surfaces from the shared BFF REST runtime truth and host OpenAPI settings, and `/engine/snapshot` now carries `BackendForFrontendRestDocuments` — **Shipped** · hosting tests 2/2 + package-surface tests 2/2
+- ENG-106 phase 12 feature-flag runtime baseline: `Cephalon.Abstractions` now exposes host-agnostic feature-flag contracts, `Cephalon.Engine` now composes code-first, configuration-driven, and module-contributed flags into `IFeatureFlagRuntimeCatalog`, `IFeatureToggle`, and `snapshot.FeatureFlags`, and `Cephalon.AspNetCore` now exposes `/engine/features` plus the shared evaluation route while external-provider bridges and any future capability publication remain later — **Shipped** · composition tests 3/3 + hosting tests 1/1 + package-surface tests 1/1

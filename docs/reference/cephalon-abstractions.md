@@ -14,6 +14,7 @@ Generated from XML comments and the public API surface of the compiled assembly.
 - `Cephalon.Abstractions.Data`
 - `Cephalon.Abstractions.EventSourcing`
 - `Cephalon.Abstractions.Execution`
+- `Cephalon.Abstractions.Features`
 - `Cephalon.Abstractions.Health`
 - `Cephalon.Abstractions.Ids`
 - `Cephalon.Abstractions.Localization`
@@ -13411,6 +13412,797 @@ Returns: The matching hosted executions, or an empty list when the module contri
 Parameters:
 - `sourceModuleId`: The source module identifier to filter by.
 
+<a id="namespace-cephalon-abstractions-features"></a>
+
+## Namespace Cephalon.Abstractions.Features
+
+<a id="type-cephalon-abstractions-features-featureflagdescriptor"></a>
+
+### `FeatureFlagDescriptor`
+
+Describes one feature flag visible to the active Cephalon runtime.
+
+#### Declaration
+```csharp
+public sealed class FeatureFlagDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-features-featureflagdescriptor-ctor-system-string-system-string-system-string-system-boolean-cephalon-abstractions-features-featureflagsourcekind-system-string-cephalon-abstractions-features-featureflagtargetingdescriptor-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `FeatureFlagDescriptor`
+
+```csharp
+FeatureFlagDescriptor(string id, string displayName, string description, bool enabled, FeatureFlagSourceKind sourceKind, string sourceModuleId, FeatureFlagTargetingDescriptor targeting, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a feature-flag descriptor.
+
+Parameters:
+- `id`: The stable feature-flag identifier.
+- `displayName`: The operator-facing feature-flag name.
+- `description`: The human-readable description of the gated behavior.
+- `enabled`: Indicates whether the feature flag is enabled before any targeting constraints are applied.
+- `sourceKind`: Identifies whether the feature flag is host-owned or module-owned.
+- `sourceModuleId`: The module identifier that owns this feature flag when `sourceKind` is `Module`.
+- `targeting`: The optional targeting constraints attached to the feature flag.
+- `metadata`: Optional operator-facing metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-features-featureflagdescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable description of the gated behavior.
+
+<a id="member-p-cephalon-abstractions-features-featureflagdescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing feature-flag name.
+
+<a id="member-p-cephalon-abstractions-features-featureflagdescriptor-enabled"></a>
+
+##### `Enabled`
+
+```csharp
+bool Enabled { get; }
+```
+
+Gets a value indicating whether the feature flag is enabled before targeting is applied.
+
+<a id="member-p-cephalon-abstractions-features-featureflagdescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable feature-flag identifier.
+
+<a id="member-p-cephalon-abstractions-features-featureflagdescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets operator-facing metadata for the feature flag.
+
+<a id="member-p-cephalon-abstractions-features-featureflagdescriptor-sourcekind"></a>
+
+##### `SourceKind`
+
+```csharp
+FeatureFlagSourceKind SourceKind { get; }
+```
+
+Gets the ownership kind for this feature flag.
+
+<a id="member-p-cephalon-abstractions-features-featureflagdescriptor-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; }
+```
+
+Gets the owning module identifier when the feature flag is module-owned.
+
+<a id="member-p-cephalon-abstractions-features-featureflagdescriptor-targeting"></a>
+
+##### `Targeting`
+
+```csharp
+FeatureFlagTargetingDescriptor Targeting { get; }
+```
+
+Gets the optional targeting constraints attached to the feature flag.
+
+<a id="type-cephalon-abstractions-features-featureflagevaluationcontext"></a>
+
+### `FeatureFlagEvaluationContext`
+
+Supplies contextual information for evaluating a feature flag at runtime.
+
+#### Declaration
+```csharp
+public sealed class FeatureFlagEvaluationContext
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-features-featureflagevaluationcontext-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `FeatureFlagEvaluationContext`
+
+```csharp
+FeatureFlagEvaluationContext(string environmentName, string moduleId, string behaviorId, string capabilityKey, string transportId, string tenantId, string subjectId, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a feature-flag evaluation context.
+
+Parameters:
+- `environmentName`: The active hosting environment name.
+- `moduleId`: The current module identifier when one is known.
+- `behaviorId`: The current behavior identifier when one is known.
+- `capabilityKey`: The current capability key when one is known.
+- `transportId`: The active transport identifier when one is known.
+- `tenantId`: The current tenant identifier when one is known.
+- `subjectId`: The current subject identifier when one is known.
+- `tags`: The descriptive tags associated with the current request or workload.
+- `metadata`: Additional evaluation metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-features-featureflagevaluationcontext-behaviorid"></a>
+
+##### `BehaviorId`
+
+```csharp
+string BehaviorId { get; }
+```
+
+Gets the current behavior identifier when one is known.
+
+<a id="member-p-cephalon-abstractions-features-featureflagevaluationcontext-capabilitykey"></a>
+
+##### `CapabilityKey`
+
+```csharp
+string CapabilityKey { get; }
+```
+
+Gets the current capability key when one is known.
+
+<a id="member-p-cephalon-abstractions-features-featureflagevaluationcontext-empty"></a>
+
+##### `Empty`
+
+```csharp
+FeatureFlagEvaluationContext Empty { get; }
+```
+
+Gets an empty feature-flag evaluation context.
+
+<a id="member-p-cephalon-abstractions-features-featureflagevaluationcontext-environmentname"></a>
+
+##### `EnvironmentName`
+
+```csharp
+string EnvironmentName { get; }
+```
+
+Gets the active hosting environment name.
+
+<a id="member-p-cephalon-abstractions-features-featureflagevaluationcontext-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets additional evaluation metadata.
+
+<a id="member-p-cephalon-abstractions-features-featureflagevaluationcontext-moduleid"></a>
+
+##### `ModuleId`
+
+```csharp
+string ModuleId { get; }
+```
+
+Gets the current module identifier when one is known.
+
+<a id="member-p-cephalon-abstractions-features-featureflagevaluationcontext-subjectid"></a>
+
+##### `SubjectId`
+
+```csharp
+string SubjectId { get; }
+```
+
+Gets the current subject identifier when one is known.
+
+<a id="member-p-cephalon-abstractions-features-featureflagevaluationcontext-tags"></a>
+
+##### `Tags`
+
+```csharp
+IReadOnlyList<string> Tags { get; }
+```
+
+Gets the descriptive tags associated with the current request or workload.
+
+<a id="member-p-cephalon-abstractions-features-featureflagevaluationcontext-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; }
+```
+
+Gets the current tenant identifier when one is known.
+
+<a id="member-p-cephalon-abstractions-features-featureflagevaluationcontext-transportid"></a>
+
+##### `TransportId`
+
+```csharp
+string TransportId { get; }
+```
+
+Gets the active transport identifier when one is known.
+
+<a id="type-cephalon-abstractions-features-featureflagevaluationresult"></a>
+
+### `FeatureFlagEvaluationResult`
+
+Describes the result of evaluating a feature flag for a specific runtime context.
+
+#### Declaration
+```csharp
+public sealed class FeatureFlagEvaluationResult
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-features-featureflagevaluationresult-ctor-system-string-system-boolean-system-boolean-system-boolean-system-string-system-nullable-cephalon-abstractions-features-featureflagsourcekind-system-string"></a>
+
+##### `FeatureFlagEvaluationResult`
+
+```csharp
+FeatureFlagEvaluationResult(string FeatureId, bool IsDefined, bool IsEnabled, bool Matched, string Reason, FeatureFlagSourceKind? SourceKind, string SourceModuleId)
+```
+
+Describes the result of evaluating a feature flag for a specific runtime context.
+
+Parameters:
+- `FeatureId`: The evaluated feature-flag identifier.
+- `IsDefined`: Indicates whether the feature flag exists in the active runtime.
+- `IsEnabled`: Indicates whether the feature flag resolved to enabled.
+- `Matched`: Indicates whether the supplied evaluation context matched the targeting constraints for the feature flag.
+- `Reason`: The operator-facing explanation for the evaluation result.
+- `SourceKind`: The ownership kind for the resolved feature flag when one exists.
+- `SourceModuleId`: The owning module identifier when the feature flag is module-owned.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-features-featureflagevaluationresult-featureid"></a>
+
+##### `FeatureId`
+
+```csharp
+string FeatureId { get; set; }
+```
+
+The evaluated feature-flag identifier.
+
+<a id="member-p-cephalon-abstractions-features-featureflagevaluationresult-isdefined"></a>
+
+##### `IsDefined`
+
+```csharp
+bool IsDefined { get; set; }
+```
+
+Indicates whether the feature flag exists in the active runtime.
+
+<a id="member-p-cephalon-abstractions-features-featureflagevaluationresult-isenabled"></a>
+
+##### `IsEnabled`
+
+```csharp
+bool IsEnabled { get; set; }
+```
+
+Indicates whether the feature flag resolved to enabled.
+
+<a id="member-p-cephalon-abstractions-features-featureflagevaluationresult-matched"></a>
+
+##### `Matched`
+
+```csharp
+bool Matched { get; set; }
+```
+
+Indicates whether the supplied evaluation context matched the targeting constraints for the feature flag.
+
+<a id="member-p-cephalon-abstractions-features-featureflagevaluationresult-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; set; }
+```
+
+The operator-facing explanation for the evaluation result.
+
+<a id="member-p-cephalon-abstractions-features-featureflagevaluationresult-sourcekind"></a>
+
+##### `SourceKind`
+
+```csharp
+FeatureFlagSourceKind? SourceKind { get; set; }
+```
+
+The ownership kind for the resolved feature flag when one exists.
+
+<a id="member-p-cephalon-abstractions-features-featureflagevaluationresult-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; set; }
+```
+
+The owning module identifier when the feature flag is module-owned.
+
+<a id="type-cephalon-abstractions-features-featureflagsourcekind"></a>
+
+### `FeatureFlagSourceKind`
+
+Identifies who owns a feature flag visible to the active runtime.
+
+#### Declaration
+```csharp
+public enum FeatureFlagSourceKind
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-features-featureflagsourcekind-host"></a>
+
+##### `Host`
+
+```csharp
+const FeatureFlagSourceKind Host
+```
+
+Indicates the feature flag is host-owned and was configured directly by the app.
+
+<a id="member-f-cephalon-abstractions-features-featureflagsourcekind-module"></a>
+
+##### `Module`
+
+```csharp
+const FeatureFlagSourceKind Module
+```
+
+Indicates the feature flag is module-owned and was contributed by a Cephalon module.
+
+<a id="type-cephalon-abstractions-features-featureflagtargetingdescriptor"></a>
+
+### `FeatureFlagTargetingDescriptor`
+
+Describes the optional targeting constraints that govern when a feature flag is considered active for a given runtime evaluation context.
+
+#### Declaration
+```csharp
+public sealed class FeatureFlagTargetingDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-features-featureflagtargetingdescriptor-ctor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `FeatureFlagTargetingDescriptor`
+
+```csharp
+FeatureFlagTargetingDescriptor(IReadOnlyList<string> includedModuleIds, IReadOnlyList<string> excludedModuleIds, IReadOnlyList<string> includedBehaviorIds, IReadOnlyList<string> excludedBehaviorIds, IReadOnlyList<string> includedCapabilityKeys, IReadOnlyList<string> excludedCapabilityKeys, IReadOnlyList<string> includedTransportIds, IReadOnlyList<string> excludedTransportIds, IReadOnlyList<string> includedEnvironmentNames, IReadOnlyList<string> excludedEnvironmentNames, IReadOnlyList<string> includedTenantIds, IReadOnlyList<string> excludedTenantIds, IReadOnlyList<string> includedSubjectIds, IReadOnlyList<string> excludedSubjectIds, IReadOnlyList<string> includedTags, IReadOnlyList<string> excludedTags)
+```
+
+Creates feature-flag targeting constraints.
+
+Parameters:
+- `includedModuleIds`: The module identifiers that are explicitly included in the targeted audience.
+- `excludedModuleIds`: The module identifiers that are explicitly excluded from the targeted audience.
+- `includedBehaviorIds`: The behavior identifiers that are explicitly included in the targeted audience.
+- `excludedBehaviorIds`: The behavior identifiers that are explicitly excluded from the targeted audience.
+- `includedCapabilityKeys`: The capability keys that are explicitly included in the targeted audience.
+- `excludedCapabilityKeys`: The capability keys that are explicitly excluded from the targeted audience.
+- `includedTransportIds`: The transport identifiers that are explicitly included in the targeted audience.
+- `excludedTransportIds`: The transport identifiers that are explicitly excluded from the targeted audience.
+- `includedEnvironmentNames`: The environment names that are explicitly included in the targeted audience.
+- `excludedEnvironmentNames`: The environment names that are explicitly excluded from the targeted audience.
+- `includedTenantIds`: The tenant identifiers that are explicitly included in the targeted audience.
+- `excludedTenantIds`: The tenant identifiers that are explicitly excluded from the targeted audience.
+- `includedSubjectIds`: The subject identifiers that are explicitly included in the targeted audience.
+- `excludedSubjectIds`: The subject identifiers that are explicitly excluded from the targeted audience.
+- `includedTags`: The descriptive tags that are explicitly included in the targeted audience.
+- `excludedTags`: The descriptive tags that are explicitly excluded from the targeted audience.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-empty"></a>
+
+##### `Empty`
+
+```csharp
+FeatureFlagTargetingDescriptor Empty { get; }
+```
+
+Gets an empty targeting descriptor with no constraints.
+
+<a id="member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-excludedbehaviorids"></a>
+
+##### `ExcludedBehaviorIds`
+
+```csharp
+IReadOnlyList<string> ExcludedBehaviorIds { get; }
+```
+
+Gets the explicitly excluded behavior identifiers.
+
+<a id="member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-excludedcapabilitykeys"></a>
+
+##### `ExcludedCapabilityKeys`
+
+```csharp
+IReadOnlyList<string> ExcludedCapabilityKeys { get; }
+```
+
+Gets the explicitly excluded capability keys.
+
+<a id="member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-excludedenvironmentnames"></a>
+
+##### `ExcludedEnvironmentNames`
+
+```csharp
+IReadOnlyList<string> ExcludedEnvironmentNames { get; }
+```
+
+Gets the explicitly excluded environment names.
+
+<a id="member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-excludedmoduleids"></a>
+
+##### `ExcludedModuleIds`
+
+```csharp
+IReadOnlyList<string> ExcludedModuleIds { get; }
+```
+
+Gets the explicitly excluded module identifiers.
+
+<a id="member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-excludedsubjectids"></a>
+
+##### `ExcludedSubjectIds`
+
+```csharp
+IReadOnlyList<string> ExcludedSubjectIds { get; }
+```
+
+Gets the explicitly excluded subject identifiers.
+
+<a id="member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-excludedtags"></a>
+
+##### `ExcludedTags`
+
+```csharp
+IReadOnlyList<string> ExcludedTags { get; }
+```
+
+Gets the explicitly excluded descriptive tags.
+
+<a id="member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-excludedtenantids"></a>
+
+##### `ExcludedTenantIds`
+
+```csharp
+IReadOnlyList<string> ExcludedTenantIds { get; }
+```
+
+Gets the explicitly excluded tenant identifiers.
+
+<a id="member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-excludedtransportids"></a>
+
+##### `ExcludedTransportIds`
+
+```csharp
+IReadOnlyList<string> ExcludedTransportIds { get; }
+```
+
+Gets the explicitly excluded transport identifiers.
+
+<a id="member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any targeting constraint was supplied.
+
+<a id="member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-includedbehaviorids"></a>
+
+##### `IncludedBehaviorIds`
+
+```csharp
+IReadOnlyList<string> IncludedBehaviorIds { get; }
+```
+
+Gets the explicitly included behavior identifiers.
+
+<a id="member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-includedcapabilitykeys"></a>
+
+##### `IncludedCapabilityKeys`
+
+```csharp
+IReadOnlyList<string> IncludedCapabilityKeys { get; }
+```
+
+Gets the explicitly included capability keys.
+
+<a id="member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-includedenvironmentnames"></a>
+
+##### `IncludedEnvironmentNames`
+
+```csharp
+IReadOnlyList<string> IncludedEnvironmentNames { get; }
+```
+
+Gets the explicitly included environment names.
+
+<a id="member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-includedmoduleids"></a>
+
+##### `IncludedModuleIds`
+
+```csharp
+IReadOnlyList<string> IncludedModuleIds { get; }
+```
+
+Gets the explicitly included module identifiers.
+
+<a id="member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-includedsubjectids"></a>
+
+##### `IncludedSubjectIds`
+
+```csharp
+IReadOnlyList<string> IncludedSubjectIds { get; }
+```
+
+Gets the explicitly included subject identifiers.
+
+<a id="member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-includedtags"></a>
+
+##### `IncludedTags`
+
+```csharp
+IReadOnlyList<string> IncludedTags { get; }
+```
+
+Gets the explicitly included descriptive tags.
+
+<a id="member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-includedtenantids"></a>
+
+##### `IncludedTenantIds`
+
+```csharp
+IReadOnlyList<string> IncludedTenantIds { get; }
+```
+
+Gets the explicitly included tenant identifiers.
+
+<a id="member-p-cephalon-abstractions-features-featureflagtargetingdescriptor-includedtransportids"></a>
+
+##### `IncludedTransportIds`
+
+```csharp
+IReadOnlyList<string> IncludedTransportIds { get; }
+```
+
+Gets the explicitly included transport identifiers.
+
+<a id="type-cephalon-abstractions-features-ifeatureflagcontributor"></a>
+
+### `IFeatureFlagContributor`
+
+Allows a module to contribute feature flags to the active runtime.
+
+#### Declaration
+```csharp
+public interface IFeatureFlagContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-features-ifeatureflagcontributor-registerfeatureflags-cephalon-abstractions-features-ifeatureflagregistry"></a>
+
+##### `RegisterFeatureFlags`
+
+```csharp
+void RegisterFeatureFlags(IFeatureFlagRegistry registry)
+```
+
+Registers the feature flags owned by the contributing module.
+
+Parameters:
+- `registry`: The registry that receives feature-flag descriptors.
+
+<a id="type-cephalon-abstractions-features-ifeatureflagregistry"></a>
+
+### `IFeatureFlagRegistry`
+
+Collects feature flags contributed to the active runtime.
+
+#### Declaration
+```csharp
+public interface IFeatureFlagRegistry
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-features-ifeatureflagregistry-add-cephalon-abstractions-features-featureflagdescriptor"></a>
+
+##### `Add`
+
+```csharp
+void Add(FeatureFlagDescriptor featureFlag)
+```
+
+Adds a feature-flag descriptor to the current runtime composition.
+
+Parameters:
+- `featureFlag`: The feature-flag descriptor to register.
+
+<a id="type-cephalon-abstractions-features-ifeatureflagruntimecatalog"></a>
+
+### `IFeatureFlagRuntimeCatalog`
+
+Exposes the feature flags visible to the current runtime.
+
+#### Declaration
+```csharp
+public interface IFeatureFlagRuntimeCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-features-ifeatureflagruntimecatalog-featureflags"></a>
+
+##### `FeatureFlags`
+
+```csharp
+IReadOnlyList<FeatureFlagDescriptor> FeatureFlags { get; }
+```
+
+Gets all feature flags visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-features-ifeatureflagruntimecatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+FeatureFlagDescriptor GetById(string featureFlagId)
+```
+
+Gets one feature flag by its stable identifier.
+
+Returns: The matching feature flag, or `null` when it is not active.
+
+Parameters:
+- `featureFlagId`: The feature-flag identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-features-ifeatureflagruntimecatalog-getbysourcemodule-system-string"></a>
+
+##### `GetBySourceModule`
+
+```csharp
+IReadOnlyList<FeatureFlagDescriptor> GetBySourceModule(string sourceModuleId)
+```
+
+Gets all module-owned feature flags contributed by the requested source module.
+
+Returns: The matching feature flags, or an empty list when none were contributed.
+
+Parameters:
+- `sourceModuleId`: The source-module identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-features-ifeatureflagruntimecatalog-getdisabled"></a>
+
+##### `GetDisabled`
+
+```csharp
+IReadOnlyList<FeatureFlagDescriptor> GetDisabled()
+```
+
+Gets all feature flags that are disabled before targeting is applied.
+
+Returns: The disabled feature flags.
+
+<a id="member-m-cephalon-abstractions-features-ifeatureflagruntimecatalog-getenabled"></a>
+
+##### `GetEnabled`
+
+```csharp
+IReadOnlyList<FeatureFlagDescriptor> GetEnabled()
+```
+
+Gets all feature flags that are enabled before targeting is applied.
+
+Returns: The enabled feature flags.
+
+<a id="type-cephalon-abstractions-features-ifeaturetoggle"></a>
+
+### `IFeatureToggle`
+
+Evaluates runtime feature flags against an optional evaluation context.
+
+#### Declaration
+```csharp
+public interface IFeatureToggle
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-features-ifeaturetoggle-evaluate-system-string-cephalon-abstractions-features-featureflagevaluationcontext"></a>
+
+##### `Evaluate`
+
+```csharp
+FeatureFlagEvaluationResult Evaluate(string featureFlagId, FeatureFlagEvaluationContext context)
+```
+
+Evaluates the requested feature flag and returns a richer operator-facing result.
+
+Returns: The full evaluation result.
+
+Parameters:
+- `featureFlagId`: The stable feature-flag identifier to evaluate.
+- `context`: The optional runtime context used for targeting evaluation.
+
+<a id="member-m-cephalon-abstractions-features-ifeaturetoggle-isenabled-system-string-cephalon-abstractions-features-featureflagevaluationcontext"></a>
+
+##### `IsEnabled`
+
+```csharp
+bool IsEnabled(string featureFlagId, FeatureFlagEvaluationContext context)
+```
+
+Evaluates whether the requested feature flag is enabled for the supplied context.
+
+Returns: `true` when the feature flag resolves to enabled; otherwise `false`.
+
+Parameters:
+- `featureFlagId`: The stable feature-flag identifier to evaluate.
+- `context`: The optional runtime context used for targeting evaluation.
+
 <a id="namespace-cephalon-abstractions-health"></a>
 
 ## Namespace Cephalon.Abstractions.Health
@@ -14304,6 +15096,382 @@ Gets the declared module version, when one is available.
 <a id="namespace-cephalon-abstractions-patterns"></a>
 
 ## Namespace Cephalon.Abstractions.Patterns
+
+<a id="type-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor"></a>
+
+### `BackendForFrontendBehaviorFilterDescriptor`
+
+Describes behavior, capability, and tag-selection hints for one backend-for-frontend binding.
+
+#### Declaration
+```csharp
+public sealed class BackendForFrontendBehaviorFilterDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-ctor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `BackendForFrontendBehaviorFilterDescriptor`
+
+```csharp
+BackendForFrontendBehaviorFilterDescriptor(IReadOnlyList<string> includedBehaviorIds, IReadOnlyList<string> excludedBehaviorIds, IReadOnlyList<string> includedCapabilityKeys, IReadOnlyList<string> excludedCapabilityKeys, IReadOnlyList<string> includedTags, IReadOnlyList<string> excludedTags)
+```
+
+Creates a backend-for-frontend behavior filter descriptor.
+
+Parameters:
+- `includedBehaviorIds`: The explicit behavior identifiers that should stay visible to the client.
+- `excludedBehaviorIds`: The explicit behavior identifiers that should be hidden from the client.
+- `includedCapabilityKeys`: The explicit capability keys that should stay visible to the client.
+- `excludedCapabilityKeys`: The explicit capability keys that should be hidden from the client.
+- `includedTags`: The behavior or endpoint tags that should stay visible to the client.
+- `excludedTags`: The behavior or endpoint tags that should be hidden from the client.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-empty"></a>
+
+##### `Empty`
+
+```csharp
+BackendForFrontendBehaviorFilterDescriptor Empty { get; }
+```
+
+Gets an empty backend-for-frontend behavior filter.
+
+<a id="member-p-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-excludedbehaviorids"></a>
+
+##### `ExcludedBehaviorIds`
+
+```csharp
+IReadOnlyList<string> ExcludedBehaviorIds { get; }
+```
+
+Gets the explicit behavior identifiers that should be hidden from the client.
+
+<a id="member-p-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-excludedcapabilitykeys"></a>
+
+##### `ExcludedCapabilityKeys`
+
+```csharp
+IReadOnlyList<string> ExcludedCapabilityKeys { get; }
+```
+
+Gets the explicit capability keys that should be hidden from the client.
+
+<a id="member-p-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-excludedtags"></a>
+
+##### `ExcludedTags`
+
+```csharp
+IReadOnlyList<string> ExcludedTags { get; }
+```
+
+Gets the behavior or endpoint tags that should be hidden from the client.
+
+<a id="member-p-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any behavior-filter hints were explicitly supplied.
+
+<a id="member-p-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-includedbehaviorids"></a>
+
+##### `IncludedBehaviorIds`
+
+```csharp
+IReadOnlyList<string> IncludedBehaviorIds { get; }
+```
+
+Gets the explicit behavior identifiers that should stay visible to the client.
+
+<a id="member-p-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-includedcapabilitykeys"></a>
+
+##### `IncludedCapabilityKeys`
+
+```csharp
+IReadOnlyList<string> IncludedCapabilityKeys { get; }
+```
+
+Gets the explicit capability keys that should stay visible to the client.
+
+<a id="member-p-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-includedtags"></a>
+
+##### `IncludedTags`
+
+```csharp
+IReadOnlyList<string> IncludedTags { get; }
+```
+
+Gets the behavior or endpoint tags that should stay visible to the client.
+
+<a id="type-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor"></a>
+
+### `BackendForFrontendClientBindingDescriptor`
+
+Describes one client-specific transport binding owned by a Cephalon module.
+
+#### Declaration
+```csharp
+public sealed class BackendForFrontendClientBindingDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `BackendForFrontendClientBindingDescriptor`
+
+```csharp
+BackendForFrontendClientBindingDescriptor(string id, string clientId, string sourceModuleId, string displayName, string description, string transportId, string entryPoint, BackendForFrontendBehaviorFilterDescriptor behaviorFilter, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a backend-for-frontend client binding descriptor.
+
+Parameters:
+- `id`: The stable binding identifier.
+- `clientId`: The stable client identifier, such as `mobile` or `storefront`.
+- `sourceModuleId`: The Cephalon module that owns this binding.
+- `displayName`: The operator-facing binding name.
+- `description`: The human-readable description of the client-specific surface.
+- `transportId`: The transport identifier used by this client surface.
+- `entryPoint`: The transport-specific entry point, route prefix, or endpoint handle when one is known.
+- `behaviorFilter`: The behavior, capability, and tag-selection hints attached to this client binding.
+- `metadata`: Optional binding metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-behaviorfilter"></a>
+
+##### `BehaviorFilter`
+
+```csharp
+BackendForFrontendBehaviorFilterDescriptor BehaviorFilter { get; }
+```
+
+Gets the behavior, capability, and tag-selection hints attached to this client binding.
+
+<a id="member-p-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-clientid"></a>
+
+##### `ClientId`
+
+```csharp
+string ClientId { get; }
+```
+
+Gets the stable client identifier.
+
+<a id="member-p-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable description of the client-specific surface.
+
+<a id="member-p-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing binding name.
+
+<a id="member-p-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-entrypoint"></a>
+
+##### `EntryPoint`
+
+```csharp
+string EntryPoint { get; }
+```
+
+Gets the transport-specific entry point, route prefix, or endpoint handle when one is known.
+
+<a id="member-p-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable binding identifier.
+
+<a id="member-p-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional binding metadata.
+
+<a id="member-p-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; }
+```
+
+Gets the module that owns this client-specific binding.
+
+<a id="member-p-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-transportid"></a>
+
+##### `TransportId`
+
+```csharp
+string TransportId { get; }
+```
+
+Gets the transport identifier used by this client-specific surface.
+
+<a id="type-cephalon-abstractions-patterns-ibackendforfrontendclientbindingcontributor"></a>
+
+### `IBackendForFrontendClientBindingContributor`
+
+Allows a module to contribute backend-for-frontend client bindings into the active runtime.
+
+#### Declaration
+```csharp
+public interface IBackendForFrontendClientBindingContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-patterns-ibackendforfrontendclientbindingcontributor-registerclientbindings-cephalon-abstractions-patterns-ibackendforfrontendclientbindingregistry"></a>
+
+##### `RegisterClientBindings`
+
+```csharp
+void RegisterClientBindings(IBackendForFrontendClientBindingRegistry bindings)
+```
+
+Registers one or more backend-for-frontend client bindings with the supplied registry.
+
+Parameters:
+- `bindings`: The registry that collects contributed client-binding descriptors.
+
+<a id="type-cephalon-abstractions-patterns-ibackendforfrontendclientbindingregistry"></a>
+
+### `IBackendForFrontendClientBindingRegistry`
+
+Collects backend-for-frontend client binding descriptors contributed to the active runtime.
+
+#### Declaration
+```csharp
+public interface IBackendForFrontendClientBindingRegistry
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-patterns-ibackendforfrontendclientbindingregistry-add-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor"></a>
+
+##### `Add`
+
+```csharp
+void Add(BackendForFrontendClientBindingDescriptor binding)
+```
+
+Adds a backend-for-frontend client binding descriptor to the current runtime composition.
+
+Parameters:
+- `binding`: The client binding descriptor to register.
+
+<a id="type-cephalon-abstractions-patterns-ibackendforfrontendruntimecatalog"></a>
+
+### `IBackendForFrontendRuntimeCatalog`
+
+Exposes the backend-for-frontend client bindings visible to the current runtime.
+
+#### Declaration
+```csharp
+public interface IBackendForFrontendRuntimeCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-patterns-ibackendforfrontendruntimecatalog-bindings"></a>
+
+##### `Bindings`
+
+```csharp
+IReadOnlyList<BackendForFrontendClientBindingDescriptor> Bindings { get; }
+```
+
+Gets all backend-for-frontend client bindings visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-patterns-ibackendforfrontendruntimecatalog-getbyclientid-system-string"></a>
+
+##### `GetByClientId`
+
+```csharp
+IReadOnlyList<BackendForFrontendClientBindingDescriptor> GetByClientId(string clientId)
+```
+
+Gets all backend-for-frontend client bindings owned by the requested client identifier.
+
+Returns: The matching client binding descriptors, or an empty list when none are active.
+
+Parameters:
+- `clientId`: The client identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-patterns-ibackendforfrontendruntimecatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+BackendForFrontendClientBindingDescriptor GetById(string bindingId)
+```
+
+Gets one backend-for-frontend client binding by its stable identifier.
+
+Returns: The matching client binding descriptor, or `null` when it is not active.
+
+Parameters:
+- `bindingId`: The binding identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-patterns-ibackendforfrontendruntimecatalog-getbysourcemodule-system-string"></a>
+
+##### `GetBySourceModule`
+
+```csharp
+IReadOnlyList<BackendForFrontendClientBindingDescriptor> GetBySourceModule(string sourceModuleId)
+```
+
+Gets all backend-for-frontend client bindings owned by the requested module.
+
+Returns: The matching client binding descriptors, or an empty list when none are active.
+
+Parameters:
+- `sourceModuleId`: The module identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-patterns-ibackendforfrontendruntimecatalog-getbytransportid-system-string"></a>
+
+##### `GetByTransportId`
+
+```csharp
+IReadOnlyList<BackendForFrontendClientBindingDescriptor> GetByTransportId(string transportId)
+```
+
+Gets all backend-for-frontend client bindings that target the requested transport.
+
+Returns: The matching client binding descriptors, or an empty list when none are active.
+
+Parameters:
+- `transportId`: The transport identifier to filter by.
 
 <a id="type-cephalon-abstractions-patterns-istranglerfigmigrationruntimecatalog"></a>
 
@@ -17021,6 +18189,508 @@ Gets the resolved tenant context when resolution succeeded.
 <a id="namespace-cephalon-abstractions-transports"></a>
 
 ## Namespace Cephalon.Abstractions.Transports
+
+<a id="type-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor"></a>
+
+### `BackendForFrontendRestDocumentRuntimeDescriptor`
+
+Describes one backend-for-frontend REST documentation surface materialized for one scope and one published OpenAPI document.
+
+Remarks: These runtime descriptors keep client-aware REST documentation surfaces introspectable without turning OpenAPI JSON or Scalar page routes into a second source of truth outside the shared backend-for-frontend and REST runtime catalogs.
+
+#### Declaration
+```csharp
+public sealed class BackendForFrontendRestDocumentRuntimeDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `BackendForFrontendRestDocumentRuntimeDescriptor`
+
+```csharp
+BackendForFrontendRestDocumentRuntimeDescriptor(string id, string kind, string scopeId, string clientId, string documentName, string openApiPath, string scalarPath, IReadOnlyList<string> bindingIds, IReadOnlyList<string> sourceModuleIds, IReadOnlyList<string> runtimeEndpointIds, IReadOnlyList<string> restEndpointIds)
+```
+
+Creates a backend-for-frontend REST documentation runtime descriptor.
+
+Parameters:
+- `id`: The stable documentation-surface identifier.
+- `kind`: The stable scope kind. Supported values are `BindingKind` and `ClientKind`.
+- `scopeId`: The stable scope identifier. For binding-scoped surfaces this is the binding identifier, while client-scoped surfaces use the client identifier.
+- `clientId`: The stable client identifier served by the materialized document.
+- `documentName`: The resolved OpenAPI document name.
+- `openApiPath`: The rooted OpenAPI JSON path for the filtered document.
+- `scalarPath`: The rooted Scalar page path for the filtered document.
+- `bindingIds`: The backend-for-frontend binding identifiers that contribute to the materialized document. Binding-scoped surfaces contain one value, while client-scoped surfaces can aggregate more than one binding.
+- `sourceModuleIds`: The published-endpoint source-module identifiers represented in the materialized document.
+- `runtimeEndpointIds`: The client-aware runtime endpoint identifiers included in the materialized document.
+- `restEndpointIds`: The published REST endpoint identifiers included in the materialized document.
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-bindingkind"></a>
+
+##### `BindingKind`
+
+```csharp
+const string BindingKind
+```
+
+The stable kind identifier used when the documentation surface is scoped to one binding.
+
+<a id="member-f-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-clientkind"></a>
+
+##### `ClientKind`
+
+```csharp
+const string ClientKind
+```
+
+The stable kind identifier used when the documentation surface is scoped to one client.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-bindingid"></a>
+
+##### `BindingId`
+
+```csharp
+string BindingId { get; }
+```
+
+Gets the binding identifier when the surface is scoped to one binding.
+
+<a id="member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-bindingids"></a>
+
+##### `BindingIds`
+
+```csharp
+IReadOnlyList<string> BindingIds { get; }
+```
+
+Gets the contributing backend-for-frontend binding identifiers.
+
+<a id="member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-clientid"></a>
+
+##### `ClientId`
+
+```csharp
+string ClientId { get; }
+```
+
+Gets the stable client identifier represented by the materialized document.
+
+<a id="member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-documentname"></a>
+
+##### `DocumentName`
+
+```csharp
+string DocumentName { get; }
+```
+
+Gets the resolved OpenAPI document name.
+
+<a id="member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable documentation-surface identifier.
+
+<a id="member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-kind"></a>
+
+##### `Kind`
+
+```csharp
+string Kind { get; }
+```
+
+Gets the stable scope kind.
+
+<a id="member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-openapipath"></a>
+
+##### `OpenApiPath`
+
+```csharp
+string OpenApiPath { get; }
+```
+
+Gets the rooted OpenAPI JSON path for the filtered document.
+
+<a id="member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-restendpointids"></a>
+
+##### `RestEndpointIds`
+
+```csharp
+IReadOnlyList<string> RestEndpointIds { get; }
+```
+
+Gets the included published REST endpoint identifiers.
+
+<a id="member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-runtimeendpointids"></a>
+
+##### `RuntimeEndpointIds`
+
+```csharp
+IReadOnlyList<string> RuntimeEndpointIds { get; }
+```
+
+Gets the included client-aware runtime endpoint identifiers.
+
+<a id="member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-scalarpath"></a>
+
+##### `ScalarPath`
+
+```csharp
+string ScalarPath { get; }
+```
+
+Gets the rooted Scalar page path for the filtered document.
+
+<a id="member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-scopeid"></a>
+
+##### `ScopeId`
+
+```csharp
+string ScopeId { get; }
+```
+
+Gets the stable scope identifier.
+
+<a id="member-p-cephalon-abstractions-transports-backendforfrontendrestdocumentruntimedescriptor-sourcemoduleids"></a>
+
+##### `SourceModuleIds`
+
+```csharp
+IReadOnlyList<string> SourceModuleIds { get; }
+```
+
+Gets the published-endpoint source-module identifiers represented in the materialized document.
+
+<a id="type-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor"></a>
+
+### `BackendForFrontendRestEndpointRuntimeDescriptor`
+
+Describes one backend-for-frontend client binding matched to one published REST endpoint.
+
+Remarks: This runtime surface keeps the host-agnostic backend-for-frontend binding contract separate from the host-owned REST runtime catalog while still letting operator tooling answer which published REST endpoints are currently visible to a specific client binding.
+
+#### Declaration
+```csharp
+public sealed class BackendForFrontendRestEndpointRuntimeDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-ctor-system-string-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor-cephalon-abstractions-transports-restendpointruntimedescriptor-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `BackendForFrontendRestEndpointRuntimeDescriptor`
+
+```csharp
+BackendForFrontendRestEndpointRuntimeDescriptor(string id, BackendForFrontendClientBindingDescriptor binding, RestEndpointRuntimeDescriptor endpoint, bool matchedByDefault, IReadOnlyList<string> matchedBehaviorIds, IReadOnlyList<string> matchedCapabilityKeys, IReadOnlyList<string> matchedTags)
+```
+
+Creates a backend-for-frontend REST endpoint runtime descriptor.
+
+Parameters:
+- `id`: The stable binding-plus-endpoint identifier.
+- `binding`: The backend-for-frontend client binding that selected the endpoint.
+- `endpoint`: The published REST endpoint selected for that binding.
+- `matchedByDefault`: `true` when the endpoint stayed visible because the binding declared no positive include filters and the endpoint was not excluded.
+- `matchedBehaviorIds`: The included behavior identifiers that matched the published endpoint when explicit behavior-id filters were part of the binding.
+- `matchedCapabilityKeys`: The included required-capability keys that matched the published endpoint when explicit capability filters were part of the binding.
+- `matchedTags`: The included tags that matched the published endpoint when explicit tag filters were part of the binding.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-binding"></a>
+
+##### `Binding`
+
+```csharp
+BackendForFrontendClientBindingDescriptor Binding { get; }
+```
+
+Gets the backend-for-frontend client binding that selected the endpoint.
+
+<a id="member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-bindingid"></a>
+
+##### `BindingId`
+
+```csharp
+string BindingId { get; }
+```
+
+Gets the stable backend-for-frontend binding identifier.
+
+<a id="member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-clientid"></a>
+
+##### `ClientId`
+
+```csharp
+string ClientId { get; }
+```
+
+Gets the stable client identifier.
+
+<a id="member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-endpoint"></a>
+
+##### `Endpoint`
+
+```csharp
+RestEndpointRuntimeDescriptor Endpoint { get; }
+```
+
+Gets the published REST endpoint selected for that binding.
+
+<a id="member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable binding-plus-endpoint identifier.
+
+<a id="member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-matchedbehaviorids"></a>
+
+##### `MatchedBehaviorIds`
+
+```csharp
+IReadOnlyList<string> MatchedBehaviorIds { get; }
+```
+
+Gets the included behavior identifiers that matched the published endpoint.
+
+<a id="member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-matchedbydefault"></a>
+
+##### `MatchedByDefault`
+
+```csharp
+bool MatchedByDefault { get; }
+```
+
+Gets a value indicating whether the endpoint stayed visible because the binding declared no positive include filters and the endpoint was not excluded.
+
+<a id="member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-matchedcapabilitykeys"></a>
+
+##### `MatchedCapabilityKeys`
+
+```csharp
+IReadOnlyList<string> MatchedCapabilityKeys { get; }
+```
+
+Gets the included required-capability keys that matched the published endpoint.
+
+<a id="member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-matchedtags"></a>
+
+##### `MatchedTags`
+
+```csharp
+IReadOnlyList<string> MatchedTags { get; }
+```
+
+Gets the included tags that matched the published endpoint.
+
+<a id="member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-restendpointid"></a>
+
+##### `RestEndpointId`
+
+```csharp
+string RestEndpointId { get; }
+```
+
+Gets the stable published REST endpoint identifier.
+
+<a id="member-p-cephalon-abstractions-transports-backendforfrontendrestendpointruntimedescriptor-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; }
+```
+
+Gets the binding-owner module identifier.
+
+<a id="type-cephalon-abstractions-transports-ibackendforfrontendrestdocumentruntimecatalog"></a>
+
+### `IBackendForFrontendRestDocumentRuntimeCatalog`
+
+Exposes the client-aware REST documentation surfaces derived from the active backend-for-frontend bindings and published REST endpoint catalog.
+
+Remarks: This runtime surface keeps filtered OpenAPI JSON and Scalar materialization aligned with the existing backend-for-frontend binding and REST endpoint runtime catalogs instead of introducing a host-only documentation registry.
+
+#### Declaration
+```csharp
+public interface IBackendForFrontendRestDocumentRuntimeCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-ibackendforfrontendrestdocumentruntimecatalog-documents"></a>
+
+##### `Documents`
+
+```csharp
+IReadOnlyList<BackendForFrontendRestDocumentRuntimeDescriptor> Documents { get; }
+```
+
+Gets all client-aware REST documentation surfaces visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-transports-ibackendforfrontendrestdocumentruntimecatalog-getbybindingid-system-string"></a>
+
+##### `GetByBindingId`
+
+```csharp
+IReadOnlyList<BackendForFrontendRestDocumentRuntimeDescriptor> GetByBindingId(string bindingId)
+```
+
+Gets all binding-scoped REST documentation surfaces owned by the requested binding.
+
+Returns: The matching runtime descriptors, or an empty list when the binding is not active.
+
+Parameters:
+- `bindingId`: The backend-for-frontend binding identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-transports-ibackendforfrontendrestdocumentruntimecatalog-getbyclientid-system-string"></a>
+
+##### `GetByClientId`
+
+```csharp
+IReadOnlyList<BackendForFrontendRestDocumentRuntimeDescriptor> GetByClientId(string clientId)
+```
+
+Gets all client-scoped REST documentation surfaces owned by the requested client.
+
+Returns: The matching runtime descriptors, or an empty list when the client is not active.
+
+Parameters:
+- `clientId`: The client identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-transports-ibackendforfrontendrestdocumentruntimecatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+BackendForFrontendRestDocumentRuntimeDescriptor GetById(string documentId)
+```
+
+Gets one client-aware REST documentation surface by its stable identifier.
+
+Returns: The matching runtime descriptor, or `null` when it is not active.
+
+Parameters:
+- `documentId`: The documentation-surface identifier to resolve.
+
+<a id="type-cephalon-abstractions-transports-ibackendforfrontendrestruntimecatalog"></a>
+
+### `IBackendForFrontendRestRuntimeCatalog`
+
+Exposes the client-aware published REST endpoint projections derived from the active backend-for-frontend bindings.
+
+Remarks: This surface keeps backend-for-frontend client bindings and published REST endpoint material separate from the broader binding catalog so hosts can answer which REST endpoints are visible to each client binding without inventing a host-only registry outside the shared runtime truth.
+
+#### Declaration
+```csharp
+public interface IBackendForFrontendRestRuntimeCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-transports-ibackendforfrontendrestruntimecatalog-endpoints"></a>
+
+##### `Endpoints`
+
+```csharp
+IReadOnlyList<BackendForFrontendRestEndpointRuntimeDescriptor> Endpoints { get; }
+```
+
+Gets all client-aware published REST endpoint projections visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-transports-ibackendforfrontendrestruntimecatalog-getbybindingid-system-string"></a>
+
+##### `GetByBindingId`
+
+```csharp
+IReadOnlyList<BackendForFrontendRestEndpointRuntimeDescriptor> GetByBindingId(string bindingId)
+```
+
+Gets all client-aware published REST endpoint projections owned by the requested binding.
+
+Returns: The matching runtime descriptors, or an empty list when the binding is not active.
+
+Parameters:
+- `bindingId`: The backend-for-frontend binding identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-transports-ibackendforfrontendrestruntimecatalog-getbyclientid-system-string"></a>
+
+##### `GetByClientId`
+
+```csharp
+IReadOnlyList<BackendForFrontendRestEndpointRuntimeDescriptor> GetByClientId(string clientId)
+```
+
+Gets all client-aware published REST endpoint projections owned by the requested client.
+
+Returns: The matching runtime descriptors, or an empty list when the client is not active.
+
+Parameters:
+- `clientId`: The client identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-transports-ibackendforfrontendrestruntimecatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+BackendForFrontendRestEndpointRuntimeDescriptor GetById(string runtimeEndpointId)
+```
+
+Gets one client-aware published REST endpoint projection by its stable identifier.
+
+Returns: The matching runtime descriptor, or `null` when it is not active.
+
+Parameters:
+- `runtimeEndpointId`: The binding-plus-endpoint identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-transports-ibackendforfrontendrestruntimecatalog-getbyrestendpointid-system-string"></a>
+
+##### `GetByRestEndpointId`
+
+```csharp
+IReadOnlyList<BackendForFrontendRestEndpointRuntimeDescriptor> GetByRestEndpointId(string restEndpointId)
+```
+
+Gets all client-aware runtime projections that expose the requested published REST endpoint.
+
+Returns: The matching runtime descriptors, or an empty list when the endpoint is not visible.
+
+Parameters:
+- `restEndpointId`: The published REST endpoint identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-transports-ibackendforfrontendrestruntimecatalog-getbysourcemodule-system-string"></a>
+
+##### `GetBySourceModule`
+
+```csharp
+IReadOnlyList<BackendForFrontendRestEndpointRuntimeDescriptor> GetBySourceModule(string sourceModuleId)
+```
+
+Gets all client-aware published REST endpoint projections contributed by the requested binding-owner module.
+
+Returns: The matching runtime descriptors, or an empty list when the module is not active.
+
+Parameters:
+- `sourceModuleId`: The binding-owner module identifier to filter by.
 
 <a id="type-cephalon-abstractions-transports-irestendpointauthoringpolicyruntimecatalog"></a>
 

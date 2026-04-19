@@ -451,6 +451,66 @@ Gets the service collection that the builder mutates while composing the engine.
 
 #### Methods
 
+<a id="member-m-cephalon-engine-composition-enginebuilder-addbackendforfrontendclientbinding-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor"></a>
+
+##### `AddBackendForFrontendClientBinding`
+
+```csharp
+EngineBuilder AddBackendForFrontendClientBinding(BackendForFrontendClientBindingDescriptor binding)
+```
+
+Adds a backend-for-frontend client binding to the current runtime composition.
+
+Returns: The same builder instance.
+
+Parameters:
+- `binding`: The client binding descriptor to add.
+
+<a id="member-m-cephalon-engine-composition-enginebuilder-addbackendforfrontendclientbindings-system-collections-generic-ienumerable-cephalon-abstractions-patterns-backendforfrontendclientbindingdescriptor"></a>
+
+##### `AddBackendForFrontendClientBindings`
+
+```csharp
+EngineBuilder AddBackendForFrontendClientBindings(IEnumerable<BackendForFrontendClientBindingDescriptor> bindings)
+```
+
+Adds multiple backend-for-frontend client bindings to the current runtime composition.
+
+Returns: The same builder instance.
+
+Parameters:
+- `bindings`: The client binding descriptors to add.
+
+<a id="member-m-cephalon-engine-composition-enginebuilder-addfeatureflag-cephalon-abstractions-features-featureflagdescriptor"></a>
+
+##### `AddFeatureFlag`
+
+```csharp
+EngineBuilder AddFeatureFlag(FeatureFlagDescriptor featureFlag)
+```
+
+Adds a feature flag to the current runtime composition.
+
+Returns: The same builder instance.
+
+Parameters:
+- `featureFlag`: The feature-flag descriptor to add.
+
+<a id="member-m-cephalon-engine-composition-enginebuilder-addfeatureflags-system-collections-generic-ienumerable-cephalon-abstractions-features-featureflagdescriptor"></a>
+
+##### `AddFeatureFlags`
+
+```csharp
+EngineBuilder AddFeatureFlags(IEnumerable<FeatureFlagDescriptor> featureFlags)
+```
+
+Adds multiple feature flags to the current runtime composition.
+
+Returns: The same builder instance.
+
+Parameters:
+- `featureFlags`: The feature-flag descriptors to add.
+
 <a id="member-m-cephalon-engine-composition-enginebuilder-addlanguageresources-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
 
 ##### `AddLanguageResources`
@@ -764,6 +824,21 @@ Returns: The same builder instance.
 Parameters:
 - `technology`: The technology descriptor to register.
 
+<a id="member-m-cephalon-engine-composition-enginebuilder-usebackendforfrontendsettings-cephalon-engine-configuration-backendforfrontendsettings"></a>
+
+##### `UseBackendForFrontendSettings`
+
+```csharp
+EngineBuilder UseBackendForFrontendSettings(BackendForFrontendSettings settings)
+```
+
+Replaces the backend-for-frontend settings used by the runtime client-binding catalog.
+
+Returns: The same builder instance.
+
+Parameters:
+- `settings`: The backend-for-frontend settings to apply.
+
 <a id="member-m-cephalon-engine-composition-enginebuilder-useblueprint-cephalon-abstractions-appmodel-appblueprint"></a>
 
 ##### `UseBlueprint`
@@ -811,6 +886,21 @@ Returns: The same builder instance.
 
 Parameters:
 - `policy`: The lifecycle failure policy to apply.
+
+<a id="member-m-cephalon-engine-composition-enginebuilder-usefeaturesettings-cephalon-engine-configuration-featuresettings"></a>
+
+##### `UseFeatureSettings`
+
+```csharp
+EngineBuilder UseFeatureSettings(FeatureSettings settings)
+```
+
+Merges feature-flag settings into the current builder state.
+
+Returns: The same builder instance.
+
+Parameters:
+- `settings`: The feature-flag settings to merge.
 
 <a id="member-m-cephalon-engine-composition-enginebuilder-uselocalization-cephalon-engine-configuration-localizationsettings"></a>
 
@@ -1397,6 +1487,355 @@ AuditSettings FromConfiguration(IConfiguration configuration, string sectionPath
 Reads audit settings from configuration.
 
 Returns: The parsed audit settings.
+
+Parameters:
+- `configuration`: The configuration source that contains the engine section.
+- `sectionPath`: The root configuration section path to read from.
+
+<a id="type-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings"></a>
+
+### `BackendForFrontendBehaviorFilterSettings`
+
+Describes configuration-driven behavior-filter hints for one backend-for-frontend binding.
+
+#### Declaration
+```csharp
+public sealed class BackendForFrontendBehaviorFilterSettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-ctor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `BackendForFrontendBehaviorFilterSettings`
+
+```csharp
+BackendForFrontendBehaviorFilterSettings(IReadOnlyList<string> includedBehaviorIds, IReadOnlyList<string> excludedBehaviorIds, IReadOnlyList<string> includedCapabilityKeys, IReadOnlyList<string> excludedCapabilityKeys, IReadOnlyList<string> includedTags, IReadOnlyList<string> excludedTags)
+```
+
+Creates backend-for-frontend behavior-filter settings.
+
+Parameters:
+- `includedBehaviorIds`: The explicit behavior identifiers that should stay visible to the client.
+- `excludedBehaviorIds`: The explicit behavior identifiers that should be hidden from the client.
+- `includedCapabilityKeys`: The explicit capability keys that should stay visible to the client.
+- `excludedCapabilityKeys`: The explicit capability keys that should be hidden from the client.
+- `includedTags`: The behavior or endpoint tags that should stay visible to the client.
+- `excludedTags`: The behavior or endpoint tags that should be hidden from the client.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-empty"></a>
+
+##### `Empty`
+
+```csharp
+BackendForFrontendBehaviorFilterSettings Empty { get; }
+```
+
+Gets an empty backend-for-frontend behavior-filter settings instance.
+
+<a id="member-p-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-excludedbehaviorids"></a>
+
+##### `ExcludedBehaviorIds`
+
+```csharp
+IReadOnlyList<string> ExcludedBehaviorIds { get; }
+```
+
+Gets the explicit behavior identifiers that should be hidden from the client.
+
+<a id="member-p-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-excludedcapabilitykeys"></a>
+
+##### `ExcludedCapabilityKeys`
+
+```csharp
+IReadOnlyList<string> ExcludedCapabilityKeys { get; }
+```
+
+Gets the explicit capability keys that should be hidden from the client.
+
+<a id="member-p-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-excludedtags"></a>
+
+##### `ExcludedTags`
+
+```csharp
+IReadOnlyList<string> ExcludedTags { get; }
+```
+
+Gets the behavior or endpoint tags that should be hidden from the client.
+
+<a id="member-p-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any backend-for-frontend behavior-filter settings were explicitly supplied.
+
+<a id="member-p-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-includedbehaviorids"></a>
+
+##### `IncludedBehaviorIds`
+
+```csharp
+IReadOnlyList<string> IncludedBehaviorIds { get; }
+```
+
+Gets the explicit behavior identifiers that should stay visible to the client.
+
+<a id="member-p-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-includedcapabilitykeys"></a>
+
+##### `IncludedCapabilityKeys`
+
+```csharp
+IReadOnlyList<string> IncludedCapabilityKeys { get; }
+```
+
+Gets the explicit capability keys that should stay visible to the client.
+
+<a id="member-p-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-includedtags"></a>
+
+##### `IncludedTags`
+
+```csharp
+IReadOnlyList<string> IncludedTags { get; }
+```
+
+Gets the behavior or endpoint tags that should stay visible to the client.
+
+#### Methods
+
+<a id="member-m-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-fromsection-microsoft-extensions-configuration-iconfigurationsection"></a>
+
+##### `FromSection`
+
+```csharp
+BackendForFrontendBehaviorFilterSettings FromSection(IConfigurationSection section)
+```
+
+Reads backend-for-frontend behavior-filter settings from the supplied configuration section.
+
+Returns: The parsed behavior-filter settings.
+
+Parameters:
+- `section`: The configuration section that contains the behavior-filter settings.
+
+<a id="type-cephalon-engine-configuration-backendforfrontendclientbindingsettings"></a>
+
+### `BackendForFrontendClientBindingSettings`
+
+Describes one configuration-driven backend-for-frontend client binding.
+
+#### Declaration
+```csharp
+public sealed class BackendForFrontendClientBindingSettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-backendforfrontendclientbindingsettings-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-cephalon-engine-configuration-backendforfrontendbehaviorfiltersettings-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `BackendForFrontendClientBindingSettings`
+
+```csharp
+BackendForFrontendClientBindingSettings(string id, string clientId, string sourceModuleId, string displayName, string description, string transportId, string entryPoint, BackendForFrontendBehaviorFilterSettings behaviorFilter, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates backend-for-frontend client binding settings.
+
+Parameters:
+- `id`: The stable binding identifier.
+- `clientId`: The stable client identifier.
+- `sourceModuleId`: The Cephalon module that owns this binding.
+- `displayName`: The operator-facing binding name.
+- `description`: The human-readable description of the client-specific surface.
+- `transportId`: The transport identifier used by this client surface.
+- `entryPoint`: The transport-specific entry point, route prefix, or endpoint handle when one is known.
+- `behaviorFilter`: The behavior, capability, and tag-selection hints attached to this binding.
+- `metadata`: Optional binding metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-backendforfrontendclientbindingsettings-behaviorfilter"></a>
+
+##### `BehaviorFilter`
+
+```csharp
+BackendForFrontendBehaviorFilterSettings BehaviorFilter { get; }
+```
+
+Gets the behavior, capability, and tag-selection hints attached to this client binding.
+
+<a id="member-p-cephalon-engine-configuration-backendforfrontendclientbindingsettings-clientid"></a>
+
+##### `ClientId`
+
+```csharp
+string ClientId { get; }
+```
+
+Gets the stable client identifier.
+
+<a id="member-p-cephalon-engine-configuration-backendforfrontendclientbindingsettings-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable description of the client-specific surface.
+
+<a id="member-p-cephalon-engine-configuration-backendforfrontendclientbindingsettings-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing binding name.
+
+<a id="member-p-cephalon-engine-configuration-backendforfrontendclientbindingsettings-entrypoint"></a>
+
+##### `EntryPoint`
+
+```csharp
+string EntryPoint { get; }
+```
+
+Gets the transport-specific entry point, route prefix, or endpoint handle when one is known.
+
+<a id="member-p-cephalon-engine-configuration-backendforfrontendclientbindingsettings-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable binding identifier.
+
+<a id="member-p-cephalon-engine-configuration-backendforfrontendclientbindingsettings-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional binding metadata.
+
+<a id="member-p-cephalon-engine-configuration-backendforfrontendclientbindingsettings-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; }
+```
+
+Gets the module that owns this client-specific binding.
+
+<a id="member-p-cephalon-engine-configuration-backendforfrontendclientbindingsettings-transportid"></a>
+
+##### `TransportId`
+
+```csharp
+string TransportId { get; }
+```
+
+Gets the transport identifier used by this client-specific surface.
+
+#### Methods
+
+<a id="member-m-cephalon-engine-configuration-backendforfrontendclientbindingsettings-fromsection-microsoft-extensions-configuration-iconfigurationsection"></a>
+
+##### `FromSection`
+
+```csharp
+BackendForFrontendClientBindingSettings FromSection(IConfigurationSection section)
+```
+
+Reads one backend-for-frontend client binding from configuration.
+
+Returns: The parsed client-binding settings.
+
+Parameters:
+- `section`: The configuration section that contains the client binding.
+
+<a id="type-cephalon-engine-configuration-backendforfrontendsettings"></a>
+
+### `BackendForFrontendSettings`
+
+Describes configuration-driven backend-for-frontend settings for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class BackendForFrontendSettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-backendforfrontendsettings-ctor-system-collections-generic-ireadonlylist-cephalon-engine-configuration-backendforfrontendclientbindingsettings"></a>
+
+##### `BackendForFrontendSettings`
+
+```csharp
+BackendForFrontendSettings(IReadOnlyList<BackendForFrontendClientBindingSettings> bindings)
+```
+
+Creates backend-for-frontend settings.
+
+Parameters:
+- `bindings`: The client-specific transport bindings configured for the app.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-backendforfrontendsettings-bindings"></a>
+
+##### `Bindings`
+
+```csharp
+IReadOnlyList<BackendForFrontendClientBindingSettings> Bindings { get; }
+```
+
+Gets the client-specific transport bindings configured for the app.
+
+<a id="member-p-cephalon-engine-configuration-backendforfrontendsettings-empty"></a>
+
+##### `Empty`
+
+```csharp
+BackendForFrontendSettings Empty { get; }
+```
+
+Gets an empty backend-for-frontend settings instance.
+
+<a id="member-p-cephalon-engine-configuration-backendforfrontendsettings-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any backend-for-frontend settings were explicitly supplied.
+
+#### Methods
+
+<a id="member-m-cephalon-engine-configuration-backendforfrontendsettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string"></a>
+
+##### `FromConfiguration`
+
+```csharp
+BackendForFrontendSettings FromConfiguration(IConfiguration configuration, string sectionPath)
+```
+
+Reads backend-for-frontend settings from configuration.
+
+Returns: The parsed backend-for-frontend settings.
 
 Parameters:
 - `configuration`: The configuration source that contains the engine section.
@@ -2464,12 +2903,12 @@ public sealed class EngineSettings
 
 #### Constructors
 
-<a id="member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy-cephalon-engine-configuration-datasettings-cephalon-engine-configuration-databasetopologysettings-cephalon-engine-configuration-identitysettings-cephalon-engine-configuration-tenancysettings-cephalon-engine-configuration-auditsettings-cephalon-engine-configuration-messagingsettings-cephalon-engine-configuration-resiliencesettings-cephalon-engine-configuration-migrationsettings"></a>
+<a id="member-m-cephalon-engine-configuration-enginesettings-ctor-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-engine-configuration-engineoptions-cephalon-engine-configuration-modulediscoverysettings-cephalon-engine-configuration-localizationsettings-cephalon-engine-configuration-failurepolicy-cephalon-engine-configuration-trustpolicy-cephalon-engine-configuration-packagepolicy-cephalon-engine-configuration-datasettings-cephalon-engine-configuration-databasetopologysettings-cephalon-engine-configuration-identitysettings-cephalon-engine-configuration-tenancysettings-cephalon-engine-configuration-auditsettings-cephalon-engine-configuration-messagingsettings-cephalon-engine-configuration-resiliencesettings-cephalon-engine-configuration-migrationsettings-cephalon-engine-configuration-backendforfrontendsettings-cephalon-engine-configuration-featuresettings"></a>
 
 ##### `EngineSettings`
 
 ```csharp
-EngineSettings(string blueprint, IReadOnlyList<string> patterns, IReadOnlyList<string> transports, IReadOnlyList<string> technologies, EngineOptions options, ModuleDiscoverySettings discovery, LocalizationSettings localization, FailurePolicy failurePolicy, TrustPolicy trustPolicy, PackagePolicy packagePolicy, DataSettings data, DatabaseTopologySettings databases, IdentitySettings identity, TenancySettings tenancy, AuditSettings audit, MessagingSettings messaging, ResilienceSettings resilience, MigrationSettings migration)
+EngineSettings(string blueprint, IReadOnlyList<string> patterns, IReadOnlyList<string> transports, IReadOnlyList<string> technologies, EngineOptions options, ModuleDiscoverySettings discovery, LocalizationSettings localization, FailurePolicy failurePolicy, TrustPolicy trustPolicy, PackagePolicy packagePolicy, DataSettings data, DatabaseTopologySettings databases, IdentitySettings identity, TenancySettings tenancy, AuditSettings audit, MessagingSettings messaging, ResilienceSettings resilience, MigrationSettings migration, BackendForFrontendSettings backendForFrontend, FeatureSettings features)
 ```
 
 Initializes a new instance of the `EngineSettings` class.
@@ -2493,6 +2932,8 @@ Parameters:
 - `messaging`: Configuration-driven messaging settings.
 - `resilience`: Configuration-driven resilience settings.
 - `migration`: Configuration-driven migration settings.
+- `backendForFrontend`: Configuration-driven backend-for-frontend settings.
+- `features`: Configuration-driven feature-flag settings.
 
 #### Fields
 
@@ -2517,6 +2958,16 @@ AuditSettings Audit { get; }
 ```
 
 Gets configuration-driven audit settings.
+
+<a id="member-p-cephalon-engine-configuration-enginesettings-backendforfrontend"></a>
+
+##### `BackendForFrontend`
+
+```csharp
+BackendForFrontendSettings BackendForFrontend { get; }
+```
+
+Gets configuration-driven backend-for-frontend settings.
 
 <a id="member-p-cephalon-engine-configuration-enginesettings-blueprint"></a>
 
@@ -2567,6 +3018,16 @@ FailurePolicy FailurePolicy { get; }
 ```
 
 Gets runtime failure policy values.
+
+<a id="member-p-cephalon-engine-configuration-enginesettings-features"></a>
+
+##### `Features`
+
+```csharp
+FeatureSettings Features { get; }
+```
+
+Gets configuration-driven feature-flag settings.
 
 <a id="member-p-cephalon-engine-configuration-enginesettings-hasvalues"></a>
 
@@ -2853,6 +3314,454 @@ FailurePolicy FromConfiguration(IConfiguration configuration, string sectionPath
 Reads the failure policy from configuration.
 
 Returns: The parsed failure policy.
+
+Parameters:
+- `configuration`: The configuration source that contains the engine section.
+- `sectionPath`: The root configuration section path to read from.
+
+<a id="type-cephalon-engine-configuration-featureflagsettings"></a>
+
+### `FeatureFlagSettings`
+
+Describes one configuration-driven feature flag.
+
+#### Declaration
+```csharp
+public sealed class FeatureFlagSettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-featureflagsettings-ctor-system-string-system-string-system-string-system-boolean-cephalon-abstractions-features-featureflagsourcekind-system-string-cephalon-engine-configuration-featureflagtargetingsettings-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `FeatureFlagSettings`
+
+```csharp
+FeatureFlagSettings(string id, string displayName, string description, bool enabled, FeatureFlagSourceKind sourceKind, string sourceModuleId, FeatureFlagTargetingSettings targeting, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates feature-flag settings.
+
+Parameters:
+- `id`: The stable feature-flag identifier.
+- `displayName`: The operator-facing feature-flag name.
+- `description`: The human-readable feature-flag description.
+- `enabled`: Indicates whether the feature flag is enabled before targeting is applied.
+- `sourceKind`: Identifies whether the feature flag is host-owned or module-owned.
+- `sourceModuleId`: The source-module identifier when the feature flag is module-owned.
+- `targeting`: The optional targeting settings attached to the feature flag.
+- `metadata`: Optional operator-facing metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-featureflagsettings-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable feature-flag description.
+
+<a id="member-p-cephalon-engine-configuration-featureflagsettings-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing feature-flag name.
+
+<a id="member-p-cephalon-engine-configuration-featureflagsettings-enabled"></a>
+
+##### `Enabled`
+
+```csharp
+bool Enabled { get; }
+```
+
+Gets a value indicating whether the feature flag is enabled before targeting is applied.
+
+<a id="member-p-cephalon-engine-configuration-featureflagsettings-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable feature-flag identifier.
+
+<a id="member-p-cephalon-engine-configuration-featureflagsettings-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional operator-facing metadata.
+
+<a id="member-p-cephalon-engine-configuration-featureflagsettings-sourcekind"></a>
+
+##### `SourceKind`
+
+```csharp
+FeatureFlagSourceKind SourceKind { get; }
+```
+
+Gets the ownership kind for this feature flag.
+
+<a id="member-p-cephalon-engine-configuration-featureflagsettings-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; }
+```
+
+Gets the source-module identifier when the feature flag is module-owned.
+
+<a id="member-p-cephalon-engine-configuration-featureflagsettings-targeting"></a>
+
+##### `Targeting`
+
+```csharp
+FeatureFlagTargetingSettings Targeting { get; }
+```
+
+Gets the optional targeting settings attached to the feature flag.
+
+#### Methods
+
+<a id="member-m-cephalon-engine-configuration-featureflagsettings-fromsection-microsoft-extensions-configuration-iconfigurationsection"></a>
+
+##### `FromSection`
+
+```csharp
+FeatureFlagSettings FromSection(IConfigurationSection section)
+```
+
+Reads one feature flag from configuration.
+
+Returns: The parsed feature-flag settings.
+
+Parameters:
+- `section`: The configuration section that contains the feature flag.
+
+<a id="type-cephalon-engine-configuration-featureflagtargetingsettings"></a>
+
+### `FeatureFlagTargetingSettings`
+
+Describes configuration-driven targeting constraints for one feature flag.
+
+#### Declaration
+```csharp
+public sealed class FeatureFlagTargetingSettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-featureflagtargetingsettings-ctor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `FeatureFlagTargetingSettings`
+
+```csharp
+FeatureFlagTargetingSettings(IReadOnlyList<string> includedModuleIds, IReadOnlyList<string> excludedModuleIds, IReadOnlyList<string> includedBehaviorIds, IReadOnlyList<string> excludedBehaviorIds, IReadOnlyList<string> includedCapabilityKeys, IReadOnlyList<string> excludedCapabilityKeys, IReadOnlyList<string> includedTransportIds, IReadOnlyList<string> excludedTransportIds, IReadOnlyList<string> includedEnvironmentNames, IReadOnlyList<string> excludedEnvironmentNames, IReadOnlyList<string> includedTenantIds, IReadOnlyList<string> excludedTenantIds, IReadOnlyList<string> includedSubjectIds, IReadOnlyList<string> excludedSubjectIds, IReadOnlyList<string> includedTags, IReadOnlyList<string> excludedTags)
+```
+
+Creates feature-flag targeting settings.
+
+Parameters:
+- `includedModuleIds`: The explicitly included module identifiers.
+- `excludedModuleIds`: The explicitly excluded module identifiers.
+- `includedBehaviorIds`: The explicitly included behavior identifiers.
+- `excludedBehaviorIds`: The explicitly excluded behavior identifiers.
+- `includedCapabilityKeys`: The explicitly included capability keys.
+- `excludedCapabilityKeys`: The explicitly excluded capability keys.
+- `includedTransportIds`: The explicitly included transport identifiers.
+- `excludedTransportIds`: The explicitly excluded transport identifiers.
+- `includedEnvironmentNames`: The explicitly included environment names.
+- `excludedEnvironmentNames`: The explicitly excluded environment names.
+- `includedTenantIds`: The explicitly included tenant identifiers.
+- `excludedTenantIds`: The explicitly excluded tenant identifiers.
+- `includedSubjectIds`: The explicitly included subject identifiers.
+- `excludedSubjectIds`: The explicitly excluded subject identifiers.
+- `includedTags`: The explicitly included descriptive tags.
+- `excludedTags`: The explicitly excluded descriptive tags.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-featureflagtargetingsettings-empty"></a>
+
+##### `Empty`
+
+```csharp
+FeatureFlagTargetingSettings Empty { get; }
+```
+
+Gets an empty feature-flag targeting settings instance.
+
+<a id="member-p-cephalon-engine-configuration-featureflagtargetingsettings-excludedbehaviorids"></a>
+
+##### `ExcludedBehaviorIds`
+
+```csharp
+IReadOnlyList<string> ExcludedBehaviorIds { get; }
+```
+
+Gets the explicitly excluded behavior identifiers.
+
+<a id="member-p-cephalon-engine-configuration-featureflagtargetingsettings-excludedcapabilitykeys"></a>
+
+##### `ExcludedCapabilityKeys`
+
+```csharp
+IReadOnlyList<string> ExcludedCapabilityKeys { get; }
+```
+
+Gets the explicitly excluded capability keys.
+
+<a id="member-p-cephalon-engine-configuration-featureflagtargetingsettings-excludedenvironmentnames"></a>
+
+##### `ExcludedEnvironmentNames`
+
+```csharp
+IReadOnlyList<string> ExcludedEnvironmentNames { get; }
+```
+
+Gets the explicitly excluded environment names.
+
+<a id="member-p-cephalon-engine-configuration-featureflagtargetingsettings-excludedmoduleids"></a>
+
+##### `ExcludedModuleIds`
+
+```csharp
+IReadOnlyList<string> ExcludedModuleIds { get; }
+```
+
+Gets the explicitly excluded module identifiers.
+
+<a id="member-p-cephalon-engine-configuration-featureflagtargetingsettings-excludedsubjectids"></a>
+
+##### `ExcludedSubjectIds`
+
+```csharp
+IReadOnlyList<string> ExcludedSubjectIds { get; }
+```
+
+Gets the explicitly excluded subject identifiers.
+
+<a id="member-p-cephalon-engine-configuration-featureflagtargetingsettings-excludedtags"></a>
+
+##### `ExcludedTags`
+
+```csharp
+IReadOnlyList<string> ExcludedTags { get; }
+```
+
+Gets the explicitly excluded descriptive tags.
+
+<a id="member-p-cephalon-engine-configuration-featureflagtargetingsettings-excludedtenantids"></a>
+
+##### `ExcludedTenantIds`
+
+```csharp
+IReadOnlyList<string> ExcludedTenantIds { get; }
+```
+
+Gets the explicitly excluded tenant identifiers.
+
+<a id="member-p-cephalon-engine-configuration-featureflagtargetingsettings-excludedtransportids"></a>
+
+##### `ExcludedTransportIds`
+
+```csharp
+IReadOnlyList<string> ExcludedTransportIds { get; }
+```
+
+Gets the explicitly excluded transport identifiers.
+
+<a id="member-p-cephalon-engine-configuration-featureflagtargetingsettings-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any targeting constraint was supplied.
+
+<a id="member-p-cephalon-engine-configuration-featureflagtargetingsettings-includedbehaviorids"></a>
+
+##### `IncludedBehaviorIds`
+
+```csharp
+IReadOnlyList<string> IncludedBehaviorIds { get; }
+```
+
+Gets the explicitly included behavior identifiers.
+
+<a id="member-p-cephalon-engine-configuration-featureflagtargetingsettings-includedcapabilitykeys"></a>
+
+##### `IncludedCapabilityKeys`
+
+```csharp
+IReadOnlyList<string> IncludedCapabilityKeys { get; }
+```
+
+Gets the explicitly included capability keys.
+
+<a id="member-p-cephalon-engine-configuration-featureflagtargetingsettings-includedenvironmentnames"></a>
+
+##### `IncludedEnvironmentNames`
+
+```csharp
+IReadOnlyList<string> IncludedEnvironmentNames { get; }
+```
+
+Gets the explicitly included environment names.
+
+<a id="member-p-cephalon-engine-configuration-featureflagtargetingsettings-includedmoduleids"></a>
+
+##### `IncludedModuleIds`
+
+```csharp
+IReadOnlyList<string> IncludedModuleIds { get; }
+```
+
+Gets the explicitly included module identifiers.
+
+<a id="member-p-cephalon-engine-configuration-featureflagtargetingsettings-includedsubjectids"></a>
+
+##### `IncludedSubjectIds`
+
+```csharp
+IReadOnlyList<string> IncludedSubjectIds { get; }
+```
+
+Gets the explicitly included subject identifiers.
+
+<a id="member-p-cephalon-engine-configuration-featureflagtargetingsettings-includedtags"></a>
+
+##### `IncludedTags`
+
+```csharp
+IReadOnlyList<string> IncludedTags { get; }
+```
+
+Gets the explicitly included descriptive tags.
+
+<a id="member-p-cephalon-engine-configuration-featureflagtargetingsettings-includedtenantids"></a>
+
+##### `IncludedTenantIds`
+
+```csharp
+IReadOnlyList<string> IncludedTenantIds { get; }
+```
+
+Gets the explicitly included tenant identifiers.
+
+<a id="member-p-cephalon-engine-configuration-featureflagtargetingsettings-includedtransportids"></a>
+
+##### `IncludedTransportIds`
+
+```csharp
+IReadOnlyList<string> IncludedTransportIds { get; }
+```
+
+Gets the explicitly included transport identifiers.
+
+#### Methods
+
+<a id="member-m-cephalon-engine-configuration-featureflagtargetingsettings-fromsection-microsoft-extensions-configuration-iconfigurationsection"></a>
+
+##### `FromSection`
+
+```csharp
+FeatureFlagTargetingSettings FromSection(IConfigurationSection section)
+```
+
+Reads feature-flag targeting settings from the supplied configuration section.
+
+Returns: The parsed targeting settings.
+
+Parameters:
+- `section`: The configuration section that contains the targeting settings.
+
+<a id="type-cephalon-engine-configuration-featuresettings"></a>
+
+### `FeatureSettings`
+
+Describes configuration-driven feature-flag settings for a Cephalon app.
+
+#### Declaration
+```csharp
+public sealed class FeatureSettings
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-engine-configuration-featuresettings-ctor-system-collections-generic-ireadonlylist-cephalon-engine-configuration-featureflagsettings"></a>
+
+##### `FeatureSettings`
+
+```csharp
+FeatureSettings(IReadOnlyList<FeatureFlagSettings> flags)
+```
+
+Creates feature settings.
+
+Parameters:
+- `flags`: The feature flags configured for the app.
+
+#### Properties
+
+<a id="member-p-cephalon-engine-configuration-featuresettings-empty"></a>
+
+##### `Empty`
+
+```csharp
+FeatureSettings Empty { get; }
+```
+
+Gets an empty feature settings instance.
+
+<a id="member-p-cephalon-engine-configuration-featuresettings-flags"></a>
+
+##### `Flags`
+
+```csharp
+IReadOnlyList<FeatureFlagSettings> Flags { get; }
+```
+
+Gets the feature flags configured for the app.
+
+<a id="member-p-cephalon-engine-configuration-featuresettings-hasvalues"></a>
+
+##### `HasValues`
+
+```csharp
+bool HasValues { get; }
+```
+
+Gets a value indicating whether any feature settings were explicitly supplied.
+
+#### Methods
+
+<a id="member-m-cephalon-engine-configuration-featuresettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string"></a>
+
+##### `FromConfiguration`
+
+```csharp
+FeatureSettings FromConfiguration(IConfiguration configuration, string sectionPath)
+```
+
+Reads feature settings from configuration.
+
+Returns: The parsed feature settings.
 
 Parameters:
 - `configuration`: The configuration source that contains the engine section.
@@ -7981,6 +8890,36 @@ IReadOnlyList<AuthorizationPolicyDescriptor> AuthorizationPolicies { get; set; }
 
 Gets the authorization policies contributed by active modules and visible to the runtime at the time the snapshot was created.
 
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-backendforfrontendbindings"></a>
+
+##### `BackendForFrontendBindings`
+
+```csharp
+IReadOnlyList<BackendForFrontendClientBindingDescriptor> BackendForFrontendBindings { get; set; }
+```
+
+Gets the backend-for-frontend client bindings visible to the runtime at the time the snapshot was created.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-backendforfrontendrestdocuments"></a>
+
+##### `BackendForFrontendRestDocuments`
+
+```csharp
+IReadOnlyList<BackendForFrontendRestDocumentRuntimeDescriptor> BackendForFrontendRestDocuments { get; set; }
+```
+
+Gets the client-aware REST documentation surfaces derived from the active backend-for-frontend bindings and visible to the runtime at the time the snapshot was created.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-backendforfrontendrestendpoints"></a>
+
+##### `BackendForFrontendRestEndpoints`
+
+```csharp
+IReadOnlyList<BackendForFrontendRestEndpointRuntimeDescriptor> BackendForFrontendRestEndpoints { get; set; }
+```
+
+Gets the client-aware published REST endpoint projections derived from the active backend-for-frontend bindings and visible to the runtime at the time the snapshot was created.
+
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-behaviorresiliencepolicies"></a>
 
 ##### `BehaviorResiliencePolicies`
@@ -8070,6 +9009,16 @@ IReadOnlyList<ExecutionGraphDescriptor> ExecutionGraphs { get; set; }
 ```
 
 The execution graphs contributed by active modules and visible to the runtime at the time the snapshot was created.
+
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-featureflags"></a>
+
+##### `FeatureFlags`
+
+```csharp
+IReadOnlyList<FeatureFlagDescriptor> FeatureFlags { get; set; }
+```
+
+Gets the feature flags visible to the runtime at the time the snapshot was created.
 
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-hostedexecutions"></a>
 

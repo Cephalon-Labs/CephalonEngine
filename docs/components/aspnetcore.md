@@ -13,6 +13,7 @@
 - `/engine/backend-for-frontend` when the engine-owned backend-for-frontend client-binding catalog is active
 - `/engine/backend-for-frontend/rest-endpoints` when the client-aware backend-for-frontend REST runtime catalog is active
 - `/engine/backend-for-frontend/rest-documents` plus scope-specific filtered OpenAPI and Scalar materialization when the backend-for-frontend REST document catalog is active
+- `/engine/features` when the engine-owned feature-flag catalog is active
 - `/engine/rate-limiting` when ASP.NET Core rate-limiting enforcement is active
 - `/engine/rest-endpoint-candidates` when the module-owned REST candidate catalog is active
 - `/engine/rest-endpoint-publication-groups` when grouped module-owned REST publication visibility and authoring-policy state are active
@@ -274,6 +275,16 @@ materialize under the configured OpenAPI route root as
 `.../backend-for-frontend/clients/{clientId}/{documentName}.json`, and the matching Scalar pages
 stay aligned with the configured Scalar prefix while keeping the selected `bindingId` or `clientId`
 in the query string so the document selector can remain truthful to the scoped document set.
+
+The same host surface now also exposes the shipped feature-flag runtime directly. When
+`IFeatureFlagRuntimeCatalog` is active, `/engine/features`, `/engine/features/enabled`,
+`/engine/features/disabled`, `/engine/features/modules/{moduleId}`, and
+`/engine/features/{featureFlagId}` project the merged host-owned plus module-owned catalog. The
+evaluation route `/engine/features/{featureFlagId}/evaluate` resolves the requested flag through the
+shared `IFeatureToggle` using query-string supplied environment, module, behavior, capability,
+transport, tenant, subject, and repeated `tag` inputs, and `/engine/snapshot` carries the same
+merged descriptor set through `FeatureFlags` so operators can compare catalog truth and evaluation
+answers without inventing host-only feature-flag state.
 
 The host now also exposes additive event-dispatch operator answers directly. When eventing packs
 register the corresponding catalogs, `/engine/event-dispatch-runtimes` and
