@@ -90,12 +90,19 @@ How future-facing workload capabilities are layered onto the app model without t
 Supported direction:
 
 - `AgenticWorkloads`
+- `CellBasedArchitecture`
 - `EventDrivenIntegration`
 - `KnowledgeRetrieval`
 - `RealtimeExperience`
 - `EdgeNativeDelivery`
+- `IdentityAccess`
+- `MultiTenancy`
+- `HybridCloudRuntime`
+- `ServiceMeshIntegration`
+- `ServerlessHosting`
 
 Technology profiles should carry workload guidance, validation rules, and scaffold conventions for emerging stacks such as AI orchestration, event-driven integration, retrieval-heavy systems, realtime experiences, or edge-aware deployments.
+That same layer now also carries `CellBasedArchitecture`, where cell boundaries stay a technology/runtime concern instead of becoming a new blueprint or deployment shape.
 They may also be supplied by packages or project code when a team needs to model a future stack that is not part of the built-in catalog yet.
 
 ## Recommended interpretation of the candidate choices

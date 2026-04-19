@@ -29,6 +29,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
     IStranglerFigRuntimeCatalog stranglerFigRuntimeCatalog,
     IStranglerFigMigrationRuntimeCatalog stranglerFigMigrationRuntimeCatalog,
     IStranglerFigIngressRuntimeCatalog stranglerFigIngressRuntimeCatalog,
+    ICellBoundaryCatalog cellBoundaryCatalog,
     ITechnologyRuntimeCatalog technologyRuntimeCatalog,
     IRuntimeDiagnosticsCatalog diagnosticsCatalog) : IRuntimeIntrospectionSnapshotProvider
 {
@@ -60,6 +61,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
             diagnosticsCatalog.Conventions,
             runtime.OperationalStory)
         {
+            CellBoundaries = cellBoundaryCatalog.CellBoundaries,
             HostedExecutions = hostedExecutionRuntimeCatalog.HostedExecutions,
             Projections = projectionCatalog.Projections,
             Outboxes = outboxCatalog.Outboxes,

@@ -2115,6 +2115,34 @@ Delivered:
 - targeted hosting coverage now proves local rewrite, absolute redirect, absolute proxy, and unsupported-target failure behavior while existing composition plus package-surface coverage proves the shared migration runtime truth remains intact through hosting tests `5/5`, composition tests `4/4`, and package-surface tests `153/153`
 - architecture recommendations, component docs, roadmap, backlog, and project memory now describe the shipped cutover baseline truthfully while keeping provider-specific ingress or edge automation explicitly planned
 
+### ENG-120 Phase 13 cell-boundary contract baseline
+
+Status: done
+Estimate: 5
+Completed: April 19, 2026
+
+Why:
+
+- phase 13 called for cell-based architecture, but Cephalon still had no host-agnostic contract for which module owned a cell boundary, what blast radius that boundary represented, or how operators could inspect the active cell topology without a host-only registry
+- future routing, health-isolation, and edge-aware traffic automation need one deterministic runtime truth for cells before any companion-pack or host-specific follow-through can be layered on top
+- the app-model story was also incomplete because a built-in `cell-based-architecture` profile existed only in planning docs and could not yet become an observable runtime answer
+
+Acceptance:
+
+- `Cephalon.Abstractions` exposes host-agnostic contribution and read contracts for explicit module-owned cell boundaries
+- `Cephalon.Engine` composes host-added and module-contributed cell boundaries into one runtime catalog, projects the same answer into `snapshot.CellBoundaries`, and surfaces the same topology through the technology runtime catalog without inventing a second registry
+- active cell boundaries auto-select the built-in `cell-based-architecture` profile so operator tooling can read one truthful technology answer without extra host ceremony
+- ASP.NET Core hosts expose direct operator routes for the merged cell-boundary catalog and its cell/module drill-down answers
+- docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the shipped baseline while remaining honest that deeper routing, health-isolation, data mesh, and CDC follow-through are still later work
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships `CellBoundaryDescriptor`, `ICellBoundaryContributor`, `ICellBoundaryRegistry`, and `ICellBoundaryCatalog` so modules, hosts, and tooling can talk about explicit module-owned cell boundaries without referencing `Cephalon.Engine` concrete types
+- `Cephalon.Engine` now supports `engine.AddCellBoundary(...)` plus module-owned `ICellBoundaryContributor` inputs, validates referenced modules deterministically, composes one `ICellBoundaryCatalog`, projects `snapshot.CellBoundaries`, and publishes the same answer through the `cell-boundaries` technology runtime surface
+- active cell boundaries now auto-select the built-in `cell-based-architecture` profile so `/engine/technologies`, `/engine/technology-catalog`, and `/engine/technology-surfaces/cell-based-architecture` stay aligned with the live topology
+- `Cephalon.AspNetCore` now exposes `/engine/cells`, `/engine/cells/{cellId}`, and `/engine/cells/modules/{moduleId}` as the direct operator routes for the merged cell-boundary catalog
+- targeted coverage now proves catalog composition, invalid-module rejection, runtime-snapshot projection, ASP.NET Core route publication, and public package-surface alignment through composition tests `2/2`, hosting tests `1/1`, and tooling tests `166/166`
+
 ### ENG-119 Phase 12 strangler-fig ingress runtime follow-through
 
 Status: done
@@ -3123,6 +3151,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-100 generic behavior HTTP transport-native timeout and circuit-breaker envelopes: `Cephalon.Behaviors.Http` now shares one resilience-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution timeout and open-circuit rejections keep protocol-native error shapes with stable Cephalon codes plus `503` metadata and optional retry-after timing instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned timeout and circuit-breaker policy — **Shipped** · targeted hosting tests 25/25 + composition tests 28/28 + package-surface tests 153/153
 - ENG-101 phase 12 strangler-fig migration policy and progress baseline: `Cephalon.Abstractions` now exposes `IStranglerFigMigrationRuntimeCatalog` plus `StranglerFigMigrationRuntimeDescriptor`, `Cephalon.Engine` now binds deterministic `Engine:Migration:StranglerFig` default plus per-route overlays into `snapshot.StranglerFigRoutePolicies`, and `Cephalon.AspNetCore` now exposes `/engine/strangler-fig/runtime` plus `/engine/strangler-fig/runtime/{routeId}` while host-level cutover remains later — **Shipped** · composition tests 4/4 + hosting tests 1/1 + package-surface tests 153/153
 - ENG-102 phase 12 ASP.NET Core strangler-fig cutover runtime: `Cephalon.AspNetCore` now derives host cutover execution from `IStranglerFigMigrationRuntimeCatalog`, exposes `/engine/strangler-fig/cutover` plus `/engine/strangler-fig/cutover/resolve`, rewrites rooted local targets in-process, redirects or proxies absolute HTTP or HTTPS targets through `Engine:Migration:StranglerFig:AspNetCore`, and rejects unsupported selected endpoints truthfully with `502` while broader provider-specific ingress or edge automation remains later — **Shipped** · hosting tests 5/5 + composition tests 4/4 + package-surface tests 153/153
+- ENG-120 phase 13 cell-boundary contract baseline: `Cephalon.Abstractions` now exposes `CellBoundaryDescriptor`, `ICellBoundaryContributor`, `ICellBoundaryRegistry`, and `ICellBoundaryCatalog`, `Cephalon.Engine` now projects `snapshot.CellBoundaries` plus the `cell-boundaries` technology runtime surface while auto-selecting `cell-based-architecture` for active boundaries, and `Cephalon.AspNetCore` now exposes `/engine/cells*` so the same topology stays operator-readable without a host-only registry — **Shipped** · GitHub issue `#517` · composition tests 2/2 + hosting tests 1/1 + tooling tests 166/166
 - ENG-119 phase 12 strangler-fig ingress runtime follow-through: `Cephalon.Abstractions` now exposes `IStranglerFigIngressRuntimeCatalog` plus `StranglerFigIngressRuntimeDescriptor`, `Cephalon.Engine` now projects `snapshot.StranglerFigIngressRoutes`, and `Cephalon.AspNetCore` now exposes `/engine/strangler-fig/ingress*` while deriving host cutover from that shared ingress truth and keeping provider-specific ingress or edge automation separate — **Shipped** · GitHub issue `#516` · composition tests 5/5 + hosting tests 6/6 + tooling tests 171/171
 - ENG-103 phase 12 backend-for-frontend client-binding runtime baseline: `Cephalon.Abstractions` now exposes host-agnostic BFF client-binding contracts, `Cephalon.Engine` now composes host-added, module-contributed, and `Engine:BackendForFrontend:Bindings` entries into `snapshot.BackendForFrontendBindings` while auto-selecting `backend-for-frontend` when bindings exist, and `Cephalon.AspNetCore` now exposes `/engine/backend-for-frontend` plus client/module/transport drill-down routes while client-aware filtering or materialization remain later — **Shipped** · composition tests 3/3 + hosting tests 1/1 + package-surface tests 1/1
 - ENG-104 phase 12 backend-for-frontend client-aware REST filtering runtime baseline: `Cephalon.Abstractions` now exposes public client-aware BFF REST runtime contracts, `Cephalon.AspNetCore` now derives `IBackendForFrontendRestRuntimeCatalog` from the shared binding catalog plus published REST endpoint truth, `/engine/snapshot` now carries `BackendForFrontendRestEndpoints`, and `/engine/backend-for-frontend/rest-endpoints` now exposes binding/client/module/published-endpoint drill-down routes while per-client OpenAPI/Scalar materialization remains later — **Shipped** · hosting tests 1/1 + package-surface tests 2/2

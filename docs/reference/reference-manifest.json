@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-19T15:24:00.9434972+00:00",
+  "GeneratedAtUtc": "2026-04-19T16:08:31.1726272+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 304
+      "TypeCount": 308
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -585,7 +585,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-technologies",
-      "TypeCount": 11
+      "TypeCount": 15
     },
     {
       "NamespaceName": "Cephalon.Abstractions.Tenancy",
@@ -2794,7 +2794,7 @@
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
-        "Properties": 11,
+        "Properties": 12,
         "Methods": 2
       }
     },
@@ -2961,6 +2961,21 @@
         "Fields": 0,
         "Properties": 0,
         "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "CellBoundaryDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-technologies-cellboundarydescriptor",
+      "Declaration": "public sealed class CellBoundaryDescriptor",
+      "Summary": "Describes one module-owned cell boundary visible to the active Cephalon runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 8,
+        "Methods": 0
       }
     },
     {
@@ -3965,7 +3980,7 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 38
+        "Methods": 40
       }
     },
     {
@@ -5626,6 +5641,51 @@
       "AnchorId": "type-cephalon-abstractions-capabilities-icapabilityregistry",
       "Declaration": "public interface ICapabilityRegistry",
       "Summary": "Registers capabilities exposed by modules and packages.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "ICellBoundaryCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-technologies-icellboundarycatalog",
+      "Declaration": "public interface ICellBoundaryCatalog",
+      "Summary": "Exposes the cell boundaries visible to the current runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "ICellBoundaryContributor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-technologies-icellboundarycontributor",
+      "Declaration": "public interface ICellBoundaryContributor",
+      "Summary": "Allows a module to contribute cell boundaries to the active runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "ICellBoundaryRegistry",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-technologies-icellboundaryregistry",
+      "Declaration": "public interface ICellBoundaryRegistry",
+      "Summary": "Collects cell-boundary descriptors during runtime composition.",
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
@@ -9994,7 +10054,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 37,
+        "Properties": 38,
         "Methods": 0
       }
     },
@@ -11494,6 +11554,17 @@
     {
       "DisplayName": "Add",
       "Category": "Methods",
+      "DeclaringTypeName": "ICellBoundaryRegistry",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-icellboundaryregistry-add-cephalon-abstractions-technologies-cellboundarydescriptor",
+      "Signature": "void Add(CellBoundaryDescriptor cellBoundary)",
+      "Summary": "Adds one cell-boundary descriptor to the active runtime composition."
+    },
+    {
+      "DisplayName": "Add",
+      "Category": "Methods",
       "DeclaringTypeName": "IEdgeNodeRegistry",
       "NamespaceName": "Cephalon.Edge.Services",
       "AssemblyName": "Cephalon.Edge",
@@ -11710,6 +11781,28 @@
       "AnchorId": "member-m-cephalon-eventing-behaviors-registration-behavioreventingenginebuilderextensions-addbehavioreventingbridge-cephalon-engine-composition-enginebuilder",
       "Signature": "EngineBuilder AddBehaviorEventingBridge(this EngineBuilder builder)",
       "Summary": "Adds the explicit saga-choreography bridge that stages behavior publications through the shared \u0060Cephalon.Eventing\u0060 publication path."
+    },
+    {
+      "DisplayName": "AddCellBoundaries",
+      "Category": "Methods",
+      "DeclaringTypeName": "EngineBuilder",
+      "NamespaceName": "Cephalon.Engine.Composition",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-addcellboundaries-system-collections-generic-ienumerable-cephalon-abstractions-technologies-cellboundarydescriptor",
+      "Signature": "EngineBuilder AddCellBoundaries(IEnumerable\u003CCellBoundaryDescriptor\u003E cellBoundaries)",
+      "Summary": "Adds multiple cell boundaries to the current runtime composition."
+    },
+    {
+      "DisplayName": "AddCellBoundary",
+      "Category": "Methods",
+      "DeclaringTypeName": "EngineBuilder",
+      "NamespaceName": "Cephalon.Engine.Composition",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-addcellboundary-cephalon-abstractions-technologies-cellboundarydescriptor",
+      "Signature": "EngineBuilder AddCellBoundary(CellBoundaryDescriptor cellBoundary)",
+      "Summary": "Adds a cell boundary to the current runtime composition."
     },
     {
       "DisplayName": "AddCephalon",
@@ -15881,6 +15974,17 @@
       "Summary": "Register service method with a service binder with or without implementation. Useful when customizing the service binding logic. Note: this method is part of an experimental API that can change or be removed without any prior notice."
     },
     {
+      "DisplayName": "BlastRadius",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellBoundaryDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-cellboundarydescriptor-blastradius",
+      "Signature": "string BlastRadius { get; }",
+      "Summary": "Gets the operator-facing blast-radius posture for this cell."
+    },
+    {
       "DisplayName": "BlockingActionCount",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseTopologyOperationalActionPlan",
@@ -16638,6 +16742,50 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databasetopologyoperationalaction-category",
       "Signature": "string Category { get; }",
       "Summary": "Gets the stable machine-readable remediation category."
+    },
+    {
+      "DisplayName": "CellBasedArchitecture",
+      "Category": "Properties",
+      "DeclaringTypeName": "BuiltInTechnologies",
+      "NamespaceName": "Cephalon.Engine.Technologies",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-technologies-builtintechnologies-cellbasedarchitecture",
+      "Signature": "TechnologyDescriptor CellBasedArchitecture { get; }",
+      "Summary": "Gets the built-in cell-based-architecture technology profile."
+    },
+    {
+      "DisplayName": "CellBoundaries",
+      "Category": "Properties",
+      "DeclaringTypeName": "ICellBoundaryCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-icellboundarycatalog-cellboundaries",
+      "Signature": "IReadOnlyList\u003CCellBoundaryDescriptor\u003E CellBoundaries { get; }",
+      "Summary": "Gets all cell boundaries visible to the current runtime."
+    },
+    {
+      "DisplayName": "CellBoundaries",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-cellboundaries",
+      "Signature": "IReadOnlyList\u003CCellBoundaryDescriptor\u003E CellBoundaries { get; set; }",
+      "Summary": "Gets the cell boundaries visible to the runtime at the time the snapshot was created."
+    },
+    {
+      "DisplayName": "CellBoundaryDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CellBoundaryDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-cellboundarydescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "CellBoundaryDescriptor(string id, string sourceModuleId, string displayName, string description, string blastRadius, string routingStrategy, IReadOnlyList\u003Cstring\u003E moduleIds, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a cell-boundary descriptor."
     },
     {
       "DisplayName": "CephalonPackageVersion",
@@ -20338,6 +20486,17 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "CellBoundaryDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-cellboundarydescriptor-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the human-readable description of the cell boundary."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "DatabaseMigrationCommandDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -21379,6 +21538,17 @@
       "AnchorId": "member-p-cephalon-engine-manifest-capabilitymanifest-displayname",
       "Signature": "string DisplayName { get; }",
       "Summary": "Gets the operator-facing capability name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellBoundaryDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-cellboundarydescriptor-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the operator-facing cell name."
     },
     {
       "DisplayName": "DisplayName",
@@ -26905,6 +27075,17 @@
     {
       "DisplayName": "GetById",
       "Category": "Methods",
+      "DeclaringTypeName": "ICellBoundaryCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-icellboundarycatalog-getbyid-system-string",
+      "Signature": "CellBoundaryDescriptor GetById(string cellId)",
+      "Summary": "Gets one cell boundary by its stable identifier."
+    },
+    {
+      "DisplayName": "GetById",
+      "Category": "Methods",
       "DeclaringTypeName": "IDatabaseMigrationCatalog",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -27154,6 +27335,17 @@
       "AnchorId": "member-m-cephalon-abstractions-authorization-iauthorizationpolicycatalog-getbymode-cephalon-abstractions-authorization-authorizationmode",
       "Signature": "IReadOnlyList\u003CAuthorizationPolicyDescriptor\u003E GetByMode(AuthorizationMode mode)",
       "Summary": "Gets all authorization policies that support the requested mode."
+    },
+    {
+      "DisplayName": "GetByModule",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICellBoundaryCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-icellboundarycatalog-getbymodule-system-string",
+      "Signature": "IReadOnlyList\u003CCellBoundaryDescriptor\u003E GetByModule(string moduleId)",
+      "Summary": "Gets all cell boundaries that include the requested module."
     },
     {
       "DisplayName": "GetByOutboxId",
@@ -30102,6 +30294,17 @@
       "AnchorId": "member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the behavior identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellBoundaryDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-cellboundarydescriptor-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable cell identifier."
     },
     {
       "DisplayName": "Id",
@@ -34341,6 +34544,17 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "CellBoundaryDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-cellboundarydescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional operator-facing metadata for this cell boundary."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "DatabaseMigrationCommandDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -35745,6 +35959,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-moduleid",
       "Signature": "string ModuleId { get; set; }",
       "Summary": "The stable module identifier."
+    },
+    {
+      "DisplayName": "ModuleIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellBoundaryDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-cellboundarydescriptor-moduleids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ModuleIds { get; }",
+      "Summary": "Gets the module identifiers that belong to this cell boundary."
     },
     {
       "DisplayName": "ModuleManifest",
@@ -40664,6 +40889,17 @@
       "Summary": "Registers capabilities exposed by the module."
     },
     {
+      "DisplayName": "RegisterCellBoundaries",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICellBoundaryContributor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-icellboundarycontributor-registercellboundaries-cephalon-abstractions-technologies-icellboundaryregistry",
+      "Signature": "void RegisterCellBoundaries(ICellBoundaryRegistry cells)",
+      "Summary": "Registers the cell boundaries owned by the contributing module."
+    },
+    {
       "DisplayName": "RegisterChannels",
       "Category": "Methods",
       "DeclaringTypeName": "IEventChannelContributor",
@@ -43678,6 +43914,17 @@
       "Summary": "Gets the route-specific strangler-fig migration-policy entries."
     },
     {
+      "DisplayName": "RoutingStrategy",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellBoundaryDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-cellboundarydescriptor-routingstrategy",
+      "Signature": "string RoutingStrategy { get; }",
+      "Summary": "Gets the operator-facing routing strategy for this cell."
+    },
+    {
       "DisplayName": "RuleId",
       "Category": "Properties",
       "DeclaringTypeName": "BehaviorCompatibilityViolation",
@@ -45997,6 +46244,17 @@
       "AnchorId": "member-p-cephalon-engine-trust-capabilitypolicydecision-sourcemoduleid",
       "Signature": "string SourceModuleId { get; set; }",
       "Summary": "The module that contributed the capability."
+    },
+    {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellBoundaryDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-cellboundarydescriptor-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; }",
+      "Summary": "Gets the module that owns this cell boundary."
     },
     {
       "DisplayName": "SourceModuleId",

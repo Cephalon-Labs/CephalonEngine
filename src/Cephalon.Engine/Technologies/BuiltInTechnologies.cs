@@ -183,6 +183,23 @@ public static class BuiltInTechnologies
             "Treat serverless delivery as an additive hosting slice, not as a replacement for the app profile or module model."
         ]);
 
+    /// <summary>
+    /// Gets the built-in cell-based-architecture technology profile.
+    /// </summary>
+    public static TechnologyDescriptor CellBasedArchitecture { get; } = new(
+        id: "cell-based-architecture",
+        displayName: "Cell-Based Architecture",
+        description: "Prepares the app for explicit module-owned cell boundaries, blast-radius isolation, and future cell-routing follow-through.",
+        kind: TechnologyKind.Platform,
+        aliases: ["CellBasedArchitecture", "CellBased", "Cells"],
+        tags: ["cells", "blast-radius", "isolation", "routing"],
+        guidance:
+        [
+            "Keep cell boundaries module-owned and explicit instead of hiding them in host startup or deployment notes.",
+            "Project blast-radius and routing posture through runtime catalogs so operators can inspect the active cell topology directly.",
+            "Treat future traffic-management, failover, and health-isolation automation as additive follow-through over the boundary catalog instead of bespoke host logic."
+        ]);
+
     private static readonly TechnologyDescriptor[] Items =
     [
         AgenticWorkloads,
@@ -194,7 +211,8 @@ public static class BuiltInTechnologies
         MultiTenancy,
         HybridCloudRuntime,
         ServiceMeshIntegration,
-        ServerlessHosting
+        ServerlessHosting,
+        CellBasedArchitecture
     ];
 
     private static readonly Dictionary<string, TechnologyDescriptor> Index = CreateIndex();

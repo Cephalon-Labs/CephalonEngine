@@ -98,9 +98,10 @@ Technologies are additive workload profiles that prepare the runtime for specifi
 - `Security` (5) — identity, authorization, policies
 - `Platform` (6) — runtime, tenancy, mesh
 
-### Built-in technology descriptors (10)
+### Built-in technology descriptors (11)
 
 - `agentic-workloads` — Agentic Workloads (Intelligence): prepares the app model for assistants, tool-using agents, and long-running autonomous workflows. Aliases: `AgenticWorkloads`, `Agentic`. Package hint: `Cephalon.Agentics`.
+- `cell-based-architecture` — Cell-Based Architecture (Platform): prepares the app for explicit module-owned cell boundaries, blast-radius isolation, and future cell-routing follow-through. Aliases: `CellBasedArchitecture`, `CellBased`, `Cells`.
 - `event-driven-integration` — Event-Driven Integration (Messaging): prepares modules for broker-backed events, asynchronous workflows, and eventually consistent integration flows. Aliases: `EventDrivenIntegration`, `EventDriven`. Package hint: `Cephalon.Eventing`.
 - `knowledge-retrieval` — Knowledge Retrieval (Data): prepares the app for semantic retrieval, indexing, search, and knowledge-backed experiences. Aliases: `KnowledgeRetrieval`, `Knowledge`. Package hint: `Cephalon.Retrieval`.
 - `realtime-experience` — Realtime Experience (Experience): prepares the app for live collaboration, presence, streaming updates, and reactive client experiences. Aliases: `RealtimeExperience`, `Realtime`.
@@ -482,6 +483,7 @@ The engine exposes operator-facing runtime information through these endpoints:
 - `/engine/app-model` — app profile with blueprint, patterns, technologies, transports
 - `/engine/manifest` — runtime manifest with modules, capabilities, metadata
 - `/engine/runtime-story` — lifecycle story with state, events, timeline
+- `/engine/cells` — active cell-boundary catalog
 - `/engine/technologies` — active technology selections
 - `/engine/technology-catalog` — full technology catalog
 - `/engine/technology-surfaces` — active technology runtime surfaces
@@ -515,7 +517,7 @@ The engine exposes operator-facing runtime information through these endpoints:
 
 - Blueprints: 3 app + 1 suite = **4**
 - Patterns: **21**
-- Technologies: **10**
+- Technologies: **11**
 - Transports: **6** + 3 messaging bindings = **9**
 - Execution strategies: **7**
 - Modules: 6 core + 10 data + 10 event-sourcing + 5 specialized + 1 identifier = **32**

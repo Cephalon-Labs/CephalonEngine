@@ -796,6 +796,18 @@ public static class EngineWebApplicationExtensions
             .WithName("GetCephalonBackendForFrontendBinding");
         engineGroup.MapGet("/patterns", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Patterns))
             .WithName("GetCephalonPatterns");
+        engineGroup.MapGet("/cells", ([FromServices] ICellBoundaryCatalog catalog) => TypedResults.Ok(catalog.CellBoundaries))
+            .WithName("GetCephalonCellBoundaries");
+        engineGroup.MapGet("/cells/modules/{moduleId}", (string moduleId, [FromServices] ICellBoundaryCatalog catalog) =>
+                TypedResults.Ok(catalog.GetByModule(moduleId)))
+            .WithName("GetCephalonCellBoundariesByModule");
+        engineGroup.MapGet("/cells/{cellId}", (string cellId, [FromServices] ICellBoundaryCatalog catalog) =>
+            {
+                var cellBoundary = catalog.GetById(cellId);
+
+                return cellBoundary is null ? Results.NotFound() : Results.Ok(cellBoundary);
+            })
+            .WithName("GetCephalonCellBoundary");
         engineGroup.MapGet("/technologies", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Technologies))
             .WithName("GetCephalonTechnologies");
         engineGroup.MapGet("/technology-catalog", ([FromServices] TechnologyCatalogSnapshot catalog) => TypedResults.Ok(catalog.Technologies))

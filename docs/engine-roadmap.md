@@ -140,7 +140,7 @@ The project board now tracks both delivered work and upcoming work through expli
 - `Sprint 40` follow-through: `ENG-118` now ships the module-backed saga choreography capability-publication follow-through so `Cephalon.Behaviors` publishes `behaviors.saga-choreography.runtime-catalog` and `behaviors.saga-choreography.publication-state` only when `AddBehaviorPatterns()` actually registers `ISagaChoreographyRuntimeCatalog` and `ISagaChoreographyPublicationRuntimeStateCatalog`, `/engine/capabilities` now exposes the same pack/service/snapshot/route truth, and capability provenance stays with the `behaviors` module instead of inventing a synthetic engine or bridge source
 - `Sprint 36–37 (Phase 11)`: `ENG-076` now ships the contract-first resilience baseline — `Engine:Resilience`, `AppProfile.Resilience`, `/engine/resilience`, and the missing `onion-architecture` plus `anti-corruption-layer` pattern descriptors — `ENG-077` now ships the first transport-native follow-through through ASP.NET Core public-HTTP rate limiting plus `/engine/rate-limiting`, `ENG-078` now adds endpoint-scoped behavior/transport override modeling for ASP.NET Core HTTP surfaces, `ENG-079` now adds the first behavior-pipeline follow-through through shared timeout-plus-bulkhead enforcement plus `/engine/behavior-resilience`, `ENG-080` now adds behavior-execution override resolution with behavior/transport precedence plus route-truthful REST/OpenAPI answers, `ENG-081` now adds shared circuit-breaker enforcement plus live runtime state and truthful REST `503` answers for open circuits, `ENG-082` now adds behavior-authored idempotency plus retry-eligibility classification/runtime metadata for the same behavior-execution surface, `ENG-083` now closes the loop with idempotency-gated retry execution plus truthful retry runtime metadata in the shared behavior pipeline, `ENG-084` now splits the built-in ASP.NET Core GraphQL surface into explicit HTTP, schema, SSE, and WebSocket routes while `/engine/rate-limiting` now publishes truthful long-lived stream/connection metadata, `ENG-085` now rounds out the shared GraphQL authoring baseline through `ConfigureGraphQLMutation(...)` plus `ConfigureGraphQLSubscription(...)` and protocol-level proof that configured schema, SSE, and WebSocket routes execute real SDL, `text/event-stream`, and `graphql-transport-ws` behavior, `ENG-098` now extends the shared behavior-execution surface with rate limiting plus REST `429` precedence that stays truthful when ASP.NET Core and behavior-dispatch limiters both target the same route, `ENG-099` now keeps that same rate-limiting truth protocol-native for the generic behavior HTTP GraphQL, JSON-RPC, SSE, and WebSocket adapters, and `ENG-100` now keeps timeout plus open-circuit `503` truth equally protocol-native for those same generic behavior HTTP adapters; broader non-REST resilience-envelope semantics beyond the current `429`/`503` baseline remain planned follow-through
 - `Sprint 38–40 (Phase 12)`: planned migration and advanced coordination — the descriptor baseline for strangler fig plus BFF, the first strangler-fig runtime-contract slice, the first configuration-driven strangler-fig migration-policy/progress slice, the first ASP.NET Core host-level cutover runtime, the engine-first strangler-fig ingress-runtime follow-through, the first BFF client-binding runtime, the first client-aware BFF REST filtering runtime, the first BFF REST documentation/materialization runtime, the first feature-flag runtime baseline, the generic external-provider bridge baseline, the first host-agnostic saga choreography baseline, the explicit choreography-to-eventing bridge baseline, the first saga choreography authoring-helper follow-through, the first saga choreography runtime/operator catalog follow-through, the first live saga choreography publication-state follow-through, the module-backed saga choreography capability-publication follow-through, the first durable-execution baseline, the first durable runtime/operator catalog follow-through, the first durable live-state/failure-posture follow-through, the first durable timer/signal coordination follow-through, and the first durable compensation-helper follow-through are now shipped, while broader non-REST frontend-materialization, provider-specific ingress or edge automation, and provider-specific feature-flag companion packs remain planned
-- `Sprint 40–41 (Phase 13)`: planned next-generation patterns — cell-based architecture, data mesh, CDC
+- `Sprint 40–41 (Phase 13)`: `ENG-120` now ships the first cell-based architecture baseline through `CellBoundaryDescriptor`, `ICellBoundaryCatalog`, `/engine/cells`, `snapshot.CellBoundaries`, and the `cell-boundaries` technology surface while data mesh, CDC, and deeper cell-routing or health-isolation follow-through remain planned
 - `Later / not scheduled yet`: further cloud/platform integrations beyond the shipped phase 6 baseline, `ENG-054` hybrid-runtime service-mesh and serverless expansion, and future solution-level expansion only when an explicit adoption scenario needs them
 
 ## Planning principles
@@ -886,21 +886,25 @@ Exit criteria:
 
 ## Phase 13: Next-Generation Patterns
 
-Status: planned
+Status: in progress
 
 Goal: add differentiation-grade patterns that position CephalonEngine for the next generation of distributed application architecture.
 
 Target: Sprint 40–41
 
-Planned deliverables:
+Shipped baseline:
 
-- cell-based architecture technology descriptor and `ICellBoundary` abstraction for blast-radius isolation and cell-to-cell routing
+- `ENG-120` now ships the first cell-based architecture baseline through the built-in `cell-based-architecture` profile, `CellBoundaryDescriptor`, `ICellBoundaryContributor`, `ICellBoundaryCatalog`, `engine.AddCellBoundary(...)`, `/engine/cells*`, `snapshot.CellBoundaries`, and the `cell-boundaries` technology runtime surface; active boundaries now auto-select the profile while preserving module ownership in one runtime truth
+
+Remaining follow-through:
+
+- deeper cell-to-cell routing, health-isolation, and provider-specific or edge-aware traffic automation over the same boundary catalog
 - data mesh `IDataProduct<T>` abstraction where modules own queryable data products surfaced through the runtime catalog
 - change data capture `ICdcCapture` abstraction for automated database-change publication through the outbox without explicit staging
 
 Exit criteria:
 
-- modules can declare cell boundaries with explicit blast-radius isolation
+- modules can declare cell boundaries with explicit blast-radius isolation and operators can inspect the same answer through `/engine/cells`, `/engine/technology-surfaces/cell-based-architecture`, and `/engine/snapshot`
 - modules can expose queryable data products through the runtime catalog
 - database changes can be captured and published through the outbox without explicit staging
 

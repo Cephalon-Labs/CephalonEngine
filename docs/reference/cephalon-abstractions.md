@@ -19599,6 +19599,228 @@ The transport identifiers whose HTTP surfaces are covered by the policy.
 
 ## Namespace Cephalon.Abstractions.Technologies
 
+<a id="type-cephalon-abstractions-technologies-cellboundarydescriptor"></a>
+
+### `CellBoundaryDescriptor`
+
+Describes one module-owned cell boundary visible to the active Cephalon runtime.
+
+#### Declaration
+```csharp
+public sealed class CellBoundaryDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-technologies-cellboundarydescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `CellBoundaryDescriptor`
+
+```csharp
+CellBoundaryDescriptor(string id, string sourceModuleId, string displayName, string description, string blastRadius, string routingStrategy, IReadOnlyList<string> moduleIds, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a cell-boundary descriptor.
+
+Parameters:
+- `id`: The stable cell identifier.
+- `sourceModuleId`: The Cephalon module that owns this cell boundary.
+- `displayName`: The operator-facing cell name.
+- `description`: The human-readable description of the cell boundary.
+- `blastRadius`: The operator-facing blast-radius posture for this cell.
+- `routingStrategy`: The operator-facing routing strategy applied to this cell.
+- `moduleIds`: The module identifiers that belong to this cell boundary.
+- `metadata`: Optional operator-facing metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-technologies-cellboundarydescriptor-blastradius"></a>
+
+##### `BlastRadius`
+
+```csharp
+string BlastRadius { get; }
+```
+
+Gets the operator-facing blast-radius posture for this cell.
+
+<a id="member-p-cephalon-abstractions-technologies-cellboundarydescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable description of the cell boundary.
+
+<a id="member-p-cephalon-abstractions-technologies-cellboundarydescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing cell name.
+
+<a id="member-p-cephalon-abstractions-technologies-cellboundarydescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable cell identifier.
+
+<a id="member-p-cephalon-abstractions-technologies-cellboundarydescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional operator-facing metadata for this cell boundary.
+
+<a id="member-p-cephalon-abstractions-technologies-cellboundarydescriptor-moduleids"></a>
+
+##### `ModuleIds`
+
+```csharp
+IReadOnlyList<string> ModuleIds { get; }
+```
+
+Gets the module identifiers that belong to this cell boundary.
+
+<a id="member-p-cephalon-abstractions-technologies-cellboundarydescriptor-routingstrategy"></a>
+
+##### `RoutingStrategy`
+
+```csharp
+string RoutingStrategy { get; }
+```
+
+Gets the operator-facing routing strategy for this cell.
+
+<a id="member-p-cephalon-abstractions-technologies-cellboundarydescriptor-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; }
+```
+
+Gets the module that owns this cell boundary.
+
+<a id="type-cephalon-abstractions-technologies-icellboundarycatalog"></a>
+
+### `ICellBoundaryCatalog`
+
+Exposes the cell boundaries visible to the current runtime.
+
+#### Declaration
+```csharp
+public interface ICellBoundaryCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-technologies-icellboundarycatalog-cellboundaries"></a>
+
+##### `CellBoundaries`
+
+```csharp
+IReadOnlyList<CellBoundaryDescriptor> CellBoundaries { get; }
+```
+
+Gets all cell boundaries visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-technologies-icellboundarycatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+CellBoundaryDescriptor GetById(string cellId)
+```
+
+Gets one cell boundary by its stable identifier.
+
+Returns: The matching cell boundary, or `null` when it is not active.
+
+Parameters:
+- `cellId`: The cell identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-technologies-icellboundarycatalog-getbymodule-system-string"></a>
+
+##### `GetByModule`
+
+```csharp
+IReadOnlyList<CellBoundaryDescriptor> GetByModule(string moduleId)
+```
+
+Gets all cell boundaries that include the requested module.
+
+Returns: The matching cell boundaries, or an empty list when none are active.
+
+Parameters:
+- `moduleId`: The module identifier to filter by.
+
+<a id="type-cephalon-abstractions-technologies-icellboundarycontributor"></a>
+
+### `ICellBoundaryContributor`
+
+Allows a module to contribute cell boundaries to the active runtime.
+
+#### Declaration
+```csharp
+public interface ICellBoundaryContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-technologies-icellboundarycontributor-registercellboundaries-cephalon-abstractions-technologies-icellboundaryregistry"></a>
+
+##### `RegisterCellBoundaries`
+
+```csharp
+void RegisterCellBoundaries(ICellBoundaryRegistry cells)
+```
+
+Registers the cell boundaries owned by the contributing module.
+
+Parameters:
+- `cells`: The registry that receives cell-boundary descriptors.
+
+<a id="type-cephalon-abstractions-technologies-icellboundaryregistry"></a>
+
+### `ICellBoundaryRegistry`
+
+Collects cell-boundary descriptors during runtime composition.
+
+#### Declaration
+```csharp
+public interface ICellBoundaryRegistry
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-technologies-icellboundaryregistry-add-cephalon-abstractions-technologies-cellboundarydescriptor"></a>
+
+##### `Add`
+
+```csharp
+void Add(CellBoundaryDescriptor cellBoundary)
+```
+
+Adds one cell-boundary descriptor to the active runtime composition.
+
+Parameters:
+- `cellBoundary`: The cell-boundary descriptor to add.
+
 <a id="type-cephalon-abstractions-technologies-itechnologycapabilitycontributor"></a>
 
 ### `ITechnologyCapabilityContributor`

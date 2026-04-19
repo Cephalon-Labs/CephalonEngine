@@ -14,6 +14,11 @@ They sit between pure metadata and full application blueprints:
 Technology profiles should not stop at documentation or scaffold hints. When a workload becomes important enough to need reusable services, capabilities, or conventions, it should move into a companion package instead of forcing changes into the engine core.
 
 That keeps the engine extensible without making every new trend a built-in subsystem.
+Some profiles can also start as engine-owned contract baselines before a dedicated companion pack
+exists. The new `cell-based-architecture` profile now follows that path: the engine ships
+`CellBoundaryDescriptor`, `/engine/cells`, and the `cell-boundaries` technology runtime surface
+today, while deeper traffic-management or health-isolation automation can still move into a future
+companion pack later.
 
 ## Shipped baseline packs
 

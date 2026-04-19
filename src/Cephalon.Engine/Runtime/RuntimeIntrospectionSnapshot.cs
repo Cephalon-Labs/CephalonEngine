@@ -45,6 +45,11 @@ public sealed record RuntimeIntrospectionSnapshot(
     RuntimeOperationalStory OperationalStory)
 {
     /// <summary>
+    /// Gets the cell boundaries visible to the runtime at the time the snapshot was created.
+    /// </summary>
+    public IReadOnlyList<CellBoundaryDescriptor> CellBoundaries { get; init; } = [];
+
+    /// <summary>
     /// Gets the hosted executions contributed by active modules and visible to the runtime at the time the snapshot was created.
     /// </summary>
     public IReadOnlyList<HostedExecutionDescriptor> HostedExecutions { get; init; } = [];

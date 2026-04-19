@@ -268,6 +268,10 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Patterns.StranglerFigRouteDescriptor),
             typeof(global::Cephalon.Abstractions.Patterns.StranglerFigRouteResolution),
             typeof(global::Cephalon.Abstractions.Patterns.StranglerFigTarget),
+            typeof(global::Cephalon.Abstractions.Technologies.CellBoundaryDescriptor),
+            typeof(global::Cephalon.Abstractions.Technologies.ICellBoundaryCatalog),
+            typeof(global::Cephalon.Abstractions.Technologies.ICellBoundaryContributor),
+            typeof(global::Cephalon.Abstractions.Technologies.ICellBoundaryRegistry),
             typeof(global::Cephalon.Abstractions.Technologies.ITechnologyCapabilityContributor),
             typeof(global::Cephalon.Abstractions.Technologies.ITechnologyContributor),
             typeof(global::Cephalon.Abstractions.Technologies.ITechnologyRegistry),
@@ -2458,6 +2462,27 @@ public sealed class PackageSurfaceTests
             .GetProperty("TargetUri", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot)
             .GetProperty("StranglerFigIngressRoutes", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void CellBoundaryRuntimeContractsExposeSnapshotSurface()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.ICellBoundaryCatalog)
+            .GetProperty("CellBoundaries", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.ICellBoundaryCatalog)
+            .GetMethod("GetById", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.ICellBoundaryCatalog)
+            .GetMethod("GetByModule", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellBoundaryDescriptor)
+            .GetProperty("SourceModuleId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellBoundaryDescriptor)
+            .GetProperty("BlastRadius", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellBoundaryDescriptor)
+            .GetProperty("RoutingStrategy", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellBoundaryDescriptor)
+            .GetProperty("ModuleIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot)
+            .GetProperty("CellBoundaries", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

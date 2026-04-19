@@ -159,6 +159,9 @@ Browse the published API surface by public member.
 - [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-capabilities-icapabilityregistry-add-cephalon-abstractions-capabilities-capability): `Methods` on `ICapabilityRegistry` in `Cephalon.Abstractions.Capabilities` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Capabilities&scope=members)
   - Adds a capability to the registry.
   - `void Add(Capability capability)`
+- [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icellboundaryregistry-add-cephalon-abstractions-technologies-cellboundarydescriptor): `Methods` on `ICellBoundaryRegistry` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Adds one cell-boundary descriptor to the active runtime composition.
+  - `void Add(CellBoundaryDescriptor cellBoundary)`
 - [Add](cephalon-edge.md#member-m-cephalon-edge-services-iedgenoderegistry-add-cephalon-edge-services-edgenodedescriptor): `Methods` on `IEdgeNodeRegistry` in `Cephalon.Edge.Services` (`Cephalon.Edge`) [Browse](browse.html?q=Add&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Services&scope=members)
   - Adds an edge node descriptor to the registry.
   - `void Add(EdgeNodeDescriptor node)`
@@ -219,6 +222,12 @@ Browse the published API surface by public member.
 - [AddBehaviorEventingBridge](cephalon-eventing-behaviors.md#member-m-cephalon-eventing-behaviors-registration-behavioreventingenginebuilderextensions-addbehavioreventingbridge-cephalon-engine-composition-enginebuilder): `Methods` on `BehaviorEventingEngineBuilderExtensions` in `Cephalon.Eventing.Behaviors.Registration` (`Cephalon.Eventing.Behaviors`) [Browse](browse.html?q=AddBehaviorEventingBridge&assembly=Cephalon.Eventing.Behaviors&namespace=Cephalon.Eventing.Behaviors.Registration&scope=members)
   - Adds the explicit saga-choreography bridge that stages behavior publications through the shared `Cephalon.Eventing` publication path.
   - `EngineBuilder AddBehaviorEventingBridge(this EngineBuilder builder)`
+- [AddCellBoundaries](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addcellboundaries-system-collections-generic-ienumerable-cephalon-abstractions-technologies-cellboundarydescriptor): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddCellBoundaries&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
+  - Adds multiple cell boundaries to the current runtime composition.
+  - `EngineBuilder AddCellBoundaries(IEnumerable<CellBoundaryDescriptor> cellBoundaries)`
+- [AddCellBoundary](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addcellboundary-cephalon-abstractions-technologies-cellboundarydescriptor): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddCellBoundary&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
+  - Adds a cell boundary to the current runtime composition.
+  - `EngineBuilder AddCellBoundary(CellBoundaryDescriptor cellBoundary)`
 - [AddCephalon](cephalon-engine.md#member-m-cephalon-engine-composition-engineservicecollectionextensions-addcephalon-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-engine-composition-enginebuilder): `Methods` on `EngineServiceCollectionExtensions` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddCephalon&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Adds Cephalon using code-first configuration.
   - `IServiceCollection AddCephalon(this IServiceCollection services, Action<EngineBuilder> configure)`
@@ -1359,6 +1368,9 @@ Browse the published API surface by public member.
 - [BindService](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-bindservice-grpc-core-servicebinderbase-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryservicebase): `Methods` on `DiscoveryService` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=BindService&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - Register service method with a service binder with or without implementation. Useful when customizing the service binding logic. Note: this method is part of an experimental API that can change or be removed without any prior notice.
   - `void BindService(ServiceBinderBase serviceBinder, DiscoveryServiceBase serviceImpl)`
+- [BlastRadius](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellboundarydescriptor-blastradius): `Properties` on `CellBoundaryDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=BlastRadius&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the operator-facing blast-radius posture for this cell.
+  - `string BlastRadius { get; }`
 - [BlockingActionCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasetopologyoperationalactionplan-blockingactioncount): `Properties` on `DatabaseTopologyOperationalActionPlan` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=BlockingActionCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of blocking actions in the plan.
   - `int BlockingActionCount { get; }`
@@ -1569,6 +1581,18 @@ Browse the published API surface by public member.
 - [Category](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasetopologyoperationalaction-category): `Properties` on `DatabaseTopologyOperationalAction` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Category&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable machine-readable remediation category.
   - `string Category { get; }`
+- [CellBasedArchitecture](cephalon-engine.md#member-p-cephalon-engine-technologies-builtintechnologies-cellbasedarchitecture): `Properties` on `BuiltInTechnologies` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=CellBasedArchitecture&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
+  - Gets the built-in cell-based-architecture technology profile.
+  - `TechnologyDescriptor CellBasedArchitecture { get; }`
+- [CellBoundaries](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-icellboundarycatalog-cellboundaries): `Properties` on `ICellBoundaryCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=CellBoundaries&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets all cell boundaries visible to the current runtime.
+  - `IReadOnlyList<CellBoundaryDescriptor> CellBoundaries { get; }`
+- [CellBoundaries](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-cellboundaries): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=CellBoundaries&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the cell boundaries visible to the runtime at the time the snapshot was created.
+  - `IReadOnlyList<CellBoundaryDescriptor> CellBoundaries { get; set; }`
+- [CellBoundaryDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-cellboundarydescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `CellBoundaryDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=CellBoundaryDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Creates a cell-boundary descriptor.
+  - `CellBoundaryDescriptor(string id, string sourceModuleId, string displayName, string description, string blastRadius, string routingStrategy, IReadOnlyList<string> moduleIds, IReadOnlyDictionary<string, string> metadata)`
 - [CephalonPackageVersion](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-scaffoldrequest-cephalonpackageversion): `Properties` on `ScaffoldRequest` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=CephalonPackageVersion&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the Cephalon package version written into the scaffold.
   - `string CephalonPackageVersion { get; }`
@@ -2580,6 +2604,9 @@ Browse the published API surface by public member.
 - [Description](cephalon-engine.md#member-p-cephalon-engine-manifest-capabilitymanifest-description): `Properties` on `CapabilityManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Description&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the capability description.
   - `string Description { get; }`
+- [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellboundarydescriptor-description): `Properties` on `CellBoundaryDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the human-readable description of the cell boundary.
+  - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-description): `Properties` on `DatabaseMigrationCommandDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the human-readable command description.
   - `string Description { get; }`
@@ -2864,6 +2891,9 @@ Browse the published API surface by public member.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-engine.md#member-p-cephalon-engine-manifest-capabilitymanifest-displayname): `Properties` on `CapabilityManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the operator-facing capability name.
+  - `string DisplayName { get; }`
+- [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellboundarydescriptor-displayname): `Properties` on `CellBoundaryDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the operator-facing cell name.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-displayname): `Properties` on `DatabaseMigrationCommandDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing command name.
@@ -4380,6 +4410,9 @@ Browse the published API surface by public member.
 - [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-resilience-ibehaviorresilienceruntimecatalog-getbyid-system-string): `Methods` on `IBehaviorResilienceRuntimeCatalog` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - Gets one behavior-execution resilience policy by its stable identifier.
   - `BehaviorResilienceRuntimeDescriptor GetById(string policyId)`
+- [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icellboundarycatalog-getbyid-system-string): `Methods` on `ICellBoundaryCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets one cell boundary by its stable identifier.
+  - `CellBoundaryDescriptor GetById(string cellId)`
 - [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idatabasemigrationcatalog-getbyid-system-string): `Methods` on `IDatabaseMigrationCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets one migration target by its logical identifier.
   - `DatabaseMigrationDescriptor GetById(string databaseMigrationId)`
@@ -4449,6 +4482,9 @@ Browse the published API surface by public member.
 - [GetByMode](cephalon-abstractions.md#member-m-cephalon-abstractions-authorization-iauthorizationpolicycatalog-getbymode-cephalon-abstractions-authorization-authorizationmode): `Methods` on `IAuthorizationPolicyCatalog` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets all authorization policies that support the requested mode.
   - `IReadOnlyList<AuthorizationPolicyDescriptor> GetByMode(AuthorizationMode mode)`
+- [GetByModule](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icellboundarycatalog-getbymodule-system-string): `Methods` on `ICellBoundaryCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets all cell boundaries that include the requested module.
+  - `IReadOnlyList<CellBoundaryDescriptor> GetByModule(string moduleId)`
 - [GetByOutboxId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchruntimecatalog-getbyoutboxid-system-string): `Methods` on `IEventDispatchRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByOutboxId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest reported dispatch state for one outbox-backed publication path.
   - `EventDispatchRuntimeState GetByOutboxId(string outboxId)`
@@ -5258,6 +5294,9 @@ Browse the published API surface by public member.
   - `string Id { get; set; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-id): `Properties` on `BehaviorTopologyDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the behavior identifier.
+  - `string Id { get; }`
+- [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellboundarydescriptor-id): `Properties` on `CellBoundaryDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the stable cell identifier.
   - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-id): `Properties` on `DatabaseMigrationCommandDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable command identifier.
@@ -6426,6 +6465,9 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-engine.md#member-p-cephalon-engine-manifest-capabilitymanifest-metadata): `Properties` on `CapabilityManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets additional capability metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellboundarydescriptor-metadata): `Properties` on `CellBoundaryDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets optional operator-facing metadata for this cell boundary.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-metadata): `Properties` on `DatabaseMigrationCommandDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets optional operator-facing metadata associated with the command.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -6810,6 +6852,9 @@ Browse the published API surface by public member.
 - [ModuleId](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-moduleid): `Properties` on `RuntimeModuleLifecycleState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=ModuleId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The stable module identifier.
   - `string ModuleId { get; set; }`
+- [ModuleIds](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellboundarydescriptor-moduleids): `Properties` on `CellBoundaryDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=ModuleIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the module identifiers that belong to this cell boundary.
+  - `IReadOnlyList<string> ModuleIds { get; }`
 - [ModuleManifest](cephalon-engine.md#member-m-cephalon-engine-manifest-modulemanifest-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-boolean): `Constructors` on `ModuleManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=ModuleManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Creates a new module manifest entry.
   - `ModuleManifest(string id, string displayName, string description, string version, string assemblyName, string typeName, IReadOnlyList<string> dependsOn, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata, string packageId, bool isTrusted)`
@@ -8166,6 +8211,9 @@ Browse the published API surface by public member.
 - [RegisterCapabilities](cephalon-abstractions.md#member-m-cephalon-abstractions-modules-modulebase-registercapabilities-cephalon-abstractions-capabilities-icapabilityregistry): `Methods` on `ModuleBase` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=RegisterCapabilities&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
   - Registers capabilities exposed by the module.
   - `void RegisterCapabilities(ICapabilityRegistry capabilities)`
+- [RegisterCellBoundaries](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icellboundarycontributor-registercellboundaries-cephalon-abstractions-technologies-icellboundaryregistry): `Methods` on `ICellBoundaryContributor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=RegisterCellBoundaries&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Registers the cell boundaries owned by the contributing module.
+  - `void RegisterCellBoundaries(ICellBoundaryRegistry cells)`
 - [RegisterChannels](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventchannelcontributor-registerchannels-cephalon-eventing-services-ieventchannelregistry): `Methods` on `IEventChannelContributor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RegisterChannels&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Registers one or more event channel descriptors with the supplied registry.
   - `void RegisterChannels(IEventChannelRegistry channels)`
@@ -8988,6 +9036,9 @@ Browse the published API surface by public member.
 - [Routes](cephalon-engine.md#member-p-cephalon-engine-configuration-stranglerfigmigrationsettings-routes): `Properties` on `StranglerFigMigrationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Routes&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the route-specific strangler-fig migration-policy entries.
   - `IReadOnlyList<StranglerFigRoutePolicySettings> Routes { get; }`
+- [RoutingStrategy](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellboundarydescriptor-routingstrategy): `Properties` on `CellBoundaryDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=RoutingStrategy&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the operator-facing routing strategy for this cell.
+  - `string RoutingStrategy { get; }`
 - [RuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviorcompatibilityviolation-ruleid): `Properties` on `BehaviorCompatibilityViolation` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=RuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the rule identifier that was violated.
   - `string RuleId { get; }`
@@ -9624,6 +9675,9 @@ Browse the published API surface by public member.
 - [SourceModuleId](cephalon-engine.md#member-p-cephalon-engine-trust-capabilitypolicydecision-sourcemoduleid): `Properties` on `CapabilityPolicyDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The module that contributed the capability.
   - `string SourceModuleId { get; set; }`
+- [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellboundarydescriptor-sourcemoduleid): `Properties` on `CellBoundaryDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the module that owns this cell boundary.
+  - `string SourceModuleId { get; }`
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-sourcemoduleid): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the owning module identifier when one is known at runtime.
   - `string SourceModuleId { get; }`

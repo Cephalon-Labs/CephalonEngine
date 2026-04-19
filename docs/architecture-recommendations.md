@@ -247,17 +247,16 @@ These patterns would make CephalonEngine stand out among modern application fram
 
 ### Cell-Based Architecture
 
-Current state: no cell boundary concept exists. CephalonEngine's module system is already cell-shaped, but without explicit blast-radius isolation and cell-to-cell routing.
+Current state: the first explicit cell-boundary baseline is now shipped. `CellBoundaryDescriptor`, `ICellBoundaryContributor`, `ICellBoundaryRegistry`, `ICellBoundaryCatalog`, `/engine/cells`, `snapshot.CellBoundaries`, and the `cell-boundaries` technology runtime surface now make module-owned blast-radius posture readable from one shared runtime truth. CephalonEngine's module system is now explicitly cell-shaped, but deeper cell-to-cell routing and health isolation are not shipped yet.
 
-Recommendation: add technology descriptor and cell boundary abstraction for Netflix/Meta-scale deployments.
+Recommendation: keep cells as a technology/profile concern instead of a new blueprint, keep module ownership explicit, and add routing or health-isolation automation only as additive follow-through over the shipped boundary catalog.
 
 Implementation outline:
-- `TechnologyDescriptor` "cell-based-architecture"
-- `ICellBoundary` — defines a cell's blast radius
-- Cell routing table and cell health isolation
-- Module-to-cell mapping through configuration
+- shipped baseline: built-in `TechnologyDescriptor` `cell-based-architecture`, `CellBoundaryDescriptor`, `ICellBoundaryContributor`, `ICellBoundaryCatalog`, `/engine/cells`, `snapshot.CellBoundaries`, and the `cell-boundaries` technology runtime surface
+- later follow-through: cell routing table and cell health isolation
+- later follow-through: module-to-cell mapping through configuration when explicit operator scenarios justify that extra layer
 
-Effort: large.
+Effort: medium for the remaining follow-through.
 
 ### Data Mesh (domain-owned data products)
 
@@ -358,11 +357,11 @@ Exit criteria:
 Target: Sprint 40–41
 
 Deliverables:
-- Cell-Based Architecture technology descriptor and boundary abstraction
+- Cell-Based Architecture technology descriptor and boundary abstraction — shipped baseline
 - Data Mesh data product abstraction
 - CDC capture abstraction
 
 Exit criteria:
-- modules can declare cell boundaries with explicit blast-radius isolation
+- modules can declare cell boundaries with explicit blast-radius isolation and operators can inspect the same answer through `/engine/cells`, `/engine/technology-surfaces/cell-based-architecture`, and `/engine/snapshot`
 - modules can expose queryable data products through the runtime catalog
 - database changes can be captured and published through the outbox without explicit staging

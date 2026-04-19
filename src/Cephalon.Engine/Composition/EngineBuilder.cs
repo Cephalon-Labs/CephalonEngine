@@ -56,6 +56,7 @@ public sealed class EngineBuilder
     private readonly List<IModule> modules = [];
     private readonly List<ModulePackageReference> packages = [];
     private readonly List<ModulePackageDirectory> packageDirectories = [];
+    private readonly List<CellBoundaryDescriptor> cellBoundaries = [];
     private readonly List<BackendForFrontendClientBindingDescriptor> backendForFrontendBindings = [];
     private readonly List<StranglerFigRouteDescriptor> stranglerFigRoutes = [];
     private readonly List<FeatureFlagDescriptor> featureFlags = [];
@@ -189,6 +190,36 @@ public sealed class EngineBuilder
     public EngineBuilder AddTechnology(TechnologyDescriptor technology)
     {
         appProfileBuilder.AddTechnology(technology);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a cell boundary to the current runtime composition.
+    /// </summary>
+    /// <param name="cellBoundary">The cell-boundary descriptor to add.</param>
+    /// <returns>The same builder instance.</returns>
+    public EngineBuilder AddCellBoundary(CellBoundaryDescriptor cellBoundary)
+    {
+        ArgumentNullException.ThrowIfNull(cellBoundary);
+
+        cellBoundaries.Add(cellBoundary);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds multiple cell boundaries to the current runtime composition.
+    /// </summary>
+    /// <param name="cellBoundaries">The cell-boundary descriptors to add.</param>
+    /// <returns>The same builder instance.</returns>
+    public EngineBuilder AddCellBoundaries(IEnumerable<CellBoundaryDescriptor> cellBoundaries)
+    {
+        ArgumentNullException.ThrowIfNull(cellBoundaries);
+
+        foreach (var cellBoundary in cellBoundaries)
+        {
+            AddCellBoundary(cellBoundary);
+        }
+
         return this;
     }
 
@@ -731,6 +762,7 @@ public sealed class EngineBuilder
             var inboxes = new List<InboxDescriptor>();
             var auditStores = new List<AuditStoreDescriptor>();
             var authorizationPolicies = new List<AuthorizationPolicyDescriptor>();
+            var activeCellBoundaries = new List<CellBoundaryDescriptor>(cellBoundaries);
             var activeBackendForFrontendBindings = new List<BackendForFrontendClientBindingDescriptor>(backendForFrontendBindings);
             var activeStranglerFigRoutes = new List<StranglerFigRouteDescriptor>(stranglerFigRoutes);
             var activeFeatureFlags = new List<FeatureFlagDescriptor>(featureFlags);
@@ -783,6 +815,12 @@ public sealed class EngineBuilder
                     new AuthorizationPolicyRegistryAdapter(module.Descriptor.Id, authorizationPolicies));
             }
 
+            foreach (var module in orderedModules.Where(static module => module is ICellBoundaryContributor))
+            {
+                ((ICellBoundaryContributor)module).RegisterCellBoundaries(
+                    new CellBoundaryRegistryAdapter(module.Descriptor.Id, activeCellBoundaries));
+            }
+
             foreach (var module in orderedModules.Where(static module => module is IFeatureFlagContributor))
             {
                 ((IFeatureFlagContributor)module).RegisterFeatureFlags(
@@ -816,6 +854,12 @@ public sealed class EngineBuilder
                 appProfileBuilder.TryAddPattern(BuiltInPatterns.StranglerFigPattern);
             }
 
+            ValidateCellBoundaries(activeCellBoundaries, orderedModules);
+            if (activeCellBoundaries.Count > 0)
+            {
+                appProfileBuilder.AddTechnology(BuiltInTechnologies.CellBasedArchitecture);
+            }
+
             var appProfile = appProfileBuilder.Build();
             var technologyCatalog = new TechnologyCatalogSnapshot(appProfileBuilder.GetTechnologyCatalog());
             var technologySelection = new TechnologySelection(appProfile.Technologies, technologyCatalog.Technologies);
@@ -833,6 +877,10 @@ public sealed class EngineBuilder
             Services.TryAddSingleton<IReadOnlyList<OwnedBehaviorRegistration>>(ownedBehaviorRegistrations);
             Services.TryAddSingleton<IReadOnlyList<AuditStoreDescriptor>>(_ => auditStores.ToArray());
             Services.TryAddSingleton<IReadOnlyList<OutboxDescriptor>>(_ => outboxes.ToArray());
+            Services.TryAddSingleton<CellBoundaryCatalogSnapshot>(_ =>
+                new CellBoundaryCatalogSnapshot(activeCellBoundaries));
+            Services.TryAddSingleton<ICellBoundaryCatalog>(serviceProvider =>
+                serviceProvider.GetRequiredService<CellBoundaryCatalogSnapshot>());
             Services.TryAddSingleton<BackendForFrontendRuntimeCatalogSnapshot>(_ =>
                 new BackendForFrontendRuntimeCatalogSnapshot(activeBackendForFrontendBindings));
             Services.TryAddSingleton<IBackendForFrontendRuntimeCatalog>(serviceProvider =>
@@ -876,6 +924,7 @@ public sealed class EngineBuilder
                 new InMemoryFeatureToggle(
                     serviceProvider.GetRequiredService<IFeatureFlagRuntimeCatalog>(),
                     serviceProvider.GetServices<IFeatureFlagProvider>()));
+            Services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, CellBoundaryTechnologyRuntimeContributor>());
             Services.TryAddSingleton<TechnologyRuntimeCatalogSnapshot>(serviceProvider =>
                 new TechnologyRuntimeCatalogSnapshot(
                     serviceProvider.GetServices<ITechnologyRuntimeContributor>()));
@@ -985,6 +1034,35 @@ public sealed class EngineBuilder
         return capabilities
             .Where(capability => options.IsCapabilityEnabled(capability.Key))
             .ToArray();
+    }
+
+    private static void ValidateCellBoundaries(
+        List<CellBoundaryDescriptor> cellBoundaries,
+        List<IModule> orderedModules)
+    {
+        ArgumentNullException.ThrowIfNull(cellBoundaries);
+        ArgumentNullException.ThrowIfNull(orderedModules);
+
+        if (cellBoundaries.Count == 0)
+        {
+            return;
+        }
+
+        var knownModuleIds = orderedModules
+            .Select(static module => module.Descriptor.Id)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var cellBoundary in cellBoundaries)
+        {
+            foreach (var moduleId in cellBoundary.ModuleIds)
+            {
+                if (!knownModuleIds.Contains(moduleId))
+                {
+                    throw new InvalidOperationException(
+                        $"Cell boundary '{cellBoundary.Id}' references unknown module '{moduleId}'.");
+                }
+            }
+        }
     }
 
     private static BackendForFrontendClientBindingDescriptor CreateBackendForFrontendClientBindingDescriptor(

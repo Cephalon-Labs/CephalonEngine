@@ -18,6 +18,7 @@
 - additive projection contracts and runtime projection catalogs
 - additive inbox contracts and runtime inbox catalogs
 - additive outbox contracts, dispatch-policy contracts, and runtime outbox catalogs
+- additive cell-boundary contracts, runtime catalogs, and technology-surface projection
 - additive database-role contracts and runtime database-role catalogs
 - additive database-migration contracts and runtime database-migration catalogs
 - additive database-migration operational playbook contracts and runtime database-migration playbook catalogs
@@ -54,6 +55,8 @@
 - `Authorization/AuthorizationPolicyCatalogSnapshot.cs`
 - `Audit/AuditStoreCatalogSnapshot.cs`
 - `Patterns/StranglerFigRuntimeCatalogSnapshot.cs`
+- `Technologies/CellBoundaryCatalogSnapshot.cs`
+- `Technologies/CellBoundaryTechnologyRuntimeContributor.cs`
 - `Features/FeatureFlagRegistryAdapter.cs`
 - `Features/FeatureFlagRuntimeCatalogSnapshot.cs`
 - `Features/InMemoryFeatureToggle.cs`
@@ -99,6 +102,14 @@
 ## How it fits
 
 This package is the host-agnostic center of the framework. ASP.NET Core, worker hosts, CLI, scaffolding, and companion technology packs all consume this runtime model instead of rebuilding engine logic locally. That now includes the runtime diagnostics catalog that publishes stable event-id conventions for the active engine and companion packages, the execution-graph and hosted-execution transition counters exposed through the shared `Cephalon.Engine` meter, the runtime story contracts that explain what loaded, started, failed, and why in one ordered payload, the additive execution-graph catalog surfaced through `/engine/execution-graphs` and `/engine/snapshot`, the additive hosted-execution catalog surfaced through `/engine/hosted-executions` and `/engine/snapshot`, the additive projection catalog surfaced through `/engine/projections` and `/engine/snapshot`, the additive inbox catalog surfaced through `/engine/inboxes` and `/engine/snapshot`, the additive outbox catalog surfaced through `/engine/outboxes` and `/engine/snapshot`, the additive authorization-policy catalog surfaced through `/engine/authorization-policies` and `/engine/snapshot`, the additive audit-store catalog surfaced through `/engine/audit-stores` and `/engine/snapshot`, the additive event-dispatch runtime descriptor and state catalogs surfaced through `snapshot.EventDispatchRuntimes` and `snapshot.EventDispatchStates`, the additive choreography publication-state catalog surfaced through `snapshot.SagaChoreographyPublicationStates`, the module-backed choreography capability projection surfaced through the runtime manifest and `/engine/capabilities`, the additive rate-limiting runtime catalog surfaced through host-owned routes and `snapshot.RateLimitingPolicies`, the live aggregate `Summary` now carried by each dispatch-runtime descriptor so operator tooling has one canonical per-runtime answer, and the outbox-dispatch-policy enrichment that lets `/engine/outboxes` answer `disabled`, `consumer-managed`, or runtime-managed ownership without hardwiring provider or adapter logic into the engine core. The execution-graph and hosted-execution lifecycle state still surface through `/engine/runtime-story` and `/engine/snapshot`, and the configuration-driven failure-policy windows let hosts tune readiness warmup, shutdown drain, and manual restart backoff without hardwiring host-specific lifecycle logic. The technology-runtime catalog is also now projected on demand from active contributors when the engine builds it that way, so application-managed companion-pack state such as event-subscription runtime reporting and outbox-dispatch runtime reporting can stay fresh in `/engine/technology-surfaces` and `/engine/snapshot` instead of freezing at the first resolution.
+
+The same engine-first runtime truth now also carries the first phase 13 cell baseline. Modules and
+hosts can contribute `CellBoundaryDescriptor` entries, the engine composes them through
+`ICellBoundaryCatalog`, active boundaries now auto-select the built-in `cell-based-architecture`
+profile, and the same answer now appears through `/engine/cells`, `snapshot.CellBoundaries`, and
+the `cell-boundaries` technology runtime surface without inventing a second host-only topology
+registry. Deeper routing, health isolation, or provider-aware traffic automation remain later
+follow-through over that same boundary catalog.
 
 Just as importantly, this package exists to lower ceremony for consumer apps. The engine should absorb repetitive composition, configuration binding, runtime wiring, introspection, and companion-pack coordination so Cephalon-based apps spend less code on plumbing and declarations, emit less boilerplate, and stay focused on project-specific business logic.
 

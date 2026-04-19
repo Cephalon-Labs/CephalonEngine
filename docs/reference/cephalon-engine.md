@@ -481,6 +481,36 @@ Returns: The same builder instance.
 Parameters:
 - `bindings`: The client binding descriptors to add.
 
+<a id="member-m-cephalon-engine-composition-enginebuilder-addcellboundaries-system-collections-generic-ienumerable-cephalon-abstractions-technologies-cellboundarydescriptor"></a>
+
+##### `AddCellBoundaries`
+
+```csharp
+EngineBuilder AddCellBoundaries(IEnumerable<CellBoundaryDescriptor> cellBoundaries)
+```
+
+Adds multiple cell boundaries to the current runtime composition.
+
+Returns: The same builder instance.
+
+Parameters:
+- `cellBoundaries`: The cell-boundary descriptors to add.
+
+<a id="member-m-cephalon-engine-composition-enginebuilder-addcellboundary-cephalon-abstractions-technologies-cellboundarydescriptor"></a>
+
+##### `AddCellBoundary`
+
+```csharp
+EngineBuilder AddCellBoundary(CellBoundaryDescriptor cellBoundary)
+```
+
+Adds a cell boundary to the current runtime composition.
+
+Returns: The same builder instance.
+
+Parameters:
+- `cellBoundary`: The cell-boundary descriptor to add.
+
 <a id="member-m-cephalon-engine-composition-enginebuilder-addfeatureflag-cephalon-abstractions-features-featureflagdescriptor"></a>
 
 ##### `AddFeatureFlag`
@@ -9063,6 +9093,16 @@ IReadOnlyList<BehaviorResilienceRuntimeDescriptor> BehaviorResiliencePolicies { 
 
 Gets the effective behavior-execution resilience policies visible to the runtime at the time the snapshot was created.
 
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-cellboundaries"></a>
+
+##### `CellBoundaries`
+
+```csharp
+IReadOnlyList<CellBoundaryDescriptor> CellBoundaries { get; set; }
+```
+
+Gets the cell boundaries visible to the runtime at the time the snapshot was created.
+
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-databasemigrationplaybook"></a>
 
 ##### `DatabaseMigrationPlaybook`
@@ -10129,6 +10169,16 @@ IReadOnlyList<TechnologyDescriptor> All { get; }
 ```
 
 Gets all built-in technology descriptors.
+
+<a id="member-p-cephalon-engine-technologies-builtintechnologies-cellbasedarchitecture"></a>
+
+##### `CellBasedArchitecture`
+
+```csharp
+TechnologyDescriptor CellBasedArchitecture { get; }
+```
+
+Gets the built-in cell-based-architecture technology profile.
 
 <a id="member-p-cephalon-engine-technologies-builtintechnologies-edgenativedelivery"></a>
 

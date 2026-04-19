@@ -9,6 +9,7 @@
 - capability contracts such as `Capability`, `CapabilityAccess`, and `ICapabilityRegistry`
 - feature-flag contracts such as `FeatureFlagDescriptor`, `FeatureFlagProviderBindingDescriptor`, `FeatureFlagProviderEvaluationResult`, `FeatureFlagTargetingDescriptor`, `IFeatureToggle`, `IFeatureFlagProvider`, `IFeatureFlagRuntimeCatalog`, `IFeatureFlagContributor`, and `IFeatureFlagRegistry`
 - execution/runtime-catalog contracts such as `DurableExecutionRuntimeDescriptor`, `IDurableExecutionRuntimeCatalog`, `DurableExecutionRuntimeState`, `IDurableExecutionRuntimeStateCatalog`, `SagaChoreographyRuntimeDescriptor`, `ISagaChoreographyRuntimeCatalog`, `SagaChoreographyPublicationRuntimeState`, and `ISagaChoreographyPublicationRuntimeStateCatalog`
+- technology runtime contracts such as `CellBoundaryDescriptor`, `ICellBoundaryContributor`, `ICellBoundaryRegistry`, `ICellBoundaryCatalog`, `TechnologyDescriptor`, and `ITechnologyRuntimeCatalog`
 - app-model contracts such as `AppBlueprint`, `AppProfile`, resilience-selection types, and scaffold-plan types
 - phase-8 runtime-neutral contracts for data, authorization, tenancy, audit, and id generation
 - health contracts used across hosts and packages
@@ -71,6 +72,8 @@
 - `Localization/ILocalizedResourceContributor.cs`
 - `Patterns/IStranglerFigRouter.cs`
 - `Patterns/StranglerFigRouteDescriptor.cs`
+- `Technologies/CellBoundaryDescriptor.cs`
+- `Technologies/ICellBoundaryCatalog.cs`
 - `Technologies/ITechnologyRuntimeCatalog.cs`
 - `Transports/IRestEndpointCandidateRuntimeCatalog.cs`
 - `Transports/IRestEndpointCandidateRuntimeRegistry.cs`
@@ -172,6 +175,12 @@ namespace now carries `IStranglerFigRouteContributor`, `IStranglerFigRouteRegist
 talk about migration-boundary ownership, effective configuration-driven target selection, route-level
 progress, and request resolution without leaking ASP.NET Core proxy behavior, YARP, or cloud
 traffic-manager types into `Cephalon.Abstractions`.
+
+The same host-agnostic rule now also covers the phase 13 cell baseline. The `Technologies`
+namespace now carries `CellBoundaryDescriptor`, `ICellBoundaryContributor`,
+`ICellBoundaryRegistry`, and `ICellBoundaryCatalog` so modules, hosts, and operator tooling can
+talk about explicit module-owned blast-radius boundaries without leaking ASP.NET Core ingress,
+service-mesh, or health-probe types into `Cephalon.Abstractions`.
 
 The same phase 12 rule now also covers backend-for-frontend REST documentation materialization.
 `BackendForFrontendRestDocumentRuntimeDescriptor` and
