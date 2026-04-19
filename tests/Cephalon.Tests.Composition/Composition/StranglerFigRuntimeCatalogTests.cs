@@ -221,6 +221,97 @@ public sealed class StranglerFigRuntimeCatalogTests
         Assert.Contains("unknown route ids", exception.Message, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void BuildProjectsIngressRuntimeCatalogIntoSnapshot()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(blueprint: "Microservice"));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new DiscoveryTestModule());
+            engine.AddStranglerFigRoute(new StranglerFigRouteDescriptor(
+                id: "status-pass-through",
+                sourceModuleId: "platform",
+                displayName: "Status pass-through",
+                description: "Keeps the selected route on the same rooted path.",
+                pathPrefix: "/legacy/status",
+                preferredTarget: StranglerFigTarget.Legacy,
+                legacyEndpoint: "/legacy/status"));
+            engine.AddStranglerFigRoute(new StranglerFigRouteDescriptor(
+                id: "reports-rewrite",
+                sourceModuleId: "platform",
+                displayName: "Reports rewrite",
+                description: "Rewrites report traffic to a different rooted local path.",
+                pathPrefix: "/reports",
+                preferredTarget: StranglerFigTarget.Legacy,
+                legacyEndpoint: "/legacy/reports"));
+            engine.AddStranglerFigRoute(new StranglerFigRouteDescriptor(
+                id: "orders-proxy",
+                sourceModuleId: "platform",
+                displayName: "Orders proxy",
+                description: "Proxies order traffic to an absolute legacy URI.",
+                pathPrefix: "/checkout/orders",
+                preferredTarget: StranglerFigTarget.Legacy,
+                legacyEndpoint: "https://legacy.example.com/orders"));
+            engine.AddStranglerFigRoute(new StranglerFigRouteDescriptor(
+                id: "events-opaque",
+                sourceModuleId: "platform",
+                displayName: "Events opaque",
+                description: "Keeps one opaque boundary visible for operators.",
+                pathPrefix: "/events",
+                preferredTarget: StranglerFigTarget.Legacy,
+                legacyEndpoint: "legacy://events"));
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var catalog = provider.GetRequiredService<IStranglerFigIngressRuntimeCatalog>();
+        var snapshot = provider.GetRequiredService<IRuntimeIntrospectionSnapshotProvider>().CreateSnapshot();
+
+        Assert.Equal(4, catalog.Routes.Count);
+
+        var passThrough = catalog.GetById("status-pass-through");
+        Assert.NotNull(passThrough);
+        Assert.Equal("pass-through", passThrough.IngressMode);
+        Assert.True(passThrough.CanMaterialize);
+        Assert.Equal("/legacy/status", passThrough.TargetPathPrefix);
+        Assert.Null(passThrough.TargetUri);
+
+        var rewrite = catalog.GetById("reports-rewrite");
+        Assert.NotNull(rewrite);
+        Assert.Equal("rewrite-local-path", rewrite.IngressMode);
+        Assert.True(rewrite.CanMaterialize);
+        Assert.Equal("/legacy/reports", rewrite.TargetPathPrefix);
+
+        var proxy = catalog.GetById("orders-proxy");
+        Assert.NotNull(proxy);
+        Assert.Equal("proxy-absolute-uri", proxy.IngressMode);
+        Assert.True(proxy.CanMaterialize);
+        Assert.Equal("absolute-uri", proxy.SelectedEndpointKind);
+        Assert.Equal("/orders", proxy.TargetPathPrefix);
+        Assert.Equal("https://legacy.example.com/orders", proxy.TargetUri);
+
+        var opaque = catalog.GetById("events-opaque");
+        Assert.NotNull(opaque);
+        Assert.Equal("opaque-endpoint", opaque.IngressMode);
+        Assert.False(opaque.CanMaterialize);
+        Assert.Equal("opaque", opaque.SelectedEndpointKind);
+        Assert.Null(opaque.TargetPathPrefix);
+        Assert.Null(opaque.TargetUri);
+
+        var platformRoutes = catalog.GetBySourceModule("platform");
+        Assert.Equal(4, platformRoutes.Count);
+        Assert.Contains(platformRoutes, route => route.RouteId == "orders-proxy");
+
+        Assert.Equal(4, snapshot.StranglerFigIngressRoutes.Count);
+        Assert.Contains(snapshot.StranglerFigIngressRoutes, route =>
+            route.RouteId == "reports-rewrite" &&
+            route.IngressMode == "rewrite-local-path");
+        Assert.Contains(snapshot.StranglerFigIngressRoutes, route =>
+            route.RouteId == "events-opaque" &&
+            route.CanMaterialize == false);
+    }
+
     private sealed class StranglerFigCatalogTestModule : ModuleBase, IStranglerFigRouteContributor
     {
         public override ModuleDescriptor Descriptor { get; } = new(

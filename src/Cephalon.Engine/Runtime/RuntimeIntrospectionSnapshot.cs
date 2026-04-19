@@ -197,4 +197,9 @@ public sealed record RuntimeIntrospectionSnapshot(
     /// Gets the effective strangler-fig migration-policy answers visible to the runtime at the time the snapshot was created.
     /// </summary>
     public IReadOnlyList<StranglerFigMigrationRuntimeDescriptor> StranglerFigRoutePolicies { get; init; } = [];
+
+    /// <summary>
+    /// Gets the effective strangler-fig ingress materialization answers visible to the runtime at the time the snapshot was created.
+    /// </summary>
+    public IReadOnlyList<StranglerFigIngressRuntimeDescriptor> StranglerFigIngressRoutes { get; init; } = [];
 }

@@ -450,6 +450,103 @@ public sealed class AspNetCoreHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonExposesStranglerFigIngressRoutesAndSnapshot()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Services.AddProblemDetails();
+        builder.Services.AddHealthChecks()
+            .AddCheck("cephalon.liveness", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy(), tags: ["live", "engine"])
+            .AddCheck("cephalon.readiness", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy(), tags: ["ready", "engine"]);
+        builder.Services.AddSingleton<IRateLimitingRuntimeCatalog>(EmptyRateLimitingRuntimeCatalog.Instance);
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "Microservice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Patterns:0"] = "StranglerFig";
+        builder.Configuration[$"{EngineSettings.SectionName}:Migration:StranglerFig:DefaultTarget"] = "legacy";
+        builder.Services.AddCephalon(engine =>
+        {
+            engine.UseConfiguration(builder.Configuration);
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new DiscoveryTestModule());
+            engine.AddStranglerFigRoute(new StranglerFigRouteDescriptor(
+                id: "status-pass-through",
+                sourceModuleId: "platform",
+                displayName: "Status pass-through",
+                description: "Keeps the selected route on the same rooted path.",
+                pathPrefix: "/legacy/status",
+                preferredTarget: StranglerFigTarget.Legacy,
+                legacyEndpoint: "/legacy/status"));
+            engine.AddStranglerFigRoute(new StranglerFigRouteDescriptor(
+                id: "reports-rewrite",
+                sourceModuleId: "platform",
+                displayName: "Reports rewrite",
+                description: "Rewrites report traffic to a different rooted local path.",
+                pathPrefix: "/reports",
+                preferredTarget: StranglerFigTarget.Legacy,
+                legacyEndpoint: "/legacy/reports"));
+            engine.AddStranglerFigRoute(new StranglerFigRouteDescriptor(
+                id: "orders-proxy",
+                sourceModuleId: "platform",
+                displayName: "Orders proxy",
+                description: "Proxies order traffic to an absolute legacy URI.",
+                pathPrefix: "/checkout/orders",
+                preferredTarget: StranglerFigTarget.Legacy,
+                legacyEndpoint: "https://legacy.example.com/orders"));
+            engine.AddStranglerFigRoute(new StranglerFigRouteDescriptor(
+                id: "events-opaque",
+                sourceModuleId: "platform",
+                displayName: "Events opaque",
+                description: "Keeps one opaque boundary visible for operators.",
+                pathPrefix: "/events",
+                preferredTarget: StranglerFigTarget.Legacy,
+                legacyEndpoint: "legacy://events"));
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var routes = await client.GetFromJsonAsync<StranglerFigIngressRuntimeDescriptor[]>("/engine/strangler-fig/ingress");
+        var route = await client.GetFromJsonAsync<StranglerFigIngressRuntimeDescriptor>("/engine/strangler-fig/ingress/reports-rewrite");
+        var moduleRoutes = await client.GetFromJsonAsync<StranglerFigIngressRuntimeDescriptor[]>("/engine/strangler-fig/ingress/modules/platform");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(routes);
+        Assert.Equal(4, routes.Length);
+        Assert.Contains(routes, candidate =>
+            candidate.RouteId == "status-pass-through" &&
+            candidate.IngressMode == "pass-through");
+        Assert.Contains(routes, candidate =>
+            candidate.RouteId == "orders-proxy" &&
+            candidate.IngressMode == "proxy-absolute-uri" &&
+            candidate.TargetUri == "https://legacy.example.com/orders");
+        Assert.Contains(routes, candidate =>
+            candidate.RouteId == "events-opaque" &&
+            candidate.IngressMode == "opaque-endpoint" &&
+            candidate.CanMaterialize == false);
+
+        Assert.NotNull(route);
+        Assert.Equal("rewrite-local-path", route.IngressMode);
+        Assert.True(route.CanMaterialize);
+        Assert.Equal("/legacy/reports", route.TargetPathPrefix);
+        Assert.Null(route.TargetUri);
+
+        Assert.NotNull(moduleRoutes);
+        Assert.Equal(4, moduleRoutes.Length);
+        Assert.Contains(moduleRoutes, candidate => candidate.RouteId == "events-opaque");
+
+        Assert.NotNull(snapshot);
+        Assert.Equal(4, snapshot.StranglerFigIngressRoutes.Count);
+        Assert.Contains(snapshot.StranglerFigIngressRoutes, candidate =>
+            candidate.RouteId == "orders-proxy" &&
+            candidate.SelectedEndpointKind == "absolute-uri");
+        Assert.Contains(snapshot.StranglerFigIngressRoutes, candidate =>
+            candidate.RouteId == "events-opaque" &&
+            candidate.IngressMode == "opaque-endpoint");
+    }
+
+    [Fact]
     public async Task MapCephalonRewritesLocalStranglerFigCutoverTargets()
     {
         var builder = WebApplication.CreateSlimBuilder();

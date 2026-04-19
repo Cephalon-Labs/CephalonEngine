@@ -663,6 +663,8 @@ public static class EngineWebApplicationExtensions
             .WithName("GetCephalonStranglerFigRoutes");
         engineGroup.MapGet("/strangler-fig/runtime", ([FromServices] IStranglerFigMigrationRuntimeCatalog catalog) => TypedResults.Ok(catalog.Routes))
             .WithName("GetCephalonStranglerFigRuntimeRoutes");
+        engineGroup.MapGet("/strangler-fig/ingress", ([FromServices] IStranglerFigIngressRuntimeCatalog catalog) => TypedResults.Ok(catalog.Routes))
+            .WithName("GetCephalonStranglerFigIngressRoutes");
         engineGroup.MapGet("/strangler-fig/resolve", async (
                 string path,
                 string? method,
@@ -692,6 +694,18 @@ public static class EngineWebApplicationExtensions
                 return route is null ? Results.NotFound() : Results.Ok(route);
             })
             .WithName("GetCephalonStranglerFigRuntimeRoute");
+        engineGroup.MapGet("/strangler-fig/ingress/modules/{moduleId}", (string moduleId, [FromServices] IStranglerFigIngressRuntimeCatalog catalog) =>
+            {
+                return Results.Ok(catalog.GetBySourceModule(moduleId));
+            })
+            .WithName("GetCephalonStranglerFigIngressRoutesByModule");
+        engineGroup.MapGet("/strangler-fig/ingress/{routeId}", (string routeId, [FromServices] IStranglerFigIngressRuntimeCatalog catalog) =>
+            {
+                var route = catalog.GetById(routeId);
+
+                return route is null ? Results.NotFound() : Results.Ok(route);
+            })
+            .WithName("GetCephalonStranglerFigIngressRoute");
         engineGroup.MapGet("/strangler-fig/cutover", ([FromServices] AspNetCoreStranglerFigCutoverCatalog catalog) => TypedResults.Ok(catalog.Routes))
             .WithName("GetCephalonStranglerFigCutoverRoutes");
         engineGroup.MapGet("/strangler-fig/cutover/resolve", async (

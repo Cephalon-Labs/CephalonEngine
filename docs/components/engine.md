@@ -27,7 +27,7 @@
 - additive event-dispatch runtime descriptor and state catalogs
 - additive saga choreography runtime catalogs, live publication-state catalogs, module-backed capability projection, and snapshot projection
 - additive backend-for-frontend client-binding contribution contracts and runtime catalogs
-- additive strangler-fig route-contribution contracts plus runtime route, migration-policy, and request-resolution catalogs
+- additive strangler-fig route-contribution contracts plus runtime route, migration-policy, ingress, and request-resolution catalogs
 - additive feature-flag contribution contracts, runtime catalogs, and evaluation
 - manifest generation and runtime introspection snapshots
 - built-in blueprint, pattern, transport, and technology catalogs
@@ -118,8 +118,13 @@ strangler-fig follow-through is now also shipped: when modules or host code cont
 policy/progress slice is now also shipped: `Engine:Migration:StranglerFig` overlays deterministic
 default plus per-route target and progress policy into `IStranglerFigMigrationRuntimeCatalog`,
 `snapshot.StranglerFigRoutePolicies`, and the ASP.NET Core `/engine/strangler-fig/runtime`
-surface without changing the authored route catalog. The first host-level cutover slice is also
-now shipped through `Engine:Migration:StranglerFig:AspNetCore` and the ASP.NET Core
+surface without changing the authored route catalog. The engine-first ingress follow-through is
+now also shipped: `IStranglerFigIngressRuntimeCatalog` plus
+`StranglerFigIngressRuntimeDescriptor` classify pass-through, local rewrite, absolute endpoint,
+and opaque endpoint materialization truth into `snapshot.StranglerFigIngressRoutes` and the
+ASP.NET Core `/engine/strangler-fig/ingress` surface without creating a second host-only ingress
+registry. The first host-level cutover slice now also derives from that shared ingress truth
+through `Engine:Migration:StranglerFig:AspNetCore` and the ASP.NET Core
 `/engine/strangler-fig/cutover` surface. The same phase now also ships the first backend-for-
 frontend client-binding runtime: host code, modules, and `Engine:BackendForFrontend:Bindings` can
 contribute `BackendForFrontendClientBindingDescriptor` entries, the engine composes them through
@@ -132,9 +137,10 @@ shared binding catalog plus the published REST endpoint catalog instead of inven
 of truth. The next documentation/materialization follow-through is now also shipped additively:
 when a host adapter registers `IBackendForFrontendRestDocumentRuntimeCatalog`,
 `snapshot.BackendForFrontendRestDocuments` can publish scope-specific OpenAPI and Scalar surfaces
-without moving OpenAPI generation or Scalar mapping into `Cephalon.Engine`. Broader traffic-manager
-or ingress follow-through plus non-REST materialization remain later slices. The same phase now
-also ships the first feature-flag baseline: `Engine:Features`, `engine.AddFeatureFlag(...)`,
+without moving OpenAPI generation or Scalar mapping into `Cephalon.Engine`. Broader
+provider-specific ingress or edge automation plus non-REST materialization remain later slices.
+The same phase now also ships the first feature-flag baseline: `Engine:Features`,
+`engine.AddFeatureFlag(...)`,
 `engine.AddFeatureFlags(...)`, and module-owned `IFeatureFlagContributor` inputs now merge into one
 `IFeatureFlagRuntimeCatalog` plus `IFeatureToggle` runtime, `snapshot.FeatureFlags` now publishes
 the merged descriptor set, and ASP.NET Core can project that same truth through `/engine/features`

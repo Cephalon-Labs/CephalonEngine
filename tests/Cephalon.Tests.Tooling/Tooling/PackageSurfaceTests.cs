@@ -254,11 +254,13 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Patterns.IBackendForFrontendClientBindingContributor),
             typeof(global::Cephalon.Abstractions.Patterns.IBackendForFrontendClientBindingRegistry),
             typeof(global::Cephalon.Abstractions.Patterns.IBackendForFrontendRuntimeCatalog),
+            typeof(global::Cephalon.Abstractions.Patterns.IStranglerFigIngressRuntimeCatalog),
             typeof(global::Cephalon.Abstractions.Patterns.IStranglerFigRouteContributor),
             typeof(global::Cephalon.Abstractions.Patterns.IStranglerFigMigrationRuntimeCatalog),
             typeof(global::Cephalon.Abstractions.Patterns.IStranglerFigRouteRegistry),
             typeof(global::Cephalon.Abstractions.Patterns.IStranglerFigRouter),
             typeof(global::Cephalon.Abstractions.Patterns.IStranglerFigRuntimeCatalog),
+            typeof(global::Cephalon.Abstractions.Patterns.StranglerFigIngressRuntimeDescriptor),
             typeof(global::Cephalon.Abstractions.Patterns.StranglerFigMigrationRuntimeDescriptor),
             typeof(global::Cephalon.Abstractions.Patterns.PatternDescriptor),
             typeof(global::Cephalon.Abstractions.Patterns.PatternKind),
@@ -2433,6 +2435,29 @@ public sealed class PackageSurfaceTests
             .GetProperty("LastPublisherType", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot)
             .GetProperty("SagaChoreographyPublicationStates", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void StranglerFigIngressRuntimeContractsExposeSnapshotSurface()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Patterns.IStranglerFigIngressRuntimeCatalog)
+            .GetProperty("Routes", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Patterns.IStranglerFigIngressRuntimeCatalog)
+            .GetMethod("GetById", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Patterns.IStranglerFigIngressRuntimeCatalog)
+            .GetMethod("GetBySourceModule", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Patterns.StranglerFigIngressRuntimeDescriptor)
+            .GetProperty("SelectedEndpointKind", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Patterns.StranglerFigIngressRuntimeDescriptor)
+            .GetProperty("IngressMode", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Patterns.StranglerFigIngressRuntimeDescriptor)
+            .GetProperty("CanMaterialize", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Patterns.StranglerFigIngressRuntimeDescriptor)
+            .GetProperty("TargetPathPrefix", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Patterns.StranglerFigIngressRuntimeDescriptor)
+            .GetProperty("TargetUri", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot)
+            .GetProperty("StranglerFigIngressRoutes", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

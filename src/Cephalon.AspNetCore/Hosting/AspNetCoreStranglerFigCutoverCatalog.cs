@@ -21,7 +21,7 @@ internal sealed class AspNetCoreStranglerFigCutoverCatalog
     private readonly Dictionary<string, RouteEntry> entriesByRouteId;
 
     public AspNetCoreStranglerFigCutoverCatalog(
-        IStranglerFigMigrationRuntimeCatalog runtimeCatalog,
+        IStranglerFigIngressRuntimeCatalog runtimeCatalog,
         AspNetCoreStranglerFigCutoverOptions options)
     {
         ArgumentNullException.ThrowIfNull(runtimeCatalog);
@@ -103,12 +103,12 @@ internal sealed class AspNetCoreStranglerFigCutoverCatalog
         };
     }
 
-    private RouteEntry CreateEntry(StranglerFigMigrationRuntimeDescriptor route)
+    private RouteEntry CreateEntry(StranglerFigIngressRuntimeDescriptor route)
     {
         ArgumentNullException.ThrowIfNull(route);
 
-        var endpoint = ResolveEndpoint(route.SelectedEndpoint);
-        var handlingMode = ResolveHandlingMode(route, endpoint);
+        var endpoint = ResolveEndpoint(route);
+        var handlingMode = ResolveHandlingMode(route);
         var intercepts = IsInterceptingHandlingMode(handlingMode);
         int? redirectStatusCode = string.Equals(
                 handlingMode,
@@ -140,22 +140,19 @@ internal sealed class AspNetCoreStranglerFigCutoverCatalog
             endpoint);
     }
 
-    private string ResolveHandlingMode(
-        StranglerFigMigrationRuntimeDescriptor route,
-        ResolvedEndpoint endpoint)
+    private string ResolveHandlingMode(StranglerFigIngressRuntimeDescriptor route)
     {
         if (!options.Enabled)
         {
             return DisabledHandlingMode;
         }
 
-        return endpoint.Kind switch
+        return route.IngressMode switch
         {
-            LocalPathEndpointKind when PathsEquivalent(endpoint.LocalPath, route.PathPrefix) &&
-                string.IsNullOrEmpty(endpoint.Query) => PassThroughHandlingMode,
-            LocalPathEndpointKind => RewriteLocalPathHandlingMode,
-            AbsoluteUriEndpointKind when options.UsesProxyForAbsoluteEndpoints => ProxyAbsoluteUriHandlingMode,
-            AbsoluteUriEndpointKind => RedirectAbsoluteUriHandlingMode,
+            "pass-through" => PassThroughHandlingMode,
+            "rewrite-local-path" => RewriteLocalPathHandlingMode,
+            "proxy-absolute-uri" when options.UsesProxyForAbsoluteEndpoints => ProxyAbsoluteUriHandlingMode,
+            "proxy-absolute-uri" => RedirectAbsoluteUriHandlingMode,
             _ => UnsupportedEndpointHandlingMode
         };
     }
@@ -241,60 +238,39 @@ internal sealed class AspNetCoreStranglerFigCutoverCatalog
             DestinationQuery: null,
             DestinationUri: null,
             ResponseStatusCode: StatusCodes.Status502BadGateway,
-            FailureReason: $"Selected endpoint '{descriptor.SelectedEndpoint}' does not map to a rooted local path or absolute HTTP/HTTPS URI.");
+            FailureReason: $"Selected endpoint '{descriptor.SelectedEndpoint}' cannot be materialized by the generic strangler-fig ingress runtime because it is not a rooted local path or absolute HTTP/HTTPS URI.");
     }
 
-    private static ResolvedEndpoint ResolveEndpoint(string selectedEndpoint)
+    private static ResolvedEndpoint ResolveEndpoint(StranglerFigIngressRuntimeDescriptor route)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(selectedEndpoint);
+        ArgumentNullException.ThrowIfNull(route);
 
-        if (Uri.TryCreate(selectedEndpoint, UriKind.Absolute, out var absoluteUri))
+        if (string.Equals(route.SelectedEndpointKind, AbsoluteUriEndpointKind, StringComparison.OrdinalIgnoreCase))
         {
-            if (string.Equals(absoluteUri.Scheme, Uri.UriSchemeHttp, StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(absoluteUri.Scheme, Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase))
-            {
-                return new ResolvedEndpoint(
-                    Kind: AbsoluteUriEndpointKind,
-                    LocalPath: NormalizePath(absoluteUri.AbsolutePath),
-                    Query: NormalizeOptionalQuery(absoluteUri.Query),
-                    AbsoluteUri: absoluteUri);
-            }
+            var absoluteUri = Uri.TryCreate(route.TargetUri, UriKind.Absolute, out var parsedUri)
+                ? parsedUri
+                : null;
 
             return new ResolvedEndpoint(
-                Kind: UnsupportedEndpointKind,
-                LocalPath: null,
-                Query: null,
-                AbsoluteUri: null);
+                Kind: absoluteUri is null ? UnsupportedEndpointKind : AbsoluteUriEndpointKind,
+                LocalPath: route.TargetPathPrefix,
+                Query: route.TargetQuery,
+                AbsoluteUri: absoluteUri);
         }
 
-        if (!selectedEndpoint.StartsWith('/'))
+        if (string.Equals(route.SelectedEndpointKind, LocalPathEndpointKind, StringComparison.OrdinalIgnoreCase))
         {
             return new ResolvedEndpoint(
-                Kind: UnsupportedEndpointKind,
-                LocalPath: null,
-                Query: null,
+                Kind: LocalPathEndpointKind,
+                LocalPath: route.TargetPathPrefix,
+                Query: route.TargetQuery,
                 AbsoluteUri: null);
         }
-
-        var normalized = selectedEndpoint.Trim();
-        var hashIndex = normalized.IndexOf('#');
-        if (hashIndex >= 0)
-        {
-            normalized = normalized[..hashIndex];
-        }
-
-        var queryIndex = normalized.IndexOf('?');
-        var path = queryIndex >= 0
-            ? normalized[..queryIndex]
-            : normalized;
-        var query = queryIndex >= 0
-            ? normalized[queryIndex..]
-            : null;
 
         return new ResolvedEndpoint(
-            Kind: LocalPathEndpointKind,
-            LocalPath: NormalizePath(path),
-            Query: NormalizeOptionalQuery(query),
+            Kind: UnsupportedEndpointKind,
+            LocalPath: null,
+            Query: null,
             AbsoluteUri: null);
     }
 
@@ -402,32 +378,6 @@ internal sealed class AspNetCoreStranglerFigCutoverCatalog
         return string.IsNullOrWhiteSpace(normalized)
             ? "/"
             : normalized;
-    }
-
-    private static string? NormalizeOptionalQuery(string? value)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            return null;
-        }
-
-        var trimmed = value.Trim();
-        if (string.IsNullOrWhiteSpace(trimmed) || string.Equals(trimmed, "?", StringComparison.Ordinal))
-        {
-            return null;
-        }
-
-        return trimmed.StartsWith('?')
-            ? trimmed
-            : "?" + trimmed;
-    }
-
-    private static bool PathsEquivalent(string? left, string? right)
-    {
-        return string.Equals(
-            NormalizePath(left),
-            NormalizePath(right),
-            StringComparison.OrdinalIgnoreCase);
     }
 
     private static string TrimQueryPrefix(string? value)

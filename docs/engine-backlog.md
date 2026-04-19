@@ -2104,7 +2104,7 @@ Acceptance:
 - ASP.NET Core hosts expose a first host-level cutover runtime derived from `IStranglerFigMigrationRuntimeCatalog` instead of inventing a second cutover registry
 - `Engine:Migration:StranglerFig:AspNetCore` controls whether cutover is active and whether absolute HTTP or HTTPS targets redirect or proxy without changing the underlying migration-policy truth
 - ASP.NET Core hosts expose direct operator routes for the cutover view and one request-shaped cutover-resolution probe
-- docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the shipped cutover scope while remaining honest that broader traffic-manager or ingress follow-through is still later work
+- docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the shipped cutover scope while remaining honest that provider-specific ingress or edge automation is still later work
 
 Delivered:
 
@@ -2113,7 +2113,34 @@ Delivered:
 - ASP.NET Core now exposes `/engine/strangler-fig/cutover`, `/engine/strangler-fig/cutover/{routeId}`, and `/engine/strangler-fig/cutover/resolve` as the direct operator surface for host-level cutover handling answers
 - rooted local selected endpoints now rewrite in-process before endpoint execution, absolute HTTP or HTTPS selected endpoints can redirect or proxy through a dedicated host-owned `HttpClient`, and unsupported selected endpoints now fail truthfully with `502`
 - targeted hosting coverage now proves local rewrite, absolute redirect, absolute proxy, and unsupported-target failure behavior while existing composition plus package-surface coverage proves the shared migration runtime truth remains intact through hosting tests `5/5`, composition tests `4/4`, and package-surface tests `153/153`
-- architecture recommendations, component docs, roadmap, backlog, and project memory now describe the shipped cutover baseline truthfully while keeping broader traffic-manager or ingress follow-through explicitly planned
+- architecture recommendations, component docs, roadmap, backlog, and project memory now describe the shipped cutover baseline truthfully while keeping provider-specific ingress or edge automation explicitly planned
+
+### ENG-119 Phase 12 strangler-fig ingress runtime follow-through
+
+Status: done
+Estimate: 4
+Completed: April 19, 2026
+
+Why:
+
+- after `ENG-102`, Cephalon could explain authored route ownership, effective target-selection, and ASP.NET Core cutover handling, but the runtime still lacked one engine-owned ingress answer for pass-through, local rewrite, absolute-endpoint, or opaque-target materialization
+- teams migrating onto Cephalon need normalized ingress truth to stay host-agnostic so future hosts, companion packs, and edge adapters can observe the same route ownership without reverse-engineering ASP.NET Core middleware choices
+- the operator story was still incomplete because `/engine/snapshot` and ASP.NET Core hosts could not yet publish one merged ingress catalog or keep host cutover explicitly derived from that shared ingress truth
+
+Acceptance:
+
+- `Cephalon.Abstractions` exposes a host-agnostic strangler-fig ingress runtime catalog plus a typed runtime descriptor for normalized ingress materialization answers
+- `Cephalon.Engine` derives the ingress runtime from the authored and migration-policy truth, validates projection into `/engine/snapshot`, and keeps cutover-adjacent answers deterministic without inventing a second registry
+- ASP.NET Core hosts expose direct operator routes for the ingress view and derive cutover handling from that shared ingress truth instead of recomputing target materialization ad hoc
+- docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the shipped ingress scope while remaining honest that provider-specific ingress or edge automation is still later work
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships `IStranglerFigIngressRuntimeCatalog` plus `StranglerFigIngressRuntimeDescriptor` so hosts, tooling, and companion packs can read normalized pass-through, local rewrite, absolute-endpoint, and opaque-target ingress answers without referencing `Cephalon.Engine` concrete types
+- `Cephalon.Engine` now derives that shared ingress runtime in `StranglerFigRuntimeCatalogSnapshot`, projects `snapshot.StranglerFigIngressRoutes`, and keeps the authored route catalog plus migration-policy catalog as the underlying truth
+- `Cephalon.AspNetCore` now exposes `/engine/strangler-fig/ingress`, `/engine/strangler-fig/ingress/{routeId}`, and `/engine/strangler-fig/ingress/modules/{moduleId}` while the host cutover catalog now derives from `IStranglerFigIngressRuntimeCatalog`
+- targeted coverage now proves ingress classification, snapshot projection, runtime-route publication, and cutover derivation through composition tests `5/5`, hosting tests `6/6`, tooling tests `171/171`, and the regenerated reference-doc publish baseline
+- architecture recommendations, component docs, roadmap, backlog, and project memory now describe the shipped ingress follow-through truthfully while keeping provider-specific ingress or edge automation explicitly planned
 
 ### ENG-103 Phase 12 backend-for-frontend client-binding runtime baseline
 
@@ -3095,7 +3122,8 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-099 generic behavior HTTP transport-native rate-limit envelopes: `Cephalon.Behaviors.Http` now shares one limiter-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution limiter rejections keep protocol-native error shapes with stable Cephalon codes plus `429` metadata instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned rate limiting — **Shipped** · targeted hosting tests 13/13 + composition tests 28/28 + package-surface tests 153/153
 - ENG-100 generic behavior HTTP transport-native timeout and circuit-breaker envelopes: `Cephalon.Behaviors.Http` now shares one resilience-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution timeout and open-circuit rejections keep protocol-native error shapes with stable Cephalon codes plus `503` metadata and optional retry-after timing instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned timeout and circuit-breaker policy — **Shipped** · targeted hosting tests 25/25 + composition tests 28/28 + package-surface tests 153/153
 - ENG-101 phase 12 strangler-fig migration policy and progress baseline: `Cephalon.Abstractions` now exposes `IStranglerFigMigrationRuntimeCatalog` plus `StranglerFigMigrationRuntimeDescriptor`, `Cephalon.Engine` now binds deterministic `Engine:Migration:StranglerFig` default plus per-route overlays into `snapshot.StranglerFigRoutePolicies`, and `Cephalon.AspNetCore` now exposes `/engine/strangler-fig/runtime` plus `/engine/strangler-fig/runtime/{routeId}` while host-level cutover remains later — **Shipped** · composition tests 4/4 + hosting tests 1/1 + package-surface tests 153/153
-- ENG-102 phase 12 ASP.NET Core strangler-fig cutover runtime: `Cephalon.AspNetCore` now derives host cutover execution from `IStranglerFigMigrationRuntimeCatalog`, exposes `/engine/strangler-fig/cutover` plus `/engine/strangler-fig/cutover/resolve`, rewrites rooted local targets in-process, redirects or proxies absolute HTTP or HTTPS targets through `Engine:Migration:StranglerFig:AspNetCore`, and rejects unsupported selected endpoints truthfully with `502` while broader traffic-manager or ingress follow-through remains later — **Shipped** · hosting tests 5/5 + composition tests 4/4 + package-surface tests 153/153
+- ENG-102 phase 12 ASP.NET Core strangler-fig cutover runtime: `Cephalon.AspNetCore` now derives host cutover execution from `IStranglerFigMigrationRuntimeCatalog`, exposes `/engine/strangler-fig/cutover` plus `/engine/strangler-fig/cutover/resolve`, rewrites rooted local targets in-process, redirects or proxies absolute HTTP or HTTPS targets through `Engine:Migration:StranglerFig:AspNetCore`, and rejects unsupported selected endpoints truthfully with `502` while broader provider-specific ingress or edge automation remains later — **Shipped** · hosting tests 5/5 + composition tests 4/4 + package-surface tests 153/153
+- ENG-119 phase 12 strangler-fig ingress runtime follow-through: `Cephalon.Abstractions` now exposes `IStranglerFigIngressRuntimeCatalog` plus `StranglerFigIngressRuntimeDescriptor`, `Cephalon.Engine` now projects `snapshot.StranglerFigIngressRoutes`, and `Cephalon.AspNetCore` now exposes `/engine/strangler-fig/ingress*` while deriving host cutover from that shared ingress truth and keeping provider-specific ingress or edge automation separate — **Shipped** · GitHub issue `#516` · composition tests 5/5 + hosting tests 6/6 + tooling tests 171/171
 - ENG-103 phase 12 backend-for-frontend client-binding runtime baseline: `Cephalon.Abstractions` now exposes host-agnostic BFF client-binding contracts, `Cephalon.Engine` now composes host-added, module-contributed, and `Engine:BackendForFrontend:Bindings` entries into `snapshot.BackendForFrontendBindings` while auto-selecting `backend-for-frontend` when bindings exist, and `Cephalon.AspNetCore` now exposes `/engine/backend-for-frontend` plus client/module/transport drill-down routes while client-aware filtering or materialization remain later — **Shipped** · composition tests 3/3 + hosting tests 1/1 + package-surface tests 1/1
 - ENG-104 phase 12 backend-for-frontend client-aware REST filtering runtime baseline: `Cephalon.Abstractions` now exposes public client-aware BFF REST runtime contracts, `Cephalon.AspNetCore` now derives `IBackendForFrontendRestRuntimeCatalog` from the shared binding catalog plus published REST endpoint truth, `/engine/snapshot` now carries `BackendForFrontendRestEndpoints`, and `/engine/backend-for-frontend/rest-endpoints` now exposes binding/client/module/published-endpoint drill-down routes while per-client OpenAPI/Scalar materialization remains later — **Shipped** · hosting tests 1/1 + package-surface tests 2/2
 - ENG-105 phase 12 backend-for-frontend REST document materialization baseline: `Cephalon.Abstractions` now exposes scope-specific BFF REST document contracts, `Cephalon.AspNetCore` now derives `/engine/backend-for-frontend/rest-documents` plus filtered binding/client OpenAPI and Scalar surfaces from the shared BFF REST runtime truth and host OpenAPI settings, and `/engine/snapshot` now carries `BackendForFrontendRestDocuments` — **Shipped** · hosting tests 2/2 + package-surface tests 2/2

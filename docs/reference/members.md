@@ -1494,6 +1494,9 @@ Browse the published API surface by public member.
 - [CandidateTargeting](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointgovernanceruleselectionbasis-candidatetargeting): `Fields` on `RestEndpointGovernanceRuleSelectionBasis` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=CandidateTargeting&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - A rule that targeted explicit candidate ids won over a broader rule that did not.
   - `const RestEndpointGovernanceRuleSelectionBasis CandidateTargeting`
+- [CanMaterialize](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-canmaterialize): `Properties` on `StranglerFigIngressRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=CanMaterialize&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets a value indicating whether a generic ingress or traffic manager can materialize this selected endpoint directly.
+  - `bool CanMaterialize { get; }`
 - [CanRestart](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimefailureinfo-canrestart): `Properties` on `RuntimeFailureInfo` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=CanRestart&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Whether the current policy allows a manual restart after this failure.
   - `bool CanRestart { get; set; }`
@@ -2703,6 +2706,9 @@ Browse the published API surface by public member.
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-description): `Properties` on `ScaffoldPlan` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Gets the scaffold-plan description.
   - `string Description { get; }`
+- [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-description): `Properties` on `StranglerFigIngressRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the human-readable description of the migration boundary.
+  - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-description): `Properties` on `StranglerFigMigrationRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the human-readable description of the migration boundary.
   - `string Description { get; }`
@@ -2964,6 +2970,9 @@ Browse the published API surface by public member.
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-displayname): `Properties` on `ScaffoldPlan` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Gets the human-readable scaffold-plan name.
   - `string DisplayName { get; }`
+- [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-displayname): `Properties` on `StranglerFigIngressRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the operator-facing route name.
+  - `string DisplayName { get; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-displayname): `Properties` on `StranglerFigMigrationRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the operator-facing route name.
   - `string DisplayName { get; }`
@@ -3078,6 +3087,9 @@ Browse the published API surface by public member.
 - [EffectiveTarget](cephalon-engine.md#member-p-cephalon-engine-appmodel-databasetopologyroleresolution-effectivetarget): `Properties` on `DatabaseTopologyRoleResolution` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=EffectiveTarget&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
   - Gets the effective target after applying any role reference.
   - `DatabaseTargetSelection EffectiveTarget { get; }`
+- [EffectiveTarget](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-effectivetarget): `Properties` on `StranglerFigIngressRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=EffectiveTarget&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the target that will actually receive traffic after endpoint fallback is considered.
+  - `StranglerFigTarget EffectiveTarget { get; }`
 - [EffectiveTarget](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-effectivetarget): `Properties` on `StranglerFigMigrationRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=EffectiveTarget&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the target that will actually receive traffic after endpoint fallback is considered.
   - `StranglerFigTarget EffectiveTarget { get; }`
@@ -4422,6 +4434,9 @@ Browse the published API surface by public member.
 - [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-isagachoreographyruntimecatalog-getbyid-system-string): `Methods` on `ISagaChoreographyRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets one saga-choreography behavior by its stable behavior identifier.
   - `SagaChoreographyRuntimeDescriptor GetById(string behaviorId)`
+- [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-patterns-istranglerfigingressruntimecatalog-getbyid-system-string): `Methods` on `IStranglerFigIngressRuntimeCatalog` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets one effective strangler-fig ingress answer by its stable route identifier.
+  - `StranglerFigIngressRuntimeDescriptor GetById(string routeId)`
 - [GetById](cephalon-abstractions.md#member-m-cephalon-abstractions-patterns-istranglerfigmigrationruntimecatalog-getbyid-system-string): `Methods` on `IStranglerFigMigrationRuntimeCatalog` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetById&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets one effective strangler-fig migration-policy answer by its stable route identifier.
   - `StranglerFigMigrationRuntimeDescriptor GetById(string routeId)`
@@ -4530,6 +4545,9 @@ Browse the published API surface by public member.
 - [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-isagachoreographyruntimecatalog-getbysourcemodule-system-string): `Methods` on `ISagaChoreographyRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets all saga-choreography behaviors contributed by the requested module.
   - `IReadOnlyList<SagaChoreographyRuntimeDescriptor> GetBySourceModule(string sourceModuleId)`
+- [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-patterns-istranglerfigingressruntimecatalog-getbysourcemodule-system-string): `Methods` on `IStranglerFigIngressRuntimeCatalog` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets all effective strangler-fig ingress answers owned by the requested module.
+  - `IReadOnlyList<StranglerFigIngressRuntimeDescriptor> GetBySourceModule(string sourceModuleId)`
 - [GetBySourceModule](cephalon-abstractions.md#member-m-cephalon-abstractions-patterns-istranglerfigmigrationruntimecatalog-getbysourcemodule-system-string): `Methods` on `IStranglerFigMigrationRuntimeCatalog` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetBySourceModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets all effective strangler-fig migration-policy answers owned by the requested module.
   - `IReadOnlyList<StranglerFigMigrationRuntimeDescriptor> GetBySourceModule(string sourceModuleId)`
@@ -5568,6 +5586,9 @@ Browse the published API surface by public member.
 - [Information](cephalon-engine.md#member-f-cephalon-engine-diagnostics-diagnosticseverity-information): `Fields` on `DiagnosticSeverity` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Information&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - The event describes expected informational runtime behavior.
   - `const DiagnosticSeverity Information`
+- [IngressMode](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-ingressmode): `Properties` on `StranglerFigIngressRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=IngressMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the normalized ingress follow-through mode, such as `pass-through`, `rewrite-local-path`, `proxy-absolute-uri`, or `opaque-endpoint`.
+  - `string IngressMode { get; }`
 - [InitializeAsync](cephalon-engine.md#member-m-cephalon-engine-runtime-engineruntime-initializeasync-system-iserviceprovider-system-threading-cancellationtoken): `Methods` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=InitializeAsync&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Initializes the runtime and its modules.
   - `Task InitializeAsync(IServiceProvider services, CancellationToken cancellationToken)`
@@ -6543,6 +6564,9 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-metadata): `Properties` on `ScaffoldProject` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Gets optional project metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-metadata): `Properties` on `StranglerFigIngressRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the original authored route metadata.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-metadata): `Properties` on `StranglerFigMigrationRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the original authored route metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -6620,6 +6644,9 @@ Browse the published API surface by public member.
   - `IReadOnlyList<string> Methods { get; }`
 - [Methods](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-methods): `Properties` on `RestEndpointSuppressionOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Methods&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Gets the effective HTTP methods targeted by this suppression rule before override actions are applied.
+  - `IReadOnlyList<string> Methods { get; }`
+- [Methods](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-methods): `Properties` on `StranglerFigIngressRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Methods&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the normalized request methods that this route matches.
   - `IReadOnlyList<string> Methods { get; }`
 - [Methods](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-methods): `Properties` on `StranglerFigMigrationRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Methods&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the normalized request methods that this route matches.
@@ -7431,6 +7458,9 @@ Browse the published API surface by public member.
 - [PathBase](cephalon-abstractions.md#member-p-cephalon-abstractions-tenancy-tenantresolutionrequest-pathbase): `Properties` on `TenantResolutionRequest` in `Cephalon.Abstractions.Tenancy` (`Cephalon.Abstractions`) [Browse](browse.html?q=PathBase&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Tenancy&scope=members)
   - Gets the path base associated with the current request when one is known.
   - `string PathBase { get; }`
+- [PathPrefix](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-pathprefix): `Properties` on `StranglerFigIngressRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=PathPrefix&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the rooted public path prefix that matches this route.
+  - `string PathPrefix { get; }`
 - [PathPrefix](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-pathprefix): `Properties` on `StranglerFigMigrationRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=PathPrefix&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the rooted path prefix that matches this route.
   - `string PathPrefix { get; }`
@@ -7731,12 +7761,18 @@ Browse the published API surface by public member.
 - [ProductionReadyTargetCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationoperationalplaybook-productionreadytargetcount): `Properties` on `DatabaseMigrationOperationalPlaybook` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProductionReadyTargetCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of targets that publish a production-recommended command.
   - `int ProductionReadyTargetCount { get; }`
+- [ProgressPercent](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-progresspercent): `Properties` on `StranglerFigIngressRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProgressPercent&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the normalized migration-progress percentage for the route.
+  - `int ProgressPercent { get; }`
 - [ProgressPercent](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-progresspercent): `Properties` on `StranglerFigMigrationRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProgressPercent&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the normalized migration-progress percentage for the route.
   - `int ProgressPercent { get; }`
 - [ProgressPercent](cephalon-engine.md#member-p-cephalon-engine-configuration-stranglerfigroutepolicysettings-progresspercent): `Properties` on `StranglerFigRoutePolicySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ProgressPercent&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the route-specific normalized migration-progress percentage.
   - `int? ProgressPercent { get; }`
+- [ProgressState](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-progressstate): `Properties` on `StranglerFigIngressRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProgressState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the normalized migration-progress state for the route.
+  - `string ProgressState { get; }`
 - [ProgressState](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-progressstate): `Properties` on `StranglerFigMigrationRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProgressState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the normalized migration-progress state for the route.
   - `string ProgressState { get; }`
@@ -8322,9 +8358,15 @@ Browse the published API surface by public member.
 - [RequestedTarget](cephalon-engine.md#member-p-cephalon-engine-appmodel-databasetopologyroleresolution-requestedtarget): `Properties` on `DatabaseTopologyRoleResolution` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=RequestedTarget&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
   - Gets the target declared for the requested role.
   - `DatabaseTargetSelection RequestedTarget { get; }`
+- [RequestedTarget](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-requestedtarget): `Properties` on `StranglerFigIngressRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequestedTarget&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the target requested after applying migration-policy overlays.
+  - `StranglerFigTarget RequestedTarget { get; }`
 - [RequestedTarget](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-requestedtarget): `Properties` on `StranglerFigMigrationRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequestedTarget&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the target requested after applying migration-policy overlays.
   - `StranglerFigTarget RequestedTarget { get; }`
+- [RequestedTargetSource](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-requestedtargetsource): `Properties` on `StranglerFigIngressRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequestedTargetSource&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the source of the requested target, such as `authored-route`, `migration-default`, or `migration-route`.
+  - `string RequestedTargetSource { get; }`
 - [RequestedTargetSource](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-requestedtargetsource): `Properties` on `StranglerFigMigrationRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequestedTargetSource&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the source of the requested target, such as `authored-route`, `migration-default`, or `migration-route`.
   - `string RequestedTargetSource { get; }`
@@ -8907,6 +8949,9 @@ Browse the published API surface by public member.
 - [RouteGroupPrefixes](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-routegroupprefixes): `Properties` on `RestEndpointSuppressionOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=RouteGroupPrefixes&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Gets the published route-group prefixes targeted by this suppression rule before override actions are applied.
   - `IReadOnlyList<string> RouteGroupPrefixes { get; }`
+- [RouteId](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-routeid): `Properties` on `StranglerFigIngressRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=RouteId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the stable route identifier.
+  - `string RouteId { get; }`
 - [RouteId](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-routeid): `Properties` on `StranglerFigMigrationRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=RouteId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the stable route identifier.
   - `string RouteId { get; }`
@@ -8931,6 +8976,9 @@ Browse the published API surface by public member.
 - [RoutePrefix](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocssurface-routeprefix): `Properties` on `ReferenceDocsSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=RoutePrefix&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - The route prefix where the documentation is served.
   - `string RoutePrefix { get; set; }`
+- [Routes](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-istranglerfigingressruntimecatalog-routes): `Properties` on `IStranglerFigIngressRuntimeCatalog` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Routes&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets all effective strangler-fig ingress answers visible to the current runtime.
+  - `IReadOnlyList<StranglerFigIngressRuntimeDescriptor> Routes { get; }`
 - [Routes](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-istranglerfigmigrationruntimecatalog-routes): `Properties` on `IStranglerFigMigrationRuntimeCatalog` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Routes&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets all effective strangler-fig migration-policy answers visible to the current runtime.
   - `IReadOnlyList<StranglerFigMigrationRuntimeDescriptor> Routes { get; }`
@@ -9041,6 +9089,9 @@ Browse the published API surface by public member.
   - `RuntimeManifest(string manifestVersion, string engineVersion, DateTimeOffset generatedAtUtc, AppProfile appProfile, IReadOnlyList<ModuleManifest> modules, IReadOnlyList<CapabilityManifest> capabilities, IReadOnlyList<PackageManifest> packages)`
 - [RuntimeMetadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-runtimemetadata): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RuntimeMetadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets optional runtime metadata associated with the database role.
+  - `IReadOnlyDictionary<string, string> RuntimeMetadata { get; }`
+- [RuntimeMetadata](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-runtimemetadata): `Properties` on `StranglerFigIngressRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=RuntimeMetadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets runtime-only metadata such as notes or overlay provenance.
   - `IReadOnlyDictionary<string, string> RuntimeMetadata { get; }`
 - [RuntimeMetadata](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-runtimemetadata): `Properties` on `StranglerFigMigrationRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=RuntimeMetadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets runtime-only metadata such as notes or overlay provenance.
@@ -9243,12 +9294,18 @@ Browse the published API surface by public member.
 - [SelectedCandidateIds](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointpublicationgroupgovernanceoverridesummarydescriptor-selectedcandidateids): `Properties` on `RestEndpointPublicationGroupGovernanceOverrideSummaryDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=SelectedCandidateIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the ordered candidate identifiers that selected this override rule, including runtime no-op selections.
   - `IReadOnlyList<string> SelectedCandidateIds { get; }`
+- [SelectedEndpoint](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-selectedendpoint): `Properties` on `StranglerFigIngressRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=SelectedEndpoint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the concrete endpoint or boundary identifier that will receive traffic.
+  - `string SelectedEndpoint { get; }`
 - [SelectedEndpoint](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-selectedendpoint): `Properties` on `StranglerFigMigrationRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=SelectedEndpoint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the concrete endpoint or boundary identifier that will receive traffic.
   - `string SelectedEndpoint { get; }`
 - [SelectedEndpoint](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigrouteresolution-selectedendpoint): `Properties` on `StranglerFigRouteResolution` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=SelectedEndpoint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - The concrete endpoint or boundary identifier that should receive the request.
   - `string SelectedEndpoint { get; set; }`
+- [SelectedEndpointKind](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-selectedendpointkind): `Properties` on `StranglerFigIngressRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=SelectedEndpointKind&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the normalized selected-endpoint kind, such as `local-path`, `absolute-uri`, or `opaque`.
+  - `string SelectedEndpointKind { get; }`
 - [SelectedOverrideActionKinds](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-selectedoverrideactionkinds): `Properties` on `RestEndpointCandidateRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=SelectedOverrideActionKinds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the normalized action dimensions declared by the selected override rule when one winning override rule was resolved for this candidate.
   - `IReadOnlyList<RestEndpointOverrideActionKind> SelectedOverrideActionKinds { get; }`
@@ -9294,6 +9351,9 @@ Browse the published API surface by public member.
 - [SelectionBasisSummaries](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointsuppressiondescriptor-selectionbasissummaries): `Properties` on `RestEndpointSuppressionDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=SelectionBasisSummaries&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the grouped selection-basis buckets for runtime candidates that were actually suppressed by this rule.
   - `IReadOnlyList<RestEndpointGovernanceSelectionBasisSummaryDescriptor> SelectionBasisSummaries { get; }`
+- [SelectionMode](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-selectionmode): `Properties` on `StranglerFigIngressRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=SelectionMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the runtime selection result, such as `requested-target` or `fallback-target`.
+  - `string SelectionMode { get; }`
 - [SelectionMode](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-selectionmode): `Properties` on `StranglerFigMigrationRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=SelectionMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the runtime selection result, such as `requested-target` or `fallback-target`.
   - `string SelectionMode { get; }`
@@ -9615,6 +9675,9 @@ Browse the published API surface by public member.
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-sourcemoduleid): `Properties` on `SagaChoreographyRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the owning module identifier when one is known at runtime.
   - `string SourceModuleId { get; }`
+- [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-sourcemoduleid): `Properties` on `StranglerFigIngressRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the module that owns the modern Cephalon boundary for this route.
+  - `string SourceModuleId { get; }`
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-sourcemoduleid): `Properties` on `StranglerFigMigrationRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the module that owns the modern Cephalon boundary for this route.
   - `string SourceModuleId { get; }`
@@ -9882,6 +9945,12 @@ Browse the published API surface by public member.
 - [StranglerFig](cephalon-engine.md#member-p-cephalon-engine-configuration-migrationsettings-stranglerfig): `Properties` on `MigrationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=StranglerFig&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the strangler-fig migration settings resolved for the app.
   - `StranglerFigMigrationSettings StranglerFig { get; }`
+- [StranglerFigIngressRoutes](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-stranglerfigingressroutes): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=StranglerFigIngressRoutes&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
+  - Gets the effective strangler-fig ingress materialization answers visible to the runtime at the time the snapshot was created.
+  - `IReadOnlyList<StranglerFigIngressRuntimeDescriptor> StranglerFigIngressRoutes { get; set; }`
+- [StranglerFigIngressRuntimeDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-cephalon-abstractions-patterns-stranglerfigtarget-cephalon-abstractions-patterns-stranglerfigtarget-system-string-system-string-system-string-system-string-system-string-system-boolean-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `StranglerFigIngressRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=StranglerFigIngressRuntimeDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Creates a strangler-fig ingress runtime descriptor.
+  - `StranglerFigIngressRuntimeDescriptor(string routeId, string sourceModuleId, string displayName, string description, string pathPrefix, StranglerFigTarget requestedTarget, StranglerFigTarget effectiveTarget, string requestedTargetSource, string selectionMode, string selectedEndpoint, string selectedEndpointKind, string ingressMode, bool canMaterialize, string targetPathPrefix, string targetQuery, string targetUri, IReadOnlyList<string> methods, string progressState, int progressPercent, IReadOnlyDictionary<string, string> metadata, IReadOnlyDictionary<string, string> runtimeMetadata)`
 - [StranglerFigMigrationRuntimeDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-cephalon-abstractions-patterns-stranglerfigtarget-cephalon-abstractions-patterns-stranglerfigtarget-cephalon-abstractions-patterns-stranglerfigtarget-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `StranglerFigMigrationRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=StranglerFigMigrationRuntimeDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Creates a strangler-fig runtime migration descriptor.
   - `StranglerFigMigrationRuntimeDescriptor(string routeId, string sourceModuleId, string displayName, string description, string pathPrefix, StranglerFigTarget authoredTarget, StranglerFigTarget requestedTarget, StranglerFigTarget effectiveTarget, string requestedTargetSource, string selectionMode, string selectedEndpoint, string legacyEndpoint, string modernEndpoint, IReadOnlyList<string> methods, string progressState, int progressPercent, IReadOnlyDictionary<string, string> metadata, IReadOnlyDictionary<string, string> runtimeMetadata)`
@@ -10314,6 +10383,12 @@ Browse the published API surface by public member.
 - [Targeting](cephalon-engine.md#member-p-cephalon-engine-configuration-featureflagsettings-targeting): `Properties` on `FeatureFlagSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Targeting&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the optional targeting settings attached to the feature flag.
   - `FeatureFlagTargetingSettings Targeting { get; }`
+- [TargetPathPrefix](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-targetpathprefix): `Properties` on `StranglerFigIngressRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=TargetPathPrefix&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the normalized path prefix that traffic should land on when the selected endpoint is path-shaped.
+  - `string TargetPathPrefix { get; }`
+- [TargetQuery](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-targetquery): `Properties` on `StranglerFigIngressRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=TargetQuery&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the normalized base query string that should flow with the selected endpoint when one exists.
+  - `string TargetQuery { get; }`
 - [TargetRoleIds](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-services-entityframeworkdatabasemigrationregistration-targetroleids): `Properties` on `EntityFrameworkDatabaseMigrationRegistration` in `Cephalon.Data.EntityFramework.Services` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=TargetRoleIds&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Services&scope=members)
   - Gets the logical migration targets satisfied by the context.
   - `IReadOnlyList<string> TargetRoleIds { get; }`
@@ -10326,6 +10401,9 @@ Browse the published API surface by public member.
 - [TargetStoreId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-projectiondescriptor-targetstoreid): `Properties` on `ProjectionDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TargetStoreId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the logical target store or read-model identifier populated by the projection.
   - `string TargetStoreId { get; }`
+- [TargetUri](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-targeturi): `Properties` on `StranglerFigIngressRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=TargetUri&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
+  - Gets the normalized absolute URI that traffic should target when the selected endpoint is absolute.
+  - `string TargetUri { get; }`
 - [Technologies](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-appprofile-technologies): `Properties` on `AppProfile` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Technologies&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the selected technology profiles.
   - `IReadOnlyList<TechnologyDescriptor> Technologies { get; }`

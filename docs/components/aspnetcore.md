@@ -9,7 +9,7 @@
 - runtime startup and shutdown integration through hosted services
 - `/engine/*` metadata, status, diagnostics, and policy endpoints
 - `/engine/resilience` when the engine-owned resilience contract is active
-- `/engine/strangler-fig`, `/engine/strangler-fig/runtime`, `/engine/strangler-fig/resolve`, and `/engine/strangler-fig/cutover` when the engine-owned strangler-fig route, migration-policy, and ASP.NET Core cutover catalogs are active
+- `/engine/strangler-fig`, `/engine/strangler-fig/runtime`, `/engine/strangler-fig/ingress`, `/engine/strangler-fig/resolve`, and `/engine/strangler-fig/cutover` when the engine-owned strangler-fig route, migration-policy, ingress, and ASP.NET Core cutover catalogs are active
 - `/engine/backend-for-frontend` when the engine-owned backend-for-frontend client-binding catalog is active
 - `/engine/backend-for-frontend/rest-endpoints` when the client-aware backend-for-frontend REST runtime catalog is active
 - `/engine/backend-for-frontend/rest-documents` plus scope-specific filtered OpenAPI and Scalar materialization when the backend-for-frontend REST document catalog is active
@@ -244,21 +244,27 @@ behavior/transport pair. Retry now runs in that same shared pipeline only for ex
 when the effective retry policy is active and the classifier marks the failure as transient, while
 non-idempotent or unknown behaviors still fail without automatic replay.
 
-The same host surface now also exposes the shipped strangler-fig authored, effective-policy, and
-host-cutover answers directly. `/engine/strangler-fig` and `/engine/strangler-fig/{routeId}`
+The same host surface now also exposes the shipped strangler-fig authored, effective-policy,
+ingress, and host-cutover answers directly. `/engine/strangler-fig` and
+`/engine/strangler-fig/{routeId}`
 publish the active migration-route catalog composed by `Cephalon.Engine`, while
 `/engine/strangler-fig/resolve` evaluates one request-shaped `path` plus `method` pair through the
 host-agnostic `IStranglerFigRouter`. The configuration-driven policy/progress overlay is also
 visible here: `/engine/strangler-fig/runtime` plus `/engine/strangler-fig/runtime/{routeId}`
 publish effective requested-versus-selected target answers, route-level progress state and
 percent, and optional route notes from `Engine:Migration:StranglerFig` through the host-agnostic
-`IStranglerFigMigrationRuntimeCatalog` without replacing the authored route catalog. When
-`Engine:Migration:StranglerFig:AspNetCore` is enabled, `/engine/strangler-fig/cutover`,
-`/engine/strangler-fig/cutover/{routeId}`, and `/engine/strangler-fig/cutover/resolve` publish
-how ASP.NET Core will execute that shared migration truth: rooted local selected endpoints rewrite
-in-process before endpoint execution, absolute HTTP or HTTPS selected endpoints can redirect or
-proxy through the host-owned proxy client, and unsupported selected endpoints fail truthfully with
-`502` while broader traffic-manager or ingress follow-through stays outside the current baseline.
+`IStranglerFigMigrationRuntimeCatalog` without replacing the authored route catalog. The
+engine-first ingress follow-through is visible here too: `/engine/strangler-fig/ingress`,
+`/engine/strangler-fig/ingress/{routeId}`, and `/engine/strangler-fig/ingress/modules/{moduleId}`
+publish the normalized ingress materialization answer from `IStranglerFigIngressRuntimeCatalog`,
+including pass-through, local rewrite, absolute endpoint, and opaque endpoint truth without a
+second ASP.NET Core-only ingress registry. When `Engine:Migration:StranglerFig:AspNetCore` is
+enabled, `/engine/strangler-fig/cutover`, `/engine/strangler-fig/cutover/{routeId}`, and
+`/engine/strangler-fig/cutover/resolve` publish how ASP.NET Core will execute that shared ingress
+truth: rooted local selected endpoints rewrite in-process before endpoint execution, absolute HTTP
+or HTTPS selected endpoints can redirect or proxy through the host-owned proxy client, and
+unsupported or opaque selected endpoints fail truthfully with `502` while provider-specific
+ingress or edge automation stays outside the current baseline.
 
 The same operator surface now also exposes the shipped backend-for-frontend client-binding runtime.
 `/engine/backend-for-frontend` publishes the merged client-binding catalog composed by

@@ -843,6 +843,8 @@ public sealed class EngineBuilder
                 serviceProvider.GetRequiredService<StranglerFigRuntimeCatalogSnapshot>());
             Services.TryAddSingleton<IStranglerFigMigrationRuntimeCatalog>(serviceProvider =>
                 serviceProvider.GetRequiredService<StranglerFigRuntimeCatalogSnapshot>());
+            Services.TryAddSingleton<IStranglerFigIngressRuntimeCatalog>(serviceProvider =>
+                serviceProvider.GetRequiredService<StranglerFigRuntimeCatalogSnapshot>());
             Services.TryAddSingleton<IStranglerFigRouter>(serviceProvider =>
                 serviceProvider.GetRequiredService<StranglerFigRuntimeCatalogSnapshot>());
             Services.TryAddSingleton<DatabaseRoleCatalogSnapshot>(serviceProvider =>

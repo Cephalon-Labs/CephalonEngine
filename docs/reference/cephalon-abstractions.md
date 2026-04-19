@@ -17575,6 +17575,61 @@ Returns: The matching client binding descriptors, or an empty list when none are
 Parameters:
 - `transportId`: The transport identifier to filter by.
 
+<a id="type-cephalon-abstractions-patterns-istranglerfigingressruntimecatalog"></a>
+
+### `IStranglerFigIngressRuntimeCatalog`
+
+Exposes the normalized strangler-fig ingress materialization answers visible to the current runtime.
+
+#### Declaration
+```csharp
+public interface IStranglerFigIngressRuntimeCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-patterns-istranglerfigingressruntimecatalog-routes"></a>
+
+##### `Routes`
+
+```csharp
+IReadOnlyList<StranglerFigIngressRuntimeDescriptor> Routes { get; }
+```
+
+Gets all effective strangler-fig ingress answers visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-patterns-istranglerfigingressruntimecatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+StranglerFigIngressRuntimeDescriptor GetById(string routeId)
+```
+
+Gets one effective strangler-fig ingress answer by its stable route identifier.
+
+Returns: The matching runtime descriptor, or `null` when it is not active.
+
+Parameters:
+- `routeId`: The route identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-patterns-istranglerfigingressruntimecatalog-getbysourcemodule-system-string"></a>
+
+##### `GetBySourceModule`
+
+```csharp
+IReadOnlyList<StranglerFigIngressRuntimeDescriptor> GetBySourceModule(string sourceModuleId)
+```
+
+Gets all effective strangler-fig ingress answers owned by the requested module.
+
+Returns: The matching runtime descriptors, or an empty list when none are active.
+
+Parameters:
+- `sourceModuleId`: The module identifier to filter by.
+
 <a id="type-cephalon-abstractions-patterns-istranglerfigmigrationruntimecatalog"></a>
 
 ### `IStranglerFigMigrationRuntimeCatalog`
@@ -17984,6 +18039,264 @@ const PatternKind Organization
 ```
 
 Identifies an organization pattern.
+
+<a id="type-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor"></a>
+
+### `StranglerFigIngressRuntimeDescriptor`
+
+Describes the effective strangler-fig ingress materialization answer for one route.
+
+#### Declaration
+```csharp
+public sealed class StranglerFigIngressRuntimeDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-cephalon-abstractions-patterns-stranglerfigtarget-cephalon-abstractions-patterns-stranglerfigtarget-system-string-system-string-system-string-system-string-system-string-system-boolean-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `StranglerFigIngressRuntimeDescriptor`
+
+```csharp
+StranglerFigIngressRuntimeDescriptor(string routeId, string sourceModuleId, string displayName, string description, string pathPrefix, StranglerFigTarget requestedTarget, StranglerFigTarget effectiveTarget, string requestedTargetSource, string selectionMode, string selectedEndpoint, string selectedEndpointKind, string ingressMode, bool canMaterialize, string targetPathPrefix, string targetQuery, string targetUri, IReadOnlyList<string> methods, string progressState, int progressPercent, IReadOnlyDictionary<string, string> metadata, IReadOnlyDictionary<string, string> runtimeMetadata)
+```
+
+Creates a strangler-fig ingress runtime descriptor.
+
+Parameters:
+- `routeId`: The stable route identifier.
+- `sourceModuleId`: The Cephalon module that owns the modern boundary for this route.
+- `displayName`: The operator-facing route name.
+- `description`: The human-readable description of the migration boundary.
+- `pathPrefix`: The rooted public path prefix that this route matches.
+- `requestedTarget`: The target requested after applying migration-policy overlays.
+- `effectiveTarget`: The target that will actually receive traffic after endpoint fallback is considered.
+- `requestedTargetSource`: The source of the requested target, such as `authored-route` or `migration-route`.
+- `selectionMode`: The runtime selection result, such as `requested-target` or `fallback-target`.
+- `selectedEndpoint`: The concrete endpoint or boundary identifier that will receive traffic.
+- `selectedEndpointKind`: The normalized selected-endpoint kind, such as `local-path`, `absolute-uri`, or `opaque`.
+- `ingressMode`: The normalized ingress follow-through mode, such as `pass-through`, `rewrite-local-path`, `proxy-absolute-uri`, or `opaque-endpoint`.
+- `canMaterialize`: Indicates whether a generic ingress or traffic manager can materialize this selected endpoint directly.
+- `targetPathPrefix`: The normalized path prefix that traffic should land on when the selected endpoint is path-shaped.
+- `targetQuery`: The normalized base query string that should flow with the selected endpoint when one exists.
+- `targetUri`: The normalized absolute URI that traffic should target when the selected endpoint is absolute.
+- `methods`: Optional request methods that this route matches.
+- `progressState`: The normalized migration-progress state for the route.
+- `progressPercent`: The normalized migration-progress percentage for the route.
+- `metadata`: The original authored route metadata.
+- `runtimeMetadata`: Additional runtime-only metadata such as notes or overlay provenance.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-canmaterialize"></a>
+
+##### `CanMaterialize`
+
+```csharp
+bool CanMaterialize { get; }
+```
+
+Gets a value indicating whether a generic ingress or traffic manager can materialize this selected endpoint directly.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable description of the migration boundary.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing route name.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-effectivetarget"></a>
+
+##### `EffectiveTarget`
+
+```csharp
+StranglerFigTarget EffectiveTarget { get; }
+```
+
+Gets the target that will actually receive traffic after endpoint fallback is considered.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-ingressmode"></a>
+
+##### `IngressMode`
+
+```csharp
+string IngressMode { get; }
+```
+
+Gets the normalized ingress follow-through mode, such as `pass-through`, `rewrite-local-path`, `proxy-absolute-uri`, or `opaque-endpoint`.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets the original authored route metadata.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-methods"></a>
+
+##### `Methods`
+
+```csharp
+IReadOnlyList<string> Methods { get; }
+```
+
+Gets the normalized request methods that this route matches.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-pathprefix"></a>
+
+##### `PathPrefix`
+
+```csharp
+string PathPrefix { get; }
+```
+
+Gets the rooted public path prefix that matches this route.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-progresspercent"></a>
+
+##### `ProgressPercent`
+
+```csharp
+int ProgressPercent { get; }
+```
+
+Gets the normalized migration-progress percentage for the route.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-progressstate"></a>
+
+##### `ProgressState`
+
+```csharp
+string ProgressState { get; }
+```
+
+Gets the normalized migration-progress state for the route.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-requestedtarget"></a>
+
+##### `RequestedTarget`
+
+```csharp
+StranglerFigTarget RequestedTarget { get; }
+```
+
+Gets the target requested after applying migration-policy overlays.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-requestedtargetsource"></a>
+
+##### `RequestedTargetSource`
+
+```csharp
+string RequestedTargetSource { get; }
+```
+
+Gets the source of the requested target, such as `authored-route`, `migration-default`, or `migration-route`.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-routeid"></a>
+
+##### `RouteId`
+
+```csharp
+string RouteId { get; }
+```
+
+Gets the stable route identifier.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-runtimemetadata"></a>
+
+##### `RuntimeMetadata`
+
+```csharp
+IReadOnlyDictionary<string, string> RuntimeMetadata { get; }
+```
+
+Gets runtime-only metadata such as notes or overlay provenance.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-selectedendpoint"></a>
+
+##### `SelectedEndpoint`
+
+```csharp
+string SelectedEndpoint { get; }
+```
+
+Gets the concrete endpoint or boundary identifier that will receive traffic.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-selectedendpointkind"></a>
+
+##### `SelectedEndpointKind`
+
+```csharp
+string SelectedEndpointKind { get; }
+```
+
+Gets the normalized selected-endpoint kind, such as `local-path`, `absolute-uri`, or `opaque`.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-selectionmode"></a>
+
+##### `SelectionMode`
+
+```csharp
+string SelectionMode { get; }
+```
+
+Gets the runtime selection result, such as `requested-target` or `fallback-target`.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; }
+```
+
+Gets the module that owns the modern Cephalon boundary for this route.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-targetpathprefix"></a>
+
+##### `TargetPathPrefix`
+
+```csharp
+string TargetPathPrefix { get; }
+```
+
+Gets the normalized path prefix that traffic should land on when the selected endpoint is path-shaped.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-targetquery"></a>
+
+##### `TargetQuery`
+
+```csharp
+string TargetQuery { get; }
+```
+
+Gets the normalized base query string that should flow with the selected endpoint when one exists.
+
+<a id="member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-targeturi"></a>
+
+##### `TargetUri`
+
+```csharp
+string TargetUri { get; }
+```
+
+Gets the normalized absolute URI that traffic should target when the selected endpoint is absolute.
 
 <a id="type-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor"></a>
 

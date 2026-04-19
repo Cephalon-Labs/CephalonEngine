@@ -28,6 +28,7 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
     IBackendForFrontendRuntimeCatalog backendForFrontendRuntimeCatalog,
     IStranglerFigRuntimeCatalog stranglerFigRuntimeCatalog,
     IStranglerFigMigrationRuntimeCatalog stranglerFigMigrationRuntimeCatalog,
+    IStranglerFigIngressRuntimeCatalog stranglerFigIngressRuntimeCatalog,
     ITechnologyRuntimeCatalog technologyRuntimeCatalog,
     IRuntimeDiagnosticsCatalog diagnosticsCatalog) : IRuntimeIntrospectionSnapshotProvider
 {
@@ -88,7 +89,8 @@ internal sealed class RuntimeIntrospectionSnapshotProvider(
             BackendForFrontendRestEndpoints = backendForFrontendRestRuntimeCatalog?.Endpoints ?? [],
             BackendForFrontendRestDocuments = backendForFrontendRestDocumentRuntimeCatalog?.Documents ?? [],
             StranglerFigRoutes = stranglerFigRuntimeCatalog.Routes,
-            StranglerFigRoutePolicies = stranglerFigMigrationRuntimeCatalog.Routes
+            StranglerFigRoutePolicies = stranglerFigMigrationRuntimeCatalog.Routes,
+            StranglerFigIngressRoutes = stranglerFigIngressRuntimeCatalog.Routes
         };
     }
 }

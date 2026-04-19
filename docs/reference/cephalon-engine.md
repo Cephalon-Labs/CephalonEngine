@@ -9333,6 +9333,16 @@ RuntimeStatusSnapshot Status { get; set; }
 
 The current lifecycle status of the runtime.
 
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-stranglerfigingressroutes"></a>
+
+##### `StranglerFigIngressRoutes`
+
+```csharp
+IReadOnlyList<StranglerFigIngressRuntimeDescriptor> StranglerFigIngressRoutes { get; set; }
+```
+
+Gets the effective strangler-fig ingress materialization answers visible to the runtime at the time the snapshot was created.
+
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-stranglerfigroutepolicies"></a>
 
 ##### `StranglerFigRoutePolicies`

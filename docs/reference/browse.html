@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-19T14:27:33.5590006+00:00",
+  "GeneratedAtUtc": "2026-04-19T15:24:00.9434972+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -111,7 +111,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 302
+      "TypeCount": 304
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -674,7 +674,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-patterns",
-      "TypeCount": 17
+      "TypeCount": 19
     },
     {
       "NamespaceName": "Cephalon.Abstractions.Resilience",
@@ -7387,6 +7387,21 @@
       }
     },
     {
+      "DisplayName": "IStranglerFigIngressRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-patterns-istranglerfigingressruntimecatalog",
+      "Declaration": "public interface IStranglerFigIngressRuntimeCatalog",
+      "Summary": "Exposes the normalized strangler-fig ingress materialization answers visible to the current runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 2
+      }
+    },
+    {
       "DisplayName": "IStranglerFigMigrationRuntimeCatalog",
       "NamespaceName": "Cephalon.Abstractions.Patterns",
       "AssemblyName": "Cephalon.Abstractions",
@@ -10082,7 +10097,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 36,
+        "Properties": 37,
         "Methods": 0
       }
     },
@@ -10443,6 +10458,21 @@
         "Constructors": 0,
         "Fields": 2,
         "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "StranglerFigIngressRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor",
+      "Declaration": "public sealed class StranglerFigIngressRuntimeDescriptor",
+      "Summary": "Describes the effective strangler-fig ingress materialization answer for one route.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 21,
         "Methods": 0
       }
     },
@@ -16438,6 +16468,17 @@
       "Summary": "A rule that targeted explicit candidate ids won over a broader rule that did not."
     },
     {
+      "DisplayName": "CanMaterialize",
+      "Category": "Properties",
+      "DeclaringTypeName": "StranglerFigIngressRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-canmaterialize",
+      "Signature": "bool CanMaterialize { get; }",
+      "Summary": "Gets a value indicating whether a generic ingress or traffic manager can materialize this selected endpoint directly."
+    },
+    {
       "DisplayName": "CanRestart",
       "Category": "Properties",
       "DeclaringTypeName": "RuntimeFailureInfo",
@@ -20862,6 +20903,17 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "StranglerFigIngressRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the human-readable description of the migration boundary."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "StranglerFigMigrationRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Patterns",
       "AssemblyName": "Cephalon.Abstractions",
@@ -21819,6 +21871,17 @@
     {
       "DisplayName": "DisplayName",
       "Category": "Properties",
+      "DeclaringTypeName": "StranglerFigIngressRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the operator-facing route name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
       "DeclaringTypeName": "StranglerFigMigrationRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Patterns",
       "AssemblyName": "Cephalon.Abstractions",
@@ -22222,6 +22285,17 @@
       "AnchorId": "member-p-cephalon-engine-appmodel-databasetopologyroleresolution-effectivetarget",
       "Signature": "DatabaseTargetSelection EffectiveTarget { get; }",
       "Summary": "Gets the effective target after applying any role reference."
+    },
+    {
+      "DisplayName": "EffectiveTarget",
+      "Category": "Properties",
+      "DeclaringTypeName": "StranglerFigIngressRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-effectivetarget",
+      "Signature": "StranglerFigTarget EffectiveTarget { get; }",
+      "Summary": "Gets the target that will actually receive traffic after endpoint fallback is considered."
     },
     {
       "DisplayName": "EffectiveTarget",
@@ -27132,6 +27206,17 @@
     {
       "DisplayName": "GetById",
       "Category": "Methods",
+      "DeclaringTypeName": "IStranglerFigIngressRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-patterns-istranglerfigingressruntimecatalog-getbyid-system-string",
+      "Signature": "StranglerFigIngressRuntimeDescriptor GetById(string routeId)",
+      "Summary": "Gets one effective strangler-fig ingress answer by its stable route identifier."
+    },
+    {
+      "DisplayName": "GetById",
+      "Category": "Methods",
       "DeclaringTypeName": "IStranglerFigMigrationRuntimeCatalog",
       "NamespaceName": "Cephalon.Abstractions.Patterns",
       "AssemblyName": "Cephalon.Abstractions",
@@ -27524,6 +27609,17 @@
       "AnchorId": "member-m-cephalon-abstractions-execution-isagachoreographyruntimecatalog-getbysourcemodule-system-string",
       "Signature": "IReadOnlyList\u003CSagaChoreographyRuntimeDescriptor\u003E GetBySourceModule(string sourceModuleId)",
       "Summary": "Gets all saga-choreography behaviors contributed by the requested module."
+    },
+    {
+      "DisplayName": "GetBySourceModule",
+      "Category": "Methods",
+      "DeclaringTypeName": "IStranglerFigIngressRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-patterns-istranglerfigingressruntimecatalog-getbysourcemodule-system-string",
+      "Signature": "IReadOnlyList\u003CStranglerFigIngressRuntimeDescriptor\u003E GetBySourceModule(string sourceModuleId)",
+      "Summary": "Gets all effective strangler-fig ingress answers owned by the requested module."
     },
     {
       "DisplayName": "GetBySourceModule",
@@ -31310,6 +31406,17 @@
       "Summary": "The event describes expected informational runtime behavior."
     },
     {
+      "DisplayName": "IngressMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "StranglerFigIngressRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-ingressmode",
+      "Signature": "string IngressMode { get; }",
+      "Summary": "Gets the normalized ingress follow-through mode, such as \u0060pass-through\u0060, \u0060rewrite-local-path\u0060, \u0060proxy-absolute-uri\u0060, or \u0060opaque-endpoint\u0060."
+    },
+    {
       "DisplayName": "InitializeAsync",
       "Category": "Methods",
       "DeclaringTypeName": "EngineRuntime",
@@ -34843,6 +34950,17 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "StranglerFigIngressRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets the original authored route metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "StranglerFigMigrationRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Patterns",
       "AssemblyName": "Cephalon.Abstractions",
@@ -35125,6 +35243,17 @@
       "AnchorId": "member-p-cephalon-aspnetcore-hosting-restendpointsuppressionoptions-methods",
       "Signature": "IReadOnlyList\u003Cstring\u003E Methods { get; }",
       "Summary": "Gets the effective HTTP methods targeted by this suppression rule before override actions are applied."
+    },
+    {
+      "DisplayName": "Methods",
+      "Category": "Properties",
+      "DeclaringTypeName": "StranglerFigIngressRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-methods",
+      "Signature": "IReadOnlyList\u003Cstring\u003E Methods { get; }",
+      "Summary": "Gets the normalized request methods that this route matches."
     },
     {
       "DisplayName": "Methods",
@@ -38066,6 +38195,17 @@
     {
       "DisplayName": "PathPrefix",
       "Category": "Properties",
+      "DeclaringTypeName": "StranglerFigIngressRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-pathprefix",
+      "Signature": "string PathPrefix { get; }",
+      "Summary": "Gets the rooted public path prefix that matches this route."
+    },
+    {
+      "DisplayName": "PathPrefix",
+      "Category": "Properties",
       "DeclaringTypeName": "StranglerFigMigrationRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Patterns",
       "AssemblyName": "Cephalon.Abstractions",
@@ -39166,6 +39306,17 @@
     {
       "DisplayName": "ProgressPercent",
       "Category": "Properties",
+      "DeclaringTypeName": "StranglerFigIngressRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-progresspercent",
+      "Signature": "int ProgressPercent { get; }",
+      "Summary": "Gets the normalized migration-progress percentage for the route."
+    },
+    {
+      "DisplayName": "ProgressPercent",
+      "Category": "Properties",
       "DeclaringTypeName": "StranglerFigMigrationRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Patterns",
       "AssemblyName": "Cephalon.Abstractions",
@@ -39184,6 +39335,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-stranglerfigroutepolicysettings-progresspercent",
       "Signature": "int? ProgressPercent { get; }",
       "Summary": "Gets the route-specific normalized migration-progress percentage."
+    },
+    {
+      "DisplayName": "ProgressState",
+      "Category": "Properties",
+      "DeclaringTypeName": "StranglerFigIngressRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-progressstate",
+      "Signature": "string ProgressState { get; }",
+      "Summary": "Gets the normalized migration-progress state for the route."
     },
     {
       "DisplayName": "ProgressState",
@@ -41311,6 +41473,17 @@
     {
       "DisplayName": "RequestedTarget",
       "Category": "Properties",
+      "DeclaringTypeName": "StranglerFigIngressRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-requestedtarget",
+      "Signature": "StranglerFigTarget RequestedTarget { get; }",
+      "Summary": "Gets the target requested after applying migration-policy overlays."
+    },
+    {
+      "DisplayName": "RequestedTarget",
+      "Category": "Properties",
       "DeclaringTypeName": "StranglerFigMigrationRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Patterns",
       "AssemblyName": "Cephalon.Abstractions",
@@ -41318,6 +41491,17 @@
       "AnchorId": "member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-requestedtarget",
       "Signature": "StranglerFigTarget RequestedTarget { get; }",
       "Summary": "Gets the target requested after applying migration-policy overlays."
+    },
+    {
+      "DisplayName": "RequestedTargetSource",
+      "Category": "Properties",
+      "DeclaringTypeName": "StranglerFigIngressRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-requestedtargetsource",
+      "Signature": "string RequestedTargetSource { get; }",
+      "Summary": "Gets the source of the requested target, such as \u0060authored-route\u0060, \u0060migration-default\u0060, or \u0060migration-route\u0060."
     },
     {
       "DisplayName": "RequestedTargetSource",
@@ -43456,6 +43640,17 @@
     {
       "DisplayName": "RouteId",
       "Category": "Properties",
+      "DeclaringTypeName": "StranglerFigIngressRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-routeid",
+      "Signature": "string RouteId { get; }",
+      "Summary": "Gets the stable route identifier."
+    },
+    {
+      "DisplayName": "RouteId",
+      "Category": "Properties",
       "DeclaringTypeName": "StranglerFigMigrationRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Patterns",
       "AssemblyName": "Cephalon.Abstractions",
@@ -43540,6 +43735,17 @@
       "AnchorId": "member-p-cephalon-aspnetcore-documentation-referencedocssurface-routeprefix",
       "Signature": "string RoutePrefix { get; set; }",
       "Summary": "The route prefix where the documentation is served."
+    },
+    {
+      "DisplayName": "Routes",
+      "Category": "Properties",
+      "DeclaringTypeName": "IStranglerFigIngressRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-istranglerfigingressruntimecatalog-routes",
+      "Signature": "IReadOnlyList\u003CStranglerFigIngressRuntimeDescriptor\u003E Routes { get; }",
+      "Summary": "Gets all effective strangler-fig ingress answers visible to the current runtime."
     },
     {
       "DisplayName": "Routes",
@@ -43947,6 +44153,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databaseroledescriptor-runtimemetadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E RuntimeMetadata { get; }",
       "Summary": "Gets optional runtime metadata associated with the database role."
+    },
+    {
+      "DisplayName": "RuntimeMetadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "StranglerFigIngressRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-runtimemetadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E RuntimeMetadata { get; }",
+      "Summary": "Gets runtime-only metadata such as notes or overlay provenance."
     },
     {
       "DisplayName": "RuntimeMetadata",
@@ -44677,6 +44894,17 @@
     {
       "DisplayName": "SelectedEndpoint",
       "Category": "Properties",
+      "DeclaringTypeName": "StranglerFigIngressRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-selectedendpoint",
+      "Signature": "string SelectedEndpoint { get; }",
+      "Summary": "Gets the concrete endpoint or boundary identifier that will receive traffic."
+    },
+    {
+      "DisplayName": "SelectedEndpoint",
+      "Category": "Properties",
       "DeclaringTypeName": "StranglerFigMigrationRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Patterns",
       "AssemblyName": "Cephalon.Abstractions",
@@ -44695,6 +44923,17 @@
       "AnchorId": "member-p-cephalon-abstractions-patterns-stranglerfigrouteresolution-selectedendpoint",
       "Signature": "string SelectedEndpoint { get; set; }",
       "Summary": "The concrete endpoint or boundary identifier that should receive the request."
+    },
+    {
+      "DisplayName": "SelectedEndpointKind",
+      "Category": "Properties",
+      "DeclaringTypeName": "StranglerFigIngressRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-selectedendpointkind",
+      "Signature": "string SelectedEndpointKind { get; }",
+      "Summary": "Gets the normalized selected-endpoint kind, such as \u0060local-path\u0060, \u0060absolute-uri\u0060, or \u0060opaque\u0060."
     },
     {
       "DisplayName": "SelectedOverrideActionKinds",
@@ -44860,6 +45099,17 @@
       "AnchorId": "member-p-cephalon-abstractions-transports-restendpointsuppressiondescriptor-selectionbasissummaries",
       "Signature": "IReadOnlyList\u003CRestEndpointGovernanceSelectionBasisSummaryDescriptor\u003E SelectionBasisSummaries { get; }",
       "Summary": "Gets the grouped selection-basis buckets for runtime candidates that were actually suppressed by this rule."
+    },
+    {
+      "DisplayName": "SelectionMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "StranglerFigIngressRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-selectionmode",
+      "Signature": "string SelectionMode { get; }",
+      "Summary": "Gets the runtime selection result, such as \u0060requested-target\u0060 or \u0060fallback-target\u0060."
     },
     {
       "DisplayName": "SelectionMode",
@@ -46041,6 +46291,17 @@
     {
       "DisplayName": "SourceModuleId",
       "Category": "Properties",
+      "DeclaringTypeName": "StranglerFigIngressRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; }",
+      "Summary": "Gets the module that owns the modern Cephalon boundary for this route."
+    },
+    {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
       "DeclaringTypeName": "StranglerFigMigrationRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Patterns",
       "AssemblyName": "Cephalon.Abstractions",
@@ -47016,6 +47277,28 @@
       "AnchorId": "member-p-cephalon-engine-configuration-migrationsettings-stranglerfig",
       "Signature": "StranglerFigMigrationSettings StranglerFig { get; }",
       "Summary": "Gets the strangler-fig migration settings resolved for the app."
+    },
+    {
+      "DisplayName": "StranglerFigIngressRoutes",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-stranglerfigingressroutes",
+      "Signature": "IReadOnlyList\u003CStranglerFigIngressRuntimeDescriptor\u003E StranglerFigIngressRoutes { get; set; }",
+      "Summary": "Gets the effective strangler-fig ingress materialization answers visible to the runtime at the time the snapshot was created."
+    },
+    {
+      "DisplayName": "StranglerFigIngressRuntimeDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "StranglerFigIngressRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-cephalon-abstractions-patterns-stranglerfigtarget-cephalon-abstractions-patterns-stranglerfigtarget-system-string-system-string-system-string-system-string-system-string-system-boolean-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "StranglerFigIngressRuntimeDescriptor(string routeId, string sourceModuleId, string displayName, string description, string pathPrefix, StranglerFigTarget requestedTarget, StranglerFigTarget effectiveTarget, string requestedTargetSource, string selectionMode, string selectedEndpoint, string selectedEndpointKind, string ingressMode, bool canMaterialize, string targetPathPrefix, string targetQuery, string targetUri, IReadOnlyList\u003Cstring\u003E methods, string progressState, int progressPercent, IReadOnlyDictionary\u003Cstring, string\u003E metadata, IReadOnlyDictionary\u003Cstring, string\u003E runtimeMetadata)",
+      "Summary": "Creates a strangler-fig ingress runtime descriptor."
     },
     {
       "DisplayName": "StranglerFigMigrationRuntimeDescriptor",
@@ -48591,6 +48874,28 @@
       "Summary": "Gets the optional targeting settings attached to the feature flag."
     },
     {
+      "DisplayName": "TargetPathPrefix",
+      "Category": "Properties",
+      "DeclaringTypeName": "StranglerFigIngressRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-targetpathprefix",
+      "Signature": "string TargetPathPrefix { get; }",
+      "Summary": "Gets the normalized path prefix that traffic should land on when the selected endpoint is path-shaped."
+    },
+    {
+      "DisplayName": "TargetQuery",
+      "Category": "Properties",
+      "DeclaringTypeName": "StranglerFigIngressRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-targetquery",
+      "Signature": "string TargetQuery { get; }",
+      "Summary": "Gets the normalized base query string that should flow with the selected endpoint when one exists."
+    },
+    {
       "DisplayName": "TargetRoleIds",
       "Category": "Properties",
       "DeclaringTypeName": "EntityFrameworkDatabaseMigrationRegistration",
@@ -48633,6 +48938,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-projectiondescriptor-targetstoreid",
       "Signature": "string TargetStoreId { get; }",
       "Summary": "Gets the logical target store or read-model identifier populated by the projection."
+    },
+    {
+      "DisplayName": "TargetUri",
+      "Category": "Properties",
+      "DeclaringTypeName": "StranglerFigIngressRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Patterns",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-targeturi",
+      "Signature": "string TargetUri { get; }",
+      "Summary": "Gets the normalized absolute URI that traffic should target when the selected endpoint is absolute."
     },
     {
       "DisplayName": "Technologies",
