@@ -106,16 +106,25 @@ Effort: small.
 
 ### Saga Choreography (event-driven saga variant)
 
-Current state: saga implementation is orchestration-based only (`SagaExecutionStrategy` with state store). Choreography-based sagas where each service reacts to events are equally important for loosely-coupled systems.
+Current state: the first host-agnostic choreography baseline is now shipped. `Cephalon.Behaviors.Patterns`
+now exposes `ChoreographySagaExecutionStrategy`, `ISagaChoreographyPublisher`,
+`SagaChoreographyPublication`, `SagaChoreographyStepResult`, and an in-memory default publisher so
+choreography steps can publish continuation or compensation work without forcing a hard dependency
+on `Cephalon.Eventing`.
 
-Recommendation: add a choreography saga execution strategy that leverages existing eventing infrastructure.
+Recommendation: keep the host-agnostic choreography contracts stable, then add a dedicated
+`Cephalon.Eventing` bridge that maps `ISagaChoreographyPublisher` onto the shared outbox-backed
+eventing runtime instead of collapsing the behavior-pattern layer into a technology-pack
+dependency.
 
 Implementation outline:
-- `ChoreographySagaExecutionStrategy` — event-reaction-based coordination
-- `ISagaEventReactor<TEvent>` interface
-- Compensation event publishing
-- Works with existing outbox for reliable event publication
-- Capability: `behaviors.saga-choreography`
+- shipped baseline: `ChoreographySagaExecutionStrategy`, `ISagaChoreographyPublisher`,
+  `SagaChoreographyPublication`, `SagaChoreographyStepResult`, `InMemorySagaChoreographyPublisher`,
+  and capability `behaviors.saga-choreography`
+- next follow-through: `Cephalon.Eventing` bridge that stages choreography publications through the
+  same outbox-backed publication runtime used by the eventing technology pack
+- optional later follow-through: higher-level authoring helpers such as `ISagaEventReactor<TEvent>`
+  when a concrete module-authoring workflow benefits from them
 
 Effort: medium.
 

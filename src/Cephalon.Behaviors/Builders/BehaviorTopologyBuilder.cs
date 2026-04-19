@@ -49,6 +49,13 @@ public sealed class BehaviorTopologyBuilder : IBehaviorTopologyBuilder
     }
 
     /// <inheritdoc />
+    public IBehaviorTopologyBuilder AsSagaChoreography()
+    {
+        _pattern = "saga-choreography";
+        return this;
+    }
+
+    /// <inheritdoc />
     public IBehaviorTopologyBuilder AsProcessManager()
     {
         _pattern = "process-manager";
@@ -94,6 +101,16 @@ public sealed class BehaviorTopologyBuilder : IBehaviorTopologyBuilder
     public BehaviorTopologyBuilder WithSagaStepPattern()
     {
         _pattern = "saga-step";
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the interaction pattern to <c>saga-choreography</c>.
+    /// </summary>
+    /// <returns>The same builder for fluent chaining.</returns>
+    public BehaviorTopologyBuilder WithSagaChoreographyPattern()
+    {
+        _pattern = "saga-choreography";
         return this;
     }
 

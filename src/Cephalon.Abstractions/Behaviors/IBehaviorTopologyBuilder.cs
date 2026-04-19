@@ -10,6 +10,8 @@ public interface IBehaviorTopologyBuilder
     IBehaviorTopologyBuilder AsEventDriven();
     /// <summary>Declares this behavior as a saga step (stateful, compensation chain).</summary>
     IBehaviorTopologyBuilder AsSaga();
+    /// <summary>Declares this behavior as a choreography-based saga step (event-reaction coordination).</summary>
+    IBehaviorTopologyBuilder AsSagaChoreography();
     /// <summary>Declares this behavior as a process manager step (long-running, durable checkpoint).</summary>
     IBehaviorTopologyBuilder AsProcessManager();
     /// <summary>Declares this behavior as direct (no architectural pattern — input → handler → output, 200/204 HTTP).</summary>

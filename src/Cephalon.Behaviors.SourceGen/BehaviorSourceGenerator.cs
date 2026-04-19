@@ -534,6 +534,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                 case "AsCqrs": pattern = "cqrs"; break;
                 case "AsEventDriven": pattern = "event-driven"; break;
                 case "AsSaga": pattern = "saga-step"; break;
+                case "AsSagaChoreography": pattern = "saga-choreography"; break;
                 case "AsProcessManager": pattern = "process-manager"; break;
 
                 // Transport methods

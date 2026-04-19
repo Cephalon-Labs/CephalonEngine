@@ -1,4 +1,5 @@
 using Cephalon.Behaviors.Patterns.Abstractions;
+using Cephalon.Behaviors.Patterns.Publishers;
 using Cephalon.Behaviors.Patterns.Registry;
 using Cephalon.Behaviors.Patterns.Stores;
 using Cephalon.Behaviors.Patterns.Strategies;
@@ -8,12 +9,13 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Cephalon.Behaviors.Patterns.Hosting;
 
 /// <summary>
-/// Extension methods for registering M4 pattern execution strategies with the behavior collection builder.
+/// Extension methods for registering pattern execution strategies with the behavior collection builder.
 /// </summary>
 public static class PatternBehaviorExtensions
 {
     /// <summary>
-    /// Registers all five built-in pattern execution strategies, their default in-memory stores,
+    /// Registers all built-in pattern execution strategies, their default in-memory stores,
+    /// the default in-memory choreography publisher,
     /// and the <see cref="ExecutionStrategyRegistry"/> as singletons on the service collection.
     /// </summary>
     /// <param name="builder">The behavior collection builder to configure.</param>
@@ -26,11 +28,13 @@ public static class PatternBehaviorExtensions
         // Register default stores.
         builder.Services.AddSingleton<ISagaStateStore, InMemorySagaStateStore>();
         builder.Services.AddSingleton<IProcessCheckpointStore, InMemoryProcessCheckpointStore>();
+        builder.Services.AddSingleton<ISagaChoreographyPublisher, InMemorySagaChoreographyPublisher>();
 
-        // Register all five strategies.
+        // Register the built-in strategies.
         builder.Services.AddSingleton<IBehaviorExecutionStrategy, CqrsExecutionStrategy>();
         builder.Services.AddSingleton<IBehaviorExecutionStrategy, EventDrivenExecutionStrategy>();
         builder.Services.AddSingleton<IBehaviorExecutionStrategy, SagaExecutionStrategy>();
+        builder.Services.AddSingleton<IBehaviorExecutionStrategy, ChoreographySagaExecutionStrategy>();
         builder.Services.AddSingleton<IBehaviorExecutionStrategy, ProcessManagerExecutionStrategy>();
         builder.Services.AddSingleton<IBehaviorExecutionStrategy, DirectExecutionStrategy>();
 

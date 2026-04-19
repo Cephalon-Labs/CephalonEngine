@@ -1,5 +1,6 @@
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Behaviors.Patterns.Abstractions;
+using Cephalon.Behaviors.Patterns.Publishers;
 using Cephalon.Behaviors.Patterns.Registry;
 using Cephalon.Behaviors.Patterns.Stores;
 using Cephalon.Behaviors.Patterns.Strategies;
@@ -66,6 +67,18 @@ public sealed class PatternStrategyTests
     {
         public Task<CompletionSignal> HandleAsync(string input, IBehaviorContext context, CancellationToken cancellationToken = default)
             => Task.FromResult(new CompletionSignal());
+    }
+
+    [AppBehavior("test.choreography")]
+    private sealed class ChoreographyBehavior : IAppBehavior<string, SagaChoreographyPublication>
+    {
+        public Task<SagaChoreographyPublication> HandleAsync(string input, IBehaviorContext context, CancellationToken cancellationToken = default)
+            => Task.FromResult(new SagaChoreographyPublication(
+                id: "choreography-1",
+                channelId: "orders.events",
+                eventType: "order-submitted",
+                payload: $"{{\"value\":\"{input}\"}}",
+                occurredAtUtc: DateTimeOffset.UtcNow));
     }
 
     /// <summary>A completion signal that implements <see cref="IProcessCompletion"/> to indicate process end.</summary>
@@ -183,6 +196,22 @@ public sealed class PatternStrategyTests
         Assert.Null(saved);
     }
 
+    [Fact]
+    public async Task ChoreographySagaStrategy_PublishesReturnedPublication()
+    {
+        var publisher = new InMemorySagaChoreographyPublisher();
+        var strategy = new ChoreographySagaExecutionStrategy(
+            publisher,
+            NullLogger<ChoreographySagaExecutionStrategy>.Instance);
+        var ctx = MakeContext(new ChoreographyBehavior(), "input", MakeCtx("test.choreography", correlationId: "choreo-1"), "saga-choreography");
+
+        var result = await strategy.ExecuteAsync(ctx);
+
+        Assert.Equal(202, result.HttpStatusCode);
+        var published = Assert.Single(publisher.PublishedPublications);
+        Assert.Equal("choreo-1", published.CorrelationId);
+    }
+
     // ─────────────────────────────────────────────────────────────────────────
     // ProcessManagerExecutionStrategy
     // ─────────────────────────────────────────────────────────────────────────
@@ -261,12 +290,14 @@ public sealed class PatternStrategyTests
     private static ExecutionStrategyRegistry BuildRegistry()
     {
         var store = new InMemorySagaStateStore();
+        var choreographyPublisher = new InMemorySagaChoreographyPublisher();
         var cpStore = new InMemoryProcessCheckpointStore();
         return new ExecutionStrategyRegistry(new IBehaviorExecutionStrategy[]
         {
             new CqrsExecutionStrategy(),
             new EventDrivenExecutionStrategy(NullLogger<EventDrivenExecutionStrategy>.Instance),
             new SagaExecutionStrategy(store, NullLogger<SagaExecutionStrategy>.Instance),
+            new ChoreographySagaExecutionStrategy(choreographyPublisher, NullLogger<ChoreographySagaExecutionStrategy>.Instance),
             new ProcessManagerExecutionStrategy(cpStore, NullLogger<ProcessManagerExecutionStrategy>.Instance),
             new DirectExecutionStrategy()
         });
@@ -280,12 +311,14 @@ public sealed class PatternStrategyTests
         var cqrs = registry.GetStrategy("cqrs");
         var eventDriven = registry.GetStrategy("event-driven");
         var saga = registry.GetStrategy("saga-step");
+        var choreography = registry.GetStrategy("saga-choreography");
         var pm = registry.GetStrategy("process-manager");
         var direct = registry.GetStrategy("direct");
 
         Assert.IsType<CqrsExecutionStrategy>(cqrs);
         Assert.IsType<EventDrivenExecutionStrategy>(eventDriven);
         Assert.IsType<SagaExecutionStrategy>(saga);
+        Assert.IsType<ChoreographySagaExecutionStrategy>(choreography);
         Assert.IsType<ProcessManagerExecutionStrategy>(pm);
         Assert.IsType<DirectExecutionStrategy>(direct);
     }
@@ -297,7 +330,7 @@ public sealed class PatternStrategyTests
         var patterns = registry.All.Select(s => s.Pattern).ToList();
 
         Assert.Equal(patterns.Count, patterns.Distinct(StringComparer.OrdinalIgnoreCase).Count());
-        Assert.Equal(5, patterns.Count);
+        Assert.Equal(6, patterns.Count);
     }
 
     // ─────────────────────────────────────────────────────────────────────────

@@ -50,7 +50,7 @@ public sealed class BehaviorTopologyDescriptor
     /// <summary>Gets the behavior identifier.</summary>
     public string Id { get; }
 
-    /// <summary>Gets the pattern identifier (e.g. "cqrs", "event-driven", "saga-step", "process-manager", "direct").</summary>
+    /// <summary>Gets the pattern identifier (e.g. "cqrs", "event-driven", "saga-step", "saga-choreography", "process-manager", "direct").</summary>
     public string Pattern { get; }
 
     /// <summary>Gets the transport identifiers configured for this behavior.</summary>

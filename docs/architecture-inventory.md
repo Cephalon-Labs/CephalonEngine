@@ -141,12 +141,13 @@ Transports define the communication mechanism between client and server.
 
 Execution strategies define how behaviors execute under a given pattern.
 
-### Built-in strategies (5)
+### Built-in strategies (6)
 
 - `direct` — Direct: returns HTTP 200 when output is non-null, HTTP 204 when null. Synchronous request/response.
 - `cqrs` — CQRS: null output means command (HTTP 202 Accepted), non-null output means query (HTTP 200 OK). Read/write separation at the behavior level.
 - `event-driven` — Event-Driven: returns HTTP 202 Accepted immediately. Behavior runs in the background as fire-and-forget. Background faults are caught and logged.
 - `saga-step` — Saga Step: loads saga state before invocation and persists it after successful execution. On exception, state is not saved so compensation logic can be applied. Saga identifier read from `IBehaviorContext.CorrelationId`.
+- `saga-choreography` — Saga Choreography: invokes one choreography step, stages returned `SagaChoreographyPublication` entries through `ISagaChoreographyPublisher`, and returns HTTP 202 when publications were accepted.
 - `process-manager` — Process Manager: loads process checkpoint before invocation, saves after successful step, deletes when process signals completion via `IProcessCompletion`. Process identifier read from `IBehaviorContext.CorrelationId`.
 
 ## Modules

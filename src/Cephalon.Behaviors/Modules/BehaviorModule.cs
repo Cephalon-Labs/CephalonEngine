@@ -23,7 +23,7 @@ namespace Cephalon.Behaviors.Modules;
 
 /// <summary>
 /// The Cephalon behavior module. Registers behavior topology infrastructure and
-/// exposes the five standard interaction pattern capabilities to the runtime.
+/// exposes the built-in interaction pattern capabilities to the runtime.
 /// </summary>
 internal sealed class BehaviorModule(
     IConfiguration? configuration,
@@ -117,6 +117,7 @@ internal sealed class BehaviorModule(
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IBehaviorCompatibilityRule, Abt001SagaStepStatefulTransportRule>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IBehaviorCompatibilityRule, Abt003ProcessManagerRequiresInboxRule>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IBehaviorCompatibilityRule, Abt004CqrsMultipleTransportsRule>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IBehaviorCompatibilityRule, Abt005SagaChoreographyOutboxRule>());
 
         // Compatibility matrix
         services.TryAddSingleton<CompatibilityMatrix>();
@@ -473,6 +474,11 @@ internal sealed class BehaviorModule(
             key: "behaviors.saga",
             displayName: "Saga Behaviors",
             description: "Saga step behavior topology with stateful transport enforcement."));
+
+        capabilities.Add(new Capability(
+            key: "behaviors.saga-choreography",
+            displayName: "Saga Choreography Behaviors",
+            description: "Choreography-based saga behavior topology for event-reaction coordination."));
 
         capabilities.Add(new Capability(
             key: "behaviors.process-manager",

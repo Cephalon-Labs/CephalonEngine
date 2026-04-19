@@ -147,6 +147,16 @@ public sealed class BehaviorBaselineTests
         Assert.Equal("direct", desc.Pattern);
     }
 
+    [Fact]
+    public void BehaviorTopologyBuilderSupportsSagaChoreographyPattern()
+    {
+        var desc = new BehaviorTopologyBuilder()
+            .AsSagaChoreography()
+            .Build("x");
+
+        Assert.Equal("saga-choreography", desc.Pattern);
+    }
+
     // BehaviorAllowlistValidator
     // ─────────────────────────────────────────────────────────────────────────
 
@@ -586,6 +596,19 @@ public sealed class BehaviorBaselineTests
         Assert.NotNull(violation);
         Assert.Equal(CompatibilitySeverity.Advisory, violation!.Severity);
         Assert.Equal("ABT-004", violation.RuleId);
+    }
+
+    [Fact]
+    public void CompatibilityMatrixAbt005SagaChoreographyWithoutOutboxReturnsAdvisory()
+    {
+        var rule = new Abt005SagaChoreographyOutboxRule();
+        var desc = new BehaviorTopologyDescriptor("order.fulfillment", "saga-choreography", ["rabbitmq"]);
+
+        var violation = rule.Check(desc);
+
+        Assert.NotNull(violation);
+        Assert.Equal(CompatibilitySeverity.Advisory, violation!.Severity);
+        Assert.Equal("ABT-005", violation.RuleId);
     }
 
     // ─────────────────────────────────────────────────────────────────────────

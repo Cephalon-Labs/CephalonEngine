@@ -13,16 +13,16 @@
 - **IBehaviorCatalog / IBehaviorRegistry** — populated by `IBehaviorContributor` implementations
 - **Hosting** — `IEngineBuilder.AddBehaviors(configure?)` extension + `BehaviorModule`
 - **Configuration** — `Engine:Behaviors` auto-registration controls
-- **Built-in compatibility rules** — startup guardrails covering saga, process-manager, and CQRS
-  constraints
+- **Built-in compatibility rules** — startup guardrails covering saga, saga choreography,
+  process-manager, and CQRS constraints
 
 ## Key contracts (from `Cephalon.Abstractions.Behaviors`)
 
 | Type | Description |
 |------|-------------|
 | `IAppBehavior<TIn, TOut>` | Single behavior interface — `HandleAsync` + optional `static virtual ConfigureTopology` |
-| `IBehaviorContext` | Transport-neutral ambient API: `PublishAsync`, `SendAsync`, `ReplyAsync`, saga state, correlation |
-| `IBehaviorTopologyBuilder` | Fluent builder: `AsCqrs()`, `AsEventDriven()`, `ViaHttpJsonRpc()`, `ViaRabbitMq()`, `RequireFeatureFlag(...)`, etc. |
+| `IBehaviorContext` | Transport-neutral ambient API: `BehaviorId`, `CorrelationId`, `Metadata`, optional `EventStore`, and `ReplyAsync(...)` |
+| `IBehaviorTopologyBuilder` | Fluent builder: `AsCqrs()`, `AsEventDriven()`, `AsSagaChoreography()`, `ViaHttpJsonRpc()`, `ViaRabbitMq()`, `RequireFeatureFlag(...)`, etc. |
 | `IBehaviorModuleBuilder` | Host-agnostic builder that lets a module declare which behaviors it owns |
 | `IBehaviorOwnerModule` | Module contract for explicit behavior ownership through `ConfigureBehaviors(...)` |
 | `OwnedBehaviorRegistration` | Runtime composition record describing one module-owned behavior registration |
@@ -267,7 +267,7 @@ Implements `ITechnologyRuntimeContributor` and reports the behavior subsystem su
 `/engine/snapshot`:
 
 - Total registered behavior count
-- Pattern distribution (cqrs / event-driven / saga-step / process-manager / direct)
+- Pattern distribution (cqrs / event-driven / saga-step / saga-choreography / process-manager / direct)
 - Transport distribution across all registered behaviors
 - Feature-gated behavior count across the active catalog
 - Per-behavior required feature ids and owning module id when the resolved topology declares them
