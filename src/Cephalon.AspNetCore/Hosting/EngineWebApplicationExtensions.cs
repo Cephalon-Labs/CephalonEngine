@@ -470,6 +470,38 @@ public static class EngineWebApplicationExtensions
                 return route is null ? Results.NotFound() : Results.Ok(route);
             })
             .WithName("GetCephalonStranglerFigRuntimeRoute");
+        engineGroup.MapGet("/strangler-fig/cutover", ([FromServices] AspNetCoreStranglerFigCutoverCatalog catalog) => TypedResults.Ok(catalog.Routes))
+            .WithName("GetCephalonStranglerFigCutoverRoutes");
+        engineGroup.MapGet("/strangler-fig/cutover/resolve", async (
+                string path,
+                string? method,
+                string? query,
+                [FromServices] IStranglerFigRouter router,
+                [FromServices] AspNetCoreStranglerFigCutoverCatalog catalog,
+                CancellationToken cancellationToken) =>
+            {
+                var resolution = await router.ResolveAsync(
+                        new StranglerFigRequest(path, method ?? HttpMethods.Get),
+                        cancellationToken)
+                    .ConfigureAwait(false);
+
+                if (resolution is null)
+                {
+                    return Results.NotFound();
+                }
+
+                return Results.Ok(catalog.CreateDecision(
+                    resolution,
+                    NormalizeOptionalQueryString(query)));
+            })
+            .WithName("ResolveCephalonStranglerFigCutover");
+        engineGroup.MapGet("/strangler-fig/cutover/{routeId}", (string routeId, [FromServices] AspNetCoreStranglerFigCutoverCatalog catalog) =>
+            {
+                var route = catalog.GetById(routeId);
+
+                return route is null ? Results.NotFound() : Results.Ok(route);
+            })
+            .WithName("GetCephalonStranglerFigCutoverRoute");
         engineGroup.MapGet("/patterns", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Patterns))
             .WithName("GetCephalonPatterns");
         engineGroup.MapGet("/technologies", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Technologies))
@@ -547,6 +579,14 @@ public static class EngineWebApplicationExtensions
             .WithDisplayName("Cephalon Readiness")
             .DisableRateLimiting()
             .ExcludeFromDescription();
+
+        var stranglerFigCutoverCatalog = app.Services.GetService<AspNetCoreStranglerFigCutoverCatalog>();
+        if (stranglerFigCutoverCatalog?.HasActiveHandlers == true)
+        {
+            app.UseMiddleware<AspNetCoreStranglerFigCutoverMiddleware>();
+        }
+
+        app.UseRouting();
 
         if (app.Services.GetService<IRateLimitingRuntimeCatalog>()?.Policies.Any(static policy =>
                 string.Equals(policy.ExecutionMode, AspNetCoreRateLimitingPolicyResolver.EnabledExecutionMode, StringComparison.OrdinalIgnoreCase)) == true)
@@ -839,6 +879,17 @@ public static class EngineWebApplicationExtensions
     private static string BuildVersionedAssetReference(string route)
     {
         return $"{route}?v={DocumentationAssetVersion}";
+    }
+
+    private static QueryString NormalizeOptionalQueryString(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return QueryString.Empty;
+        }
+
+        var normalized = value.Trim();
+        return new QueryString(normalized.StartsWith('?') ? normalized : "?" + normalized);
     }
 
     private static bool TryParseAuditOutcome(

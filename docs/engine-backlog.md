@@ -2087,6 +2087,34 @@ Delivered:
 - targeted composition, hosting, and package-surface coverage now prove default plus per-route overlay behavior, snapshot/runtime-route projection, fail-fast validation for unknown route policies, and the new abstraction-layer public surface through composition tests `4/4`, hosting tests `1/1`, and package-surface tests `153/153`
 - architecture recommendations, component docs, roadmap, backlog, and project memory now describe the shipped policy/progress baseline truthfully while keeping host-level cutover and proxy behavior explicitly planned
 
+### ENG-102 Phase 12 ASP.NET Core strangler-fig cutover runtime
+
+Status: done
+Estimate: 5
+Completed: April 19, 2026
+
+Why:
+
+- after `ENG-101`, Cephalon could explain authored route ownership plus effective target-selection and migration progress, but ASP.NET Core still could not execute the selected cutover target without project-local middleware or reverse-proxy glue
+- teams migrating onto Cephalon need host cutover to stay derived from the same engine-owned migration truth so they can change ownership gradually without rewriting project endpoint code
+- the operator story was still incomplete because ASP.NET Core could not yet answer which routes would rewrite locally, redirect or proxy to absolute endpoints, or fail because the selected target was not executable by the host
+
+Acceptance:
+
+- ASP.NET Core hosts expose a first host-level cutover runtime derived from `IStranglerFigMigrationRuntimeCatalog` instead of inventing a second cutover registry
+- `Engine:Migration:StranglerFig:AspNetCore` controls whether cutover is active and whether absolute HTTP or HTTPS targets redirect or proxy without changing the underlying migration-policy truth
+- ASP.NET Core hosts expose direct operator routes for the cutover view and one request-shaped cutover-resolution probe
+- docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the shipped cutover scope while remaining honest that broader traffic-manager or ingress follow-through is still later work
+
+Delivered:
+
+- `Cephalon.AspNetCore` now ships an internal cutover catalog plus middleware derived from `IStranglerFigMigrationRuntimeCatalog`, so the host can resolve effective route ownership once and then apply the matching local rewrite, absolute redirect, absolute proxy, or truthful unsupported-target failure path
+- `Engine:Migration:StranglerFig:AspNetCore` now binds typed host options for enabling cutover and selecting absolute-endpoint redirect versus proxy behavior without replacing `Engine:Migration:StranglerFig` as the runtime source of truth
+- ASP.NET Core now exposes `/engine/strangler-fig/cutover`, `/engine/strangler-fig/cutover/{routeId}`, and `/engine/strangler-fig/cutover/resolve` as the direct operator surface for host-level cutover handling answers
+- rooted local selected endpoints now rewrite in-process before endpoint execution, absolute HTTP or HTTPS selected endpoints can redirect or proxy through a dedicated host-owned `HttpClient`, and unsupported selected endpoints now fail truthfully with `502`
+- targeted hosting coverage now proves local rewrite, absolute redirect, absolute proxy, and unsupported-target failure behavior while existing composition plus package-surface coverage proves the shared migration runtime truth remains intact through hosting tests `5/5`, composition tests `4/4`, and package-surface tests `153/153`
+- architecture recommendations, component docs, roadmap, backlog, and project memory now describe the shipped cutover baseline truthfully while keeping broader traffic-manager or ingress follow-through explicitly planned
+
 ### ENG-069 Event-dispatch runtime operator-surface baseline
 
 Status: done
@@ -2527,3 +2555,4 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-099 generic behavior HTTP transport-native rate-limit envelopes: `Cephalon.Behaviors.Http` now shares one limiter-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution limiter rejections keep protocol-native error shapes with stable Cephalon codes plus `429` metadata instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned rate limiting — **Shipped** · targeted hosting tests 13/13 + composition tests 28/28 + package-surface tests 153/153
 - ENG-100 generic behavior HTTP transport-native timeout and circuit-breaker envelopes: `Cephalon.Behaviors.Http` now shares one resilience-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution timeout and open-circuit rejections keep protocol-native error shapes with stable Cephalon codes plus `503` metadata and optional retry-after timing instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned timeout and circuit-breaker policy — **Shipped** · targeted hosting tests 25/25 + composition tests 28/28 + package-surface tests 153/153
 - ENG-101 phase 12 strangler-fig migration policy and progress baseline: `Cephalon.Abstractions` now exposes `IStranglerFigMigrationRuntimeCatalog` plus `StranglerFigMigrationRuntimeDescriptor`, `Cephalon.Engine` now binds deterministic `Engine:Migration:StranglerFig` default plus per-route overlays into `snapshot.StranglerFigRoutePolicies`, and `Cephalon.AspNetCore` now exposes `/engine/strangler-fig/runtime` plus `/engine/strangler-fig/runtime/{routeId}` while host-level cutover remains later — **Shipped** · composition tests 4/4 + hosting tests 1/1 + package-surface tests 153/153
+- ENG-102 phase 12 ASP.NET Core strangler-fig cutover runtime: `Cephalon.AspNetCore` now derives host cutover execution from `IStranglerFigMigrationRuntimeCatalog`, exposes `/engine/strangler-fig/cutover` plus `/engine/strangler-fig/cutover/resolve`, rewrites rooted local targets in-process, redirects or proxies absolute HTTP or HTTPS targets through `Engine:Migration:StranglerFig:AspNetCore`, and rejects unsupported selected endpoints truthfully with `502` while broader traffic-manager or ingress follow-through remains later — **Shipped** · hosting tests 5/5 + composition tests 4/4 + package-surface tests 153/153

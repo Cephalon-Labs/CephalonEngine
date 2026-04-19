@@ -21,6 +21,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.RateLimiting;
 
@@ -124,6 +125,15 @@ public static class EngineWebApplicationBuilderExtensions
             serviceProvider.GetRequiredService<AspNetCoreRestEndpointRuntimeCatalog>());
         builder.AddReferenceDocsHosting();
         builder.Services.AddCephalon(builder.Configuration, configure);
+        var stranglerFigCutoverOptions = AspNetCoreStranglerFigCutoverOptions.FromConfiguration(builder.Configuration);
+        builder.Services.TryAddSingleton(stranglerFigCutoverOptions);
+        builder.Services.TryAddSingleton<AspNetCoreStranglerFigCutoverCatalog>();
+        builder.Services.AddHttpClient(AspNetCoreStranglerFigCutoverMiddleware.ProxyHttpClientName)
+            .ConfigurePrimaryHttpMessageHandler(static () => new HttpClientHandler
+            {
+                AllowAutoRedirect = false,
+                UseCookies = false
+            });
         var referenceDocsOptions = ReferenceDocsHostingOptions.FromConfiguration(
             builder.Configuration,
             contentRootPath: builder.Environment.ContentRootPath);

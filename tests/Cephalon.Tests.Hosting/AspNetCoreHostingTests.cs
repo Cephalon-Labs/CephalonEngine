@@ -357,6 +357,188 @@ public sealed class AspNetCoreHostingTests
             candidate.ProgressPercent == 40);
     }
 
+    [Fact]
+    public async Task MapCephalonRewritesLocalStranglerFigCutoverTargets()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        ConfigureStranglerFigCutoverHost(
+            builder,
+            legacyEndpoint: "/legacy/orders",
+            modernEndpoint: "/checkout/orders",
+            absoluteEndpointMode: "Redirect");
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+        app.MapPost("/legacy/orders/{id}", (string id, HttpContext httpContext) => Results.Json(new
+        {
+            source = "legacy",
+            id,
+            path = httpContext.Request.Path.Value,
+            query = httpContext.Request.QueryString.Value
+        }));
+        app.MapPost("/checkout/orders/{id}", () => Results.Json(new
+        {
+            source = "modern"
+        }));
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var request = new HttpRequestMessage(HttpMethod.Post, "/checkout/orders/42?expand=lines")
+        {
+            Content = JsonContent.Create(new
+            {
+                quantity = 2
+            })
+        };
+
+        var response = await client.SendAsync(request);
+        var payload = await response.Content.ReadAsStringAsync();
+        using var payloadDocument = JsonDocument.Parse(payload);
+
+        Assert.True(response.IsSuccessStatusCode);
+        Assert.Equal("legacy", payloadDocument.RootElement.GetProperty("source").GetString());
+        Assert.Equal("42", payloadDocument.RootElement.GetProperty("id").GetString());
+        Assert.Equal("/legacy/orders/42", payloadDocument.RootElement.GetProperty("path").GetString());
+        Assert.Equal("?expand=lines", payloadDocument.RootElement.GetProperty("query").GetString());
+        Assert.Equal("orders-cutover", response.Headers.GetValues("X-Cephalon-StranglerFig-RouteId").Single());
+        Assert.Equal("rewrite-local-path", response.Headers.GetValues("X-Cephalon-StranglerFig-Handling").Single());
+
+        var cutoverPayload = await client.GetStringAsync("/engine/strangler-fig/cutover/orders-cutover");
+        using var cutoverDocument = JsonDocument.Parse(cutoverPayload);
+        Assert.Equal("rewrite-local-path", cutoverDocument.RootElement.GetProperty("handlingMode").GetString());
+        Assert.Equal("local-path", cutoverDocument.RootElement.GetProperty("selectedEndpointKind").GetString());
+
+        var decisionPayload = await client.GetStringAsync("/engine/strangler-fig/cutover/resolve?path=%2Fcheckout%2Forders%2F42&method=POST&query=expand%3Dlines");
+        using var decisionDocument = JsonDocument.Parse(decisionPayload);
+        Assert.Equal("rewrite-local-path", decisionDocument.RootElement.GetProperty("handlingMode").GetString());
+        Assert.Equal("/legacy/orders/42", decisionDocument.RootElement.GetProperty("destinationPath").GetString());
+        Assert.Equal("?expand=lines", decisionDocument.RootElement.GetProperty("destinationQuery").GetString());
+    }
+
+    [Fact]
+    public async Task MapCephalonRedirectsAbsoluteStranglerFigCutoverTargets()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        ConfigureStranglerFigCutoverHost(
+            builder,
+            legacyEndpoint: "https://legacy.example.com/orders",
+            modernEndpoint: "/checkout/orders",
+            absoluteEndpointMode: "Redirect");
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+        app.MapGet("/checkout/orders/{id}", () => Results.Json(new
+        {
+            source = "modern"
+        }));
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var response = await client.GetAsync("/checkout/orders/42?expand=lines");
+
+        Assert.Equal(HttpStatusCode.TemporaryRedirect, response.StatusCode);
+        Assert.Equal(
+            "https://legacy.example.com/orders/42?expand=lines",
+            response.Headers.Location?.AbsoluteUri);
+        Assert.Equal("redirect-absolute-uri", response.Headers.GetValues("X-Cephalon-StranglerFig-Handling").Single());
+
+        var decisionPayload = await client.GetStringAsync("/engine/strangler-fig/cutover/resolve?path=%2Fcheckout%2Forders%2F42&method=GET&query=expand%3Dlines");
+        using var decisionDocument = JsonDocument.Parse(decisionPayload);
+        Assert.Equal("redirect-absolute-uri", decisionDocument.RootElement.GetProperty("handlingMode").GetString());
+        Assert.Equal(
+            "https://legacy.example.com/orders/42?expand=lines",
+            decisionDocument.RootElement.GetProperty("destinationUri").GetString());
+    }
+
+    [Fact]
+    public async Task MapCephalonProxiesAbsoluteStranglerFigCutoverTargets()
+    {
+        var proxyHandler = new CapturingProxyMessageHandler();
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        ConfigureStranglerFigCutoverHost(
+            builder,
+            legacyEndpoint: "https://legacy.example.com/orders",
+            modernEndpoint: "/checkout/orders",
+            absoluteEndpointMode: "Proxy");
+        builder.Services.AddHttpClient("cephalon-strangler-fig-proxy")
+            .ConfigurePrimaryHttpMessageHandler(() => proxyHandler);
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+        app.MapPost("/checkout/orders/{id}", () => Results.Json(new
+        {
+            source = "modern"
+        }));
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var request = new HttpRequestMessage(HttpMethod.Post, "/checkout/orders/42?expand=lines")
+        {
+            Content = JsonContent.Create(new
+            {
+                quantity = 2
+            })
+        };
+
+        var response = await client.SendAsync(request);
+        var payload = await response.Content.ReadAsStringAsync();
+        using var payloadDocument = JsonDocument.Parse(payload);
+
+        Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
+        Assert.Equal("proxy", payloadDocument.RootElement.GetProperty("source").GetString());
+        Assert.Equal(
+            "https://legacy.example.com/orders/42?expand=lines",
+            payloadDocument.RootElement.GetProperty("destinationUri").GetString());
+        Assert.Equal("proxy-absolute-uri", response.Headers.GetValues("X-Cephalon-StranglerFig-Handling").Single());
+        Assert.NotNull(proxyHandler.LastRequestUri);
+        Assert.Equal("https://legacy.example.com/orders/42?expand=lines", proxyHandler.LastRequestUri!.AbsoluteUri);
+        Assert.Equal(HttpMethod.Post, proxyHandler.LastMethod);
+        Assert.Equal("/checkout/orders/42", proxyHandler.LastForwardedPath);
+        Assert.Equal("POST", proxyHandler.LastForwardedMethod);
+        Assert.Equal("application/json; charset=utf-8", proxyHandler.LastContentType);
+        Assert.Contains("\"quantity\":2", proxyHandler.LastBody, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task MapCephalonRejectsUnsupportedStranglerFigCutoverTargets()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        ConfigureStranglerFigCutoverHost(
+            builder,
+            legacyEndpoint: "legacy://orders",
+            modernEndpoint: "/checkout/orders",
+            absoluteEndpointMode: "Redirect");
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+        app.MapGet("/checkout/orders/{id}", () => Results.Json(new
+        {
+            source = "modern"
+        }));
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var response = await client.GetAsync("/checkout/orders/42");
+        var payload = await response.Content.ReadAsStringAsync();
+        using var payloadDocument = JsonDocument.Parse(payload);
+
+        Assert.Equal(HttpStatusCode.BadGateway, response.StatusCode);
+        Assert.Equal("orders-cutover", payloadDocument.RootElement.GetProperty("routeId").GetString());
+        Assert.Equal("legacy://orders", payloadDocument.RootElement.GetProperty("selectedEndpoint").GetString());
+        Assert.Equal("unsupported-endpoint", payloadDocument.RootElement.GetProperty("handlingMode").GetString());
+
+        var cutoverPayload = await client.GetStringAsync("/engine/strangler-fig/cutover/orders-cutover");
+        using var cutoverDocument = JsonDocument.Parse(cutoverPayload);
+        Assert.Equal("unsupported-endpoint", cutoverDocument.RootElement.GetProperty("handlingMode").GetString());
+        Assert.Equal("unsupported", cutoverDocument.RootElement.GetProperty("selectedEndpointKind").GetString());
+    }
+
     private sealed class EmptyRateLimitingRuntimeCatalog : IRateLimitingRuntimeCatalog
     {
         public static EmptyRateLimitingRuntimeCatalog Instance { get; } = new();
@@ -373,6 +555,78 @@ public sealed class AspNetCoreHostingTests
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(transportId);
             return [];
+        }
+    }
+
+    private static void ConfigureStranglerFigCutoverHost(
+        WebApplicationBuilder builder,
+        string legacyEndpoint,
+        string modernEndpoint,
+        string absoluteEndpointMode)
+    {
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "Microservice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Patterns:0"] = "StranglerFig";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.Configuration[$"{EngineSettings.SectionName}:Migration:StranglerFig:DefaultTarget"] = "legacy";
+        builder.Configuration[$"{EngineSettings.SectionName}:Migration:StranglerFig:DefaultProgressState"] = "cutover";
+        builder.Configuration[$"{EngineSettings.SectionName}:Migration:StranglerFig:DefaultProgressPercent"] = "85";
+        builder.Configuration[$"{EngineSettings.SectionName}:Migration:StranglerFig:AspNetCore:Enabled"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Migration:StranglerFig:AspNetCore:AbsoluteEndpointMode"] = absoluteEndpointMode;
+        builder.AddCephalon(engine =>
+        {
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new DiscoveryTestModule());
+            engine.AddStranglerFigRoute(new StranglerFigRouteDescriptor(
+                id: "orders-cutover",
+                sourceModuleId: "platform",
+                displayName: "Orders cutover",
+                description: "Routes order requests through the strangler-fig cutover surface.",
+                pathPrefix: "/checkout/orders",
+                preferredTarget: StranglerFigTarget.Modern,
+                legacyEndpoint: legacyEndpoint,
+                modernEndpoint: modernEndpoint));
+        });
+    }
+
+    private sealed class CapturingProxyMessageHandler : HttpMessageHandler
+    {
+        public Uri? LastRequestUri { get; private set; }
+
+        public HttpMethod? LastMethod { get; private set; }
+
+        public string? LastForwardedPath { get; private set; }
+
+        public string? LastForwardedMethod { get; private set; }
+
+        public string? LastContentType { get; private set; }
+
+        public string? LastBody { get; private set; }
+
+        protected override async Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage request,
+            CancellationToken cancellationToken)
+        {
+            LastRequestUri = request.RequestUri;
+            LastMethod = request.Method;
+            LastForwardedPath = request.Headers.TryGetValues("X-Forwarded-Path", out var forwardedPaths)
+                ? forwardedPaths.SingleOrDefault()
+                : null;
+            LastForwardedMethod = request.Headers.TryGetValues("X-Forwarded-Method", out var forwardedMethods)
+                ? forwardedMethods.SingleOrDefault()
+                : null;
+            LastContentType = request.Content?.Headers.ContentType?.ToString();
+            LastBody = request.Content is null
+                ? null
+                : await request.Content.ReadAsStringAsync(cancellationToken);
+
+            return new HttpResponseMessage(HttpStatusCode.Accepted)
+            {
+                Content = JsonContent.Create(new
+                {
+                    source = "proxy",
+                    destinationUri = request.RequestUri?.AbsoluteUri
+                })
+            };
         }
     }
 
