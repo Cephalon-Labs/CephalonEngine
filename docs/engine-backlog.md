@@ -2143,6 +2143,34 @@ Delivered:
 - targeted composition, hosting, and package-surface coverage now lock the new runtime truth through composition tests `3/3`, hosting tests `1/1`, and package-surface tests `1/1`
 - architecture recommendations, component docs, roadmap, backlog, and project memory now describe the shipped BFF runtime baseline truthfully while keeping client-aware filtering or transport-specific materialization explicitly planned
 
+### ENG-104 Phase 12 backend-for-frontend client-aware REST filtering runtime baseline
+
+Status: done
+Estimate: 5
+Completed: April 19, 2026
+
+Why:
+
+- after `ENG-103`, Cephalon could describe which client bindings existed, but operators still had no direct runtime answer for which published REST endpoints were effectively visible to each client binding after behavior, capability, or tag filters were applied
+- the next BFF follow-through needed to stay derived from the shared runtime truth instead of inventing a second ASP.NET Core-only registry that could drift away from the merged binding catalog or the published REST endpoint catalog
+- teams need one client-aware REST runtime surface before later per-client OpenAPI or Scalar materialization can remain truthful and low-ceremony
+
+Acceptance:
+
+- `Cephalon.Abstractions` exposes runtime contracts for one client-binding-plus-published-endpoint answer without collapsing binding truth and REST truth into one type
+- ASP.NET Core derives a client-aware REST runtime catalog from `IBackendForFrontendRuntimeCatalog` plus `IRestEndpointRuntimeCatalog` and projects that answer through `/engine/snapshot`
+- ASP.NET Core hosts expose direct operator routes for the derived client-aware REST runtime plus binding/client/module/published-endpoint drill-down answers
+- docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the shipped runtime baseline while remaining honest that per-client documentation/materialization is still later work
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships `BackendForFrontendRestEndpointRuntimeDescriptor` plus `IBackendForFrontendRestRuntimeCatalog` as the public client-aware REST runtime contract
+- `Cephalon.AspNetCore` now derives `AspNetCoreBackendForFrontendRestRuntimeCatalog` from the shared BFF binding catalog plus published REST endpoint catalog instead of inventing a second source of truth, preserving binding-owner module identity while filtering by included/excluded behavior ids, capability keys, and tags
+- `/engine/backend-for-frontend/rest-endpoints`, `/engine/backend-for-frontend/rest-endpoints/bindings/{bindingId}`, `/engine/backend-for-frontend/rest-endpoints/clients/{clientId}`, `/engine/backend-for-frontend/rest-endpoints/modules/{moduleId}`, `/engine/backend-for-frontend/rest-endpoints/published/{restEndpointId}`, and `/engine/backend-for-frontend/rest-endpoints/{runtimeEndpointId}` now expose the derived runtime answer directly
+- `/engine/snapshot` now carries `BackendForFrontendRestEndpoints` so operator tooling can read the same client-aware REST truth without re-querying separate routes
+- targeted hosting and package-surface coverage now lock the new runtime truth through hosting tests `1/1` and package-surface tests `2/2`
+- architecture recommendations, component docs, roadmap, backlog, and project memory now describe the shipped BFF REST filtering runtime truthfully while keeping per-client OpenAPI/Scalar materialization explicitly planned
+
 ### ENG-069 Event-dispatch runtime operator-surface baseline
 
 Status: done
@@ -2585,3 +2613,4 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-101 phase 12 strangler-fig migration policy and progress baseline: `Cephalon.Abstractions` now exposes `IStranglerFigMigrationRuntimeCatalog` plus `StranglerFigMigrationRuntimeDescriptor`, `Cephalon.Engine` now binds deterministic `Engine:Migration:StranglerFig` default plus per-route overlays into `snapshot.StranglerFigRoutePolicies`, and `Cephalon.AspNetCore` now exposes `/engine/strangler-fig/runtime` plus `/engine/strangler-fig/runtime/{routeId}` while host-level cutover remains later — **Shipped** · composition tests 4/4 + hosting tests 1/1 + package-surface tests 153/153
 - ENG-102 phase 12 ASP.NET Core strangler-fig cutover runtime: `Cephalon.AspNetCore` now derives host cutover execution from `IStranglerFigMigrationRuntimeCatalog`, exposes `/engine/strangler-fig/cutover` plus `/engine/strangler-fig/cutover/resolve`, rewrites rooted local targets in-process, redirects or proxies absolute HTTP or HTTPS targets through `Engine:Migration:StranglerFig:AspNetCore`, and rejects unsupported selected endpoints truthfully with `502` while broader traffic-manager or ingress follow-through remains later — **Shipped** · hosting tests 5/5 + composition tests 4/4 + package-surface tests 153/153
 - ENG-103 phase 12 backend-for-frontend client-binding runtime baseline: `Cephalon.Abstractions` now exposes host-agnostic BFF client-binding contracts, `Cephalon.Engine` now composes host-added, module-contributed, and `Engine:BackendForFrontend:Bindings` entries into `snapshot.BackendForFrontendBindings` while auto-selecting `backend-for-frontend` when bindings exist, and `Cephalon.AspNetCore` now exposes `/engine/backend-for-frontend` plus client/module/transport drill-down routes while client-aware filtering or materialization remain later — **Shipped** · composition tests 3/3 + hosting tests 1/1 + package-surface tests 1/1
+- ENG-104 phase 12 backend-for-frontend client-aware REST filtering runtime baseline: `Cephalon.Abstractions` now exposes public client-aware BFF REST runtime contracts, `Cephalon.AspNetCore` now derives `IBackendForFrontendRestRuntimeCatalog` from the shared binding catalog plus published REST endpoint truth, `/engine/snapshot` now carries `BackendForFrontendRestEndpoints`, and `/engine/backend-for-frontend/rest-endpoints` now exposes binding/client/module/published-endpoint drill-down routes while per-client OpenAPI/Scalar materialization remains later — **Shipped** · hosting tests 1/1 + package-surface tests 2/2

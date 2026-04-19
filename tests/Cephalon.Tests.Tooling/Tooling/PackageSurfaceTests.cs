@@ -304,6 +304,8 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupAuthoringStyleDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointPublicationGroupDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointSuppressionDescriptor),
+            typeof(global::Cephalon.Abstractions.Transports.BackendForFrontendRestEndpointRuntimeDescriptor),
+            typeof(global::Cephalon.Abstractions.Transports.IBackendForFrontendRestRuntimeCatalog),
             typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.TransportDescriptor),
             typeof(global::Cephalon.Abstractions.Transports.TransportFeatures));
@@ -1893,6 +1895,25 @@ public sealed class PackageSurfaceTests
             .GetProperty("BehaviorFilter", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot)
             .GetProperty("BackendForFrontendBindings", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void BackendForFrontendRestRuntimeContractsExposeSnapshotSurface()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.BackendForFrontendRestEndpointRuntimeDescriptor)
+            .GetProperty("Binding", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.BackendForFrontendRestEndpointRuntimeDescriptor)
+            .GetProperty("Endpoint", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.BackendForFrontendRestEndpointRuntimeDescriptor)
+            .GetProperty("MatchedByDefault", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.BackendForFrontendRestEndpointRuntimeDescriptor)
+            .GetProperty("MatchedBehaviorIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.BackendForFrontendRestEndpointRuntimeDescriptor)
+            .GetProperty("MatchedCapabilityKeys", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.BackendForFrontendRestEndpointRuntimeDescriptor)
+            .GetProperty("MatchedTags", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot)
+            .GetProperty("BackendForFrontendRestEndpoints", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

@@ -117,8 +117,12 @@ frontend client-binding runtime: host code, modules, and `Engine:BackendForFront
 contribute `BackendForFrontendClientBindingDescriptor` entries, the engine composes them through
 `IBackendForFrontendRuntimeCatalog`, auto-selects the `backend-for-frontend` pattern when bindings
 exist, and projects the merged answer into `snapshot.BackendForFrontendBindings` and the ASP.NET
-Core `/engine/backend-for-frontend` surface. Broader traffic-manager or ingress follow-through plus
-client-aware backend-for-frontend filtering or materialization remain later slices. The new host-agnostic `IRateLimitingRuntimeCatalog` and
+Core `/engine/backend-for-frontend` surface. The first client-aware REST follow-through is now also
+shipped: host adapters can project `IBackendForFrontendRestRuntimeCatalog` into
+`snapshot.BackendForFrontendRestEndpoints` and ASP.NET Core now derives that runtime answer from the
+shared binding catalog plus the published REST endpoint catalog instead of inventing a second source
+of truth. Broader traffic-manager or ingress follow-through plus per-client documentation or
+non-REST materialization remain later slices. The new host-agnostic `IRateLimitingRuntimeCatalog` and
 `RateLimitingRuntimeDescriptor` contracts also let host adapters publish effective enforcement into
 `snapshot.RateLimitingPolicies` without pretending the engine core itself performs HTTP throttling.
 `RateLimitingSelection` now also carries additive `Overrides` projected as

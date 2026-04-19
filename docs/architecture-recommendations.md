@@ -121,18 +121,19 @@ Effort: medium.
 
 ### Backend for Frontend — BFF (explicit pattern)
 
-Current state: the contract-first client-binding runtime baseline is now shipped. `BuiltInPatterns.cs` still carries the `backend-for-frontend` descriptor, and `Cephalon.Abstractions` now also exports `BackendForFrontendBehaviorFilterDescriptor`, `BackendForFrontendClientBindingDescriptor`, `IBackendForFrontendClientBindingContributor`, `IBackendForFrontendClientBindingRegistry`, and `IBackendForFrontendRuntimeCatalog`. `Cephalon.Engine` now composes host-added, module-contributed, and `Engine:BackendForFrontend:Bindings` client bindings into one runtime catalog, auto-selects the `backend-for-frontend` pattern when bindings exist, and projects the merged answer through `snapshot.BackendForFrontendBindings`. ASP.NET Core now exposes `/engine/backend-for-frontend` plus client, module, and transport drill-down routes as the operator-facing surface. Remaining work is client-aware behavior filtering or endpoint materialization follow-through, not the first runtime truth layer.
+Current state: the contract-first client-binding runtime baseline is now shipped, and the first client-aware REST follow-through is now shipped on top of it. `BuiltInPatterns.cs` still carries the `backend-for-frontend` descriptor, and `Cephalon.Abstractions` now also exports `BackendForFrontendBehaviorFilterDescriptor`, `BackendForFrontendClientBindingDescriptor`, `IBackendForFrontendClientBindingContributor`, `IBackendForFrontendClientBindingRegistry`, `IBackendForFrontendRuntimeCatalog`, `BackendForFrontendRestEndpointRuntimeDescriptor`, and `IBackendForFrontendRestRuntimeCatalog`. `Cephalon.Engine` still composes host-added, module-contributed, and `Engine:BackendForFrontend:Bindings` client bindings into one runtime catalog, auto-selects the `backend-for-frontend` pattern when bindings exist, and projects the merged binding answer through `snapshot.BackendForFrontendBindings`, while ASP.NET Core now derives client-aware REST runtime answers from that shared binding catalog plus `IRestEndpointRuntimeCatalog` instead of inventing a second host-only registry. ASP.NET Core now exposes `/engine/backend-for-frontend` plus client, module, and transport drill-down routes for binding truth, and `/engine/backend-for-frontend/rest-endpoints` plus binding, client, module, published-endpoint, and id drill-down routes for effective REST visibility per client binding. Remaining work is per-client documentation/materialization follow-through such as client-scoped OpenAPI or Scalar surfaces, not the first client-aware runtime truth layer.
 
-Recommendation: keep the host-agnostic client-binding contracts and runtime catalog stable, keep ASP.NET Core operator routes derived from that shared catalog, and add client-aware behavior filtering or transport-specific materialization only when a concrete frontend surface needs it.
+Recommendation: keep the host-agnostic client-binding contracts and runtime catalog stable, keep client-aware REST filtering derived from `IBackendForFrontendRuntimeCatalog` plus `IRestEndpointRuntimeCatalog`, and add transport-specific materialization only when a concrete frontend surface needs more than runtime introspection.
 
 Implementation outline:
 - `PatternDescriptor` "backend-for-frontend" in `BuiltInPatterns.cs` with aliases `["BackendForFrontend", "BFF"]`
 - `BackendForFrontendClientBindingDescriptor`, `IBackendForFrontendClientBindingContributor`, `IBackendForFrontendClientBindingRegistry`, and `IBackendForFrontendRuntimeCatalog` for host-agnostic client-binding contribution and reads
 - `Engine:BackendForFrontend:Bindings` for configuration-driven binding contribution without inventing a host-only registry
 - `/engine/backend-for-frontend` plus `snapshot.BackendForFrontendBindings` for the shipped operator-facing runtime surface
-- Client-aware behavior filtering and transport-specific materialization as later follow-through
+- `BackendForFrontendRestEndpointRuntimeDescriptor`, `IBackendForFrontendRestRuntimeCatalog`, `/engine/backend-for-frontend/rest-endpoints`, and `snapshot.BackendForFrontendRestEndpoints` for the shipped client-aware REST follow-through derived from existing runtime catalogs
+- Per-client OpenAPI/Scalar materialization and non-REST transport-specific follow-through as later slices
 
-Effort: small-to-medium for the remaining filtering and materialization follow-through.
+Effort: small-to-medium for the remaining per-client documentation and transport-materialization follow-through.
 
 ### Feature Flags (progressive delivery)
 

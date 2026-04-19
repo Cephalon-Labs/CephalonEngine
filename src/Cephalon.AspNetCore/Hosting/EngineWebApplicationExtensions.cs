@@ -513,6 +513,28 @@ public static class EngineWebApplicationExtensions
         engineGroup.MapGet("/backend-for-frontend/transports/{transportId}", (string transportId, [FromServices] IBackendForFrontendRuntimeCatalog catalog) =>
                 TypedResults.Ok(catalog.GetByTransportId(transportId)))
             .WithName("GetCephalonBackendForFrontendBindingsByTransport");
+        engineGroup.MapGet("/backend-for-frontend/rest-endpoints", ([FromServices] IBackendForFrontendRestRuntimeCatalog catalog) =>
+                TypedResults.Ok(catalog.Endpoints))
+            .WithName("GetCephalonBackendForFrontendRestEndpoints");
+        engineGroup.MapGet("/backend-for-frontend/rest-endpoints/bindings/{bindingId}", (string bindingId, [FromServices] IBackendForFrontendRestRuntimeCatalog catalog) =>
+                TypedResults.Ok(catalog.GetByBindingId(bindingId)))
+            .WithName("GetCephalonBackendForFrontendRestEndpointsByBinding");
+        engineGroup.MapGet("/backend-for-frontend/rest-endpoints/clients/{clientId}", (string clientId, [FromServices] IBackendForFrontendRestRuntimeCatalog catalog) =>
+                TypedResults.Ok(catalog.GetByClientId(clientId)))
+            .WithName("GetCephalonBackendForFrontendRestEndpointsByClient");
+        engineGroup.MapGet("/backend-for-frontend/rest-endpoints/modules/{moduleId}", (string moduleId, [FromServices] IBackendForFrontendRestRuntimeCatalog catalog) =>
+                TypedResults.Ok(catalog.GetBySourceModule(moduleId)))
+            .WithName("GetCephalonBackendForFrontendRestEndpointsByModule");
+        engineGroup.MapGet("/backend-for-frontend/rest-endpoints/published/{restEndpointId}", (string restEndpointId, [FromServices] IBackendForFrontendRestRuntimeCatalog catalog) =>
+                TypedResults.Ok(catalog.GetByRestEndpointId(restEndpointId)))
+            .WithName("GetCephalonBackendForFrontendRestEndpointsByPublishedEndpoint");
+        engineGroup.MapGet("/backend-for-frontend/rest-endpoints/{runtimeEndpointId}", (string runtimeEndpointId, [FromServices] IBackendForFrontendRestRuntimeCatalog catalog) =>
+            {
+                var runtimeEndpoint = catalog.GetById(runtimeEndpointId);
+
+                return runtimeEndpoint is null ? Results.NotFound() : Results.Ok(runtimeEndpoint);
+            })
+            .WithName("GetCephalonBackendForFrontendRestEndpoint");
         engineGroup.MapGet("/backend-for-frontend/{bindingId}", (string bindingId, [FromServices] IBackendForFrontendRuntimeCatalog catalog) =>
             {
                 var binding = catalog.GetById(bindingId);

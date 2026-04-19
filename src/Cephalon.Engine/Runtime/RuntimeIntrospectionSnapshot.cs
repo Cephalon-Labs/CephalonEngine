@@ -148,6 +148,13 @@ public sealed record RuntimeIntrospectionSnapshot(
     public IReadOnlyList<BackendForFrontendClientBindingDescriptor> BackendForFrontendBindings { get; init; } = [];
 
     /// <summary>
+    /// Gets the client-aware published REST endpoint projections derived from the active
+    /// backend-for-frontend bindings and visible to the runtime at the time the snapshot was
+    /// created.
+    /// </summary>
+    public IReadOnlyList<BackendForFrontendRestEndpointRuntimeDescriptor> BackendForFrontendRestEndpoints { get; init; } = [];
+
+    /// <summary>
     /// Gets the strangler-fig migration routes visible to the runtime at the time the snapshot was created.
     /// </summary>
     public IReadOnlyList<StranglerFigRouteDescriptor> StranglerFigRoutes { get; init; } = [];

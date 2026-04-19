@@ -11,6 +11,7 @@
 - `/engine/resilience` when the engine-owned resilience contract is active
 - `/engine/strangler-fig`, `/engine/strangler-fig/runtime`, `/engine/strangler-fig/resolve`, and `/engine/strangler-fig/cutover` when the engine-owned strangler-fig route, migration-policy, and ASP.NET Core cutover catalogs are active
 - `/engine/backend-for-frontend` when the engine-owned backend-for-frontend client-binding catalog is active
+- `/engine/backend-for-frontend/rest-endpoints` when the client-aware backend-for-frontend REST runtime catalog is active
 - `/engine/rate-limiting` when ASP.NET Core rate-limiting enforcement is active
 - `/engine/rest-endpoint-candidates` when the module-owned REST candidate catalog is active
 - `/engine/rest-endpoint-publication-groups` when grouped module-owned REST publication visibility and authoring-policy state are active
@@ -255,8 +256,12 @@ The same operator surface now also exposes the shipped backend-for-frontend clie
 stable identifier and the client/module/transport drill-down routes expose the same catalog through
 those narrower operator lenses. That host surface stays derived from the shared
 `IBackendForFrontendRuntimeCatalog` and `snapshot.BackendForFrontendBindings` contracts rather than
-inventing a second ASP.NET Core-only registry, which keeps later client-aware filtering or
-transport-specific materialization follow-through anchored to one runtime truth.
+inventing a second ASP.NET Core-only registry. The same host now also derives
+`/engine/backend-for-frontend/rest-endpoints` plus its binding/client/module/published-endpoint/id
+drill-down routes from that shared binding catalog and the published `IRestEndpointRuntimeCatalog`,
+and `snapshot.BackendForFrontendRestEndpoints` carries the same derived client-aware REST truth for
+operators or tooling that want one snapshot payload. Later per-client OpenAPI/Scalar materialization
+can stay anchored to that same runtime truth instead of re-deriving it again.
 
 The host now also exposes additive event-dispatch operator answers directly. When eventing packs
 register the corresponding catalogs, `/engine/event-dispatch-runtimes` and

@@ -123,6 +123,9 @@ public static class EngineWebApplicationBuilderExtensions
             serviceProvider.GetRequiredService<AspNetCoreRestEndpointRuntimeCatalog>());
         builder.Services.TryAddSingleton<IRestEndpointRuntimeRegistry>(serviceProvider =>
             serviceProvider.GetRequiredService<AspNetCoreRestEndpointRuntimeCatalog>());
+        builder.Services.TryAddSingleton<AspNetCoreBackendForFrontendRestRuntimeCatalog>();
+        builder.Services.TryAddSingleton<IBackendForFrontendRestRuntimeCatalog>(serviceProvider =>
+            serviceProvider.GetRequiredService<AspNetCoreBackendForFrontendRestRuntimeCatalog>());
         builder.AddReferenceDocsHosting();
         builder.Services.AddCephalon(builder.Configuration, configure);
         var stranglerFigCutoverOptions = AspNetCoreStranglerFigCutoverOptions.FromConfiguration(builder.Configuration);
