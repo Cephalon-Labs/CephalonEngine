@@ -34,6 +34,10 @@ public static class PatternBehaviorExtensions
         builder.Services.TryAddSingleton<ISagaStateStore, InMemorySagaStateStore>();
         builder.Services.TryAddSingleton<IProcessCheckpointStore, InMemoryProcessCheckpointStore>();
         builder.Services.TryAddSingleton<ISagaChoreographyPublisher, InMemorySagaChoreographyPublisher>();
+        builder.Services.TryAddSingleton<ISagaChoreographyRuntimeCatalog>(static serviceProvider =>
+            new SagaChoreographyRuntimeCatalogSnapshot(
+                serviceProvider.GetRequiredService<IBehaviorCatalog>(),
+                serviceProvider.GetRequiredService<IBehaviorTypeRegistry>()));
         builder.Services.TryAddSingleton<IDurableExecutionRuntimeCatalog>(static serviceProvider =>
             new DurableExecutionRuntimeCatalogSnapshot(
                 serviceProvider.GetRequiredService<IBehaviorCatalog>(),

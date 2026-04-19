@@ -107,16 +107,21 @@ Effort: small.
 ### Saga Choreography (event-driven saga variant)
 
 Current state: the first host-agnostic choreography baseline, the first explicit eventing bridge,
-and the first higher-level authoring-helper follow-through are now shipped.
-`Cephalon.Behaviors.Patterns` exposes `ChoreographySagaExecutionStrategy`,
-`ISagaChoreographyPublisher`, `ISagaChoreographyStepResult`, `ISagaEventReactor<TEvent>`,
+the first higher-level authoring-helper follow-through, and the first choreography
+runtime/operator catalog follow-through are now shipped. `Cephalon.Behaviors.Patterns` exposes
+`ChoreographySagaExecutionStrategy`, `ISagaChoreographyPublisher`,
+`ISagaChoreographyStepResult`, `ISagaEventReactor<TEvent>`,
 `ISagaEventReactor<TEvent, TOutput>`, `SagaChoreographyPublication`,
 `SagaChoreographyStepResult`, `SagaChoreographyStepResult<TOutput>`, and an in-memory default
 publisher so choreography steps can publish continuation or compensation work through typed helper
-contracts without forcing a hard dependency on `Cephalon.Eventing`, while
-`Cephalon.Eventing.Behaviors` now provides the explicit `AddBehaviorEventingBridge()`
-follow-through that stages those publications through the shared outbox-backed eventing publish
-path when that path is actually available.
+contracts without forcing a hard dependency on `Cephalon.Eventing`. `Cephalon.Abstractions` now
+also exposes `SagaChoreographyRuntimeDescriptor` plus `ISagaChoreographyRuntimeCatalog`,
+`Cephalon.Behaviors.Patterns` derives that static operator surface from shared behavior topology
+plus registered implementation types, `Cephalon.Engine` projects the same answer through
+`snapshot.SagaChoreographies`, and ASP.NET Core now exposes `/engine/saga-choreographies` plus
+id/module/transport drill-down routes. `Cephalon.Eventing.Behaviors` still provides the explicit
+`AddBehaviorEventingBridge()` follow-through that stages those publications through the shared
+outbox-backed eventing publish path when that path is actually available.
 
 Recommendation: keep the host-agnostic choreography contracts stable and keep the bridge explicit
 through a dedicated companion pack rather than collapsing the behavior-pattern layer into
@@ -135,6 +140,12 @@ Implementation outline:
   `SagaChoreographyStepResult<TOutput>`, and typed JSON publication helpers on
   `SagaChoreographyPublication` so choreography authors can stay on the shared execution contract
   without inventing a second registry or hard-depending on `Cephalon.Eventing`
+- shipped runtime/operator follow-through: `SagaChoreographyRuntimeDescriptor`,
+  `ISagaChoreographyRuntimeCatalog`, `snapshot.SagaChoreographies`,
+  `/engine/saga-choreographies`, `/engine/saga-choreographies/{behaviorId}`,
+  `/engine/saga-choreographies/modules/{moduleId}`, and
+  `/engine/saga-choreographies/transports/{transportId}` all stay derived from the same shared
+  choreography behavior topology and registered implementation types
 
 Effort: medium for any later capability-publication or provider-specific choreography follow-through.
 

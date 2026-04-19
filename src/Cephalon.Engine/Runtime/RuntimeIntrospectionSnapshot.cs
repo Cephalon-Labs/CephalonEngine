@@ -115,6 +115,11 @@ public sealed record RuntimeIntrospectionSnapshot(
     public IReadOnlyList<FeatureFlagDescriptor> FeatureFlags { get; init; } = [];
 
     /// <summary>
+    /// Gets the active saga-choreography behaviors visible to the runtime at the time the snapshot was created.
+    /// </summary>
+    public IReadOnlyList<SagaChoreographyRuntimeDescriptor> SagaChoreographies { get; init; } = [];
+
+    /// <summary>
     /// Gets the resolved public REST endpoints visible to the runtime at the time the snapshot was created.
     /// </summary>
     public IReadOnlyList<RestEndpointRuntimeDescriptor> RestEndpoints { get; init; } = [];

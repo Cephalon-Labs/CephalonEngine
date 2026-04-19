@@ -9303,6 +9303,16 @@ IReadOnlyList<RestEndpointSuppressionDescriptor> RestEndpointSuppressions { get;
 
 Gets the host-level REST endpoint suppression rules visible to the runtime at the time the snapshot was created.
 
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-sagachoreographies"></a>
+
+##### `SagaChoreographies`
+
+```csharp
+IReadOnlyList<SagaChoreographyRuntimeDescriptor> SagaChoreographies { get; set; }
+```
+
+Gets the active saga-choreography behaviors visible to the runtime at the time the snapshot was created.
+
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-status"></a>
 
 ##### `Status`

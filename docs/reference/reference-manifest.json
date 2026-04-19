@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-19T12:10:17.0647742+00:00",
+  "GeneratedAtUtc": "2026-04-19T12:40:46.3378189+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 298
+      "TypeCount": 300
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -529,7 +529,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-execution",
-      "TypeCount": 17
+      "TypeCount": 19
     },
     {
       "NamespaceName": "Cephalon.Abstractions.Features",
@@ -7224,6 +7224,21 @@
       }
     },
     {
+      "DisplayName": "ISagaChoreographyRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-execution-isagachoreographyruntimecatalog",
+      "Declaration": "public interface ISagaChoreographyRuntimeCatalog",
+      "Summary": "Exposes the active saga-choreography behaviors visible to the current runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 3
+      }
+    },
+    {
       "DisplayName": "IServerSentEventsModule",
       "NamespaceName": "Cephalon.AspNetCore.Transports.ServerSentEvents",
       "AssemblyName": "Cephalon.AspNetCore",
@@ -9949,7 +9964,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 34,
+        "Properties": 35,
         "Methods": 0
       }
     },
@@ -10070,6 +10085,21 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 7,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "SagaChoreographyRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-execution-sagachoreographyruntimedescriptor",
+      "Declaration": "public sealed class SagaChoreographyRuntimeDescriptor",
+      "Summary": "Describes one active saga-choreography behavior visible to the current runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 12,
         "Methods": 0
       }
     },
@@ -15516,6 +15546,17 @@
       "Summary": "Gets the concrete behavior implementation type name when the endpoint dispatches through a Cephalon behavior and the runtime can classify that implementation identity."
     },
     {
+      "DisplayName": "BehaviorType",
+      "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-behaviortype",
+      "Signature": "string BehaviorType { get; }",
+      "Summary": "Gets the concrete choreography behavior implementation type name."
+    },
+    {
       "DisplayName": "BestEffortContinue",
       "Category": "Fields",
       "DeclaringTypeName": "StopFailureBehavior",
@@ -20611,6 +20652,17 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the human-readable choreography description."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "ScaffoldPlan",
       "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
       "AssemblyName": "Cephalon.Abstractions",
@@ -21553,6 +21605,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-displayname",
       "Signature": "string DisplayName { get; set; }",
       "Summary": "The operator-facing module display name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the operator-facing choreography name."
     },
     {
       "DisplayName": "DisplayName",
@@ -26804,6 +26867,17 @@
     {
       "DisplayName": "GetById",
       "Category": "Methods",
+      "DeclaringTypeName": "ISagaChoreographyRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-isagachoreographyruntimecatalog-getbyid-system-string",
+      "Signature": "SagaChoreographyRuntimeDescriptor GetById(string behaviorId)",
+      "Summary": "Gets one saga-choreography behavior by its stable behavior identifier."
+    },
+    {
+      "DisplayName": "GetById",
+      "Category": "Methods",
       "DeclaringTypeName": "IStranglerFigMigrationRuntimeCatalog",
       "NamespaceName": "Cephalon.Abstractions.Patterns",
       "AssemblyName": "Cephalon.Abstractions",
@@ -27178,6 +27252,17 @@
     {
       "DisplayName": "GetBySourceModule",
       "Category": "Methods",
+      "DeclaringTypeName": "ISagaChoreographyRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-isagachoreographyruntimecatalog-getbysourcemodule-system-string",
+      "Signature": "IReadOnlyList\u003CSagaChoreographyRuntimeDescriptor\u003E GetBySourceModule(string sourceModuleId)",
+      "Summary": "Gets all saga-choreography behaviors contributed by the requested module."
+    },
+    {
+      "DisplayName": "GetBySourceModule",
+      "Category": "Methods",
       "DeclaringTypeName": "IStranglerFigMigrationRuntimeCatalog",
       "NamespaceName": "Cephalon.Abstractions.Patterns",
       "AssemblyName": "Cephalon.Abstractions",
@@ -27295,6 +27380,17 @@
       "AnchorId": "member-m-cephalon-abstractions-resilience-iratelimitingruntimecatalog-getbytransportid-system-string",
       "Signature": "IReadOnlyList\u003CRateLimitingRuntimeDescriptor\u003E GetByTransportId(string transportId)",
       "Summary": "Gets all rate-limiting policies that apply to the requested transport identifier."
+    },
+    {
+      "DisplayName": "GetByTransportId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ISagaChoreographyRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-isagachoreographyruntimecatalog-getbytransportid-system-string",
+      "Signature": "IReadOnlyList\u003CSagaChoreographyRuntimeDescriptor\u003E GetByTransportId(string transportId)",
+      "Summary": "Gets all saga-choreography behaviors exposed over the requested transport."
     },
     {
       "DisplayName": "GetDependencyHealth",
@@ -30247,6 +30343,17 @@
     {
       "DisplayName": "Id",
       "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable choreography behavior identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
       "DeclaringTypeName": "ScaffoldPlan",
       "NamespaceName": "Cephalon.Abstractions.AppModel.Scaffolding",
       "AssemblyName": "Cephalon.Abstractions",
@@ -31013,6 +31120,17 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-inputtype",
       "Signature": "string InputType { get; }",
       "Summary": "Gets the durable workflow input type name."
+    },
+    {
+      "DisplayName": "InputType",
+      "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-inputtype",
+      "Signature": "string InputType { get; }",
+      "Summary": "Gets the choreography input type name."
     },
     {
       "DisplayName": "InstanceId",
@@ -32487,6 +32605,17 @@
       "AnchorId": "member-m-cephalon-engine-localization-localizedtextcatalog-ctor-cephalon-engine-configuration-localizationsettings",
       "Signature": "LocalizedTextCatalog(LocalizationSettings settings)",
       "Summary": "Initializes a new instance of the \u0060LocalizedTextCatalog\u0060 class."
+    },
+    {
+      "DisplayName": "LocalOutputType",
+      "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-localoutputtype",
+      "Signature": "string LocalOutputType { get; }",
+      "Summary": "Gets the typed local output carried inside the choreography result contract when one is known."
     },
     {
       "DisplayName": "Location",
@@ -34269,6 +34398,17 @@
       "AnchorId": "member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
       "Summary": "Gets optional additive metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets additional operator-facing metadata describing choreography semantics."
     },
     {
       "DisplayName": "Metadata",
@@ -40981,6 +41121,17 @@
       "Summary": "Gets the required Cephalon feature-flag identifiers enforced at the REST boundary when any are available."
     },
     {
+      "DisplayName": "RequiredFeatureFlagIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-requiredfeatureflagids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E RequiredFeatureFlagIds { get; }",
+      "Summary": "Gets the ordered feature-flag identifiers that gate choreography execution."
+    },
+    {
       "DisplayName": "RequiredRoleMatch",
       "Category": "Fields",
       "DeclaringTypeName": "IdentityPolicyMetadataKeys",
@@ -42345,6 +42496,17 @@
       "Summary": "Initializes a new instance of the \u0060ResultModelErrorDetail\u0060 class."
     },
     {
+      "DisplayName": "ResultType",
+      "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-resulttype",
+      "Signature": "string ResultType { get; }",
+      "Summary": "Gets the behavior result-contract type name."
+    },
+    {
       "DisplayName": "RetainedCandidateIds",
       "Category": "Properties",
       "DeclaringTypeName": "RestEndpointAuthoringPolicyAuthoringStyleDescriptor",
@@ -43465,6 +43627,39 @@
       "AnchorId": "member-f-cephalon-engine-diagnostics-enginediagnostics-runtimetransitioncountername",
       "Signature": "const string RuntimeTransitionCounterName",
       "Summary": "Gets the counter name for runtime lifecycle transitions."
+    },
+    {
+      "DisplayName": "SagaChoreographies",
+      "Category": "Properties",
+      "DeclaringTypeName": "ISagaChoreographyRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-isagachoreographyruntimecatalog-sagachoreographies",
+      "Signature": "IReadOnlyList\u003CSagaChoreographyRuntimeDescriptor\u003E SagaChoreographies { get; }",
+      "Summary": "Gets all active saga-choreography behaviors visible to the current runtime."
+    },
+    {
+      "DisplayName": "SagaChoreographies",
+      "Category": "Properties",
+      "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
+      "NamespaceName": "Cephalon.Engine.Runtime",
+      "AssemblyName": "Cephalon.Engine",
+      "FileName": "cephalon-engine.md",
+      "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-sagachoreographies",
+      "Signature": "IReadOnlyList\u003CSagaChoreographyRuntimeDescriptor\u003E SagaChoreographies { get; set; }",
+      "Summary": "Gets the active saga-choreography behaviors visible to the runtime at the time the snapshot was created."
+    },
+    {
+      "DisplayName": "SagaChoreographyRuntimeDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "SagaChoreographyRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "SagaChoreographyRuntimeDescriptor(string id, string displayName, string description, string behaviorType, string inputType, string resultType, string localOutputType, string sourceModuleId, IReadOnlyList\u003Cstring\u003E transportIds, IReadOnlyList\u003Cstring\u003E requiredFeatureFlagIds, IReadOnlyList\u003Cint\u003E successStatusCodes, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a saga-choreography runtime descriptor."
     },
     {
       "DisplayName": "SamplingDurationSeconds",
@@ -45383,6 +45578,17 @@
     {
       "DisplayName": "SourceModuleId",
       "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; }",
+      "Summary": "Gets the owning module identifier when one is known at runtime."
+    },
+    {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
       "DeclaringTypeName": "StranglerFigMigrationRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Patterns",
       "AssemblyName": "Cephalon.Abstractions",
@@ -46963,6 +47169,17 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-successstatuscodes",
       "Signature": "IReadOnlyList\u003Cint\u003E SuccessStatusCodes { get; }",
       "Summary": "Gets the HTTP success status codes the shared durable strategy can return."
+    },
+    {
+      "DisplayName": "SuccessStatusCodes",
+      "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-successstatuscodes",
+      "Signature": "IReadOnlyList\u003Cint\u003E SuccessStatusCodes { get; }",
+      "Summary": "Gets the HTTP success status codes the shared choreography strategy can return."
     },
     {
       "DisplayName": "Suite",
@@ -49064,6 +49281,17 @@
       "AnchorId": "member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-transportids",
       "Signature": "IReadOnlyList\u003Cstring\u003E TransportIds { get; set; }",
       "Summary": "The transport identifiers whose HTTP surfaces are covered by the policy."
+    },
+    {
+      "DisplayName": "TransportIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "SagaChoreographyRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-transportids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E TransportIds { get; }",
+      "Summary": "Gets the transport identifiers that expose the choreography."
     },
     {
       "DisplayName": "Transports",

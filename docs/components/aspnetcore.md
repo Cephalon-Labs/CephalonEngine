@@ -14,6 +14,8 @@
 - `/engine/backend-for-frontend/rest-endpoints` when the client-aware backend-for-frontend REST runtime catalog is active
 - `/engine/backend-for-frontend/rest-documents` plus scope-specific filtered OpenAPI and Scalar materialization when the backend-for-frontend REST document catalog is active
 - `/engine/features` when the engine-owned feature-flag catalog is active
+- `/engine/saga-choreographies` when the shared saga choreography runtime catalog is active
+- `/engine/durable-executions` plus `/engine/durable-executions/runtime` when the shared durable execution runtime catalogs are active
 - `/engine/rate-limiting` when ASP.NET Core rate-limiting enforcement is active
 - `/engine/rest-endpoint-candidates` when the module-owned REST candidate catalog is active
 - `/engine/rest-endpoint-publication-groups` when grouped module-owned REST publication visibility and authoring-policy state are active
@@ -289,6 +291,16 @@ bindings participated. `/engine/snapshot` carries that same merged descriptor se
 `FeatureFlags`, and request-time REST or behavior execution keeps honoring the same provider-backed
 answer because transport gating still flows through the shared feature evaluator instead of a
 separate ASP.NET Core-only registry.
+
+The same operator surface now also exposes the shipped choreography and durable execution runtime
+catalogs directly. `/engine/saga-choreographies` plus its behavior/module/transport drill-down
+routes read `ISagaChoreographyRuntimeCatalog` so operators can inspect choreography ownership,
+transport exposure, feature gates, and result-shape metadata without depending on the optional
+eventing bridge runtime surface. `/engine/durable-executions` plus
+`/engine/durable-executions/runtime` and their drill-down routes read the shared durable execution
+catalogs so operators can inspect both static durable workflow ownership and live per-stream
+posture through the same `/engine/*` surface instead of reconstructing those answers from broader
+behavior or event-store internals.
 
 The host now also exposes additive event-dispatch operator answers directly. When eventing packs
 register the corresponding catalogs, `/engine/event-dispatch-runtimes` and

@@ -219,6 +219,8 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Execution.IHostedExecutionContributor),
             typeof(global::Cephalon.Abstractions.Execution.IHostedExecutionRegistry),
             typeof(global::Cephalon.Abstractions.Execution.IHostedExecutionRuntimeCatalog),
+            typeof(global::Cephalon.Abstractions.Execution.ISagaChoreographyRuntimeCatalog),
+            typeof(global::Cephalon.Abstractions.Execution.SagaChoreographyRuntimeDescriptor),
             typeof(global::Cephalon.Abstractions.Features.FeatureFlagDescriptor),
             typeof(global::Cephalon.Abstractions.Features.FeatureFlagEvaluationContext),
             typeof(global::Cephalon.Abstractions.Features.FeatureFlagEvaluationResult),
@@ -2369,6 +2371,27 @@ public sealed class PackageSurfaceTests
             .GetMethod("CreateJson", BindingFlags.Public | BindingFlags.Static));
         Assert.NotNull(typeof(global::Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyPublication)
             .GetMethod("CreateCompensationJson", BindingFlags.Public | BindingFlags.Static));
+    }
+
+    [Fact]
+    public void SagaChoreographyRuntimeContractsExposeSnapshotSurface()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.ISagaChoreographyRuntimeCatalog)
+            .GetProperty("SagaChoreographies", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.ISagaChoreographyRuntimeCatalog)
+            .GetMethod("GetById", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.ISagaChoreographyRuntimeCatalog)
+            .GetMethod("GetBySourceModule", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.ISagaChoreographyRuntimeCatalog)
+            .GetMethod("GetByTransportId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.SagaChoreographyRuntimeDescriptor)
+            .GetProperty("ResultType", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.SagaChoreographyRuntimeDescriptor)
+            .GetProperty("LocalOutputType", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.SagaChoreographyRuntimeDescriptor)
+            .GetProperty("SuccessStatusCodes", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot)
+            .GetProperty("SagaChoreographies", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

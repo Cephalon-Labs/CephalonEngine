@@ -128,6 +128,32 @@ public static class EngineWebApplicationExtensions
                 return policy is null ? Results.NotFound() : Results.Ok(policy);
             })
             .WithName("GetCephalonBehaviorResiliencePolicy");
+        engineGroup.MapGet("/saga-choreographies", (HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<ISagaChoreographyRuntimeCatalog>();
+                return TypedResults.Ok(catalog?.SagaChoreographies ?? []);
+            })
+            .WithName("GetCephalonSagaChoreographies");
+        engineGroup.MapGet("/saga-choreographies/modules/{moduleId}", (string moduleId, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<ISagaChoreographyRuntimeCatalog>();
+                return TypedResults.Ok(catalog?.GetBySourceModule(moduleId) ?? []);
+            })
+            .WithName("GetCephalonSagaChoreographiesByModule");
+        engineGroup.MapGet("/saga-choreographies/transports/{transportId}", (string transportId, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<ISagaChoreographyRuntimeCatalog>();
+                return TypedResults.Ok(catalog?.GetByTransportId(transportId) ?? []);
+            })
+            .WithName("GetCephalonSagaChoreographiesByTransport");
+        engineGroup.MapGet("/saga-choreographies/{behaviorId}", (string behaviorId, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<ISagaChoreographyRuntimeCatalog>();
+                var choreography = catalog?.GetById(behaviorId);
+
+                return choreography is null ? Results.NotFound() : Results.Ok(choreography);
+            })
+            .WithName("GetCephalonSagaChoreography");
         engineGroup.MapGet("/durable-executions", (HttpContext httpContext) =>
             {
                 var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeCatalog>();

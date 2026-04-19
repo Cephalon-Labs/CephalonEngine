@@ -25,6 +25,7 @@
 - additive authorization-policy contracts and runtime authorization-policy catalogs
 - additive audit-store contracts and runtime audit-store catalogs
 - additive event-dispatch runtime descriptor and state catalogs
+- additive saga choreography runtime catalogs and snapshot projection
 - additive backend-for-frontend client-binding contribution contracts and runtime catalogs
 - additive strangler-fig route-contribution contracts plus runtime route, migration-policy, and request-resolution catalogs
 - additive feature-flag contribution contracts, runtime catalogs, and evaluation
@@ -148,6 +149,14 @@ now also shipped there: `FeatureFlagDescriptor.ProviderBindings`,
 the same shared evaluator without replacing the Cephalon-owned descriptor catalog. Missing or
 provider-disabled bindings now surface as disabled evaluation answers with provider details instead
 of silently inventing a second host-only feature registry.
+The same phase now also ships the first static saga choreography runtime/operator projection:
+`ISagaChoreographyRuntimeCatalog` stays host-agnostic in `Cephalon.Abstractions`,
+`Cephalon.Behaviors.Patterns` derives it from shared behavior topology plus registered
+implementation types, and `Cephalon.Engine` projects that answer into `snapshot.SagaChoreographies`
+without claiming live event-publication ownership. That keeps choreography ownership, transport
+exposure, feature gates, and result-shape metadata readable from one engine surface while the
+explicit `Cephalon.Eventing.Behaviors` bridge remains a separate additive runtime answer for
+durable publish handoff.
 That same shared feature-flag runtime now also reaches the public REST boundary in ASP.NET Core:
 `RequireFeatureFlag(...)` / `RequireFeatureFlags(...)` can gate request execution while keeping the
 published endpoint visible through `/engine/rest-endpoints` and `snapshot.RestEndpoints`, and host

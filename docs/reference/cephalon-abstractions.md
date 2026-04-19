@@ -14638,6 +14638,237 @@ Returns: The matching hosted executions, or an empty list when the module contri
 Parameters:
 - `sourceModuleId`: The source module identifier to filter by.
 
+<a id="type-cephalon-abstractions-execution-isagachoreographyruntimecatalog"></a>
+
+### `ISagaChoreographyRuntimeCatalog`
+
+Exposes the active saga-choreography behaviors visible to the current runtime.
+
+#### Declaration
+```csharp
+public interface ISagaChoreographyRuntimeCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-execution-isagachoreographyruntimecatalog-sagachoreographies"></a>
+
+##### `SagaChoreographies`
+
+```csharp
+IReadOnlyList<SagaChoreographyRuntimeDescriptor> SagaChoreographies { get; }
+```
+
+Gets all active saga-choreography behaviors visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-execution-isagachoreographyruntimecatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+SagaChoreographyRuntimeDescriptor GetById(string behaviorId)
+```
+
+Gets one saga-choreography behavior by its stable behavior identifier.
+
+Returns: The matching choreography descriptor, or `null` when it is not active.
+
+Parameters:
+- `behaviorId`: The choreography behavior identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-execution-isagachoreographyruntimecatalog-getbysourcemodule-system-string"></a>
+
+##### `GetBySourceModule`
+
+```csharp
+IReadOnlyList<SagaChoreographyRuntimeDescriptor> GetBySourceModule(string sourceModuleId)
+```
+
+Gets all saga-choreography behaviors contributed by the requested module.
+
+Returns: The matching choreographies, or an empty list when the module contributed none.
+
+Parameters:
+- `sourceModuleId`: The source module identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-execution-isagachoreographyruntimecatalog-getbytransportid-system-string"></a>
+
+##### `GetByTransportId`
+
+```csharp
+IReadOnlyList<SagaChoreographyRuntimeDescriptor> GetByTransportId(string transportId)
+```
+
+Gets all saga-choreography behaviors exposed over the requested transport.
+
+Returns: The matching choreographies, or an empty list when none expose that transport.
+
+Parameters:
+- `transportId`: The stable transport identifier to filter by.
+
+<a id="type-cephalon-abstractions-execution-sagachoreographyruntimedescriptor"></a>
+
+### `SagaChoreographyRuntimeDescriptor`
+
+Describes one active saga-choreography behavior visible to the current runtime.
+
+Remarks: This runtime-facing surface keeps choreography truth derived from the shared behavior topology and registered implementation types instead of inventing a host-only choreography registry. It is intentionally static and operator-facing: it describes the active choreography contract shape, ownership, transports, and publication semantics rather than per-invocation state.
+
+#### Declaration
+```csharp
+public sealed class SagaChoreographyRuntimeDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `SagaChoreographyRuntimeDescriptor`
+
+```csharp
+SagaChoreographyRuntimeDescriptor(string id, string displayName, string description, string behaviorType, string inputType, string resultType, string localOutputType, string sourceModuleId, IReadOnlyList<string> transportIds, IReadOnlyList<string> requiredFeatureFlagIds, IReadOnlyList<int> successStatusCodes, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a saga-choreography runtime descriptor.
+
+Parameters:
+- `id`: The stable choreography behavior identifier.
+- `displayName`: The operator-facing choreography name.
+- `description`: A human-readable description of the choreography behavior.
+- `behaviorType`: The concrete choreography behavior implementation type name.
+- `inputType`: The choreography input type name.
+- `resultType`: The behavior result-contract type name.
+- `localOutputType`: The typed local output carried inside the shared choreography result contract when one is known.
+- `sourceModuleId`: The owning module identifier when the choreography came from an explicit module-owned behavior.
+- `transportIds`: The transport identifiers that expose the choreography.
+- `requiredFeatureFlagIds`: The ordered feature-flag identifiers that must resolve to enabled before the choreography can execute.
+- `successStatusCodes`: The HTTP success status codes the shared choreography strategy can return for local output, publication-only work, or completion without output.
+- `metadata`: Additional operator-facing metadata describing choreography semantics.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-behaviortype"></a>
+
+##### `BehaviorType`
+
+```csharp
+string BehaviorType { get; }
+```
+
+Gets the concrete choreography behavior implementation type name.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable choreography description.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing choreography name.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable choreography behavior identifier.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-inputtype"></a>
+
+##### `InputType`
+
+```csharp
+string InputType { get; }
+```
+
+Gets the choreography input type name.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-localoutputtype"></a>
+
+##### `LocalOutputType`
+
+```csharp
+string LocalOutputType { get; }
+```
+
+Gets the typed local output carried inside the choreography result contract when one is known.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets additional operator-facing metadata describing choreography semantics.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-requiredfeatureflagids"></a>
+
+##### `RequiredFeatureFlagIds`
+
+```csharp
+IReadOnlyList<string> RequiredFeatureFlagIds { get; }
+```
+
+Gets the ordered feature-flag identifiers that gate choreography execution.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-resulttype"></a>
+
+##### `ResultType`
+
+```csharp
+string ResultType { get; }
+```
+
+Gets the behavior result-contract type name.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-sourcemoduleid"></a>
+
+##### `SourceModuleId`
+
+```csharp
+string SourceModuleId { get; }
+```
+
+Gets the owning module identifier when one is known at runtime.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-successstatuscodes"></a>
+
+##### `SuccessStatusCodes`
+
+```csharp
+IReadOnlyList<int> SuccessStatusCodes { get; }
+```
+
+Gets the HTTP success status codes the shared choreography strategy can return.
+
+<a id="member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-transportids"></a>
+
+##### `TransportIds`
+
+```csharp
+IReadOnlyList<string> TransportIds { get; }
+```
+
+Gets the transport identifiers that expose the choreography.
+
 <a id="namespace-cephalon-abstractions-features"></a>
 
 ## Namespace Cephalon.Abstractions.Features

@@ -8,6 +8,7 @@
 - behavior contracts such as `IAppBehavior<TIn, TOut>`, `IBehaviorContext`, `IBehaviorTopologyBuilder`, `BehaviorTopologyDescriptor`, `BehaviorFeatureDisabledException`, `IBehaviorOwnerModule`, `IBehaviorModuleBuilder`, and `OwnedBehaviorRegistration`
 - capability contracts such as `Capability`, `CapabilityAccess`, and `ICapabilityRegistry`
 - feature-flag contracts such as `FeatureFlagDescriptor`, `FeatureFlagProviderBindingDescriptor`, `FeatureFlagProviderEvaluationResult`, `FeatureFlagTargetingDescriptor`, `IFeatureToggle`, `IFeatureFlagProvider`, `IFeatureFlagRuntimeCatalog`, `IFeatureFlagContributor`, and `IFeatureFlagRegistry`
+- execution/runtime-catalog contracts such as `DurableExecutionRuntimeDescriptor`, `IDurableExecutionRuntimeCatalog`, `DurableExecutionRuntimeState`, `IDurableExecutionRuntimeStateCatalog`, `SagaChoreographyRuntimeDescriptor`, and `ISagaChoreographyRuntimeCatalog`
 - app-model contracts such as `AppBlueprint`, `AppProfile`, resilience-selection types, and scaffold-plan types
 - phase-8 runtime-neutral contracts for data, authorization, tenancy, audit, and id generation
 - health contracts used across hosts and packages
@@ -33,6 +34,12 @@
 - `Features/IFeatureFlagProvider.cs`
 - `Features/IFeatureToggle.cs`
 - `Features/IFeatureFlagRuntimeCatalog.cs`
+- `Execution/DurableExecutionRuntimeDescriptor.cs`
+- `Execution/IDurableExecutionRuntimeCatalog.cs`
+- `Execution/DurableExecutionRuntimeState.cs`
+- `Execution/IDurableExecutionRuntimeStateCatalog.cs`
+- `Execution/SagaChoreographyRuntimeDescriptor.cs`
+- `Execution/ISagaChoreographyRuntimeCatalog.cs`
 - `AppModel/AppProfile.cs`
 - `AppModel/SuiteBlueprint.cs`
 - `AppModel/Scaffolding/ScaffoldPlan.cs`
@@ -96,6 +103,7 @@
 - `Behaviors`
 - `Capabilities`
 - `Data`
+- `Execution`
 - `Features`
 - `Health`
 - `Ids`
@@ -184,6 +192,15 @@ into `Cephalon.Abstractions`. Those contracts intentionally separate host-owned 
 flags through `FeatureFlagSourceKind`, let `FeatureFlagDescriptor.ProviderBindings` keep the local
 Cephalon descriptor as the source of runtime truth, and let `IFeatureFlagProvider` contribute
 additional gate decisions without claiming ownership of the flag itself.
+
+The same host-agnostic rule now also covers choreography and durable execution operator truth. The
+`Execution` namespace carries `SagaChoreographyRuntimeDescriptor` plus
+`ISagaChoreographyRuntimeCatalog`, together with `DurableExecutionRuntimeDescriptor`,
+`IDurableExecutionRuntimeCatalog`, `DurableExecutionRuntimeState`, and
+`IDurableExecutionRuntimeStateCatalog`, so modules, hosts, operator tooling, and companion packs
+can talk about static workflow ownership, transport exposure, feature gates, result-contract shape,
+and live durable posture without leaking ASP.NET Core route mappers, event-store implementations, or
+eventing-bridge internals into `Cephalon.Abstractions`.
 
 That same host-agnostic rule now also reaches shared behavior execution. The `Behaviors` namespace
 now keeps ordered `BehaviorTopologyDescriptor.RequiredFeatureFlagIds` plus

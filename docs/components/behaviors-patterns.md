@@ -15,6 +15,7 @@ durable-execution replay are handled.
 - **ISagaChoreographyStepResult / SagaChoreographyStepResult / SagaChoreographyStepResult<TOutput>** — host-agnostic choreography output contracts for shared output-plus-publication normalization
 - **ISagaEventReactor<TEvent> / ISagaEventReactor<TEvent, TOutput>** — higher-level choreography authoring helpers that still compile down to the shared behavior contract
 - **SagaChoreographyPublication** — host-agnostic choreography publication contract plus typed JSON publication helpers
+- **SagaChoreographyRuntimeDescriptor / ISagaChoreographyRuntimeCatalog** — operator-facing choreography catalog derived from shared behavior topology, implementation type, ownership, transports, feature flags, and result-shape metadata
 - **IDurableExecution<TState> / IDurableExecution<TInput, TState, TOutput>** — host-agnostic durable workflow contract over `IEventStore` replay
 - **DurableExecutionState<TState> / DurableExecutionStepResult<TOutput>** — replay snapshot and step-result contracts for durable execution
 - **DurableExecutionPendingTimer / DurableExecutionPendingSignal** — host-agnostic coordination descriptors for pending durable timer and signal waits
@@ -31,6 +32,7 @@ durable-execution replay are handled.
 - **ProcessManagerExecutionStrategy** — pattern: `"process-manager"`, checkpoint lifecycle management
 - **DurableExecutionStrategy** — pattern: `"durable-execution"`, replays state from `IEventStore` and appends deterministic continuation events
 - **DurableExecutionRuntimeCatalogSnapshot** — runtime projection used by `IDurableExecutionRuntimeCatalog`, `/engine/durable-executions`, and `snapshot.DurableExecutions`
+- **SagaChoreographyRuntimeCatalogSnapshot** — runtime projection used by `ISagaChoreographyRuntimeCatalog`, `/engine/saga-choreographies`, and `snapshot.SagaChoreographies`
 - **DirectExecutionStrategy** — pattern: `"direct"`, 200 with output / 204 with null
 - **ExecutionStrategyRegistry** — `FrozenDictionary` O(1) registry for all strategies
 - **Hosting** — `AddBehaviorPatterns()` extension on `IBehaviorCollectionBuilder`
@@ -94,6 +96,15 @@ The baseline stays host-agnostic on purpose. `Cephalon.Behaviors.Patterns` does 
 `Cephalon.Eventing`; instead, it exposes `ISagaChoreographyPublisher` plus an in-memory default so
 tests, local development, and explicit bridge packages such as `Cephalon.Eventing.Behaviors` can
 all use the same execution contract.
+
+That same shared topology now also drives the first choreography operator surface.
+`AddBehaviorPatterns()` registers `ISagaChoreographyRuntimeCatalog`,
+`SagaChoreographyRuntimeCatalogSnapshot` derives one static descriptor per active choreography
+behavior from `IBehaviorCatalog` plus `IBehaviorTypeRegistry`, `Cephalon.Engine` projects the same
+answer through `snapshot.SagaChoreographies`, and ASP.NET Core exposes `/engine/saga-choreographies`
+plus id/module/transport drill-down routes. That runtime answer preserves module ownership,
+transport ids, required feature ids, typed input/result/local-output metadata, and authoring-model
+or publication-shape classification without pretending to be a live publication-state tracker.
 
 ## Durable execution contract
 
@@ -166,7 +177,7 @@ and it only activates when the shared `Cephalon.Eventing` publication path is tr
 
 ## Status
 
-> Status: ✅ Shipped — M4 baseline plus later follow-through for saga choreography, higher-level saga choreography authoring helpers, durable execution, the first durable runtime catalog/operator surface, the first durable per-stream live-state/failure-posture surface, the first durable timer/signal coordination surface, and the first durable compensation-helper surface
+> Status: ✅ Shipped — M4 baseline plus later follow-through for saga choreography, the first saga choreography runtime catalog/operator surface, higher-level saga choreography authoring helpers, durable execution, the first durable runtime catalog/operator surface, the first durable per-stream live-state/failure-posture surface, the first durable timer/signal coordination surface, and the first durable compensation-helper surface
 
 ## Related components
 
