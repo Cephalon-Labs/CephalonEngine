@@ -149,7 +149,7 @@ Execution strategies define how behaviors execute under a given pattern.
 - `saga-step` — Saga Step: loads saga state before invocation and persists it after successful execution. On exception, state is not saved so compensation logic can be applied. Saga identifier read from `IBehaviorContext.CorrelationId`.
 - `saga-choreography` — Saga Choreography: invokes one choreography step, stages returned `SagaChoreographyPublication` entries through `ISagaChoreographyPublisher`, and returns HTTP 202 when publications were accepted.
 - `process-manager` — Process Manager: loads process checkpoint before invocation, saves after successful step, deletes when process signals completion via `IProcessCompletion`. Process identifier read from `IBehaviorContext.CorrelationId`.
-- `durable-execution` — Durable Execution: replays state from `IEventStore`, validates sequential stream-version output from `IDurableExecution<TInput, TState, TOutput>`, appends continuation events, returns HTTP 200 with local output, HTTP 202 when continuation events were staged without local output, and HTTP 204 when the step completed without output.
+- `durable-execution` — Durable Execution: replays state from `IEventStore`, validates sequential stream-version output from `IDurableExecution<TInput, TState, TOutput>`, appends continuation events, can surface pending timers/signals through the shared durable runtime state, returns HTTP 200 with local output, HTTP 202 when continuation work or timer/signal coordination remains without local output, and HTTP 204 when the step completed without output.
 
 ## Modules
 

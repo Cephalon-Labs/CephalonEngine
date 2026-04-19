@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-19T10:36:19.3055314+00:00",
+  "GeneratedAtUtc": "2026-04-19T11:11:49.9552781+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 295
+      "TypeCount": 297
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -529,7 +529,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-execution",
-      "TypeCount": 14
+      "TypeCount": 16
     },
     {
       "NamespaceName": "Cephalon.Abstractions.Features",
@@ -3789,6 +3789,36 @@
       }
     },
     {
+      "DisplayName": "DurableExecutionPendingSignal",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-execution-durableexecutionpendingsignal",
+      "Declaration": "public sealed class DurableExecutionPendingSignal",
+      "Summary": "Describes one durable-execution signal that is currently pending for a workflow stream.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 5,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "DurableExecutionPendingTimer",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-execution-durableexecutionpendingtimer",
+      "Declaration": "public sealed class DurableExecutionPendingTimer",
+      "Summary": "Describes one durable-execution timer that is currently pending for a workflow stream.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 5,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "DurableExecutionRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -3814,7 +3844,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 23,
+        "Properties": 29,
         "Methods": 0
       }
     },
@@ -5960,7 +5990,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 5
+        "Methods": 9
       }
     },
     {
@@ -18342,6 +18372,17 @@
       "Summary": "Gets the operator-facing coordination guidance for shared physical targets, when available."
     },
     {
+      "DisplayName": "CoordinationPending",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-coordinationpending",
+      "Signature": "bool CoordinationPending { get; }",
+      "Summary": "Gets a value indicating whether the latest runtime state still has pending continuation, timer, or signal work."
+    },
+    {
       "DisplayName": "CoordinationRequiredGroupCount",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseMigrationOperationalPlaybook",
@@ -20170,6 +20211,28 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionPendingSignal",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionpendingsignal-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the human-readable signal description when one was supplied."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionPendingTimer",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionpendingtimer-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the human-readable timer description when one was supplied."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "DurableExecutionRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -21138,6 +21201,28 @@
     {
       "DisplayName": "DisplayName",
       "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionPendingSignal",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionpendingsignal-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the operator-facing signal name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionPendingTimer",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionpendingtimer-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the operator-facing timer name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
       "DeclaringTypeName": "DurableExecutionRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -21642,6 +21727,17 @@
       "Summary": "Gets or sets the base URI of the Droplet metadata-service endpoint."
     },
     {
+      "DisplayName": "DueAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionPendingTimer",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionpendingtimer-dueatutc",
+      "Signature": "DateTimeOffset DueAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp when the timer is next due."
+    },
+    {
       "DisplayName": "DuplexStreaming",
       "Category": "Fields",
       "DeclaringTypeName": "TransportFeatures",
@@ -21651,6 +21747,28 @@
       "AnchorId": "member-f-cephalon-abstractions-transports-transportfeatures-duplexstreaming",
       "Signature": "const TransportFeatures DuplexStreaming",
       "Summary": "Indicates duplex-streaming interactions are supported."
+    },
+    {
+      "DisplayName": "DurableExecutionPendingSignal",
+      "Category": "Constructors",
+      "DeclaringTypeName": "DurableExecutionPendingSignal",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-durableexecutionpendingsignal-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "DurableExecutionPendingSignal(string id, string displayName, string description, string payloadType, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Initializes a new instance of the \u0060DurableExecutionPendingSignal\u0060 class."
+    },
+    {
+      "DisplayName": "DurableExecutionPendingTimer",
+      "Category": "Constructors",
+      "DeclaringTypeName": "DurableExecutionPendingTimer",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-durableexecutionpendingtimer-ctor-system-string-system-datetimeoffset-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "DurableExecutionPendingTimer(string id, DateTimeOffset dueAtUtc, string displayName, string description, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Initializes a new instance of the \u0060DurableExecutionPendingTimer\u0060 class."
     },
     {
       "DisplayName": "DurableExecutionRuntimeDescriptor",
@@ -21670,8 +21788,8 @@
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-execution-durableexecutionruntimestate-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-int64-system-nullable-system-int64-system-nullable-system-int32-system-int32-system-boolean-system-boolean-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
-      "Signature": "DurableExecutionRuntimeState(string BehaviorId, string StreamId, string SourceModuleId, IReadOnlyList\u003Cstring\u003E TransportIds, string LastOutcome, string LastStage, DateTimeOffset? LastObservedAtUtc, long? LastReplayedVersion, long? LastKnownVersion, int? LastHttpStatusCode, int LastAppendedEventCount, bool LastStepProducedOutput, bool LastStepCompleted, int StartedCount, int SucceededCount, int ContinuationCount, int CompletedCount, int FailedCount, string LastError, IReadOnlyDictionary\u003Cstring, string\u003E Metadata)",
+      "AnchorId": "member-m-cephalon-abstractions-execution-durableexecutionruntimestate-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-int64-system-nullable-system-int64-system-nullable-system-int32-system-int32-system-boolean-system-boolean-system-int32-system-int32-system-int32-system-int32-system-int32-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-durableexecutionpendingtimer-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-durableexecutionpendingsignal-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "DurableExecutionRuntimeState(string BehaviorId, string StreamId, string SourceModuleId, IReadOnlyList\u003Cstring\u003E TransportIds, string LastOutcome, string LastStage, DateTimeOffset? LastObservedAtUtc, long? LastReplayedVersion, long? LastKnownVersion, int? LastHttpStatusCode, int LastAppendedEventCount, bool LastStepProducedOutput, bool LastStepCompleted, int StartedCount, int SucceededCount, int ContinuationCount, int CompletedCount, int FailedCount, IReadOnlyList\u003CDurableExecutionPendingTimer\u003E PendingTimers, IReadOnlyList\u003CDurableExecutionPendingSignal\u003E PendingSignals, string LastError, IReadOnlyDictionary\u003Cstring, string\u003E Metadata)",
       "Summary": "Describes the latest operator-facing runtime state reported for one durable-execution stream."
     },
     {
@@ -26680,6 +26798,28 @@
       "Summary": "Gets all behaviors registered with the specified pattern."
     },
     {
+      "DisplayName": "GetByPendingSignalId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IDurableExecutionRuntimeStateCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getbypendingsignalid-system-string",
+      "Signature": "IReadOnlyList\u003CDurableExecutionRuntimeState\u003E GetByPendingSignalId(string signalId)",
+      "Summary": "Gets the reported durable-execution state entries that currently include the requested pending signal."
+    },
+    {
+      "DisplayName": "GetByPendingTimerId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IDurableExecutionRuntimeStateCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getbypendingtimerid-system-string",
+      "Signature": "IReadOnlyList\u003CDurableExecutionRuntimeState\u003E GetByPendingTimerId(string timerId)",
+      "Summary": "Gets the reported durable-execution state entries that currently include the requested pending timer."
+    },
+    {
       "DisplayName": "GetByProvider",
       "Category": "Methods",
       "DeclaringTypeName": "EventStreamCatalog",
@@ -27219,6 +27359,28 @@
       "Summary": "Gets the stable wire name used by JSON serialization and compatibility metadata for the override binding mode."
     },
     {
+      "DisplayName": "GetWithPendingSignals",
+      "Category": "Methods",
+      "DeclaringTypeName": "IDurableExecutionRuntimeStateCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getwithpendingsignals",
+      "Signature": "IReadOnlyList\u003CDurableExecutionRuntimeState\u003E GetWithPendingSignals()",
+      "Summary": "Gets the reported durable-execution state entries that currently have one or more pending signals."
+    },
+    {
+      "DisplayName": "GetWithPendingTimers",
+      "Category": "Methods",
+      "DeclaringTypeName": "IDurableExecutionRuntimeStateCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getwithpendingtimers",
+      "Signature": "IReadOnlyList\u003CDurableExecutionRuntimeState\u003E GetWithPendingTimers()",
+      "Summary": "Gets the reported durable-execution state entries that currently have one or more pending timers."
+    },
+    {
       "DisplayName": "GovernanceOverrideSummaries",
       "Category": "Properties",
       "DeclaringTypeName": "RestEndpointAuthoringPolicyAuthoringStyleDescriptor",
@@ -27569,6 +27731,28 @@
       "AnchorId": "member-p-cephalon-abstractions-audit-audithistoryqueryresult-hasmore",
       "Signature": "bool HasMore { get; }",
       "Summary": "Gets a value indicating whether more entries remain beyond this page."
+    },
+    {
+      "DisplayName": "HasPendingSignals",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-haspendingsignals",
+      "Signature": "bool HasPendingSignals { get; }",
+      "Summary": "Gets a value indicating whether one or more durable signals are currently awaited for the stream."
+    },
+    {
+      "DisplayName": "HasPendingTimers",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-haspendingtimers",
+      "Signature": "bool HasPendingTimers { get; }",
+      "Summary": "Gets a value indicating whether one or more durable timers are currently pending for the stream."
     },
     {
       "DisplayName": "HasProcessedAsync",
@@ -29516,6 +29700,28 @@
       "AnchorId": "member-p-cephalon-engine-diagnostics-diagnosticeventdefinition-id",
       "Signature": "int Id { get; set; }",
       "Summary": "The stable numeric event identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionPendingSignal",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionpendingsignal-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable signal identifier within the durable workflow."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionPendingTimer",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionpendingtimer-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable timer identifier within the durable workflow."
     },
     {
       "DisplayName": "Id",
@@ -33546,6 +33752,28 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionPendingSignal",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionpendingsignal-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets additional operator-facing metadata describing the signal."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionPendingTimer",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionpendingtimer-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets additional operator-facing metadata describing the timer."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "DurableExecutionRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -35313,6 +35541,17 @@
       "AnchorId": "member-p-cephalon-data-entityframework-modeling-entityframeworkoutboxentry-nextattemptatutc",
       "Signature": "DateTimeOffset? NextAttemptAtUtc { get; set; }",
       "Summary": "Gets or sets the time at which the outbox row becomes eligible for the next dispatch attempt, when delayed retry is in effect."
+    },
+    {
+      "DisplayName": "NextTimerDueAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-nexttimerdueatutc",
+      "Signature": "DateTimeOffset? NextTimerDueAtUtc { get; }",
+      "Summary": "Gets the earliest UTC due timestamp across the currently pending timers when one exists."
     },
     {
       "DisplayName": "NoContent",
@@ -37383,6 +37622,17 @@
       "Summary": "Gets the serialized payload that should be delivered later."
     },
     {
+      "DisplayName": "PayloadType",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionPendingSignal",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionpendingsignal-payloadtype",
+      "Signature": "string PayloadType { get; }",
+      "Summary": "Gets the expected payload type name when the awaited signal declares one."
+    },
+    {
       "DisplayName": "PendingMigrationTargetCount",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseTopologyOperationalSummary",
@@ -37392,6 +37642,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databasetopologyoperationalsummary-pendingmigrationtargetcount",
       "Signature": "int PendingMigrationTargetCount { get; }",
       "Summary": "Gets the number of migration targets that are not yet \u0060Succeeded\u0060."
+    },
+    {
+      "DisplayName": "PendingSignals",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-pendingsignals",
+      "Signature": "IReadOnlyList\u003CDurableExecutionPendingSignal\u003E PendingSignals { get; set; }",
+      "Summary": "The durable signals that are currently awaited for this stream."
+    },
+    {
+      "DisplayName": "PendingTimers",
+      "Category": "Properties",
+      "DeclaringTypeName": "DurableExecutionRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Execution",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-pendingtimers",
+      "Signature": "IReadOnlyList\u003CDurableExecutionPendingTimer\u003E PendingTimers { get; set; }",
+      "Summary": "The durable timers that are currently pending for this stream."
     },
     {
       "DisplayName": "PermitLimit",

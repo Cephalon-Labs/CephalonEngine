@@ -35,6 +35,8 @@ namespace Cephalon.Abstractions.Execution;
 /// </param>
 /// <param name="CompletedCount">The number of <c>completed</c> observations reported so far.</param>
 /// <param name="FailedCount">The number of <c>failed</c> observations reported so far.</param>
+/// <param name="PendingTimers">The durable timers that are currently pending for this stream.</param>
+/// <param name="PendingSignals">The durable signals that are currently awaited for this stream.</param>
 /// <param name="LastError">
 /// The latest operator-facing error summary when the durable step reported a failure.
 /// </param>
@@ -58,6 +60,8 @@ public sealed record DurableExecutionRuntimeState(
     int ContinuationCount,
     int CompletedCount,
     int FailedCount,
+    IReadOnlyList<DurableExecutionPendingTimer> PendingTimers,
+    IReadOnlyList<DurableExecutionPendingSignal> PendingSignals,
     string? LastError,
     IReadOnlyDictionary<string, string> Metadata)
 {
@@ -70,6 +74,32 @@ public sealed record DurableExecutionRuntimeState(
     /// Gets a value indicating whether the latest report says the workflow still has continuation work pending.
     /// </summary>
     public bool ContinuationPending => string.Equals(LastOutcome, "continuation-staged", StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Gets a value indicating whether one or more durable timers are currently pending for the stream.
+    /// </summary>
+    public bool HasPendingTimers => PendingTimers.Count > 0;
+
+    /// <summary>
+    /// Gets a value indicating whether one or more durable signals are currently awaited for the stream.
+    /// </summary>
+    public bool HasPendingSignals => PendingSignals.Count > 0;
+
+    /// <summary>
+    /// Gets the earliest UTC due timestamp across the currently pending timers when one exists.
+    /// </summary>
+    public DateTimeOffset? NextTimerDueAtUtc => PendingTimers.Count == 0
+        ? null
+        : PendingTimers.Min(static timer => timer.DueAtUtc);
+
+    /// <summary>
+    /// Gets a value indicating whether the latest runtime state still has pending continuation, timer, or signal work.
+    /// </summary>
+    public bool CoordinationPending =>
+        ContinuationPending ||
+        HasPendingTimers ||
+        HasPendingSignals ||
+        string.Equals(LastOutcome, "waiting", StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
     /// Gets a value indicating whether the latest report says the durable stream is currently in a failed posture.

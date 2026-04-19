@@ -41,7 +41,8 @@ public sealed class DurableExecutionRuntimeDescriptor
     /// </param>
     /// <param name="successStatusCodes">
     /// The HTTP success status codes the shared durable execution strategy can return for local
-    /// output, continuation-only work, or completion without output.
+    /// output, continuation-only work, pending timer/signal coordination, or completion without
+    /// output.
     /// </param>
     /// <param name="metadata">Additional operator-facing metadata describing replay semantics.</param>
     public DurableExecutionRuntimeDescriptor(

@@ -15,8 +15,9 @@ durable-execution replay are handled.
 - **SagaChoreographyPublication / SagaChoreographyStepResult** — host-agnostic choreography output contracts
 - **IDurableExecution<TState> / IDurableExecution<TInput, TState, TOutput>** — host-agnostic durable workflow contract over `IEventStore` replay
 - **DurableExecutionState<TState> / DurableExecutionStepResult<TOutput>** — replay snapshot and step-result contracts for durable execution
+- **DurableExecutionPendingTimer / DurableExecutionPendingSignal** — host-agnostic coordination descriptors for pending durable timer and signal waits
 - **DurableExecutionRuntimeDescriptor / IDurableExecutionRuntimeCatalog** — operator-facing durable workflow catalog derived from shared behavior topology, ownership, transports, feature flags, and replay metadata
-- **DurableExecutionRuntimeState / IDurableExecutionRuntimeStateCatalog** — operator-facing per-stream durable runtime posture, including last outcome, stage, version progress, append count, completion state, and failure summary
+- **DurableExecutionRuntimeState / IDurableExecutionRuntimeStateCatalog** — operator-facing per-stream durable runtime posture, including last outcome, stage, version progress, append count, pending timers/signals, completion state, and failure summary
 - **InMemorySagaStateStore** — `ConcurrentDictionary`-backed saga state with JSON serialization
 - **InMemoryProcessCheckpointStore** — `ConcurrentDictionary`-backed checkpoint store
 - **InMemorySagaChoreographyPublisher** — in-memory choreography publication collector for local development and tests
@@ -40,7 +41,7 @@ durable-execution replay are handled.
 | `saga-step` | `SagaExecutionStrategy` | 200 | 200 | No |
 | `saga-choreography` | `ChoreographySagaExecutionStrategy` | 202 when publications exist, otherwise 200 | 204 | No |
 | `process-manager` | `ProcessManagerExecutionStrategy` | 200 | 200 | No |
-| `durable-execution` | `DurableExecutionStrategy` | 200 | 202 when continuation events were appended, otherwise 204 | No |
+| `durable-execution` | `DurableExecutionStrategy` | 200 | 202 when continuation events or pending timer/signal coordination remain, otherwise 204 | No |
 | `direct` | `DirectExecutionStrategy` | 200 | 204 | No |
 
 ## Registration
@@ -84,11 +85,14 @@ Durable workflows opt in explicitly through `IBehaviorTopologyBuilder.AsDurableE
 
 - `ResolveStreamId(...)` keeps stream ownership explicit instead of deriving it from ambient host state
 - `CreateInitialState()` seeds the replay state for new streams
+- `DurableExecutionStepResult<TOutput>` can now also carry `pendingTimers` and `pendingSignals` so
+  workflows can publish timer/signal coordination intent through the shared durable runtime state
 - `DurableExecutionStrategy` replays current state from `IBehaviorContext.EventStore`, passes that
   snapshot to `ExecuteDurablyAsync(...)`, validates that returned events continue the stream with
   sequential versions, and appends them through `IEventStore.AppendAsync(...)`
-- the strategy returns `200` when the step produced local output, `202` when it only staged
-  continuation events, and `204` when the step completed without output
+- the strategy returns `200` when the step produced local output, `202` when it staged
+  continuation events or is still waiting on durable timers/signals without local output, and `204`
+  when the step completed without output
 
 The durable baseline intentionally stays smaller than a full workflow engine. It does not add a
 second journal or a transport-specific runner; it reuses the existing `IEventStore` contract so
@@ -99,16 +103,21 @@ HTTP, messaging, and tests can share the same replay truth. `Cephalon.Behaviors`
 That same shared topology now also drives the durable operator surface. `AddBehaviorPatterns()`
 registers `IDurableExecutionRuntimeCatalog` plus `IDurableExecutionRuntimeStateCatalog`,
 `DurableExecutionStrategy` reports per-stream `started`, `succeeded`, `continuation-staged`,
-`completed`, and `failed` observations into the shared state catalog, `Cephalon.Engine` projects
-both `snapshot.DurableExecutions` and `snapshot.DurableExecutionStates`, and ASP.NET Core exposes
-`/engine/durable-executions` plus `/engine/durable-executions/runtime`,
+`waiting`, `completed`, and `failed` observations into the shared state catalog, `Cephalon.Engine`
+projects both `snapshot.DurableExecutions` and `snapshot.DurableExecutionStates`, and ASP.NET
+Core exposes `/engine/durable-executions` plus `/engine/durable-executions/runtime`,
 `/engine/durable-executions/runtime/streams/{streamId}`,
 `/engine/durable-executions/runtime/behaviors/{behaviorId}`,
 `/engine/durable-executions/runtime/modules/{moduleId}`, and
-`/engine/durable-executions/runtime/transports/{transportId}`. Those runtime surfaces preserve
-module ownership, transport ids, required feature ids, typed input/state/output contracts, the
-shared `200`/`202`/`204` success posture, replay/version progress, append counts, and durable
-failure posture without inventing a second host-specific workflow registry.
+`/engine/durable-executions/runtime/transports/{transportId}` together with the pending
+coordination filters `/engine/durable-executions/runtime/timers`,
+`/engine/durable-executions/runtime/timers/{timerId}`,
+`/engine/durable-executions/runtime/signals`, and
+`/engine/durable-executions/runtime/signals/{signalId}`. Those runtime surfaces preserve module
+ownership, transport ids, required feature ids, typed input/state/output contracts, the shared
+`200`/`202`/`204` success posture, replay/version progress, append counts, pending timer/signal
+coordination, and durable failure posture without inventing a second host-specific workflow
+registry.
 
 ## Replacing the default stores
 
@@ -137,7 +146,7 @@ and it only activates when the shared `Cephalon.Eventing` publication path is tr
 
 ## Status
 
-> Status: ✅ Shipped — M4 baseline plus later follow-through for saga choreography, durable execution, the first durable runtime catalog/operator surface, and the first durable per-stream live-state/failure-posture surface
+> Status: ✅ Shipped — M4 baseline plus later follow-through for saga choreography, durable execution, the first durable runtime catalog/operator surface, the first durable per-stream live-state/failure-posture surface, and the first durable timer/signal coordination surface
 
 ## Related components
 

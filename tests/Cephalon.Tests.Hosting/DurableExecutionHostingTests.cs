@@ -95,10 +95,16 @@ public sealed class DurableExecutionHostingTests
         await app.StartAsync();
         var client = app.GetTestClient();
         var initialStates = await client.GetFromJsonAsync<DurableExecutionRuntimeState[]>("/engine/durable-executions/runtime");
+        var initialTimerStates = await client.GetFromJsonAsync<DurableExecutionRuntimeState[]>("/engine/durable-executions/runtime/timers");
+        var initialSignalStates = await client.GetFromJsonAsync<DurableExecutionRuntimeState[]>("/engine/durable-executions/runtime/signals");
         var missingStateResponse = await client.GetAsync("/engine/durable-executions/runtime/streams/tests.workflows.hosted.approvals.start:missing");
 
         Assert.NotNull(initialStates);
         Assert.Empty(initialStates);
+        Assert.NotNull(initialTimerStates);
+        Assert.Empty(initialTimerStates);
+        Assert.NotNull(initialSignalStates);
+        Assert.Empty(initialSignalStates);
         Assert.Equal(HttpStatusCode.NotFound, missingStateResponse.StatusCode);
 
         var strategy = app.Services.GetServices<IBehaviorExecutionStrategy>()
@@ -108,7 +114,7 @@ public sealed class DurableExecutionHostingTests
         await strategy.ExecuteAsync(MakeContext(
             behaviorId: "tests.workflows.hosted.approvals.start",
             behavior: new HostedApprovalWorkflowBehavior(),
-            input: new HostedApprovalWorkflowInput("APR-42"),
+            input: new HostedApprovalWorkflowInput("APR-42", "success"),
             behaviorContext: new HostingTestBehaviorContext(
                 "tests.workflows.hosted.approvals.start",
                 correlationId: "corr-hosted",
@@ -118,21 +124,46 @@ public sealed class DurableExecutionHostingTests
                     ["tenantId"] = "tenant-7"
                 })));
 
+        await strategy.ExecuteAsync(MakeContext(
+            behaviorId: "tests.workflows.hosted.approvals.start",
+            behavior: new HostedApprovalWorkflowBehavior(),
+            input: new HostedApprovalWorkflowInput("APR-99", "wait"),
+            behaviorContext: new HostingTestBehaviorContext(
+                "tests.workflows.hosted.approvals.start",
+                correlationId: "corr-wait",
+                eventStore: eventStore)));
+
         var states = await client.GetFromJsonAsync<DurableExecutionRuntimeState[]>("/engine/durable-executions/runtime");
         var byBehavior = await client.GetFromJsonAsync<DurableExecutionRuntimeState[]>("/engine/durable-executions/runtime/behaviors/tests.workflows.hosted.approvals.start");
         var byModule = await client.GetFromJsonAsync<DurableExecutionRuntimeState[]>("/engine/durable-executions/runtime/modules/tests.durable-host");
         var byTransport = await client.GetFromJsonAsync<DurableExecutionRuntimeState[]>("/engine/durable-executions/runtime/transports/in-memory");
+        var byPendingTimers = await client.GetFromJsonAsync<DurableExecutionRuntimeState[]>("/engine/durable-executions/runtime/timers");
+        var byPendingTimerId = await client.GetFromJsonAsync<DurableExecutionRuntimeState[]>("/engine/durable-executions/runtime/timers/approval-timeout");
+        var byPendingSignals = await client.GetFromJsonAsync<DurableExecutionRuntimeState[]>("/engine/durable-executions/runtime/signals");
+        var byPendingSignalId = await client.GetFromJsonAsync<DurableExecutionRuntimeState[]>("/engine/durable-executions/runtime/signals/approval-released");
         var state = await client.GetFromJsonAsync<DurableExecutionRuntimeState>("/engine/durable-executions/runtime/streams/tests.workflows.hosted.approvals.start:corr-hosted");
+        var waitingState = await client.GetFromJsonAsync<DurableExecutionRuntimeState>("/engine/durable-executions/runtime/streams/tests.workflows.hosted.approvals.start:corr-wait");
         var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
 
         Assert.NotNull(states);
-        var reportedState = Assert.Single(states);
-        Assert.Single(byBehavior!);
-        Assert.Single(byModule!);
-        Assert.Single(byTransport!);
+        Assert.Equal(2, states.Length);
+        Assert.Equal(2, byBehavior!.Length);
+        Assert.Equal(2, byModule!.Length);
+        Assert.Equal(2, byTransport!.Length);
+        Assert.Single(byPendingTimers!);
+        Assert.Single(byPendingTimerId!);
+        Assert.Single(byPendingSignals!);
+        Assert.Single(byPendingSignalId!);
         Assert.NotNull(state);
+        Assert.NotNull(waitingState);
         Assert.NotNull(snapshot);
 
+        var reportedState = Assert.Single(
+            states,
+            static candidate => string.Equals(
+                candidate.StreamId,
+                "tests.workflows.hosted.approvals.start:corr-hosted",
+                StringComparison.Ordinal));
         Assert.Equal(reportedState.StreamId, state!.StreamId);
         Assert.Equal("tests.workflows.hosted.approvals.start", state.BehaviorId);
         Assert.Equal("tests.durable-host", state.SourceModuleId);
@@ -153,10 +184,29 @@ public sealed class DurableExecutionHostingTests
         Assert.Equal(2, state.TotalReports);
         Assert.False(state.ContinuationPending);
         Assert.False(state.IsFailed);
+        Assert.False(state.CoordinationPending);
         Assert.Equal("corr-hosted", state.Metadata["correlationId"]);
         Assert.Equal("tenant-7", state.Metadata["tenantId"]);
 
-        var snapshotState = Assert.Single(snapshot!.DurableExecutionStates);
+        Assert.Equal("waiting", waitingState!.LastOutcome);
+        Assert.Equal("execute", waitingState.LastStage);
+        Assert.Equal(202, waitingState.LastHttpStatusCode);
+        Assert.True(waitingState.HasPendingTimers);
+        Assert.True(waitingState.HasPendingSignals);
+        Assert.True(waitingState.CoordinationPending);
+        Assert.Equal(
+            new DateTimeOffset(2026, 4, 19, 5, 0, 0, TimeSpan.Zero),
+            waitingState.NextTimerDueAtUtc);
+        Assert.Equal("approval-timeout", Assert.Single(waitingState.PendingTimers).Id);
+        Assert.Equal("approval-released", Assert.Single(waitingState.PendingSignals).Id);
+
+        Assert.Equal(2, snapshot!.DurableExecutionStates.Count);
+        var snapshotState = Assert.Single(
+            snapshot.DurableExecutionStates,
+            static candidate => string.Equals(
+                candidate.StreamId,
+                "tests.workflows.hosted.approvals.start:corr-hosted",
+                StringComparison.Ordinal));
         Assert.Equal(state.StreamId, snapshotState.StreamId);
         Assert.Equal(state.BehaviorId, snapshotState.BehaviorId);
         Assert.Equal(state.LastOutcome, snapshotState.LastOutcome);
@@ -210,7 +260,7 @@ public sealed class DurableExecutionHostingTests
         }
     }
 
-    private sealed record HostedApprovalWorkflowInput(string ApprovalId);
+    private sealed record HostedApprovalWorkflowInput(string ApprovalId, string Mode);
 
     private sealed record HostedApprovalWorkflowState(int ApprovedCount);
 
@@ -249,16 +299,38 @@ public sealed class DurableExecutionHostingTests
             IBehaviorContext context,
             CancellationToken cancellationToken = default)
         {
-            return Task.FromResult(new DurableExecutionStepResult<HostedApprovalWorkflowOutput>(
-                output: new HostedApprovalWorkflowOutput("accepted"),
-                events:
-                [
-                    new HostedApprovalAcceptedEvent(
-                        execution.StreamId,
-                        execution.Version + 1,
-                        new DateTime(2026, 4, 19, 2, 0, 0, DateTimeKind.Utc))
-                ],
-                isCompleted: false));
+            return Task.FromResult(input.Mode switch
+            {
+                "success" => new DurableExecutionStepResult<HostedApprovalWorkflowOutput>(
+                    output: new HostedApprovalWorkflowOutput("accepted"),
+                    events:
+                    [
+                        new HostedApprovalAcceptedEvent(
+                            execution.StreamId,
+                            execution.Version + 1,
+                            new DateTime(2026, 4, 19, 2, 0, 0, DateTimeKind.Utc))
+                    ],
+                    isCompleted: false),
+                "wait" => new DurableExecutionStepResult<HostedApprovalWorkflowOutput>(
+                    output: null,
+                    events: [],
+                    isCompleted: false,
+                    pendingTimers:
+                    [
+                        new DurableExecutionPendingTimer(
+                            id: "approval-timeout",
+                            dueAtUtc: new DateTimeOffset(2026, 4, 19, 5, 0, 0, TimeSpan.Zero),
+                            displayName: "Approval Timeout")
+                    ],
+                    pendingSignals:
+                    [
+                        new DurableExecutionPendingSignal(
+                            id: "approval-released",
+                            displayName: "Approval Released",
+                            payloadType: typeof(string).FullName)
+                    ]),
+                _ => throw new InvalidOperationException($"Unknown hosted durable mode '{input.Mode}'.")
+            });
         }
     }
 

@@ -19,7 +19,7 @@ namespace Cephalon.Tests.Composition;
 public sealed class DurableExecutionRuntimeStateCatalogTests
 {
     [Fact]
-    public async Task RuntimeStateCatalogTracksDurableStreamOutcomePostureAcrossSnapshotFiltersAndFailures()
+    public async Task RuntimeStateCatalogTracksDurableStreamOutcomePostureAcrossSnapshotFiltersCoordinationAndFailures()
     {
         var services = new ServiceCollection();
         services.AddCephalon(engine =>
@@ -64,6 +64,15 @@ public sealed class DurableExecutionRuntimeStateCatalogTests
         await strategy.ExecuteAsync(MakeContext(
             behaviorId: "tests.workflows.runtime.approvals.execute",
             behavior: new ObservedApprovalWorkflowBehavior(),
+            input: new ObservedApprovalWorkflowInput("wait", 0),
+            behaviorContext: new TestBehaviorContext(
+                "tests.workflows.runtime.approvals.execute",
+                correlationId: "corr-wait",
+                eventStore: eventStore)));
+
+        await strategy.ExecuteAsync(MakeContext(
+            behaviorId: "tests.workflows.runtime.approvals.execute",
+            behavior: new ObservedApprovalWorkflowBehavior(),
             input: new ObservedApprovalWorkflowInput("complete", 0),
             behaviorContext: new TestBehaviorContext(
                 "tests.workflows.runtime.approvals.execute",
@@ -76,15 +85,19 @@ public sealed class DurableExecutionRuntimeStateCatalogTests
             input: new ObservedApprovalWorkflowInput("fail", 1),
             behaviorContext: new TestBehaviorContext(
                 "tests.workflows.runtime.approvals.execute",
-                correlationId: "corr-fail",
-                eventStore: eventStore))));
+            correlationId: "corr-fail",
+            eventStore: eventStore))));
 
         Assert.Contains("stream version", exception.Message, StringComparison.OrdinalIgnoreCase);
 
         var behaviorStates = catalog.GetByBehaviorId("tests.workflows.runtime.approvals.execute");
-        Assert.Equal(4, behaviorStates.Count);
-        Assert.Equal(4, catalog.GetBySourceModule("tests.durable-state-owner").Count);
-        Assert.Equal(4, catalog.GetByTransportId("rabbitmq").Count);
+        Assert.Equal(5, behaviorStates.Count);
+        Assert.Equal(5, catalog.GetBySourceModule("tests.durable-state-owner").Count);
+        Assert.Equal(5, catalog.GetByTransportId("rabbitmq").Count);
+        Assert.Single(catalog.GetWithPendingTimers());
+        Assert.Single(catalog.GetWithPendingSignals());
+        Assert.Single(catalog.GetByPendingTimerId("approval-timeout"));
+        Assert.Single(catalog.GetByPendingSignalId("approval-released"));
 
         Assert.True(catalog.TryGetByStreamId(
             "tests.workflows.runtime.approvals.execute:corr-success",
@@ -124,6 +137,38 @@ public sealed class DurableExecutionRuntimeStateCatalogTests
         Assert.Equal(0, continuationState.SucceededCount);
         Assert.Equal(1, continuationState.ContinuationCount);
         Assert.True(continuationState.ContinuationPending);
+        Assert.True(continuationState.CoordinationPending);
+
+        var waitingState = catalog.GetByStreamId("tests.workflows.runtime.approvals.execute:corr-wait");
+        Assert.NotNull(waitingState);
+        Assert.Equal("waiting", waitingState!.LastOutcome);
+        Assert.Equal("execute", waitingState.LastStage);
+        Assert.Equal(202, waitingState.LastHttpStatusCode);
+        Assert.Equal(0, waitingState.LastAppendedEventCount);
+        Assert.False(waitingState.LastStepProducedOutput);
+        Assert.False(waitingState.LastStepCompleted);
+        Assert.Equal(1, waitingState.StartedCount);
+        Assert.Equal(0, waitingState.SucceededCount);
+        Assert.Equal(1, waitingState.ContinuationCount);
+        Assert.Equal(0, waitingState.CompletedCount);
+        Assert.Equal(0, waitingState.FailedCount);
+        Assert.Equal(2, waitingState.TotalReports);
+        Assert.False(waitingState.ContinuationPending);
+        Assert.True(waitingState.HasPendingTimers);
+        Assert.True(waitingState.HasPendingSignals);
+        Assert.True(waitingState.CoordinationPending);
+        Assert.Equal(
+            new DateTimeOffset(2026, 4, 19, 4, 0, 0, TimeSpan.Zero),
+            waitingState.NextTimerDueAtUtc);
+        var timer = Assert.Single(waitingState.PendingTimers);
+        Assert.Equal("approval-timeout", timer.Id);
+        Assert.Equal("Approval Timeout", timer.DisplayName);
+        Assert.Equal("approval", timer.Metadata["lane"]);
+        var signal = Assert.Single(waitingState.PendingSignals);
+        Assert.Equal("approval-released", signal.Id);
+        Assert.Equal("Approval Released", signal.DisplayName);
+        Assert.Equal("System.String", signal.PayloadType);
+        Assert.Equal("approval", signal.Metadata["lane"]);
 
         var completedState = catalog.GetByStreamId("tests.workflows.runtime.approvals.execute:corr-complete");
         Assert.NotNull(completedState);
@@ -138,6 +183,7 @@ public sealed class DurableExecutionRuntimeStateCatalogTests
         Assert.Equal(0, completedState.ContinuationCount);
         Assert.Equal(1, completedState.CompletedCount);
         Assert.False(completedState.IsFailed);
+        Assert.False(completedState.CoordinationPending);
 
         var failedState = catalog.GetByStreamId("tests.workflows.runtime.approvals.execute:corr-fail");
         Assert.NotNull(failedState);
@@ -161,7 +207,7 @@ public sealed class DurableExecutionRuntimeStateCatalogTests
         Assert.Contains("InvalidOperationException", failedState.Metadata["exceptionType"], StringComparison.Ordinal);
 
         var snapshot = snapshotProvider.CreateSnapshot();
-        Assert.Equal(4, snapshot.DurableExecutionStates.Count);
+        Assert.Equal(5, snapshot.DurableExecutionStates.Count);
         Assert.Contains(
             snapshot.DurableExecutionStates,
             state => string.Equals(
@@ -280,6 +326,34 @@ public sealed class DurableExecutionRuntimeStateCatalogTests
                             IsCompleted: false)
                     ],
                     isCompleted: false),
+                "wait" => new DurableExecutionStepResult<string?>(
+                    output: null,
+                    events: [],
+                    isCompleted: false,
+                    pendingTimers:
+                    [
+                        new DurableExecutionPendingTimer(
+                            id: "approval-timeout",
+                            dueAtUtc: new DateTimeOffset(2026, 4, 19, 4, 0, 0, TimeSpan.Zero),
+                            displayName: "Approval Timeout",
+                            description: "Escalate the approval when the timer elapses.",
+                            metadata: new Dictionary<string, string>
+                            {
+                                ["lane"] = "approval"
+                            })
+                    ],
+                    pendingSignals:
+                    [
+                        new DurableExecutionPendingSignal(
+                            id: "approval-released",
+                            displayName: "Approval Released",
+                            description: "Waits for the external release signal.",
+                            payloadType: typeof(string).FullName,
+                            metadata: new Dictionary<string, string>
+                            {
+                                ["lane"] = "approval"
+                            })
+                    ]),
                 "complete" => new DurableExecutionStepResult<string?>(
                     output: null,
                     events: [],

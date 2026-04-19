@@ -81,6 +81,62 @@ internal sealed class DurableExecutionRuntimeStateCatalog(
         }
     }
 
+    public IReadOnlyList<DurableExecutionRuntimeState> GetWithPendingTimers()
+    {
+        lock (gate)
+        {
+            return statesByStreamId.Values
+                .Where(static state => state.HasPendingTimers)
+                .OrderBy(static state => state.NextTimerDueAtUtc)
+                .ThenBy(static state => state.BehaviorId, Comparer)
+                .ThenBy(static state => state.StreamId, Comparer)
+                .ToArray();
+        }
+    }
+
+    public IReadOnlyList<DurableExecutionRuntimeState> GetWithPendingSignals()
+    {
+        lock (gate)
+        {
+            return statesByStreamId.Values
+                .Where(static state => state.HasPendingSignals)
+                .OrderBy(static state => state.BehaviorId, Comparer)
+                .ThenBy(static state => state.StreamId, Comparer)
+                .ToArray();
+        }
+    }
+
+    public IReadOnlyList<DurableExecutionRuntimeState> GetByPendingTimerId(string timerId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(timerId);
+        var normalizedTimerId = timerId.Trim();
+
+        lock (gate)
+        {
+            return statesByStreamId.Values
+                .Where(state => state.PendingTimers.Any(timer => Comparer.Equals(timer.Id, normalizedTimerId)))
+                .OrderBy(static state => state.NextTimerDueAtUtc)
+                .ThenBy(static state => state.BehaviorId, Comparer)
+                .ThenBy(static state => state.StreamId, Comparer)
+                .ToArray();
+        }
+    }
+
+    public IReadOnlyList<DurableExecutionRuntimeState> GetByPendingSignalId(string signalId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(signalId);
+        var normalizedSignalId = signalId.Trim();
+
+        lock (gate)
+        {
+            return statesByStreamId.Values
+                .Where(state => state.PendingSignals.Any(signal => Comparer.Equals(signal.Id, normalizedSignalId)))
+                .OrderBy(static state => state.BehaviorId, Comparer)
+                .ThenBy(static state => state.StreamId, Comparer)
+                .ToArray();
+        }
+    }
+
     public bool TryGetByStreamId(string streamId, out DurableExecutionRuntimeState? state)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(streamId);
@@ -133,6 +189,8 @@ internal sealed class DurableExecutionRuntimeStateCatalog(
                     ContinuationCount: 0,
                     CompletedCount: 0,
                     FailedCount: 0,
+                    PendingTimers: [],
+                    PendingSignals: [],
                     LastError: null,
                     Metadata: EmptyMetadata);
 
@@ -165,6 +223,8 @@ internal sealed class DurableExecutionRuntimeStateCatalog(
                     LastStepProducedOutput = report.ProducedOutput,
                     LastStepCompleted = report.IsCompleted,
                     SucceededCount = current.SucceededCount + 1,
+                    PendingTimers = report.PendingTimers,
+                    PendingSignals = report.PendingSignals,
                     LastError = null,
                     Metadata = metadata
                 },
@@ -180,6 +240,25 @@ internal sealed class DurableExecutionRuntimeStateCatalog(
                     LastStepProducedOutput = report.ProducedOutput,
                     LastStepCompleted = report.IsCompleted,
                     ContinuationCount = current.ContinuationCount + 1,
+                    PendingTimers = report.PendingTimers,
+                    PendingSignals = report.PendingSignals,
+                    LastError = null,
+                    Metadata = metadata
+                },
+                DurableExecutionRuntimeOutcomes.Waiting => current with
+                {
+                    LastOutcome = normalizedOutcome,
+                    LastStage = normalizedStage,
+                    LastObservedAtUtc = report.ObservedAtUtc,
+                    LastReplayedVersion = report.ReplayedVersion,
+                    LastKnownVersion = report.KnownVersion,
+                    LastHttpStatusCode = report.HttpStatusCode,
+                    LastAppendedEventCount = report.AppendedEventCount,
+                    LastStepProducedOutput = report.ProducedOutput,
+                    LastStepCompleted = report.IsCompleted,
+                    ContinuationCount = current.ContinuationCount + 1,
+                    PendingTimers = report.PendingTimers,
+                    PendingSignals = report.PendingSignals,
                     LastError = null,
                     Metadata = metadata
                 },
@@ -195,6 +274,8 @@ internal sealed class DurableExecutionRuntimeStateCatalog(
                     LastStepProducedOutput = report.ProducedOutput,
                     LastStepCompleted = report.IsCompleted,
                     CompletedCount = current.CompletedCount + 1,
+                    PendingTimers = report.PendingTimers,
+                    PendingSignals = report.PendingSignals,
                     LastError = null,
                     Metadata = metadata
                 },
@@ -231,6 +312,7 @@ internal sealed class DurableExecutionRuntimeStateCatalog(
             DurableExecutionRuntimeOutcomes.Started => DurableExecutionRuntimeOutcomes.Started,
             DurableExecutionRuntimeOutcomes.Succeeded => DurableExecutionRuntimeOutcomes.Succeeded,
             DurableExecutionRuntimeOutcomes.ContinuationStaged => DurableExecutionRuntimeOutcomes.ContinuationStaged,
+            DurableExecutionRuntimeOutcomes.Waiting => DurableExecutionRuntimeOutcomes.Waiting,
             DurableExecutionRuntimeOutcomes.Completed => DurableExecutionRuntimeOutcomes.Completed,
             DurableExecutionRuntimeOutcomes.Failed => DurableExecutionRuntimeOutcomes.Failed,
             _ => throw new InvalidOperationException(

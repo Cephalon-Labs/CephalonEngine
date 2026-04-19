@@ -202,6 +202,8 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.EventSourcing.IEventStoreContributor),
             typeof(global::Cephalon.Abstractions.EventSourcing.IEventStoreRegistry),
             typeof(global::Cephalon.Abstractions.EventSourcing.ISnapshotStore),
+            typeof(global::Cephalon.Abstractions.Execution.DurableExecutionPendingSignal),
+            typeof(global::Cephalon.Abstractions.Execution.DurableExecutionPendingTimer),
             typeof(global::Cephalon.Abstractions.Execution.DurableExecutionRuntimeDescriptor),
             typeof(global::Cephalon.Abstractions.Execution.DurableExecutionRuntimeState),
             typeof(global::Cephalon.Abstractions.Execution.ExecutionGraphDescriptor),
@@ -2300,6 +2302,45 @@ public sealed class PackageSurfaceTests
             .GetProperty("OriginalSummary", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor)
             .GetProperty("OriginalDescription", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void DurableExecutionRuntimeStateContractsExposePendingCoordination()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.DurableExecutionRuntimeState)
+            .GetProperty("PendingTimers", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.DurableExecutionRuntimeState)
+            .GetProperty("PendingSignals", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.DurableExecutionRuntimeState)
+            .GetProperty("HasPendingTimers", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.DurableExecutionRuntimeState)
+            .GetProperty("HasPendingSignals", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.DurableExecutionRuntimeState)
+            .GetProperty("NextTimerDueAtUtc", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.DurableExecutionRuntimeState)
+            .GetProperty("CoordinationPending", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void DurableExecutionRuntimeStateCatalogContractsExposePendingCoordinationFilters()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.IDurableExecutionRuntimeStateCatalog)
+            .GetMethod("GetWithPendingTimers", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.IDurableExecutionRuntimeStateCatalog)
+            .GetMethod("GetWithPendingSignals", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.IDurableExecutionRuntimeStateCatalog)
+            .GetMethod("GetByPendingTimerId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Execution.IDurableExecutionRuntimeStateCatalog)
+            .GetMethod("GetByPendingSignalId", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void DurableExecutionStepResultContractsExposePendingCoordination()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Behaviors.Patterns.Abstractions.DurableExecutionStepResult<>)
+            .GetProperty("PendingTimers", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Behaviors.Patterns.Abstractions.DurableExecutionStepResult<>)
+            .GetProperty("PendingSignals", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

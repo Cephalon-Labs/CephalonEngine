@@ -92,7 +92,7 @@ event-sourcing baseline instead of only checkpointing one step at a time.
 - keep stream ownership explicit through `ResolveStreamId(...)` instead of relying on transport-only
   identifiers
 - return `DurableExecutionStepResult<TOutput>` so the runtime can append deterministic continuation
-  events and distinguish `200`, `202`, and `204` outcomes truthfully
+  events, pending timers/signals, and distinguish `200`, `202`, and `204` outcomes truthfully
 - keep `EventSourcingEnabled = true`; built-in rule `ABT-006` fails fast when a behavior declares
   `durable-execution` without the event-sourcing baseline
 
@@ -102,7 +102,10 @@ workflow journal, which keeps HTTP, messaging, and tests aligned on the same rep
 The operator surface now follows the same shared runtime truth: `IDurableExecutionRuntimeCatalog`
 and `IDurableExecutionRuntimeStateCatalog` publish both the static durable workflow contract and
 the latest per-stream runtime posture through `/engine/durable-executions`,
-`/engine/durable-executions/runtime`, and the matching snapshot fields.
+`/engine/durable-executions/runtime`, the pending timer/signal filters under
+`/engine/durable-executions/runtime/timers*` plus `/engine/durable-executions/runtime/signals*`,
+and the matching snapshot fields. Pending timer/signal waits now stay part of that same runtime
+truth instead of requiring ad-hoc host-side workflow registries.
 
 ## Feature-gated execution
 

@@ -39,8 +39,9 @@ public sealed class DurableExecutionStrategy : IBehaviorExecutionStrategy
     /// <param name="context">The execution context for this invocation.</param>
     /// <param name="ct">A token that cancels the execution.</param>
     /// <returns>
-    /// A result with HTTP 200 when local output exists, HTTP 202 when only durable continuation events were staged,
-    /// or HTTP 204 when no local output remains and the step completed without follow-up events.
+    /// A result with HTTP 200 when local output exists, HTTP 202 when durable continuation work or
+    /// pending timer/signal coordination remains without local output, or HTTP 204 when no local
+    /// output remains and the step completed without follow-up work.
     /// </returns>
     /// <exception cref="InvalidOperationException">
     /// Thrown when durable execution is selected for a behavior that does not implement
@@ -191,6 +192,8 @@ public sealed class DurableExecutionStrategy : IBehaviorExecutionStrategy
                     appendedEventCount: step.Events.Count,
                     producedOutput: step.Output is not null,
                     isCompleted: step.IsCompleted,
+                    pendingTimers: step.PendingTimers,
+                    pendingSignals: step.PendingSignals,
                     metadata: metadata),
                 ct)
             .ConfigureAwait(false);
@@ -212,7 +215,7 @@ public sealed class DurableExecutionStrategy : IBehaviorExecutionStrategy
             return 200;
         }
 
-        if (step.Events.Count > 0 && !step.IsCompleted)
+        if (!step.IsCompleted && (step.Events.Count > 0 || step.PendingTimers.Count > 0 || step.PendingSignals.Count > 0))
         {
             return 202;
         }
@@ -227,6 +230,12 @@ public sealed class DurableExecutionStrategy : IBehaviorExecutionStrategy
         if (step.Output is null && step.Events.Count > 0 && !step.IsCompleted)
         {
             return DurableExecutionRuntimeOutcomes.ContinuationStaged;
+        }
+
+        if (step.Output is null && step.Events.Count == 0 && !step.IsCompleted &&
+            (step.PendingTimers.Count > 0 || step.PendingSignals.Count > 0))
+        {
+            return DurableExecutionRuntimeOutcomes.Waiting;
         }
 
         if (step.Output is null && step.Events.Count == 0 && step.IsCompleted)
@@ -438,7 +447,9 @@ public sealed class DurableExecutionStrategy : IBehaviorExecutionStrategy
             return new DurableExecutionStepEnvelope(
                 result.Output,
                 result.Events,
-                result.IsCompleted);
+                result.IsCompleted,
+                result.PendingTimers,
+                result.PendingSignals);
         }
     }
 
@@ -447,11 +458,15 @@ public sealed class DurableExecutionStrategy : IBehaviorExecutionStrategy
         internal DurableExecutionStepEnvelope(
             object? output,
             IReadOnlyList<IDomainEvent> events,
-            bool isCompleted)
+            bool isCompleted,
+            IReadOnlyList<DurableExecutionPendingTimer> pendingTimers,
+            IReadOnlyList<DurableExecutionPendingSignal> pendingSignals)
         {
             Output = output;
             Events = events;
             IsCompleted = isCompleted;
+            PendingTimers = pendingTimers;
+            PendingSignals = pendingSignals;
         }
 
         internal object? Output { get; }
@@ -459,5 +474,9 @@ public sealed class DurableExecutionStrategy : IBehaviorExecutionStrategy
         internal IReadOnlyList<IDomainEvent> Events { get; }
 
         internal bool IsCompleted { get; }
+
+        internal IReadOnlyList<DurableExecutionPendingTimer> PendingTimers { get; }
+
+        internal IReadOnlyList<DurableExecutionPendingSignal> PendingSignals { get; }
     }
 }

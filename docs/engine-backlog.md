@@ -2354,6 +2354,54 @@ Delivered:
 - focused composition, hosting, package-surface, component-doc, roadmap, backlog, project-memory,
   and reference-doc coverage now lock the durable live-state contract plus the new public surface
 
+### ENG-113 Phase 12 durable execution timers and signals coordination baseline
+
+Status: done
+Estimate: 5
+Completed: April 19, 2026
+
+Why:
+
+- after `ENG-112`, operators could see per-stream durable posture, but they still had no
+  engine-owned answer for which streams were waiting on durable timers or external signals
+- durable workflow authors still had to encode timer/signal waits indirectly even though the
+  shared durable strategy already owned the truthful `200` / `202` / `204` execution posture
+- ASP.NET Core hosts still had no direct `/engine/*` filters for pending durable timers or
+  signals, which made it harder to find streams blocked on the same coordination trigger
+
+Acceptance:
+
+- `Cephalon.Abstractions` exposes host-agnostic pending timer/signal contracts for durable
+  coordination
+- `DurableExecutionStepResult<TOutput>` and `DurableExecutionRuntimeState` can surface pending
+  timers/signals without inventing a second workflow registry beside the shared durable runtime
+- `/engine/snapshot` and ASP.NET Core operator routes can filter active durable state by pending
+  timer or pending signal
+- docs, backlog, roadmap, project memory, reference docs, and focused composition/hosting/tooling
+  coverage stay aligned with the shipped timer/signal scope while compensation helpers remain
+  later work
+
+Delivered:
+
+- `Cephalon.Abstractions` now exposes `DurableExecutionPendingTimer` and
+  `DurableExecutionPendingSignal`; `DurableExecutionRuntimeState` now carries pending timers,
+  pending signals, derived coordination posture, and next-due timer data; and
+  `IDurableExecutionRuntimeStateCatalog` now adds pending timer/signal filter methods
+- `Cephalon.Behaviors.Patterns` now lets `DurableExecutionStepResult<TOutput>` declare
+  `pendingTimers` plus `pendingSignals`, and `DurableExecutionStrategy` now emits a truthful
+  `waiting` posture with `202` when no local output remains but durable timer/signal coordination
+  is still pending
+- `Cephalon.Engine` continues projecting the same `snapshot.DurableExecutionStates` surface, now
+  with additive timer/signal coordination data instead of creating a second workflow snapshot
+- `Cephalon.AspNetCore` now exposes `/engine/durable-executions/runtime/timers`,
+  `/engine/durable-executions/runtime/timers/{timerId}`,
+  `/engine/durable-executions/runtime/signals`, and
+  `/engine/durable-executions/runtime/signals/{signalId}` as direct operator routes derived from
+  the same shared runtime truth
+- focused composition, hosting, package-surface, component-doc, roadmap, backlog, project-memory,
+  and reference-doc coverage now lock the durable timer/signal coordination contract plus the new
+  public surface
+
 ### ENG-069 Event-dispatch runtime operator-surface baseline
 
 Status: done
@@ -2807,3 +2855,4 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-110 phase 12 explicit saga choreography eventing bridge baseline: `Cephalon.Eventing.Behaviors` now exposes `AddBehaviorEventingBridge()` as the explicit companion-pack bridge that swaps the fallback in-memory choreography publisher for an outbox-backed eventing handoff when `EventDrivenIntegration`, publishing, and a real `IOutbox` are all active; the bridge preserves explicit `ISagaChoreographyPublisher` overrides, projects capability `eventing.behaviors.saga-choreography` plus the `saga-choreography-bridges` runtime surface, and keeps choreography ownership in `Cephalon.Behaviors.Patterns` instead of collapsing it into the `Cephalon.Eventing` baseline — **Shipped** · targeted composition tests 25/25 + tooling tests 236/236
 - ENG-111 phase 12 durable execution runtime catalog baseline: `Cephalon.Abstractions` now exposes `DurableExecutionRuntimeDescriptor` plus `IDurableExecutionRuntimeCatalog`, `Cephalon.Behaviors.Patterns` now derives the catalog from shared durable behavior topology plus registered implementation types, `Cephalon.Engine` now projects `snapshot.DurableExecutions`, and `Cephalon.AspNetCore` now exposes `/engine/durable-executions` plus behavior/module/transport drill-down routes while replay-progress and failure-posture follow-through remain later — **Shipped** · composition tests 1/1 + hosting tests 1/1 + package-surface tests 158/158
 - ENG-112 phase 12 durable execution runtime state and failure-posture baseline: `Cephalon.Abstractions` now exposes `DurableExecutionRuntimeState` plus `IDurableExecutionRuntimeStateCatalog`, `Cephalon.Behaviors.Patterns` now reports per-stream durable observations from `DurableExecutionStrategy`, `Cephalon.Engine` now projects `snapshot.DurableExecutionStates`, and `Cephalon.AspNetCore` now exposes `/engine/durable-executions/runtime` plus stream/behavior/module/transport drill-down routes while higher-level timers/signals/compensation helpers remain later — **Shipped** · composition tests 2/2 + hosting tests 2/2 + package-surface tests 158/158
+- ENG-113 phase 12 durable execution timers and signals coordination baseline: `Cephalon.Abstractions` now exposes `DurableExecutionPendingTimer` plus `DurableExecutionPendingSignal`, `Cephalon.Behaviors.Patterns` now lets `DurableExecutionStepResult<TOutput>` and `DurableExecutionStrategy` surface durable `waiting` posture plus pending timer/signal coordination through the shared runtime state catalog, and `Cephalon.AspNetCore` now exposes `/engine/durable-executions/runtime/timers*` plus `/engine/durable-executions/runtime/signals*` while compensation helpers remain later — **Shipped** · GitHub issue `#510` · composition tests 2/2 + hosting tests 2/2 + package-surface tests 161/161

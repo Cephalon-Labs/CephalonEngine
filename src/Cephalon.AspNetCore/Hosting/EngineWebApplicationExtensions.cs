@@ -178,6 +178,30 @@ public static class EngineWebApplicationExtensions
                 return TypedResults.Ok(catalog?.GetByTransportId(transportId) ?? []);
             })
             .WithName("GetCephalonDurableExecutionStatesByTransport");
+        engineGroup.MapGet("/durable-executions/runtime/timers", (HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeStateCatalog>();
+                return TypedResults.Ok(catalog?.GetWithPendingTimers() ?? []);
+            })
+            .WithName("GetCephalonDurableExecutionStatesWithPendingTimers");
+        engineGroup.MapGet("/durable-executions/runtime/timers/{timerId}", (string timerId, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeStateCatalog>();
+                return TypedResults.Ok(catalog?.GetByPendingTimerId(timerId) ?? []);
+            })
+            .WithName("GetCephalonDurableExecutionStatesByPendingTimer");
+        engineGroup.MapGet("/durable-executions/runtime/signals", (HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeStateCatalog>();
+                return TypedResults.Ok(catalog?.GetWithPendingSignals() ?? []);
+            })
+            .WithName("GetCephalonDurableExecutionStatesWithPendingSignals");
+        engineGroup.MapGet("/durable-executions/runtime/signals/{signalId}", (string signalId, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeStateCatalog>();
+                return TypedResults.Ok(catalog?.GetByPendingSignalId(signalId) ?? []);
+            })
+            .WithName("GetCephalonDurableExecutionStatesByPendingSignal");
         engineGroup.MapGet("/durable-executions/runtime/streams/{streamId}", (string streamId, HttpContext httpContext) =>
             {
                 var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeStateCatalog>();

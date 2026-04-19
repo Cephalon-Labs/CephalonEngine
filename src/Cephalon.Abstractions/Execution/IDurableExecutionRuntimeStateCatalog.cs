@@ -39,6 +39,32 @@ public interface IDurableExecutionRuntimeStateCatalog
     IReadOnlyList<DurableExecutionRuntimeState> GetByTransportId(string transportId);
 
     /// <summary>
+    /// Gets the reported durable-execution state entries that currently have one or more pending timers.
+    /// </summary>
+    /// <returns>The matching state entries, or an empty list when no stream currently reports pending timers.</returns>
+    IReadOnlyList<DurableExecutionRuntimeState> GetWithPendingTimers();
+
+    /// <summary>
+    /// Gets the reported durable-execution state entries that currently have one or more pending signals.
+    /// </summary>
+    /// <returns>The matching state entries, or an empty list when no stream currently reports pending signals.</returns>
+    IReadOnlyList<DurableExecutionRuntimeState> GetWithPendingSignals();
+
+    /// <summary>
+    /// Gets the reported durable-execution state entries that currently include the requested pending timer.
+    /// </summary>
+    /// <param name="timerId">The stable timer identifier to filter by.</param>
+    /// <returns>The matching state entries, or an empty list when no stream currently reports that timer.</returns>
+    IReadOnlyList<DurableExecutionRuntimeState> GetByPendingTimerId(string timerId);
+
+    /// <summary>
+    /// Gets the reported durable-execution state entries that currently include the requested pending signal.
+    /// </summary>
+    /// <param name="signalId">The stable signal identifier to filter by.</param>
+    /// <returns>The matching state entries, or an empty list when no stream currently reports that signal.</returns>
+    IReadOnlyList<DurableExecutionRuntimeState> GetByPendingSignalId(string signalId);
+
+    /// <summary>
     /// Tries to get the latest reported durable-execution state for one stream.
     /// </summary>
     /// <param name="streamId">The stable stream identifier to resolve.</param>

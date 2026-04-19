@@ -1,3 +1,5 @@
+using Cephalon.Abstractions.Execution;
+
 namespace Cephalon.Behaviors.Patterns.Runtime;
 
 /// <summary>
@@ -17,6 +19,8 @@ internal sealed class DurableExecutionExecutionReport
         int appendedEventCount = 0,
         bool producedOutput = false,
         bool isCompleted = false,
+        IReadOnlyList<DurableExecutionPendingTimer>? pendingTimers = null,
+        IReadOnlyList<DurableExecutionPendingSignal>? pendingSignals = null,
         string? error = null,
         IReadOnlyDictionary<string, string>? metadata = null)
     {
@@ -67,6 +71,8 @@ internal sealed class DurableExecutionExecutionReport
         AppendedEventCount = appendedEventCount;
         ProducedOutput = producedOutput;
         IsCompleted = isCompleted;
+        PendingTimers = NormalizePendingTimers(pendingTimers);
+        PendingSignals = NormalizePendingSignals(pendingSignals);
         Error = string.IsNullOrWhiteSpace(error) ? null : error.Trim();
         Metadata = metadata is null
             ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -95,7 +101,70 @@ internal sealed class DurableExecutionExecutionReport
 
     public bool IsCompleted { get; }
 
+    public IReadOnlyList<DurableExecutionPendingTimer> PendingTimers { get; }
+
+    public IReadOnlyList<DurableExecutionPendingSignal> PendingSignals { get; }
+
     public string? Error { get; }
 
     public IReadOnlyDictionary<string, string> Metadata { get; }
+
+    private static DurableExecutionPendingTimer[] NormalizePendingTimers(
+        IReadOnlyList<DurableExecutionPendingTimer>? pendingTimers)
+    {
+        if (pendingTimers is null || pendingTimers.Count == 0)
+        {
+            return [];
+        }
+
+        if (pendingTimers.Any(static timer => timer is null))
+        {
+            throw new ArgumentException("Pending timers cannot contain null entries.", nameof(pendingTimers));
+        }
+
+        var duplicateTimerId = pendingTimers
+            .GroupBy(static timer => timer.Id, StringComparer.OrdinalIgnoreCase)
+            .FirstOrDefault(static group => group.Count() > 1)?
+            .Key;
+        if (!string.IsNullOrWhiteSpace(duplicateTimerId))
+        {
+            throw new ArgumentException(
+                $"Pending timer id '{duplicateTimerId}' was declared more than once.",
+                nameof(pendingTimers));
+        }
+
+        return pendingTimers
+            .OrderBy(static timer => timer.DueAtUtc)
+            .ThenBy(static timer => timer.Id, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+    }
+
+    private static DurableExecutionPendingSignal[] NormalizePendingSignals(
+        IReadOnlyList<DurableExecutionPendingSignal>? pendingSignals)
+    {
+        if (pendingSignals is null || pendingSignals.Count == 0)
+        {
+            return [];
+        }
+
+        if (pendingSignals.Any(static signal => signal is null))
+        {
+            throw new ArgumentException("Pending signals cannot contain null entries.", nameof(pendingSignals));
+        }
+
+        var duplicateSignalId = pendingSignals
+            .GroupBy(static signal => signal.Id, StringComparer.OrdinalIgnoreCase)
+            .FirstOrDefault(static group => group.Count() > 1)?
+            .Key;
+        if (!string.IsNullOrWhiteSpace(duplicateSignalId))
+        {
+            throw new ArgumentException(
+                $"Pending signal id '{duplicateSignalId}' was declared more than once.",
+                nameof(pendingSignals));
+        }
+
+        return pendingSignals
+            .OrderBy(static signal => signal.Id, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+    }
 }

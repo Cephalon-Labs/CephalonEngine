@@ -12897,6 +12897,170 @@ Parameters:
 
 ## Namespace Cephalon.Abstractions.Execution
 
+<a id="type-cephalon-abstractions-execution-durableexecutionpendingsignal"></a>
+
+### `DurableExecutionPendingSignal`
+
+Describes one durable-execution signal that is currently pending for a workflow stream.
+
+#### Declaration
+```csharp
+public sealed class DurableExecutionPendingSignal
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-execution-durableexecutionpendingsignal-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `DurableExecutionPendingSignal`
+
+```csharp
+DurableExecutionPendingSignal(string id, string displayName, string description, string payloadType, IReadOnlyDictionary<string, string> metadata)
+```
+
+Initializes a new instance of the `DurableExecutionPendingSignal` class.
+
+Parameters:
+- `id`: The stable signal identifier within the durable workflow.
+- `displayName`: The operator-facing signal name.
+- `description`: A human-readable description of why the signal is awaited.
+- `payloadType`: The expected payload type name for the awaited signal when one is known.
+- `metadata`: Additional operator-facing metadata describing the signal.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionpendingsignal-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable signal description when one was supplied.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionpendingsignal-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing signal name.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionpendingsignal-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable signal identifier within the durable workflow.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionpendingsignal-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets additional operator-facing metadata describing the signal.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionpendingsignal-payloadtype"></a>
+
+##### `PayloadType`
+
+```csharp
+string PayloadType { get; }
+```
+
+Gets the expected payload type name when the awaited signal declares one.
+
+<a id="type-cephalon-abstractions-execution-durableexecutionpendingtimer"></a>
+
+### `DurableExecutionPendingTimer`
+
+Describes one durable-execution timer that is currently pending for a workflow stream.
+
+#### Declaration
+```csharp
+public sealed class DurableExecutionPendingTimer
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-execution-durableexecutionpendingtimer-ctor-system-string-system-datetimeoffset-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `DurableExecutionPendingTimer`
+
+```csharp
+DurableExecutionPendingTimer(string id, DateTimeOffset dueAtUtc, string displayName, string description, IReadOnlyDictionary<string, string> metadata)
+```
+
+Initializes a new instance of the `DurableExecutionPendingTimer` class.
+
+Parameters:
+- `id`: The stable timer identifier within the durable workflow.
+- `dueAtUtc`: The UTC timestamp when the timer is next due.
+- `displayName`: The operator-facing timer name.
+- `description`: A human-readable description of why the timer is pending.
+- `metadata`: Additional operator-facing metadata describing the timer.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionpendingtimer-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable timer description when one was supplied.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionpendingtimer-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing timer name.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionpendingtimer-dueatutc"></a>
+
+##### `DueAtUtc`
+
+```csharp
+DateTimeOffset DueAtUtc { get; }
+```
+
+Gets the UTC timestamp when the timer is next due.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionpendingtimer-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable timer identifier within the durable workflow.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionpendingtimer-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets additional operator-facing metadata describing the timer.
+
 <a id="type-cephalon-abstractions-execution-durableexecutionruntimedescriptor"></a>
 
 ### `DurableExecutionRuntimeDescriptor`
@@ -12936,7 +13100,7 @@ Parameters:
 - `requiredFeatureFlagIds`: The ordered feature-flag identifiers that must resolve to enabled before the workflow can execute.
 - `eventSourcingEnabled`: Indicates whether the authored behavior topology explicitly enables event sourcing for the workflow.
 - `requiresEventStore`: Indicates whether the runtime contract requires an `IEventStore` to execute truthfully.
-- `successStatusCodes`: The HTTP success status codes the shared durable execution strategy can return for local output, continuation-only work, or completion without output.
+- `successStatusCodes`: The HTTP success status codes the shared durable execution strategy can return for local output, continuation-only work, pending timer/signal coordination, or completion without output.
 - `metadata`: Additional operator-facing metadata describing replay semantics.
 
 #### Properties
@@ -13104,12 +13268,12 @@ public sealed class DurableExecutionRuntimeState
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-execution-durableexecutionruntimestate-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-int64-system-nullable-system-int64-system-nullable-system-int32-system-int32-system-boolean-system-boolean-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+<a id="member-m-cephalon-abstractions-execution-durableexecutionruntimestate-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-int64-system-nullable-system-int64-system-nullable-system-int32-system-int32-system-boolean-system-boolean-system-int32-system-int32-system-int32-system-int32-system-int32-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-durableexecutionpendingtimer-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-durableexecutionpendingsignal-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
 
 ##### `DurableExecutionRuntimeState`
 
 ```csharp
-DurableExecutionRuntimeState(string BehaviorId, string StreamId, string SourceModuleId, IReadOnlyList<string> TransportIds, string LastOutcome, string LastStage, DateTimeOffset? LastObservedAtUtc, long? LastReplayedVersion, long? LastKnownVersion, int? LastHttpStatusCode, int LastAppendedEventCount, bool LastStepProducedOutput, bool LastStepCompleted, int StartedCount, int SucceededCount, int ContinuationCount, int CompletedCount, int FailedCount, string LastError, IReadOnlyDictionary<string, string> Metadata)
+DurableExecutionRuntimeState(string BehaviorId, string StreamId, string SourceModuleId, IReadOnlyList<string> TransportIds, string LastOutcome, string LastStage, DateTimeOffset? LastObservedAtUtc, long? LastReplayedVersion, long? LastKnownVersion, int? LastHttpStatusCode, int LastAppendedEventCount, bool LastStepProducedOutput, bool LastStepCompleted, int StartedCount, int SucceededCount, int ContinuationCount, int CompletedCount, int FailedCount, IReadOnlyList<DurableExecutionPendingTimer> PendingTimers, IReadOnlyList<DurableExecutionPendingSignal> PendingSignals, string LastError, IReadOnlyDictionary<string, string> Metadata)
 ```
 
 Describes the latest operator-facing runtime state reported for one durable-execution stream.
@@ -13133,6 +13297,8 @@ Parameters:
 - `ContinuationCount`: The number of `continuation-staged` observations reported so far.
 - `CompletedCount`: The number of `completed` observations reported so far.
 - `FailedCount`: The number of `failed` observations reported so far.
+- `PendingTimers`: The durable timers that are currently pending for this stream.
+- `PendingSignals`: The durable signals that are currently awaited for this stream.
 - `LastError`: The latest operator-facing error summary when the durable step reported a failure.
 - `Metadata`: The operator-facing metadata captured by the latest report.
 
@@ -13178,6 +13344,16 @@ bool ContinuationPending { get; }
 
 Gets a value indicating whether the latest report says the workflow still has continuation work pending.
 
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-coordinationpending"></a>
+
+##### `CoordinationPending`
+
+```csharp
+bool CoordinationPending { get; }
+```
+
+Gets a value indicating whether the latest runtime state still has pending continuation, timer, or signal work.
+
 <a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-failedcount"></a>
 
 ##### `FailedCount`
@@ -13187,6 +13363,26 @@ int FailedCount { get; set; }
 ```
 
 The number of `failed` observations reported so far.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-haspendingsignals"></a>
+
+##### `HasPendingSignals`
+
+```csharp
+bool HasPendingSignals { get; }
+```
+
+Gets a value indicating whether one or more durable signals are currently awaited for the stream.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-haspendingtimers"></a>
+
+##### `HasPendingTimers`
+
+```csharp
+bool HasPendingTimers { get; }
+```
+
+Gets a value indicating whether one or more durable timers are currently pending for the stream.
 
 <a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-isfailed"></a>
 
@@ -13307,6 +13503,36 @@ IReadOnlyDictionary<string, string> Metadata { get; set; }
 ```
 
 The operator-facing metadata captured by the latest report.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-nexttimerdueatutc"></a>
+
+##### `NextTimerDueAtUtc`
+
+```csharp
+DateTimeOffset? NextTimerDueAtUtc { get; }
+```
+
+Gets the earliest UTC due timestamp across the currently pending timers when one exists.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-pendingsignals"></a>
+
+##### `PendingSignals`
+
+```csharp
+IReadOnlyList<DurableExecutionPendingSignal> PendingSignals { get; set; }
+```
+
+The durable signals that are currently awaited for this stream.
+
+<a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-pendingtimers"></a>
+
+##### `PendingTimers`
+
+```csharp
+IReadOnlyList<DurableExecutionPendingTimer> PendingTimers { get; set; }
+```
+
+The durable timers that are currently pending for this stream.
 
 <a id="member-p-cephalon-abstractions-execution-durableexecutionruntimestate-sourcemoduleid"></a>
 
@@ -13927,6 +14153,36 @@ Returns: The matching state entries, or an empty list when the behavior has not 
 Parameters:
 - `behaviorId`: The stable durable behavior identifier to filter by.
 
+<a id="member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getbypendingsignalid-system-string"></a>
+
+##### `GetByPendingSignalId`
+
+```csharp
+IReadOnlyList<DurableExecutionRuntimeState> GetByPendingSignalId(string signalId)
+```
+
+Gets the reported durable-execution state entries that currently include the requested pending signal.
+
+Returns: The matching state entries, or an empty list when no stream currently reports that signal.
+
+Parameters:
+- `signalId`: The stable signal identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getbypendingtimerid-system-string"></a>
+
+##### `GetByPendingTimerId`
+
+```csharp
+IReadOnlyList<DurableExecutionRuntimeState> GetByPendingTimerId(string timerId)
+```
+
+Gets the reported durable-execution state entries that currently include the requested pending timer.
+
+Returns: The matching state entries, or an empty list when no stream currently reports that timer.
+
+Parameters:
+- `timerId`: The stable timer identifier to filter by.
+
 <a id="member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getbysourcemodule-system-string"></a>
 
 ##### `GetBySourceModule`
@@ -13971,6 +14227,30 @@ Returns: The matching state entries, or an empty list when none reported runtime
 
 Parameters:
 - `transportId`: The stable transport identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getwithpendingsignals"></a>
+
+##### `GetWithPendingSignals`
+
+```csharp
+IReadOnlyList<DurableExecutionRuntimeState> GetWithPendingSignals()
+```
+
+Gets the reported durable-execution state entries that currently have one or more pending signals.
+
+Returns: The matching state entries, or an empty list when no stream currently reports pending signals.
+
+<a id="member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getwithpendingtimers"></a>
+
+##### `GetWithPendingTimers`
+
+```csharp
+IReadOnlyList<DurableExecutionRuntimeState> GetWithPendingTimers()
+```
+
+Gets the reported durable-execution state entries that currently have one or more pending timers.
+
+Returns: The matching state entries, or an empty list when no stream currently reports pending timers.
 
 <a id="member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-trygetbystreamid-system-string-cephalon-abstractions-execution-durableexecutionruntimestate"></a>
 

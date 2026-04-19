@@ -38,7 +38,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Abstractions.Execution`
 
-- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-execution): 14 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution)
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-execution): 16 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution)
 
 ## `Cephalon.Abstractions.Features`
 

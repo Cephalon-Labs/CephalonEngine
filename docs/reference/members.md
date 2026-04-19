@@ -2070,6 +2070,9 @@ Browse the published API surface by public member.
 - [CoordinationHint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationoperationalstep-coordinationhint): `Properties` on `DatabaseMigrationOperationalStep` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CoordinationHint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing coordination guidance for shared physical targets, when available.
   - `string CoordinationHint { get; }`
+- [CoordinationPending](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-coordinationpending): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=CoordinationPending&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets a value indicating whether the latest runtime state still has pending continuation, timer, or signal work.
+  - `bool CoordinationPending { get; }`
 - [CoordinationRequiredGroupCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationoperationalplaybook-coordinationrequiredgroupcount): `Properties` on `DatabaseMigrationOperationalPlaybook` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CoordinationRequiredGroupCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of physical-target execution groups that span multiple logical migration targets.
   - `int CoordinationRequiredGroupCount { get; }`
@@ -2571,6 +2574,12 @@ Browse the published API surface by public member.
 - [Description](cephalon-engine.md#member-p-cephalon-engine-diagnostics-diagnosticsconvention-description): `Properties` on `DiagnosticsConvention` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Description&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - The operator-facing explanation of what the convention covers.
   - `string Description { get; set; }`
+- [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionpendingsignal-description): `Properties` on `DurableExecutionPendingSignal` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the human-readable signal description when one was supplied.
+  - `string Description { get; }`
+- [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionpendingtimer-description): `Properties` on `DurableExecutionPendingTimer` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the human-readable timer description when one was supplied.
+  - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-description): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the human-readable durable workflow description.
   - `string Description { get; }`
@@ -2835,6 +2844,12 @@ Browse the published API surface by public member.
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-displayname): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - The human-readable dependency name.
   - `string DisplayName { get; set; }`
+- [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionpendingsignal-displayname): `Properties` on `DurableExecutionPendingSignal` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the operator-facing signal name.
+  - `string DisplayName { get; }`
+- [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionpendingtimer-displayname): `Properties` on `DurableExecutionPendingTimer` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the operator-facing timer name.
+  - `string DisplayName { get; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-displayname): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the operator-facing durable workflow name.
   - `string DisplayName { get; }`
@@ -2973,15 +2988,24 @@ Browse the published API surface by public member.
 - [DropletMetadataEndpoint](cephalon-observability-digitalocean.md#member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-dropletmetadataendpoint): `Properties` on `DigitalOceanTelemetryExportOptions` in `Cephalon.Observability.DigitalOcean.Configuration` (`Cephalon.Observability.DigitalOcean`) [Browse](browse.html?q=DropletMetadataEndpoint&assembly=Cephalon.Observability.DigitalOcean&namespace=Cephalon.Observability.DigitalOcean.Configuration&scope=members)
   - Gets or sets the base URI of the Droplet metadata-service endpoint.
   - `string DropletMetadataEndpoint { get; set; }`
+- [DueAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionpendingtimer-dueatutc): `Properties` on `DurableExecutionPendingTimer` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DueAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the UTC timestamp when the timer is next due.
+  - `DateTimeOffset DueAtUtc { get; }`
 - [DuplexStreaming](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-transportfeatures-duplexstreaming): `Fields` on `TransportFeatures` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=DuplexStreaming&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Indicates duplex-streaming interactions are supported.
   - `const TransportFeatures DuplexStreaming`
+- [DurableExecutionPendingSignal](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-durableexecutionpendingsignal-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `DurableExecutionPendingSignal` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DurableExecutionPendingSignal&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Initializes a new instance of the `DurableExecutionPendingSignal` class.
+  - `DurableExecutionPendingSignal(string id, string displayName, string description, string payloadType, IReadOnlyDictionary<string, string> metadata)`
+- [DurableExecutionPendingTimer](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-durableexecutionpendingtimer-ctor-system-string-system-datetimeoffset-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `DurableExecutionPendingTimer` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DurableExecutionPendingTimer&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Initializes a new instance of the `DurableExecutionPendingTimer` class.
+  - `DurableExecutionPendingTimer(string id, DateTimeOffset dueAtUtc, string displayName, string description, IReadOnlyDictionary<string, string> metadata)`
 - [DurableExecutionRuntimeDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-durableexecutionruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DurableExecutionRuntimeDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Creates a durable-execution runtime descriptor.
   - `DurableExecutionRuntimeDescriptor(string id, string displayName, string description, string behaviorType, string inputType, string stateType, string outputType, string executionMode, string sourceModuleId, IReadOnlyList<string> transportIds, IReadOnlyList<string> requiredFeatureFlagIds, bool eventSourcingEnabled, bool requiresEventStore, IReadOnlyList<int> successStatusCodes, IReadOnlyDictionary<string, string> metadata)`
-- [DurableExecutionRuntimeState](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-durableexecutionruntimestate-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-int64-system-nullable-system-int64-system-nullable-system-int32-system-int32-system-boolean-system-boolean-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DurableExecutionRuntimeState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+- [DurableExecutionRuntimeState](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-durableexecutionruntimestate-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-int64-system-nullable-system-int64-system-nullable-system-int32-system-int32-system-boolean-system-boolean-system-int32-system-int32-system-int32-system-int32-system-int32-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-durableexecutionpendingtimer-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-durableexecutionpendingsignal-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DurableExecutionRuntimeState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Describes the latest operator-facing runtime state reported for one durable-execution stream.
-  - `DurableExecutionRuntimeState(string BehaviorId, string StreamId, string SourceModuleId, IReadOnlyList<string> TransportIds, string LastOutcome, string LastStage, DateTimeOffset? LastObservedAtUtc, long? LastReplayedVersion, long? LastKnownVersion, int? LastHttpStatusCode, int LastAppendedEventCount, bool LastStepProducedOutput, bool LastStepCompleted, int StartedCount, int SucceededCount, int ContinuationCount, int CompletedCount, int FailedCount, string LastError, IReadOnlyDictionary<string, string> Metadata)`
+  - `DurableExecutionRuntimeState(string BehaviorId, string StreamId, string SourceModuleId, IReadOnlyList<string> TransportIds, string LastOutcome, string LastStage, DateTimeOffset? LastObservedAtUtc, long? LastReplayedVersion, long? LastKnownVersion, int? LastHttpStatusCode, int LastAppendedEventCount, bool LastStepProducedOutput, bool LastStepCompleted, int StartedCount, int SucceededCount, int ContinuationCount, int CompletedCount, int FailedCount, IReadOnlyList<DurableExecutionPendingTimer> PendingTimers, IReadOnlyList<DurableExecutionPendingSignal> PendingSignals, string LastError, IReadOnlyDictionary<string, string> Metadata)`
 - [DurableExecutions](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-idurableexecutionruntimecatalog-durableexecutions): `Properties` on `IDurableExecutionRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DurableExecutions&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets all active durable-execution workflows visible to the current runtime.
   - `IReadOnlyList<DurableExecutionRuntimeDescriptor> DurableExecutions { get; }`
@@ -4356,6 +4380,12 @@ Browse the published API surface by public member.
 - [GetByPattern](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviorcatalog-getbypattern-system-string): `Methods` on `IBehaviorCatalog` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByPattern&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets all behaviors registered with the specified pattern.
   - `IReadOnlyList<BehaviorTopologyDescriptor> GetByPattern(string pattern)`
+- [GetByPendingSignalId](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getbypendingsignalid-system-string): `Methods` on `IDurableExecutionRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByPendingSignalId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the reported durable-execution state entries that currently include the requested pending signal.
+  - `IReadOnlyList<DurableExecutionRuntimeState> GetByPendingSignalId(string signalId)`
+- [GetByPendingTimerId](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getbypendingtimerid-system-string): `Methods` on `IDurableExecutionRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByPendingTimerId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the reported durable-execution state entries that currently include the requested pending timer.
+  - `IReadOnlyList<DurableExecutionRuntimeState> GetByPendingTimerId(string timerId)`
 - [GetByProvider](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventstreamcatalog-getbyprovider-system-string): `Methods` on `EventStreamCatalog` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=GetByProvider&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
   - Gets the event-stream descriptors backed by the requested provider identifier.
   - `IReadOnlyList<EventStreamDescriptor> GetByProvider(string provider)`
@@ -4503,6 +4533,12 @@ Browse the published API surface by public member.
 - [GetWireName](cephalon-abstractions.md#member-m-cephalon-abstractions-transports-restendpointoverridebindingmodeextensions-getwirename-cephalon-abstractions-transports-restendpointoverridebindingmode): `Methods` on `RestEndpointOverrideBindingModeExtensions` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetWireName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the stable wire name used by JSON serialization and compatibility metadata for the override binding mode.
   - `string GetWireName(this RestEndpointOverrideBindingMode bindingMode)`
+- [GetWithPendingSignals](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getwithpendingsignals): `Methods` on `IDurableExecutionRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetWithPendingSignals&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the reported durable-execution state entries that currently have one or more pending signals.
+  - `IReadOnlyList<DurableExecutionRuntimeState> GetWithPendingSignals()`
+- [GetWithPendingTimers](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getwithpendingtimers): `Methods` on `IDurableExecutionRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetWithPendingTimers&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the reported durable-execution state entries that currently have one or more pending timers.
+  - `IReadOnlyList<DurableExecutionRuntimeState> GetWithPendingTimers()`
 - [GovernanceOverrideSummaries](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointauthoringpolicyauthoringstyledescriptor-governanceoverridesummaries): `Properties` on `RestEndpointAuthoringPolicyAuthoringStyleDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=GovernanceOverrideSummaries&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the grouped host-governance override-rule outcomes summarized by rule for this authoring style.
   - `IReadOnlyList<RestEndpointGovernanceOverrideSummaryDescriptor> GovernanceOverrideSummaries { get; }`
@@ -4602,6 +4638,12 @@ Browse the published API surface by public member.
 - [HasMore](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryqueryresult-hasmore): `Properties` on `AuditHistoryQueryResult` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasMore&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets a value indicating whether more entries remain beyond this page.
   - `bool HasMore { get; }`
+- [HasPendingSignals](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-haspendingsignals): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasPendingSignals&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets a value indicating whether one or more durable signals are currently awaited for the stream.
+  - `bool HasPendingSignals { get; }`
+- [HasPendingTimers](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-haspendingtimers): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasPendingTimers&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets a value indicating whether one or more durable timers are currently pending for the stream.
+  - `bool HasPendingTimers { get; }`
 - [HasProcessedAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-data-iinbox-hasprocessedasync-system-string-system-threading-cancellationtoken): `Methods` on `IInbox` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasProcessedAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Determines whether the requested message identifier has already been recorded as processed.
   - `ValueTask<bool> HasProcessedAsync(string messageId, CancellationToken cancellationToken)`
@@ -5136,6 +5178,12 @@ Browse the published API surface by public member.
 - [Id](cephalon-engine.md#member-p-cephalon-engine-diagnostics-diagnosticeventdefinition-id): `Properties` on `DiagnosticEventDefinition` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Id&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - The stable numeric event identifier.
   - `int Id { get; set; }`
+- [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionpendingsignal-id): `Properties` on `DurableExecutionPendingSignal` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the stable signal identifier within the durable workflow.
+  - `string Id { get; }`
+- [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionpendingtimer-id): `Properties` on `DurableExecutionPendingTimer` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the stable timer identifier within the durable workflow.
+  - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-id): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the stable durable behavior identifier.
   - `string Id { get; }`
@@ -6246,6 +6294,12 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroleruntimedescriptor-metadata): `Properties` on `DatabaseRoleRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets optional runtime metadata associated with the role.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionpendingsignal-metadata): `Properties` on `DurableExecutionPendingSignal` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets additional operator-facing metadata describing the signal.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionpendingtimer-metadata): `Properties` on `DurableExecutionPendingTimer` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets additional operator-facing metadata describing the timer.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-metadata): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets additional operator-facing metadata describing replay semantics.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -6732,6 +6786,9 @@ Browse the published API surface by public member.
 - [NextAttemptAtUtc](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-modeling-entityframeworkoutboxentry-nextattemptatutc): `Properties` on `EntityFrameworkOutboxEntry` in `Cephalon.Data.EntityFramework.Modeling` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=NextAttemptAtUtc&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling&scope=members)
   - Gets or sets the time at which the outbox row becomes eligible for the next dispatch attempt, when delayed retry is in effect.
   - `DateTimeOffset? NextAttemptAtUtc { get; set; }`
+- [NextTimerDueAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-nexttimerdueatutc): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=NextTimerDueAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the earliest UTC due timestamp across the currently pending timers when one exists.
+  - `DateTimeOffset? NextTimerDueAtUtc { get; }`
 - [NoContent](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorresult-nocontent-system-string-system-string): `Methods` on `BehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=NoContent&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Creates a no-content result.
   - `BehaviorResultDescriptor NoContent(string message, string code)`
@@ -7302,9 +7359,18 @@ Browse the published API surface by public member.
 - [Payload](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxmessage-payload): `Properties` on `OutboxMessage` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Payload&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the serialized payload that should be delivered later.
   - `string Payload { get; }`
+- [PayloadType](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionpendingsignal-payloadtype): `Properties` on `DurableExecutionPendingSignal` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=PayloadType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - Gets the expected payload type name when the awaited signal declares one.
+  - `string PayloadType { get; }`
 - [PendingMigrationTargetCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasetopologyoperationalsummary-pendingmigrationtargetcount): `Properties` on `DatabaseTopologyOperationalSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PendingMigrationTargetCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of migration targets that are not yet `Succeeded`.
   - `int PendingMigrationTargetCount { get; }`
+- [PendingSignals](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-pendingsignals): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=PendingSignals&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The durable signals that are currently awaited for this stream.
+  - `IReadOnlyList<DurableExecutionPendingSignal> PendingSignals { get; set; }`
+- [PendingTimers](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-pendingtimers): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=PendingTimers&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
+  - The durable timers that are currently pending for this stream.
+  - `IReadOnlyList<DurableExecutionPendingTimer> PendingTimers { get; set; }`
 - [PermitLimit](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-ratelimitingoverrideselection-permitlimit): `Properties` on `RateLimitingOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=PermitLimit&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the maximum permits available per limiter window or bucket.
   - `int? PermitLimit { get; }`
