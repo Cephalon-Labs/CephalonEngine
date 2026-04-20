@@ -226,8 +226,9 @@ public sealed class DataRuntimePackTests
         var graph = Assert.Single(executionGraphs.Graphs, item => item.Id == "data-cdc-capture-flow");
         Assert.Equal("data-runtime", graph.SourceModuleId);
         Assert.Equal("resolve-cdc-captures", graph.EntryNodeId);
-        Assert.Equal(4, graph.Nodes.Count);
-        Assert.Equal(3, graph.Edges.Count);
+        Assert.Equal(5, graph.Nodes.Count);
+        Assert.Equal(4, graph.Edges.Count);
+        Assert.Contains(graph.Nodes, item => item.Id == "acknowledge-cdc-progress");
 
         var hostedExecution = Assert.Single(hostedExecutions.HostedExecutions, item => item.Id == "data-cdc-capture-pump");
         Assert.Equal("data-runtime", hostedExecution.SourceModuleId);
@@ -302,6 +303,7 @@ public sealed class DataRuntimePackTests
         Assert.Equal("0/16B6CA0", state.LastCheckpoint);
         Assert.Equal("shared-data-runtime", state.Metadata["captureExecution"]);
         Assert.Equal("phase13-shared", state.Metadata["captureRuntime"]);
+        Assert.Equal("not-required", state.Metadata["acknowledgement"]);
         Assert.Equal(CdcCaptureFreshnessStates.Fresh, state.Freshness.State);
         Assert.Equal(CdcCaptureLagStates.Current, state.Lag.State);
         Assert.Equal(CdcCapturePublicationStates.PendingPublication, state.Publication.State);
@@ -318,5 +320,225 @@ public sealed class DataRuntimePackTests
         Assert.Equal(CdcCapturePublicationStates.PendingPublication, snapshotState.Publication.State);
 
         await hostedService.StopAsync(CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task AddDataSharedCdcExecutionPumpAcknowledgesDurableProgressAfterSuccessfulStaging()
+    {
+        var executionState = new TestCdcExecutionState();
+        executionState.EnqueueResult(new CdcCaptureExecutionResult(
+            messages:
+            [
+                new OutboxMessage(
+                    id: "cdc-msg-010",
+                    channelId: "tenant-events",
+                    messageType: "tenant.profile.changed",
+                    payload: """{"tenantId":"tenant-010"}""",
+                    occurredAtUtc: DateTimeOffset.Parse("2026-04-20T11:00:00Z", CultureInfo.InvariantCulture))
+            ],
+            changeId: "lsn-0010",
+            checkpoint: "0/16B6D10",
+            freshness: new CdcCaptureFreshnessStatus(
+                CdcCaptureFreshnessStates.Fresh,
+                DateTimeOffset.Parse("2026-04-20T11:05:00Z", CultureInfo.InvariantCulture),
+                "The capture is still within the expected freshness window."),
+            lag: new CdcCaptureLagStatus(
+                CdcCaptureLagStates.Current,
+                pendingChangeCount: 0,
+                description: "The capture is caught up with the source stream.")));
+
+        var services = new ServiceCollection();
+        services.AddSingleton(executionState);
+        services.AddScoped<ICdcCapture, TestAcknowledgingCdcCapture>();
+        services.AddScoped<IOutbox, TestOutbox>();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"]));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new Phase8CatalogModule());
+            engine.AddData(options =>
+            {
+                options.EnableCdcExecution = true;
+                options.CdcPollingIntervalSeconds = 600;
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var hostedService = Assert.Single(provider.GetServices<IHostedService>());
+        await hostedService.StartAsync(CancellationToken.None);
+
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        await executionState.WaitForAcknowledgementAsync(timeout.Token);
+
+        var acknowledgement = Assert.Single(executionState.Acknowledgements);
+        Assert.Equal("tenant-profile-cdc", acknowledgement.CdcCaptureId);
+        Assert.Equal("tenant-event-outbox", acknowledgement.OutboxId);
+        Assert.Equal(1, acknowledgement.CapturedChangeCount);
+        Assert.Equal(1, acknowledgement.StagedMessageCount);
+        Assert.Equal("lsn-0010", acknowledgement.ChangeId);
+        Assert.Equal("0/16B6D10", acknowledgement.Checkpoint);
+        Assert.Single(acknowledgement.Messages);
+
+        var catalog = provider.GetRequiredService<ICdcCaptureRuntimeStateCatalog>();
+        var state = catalog.GetById("tenant-profile-cdc");
+        Assert.NotNull(state);
+        Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, state.LastOutcome);
+        Assert.Equal("lsn-0010", state.LastChangeId);
+        Assert.Equal("0/16B6D10", state.LastCheckpoint);
+        Assert.Equal("performed", state.Metadata["acknowledgement"]);
+        Assert.EndsWith(nameof(TestAcknowledgingCdcCapture), state.Metadata["acknowledgerServiceType"], StringComparison.Ordinal);
+
+        await hostedService.StopAsync(CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task AddDataSharedCdcExecutionPumpDoesNotAcknowledgeProgressWhenOutboxStagingFails()
+    {
+        var executionState = new TestCdcExecutionState
+        {
+            ThrowOnEnqueue = true
+        };
+        executionState.EnqueueResult(new CdcCaptureExecutionResult(
+            messages:
+            [
+                new OutboxMessage(
+                    id: "cdc-msg-020",
+                    channelId: "tenant-events",
+                    messageType: "tenant.profile.changed",
+                    payload: """{"tenantId":"tenant-020"}""",
+                    occurredAtUtc: DateTimeOffset.Parse("2026-04-20T11:10:00Z", CultureInfo.InvariantCulture))
+            ],
+            changeId: "lsn-0020",
+            checkpoint: "0/16B6D20"));
+
+        var services = new ServiceCollection();
+        services.AddSingleton(executionState);
+        services.AddScoped<ICdcCapture, TestAcknowledgingCdcCapture>();
+        services.AddScoped<IOutbox, TestOutbox>();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"]));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new Phase8CatalogModule());
+            engine.AddData(options =>
+            {
+                options.EnableCdcExecution = true;
+                options.CdcPollingIntervalSeconds = 600;
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var hostedService = Assert.Single(provider.GetServices<IHostedService>());
+        await hostedService.StartAsync(CancellationToken.None);
+
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        await executionState.WaitForEnqueueAttemptAsync(timeout.Token);
+
+        var catalog = provider.GetRequiredService<ICdcCaptureRuntimeStateCatalog>();
+        var state = await WaitForStateAsync(catalog, CdcCaptureRuntimeOutcomes.Failed);
+        Assert.Equal(CdcCaptureRuntimeOutcomes.Failed, state.LastOutcome);
+        Assert.Equal("outbox-stage", state.Metadata["failureKind"]);
+        Assert.Equal(0, executionState.AcknowledgementAttemptCount);
+        Assert.Empty(executionState.Acknowledgements);
+
+        await hostedService.StopAsync(CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task AddDataSharedCdcExecutionPumpKeepsCheckpointPendingWhenAcknowledgementFails()
+    {
+        var executionState = new TestCdcExecutionState
+        {
+            ThrowOnAcknowledge = true
+        };
+        executionState.EnqueueResult(new CdcCaptureExecutionResult(
+            messages:
+            [
+                new OutboxMessage(
+                    id: "cdc-msg-030",
+                    channelId: "tenant-events",
+                    messageType: "tenant.profile.changed",
+                    payload: """{"tenantId":"tenant-030"}""",
+                    occurredAtUtc: DateTimeOffset.Parse("2026-04-20T11:20:00Z", CultureInfo.InvariantCulture))
+            ],
+            changeId: "lsn-0030",
+            checkpoint: "0/16B6D30",
+            publication: new CdcCapturePublicationStatus(
+                CdcCapturePublicationStates.PendingPublication,
+                pendingPublicationCount: 1,
+                description: "One publication is waiting for downstream dispatch.")));
+
+        var services = new ServiceCollection();
+        services.AddSingleton(executionState);
+        services.AddScoped<ICdcCapture, TestAcknowledgingCdcCapture>();
+        services.AddScoped<IOutbox, TestOutbox>();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"]));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new Phase8CatalogModule());
+            engine.AddData(options =>
+            {
+                options.EnableCdcExecution = true;
+                options.CdcPollingIntervalSeconds = 600;
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var hostedService = Assert.Single(provider.GetServices<IHostedService>());
+        await hostedService.StartAsync(CancellationToken.None);
+
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        await executionState.WaitForAcknowledgementAttemptAsync(timeout.Token);
+
+        var catalog = provider.GetRequiredService<ICdcCaptureRuntimeStateCatalog>();
+        var state = await WaitForStateAsync(catalog, CdcCaptureRuntimeOutcomes.Failed);
+        Assert.Equal(CdcCaptureRuntimeOutcomes.Failed, state.LastOutcome);
+        Assert.Null(state.LastChangeId);
+        Assert.Null(state.LastCheckpoint);
+        Assert.Equal(1, state.LastProducedMessageCount);
+        Assert.Equal(1, state.TotalProducedMessageCount);
+        Assert.Equal(CdcCapturePublicationStates.CaptureFailed, state.Publication.State);
+        Assert.Equal(1, state.Publication.PendingPublicationCount);
+        Assert.Equal("acknowledgement", state.Metadata["failureKind"]);
+        Assert.Equal("failed", state.Metadata["acknowledgement"]);
+        Assert.Equal("lsn-0030", state.Metadata["pendingChangeId"]);
+        Assert.Equal("0/16B6D30", state.Metadata["pendingCheckpoint"]);
+        Assert.Equal(1, executionState.AcknowledgementAttemptCount);
+        Assert.Empty(executionState.Acknowledgements);
+        Assert.Single(executionState.StagedMessages);
+
+        await hostedService.StopAsync(CancellationToken.None);
+    }
+
+    private static async Task<CdcCaptureRuntimeState> WaitForStateAsync(
+        ICdcCaptureRuntimeStateCatalog catalog,
+        string expectedOutcome)
+    {
+        ArgumentNullException.ThrowIfNull(catalog);
+        ArgumentException.ThrowIfNullOrWhiteSpace(expectedOutcome);
+
+        for (var attempt = 0; attempt < 50; attempt++)
+        {
+            var state = catalog.GetById("tenant-profile-cdc");
+            if (state is not null &&
+                string.Equals(state.LastOutcome, expectedOutcome, StringComparison.OrdinalIgnoreCase))
+            {
+                return state;
+            }
+
+            await Task.Delay(20);
+        }
+
+        var finalState = catalog.GetById("tenant-profile-cdc");
+        Assert.NotNull(finalState);
+        Assert.Equal(expectedOutcome, finalState.LastOutcome);
+        return finalState;
     }
 }

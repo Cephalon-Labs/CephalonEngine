@@ -19,7 +19,7 @@
 - additive projection contracts and runtime projection catalogs
 - additive inbox contracts and runtime inbox catalogs
 - additive outbox contracts, dispatch-policy contracts, and runtime outbox catalogs
-- additive CDC capture contracts plus runtime CDC descriptor, state, freshness, lag, and publication-posture catalogs
+- additive CDC capture contracts plus runtime CDC descriptor, state, freshness, lag, publication-posture, and staged-batch acknowledgement catalogs
 - additive cell-boundary, cell-route, cell-health-isolation, and configuration-driven cell-traffic-automation contracts, runtime catalogs, and technology-surface projection
 - additive database-role contracts and runtime database-role catalogs
 - additive database-migration contracts and runtime database-migration catalogs
@@ -143,8 +143,12 @@ host-only data mesh or sync registry. When the shared CDC runtime-state catalog 
 same engine-first snapshot model now also carries `snapshot.CdcCaptureStates`, including latest
 capture outcome, counts, checkpoints, errors, typed freshness windows, typed lag posture,
 pending-publication posture, and optional linked `OutboxDispatchState` from the existing
-event-dispatch runtime truth. Provider-specific federation, self-serve data infrastructure, and
-provider-native CDC execution loops remain later work over those same catalogs.
+event-dispatch runtime truth. The same shared execution story now also leaves room for replay-safe
+provider checkpoint advancement through `CdcCaptureExecutionAcknowledgement` plus
+`ICdcCaptureAcknowledger`, so future provider-native capture loops can acknowledge durable
+progress only after the shared runtime stages the linked outbox publications successfully.
+Provider-specific federation, self-serve data infrastructure, and provider-native CDC execution
+loops remain later work over those same catalogs.
 
 Just as importantly, this package exists to lower ceremony for consumer apps. The engine should absorb repetitive composition, configuration binding, runtime wiring, introspection, and companion-pack coordination so Cephalon-based apps spend less code on plumbing and declarations, emit less boilerplate, and stay focused on project-specific business logic.
 

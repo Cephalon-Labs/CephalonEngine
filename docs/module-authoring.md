@@ -938,7 +938,7 @@ Current baseline behavior:
 - inbox descriptors stay grounded in module ownership through `sourceModuleId`, provider, mode, optional channel ids, and operator-facing metadata such as idempotency scope
 - outbox descriptors stay grounded in module ownership through `sourceModuleId`, provider, mode, optional channel ids, and operator-facing metadata such as dispatch ownership
 - authorization-policy descriptors stay host-agnostic and can publish supported `RBAC`, `ABAC`, and `Policy` modes without leaking ASP.NET Core or identity-provider types into `Cephalon.Abstractions`
-- the CDC baseline is intentionally descriptor-first: provider-specific WAL/change-stream execution still belongs to the owning module or a future companion pack, while the engine owns the catalog, outbox linkage, and validation
+- the CDC baseline is intentionally descriptor-first: provider-specific WAL/change-stream execution still belongs to the owning module or a future companion pack, while the engine owns the catalog, outbox linkage, and validation; when a provider implementation must defer durable checkpoint advancement until outbox staging succeeds, the active `ICdcCapture` can also implement `ICdcCaptureAcknowledger` so the shared runtime delivers one post-stage `CdcCaptureExecutionAcknowledgement`
 - invalid CDC capture source-module ownership or missing outbox references fail at build time instead of leaking broken operator metadata
 
 ## Package manifest contract

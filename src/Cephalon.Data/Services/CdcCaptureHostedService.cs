@@ -47,6 +47,11 @@ internal sealed class CdcCaptureHostedService(
             LogLevel.Warning,
             new EventId(6206, nameof(LogCaptureBatchFailed)),
             "CDC capture '{CdcCaptureId}' failed while running through outbox '{OutboxId}'.");
+    private static readonly Action<ILogger, string, string, Exception?> LogCaptureAcknowledgementFailedMessage =
+        LoggerMessage.Define<string, string>(
+            LogLevel.Warning,
+            new EventId(6207, nameof(LogCaptureAcknowledgementFailed)),
+            "CDC capture '{CdcCaptureId}' staged publications through outbox '{OutboxId}', but failed while acknowledging provider progress.");
 
     private readonly HashSet<string> reportedConfigurationFailures = new(StringComparer.OrdinalIgnoreCase);
     private readonly HashSet<string> reportedImplementationWarnings = new(StringComparer.OrdinalIgnoreCase);
@@ -254,6 +259,62 @@ internal sealed class CdcCaptureHostedService(
             ? CdcCaptureRuntimeOutcomes.Captured
             : CdcCaptureRuntimeOutcomes.Idle;
         var publication = CreateDefaultPublication(result.Publication, stagedMessageCount);
+        var acknowledgementMetadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        if (capture is ICdcCaptureAcknowledger acknowledger)
+        {
+            try
+            {
+                await acknowledger.AcknowledgeAsync(
+                    new CdcCaptureExecutionAcknowledgement(
+                        descriptor.Id,
+                        descriptor.OutboxId,
+                        result.Messages,
+                        result.CapturedChangeCount,
+                        result.ChangeId,
+                        result.Checkpoint,
+                        result.Metadata),
+                    cancellationToken).ConfigureAwait(false);
+
+                acknowledgementMetadata["acknowledgement"] = "performed";
+                acknowledgementMetadata["acknowledgerServiceType"] =
+                    acknowledger.GetType().FullName ?? acknowledger.GetType().Name;
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
+            }
+            catch (Exception exception)
+            {
+                LogCaptureAcknowledgementFailed(logger, descriptor.Id, descriptor.OutboxId, exception);
+                await reporter.ReportAsync(
+                    new CdcCaptureExecutionReport(
+                        cdcCaptureId: descriptor.Id,
+                        outcome: CdcCaptureRuntimeOutcomes.Failed,
+                        observedAtUtc: DateTimeOffset.UtcNow,
+                        capturedChangeCount: result.CapturedChangeCount,
+                        producedMessageCount: stagedMessageCount,
+                        error: exception.Message,
+                        freshness: result.Freshness,
+                        lag: result.Lag,
+                        publication: publication,
+                        metadata: CreateExecutionMetadata(
+                            descriptor,
+                            capture,
+                            outbox,
+                            result.Metadata,
+                            CreateAcknowledgementFailureMetadata(
+                                acknowledger,
+                                result,
+                                stagedMessageCount))),
+                    cancellationToken).ConfigureAwait(false);
+                return;
+            }
+        }
+        else
+        {
+            acknowledgementMetadata["acknowledgement"] = "not-required";
+        }
 
         await reporter.ReportAsync(
             new CdcCaptureExecutionReport(
@@ -272,11 +333,10 @@ internal sealed class CdcCaptureHostedService(
                     capture,
                     outbox,
                     result.Metadata,
-                    new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-                    {
-                        ["capturedChangeCount"] = result.CapturedChangeCount.ToString(CultureInfo.InvariantCulture),
-                        ["producedMessageCount"] = stagedMessageCount.ToString(CultureInfo.InvariantCulture)
-                    })),
+                    CreateExecutionOutcomeMetadata(
+                        result.CapturedChangeCount,
+                        stagedMessageCount,
+                        acknowledgementMetadata))),
             cancellationToken).ConfigureAwait(false);
 
         if (outcome == CdcCaptureRuntimeOutcomes.Captured)
@@ -386,6 +446,56 @@ internal sealed class CdcCaptureHostedService(
         return merged;
     }
 
+    private static Dictionary<string, string> CreateExecutionOutcomeMetadata(
+        int capturedChangeCount,
+        int producedMessageCount,
+        IReadOnlyDictionary<string, string>? acknowledgementMetadata)
+    {
+        var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["capturedChangeCount"] = capturedChangeCount.ToString(CultureInfo.InvariantCulture),
+            ["producedMessageCount"] = producedMessageCount.ToString(CultureInfo.InvariantCulture)
+        };
+
+        if (acknowledgementMetadata is not null)
+        {
+            foreach (var pair in acknowledgementMetadata)
+            {
+                metadata[pair.Key] = pair.Value;
+            }
+        }
+
+        return metadata;
+    }
+
+    private static Dictionary<string, string> CreateAcknowledgementFailureMetadata(
+        ICdcCaptureAcknowledger acknowledger,
+        CdcCaptureExecutionResult result,
+        int stagedMessageCount)
+    {
+        var metadata = CreateExecutionOutcomeMetadata(
+            result.CapturedChangeCount,
+            stagedMessageCount,
+            new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["failureKind"] = "acknowledgement",
+                ["acknowledgement"] = "failed",
+                ["acknowledgerServiceType"] = acknowledger.GetType().FullName ?? acknowledger.GetType().Name
+            });
+
+        if (!string.IsNullOrWhiteSpace(result.ChangeId))
+        {
+            metadata["pendingChangeId"] = result.ChangeId;
+        }
+
+        if (!string.IsNullOrWhiteSpace(result.Checkpoint))
+        {
+            metadata["pendingCheckpoint"] = result.Checkpoint;
+        }
+
+        return metadata;
+    }
+
     private static void LogCaptureLoopStarted(ILogger logger, int pollingIntervalSeconds) =>
         LogCaptureLoopStartedMessage(logger, pollingIntervalSeconds, null);
 
@@ -411,4 +521,7 @@ internal sealed class CdcCaptureHostedService(
 
     private static void LogCaptureBatchFailed(ILogger logger, string cdcCaptureId, string outboxId, Exception exception) =>
         LogCaptureBatchFailedMessage(logger, cdcCaptureId, outboxId, exception);
+
+    private static void LogCaptureAcknowledgementFailed(ILogger logger, string cdcCaptureId, string outboxId, Exception exception) =>
+        LogCaptureAcknowledgementFailedMessage(logger, cdcCaptureId, outboxId, exception);
 }

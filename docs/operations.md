@@ -1260,6 +1260,10 @@ Current payload highlights:
 - each runtime-state entry now also carries typed `freshness`, `lag`, and `publication` answers so
   provider packs can surface freshness windows, pending source-change counts, and pending
   publication counts without forcing hosts or operators to parse ad-hoc metadata
+- shared in-process execution can now also report `acknowledgement` and `acknowledgerServiceType`
+  metadata on successful staged-batch acknowledgement, while acknowledgement failures keep
+  `failureKind = acknowledgement` plus pending checkpoint/change-id metadata visible without
+  falsely advancing the durable checkpoint answer
 - the catalog projects active captures even before the first provider report arrives, so operators
   can still see declared ownership and linked outbox identity before execution starts
 - when the linked publication path already reports runtime truth, `outboxDispatchState` carries the
@@ -1268,8 +1272,10 @@ Current payload highlights:
 - when `AddData()` enables the shared CDC execution substrate, the same runtime also exposes the
   `data-cdc-capture-flow` execution graph plus the `data-cdc-capture-pump` hosted execution
   through `/engine/execution-graphs`, `/engine/hosted-executions`, `/engine/runtime-story`, and
-  `/engine/snapshot`; the per-capture CDC routes remain the detailed ownership and runtime-state
-  truth for each active capture
+  `/engine/snapshot`; that execution graph now includes the explicit
+  `acknowledge-cdc-progress` step between outbox staging and runtime-state reporting, while the
+  per-capture CDC routes remain the detailed ownership and runtime-state truth for each active
+  capture
 - the same runtime-state catalog is also available through `/engine/snapshot` in
   `CdcCaptureStates` when operators want one merged runtime answer
 - drill-down routes narrow the same runtime-state catalog by capture id, source module, provider,

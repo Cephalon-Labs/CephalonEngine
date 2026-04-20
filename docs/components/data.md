@@ -9,7 +9,7 @@
 - provides the first reusable bridge between phase-8 data contracts and future provider-specific packs such as `Cephalon.Data.EntityFramework`
 - provides the first reusable CDC runtime-state reporting/catalog bridge over `ICdcCaptureCatalog` plus optional linked outbox dispatch truth
 - extends that same CDC bridge with typed freshness, lag, and publication-posture reporting
-- provides an optional shared in-process CDC hosted-execution substrate that resolves active `ICdcCapture` plus `IOutbox` implementations, stages outbox publications, and reports lifecycle truth through the existing execution/runtime-story surfaces
+- provides an optional shared in-process CDC hosted-execution substrate that resolves active `ICdcCapture` plus `IOutbox` implementations, stages outbox publications, optionally acknowledges provider progress after stage success, and reports lifecycle truth through the existing execution/runtime-story surfaces
 
 ## Main surfaces
 
@@ -42,10 +42,12 @@ and pending-publication answers through `CdcCaptureExecutionReport`.
 When `DataRuntimeOptions.EnableCdcExecution` is enabled, the same package now also registers a
 shared `BackgroundService` pump that resolves active `ICdcCapture` implementations by
 `CdcCaptureId`, reads one bounded `CdcCaptureExecutionResult`, stages the returned
-`OutboxMessage` publications through the matching `IOutbox.OutboxId`, and reports the resulting
-runtime posture back through the shared catalog. That pump stays introspectable through the
-`data.cdc.execution` capability, the `data-cdc-capture-flow` execution graph, the
-`data-cdc-capture-pump` hosted execution, and the existing runtime-story/snapshot surfaces.
+`OutboxMessage` publications through the matching `IOutbox.OutboxId`, optionally calls
+`ICdcCaptureAcknowledger` with one staged `CdcCaptureExecutionAcknowledgement` only after the
+outbox handoff succeeds, and reports the resulting runtime posture back through the shared catalog.
+That pump stays introspectable through the `data.cdc.execution` capability, the
+`data-cdc-capture-flow` execution graph, the `data-cdc-capture-pump` hosted execution, and the
+existing runtime-story/snapshot surfaces.
 
 When the outbox path already reports downstream runtime truth, the same catalog can conservatively
 merge that dispatch posture into `OutboxDispatchState` and the typed CDC publication answer. That

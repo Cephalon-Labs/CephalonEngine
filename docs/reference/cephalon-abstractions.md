@@ -7795,6 +7795,120 @@ IReadOnlyList<string> Tags { get; }
 
 Gets descriptive tags associated with the CDC capture.
 
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionacknowledgement"></a>
+
+### `CdcCaptureExecutionAcknowledgement`
+
+Describes one CDC batch that the shared runtime has already staged through the linked outbox and is now safe to acknowledge durably.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionAcknowledgement
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionacknowledgement-ctor-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-data-outboxmessage-system-nullable-system-int32-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionAcknowledgement`
+
+```csharp
+CdcCaptureExecutionAcknowledgement(string cdcCaptureId, string outboxId, IReadOnlyList<OutboxMessage> messages, int? capturedChangeCount, string changeId, string checkpoint, IReadOnlyDictionary<string, string> metadata)
+```
+
+Initializes a new instance of the `CdcCaptureExecutionAcknowledgement` class.
+
+Parameters:
+- `cdcCaptureId`: The stable CDC capture identifier that owns the staged batch.
+- `outboxId`: The stable outbox identifier that already accepted the staged publications.
+- `messages`: The outbox publications that the shared runtime staged successfully.
+- `capturedChangeCount`: The number of source changes observed by the staged batch. When omitted, Cephalon uses the staged-message count as the default captured-change answer.
+- `changeId`: The latest provider-facing change identifier when one is available.
+- `checkpoint`: The latest provider-facing checkpoint or cursor when one is available.
+- `metadata`: Optional operator-facing metadata captured alongside the staged batch.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionacknowledgement-capturedchangecount"></a>
+
+##### `CapturedChangeCount`
+
+```csharp
+int CapturedChangeCount { get; }
+```
+
+Gets the number of source changes observed by the staged batch.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionacknowledgement-cdccaptureid"></a>
+
+##### `CdcCaptureId`
+
+```csharp
+string CdcCaptureId { get; }
+```
+
+Gets the stable CDC capture identifier that owns the staged batch.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionacknowledgement-changeid"></a>
+
+##### `ChangeId`
+
+```csharp
+string ChangeId { get; }
+```
+
+Gets the latest provider-facing change identifier when one was reported.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionacknowledgement-checkpoint"></a>
+
+##### `Checkpoint`
+
+```csharp
+string Checkpoint { get; }
+```
+
+Gets the latest provider-facing checkpoint or cursor when one was reported.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionacknowledgement-messages"></a>
+
+##### `Messages`
+
+```csharp
+IReadOnlyList<OutboxMessage> Messages { get; }
+```
+
+Gets the outbox publications that the shared runtime staged successfully.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionacknowledgement-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional operator-facing metadata captured alongside the staged batch.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionacknowledgement-outboxid"></a>
+
+##### `OutboxId`
+
+```csharp
+string OutboxId { get; }
+```
+
+Gets the stable outbox identifier that already accepted the staged publications.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionacknowledgement-stagedmessagecount"></a>
+
+##### `StagedMessageCount`
+
+```csharp
+int StagedMessageCount { get; }
+```
+
+Gets the number of publications that the shared runtime staged successfully.
+
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionresult"></a>
 
 ### `CdcCaptureExecutionResult`
@@ -11733,6 +11847,35 @@ Returns: The captured batch result for the active CDC surface.
 
 Parameters:
 - `cancellationToken`: The token that cancels the capture stream.
+
+<a id="type-cephalon-abstractions-data-icdccaptureacknowledger"></a>
+
+### `ICdcCaptureAcknowledger`
+
+Allows an active `ICdcCapture` implementation to acknowledge durable progress only after the shared runtime stages the linked outbox publications successfully.
+
+#### Declaration
+```csharp
+public interface ICdcCaptureAcknowledger
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureacknowledger-acknowledgeasync-cephalon-abstractions-data-cdccaptureexecutionacknowledgement-system-threading-cancellationtoken"></a>
+
+##### `AcknowledgeAsync`
+
+```csharp
+ValueTask AcknowledgeAsync(CdcCaptureExecutionAcknowledgement acknowledgement, CancellationToken cancellationToken)
+```
+
+Commits or acknowledges provider-facing progress for one staged CDC batch.
+
+Returns: A task that completes when the provider-facing acknowledgement has finished.
+
+Parameters:
+- `acknowledgement`: The staged batch that is now safe to acknowledge durably.
+- `cancellationToken`: The token that cancels the acknowledgement operation.
 
 <a id="type-cephalon-abstractions-data-icdccapturecatalog"></a>
 

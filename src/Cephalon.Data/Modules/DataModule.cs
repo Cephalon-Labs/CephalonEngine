@@ -107,7 +107,7 @@ internal sealed class DataModule(DataRuntimeOptions options) : ModuleBase, IExec
         graphs.Add(new ExecutionGraphDescriptor(
             id: DataRuntimeIds.CdcExecutionGraphId,
             displayName: "Shared CDC Capture Flow",
-            description: "Resolves active CDC capture implementations, reads one bounded capture batch, stages publications through the linked outbox, and reports runtime observations.",
+            description: "Resolves active CDC capture implementations, reads one bounded capture batch, stages publications through the linked outbox, optionally acknowledges durable provider progress, and reports runtime observations.",
             sourceModuleId: Descriptor.Id,
             entryNodeId: "resolve-cdc-captures",
             nodes:
@@ -137,6 +137,14 @@ internal sealed class DataModule(DataRuntimeOptions options) : ModuleBase, IExec
                     capabilityKey: "data.cdc.execution",
                     tags: ["data", "cdc", "outbox"]),
                 new ExecutionGraphNodeDescriptor(
+                    id: "acknowledge-cdc-progress",
+                    displayName: "Acknowledge CDC Progress",
+                    description: "Lets acknowledgement-capable captures commit provider-facing progress only after the shared runtime staged the linked outbox publications successfully.",
+                    kind: "activity",
+                    moduleId: Descriptor.Id,
+                    capabilityKey: "data.cdc.execution",
+                    tags: ["data", "cdc", "acknowledgement"]),
+                new ExecutionGraphNodeDescriptor(
                     id: "report-cdc-runtime-observation",
                     displayName: "Report CDC Runtime Observation",
                     description: "Projects the latest capture outcome back into the shared CDC runtime-state catalog.",
@@ -157,6 +165,10 @@ internal sealed class DataModule(DataRuntimeOptions options) : ModuleBase, IExec
                     displayName: "captured"),
                 new ExecutionGraphEdgeDescriptor(
                     fromNodeId: "stage-outbox-publications",
+                    toNodeId: "acknowledge-cdc-progress",
+                    displayName: "staged"),
+                new ExecutionGraphEdgeDescriptor(
+                    fromNodeId: "acknowledge-cdc-progress",
                     toNodeId: "report-cdc-runtime-observation",
                     displayName: "reported")
             ],

@@ -2170,6 +2170,32 @@ Delivered:
 - `Cephalon.AspNetCore` now exposes `/engine/cell-traffic-automations`, `/engine/cell-traffic-automations/{automationId}`, `/engine/cell-traffic-automations/modules/{moduleId}`, `/engine/cell-traffic-automations/routes/{routeId}`, `/engine/cell-traffic-automations/source-cells/{cellId}`, `/engine/cell-traffic-automations/target-cells/{cellId}`, and `/engine/cell-traffic-automations/health-isolations/{healthIsolationId}` as the direct operator routes for the merged traffic-automation catalog
 - targeted coverage now proves catalog composition, invalid-route rejection, technology-surface projection, runtime-snapshot projection, ASP.NET Core route publication, and public package-surface alignment through composition tests `2/2`, hosting tests `1/1`, and tooling tests `169/169`
 
+### ENG-129 Phase 13 shared CDC acknowledgement and checkpoint-commit baseline
+
+Status: done
+Estimate: 5
+Completed: April 20, 2026
+
+Why:
+
+- `ENG-128` shipped the shared in-process CDC pump, but the execution contract still had no post-stage acknowledgement seam for provider-native captures that must defer durable checkpoint advancement until outbox staging succeeds
+- provider packs needed one additive staged-batch acknowledgement contract so a capture can commit replay-sensitive progress only after the shared runtime confirms that the linked outbox accepted the publications
+- the shared execution/runtime-story surface still skipped the checkpoint-commit step entirely, so operators could not read one truthful answer for capture, stage, acknowledge, and report transitions
+
+Acceptance:
+
+- `Cephalon.Abstractions` exposes an additive staged-batch acknowledgement contract for CDC execution without leaking provider-specific checkpoint mechanics into the engine core
+- `Cephalon.Data` updates the shared CDC pump so acknowledgement-capable captures are called only after linked outbox staging succeeds, acknowledgement failures stay replay-safe, and pending checkpoint/change-id metadata remains operator-visible when acknowledgement fails
+- the shared execution/runtime-story contract keeps the new acknowledgement step introspectable through the existing capability, execution graph, hosted execution, and snapshot surfaces instead of inventing a second runtime registry
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the shipped slice while remaining explicit that concrete provider-native capture implementations and alternate CDC topologies are still later work
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships `CdcCaptureExecutionAcknowledgement` plus `ICdcCaptureAcknowledger`, so an acknowledgement-capable `ICdcCapture` implementation can receive one staged batch with stable capture/outbox ids, staged messages, counts, change ids, checkpoints, and metadata only after the shared runtime stages the linked outbox publications successfully
+- `Cephalon.Data` now extends `CdcCaptureHostedService` so the shared pump optionally acknowledges staged batches after outbox success, reports `acknowledgement` plus `acknowledgerServiceType` metadata on success, and reports `failureKind = acknowledgement` together with pending checkpoint/change-id metadata when durable acknowledgement fails
+- `Cephalon.Data` now keeps the operational graph truthful through the additive `acknowledge-cdc-progress` node in `data-cdc-capture-flow`, so `/engine/execution-graphs`, `/engine/hosted-executions`, `/engine/runtime-story`, and `/engine/snapshot` reflect the real shared CDC loop without replacing `/engine/cdc-captures*`
+- targeted coverage now proves no-ack baseline behavior, acknowledgement success, outbox-stage failure behavior, acknowledgement failure behavior, hosting surface publication, and package-surface alignment through composition tests `9/9`, hosting tests `1/1`, and tooling tests `2/2`
+
 ### ENG-128 Phase 13 shared CDC hosted-execution substrate baseline
 
 Status: done

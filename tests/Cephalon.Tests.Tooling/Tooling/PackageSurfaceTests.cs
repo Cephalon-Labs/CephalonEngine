@@ -165,8 +165,10 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Data.ICommand<>),
             typeof(global::Cephalon.Abstractions.Data.ICommandHandler<>),
             typeof(global::Cephalon.Abstractions.Data.ICommandHandler<,>),
+            typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionAcknowledgement),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureDescriptor),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionResult),
+            typeof(global::Cephalon.Abstractions.Data.ICdcCaptureAcknowledger),
             typeof(global::Cephalon.Abstractions.Data.ICdcCapture),
             typeof(global::Cephalon.Abstractions.Data.ICdcCaptureCatalog),
             typeof(global::Cephalon.Abstractions.Data.ICdcCaptureContributor),
@@ -2527,10 +2529,22 @@ public sealed class PackageSurfaceTests
     [Fact]
     public void CdcCaptureRuntimeContractsExposeSnapshotSurface()
     {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureAcknowledger)
+            .GetMethod("AcknowledgeAsync", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCapture)
             .GetProperty("CdcCaptureId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCapture)
             .GetMethod("CaptureAsync", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionAcknowledgement)
+            .GetProperty("CdcCaptureId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionAcknowledgement)
+            .GetProperty("OutboxId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionAcknowledgement)
+            .GetProperty("Messages", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionAcknowledgement)
+            .GetProperty("StagedMessageCount", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionAcknowledgement)
+            .GetProperty("Checkpoint", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionResult)
             .GetProperty("Messages", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionResult)

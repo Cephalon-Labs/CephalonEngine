@@ -3349,7 +3349,8 @@ note: visible
         var executionGraph = Assert.Single(executionGraphs, item => item.Id == "data-cdc-capture-flow");
         Assert.Equal("data-runtime", executionGraph.SourceModuleId);
         Assert.Equal("resolve-cdc-captures", executionGraph.EntryNodeId);
-        Assert.Equal(4, executionGraph.Nodes.Count);
+        Assert.Equal(5, executionGraph.Nodes.Count);
+        Assert.Contains(executionGraph.Nodes, item => item.Id == "acknowledge-cdc-progress");
 
         Assert.NotNull(story);
         var storyHostedExecution = Assert.Single(story.HostedExecutions, item => item.HostedExecutionId == "data-cdc-capture-pump");
@@ -3363,6 +3364,7 @@ note: visible
         Assert.Equal(1, state.LastProducedMessageCount);
         Assert.Equal("shared-data-runtime", state.Metadata["captureExecution"]);
         Assert.Equal("phase13-shared-hosting", state.Metadata["captureRuntime"]);
+        Assert.Equal("not-required", state.Metadata["acknowledgement"]);
         Assert.Equal(CdcCapturePublicationStates.PendingPublication, state.Publication.State);
         Assert.Equal(1, state.Publication.PendingPublicationCount);
 
