@@ -166,12 +166,15 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Data.ICommandHandler<>),
             typeof(global::Cephalon.Abstractions.Data.ICommandHandler<,>),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionAcknowledgement),
+            typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeDescriptor),
+            typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeSummary),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureDescriptor),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionResult),
             typeof(global::Cephalon.Abstractions.Data.ICdcCaptureAcknowledger),
             typeof(global::Cephalon.Abstractions.Data.ICdcCapture),
             typeof(global::Cephalon.Abstractions.Data.ICdcCaptureCatalog),
             typeof(global::Cephalon.Abstractions.Data.ICdcCaptureContributor),
+            typeof(global::Cephalon.Abstractions.Data.ICdcCaptureExecutionRuntimeCatalog),
             typeof(global::Cephalon.Abstractions.Data.ICdcCaptureRegistry),
             typeof(global::Cephalon.Abstractions.Data.ICdcCaptureRuntimeStateCatalog),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureFreshnessStates),
@@ -788,6 +791,11 @@ public sealed class PackageSurfaceTests
         AssertExportedTypes(
             typeof(global::Cephalon.Data.Registration.DataEngineBuilderExtensions).Assembly,
             typeof(global::Cephalon.Data.Configuration.DataRuntimeOptions),
+            typeof(global::Cephalon.Data.Services.CdcCaptureExecutionReport),
+            typeof(global::Cephalon.Data.Services.CdcCaptureRuntimeOutcomes),
+            typeof(global::Cephalon.Data.Services.ICdcCaptureRuntimeReporter),
+            typeof(global::Cephalon.Data.Services.ICdcCaptureExecutionRuntimeContributor),
+            typeof(global::Cephalon.Data.Services.ICdcCaptureExecutionRuntimeRegistry),
             typeof(global::Cephalon.Data.Registration.DataEngineBuilderExtensions));
     }
 
@@ -2545,6 +2553,20 @@ public sealed class PackageSurfaceTests
             .GetProperty("StagedMessageCount", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionAcknowledgement)
             .GetProperty("Checkpoint", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureExecutionRuntimeCatalog)
+            .GetProperty("Runtimes", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureExecutionRuntimeCatalog)
+            .GetMethod("GetById", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeDescriptor)
+            .GetProperty("CdcCaptureIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeDescriptor)
+            .GetProperty("Summary", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeSummary)
+            .GetProperty("ReportedCdcCaptureIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeSummary)
+            .GetProperty("LastAcknowledgement", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeSummary)
+            .GetProperty("TotalCapturedChangeCount", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionResult)
             .GetProperty("Messages", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionResult)
@@ -2621,6 +2643,8 @@ public sealed class PackageSurfaceTests
             .GetProperty("CdcCaptures", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot)
             .GetProperty("CdcCaptureStates", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot)
+            .GetProperty("CdcCaptureExecutionRuntimes", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

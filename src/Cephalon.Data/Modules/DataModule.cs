@@ -48,6 +48,10 @@ internal sealed class DataModule(DataRuntimeOptions options) : ModuleBase, IExec
 
         if (options.EnableCdcExecution)
         {
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<ICdcCaptureExecutionRuntimeContributor, SharedCdcCaptureExecutionRuntimeContributor>());
+            services.TryAddSingleton<CdcCaptureExecutionRuntimeCatalog>();
+            services.TryAddSingleton<Abstractions.Data.ICdcCaptureExecutionRuntimeCatalog>(static serviceProvider =>
+                serviceProvider.GetRequiredService<CdcCaptureExecutionRuntimeCatalog>());
             services.AddHostedService<CdcCaptureHostedService>();
         }
     }
@@ -89,6 +93,7 @@ internal sealed class DataModule(DataRuntimeOptions options) : ModuleBase, IExec
                 metadata: new Dictionary<string, string>
                 {
                     ["pack"] = "Cephalon.Data",
+                    ["executionRuntimeId"] = DataRuntimeIds.CdcExecutionRuntimeId,
                     ["hostedExecutionId"] = DataRuntimeIds.CdcHostedExecutionId,
                     ["executionGraphId"] = DataRuntimeIds.CdcExecutionGraphId
                 }));

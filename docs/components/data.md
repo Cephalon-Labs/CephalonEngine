@@ -10,18 +10,24 @@
 - provides the first reusable CDC runtime-state reporting/catalog bridge over `ICdcCaptureCatalog` plus optional linked outbox dispatch truth
 - extends that same CDC bridge with typed freshness, lag, and publication-posture reporting
 - provides an optional shared in-process CDC hosted-execution substrate that resolves active `ICdcCapture` plus `IOutbox` implementations, stages outbox publications, optionally acknowledges provider progress after stage success, and reports lifecycle truth through the existing execution/runtime-story surfaces
+- provides an additive CDC execution-runtime catalog so shared or provider-specific capture runners can publish one ownership/topology answer without replacing per-capture CDC truth
 
 ## Main surfaces
 
 - `Configuration/DataRuntimeOptions.cs`
 - `Registration/DataEngineBuilderExtensions.cs`
 - `Services/CdcCaptureExecutionReport.cs`
+- `Services/CdcCaptureExecutionRuntimeCatalog.cs`
+- `Services/CdcCaptureExecutionRuntimeRegistry.cs`
 - `Services/CdcCaptureHostedService.cs`
 - `Services/CdcCaptureRuntimeStateCatalog.cs`
 - `Services/DataRuntimeIds.cs`
 - `Services/HandlerDispatchingReadStore.cs`
 - `Services/HandlerDispatchingWriteStore.cs`
+- `Services/ICdcCaptureExecutionRuntimeContributor.cs`
+- `Services/ICdcCaptureExecutionRuntimeRegistry.cs`
 - `Services/ICdcCaptureRuntimeReporter.cs`
+- `Services/SharedCdcCaptureExecutionRuntimeContributor.cs`
 
 ## How it fits
 
@@ -48,6 +54,17 @@ outbox handoff succeeds, and reports the resulting runtime posture back through 
 That pump stays introspectable through the `data.cdc.execution` capability, the
 `data-cdc-capture-flow` execution graph, the `data-cdc-capture-pump` hosted execution, and the
 existing runtime-story/snapshot surfaces.
+
+The same shared runtime now also projects one operator-facing CDC execution-runtime answer through
+`ICdcCaptureExecutionRuntimeCatalog`. The shipped `SharedCdcCaptureExecutionRuntimeContributor`
+publishes `data-cdc-capture-pump` with `executionOwnership = host-managed`,
+`executionTopology = shared-in-process-polling`, `acknowledgementMode = post-stage-provider`,
+linked `hostedExecutionId` plus `executionGraphId`, and `surface = shared-cdc-execution`, while
+`CdcCaptureExecutionRuntimeCatalog` folds the shared `ICdcCaptureRuntimeStateCatalog` into one
+aggregate `CdcCaptureExecutionRuntimeSummary` per runtime. That same ownership/topology answer now
+flows through `/engine/cdc-capture-runtimes` and `snapshot.CdcCaptureExecutionRuntimes`, so later
+provider-native or out-of-process runners can project on the same truth instead of inventing a
+second host-only runner registry beside `/engine/cdc-captures*`.
 
 When the outbox path already reports downstream runtime truth, the same catalog can conservatively
 merge that dispatch posture into `OutboxDispatchState` and the typed CDC publication answer. That

@@ -433,6 +433,24 @@ public static class EngineWebApplicationExtensions
             .WithName("GetCephalonDataProduct");
         engineGroup.MapGet("/cdc-captures", ([FromServices] ICdcCaptureCatalog catalog) => TypedResults.Ok(catalog.CdcCaptures))
             .WithName("GetCephalonCdcCaptures");
+        engineGroup.MapGet("/cdc-capture-runtimes", (HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .Runtimes ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimes");
+        engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}", (string executionRuntimeId, HttpContext httpContext) =>
+            {
+                var runtimeDescriptor = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetById(executionRuntimeId);
+
+                return runtimeDescriptor is null ? Results.NotFound() : Results.Ok(runtimeDescriptor);
+            })
+            .WithName("GetCephalonCdcCaptureRuntime");
         engineGroup.MapGet("/cdc-captures/runtime", (HttpContext httpContext) =>
             {
                 var catalog = httpContext.RequestServices.GetService<ICdcCaptureRuntimeStateCatalog>();

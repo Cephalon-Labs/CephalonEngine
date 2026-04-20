@@ -63,6 +63,9 @@
 - `Data/CdcCapturePublicationStatus.cs`
 - `Data/CdcCaptureRuntimeState.cs`
 - `Data/ICdcCaptureRuntimeStateCatalog.cs`
+- `Data/CdcCaptureExecutionRuntimeDescriptor.cs`
+- `Data/CdcCaptureExecutionRuntimeSummary.cs`
+- `Data/ICdcCaptureExecutionRuntimeCatalog.cs`
 - `Data/IReadStore.cs`
 - `Data/ProjectionDescriptor.cs`
 - `Data/InboxDescriptor.cs`
@@ -168,6 +171,13 @@ delivery.
 report latest capture posture, totals, checkpoints, errors, typed freshness/lag/publication
 posture, and optional linked `EventDispatchRuntimeState` publication posture without turning CDC
 execution into an ASP.NET Core-only or provider-specific registry.
+
+`CdcCaptureExecutionRuntimeDescriptor`, `CdcCaptureExecutionRuntimeSummary`, and
+`ICdcCaptureExecutionRuntimeCatalog` then keep the execution-topology layer host-agnostic too, so
+shared or provider-specific CDC runners can publish one operator-facing runtime answer with stable
+ownership metadata, bounded linked capture ids, aggregate latest-plus-total posture, and replay-safe
+acknowledgement visibility without inventing a second host-only runner inventory beside the
+per-capture descriptor and runtime-state catalogs.
 
 The app-model contract now also carries a contract-first resilience family through
 `ResilienceSelection`, `RetrySelection`, `TimeoutSelection`, `CircuitBreakerSelection`,

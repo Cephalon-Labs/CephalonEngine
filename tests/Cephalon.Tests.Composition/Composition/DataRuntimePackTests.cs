@@ -221,6 +221,7 @@ public sealed class DataRuntimePackTests
         var runtime = provider.GetRequiredService<Cephalon.Engine.Runtime.IRuntime>();
         var executionGraphs = provider.GetRequiredService<IExecutionRuntimeCatalog>();
         var hostedExecutions = provider.GetRequiredService<IHostedExecutionRuntimeCatalog>();
+        var cdcCaptureRuntimes = provider.GetRequiredService<ICdcCaptureExecutionRuntimeCatalog>();
 
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "data.cdc.execution");
         var graph = Assert.Single(executionGraphs.Graphs, item => item.Id == "data-cdc-capture-flow");
@@ -235,6 +236,15 @@ public sealed class DataRuntimePackTests
         Assert.Equal("background-service", hostedExecution.Kind);
         Assert.Equal("data-cdc-capture-flow", hostedExecution.ExecutionGraphId);
         Assert.True(hostedExecution.StartsWithHost);
+
+        var runtimeDescriptor = Assert.Single(cdcCaptureRuntimes.Runtimes);
+        Assert.Equal("data-cdc-capture-pump", runtimeDescriptor.Id);
+        Assert.Contains("tenant-profile-cdc", runtimeDescriptor.CdcCaptureIds);
+        Assert.Equal("host-managed", runtimeDescriptor.Metadata["executionOwnership"]);
+        Assert.Equal("shared-in-process-polling", runtimeDescriptor.Metadata["executionTopology"]);
+        Assert.Equal("post-stage-provider", runtimeDescriptor.Metadata["acknowledgementMode"]);
+        Assert.Equal("data-cdc-capture-flow", runtimeDescriptor.Metadata["executionGraphId"]);
+        Assert.False(runtimeDescriptor.Summary.HasReports);
     }
 
     [Fact]
@@ -293,6 +303,7 @@ public sealed class DataRuntimePackTests
 
         var catalog = provider.GetRequiredService<ICdcCaptureRuntimeStateCatalog>();
         var state = catalog.GetById("tenant-profile-cdc");
+        var runtimeCatalog = provider.GetRequiredService<ICdcCaptureExecutionRuntimeCatalog>();
         Assert.NotNull(state);
         Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, state.LastOutcome);
         Assert.Equal(1, state.LastCapturedChangeCount);
@@ -314,10 +325,24 @@ public sealed class DataRuntimePackTests
         Assert.Equal("cdc-msg-001", stagedMessage.Id);
         Assert.Equal("tenant-events", stagedMessage.ChannelId);
 
+        var runtimeDescriptor = runtimeCatalog.GetById("data-cdc-capture-pump");
+        Assert.NotNull(runtimeDescriptor);
+        Assert.Equal(["tenant-profile-cdc"], runtimeDescriptor.CdcCaptureIds);
+        Assert.True(runtimeDescriptor.Summary.HasReports);
+        Assert.Equal(["tenant-profile-cdc"], runtimeDescriptor.Summary.ReportedCdcCaptureIds);
+        Assert.Equal("tenant-profile-cdc", runtimeDescriptor.Summary.LastCdcCaptureId);
+        Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, runtimeDescriptor.Summary.LastOutcome);
+        Assert.Equal(1, runtimeDescriptor.Summary.TotalCapturedChangeCount);
+        Assert.Equal(1, runtimeDescriptor.Summary.TotalProducedMessageCount);
+        Assert.Equal("not-required", runtimeDescriptor.Summary.LastAcknowledgement);
+
         var snapshot = provider.GetRequiredService<IRuntimeIntrospectionSnapshotProvider>().CreateSnapshot();
         var snapshotState = Assert.Single(snapshot.CdcCaptureStates);
         Assert.Equal("tenant-profile-cdc", snapshotState.CdcCaptureId);
         Assert.Equal(CdcCapturePublicationStates.PendingPublication, snapshotState.Publication.State);
+        var snapshotRuntime = Assert.Single(snapshot.CdcCaptureExecutionRuntimes);
+        Assert.Equal("data-cdc-capture-pump", snapshotRuntime.Id);
+        Assert.Equal(2, snapshotRuntime.Summary.TotalReports);
 
         await hostedService.StopAsync(CancellationToken.None);
     }

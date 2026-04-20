@@ -1296,6 +1296,32 @@ Current note:
   topologies should stay additive over the same capture/runtime-state and execution-runtime surfaces
   instead of a second host-only registry
 
+## CDC capture execution-runtime surface
+
+`GET /engine/cdc-capture-runtimes` exposes the operator-facing CDC execution-runtime catalog
+derived from active data packs plus the shared CDC runtime-state surface.
+
+Current payload highlights:
+
+- each execution runtime carries a stable `id`, `displayName`, `description`, bounded
+  `cdcCaptureIds`, and operator-facing `metadata`
+- `summary` carries the aggregate latest-plus-total runtime answer for that execution runtime,
+  including reported capture ids, latest outcome/observation time, latest checkpoint/change id,
+  aggregate started/captured/idle/failed counts, total captured changes, total produced messages,
+  latest acknowledgement posture, and latest error
+- the same execution-runtime catalog is also available through `/engine/snapshot` in
+  `CdcCaptureExecutionRuntimes` when operators want one merged runtime answer
+- the drill-down route `/engine/cdc-capture-runtimes/{executionRuntimeId}` narrows the same catalog
+  to one execution runtime by stable id
+
+Current note:
+
+- the shipped shared `Cephalon.Data` runtime contributes `data-cdc-capture-pump` with
+  `executionOwnership = host-managed`, `executionTopology = shared-in-process-polling`,
+  `acknowledgementMode = post-stage-provider`, and links back to `data-cdc-capture-flow` plus
+  `data-cdc-capture-pump`; `/engine/cdc-captures*` and `/engine/cdc-captures/runtime*` remain the
+  detailed per-capture ownership and live-posture surfaces
+
 ## Inbox surface
 
 `GET /engine/inboxes` exposes the operator-facing inbox catalog contributed by active modules and companion packs.

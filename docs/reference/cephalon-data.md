@@ -327,6 +327,58 @@ const string Started
 
 Gets the outcome identifier used when a capture runtime starts or resumes work.
 
+<a id="type-cephalon-data-services-icdccaptureexecutionruntimecontributor"></a>
+
+### `ICdcCaptureExecutionRuntimeContributor`
+
+Contributes one or more operator-facing CDC capture execution runtimes to the active data runtime.
+
+#### Declaration
+```csharp
+public interface ICdcCaptureExecutionRuntimeContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-data-services-icdccaptureexecutionruntimecontributor-registerexecutionruntimes-cephalon-data-services-icdccaptureexecutionruntimeregistry"></a>
+
+##### `RegisterExecutionRuntimes`
+
+```csharp
+void RegisterExecutionRuntimes(ICdcCaptureExecutionRuntimeRegistry executionRuntimes)
+```
+
+Registers one or more CDC capture execution runtime descriptors owned by the contributor.
+
+Parameters:
+- `executionRuntimes`: The execution-runtime registry receiving contributed descriptors.
+
+<a id="type-cephalon-data-services-icdccaptureexecutionruntimeregistry"></a>
+
+### `ICdcCaptureExecutionRuntimeRegistry`
+
+Receives operator-facing CDC capture execution runtime descriptors contributed by active data packs.
+
+#### Declaration
+```csharp
+public interface ICdcCaptureExecutionRuntimeRegistry
+```
+
+#### Methods
+
+<a id="member-m-cephalon-data-services-icdccaptureexecutionruntimeregistry-add-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor"></a>
+
+##### `Add`
+
+```csharp
+void Add(CdcCaptureExecutionRuntimeDescriptor executionRuntime)
+```
+
+Adds one CDC capture execution runtime to the current data-runtime composition.
+
+Parameters:
+- `executionRuntime`: The execution runtime to register.
+
 <a id="type-cephalon-data-services-icdccaptureruntimereporter"></a>
 
 ### `ICdcCaptureRuntimeReporter`

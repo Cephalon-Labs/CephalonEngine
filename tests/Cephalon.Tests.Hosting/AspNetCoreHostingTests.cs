@@ -3336,6 +3336,8 @@ note: visible
         var client = app.GetTestClient();
         var hostedExecutions = await client.GetFromJsonAsync<HostedExecutionDescriptor[]>("/engine/hosted-executions");
         var executionGraphs = await client.GetFromJsonAsync<ExecutionGraphDescriptor[]>("/engine/execution-graphs");
+        var cdcCaptureRuntimes = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes");
+        var cdcCaptureRuntime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>("/engine/cdc-capture-runtimes/data-cdc-capture-pump");
         var story = await client.GetFromJsonAsync<RuntimeOperationalStory>("/engine/runtime-story");
         var state = await client.GetFromJsonAsync<CdcCaptureRuntimeState>("/engine/cdc-captures/runtime/tenant-profile-cdc");
         var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
@@ -3351,6 +3353,19 @@ note: visible
         Assert.Equal("resolve-cdc-captures", executionGraph.EntryNodeId);
         Assert.Equal(5, executionGraph.Nodes.Count);
         Assert.Contains(executionGraph.Nodes, item => item.Id == "acknowledge-cdc-progress");
+
+        Assert.NotNull(cdcCaptureRuntimes);
+        var runtimeDescriptor = Assert.Single(cdcCaptureRuntimes);
+        Assert.Equal("data-cdc-capture-pump", runtimeDescriptor.Id);
+        Assert.Contains("tenant-profile-cdc", runtimeDescriptor.CdcCaptureIds);
+        Assert.Equal("shared-in-process-polling", runtimeDescriptor.Metadata["executionTopology"]);
+        Assert.NotNull(cdcCaptureRuntime);
+        Assert.Equal("data-cdc-capture-pump", cdcCaptureRuntime.Id);
+        Assert.True(cdcCaptureRuntime.Summary.HasReports);
+        Assert.Equal("tenant-profile-cdc", cdcCaptureRuntime.Summary.LastCdcCaptureId);
+        Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, cdcCaptureRuntime.Summary.LastOutcome);
+        Assert.Equal(1, cdcCaptureRuntime.Summary.TotalProducedMessageCount);
+        Assert.Equal("not-required", cdcCaptureRuntime.Summary.LastAcknowledgement);
 
         Assert.NotNull(story);
         var storyHostedExecution = Assert.Single(story.HostedExecutions, item => item.HostedExecutionId == "data-cdc-capture-pump");
@@ -3373,6 +3388,7 @@ note: visible
         Assert.Contains(snapshot.ExecutionGraphs, item => item.Id == "data-cdc-capture-flow");
         Assert.Contains(snapshot.OperationalStory.HostedExecutions, item => item.HostedExecutionId == "data-cdc-capture-pump" && item.IsActive);
         Assert.Contains(snapshot.CdcCaptureStates, item => item.CdcCaptureId == "tenant-profile-cdc" && item.LastProducedMessageCount == 1);
+        Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == "data-cdc-capture-pump" && item.Summary.TotalProducedMessageCount == 1);
     }
 
     [Fact]

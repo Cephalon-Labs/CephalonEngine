@@ -30,7 +30,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Abstractions.Data`
 
-- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-data): 75 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data)
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-data): 78 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data)
 
 ## `Cephalon.Abstractions.EventSourcing`
 
@@ -198,7 +198,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Data.Services`
 
-- [Cephalon.Data](cephalon-data.md#namespace-cephalon-data-services): 3 public types [Browse](browse.html?assembly=Cephalon.Data&namespace=Cephalon.Data.Services)
+- [Cephalon.Data](cephalon-data.md#namespace-cephalon-data-services): 5 public types [Browse](browse.html?assembly=Cephalon.Data&namespace=Cephalon.Data.Services)
 
 ## `Cephalon.Edge.Configuration`
 

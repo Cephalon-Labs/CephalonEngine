@@ -401,6 +401,7 @@ internal sealed class CdcCaptureHostedService(
         return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["captureExecution"] = "shared-data-runtime",
+            ["cdcCaptureExecutionRuntimeId"] = DataRuntimeIds.CdcExecutionRuntimeId,
             ["failureKind"] = failureKind,
             ["provider"] = descriptor.Provider,
             ["outboxId"] = descriptor.OutboxId,
@@ -419,6 +420,7 @@ internal sealed class CdcCaptureHostedService(
         var merged = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["captureExecution"] = "shared-data-runtime",
+            ["cdcCaptureExecutionRuntimeId"] = DataRuntimeIds.CdcExecutionRuntimeId,
             ["provider"] = descriptor.Provider,
             ["outboxId"] = descriptor.OutboxId,
             ["captureServiceType"] = capture.GetType().FullName ?? capture.GetType().Name,

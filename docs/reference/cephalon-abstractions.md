@@ -8034,6 +8034,320 @@ CdcCapturePublicationStatus Publication { get; }
 
 Gets the typed publication-posture answer reported by the capture implementation when one was supplied.
 
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor"></a>
+
+### `CdcCaptureExecutionRuntimeDescriptor`
+
+Describes one operator-facing CDC capture execution runtime visible to the current Cephalon runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-abstractions-data-cdccaptureexecutionruntimesummary"></a>
+
+##### `CdcCaptureExecutionRuntimeDescriptor`
+
+```csharp
+CdcCaptureExecutionRuntimeDescriptor(string id, string displayName, string description, IReadOnlyDictionary<string, string> metadata, IReadOnlyList<string> cdcCaptureIds, CdcCaptureExecutionRuntimeSummary summary)
+```
+
+Creates a new CDC capture execution runtime descriptor.
+
+Parameters:
+- `id`: The stable execution-runtime identifier.
+- `displayName`: The operator-facing execution-runtime name.
+- `description`: The human-readable execution-runtime description.
+- `metadata`: Optional operator-facing metadata for the execution runtime.
+- `cdcCaptureIds`: Optional CDC capture identifiers explicitly owned by the execution runtime when ownership is bounded to a known capture set.
+- `summary`: Optional aggregate runtime summary describing the latest reported operator-facing state for the execution runtime.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-cdccaptureids"></a>
+
+##### `CdcCaptureIds`
+
+```csharp
+IReadOnlyList<string> CdcCaptureIds { get; }
+```
+
+Gets the CDC capture identifiers explicitly owned by the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable execution-runtime description.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing execution-runtime name.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable execution-runtime identifier.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets operator-facing metadata for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-summary"></a>
+
+##### `Summary`
+
+```csharp
+CdcCaptureExecutionRuntimeSummary Summary { get; }
+```
+
+Gets the latest aggregate runtime summary reported for the execution runtime.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimesummary"></a>
+
+### `CdcCaptureExecutionRuntimeSummary`
+
+Describes the latest aggregate operator-facing runtime summary for one CDC capture execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeSummary
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-ctor-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-int32-system-int32-system-int32-system-int32-system-int64-system-int64-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionRuntimeSummary`
+
+```csharp
+CdcCaptureExecutionRuntimeSummary(IReadOnlyList<string> ReportedCdcCaptureIds, string LastCdcCaptureId, string LastOutcome, DateTimeOffset? LastObservedAtUtc, string LastChangeId, string LastCheckpoint, int StartedCount, int CapturedCount, int IdleCount, int FailedCount, long TotalCapturedChangeCount, long TotalProducedMessageCount, string LastAcknowledgement, string LastError)
+```
+
+Describes the latest aggregate operator-facing runtime summary for one CDC capture execution runtime.
+
+Parameters:
+- `ReportedCdcCaptureIds`: The CDC capture identifiers that have reported runtime state for the execution runtime.
+- `LastCdcCaptureId`: The CDC capture identifier that produced the latest runtime observation.
+- `LastOutcome`: The latest reported capture outcome visible for the execution runtime.
+- `LastObservedAtUtc`: The UTC timestamp when the latest runtime observation was reported.
+- `LastChangeId`: The latest provider-facing change identifier visible for the execution runtime.
+- `LastCheckpoint`: The latest provider-facing checkpoint visible for the execution runtime.
+- `StartedCount`: The total number of `started` observations visible for the execution runtime.
+- `CapturedCount`: The total number of `captured` observations visible for the execution runtime.
+- `IdleCount`: The total number of `idle` observations visible for the execution runtime.
+- `FailedCount`: The total number of `failed` observations visible for the execution runtime.
+- `TotalCapturedChangeCount`: The total number of source changes reported for the execution runtime.
+- `TotalProducedMessageCount`: The total number of produced outbox messages reported for the execution runtime.
+- `LastAcknowledgement`: The latest acknowledgement posture reported for the execution runtime when one is known.
+- `LastError`: The latest operator-facing error summary visible for the execution runtime.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-capturedcount"></a>
+
+##### `CapturedCount`
+
+```csharp
+int CapturedCount { get; set; }
+```
+
+The total number of `captured` observations visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-empty"></a>
+
+##### `Empty`
+
+```csharp
+CdcCaptureExecutionRuntimeSummary Empty { get; }
+```
+
+Gets an empty summary for execution runtimes that have not reported state yet.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-failedcount"></a>
+
+##### `FailedCount`
+
+```csharp
+int FailedCount { get; set; }
+```
+
+The total number of `failed` observations visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-hasreports"></a>
+
+##### `HasReports`
+
+```csharp
+bool HasReports { get; }
+```
+
+Gets a value indicating whether the execution runtime has reported any runtime observations yet.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-idlecount"></a>
+
+##### `IdleCount`
+
+```csharp
+int IdleCount { get; set; }
+```
+
+The total number of `idle` observations visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-lastacknowledgement"></a>
+
+##### `LastAcknowledgement`
+
+```csharp
+string LastAcknowledgement { get; set; }
+```
+
+The latest acknowledgement posture reported for the execution runtime when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-lastcdccaptureid"></a>
+
+##### `LastCdcCaptureId`
+
+```csharp
+string LastCdcCaptureId { get; set; }
+```
+
+The CDC capture identifier that produced the latest runtime observation.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-lastchangeid"></a>
+
+##### `LastChangeId`
+
+```csharp
+string LastChangeId { get; set; }
+```
+
+The latest provider-facing change identifier visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-lastcheckpoint"></a>
+
+##### `LastCheckpoint`
+
+```csharp
+string LastCheckpoint { get; set; }
+```
+
+The latest provider-facing checkpoint visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-lasterror"></a>
+
+##### `LastError`
+
+```csharp
+string LastError { get; set; }
+```
+
+The latest operator-facing error summary visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-lastobservedatutc"></a>
+
+##### `LastObservedAtUtc`
+
+```csharp
+DateTimeOffset? LastObservedAtUtc { get; set; }
+```
+
+The UTC timestamp when the latest runtime observation was reported.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-lastoutcome"></a>
+
+##### `LastOutcome`
+
+```csharp
+string LastOutcome { get; set; }
+```
+
+The latest reported capture outcome visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-reportedcapturecount"></a>
+
+##### `ReportedCaptureCount`
+
+```csharp
+int ReportedCaptureCount { get; }
+```
+
+Gets the number of distinct CDC captures that have reported runtime state for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-reportedcdccaptureids"></a>
+
+##### `ReportedCdcCaptureIds`
+
+```csharp
+IReadOnlyList<string> ReportedCdcCaptureIds { get; set; }
+```
+
+The CDC capture identifiers that have reported runtime state for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-startedcount"></a>
+
+##### `StartedCount`
+
+```csharp
+int StartedCount { get; set; }
+```
+
+The total number of `started` observations visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-totalcapturedchangecount"></a>
+
+##### `TotalCapturedChangeCount`
+
+```csharp
+long TotalCapturedChangeCount { get; set; }
+```
+
+The total number of source changes reported for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-totalproducedmessagecount"></a>
+
+##### `TotalProducedMessageCount`
+
+```csharp
+long TotalProducedMessageCount { get; set; }
+```
+
+The total number of produced outbox messages reported for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-totalreports"></a>
+
+##### `TotalReports`
+
+```csharp
+int TotalReports { get; }
+```
+
+Gets the total number of runtime observations visible for the execution runtime.
+
 <a id="type-cephalon-abstractions-data-cdccapturefreshnessstates"></a>
 
 ### `CdcCaptureFreshnessStates`
@@ -12017,6 +12331,46 @@ Registers one or more CDC capture descriptors with the supplied registry.
 
 Parameters:
 - `cdcCaptures`: The registry that collects contributed CDC capture descriptors.
+
+<a id="type-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog"></a>
+
+### `ICdcCaptureExecutionRuntimeCatalog`
+
+Exposes the configured CDC capture execution runtimes visible to the current runtime.
+
+#### Declaration
+```csharp
+public interface ICdcCaptureExecutionRuntimeCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-runtimes"></a>
+
+##### `Runtimes`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> Runtimes { get; }
+```
+
+Gets the configured CDC capture execution runtimes visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbyid-system-string"></a>
+
+##### `GetById`
+
+```csharp
+CdcCaptureExecutionRuntimeDescriptor GetById(string executionRuntimeId)
+```
+
+Gets one CDC capture execution runtime by its stable identifier.
+
+Returns: The matching execution-runtime descriptor, or `null` when none exists.
+
+Parameters:
+- `executionRuntimeId`: The stable execution-runtime identifier to resolve.
 
 <a id="type-cephalon-abstractions-data-icdccaptureregistry"></a>
 

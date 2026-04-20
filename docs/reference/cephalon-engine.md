@@ -9535,6 +9535,16 @@ IReadOnlyList<BehaviorResilienceRuntimeDescriptor> BehaviorResiliencePolicies { 
 
 Gets the effective behavior-execution resilience policies visible to the runtime at the time the snapshot was created.
 
+<a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-cdccaptureexecutionruntimes"></a>
+
+##### `CdcCaptureExecutionRuntimes`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> CdcCaptureExecutionRuntimes { get; set; }
+```
+
+Gets the configured CDC capture execution runtimes visible to the runtime at the time the snapshot was created.
+
 <a id="member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-cdccaptures"></a>
 
 ##### `CdcCaptures`
