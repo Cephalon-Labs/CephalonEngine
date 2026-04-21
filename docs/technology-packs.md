@@ -21,13 +21,14 @@ exists. The new `cell-based-architecture` profile now follows that path: the eng
 `/engine/cell-health-isolations`, `/engine/cell-traffic-automations`, and the
 `cell-boundaries`, `cell-routes`, `cell-health-isolations`, plus `cell-traffic-automations`
 technology runtime surfaces today. That engine-owned baseline now also carries additive
-`providerId` plus `edgeNodeIds` targeting on the shared automation catalog, while deeper concrete
-provider-managed or edge-runtime materializers can still move into a future companion pack later.
-The first provider-managed seam is now also explicit through
-`ICellTrafficAutomationProviderMaterializer` plus typed provider-materialization result/state
-contracts, so a future service-mesh, gateway, or edge companion pack can reconcile provider-owned
-traffic posture back onto the same shared automation catalog instead of publishing a second
-materialization registry.
+`providerId` plus `edgeNodeIds` targeting on the shared automation catalog. The shared
+materialization seam is now also explicit through `CellTrafficAutomationMaterializationResult`,
+`CellTrafficAutomationMaterializationStates`, `ICellTrafficAutomationProviderMaterializer`, and
+`ICellTrafficAutomationEdgeMaterializer`; `Cephalon.Edge` now ships the first concrete
+edge-runtime materializer while the provider-named result/state types stay available as
+compatibility helpers over the same contract. Future service-mesh, gateway, or provider companion
+packs can reconcile provider-owned or edge-owned traffic posture back onto the same shared
+automation catalog instead of publishing a second materialization registry.
 
 ## Shipped baseline packs
 

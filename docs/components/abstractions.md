@@ -96,7 +96,13 @@
 - `Technologies/ICellBoundaryCatalog.cs`
 - `Technologies/CellHealthIsolationDescriptor.cs`
 - `Technologies/ICellHealthIsolationCatalog.cs`
+- `Technologies/CellTrafficAutomationMaterializationResult.cs`
+- `Technologies/CellTrafficAutomationMaterializationStates.cs`
 - `Technologies/CellTrafficAutomationRuntimeDescriptor.cs`
+- `Technologies/ICellTrafficAutomationEdgeMaterializer.cs`
+- `Technologies/ICellTrafficAutomationProviderMaterializer.cs`
+- `Technologies/CellTrafficAutomationProviderMaterializationResult.cs`
+- `Technologies/CellTrafficAutomationProviderMaterializationStates.cs`
 - `Technologies/ICellTrafficAutomationRuntimeCatalog.cs`
 - `Technologies/CellRouteDescriptor.cs`
 - `Technologies/ICellRouteCatalog.cs`
@@ -251,14 +257,16 @@ policy without leaking ASP.NET Core ingress, service-mesh, traffic-manager, edge
 health-probe types into `Cephalon.Abstractions`. That same runtime descriptor now also carries
 first-class optional `providerId` and `edgeNodeIds` targeting, while the shared catalog can answer
 provider and edge-node drill-downs without depending on `Cephalon.Edge` concrete types. The same
-host-agnostic surface now also includes `ICellTrafficAutomationProviderMaterializer`,
-`CellTrafficAutomationProviderMaterializationResult`, and
-`CellTrafficAutomationProviderMaterializationStates`, while
-`CellTrafficAutomationRuntimeDescriptor` carries `providerMaterializerId`,
+host-agnostic surface now also includes `CellTrafficAutomationMaterializationResult`,
+`CellTrafficAutomationMaterializationStates`, `ICellTrafficAutomationProviderMaterializer`, and
+`ICellTrafficAutomationEdgeMaterializer`; the provider-named result/state types stay available as
+compatibility helpers over that generic materialization contract. `CellTrafficAutomationRuntimeDescriptor`
+now carries `edgeMaterializerId`, `edgeMaterializationState`,
+`edgeMaterializationObservedAtUtc`, `edgeMaterializationError`, `providerMaterializerId`,
 `providerMaterializationState`, `providerMaterializationObservedAtUtc`, and
-`providerMaterializationError` so provider-managed automation reconciliation can stay visible on
-the shared runtime catalog without leaking control-plane SDK or host-adapter types into
-`Cephalon.Abstractions`.
+`providerMaterializationError` so provider-managed, edge-managed, or provider-and-edge-managed
+automation reconciliation can stay visible on the shared runtime catalog without leaking
+control-plane SDK or host-adapter types into `Cephalon.Abstractions`.
 
 The same phase 12 rule now also covers backend-for-frontend REST documentation materialization.
 `BackendForFrontendRestDocumentRuntimeDescriptor` and

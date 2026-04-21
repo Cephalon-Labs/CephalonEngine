@@ -112,9 +112,11 @@ keeps the same topology, routing, health-isolation posture, and effective automa
 visible through the existing technology-surface projection, including first-class `providerId` and
 `edgeNodeIds` targeting. That same shared route set now also surfaces `providerMaterializerId`,
 `providerMaterializationState`, `providerMaterializationObservedAtUtc`, and
-`providerMaterializationError` when provider-managed automation is reconciled through the engine
-catalog, so operators can inspect selected materializer ownership and the latest startup
-reconciliation result without learning a second ASP.NET Core-only materialization endpoint family.
+`providerMaterializationError`, plus `edgeMaterializerId`, `edgeMaterializationState`,
+`edgeMaterializationObservedAtUtc`, and `edgeMaterializationError` when provider-managed or
+edge-managed automation is reconciled through the engine catalog, so operators can inspect
+selected materializer ownership and the latest startup reconciliation result without learning a
+second ASP.NET Core-only materialization endpoint family.
 That keeps the phase 13 cell baseline operator-facing without turning cell topology, traffic
 posture, health-partition posture, or traffic automation into an ASP.NET Core-only concept.
 

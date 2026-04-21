@@ -1012,6 +1012,7 @@ public sealed class EngineBuilder
                 cellSettings.TrafficAutomation,
                 technologySelection.IsSelected(BuiltInTechnologies.EdgeNativeDelivery.Id));
             var hasProviderMaterializationTargets = HasProviderMaterializationTargets(cellSettings.TrafficAutomation);
+            var hasEdgeMaterializationTargets = HasEdgeMaterializationTargets(cellSettings.TrafficAutomation);
             var localizedResources = new LocalizedResourceRegistry();
             foreach (var module in orderedModules.OfType<ILocalizedResourceContributor>())
             {
@@ -1049,12 +1050,18 @@ public sealed class EngineBuilder
                     activeCellHealthIsolations,
                     cellSettings.TrafficAutomation,
                     technologySelection.IsSelected(BuiltInTechnologies.EdgeNativeDelivery.Id),
-                    serviceProvider.GetServices<ICellTrafficAutomationProviderMaterializer>()));
+                    serviceProvider.GetServices<ICellTrafficAutomationProviderMaterializer>(),
+                    serviceProvider.GetServices<ICellTrafficAutomationEdgeMaterializer>()));
             Services.TryAddSingleton<ICellTrafficAutomationRuntimeCatalog>(serviceProvider =>
                 serviceProvider.GetRequiredService<CellTrafficAutomationRuntimeCatalogSnapshot>());
             if (hasProviderMaterializationTargets)
             {
                 Services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, CellTrafficAutomationProviderMaterializationHostedService>());
+            }
+
+            if (hasEdgeMaterializationTargets)
+            {
+                Services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, CellTrafficAutomationEdgeMaterializationHostedService>());
             }
             Services.TryAddSingleton<BackendForFrontendRuntimeCatalogSnapshot>(_ =>
                 new BackendForFrontendRuntimeCatalogSnapshot(activeBackendForFrontendBindings));
@@ -1683,6 +1690,18 @@ public sealed class EngineBuilder
         }
 
         return settings.Routes.Any(static route => !string.IsNullOrWhiteSpace(route.ProviderId));
+    }
+
+    private static bool HasEdgeMaterializationTargets(CellTrafficAutomationSettings settings)
+    {
+        ArgumentNullException.ThrowIfNull(settings);
+
+        if (settings.DefaultEdgeNodeIds.Count > 0)
+        {
+            return true;
+        }
+
+        return settings.Routes.Any(static route => route.EdgeNodeIds.Count > 0);
     }
 
     private static void ValidateCellTrafficAutomation(

@@ -24,20 +24,23 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
     private readonly Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>> automationsByProvider;
     private readonly Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>> automationsByEdgeNodeId;
     private readonly Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>> automationsByHealthIsolationId;
-    private readonly Dictionary<string, ProviderMaterializationObservation> providerMaterializationObservationsByAutomationId = new(Comparer);
+    private readonly Dictionary<string, MaterializationObservation> edgeMaterializationObservationsByAutomationId = new(Comparer);
+    private readonly Dictionary<string, MaterializationObservation> providerMaterializationObservationsByAutomationId = new(Comparer);
 
     public CellTrafficAutomationRuntimeCatalogSnapshot(
         IEnumerable<CellRouteDescriptor> routes,
         IEnumerable<CellHealthIsolationDescriptor> healthIsolations,
         CellTrafficAutomationSettings? settings = null,
         bool edgeTechnologySelected = false,
-        IEnumerable<ICellTrafficAutomationProviderMaterializer>? providerMaterializers = null)
+        IEnumerable<ICellTrafficAutomationProviderMaterializer>? providerMaterializers = null,
+        IEnumerable<ICellTrafficAutomationEdgeMaterializer>? edgeMaterializers = null)
     {
         ArgumentNullException.ThrowIfNull(routes);
         ArgumentNullException.ThrowIfNull(healthIsolations);
 
         var configuredSettings = settings ?? CellTrafficAutomationSettings.Empty;
         var providerMaterializersByProvider = CreateProviderMaterializerIndex(providerMaterializers);
+        var validatedEdgeMaterializers = ValidateEdgeMaterializers(edgeMaterializers);
         var orderedRoutes = routes
             .OrderBy(static route => route.SourceCellId, Comparer)
             .ThenBy(static route => route.TargetCellId, Comparer)
@@ -78,7 +81,7 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
                 .ToArray();
 
         automations = selectedRoutes
-            .Select(route => CreateDescriptor(route, healthIsolationsByCellId, configuredSettings, routePoliciesById, edgeTechnologySelected, providerMaterializersByProvider))
+            .Select(route => CreateDescriptor(route, healthIsolationsByCellId, configuredSettings, routePoliciesById, edgeTechnologySelected, providerMaterializersByProvider, validatedEdgeMaterializers))
             .OrderBy(static automation => automation.SourceCellId, Comparer)
             .ThenBy(static automation => automation.TargetCellId, Comparer)
             .ThenBy(static automation => automation.SourceModuleId, Comparer)
@@ -242,10 +245,26 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
         }
     }
 
+    internal IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> GetPendingEdgeMaterializations()
+    {
+        lock (gate)
+        {
+            return automations
+                .Where(static automation =>
+                    automation.EdgeNodeIds.Count > 0 &&
+                    !string.IsNullOrWhiteSpace(automation.EdgeMaterializerId) &&
+                    Comparer.Equals(
+                        automation.EdgeMaterializationState,
+                        CellTrafficAutomationMaterializationStates.Pending))
+                .Select(Enrich)
+                .ToArray();
+        }
+    }
+
     internal void ReportProviderMaterialization(
         string automationId,
         string materializerId,
-        CellTrafficAutomationProviderMaterializationResult result)
+        CellTrafficAutomationMaterializationResult result)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(automationId);
         ArgumentException.ThrowIfNullOrWhiteSpace(materializerId);
@@ -271,7 +290,45 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
 
         lock (gate)
         {
-            providerMaterializationObservationsByAutomationId[normalizedAutomationId] = new ProviderMaterializationObservation(
+            providerMaterializationObservationsByAutomationId[normalizedAutomationId] = new MaterializationObservation(
+                normalizedMaterializerId,
+                result.State,
+                result.ObservedAtUtc,
+                result.Error,
+                result.Metadata);
+        }
+    }
+
+    internal void ReportEdgeMaterialization(
+        string automationId,
+        string materializerId,
+        CellTrafficAutomationMaterializationResult result)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(automationId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(materializerId);
+        ArgumentNullException.ThrowIfNull(result);
+
+        var normalizedAutomationId = automationId.Trim();
+        var normalizedMaterializerId = materializerId.Trim();
+
+        if (!automationsById.TryGetValue(normalizedAutomationId, out var automation))
+        {
+            throw new InvalidOperationException(
+                $"Cell traffic automation '{normalizedAutomationId}' is not registered in the active runtime.");
+        }
+
+        if (!Comparer.Equals(automation.EdgeMaterializerId, normalizedMaterializerId))
+        {
+            var selectedMaterializer = string.IsNullOrWhiteSpace(automation.EdgeMaterializerId)
+                ? "none"
+                : automation.EdgeMaterializerId;
+            throw new InvalidOperationException(
+                $"Cell traffic automation '{normalizedAutomationId}' is assigned to edge materializer '{selectedMaterializer}' and cannot report through '{normalizedMaterializerId}'.");
+        }
+
+        lock (gate)
+        {
+            edgeMaterializationObservationsByAutomationId[normalizedAutomationId] = new MaterializationObservation(
                 normalizedMaterializerId,
                 result.State,
                 result.ObservedAtUtc,
@@ -286,7 +343,8 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
         CellTrafficAutomationSettings settings,
         Dictionary<string, CellTrafficAutomationRouteSettings> routePoliciesById,
         bool edgeTechnologySelected,
-        Dictionary<string, ICellTrafficAutomationProviderMaterializer> providerMaterializersByProvider)
+        Dictionary<string, ICellTrafficAutomationProviderMaterializer> providerMaterializersByProvider,
+        IReadOnlyList<ICellTrafficAutomationEdgeMaterializer> edgeMaterializers)
     {
         var sourceHealthIsolations = healthIsolationsByCellId.TryGetValue(route.SourceCellId, out var sourceMatches)
             ? sourceMatches
@@ -374,7 +432,7 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
             }
         }
 
-        return new CellTrafficAutomationRuntimeDescriptor(
+        var descriptor = new CellTrafficAutomationRuntimeDescriptor(
             id: route.Id,
             routeId: route.Id,
             sourceModuleId: route.SourceModuleId,
@@ -406,10 +464,68 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
             runtimeMetadata: runtimeMetadata,
             providerId: providerId,
             edgeNodeIds: edgeNodeIds,
+            edgeMaterializerId: null,
+            edgeMaterializationState: null,
+            edgeMaterializationObservedAtUtc: null,
+            edgeMaterializationError: null,
             providerMaterializerId: providerMaterializerId,
             providerMaterializationState: providerMaterializationState,
             providerMaterializationObservedAtUtc: null,
             providerMaterializationError: null);
+
+        string? edgeMaterializerId = null;
+        string? edgeMaterializationState = null;
+        if (UsesEdgeMaterialization(materializationMode))
+        {
+            var selectedEdgeMaterializer = SelectEdgeMaterializer(descriptor, edgeMaterializers);
+            if (selectedEdgeMaterializer is not null)
+            {
+                edgeMaterializerId = selectedEdgeMaterializer.MaterializerId;
+                edgeMaterializationState = CellTrafficAutomationMaterializationStates.Pending;
+            }
+            else
+            {
+                edgeMaterializationState = CellTrafficAutomationMaterializationStates.Unavailable;
+            }
+        }
+
+        if (edgeMaterializerId is null && edgeMaterializationState is null)
+        {
+            return descriptor;
+        }
+
+        return new CellTrafficAutomationRuntimeDescriptor(
+            id: descriptor.Id,
+            routeId: descriptor.RouteId,
+            sourceModuleId: descriptor.SourceModuleId,
+            sourceCellId: descriptor.SourceCellId,
+            targetCellId: descriptor.TargetCellId,
+            displayName: descriptor.DisplayName,
+            description: descriptor.Description,
+            routingStrategy: descriptor.RoutingStrategy,
+            governanceMode: descriptor.GovernanceMode,
+            automationMode: descriptor.AutomationMode,
+            triggerMode: descriptor.TriggerMode,
+            actionMode: descriptor.ActionMode,
+            materializationMode: descriptor.MaterializationMode,
+            policySource: descriptor.PolicySource,
+            transportIds: descriptor.TransportIds,
+            requiredCapabilityKey: descriptor.RequiredCapabilityKey,
+            sourceHealthIsolationIds: descriptor.SourceHealthIsolationIds,
+            targetHealthIsolationIds: descriptor.TargetHealthIsolationIds,
+            dependencyIds: descriptor.DependencyIds,
+            metadata: descriptor.Metadata,
+            runtimeMetadata: descriptor.RuntimeMetadata,
+            providerId: descriptor.ProviderId,
+            edgeNodeIds: descriptor.EdgeNodeIds,
+            edgeMaterializerId: edgeMaterializerId,
+            edgeMaterializationState: edgeMaterializationState,
+            edgeMaterializationObservedAtUtc: null,
+            edgeMaterializationError: null,
+            providerMaterializerId: descriptor.ProviderMaterializerId,
+            providerMaterializationState: descriptor.ProviderMaterializationState,
+            providerMaterializationObservedAtUtc: descriptor.ProviderMaterializationObservedAtUtc,
+            providerMaterializationError: descriptor.ProviderMaterializationError);
     }
 
     private static string ResolveDefaultTriggerMode(int sourceHealthIsolationCount, int targetHealthIsolationCount)
@@ -439,6 +555,16 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
         return materializationMode.Trim().ToLowerInvariant() switch
         {
             "provider-managed" => true,
+            "provider-and-edge-managed" => true,
+            _ => false
+        };
+    }
+
+    private static bool UsesEdgeMaterialization(string materializationMode)
+    {
+        return materializationMode.Trim().ToLowerInvariant() switch
+        {
+            "edge-managed" => true,
             "provider-and-edge-managed" => true,
             _ => false
         };
@@ -516,7 +642,9 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
 
     private CellTrafficAutomationRuntimeDescriptor Enrich(CellTrafficAutomationRuntimeDescriptor automation)
     {
-        if (!providerMaterializationObservationsByAutomationId.TryGetValue(automation.Id, out var observation))
+        var hasProviderObservation = providerMaterializationObservationsByAutomationId.TryGetValue(automation.Id, out var providerObservation);
+        var hasEdgeObservation = edgeMaterializationObservationsByAutomationId.TryGetValue(automation.Id, out var edgeObservation);
+        if (!hasProviderObservation && !hasEdgeObservation)
         {
             return automation;
         }
@@ -524,9 +652,20 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
         var runtimeMetadata = automation.RuntimeMetadata.Count == 0
             ? new Dictionary<string, string>(Comparer)
             : new Dictionary<string, string>(automation.RuntimeMetadata, Comparer);
-        foreach (var pair in observation.Metadata)
+        if (hasProviderObservation)
         {
-            runtimeMetadata[$"providerMaterialization.{pair.Key}"] = pair.Value;
+            foreach (var pair in providerObservation!.Metadata)
+            {
+                runtimeMetadata[$"providerMaterialization.{pair.Key}"] = pair.Value;
+            }
+        }
+
+        if (hasEdgeObservation)
+        {
+            foreach (var pair in edgeObservation!.Metadata)
+            {
+                runtimeMetadata[$"edgeMaterialization.{pair.Key}"] = pair.Value;
+            }
         }
 
         return new CellTrafficAutomationRuntimeDescriptor(
@@ -553,10 +692,30 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
             runtimeMetadata: runtimeMetadata,
             providerId: automation.ProviderId,
             edgeNodeIds: automation.EdgeNodeIds,
-            providerMaterializerId: observation.MaterializerId,
-            providerMaterializationState: observation.State,
-            providerMaterializationObservedAtUtc: observation.ObservedAtUtc,
-            providerMaterializationError: observation.Error);
+            edgeMaterializerId: hasEdgeObservation
+                ? edgeObservation!.MaterializerId
+                : automation.EdgeMaterializerId,
+            edgeMaterializationState: hasEdgeObservation
+                ? edgeObservation!.State
+                : automation.EdgeMaterializationState,
+            edgeMaterializationObservedAtUtc: hasEdgeObservation
+                ? edgeObservation!.ObservedAtUtc
+                : automation.EdgeMaterializationObservedAtUtc,
+            edgeMaterializationError: hasEdgeObservation
+                ? edgeObservation!.Error
+                : automation.EdgeMaterializationError,
+            providerMaterializerId: hasProviderObservation
+                ? providerObservation!.MaterializerId
+                : automation.ProviderMaterializerId,
+            providerMaterializationState: hasProviderObservation
+                ? providerObservation!.State
+                : automation.ProviderMaterializationState,
+            providerMaterializationObservedAtUtc: hasProviderObservation
+                ? providerObservation!.ObservedAtUtc
+                : automation.ProviderMaterializationObservedAtUtc,
+            providerMaterializationError: hasProviderObservation
+                ? providerObservation!.Error
+                : automation.ProviderMaterializationError);
     }
 
     private static Dictionary<string, ICellTrafficAutomationProviderMaterializer> CreateProviderMaterializerIndex(
@@ -596,9 +755,66 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
         return index;
     }
 
-    private sealed class ProviderMaterializationObservation
+    private static ICellTrafficAutomationEdgeMaterializer[] ValidateEdgeMaterializers(
+        IEnumerable<ICellTrafficAutomationEdgeMaterializer>? edgeMaterializers)
     {
-        public ProviderMaterializationObservation(
+        if (edgeMaterializers is null)
+        {
+            return [];
+        }
+
+        var materializers = edgeMaterializers.ToArray();
+        var uniqueIds = new HashSet<string>(Comparer);
+        foreach (var materializer in materializers)
+        {
+            ArgumentNullException.ThrowIfNull(materializer);
+
+            if (string.IsNullOrWhiteSpace(materializer.MaterializerId))
+            {
+                throw new InvalidOperationException(
+                    $"Cell traffic automation edge materializer '{materializer.GetType().FullName}' must declare a materializer id.");
+            }
+
+            if (!uniqueIds.Add(materializer.MaterializerId.Trim()))
+            {
+                throw new InvalidOperationException(
+                    $"Multiple cell traffic automation edge materializers are registered with materializer id '{materializer.MaterializerId.Trim()}'.");
+            }
+        }
+
+        return materializers;
+    }
+
+    private static ICellTrafficAutomationEdgeMaterializer? SelectEdgeMaterializer(
+        CellTrafficAutomationRuntimeDescriptor automation,
+        IReadOnlyList<ICellTrafficAutomationEdgeMaterializer> edgeMaterializers)
+    {
+        if (edgeMaterializers.Count == 0)
+        {
+            return null;
+        }
+
+        var matches = edgeMaterializers
+            .Where(materializer => materializer.CanMaterialize(automation))
+            .ToArray();
+        if (matches.Length <= 1)
+        {
+            return matches.Length == 0
+                ? null
+                : matches[0];
+        }
+
+        var materializerIds = matches
+            .Select(static materializer => materializer.MaterializerId)
+            .OrderBy(static materializerId => materializerId, Comparer);
+
+        throw new InvalidOperationException(
+            $"Multiple edge materializers matched cell traffic automation '{automation.Id}': {string.Join(", ", materializerIds)}.");
+    }
+
+    private sealed class MaterializationObservation
+    {
+        public MaterializationObservation(
             string materializerId,
             string state,
             DateTimeOffset observedAtUtc,

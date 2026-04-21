@@ -17,6 +17,7 @@
 - `Services/EdgeNodeDescriptor.cs`
 - `Services/EdgeNodeRegistry.cs`
 - `Services/EdgeNodeCatalog.cs`
+- `Services/EdgeTrafficAutomationMaterializer.cs`
 - `Services/IEdgeNodeContributor.cs`
 - `Services/IEdgeNodeCatalog.cs`
 - `Services/EdgeRuntimeSurfaceContributor.cs`
@@ -34,7 +35,12 @@ This pack lets Cephalon model edge topology and deployment concerns through the 
 selection and introspection flow used by the other future-tech companions. Phase 13 cell traffic
 automation can now target `edgeNodeIds` on the shared `ICellTrafficAutomationRuntimeCatalog`
 without taking a direct dependency on `Cephalon.Edge`; operators can correlate those automation
-answers with the `edge-nodes` technology surface when `EdgeNativeDelivery` is active.
+answers with the `edge-nodes` technology surface when `EdgeNativeDelivery` is active. The pack now
+also contributes the first concrete `ICellTrafficAutomationEdgeMaterializer` through
+`EdgeTrafficAutomationMaterializer`, so `edge-managed` or `provider-and-edge-managed` routes can
+reconcile targeted `edgeNodeIds` back into the shared `ICellTrafficAutomationRuntimeCatalog`,
+`snapshot.CellTrafficAutomations`, and the `cell-traffic-automations` technology surface while
+keeping edge-runtime implementation details inside `Cephalon.Edge`.
 
 ## Related docs
 

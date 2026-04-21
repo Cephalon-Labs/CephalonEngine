@@ -299,6 +299,8 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Technologies.CellHealthIsolationDescriptor),
             typeof(global::Cephalon.Abstractions.Technologies.CellRouteDescriptor),
             typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationRuntimeDescriptor),
+            typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationMaterializationResult),
+            typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationMaterializationStates),
             typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationProviderMaterializationResult),
             typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationProviderMaterializationStates),
             typeof(global::Cephalon.Abstractions.Technologies.ICellBoundaryCatalog),
@@ -307,6 +309,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Technologies.ICellHealthIsolationCatalog),
             typeof(global::Cephalon.Abstractions.Technologies.ICellHealthIsolationContributor),
             typeof(global::Cephalon.Abstractions.Technologies.ICellHealthIsolationRegistry),
+            typeof(global::Cephalon.Abstractions.Technologies.ICellTrafficAutomationEdgeMaterializer),
             typeof(global::Cephalon.Abstractions.Technologies.ICellTrafficAutomationProviderMaterializer),
             typeof(global::Cephalon.Abstractions.Technologies.ICellRouteCatalog),
             typeof(global::Cephalon.Abstractions.Technologies.ICellRouteContributor),
@@ -2859,6 +2862,28 @@ public sealed class PackageSurfaceTests
             .GetProperty("ProviderId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.ICellTrafficAutomationProviderMaterializer)
             .GetMethod("MaterializeAsync", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.ICellTrafficAutomationEdgeMaterializer)
+            .GetProperty("MaterializerId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.ICellTrafficAutomationEdgeMaterializer)
+            .GetMethod("CanMaterialize", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.ICellTrafficAutomationEdgeMaterializer)
+            .GetMethod("MaterializeAsync", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationMaterializationResult)
+            .GetProperty("State", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationMaterializationResult)
+            .GetProperty("ObservedAtUtc", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationMaterializationResult)
+            .GetProperty("Error", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationMaterializationResult)
+            .GetProperty("Metadata", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationMaterializationStates)
+            .GetField("Unavailable", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationMaterializationStates)
+            .GetField("Pending", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationMaterializationStates)
+            .GetField("Applied", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationMaterializationStates)
+            .GetField("Failed", BindingFlags.Static | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationProviderMaterializationResult)
             .GetProperty("State", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationProviderMaterializationResult)
@@ -2889,6 +2914,14 @@ public sealed class PackageSurfaceTests
             .GetProperty("ProviderId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationRuntimeDescriptor)
             .GetProperty("EdgeNodeIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationRuntimeDescriptor)
+            .GetProperty("EdgeMaterializerId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationRuntimeDescriptor)
+            .GetProperty("EdgeMaterializationState", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationRuntimeDescriptor)
+            .GetProperty("EdgeMaterializationObservedAtUtc", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationRuntimeDescriptor)
+            .GetProperty("EdgeMaterializationError", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationRuntimeDescriptor)
             .GetProperty("ProviderMaterializerId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationRuntimeDescriptor)

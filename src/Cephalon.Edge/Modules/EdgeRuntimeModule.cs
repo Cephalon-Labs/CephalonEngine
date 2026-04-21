@@ -54,6 +54,7 @@ internal sealed class EdgeRuntimeModule : ModuleBase, ITechnologyServiceContribu
         hasNodeContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEdgeNodeContributor));
         services.TryAddSingleton(options);
         services.TryAddSingleton<IEdgeNodeCatalog, EdgeNodeCatalog>();
+        services.TryAddSingleton<ICellTrafficAutomationEdgeMaterializer, EdgeTrafficAutomationMaterializer>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EdgeRuntimeSurfaceContributor>());
     }
 

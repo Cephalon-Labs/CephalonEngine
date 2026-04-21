@@ -68,6 +68,8 @@
 - `Technologies/CellHealthIsolationCatalogSnapshot.cs`
 - `Technologies/CellHealthIsolationTechnologyRuntimeContributor.cs`
 - `Technologies/CellTrafficAutomationRuntimeCatalogSnapshot.cs`
+- `Technologies/CellTrafficAutomationProviderMaterializationHostedService.cs`
+- `Technologies/CellTrafficAutomationEdgeMaterializationHostedService.cs`
 - `Technologies/CellTrafficAutomationTechnologyRuntimeContributor.cs`
 - `Features/FeatureFlagRegistryAdapter.cs`
 - `Features/FeatureFlagRuntimeCatalogSnapshot.cs`
@@ -136,14 +138,17 @@ runtime catalog can publish provider-aware and edge-aware automation posture wit
 underlying cell-route or health-isolation truth. The engine derives `provider-managed`,
 `edge-managed`, or `provider-and-edge-managed` materialization posture when those overlays are
 present, validates that explicit edge-node targeting only appears when `edge-native-delivery` is
-selected, and keeps concrete provider or edge control-plane materializers as later follow-through
-over those same catalogs. The first provider-managed follow-through is now also shipped there:
-`ICellTrafficAutomationProviderMaterializer` stays host-agnostic in `Cephalon.Abstractions`,
+selected, and keeps richer provider-specific control-plane behavior as later follow-through over
+those same catalogs. The first provider-managed and edge-runtime follow-throughs are now also
+shipped there: `ICellTrafficAutomationProviderMaterializer` plus
+`ICellTrafficAutomationEdgeMaterializer` stay host-agnostic in `Cephalon.Abstractions`,
 `CellTrafficAutomationRuntimeCatalogSnapshot` keeps one shared automation truth with selected
-`ProviderMaterializerId` plus `ProviderMaterializationState`/`ObservedAtUtc`/`Error`, and the
-engine runs startup reconciliation through `CellTrafficAutomationProviderMaterializationHostedService`
-so provider-managed or provider-and-edge-managed routes can move from `pending` to `applied`,
-`failed`, or `unavailable` without inventing a second traffic-materialization registry.
+`ProviderMaterializerId` plus `ProviderMaterializationState`/`ObservedAtUtc`/`Error` and
+`EdgeMaterializerId` plus `EdgeMaterializationState`/`ObservedAtUtc`/`Error`, and the engine runs
+startup reconciliation through `CellTrafficAutomationProviderMaterializationHostedService` plus
+`CellTrafficAutomationEdgeMaterializationHostedService` so provider-managed, edge-managed, or
+provider-and-edge-managed routes can move from `pending` to `applied`, `failed`, or `unavailable`
+without inventing a second traffic-materialization registry.
 
 That same engine-first runtime truth now also carries the first phase-13 data mesh and CDC
 baselines end to end. Modules and hosts can contribute `DataProductDescriptor` entries and

@@ -77,6 +77,10 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
             runtimeMetadata,
             providerId: null,
             edgeNodeIds: null,
+            edgeMaterializerId: null,
+            edgeMaterializationState: null,
+            edgeMaterializationObservedAtUtc: null,
+            edgeMaterializationError: null,
             providerMaterializerId: null,
             providerMaterializationState: null,
             providerMaterializationObservedAtUtc: null,
@@ -158,6 +162,10 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
             runtimeMetadata,
             providerId,
             edgeNodeIds,
+            edgeMaterializerId: null,
+            edgeMaterializationState: null,
+            edgeMaterializationObservedAtUtc: null,
+            edgeMaterializationError: null,
             providerMaterializerId: null,
             providerMaterializationState: null,
             providerMaterializationObservedAtUtc: null,
@@ -166,7 +174,7 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
     }
 
     /// <summary>
-    /// Creates a cell traffic-automation runtime descriptor with provider, edge, and provider-materialization state.
+    /// Creates a cell traffic-automation runtime descriptor with provider, edge, and materialization state.
     /// </summary>
     /// <param name="id">The stable traffic-automation identifier.</param>
     /// <param name="routeId">The stable governed cell-route identifier that this automation answer applies to.</param>
@@ -191,6 +199,10 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
     /// <param name="runtimeMetadata">Additional runtime-only metadata such as policy notes or overlay provenance.</param>
     /// <param name="providerId">The optional external provider or control-plane identifier that materializes this automation.</param>
     /// <param name="edgeNodeIds">The optional edge-node identifiers associated with this automation answer.</param>
+    /// <param name="edgeMaterializerId">The optional selected edge materializer identifier.</param>
+    /// <param name="edgeMaterializationState">The optional edge-materialization state for this automation.</param>
+    /// <param name="edgeMaterializationObservedAtUtc">The optional UTC timestamp when the edge-materialization state was last observed.</param>
+    /// <param name="edgeMaterializationError">The optional operator-facing edge-materialization error summary.</param>
     /// <param name="providerMaterializerId">The optional selected provider materializer identifier.</param>
     /// <param name="providerMaterializationState">The optional provider-materialization state for this automation.</param>
     /// <param name="providerMaterializationObservedAtUtc">The optional UTC timestamp when the provider-materialization state was last observed.</param>
@@ -220,6 +232,10 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
         IReadOnlyDictionary<string, string>? runtimeMetadata,
         string? providerId,
         IReadOnlyList<string>? edgeNodeIds,
+        string? edgeMaterializerId,
+        string? edgeMaterializationState,
+        DateTimeOffset? edgeMaterializationObservedAtUtc,
+        string? edgeMaterializationError,
         string? providerMaterializerId,
         string? providerMaterializationState,
         DateTimeOffset? providerMaterializationObservedAtUtc,
@@ -313,6 +329,16 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
             ? null
             : providerId.Trim();
         EdgeNodeIds = NormalizeValues(edgeNodeIds);
+        EdgeMaterializerId = string.IsNullOrWhiteSpace(edgeMaterializerId)
+            ? null
+            : edgeMaterializerId.Trim();
+        EdgeMaterializationState = string.IsNullOrWhiteSpace(edgeMaterializationState)
+            ? null
+            : edgeMaterializationState.Trim().ToLowerInvariant();
+        EdgeMaterializationObservedAtUtc = edgeMaterializationObservedAtUtc;
+        EdgeMaterializationError = string.IsNullOrWhiteSpace(edgeMaterializationError)
+            ? null
+            : edgeMaterializationError.Trim();
         ProviderMaterializerId = string.IsNullOrWhiteSpace(providerMaterializerId)
             ? null
             : providerMaterializerId.Trim();
@@ -412,6 +438,26 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
     /// Gets the optional edge-node identifiers associated with this automation answer.
     /// </summary>
     public IReadOnlyList<string> EdgeNodeIds { get; }
+
+    /// <summary>
+    /// Gets the optional selected edge materializer identifier.
+    /// </summary>
+    public string? EdgeMaterializerId { get; }
+
+    /// <summary>
+    /// Gets the optional edge-materialization state for this automation.
+    /// </summary>
+    public string? EdgeMaterializationState { get; }
+
+    /// <summary>
+    /// Gets the optional UTC timestamp when the edge-materialization state was last observed.
+    /// </summary>
+    public DateTimeOffset? EdgeMaterializationObservedAtUtc { get; }
+
+    /// <summary>
+    /// Gets the optional operator-facing edge-materialization error summary.
+    /// </summary>
+    public string? EdgeMaterializationError { get; }
 
     /// <summary>
     /// Gets the optional selected provider materializer identifier.
