@@ -15,6 +15,9 @@ public sealed class CdcCaptureRuntimeObservation
     /// The stable outcome identifier, such as <c>started</c>, <c>captured</c>, <c>idle</c>, or <c>failed</c>.
     /// </param>
     /// <param name="observedAtUtc">The UTC timestamp when the observation occurred.</param>
+    /// <param name="reportId">
+    /// The optional stable report identifier used to make repeated external observation submissions idempotent.
+    /// </param>
     /// <param name="capturedChangeCount">The number of source changes observed by this report.</param>
     /// <param name="producedMessageCount">The number of outbox messages produced by this report.</param>
     /// <param name="changeId">The latest provider-facing change identifier when available.</param>
@@ -29,6 +32,7 @@ public sealed class CdcCaptureRuntimeObservation
         string cdcCaptureId,
         string outcome,
         DateTimeOffset observedAtUtc,
+        string? reportId = null,
         int capturedChangeCount = 0,
         int producedMessageCount = 0,
         string? changeId = null,
@@ -62,6 +66,7 @@ public sealed class CdcCaptureRuntimeObservation
         CdcCaptureId = cdcCaptureId.Trim();
         Outcome = outcome.Trim();
         ObservedAtUtc = observedAtUtc;
+        ReportId = string.IsNullOrWhiteSpace(reportId) ? null : reportId.Trim();
         CapturedChangeCount = capturedChangeCount;
         ProducedMessageCount = producedMessageCount;
         ChangeId = string.IsNullOrWhiteSpace(changeId) ? null : changeId.Trim();
@@ -89,6 +94,11 @@ public sealed class CdcCaptureRuntimeObservation
     /// Gets the UTC timestamp when the observation occurred.
     /// </summary>
     public DateTimeOffset ObservedAtUtc { get; }
+
+    /// <summary>
+    /// Gets the optional stable report identifier used to make repeated submissions idempotent.
+    /// </summary>
+    public string? ReportId { get; }
 
     /// <summary>
     /// Gets the number of source changes observed by this report.

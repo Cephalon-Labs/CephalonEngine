@@ -140,6 +140,26 @@ IDictionary<string, string> Metadata { get; }
 
 Gets arbitrary operator-facing metadata that should flow through the runtime declaration.
 
+<a id="member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-observationstaleafterseconds"></a>
+
+##### `ObservationStaleAfterSeconds`
+
+```csharp
+int? ObservationStaleAfterSeconds { get; set; }
+```
+
+Gets or sets the report-freshness window, in seconds, used to mark external runtime observations stale.
+
+<a id="member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-rejectoutoforderreports"></a>
+
+##### `RejectOutOfOrderReports`
+
+```csharp
+bool RejectOutOfOrderReports { get; set; }
+```
+
+Gets or sets a value indicating whether the runtime should reject out-of-order external reports.
+
 <a id="type-cephalon-data-configuration-dataruntimeoptions"></a>
 
 ### `DataRuntimeOptions`
@@ -275,12 +295,12 @@ public sealed class CdcCaptureExecutionReport
 
 #### Constructors
 
-<a id="member-m-cephalon-data-services-cdccaptureexecutionreport-ctor-system-string-system-string-system-datetimeoffset-system-int32-system-int32-system-string-system-string-system-string-cephalon-abstractions-data-cdccapturefreshnessstatus-cephalon-abstractions-data-cdccapturelagstatus-cephalon-abstractions-data-cdccapturepublicationstatus-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+<a id="member-m-cephalon-data-services-cdccaptureexecutionreport-ctor-system-string-system-string-system-datetimeoffset-system-string-system-int32-system-int32-system-string-system-string-system-string-cephalon-abstractions-data-cdccapturefreshnessstatus-cephalon-abstractions-data-cdccapturefreshnessstatus-cephalon-abstractions-data-cdccapturelagstatus-cephalon-abstractions-data-cdccapturepublicationstatus-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
 
 ##### `CdcCaptureExecutionReport`
 
 ```csharp
-CdcCaptureExecutionReport(string cdcCaptureId, string outcome, DateTimeOffset observedAtUtc, int capturedChangeCount, int producedMessageCount, string changeId, string checkpoint, string error, CdcCaptureFreshnessStatus freshness, CdcCaptureLagStatus lag, CdcCapturePublicationStatus publication, IReadOnlyDictionary<string, string> metadata)
+CdcCaptureExecutionReport(string cdcCaptureId, string outcome, DateTimeOffset observedAtUtc, string reportId, int capturedChangeCount, int producedMessageCount, string changeId, string checkpoint, string error, CdcCaptureFreshnessStatus freshness, CdcCaptureFreshnessStatus observationFreshness, CdcCaptureLagStatus lag, CdcCapturePublicationStatus publication, IReadOnlyDictionary<string, string> metadata)
 ```
 
 Creates a new CDC capture runtime observation.
@@ -289,12 +309,14 @@ Parameters:
 - `cdcCaptureId`: The stable CDC capture identifier that produced the observation.
 - `outcome`: The stable outcome identifier, such as `started`, `captured`, `idle`, or `failed`.
 - `observedAtUtc`: The UTC timestamp when the observation occurred.
+- `reportId`: The optional stable report identifier used to make repeated submissions idempotent.
 - `capturedChangeCount`: The number of source changes observed by this report.
 - `producedMessageCount`: The number of outbox messages produced by this report.
 - `changeId`: The latest provider-facing change identifier when available.
 - `checkpoint`: The latest provider-facing checkpoint or cursor when available.
 - `error`: The operator-facing error summary when the observation represents a failure.
 - `freshness`: An optional typed freshness answer reported by the active provider/runtime.
+- `observationFreshness`: An optional report-freshness answer describing whether the observation itself is still current.
 - `lag`: An optional typed lag answer reported by the active provider/runtime.
 - `publication`: An optional typed publication-posture answer reported by the active provider/runtime.
 - `metadata`: Optional operator-facing metadata captured alongside the observation.
@@ -381,6 +403,16 @@ IReadOnlyDictionary<string, string> Metadata { get; }
 
 Gets optional operator-facing metadata captured alongside the observation.
 
+<a id="member-p-cephalon-data-services-cdccaptureexecutionreport-observationfreshness"></a>
+
+##### `ObservationFreshness`
+
+```csharp
+CdcCaptureFreshnessStatus ObservationFreshness { get; }
+```
+
+Gets the typed report-freshness answer reported for the observation itself when one was supplied.
+
 <a id="member-p-cephalon-data-services-cdccaptureexecutionreport-observedatutc"></a>
 
 ##### `ObservedAtUtc`
@@ -420,6 +452,16 @@ CdcCapturePublicationStatus Publication { get; }
 ```
 
 Gets the typed publication-posture answer reported by the active provider/runtime when one was supplied.
+
+<a id="member-p-cephalon-data-services-cdccaptureexecutionreport-reportid"></a>
+
+##### `ReportId`
+
+```csharp
+string ReportId { get; }
+```
+
+Gets the optional stable report identifier used to make repeated submissions idempotent.
 
 <a id="type-cephalon-data-services-cdccaptureruntimeoutcomes"></a>
 

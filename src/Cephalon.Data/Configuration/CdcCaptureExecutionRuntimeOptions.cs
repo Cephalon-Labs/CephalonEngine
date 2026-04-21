@@ -60,6 +60,16 @@ public sealed class CdcCaptureExecutionRuntimeOptions
     public string? ExecutionGraphId { get; set; }
 
     /// <summary>
+    /// Gets or sets the report-freshness window, in seconds, used to mark external runtime observations stale.
+    /// </summary>
+    public int? ObservationStaleAfterSeconds { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the runtime should reject out-of-order external reports.
+    /// </summary>
+    public bool RejectOutOfOrderReports { get; set; } = true;
+
+    /// <summary>
     /// Gets the CDC capture identifiers explicitly owned by the runtime when ownership is bounded to a known capture set.
     /// </summary>
     public IList<string> CdcCaptureIds { get; } = [];
@@ -81,6 +91,8 @@ public sealed class CdcCaptureExecutionRuntimeOptions
             acknowledgementMode: AcknowledgementMode,
             hostedExecutionId: HostedExecutionId,
             executionGraphId: ExecutionGraphId,
+            observationStaleAfterSeconds: ObservationStaleAfterSeconds,
+            rejectOutOfOrderReports: RejectOutOfOrderReports,
             metadata: Metadata.Count == 0
                 ? null
                 : new Dictionary<string, string>(Metadata, StringComparer.OrdinalIgnoreCase),

@@ -205,6 +205,14 @@ capture observations back through the same descriptor-backed runtime-state catal
 effective ownership boundary without introducing a second HTTP-only or provider-only CDC status
 contract.
 
+That same reporting seam now also keeps retry, ordering, and freshness-expiry policy host-agnostic.
+`CdcCaptureRuntimeObservation.ReportId` gives external runners a stable idempotency key for retry
+safe submissions, `CdcCaptureExecutionRuntimeDescriptor` now exposes
+`ObservationStaleAfterSeconds` plus `RejectOutOfOrderReports` for declared runtime policy,
+`CdcCaptureRuntimeState` now preserves `LastReportId` plus typed `ObservationFreshness`, and
+`CdcCaptureExecutionRuntimeSummary` can aggregate `fresh`, `stale`, `mixed`, or `unknown`
+observation posture without forcing adapters to invent their own HTTP-local reporting contracts.
+
 The app-model contract now also carries a contract-first resilience family through
 `ResilienceSelection`, `RetrySelection`, `TimeoutSelection`, `CircuitBreakerSelection`,
 `BulkheadSelection`, and `RateLimitingSelection`. `RateLimitingSelection` now also carries additive

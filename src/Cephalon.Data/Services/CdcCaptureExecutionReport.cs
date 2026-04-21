@@ -15,12 +15,14 @@ public sealed class CdcCaptureExecutionReport
     /// The stable outcome identifier, such as <c>started</c>, <c>captured</c>, <c>idle</c>, or <c>failed</c>.
     /// </param>
     /// <param name="observedAtUtc">The UTC timestamp when the observation occurred.</param>
+    /// <param name="reportId">The optional stable report identifier used to make repeated submissions idempotent.</param>
     /// <param name="capturedChangeCount">The number of source changes observed by this report.</param>
     /// <param name="producedMessageCount">The number of outbox messages produced by this report.</param>
     /// <param name="changeId">The latest provider-facing change identifier when available.</param>
     /// <param name="checkpoint">The latest provider-facing checkpoint or cursor when available.</param>
     /// <param name="error">The operator-facing error summary when the observation represents a failure.</param>
     /// <param name="freshness">An optional typed freshness answer reported by the active provider/runtime.</param>
+    /// <param name="observationFreshness">An optional report-freshness answer describing whether the observation itself is still current.</param>
     /// <param name="lag">An optional typed lag answer reported by the active provider/runtime.</param>
     /// <param name="publication">An optional typed publication-posture answer reported by the active provider/runtime.</param>
     /// <param name="metadata">Optional operator-facing metadata captured alongside the observation.</param>
@@ -28,12 +30,14 @@ public sealed class CdcCaptureExecutionReport
         string cdcCaptureId,
         string outcome,
         DateTimeOffset observedAtUtc,
+        string? reportId = null,
         int capturedChangeCount = 0,
         int producedMessageCount = 0,
         string? changeId = null,
         string? checkpoint = null,
         string? error = null,
         CdcCaptureFreshnessStatus? freshness = null,
+        CdcCaptureFreshnessStatus? observationFreshness = null,
         CdcCaptureLagStatus? lag = null,
         CdcCapturePublicationStatus? publication = null,
         IReadOnlyDictionary<string, string>? metadata = null)
@@ -61,12 +65,14 @@ public sealed class CdcCaptureExecutionReport
         CdcCaptureId = cdcCaptureId.Trim();
         Outcome = outcome.Trim();
         ObservedAtUtc = observedAtUtc;
+        ReportId = string.IsNullOrWhiteSpace(reportId) ? null : reportId.Trim();
         CapturedChangeCount = capturedChangeCount;
         ProducedMessageCount = producedMessageCount;
         ChangeId = string.IsNullOrWhiteSpace(changeId) ? null : changeId.Trim();
         Checkpoint = string.IsNullOrWhiteSpace(checkpoint) ? null : checkpoint.Trim();
         Error = string.IsNullOrWhiteSpace(error) ? null : error.Trim();
         Freshness = freshness;
+        ObservationFreshness = observationFreshness;
         Lag = lag;
         Publication = publication;
         Metadata = metadata is null
@@ -88,6 +94,11 @@ public sealed class CdcCaptureExecutionReport
     /// Gets the UTC timestamp when the observation occurred.
     /// </summary>
     public DateTimeOffset ObservedAtUtc { get; }
+
+    /// <summary>
+    /// Gets the optional stable report identifier used to make repeated submissions idempotent.
+    /// </summary>
+    public string? ReportId { get; }
 
     /// <summary>
     /// Gets the number of source changes observed by this report.
@@ -118,6 +129,11 @@ public sealed class CdcCaptureExecutionReport
     /// Gets the typed freshness answer reported by the active provider/runtime when one was supplied.
     /// </summary>
     public CdcCaptureFreshnessStatus? Freshness { get; }
+
+    /// <summary>
+    /// Gets the typed report-freshness answer reported for the observation itself when one was supplied.
+    /// </summary>
+    public CdcCaptureFreshnessStatus? ObservationFreshness { get; }
 
     /// <summary>
     /// Gets the typed lag answer reported by the active provider/runtime when one was supplied.

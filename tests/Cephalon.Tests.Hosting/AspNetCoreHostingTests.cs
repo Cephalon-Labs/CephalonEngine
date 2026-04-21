@@ -3525,7 +3525,9 @@ note: visible
                     Description = "Represents an externally managed out-of-process CDC runner.",
                     ExecutionOwnership = "external-managed",
                     ExecutionTopology = "out-of-process-reporting",
-                    AcknowledgementMode = "runtime-managed"
+                    AcknowledgementMode = "runtime-managed",
+                    ObservationStaleAfterSeconds = 60,
+                    RejectOutOfOrderReports = true
                 });
                 options.CdcExecutionRuntimes[0].CdcCaptureIds.Add("tenant-profile-cdc");
             });
@@ -3553,8 +3555,10 @@ note: visible
     [Fact]
     public async Task MapCephalonAcceptsExternalCdcRuntimeReportsAndRefreshesRuntimeSurfaces()
     {
+        var timeProvider = new MutableTimeProvider(DateTimeOffset.Parse("2026-04-21T03:10:30Z", CultureInfo.InvariantCulture));
         var builder = WebApplication.CreateSlimBuilder();
         builder.WebHost.UseTestServer();
+        builder.Services.AddSingleton<TimeProvider>(timeProvider);
         builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularVerticalSlice";
         builder.Configuration[$"{EngineSettings.SectionName}:Patterns:0"] = "CQRS";
         builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
@@ -3572,7 +3576,9 @@ note: visible
                     Description = "Represents an externally managed out-of-process CDC runner.",
                     ExecutionOwnership = "external-managed",
                     ExecutionTopology = "out-of-process-reporting",
-                    AcknowledgementMode = "runtime-managed"
+                    AcknowledgementMode = "runtime-managed",
+                    ObservationStaleAfterSeconds = 60,
+                    RejectOutOfOrderReports = true
                 });
                 options.CdcExecutionRuntimes[0].CdcCaptureIds.Add("tenant-profile-cdc");
             });
@@ -3592,6 +3598,7 @@ note: visible
                     cdcCaptureId: "tenant-profile-cdc",
                     outcome: CdcCaptureRuntimeOutcomes.Captured,
                     observedAtUtc: DateTimeOffset.Parse("2026-04-21T03:10:00Z", CultureInfo.InvariantCulture),
+                    reportId: "external-report-001",
                     capturedChangeCount: 5,
                     producedMessageCount: 5,
                     changeId: "lsn-external-0005",
@@ -3615,23 +3622,41 @@ note: visible
             });
 
         response.EnsureSuccessStatusCode();
+        var reportPayload = await response.Content.ReadAsStringAsync();
+        using var reportDocument = JsonDocument.Parse(reportPayload);
         var reportedRuntime = await response.Content.ReadFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>();
         var runtime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>("/engine/cdc-capture-runtimes/external-cdc-runtime");
         var state = await client.GetFromJsonAsync<CdcCaptureRuntimeState>("/engine/cdc-captures/runtime/tenant-profile-cdc");
         var statesByRuntime = await client.GetFromJsonAsync<CdcCaptureRuntimeState[]>("/engine/cdc-captures/runtime/execution-runtimes/external-cdc-runtime");
         var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+        var serviceRuntime = app.Services.GetRequiredService<ICdcCaptureExecutionRuntimeCatalog>().GetById("external-cdc-runtime");
+        var serviceState = app.Services.GetRequiredService<ICdcCaptureRuntimeStateCatalog>().GetById("tenant-profile-cdc");
 
         Assert.NotNull(reportedRuntime);
         Assert.Equal("external-cdc-runtime", reportedRuntime.Id);
         Assert.True(reportedRuntime.Summary.HasReports);
         Assert.Equal("tenant-profile-cdc", reportedRuntime.Summary.LastCdcCaptureId);
         Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, reportedRuntime.Summary.LastOutcome);
+        Assert.Equal("external-report-001", reportedRuntime.Summary.LastReportId);
         Assert.Equal(5, reportedRuntime.Summary.TotalCapturedChangeCount);
         Assert.Equal(5, reportedRuntime.Summary.TotalProducedMessageCount);
+        Assert.NotNull(serviceState);
+        Assert.Equal("60", serviceState.Metadata["observationStaleAfterSeconds"]);
+        Assert.Equal(CdcCaptureFreshnessStates.Fresh, serviceState.Metadata["observationFreshnessState"]);
+        Assert.Equal(CdcCaptureFreshnessStates.Fresh, serviceState.ObservationFreshness.State);
+        Assert.Equal(DateTimeOffset.Parse("2026-04-21T03:11:00Z", CultureInfo.InvariantCulture), serviceState.ObservationFreshness.FreshUntilUtc);
+        Assert.NotNull(serviceRuntime);
+        Assert.Equal(CdcCaptureFreshnessStates.Fresh, serviceRuntime.Summary.ObservationFreshness.State);
+        Assert.Equal(DateTimeOffset.Parse("2026-04-21T03:11:00Z", CultureInfo.InvariantCulture), serviceRuntime.Summary.ObservationFreshness.FreshUntilUtc);
+        Assert.Equal(CdcCaptureFreshnessStates.Fresh, reportDocument.RootElement.GetProperty("summary").GetProperty("observationFreshness").GetProperty("state").GetString());
+        Assert.Equal(CdcCaptureFreshnessStates.Fresh, reportedRuntime.Summary.ObservationFreshness.State);
+        Assert.Equal(DateTimeOffset.Parse("2026-04-21T03:11:00Z", CultureInfo.InvariantCulture), reportedRuntime.Summary.ObservationFreshness.FreshUntilUtc);
 
         Assert.NotNull(runtime);
         Assert.True(runtime.Summary.HasReports);
         Assert.Equal("out-of-process-reporting", runtime.ExecutionTopology);
+        Assert.Equal("external-report-001", runtime.Summary.LastReportId);
+        Assert.Equal(CdcCaptureFreshnessStates.Fresh, runtime.Summary.ObservationFreshness.State);
 
         Assert.NotNull(state);
         Assert.Equal("external-cdc-runtime", state.ExecutionBinding.EffectiveExecutionRuntimeId);
@@ -3641,23 +3666,175 @@ note: visible
         Assert.Equal(5, state.TotalProducedMessageCount);
         Assert.Equal("lsn-external-0005", state.LastChangeId);
         Assert.Equal("external-checkpoint-0005", state.LastCheckpoint);
+        Assert.Equal("external-report-001", state.LastReportId);
         Assert.Equal("external-runtime-report", state.Metadata["captureExecution"]);
         Assert.Equal("external-cdc-runtime", state.Metadata["cdcCaptureExecutionRuntimeId"]);
+        Assert.Equal("external-report-001", state.Metadata["cdcCaptureReportId"]);
+        Assert.Equal(CdcCaptureFreshnessStates.Fresh, state.ObservationFreshness.State);
+        Assert.Equal(DateTimeOffset.Parse("2026-04-21T03:11:00Z", CultureInfo.InvariantCulture), state.ObservationFreshness.FreshUntilUtc);
+        Assert.Equal(CdcCaptureFreshnessStates.Fresh, state.Metadata["observationFreshnessState"]);
+        Assert.Equal("60", state.Metadata["observationStaleAfterSeconds"]);
 
         Assert.NotNull(statesByRuntime);
         var stateByRuntime = Assert.Single(statesByRuntime);
         Assert.Equal("tenant-profile-cdc", stateByRuntime.CdcCaptureId);
         Assert.Equal("external-cdc-runtime", stateByRuntime.ExecutionBinding.EffectiveExecutionRuntimeId);
+        Assert.Equal("external-report-001", stateByRuntime.LastReportId);
 
         Assert.NotNull(snapshot);
         Assert.Contains(snapshot.CdcCaptureStates, item =>
             item.CdcCaptureId == "tenant-profile-cdc" &&
             item.ExecutionBinding.EffectiveExecutionRuntimeId == "external-cdc-runtime" &&
-            item.TotalProducedMessageCount == 5);
+            item.TotalProducedMessageCount == 5 &&
+            item.LastReportId == "external-report-001" &&
+            item.ObservationFreshness.State == CdcCaptureFreshnessStates.Fresh);
         Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item =>
             item.Id == "external-cdc-runtime" &&
             item.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured &&
-            item.Summary.TotalProducedMessageCount == 5);
+            item.Summary.TotalProducedMessageCount == 5 &&
+            item.Summary.LastReportId == "external-report-001" &&
+            item.Summary.ObservationFreshness.State == CdcCaptureFreshnessStates.Fresh);
+    }
+
+    [Fact]
+    public async Task MapCephalonRejectsOutOfOrderExternalCdcRuntimeReports()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularVerticalSlice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Patterns:0"] = "CQRS";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new Phase8CatalogModule());
+            cephalon.AddData(options =>
+            {
+                options.EnableExternalCdcRuntimeReporting = true;
+                options.CdcExecutionRuntimes.Add(new CdcCaptureExecutionRuntimeOptions
+                {
+                    Id = "external-cdc-runtime",
+                    DisplayName = "External CDC Runtime",
+                    Description = "Represents an externally managed out-of-process CDC runner.",
+                    ExecutionOwnership = "external-managed",
+                    ExecutionTopology = "out-of-process-reporting",
+                    RejectOutOfOrderReports = true
+                });
+                options.CdcExecutionRuntimes[0].CdcCaptureIds.Add("tenant-profile-cdc");
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+
+        var client = app.GetTestClient();
+        var firstResponse = await client.PostAsJsonAsync(
+            "/engine/cdc-capture-runtimes/external-cdc-runtime/reports",
+            new[]
+            {
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: "tenant-profile-cdc",
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-21T03:20:00Z", CultureInfo.InvariantCulture),
+                    reportId: "external-report-late")
+            });
+        firstResponse.EnsureSuccessStatusCode();
+
+        var secondResponse = await client.PostAsJsonAsync(
+            "/engine/cdc-capture-runtimes/external-cdc-runtime/reports",
+            new[]
+            {
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: "tenant-profile-cdc",
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-21T03:15:00Z", CultureInfo.InvariantCulture),
+                    reportId: "external-report-early")
+            });
+        var errorPayload = await secondResponse.Content.ReadAsStringAsync();
+
+        Assert.Equal(HttpStatusCode.BadRequest, secondResponse.StatusCode);
+        Assert.Contains("out-of-order", errorPayload, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("external-report-early", errorPayload, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task MapCephalonExpiresExternalCdcRuntimeObservationFreshnessAfterConfiguredWindow()
+    {
+        var timeProvider = new MutableTimeProvider(DateTimeOffset.Parse("2026-04-21T03:30:00Z", CultureInfo.InvariantCulture));
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Services.AddSingleton<TimeProvider>(timeProvider);
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularVerticalSlice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Patterns:0"] = "CQRS";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new Phase8CatalogModule());
+            cephalon.AddData(options =>
+            {
+                options.EnableExternalCdcRuntimeReporting = true;
+                options.CdcExecutionRuntimes.Add(new CdcCaptureExecutionRuntimeOptions
+                {
+                    Id = "external-cdc-runtime",
+                    DisplayName = "External CDC Runtime",
+                    Description = "Represents an externally managed out-of-process CDC runner.",
+                    ExecutionOwnership = "external-managed",
+                    ExecutionTopology = "out-of-process-reporting",
+                    ObservationStaleAfterSeconds = 60
+                });
+                options.CdcExecutionRuntimes[0].CdcCaptureIds.Add("tenant-profile-cdc");
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+
+        var client = app.GetTestClient();
+        var response = await client.PostAsJsonAsync(
+            "/engine/cdc-capture-runtimes/external-cdc-runtime/reports",
+            new[]
+            {
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: "tenant-profile-cdc",
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-21T03:30:00Z", CultureInfo.InvariantCulture),
+                    reportId: "external-report-freshness")
+            });
+
+        response.EnsureSuccessStatusCode();
+
+        var freshState = await client.GetFromJsonAsync<CdcCaptureRuntimeState>("/engine/cdc-captures/runtime/tenant-profile-cdc");
+        var freshRuntime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>("/engine/cdc-capture-runtimes/external-cdc-runtime");
+
+        Assert.NotNull(freshState);
+        Assert.Equal(CdcCaptureFreshnessStates.Fresh, freshState.ObservationFreshness.State);
+        Assert.Equal(DateTimeOffset.Parse("2026-04-21T03:31:00Z", CultureInfo.InvariantCulture), freshState.ObservationFreshness.FreshUntilUtc);
+        Assert.NotNull(freshRuntime);
+        Assert.Equal(CdcCaptureFreshnessStates.Fresh, freshRuntime.Summary.ObservationFreshness.State);
+
+        timeProvider.Advance(TimeSpan.FromSeconds(61));
+
+        var staleState = await client.GetFromJsonAsync<CdcCaptureRuntimeState>("/engine/cdc-captures/runtime/tenant-profile-cdc");
+        var staleRuntime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>("/engine/cdc-capture-runtimes/external-cdc-runtime");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(staleState);
+        Assert.Equal(CdcCaptureFreshnessStates.Stale, staleState.ObservationFreshness.State);
+        Assert.True(staleState.IsObservationStale);
+        Assert.NotNull(staleRuntime);
+        Assert.Equal(CdcCaptureFreshnessStates.Stale, staleRuntime.Summary.ObservationFreshness.State);
+        Assert.NotNull(snapshot);
+        Assert.Contains(snapshot.CdcCaptureStates, item =>
+            item.CdcCaptureId == "tenant-profile-cdc" &&
+            item.ObservationFreshness.State == CdcCaptureFreshnessStates.Stale);
+        Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item =>
+            item.Id == "external-cdc-runtime" &&
+            item.Summary.ObservationFreshness.State == CdcCaptureFreshnessStates.Stale);
     }
 
     [Fact]
@@ -4044,6 +4221,21 @@ note: visible
         }
         catch (UnauthorizedAccessException)
         {
+        }
+    }
+
+    private sealed class MutableTimeProvider(DateTimeOffset now) : TimeProvider
+    {
+        private DateTimeOffset utcNow = now;
+
+        public override DateTimeOffset GetUtcNow()
+        {
+            return utcNow;
+        }
+
+        public void Advance(TimeSpan duration)
+        {
+            utcNow = utcNow.Add(duration);
         }
     }
 

@@ -12,6 +12,8 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     private const string AcknowledgementModeMetadataKey = "acknowledgementMode";
     private const string HostedExecutionIdMetadataKey = "hostedExecutionId";
     private const string ExecutionGraphIdMetadataKey = "executionGraphId";
+    private const string ObservationStaleAfterSecondsMetadataKey = "observationStaleAfterSeconds";
+    private const string RejectOutOfOrderReportsMetadataKey = "rejectOutOfOrderReports";
 
     /// <summary>
     /// Creates a new CDC capture execution runtime descriptor.
@@ -61,6 +63,8 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
         AcknowledgementMode = ResolveMetadata(Metadata, AcknowledgementModeMetadataKey);
         HostedExecutionId = ResolveMetadata(Metadata, HostedExecutionIdMetadataKey);
         ExecutionGraphId = ResolveMetadata(Metadata, ExecutionGraphIdMetadataKey);
+        ObservationStaleAfterSeconds = ResolveNullableIntMetadata(Metadata, ObservationStaleAfterSecondsMetadataKey);
+        RejectOutOfOrderReports = ResolveBooleanMetadata(Metadata, RejectOutOfOrderReportsMetadataKey);
     }
 
     /// <summary>
@@ -84,6 +88,12 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     /// <param name="executionGraphId">
     /// The stable execution-graph identifier when the runtime is backed by a Cephalon execution graph.
     /// </param>
+    /// <param name="observationStaleAfterSeconds">
+    /// The optional report-freshness window, in seconds, used to decide when external runtime observations become stale.
+    /// </param>
+    /// <param name="rejectOutOfOrderReports">
+    /// A value indicating whether the runtime should reject external observations that arrive older than the current latest report.
+    /// </param>
     /// <param name="metadata">Optional operator-facing metadata for the execution runtime.</param>
     /// <param name="cdcCaptureIds">
     /// Optional CDC capture identifiers explicitly owned by the execution runtime when ownership is bounded to a known capture set.
@@ -98,6 +108,8 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
         string? acknowledgementMode = null,
         string? hostedExecutionId = null,
         string? executionGraphId = null,
+        int? observationStaleAfterSeconds = null,
+        bool rejectOutOfOrderReports = false,
         IReadOnlyDictionary<string, string>? metadata = null,
         IReadOnlyList<string>? cdcCaptureIds = null,
         CdcCaptureExecutionRuntimeSummary? summary = null)
@@ -111,7 +123,9 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
                 executionTopology,
                 acknowledgementMode,
                 hostedExecutionId,
-                executionGraphId),
+                executionGraphId,
+                observationStaleAfterSeconds,
+                rejectOutOfOrderReports),
             cdcCaptureIds,
             summary)
     {
@@ -163,6 +177,16 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     public string? ExecutionGraphId { get; }
 
     /// <summary>
+    /// Gets the report-freshness window, in seconds, used to mark external runtime observations stale when one was declared.
+    /// </summary>
+    public int? ObservationStaleAfterSeconds { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the runtime rejects out-of-order external runtime reports.
+    /// </summary>
+    public bool RejectOutOfOrderReports { get; }
+
+    /// <summary>
     /// Gets the CDC capture identifiers explicitly owned by the execution runtime.
     /// </summary>
     public IReadOnlyList<string> CdcCaptureIds { get; }
@@ -188,7 +212,9 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
         string executionTopology,
         string? acknowledgementMode,
         string? hostedExecutionId,
-        string? executionGraphId)
+        string? executionGraphId,
+        int? observationStaleAfterSeconds,
+        bool rejectOutOfOrderReports)
     {
         if (string.IsNullOrWhiteSpace(executionOwnership))
         {
@@ -210,6 +236,8 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
         UpsertOptional(normalizedMetadata, AcknowledgementModeMetadataKey, acknowledgementMode);
         UpsertOptional(normalizedMetadata, HostedExecutionIdMetadataKey, hostedExecutionId);
         UpsertOptional(normalizedMetadata, ExecutionGraphIdMetadataKey, executionGraphId);
+        UpsertOptionalInt(normalizedMetadata, ObservationStaleAfterSecondsMetadataKey, observationStaleAfterSeconds);
+        UpsertOptionalBoolean(normalizedMetadata, RejectOutOfOrderReportsMetadataKey, rejectOutOfOrderReports);
 
         return normalizedMetadata;
     }
@@ -230,6 +258,32 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
             : defaultValue.Trim();
     }
 
+    private static int? ResolveNullableIntMetadata(
+        IReadOnlyDictionary<string, string> metadata,
+        string key)
+    {
+        if (!metadata.TryGetValue(key, out var value) ||
+            string.IsNullOrWhiteSpace(value))
+        {
+            return null;
+        }
+
+        return int.TryParse(value.Trim(), out var parsed) ? parsed : null;
+    }
+
+    private static bool ResolveBooleanMetadata(
+        IReadOnlyDictionary<string, string> metadata,
+        string key)
+    {
+        if (!metadata.TryGetValue(key, out var value) ||
+            string.IsNullOrWhiteSpace(value))
+        {
+            return false;
+        }
+
+        return bool.TryParse(value.Trim(), out var parsed) && parsed;
+    }
+
     private static void UpsertOptional(
         Dictionary<string, string> metadata,
         string key,
@@ -245,5 +299,33 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
         }
 
         metadata[key] = normalizedValue;
+    }
+
+    private static void UpsertOptionalInt(
+        Dictionary<string, string> metadata,
+        string key,
+        int? value)
+    {
+        if (value is null)
+        {
+            metadata.Remove(key);
+            return;
+        }
+
+        metadata[key] = value.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+    }
+
+    private static void UpsertOptionalBoolean(
+        Dictionary<string, string> metadata,
+        string key,
+        bool value)
+    {
+        if (!value)
+        {
+            metadata.Remove(key);
+            return;
+        }
+
+        metadata[key] = bool.TrueString;
     }
 }

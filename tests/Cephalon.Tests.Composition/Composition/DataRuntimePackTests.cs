@@ -469,7 +469,9 @@ public sealed class DataRuntimePackTests
     [Fact]
     public async Task AddDataAcceptsExecutionRuntimeObservationsThroughExternalReportSink()
     {
+        var timeProvider = new MutableTimeProvider(DateTimeOffset.Parse("2026-04-21T02:10:30Z", CultureInfo.InvariantCulture));
         var services = new ServiceCollection();
+        services.AddSingleton<TimeProvider>(timeProvider);
         services.AddCephalon(engine =>
         {
             engine.UseSettings(new EngineSettings(
@@ -487,7 +489,9 @@ public sealed class DataRuntimePackTests
                     Description = "Represents an externally managed out-of-process CDC runner.",
                     ExecutionOwnership = "external-managed",
                     ExecutionTopology = "out-of-process-reporting",
-                    AcknowledgementMode = "runtime-managed"
+                    AcknowledgementMode = "runtime-managed",
+                    ObservationStaleAfterSeconds = 60,
+                    RejectOutOfOrderReports = true
                 });
                 options.CdcExecutionRuntimes[0].CdcCaptureIds.Add("tenant-profile-cdc");
             });
@@ -505,6 +509,7 @@ public sealed class DataRuntimePackTests
                     cdcCaptureId: "tenant-profile-cdc",
                     outcome: CdcCaptureRuntimeOutcomes.Captured,
                     observedAtUtc: DateTimeOffset.Parse("2026-04-21T02:10:00Z", CultureInfo.InvariantCulture),
+                    reportId: "external-report-001",
                     capturedChangeCount: 3,
                     producedMessageCount: 3,
                     changeId: "lsn-ext-0003",
@@ -534,18 +539,208 @@ public sealed class DataRuntimePackTests
         Assert.Equal(3, state.TotalProducedMessageCount);
         Assert.Equal("lsn-ext-0003", state.LastChangeId);
         Assert.Equal("ext-checkpoint-0003", state.LastCheckpoint);
+        Assert.Equal("external-report-001", state.LastReportId);
         Assert.Equal("external-cdc-runtime", state.ExecutionBinding.EffectiveExecutionRuntimeId);
         Assert.Equal("out-of-process-reporting", state.ExecutionBinding.ExecutionTopology);
         Assert.Equal("external-runtime-report", state.Metadata["captureExecution"]);
         Assert.Equal("external-cdc-runtime", state.Metadata["cdcCaptureExecutionRuntimeId"]);
+        Assert.Equal("external-report-001", state.Metadata["cdcCaptureReportId"]);
+        Assert.Equal(CdcCaptureFreshnessStates.Fresh, state.ObservationFreshness.State);
+        Assert.Equal(DateTimeOffset.Parse("2026-04-21T02:11:00Z", CultureInfo.InvariantCulture), state.ObservationFreshness.FreshUntilUtc);
+        Assert.Equal(CdcCaptureFreshnessStates.Fresh, state.Metadata["observationFreshnessState"]);
+        Assert.Equal("60", state.Metadata["observationStaleAfterSeconds"]);
 
         var runtime = runtimeCatalog.GetById("external-cdc-runtime");
         Assert.NotNull(runtime);
         Assert.True(runtime.Summary.HasReports);
         Assert.Equal("tenant-profile-cdc", runtime.Summary.LastCdcCaptureId);
         Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, runtime.Summary.LastOutcome);
+        Assert.Equal("external-report-001", runtime.Summary.LastReportId);
         Assert.Equal(3, runtime.Summary.TotalCapturedChangeCount);
         Assert.Equal(3, runtime.Summary.TotalProducedMessageCount);
+        Assert.Equal(CdcCaptureFreshnessStates.Fresh, runtime.Summary.ObservationFreshness.State);
+        Assert.Equal(DateTimeOffset.Parse("2026-04-21T02:11:00Z", CultureInfo.InvariantCulture), runtime.Summary.ObservationFreshness.FreshUntilUtc);
+    }
+
+    [Fact]
+    public async Task AddDataTreatsRepeatedExternalExecutionRuntimeReportIdsAsIdempotent()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"]));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new Phase8CatalogModule());
+            engine.AddData(options =>
+            {
+                options.EnableExternalCdcRuntimeReporting = true;
+                options.CdcExecutionRuntimes.Add(new CdcCaptureExecutionRuntimeOptions
+                {
+                    Id = "external-cdc-runtime",
+                    DisplayName = "External CDC Runtime",
+                    Description = "Represents an externally managed out-of-process CDC runner.",
+                    ExecutionOwnership = "external-managed",
+                    ExecutionTopology = "out-of-process-reporting"
+                });
+                options.CdcExecutionRuntimes[0].CdcCaptureIds.Add("tenant-profile-cdc");
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var reportSink = provider.GetRequiredService<ICdcCaptureExecutionRuntimeReportSink>();
+        var runtimeStateCatalog = provider.GetRequiredService<ICdcCaptureRuntimeStateCatalog>();
+        var runtimeCatalog = provider.GetRequiredService<ICdcCaptureExecutionRuntimeCatalog>();
+
+        var observation = new CdcCaptureRuntimeObservation(
+            cdcCaptureId: "tenant-profile-cdc",
+            outcome: CdcCaptureRuntimeOutcomes.Captured,
+            observedAtUtc: DateTimeOffset.Parse("2026-04-21T02:30:00Z", CultureInfo.InvariantCulture),
+            reportId: "external-report-duplicate",
+            capturedChangeCount: 4,
+            producedMessageCount: 4,
+            changeId: "lsn-ext-0004",
+            checkpoint: "ext-checkpoint-0004",
+            metadata: new Dictionary<string, string>
+            {
+                ["captureExecution"] = "external-runtime-report"
+            });
+
+        await reportSink.ReportAsync("external-cdc-runtime", [observation]);
+        await reportSink.ReportAsync("external-cdc-runtime", [observation]);
+
+        var state = Assert.Single(runtimeStateCatalog.GetByExecutionRuntimeId("external-cdc-runtime"));
+        Assert.Equal("external-report-duplicate", state.LastReportId);
+        Assert.Equal(1, state.CapturedCount);
+        Assert.Equal(4, state.TotalCapturedChangeCount);
+        Assert.Equal(4, state.TotalProducedMessageCount);
+
+        var runtime = runtimeCatalog.GetById("external-cdc-runtime");
+        Assert.NotNull(runtime);
+        Assert.Equal("external-report-duplicate", runtime.Summary.LastReportId);
+        Assert.Equal(1, runtime.Summary.CapturedCount);
+        Assert.Equal(4, runtime.Summary.TotalCapturedChangeCount);
+        Assert.Equal(4, runtime.Summary.TotalProducedMessageCount);
+    }
+
+    [Fact]
+    public async Task AddDataRejectsOutOfOrderExternalExecutionRuntimeReportsWhenConfigured()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"]));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new Phase8CatalogModule());
+            engine.AddData(options =>
+            {
+                options.EnableExternalCdcRuntimeReporting = true;
+                options.CdcExecutionRuntimes.Add(new CdcCaptureExecutionRuntimeOptions
+                {
+                    Id = "external-cdc-runtime",
+                    DisplayName = "External CDC Runtime",
+                    Description = "Represents an externally managed out-of-process CDC runner.",
+                    ExecutionOwnership = "external-managed",
+                    ExecutionTopology = "out-of-process-reporting",
+                    RejectOutOfOrderReports = true
+                });
+                options.CdcExecutionRuntimes[0].CdcCaptureIds.Add("tenant-profile-cdc");
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var reportSink = provider.GetRequiredService<ICdcCaptureExecutionRuntimeReportSink>();
+
+        await reportSink.ReportAsync(
+            "external-cdc-runtime",
+            [
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: "tenant-profile-cdc",
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-21T02:40:00Z", CultureInfo.InvariantCulture),
+                    reportId: "external-report-late")
+            ]);
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => reportSink.ReportAsync(
+            "external-cdc-runtime",
+            [
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: "tenant-profile-cdc",
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-21T02:35:00Z", CultureInfo.InvariantCulture),
+                    reportId: "external-report-early")
+            ]).AsTask());
+
+        Assert.Contains("out-of-order", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("external-report-early", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task AddDataExpiresExternalExecutionRuntimeObservationFreshnessAfterConfiguredWindow()
+    {
+        var timeProvider = new MutableTimeProvider(DateTimeOffset.Parse("2026-04-21T02:50:00Z", CultureInfo.InvariantCulture));
+        var services = new ServiceCollection();
+        services.AddSingleton<TimeProvider>(timeProvider);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"]));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new Phase8CatalogModule());
+            engine.AddData(options =>
+            {
+                options.EnableExternalCdcRuntimeReporting = true;
+                options.CdcExecutionRuntimes.Add(new CdcCaptureExecutionRuntimeOptions
+                {
+                    Id = "external-cdc-runtime",
+                    DisplayName = "External CDC Runtime",
+                    Description = "Represents an externally managed out-of-process CDC runner.",
+                    ExecutionOwnership = "external-managed",
+                    ExecutionTopology = "out-of-process-reporting",
+                    ObservationStaleAfterSeconds = 60
+                });
+                options.CdcExecutionRuntimes[0].CdcCaptureIds.Add("tenant-profile-cdc");
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var reportSink = provider.GetRequiredService<ICdcCaptureExecutionRuntimeReportSink>();
+        var runtimeStateCatalog = provider.GetRequiredService<ICdcCaptureRuntimeStateCatalog>();
+        var runtimeCatalog = provider.GetRequiredService<ICdcCaptureExecutionRuntimeCatalog>();
+
+        await reportSink.ReportAsync(
+            "external-cdc-runtime",
+            [
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: "tenant-profile-cdc",
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-21T02:50:00Z", CultureInfo.InvariantCulture),
+                    reportId: "external-report-freshness")
+            ]);
+
+        var freshState = Assert.Single(runtimeStateCatalog.GetByExecutionRuntimeId("external-cdc-runtime"));
+        Assert.Equal(CdcCaptureFreshnessStates.Fresh, freshState.ObservationFreshness.State);
+        Assert.Equal(DateTimeOffset.Parse("2026-04-21T02:51:00Z", CultureInfo.InvariantCulture), freshState.ObservationFreshness.FreshUntilUtc);
+
+        var freshRuntime = runtimeCatalog.GetById("external-cdc-runtime");
+        Assert.NotNull(freshRuntime);
+        Assert.Equal(CdcCaptureFreshnessStates.Fresh, freshRuntime.Summary.ObservationFreshness.State);
+
+        timeProvider.Advance(TimeSpan.FromSeconds(61));
+
+        var staleState = Assert.Single(runtimeStateCatalog.GetByExecutionRuntimeId("external-cdc-runtime"));
+        Assert.Equal(CdcCaptureFreshnessStates.Stale, staleState.ObservationFreshness.State);
+        Assert.Equal(DateTimeOffset.Parse("2026-04-21T02:51:00Z", CultureInfo.InvariantCulture), staleState.ObservationFreshness.FreshUntilUtc);
+        Assert.True(staleState.IsObservationStale);
+
+        var staleRuntime = runtimeCatalog.GetById("external-cdc-runtime");
+        Assert.NotNull(staleRuntime);
+        Assert.Equal(CdcCaptureFreshnessStates.Stale, staleRuntime.Summary.ObservationFreshness.State);
+        Assert.True(staleRuntime.Summary.HasStaleObservations);
     }
 
     [Fact]
@@ -988,6 +1183,21 @@ public sealed class DataRuntimePackTests
         Assert.NotNull(finalState);
         Assert.Equal(expectedOutcome, finalState.LastOutcome);
         return finalState;
+    }
+
+    private sealed class MutableTimeProvider(DateTimeOffset now) : TimeProvider
+    {
+        private DateTimeOffset utcNow = now;
+
+        public override DateTimeOffset GetUtcNow()
+        {
+            return utcNow;
+        }
+
+        public void Advance(TimeSpan duration)
+        {
+            utcNow = utcNow.Add(duration);
+        }
     }
 
     private sealed class RequestedExecutionBindingCdcModule : ModuleBase, ICdcCaptureContributor, IOutboxContributor

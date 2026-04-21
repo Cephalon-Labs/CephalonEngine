@@ -4,7 +4,9 @@ namespace Cephalon.Data.Services;
 
 internal sealed class CdcCaptureRuntimeStateCatalog(
     ICdcCaptureCatalog descriptorCatalog,
-    IEventDispatchRuntimeCatalog? dispatchRuntimeCatalog = null) : ICdcCaptureRuntimeStateCatalog, ICdcCaptureRuntimeReporter, ICdcCaptureExecutionRuntimeReportSink
+    CdcCaptureExecutionRuntimeDescriptorCatalog runtimeDescriptorCatalog,
+    IEventDispatchRuntimeCatalog? dispatchRuntimeCatalog = null,
+    TimeProvider? timeProvider = null) : ICdcCaptureRuntimeStateCatalog, ICdcCaptureRuntimeReporter, ICdcCaptureExecutionRuntimeReportSink
 {
     private static readonly StringComparer Comparer = StringComparer.OrdinalIgnoreCase;
     private static readonly IReadOnlyDictionary<string, string> EmptyMetadata =
@@ -14,9 +16,14 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
     private readonly IReadOnlyList<CdcCaptureDescriptor> descriptors = descriptorCatalog.CdcCaptures;
     private readonly Dictionary<string, CdcCaptureDescriptor> descriptorsById = descriptorCatalog.CdcCaptures
         .ToDictionary(static descriptor => descriptor.Id, Comparer);
+    private readonly Dictionary<string, CdcCaptureExecutionRuntimeDescriptor> runtimeDescriptorsById = runtimeDescriptorCatalog.Runtimes
+        .ToDictionary(static runtime => runtime.Id, Comparer);
     private readonly Dictionary<string, CdcCaptureRuntimeState> reportedStatesById = new(Comparer);
+    private readonly TimeProvider timeProvider = timeProvider ?? TimeProvider.System;
 
     private static readonly CdcCaptureFreshnessStatus UnknownFreshness =
+        new(CdcCaptureFreshnessStates.Unknown);
+    private static readonly CdcCaptureFreshnessStatus UnknownObservationFreshness =
         new(CdcCaptureFreshnessStates.Unknown);
     private static readonly CdcCaptureLagStatus UnknownLag =
         new(CdcCaptureLagStates.Unknown);
@@ -175,6 +182,7 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
         }
 
         var normalizedExecutionRuntimeId = executionRuntimeId.Trim();
+        var runtimeDescriptor = ResolveExecutionRuntimeDescriptor(normalizedExecutionRuntimeId);
 
         foreach (var observation in observations)
         {
@@ -196,19 +204,27 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                     $"CDC capture '{observation.CdcCaptureId}' is currently owned by execution runtime '{currentOwner}' and cannot report through '{normalizedExecutionRuntimeId}'.");
             }
 
+            var observationFreshness = CreateObservationFreshness(runtimeDescriptor, observation.ObservedAtUtc);
             ApplyReport(new CdcCaptureExecutionReport(
                 cdcCaptureId: observation.CdcCaptureId,
                 outcome: observation.Outcome,
                 observedAtUtc: observation.ObservedAtUtc,
+                reportId: observation.ReportId,
                 capturedChangeCount: observation.CapturedChangeCount,
                 producedMessageCount: observation.ProducedMessageCount,
                 changeId: observation.ChangeId,
                 checkpoint: observation.Checkpoint,
                 error: observation.Error,
                 freshness: observation.Freshness,
+                observationFreshness: observationFreshness,
                 lag: observation.Lag,
                 publication: observation.Publication,
-                metadata: AddExecutionRuntimeMetadata(normalizedExecutionRuntimeId, observation.Metadata)));
+                metadata: AddExecutionRuntimeMetadata(
+                    normalizedExecutionRuntimeId,
+                    observation.Metadata,
+                    observation.ReportId,
+                    observationFreshness,
+                    runtimeDescriptor?.ObservationStaleAfterSeconds)));
         }
 
         return ValueTask.CompletedTask;
@@ -221,6 +237,7 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
             var dispatchState = dispatchRuntimeCatalog?.GetByOutboxId(descriptor.OutboxId);
             return existing with
             {
+                ObservationFreshness = ResolveObservationFreshness(existing.ObservationFreshness),
                 Publication = ResolvePublicationStatus(
                     existing.Publication,
                     reportedPublication: null,
@@ -247,6 +264,7 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
             ResourceIds: descriptor.ResourceIds,
             LastOutcome: null,
             LastObservedAtUtc: null,
+            LastReportId: null,
             LastCapturedChangeCount: 0,
             LastProducedMessageCount: 0,
             StartedCount: 0,
@@ -259,6 +277,7 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
             LastCheckpoint: null,
             LastError: null,
             Freshness: UnknownFreshness,
+            ObservationFreshness: UnknownObservationFreshness,
             Lag: UnknownLag,
             Publication: ResolvePublicationStatus(
                 UnknownPublication,
@@ -355,10 +374,38 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
             var current = reportedStatesById.TryGetValue(report.CdcCaptureId, out var existing)
                 ? existing
                 : CreateDefaultState(descriptor);
+            var executionRuntime = ResolveExecutionRuntimeDescriptor(
+                descriptor.ExecutionBinding.EffectiveExecutionRuntimeId,
+                report.Metadata);
+            var normalizedReportId = string.IsNullOrWhiteSpace(report.ReportId)
+                ? null
+                : report.ReportId.Trim();
+
+            if (normalizedReportId is not null &&
+                Comparer.Equals(current.LastReportId, normalizedReportId))
+            {
+                if (IsIdempotentDuplicate(current, report))
+                {
+                    return;
+                }
+
+                throw new InvalidOperationException(
+                    $"CDC capture '{report.CdcCaptureId}' already recorded report '{normalizedReportId}' with different payload.");
+            }
+
+            if (executionRuntime?.RejectOutOfOrderReports == true &&
+                current.LastObservedAtUtc.HasValue &&
+                report.ObservedAtUtc < current.LastObservedAtUtc.Value)
+            {
+                throw new InvalidOperationException(
+                    $"CDC capture '{report.CdcCaptureId}' rejected out-of-order report '{normalizedReportId ?? "(no report id)"}' because the latest observation is already '{current.LastObservedAtUtc.Value:O}'.");
+            }
+
             var totalCapturedChangeCount = current.TotalCapturedChangeCount + report.CapturedChangeCount;
             var totalProducedMessageCount = current.TotalProducedMessageCount + report.ProducedMessageCount;
             var dispatchState = dispatchRuntimeCatalog?.GetByOutboxId(descriptor.OutboxId);
             var freshness = report.Freshness ?? current.Freshness;
+            var observationFreshness = report.ObservationFreshness ?? UnknownObservationFreshness;
             var lag = report.Lag ?? current.Lag;
 
             current = normalizedOutcome switch
@@ -367,6 +414,7 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                 {
                     LastOutcome = normalizedOutcome,
                     LastObservedAtUtc = report.ObservedAtUtc,
+                    LastReportId = normalizedReportId,
                     LastCapturedChangeCount = report.CapturedChangeCount,
                     LastProducedMessageCount = report.ProducedMessageCount,
                     StartedCount = current.StartedCount + 1,
@@ -376,6 +424,7 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                     LastCheckpoint = report.Checkpoint,
                     LastError = null,
                     Freshness = freshness,
+                    ObservationFreshness = observationFreshness,
                     Lag = lag,
                     Publication = ResolvePublicationStatus(
                         current.Publication,
@@ -390,6 +439,7 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                 {
                     LastOutcome = normalizedOutcome,
                     LastObservedAtUtc = report.ObservedAtUtc,
+                    LastReportId = normalizedReportId,
                     LastCapturedChangeCount = report.CapturedChangeCount,
                     LastProducedMessageCount = report.ProducedMessageCount,
                     CapturedCount = current.CapturedCount + 1,
@@ -399,6 +449,7 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                     LastCheckpoint = report.Checkpoint,
                     LastError = null,
                     Freshness = freshness,
+                    ObservationFreshness = observationFreshness,
                     Lag = lag,
                     Publication = ResolvePublicationStatus(
                         current.Publication,
@@ -413,6 +464,7 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                 {
                     LastOutcome = normalizedOutcome,
                     LastObservedAtUtc = report.ObservedAtUtc,
+                    LastReportId = normalizedReportId,
                     LastCapturedChangeCount = report.CapturedChangeCount,
                     LastProducedMessageCount = report.ProducedMessageCount,
                     IdleCount = current.IdleCount + 1,
@@ -422,6 +474,7 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                     LastCheckpoint = report.Checkpoint,
                     LastError = null,
                     Freshness = freshness,
+                    ObservationFreshness = observationFreshness,
                     Lag = lag,
                     Publication = ResolvePublicationStatus(
                         current.Publication,
@@ -436,6 +489,7 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                 {
                     LastOutcome = normalizedOutcome,
                     LastObservedAtUtc = report.ObservedAtUtc,
+                    LastReportId = normalizedReportId,
                     LastCapturedChangeCount = report.CapturedChangeCount,
                     LastProducedMessageCount = report.ProducedMessageCount,
                     FailedCount = current.FailedCount + 1,
@@ -445,6 +499,7 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                     LastCheckpoint = report.Checkpoint,
                     LastError = report.Error,
                     Freshness = freshness,
+                    ObservationFreshness = observationFreshness,
                     Lag = lag,
                     Publication = ResolvePublicationStatus(
                         current.Publication,
@@ -465,13 +520,135 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
 
     private static Dictionary<string, string> AddExecutionRuntimeMetadata(
         string executionRuntimeId,
-        IReadOnlyDictionary<string, string> metadata)
+        IReadOnlyDictionary<string, string> metadata,
+        string? reportId,
+        CdcCaptureFreshnessStatus? observationFreshness,
+        int? observationStaleAfterSeconds)
     {
         var merged = metadata.Count == 0
             ? new Dictionary<string, string>(Comparer)
             : new Dictionary<string, string>(metadata, Comparer);
         merged["cdcCaptureExecutionRuntimeId"] = executionRuntimeId;
+        UpsertOptional(merged, "cdcCaptureReportId", reportId);
+        UpsertOptional(merged, "observationFreshUntilUtc", observationFreshness?.FreshUntilUtc?.ToString("O", System.Globalization.CultureInfo.InvariantCulture));
+        UpsertOptional(merged, "observationFreshnessState", observationFreshness?.State);
+        UpsertOptional(merged, "observationStaleAfterSeconds", observationStaleAfterSeconds?.ToString(System.Globalization.CultureInfo.InvariantCulture));
 
         return merged;
+    }
+
+    private CdcCaptureExecutionRuntimeDescriptor? ResolveExecutionRuntimeDescriptor(
+        string? executionRuntimeId,
+        IReadOnlyDictionary<string, string>? metadata = null)
+    {
+        var normalizedExecutionRuntimeId = string.IsNullOrWhiteSpace(executionRuntimeId)
+            ? null
+            : executionRuntimeId.Trim();
+        if (normalizedExecutionRuntimeId is null &&
+            metadata is not null &&
+            metadata.TryGetValue("cdcCaptureExecutionRuntimeId", out var runtimeIdFromMetadata) &&
+            !string.IsNullOrWhiteSpace(runtimeIdFromMetadata))
+        {
+            normalizedExecutionRuntimeId = runtimeIdFromMetadata.Trim();
+        }
+
+        return normalizedExecutionRuntimeId is not null &&
+               runtimeDescriptorsById.TryGetValue(normalizedExecutionRuntimeId, out var runtimeDescriptor)
+            ? runtimeDescriptor
+            : null;
+    }
+
+    private CdcCaptureFreshnessStatus ResolveObservationFreshness(CdcCaptureFreshnessStatus freshness)
+    {
+        if (!freshness.HasWindow ||
+            freshness.FreshUntilUtc is null)
+        {
+            return freshness;
+        }
+
+        if (timeProvider.GetUtcNow() <= freshness.FreshUntilUtc.Value)
+        {
+            return freshness;
+        }
+
+        return new CdcCaptureFreshnessStatus(
+            CdcCaptureFreshnessStates.Stale,
+            freshness.FreshUntilUtc,
+            "The latest CDC runtime observation is older than the configured freshness window.");
+    }
+
+    private static bool IsIdempotentDuplicate(
+        CdcCaptureRuntimeState current,
+        CdcCaptureExecutionReport report)
+    {
+        return Nullable.Equals(current.LastObservedAtUtc, report.ObservedAtUtc) &&
+               string.Equals(current.LastOutcome, report.Outcome, StringComparison.OrdinalIgnoreCase) &&
+               current.LastCapturedChangeCount == report.CapturedChangeCount &&
+               current.LastProducedMessageCount == report.ProducedMessageCount &&
+               string.Equals(current.LastChangeId, report.ChangeId, StringComparison.Ordinal) &&
+               string.Equals(current.LastCheckpoint, report.Checkpoint, StringComparison.Ordinal) &&
+               string.Equals(current.LastError, report.Error, StringComparison.Ordinal) &&
+               MatchesOptional(current.Freshness, report.Freshness) &&
+               MatchesOptional(current.ObservationFreshness, report.ObservationFreshness) &&
+               MatchesOptional(current.Lag, report.Lag) &&
+               MatchesOptional(current.Publication, report.Publication) &&
+               MetadataMatches(current.Metadata, report.Metadata);
+    }
+
+    private static bool MatchesOptional<T>(T current, T? incoming)
+        where T : class
+    {
+        return incoming is null || EqualityComparer<T>.Default.Equals(current, incoming);
+    }
+
+    private static bool MetadataMatches(
+        IReadOnlyDictionary<string, string> current,
+        IReadOnlyDictionary<string, string> incoming)
+    {
+        if (current.Count != incoming.Count)
+        {
+            return false;
+        }
+
+        foreach (var pair in current)
+        {
+            if (!incoming.TryGetValue(pair.Key, out var incomingValue) ||
+                !Comparer.Equals(pair.Value, incomingValue))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static CdcCaptureFreshnessStatus? CreateObservationFreshness(
+        CdcCaptureExecutionRuntimeDescriptor? executionRuntime,
+        DateTimeOffset observedAtUtc)
+    {
+        if (executionRuntime?.ObservationStaleAfterSeconds is not int staleAfterSeconds ||
+            staleAfterSeconds <= 0)
+        {
+            return null;
+        }
+
+        return new CdcCaptureFreshnessStatus(
+            CdcCaptureFreshnessStates.Fresh,
+            observedAtUtc.AddSeconds(staleAfterSeconds),
+            "The latest CDC runtime observation is still within the configured freshness window.");
+    }
+
+    private static void UpsertOptional(
+        Dictionary<string, string> metadata,
+        string key,
+        string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            metadata.Remove(key);
+            return;
+        }
+
+        metadata[key] = value.Trim();
     }
 }

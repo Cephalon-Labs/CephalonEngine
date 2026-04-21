@@ -13,6 +13,7 @@ namespace Cephalon.Abstractions.Data;
 /// <param name="ResourceIds">The resource identifiers observed by the capture.</param>
 /// <param name="LastOutcome">The latest reported capture outcome identifier when one exists.</param>
 /// <param name="LastObservedAtUtc">The UTC timestamp when the latest capture observation was reported.</param>
+/// <param name="LastReportId">The latest stable report identifier when the active runtime supplied one.</param>
 /// <param name="LastCapturedChangeCount">The number of source changes observed in the latest report.</param>
 /// <param name="LastProducedMessageCount">The number of outbox messages produced by the latest report.</param>
 /// <param name="StartedCount">The number of <c>started</c> observations reported so far.</param>
@@ -25,6 +26,7 @@ namespace Cephalon.Abstractions.Data;
 /// <param name="LastCheckpoint">The latest provider-facing checkpoint or cursor when one was reported.</param>
 /// <param name="LastError">The latest operator-facing error summary when one was reported.</param>
 /// <param name="Freshness">The latest provider-facing freshness answer reported for the capture.</param>
+/// <param name="ObservationFreshness">The latest report-freshness answer visible for the capture observation itself.</param>
 /// <param name="Lag">The latest provider-facing lag answer reported for the capture.</param>
 /// <param name="Publication">The latest publication posture answer reported for the capture.</param>
 /// <param name="OutboxDispatchState">
@@ -42,6 +44,7 @@ public sealed record CdcCaptureRuntimeState(
     IReadOnlyList<string> ResourceIds,
     string? LastOutcome,
     DateTimeOffset? LastObservedAtUtc,
+    string? LastReportId,
     int LastCapturedChangeCount,
     int LastProducedMessageCount,
     int StartedCount,
@@ -54,6 +57,7 @@ public sealed record CdcCaptureRuntimeState(
     string? LastCheckpoint,
     string? LastError,
     CdcCaptureFreshnessStatus Freshness,
+    CdcCaptureFreshnessStatus ObservationFreshness,
     CdcCaptureLagStatus Lag,
     CdcCapturePublicationStatus Publication,
     EventDispatchRuntimeState? OutboxDispatchState,
@@ -84,6 +88,16 @@ public sealed record CdcCaptureRuntimeState(
     /// Gets a value indicating whether the capture still has a provider-reported freshness window.
     /// </summary>
     public bool HasFreshnessWindow => Freshness.HasWindow;
+
+    /// <summary>
+    /// Gets a value indicating whether the capture observation still has a report-freshness window.
+    /// </summary>
+    public bool HasObservationFreshnessWindow => ObservationFreshness.HasWindow;
+
+    /// <summary>
+    /// Gets a value indicating whether the latest report is now stale according to the execution-runtime reporting policy.
+    /// </summary>
+    public bool IsObservationStale => string.Equals(ObservationFreshness.State, CdcCaptureFreshnessStates.Stale, StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
     /// Gets a value indicating whether the capture still has provider-reported pending source changes.

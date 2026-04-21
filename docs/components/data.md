@@ -90,7 +90,16 @@ registers `ICdcCaptureExecutionRuntimeReportSink` on top of the shared
 for one `executionRuntimeId`, validates that every reported `cdcCaptureId` is effectively owned by
 that runtime, stamps `metadata.cdcCaptureExecutionRuntimeId`, and then refreshes the existing
 `/engine/cdc-captures/runtime*`, `/engine/cdc-capture-runtimes*`, and `snapshot` answers through
-the same shared catalog instead of a second external-monitor path.
+the same shared catalog instead of a second external-monitor path. That same seam now also lets
+declared execution runtimes opt into `ObservationStaleAfterSeconds` and
+`RejectOutOfOrderReports`, treats repeated `CdcCaptureRuntimeObservation.ReportId` values as
+idempotent retries when the payload matches, rejects older reports when the runtime requires
+ordered ingestion, and derives `ObservationFreshness` plus execution-runtime-summary freshness from
+the configured stale window even when the active runner lives out of process. The shared catalog
+also stamps `metadata.cdcCaptureReportId`, `metadata.observationFreshnessState`,
+`metadata.observationFreshUntilUtc`, and `metadata.observationStaleAfterSeconds` so operators can
+read latest report identity and expiry posture straight off `/engine/cdc-captures/runtime*`,
+`/engine/cdc-capture-runtimes*`, and `snapshot` without inventing a second watchdog registry.
 
 `Cephalon.Data.MongoDB` first proved that contract with a document-oriented provider-native runner.
 Its `mongodb-change-stream-capture-pump` contributor publishes host-managed, provider-native,

@@ -8278,12 +8278,12 @@ Parameters:
 - `cdcCaptureIds`: Optional CDC capture identifiers explicitly owned by the execution runtime when ownership is bounded to a known capture set.
 - `summary`: Optional aggregate runtime summary describing the latest reported operator-facing state for the execution runtime.
 
-<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-abstractions-data-cdccaptureexecutionruntimesummary"></a>
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-nullable-system-int32-system-boolean-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-abstractions-data-cdccaptureexecutionruntimesummary"></a>
 
 ##### `CdcCaptureExecutionRuntimeDescriptor`
 
 ```csharp
-CdcCaptureExecutionRuntimeDescriptor(string id, string displayName, string description, string executionOwnership, string executionTopology, string acknowledgementMode, string hostedExecutionId, string executionGraphId, IReadOnlyDictionary<string, string> metadata, IReadOnlyList<string> cdcCaptureIds, CdcCaptureExecutionRuntimeSummary summary)
+CdcCaptureExecutionRuntimeDescriptor(string id, string displayName, string description, string executionOwnership, string executionTopology, string acknowledgementMode, string hostedExecutionId, string executionGraphId, int? observationStaleAfterSeconds, bool rejectOutOfOrderReports, IReadOnlyDictionary<string, string> metadata, IReadOnlyList<string> cdcCaptureIds, CdcCaptureExecutionRuntimeSummary summary)
 ```
 
 Creates a new CDC capture execution runtime descriptor with first-class ownership and topology semantics.
@@ -8297,6 +8297,8 @@ Parameters:
 - `acknowledgementMode`: The operator-facing acknowledgement mode when the runtime reports one, such as `post-stage-provider`.
 - `hostedExecutionId`: The stable hosted-execution identifier when the runtime is backed by a Cephalon hosted execution.
 - `executionGraphId`: The stable execution-graph identifier when the runtime is backed by a Cephalon execution graph.
+- `observationStaleAfterSeconds`: The optional report-freshness window, in seconds, used to decide when external runtime observations become stale.
+- `rejectOutOfOrderReports`: A value indicating whether the runtime should reject external observations that arrive older than the current latest report.
 - `metadata`: Optional operator-facing metadata for the execution runtime.
 - `cdcCaptureIds`: Optional CDC capture identifiers explicitly owned by the execution runtime when ownership is bounded to a known capture set.
 - `summary`: Optional aggregate runtime summary describing the latest reported operator-facing state for the execution runtime.
@@ -8403,6 +8405,26 @@ IReadOnlyDictionary<string, string> Metadata { get; }
 
 Gets operator-facing metadata for the execution runtime.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-observationstaleafterseconds"></a>
+
+##### `ObservationStaleAfterSeconds`
+
+```csharp
+int? ObservationStaleAfterSeconds { get; }
+```
+
+Gets the report-freshness window, in seconds, used to mark external runtime observations stale when one was declared.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-rejectoutoforderreports"></a>
+
+##### `RejectOutOfOrderReports`
+
+```csharp
+bool RejectOutOfOrderReports { get; }
+```
+
+Gets a value indicating whether the runtime rejects out-of-order external runtime reports.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-summary"></a>
 
 ##### `Summary`
@@ -8426,12 +8448,12 @@ public sealed class CdcCaptureExecutionRuntimeSummary
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-ctor-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-int32-system-int32-system-int32-system-int32-system-int64-system-int64-system-string-system-string"></a>
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-ctor-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-string-system-int32-system-int32-system-int32-system-int32-system-int64-system-int64-system-string-system-string-cephalon-abstractions-data-cdccapturefreshnessstatus"></a>
 
 ##### `CdcCaptureExecutionRuntimeSummary`
 
 ```csharp
-CdcCaptureExecutionRuntimeSummary(IReadOnlyList<string> ReportedCdcCaptureIds, string LastCdcCaptureId, string LastOutcome, DateTimeOffset? LastObservedAtUtc, string LastChangeId, string LastCheckpoint, int StartedCount, int CapturedCount, int IdleCount, int FailedCount, long TotalCapturedChangeCount, long TotalProducedMessageCount, string LastAcknowledgement, string LastError)
+CdcCaptureExecutionRuntimeSummary(IReadOnlyList<string> ReportedCdcCaptureIds, string LastCdcCaptureId, string LastOutcome, DateTimeOffset? LastObservedAtUtc, string LastReportId, string LastChangeId, string LastCheckpoint, int StartedCount, int CapturedCount, int IdleCount, int FailedCount, long TotalCapturedChangeCount, long TotalProducedMessageCount, string LastAcknowledgement, string LastError, CdcCaptureFreshnessStatus ObservationFreshness)
 ```
 
 Describes the latest aggregate operator-facing runtime summary for one CDC capture execution runtime.
@@ -8441,6 +8463,7 @@ Parameters:
 - `LastCdcCaptureId`: The CDC capture identifier that produced the latest runtime observation.
 - `LastOutcome`: The latest reported capture outcome visible for the execution runtime.
 - `LastObservedAtUtc`: The UTC timestamp when the latest runtime observation was reported.
+- `LastReportId`: The latest stable report identifier visible for the execution runtime when one was reported.
 - `LastChangeId`: The latest provider-facing change identifier visible for the execution runtime.
 - `LastCheckpoint`: The latest provider-facing checkpoint visible for the execution runtime.
 - `StartedCount`: The total number of `started` observations visible for the execution runtime.
@@ -8451,6 +8474,7 @@ Parameters:
 - `TotalProducedMessageCount`: The total number of produced outbox messages reported for the execution runtime.
 - `LastAcknowledgement`: The latest acknowledgement posture reported for the execution runtime when one is known.
 - `LastError`: The latest operator-facing error summary visible for the execution runtime.
+- `ObservationFreshness`: The latest aggregate report-freshness posture visible for the execution runtime.
 
 #### Properties
 
@@ -8493,6 +8517,16 @@ bool HasReports { get; }
 ```
 
 Gets a value indicating whether the execution runtime has reported any runtime observations yet.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-hasstaleobservations"></a>
+
+##### `HasStaleObservations`
+
+```csharp
+bool HasStaleObservations { get; }
+```
+
+Gets a value indicating whether at least one reported capture observation is now stale.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-idlecount"></a>
 
@@ -8573,6 +8607,26 @@ string LastOutcome { get; set; }
 ```
 
 The latest reported capture outcome visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-lastreportid"></a>
+
+##### `LastReportId`
+
+```csharp
+string LastReportId { get; set; }
+```
+
+The latest stable report identifier visible for the execution runtime when one was reported.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-observationfreshness"></a>
+
+##### `ObservationFreshness`
+
+```csharp
+CdcCaptureFreshnessStatus ObservationFreshness { get; set; }
+```
+
+The latest aggregate report-freshness posture visible for the execution runtime.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-reportedcapturecount"></a>
 
@@ -8656,6 +8710,16 @@ const string Fresh
 ```
 
 Indicates that the provider reports the capture as fresh.
+
+<a id="member-f-cephalon-abstractions-data-cdccapturefreshnessstates-mixed"></a>
+
+##### `Mixed`
+
+```csharp
+const string Mixed
+```
+
+Indicates that an aggregate runtime answer contains both fresh and unknown capture observation posture.
 
 <a id="member-f-cephalon-abstractions-data-cdccapturefreshnessstates-stale"></a>
 
@@ -9036,12 +9100,12 @@ public sealed class CdcCaptureRuntimeObservation
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-data-cdccaptureruntimeobservation-ctor-system-string-system-string-system-datetimeoffset-system-int32-system-int32-system-string-system-string-system-string-cephalon-abstractions-data-cdccapturefreshnessstatus-cephalon-abstractions-data-cdccapturelagstatus-cephalon-abstractions-data-cdccapturepublicationstatus-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+<a id="member-m-cephalon-abstractions-data-cdccaptureruntimeobservation-ctor-system-string-system-string-system-datetimeoffset-system-string-system-int32-system-int32-system-string-system-string-system-string-cephalon-abstractions-data-cdccapturefreshnessstatus-cephalon-abstractions-data-cdccapturelagstatus-cephalon-abstractions-data-cdccapturepublicationstatus-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
 
 ##### `CdcCaptureRuntimeObservation`
 
 ```csharp
-CdcCaptureRuntimeObservation(string cdcCaptureId, string outcome, DateTimeOffset observedAtUtc, int capturedChangeCount, int producedMessageCount, string changeId, string checkpoint, string error, CdcCaptureFreshnessStatus freshness, CdcCaptureLagStatus lag, CdcCapturePublicationStatus publication, IReadOnlyDictionary<string, string> metadata)
+CdcCaptureRuntimeObservation(string cdcCaptureId, string outcome, DateTimeOffset observedAtUtc, string reportId, int capturedChangeCount, int producedMessageCount, string changeId, string checkpoint, string error, CdcCaptureFreshnessStatus freshness, CdcCaptureLagStatus lag, CdcCapturePublicationStatus publication, IReadOnlyDictionary<string, string> metadata)
 ```
 
 Creates a new CDC capture runtime observation.
@@ -9050,6 +9114,7 @@ Parameters:
 - `cdcCaptureId`: The stable CDC capture identifier that produced the observation.
 - `outcome`: The stable outcome identifier, such as `started`, `captured`, `idle`, or `failed`.
 - `observedAtUtc`: The UTC timestamp when the observation occurred.
+- `reportId`: The optional stable report identifier used to make repeated external observation submissions idempotent.
 - `capturedChangeCount`: The number of source changes observed by this report.
 - `producedMessageCount`: The number of outbox messages produced by this report.
 - `changeId`: The latest provider-facing change identifier when available.
@@ -9182,6 +9247,16 @@ CdcCapturePublicationStatus Publication { get; }
 
 Gets the typed publication-posture answer reported by the active provider/runtime when one was supplied.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-reportid"></a>
+
+##### `ReportId`
+
+```csharp
+string ReportId { get; }
+```
+
+Gets the optional stable report identifier used to make repeated submissions idempotent.
+
 <a id="type-cephalon-abstractions-data-cdccaptureruntimestate"></a>
 
 ### `CdcCaptureRuntimeState`
@@ -9195,12 +9270,12 @@ public sealed class CdcCaptureRuntimeState
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-data-cdccaptureruntimestate-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-nullable-system-datetimeoffset-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int64-system-int64-system-string-system-string-system-string-cephalon-abstractions-data-cdccapturefreshnessstatus-cephalon-abstractions-data-cdccapturelagstatus-cephalon-abstractions-data-cdccapturepublicationstatus-cephalon-abstractions-data-eventdispatchruntimestate-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+<a id="member-m-cephalon-abstractions-data-cdccaptureruntimestate-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int64-system-int64-system-string-system-string-system-string-cephalon-abstractions-data-cdccapturefreshnessstatus-cephalon-abstractions-data-cdccapturefreshnessstatus-cephalon-abstractions-data-cdccapturelagstatus-cephalon-abstractions-data-cdccapturepublicationstatus-cephalon-abstractions-data-eventdispatchruntimestate-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
 
 ##### `CdcCaptureRuntimeState`
 
 ```csharp
-CdcCaptureRuntimeState(string CdcCaptureId, string SourceModuleId, string Provider, string SourceId, string OutboxId, string Mode, string EventFormat, IReadOnlyList<string> ResourceIds, string LastOutcome, DateTimeOffset? LastObservedAtUtc, int LastCapturedChangeCount, int LastProducedMessageCount, int StartedCount, int CapturedCount, int IdleCount, int FailedCount, long TotalCapturedChangeCount, long TotalProducedMessageCount, string LastChangeId, string LastCheckpoint, string LastError, CdcCaptureFreshnessStatus Freshness, CdcCaptureLagStatus Lag, CdcCapturePublicationStatus Publication, EventDispatchRuntimeState OutboxDispatchState, IReadOnlyDictionary<string, string> Metadata)
+CdcCaptureRuntimeState(string CdcCaptureId, string SourceModuleId, string Provider, string SourceId, string OutboxId, string Mode, string EventFormat, IReadOnlyList<string> ResourceIds, string LastOutcome, DateTimeOffset? LastObservedAtUtc, string LastReportId, int LastCapturedChangeCount, int LastProducedMessageCount, int StartedCount, int CapturedCount, int IdleCount, int FailedCount, long TotalCapturedChangeCount, long TotalProducedMessageCount, string LastChangeId, string LastCheckpoint, string LastError, CdcCaptureFreshnessStatus Freshness, CdcCaptureFreshnessStatus ObservationFreshness, CdcCaptureLagStatus Lag, CdcCapturePublicationStatus Publication, EventDispatchRuntimeState OutboxDispatchState, IReadOnlyDictionary<string, string> Metadata)
 ```
 
 Describes the latest operator-facing runtime state visible for one active CDC capture.
@@ -9216,6 +9291,7 @@ Parameters:
 - `ResourceIds`: The resource identifiers observed by the capture.
 - `LastOutcome`: The latest reported capture outcome identifier when one exists.
 - `LastObservedAtUtc`: The UTC timestamp when the latest capture observation was reported.
+- `LastReportId`: The latest stable report identifier when the active runtime supplied one.
 - `LastCapturedChangeCount`: The number of source changes observed in the latest report.
 - `LastProducedMessageCount`: The number of outbox messages produced by the latest report.
 - `StartedCount`: The number of `started` observations reported so far.
@@ -9228,6 +9304,7 @@ Parameters:
 - `LastCheckpoint`: The latest provider-facing checkpoint or cursor when one was reported.
 - `LastError`: The latest operator-facing error summary when one was reported.
 - `Freshness`: The latest provider-facing freshness answer reported for the capture.
+- `ObservationFreshness`: The latest report-freshness answer visible for the capture observation itself.
 - `Lag`: The latest provider-facing lag answer reported for the capture.
 - `Publication`: The latest publication posture answer reported for the capture.
 - `OutboxDispatchState`: The latest linked outbox dispatch state when the active runtime also reports publication posture for the capture's outbox.
@@ -9315,6 +9392,16 @@ bool HasFreshnessWindow { get; }
 
 Gets a value indicating whether the capture still has a provider-reported freshness window.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-hasobservationfreshnesswindow"></a>
+
+##### `HasObservationFreshnessWindow`
+
+```csharp
+bool HasObservationFreshnessWindow { get; }
+```
+
+Gets a value indicating whether the capture observation still has a report-freshness window.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-haspendingchanges"></a>
 
 ##### `HasPendingChanges`
@@ -9364,6 +9451,16 @@ bool IsFailed { get; }
 ```
 
 Gets a value indicating whether the latest reported capture posture is failed.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-isobservationstale"></a>
+
+##### `IsObservationStale`
+
+```csharp
+bool IsObservationStale { get; }
+```
+
+Gets a value indicating whether the latest report is now stale according to the execution-runtime reporting policy.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-lag"></a>
 
@@ -9445,6 +9542,16 @@ int LastProducedMessageCount { get; set; }
 
 The number of outbox messages produced by the latest report.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-lastreportid"></a>
+
+##### `LastReportId`
+
+```csharp
+string LastReportId { get; set; }
+```
+
+The latest stable report identifier when the active runtime supplied one.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-metadata"></a>
 
 ##### `Metadata`
@@ -9464,6 +9571,16 @@ string Mode { get; set; }
 ```
 
 The capture mode such as `wal`, `change-stream`, or `table-tail`.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-observationfreshness"></a>
+
+##### `ObservationFreshness`
+
+```csharp
+CdcCaptureFreshnessStatus ObservationFreshness { get; set; }
+```
+
+The latest report-freshness answer visible for the capture observation itself.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-outboxdispatchstate"></a>
 

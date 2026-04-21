@@ -7,6 +7,7 @@ namespace Cephalon.Abstractions.Data;
 /// <param name="LastCdcCaptureId">The CDC capture identifier that produced the latest runtime observation.</param>
 /// <param name="LastOutcome">The latest reported capture outcome visible for the execution runtime.</param>
 /// <param name="LastObservedAtUtc">The UTC timestamp when the latest runtime observation was reported.</param>
+/// <param name="LastReportId">The latest stable report identifier visible for the execution runtime when one was reported.</param>
 /// <param name="LastChangeId">The latest provider-facing change identifier visible for the execution runtime.</param>
 /// <param name="LastCheckpoint">The latest provider-facing checkpoint visible for the execution runtime.</param>
 /// <param name="StartedCount">The total number of <c>started</c> observations visible for the execution runtime.</param>
@@ -17,11 +18,13 @@ namespace Cephalon.Abstractions.Data;
 /// <param name="TotalProducedMessageCount">The total number of produced outbox messages reported for the execution runtime.</param>
 /// <param name="LastAcknowledgement">The latest acknowledgement posture reported for the execution runtime when one is known.</param>
 /// <param name="LastError">The latest operator-facing error summary visible for the execution runtime.</param>
+/// <param name="ObservationFreshness">The latest aggregate report-freshness posture visible for the execution runtime.</param>
 public sealed record CdcCaptureExecutionRuntimeSummary(
     IReadOnlyList<string> ReportedCdcCaptureIds,
     string? LastCdcCaptureId,
     string? LastOutcome,
     DateTimeOffset? LastObservedAtUtc,
+    string? LastReportId,
     string? LastChangeId,
     string? LastCheckpoint,
     int StartedCount,
@@ -31,7 +34,8 @@ public sealed record CdcCaptureExecutionRuntimeSummary(
     long TotalCapturedChangeCount,
     long TotalProducedMessageCount,
     string? LastAcknowledgement,
-    string? LastError)
+    string? LastError,
+    CdcCaptureFreshnessStatus ObservationFreshness)
 {
     /// <summary>
     /// Gets an empty summary for execution runtimes that have not reported state yet.
@@ -41,6 +45,7 @@ public sealed record CdcCaptureExecutionRuntimeSummary(
         LastCdcCaptureId: null,
         LastOutcome: null,
         LastObservedAtUtc: null,
+        LastReportId: null,
         LastChangeId: null,
         LastCheckpoint: null,
         StartedCount: 0,
@@ -50,7 +55,8 @@ public sealed record CdcCaptureExecutionRuntimeSummary(
         TotalCapturedChangeCount: 0,
         TotalProducedMessageCount: 0,
         LastAcknowledgement: null,
-        LastError: null);
+        LastError: null,
+        ObservationFreshness: new CdcCaptureFreshnessStatus(CdcCaptureFreshnessStates.Unknown));
 
     /// <summary>
     /// Gets the number of distinct CDC captures that have reported runtime state for the execution runtime.
@@ -66,4 +72,9 @@ public sealed record CdcCaptureExecutionRuntimeSummary(
     /// Gets a value indicating whether the execution runtime has reported any runtime observations yet.
     /// </summary>
     public bool HasReports => TotalReports > 0;
+
+    /// <summary>
+    /// Gets a value indicating whether at least one reported capture observation is now stale.
+    /// </summary>
+    public bool HasStaleObservations => string.Equals(ObservationFreshness.State, CdcCaptureFreshnessStates.Stale, StringComparison.OrdinalIgnoreCase);
 }

@@ -19,4 +19,9 @@ public static class CdcCaptureFreshnessStates
     /// Indicates that the provider reports the capture as stale.
     /// </summary>
     public const string Stale = "stale";
+
+    /// <summary>
+    /// Indicates that an aggregate runtime answer contains both fresh and unknown capture observation posture.
+    /// </summary>
+    public const string Mixed = "mixed";
 }
