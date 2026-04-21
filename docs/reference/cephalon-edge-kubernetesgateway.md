@@ -237,6 +237,18 @@ Initializes a new instance of the `KubernetesGatewayTrafficObservationOptions` c
 
 #### Properties
 
+<a id="member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationoptions-enablecleanupsweep"></a>
+
+##### `EnableCleanupSweep`
+
+```csharp
+bool EnableCleanupSweep { get; set; }
+```
+
+Gets or sets a value indicating whether apply-and-reconcile mode should also sweep previously owned stale HTTPRoute resources.
+
+Remarks: This cleanup sweep is disabled by default so existing apply-and-reconcile behavior stays additive. When enabled, the materializer will delete transferred resources and prune orphaned resources that still carry Cephalon ownership labels in the configured route namespaces.
+
 <a id="member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationoptions-kubeconfigpath"></a>
 
 ##### `KubeConfigPath`

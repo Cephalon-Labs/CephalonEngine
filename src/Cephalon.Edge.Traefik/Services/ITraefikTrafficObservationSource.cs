@@ -8,4 +8,9 @@ internal interface ITraefikTrafficObservationSource
         CellTrafficAutomationRuntimeDescriptor automation,
         TraefikIngressRouteProjection projection,
         CancellationToken cancellationToken = default);
+
+    ValueTask<TraefikTrafficCleanupSweepResult> SweepCleanupAsync(
+        IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> activeAutomations,
+        IReadOnlyCollection<TraefikIngressRouteProjection> activeProjections,
+        CancellationToken cancellationToken = default);
 }

@@ -1,3 +1,4 @@
+using System.Globalization;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Edge.Traefik.Configuration;
 
@@ -10,6 +11,9 @@ internal sealed class TraefikTrafficAutomationMaterializer : ICellTrafficAutomat
     private readonly ITraefikTrafficApplyService? applyService;
     private readonly string controlPlaneMode;
     private readonly int observationPollingIntervalSeconds;
+    private readonly bool cleanupSweepEnabled;
+    private readonly Lock cleanupSummaryGate = new();
+    private TraefikTrafficCleanupSweepResult? lastCleanupSweepResult;
 
     public TraefikTrafficAutomationMaterializer(
         TraefikTrafficProjectionCatalog projections,
@@ -32,6 +36,7 @@ internal sealed class TraefikTrafficAutomationMaterializer : ICellTrafficAutomat
         this.applyService = applyService;
         controlPlaneMode = TraefikTrafficObservationModes.Normalize(options.Observation.Mode);
         observationPollingIntervalSeconds = Math.Max(1, options.Observation.PollingIntervalSeconds);
+        cleanupSweepEnabled = options.Observation.EnableCleanupSweep;
     }
 
     public string MaterializerId { get; }
@@ -56,6 +61,11 @@ internal sealed class TraefikTrafficAutomationMaterializer : ICellTrafficAutomat
             TraefikTrafficObservationModes.ApplyAndReconcile,
             StringComparison.OrdinalIgnoreCase);
 
+    internal bool SupportsCleanupSweep =>
+        UsesApplyAndReconcile &&
+        cleanupSweepEnabled &&
+        observationSource is not null;
+
     internal TimeSpan ObservationPollingInterval =>
         TimeSpan.FromSeconds(observationPollingIntervalSeconds);
 
@@ -77,10 +87,10 @@ internal sealed class TraefikTrafficAutomationMaterializer : ICellTrafficAutomat
 
         if (!projectionsByRouteId.TryGetValue(automation.RouteId, out var projection))
         {
-            return new CellTrafficAutomationProviderMaterializationResult(
+            return AttachCleanupSummary(new CellTrafficAutomationProviderMaterializationResult(
                 state: CellTrafficAutomationProviderMaterializationStates.Unavailable,
                 observedAtUtc: DateTimeOffset.UtcNow,
-                error: $"Traefik traffic materializer '{MaterializerId}' has no projection for route '{automation.RouteId}'.");
+                error: $"Traefik traffic materializer '{MaterializerId}' has no projection for route '{automation.RouteId}'."));
         }
 
         if (UsesApplyAndReconcile)
@@ -104,10 +114,10 @@ internal sealed class TraefikTrafficAutomationMaterializer : ICellTrafficAutomat
         metadata["lifecycleAction"] = CellTrafficAutomationLifecycleActions.Project;
         metadata["ingressRouteWriteAction"] = "none";
 
-        return new CellTrafficAutomationProviderMaterializationResult(
+        return AttachCleanupSummary(new CellTrafficAutomationProviderMaterializationResult(
             state: CellTrafficAutomationProviderMaterializationStates.Pending,
             observedAtUtc: DateTimeOffset.UtcNow,
-            metadata: metadata);
+            metadata: metadata));
     }
 
     internal async ValueTask<CellTrafficAutomationProviderMaterializationResult> RefreshAsync(
@@ -129,10 +139,10 @@ internal sealed class TraefikTrafficAutomationMaterializer : ICellTrafficAutomat
 
         if (!projectionsByRouteId.TryGetValue(automation.RouteId, out var projection))
         {
-            return new CellTrafficAutomationProviderMaterializationResult(
+            return AttachCleanupSummary(new CellTrafficAutomationProviderMaterializationResult(
                 state: CellTrafficAutomationProviderMaterializationStates.Unavailable,
                 observedAtUtc: DateTimeOffset.UtcNow,
-                error: $"Traefik traffic materializer '{MaterializerId}' has no projection for route '{automation.RouteId}'.");
+                error: $"Traefik traffic materializer '{MaterializerId}' has no projection for route '{automation.RouteId}'."));
         }
 
         if (observationSource is null)
@@ -148,14 +158,52 @@ internal sealed class TraefikTrafficAutomationMaterializer : ICellTrafficAutomat
             metadata["lifecycleAction"] = CellTrafficAutomationLifecycleActions.Observe;
             metadata["ingressRouteWriteAction"] = "none";
 
-            return new CellTrafficAutomationProviderMaterializationResult(
+            return AttachCleanupSummary(new CellTrafficAutomationProviderMaterializationResult(
                 state: CellTrafficAutomationProviderMaterializationStates.Failed,
                 observedAtUtc: DateTimeOffset.UtcNow,
                 error: $"Traefik traffic materializer '{MaterializerId}' is configured for '{controlPlaneMode}' mode, but no observation source is active.",
-                metadata: metadata);
+                metadata: metadata));
         }
 
-        return await observationSource.ObserveAsync(automation, projection, cancellationToken).ConfigureAwait(false);
+        return AttachCleanupSummary(
+            await observationSource.ObserveAsync(automation, projection, cancellationToken).ConfigureAwait(false));
+    }
+
+    internal async ValueTask<TraefikTrafficCleanupSweepResult> SweepCleanupAsync(
+        IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> activeAutomations,
+        CancellationToken cancellationToken = default)
+    {
+        if (!UsesApplyAndReconcile)
+        {
+            return RecordCleanupSweepResult(CreateDefaultCleanupSweepResult());
+        }
+
+        if (!cleanupSweepEnabled)
+        {
+            return RecordCleanupSweepResult(CreateDefaultCleanupSweepResult());
+        }
+
+        if (observationSource is null)
+        {
+            return RecordCleanupSweepResult(CreateUnavailableCleanupSweepResult());
+        }
+
+        try
+        {
+            var cleanupResult = await observationSource.SweepCleanupAsync(
+                activeAutomations,
+                projectionsByRouteId.Values.ToArray(),
+                cancellationToken).ConfigureAwait(false);
+            return RecordCleanupSweepResult(cleanupResult);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception exception)
+        {
+            return RecordCleanupSweepResult(CreateFailedCleanupSweepResult(exception.Message));
+        }
     }
 
     private async ValueTask<CellTrafficAutomationProviderMaterializationResult> ApplyAndReconcileAsync(
@@ -176,11 +224,11 @@ internal sealed class TraefikTrafficAutomationMaterializer : ICellTrafficAutomat
             metadata["lifecycleAction"] = CellTrafficAutomationLifecycleActions.Reconcile;
             metadata["ingressRouteWriteAction"] = "none";
 
-            return new CellTrafficAutomationProviderMaterializationResult(
+            return AttachCleanupSummary(new CellTrafficAutomationProviderMaterializationResult(
                 state: CellTrafficAutomationProviderMaterializationStates.Failed,
                 observedAtUtc: DateTimeOffset.UtcNow,
                 error: $"Traefik traffic materializer '{MaterializerId}' is configured for apply-and-reconcile mode, but no apply service is active.",
-                metadata: metadata);
+                metadata: metadata));
         }
 
         if (observationSource is null)
@@ -196,11 +244,11 @@ internal sealed class TraefikTrafficAutomationMaterializer : ICellTrafficAutomat
             metadata["lifecycleAction"] = CellTrafficAutomationLifecycleActions.Reconcile;
             metadata["ingressRouteWriteAction"] = "none";
 
-            return new CellTrafficAutomationProviderMaterializationResult(
+            return AttachCleanupSummary(new CellTrafficAutomationProviderMaterializationResult(
                 state: CellTrafficAutomationProviderMaterializationStates.Failed,
                 observedAtUtc: DateTimeOffset.UtcNow,
                 error: $"Traefik traffic materializer '{MaterializerId}' is configured for apply-and-reconcile mode, but no observation source is active.",
-                metadata: metadata);
+                metadata: metadata));
         }
 
         var applyResult = await applyService.ApplyAsync(automation, projection, cancellationToken).ConfigureAwait(false);
@@ -209,11 +257,115 @@ internal sealed class TraefikTrafficAutomationMaterializer : ICellTrafficAutomat
                 CellTrafficAutomationProviderMaterializationStates.Failed,
                 StringComparison.OrdinalIgnoreCase))
         {
-            return applyResult;
+            return AttachCleanupSummary(applyResult);
         }
 
         var observedResult = await observationSource.ObserveAsync(automation, projection, cancellationToken).ConfigureAwait(false);
-        return MergeApplyAndObservedResult(applyResult, observedResult);
+        return AttachCleanupSummary(MergeApplyAndObservedResult(applyResult, observedResult));
+    }
+
+    private CellTrafficAutomationProviderMaterializationResult AttachCleanupSummary(
+        CellTrafficAutomationProviderMaterializationResult result)
+    {
+        if (!UsesApplyAndReconcile)
+        {
+            return result;
+        }
+
+        var cleanupResult = GetCleanupSweepResult();
+        var metadata = result.Metadata.Count == 0
+            ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            : new Dictionary<string, string>(result.Metadata, StringComparer.OrdinalIgnoreCase);
+        metadata["cleanupSweepEnabled"] = cleanupSweepEnabled ? "true" : "false";
+        metadata["cleanupState"] = cleanupResult.State;
+        metadata["cleanupObservedAtUtc"] = cleanupResult.ObservedAtUtc.ToString("O", CultureInfo.InvariantCulture);
+
+        if (!string.IsNullOrWhiteSpace(cleanupResult.Error))
+        {
+            metadata["cleanupError"] = cleanupResult.Error!;
+        }
+        else
+        {
+            metadata.Remove("cleanupError");
+        }
+
+        foreach (var pair in cleanupResult.Metadata)
+        {
+            metadata[$"cleanup.{pair.Key}"] = pair.Value;
+        }
+
+        return new CellTrafficAutomationProviderMaterializationResult(
+            state: result.State,
+            observedAtUtc: result.ObservedAtUtc,
+            error: result.Error,
+            metadata: metadata);
+    }
+
+    private TraefikTrafficCleanupSweepResult GetCleanupSweepResult()
+    {
+        lock (cleanupSummaryGate)
+        {
+            lastCleanupSweepResult ??= CreateDefaultCleanupSweepResult();
+            return lastCleanupSweepResult;
+        }
+    }
+
+    private TraefikTrafficCleanupSweepResult RecordCleanupSweepResult(
+        TraefikTrafficCleanupSweepResult result)
+    {
+        lock (cleanupSummaryGate)
+        {
+            lastCleanupSweepResult = result;
+            return result;
+        }
+    }
+
+    private TraefikTrafficCleanupSweepResult CreateDefaultCleanupSweepResult()
+    {
+        var metadata = CreateCleanupSweepMetadata();
+        var state = cleanupSweepEnabled ? "pending" : "disabled";
+        return new TraefikTrafficCleanupSweepResult(
+            DateTimeOffset.UtcNow,
+            state,
+            metadata: metadata);
+    }
+
+    private TraefikTrafficCleanupSweepResult CreateUnavailableCleanupSweepResult()
+    {
+        return new TraefikTrafficCleanupSweepResult(
+            DateTimeOffset.UtcNow,
+            "unavailable",
+            "Traefik cleanup sweep requires an observation source.",
+            CreateCleanupSweepMetadata());
+    }
+
+    private TraefikTrafficCleanupSweepResult CreateFailedCleanupSweepResult(string error)
+    {
+        return new TraefikTrafficCleanupSweepResult(
+            DateTimeOffset.UtcNow,
+            "failed",
+            error,
+            CreateCleanupSweepMetadata());
+    }
+
+    private Dictionary<string, string> CreateCleanupSweepMetadata()
+    {
+        var namespaces = projectionsByRouteId.Values
+            .Select(static projection => projection.RouteNamespace)
+            .Where(static value => !string.IsNullOrWhiteSpace(value))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static value => value, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["candidateCount"] = "0",
+            ["removedResourceCount"] = "0",
+            ["deletedTransferredResourceCount"] = "0",
+            ["prunedOrphanResourceCount"] = "0",
+            ["resourceIds"] = string.Empty,
+            ["lifecycleActions"] = string.Empty,
+            ["namespaces"] = string.Join(",", namespaces)
+        };
     }
 
     private static CellTrafficAutomationProviderMaterializationResult MergeApplyAndObservedResult(

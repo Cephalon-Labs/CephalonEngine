@@ -319,6 +319,91 @@ public sealed class KubernetesGatewayTrafficMaterializerAspNetCoreHostingTests
             item.RuntimeMetadata["providerMaterialization.providerAction"] == "apply-and-reconcile");
     }
 
+    [Fact]
+    public async Task MapCephalonExposesKubernetesGatewayCleanupSweepMetadataOnExistingSurfaces()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Services.AddProblemDetails();
+        builder.Services.AddHealthChecks()
+            .AddCheck("cephalon.liveness", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy(), tags: ["live", "engine"])
+            .AddCheck("cephalon.readiness", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy(), tags: ["ready", "engine"]);
+        builder.Services.AddSingleton<IRateLimitingRuntimeCatalog>(EmptyRateLimitingRuntimeCatalog.Instance);
+        builder.Services.AddSingleton<IKubernetesGatewayTrafficApplyService>(
+            new StaticApplyService(static () => CreateApplyPendingResult("created")));
+        builder.Services.AddSingleton<IKubernetesGatewayTrafficObservationSource>(
+            new StaticObservationSource(static () => CreateObservedAppliedResult(), static () => CreateCleanupSweepResult()));
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "Microservice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:RouteId"] = "orders-to-public-ingress";
+        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:AutomationMode"] = "automatic";
+        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:TriggerMode"] = "source-or-target-health";
+        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:ActionMode"] = "shed-load";
+        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:MaterializationMode"] = "provider-managed";
+        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:ProviderId"] =
+            KubernetesGatewayTrafficMaterializerOptions.DefaultProviderId;
+        builder.Services.AddCephalon(engine =>
+        {
+            engine.UseConfiguration(builder.Configuration);
+            engine.AddModule(new KubernetesGatewayTrafficHostingTestModule());
+            engine.AddKubernetesGatewayTrafficMaterializer(options =>
+            {
+                options.ControllerName = "cephalon.io/gateway-controller";
+                options.GatewayClassName = "cephalon-public";
+                options.GatewayNamespace = "edge-system";
+                options.GatewayName = "public-gateway";
+                options.ListenerName = "https";
+                options.RouteNamespace = "edge-system";
+                options.Observation.Mode = KubernetesGatewayTrafficObservationModes.ApplyAndReconcile;
+                options.Observation.PollingIntervalSeconds = 1;
+                options.Observation.StaleAfterSeconds = 180;
+                options.Observation.EnableCleanupSweep = true;
+                options.Routes.Add(new KubernetesGatewayTrafficRouteOptions
+                {
+                    RouteId = "orders-to-public-ingress",
+                    HttpRouteName = "orders-public-ingress",
+                    BackendNamespace = "orders-runtime",
+                    BackendServiceName = "orders-api",
+                    BackendPort = 8443,
+                    BackendWeight = 100
+                });
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        await Task.Delay(TimeSpan.FromMilliseconds(1400));
+
+        var client = app.GetTestClient();
+        var providerAutomations =
+            await client.GetFromJsonAsync<CellTrafficAutomationRuntimeDescriptor[]>("/engine/cell-traffic-automations/providers/kubernetes-gateway");
+        var surfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/cell-based-architecture");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(providerAutomations);
+        var automation = Assert.Single(providerAutomations);
+        Assert.Equal("true", automation.RuntimeMetadata["providerMaterialization.cleanupSweepEnabled"]);
+        Assert.Equal("applied", automation.RuntimeMetadata["providerMaterialization.cleanupState"]);
+        Assert.Equal("2", automation.RuntimeMetadata["providerMaterialization.cleanup.candidateCount"]);
+        Assert.Equal("1", automation.RuntimeMetadata["providerMaterialization.cleanup.deletedTransferredResourceCount"]);
+        Assert.Equal("1", automation.RuntimeMetadata["providerMaterialization.cleanup.prunedOrphanResourceCount"]);
+
+        Assert.NotNull(surfaces);
+        var gatewaySurface = Assert.Single(
+            surfaces,
+            static surface => surface.SurfaceId == "kubernetes-gateway-traffic-materializations");
+        var entry = Assert.Single(gatewaySurface.Entries, item => item.Metadata["routeId"] == "orders-to-public-ingress");
+        Assert.Equal("applied", entry.Metadata["cleanupState"]);
+        Assert.Equal("2", entry.Metadata["cleanup.candidateCount"]);
+        Assert.Equal("delete,prune", entry.Metadata["cleanup.lifecycleActions"]);
+
+        Assert.NotNull(snapshot);
+        Assert.Contains(snapshot.CellTrafficAutomations, item =>
+            item.RouteId == "orders-to-public-ingress" &&
+            item.RuntimeMetadata["providerMaterialization.cleanupState"] == "applied");
+    }
+
     private static CellTrafficAutomationProviderMaterializationResult CreateApplyPendingResult(string writeAction)
     {
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -386,6 +471,24 @@ public sealed class KubernetesGatewayTrafficMaterializerAspNetCoreHostingTests
             metadata: metadata);
     }
 
+    private static KubernetesGatewayTrafficCleanupSweepResult CreateCleanupSweepResult()
+    {
+        return new KubernetesGatewayTrafficCleanupSweepResult(
+            DateTimeOffset.UtcNow,
+            "applied",
+            metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["activeAutomationCount"] = "1",
+                ["candidateCount"] = "2",
+                ["removedResourceCount"] = "2",
+                ["deletedTransferredResourceCount"] = "1",
+                ["prunedOrphanResourceCount"] = "1",
+                ["resourceIds"] = "httproute/edge-system/orders-public-ingress-legacy,httproute/edge-system/orders-public-ingress-stale",
+                ["lifecycleActions"] = "delete,prune",
+                ["namespaces"] = "edge-system"
+            });
+    }
+
     private sealed class StaticApplyService(
         Func<CellTrafficAutomationProviderMaterializationResult> factory)
         : IKubernetesGatewayTrafficApplyService
@@ -401,7 +504,8 @@ public sealed class KubernetesGatewayTrafficMaterializerAspNetCoreHostingTests
     }
 
     private sealed class StaticObservationSource(
-        Func<CellTrafficAutomationProviderMaterializationResult> factory)
+        Func<CellTrafficAutomationProviderMaterializationResult> factory,
+        Func<KubernetesGatewayTrafficCleanupSweepResult>? cleanupFactory = null)
         : IKubernetesGatewayTrafficObservationSource
     {
         public ValueTask<CellTrafficAutomationProviderMaterializationResult> ObserveAsync(
@@ -411,6 +515,17 @@ public sealed class KubernetesGatewayTrafficMaterializerAspNetCoreHostingTests
         {
             cancellationToken.ThrowIfCancellationRequested();
             return ValueTask.FromResult(factory());
+        }
+
+        public ValueTask<KubernetesGatewayTrafficCleanupSweepResult> SweepCleanupAsync(
+            IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> activeAutomations,
+            IReadOnlyCollection<KubernetesGatewayTrafficRouteProjection> activeProjections,
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return ValueTask.FromResult(
+                cleanupFactory?.Invoke() ??
+                new KubernetesGatewayTrafficCleanupSweepResult(DateTimeOffset.UtcNow, "idle"));
         }
     }
 

@@ -8,4 +8,9 @@ internal interface IKubernetesGatewayTrafficObservationSource
         CellTrafficAutomationRuntimeDescriptor automation,
         KubernetesGatewayTrafficRouteProjection projection,
         CancellationToken cancellationToken = default);
+
+    ValueTask<KubernetesGatewayTrafficCleanupSweepResult> SweepCleanupAsync(
+        IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> activeAutomations,
+        IReadOnlyCollection<KubernetesGatewayTrafficRouteProjection> activeProjections,
+        CancellationToken cancellationToken = default);
 }

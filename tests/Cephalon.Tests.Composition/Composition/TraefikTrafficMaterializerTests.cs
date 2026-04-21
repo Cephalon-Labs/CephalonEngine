@@ -312,6 +312,82 @@ public sealed class TraefikTrafficMaterializerTests
     }
 
     [Fact]
+    public void CleanupDispositionTreatsTransferredIngressRoutesAsDeleteCandidates()
+    {
+        var automation = CreateAutomationDescriptor(
+            automationId: "orders-public-automation",
+            routeId: "orders-to-public-ingress",
+            sourceModuleId: "traefik-traffic-tests");
+        using var source = new TraefikTrafficObservationSource(
+            new TraefikTrafficMaterializerOptions(),
+            TimeProvider.System,
+            runtimeCatalogAccessor: () => new StaticCellTrafficAutomationRuntimeCatalog([automation]));
+
+        var disposition = source.EvaluateCleanupDisposition(
+            new TraefikIngressRouteResource
+            {
+                Metadata = new k8s.Models.V1ObjectMeta
+                {
+                    NamespaceProperty = "edge-traefik",
+                    Name = "orders-public-ingress-legacy",
+                    Labels = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [TraefikOwnership.ManagedByLabel] = TraefikOwnership.ManagedByValue
+                    },
+                    Annotations = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [TraefikOwnership.AutomationIdAnnotation] = automation.Id,
+                        [TraefikOwnership.RouteIdAnnotation] = automation.RouteId,
+                        [TraefikOwnership.SourceModuleIdAnnotation] = automation.SourceModuleId
+                    }
+                }
+            },
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase));
+
+        Assert.True(disposition.ShouldRemove);
+        Assert.Equal(CellTrafficAutomationLifecycleActions.Delete, disposition.LifecycleAction);
+        Assert.Equal(CellTrafficAutomationOwnershipStates.Transferred, disposition.OwnershipState);
+        Assert.Equal("active-owner-transferred", disposition.Reason);
+        Assert.Equal("ingressroute/edge-traefik/orders-public-ingress-legacy", disposition.ProviderRouteId);
+    }
+
+    [Fact]
+    public void CleanupDispositionTreatsStaleIngressRoutesAsPruneCandidates()
+    {
+        using var source = new TraefikTrafficObservationSource(
+            new TraefikTrafficMaterializerOptions(),
+            TimeProvider.System,
+            runtimeCatalogAccessor: () => new StaticCellTrafficAutomationRuntimeCatalog([]));
+
+        var disposition = source.EvaluateCleanupDisposition(
+            new TraefikIngressRouteResource
+            {
+                Metadata = new k8s.Models.V1ObjectMeta
+                {
+                    NamespaceProperty = "edge-traefik",
+                    Name = "orders-public-ingress-stale",
+                    Labels = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [TraefikOwnership.ManagedByLabel] = TraefikOwnership.ManagedByValue
+                    },
+                    Annotations = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [TraefikOwnership.AutomationIdAnnotation] = "retired-orders-automation",
+                        [TraefikOwnership.RouteIdAnnotation] = "retired-orders-route",
+                        [TraefikOwnership.SourceModuleIdAnnotation] = "retired-module"
+                    }
+                }
+            },
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase));
+
+        Assert.True(disposition.ShouldRemove);
+        Assert.Equal(CellTrafficAutomationLifecycleActions.Prune, disposition.LifecycleAction);
+        Assert.Equal(CellTrafficAutomationOwnershipStates.Pruned, disposition.OwnershipState);
+        Assert.Equal("stale-owner", disposition.Reason);
+        Assert.Equal("ingressroute/edge-traefik/orders-public-ingress-stale", disposition.ProviderRouteId);
+    }
+
+    [Fact]
     public async Task ObservationHostedServiceRefreshesLiveTraefikStatusOnPollingInterval()
     {
         var source = new SequencedObservationSource(new Dictionary<string, Queue<CellTrafficAutomationProviderMaterializationResult>>(StringComparer.OrdinalIgnoreCase)
@@ -432,11 +508,64 @@ public sealed class TraefikTrafficMaterializerTests
         Assert.Equal("traefik-ingressroute-observation", automation.RuntimeMetadata["providerMaterialization.statusSource"]);
     }
 
+    [Fact]
+    public async Task ApplyAndReconcileRefreshesCleanupSweepSummaryOnPollingInterval()
+    {
+        var observationSource = new StaticObservationSource(
+            CreateObservedAppliedResult,
+            static () => CreateCleanupSweepResult());
+        var services = CreateServiceCollection(
+            includeAdminProjection: false,
+            controlPlaneMode: TraefikTrafficObservationModes.ApplyAndReconcile,
+            observationPollingIntervalSeconds: 1,
+            enableCleanupSweep: true,
+            configureServices: collection =>
+            {
+                collection.AddSingleton<ITraefikTrafficApplyService>(
+                    new StaticApplyService(
+                        static (automation, projection) => CreateApplyPendingResult(automation.RouteId, "created")));
+                collection.AddSingleton<ITraefikTrafficObservationSource>(observationSource);
+            });
+
+        using var provider = services.BuildServiceProvider();
+        foreach (var hostedService in provider.GetServices<IHostedService>())
+        {
+            await hostedService.StartAsync(CancellationToken.None);
+        }
+
+        var catalog = provider.GetRequiredService<ICellTrafficAutomationRuntimeCatalog>();
+
+        var initial = catalog.GetByRouteId("orders-to-public-ingress");
+        Assert.NotNull(initial);
+        Assert.Equal("true", initial.RuntimeMetadata["providerMaterialization.cleanupSweepEnabled"]);
+        Assert.Equal("pending", initial.RuntimeMetadata["providerMaterialization.cleanupState"]);
+
+        await WaitForConditionAsync(
+            () =>
+            {
+                var refreshed = catalog.GetByRouteId("orders-to-public-ingress");
+                return refreshed is not null &&
+                    string.Equals(refreshed.RuntimeMetadata["providerMaterialization.cleanupState"], "applied", StringComparison.OrdinalIgnoreCase);
+            },
+            TimeSpan.FromSeconds(10));
+
+        var automation = catalog.GetByRouteId("orders-to-public-ingress");
+        Assert.NotNull(automation);
+        Assert.Equal("true", automation.RuntimeMetadata["providerMaterialization.cleanupSweepEnabled"]);
+        Assert.Equal("applied", automation.RuntimeMetadata["providerMaterialization.cleanupState"]);
+        Assert.Equal("2", automation.RuntimeMetadata["providerMaterialization.cleanup.candidateCount"]);
+        Assert.Equal("2", automation.RuntimeMetadata["providerMaterialization.cleanup.removedResourceCount"]);
+        Assert.Equal("1", automation.RuntimeMetadata["providerMaterialization.cleanup.deletedTransferredResourceCount"]);
+        Assert.Equal("1", automation.RuntimeMetadata["providerMaterialization.cleanup.prunedOrphanResourceCount"]);
+        Assert.Equal("delete,prune", automation.RuntimeMetadata["providerMaterialization.cleanup.lifecycleActions"]);
+    }
+
     private static ServiceCollection CreateServiceCollection(
         bool includeAdminProjection,
         string? controlPlaneMode = null,
         int observationPollingIntervalSeconds = 30,
         int observationStaleAfterSeconds = 90,
+        bool enableCleanupSweep = false,
         Action<ServiceCollection>? configureServices = null)
     {
         var services = new ServiceCollection();
@@ -446,7 +575,8 @@ public sealed class TraefikTrafficMaterializerTests
             includeAdminProjection,
             controlPlaneMode,
             observationPollingIntervalSeconds,
-            observationStaleAfterSeconds));
+            observationStaleAfterSeconds,
+            enableCleanupSweep));
         return services;
     }
 
@@ -455,7 +585,8 @@ public sealed class TraefikTrafficMaterializerTests
         bool includeAdminProjection,
         string? controlPlaneMode,
         int observationPollingIntervalSeconds,
-        int observationStaleAfterSeconds)
+        int observationStaleAfterSeconds,
+        bool enableCleanupSweep)
     {
         engine.UseSettings(new EngineSettings(
             blueprint: "Microservice",
@@ -490,6 +621,7 @@ public sealed class TraefikTrafficMaterializerTests
             options.Observation.Mode = controlPlaneMode ?? TraefikTrafficObservationModes.ConfiguredIntent;
             options.Observation.PollingIntervalSeconds = observationPollingIntervalSeconds;
             options.Observation.StaleAfterSeconds = observationStaleAfterSeconds;
+            options.Observation.EnableCleanupSweep = enableCleanupSweep;
             options.Routes.Add(new TraefikIngressRouteOptions
             {
                 RouteId = "orders-to-public-ingress",
@@ -732,6 +864,24 @@ public sealed class TraefikTrafficMaterializerTests
         };
     }
 
+    private static TraefikTrafficCleanupSweepResult CreateCleanupSweepResult()
+    {
+        return new TraefikTrafficCleanupSweepResult(
+            DateTimeOffset.UtcNow,
+            "applied",
+            metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["activeAutomationCount"] = "1",
+                ["candidateCount"] = "2",
+                ["removedResourceCount"] = "2",
+                ["deletedTransferredResourceCount"] = "1",
+                ["prunedOrphanResourceCount"] = "1",
+                ["resourceIds"] = "ingressroute/edge-traefik/orders-public-ingress-legacy,ingressroute/edge-traefik/orders-public-ingress-stale",
+                ["lifecycleActions"] = "delete,prune",
+                ["namespaces"] = "edge-traefik"
+            });
+    }
+
     private static async Task WaitForConditionAsync(Func<bool> condition, TimeSpan timeout)
     {
         var deadline = DateTime.UtcNow + timeout;
@@ -804,7 +954,8 @@ public sealed class TraefikTrafficMaterializerTests
     }
 
     private sealed class StaticObservationSource(
-        Func<CellTrafficAutomationRuntimeDescriptor, TraefikIngressRouteProjection, CellTrafficAutomationProviderMaterializationResult> factory)
+        Func<CellTrafficAutomationRuntimeDescriptor, TraefikIngressRouteProjection, CellTrafficAutomationProviderMaterializationResult> factory,
+        Func<TraefikTrafficCleanupSweepResult>? cleanupFactory = null)
         : ITraefikTrafficObservationSource
     {
         public ValueTask<CellTrafficAutomationProviderMaterializationResult> ObserveAsync(
@@ -814,6 +965,17 @@ public sealed class TraefikTrafficMaterializerTests
         {
             cancellationToken.ThrowIfCancellationRequested();
             return ValueTask.FromResult(factory(automation, projection));
+        }
+
+        public ValueTask<TraefikTrafficCleanupSweepResult> SweepCleanupAsync(
+            IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> activeAutomations,
+            IReadOnlyCollection<TraefikIngressRouteProjection> activeProjections,
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return ValueTask.FromResult(
+                cleanupFactory?.Invoke() ??
+                new TraefikTrafficCleanupSweepResult(DateTimeOffset.UtcNow, "idle"));
         }
     }
 
@@ -832,7 +994,8 @@ public sealed class TraefikTrafficMaterializerTests
     }
 
     private sealed class SequencedObservationSource(
-        Dictionary<string, Queue<CellTrafficAutomationProviderMaterializationResult>> resultsByRouteId)
+        Dictionary<string, Queue<CellTrafficAutomationProviderMaterializationResult>> resultsByRouteId,
+        Func<TraefikTrafficCleanupSweepResult>? cleanupFactory = null)
         : ITraefikTrafficObservationSource
     {
         private readonly Lock gate = new();
@@ -860,6 +1023,17 @@ public sealed class TraefikTrafficMaterializerTests
 
                 return ValueTask.FromResult(result);
             }
+        }
+
+        public ValueTask<TraefikTrafficCleanupSweepResult> SweepCleanupAsync(
+            IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> activeAutomations,
+            IReadOnlyCollection<TraefikIngressRouteProjection> activeProjections,
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return ValueTask.FromResult(
+                cleanupFactory?.Invoke() ??
+                new TraefikTrafficCleanupSweepResult(DateTimeOffset.UtcNow, "idle"));
         }
     }
 

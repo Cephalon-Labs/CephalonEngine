@@ -27,6 +27,11 @@ internal sealed class KubernetesGatewayTrafficObservationHostedService(
             LogLevel.Warning,
             new EventId(21402, nameof(LogObservationFailed)),
             "Kubernetes Gateway control-plane reconciliation failed for automation '{AutomationId}' on provider '{ProviderId}'.");
+    private static readonly Action<ILogger, string, Exception?> LogCleanupSweepFailedMessage =
+        LoggerMessage.Define<string>(
+            LogLevel.Warning,
+            new EventId(21403, nameof(LogCleanupSweepFailed)),
+            "Kubernetes Gateway cleanup sweep failed: {Error}");
 
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
@@ -87,6 +92,16 @@ internal sealed class KubernetesGatewayTrafficObservationHostedService(
             .ThenBy(static automation => automation.Id, StringComparer.OrdinalIgnoreCase)
             .ToArray();
 
+        if (materializer.SupportsCleanupSweep)
+        {
+            var cleanupResult = await materializer.SweepCleanupAsync(automations, cancellationToken).ConfigureAwait(false);
+            if (string.Equals(cleanupResult.State, "failed", StringComparison.OrdinalIgnoreCase) &&
+                !string.IsNullOrWhiteSpace(cleanupResult.Error))
+            {
+                LogCleanupSweepFailed(logger, cleanupResult.Error!);
+            }
+        }
+
         foreach (var automation in automations)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -131,4 +146,7 @@ internal sealed class KubernetesGatewayTrafficObservationHostedService(
         string? providerId,
         Exception exception) =>
         LogObservationFailedMessage(logger, automationId, providerId, exception);
+
+    private static void LogCleanupSweepFailed(ILogger logger, string error) =>
+        LogCleanupSweepFailedMessage(logger, error, null);
 }

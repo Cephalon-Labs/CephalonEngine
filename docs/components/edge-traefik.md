@@ -1,17 +1,18 @@
 # Cephalon.Edge.Traefik
 
-`Cephalon.Edge.Traefik` is the second provider-specific control-plane materializer pack for Cephalon cell traffic automation. It proves that the shared provider-materializer seam is not overfit to Kubernetes Gateway API by projecting truthful Traefik `IngressRoute` intent and, when enabled, overlaying live Traefik CRD observation or ownership-aware `IngressRoute` apply-and-reconcile posture back onto the same shared runtime surfaces without moving Traefik-specific assumptions into `Cephalon.Engine`.
+`Cephalon.Edge.Traefik` is the second provider-specific control-plane materializer pack for Cephalon cell traffic automation. It proves that the shared provider-materializer seam is not overfit to Kubernetes Gateway API by projecting truthful Traefik `IngressRoute` intent and, when enabled, overlaying live Traefik CRD observation, ownership-aware `IngressRoute` apply-and-reconcile posture, and additive cleanup sweeps back onto the same shared runtime surfaces without moving Traefik-specific assumptions into `Cephalon.Engine`.
 
 ## What it owns
 
-- `TraefikTrafficMaterializerOptions`, `TraefikTrafficObservationModes`, `TraefikTrafficObservationOptions`, `TraefikIngressRouteOptions`, and `TraefikMiddlewareReferenceOptions` for declarative Traefik `IngressRoute` projection plus opt-in live observation or apply-and-reconcile execution
+- `TraefikTrafficMaterializerOptions`, `TraefikTrafficObservationModes`, `TraefikTrafficObservationOptions`, `TraefikIngressRouteOptions`, and `TraefikMiddlewareReferenceOptions` for declarative Traefik `IngressRoute` projection plus opt-in live observation, apply-and-reconcile execution, or cleanup sweeps
 - the `AddTraefikTrafficMaterializer(...)` registration entry point for attaching the pack to an `EngineBuilder`
 - a provider-specific `ICellTrafficAutomationProviderMaterializer` implementation for `providerId = "traefik"`
 - deterministic projection of selected cell routes into Traefik `IngressRoute` intent, including entry points, match rules, middleware references, backend Service references, and TLS options
-- opt-in observe-only polling over Traefik `IngressRoute`, `Middleware`, `TLSOption`, `Secret`, and backend `Service` resources so live ownership, dependency, drift, and freshness posture can flow back into the shared runtime catalog
+- opt-in observe-only polling over Traefik `IngressRoute`, `Middleware`, `TLSOption`, `Secret`, and backend `Service` resources so live ownership, dependency, drift, freshness, and cleanup posture can flow back into the shared runtime catalog
 - opt-in `apply-and-reconcile` ownership over Traefik `IngressRoute` resources only, while treating referenced `Middleware`, `TLSOption`, `Secret`, and backend `Service` resources as pre-provisioned dependencies that are observed rather than written by this pack
+- namespace-scoped cleanup sweeps in `apply-and-reconcile` mode that can delete transferred `IngressRoute` resources or prune orphaned Cephalon-owned routes without inventing a second lifecycle registry
 - the `traefik-ingressroute-traffic-materializations` technology surface under `cell-based-architecture`
-- truthful operator metadata such as `providerRouteId`, `ingressRouteNamespace`, `ingressRouteName`, `entryPoints`, `matchRule`, `middlewareRefs`, `serviceRefs`, `tlsSecretName`, `tlsOptionsRef`, `statusSource`, `observationMode`, `ingressRouteWriteAction`, freshness metadata, and the shared ownership/dependency/drift/lifecycle-action vocabulary
+- truthful operator metadata such as `providerRouteId`, `ingressRouteNamespace`, `ingressRouteName`, `entryPoints`, `matchRule`, `middlewareRefs`, `serviceRefs`, `tlsSecretName`, `tlsOptionsRef`, `statusSource`, `observationMode`, `ingressRouteWriteAction`, freshness metadata, additive cleanup-sweep summaries such as `cleanupState` plus `cleanupObservedAtUtc`, and the shared ownership/dependency/drift/lifecycle-action vocabulary
 
 ## Main surfaces
 
@@ -65,6 +66,9 @@ This pack currently ships three truthful modes:
   owners stay blocked as ownership conflicts, while the merged provider answer keeps the last write
   lifecycle action (`create`, `replace`, or `transfer`) instead of collapsing every successful
   reconciliation back to `observe`
+- optional cleanup sweeps inside `apply-and-reconcile`, which publish additive `cleanup*` metadata
+  after namespace-scoped delete or prune passes while leaving the primary provider lifecycle answer
+  grounded in the selected route's actual materialization state
 
 What this proves is that a second provider family can publish selected materializer ownership,
 provider-facing route identity, middleware and TLS intent, and the same requested/observed lifecycle
@@ -80,7 +84,8 @@ When the pack owns an automation answer, operators can inspect the same route th
 The technology surface entry lives under `surfaceId = "traefik-ingressroute-traffic-materializations"`
 and carries one provider-facing projection per selected route, including the projected or observed
 `providerRouteId`, entry points, route match, middleware references, backend service reference, TLS
-intent, resource existence, dependency posture, `ingressRouteWriteAction`, and freshness metadata.
+intent, resource existence, dependency posture, `ingressRouteWriteAction`, freshness metadata, and
+additive cleanup-sweep metadata such as `cleanupState` and `cleanup.lifecycleActions`.
 
 ## Registration
 
@@ -152,6 +157,31 @@ engine.AddTraefikTrafficMaterializer(...);
 The route must still exist on the shared `ICellRouteCatalog`, and the engine still decides whether
 this pack is the selected provider materializer for that route.
 
+Enable cleanup sweeps when the same apply-and-reconcile loop should also delete transferred routes
+or prune orphaned Cephalon-owned routes that no longer map to an active automation:
+
+```csharp
+engine.AddTraefikTrafficMaterializer(options =>
+{
+    options.Observation.Mode = TraefikTrafficObservationModes.ApplyAndReconcile;
+    options.Observation.KubeConfigPath = "/etc/cephalon/traefik-kubeconfig";
+    options.Observation.EnableCleanupSweep = true;
+    options.Observation.PollingIntervalSeconds = 30;
+    options.Observation.StaleAfterSeconds = 90;
+});
+```
+
+## Ownership and cleanup model
+
+- the pack writes only `IngressRoute` resources
+- `Middleware`, `TLSOption`, backend `Service`, and TLS `Secret` resources remain pre-provisioned dependencies and are never created or updated by Cephalon
+- the pack only replaces an existing `IngressRoute` when ownership matches the current automation or when stale or incomplete Cephalon ownership metadata marks the route as an orphaned transfer candidate
+- existing unmanaged resources and active foreign Cephalon owners fail with an explicit ownership-conflict posture instead of being hijacked silently
+- owned routes carry stable Cephalon ownership labels and annotations so later observation can verify ownership truthfully
+- merged live observation keeps the last write lifecycle action (`create`, `replace`, or `transfer`) visible on the same shared runtime surfaces instead of collapsing every successful reconciliation back to `observe`
+- optional cleanup sweeps run only when `EnableCleanupSweep` is true in `apply-and-reconcile` mode, scan the configured route namespaces, delete stale transferred `IngressRoute` resources with `lifecycleAction = delete`, and prune orphaned Cephalon-owned routes with `lifecycleAction = prune`
+- cleanup sweep summaries stay additive through `providerMaterialization.cleanup*` and `traefik-ingressroute-traffic-materializations` entries so operators can inspect delete/prune posture without losing the selected route's primary materialization answer
+
 ## Current limits
 
 This pack intentionally does not yet claim:
@@ -160,9 +190,7 @@ This pack intentionally does not yet claim:
   dependency, drift, freshness posture, and owned `IngressRoute` write attempts
 - `TraefikService`, parent `IngressRoute`, or richer multi-layer routing follow-through beyond the
   single route-rule and Service backend baseline
-- prune/delete, sweep-based ownership transfer cleanup, or broader lifecycle execution beyond the
-  shipped explicit conflict-or-orphan detection plus create/replace/transfer ownership of the
-  selected `IngressRoute`
+- broader dependency-aware teardown beyond the current owned `IngressRoute` cleanup-sweep baseline
 
 Those remain later follow-through so the current provider claim stays honest.
 

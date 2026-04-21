@@ -358,6 +358,156 @@ internal sealed class TraefikTrafficObservationSource(
         }
     }
 
+    public async ValueTask<TraefikTrafficCleanupSweepResult> SweepCleanupAsync(
+        IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> activeAutomations,
+        IReadOnlyCollection<TraefikIngressRouteProjection> activeProjections,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(activeAutomations);
+        ArgumentNullException.ThrowIfNull(activeProjections);
+
+        var observedAtUtc = timeProvider.GetUtcNow();
+        var namespaces = activeProjections
+            .Select(static projection => projection.RouteNamespace)
+            .Where(static value => !string.IsNullOrWhiteSpace(value))
+            .Distinct(Comparer)
+            .OrderBy(static value => value, Comparer)
+            .ToArray();
+        var desiredProviderRouteIds = activeProjections
+            .Select(static projection => projection.ProviderRouteId)
+            .Where(static value => !string.IsNullOrWhiteSpace(value))
+            .ToHashSet(Comparer);
+        var removedResourceIds = new List<string>();
+        var lifecycleActions = new List<string>();
+        var deletedTransferredResourceCount = 0;
+        var prunedOrphanResourceCount = 0;
+
+        if (namespaces.Length == 0)
+        {
+            return new TraefikTrafficCleanupSweepResult(
+                observedAtUtc,
+                "idle",
+                metadata: CreateCleanupSweepMetadata(
+                    activeAutomations.Count,
+                    namespaces,
+                    removedResourceIds,
+                    lifecycleActions,
+                    deletedTransferredResourceCount,
+                    prunedOrphanResourceCount));
+        }
+
+        try
+        {
+            var client = GetClient();
+            if (client is null)
+            {
+                return new TraefikTrafficCleanupSweepResult(
+                    observedAtUtc,
+                    "failed",
+                    "Cleanup sweep requires either a registered IKubernetes client, an explicit kubeconfig path, or in-cluster configuration.",
+                    CreateCleanupSweepMetadata(
+                        activeAutomations.Count,
+                        namespaces,
+                        removedResourceIds,
+                        lifecycleActions,
+                        deletedTransferredResourceCount,
+                        prunedOrphanResourceCount));
+            }
+
+            foreach (var routeNamespace in namespaces)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var listedRoutes = await TryListIngressRoutesAsync(client, routeNamespace, cancellationToken).ConfigureAwait(false);
+                if (!string.IsNullOrWhiteSpace(listedRoutes.Error))
+                {
+                    return new TraefikTrafficCleanupSweepResult(
+                        observedAtUtc,
+                        "failed",
+                        listedRoutes.Error,
+                        CreateCleanupSweepMetadata(
+                            activeAutomations.Count,
+                            namespaces,
+                            removedResourceIds,
+                            lifecycleActions,
+                            deletedTransferredResourceCount,
+                            prunedOrphanResourceCount));
+                }
+
+                foreach (var ingressRoute in listedRoutes.Resources)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    var disposition = EvaluateCleanupDisposition(ingressRoute, desiredProviderRouteIds);
+                    if (!disposition.ShouldRemove)
+                    {
+                        continue;
+                    }
+
+                    var deleteError = await TryDeleteIngressRouteAsync(
+                        client,
+                        disposition.ResourceNamespace,
+                        disposition.ResourceName,
+                        cancellationToken).ConfigureAwait(false);
+                    if (!string.IsNullOrWhiteSpace(deleteError))
+                    {
+                        return new TraefikTrafficCleanupSweepResult(
+                            observedAtUtc,
+                            "failed",
+                            deleteError,
+                            CreateCleanupSweepMetadata(
+                                activeAutomations.Count,
+                                namespaces,
+                                removedResourceIds,
+                                lifecycleActions,
+                                deletedTransferredResourceCount,
+                                prunedOrphanResourceCount));
+                    }
+
+                    removedResourceIds.Add(disposition.ProviderRouteId);
+                    lifecycleActions.Add(disposition.LifecycleAction);
+                    if (Comparer.Equals(disposition.LifecycleAction, CellTrafficAutomationLifecycleActions.Delete))
+                    {
+                        deletedTransferredResourceCount++;
+                    }
+                    else if (Comparer.Equals(disposition.LifecycleAction, CellTrafficAutomationLifecycleActions.Prune))
+                    {
+                        prunedOrphanResourceCount++;
+                    }
+                }
+            }
+
+            return new TraefikTrafficCleanupSweepResult(
+                observedAtUtc,
+                removedResourceIds.Count == 0 ? "idle" : "applied",
+                metadata: CreateCleanupSweepMetadata(
+                    activeAutomations.Count,
+                    namespaces,
+                    removedResourceIds,
+                    lifecycleActions,
+                    deletedTransferredResourceCount,
+                    prunedOrphanResourceCount));
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception exception)
+        {
+            return new TraefikTrafficCleanupSweepResult(
+                observedAtUtc,
+                "failed",
+                exception.Message,
+                CreateCleanupSweepMetadata(
+                    activeAutomations.Count,
+                    namespaces,
+                    removedResourceIds,
+                    lifecycleActions,
+                    deletedTransferredResourceCount,
+                    prunedOrphanResourceCount));
+        }
+    }
+
     public void Dispose()
     {
         if (disposed)
@@ -739,6 +889,68 @@ internal sealed class TraefikTrafficObservationSource(
         }
     }
 
+    private static async Task<ResourceListResult<TraefikIngressRouteResource>> TryListIngressRoutesAsync(
+        IKubernetes client,
+        string routeNamespace,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            using var ingressRouteClient = new GenericClient(
+                client,
+                TraefikIngressRouteProjection.TraefikApiGroup,
+                TraefikIngressRouteProjection.TraefikResourceVersion,
+                "ingressroutes",
+                disposeClient: false);
+            var ingressRoutes = await ingressRouteClient.ListNamespacedAsync<TraefikIngressRouteResourceList>(
+                routeNamespace,
+                cancel: cancellationToken).ConfigureAwait(false);
+            var resources = ingressRoutes?.Items is null
+                ? Array.Empty<TraefikIngressRouteResource>()
+                : ingressRoutes.Items
+                    .Where(static item => item is not null)
+                    .ToArray();
+
+            return new ResourceListResult<TraefikIngressRouteResource>(resources, null);
+        }
+        catch (HttpOperationException exception)
+        {
+            return new ResourceListResult<TraefikIngressRouteResource>(
+                Array.Empty<TraefikIngressRouteResource>(),
+                $"Failed to list IngressRoutes in namespace '{routeNamespace}': {(string.IsNullOrWhiteSpace(exception.Message) ? "Unknown Kubernetes API error." : exception.Message)}");
+        }
+    }
+
+    private static async Task<string?> TryDeleteIngressRouteAsync(
+        IKubernetes client,
+        string routeNamespace,
+        string routeName,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            using var ingressRouteClient = new GenericClient(
+                client,
+                TraefikIngressRouteProjection.TraefikApiGroup,
+                TraefikIngressRouteProjection.TraefikResourceVersion,
+                "ingressroutes",
+                disposeClient: false);
+            await ingressRouteClient.DeleteNamespacedAsync<TraefikIngressRouteResource>(
+                routeNamespace,
+                routeName,
+                cancellationToken).ConfigureAwait(false);
+            return null;
+        }
+        catch (HttpOperationException exception) when (IsNotFound(exception))
+        {
+            return null;
+        }
+        catch (HttpOperationException exception)
+        {
+            return $"Failed to delete IngressRoute 'ingressroute/{routeNamespace}/{routeName}': {(string.IsNullOrWhiteSpace(exception.Message) ? "Unknown Kubernetes API error." : exception.Message)}";
+        }
+    }
+
     private static async Task<ResourceReadResult<TraefikResourceStub>> TryReadTraefikResourceAsync(
         IKubernetes client,
         string pluralName,
@@ -920,6 +1132,55 @@ internal sealed class TraefikTrafficObservationSource(
             ActiveOwnerId: activeOwner?.Id);
     }
 
+    internal CleanupDisposition EvaluateCleanupDisposition(
+        TraefikIngressRouteResource ingressRoute,
+        IReadOnlySet<string> desiredProviderRouteIds)
+    {
+        ArgumentNullException.ThrowIfNull(ingressRoute);
+        ArgumentNullException.ThrowIfNull(desiredProviderRouteIds);
+
+        var routeNamespace = NormalizeOptional(ingressRoute.Metadata?.NamespaceProperty);
+        var routeName = NormalizeOptional(ingressRoute.Metadata?.Name);
+        if (routeNamespace is null || routeName is null)
+        {
+            return CleanupDisposition.None;
+        }
+
+        var providerRouteId = $"ingressroute/{routeNamespace}/{routeName}";
+        if (desiredProviderRouteIds.Contains(providerRouteId))
+        {
+            return CleanupDisposition.None;
+        }
+
+        var managedBy = ReadMetadataValue(ingressRoute.Metadata?.Labels, TraefikOwnership.ManagedByLabel);
+        var observedAutomationId = ReadMetadataValue(ingressRoute.Metadata?.Annotations, TraefikOwnership.AutomationIdAnnotation);
+        var observedRouteId = ReadMetadataValue(ingressRoute.Metadata?.Annotations, TraefikOwnership.RouteIdAnnotation);
+        var observedSourceModuleId = ReadMetadataValue(ingressRoute.Metadata?.Annotations, TraefikOwnership.SourceModuleIdAnnotation);
+        if (!CanCleanupManagedResource(managedBy, observedAutomationId, observedRouteId, observedSourceModuleId))
+        {
+            return CleanupDisposition.None;
+        }
+
+        var activeOwner = ResolveActiveOwner(observedAutomationId, observedRouteId);
+        return activeOwner is not null
+            ? new CleanupDisposition(
+                true,
+                CellTrafficAutomationLifecycleActions.Delete,
+                CellTrafficAutomationOwnershipStates.Transferred,
+                "active-owner-transferred",
+                routeNamespace,
+                routeName,
+                providerRouteId)
+            : new CleanupDisposition(
+                true,
+                CellTrafficAutomationLifecycleActions.Prune,
+                CellTrafficAutomationOwnershipStates.Pruned,
+                "stale-owner",
+                routeNamespace,
+                routeName,
+                providerRouteId);
+    }
+
     private CellTrafficAutomationRuntimeDescriptor? ResolveActiveOwner(
         string? observedAutomationId,
         string? observedRouteId)
@@ -966,6 +1227,42 @@ internal sealed class TraefikTrafficObservationSource(
             !string.IsNullOrWhiteSpace(observedAutomationId) ||
             !string.IsNullOrWhiteSpace(observedRouteId) ||
             !string.IsNullOrWhiteSpace(observedSourceModuleId);
+    }
+
+    private static bool CanCleanupManagedResource(
+        string? managedBy,
+        string? observedAutomationId,
+        string? observedRouteId,
+        string? observedSourceModuleId)
+    {
+        return (string.IsNullOrWhiteSpace(managedBy) ||
+                Comparer.Equals(managedBy, TraefikOwnership.ManagedByValue)) &&
+            HasCephalonOwnershipMetadata(managedBy, observedAutomationId, observedRouteId, observedSourceModuleId);
+    }
+
+    private static Dictionary<string, string> CreateCleanupSweepMetadata(
+        int activeAutomationCount,
+        IReadOnlyList<string> namespaces,
+        List<string> removedResourceIds,
+        IReadOnlyList<string> lifecycleActions,
+        int deletedTransferredResourceCount,
+        int prunedOrphanResourceCount)
+    {
+        var distinctActions = lifecycleActions
+            .Distinct(Comparer)
+            .OrderBy(static value => value, Comparer)
+            .ToArray();
+        return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["activeAutomationCount"] = activeAutomationCount.ToString(CultureInfo.InvariantCulture),
+            ["candidateCount"] = (deletedTransferredResourceCount + prunedOrphanResourceCount).ToString(CultureInfo.InvariantCulture),
+            ["removedResourceCount"] = removedResourceIds.Count.ToString(CultureInfo.InvariantCulture),
+            ["deletedTransferredResourceCount"] = deletedTransferredResourceCount.ToString(CultureInfo.InvariantCulture),
+            ["prunedOrphanResourceCount"] = prunedOrphanResourceCount.ToString(CultureInfo.InvariantCulture),
+            ["resourceIds"] = string.Join(",", removedResourceIds.OrderBy(static value => value, Comparer)),
+            ["lifecycleActions"] = string.Join(",", distinctActions),
+            ["namespaces"] = string.Join(",", namespaces)
+        };
     }
 
     private static List<string> NormalizeValues(IReadOnlyList<string>? values)
@@ -1066,6 +1363,9 @@ internal sealed class TraefikTrafficObservationSource(
     private sealed record ResourceReadResult<T>(T? Resource, string? Error)
         where T : class;
 
+    private sealed record ResourceListResult<T>(IReadOnlyList<T> Resources, string? Error)
+        where T : class;
+
     internal sealed record OwnershipEvaluation(
         string State,
         bool IsConflict,
@@ -1078,6 +1378,25 @@ internal sealed class TraefikTrafficObservationSource(
         string? ObservedRouteId,
         string? ObservedSourceModuleId,
         string? ActiveOwnerId);
+
+    internal sealed record CleanupDisposition(
+        bool ShouldRemove,
+        string LifecycleAction,
+        string OwnershipState,
+        string Reason,
+        string ResourceNamespace,
+        string ResourceName,
+        string ProviderRouteId)
+    {
+        public static CleanupDisposition None { get; } = new(
+            false,
+            string.Empty,
+            string.Empty,
+            string.Empty,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
 
     private sealed record DependencyEvaluation(
         bool ServiceExists,
@@ -1105,6 +1424,11 @@ internal sealed class TraefikIngressRouteResource : KubernetesObject
     public V1ObjectMeta? Metadata { get; set; }
 
     public TraefikIngressRouteSpec? Spec { get; set; }
+}
+
+internal sealed class TraefikIngressRouteResourceList : KubernetesObject
+{
+    public IReadOnlyList<TraefikIngressRouteResource>? Items { get; set; }
 }
 
 internal sealed class TraefikIngressRouteSpec

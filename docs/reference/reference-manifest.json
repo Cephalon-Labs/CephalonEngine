@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-21T17:49:13.1083518+00:00",
+  "GeneratedAtUtc": "2026-04-21T18:57:06.721984+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8635,7 +8635,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 7,
+        "Properties": 8,
         "Methods": 0
       }
     },
@@ -11905,7 +11905,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 7,
+        "Properties": 8,
         "Methods": 0
       }
     },
@@ -25788,6 +25788,28 @@
       "AnchorId": "member-p-cephalon-data-configuration-dataruntimeoptions-enablecdcexecution",
       "Signature": "bool EnableCdcExecution { get; set; }",
       "Summary": "Gets or sets a value indicating whether the pack should register the shared CDC hosted execution pump."
+    },
+    {
+      "DisplayName": "EnableCleanupSweep",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficObservationOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationoptions-enablecleanupsweep",
+      "Signature": "bool EnableCleanupSweep { get; set; }",
+      "Summary": "Gets or sets a value indicating whether apply-and-reconcile mode should also sweep previously owned stale HTTPRoute resources."
+    },
+    {
+      "DisplayName": "EnableCleanupSweep",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikTrafficObservationOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-enablecleanupsweep",
+      "Signature": "bool EnableCleanupSweep { get; set; }",
+      "Summary": "Gets or sets a value indicating whether apply-and-reconcile mode should also sweep previously owned stale IngressRoute resources."
     },
     {
       "DisplayName": "Enabled",

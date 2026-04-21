@@ -27,6 +27,11 @@ internal sealed class TraefikTrafficObservationHostedService(
             LogLevel.Warning,
             new EventId(21502, nameof(LogObservationFailed)),
             "Traefik control-plane observation failed for automation '{AutomationId}' on provider '{ProviderId}'.");
+    private static readonly Action<ILogger, string, Exception?> LogCleanupSweepFailedMessage =
+        LoggerMessage.Define<string>(
+            LogLevel.Warning,
+            new EventId(21503, nameof(LogCleanupSweepFailed)),
+            "Traefik cleanup sweep failed: {Error}");
 
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
@@ -87,6 +92,16 @@ internal sealed class TraefikTrafficObservationHostedService(
             .ThenBy(static automation => automation.Id, StringComparer.OrdinalIgnoreCase)
             .ToArray();
 
+        if (materializer.SupportsCleanupSweep)
+        {
+            var cleanupResult = await materializer.SweepCleanupAsync(automations, cancellationToken).ConfigureAwait(false);
+            if (string.Equals(cleanupResult.State, "failed", StringComparison.OrdinalIgnoreCase) &&
+                !string.IsNullOrWhiteSpace(cleanupResult.Error))
+            {
+                LogCleanupSweepFailed(logger, cleanupResult.Error!);
+            }
+        }
+
         foreach (var automation in automations)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -131,4 +146,7 @@ internal sealed class TraefikTrafficObservationHostedService(
         string? providerId,
         Exception exception) =>
         LogObservationFailedMessage(logger, automationId, providerId, exception);
+
+    private static void LogCleanupSweepFailed(ILogger logger, string error) =>
+        LogCleanupSweepFailedMessage(logger, error, null);
 }

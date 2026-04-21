@@ -3762,6 +3762,12 @@ Browse the published API surface by public member.
 - [EnableCdcExecution](cephalon-data.md#member-p-cephalon-data-configuration-dataruntimeoptions-enablecdcexecution): `Properties` on `DataRuntimeOptions` in `Cephalon.Data.Configuration` (`Cephalon.Data`) [Browse](browse.html?q=EnableCdcExecution&assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration&scope=members)
   - Gets or sets a value indicating whether the pack should register the shared CDC hosted execution pump.
   - `bool EnableCdcExecution { get; set; }`
+- [EnableCleanupSweep](cephalon-edge-kubernetesgateway.md#member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationoptions-enablecleanupsweep): `Properties` on `KubernetesGatewayTrafficObservationOptions` in `Cephalon.Edge.KubernetesGateway.Configuration` (`Cephalon.Edge.KubernetesGateway`) [Browse](browse.html?q=EnableCleanupSweep&assembly=Cephalon.Edge.KubernetesGateway&namespace=Cephalon.Edge.KubernetesGateway.Configuration&scope=members)
+  - Gets or sets a value indicating whether apply-and-reconcile mode should also sweep previously owned stale HTTPRoute resources.
+  - `bool EnableCleanupSweep { get; set; }`
+- [EnableCleanupSweep](cephalon-edge-traefik.md#member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-enablecleanupsweep): `Properties` on `TraefikTrafficObservationOptions` in `Cephalon.Edge.Traefik.Configuration` (`Cephalon.Edge.Traefik`) [Browse](browse.html?q=EnableCleanupSweep&assembly=Cephalon.Edge.Traefik&namespace=Cephalon.Edge.Traefik.Configuration&scope=members)
+  - Gets or sets a value indicating whether apply-and-reconcile mode should also sweep previously owned stale IngressRoute resources.
+  - `bool EnableCleanupSweep { get; set; }`
 - [Enabled](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-audithistoryexportselection-enabled): `Properties` on `AuditHistoryExportSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets a value indicating whether audit-history export was explicitly enabled.
   - `bool? Enabled { get; }`

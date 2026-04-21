@@ -306,6 +306,156 @@ internal sealed class KubernetesGatewayTrafficObservationSource(
         }
     }
 
+    public async ValueTask<KubernetesGatewayTrafficCleanupSweepResult> SweepCleanupAsync(
+        IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> activeAutomations,
+        IReadOnlyCollection<KubernetesGatewayTrafficRouteProjection> activeProjections,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(activeAutomations);
+        ArgumentNullException.ThrowIfNull(activeProjections);
+
+        var observedAtUtc = timeProvider.GetUtcNow();
+        var namespaces = activeProjections
+            .Select(static projection => projection.RouteNamespace)
+            .Where(static value => !string.IsNullOrWhiteSpace(value))
+            .Distinct(Comparer)
+            .OrderBy(static value => value, Comparer)
+            .ToArray();
+        var desiredProviderRouteIds = activeProjections
+            .Select(static projection => projection.ProviderRouteId)
+            .Where(static value => !string.IsNullOrWhiteSpace(value))
+            .ToHashSet(Comparer);
+        var removedResourceIds = new List<string>();
+        var lifecycleActions = new List<string>();
+        var deletedTransferredResourceCount = 0;
+        var prunedOrphanResourceCount = 0;
+
+        if (namespaces.Length == 0)
+        {
+            return new KubernetesGatewayTrafficCleanupSweepResult(
+                observedAtUtc,
+                "idle",
+                metadata: CreateCleanupSweepMetadata(
+                    activeAutomations.Count,
+                    namespaces,
+                    removedResourceIds,
+                    lifecycleActions,
+                    deletedTransferredResourceCount,
+                    prunedOrphanResourceCount));
+        }
+
+        try
+        {
+            var client = GetClient();
+            if (client is null)
+            {
+                return new KubernetesGatewayTrafficCleanupSweepResult(
+                    observedAtUtc,
+                    "failed",
+                    "Cleanup sweep requires either a registered IKubernetes client, an explicit kubeconfig path, or in-cluster configuration.",
+                    CreateCleanupSweepMetadata(
+                        activeAutomations.Count,
+                        namespaces,
+                        removedResourceIds,
+                        lifecycleActions,
+                        deletedTransferredResourceCount,
+                        prunedOrphanResourceCount));
+            }
+
+            foreach (var routeNamespace in namespaces)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var listedRoutes = await TryListHttpRoutesAsync(client, routeNamespace, cancellationToken).ConfigureAwait(false);
+                if (!string.IsNullOrWhiteSpace(listedRoutes.Error))
+                {
+                    return new KubernetesGatewayTrafficCleanupSweepResult(
+                        observedAtUtc,
+                        "failed",
+                        listedRoutes.Error,
+                        CreateCleanupSweepMetadata(
+                            activeAutomations.Count,
+                            namespaces,
+                            removedResourceIds,
+                            lifecycleActions,
+                            deletedTransferredResourceCount,
+                            prunedOrphanResourceCount));
+                }
+
+                foreach (var httpRoute in listedRoutes.Resources)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    var disposition = EvaluateCleanupDisposition(httpRoute, desiredProviderRouteIds);
+                    if (!disposition.ShouldRemove)
+                    {
+                        continue;
+                    }
+
+                    var deleteError = await TryDeleteHttpRouteAsync(
+                        client,
+                        disposition.ResourceNamespace,
+                        disposition.ResourceName,
+                        cancellationToken).ConfigureAwait(false);
+                    if (!string.IsNullOrWhiteSpace(deleteError))
+                    {
+                        return new KubernetesGatewayTrafficCleanupSweepResult(
+                            observedAtUtc,
+                            "failed",
+                            deleteError,
+                            CreateCleanupSweepMetadata(
+                                activeAutomations.Count,
+                                namespaces,
+                                removedResourceIds,
+                                lifecycleActions,
+                                deletedTransferredResourceCount,
+                                prunedOrphanResourceCount));
+                    }
+
+                    removedResourceIds.Add(disposition.ProviderRouteId);
+                    lifecycleActions.Add(disposition.LifecycleAction);
+                    if (Comparer.Equals(disposition.LifecycleAction, CellTrafficAutomationLifecycleActions.Delete))
+                    {
+                        deletedTransferredResourceCount++;
+                    }
+                    else if (Comparer.Equals(disposition.LifecycleAction, CellTrafficAutomationLifecycleActions.Prune))
+                    {
+                        prunedOrphanResourceCount++;
+                    }
+                }
+            }
+
+            return new KubernetesGatewayTrafficCleanupSweepResult(
+                observedAtUtc,
+                removedResourceIds.Count == 0 ? "idle" : "applied",
+                metadata: CreateCleanupSweepMetadata(
+                    activeAutomations.Count,
+                    namespaces,
+                    removedResourceIds,
+                    lifecycleActions,
+                    deletedTransferredResourceCount,
+                    prunedOrphanResourceCount));
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception exception)
+        {
+            return new KubernetesGatewayTrafficCleanupSweepResult(
+                observedAtUtc,
+                "failed",
+                exception.Message,
+                CreateCleanupSweepMetadata(
+                    activeAutomations.Count,
+                    namespaces,
+                    removedResourceIds,
+                    lifecycleActions,
+                    deletedTransferredResourceCount,
+                    prunedOrphanResourceCount));
+        }
+    }
+
     public void Dispose()
     {
         if (disposed)
@@ -418,6 +568,68 @@ internal sealed class KubernetesGatewayTrafficObservationSource(
             return new ResourceReadResult<KubernetesGatewayHttpRouteResource>(
                 null,
                 $"Failed to read HTTPRoute '{projection.ProviderRouteId}': {(string.IsNullOrWhiteSpace(exception.Message) ? "Unknown Kubernetes API error." : exception.Message)}");
+        }
+    }
+
+    private static async Task<ResourceListResult<KubernetesGatewayHttpRouteResource>> TryListHttpRoutesAsync(
+        IKubernetes client,
+        string routeNamespace,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            using var httpRouteClient = new GenericClient(
+                client,
+                KubernetesGatewayTrafficRouteProjection.GatewayApiGroup,
+                KubernetesGatewayTrafficRouteProjection.GatewayApiVersion,
+                "httproutes",
+                disposeClient: false);
+            var httpRoutes = await httpRouteClient.ListNamespacedAsync<KubernetesGatewayHttpRouteResourceList>(
+                routeNamespace,
+                cancel: cancellationToken).ConfigureAwait(false);
+            var resources = httpRoutes?.Items is null
+                ? Array.Empty<KubernetesGatewayHttpRouteResource>()
+                : httpRoutes.Items
+                    .Where(static item => item is not null)
+                    .ToArray();
+
+            return new ResourceListResult<KubernetesGatewayHttpRouteResource>(resources, null);
+        }
+        catch (HttpOperationException exception)
+        {
+            return new ResourceListResult<KubernetesGatewayHttpRouteResource>(
+                Array.Empty<KubernetesGatewayHttpRouteResource>(),
+                $"Failed to list HTTPRoutes in namespace '{routeNamespace}': {(string.IsNullOrWhiteSpace(exception.Message) ? "Unknown Kubernetes API error." : exception.Message)}");
+        }
+    }
+
+    private static async Task<string?> TryDeleteHttpRouteAsync(
+        IKubernetes client,
+        string routeNamespace,
+        string routeName,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            using var httpRouteClient = new GenericClient(
+                client,
+                KubernetesGatewayTrafficRouteProjection.GatewayApiGroup,
+                KubernetesGatewayTrafficRouteProjection.GatewayApiVersion,
+                "httproutes",
+                disposeClient: false);
+            await httpRouteClient.DeleteNamespacedAsync<KubernetesGatewayHttpRouteResource>(
+                routeNamespace,
+                routeName,
+                cancellationToken).ConfigureAwait(false);
+            return null;
+        }
+        catch (HttpOperationException exception) when (IsNotFound(exception))
+        {
+            return null;
+        }
+        catch (HttpOperationException exception)
+        {
+            return $"Failed to delete HTTPRoute 'httproute/{routeNamespace}/{routeName}': {(string.IsNullOrWhiteSpace(exception.Message) ? "Unknown Kubernetes API error." : exception.Message)}";
         }
     }
 
@@ -865,6 +1077,55 @@ internal sealed class KubernetesGatewayTrafficObservationSource(
             ActiveOwnerId: activeOwner?.Id);
     }
 
+    internal CleanupDisposition EvaluateCleanupDisposition(
+        KubernetesGatewayHttpRouteResource httpRoute,
+        IReadOnlySet<string> desiredProviderRouteIds)
+    {
+        ArgumentNullException.ThrowIfNull(httpRoute);
+        ArgumentNullException.ThrowIfNull(desiredProviderRouteIds);
+
+        var routeNamespace = NormalizeOptional(httpRoute.Metadata?.Namespace);
+        var routeName = NormalizeOptional(httpRoute.Metadata?.Name);
+        if (routeNamespace is null || routeName is null)
+        {
+            return CleanupDisposition.None;
+        }
+
+        var providerRouteId = $"httproute/{routeNamespace}/{routeName}";
+        if (desiredProviderRouteIds.Contains(providerRouteId))
+        {
+            return CleanupDisposition.None;
+        }
+
+        var managedBy = ReadMetadataValue(httpRoute.Metadata?.Labels, KubernetesGatewayOwnership.ManagedByLabel);
+        var observedAutomationId = ReadMetadataValue(httpRoute.Metadata?.Annotations, KubernetesGatewayOwnership.AutomationIdAnnotation);
+        var observedRouteId = ReadMetadataValue(httpRoute.Metadata?.Annotations, KubernetesGatewayOwnership.RouteIdAnnotation);
+        var observedSourceModuleId = ReadMetadataValue(httpRoute.Metadata?.Annotations, KubernetesGatewayOwnership.SourceModuleIdAnnotation);
+        if (!CanCleanupManagedResource(managedBy, observedAutomationId, observedRouteId, observedSourceModuleId))
+        {
+            return CleanupDisposition.None;
+        }
+
+        var activeOwner = ResolveActiveOwner(observedAutomationId, observedRouteId, observedSourceModuleId);
+        return activeOwner is not null
+            ? new CleanupDisposition(
+                true,
+                CellTrafficAutomationLifecycleActions.Delete,
+                CellTrafficAutomationOwnershipStates.Transferred,
+                "active-owner-transferred",
+                routeNamespace,
+                routeName,
+                providerRouteId)
+            : new CleanupDisposition(
+                true,
+                CellTrafficAutomationLifecycleActions.Prune,
+                CellTrafficAutomationOwnershipStates.Pruned,
+                "stale-owner",
+                routeNamespace,
+                routeName,
+                providerRouteId);
+    }
+
     private CellTrafficAutomationRuntimeDescriptor? ResolveActiveOwner(
         string? observedAutomationId,
         string? observedRouteId,
@@ -921,6 +1182,42 @@ internal sealed class KubernetesGatewayTrafficObservationSource(
             !string.IsNullOrWhiteSpace(observedSourceModuleId);
     }
 
+    private static bool CanCleanupManagedResource(
+        string? managedBy,
+        string? observedAutomationId,
+        string? observedRouteId,
+        string? observedSourceModuleId)
+    {
+        return (string.IsNullOrWhiteSpace(managedBy) ||
+                Comparer.Equals(managedBy, KubernetesGatewayOwnership.ManagedByValue)) &&
+            HasCephalonOwnershipMetadata(managedBy, observedAutomationId, observedRouteId, observedSourceModuleId);
+    }
+
+    private static Dictionary<string, string> CreateCleanupSweepMetadata(
+        int activeAutomationCount,
+        IReadOnlyList<string> namespaces,
+        List<string> removedResourceIds,
+        IReadOnlyList<string> lifecycleActions,
+        int deletedTransferredResourceCount,
+        int prunedOrphanResourceCount)
+    {
+        var distinctActions = lifecycleActions
+            .Distinct(Comparer)
+            .OrderBy(static value => value, Comparer)
+            .ToArray();
+        return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["activeAutomationCount"] = activeAutomationCount.ToString(CultureInfo.InvariantCulture),
+            ["candidateCount"] = (deletedTransferredResourceCount + prunedOrphanResourceCount).ToString(CultureInfo.InvariantCulture),
+            ["removedResourceCount"] = removedResourceIds.Count.ToString(CultureInfo.InvariantCulture),
+            ["deletedTransferredResourceCount"] = deletedTransferredResourceCount.ToString(CultureInfo.InvariantCulture),
+            ["prunedOrphanResourceCount"] = prunedOrphanResourceCount.ToString(CultureInfo.InvariantCulture),
+            ["resourceIds"] = string.Join(",", removedResourceIds.OrderBy(static value => value, Comparer)),
+            ["lifecycleActions"] = string.Join(",", distinctActions),
+            ["namespaces"] = string.Join(",", namespaces)
+        };
+    }
+
     private static string? ReadMetadataValue(
         IReadOnlyDictionary<string, string>? values,
         string key)
@@ -947,7 +1244,29 @@ internal sealed class KubernetesGatewayTrafficObservationSource(
     private sealed record ResourceReadResult<T>(T? Resource, string? Error)
         where T : class;
 
+    private sealed record ResourceListResult<T>(IReadOnlyList<T> Resources, string? Error)
+        where T : class;
+
     private sealed record ObservedStateEvaluation(string State, string? Error);
+
+    internal sealed record CleanupDisposition(
+        bool ShouldRemove,
+        string LifecycleAction,
+        string OwnershipState,
+        string Reason,
+        string ResourceNamespace,
+        string ResourceName,
+        string ProviderRouteId)
+    {
+        public static CleanupDisposition None { get; } = new(
+            false,
+            string.Empty,
+            string.Empty,
+            string.Empty,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
 
     internal sealed record OwnershipEvaluation(
         string State,
@@ -990,6 +1309,11 @@ internal sealed class KubernetesGatewayHttpRouteResource : KubernetesObject
     public KubernetesGatewayHttpRouteSpec? Spec { get; set; }
 
     public KubernetesGatewayHttpRouteStatus? Status { get; set; }
+}
+
+internal sealed class KubernetesGatewayHttpRouteResourceList : KubernetesObject
+{
+    public IReadOnlyList<KubernetesGatewayHttpRouteResource>? Items { get; set; }
 }
 
 internal sealed class KubernetesGatewayHttpRouteSpec

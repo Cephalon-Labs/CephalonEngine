@@ -427,6 +427,18 @@ Initializes a new instance of the `TraefikTrafficObservationOptions` class.
 
 #### Properties
 
+<a id="member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-enablecleanupsweep"></a>
+
+##### `EnableCleanupSweep`
+
+```csharp
+bool EnableCleanupSweep { get; set; }
+```
+
+Gets or sets a value indicating whether apply-and-reconcile mode should also sweep previously owned stale IngressRoute resources.
+
+Remarks: This cleanup sweep is disabled by default so existing apply-and-reconcile behavior stays additive. When enabled, the materializer will delete transferred resources and prune orphaned resources that still carry Cephalon ownership labels in the configured route namespaces.
+
 <a id="member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-kubeconfigpath"></a>
 
 ##### `KubeConfigPath`

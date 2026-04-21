@@ -1,17 +1,18 @@
 # Cephalon.Edge.KubernetesGateway
 
-`Cephalon.Edge.KubernetesGateway` is the first provider-specific control-plane materializer pack for Cephalon cell traffic automation. It proves that a real gateway/control-plane family can stay outside `Cephalon.Engine` while still publishing truthful materialization answers on the shared runtime surfaces. The pack now supports configured intent, opt-in live observation, and opt-in apply-and-reconcile modes on that same shared runtime story.
+`Cephalon.Edge.KubernetesGateway` is the first provider-specific control-plane materializer pack for Cephalon cell traffic automation. It proves that a real gateway/control-plane family can stay outside `Cephalon.Engine` while still publishing truthful materialization answers on the shared runtime surfaces. The pack now supports configured intent, opt-in live observation, opt-in apply-and-reconcile, and opt-in cleanup sweeps on that same shared runtime story.
 
 ## What it owns
 
-- `KubernetesGatewayTrafficMaterializerOptions`, `KubernetesGatewayTrafficRouteOptions`, and `KubernetesGatewayTrafficObservationOptions` for declarative Kubernetes Gateway API projection plus opt-in live observation or apply-and-reconcile
+- `KubernetesGatewayTrafficMaterializerOptions`, `KubernetesGatewayTrafficRouteOptions`, and `KubernetesGatewayTrafficObservationOptions` for declarative Kubernetes Gateway API projection plus opt-in live observation, apply-and-reconcile, or cleanup sweeps
 - the `AddKubernetesGatewayTrafficMaterializer(...)` registration entry point for attaching the pack to an `EngineBuilder`
 - a provider-specific `ICellTrafficAutomationProviderMaterializer` implementation for `providerId = "kubernetes-gateway"`
 - deterministic projection of cell routes into `GatewayClass`, `Gateway`, `HTTPRoute`, `parentRefs`, and `backendRefs` intent metadata
-- recurring live `Gateway` plus `HTTPRoute` observation in `observe-only` or `apply-and-reconcile` mode, including freshness and drift metadata
+- recurring live `Gateway` plus `HTTPRoute` observation in `observe-only` or `apply-and-reconcile` mode, including freshness, drift, and cleanup metadata
 - controlled `HTTPRoute` apply semantics in `apply-and-reconcile` mode, including ownership labels and annotations, write-result metadata, and post-apply status reconciliation
+- namespace-scoped cleanup sweeps in `apply-and-reconcile` mode that can delete transferred `HTTPRoute` resources or prune orphaned Cephalon-owned routes without inventing a second lifecycle registry
 - the `kubernetes-gateway-traffic-materializations` technology surface under `cell-based-architecture`
-- truthful operator metadata such as `providerRouteId`, `gatewayNamespace`, `gatewayName`, `controllerName`, `statusSource`, projected-or-observed Gateway API conditions, shared ownership/dependency/drift posture, lifecycle action, freshness windows, and HTTPRoute write results
+- truthful operator metadata such as `providerRouteId`, `gatewayNamespace`, `gatewayName`, `controllerName`, `statusSource`, projected-or-observed Gateway API conditions, shared ownership/dependency/drift posture, lifecycle action, freshness windows, HTTPRoute write results, and additive cleanup-sweep summaries such as `cleanupState`, `cleanupObservedAtUtc`, and `cleanup.lifecycleActions`
 
 ## Main surfaces
 
@@ -45,6 +46,7 @@ The pack now has three truthful operating modes:
 - opt-in `observe-only`, which reports `providerAction = observe-only`, `statusSource = gateway-api-status`, and the same shared ownership/dependency/drift vocabulary while reading live `Gateway` plus `HTTPRoute` status back into the same shared runtime catalog without claiming that Cephalon applied resources itself
 - opt-in `apply-and-reconcile`, which reports `providerAction = apply-and-reconcile`, writes only owned `HTTPRoute` resources, keeps `Gateway` as a pre-provisioned dependency, and then merges observed `Gateway` plus `HTTPRoute` status back into the same shared runtime catalog while preserving write posture through `httpRouteWriteAction`
   and `lifecycleAction = create|replace|transfer`
+- optional cleanup sweeps inside `apply-and-reconcile`, which report additive `cleanup*` metadata after namespace-scoped delete or prune passes while leaving the primary provider lifecycle answer grounded in the selected route's actual materialization state
 
 What this proves is that one provider-specific pack can publish deterministic projected intent,
 selected materializer ownership, live provider status, drift, freshness answers, and now a narrow
@@ -62,9 +64,11 @@ The technology surface entry lives under `surfaceId = "kubernetes-gateway-traffi
 and carries one provider-facing projection per selected route, including the projected
 `providerRouteId`, parent reference, backend reference, hostname list, controller identity, and
 Gateway resource identity. In live modes the same entries also surface condition, drift,
-freshness, ownership, dependency, lifecycle-action, and write metadata such as `gatewayAcceptedCondition`,
-`httpRouteResolvedRefsCondition`, `driftState`, `observationFreshUntilUtc`,
-`ownershipState`, `dependencyState`, `lifecycleAction`, `httpRouteWriteAction`, and `httpRouteAppliedGeneration`.
+freshness, ownership, dependency, lifecycle-action, write metadata, and additive cleanup-sweep
+metadata such as `gatewayAcceptedCondition`, `httpRouteResolvedRefsCondition`, `driftState`,
+`observationFreshUntilUtc`, `ownershipState`, `dependencyState`, `lifecycleAction`,
+`httpRouteWriteAction`, `httpRouteAppliedGeneration`, `cleanupState`, and
+`cleanup.lifecycleActions`.
 
 ## Registration
 
@@ -116,6 +120,20 @@ engine.AddKubernetesGatewayTrafficMaterializer(options =>
 });
 ```
 
+Enable cleanup sweeps when the same apply-and-reconcile loop should also delete transferred routes
+or prune orphaned Cephalon-owned routes that no longer map to an active automation:
+
+```csharp
+engine.AddKubernetesGatewayTrafficMaterializer(options =>
+{
+    options.Observation.Mode = KubernetesGatewayTrafficObservationModes.ApplyAndReconcile;
+    options.Observation.UseInClusterConfiguration = true;
+    options.Observation.EnableCleanupSweep = true;
+    options.Observation.PollingIntervalSeconds = 30;
+    options.Observation.StaleAfterSeconds = 90;
+});
+```
+
 Use this pack alongside the shared cell baseline:
 
 ```csharp
@@ -157,11 +175,14 @@ this pack is the selected provider materializer for that route.
 - existing unmanaged resources and active foreign Cephalon owners fail with an explicit ownership-conflict posture instead of being hijacked silently
 - owned routes carry `cephalon.io/managed-by = edge-kubernetes-gateway` plus route and automation annotations so later observation can verify ownership truthfully
 - merged live observation keeps the last write lifecycle action (`create`, `replace`, or `transfer`) visible on the same shared runtime surfaces instead of collapsing every successful reconciliation back to `observe`
+- optional cleanup sweeps run only when `EnableCleanupSweep` is true in `apply-and-reconcile` mode, scan the configured route namespaces, delete stale transferred `HTTPRoute` resources with `lifecycleAction = delete`, and prune orphaned Cephalon-owned routes with `lifecycleAction = prune`
+- cleanup sweep summaries stay additive through `providerMaterialization.cleanup*` and the provider-specific technology surface so operators can inspect delete/prune posture without losing the selected route's primary materialization answer
 
 This pack intentionally does not yet claim:
 
 - multi-route low-code generation beyond the explicitly configured route projections
 - control-plane ownership outside `provider-managed` or `provider-and-edge-managed` routes
+- broader dependency-aware teardown beyond the current owned `HTTPRoute` sweep baseline
 
 Those remain later follow-through so the current provider claim stays honest.
 

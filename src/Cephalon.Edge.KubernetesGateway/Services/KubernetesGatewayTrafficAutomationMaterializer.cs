@@ -1,3 +1,4 @@
+using System.Globalization;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Edge.KubernetesGateway.Configuration;
 
@@ -10,6 +11,9 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
     private readonly IKubernetesGatewayTrafficApplyService? applyService;
     private readonly string controlPlaneMode;
     private readonly int observationPollingIntervalSeconds;
+    private readonly bool cleanupSweepEnabled;
+    private readonly Lock cleanupSummaryGate = new();
+    private KubernetesGatewayTrafficCleanupSweepResult? lastCleanupSweepResult;
 
     public KubernetesGatewayTrafficAutomationMaterializer(
         KubernetesGatewayTrafficProjectionCatalog projections,
@@ -32,6 +36,7 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
         this.applyService = applyService;
         controlPlaneMode = KubernetesGatewayTrafficObservationModes.Normalize(options.Observation.Mode);
         observationPollingIntervalSeconds = Math.Max(1, options.Observation.PollingIntervalSeconds);
+        cleanupSweepEnabled = options.Observation.EnableCleanupSweep;
     }
 
     public string MaterializerId { get; }
@@ -56,6 +61,11 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
             KubernetesGatewayTrafficObservationModes.ApplyAndReconcile,
             StringComparison.OrdinalIgnoreCase);
 
+    internal bool SupportsCleanupSweep =>
+        UsesApplyAndReconcile &&
+        cleanupSweepEnabled &&
+        observationSource is not null;
+
     internal TimeSpan ObservationPollingInterval =>
         TimeSpan.FromSeconds(observationPollingIntervalSeconds);
 
@@ -76,10 +86,10 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
 
         if (!projectionsByRouteId.TryGetValue(automation.RouteId, out var projection))
         {
-            return new CellTrafficAutomationProviderMaterializationResult(
+            return AttachCleanupSummary(new CellTrafficAutomationProviderMaterializationResult(
                 state: CellTrafficAutomationProviderMaterializationStates.Unavailable,
                 observedAtUtc: DateTimeOffset.UtcNow,
-                error: $"Kubernetes Gateway traffic materializer '{MaterializerId}' has no projection for route '{automation.RouteId}'.");
+                error: $"Kubernetes Gateway traffic materializer '{MaterializerId}' has no projection for route '{automation.RouteId}'."));
         }
 
         if (UsesApplyAndReconcile)
@@ -104,10 +114,10 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
         metadata["gatewayWriteAction"] = "none";
         metadata["httpRouteWriteAction"] = "none";
 
-        return new CellTrafficAutomationProviderMaterializationResult(
+        return AttachCleanupSummary(new CellTrafficAutomationProviderMaterializationResult(
             state: CellTrafficAutomationProviderMaterializationStates.Pending,
             observedAtUtc: DateTimeOffset.UtcNow,
-            metadata: metadata);
+            metadata: metadata));
     }
 
     internal async ValueTask<CellTrafficAutomationProviderMaterializationResult> RefreshAsync(
@@ -129,10 +139,10 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
 
         if (!projectionsByRouteId.TryGetValue(automation.RouteId, out var projection))
         {
-            return new CellTrafficAutomationProviderMaterializationResult(
+            return AttachCleanupSummary(new CellTrafficAutomationProviderMaterializationResult(
                 state: CellTrafficAutomationProviderMaterializationStates.Unavailable,
                 observedAtUtc: DateTimeOffset.UtcNow,
-                error: $"Kubernetes Gateway traffic materializer '{MaterializerId}' has no projection for route '{automation.RouteId}'.");
+                error: $"Kubernetes Gateway traffic materializer '{MaterializerId}' has no projection for route '{automation.RouteId}'."));
         }
 
         if (observationSource is null)
@@ -146,14 +156,52 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
             metadata["driftState"] = CellTrafficAutomationDriftStates.Unknown;
             metadata["lifecycleAction"] = CellTrafficAutomationLifecycleActions.Observe;
 
-            return new CellTrafficAutomationProviderMaterializationResult(
+            return AttachCleanupSummary(new CellTrafficAutomationProviderMaterializationResult(
                 state: CellTrafficAutomationProviderMaterializationStates.Failed,
                 observedAtUtc: DateTimeOffset.UtcNow,
                 error: $"Kubernetes Gateway traffic materializer '{MaterializerId}' is configured for observe-only mode, but no observation source is active.",
-                metadata: metadata);
+                metadata: metadata));
         }
 
-        return await observationSource.ObserveAsync(automation, projection, cancellationToken).ConfigureAwait(false);
+        return AttachCleanupSummary(
+            await observationSource.ObserveAsync(automation, projection, cancellationToken).ConfigureAwait(false));
+    }
+
+    internal async ValueTask<KubernetesGatewayTrafficCleanupSweepResult> SweepCleanupAsync(
+        IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> activeAutomations,
+        CancellationToken cancellationToken = default)
+    {
+        if (!UsesApplyAndReconcile)
+        {
+            return RecordCleanupSweepResult(CreateDefaultCleanupSweepResult());
+        }
+
+        if (!cleanupSweepEnabled)
+        {
+            return RecordCleanupSweepResult(CreateDefaultCleanupSweepResult());
+        }
+
+        if (observationSource is null)
+        {
+            return RecordCleanupSweepResult(CreateUnavailableCleanupSweepResult());
+        }
+
+        try
+        {
+            var cleanupResult = await observationSource.SweepCleanupAsync(
+                activeAutomations,
+                projectionsByRouteId.Values.ToArray(),
+                cancellationToken).ConfigureAwait(false);
+            return RecordCleanupSweepResult(cleanupResult);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception exception)
+        {
+            return RecordCleanupSweepResult(CreateFailedCleanupSweepResult(exception.Message));
+        }
     }
 
     private async ValueTask<CellTrafficAutomationProviderMaterializationResult> ApplyAndReconcileAsync(
@@ -174,11 +222,11 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
             metadata["gatewayWriteAction"] = "none";
             metadata["httpRouteWriteAction"] = "none";
 
-            return new CellTrafficAutomationProviderMaterializationResult(
+            return AttachCleanupSummary(new CellTrafficAutomationProviderMaterializationResult(
                 state: CellTrafficAutomationProviderMaterializationStates.Failed,
                 observedAtUtc: DateTimeOffset.UtcNow,
                 error: $"Kubernetes Gateway traffic materializer '{MaterializerId}' is configured for apply-and-reconcile mode, but no apply service is active.",
-                metadata: metadata);
+                metadata: metadata));
         }
 
         if (observationSource is null)
@@ -194,11 +242,11 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
             metadata["gatewayWriteAction"] = "none";
             metadata["httpRouteWriteAction"] = "none";
 
-            return new CellTrafficAutomationProviderMaterializationResult(
+            return AttachCleanupSummary(new CellTrafficAutomationProviderMaterializationResult(
                 state: CellTrafficAutomationProviderMaterializationStates.Failed,
                 observedAtUtc: DateTimeOffset.UtcNow,
                 error: $"Kubernetes Gateway traffic materializer '{MaterializerId}' is configured for apply-and-reconcile mode, but no observation source is active.",
-                metadata: metadata);
+                metadata: metadata));
         }
 
         var applyResult = await applyService.ApplyAsync(automation, projection, cancellationToken).ConfigureAwait(false);
@@ -207,11 +255,115 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
                 CellTrafficAutomationProviderMaterializationStates.Failed,
                 StringComparison.OrdinalIgnoreCase))
         {
-            return applyResult;
+            return AttachCleanupSummary(applyResult);
         }
 
         var observedResult = await observationSource.ObserveAsync(automation, projection, cancellationToken).ConfigureAwait(false);
-        return MergeApplyAndObservedResult(applyResult, observedResult);
+        return AttachCleanupSummary(MergeApplyAndObservedResult(applyResult, observedResult));
+    }
+
+    private CellTrafficAutomationProviderMaterializationResult AttachCleanupSummary(
+        CellTrafficAutomationProviderMaterializationResult result)
+    {
+        if (!UsesApplyAndReconcile)
+        {
+            return result;
+        }
+
+        var cleanupResult = GetCleanupSweepResult();
+        var metadata = result.Metadata.Count == 0
+            ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            : new Dictionary<string, string>(result.Metadata, StringComparer.OrdinalIgnoreCase);
+        metadata["cleanupSweepEnabled"] = cleanupSweepEnabled ? "true" : "false";
+        metadata["cleanupState"] = cleanupResult.State;
+        metadata["cleanupObservedAtUtc"] = cleanupResult.ObservedAtUtc.ToString("O", CultureInfo.InvariantCulture);
+
+        if (!string.IsNullOrWhiteSpace(cleanupResult.Error))
+        {
+            metadata["cleanupError"] = cleanupResult.Error!;
+        }
+        else
+        {
+            metadata.Remove("cleanupError");
+        }
+
+        foreach (var pair in cleanupResult.Metadata)
+        {
+            metadata[$"cleanup.{pair.Key}"] = pair.Value;
+        }
+
+        return new CellTrafficAutomationProviderMaterializationResult(
+            state: result.State,
+            observedAtUtc: result.ObservedAtUtc,
+            error: result.Error,
+            metadata: metadata);
+    }
+
+    private KubernetesGatewayTrafficCleanupSweepResult GetCleanupSweepResult()
+    {
+        lock (cleanupSummaryGate)
+        {
+            lastCleanupSweepResult ??= CreateDefaultCleanupSweepResult();
+            return lastCleanupSweepResult;
+        }
+    }
+
+    private KubernetesGatewayTrafficCleanupSweepResult RecordCleanupSweepResult(
+        KubernetesGatewayTrafficCleanupSweepResult result)
+    {
+        lock (cleanupSummaryGate)
+        {
+            lastCleanupSweepResult = result;
+            return result;
+        }
+    }
+
+    private KubernetesGatewayTrafficCleanupSweepResult CreateDefaultCleanupSweepResult()
+    {
+        var metadata = CreateCleanupSweepMetadata();
+        var state = cleanupSweepEnabled ? "pending" : "disabled";
+        return new KubernetesGatewayTrafficCleanupSweepResult(
+            DateTimeOffset.UtcNow,
+            state,
+            metadata: metadata);
+    }
+
+    private KubernetesGatewayTrafficCleanupSweepResult CreateUnavailableCleanupSweepResult()
+    {
+        return new KubernetesGatewayTrafficCleanupSweepResult(
+            DateTimeOffset.UtcNow,
+            "unavailable",
+            "Kubernetes Gateway cleanup sweep requires an observation source.",
+            CreateCleanupSweepMetadata());
+    }
+
+    private KubernetesGatewayTrafficCleanupSweepResult CreateFailedCleanupSweepResult(string error)
+    {
+        return new KubernetesGatewayTrafficCleanupSweepResult(
+            DateTimeOffset.UtcNow,
+            "failed",
+            error,
+            CreateCleanupSweepMetadata());
+    }
+
+    private Dictionary<string, string> CreateCleanupSweepMetadata()
+    {
+        var namespaces = projectionsByRouteId.Values
+            .Select(static projection => projection.RouteNamespace)
+            .Where(static value => !string.IsNullOrWhiteSpace(value))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static value => value, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["candidateCount"] = "0",
+            ["removedResourceCount"] = "0",
+            ["deletedTransferredResourceCount"] = "0",
+            ["prunedOrphanResourceCount"] = "0",
+            ["resourceIds"] = string.Empty,
+            ["lifecycleActions"] = string.Empty,
+            ["namespaces"] = string.Join(",", namespaces)
+        };
     }
 
     private static CellTrafficAutomationProviderMaterializationResult MergeApplyAndObservedResult(

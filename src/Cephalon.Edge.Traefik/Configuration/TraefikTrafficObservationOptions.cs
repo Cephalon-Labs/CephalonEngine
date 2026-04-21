@@ -53,4 +53,14 @@ public sealed class TraefikTrafficObservationOptions
     /// Gets or sets the freshness window, in seconds, that observed status should advertise to operators.
     /// </summary>
     public int StaleAfterSeconds { get; set; } = 90;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether apply-and-reconcile mode should also sweep previously owned stale IngressRoute resources.
+    /// </summary>
+    /// <remarks>
+    /// This cleanup sweep is disabled by default so existing apply-and-reconcile behavior stays additive. When enabled, the
+    /// materializer will delete transferred resources and prune orphaned resources that still carry Cephalon ownership labels
+    /// in the configured route namespaces.
+    /// </remarks>
+    public bool EnableCleanupSweep { get; set; }
 }
