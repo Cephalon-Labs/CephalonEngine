@@ -67,7 +67,18 @@ internal sealed class CellTrafficAutomationProviderMaterializationHostedService(
                     new CellTrafficAutomationProviderMaterializationResult(
                         CellTrafficAutomationProviderMaterializationStates.Unavailable,
                         DateTimeOffset.UtcNow,
-                        $"Provider materializer '{automation.ProviderMaterializerId}' was not available when startup reconciliation ran."),
+                        $"Provider materializer '{automation.ProviderMaterializerId}' was not available when startup reconciliation ran.",
+                        conditions:
+                        [
+                            new CellTrafficAutomationMaterializationConditionDescriptor(
+                                CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                                CellTrafficAutomationMaterializationConditionCategories.Observation,
+                                "materializer-available",
+                                CellTrafficAutomationMaterializationConditionStates.Unmet,
+                                CellTrafficAutomationMaterializationConditionSeverities.Error,
+                                reason: "missing-materializer",
+                                description: $"Provider materializer '{automation.ProviderMaterializerId}' was not available when startup reconciliation ran.")
+                        ]),
                     cancellationToken).ConfigureAwait(false);
                 continue;
             }
@@ -102,7 +113,18 @@ internal sealed class CellTrafficAutomationProviderMaterializationHostedService(
                     new CellTrafficAutomationProviderMaterializationResult(
                         CellTrafficAutomationProviderMaterializationStates.Failed,
                         DateTimeOffset.UtcNow,
-                        exception.Message),
+                        exception.Message,
+                        conditions:
+                        [
+                            new CellTrafficAutomationMaterializationConditionDescriptor(
+                                CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                                CellTrafficAutomationMaterializationConditionCategories.Observation,
+                                "materializer-run",
+                                CellTrafficAutomationMaterializationConditionStates.Unmet,
+                                CellTrafficAutomationMaterializationConditionSeverities.Error,
+                                reason: "materialization-failed",
+                                description: exception.Message)
+                        ]),
                     cancellationToken).ConfigureAwait(false);
             }
         }

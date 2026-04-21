@@ -14,12 +14,14 @@ public sealed class CellTrafficAutomationProviderMaterializationResult : CellTra
     /// <param name="observedAtUtc">The UTC timestamp when the result was observed.</param>
     /// <param name="error">The operator-facing error summary when the materialization failed.</param>
     /// <param name="metadata">Optional provider-facing metadata captured alongside the result.</param>
+    /// <param name="conditions">Optional typed provider-materialization conditions captured alongside the result.</param>
     public CellTrafficAutomationProviderMaterializationResult(
         string state,
         DateTimeOffset observedAtUtc,
         string? error = null,
-        IReadOnlyDictionary<string, string>? metadata = null)
-        : base(state, observedAtUtc, error, metadata)
+        IReadOnlyDictionary<string, string>? metadata = null,
+        IReadOnlyList<CellTrafficAutomationMaterializationConditionDescriptor>? conditions = null)
+        : base(state, observedAtUtc, error, metadata, conditions)
     {
     }
 }

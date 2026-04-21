@@ -67,6 +67,13 @@ public sealed class TraefikTrafficMaterializerTests
         Assert.Equal(CellTrafficAutomationDriftStates.Unknown, publicAutomation.RuntimeMetadata["providerMaterialization.driftState"]);
         Assert.Equal(CellTrafficAutomationLifecycleActions.Project, publicAutomation.RuntimeMetadata["providerMaterialization.lifecycleAction"]);
         Assert.Equal("none", publicAutomation.RuntimeMetadata["providerMaterialization.ingressRouteWriteAction"]);
+        Assert.Contains(publicAutomation.MaterializationConditions, condition =>
+            condition.Dimension == CellTrafficAutomationMaterializationConditionDimensions.Provider &&
+            condition.ConditionId == "runtime-observable");
+        Assert.Contains(publicAutomation.MaterializationConditions, condition =>
+            condition.Dimension == CellTrafficAutomationMaterializationConditionDimensions.Provider &&
+            condition.ConditionId == "middleware-present");
+        Assert.Equal(CellTrafficAutomationMaterializationConditionSeverities.Info, publicAutomation.RuntimeMetadata["providerMaterialization.highestConditionSeverity"]);
 
         var cellSurface = Assert.Single(
             technologyCatalog.GetByTechnology("cell-based-architecture"),
@@ -179,6 +186,10 @@ public sealed class TraefikTrafficMaterializerTests
         Assert.Equal(string.Empty, automation.RuntimeMetadata["providerMaterialization.driftReasons"]);
         Assert.Equal(CellTrafficAutomationLifecycleActions.Observe, automation.RuntimeMetadata["providerMaterialization.lifecycleAction"]);
         Assert.True(automation.RuntimeMetadata.ContainsKey("providerMaterialization.observationFreshUntilUtc"));
+        Assert.Contains(automation.MaterializationConditions, condition =>
+            condition.Dimension == CellTrafficAutomationMaterializationConditionDimensions.Provider &&
+            condition.ConditionId == "ingress-route-present" &&
+            condition.State == CellTrafficAutomationMaterializationConditionStates.Met);
 
         var traefikSurface = Assert.Single(
             technologyCatalog.GetByTechnology("cell-based-architecture"),
@@ -230,6 +241,10 @@ public sealed class TraefikTrafficMaterializerTests
         Assert.Equal(CellTrafficAutomationDriftStates.InSync, automation.RuntimeMetadata["providerMaterialization.driftState"]);
         Assert.Equal(CellTrafficAutomationLifecycleActions.Create, automation.RuntimeMetadata["providerMaterialization.lifecycleAction"]);
         Assert.Equal("true", automation.RuntimeMetadata["providerMaterialization.ingressRouteExists"]);
+        Assert.Contains(automation.MaterializationConditions, condition =>
+            condition.Dimension == CellTrafficAutomationMaterializationConditionDimensions.Provider &&
+            condition.ConditionId == "ingress-route-present" &&
+            condition.State == CellTrafficAutomationMaterializationConditionStates.Met);
 
         var traefikSurface = Assert.Single(
             technologyCatalog.GetByTechnology("cell-based-architecture"),

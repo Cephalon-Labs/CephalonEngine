@@ -23016,6 +23016,323 @@ const string Transfer
 
 The selected materializer transferred ownership to another reconciler.
 
+<a id="type-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditioncategories"></a>
+
+### `CellTrafficAutomationMaterializationConditionCategories`
+
+Defines the stable category identifiers used by typed cell traffic automation materialization conditions.
+
+#### Declaration
+```csharp
+public static class CellTrafficAutomationMaterializationConditionCategories
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditioncategories-dependency"></a>
+
+##### `Dependency`
+
+```csharp
+const string Dependency
+```
+
+A condition that describes traffic dependency posture such as missing gateways, middleware, or backend services.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditioncategories-drift"></a>
+
+##### `Drift`
+
+```csharp
+const string Drift
+```
+
+A condition that describes drift posture between authored Cephalon intent and the observed control-plane state.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditioncategories-lifecycle"></a>
+
+##### `Lifecycle`
+
+```csharp
+const string Lifecycle
+```
+
+A condition that describes the active lifecycle or reconciliation action for the materialized resource.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditioncategories-observation"></a>
+
+##### `Observation`
+
+```csharp
+const string Observation
+```
+
+A condition that describes observation posture such as stale, unavailable, or error-driven reportability.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditioncategories-ownership"></a>
+
+##### `Ownership`
+
+```csharp
+const string Ownership
+```
+
+A condition that describes ownership posture for a materialized resource.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditioncategories-readiness"></a>
+
+##### `Readiness`
+
+```csharp
+const string Readiness
+```
+
+A condition that describes whether the materialized control-plane or edge object is ready to serve traffic.
+
+<a id="type-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor"></a>
+
+### `CellTrafficAutomationMaterializationConditionDescriptor`
+
+Describes one typed provider-managed or edge-managed materialization condition for a cell traffic automation answer.
+
+#### Declaration
+```csharp
+public sealed class CellTrafficAutomationMaterializationConditionDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `CellTrafficAutomationMaterializationConditionDescriptor`
+
+```csharp
+CellTrafficAutomationMaterializationConditionDescriptor(string dimension, string category, string conditionId, string state, string severity, string reason, string description, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a typed cell traffic automation materialization condition descriptor.
+
+Parameters:
+- `dimension`: The stable materialization dimension, such as `provider` or `edge`.
+- `category`: The stable condition category, such as `readiness`, `dependency`, or `ownership`.
+- `conditionId`: The stable provider-facing or edge-facing condition identifier inside the selected category, such as `gateway-accepted`, `ingress-route-present`, or `ownership`.
+- `state`: The stable condition state, such as `met`, `unmet`, `pending`, or `unknown`.
+- `severity`: The operator-facing severity for the current condition answer, such as `info`, `warning`, or `error`.
+- `reason`: The stable reason identifier that explains why the current condition state was selected.
+- `description`: The optional operator-facing condition summary.
+- `metadata`: Optional provider-facing or edge-facing condition metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor-category"></a>
+
+##### `Category`
+
+```csharp
+string Category { get; }
+```
+
+Gets the stable condition category.
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor-conditionid"></a>
+
+##### `ConditionId`
+
+```csharp
+string ConditionId { get; }
+```
+
+Gets the stable provider-facing or edge-facing condition identifier.
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the optional operator-facing condition summary.
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor-dimension"></a>
+
+##### `Dimension`
+
+```csharp
+string Dimension { get; }
+```
+
+Gets the stable materialization dimension that produced the condition.
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional provider-facing or edge-facing condition metadata.
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; }
+```
+
+Gets the stable reason identifier that explains why the current condition state was selected.
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor-severity"></a>
+
+##### `Severity`
+
+```csharp
+string Severity { get; }
+```
+
+Gets the operator-facing severity for the current condition answer.
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable condition state.
+
+<a id="type-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondimensions"></a>
+
+### `CellTrafficAutomationMaterializationConditionDimensions`
+
+Defines the stable dimension identifiers used by typed cell traffic automation materialization conditions.
+
+#### Declaration
+```csharp
+public static class CellTrafficAutomationMaterializationConditionDimensions
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondimensions-edge"></a>
+
+##### `Edge`
+
+```csharp
+const string Edge
+```
+
+The edge-managed traffic-runtime materialization dimension.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondimensions-provider"></a>
+
+##### `Provider`
+
+```csharp
+const string Provider
+```
+
+The provider-managed control-plane materialization dimension.
+
+<a id="type-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditionseverities"></a>
+
+### `CellTrafficAutomationMaterializationConditionSeverities`
+
+Defines the stable severity identifiers used by typed cell traffic automation materialization conditions.
+
+#### Declaration
+```csharp
+public static class CellTrafficAutomationMaterializationConditionSeverities
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditionseverities-error"></a>
+
+##### `Error`
+
+```csharp
+const string Error
+```
+
+The condition signals an error that blocks or invalidates the current materialization answer.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditionseverities-info"></a>
+
+##### `Info`
+
+```csharp
+const string Info
+```
+
+The condition is informational and does not currently signal an operator-facing problem.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditionseverities-warning"></a>
+
+##### `Warning`
+
+```csharp
+const string Warning
+```
+
+The condition signals a warning that still needs operator attention.
+
+<a id="type-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditionstates"></a>
+
+### `CellTrafficAutomationMaterializationConditionStates`
+
+Defines the stable state identifiers used by typed cell traffic automation materialization conditions.
+
+#### Declaration
+```csharp
+public static class CellTrafficAutomationMaterializationConditionStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditionstates-met"></a>
+
+##### `Met`
+
+```csharp
+const string Met
+```
+
+The condition is satisfied.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditionstates-pending"></a>
+
+##### `Pending`
+
+```csharp
+const string Pending
+```
+
+The condition is expected but not yet reconciled.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditionstates-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+The runtime cannot currently determine whether the condition is satisfied.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditionstates-unmet"></a>
+
+##### `Unmet`
+
+```csharp
+const string Unmet
+```
+
+The condition is not satisfied.
+
 <a id="type-cephalon-abstractions-technologies-celltrafficautomationmaterializationresult"></a>
 
 ### `CellTrafficAutomationMaterializationResult`
@@ -23029,12 +23346,12 @@ public class CellTrafficAutomationMaterializationResult
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-technologies-celltrafficautomationmaterializationresult-ctor-system-string-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+<a id="member-m-cephalon-abstractions-technologies-celltrafficautomationmaterializationresult-ctor-system-string-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor"></a>
 
 ##### `CellTrafficAutomationMaterializationResult`
 
 ```csharp
-CellTrafficAutomationMaterializationResult(string state, DateTimeOffset observedAtUtc, string error, IReadOnlyDictionary<string, string> metadata)
+CellTrafficAutomationMaterializationResult(string state, DateTimeOffset observedAtUtc, string error, IReadOnlyDictionary<string, string> metadata, IReadOnlyList<CellTrafficAutomationMaterializationConditionDescriptor> conditions)
 ```
 
 Creates a materialization result.
@@ -23044,8 +23361,19 @@ Parameters:
 - `observedAtUtc`: The UTC timestamp when the result was observed.
 - `error`: The operator-facing error summary when the materialization failed.
 - `metadata`: Optional runtime-facing metadata captured alongside the result.
+- `conditions`: Optional typed materialization conditions captured alongside the result.
 
 #### Properties
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationmaterializationresult-conditions"></a>
+
+##### `Conditions`
+
+```csharp
+IReadOnlyList<CellTrafficAutomationMaterializationConditionDescriptor> Conditions { get; }
+```
+
+Gets optional typed materialization conditions captured alongside the result.
 
 <a id="member-p-cephalon-abstractions-technologies-celltrafficautomationmaterializationresult-error"></a>
 
@@ -23256,12 +23584,12 @@ public sealed class CellTrafficAutomationProviderMaterializationResult
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-technologies-celltrafficautomationprovidermaterializationresult-ctor-system-string-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+<a id="member-m-cephalon-abstractions-technologies-celltrafficautomationprovidermaterializationresult-ctor-system-string-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor"></a>
 
 ##### `CellTrafficAutomationProviderMaterializationResult`
 
 ```csharp
-CellTrafficAutomationProviderMaterializationResult(string state, DateTimeOffset observedAtUtc, string error, IReadOnlyDictionary<string, string> metadata)
+CellTrafficAutomationProviderMaterializationResult(string state, DateTimeOffset observedAtUtc, string error, IReadOnlyDictionary<string, string> metadata, IReadOnlyList<CellTrafficAutomationMaterializationConditionDescriptor> conditions)
 ```
 
 Creates a provider-managed materialization result.
@@ -23271,6 +23599,7 @@ Parameters:
 - `observedAtUtc`: The UTC timestamp when the result was observed.
 - `error`: The operator-facing error summary when the materialization failed.
 - `metadata`: Optional provider-facing metadata captured alongside the result.
+- `conditions`: Optional typed provider-materialization conditions captured alongside the result.
 
 <a id="type-cephalon-abstractions-technologies-celltrafficautomationprovidermaterializationstates"></a>
 
@@ -23338,12 +23667,12 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+<a id="member-m-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor"></a>
 
 ##### `CellTrafficAutomationRuntimeDescriptor`
 
 ```csharp
-CellTrafficAutomationRuntimeDescriptor(string id, string routeId, string sourceModuleId, string sourceCellId, string targetCellId, string displayName, string description, string routingStrategy, string governanceMode, string automationMode, string triggerMode, string actionMode, string materializationMode, string policySource, IReadOnlyList<string> transportIds, string requiredCapabilityKey, IReadOnlyList<string> sourceHealthIsolationIds, IReadOnlyList<string> targetHealthIsolationIds, IReadOnlyList<string> dependencyIds, IReadOnlyDictionary<string, string> metadata, IReadOnlyDictionary<string, string> runtimeMetadata)
+CellTrafficAutomationRuntimeDescriptor(string id, string routeId, string sourceModuleId, string sourceCellId, string targetCellId, string displayName, string description, string routingStrategy, string governanceMode, string automationMode, string triggerMode, string actionMode, string materializationMode, string policySource, IReadOnlyList<string> transportIds, string requiredCapabilityKey, IReadOnlyList<string> sourceHealthIsolationIds, IReadOnlyList<string> targetHealthIsolationIds, IReadOnlyList<string> dependencyIds, IReadOnlyDictionary<string, string> metadata, IReadOnlyDictionary<string, string> runtimeMetadata, IReadOnlyList<CellTrafficAutomationMaterializationConditionDescriptor> materializationConditions)
 ```
 
 Creates a cell traffic-automation runtime descriptor.
@@ -23370,13 +23699,14 @@ Parameters:
 - `dependencyIds`: The normalized dependency identifiers observed across the related health-isolation answers.
 - `metadata`: The original authored route metadata.
 - `runtimeMetadata`: Additional runtime-only metadata such as policy notes or overlay provenance.
+- `materializationConditions`: Optional typed provider-managed or edge-managed materialization conditions.
 
-<a id="member-m-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string"></a>
+<a id="member-m-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor-system-string-system-collections-generic-ireadonlylist-system-string"></a>
 
 ##### `CellTrafficAutomationRuntimeDescriptor`
 
 ```csharp
-CellTrafficAutomationRuntimeDescriptor(string id, string routeId, string sourceModuleId, string sourceCellId, string targetCellId, string displayName, string description, string routingStrategy, string governanceMode, string automationMode, string triggerMode, string actionMode, string materializationMode, string policySource, IReadOnlyList<string> transportIds, string requiredCapabilityKey, IReadOnlyList<string> sourceHealthIsolationIds, IReadOnlyList<string> targetHealthIsolationIds, IReadOnlyList<string> dependencyIds, IReadOnlyDictionary<string, string> metadata, IReadOnlyDictionary<string, string> runtimeMetadata, string providerId, IReadOnlyList<string> edgeNodeIds)
+CellTrafficAutomationRuntimeDescriptor(string id, string routeId, string sourceModuleId, string sourceCellId, string targetCellId, string displayName, string description, string routingStrategy, string governanceMode, string automationMode, string triggerMode, string actionMode, string materializationMode, string policySource, IReadOnlyList<string> transportIds, string requiredCapabilityKey, IReadOnlyList<string> sourceHealthIsolationIds, IReadOnlyList<string> targetHealthIsolationIds, IReadOnlyList<string> dependencyIds, IReadOnlyDictionary<string, string> metadata, IReadOnlyDictionary<string, string> runtimeMetadata, IReadOnlyList<CellTrafficAutomationMaterializationConditionDescriptor> materializationConditions, string providerId, IReadOnlyList<string> edgeNodeIds)
 ```
 
 Creates a cell traffic-automation runtime descriptor with provider and edge targeting.
@@ -23403,15 +23733,16 @@ Parameters:
 - `dependencyIds`: The normalized dependency identifiers observed across the related health-isolation answers.
 - `metadata`: The original authored route metadata.
 - `runtimeMetadata`: Additional runtime-only metadata such as policy notes or overlay provenance.
+- `materializationConditions`: Optional typed provider-managed or edge-managed materialization conditions.
 - `providerId`: The optional external provider or control-plane identifier that materializes this automation.
 - `edgeNodeIds`: The optional edge-node identifiers associated with this automation answer.
 
-<a id="member-m-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-nullable-system-datetimeoffset-system-string"></a>
+<a id="member-m-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-nullable-system-datetimeoffset-system-string"></a>
 
 ##### `CellTrafficAutomationRuntimeDescriptor`
 
 ```csharp
-CellTrafficAutomationRuntimeDescriptor(string id, string routeId, string sourceModuleId, string sourceCellId, string targetCellId, string displayName, string description, string routingStrategy, string governanceMode, string automationMode, string triggerMode, string actionMode, string materializationMode, string policySource, IReadOnlyList<string> transportIds, string requiredCapabilityKey, IReadOnlyList<string> sourceHealthIsolationIds, IReadOnlyList<string> targetHealthIsolationIds, IReadOnlyList<string> dependencyIds, IReadOnlyDictionary<string, string> metadata, IReadOnlyDictionary<string, string> runtimeMetadata, string providerId, IReadOnlyList<string> edgeNodeIds, string edgeMaterializerId, string edgeMaterializationState, DateTimeOffset? edgeMaterializationObservedAtUtc, string edgeMaterializationError, string providerMaterializerId, string providerMaterializationState, DateTimeOffset? providerMaterializationObservedAtUtc, string providerMaterializationError, string materializationState, DateTimeOffset? materializationObservedAtUtc, string materializationError)
+CellTrafficAutomationRuntimeDescriptor(string id, string routeId, string sourceModuleId, string sourceCellId, string targetCellId, string displayName, string description, string routingStrategy, string governanceMode, string automationMode, string triggerMode, string actionMode, string materializationMode, string policySource, IReadOnlyList<string> transportIds, string requiredCapabilityKey, IReadOnlyList<string> sourceHealthIsolationIds, IReadOnlyList<string> targetHealthIsolationIds, IReadOnlyList<string> dependencyIds, IReadOnlyDictionary<string, string> metadata, IReadOnlyDictionary<string, string> runtimeMetadata, IReadOnlyList<CellTrafficAutomationMaterializationConditionDescriptor> materializationConditions, string providerId, IReadOnlyList<string> edgeNodeIds, string edgeMaterializerId, string edgeMaterializationState, DateTimeOffset? edgeMaterializationObservedAtUtc, string edgeMaterializationError, string providerMaterializerId, string providerMaterializationState, DateTimeOffset? providerMaterializationObservedAtUtc, string providerMaterializationError, string materializationState, DateTimeOffset? materializationObservedAtUtc, string materializationError)
 ```
 
 Creates a cell traffic-automation runtime descriptor with provider, edge, and materialization state.
@@ -23438,6 +23769,7 @@ Parameters:
 - `dependencyIds`: The normalized dependency identifiers observed across the related health-isolation answers.
 - `metadata`: The original authored route metadata.
 - `runtimeMetadata`: Additional runtime-only metadata such as policy notes or overlay provenance.
+- `materializationConditions`: Optional typed provider-managed or edge-managed materialization conditions.
 - `providerId`: The optional external provider or control-plane identifier that materializes this automation.
 - `edgeNodeIds`: The optional edge-node identifiers associated with this automation answer.
 - `edgeMaterializerId`: The optional selected edge materializer identifier.
@@ -23573,6 +23905,16 @@ string Id { get; }
 ```
 
 Gets the stable traffic-automation identifier.
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-materializationconditions"></a>
+
+##### `MaterializationConditions`
+
+```csharp
+IReadOnlyList<CellTrafficAutomationMaterializationConditionDescriptor> MaterializationConditions { get; }
+```
+
+Gets optional typed provider-managed or edge-managed materialization conditions captured for this automation.
 
 <a id="member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-materializationerror"></a>
 

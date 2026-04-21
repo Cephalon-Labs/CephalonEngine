@@ -48,6 +48,9 @@ public sealed class TraefikTrafficMaterializerAspNetCoreHostingTests
             automation.ProviderMaterializerId == "traefik-materializer" &&
             automation.ProviderMaterializationState == CellTrafficAutomationProviderMaterializationStates.Pending &&
             automation.MaterializationState == CellTrafficAutomationMaterializationStates.Pending &&
+            automation.MaterializationConditions.Any(condition =>
+                condition.Dimension == CellTrafficAutomationMaterializationConditionDimensions.Provider &&
+                condition.ConditionId == "runtime-observable") &&
             automation.RuntimeMetadata["providerMaterialization.providerRouteId"] == "ingressroute/edge-traefik/orders-public-ingress" &&
             automation.RuntimeMetadata["providerMaterialization.serviceRefs"] == "service/orders-runtime/orders-api:8443@weight/100" &&
             automation.RuntimeMetadata["providerMaterialization.middlewareRefs"] == "middleware/edge-traefik/secure-headers,middleware/edge-security/orders-rate-limit" &&
@@ -120,6 +123,10 @@ public sealed class TraefikTrafficMaterializerAspNetCoreHostingTests
             automation.ProviderMaterializerId == "traefik-materializer" &&
             automation.ProviderMaterializationState == CellTrafficAutomationProviderMaterializationStates.Applied &&
             automation.MaterializationState == CellTrafficAutomationMaterializationStates.Applied &&
+            automation.MaterializationConditions.Any(condition =>
+                condition.Dimension == CellTrafficAutomationMaterializationConditionDimensions.Provider &&
+                condition.ConditionId == "ingress-route-present" &&
+                condition.State == CellTrafficAutomationMaterializationConditionStates.Met) &&
             automation.RuntimeMetadata["providerMaterialization.providerAction"] == "observe-only" &&
             automation.RuntimeMetadata["providerMaterialization.observationMode"] == TraefikTrafficObservationModes.ObserveOnly &&
             automation.RuntimeMetadata["providerMaterialization.statusSource"] == "traefik-ingressroute-observation" &&
@@ -181,6 +188,10 @@ public sealed class TraefikTrafficMaterializerAspNetCoreHostingTests
             automation.ProviderMaterializerId == "traefik-materializer" &&
             automation.ProviderMaterializationState == CellTrafficAutomationProviderMaterializationStates.Applied &&
             automation.MaterializationState == CellTrafficAutomationMaterializationStates.Applied &&
+            automation.MaterializationConditions.Any(condition =>
+                condition.Dimension == CellTrafficAutomationMaterializationConditionDimensions.Provider &&
+                condition.ConditionId == "ingress-route-present" &&
+                condition.State == CellTrafficAutomationMaterializationConditionStates.Met) &&
             automation.RuntimeMetadata["providerMaterialization.providerAction"] == "apply-and-reconcile" &&
             automation.RuntimeMetadata["providerMaterialization.observationMode"] == TraefikTrafficObservationModes.ApplyAndReconcile &&
             automation.RuntimeMetadata["providerMaterialization.statusSource"] == "traefik-ingressroute-observation" &&

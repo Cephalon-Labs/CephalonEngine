@@ -228,6 +228,18 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
         Assert.Equal("1", defaultAutomation.RuntimeMetadata["materialization.lifecycleActionCount"]);
         Assert.Equal(CellTrafficAutomationLifecycleActions.Reconcile, defaultAutomation.RuntimeMetadata["materialization.lifecycleActions"]);
         Assert.Equal("provider:reconcile,edge:reconcile", defaultAutomation.RuntimeMetadata["materialization.lifecycleActionBreakdown"]);
+        Assert.Equal("10", defaultAutomation.RuntimeMetadata["materialization.conditionCount"]);
+        Assert.Equal("5", defaultAutomation.RuntimeMetadata["providerMaterialization.conditionCount"]);
+        Assert.Equal("5", defaultAutomation.RuntimeMetadata["edgeMaterialization.conditionCount"]);
+        Assert.Equal(CellTrafficAutomationMaterializationConditionSeverities.Info, defaultAutomation.RuntimeMetadata["materialization.highestConditionSeverity"]);
+        Assert.Contains(defaultAutomation.MaterializationConditions, condition =>
+            condition.Dimension == CellTrafficAutomationMaterializationConditionDimensions.Provider &&
+            condition.ConditionId == "runtime-observable" &&
+            condition.Category == CellTrafficAutomationMaterializationConditionCategories.Observation);
+        Assert.Contains(defaultAutomation.MaterializationConditions, condition =>
+            condition.Dimension == CellTrafficAutomationMaterializationConditionDimensions.Edge &&
+            condition.ConditionId == "runtime-observable" &&
+            condition.Category == CellTrafficAutomationMaterializationConditionCategories.Observation);
 
         var routedAutomation = catalog.GetByRouteId("orders-to-platform-control");
         Assert.NotNull(routedAutomation);
@@ -245,7 +257,8 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
             automation.EdgeMaterializationState == CellTrafficAutomationMaterializationStates.Applied &&
             automation.ProviderMaterializerId == "regional-traffic-materializer" &&
             automation.ProviderMaterializationState == CellTrafficAutomationProviderMaterializationStates.Applied &&
-            automation.MaterializationState == CellTrafficAutomationMaterializationStates.Applied);
+            automation.MaterializationState == CellTrafficAutomationMaterializationStates.Applied &&
+            automation.MaterializationConditions.Count == 10);
 
         var surface = Assert.Single(
             technologyCatalog.GetByTechnology("cell-based-architecture"),
@@ -259,6 +272,8 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
             entry.Metadata["providerMaterializationState"] == CellTrafficAutomationProviderMaterializationStates.Applied &&
             entry.Metadata["materializationState"] == CellTrafficAutomationMaterializationStates.Applied &&
             entry.Metadata["providerMaterialization.providerRouteId"] == "regional-route-orders-to-reporting" &&
+            entry.Metadata["materialization.conditionCount"] == "10" &&
+            entry.Metadata["materialization.highestConditionSeverity"] == CellTrafficAutomationMaterializationConditionSeverities.Info &&
             entry.Metadata["materialization.ownershipState"] == CellTrafficAutomationOwnershipStates.Owned &&
             entry.Metadata["materialization.dependencyState"] == CellTrafficAutomationDependencyStates.Satisfied &&
             entry.Metadata["materialization.driftState"] == CellTrafficAutomationDriftStates.InSync);
@@ -569,7 +584,8 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
             return ValueTask.FromResult(new CellTrafficAutomationProviderMaterializationResult(
                 state: CellTrafficAutomationProviderMaterializationStates.Applied,
                 observedAtUtc: DateTimeOffset.UtcNow,
-                metadata: metadata));
+                metadata: metadata,
+                conditions: CreateProviderConditions()));
         }
     }
 
@@ -601,7 +617,8 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
             return ValueTask.FromResult(new CellTrafficAutomationMaterializationResult(
                 state: CellTrafficAutomationMaterializationStates.Applied,
                 observedAtUtc: DateTimeOffset.UtcNow,
-                metadata: metadata));
+                metadata: metadata,
+                conditions: CreateEdgeConditions()));
         }
     }
 
@@ -637,8 +654,150 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
                 state: CellTrafficAutomationProviderMaterializationStates.Failed,
                 observedAtUtc: DateTimeOffset.UtcNow,
                 error: "Provider route is still managed by another controller.",
-                metadata: metadata));
+                metadata: metadata,
+                conditions: CreateConflictProviderConditions()));
         }
+    }
+
+    private static CellTrafficAutomationMaterializationConditionDescriptor[] CreateProviderConditions()
+    {
+        return
+        [
+            new(
+                CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                CellTrafficAutomationMaterializationConditionCategories.Observation,
+                "runtime-observable",
+                CellTrafficAutomationMaterializationConditionStates.Met,
+                CellTrafficAutomationMaterializationConditionSeverities.Info,
+                reason: "test-runtime",
+                description: "The test provider reports live materialization truth."),
+            new(
+                CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                CellTrafficAutomationMaterializationConditionCategories.Ownership,
+                "ownership",
+                CellTrafficAutomationMaterializationConditionStates.Met,
+                CellTrafficAutomationMaterializationConditionSeverities.Info,
+                reason: "owned",
+                description: "The test provider owns the materialized route."),
+            new(
+                CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                CellTrafficAutomationMaterializationConditionCategories.Dependency,
+                "dependencies",
+                CellTrafficAutomationMaterializationConditionStates.Met,
+                CellTrafficAutomationMaterializationConditionSeverities.Info,
+                reason: "satisfied",
+                description: "The test provider dependency posture is satisfied."),
+            new(
+                CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                CellTrafficAutomationMaterializationConditionCategories.Drift,
+                "intent-alignment",
+                CellTrafficAutomationMaterializationConditionStates.Met,
+                CellTrafficAutomationMaterializationConditionSeverities.Info,
+                reason: "in-sync",
+                description: "The test provider matches the authored Cephalon intent."),
+            new(
+                CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                CellTrafficAutomationMaterializationConditionCategories.Lifecycle,
+                "reconcile-action",
+                CellTrafficAutomationMaterializationConditionStates.Pending,
+                CellTrafficAutomationMaterializationConditionSeverities.Info,
+                reason: CellTrafficAutomationLifecycleActions.Reconcile,
+                description: "The test provider is reconciling the materialized route.")
+        ];
+    }
+
+    private static CellTrafficAutomationMaterializationConditionDescriptor[] CreateEdgeConditions()
+    {
+        return
+        [
+            new(
+                CellTrafficAutomationMaterializationConditionDimensions.Edge,
+                CellTrafficAutomationMaterializationConditionCategories.Observation,
+                "runtime-observable",
+                CellTrafficAutomationMaterializationConditionStates.Met,
+                CellTrafficAutomationMaterializationConditionSeverities.Info,
+                reason: "test-runtime",
+                description: "The test edge runtime reports live materialization truth."),
+            new(
+                CellTrafficAutomationMaterializationConditionDimensions.Edge,
+                CellTrafficAutomationMaterializationConditionCategories.Ownership,
+                "ownership",
+                CellTrafficAutomationMaterializationConditionStates.Met,
+                CellTrafficAutomationMaterializationConditionSeverities.Info,
+                reason: "owned",
+                description: "The test edge runtime owns the materialized route."),
+            new(
+                CellTrafficAutomationMaterializationConditionDimensions.Edge,
+                CellTrafficAutomationMaterializationConditionCategories.Dependency,
+                "dependencies",
+                CellTrafficAutomationMaterializationConditionStates.Met,
+                CellTrafficAutomationMaterializationConditionSeverities.Info,
+                reason: "satisfied",
+                description: "The test edge runtime dependency posture is satisfied."),
+            new(
+                CellTrafficAutomationMaterializationConditionDimensions.Edge,
+                CellTrafficAutomationMaterializationConditionCategories.Drift,
+                "intent-alignment",
+                CellTrafficAutomationMaterializationConditionStates.Met,
+                CellTrafficAutomationMaterializationConditionSeverities.Info,
+                reason: "in-sync",
+                description: "The test edge runtime matches the authored Cephalon intent."),
+            new(
+                CellTrafficAutomationMaterializationConditionDimensions.Edge,
+                CellTrafficAutomationMaterializationConditionCategories.Lifecycle,
+                "reconcile-action",
+                CellTrafficAutomationMaterializationConditionStates.Pending,
+                CellTrafficAutomationMaterializationConditionSeverities.Info,
+                reason: CellTrafficAutomationLifecycleActions.Reconcile,
+                description: "The test edge runtime is reconciling the materialized route.")
+        ];
+    }
+
+    private static CellTrafficAutomationMaterializationConditionDescriptor[] CreateConflictProviderConditions()
+    {
+        return
+        [
+            new(
+                CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                CellTrafficAutomationMaterializationConditionCategories.Observation,
+                "runtime-observable",
+                CellTrafficAutomationMaterializationConditionStates.Met,
+                CellTrafficAutomationMaterializationConditionSeverities.Info,
+                reason: "test-runtime",
+                description: "The test provider reports live materialization truth."),
+            new(
+                CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                CellTrafficAutomationMaterializationConditionCategories.Ownership,
+                "ownership",
+                CellTrafficAutomationMaterializationConditionStates.Unmet,
+                CellTrafficAutomationMaterializationConditionSeverities.Error,
+                reason: "ownership-conflict",
+                description: "The test provider reports an ownership conflict."),
+            new(
+                CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                CellTrafficAutomationMaterializationConditionCategories.Dependency,
+                "dependencies",
+                CellTrafficAutomationMaterializationConditionStates.Unmet,
+                CellTrafficAutomationMaterializationConditionSeverities.Error,
+                reason: "missing",
+                description: "The test provider reports missing dependencies."),
+            new(
+                CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                CellTrafficAutomationMaterializationConditionCategories.Drift,
+                "intent-alignment",
+                CellTrafficAutomationMaterializationConditionStates.Unmet,
+                CellTrafficAutomationMaterializationConditionSeverities.Warning,
+                reason: "drifted",
+                description: "The test provider reports drift from authored intent."),
+            new(
+                CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                CellTrafficAutomationMaterializationConditionCategories.Lifecycle,
+                "reconcile-action",
+                CellTrafficAutomationMaterializationConditionStates.Met,
+                CellTrafficAutomationMaterializationConditionSeverities.Info,
+                reason: CellTrafficAutomationLifecycleActions.Transfer,
+                description: "The test provider is transferring ownership.")
+        ];
     }
 
     private sealed class CellTrafficAutomationCatalogTestModule :

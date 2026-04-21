@@ -1,6 +1,6 @@
 # Cephalon.Edge.Traefik
 
-`Cephalon.Edge.Traefik` is the second provider-specific control-plane materializer pack for Cephalon cell traffic automation. It proves that the shared provider-materializer seam is not overfit to Kubernetes Gateway API by projecting truthful Traefik `IngressRoute` intent and, when enabled, overlaying live Traefik CRD observation, ownership-aware `IngressRoute` apply-and-reconcile posture, and additive cleanup sweeps back onto the same shared runtime surfaces without moving Traefik-specific assumptions into `Cephalon.Engine`.
+`Cephalon.Edge.Traefik` is the second provider-specific control-plane materializer pack for Cephalon cell traffic automation. It proves that the shared provider-materializer seam is not overfit to Kubernetes Gateway API by projecting truthful Traefik `IngressRoute` intent and, when enabled, overlaying live Traefik CRD observation, ownership-aware `IngressRoute` apply-and-reconcile posture, typed provider materialization conditions, and additive cleanup sweeps back onto the same shared runtime surfaces without moving Traefik-specific assumptions into `Cephalon.Engine`.
 
 ## What it owns
 
@@ -12,7 +12,7 @@
 - opt-in `apply-and-reconcile` ownership over Traefik `IngressRoute` resources only, while treating referenced `Middleware`, `TLSOption`, `Secret`, and backend `Service` resources as pre-provisioned dependencies that are observed rather than written by this pack
 - namespace-scoped cleanup sweeps in `apply-and-reconcile` mode that can delete transferred `IngressRoute` resources or prune orphaned Cephalon-owned routes without inventing a second lifecycle registry
 - the `traefik-ingressroute-traffic-materializations` technology surface under `cell-based-architecture`
-- truthful operator metadata such as `providerRouteId`, `ingressRouteNamespace`, `ingressRouteName`, `entryPoints`, `matchRule`, `middlewareRefs`, `serviceRefs`, `tlsSecretName`, `tlsOptionsRef`, `statusSource`, `observationMode`, `ingressRouteWriteAction`, freshness metadata, additive cleanup-sweep summaries such as `cleanupState` plus `cleanupObservedAtUtc`, and the shared ownership/dependency/drift/lifecycle-action vocabulary
+- truthful operator metadata such as `providerRouteId`, `ingressRouteNamespace`, `ingressRouteName`, `entryPoints`, `matchRule`, `middlewareRefs`, `serviceRefs`, `tlsSecretName`, `tlsOptionsRef`, `statusSource`, `observationMode`, `ingressRouteWriteAction`, freshness metadata, typed provider `MaterializationConditions`, additive cleanup-sweep summaries such as `cleanupState` plus `cleanupObservedAtUtc`, the shared ownership/dependency/drift/lifecycle-action vocabulary, and additive condition summaries such as `providerMaterialization.conditionCount` plus `providerMaterialization.highestConditionSeverity`
 
 ## Main surfaces
 
@@ -71,8 +71,9 @@ This pack currently ships three truthful modes:
   grounded in the selected route's actual materialization state
 
 What this proves is that a second provider family can publish selected materializer ownership,
-provider-facing route identity, middleware and TLS intent, and the same requested/observed lifecycle
-truth back onto the shared automation catalog without inventing a provider-local traffic registry.
+provider-facing route identity, middleware and TLS intent, a typed condition taxonomy, and the
+same requested or observed lifecycle truth back onto the shared automation catalog without
+inventing a provider-local traffic registry.
 
 When the pack owns an automation answer, operators can inspect the same route through:
 
@@ -85,7 +86,11 @@ The technology surface entry lives under `surfaceId = "traefik-ingressroute-traf
 and carries one provider-facing projection per selected route, including the projected or observed
 `providerRouteId`, entry points, route match, middleware references, backend service reference, TLS
 intent, resource existence, dependency posture, `ingressRouteWriteAction`, freshness metadata, and
-additive cleanup-sweep metadata such as `cleanupState` and `cleanup.lifecycleActions`.
+additive cleanup-sweep metadata such as `cleanupState` and `cleanup.lifecycleActions`. The shared
+automation answer for the same route now also carries typed provider conditions through
+`CellTrafficAutomationRuntimeDescriptor.MaterializationConditions` plus additive summaries such as
+`materialization.conditionCount`, `materialization.highestConditionSeverity`,
+`providerMaterialization.conditionCategories`, and `providerMaterialization.conditionBreakdown`.
 
 ## Registration
 
@@ -186,8 +191,9 @@ engine.AddTraefikTrafficMaterializer(options =>
 
 This pack intentionally does not yet claim:
 
-- controller-driven success or condition semantics beyond observed CRD existence, ownership,
-  dependency, drift, freshness posture, and owned `IngressRoute` write attempts
+- controller-driven success or policy semantics beyond the shipped typed readiness, ownership,
+  dependency, lifecycle, and observation condition taxonomy plus the current CRD-existence and
+  dependency checks
 - `TraefikService`, parent `IngressRoute`, or richer multi-layer routing follow-through beyond the
   single route-rule and Service backend baseline
 - broader dependency-aware teardown beyond the current owned `IngressRoute` cleanup-sweep baseline

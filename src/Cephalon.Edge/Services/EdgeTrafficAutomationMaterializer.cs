@@ -43,7 +43,55 @@ internal sealed class EdgeTrafficAutomationMaterializer(IEdgeNodeCatalog catalog
         return ValueTask.FromResult(new CellTrafficAutomationMaterializationResult(
             state: CellTrafficAutomationMaterializationStates.Applied,
             observedAtUtc: DateTimeOffset.UtcNow,
-            metadata: metadata));
+            metadata: metadata,
+            conditions: CreateMaterializationConditions()));
+    }
+
+    private static CellTrafficAutomationMaterializationConditionDescriptor[] CreateMaterializationConditions()
+    {
+        return
+        [
+            new CellTrafficAutomationMaterializationConditionDescriptor(
+                CellTrafficAutomationMaterializationConditionDimensions.Edge,
+                CellTrafficAutomationMaterializationConditionCategories.Observation,
+                "runtime-observable",
+                CellTrafficAutomationMaterializationConditionStates.Met,
+                CellTrafficAutomationMaterializationConditionSeverities.Info,
+                reason: "edge-runtime",
+                description: "The selected edge runtime reports active materialization truth."),
+            new CellTrafficAutomationMaterializationConditionDescriptor(
+                CellTrafficAutomationMaterializationConditionDimensions.Edge,
+                CellTrafficAutomationMaterializationConditionCategories.Ownership,
+                "ownership",
+                CellTrafficAutomationMaterializationConditionStates.Met,
+                CellTrafficAutomationMaterializationConditionSeverities.Info,
+                reason: "owned",
+                description: "The selected edge runtime owns the materialized route."),
+            new CellTrafficAutomationMaterializationConditionDescriptor(
+                CellTrafficAutomationMaterializationConditionDimensions.Edge,
+                CellTrafficAutomationMaterializationConditionCategories.Dependency,
+                "dependencies",
+                CellTrafficAutomationMaterializationConditionStates.Met,
+                CellTrafficAutomationMaterializationConditionSeverities.Info,
+                reason: "satisfied",
+                description: "The selected edge runtime dependency posture is satisfied."),
+            new CellTrafficAutomationMaterializationConditionDescriptor(
+                CellTrafficAutomationMaterializationConditionDimensions.Edge,
+                CellTrafficAutomationMaterializationConditionCategories.Drift,
+                "intent-alignment",
+                CellTrafficAutomationMaterializationConditionStates.Met,
+                CellTrafficAutomationMaterializationConditionSeverities.Info,
+                reason: "in-sync",
+                description: "The selected edge runtime matches the authored Cephalon intent."),
+            new CellTrafficAutomationMaterializationConditionDescriptor(
+                CellTrafficAutomationMaterializationConditionDimensions.Edge,
+                CellTrafficAutomationMaterializationConditionCategories.Lifecycle,
+                "reconcile-action",
+                CellTrafficAutomationMaterializationConditionStates.Pending,
+                CellTrafficAutomationMaterializationConditionSeverities.Info,
+                reason: CellTrafficAutomationLifecycleActions.Reconcile,
+                description: "The selected edge runtime is reconciling the materialized route.")
+        ];
     }
 
     private static bool UsesEdgeMaterialization(string materializationMode)

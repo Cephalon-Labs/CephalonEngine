@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-21T20:45:14.7918027+00:00",
+  "GeneratedAtUtc": "2026-04-21T21:36:48.7763967+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 356
+      "TypeCount": 361
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -609,7 +609,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-technologies",
-      "TypeCount": 36
+      "TypeCount": 41
     },
     {
       "NamespaceName": "Cephalon.Abstractions.Tenancy",
@@ -3397,6 +3397,81 @@
       }
     },
     {
+      "DisplayName": "CellTrafficAutomationMaterializationConditionCategories",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditioncategories",
+      "Declaration": "public static class CellTrafficAutomationMaterializationConditionCategories",
+      "Summary": "Defines the stable category identifiers used by typed cell traffic automation materialization conditions.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 6,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CellTrafficAutomationMaterializationConditionDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor",
+      "Declaration": "public sealed class CellTrafficAutomationMaterializationConditionDescriptor",
+      "Summary": "Describes one typed provider-managed or edge-managed materialization condition for a cell traffic automation answer.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 8,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CellTrafficAutomationMaterializationConditionDimensions",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondimensions",
+      "Declaration": "public static class CellTrafficAutomationMaterializationConditionDimensions",
+      "Summary": "Defines the stable dimension identifiers used by typed cell traffic automation materialization conditions.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 2,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CellTrafficAutomationMaterializationConditionSeverities",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditionseverities",
+      "Declaration": "public static class CellTrafficAutomationMaterializationConditionSeverities",
+      "Summary": "Defines the stable severity identifiers used by typed cell traffic automation materialization conditions.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 3,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CellTrafficAutomationMaterializationConditionStates",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditionstates",
+      "Declaration": "public static class CellTrafficAutomationMaterializationConditionStates",
+      "Summary": "Defines the stable state identifiers used by typed cell traffic automation materialization conditions.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 4,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "CellTrafficAutomationMaterializationResult",
       "NamespaceName": "Cephalon.Abstractions.Technologies",
       "AssemblyName": "Cephalon.Abstractions",
@@ -3407,7 +3482,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 4,
+        "Properties": 5,
         "Methods": 0
       }
     },
@@ -3497,7 +3572,7 @@
       "MemberCounts": {
         "Constructors": 3,
         "Fields": 0,
-        "Properties": 34,
+        "Properties": 35,
         "Methods": 0
       }
     },
@@ -18423,6 +18498,17 @@
     {
       "DisplayName": "Category",
       "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationMaterializationConditionDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor-category",
+      "Signature": "string Category { get; }",
+      "Summary": "Gets the stable condition category."
+    },
+    {
+      "DisplayName": "Category",
+      "Category": "Properties",
       "DeclaringTypeName": "DatabaseTopologyOperationalAction",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -18894,14 +18980,25 @@
       "Summary": "Creates cell settings."
     },
     {
+      "DisplayName": "CellTrafficAutomationMaterializationConditionDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CellTrafficAutomationMaterializationConditionDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "CellTrafficAutomationMaterializationConditionDescriptor(string dimension, string category, string conditionId, string state, string severity, string reason, string description, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a typed cell traffic automation materialization condition descriptor."
+    },
+    {
       "DisplayName": "CellTrafficAutomationMaterializationResult",
       "Category": "Constructors",
       "DeclaringTypeName": "CellTrafficAutomationMaterializationResult",
       "NamespaceName": "Cephalon.Abstractions.Technologies",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-technologies-celltrafficautomationmaterializationresult-ctor-system-string-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
-      "Signature": "CellTrafficAutomationMaterializationResult(string state, DateTimeOffset observedAtUtc, string error, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-celltrafficautomationmaterializationresult-ctor-system-string-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor",
+      "Signature": "CellTrafficAutomationMaterializationResult(string state, DateTimeOffset observedAtUtc, string error, IReadOnlyDictionary\u003Cstring, string\u003E metadata, IReadOnlyList\u003CCellTrafficAutomationMaterializationConditionDescriptor\u003E conditions)",
       "Summary": "Creates a materialization result."
     },
     {
@@ -18911,8 +19008,8 @@
       "NamespaceName": "Cephalon.Abstractions.Technologies",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-technologies-celltrafficautomationprovidermaterializationresult-ctor-system-string-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
-      "Signature": "CellTrafficAutomationProviderMaterializationResult(string state, DateTimeOffset observedAtUtc, string error, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-celltrafficautomationprovidermaterializationresult-ctor-system-string-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor",
+      "Signature": "CellTrafficAutomationProviderMaterializationResult(string state, DateTimeOffset observedAtUtc, string error, IReadOnlyDictionary\u003Cstring, string\u003E metadata, IReadOnlyList\u003CCellTrafficAutomationMaterializationConditionDescriptor\u003E conditions)",
       "Summary": "Creates a provider-managed materialization result."
     },
     {
@@ -18944,8 +19041,8 @@
       "NamespaceName": "Cephalon.Abstractions.Technologies",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
-      "Signature": "CellTrafficAutomationRuntimeDescriptor(string id, string routeId, string sourceModuleId, string sourceCellId, string targetCellId, string displayName, string description, string routingStrategy, string governanceMode, string automationMode, string triggerMode, string actionMode, string materializationMode, string policySource, IReadOnlyList\u003Cstring\u003E transportIds, string requiredCapabilityKey, IReadOnlyList\u003Cstring\u003E sourceHealthIsolationIds, IReadOnlyList\u003Cstring\u003E targetHealthIsolationIds, IReadOnlyList\u003Cstring\u003E dependencyIds, IReadOnlyDictionary\u003Cstring, string\u003E metadata, IReadOnlyDictionary\u003Cstring, string\u003E runtimeMetadata)",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor",
+      "Signature": "CellTrafficAutomationRuntimeDescriptor(string id, string routeId, string sourceModuleId, string sourceCellId, string targetCellId, string displayName, string description, string routingStrategy, string governanceMode, string automationMode, string triggerMode, string actionMode, string materializationMode, string policySource, IReadOnlyList\u003Cstring\u003E transportIds, string requiredCapabilityKey, IReadOnlyList\u003Cstring\u003E sourceHealthIsolationIds, IReadOnlyList\u003Cstring\u003E targetHealthIsolationIds, IReadOnlyList\u003Cstring\u003E dependencyIds, IReadOnlyDictionary\u003Cstring, string\u003E metadata, IReadOnlyDictionary\u003Cstring, string\u003E runtimeMetadata, IReadOnlyList\u003CCellTrafficAutomationMaterializationConditionDescriptor\u003E materializationConditions)",
       "Summary": "Creates a cell traffic-automation runtime descriptor."
     },
     {
@@ -18955,8 +19052,8 @@
       "NamespaceName": "Cephalon.Abstractions.Technologies",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string",
-      "Signature": "CellTrafficAutomationRuntimeDescriptor(string id, string routeId, string sourceModuleId, string sourceCellId, string targetCellId, string displayName, string description, string routingStrategy, string governanceMode, string automationMode, string triggerMode, string actionMode, string materializationMode, string policySource, IReadOnlyList\u003Cstring\u003E transportIds, string requiredCapabilityKey, IReadOnlyList\u003Cstring\u003E sourceHealthIsolationIds, IReadOnlyList\u003Cstring\u003E targetHealthIsolationIds, IReadOnlyList\u003Cstring\u003E dependencyIds, IReadOnlyDictionary\u003Cstring, string\u003E metadata, IReadOnlyDictionary\u003Cstring, string\u003E runtimeMetadata, string providerId, IReadOnlyList\u003Cstring\u003E edgeNodeIds)",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor-system-string-system-collections-generic-ireadonlylist-system-string",
+      "Signature": "CellTrafficAutomationRuntimeDescriptor(string id, string routeId, string sourceModuleId, string sourceCellId, string targetCellId, string displayName, string description, string routingStrategy, string governanceMode, string automationMode, string triggerMode, string actionMode, string materializationMode, string policySource, IReadOnlyList\u003Cstring\u003E transportIds, string requiredCapabilityKey, IReadOnlyList\u003Cstring\u003E sourceHealthIsolationIds, IReadOnlyList\u003Cstring\u003E targetHealthIsolationIds, IReadOnlyList\u003Cstring\u003E dependencyIds, IReadOnlyDictionary\u003Cstring, string\u003E metadata, IReadOnlyDictionary\u003Cstring, string\u003E runtimeMetadata, IReadOnlyList\u003CCellTrafficAutomationMaterializationConditionDescriptor\u003E materializationConditions, string providerId, IReadOnlyList\u003Cstring\u003E edgeNodeIds)",
       "Summary": "Creates a cell traffic-automation runtime descriptor with provider and edge targeting."
     },
     {
@@ -18966,8 +19063,8 @@
       "NamespaceName": "Cephalon.Abstractions.Technologies",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-nullable-system-datetimeoffset-system-string",
-      "Signature": "CellTrafficAutomationRuntimeDescriptor(string id, string routeId, string sourceModuleId, string sourceCellId, string targetCellId, string displayName, string description, string routingStrategy, string governanceMode, string automationMode, string triggerMode, string actionMode, string materializationMode, string policySource, IReadOnlyList\u003Cstring\u003E transportIds, string requiredCapabilityKey, IReadOnlyList\u003Cstring\u003E sourceHealthIsolationIds, IReadOnlyList\u003Cstring\u003E targetHealthIsolationIds, IReadOnlyList\u003Cstring\u003E dependencyIds, IReadOnlyDictionary\u003Cstring, string\u003E metadata, IReadOnlyDictionary\u003Cstring, string\u003E runtimeMetadata, string providerId, IReadOnlyList\u003Cstring\u003E edgeNodeIds, string edgeMaterializerId, string edgeMaterializationState, DateTimeOffset? edgeMaterializationObservedAtUtc, string edgeMaterializationError, string providerMaterializerId, string providerMaterializationState, DateTimeOffset? providerMaterializationObservedAtUtc, string providerMaterializationError, string materializationState, DateTimeOffset? materializationObservedAtUtc, string materializationError)",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-nullable-system-datetimeoffset-system-string",
+      "Signature": "CellTrafficAutomationRuntimeDescriptor(string id, string routeId, string sourceModuleId, string sourceCellId, string targetCellId, string displayName, string description, string routingStrategy, string governanceMode, string automationMode, string triggerMode, string actionMode, string materializationMode, string policySource, IReadOnlyList\u003Cstring\u003E transportIds, string requiredCapabilityKey, IReadOnlyList\u003Cstring\u003E sourceHealthIsolationIds, IReadOnlyList\u003Cstring\u003E targetHealthIsolationIds, IReadOnlyList\u003Cstring\u003E dependencyIds, IReadOnlyDictionary\u003Cstring, string\u003E metadata, IReadOnlyDictionary\u003Cstring, string\u003E runtimeMetadata, IReadOnlyList\u003CCellTrafficAutomationMaterializationConditionDescriptor\u003E materializationConditions, string providerId, IReadOnlyList\u003Cstring\u003E edgeNodeIds, string edgeMaterializerId, string edgeMaterializationState, DateTimeOffset? edgeMaterializationObservedAtUtc, string edgeMaterializationError, string providerMaterializerId, string providerMaterializationState, DateTimeOffset? providerMaterializationObservedAtUtc, string providerMaterializationError, string materializationState, DateTimeOffset? materializationObservedAtUtc, string materializationError)",
       "Summary": "Creates a cell traffic-automation runtime descriptor with provider, edge, and materialization state."
     },
     {
@@ -20256,6 +20353,28 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-executiongraphedgedescriptor-condition",
       "Signature": "string Condition { get; }",
       "Summary": "Gets the optional condition or routing hint for the edge."
+    },
+    {
+      "DisplayName": "ConditionId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationMaterializationConditionDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor-conditionid",
+      "Signature": "string ConditionId { get; }",
+      "Summary": "Gets the stable provider-facing or edge-facing condition identifier."
+    },
+    {
+      "DisplayName": "Conditions",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationMaterializationResult",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationmaterializationresult-conditions",
+      "Signature": "IReadOnlyList\u003CCellTrafficAutomationMaterializationConditionDescriptor\u003E Conditions { get; }",
+      "Summary": "Gets optional typed materialization conditions captured alongside the result."
     },
     {
       "DisplayName": "Configuration",
@@ -22854,6 +22973,17 @@
       "Summary": "The dependency-health reports visible during evaluation."
     },
     {
+      "DisplayName": "Dependency",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationMaterializationConditionCategories",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditioncategories-dependency",
+      "Signature": "const string Dependency",
+      "Summary": "A condition that describes traffic dependency posture such as missing gateways, middleware, or backend services."
+    },
+    {
       "DisplayName": "DependencyHealthReport",
       "Category": "Constructors",
       "DeclaringTypeName": "DependencyHealthReport",
@@ -23215,6 +23345,17 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-cellroutedescriptor-description",
       "Signature": "string Description { get; }",
       "Summary": "Gets the human-readable description of the cell route."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationMaterializationConditionDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the optional operator-facing condition summary."
     },
     {
       "DisplayName": "Description",
@@ -23985,6 +24126,17 @@
       "AnchorId": "member-m-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-ctor",
       "Signature": "DigitalOceanTelemetryExportOptions()",
       "Summary": "Initializes a new instance of the \u0060DigitalOceanTelemetryExportOptions\u0060 class."
+    },
+    {
+      "DisplayName": "Dimension",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationMaterializationConditionDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor-dimension",
+      "Signature": "string Dimension { get; }",
+      "Summary": "Gets the stable materialization dimension that produced the condition."
     },
     {
       "DisplayName": "DirectConnection",
@@ -25032,6 +25184,17 @@
       "Summary": "Gets the domains associated with the tenant."
     },
     {
+      "DisplayName": "Drift",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationMaterializationConditionCategories",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditioncategories-drift",
+      "Signature": "const string Drift",
+      "Summary": "A condition that describes drift posture between authored Cephalon intent and the observed control-plane state."
+    },
+    {
       "DisplayName": "Drifted",
       "Category": "Fields",
       "DeclaringTypeName": "CellTrafficAutomationDriftStates",
@@ -25173,6 +25336,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-durableexecutionstates",
       "Signature": "IReadOnlyList\u003CDurableExecutionRuntimeState\u003E DurableExecutionStates { get; set; }",
       "Summary": "Gets the latest reported durable-execution runtime state entries visible to the runtime at the time the snapshot was created."
+    },
+    {
+      "DisplayName": "Edge",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationMaterializationConditionDimensions",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondimensions-edge",
+      "Signature": "const string Edge",
+      "Summary": "The edge-managed traffic-runtime materialization dimension."
     },
     {
       "DisplayName": "EdgeMaterializationError",
@@ -27109,6 +27283,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-error",
       "Signature": "string Error { get; }",
       "Summary": "Gets the operator-facing error summary when the observation represents a failure."
+    },
+    {
+      "DisplayName": "Error",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationMaterializationConditionSeverities",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditionseverities-error",
+      "Signature": "const string Error",
+      "Summary": "The condition signals an error that blocks or invalidates the current materialization answer."
     },
     {
       "DisplayName": "Error",
@@ -35713,6 +35898,17 @@
       "Summary": "Informational fault details."
     },
     {
+      "DisplayName": "Info",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationMaterializationConditionSeverities",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditionseverities-info",
+      "Signature": "const string Info",
+      "Summary": "The condition is informational and does not currently signal an operator-facing problem."
+    },
+    {
       "DisplayName": "Information",
       "Category": "Fields",
       "DeclaringTypeName": "DiagnosticSeverity",
@@ -37638,6 +37834,17 @@
       "Summary": "Gets or sets the New Relic license key used to build the required \u0060api-key\u0060 header when the package should construct OTLP headers from structured settings."
     },
     {
+      "DisplayName": "Lifecycle",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationMaterializationConditionCategories",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditioncategories-lifecycle",
+      "Signature": "const string Lifecycle",
+      "Summary": "A condition that describes the active lifecycle or reconciliation action for the materialized resource."
+    },
+    {
       "DisplayName": "Limit",
       "Category": "Properties",
       "DeclaringTypeName": "AuditHistoryQuery",
@@ -38384,6 +38591,17 @@
       "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefikingressrouteoptions-matchrule",
       "Signature": "string MatchRule { get; set; }",
       "Summary": "Gets or sets the Traefik rule expression such as \u0060Host(\u0060api.example.com\u0060) \u0026\u0026 PathPrefix(\u0060/orders\u0060)\u0060."
+    },
+    {
+      "DisplayName": "MaterializationConditions",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-materializationconditions",
+      "Signature": "IReadOnlyList\u003CCellTrafficAutomationMaterializationConditionDescriptor\u003E MaterializationConditions { get; }",
+      "Summary": "Gets optional typed provider-managed or edge-managed materialization conditions captured for this automation."
     },
     {
       "DisplayName": "MaterializationError",
@@ -39189,6 +39407,17 @@
       "Summary": "Initializes a new instance of the \u0060MessagingSettings\u0060 class."
     },
     {
+      "DisplayName": "Met",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationMaterializationConditionStates",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditionstates-met",
+      "Signature": "const string Met",
+      "Summary": "The condition is satisfied."
+    },
+    {
       "DisplayName": "Metadata",
       "Category": "Properties",
       "DeclaringTypeName": "AgenticRuntimeOptions",
@@ -39484,6 +39713,17 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-cellroutedescriptor-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
       "Summary": "Gets optional operator-facing metadata for this route."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationMaterializationConditionDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional provider-facing or edge-facing condition metadata."
     },
     {
       "DisplayName": "Metadata",
@@ -41819,6 +42059,17 @@
     },
     {
       "DisplayName": "Observation",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationMaterializationConditionCategories",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditioncategories-observation",
+      "Signature": "const string Observation",
+      "Summary": "A condition that describes observation posture such as stale, unavailable, or error-driven reportability."
+    },
+    {
+      "DisplayName": "Observation",
       "Category": "Properties",
       "DeclaringTypeName": "KubernetesGatewayTrafficMaterializerOptions",
       "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
@@ -43160,6 +43411,17 @@
       "Summary": "Initializes a new \u0060OwnedBehaviorRegistration\u0060."
     },
     {
+      "DisplayName": "Ownership",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationMaterializationConditionCategories",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditioncategories-ownership",
+      "Signature": "const string Ownership",
+      "Summary": "A condition that describes ownership posture for a materialized resource."
+    },
+    {
       "DisplayName": "OwnershipConflict",
       "Category": "Fields",
       "DeclaringTypeName": "CellTrafficAutomationOwnershipStates",
@@ -43994,6 +44256,17 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionpendingsignal-payloadtype",
       "Signature": "string PayloadType { get; }",
       "Summary": "Gets the expected payload type name when the awaited signal declares one."
+    },
+    {
+      "DisplayName": "Pending",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationMaterializationConditionStates",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditionstates-pending",
+      "Signature": "const string Pending",
+      "Summary": "The condition is expected but not yet reconciled."
     },
     {
       "DisplayName": "Pending",
@@ -45328,6 +45601,17 @@
     },
     {
       "DisplayName": "Provider",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationMaterializationConditionDimensions",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondimensions-provider",
+      "Signature": "const string Provider",
+      "Summary": "The provider-managed control-plane materialization dimension."
+    },
+    {
+      "DisplayName": "Provider",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseMigrationDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Data",
@@ -46241,6 +46525,17 @@
     },
     {
       "DisplayName": "Readiness",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationMaterializationConditionCategories",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditioncategories-readiness",
+      "Signature": "const string Readiness",
+      "Summary": "A condition that describes whether the materialized control-plane or edge object is ready to serve traffic."
+    },
+    {
+      "DisplayName": "Readiness",
       "Category": "Properties",
       "DeclaringTypeName": "DiagnosticsSurface",
       "NamespaceName": "Cephalon.AspNetCore.Diagnostics",
@@ -46381,6 +46676,17 @@
       "AnchorId": "member-p-cephalon-engine-trust-capabilitypolicydecision-reason",
       "Signature": "string Reason { get; set; }",
       "Summary": "The human-readable reason for the decision."
+    },
+    {
+      "DisplayName": "Reason",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationMaterializationConditionDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor-reason",
+      "Signature": "string Reason { get; }",
+      "Summary": "Gets the stable reason identifier that explains why the current condition state was selected."
     },
     {
       "DisplayName": "Reason",
@@ -51753,6 +52059,17 @@
     {
       "DisplayName": "Severity",
       "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationMaterializationConditionDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor-severity",
+      "Signature": "string Severity { get; }",
+      "Summary": "Gets the operator-facing severity for the current condition answer."
+    },
+    {
+      "DisplayName": "Severity",
+      "Category": "Properties",
       "DeclaringTypeName": "DiagnosticEventDefinition",
       "NamespaceName": "Cephalon.Engine.Diagnostics",
       "AssemblyName": "Cephalon.Engine",
@@ -53617,6 +53934,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccapturepublicationstatus-state",
       "Signature": "string State { get; }",
       "Summary": "Gets the stable publication-state identifier."
+    },
+    {
+      "DisplayName": "State",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationMaterializationConditionDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor-state",
+      "Signature": "string State { get; }",
+      "Summary": "Gets the stable condition state."
     },
     {
       "DisplayName": "State",
@@ -57977,6 +58305,17 @@
     {
       "DisplayName": "Unknown",
       "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationMaterializationConditionStates",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditionstates-unknown",
+      "Signature": "const string Unknown",
+      "Summary": "The runtime cannot currently determine whether the condition is satisfied."
+    },
+    {
+      "DisplayName": "Unknown",
+      "Category": "Fields",
       "DeclaringTypeName": "CellTrafficAutomationOwnershipStates",
       "NamespaceName": "Cephalon.Abstractions.Technologies",
       "AssemblyName": "Cephalon.Abstractions",
@@ -57984,6 +58323,17 @@
       "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationownershipstates-unknown",
       "Signature": "const string Unknown",
       "Summary": "The ownership posture could not be determined from the current runtime truth."
+    },
+    {
+      "DisplayName": "Unmet",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationMaterializationConditionStates",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditionstates-unmet",
+      "Signature": "const string Unmet",
+      "Summary": "The condition is not satisfied."
     },
     {
       "DisplayName": "Unspecified",
@@ -59029,6 +59379,17 @@
       "AnchorId": "member-f-cephalon-abstractions-behaviors-behaviorfaultseverity-warning",
       "Signature": "const BehaviorFaultSeverity Warning",
       "Summary": "Warning-level fault details."
+    },
+    {
+      "DisplayName": "Warning",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationMaterializationConditionSeverities",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditionseverities-warning",
+      "Signature": "const string Warning",
+      "Summary": "The condition signals a warning that still needs operator attention."
     },
     {
       "DisplayName": "Warning",

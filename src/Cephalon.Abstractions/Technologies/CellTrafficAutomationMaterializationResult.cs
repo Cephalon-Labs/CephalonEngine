@@ -14,11 +14,13 @@ public class CellTrafficAutomationMaterializationResult
     /// <param name="observedAtUtc">The UTC timestamp when the result was observed.</param>
     /// <param name="error">The operator-facing error summary when the materialization failed.</param>
     /// <param name="metadata">Optional runtime-facing metadata captured alongside the result.</param>
+    /// <param name="conditions">Optional typed materialization conditions captured alongside the result.</param>
     public CellTrafficAutomationMaterializationResult(
         string state,
         DateTimeOffset observedAtUtc,
         string? error = null,
-        IReadOnlyDictionary<string, string>? metadata = null)
+        IReadOnlyDictionary<string, string>? metadata = null,
+        IReadOnlyList<CellTrafficAutomationMaterializationConditionDescriptor>? conditions = null)
     {
         if (string.IsNullOrWhiteSpace(state))
         {
@@ -33,6 +35,23 @@ public class CellTrafficAutomationMaterializationResult
         Metadata = metadata is null
             ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             : new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase);
+        Conditions = conditions is null
+            ? []
+            : conditions
+                .Where(static condition => condition is not null)
+                .GroupBy(
+                    static condition => string.Join(
+                        "|",
+                        condition.Dimension,
+                        condition.Category,
+                        condition.ConditionId,
+                        condition.State,
+                        condition.Severity,
+                        condition.Reason ?? string.Empty,
+                        condition.Description ?? string.Empty),
+                    StringComparer.OrdinalIgnoreCase)
+                .Select(static group => group.First())
+                .ToArray();
     }
 
     /// <summary>
@@ -54,6 +73,11 @@ public class CellTrafficAutomationMaterializationResult
     /// Gets optional runtime-facing metadata captured alongside the result.
     /// </summary>
     public IReadOnlyDictionary<string, string> Metadata { get; }
+
+    /// <summary>
+    /// Gets optional typed materialization conditions captured alongside the result.
+    /// </summary>
+    public IReadOnlyList<CellTrafficAutomationMaterializationConditionDescriptor> Conditions { get; }
 
     private static string NormalizeState(string state)
     {

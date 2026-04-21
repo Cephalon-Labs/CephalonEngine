@@ -301,7 +301,8 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot :
                 result.State,
                 result.ObservedAtUtc,
                 result.Error,
-                result.Metadata);
+                result.Metadata,
+                result.Conditions);
         }
 
         return ValueTask.CompletedTask;
@@ -343,7 +344,8 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot :
                 result.State,
                 result.ObservedAtUtc,
                 result.Error,
-                result.Metadata);
+                result.Metadata,
+                result.Conditions);
         }
 
         return ValueTask.CompletedTask;
@@ -458,6 +460,7 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot :
             dependencyIds: dependencyIds,
             metadata: route.Metadata,
             runtimeMetadata: runtimeMetadata,
+            materializationConditions: null,
             providerId: providerId,
             edgeNodeIds: edgeNodeIds,
             edgeMaterializerId: null,
@@ -552,6 +555,7 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot :
             dependencyIds: selectionDescriptor.DependencyIds,
             metadata: selectionDescriptor.Metadata,
             runtimeMetadata: runtimeMetadata,
+            materializationConditions: null,
             providerId: selectionDescriptor.ProviderId,
             edgeNodeIds: selectionDescriptor.EdgeNodeIds,
             edgeMaterializerId: edgeMaterializerId,
@@ -683,6 +687,9 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot :
     {
         var hasProviderObservation = providerMaterializationObservationsByAutomationId.TryGetValue(automation.Id, out var providerObservation);
         var hasEdgeObservation = edgeMaterializationObservationsByAutomationId.TryGetValue(automation.Id, out var edgeObservation);
+        var materializationConditions = CombineMaterializationConditions(
+            providerObservation?.Conditions,
+            edgeObservation?.Conditions);
         var runtimeMetadata = automation.RuntimeMetadata.Count == 0
             ? new Dictionary<string, string>(Comparer)
             : new Dictionary<string, string>(automation.RuntimeMetadata, Comparer);
@@ -750,6 +757,9 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot :
         ApplyMaterializationLifecycleMetadata(
             runtimeMetadata,
             automation.MaterializationMode);
+        ApplyMaterializationConditionMetadata(
+            runtimeMetadata,
+            materializationConditions);
 
         return new CellTrafficAutomationRuntimeDescriptor(
             id: automation.Id,
@@ -773,6 +783,7 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot :
             dependencyIds: automation.DependencyIds,
             metadata: automation.Metadata,
             runtimeMetadata: runtimeMetadata,
+            materializationConditions: materializationConditions,
             providerId: automation.ProviderId,
             edgeNodeIds: automation.EdgeNodeIds,
             edgeMaterializerId: edgeMaterializerId,
@@ -1048,6 +1059,143 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot :
             lifecycleActions.Select(static value => $"{value.Dimension}:{value.Value}"));
     }
 
+    private static void ApplyMaterializationConditionMetadata(
+        Dictionary<string, string> runtimeMetadata,
+        CellTrafficAutomationMaterializationConditionDescriptor[] conditions)
+    {
+        ApplyDimensionConditionMetadata(
+            runtimeMetadata,
+            ProviderMaterializationMetadataPrefix,
+            conditions.Where(static condition =>
+                    Comparer.Equals(condition.Dimension, CellTrafficAutomationMaterializationConditionDimensions.Provider))
+                .ToArray());
+        ApplyDimensionConditionMetadata(
+            runtimeMetadata,
+            EdgeMaterializationMetadataPrefix,
+            conditions.Where(static condition =>
+                    Comparer.Equals(condition.Dimension, CellTrafficAutomationMaterializationConditionDimensions.Edge))
+                .ToArray());
+
+        if (conditions.Length == 0)
+        {
+            return;
+        }
+
+        runtimeMetadata["materialization.conditionCount"] = conditions.Length.ToString(CultureInfo.InvariantCulture);
+        runtimeMetadata["materialization.conditionIds"] = string.Join(
+            ",",
+            conditions.Select(static condition => condition.ConditionId)
+                .Distinct(Comparer)
+                .OrderBy(static value => value, Comparer));
+        runtimeMetadata["materialization.conditionCategories"] = string.Join(
+            ",",
+            conditions.Select(static condition => condition.Category)
+                .Distinct(Comparer)
+                .OrderBy(static value => value, Comparer));
+        runtimeMetadata["materialization.conditionStates"] = string.Join(
+            ",",
+            conditions.Select(static condition => condition.State)
+                .Distinct(Comparer)
+                .OrderBy(static value => value, Comparer));
+        runtimeMetadata["materialization.conditionSeverities"] = string.Join(
+            ",",
+            conditions.Select(static condition => condition.Severity)
+                .Distinct(Comparer)
+                .OrderBy(static value => value, GetConditionSeverityComparer()));
+        runtimeMetadata["materialization.highestConditionSeverity"] = ResolveHighestConditionSeverity(conditions);
+        runtimeMetadata["materialization.conditionBreakdown"] = string.Join(
+            ",",
+            conditions.Select(static condition =>
+                $"{condition.Dimension}:{condition.Category}:{condition.ConditionId}:{condition.State}:{condition.Severity}"));
+    }
+
+    private static void ApplyDimensionConditionMetadata(
+        Dictionary<string, string> runtimeMetadata,
+        string metadataPrefix,
+        CellTrafficAutomationMaterializationConditionDescriptor[] conditions)
+    {
+        if (conditions.Length == 0)
+        {
+            return;
+        }
+
+        runtimeMetadata[$"{metadataPrefix}conditionCount"] = conditions.Length.ToString(CultureInfo.InvariantCulture);
+        runtimeMetadata[$"{metadataPrefix}conditionIds"] = string.Join(
+            ",",
+            conditions.Select(static condition => condition.ConditionId)
+                .Distinct(Comparer)
+                .OrderBy(static value => value, Comparer));
+        runtimeMetadata[$"{metadataPrefix}conditionCategories"] = string.Join(
+            ",",
+            conditions.Select(static condition => condition.Category)
+                .Distinct(Comparer)
+                .OrderBy(static value => value, Comparer));
+        runtimeMetadata[$"{metadataPrefix}conditionStates"] = string.Join(
+            ",",
+            conditions.Select(static condition => condition.State)
+                .Distinct(Comparer)
+                .OrderBy(static value => value, Comparer));
+        runtimeMetadata[$"{metadataPrefix}conditionSeverities"] = string.Join(
+            ",",
+            conditions.Select(static condition => condition.Severity)
+                .Distinct(Comparer)
+                .OrderBy(static value => value, GetConditionSeverityComparer()));
+        runtimeMetadata[$"{metadataPrefix}highestConditionSeverity"] = ResolveHighestConditionSeverity(conditions);
+        runtimeMetadata[$"{metadataPrefix}conditionBreakdown"] = string.Join(
+            ",",
+            conditions.Select(static condition =>
+                $"{condition.Category}:{condition.ConditionId}:{condition.State}:{condition.Severity}"));
+    }
+
+    private static CellTrafficAutomationMaterializationConditionDescriptor[] CombineMaterializationConditions(
+        IReadOnlyList<CellTrafficAutomationMaterializationConditionDescriptor>? providerConditions,
+        IReadOnlyList<CellTrafficAutomationMaterializationConditionDescriptor>? edgeConditions)
+    {
+        return (providerConditions ?? [])
+            .Concat(edgeConditions ?? [])
+            .Where(static condition => condition is not null)
+            .GroupBy(
+                static condition => string.Join(
+                    "|",
+                    condition.Dimension,
+                    condition.Category,
+                    condition.ConditionId,
+                    condition.State,
+                    condition.Severity,
+                    condition.Reason ?? string.Empty,
+                    condition.Description ?? string.Empty),
+                Comparer)
+            .Select(static group => group.First())
+            .OrderBy(static condition => condition.Dimension, Comparer)
+            .ThenBy(static condition => condition.Category, Comparer)
+            .ThenBy(static condition => condition.ConditionId, Comparer)
+            .ToArray();
+    }
+
+    private static string ResolveHighestConditionSeverity(
+        IReadOnlyList<CellTrafficAutomationMaterializationConditionDescriptor> conditions)
+    {
+        return conditions
+            .Select(static condition => condition.Severity)
+            .Distinct(Comparer)
+            .OrderBy(static value => value, GetConditionSeverityComparer())
+            .Last();
+    }
+
+    private static Comparer<string> GetConditionSeverityComparer() =>
+        Comparer<string>.Create(static (left, right) => GetConditionSeverityRank(left).CompareTo(GetConditionSeverityRank(right)));
+
+    private static int GetConditionSeverityRank(string severity)
+    {
+        return NormalizeMetadataValue(severity) switch
+        {
+            CellTrafficAutomationMaterializationConditionSeverities.Info => 0,
+            CellTrafficAutomationMaterializationConditionSeverities.Warning => 1,
+            CellTrafficAutomationMaterializationConditionSeverities.Error => 2,
+            _ => -1
+        };
+    }
+
     private static MaterializationSummary ResolveMaterializationSummary(
         string materializationMode,
         string? providerMaterializationState,
@@ -1292,7 +1440,8 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot :
             string state,
             DateTimeOffset observedAtUtc,
             string? error,
-            IReadOnlyDictionary<string, string> metadata)
+            IReadOnlyDictionary<string, string> metadata,
+            IReadOnlyList<CellTrafficAutomationMaterializationConditionDescriptor> conditions)
         {
             MaterializerId = materializerId;
             State = state;
@@ -1301,6 +1450,9 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot :
             Metadata = metadata.Count == 0
                 ? new Dictionary<string, string>(Comparer)
                 : new Dictionary<string, string>(metadata, Comparer);
+            Conditions = conditions.Count == 0
+                ? []
+                : conditions.ToArray();
         }
 
         public string MaterializerId { get; }
@@ -1312,6 +1464,8 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot :
         public string? Error { get; }
 
         public IReadOnlyDictionary<string, string> Metadata { get; }
+
+        public IReadOnlyList<CellTrafficAutomationMaterializationConditionDescriptor> Conditions { get; }
     }
 
     private sealed record MaterializerCandidate(string MaterializerId, int Priority);

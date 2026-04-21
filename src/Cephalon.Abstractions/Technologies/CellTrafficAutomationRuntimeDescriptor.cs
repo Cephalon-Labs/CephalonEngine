@@ -31,6 +31,7 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
     /// <param name="dependencyIds">The normalized dependency identifiers observed across the related health-isolation answers.</param>
     /// <param name="metadata">The original authored route metadata.</param>
     /// <param name="runtimeMetadata">Additional runtime-only metadata such as policy notes or overlay provenance.</param>
+    /// <param name="materializationConditions">Optional typed provider-managed or edge-managed materialization conditions.</param>
     public CellTrafficAutomationRuntimeDescriptor(
         string id,
         string routeId,
@@ -52,7 +53,8 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
         IReadOnlyList<string>? targetHealthIsolationIds = null,
         IReadOnlyList<string>? dependencyIds = null,
         IReadOnlyDictionary<string, string>? metadata = null,
-        IReadOnlyDictionary<string, string>? runtimeMetadata = null)
+        IReadOnlyDictionary<string, string>? runtimeMetadata = null,
+        IReadOnlyList<CellTrafficAutomationMaterializationConditionDescriptor>? materializationConditions = null)
         : this(
             id,
             routeId,
@@ -75,6 +77,7 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
             dependencyIds,
             metadata,
             runtimeMetadata,
+            materializationConditions,
             providerId: null,
             edgeNodeIds: null,
             edgeMaterializerId: null,
@@ -115,6 +118,7 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
     /// <param name="dependencyIds">The normalized dependency identifiers observed across the related health-isolation answers.</param>
     /// <param name="metadata">The original authored route metadata.</param>
     /// <param name="runtimeMetadata">Additional runtime-only metadata such as policy notes or overlay provenance.</param>
+    /// <param name="materializationConditions">Optional typed provider-managed or edge-managed materialization conditions.</param>
     /// <param name="providerId">The optional external provider or control-plane identifier that materializes this automation.</param>
     /// <param name="edgeNodeIds">The optional edge-node identifiers associated with this automation answer.</param>
     public CellTrafficAutomationRuntimeDescriptor(
@@ -139,6 +143,7 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
         IReadOnlyList<string>? dependencyIds,
         IReadOnlyDictionary<string, string>? metadata,
         IReadOnlyDictionary<string, string>? runtimeMetadata,
+        IReadOnlyList<CellTrafficAutomationMaterializationConditionDescriptor>? materializationConditions,
         string? providerId,
         IReadOnlyList<string>? edgeNodeIds = null)
         : this(
@@ -163,6 +168,7 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
             dependencyIds,
             metadata,
             runtimeMetadata,
+            materializationConditions,
             providerId,
             edgeNodeIds,
             edgeMaterializerId: null,
@@ -203,6 +209,7 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
     /// <param name="dependencyIds">The normalized dependency identifiers observed across the related health-isolation answers.</param>
     /// <param name="metadata">The original authored route metadata.</param>
     /// <param name="runtimeMetadata">Additional runtime-only metadata such as policy notes or overlay provenance.</param>
+    /// <param name="materializationConditions">Optional typed provider-managed or edge-managed materialization conditions.</param>
     /// <param name="providerId">The optional external provider or control-plane identifier that materializes this automation.</param>
     /// <param name="edgeNodeIds">The optional edge-node identifiers associated with this automation answer.</param>
     /// <param name="edgeMaterializerId">The optional selected edge materializer identifier.</param>
@@ -239,6 +246,7 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
         IReadOnlyList<string>? dependencyIds,
         IReadOnlyDictionary<string, string>? metadata,
         IReadOnlyDictionary<string, string>? runtimeMetadata,
+        IReadOnlyList<CellTrafficAutomationMaterializationConditionDescriptor>? materializationConditions,
         string? providerId,
         IReadOnlyList<string>? edgeNodeIds,
         string? edgeMaterializerId,
@@ -381,6 +389,23 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
         RuntimeMetadata = runtimeMetadata is null
             ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             : new Dictionary<string, string>(runtimeMetadata, StringComparer.OrdinalIgnoreCase);
+        MaterializationConditions = materializationConditions is null
+            ? []
+            : materializationConditions
+                .Where(static condition => condition is not null)
+                .GroupBy(
+                    static condition => string.Join(
+                        "|",
+                        condition.Dimension,
+                        condition.Category,
+                        condition.ConditionId,
+                        condition.State,
+                        condition.Severity,
+                        condition.Reason ?? string.Empty,
+                        condition.Description ?? string.Empty),
+                    StringComparer.OrdinalIgnoreCase)
+                .Select(static group => group.First())
+                .ToArray();
     }
 
     /// <summary>
@@ -552,6 +577,11 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
     /// Gets runtime-only metadata such as policy notes or overlay provenance.
     /// </summary>
     public IReadOnlyDictionary<string, string> RuntimeMetadata { get; }
+
+    /// <summary>
+    /// Gets optional typed provider-managed or edge-managed materialization conditions captured for this automation.
+    /// </summary>
+    public IReadOnlyList<CellTrafficAutomationMaterializationConditionDescriptor> MaterializationConditions { get; }
 
     private static string[] NormalizeValues(IReadOnlyList<string>? values)
     {

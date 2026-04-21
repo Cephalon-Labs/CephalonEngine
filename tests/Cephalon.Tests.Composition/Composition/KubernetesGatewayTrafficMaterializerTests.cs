@@ -66,6 +66,13 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
         Assert.Equal("none", publicAutomation.RuntimeMetadata["providerMaterialization.gatewayWriteAction"]);
         Assert.Equal("none", publicAutomation.RuntimeMetadata["providerMaterialization.httpRouteWriteAction"]);
         Assert.Equal("unknown", publicAutomation.RuntimeMetadata["providerMaterialization.httpRouteProgrammedCondition"]);
+        Assert.Contains(publicAutomation.MaterializationConditions, condition =>
+            condition.Dimension == CellTrafficAutomationMaterializationConditionDimensions.Provider &&
+            condition.ConditionId == "runtime-observable");
+        Assert.Contains(publicAutomation.MaterializationConditions, condition =>
+            condition.Dimension == CellTrafficAutomationMaterializationConditionDimensions.Provider &&
+            condition.ConditionId == "ownership");
+        Assert.Equal(CellTrafficAutomationMaterializationConditionSeverities.Info, publicAutomation.RuntimeMetadata["providerMaterialization.highestConditionSeverity"]);
 
         var cellSurface = Assert.Single(
             technologyCatalog.GetByTechnology("cell-based-architecture"),
@@ -166,6 +173,10 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
         Assert.Equal(CellTrafficAutomationOwnershipStates.Owned, automation.RuntimeMetadata["providerMaterialization.ownershipState"]);
         Assert.Equal(CellTrafficAutomationDependencyStates.Satisfied, automation.RuntimeMetadata["providerMaterialization.dependencyState"]);
         Assert.Equal(CellTrafficAutomationLifecycleActions.Observe, automation.RuntimeMetadata["providerMaterialization.lifecycleAction"]);
+        Assert.Contains(automation.MaterializationConditions, condition =>
+            condition.Dimension == CellTrafficAutomationMaterializationConditionDimensions.Provider &&
+            condition.ConditionId == "gateway-accepted" &&
+            condition.State == CellTrafficAutomationMaterializationConditionStates.Met);
 
         var gatewaySurface = Assert.Single(
             technologyCatalog.GetByTechnology("cell-based-architecture"),
@@ -218,6 +229,10 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
         Assert.Equal(CellTrafficAutomationLifecycleActions.Create, automation.RuntimeMetadata["providerMaterialization.lifecycleAction"]);
         Assert.Equal("true", automation.RuntimeMetadata["providerMaterialization.httpRouteAcceptedCondition"]);
         Assert.Equal("in-sync", automation.RuntimeMetadata["providerMaterialization.driftState"]);
+        Assert.Contains(automation.MaterializationConditions, condition =>
+            condition.Dimension == CellTrafficAutomationMaterializationConditionDimensions.Provider &&
+            condition.ConditionId == "http-route-accepted" &&
+            condition.State == CellTrafficAutomationMaterializationConditionStates.Met);
 
         var gatewaySurface = Assert.Single(
             technologyCatalog.GetByTechnology("cell-based-architecture"),

@@ -95,6 +95,9 @@ public sealed class KubernetesGatewayTrafficMaterializerAspNetCoreHostingTests
             automation.ProviderMaterializerId == "kubernetes-gateway-materializer" &&
             automation.ProviderMaterializationState == CellTrafficAutomationProviderMaterializationStates.Pending &&
             automation.MaterializationState == CellTrafficAutomationMaterializationStates.Pending &&
+            automation.MaterializationConditions.Any(condition =>
+                condition.Dimension == CellTrafficAutomationMaterializationConditionDimensions.Provider &&
+                condition.ConditionId == "runtime-observable") &&
             automation.RuntimeMetadata["providerMaterialization.providerRouteId"] == "httproute/edge-system/orders-public-ingress" &&
             automation.RuntimeMetadata["providerMaterialization.resourceState"] == "projection-only" &&
             automation.RuntimeMetadata["providerMaterialization.ownershipState"] == CellTrafficAutomationOwnershipStates.Requested &&
@@ -206,6 +209,10 @@ public sealed class KubernetesGatewayTrafficMaterializerAspNetCoreHostingTests
         Assert.Equal(CellTrafficAutomationOwnershipStates.Owned, automation.RuntimeMetadata["providerMaterialization.ownershipState"]);
         Assert.Equal(CellTrafficAutomationDependencyStates.Satisfied, automation.RuntimeMetadata["providerMaterialization.dependencyState"]);
         Assert.Equal(CellTrafficAutomationLifecycleActions.Observe, automation.RuntimeMetadata["providerMaterialization.lifecycleAction"]);
+        Assert.Contains(automation.MaterializationConditions, condition =>
+            condition.Dimension == CellTrafficAutomationMaterializationConditionDimensions.Provider &&
+            condition.ConditionId == "gateway-accepted" &&
+            condition.State == CellTrafficAutomationMaterializationConditionStates.Met);
 
         Assert.NotNull(surfaces);
         var gatewaySurface = Assert.Single(
@@ -300,6 +307,10 @@ public sealed class KubernetesGatewayTrafficMaterializerAspNetCoreHostingTests
         Assert.Equal(CellTrafficAutomationDependencyStates.Satisfied, automation.RuntimeMetadata["providerMaterialization.dependencyState"]);
         Assert.Equal(CellTrafficAutomationLifecycleActions.Create, automation.RuntimeMetadata["providerMaterialization.lifecycleAction"]);
         Assert.Equal("true", automation.RuntimeMetadata["providerMaterialization.gatewayAcceptedCondition"]);
+        Assert.Contains(automation.MaterializationConditions, condition =>
+            condition.Dimension == CellTrafficAutomationMaterializationConditionDimensions.Provider &&
+            condition.ConditionId == "http-route-accepted" &&
+            condition.State == CellTrafficAutomationMaterializationConditionStates.Met);
 
         Assert.NotNull(surfaces);
         var gatewaySurface = Assert.Single(

@@ -70,7 +70,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Abstractions.Technologies`
 
-- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-technologies): 36 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies)
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-technologies): 41 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies)
 
 ## `Cephalon.Abstractions.Tenancy`
 

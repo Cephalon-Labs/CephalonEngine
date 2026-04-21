@@ -168,6 +168,16 @@ public sealed class CellTrafficAutomationAspNetCoreHostingTests
         Assert.Equal(CellTrafficAutomationDependencyStates.Satisfied, providerAutomation.RuntimeMetadata["materialization.dependencyState"]);
         Assert.Equal(CellTrafficAutomationDriftStates.InSync, providerAutomation.RuntimeMetadata["materialization.driftState"]);
         Assert.Equal(CellTrafficAutomationLifecycleActions.Reconcile, providerAutomation.RuntimeMetadata["materialization.lifecycleActions"]);
+        Assert.Equal("10", providerAutomation.RuntimeMetadata["materialization.conditionCount"]);
+        Assert.Equal("5", providerAutomation.RuntimeMetadata["providerMaterialization.conditionCount"]);
+        Assert.Equal("5", providerAutomation.RuntimeMetadata["edgeMaterialization.conditionCount"]);
+        Assert.Equal(CellTrafficAutomationMaterializationConditionSeverities.Info, providerAutomation.RuntimeMetadata["materialization.highestConditionSeverity"]);
+        Assert.Contains(providerAutomation.MaterializationConditions, condition =>
+            condition.Dimension == CellTrafficAutomationMaterializationConditionDimensions.Provider &&
+            condition.ConditionId == "runtime-observable");
+        Assert.Contains(providerAutomation.MaterializationConditions, condition =>
+            condition.Dimension == CellTrafficAutomationMaterializationConditionDimensions.Edge &&
+            condition.ConditionId == "runtime-observable");
 
         Assert.NotNull(edgeNodeAutomations);
         var edgeAutomation = Assert.Single(edgeNodeAutomations);
@@ -191,6 +201,8 @@ public sealed class CellTrafficAutomationAspNetCoreHostingTests
             entry.Metadata["providerMaterializerId"] == "regional-traffic-materializer" &&
             entry.Metadata["providerMaterializationState"] == CellTrafficAutomationProviderMaterializationStates.Applied &&
             entry.Metadata["materializationState"] == CellTrafficAutomationMaterializationStates.Applied &&
+            entry.Metadata["materialization.conditionCount"] == "10" &&
+            entry.Metadata["materialization.highestConditionSeverity"] == CellTrafficAutomationMaterializationConditionSeverities.Info &&
             entry.Metadata["providerMaterialization.providerRouteId"] == "regional-route-orders-to-reporting");
         Assert.Contains(trafficAutomationSurface.Entries, entry =>
             entry.Id == "orders-to-platform-control" &&
@@ -212,6 +224,7 @@ public sealed class CellTrafficAutomationAspNetCoreHostingTests
             candidate.ProviderMaterializerId == "regional-traffic-materializer" &&
             candidate.ProviderMaterializationState == CellTrafficAutomationProviderMaterializationStates.Applied &&
             candidate.MaterializationState == CellTrafficAutomationMaterializationStates.Applied &&
+            candidate.MaterializationConditions.Count == 10 &&
             candidate.EdgeNodeIds.SequenceEqual(["storefront-edge"]));
     }
 
@@ -338,7 +351,50 @@ public sealed class CellTrafficAutomationAspNetCoreHostingTests
             return ValueTask.FromResult(new CellTrafficAutomationProviderMaterializationResult(
                 state: CellTrafficAutomationProviderMaterializationStates.Applied,
                 observedAtUtc: DateTimeOffset.UtcNow,
-                metadata: metadata));
+                metadata: metadata,
+                conditions:
+                [
+                    new(
+                        CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                        CellTrafficAutomationMaterializationConditionCategories.Observation,
+                        "runtime-observable",
+                        CellTrafficAutomationMaterializationConditionStates.Met,
+                        CellTrafficAutomationMaterializationConditionSeverities.Info,
+                        reason: "test-runtime",
+                        description: "The test provider reports live materialization truth."),
+                    new(
+                        CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                        CellTrafficAutomationMaterializationConditionCategories.Ownership,
+                        "ownership",
+                        CellTrafficAutomationMaterializationConditionStates.Met,
+                        CellTrafficAutomationMaterializationConditionSeverities.Info,
+                        reason: "owned",
+                        description: "The test provider owns the materialized route."),
+                    new(
+                        CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                        CellTrafficAutomationMaterializationConditionCategories.Dependency,
+                        "dependencies",
+                        CellTrafficAutomationMaterializationConditionStates.Met,
+                        CellTrafficAutomationMaterializationConditionSeverities.Info,
+                        reason: "satisfied",
+                        description: "The test provider dependency posture is satisfied."),
+                    new(
+                        CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                        CellTrafficAutomationMaterializationConditionCategories.Drift,
+                        "intent-alignment",
+                        CellTrafficAutomationMaterializationConditionStates.Met,
+                        CellTrafficAutomationMaterializationConditionSeverities.Info,
+                        reason: "in-sync",
+                        description: "The test provider matches the authored Cephalon intent."),
+                    new(
+                        CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                        CellTrafficAutomationMaterializationConditionCategories.Lifecycle,
+                        "reconcile-action",
+                        CellTrafficAutomationMaterializationConditionStates.Pending,
+                        CellTrafficAutomationMaterializationConditionSeverities.Info,
+                        reason: CellTrafficAutomationLifecycleActions.Reconcile,
+                        description: "The test provider is reconciling the materialized route.")
+                ]));
         }
     }
 }

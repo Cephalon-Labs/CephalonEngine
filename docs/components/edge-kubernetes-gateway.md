@@ -1,6 +1,6 @@
 # Cephalon.Edge.KubernetesGateway
 
-`Cephalon.Edge.KubernetesGateway` is the first provider-specific control-plane materializer pack for Cephalon cell traffic automation. It proves that a real gateway/control-plane family can stay outside `Cephalon.Engine` while still publishing truthful materialization answers on the shared runtime surfaces. The pack now supports configured intent, opt-in live observation, opt-in apply-and-reconcile, and opt-in cleanup sweeps on that same shared runtime story.
+`Cephalon.Edge.KubernetesGateway` is the first provider-specific control-plane materializer pack for Cephalon cell traffic automation. It proves that a real gateway/control-plane family can stay outside `Cephalon.Engine` while still publishing truthful materialization answers on the shared runtime surfaces. The pack now supports configured intent, opt-in live observation, opt-in apply-and-reconcile, opt-in cleanup sweeps, and typed provider materialization conditions on that same shared runtime story.
 
 ## What it owns
 
@@ -12,7 +12,7 @@
 - controlled `HTTPRoute` apply semantics in `apply-and-reconcile` mode, including ownership labels and annotations, write-result metadata, and post-apply status reconciliation
 - namespace-scoped cleanup sweeps in `apply-and-reconcile` mode that can delete transferred `HTTPRoute` resources or prune orphaned Cephalon-owned routes without inventing a second lifecycle registry
 - the `kubernetes-gateway-traffic-materializations` technology surface under `cell-based-architecture`
-- truthful operator metadata such as `providerRouteId`, `gatewayNamespace`, `gatewayName`, `controllerName`, `statusSource`, projected-or-observed Gateway API conditions, shared ownership/dependency/drift posture, lifecycle action, freshness windows, HTTPRoute write results, and additive cleanup-sweep summaries such as `cleanupState`, `cleanupObservedAtUtc`, and `cleanup.lifecycleActions`
+- truthful operator metadata such as `providerRouteId`, `gatewayNamespace`, `gatewayName`, `controllerName`, `statusSource`, projected-or-observed Gateway API conditions, shared ownership/dependency/drift posture, lifecycle action, freshness windows, HTTPRoute write results, typed provider `MaterializationConditions`, and additive cleanup-sweep summaries such as `cleanupState`, `cleanupObservedAtUtc`, `cleanup.lifecycleActions`, `providerMaterialization.conditionCount`, and `providerMaterialization.highestConditionSeverity`
 
 ## Main surfaces
 
@@ -49,9 +49,10 @@ The pack now has three truthful operating modes:
 - optional cleanup sweeps inside `apply-and-reconcile`, which report additive `cleanup*` metadata after namespace-scoped delete or prune passes while leaving the primary provider lifecycle answer grounded in the selected route's actual materialization state
 
 What this proves is that one provider-specific pack can publish deterministic projected intent,
-selected materializer ownership, live provider status, drift, freshness answers, and now a narrow
-owned-resource apply loop back onto the same shared cell runtime story without inventing a second
-traffic registry or pushing Kubernetes assumptions into the engine core.
+selected materializer ownership, live provider status, drift, freshness answers, a typed
+condition taxonomy, and now a narrow owned-resource apply loop back onto the same shared cell
+runtime story without inventing a second traffic registry or pushing Kubernetes assumptions into
+the engine core.
 
 When the pack owns an automation answer, operators can inspect the same route through:
 
@@ -68,7 +69,11 @@ freshness, ownership, dependency, lifecycle-action, write metadata, and additive
 metadata such as `gatewayAcceptedCondition`, `httpRouteResolvedRefsCondition`, `driftState`,
 `observationFreshUntilUtc`, `ownershipState`, `dependencyState`, `lifecycleAction`,
 `httpRouteWriteAction`, `httpRouteAppliedGeneration`, `cleanupState`, and
-`cleanup.lifecycleActions`.
+`cleanup.lifecycleActions`. The shared automation answer for the same route now also carries
+typed provider conditions through `CellTrafficAutomationRuntimeDescriptor.MaterializationConditions`
+plus additive summaries such as `materialization.conditionCount`,
+`materialization.highestConditionSeverity`, `providerMaterialization.conditionCategories`, and
+`providerMaterialization.conditionBreakdown`.
 
 ## Registration
 
@@ -182,6 +187,8 @@ This pack intentionally does not yet claim:
 
 - multi-route low-code generation beyond the explicitly configured route projections
 - control-plane ownership outside `provider-managed` or `provider-and-edge-managed` routes
+- controller-driven policy or dependency semantics beyond the shipped typed readiness, ownership,
+  dependency, lifecycle, and observation condition taxonomy
 - broader dependency-aware teardown beyond the current owned `HTTPRoute` sweep baseline
 
 Those remain later follow-through so the current provider claim stays honest.

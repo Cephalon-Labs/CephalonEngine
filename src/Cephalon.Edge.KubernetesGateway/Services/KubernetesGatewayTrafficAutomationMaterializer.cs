@@ -114,10 +114,11 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
         metadata["gatewayWriteAction"] = "none";
         metadata["httpRouteWriteAction"] = "none";
 
-        return AttachCleanupSummary(new CellTrafficAutomationProviderMaterializationResult(
-            state: CellTrafficAutomationProviderMaterializationStates.Pending,
-            observedAtUtc: DateTimeOffset.UtcNow,
-            metadata: metadata));
+            return AttachCleanupSummary(new CellTrafficAutomationProviderMaterializationResult(
+                state: CellTrafficAutomationProviderMaterializationStates.Pending,
+                observedAtUtc: DateTimeOffset.UtcNow,
+                metadata: metadata,
+                conditions: CreateMaterializationConditions(metadata)));
     }
 
     internal async ValueTask<CellTrafficAutomationProviderMaterializationResult> RefreshAsync(
@@ -160,7 +161,8 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
                 state: CellTrafficAutomationProviderMaterializationStates.Failed,
                 observedAtUtc: DateTimeOffset.UtcNow,
                 error: $"Kubernetes Gateway traffic materializer '{MaterializerId}' is configured for observe-only mode, but no observation source is active.",
-                metadata: metadata));
+                metadata: metadata,
+                conditions: CreateMaterializationConditions(metadata)));
         }
 
         return AttachCleanupSummary(
@@ -226,7 +228,8 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
                 state: CellTrafficAutomationProviderMaterializationStates.Failed,
                 observedAtUtc: DateTimeOffset.UtcNow,
                 error: $"Kubernetes Gateway traffic materializer '{MaterializerId}' is configured for apply-and-reconcile mode, but no apply service is active.",
-                metadata: metadata));
+                metadata: metadata,
+                conditions: CreateMaterializationConditions(metadata)));
         }
 
         if (observationSource is null)
@@ -246,7 +249,8 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
                 state: CellTrafficAutomationProviderMaterializationStates.Failed,
                 observedAtUtc: DateTimeOffset.UtcNow,
                 error: $"Kubernetes Gateway traffic materializer '{MaterializerId}' is configured for apply-and-reconcile mode, but no observation source is active.",
-                metadata: metadata));
+                metadata: metadata,
+                conditions: CreateMaterializationConditions(metadata)));
         }
 
         var applyResult = await applyService.ApplyAsync(automation, projection, cancellationToken).ConfigureAwait(false);
@@ -267,7 +271,18 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
     {
         if (!UsesApplyAndReconcile)
         {
-            return result;
+            if (result.Conditions.Count > 0 || result.Metadata.Count == 0)
+            {
+                return result;
+            }
+
+            var normalizedMetadata = new Dictionary<string, string>(result.Metadata, StringComparer.OrdinalIgnoreCase);
+            return new CellTrafficAutomationProviderMaterializationResult(
+                state: result.State,
+                observedAtUtc: result.ObservedAtUtc,
+                error: result.Error,
+                metadata: normalizedMetadata,
+                conditions: CreateMaterializationConditions(normalizedMetadata));
         }
 
         var cleanupResult = GetCleanupSweepResult();
@@ -292,11 +307,16 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
             metadata[$"cleanup.{pair.Key}"] = pair.Value;
         }
 
+        var conditions = result.Conditions.Count == 0
+            ? CreateMaterializationConditions(metadata)
+            : result.Conditions;
+
         return new CellTrafficAutomationProviderMaterializationResult(
             state: result.State,
             observedAtUtc: result.ObservedAtUtc,
             error: result.Error,
-            metadata: metadata);
+            metadata: metadata,
+            conditions: conditions);
     }
 
     private KubernetesGatewayTrafficCleanupSweepResult GetCleanupSweepResult()
@@ -390,7 +410,8 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
             state: observedResult.State,
             observedAtUtc: observedResult.ObservedAtUtc,
             error: observedResult.Error,
-            metadata: metadata);
+            metadata: metadata,
+            conditions: MergeConditions(applyResult.Conditions, observedResult.Conditions));
     }
 
     private static bool UsesProviderMaterialization(string materializationMode)
@@ -402,4 +423,358 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
             _ => false
         };
     }
+
+    private static List<CellTrafficAutomationMaterializationConditionDescriptor> CreateMaterializationConditions(
+        Dictionary<string, string> metadata)
+    {
+        var conditions = new List<CellTrafficAutomationMaterializationConditionDescriptor>
+        {
+            CreateObservationCondition(metadata),
+            CreateOwnershipCondition(metadata),
+            CreateDependencyCondition(metadata),
+            CreateDriftCondition(metadata),
+            CreateLifecycleCondition(metadata)
+        };
+
+        AddBooleanCondition(
+            conditions,
+            metadata,
+            conditionId: "gateway-accepted",
+            metadataKey: "gatewayAcceptedCondition",
+            category: CellTrafficAutomationMaterializationConditionCategories.Readiness,
+            trueDescription: "The target Gateway reports Accepted=True.",
+            falseDescription: metadata.TryGetValue("gatewayAcceptedMessage", out var gatewayAcceptedMessage) && !string.IsNullOrWhiteSpace(gatewayAcceptedMessage)
+                ? gatewayAcceptedMessage
+                : "The target Gateway does not currently report Accepted=True.",
+            unknownDescription: "The target Gateway Accepted condition is not currently known.");
+        AddBooleanCondition(
+            conditions,
+            metadata,
+            conditionId: "gateway-programmed",
+            metadataKey: "gatewayProgrammedCondition",
+            category: CellTrafficAutomationMaterializationConditionCategories.Readiness,
+            trueDescription: "The target Gateway reports Programmed=True.",
+            falseDescription: metadata.TryGetValue("gatewayProgrammedMessage", out var gatewayProgrammedMessage) && !string.IsNullOrWhiteSpace(gatewayProgrammedMessage)
+                ? gatewayProgrammedMessage
+                : "The target Gateway does not currently report Programmed=True.",
+            unknownDescription: "The target Gateway Programmed condition is not currently known.");
+        AddBooleanCondition(
+            conditions,
+            metadata,
+            conditionId: "http-route-accepted",
+            metadataKey: "httpRouteAcceptedCondition",
+            category: CellTrafficAutomationMaterializationConditionCategories.Readiness,
+            trueDescription: "The target HTTPRoute reports Accepted=True.",
+            falseDescription: metadata.TryGetValue("httpRouteAcceptedMessage", out var httpRouteAcceptedMessage) && !string.IsNullOrWhiteSpace(httpRouteAcceptedMessage)
+                ? httpRouteAcceptedMessage
+                : "The target HTTPRoute does not currently report Accepted=True.",
+            unknownDescription: "The target HTTPRoute Accepted condition is not currently known.");
+        AddBooleanCondition(
+            conditions,
+            metadata,
+            conditionId: "http-route-resolved-refs",
+            metadataKey: "httpRouteResolvedRefsCondition",
+            category: CellTrafficAutomationMaterializationConditionCategories.Dependency,
+            trueDescription: "The target HTTPRoute reports ResolvedRefs=True.",
+            falseDescription: metadata.TryGetValue("httpRouteResolvedRefsMessage", out var httpRouteResolvedRefsMessage) && !string.IsNullOrWhiteSpace(httpRouteResolvedRefsMessage)
+                ? httpRouteResolvedRefsMessage
+                : "The target HTTPRoute does not currently report ResolvedRefs=True.",
+            unknownDescription: "The target HTTPRoute ResolvedRefs condition is not currently known.");
+
+        return conditions;
+    }
+
+    private static CellTrafficAutomationMaterializationConditionDescriptor[] MergeConditions(
+        IReadOnlyList<CellTrafficAutomationMaterializationConditionDescriptor> applyConditions,
+        IReadOnlyList<CellTrafficAutomationMaterializationConditionDescriptor> observedConditions)
+    {
+        return applyConditions
+            .Concat(observedConditions)
+            .GroupBy(
+                static condition => string.Join(
+                    "|",
+                    condition.Dimension,
+                    condition.Category,
+                    condition.ConditionId,
+                    condition.State,
+                    condition.Severity,
+                    condition.Reason ?? string.Empty,
+                    condition.Description ?? string.Empty),
+                StringComparer.OrdinalIgnoreCase)
+            .Select(static group => group.First())
+            .OrderBy(static condition => condition.Category, StringComparer.OrdinalIgnoreCase)
+            .ThenBy(static condition => condition.ConditionId, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+    }
+
+    private static CellTrafficAutomationMaterializationConditionDescriptor CreateObservationCondition(
+        Dictionary<string, string> metadata)
+    {
+        metadata.TryGetValue("statusSource", out var statusSource);
+        metadata.TryGetValue("resourceState", out var resourceState);
+
+        return NormalizeStatusSource(statusSource) switch
+        {
+            "gateway-api-status" => new CellTrafficAutomationMaterializationConditionDescriptor(
+                CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                CellTrafficAutomationMaterializationConditionCategories.Observation,
+                "runtime-observable",
+                CellTrafficAutomationMaterializationConditionStates.Met,
+                CellTrafficAutomationMaterializationConditionSeverities.Info,
+                reason: NormalizeReason(resourceState) ?? "live-status",
+                description: "The Kubernetes Gateway runtime reports live control-plane truth."),
+            "configured-intent" => new CellTrafficAutomationMaterializationConditionDescriptor(
+                CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                CellTrafficAutomationMaterializationConditionCategories.Observation,
+                "runtime-observable",
+                CellTrafficAutomationMaterializationConditionStates.Pending,
+                CellTrafficAutomationMaterializationConditionSeverities.Info,
+                reason: "configured-intent",
+                description: "The runtime currently exposes projected intent without a live Kubernetes observation."),
+            "control-plane-apply" => new CellTrafficAutomationMaterializationConditionDescriptor(
+                CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                CellTrafficAutomationMaterializationConditionCategories.Observation,
+                "runtime-observable",
+                CellTrafficAutomationMaterializationConditionStates.Pending,
+                CellTrafficAutomationMaterializationConditionSeverities.Info,
+                reason: NormalizeReason(resourceState) ?? "control-plane-apply",
+                description: "The runtime has written intent to the control plane and is waiting for a fresh live observation."),
+            "apply-unavailable" or "observation-unavailable" => new CellTrafficAutomationMaterializationConditionDescriptor(
+                CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                CellTrafficAutomationMaterializationConditionCategories.Observation,
+                "runtime-observable",
+                CellTrafficAutomationMaterializationConditionStates.Unmet,
+                CellTrafficAutomationMaterializationConditionSeverities.Error,
+                reason: NormalizeReason(resourceState) ?? "observation-unavailable",
+                description: "The runtime cannot currently reach the Kubernetes API to reconcile or observe traffic materialization."),
+            _ => new CellTrafficAutomationMaterializationConditionDescriptor(
+                CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                CellTrafficAutomationMaterializationConditionCategories.Observation,
+                "runtime-observable",
+                CellTrafficAutomationMaterializationConditionStates.Unmet,
+                CellTrafficAutomationMaterializationConditionSeverities.Error,
+                reason: NormalizeReason(resourceState) ?? "observation-error",
+                description: "The runtime encountered an error while reading or reconciling Kubernetes Gateway materialization.")
+        };
+    }
+
+    private static CellTrafficAutomationMaterializationConditionDescriptor CreateOwnershipCondition(
+        Dictionary<string, string> metadata)
+    {
+        metadata.TryGetValue("ownershipState", out var ownershipState);
+        metadata.TryGetValue("ownershipReason", out var ownershipReason);
+
+        var normalizedState = NormalizeState(ownershipState);
+        return normalizedState switch
+        {
+            CellTrafficAutomationOwnershipStates.Owned => new CellTrafficAutomationMaterializationConditionDescriptor(
+                CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                CellTrafficAutomationMaterializationConditionCategories.Ownership,
+                "ownership",
+                CellTrafficAutomationMaterializationConditionStates.Met,
+                CellTrafficAutomationMaterializationConditionSeverities.Info,
+                reason: ownershipReason ?? "owned",
+                description: "The Kubernetes HTTPRoute is currently owned by the active Cephalon automation."),
+            CellTrafficAutomationOwnershipStates.Requested => new CellTrafficAutomationMaterializationConditionDescriptor(
+                CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                CellTrafficAutomationMaterializationConditionCategories.Ownership,
+                "ownership",
+                CellTrafficAutomationMaterializationConditionStates.Pending,
+                CellTrafficAutomationMaterializationConditionSeverities.Info,
+                reason: ownershipReason ?? "requested",
+                description: "The Kubernetes HTTPRoute has been requested but is not yet confirmed as Cephalon-owned."),
+            CellTrafficAutomationOwnershipStates.Orphaned or CellTrafficAutomationOwnershipStates.Transferred or CellTrafficAutomationOwnershipStates.Pruned => new CellTrafficAutomationMaterializationConditionDescriptor(
+                CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                CellTrafficAutomationMaterializationConditionCategories.Ownership,
+                "ownership",
+                CellTrafficAutomationMaterializationConditionStates.Unmet,
+                CellTrafficAutomationMaterializationConditionSeverities.Warning,
+                reason: ownershipReason ?? normalizedState,
+                description: "The Kubernetes HTTPRoute carries stale or transitional Cephalon ownership metadata."),
+            CellTrafficAutomationOwnershipStates.OwnershipConflict => new CellTrafficAutomationMaterializationConditionDescriptor(
+                CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                CellTrafficAutomationMaterializationConditionCategories.Ownership,
+                "ownership",
+                CellTrafficAutomationMaterializationConditionStates.Unmet,
+                CellTrafficAutomationMaterializationConditionSeverities.Error,
+                reason: ownershipReason ?? normalizedState,
+                description: "The Kubernetes HTTPRoute is not safely owned by the active Cephalon automation."),
+            _ => new CellTrafficAutomationMaterializationConditionDescriptor(
+                CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                CellTrafficAutomationMaterializationConditionCategories.Ownership,
+                "ownership",
+                CellTrafficAutomationMaterializationConditionStates.Unknown,
+                CellTrafficAutomationMaterializationConditionSeverities.Warning,
+                reason: ownershipReason ?? "unknown",
+                description: "The runtime cannot currently determine Kubernetes HTTPRoute ownership.")
+        };
+    }
+
+    private static CellTrafficAutomationMaterializationConditionDescriptor CreateDependencyCondition(
+        Dictionary<string, string> metadata)
+    {
+        metadata.TryGetValue("dependencyState", out var dependencyState);
+        var normalizedState = NormalizeState(dependencyState);
+        return normalizedState switch
+        {
+            CellTrafficAutomationDependencyStates.Satisfied => new CellTrafficAutomationMaterializationConditionDescriptor(
+                CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                CellTrafficAutomationMaterializationConditionCategories.Dependency,
+                "dependencies",
+                CellTrafficAutomationMaterializationConditionStates.Met,
+                CellTrafficAutomationMaterializationConditionSeverities.Info,
+                reason: "satisfied",
+                description: "The expected Gateway and HTTPRoute dependency posture is currently satisfied."),
+            CellTrafficAutomationDependencyStates.Missing => new CellTrafficAutomationMaterializationConditionDescriptor(
+                CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                CellTrafficAutomationMaterializationConditionCategories.Dependency,
+                "dependencies",
+                CellTrafficAutomationMaterializationConditionStates.Unmet,
+                CellTrafficAutomationMaterializationConditionSeverities.Error,
+                reason: "missing",
+                description: "One or more required Kubernetes Gateway dependencies are missing."),
+            CellTrafficAutomationDependencyStates.Mixed => new CellTrafficAutomationMaterializationConditionDescriptor(
+                CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                CellTrafficAutomationMaterializationConditionCategories.Dependency,
+                "dependencies",
+                CellTrafficAutomationMaterializationConditionStates.Unmet,
+                CellTrafficAutomationMaterializationConditionSeverities.Warning,
+                reason: "mixed",
+                description: "Only part of the expected Kubernetes Gateway dependency posture is currently satisfied."),
+            _ => new CellTrafficAutomationMaterializationConditionDescriptor(
+                CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                CellTrafficAutomationMaterializationConditionCategories.Dependency,
+                "dependencies",
+                CellTrafficAutomationMaterializationConditionStates.Unknown,
+                CellTrafficAutomationMaterializationConditionSeverities.Info,
+                reason: "unknown",
+                description: "The runtime cannot currently determine Kubernetes Gateway dependency posture.")
+        };
+    }
+
+    private static CellTrafficAutomationMaterializationConditionDescriptor CreateDriftCondition(
+        Dictionary<string, string> metadata)
+    {
+        metadata.TryGetValue("driftState", out var driftState);
+        metadata.TryGetValue("driftReasons", out var driftReasons);
+        var description = string.IsNullOrWhiteSpace(driftReasons)
+            ? null
+            : $"Observed Kubernetes Gateway state drifts for: {driftReasons}.";
+        var normalizedState = NormalizeState(driftState);
+        return normalizedState switch
+        {
+            CellTrafficAutomationDriftStates.InSync => new CellTrafficAutomationMaterializationConditionDescriptor(
+                CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                CellTrafficAutomationMaterializationConditionCategories.Drift,
+                "intent-alignment",
+                CellTrafficAutomationMaterializationConditionStates.Met,
+                CellTrafficAutomationMaterializationConditionSeverities.Info,
+                reason: "in-sync",
+                description: "Observed Kubernetes Gateway state matches the authored Cephalon intent."),
+            CellTrafficAutomationDriftStates.Reconciling => new CellTrafficAutomationMaterializationConditionDescriptor(
+                CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                CellTrafficAutomationMaterializationConditionCategories.Drift,
+                "intent-alignment",
+                CellTrafficAutomationMaterializationConditionStates.Pending,
+                CellTrafficAutomationMaterializationConditionSeverities.Info,
+                reason: "reconciling",
+                description: "Observed Kubernetes Gateway state is still converging toward the authored Cephalon intent."),
+            CellTrafficAutomationDriftStates.Drifted => new CellTrafficAutomationMaterializationConditionDescriptor(
+                CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                CellTrafficAutomationMaterializationConditionCategories.Drift,
+                "intent-alignment",
+                CellTrafficAutomationMaterializationConditionStates.Unmet,
+                CellTrafficAutomationMaterializationConditionSeverities.Warning,
+                reason: "drifted",
+                description: description ?? "Observed Kubernetes Gateway state drifts from the authored Cephalon intent."),
+            _ => new CellTrafficAutomationMaterializationConditionDescriptor(
+                CellTrafficAutomationMaterializationConditionDimensions.Provider,
+                CellTrafficAutomationMaterializationConditionCategories.Drift,
+                "intent-alignment",
+                CellTrafficAutomationMaterializationConditionStates.Unknown,
+                CellTrafficAutomationMaterializationConditionSeverities.Info,
+                reason: "unknown",
+                description: "The runtime cannot currently determine Kubernetes Gateway drift posture.")
+        };
+    }
+
+    private static CellTrafficAutomationMaterializationConditionDescriptor CreateLifecycleCondition(
+        Dictionary<string, string> metadata)
+    {
+        metadata.TryGetValue("lifecycleAction", out var lifecycleAction);
+        var normalizedAction = NormalizeReason(lifecycleAction) ?? "unknown";
+        return new CellTrafficAutomationMaterializationConditionDescriptor(
+            CellTrafficAutomationMaterializationConditionDimensions.Provider,
+            CellTrafficAutomationMaterializationConditionCategories.Lifecycle,
+            "reconcile-action",
+            normalizedAction switch
+            {
+                CellTrafficAutomationLifecycleActions.Create or
+                CellTrafficAutomationLifecycleActions.Replace or
+                CellTrafficAutomationLifecycleActions.Transfer or
+                CellTrafficAutomationLifecycleActions.Delete or
+                CellTrafficAutomationLifecycleActions.Prune => CellTrafficAutomationMaterializationConditionStates.Met,
+                CellTrafficAutomationLifecycleActions.Project or
+                CellTrafficAutomationLifecycleActions.Reconcile or
+                CellTrafficAutomationLifecycleActions.Observe => CellTrafficAutomationMaterializationConditionStates.Pending,
+                _ => CellTrafficAutomationMaterializationConditionStates.Unknown
+            },
+            CellTrafficAutomationMaterializationConditionSeverities.Info,
+            reason: normalizedAction,
+            description: $"The active Kubernetes Gateway lifecycle posture is '{normalizedAction}'.");
+    }
+
+    private static void AddBooleanCondition(
+        List<CellTrafficAutomationMaterializationConditionDescriptor> conditions,
+        Dictionary<string, string> metadata,
+        string conditionId,
+        string metadataKey,
+        string category,
+        string trueDescription,
+        string falseDescription,
+        string unknownDescription)
+    {
+        if (!metadata.TryGetValue(metadataKey, out var value))
+        {
+            return;
+        }
+
+        var normalizedValue = NormalizeReason(value) ?? CellTrafficAutomationMaterializationConditionStates.Unknown;
+        var (state, severity, reason, description) = normalizedValue switch
+        {
+            "true" => (
+                CellTrafficAutomationMaterializationConditionStates.Met,
+                CellTrafficAutomationMaterializationConditionSeverities.Info,
+                "reported-true",
+                trueDescription),
+            "false" => (
+                CellTrafficAutomationMaterializationConditionStates.Unmet,
+                CellTrafficAutomationMaterializationConditionSeverities.Error,
+                "reported-false",
+                falseDescription),
+            _ => (
+                CellTrafficAutomationMaterializationConditionStates.Unknown,
+                CellTrafficAutomationMaterializationConditionSeverities.Info,
+                "reported-unknown",
+                unknownDescription)
+        };
+
+        conditions.Add(new CellTrafficAutomationMaterializationConditionDescriptor(
+            CellTrafficAutomationMaterializationConditionDimensions.Provider,
+            category,
+            conditionId,
+            state,
+            severity,
+            reason,
+            description));
+    }
+
+    private static string NormalizeState(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? string.Empty : value.Trim().ToLowerInvariant();
+
+    private static string? NormalizeReason(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? null : value.Trim().ToLowerInvariant();
+
+    private static string NormalizeStatusSource(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? string.Empty : value.Trim().ToLowerInvariant();
 }
