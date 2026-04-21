@@ -228,6 +228,11 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
 
         metadata["providerAction"] = KubernetesGatewayTrafficObservationModes.ApplyAndReconcile;
         metadata["observationMode"] = KubernetesGatewayTrafficObservationModes.ApplyAndReconcile;
+        if (applyResult.Metadata.TryGetValue("lifecycleAction", out var lifecycleAction) &&
+            !string.IsNullOrWhiteSpace(lifecycleAction))
+        {
+            metadata["lifecycleAction"] = lifecycleAction;
+        }
 
         return new CellTrafficAutomationProviderMaterializationResult(
             state: observedResult.State,

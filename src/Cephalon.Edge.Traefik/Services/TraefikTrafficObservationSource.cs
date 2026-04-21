@@ -12,7 +12,8 @@ namespace Cephalon.Edge.Traefik.Services;
 internal sealed class TraefikTrafficObservationSource(
     TraefikTrafficMaterializerOptions options,
     TimeProvider timeProvider,
-    IKubernetes? providedClient = null) : ITraefikTrafficObservationSource, ITraefikTrafficApplyService, IDisposable
+    IKubernetes? providedClient = null,
+    Func<ICellTrafficAutomationRuntimeCatalog>? runtimeCatalogAccessor = null) : ITraefikTrafficObservationSource, ITraefikTrafficApplyService, IDisposable
 {
     private const string LiveStatusSource = "traefik-ingressroute-observation";
     private const string ObservationUnavailableStatusSource = "observation-unavailable";
@@ -78,11 +79,12 @@ internal sealed class TraefikTrafficObservationSource(
 
             metadata["ingressRouteExists"] = ingressRoute.Resource is null ? "false" : "true";
 
+            OwnershipEvaluation? ownership = null;
             if (ingressRoute.Resource is not null)
             {
                 ApplyObservedIngressRouteMetadata(metadata, ingressRoute.Resource);
-                var ownership = EvaluateApplyOwnership(ingressRoute.Resource, automation);
-                ApplyOwnershipMetadata(metadata, ingressRoute.Resource, ownership);
+                ownership = EvaluateOwnership(ingressRoute.Resource, automation);
+                ApplyOwnershipMetadata(metadata, ownership);
                 if (ownership.IsConflict)
                 {
                     metadata["statusSource"] = ApplyErrorStatusSource;
@@ -127,7 +129,9 @@ internal sealed class TraefikTrafficObservationSource(
                     projection.IngressRouteName,
                     cancellationToken).ConfigureAwait(false);
                 metadata["ingressRouteWriteAction"] = "replaced";
-                metadata["lifecycleAction"] = CellTrafficAutomationLifecycleActions.Replace;
+                metadata["lifecycleAction"] = ownership?.CanTransfer == true
+                    ? CellTrafficAutomationLifecycleActions.Transfer
+                    : CellTrafficAutomationLifecycleActions.Replace;
             }
 
             metadata["resourceState"] = "write-succeeded";
@@ -138,8 +142,19 @@ internal sealed class TraefikTrafficObservationSource(
             ApplyObservedIngressRouteMetadata(metadata, persistedRoute);
             ApplyOwnershipMetadata(
                 metadata,
-                persistedRoute,
-                new OwnershipEvaluation(CellTrafficAutomationOwnershipStates.Owned, false, null));
+                new OwnershipEvaluation(
+                    CellTrafficAutomationOwnershipStates.Owned,
+                    IsConflict: false,
+                    CanTransfer: false,
+                    Reason: "current-owner",
+                    ResourceState: "available",
+                    Error: null,
+                    ManagedBy: TraefikOwnership.ManagedByValue,
+                    ObservedAutomationId: automation.Id,
+                    ObservedRouteId: automation.RouteId,
+                    ObservedSourceModuleId: automation.SourceModuleId,
+                    ActiveOwnerId: automation.Id));
+            ApplyTransferMetadata(metadata, ownership);
 
             if (!string.IsNullOrWhiteSpace(persistedRoute.Metadata?.ResourceVersion))
             {
@@ -259,7 +274,7 @@ internal sealed class TraefikTrafficObservationSource(
 
             ApplyObservedIngressRouteMetadata(metadata, ingressRoute.Resource);
             var ownership = EvaluateOwnership(ingressRoute.Resource, automation);
-            ApplyOwnershipMetadata(metadata, ingressRoute.Resource, ownership);
+            ApplyOwnershipMetadata(metadata, ownership);
 
             var dependencies = await EvaluateDependenciesAsync(client, projection, cancellationToken).ConfigureAwait(false);
             if (!string.IsNullOrWhiteSpace(dependencies.Error))
@@ -288,9 +303,9 @@ internal sealed class TraefikTrafficObservationSource(
                 : CellTrafficAutomationDriftStates.Drifted;
             metadata["driftReasons"] = string.Join(",", driftReasons);
 
-            if (ownership.IsConflict)
+            if (ownership.IsConflict || ownership.CanTransfer)
             {
-                metadata["resourceState"] = "ownership-conflict";
+                metadata["resourceState"] = ownership.ResourceState;
                 return new CellTrafficAutomationProviderMaterializationResult(
                     CellTrafficAutomationProviderMaterializationStates.Failed,
                     observedAtUtc,
@@ -569,14 +584,30 @@ internal sealed class TraefikTrafficObservationSource(
 
     private static void ApplyOwnershipMetadata(
         Dictionary<string, string> metadata,
-        TraefikIngressRouteResource ingressRoute,
         OwnershipEvaluation ownership)
     {
         metadata["ownershipState"] = ownership.State;
-        metadata["managedBy"] = ReadMetadataValue(ingressRoute.Metadata?.Labels, TraefikOwnership.ManagedByLabel) ?? string.Empty;
-        metadata["observedAutomationId"] = ReadMetadataValue(ingressRoute.Metadata?.Annotations, TraefikOwnership.AutomationIdAnnotation) ?? string.Empty;
-        metadata["observedRouteId"] = ReadMetadataValue(ingressRoute.Metadata?.Annotations, TraefikOwnership.RouteIdAnnotation) ?? string.Empty;
-        metadata["observedSourceModuleId"] = ReadMetadataValue(ingressRoute.Metadata?.Annotations, TraefikOwnership.SourceModuleIdAnnotation) ?? string.Empty;
+        metadata["managedBy"] = ownership.ManagedBy ?? string.Empty;
+        metadata["observedAutomationId"] = ownership.ObservedAutomationId ?? string.Empty;
+        metadata["observedRouteId"] = ownership.ObservedRouteId ?? string.Empty;
+        metadata["observedSourceModuleId"] = ownership.ObservedSourceModuleId ?? string.Empty;
+        metadata["ownershipReason"] = ownership.Reason;
+        metadata["activeOwnerAutomationId"] = ownership.ActiveOwnerId ?? string.Empty;
+    }
+
+    private static void ApplyTransferMetadata(
+        Dictionary<string, string> metadata,
+        OwnershipEvaluation? ownership)
+    {
+        if (ownership?.CanTransfer != true)
+        {
+            return;
+        }
+
+        metadata["previousAutomationId"] = ownership.ObservedAutomationId ?? string.Empty;
+        metadata["previousRouteId"] = ownership.ObservedRouteId ?? string.Empty;
+        metadata["previousSourceModuleId"] = ownership.ObservedSourceModuleId ?? string.Empty;
+        metadata["previousOwnershipReason"] = ownership.Reason;
     }
 
     private static void ApplyDependencyMetadata(
@@ -796,81 +827,145 @@ internal sealed class TraefikTrafficObservationSource(
         }
     }
 
-    private static OwnershipEvaluation EvaluateOwnership(
+    internal OwnershipEvaluation EvaluateOwnership(
         TraefikIngressRouteResource ingressRoute,
         CellTrafficAutomationRuntimeDescriptor automation)
     {
+        ArgumentNullException.ThrowIfNull(ingressRoute);
+        ArgumentNullException.ThrowIfNull(automation);
+
         var managedBy = ReadMetadataValue(ingressRoute.Metadata?.Labels, TraefikOwnership.ManagedByLabel);
         var observedAutomationId = ReadMetadataValue(ingressRoute.Metadata?.Annotations, TraefikOwnership.AutomationIdAnnotation);
         var observedRouteId = ReadMetadataValue(ingressRoute.Metadata?.Annotations, TraefikOwnership.RouteIdAnnotation);
         var observedSourceModuleId = ReadMetadataValue(ingressRoute.Metadata?.Annotations, TraefikOwnership.SourceModuleIdAnnotation);
+        var activeOwner = ResolveActiveOwner(observedAutomationId, observedRouteId);
 
         if (!string.IsNullOrWhiteSpace(managedBy) &&
             !Comparer.Equals(managedBy, TraefikOwnership.ManagedByValue))
         {
             return new OwnershipEvaluation(
                 CellTrafficAutomationOwnershipStates.OwnershipConflict,
-                true,
-                $"Traefik IngressRoute '{ingressRoute.Metadata?.Name ?? automation.RouteId}' is already marked as managed by '{managedBy}'.");
+                IsConflict: true,
+                CanTransfer: false,
+                Reason: "foreign-manager",
+                ResourceState: "ownership-conflict",
+                Error: $"Traefik IngressRoute '{ingressRoute.Metadata?.Name ?? automation.RouteId}' is already marked as managed by '{managedBy}'.",
+                ManagedBy: managedBy,
+                ObservedAutomationId: observedAutomationId,
+                ObservedRouteId: observedRouteId,
+                ObservedSourceModuleId: observedSourceModuleId,
+                ActiveOwnerId: activeOwner?.Id);
         }
 
-        if (!string.IsNullOrWhiteSpace(observedAutomationId) &&
-            !Comparer.Equals(observedAutomationId, automation.Id))
+        if (MatchesCurrentAutomation(observedAutomationId, observedRouteId, observedSourceModuleId, automation))
+        {
+            return new OwnershipEvaluation(
+                CellTrafficAutomationOwnershipStates.Owned,
+                IsConflict: false,
+                CanTransfer: false,
+                Reason: "current-owner",
+                ResourceState: "available",
+                Error: null,
+                ManagedBy: managedBy,
+                ObservedAutomationId: observedAutomationId,
+                ObservedRouteId: observedRouteId,
+                ObservedSourceModuleId: observedSourceModuleId,
+                ActiveOwnerId: activeOwner?.Id);
+        }
+
+        if (activeOwner is not null && !Comparer.Equals(activeOwner.Id, automation.Id))
         {
             return new OwnershipEvaluation(
                 CellTrafficAutomationOwnershipStates.OwnershipConflict,
-                true,
-                $"Traefik IngressRoute '{ingressRoute.Metadata?.Name ?? automation.RouteId}' is already owned by Cephalon automation '{observedAutomationId}' and cannot be assigned to '{automation.Id}'.");
+                IsConflict: true,
+                CanTransfer: false,
+                Reason: "active-foreign-owner",
+                ResourceState: "ownership-conflict",
+                Error: $"Traefik IngressRoute '{ingressRoute.Metadata?.Name ?? automation.RouteId}' is already owned by active Cephalon automation '{activeOwner.Id}' and cannot be assigned to '{automation.Id}'.",
+                ManagedBy: managedBy,
+                ObservedAutomationId: observedAutomationId,
+                ObservedRouteId: observedRouteId,
+                ObservedSourceModuleId: observedSourceModuleId,
+                ActiveOwnerId: activeOwner.Id);
         }
 
-        if (!string.IsNullOrWhiteSpace(observedRouteId) &&
-            !Comparer.Equals(observedRouteId, automation.RouteId))
+        if (HasCephalonOwnershipMetadata(managedBy, observedAutomationId, observedRouteId, observedSourceModuleId) ||
+            activeOwner is not null)
         {
             return new OwnershipEvaluation(
-                CellTrafficAutomationOwnershipStates.OwnershipConflict,
-                true,
-                $"Traefik IngressRoute '{ingressRoute.Metadata?.Name ?? automation.RouteId}' is tagged for route '{observedRouteId}' instead of '{automation.RouteId}'.");
-        }
-
-        if (!string.IsNullOrWhiteSpace(observedSourceModuleId) &&
-            !Comparer.Equals(observedSourceModuleId, automation.SourceModuleId))
-        {
-            return new OwnershipEvaluation(
-                CellTrafficAutomationOwnershipStates.OwnershipConflict,
-                true,
-                $"Traefik IngressRoute '{ingressRoute.Metadata?.Name ?? automation.RouteId}' is tagged for source module '{observedSourceModuleId}' instead of '{automation.SourceModuleId}'.");
-        }
-
-        if (!string.IsNullOrWhiteSpace(managedBy) ||
-            !string.IsNullOrWhiteSpace(observedAutomationId) ||
-            !string.IsNullOrWhiteSpace(observedRouteId) ||
-            !string.IsNullOrWhiteSpace(observedSourceModuleId))
-        {
-            return new OwnershipEvaluation(CellTrafficAutomationOwnershipStates.Owned, false, null);
-        }
-
-        return new OwnershipEvaluation(CellTrafficAutomationOwnershipStates.Requested, false, null);
-    }
-
-    private static OwnershipEvaluation EvaluateApplyOwnership(
-        TraefikIngressRouteResource ingressRoute,
-        CellTrafficAutomationRuntimeDescriptor automation)
-    {
-        var ownership = EvaluateOwnership(ingressRoute, automation);
-        if (ownership.IsConflict)
-        {
-            return ownership;
-        }
-
-        if (Comparer.Equals(ownership.State, CellTrafficAutomationOwnershipStates.Owned))
-        {
-            return ownership;
+                CellTrafficAutomationOwnershipStates.Orphaned,
+                IsConflict: false,
+                CanTransfer: true,
+                Reason: activeOwner is null ? "stale-owner" : "incomplete-current-owner",
+                ResourceState: "orphaned-ingressroute",
+                Error: $"Traefik IngressRoute '{ingressRoute.Metadata?.Name ?? automation.RouteId}' carries stale or incomplete Cephalon ownership metadata and must be reconciled before it can be reported as owned by automation '{automation.Id}'.",
+                ManagedBy: managedBy,
+                ObservedAutomationId: observedAutomationId,
+                ObservedRouteId: observedRouteId,
+                ObservedSourceModuleId: observedSourceModuleId,
+                ActiveOwnerId: activeOwner?.Id);
         }
 
         return new OwnershipEvaluation(
             CellTrafficAutomationOwnershipStates.OwnershipConflict,
-            true,
-            $"Traefik IngressRoute '{ingressRoute.Metadata?.Name ?? automation.RouteId}' already exists but is not marked as owned by Cephalon automation '{automation.Id}'.");
+            IsConflict: true,
+            CanTransfer: false,
+            Reason: "external-unmanaged-resource",
+            ResourceState: "ownership-conflict",
+            Error: $"Traefik IngressRoute '{ingressRoute.Metadata?.Name ?? automation.RouteId}' already exists but is not marked as a Cephalon-managed resource for automation '{automation.Id}'.",
+            ManagedBy: managedBy,
+            ObservedAutomationId: observedAutomationId,
+            ObservedRouteId: observedRouteId,
+            ObservedSourceModuleId: observedSourceModuleId,
+            ActiveOwnerId: activeOwner?.Id);
+    }
+
+    private CellTrafficAutomationRuntimeDescriptor? ResolveActiveOwner(
+        string? observedAutomationId,
+        string? observedRouteId)
+    {
+        var catalog = runtimeCatalogAccessor?.Invoke();
+        if (catalog is null)
+        {
+            return null;
+        }
+
+        if (!string.IsNullOrWhiteSpace(observedAutomationId))
+        {
+            var owner = catalog.GetById(observedAutomationId);
+            if (owner is not null)
+            {
+                return owner;
+            }
+        }
+
+        return !string.IsNullOrWhiteSpace(observedRouteId)
+            ? catalog.GetByRouteId(observedRouteId)
+            : null;
+    }
+
+    private static bool MatchesCurrentAutomation(
+        string? observedAutomationId,
+        string? observedRouteId,
+        string? observedSourceModuleId,
+        CellTrafficAutomationRuntimeDescriptor automation)
+    {
+        return Comparer.Equals(observedAutomationId, automation.Id) &&
+            Comparer.Equals(observedRouteId, automation.RouteId) &&
+            Comparer.Equals(observedSourceModuleId, automation.SourceModuleId);
+    }
+
+    private static bool HasCephalonOwnershipMetadata(
+        string? managedBy,
+        string? observedAutomationId,
+        string? observedRouteId,
+        string? observedSourceModuleId)
+    {
+        return (!string.IsNullOrWhiteSpace(managedBy) &&
+                Comparer.Equals(managedBy, TraefikOwnership.ManagedByValue)) ||
+            !string.IsNullOrWhiteSpace(observedAutomationId) ||
+            !string.IsNullOrWhiteSpace(observedRouteId) ||
+            !string.IsNullOrWhiteSpace(observedSourceModuleId);
     }
 
     private static List<string> NormalizeValues(IReadOnlyList<string>? values)
@@ -971,7 +1066,18 @@ internal sealed class TraefikTrafficObservationSource(
     private sealed record ResourceReadResult<T>(T? Resource, string? Error)
         where T : class;
 
-    private sealed record OwnershipEvaluation(string State, bool IsConflict, string? Error);
+    internal sealed record OwnershipEvaluation(
+        string State,
+        bool IsConflict,
+        bool CanTransfer,
+        string Reason,
+        string ResourceState,
+        string? Error,
+        string? ManagedBy,
+        string? ObservedAutomationId,
+        string? ObservedRouteId,
+        string? ObservedSourceModuleId,
+        string? ActiveOwnerId);
 
     private sealed record DependencyEvaluation(
         bool ServiceExists,

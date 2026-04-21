@@ -298,7 +298,7 @@ public sealed class KubernetesGatewayTrafficMaterializerAspNetCoreHostingTests
         Assert.Equal("created", automation.RuntimeMetadata["providerMaterialization.httpRouteWriteAction"]);
         Assert.Equal("owned", automation.RuntimeMetadata["providerMaterialization.ownershipState"]);
         Assert.Equal(CellTrafficAutomationDependencyStates.Satisfied, automation.RuntimeMetadata["providerMaterialization.dependencyState"]);
-        Assert.Equal(CellTrafficAutomationLifecycleActions.Observe, automation.RuntimeMetadata["providerMaterialization.lifecycleAction"]);
+        Assert.Equal(CellTrafficAutomationLifecycleActions.Create, automation.RuntimeMetadata["providerMaterialization.lifecycleAction"]);
         Assert.Equal("true", automation.RuntimeMetadata["providerMaterialization.gatewayAcceptedCondition"]);
 
         Assert.NotNull(surfaces);
@@ -308,6 +308,7 @@ public sealed class KubernetesGatewayTrafficMaterializerAspNetCoreHostingTests
         var entry = Assert.Single(gatewaySurface.Entries, item => item.Metadata["routeId"] == "orders-to-public-ingress");
         Assert.Equal("apply-and-reconcile", entry.Metadata["providerAction"]);
         Assert.Equal("created", entry.Metadata["httpRouteWriteAction"]);
+        Assert.Equal(CellTrafficAutomationLifecycleActions.Create, entry.Metadata["lifecycleAction"]);
         Assert.Equal("gateway-api-status", entry.Metadata["statusSource"]);
 
         Assert.NotNull(snapshot);

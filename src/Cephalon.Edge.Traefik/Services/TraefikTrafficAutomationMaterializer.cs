@@ -230,6 +230,11 @@ internal sealed class TraefikTrafficAutomationMaterializer : ICellTrafficAutomat
 
         metadata["providerAction"] = TraefikTrafficObservationModes.ApplyAndReconcile;
         metadata["observationMode"] = TraefikTrafficObservationModes.ApplyAndReconcile;
+        if (applyResult.Metadata.TryGetValue("lifecycleAction", out var lifecycleAction) &&
+            !string.IsNullOrWhiteSpace(lifecycleAction))
+        {
+            metadata["lifecycleAction"] = lifecycleAction;
+        }
 
         return new CellTrafficAutomationProviderMaterializationResult(
             state: observedResult.State,

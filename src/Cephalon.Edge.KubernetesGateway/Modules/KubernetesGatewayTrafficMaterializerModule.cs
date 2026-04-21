@@ -52,7 +52,8 @@ internal sealed class KubernetesGatewayTrafficMaterializerModule(KubernetesGatew
                 new KubernetesGatewayTrafficObservationSource(
                     options,
                     serviceProvider.GetRequiredService<TimeProvider>(),
-                    serviceProvider.GetService<k8s.IKubernetes>()));
+                    serviceProvider.GetService<k8s.IKubernetes>(),
+                    () => serviceProvider.GetRequiredService<ICellTrafficAutomationRuntimeCatalog>()));
             services.TryAddSingleton<IKubernetesGatewayTrafficObservationSource>(serviceProvider =>
                 serviceProvider.GetRequiredService<KubernetesGatewayTrafficObservationSource>());
             services.TryAddSingleton<IKubernetesGatewayTrafficApplyService>(serviceProvider =>

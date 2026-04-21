@@ -228,7 +228,7 @@ public sealed class TraefikTrafficMaterializerTests
         Assert.Equal(CellTrafficAutomationOwnershipStates.Owned, automation.RuntimeMetadata["providerMaterialization.ownershipState"]);
         Assert.Equal(CellTrafficAutomationDependencyStates.Satisfied, automation.RuntimeMetadata["providerMaterialization.dependencyState"]);
         Assert.Equal(CellTrafficAutomationDriftStates.InSync, automation.RuntimeMetadata["providerMaterialization.driftState"]);
-        Assert.Equal(CellTrafficAutomationLifecycleActions.Observe, automation.RuntimeMetadata["providerMaterialization.lifecycleAction"]);
+        Assert.Equal(CellTrafficAutomationLifecycleActions.Create, automation.RuntimeMetadata["providerMaterialization.lifecycleAction"]);
         Assert.Equal("true", automation.RuntimeMetadata["providerMaterialization.ingressRouteExists"]);
 
         var traefikSurface = Assert.Single(
@@ -239,7 +239,76 @@ public sealed class TraefikTrafficMaterializerTests
             entry.Metadata["providerAction"] == "apply-and-reconcile" &&
             entry.Metadata["statusSource"] == "traefik-ingressroute-observation" &&
             entry.Metadata["ingressRouteWriteAction"] == "created" &&
+            entry.Metadata["lifecycleAction"] == CellTrafficAutomationLifecycleActions.Create &&
             entry.Metadata["observedServiceRefs"] == "service/orders-runtime/orders-api:8443@weight/100");
+    }
+
+    [Fact]
+    public void OwnershipEvaluationTreatsExternalIngressRoutesAsConflicts()
+    {
+        var automation = CreateAutomationDescriptor(
+            automationId: "orders-public-automation",
+            routeId: "orders-to-public-ingress",
+            sourceModuleId: "traefik-traffic-tests");
+        using var source = new TraefikTrafficObservationSource(
+            new TraefikTrafficMaterializerOptions(),
+            TimeProvider.System,
+            runtimeCatalogAccessor: () => new StaticCellTrafficAutomationRuntimeCatalog([automation]));
+
+        var ownership = source.EvaluateOwnership(
+            new TraefikIngressRouteResource
+            {
+                Metadata = new k8s.Models.V1ObjectMeta
+                {
+                    Name = "orders-public-ingress"
+                }
+            },
+            automation);
+
+        Assert.Equal(CellTrafficAutomationOwnershipStates.OwnershipConflict, ownership.State);
+        Assert.True(ownership.IsConflict);
+        Assert.False(ownership.CanTransfer);
+        Assert.Equal("external-unmanaged-resource", ownership.Reason);
+        Assert.Equal("ownership-conflict", ownership.ResourceState);
+        Assert.Null(ownership.ActiveOwnerId);
+    }
+
+    [Fact]
+    public void OwnershipEvaluationTreatsIncompleteCurrentOwnershipMetadataAsTransferCandidate()
+    {
+        var automation = CreateAutomationDescriptor(
+            automationId: "orders-public-automation",
+            routeId: "orders-to-public-ingress",
+            sourceModuleId: "traefik-traffic-tests");
+        using var source = new TraefikTrafficObservationSource(
+            new TraefikTrafficMaterializerOptions(),
+            TimeProvider.System,
+            runtimeCatalogAccessor: () => new StaticCellTrafficAutomationRuntimeCatalog([automation]));
+
+        var ownership = source.EvaluateOwnership(
+            new TraefikIngressRouteResource
+            {
+                Metadata = new k8s.Models.V1ObjectMeta
+                {
+                    Name = "orders-public-ingress",
+                    Labels = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [TraefikOwnership.ManagedByLabel] = TraefikOwnership.ManagedByValue
+                    },
+                    Annotations = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [TraefikOwnership.RouteIdAnnotation] = automation.RouteId
+                    }
+                }
+            },
+            automation);
+
+        Assert.Equal(CellTrafficAutomationOwnershipStates.Orphaned, ownership.State);
+        Assert.False(ownership.IsConflict);
+        Assert.True(ownership.CanTransfer);
+        Assert.Equal("incomplete-current-owner", ownership.Reason);
+        Assert.Equal("orphaned-ingressroute", ownership.ResourceState);
+        Assert.Equal(automation.Id, ownership.ActiveOwnerId);
     }
 
     [Fact]
@@ -677,6 +746,61 @@ public sealed class TraefikTrafficMaterializerTests
         }
 
         Assert.True(condition(), "Timed out waiting for the expected condition.");
+    }
+
+    private static CellTrafficAutomationRuntimeDescriptor CreateAutomationDescriptor(
+        string automationId,
+        string routeId,
+        string sourceModuleId)
+    {
+        return new CellTrafficAutomationRuntimeDescriptor(
+            id: automationId,
+            routeId: routeId,
+            sourceModuleId: sourceModuleId,
+            sourceCellId: "orders-cell",
+            targetCellId: "public-edge-cell",
+            displayName: automationId,
+            description: "Test automation descriptor.",
+            routingStrategy: "ingressroute-managed",
+            governanceMode: "policy-guarded",
+            automationMode: "automatic",
+            triggerMode: "source-or-target-health",
+            actionMode: "shed-load",
+            materializationMode: "provider-managed",
+            policySource: "cell-route");
+    }
+
+    private sealed class StaticCellTrafficAutomationRuntimeCatalog(
+        IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> automations) : ICellTrafficAutomationRuntimeCatalog
+    {
+        public IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> Automations { get; } = automations;
+
+        public CellTrafficAutomationRuntimeDescriptor? GetById(string automationId) =>
+            Automations.FirstOrDefault(automation => string.Equals(automation.Id, automationId, StringComparison.OrdinalIgnoreCase));
+
+        public CellTrafficAutomationRuntimeDescriptor? GetByRouteId(string routeId) =>
+            Automations.FirstOrDefault(automation => string.Equals(automation.RouteId, routeId, StringComparison.OrdinalIgnoreCase));
+
+        public IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> GetBySourceModule(string sourceModuleId) =>
+            Automations.Where(automation => string.Equals(automation.SourceModuleId, sourceModuleId, StringComparison.OrdinalIgnoreCase)).ToArray();
+
+        public IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> GetBySourceCellId(string sourceCellId) =>
+            Automations.Where(automation => string.Equals(automation.SourceCellId, sourceCellId, StringComparison.OrdinalIgnoreCase)).ToArray();
+
+        public IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> GetByTargetCellId(string targetCellId) =>
+            Automations.Where(automation => string.Equals(automation.TargetCellId, targetCellId, StringComparison.OrdinalIgnoreCase)).ToArray();
+
+        public IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> GetByProvider(string provider) =>
+            Automations.Where(automation => string.Equals(automation.ProviderId, provider, StringComparison.OrdinalIgnoreCase)).ToArray();
+
+        public IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> GetByEdgeNodeId(string edgeNodeId) =>
+            Automations.Where(automation => automation.EdgeNodeIds.Any(edgeNode =>
+                string.Equals(edgeNode, edgeNodeId, StringComparison.OrdinalIgnoreCase))).ToArray();
+
+        public IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> GetByHealthIsolationId(string healthIsolationId) =>
+            Automations.Where(automation =>
+                automation.SourceHealthIsolationIds.Any(id => string.Equals(id, healthIsolationId, StringComparison.OrdinalIgnoreCase)) ||
+                automation.TargetHealthIsolationIds.Any(id => string.Equals(id, healthIsolationId, StringComparison.OrdinalIgnoreCase))).ToArray();
     }
 
     private sealed class StaticObservationSource(

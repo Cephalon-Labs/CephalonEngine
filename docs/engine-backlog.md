@@ -1,6 +1,6 @@
 # Cephalon Engine Backlog
 
-Backlog status in this document reflects the repository state as of `April 21, 2026`.
+Backlog status in this document reflects the repository state as of `April 22, 2026`.
 
 ## Completed foundation work
 
@@ -2507,6 +2507,58 @@ Delivered:
 - the shared automation story stays singular: `Cephalon.Engine` still owns reconciliation truth through the existing report sink and runtime catalog, while the Traefik pack only contributes provider-specific observation semantics and metadata instead of inventing a Traefik-local status registry
 - targeted coverage now proves observe-only startup truth plus recurring polling refresh through composition tests `4/4`, ASP.NET Core publication of the live Traefik observation surface through hosting tests `2/2`, public package-surface alignment through tooling tests `177/177`, and the reference docs publish script
 
+### ENG-145 Phase 13 Traefik apply-and-reconcile baseline
+
+Status: done
+Estimate: 5
+Completed: April 21, 2026
+
+Why:
+
+- `ENG-144` proved live Traefik observation, but the provider-specific pack still had no truthful owned-write baseline for `IngressRoute` resources on the shared traffic catalog
+- configured intent still needed to stay honest: projected routes should remain `pending` until live control-plane evidence exists instead of reading as implicitly applied
+- operators needed ownership-aware write results and reconciled live Traefik posture to stay on `/engine/cell-traffic-automations*`, `snapshot.CellTrafficAutomations`, and `traefik-ingressroute-traffic-materializations` instead of spawning a second provider-local apply registry
+
+Acceptance:
+
+- `Cephalon.Edge.Traefik` exposes `apply-and-reconcile` alongside `configured-intent` and `observe-only`
+- configured intent stays truthful by publishing projected metadata while keeping provider materialization state `pending`
+- apply-and-reconcile creates or replaces only owned `IngressRoute` resources, treats `Middleware`, `TLSOption`, backend `Service`, and TLS `Secret` resources as pre-provisioned dependencies, and then merges observed Traefik posture back into the same shared runtime payloads
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the shipped slice while deeper lifecycle execution remains later work
+
+Delivered:
+
+- `TraefikTrafficObservationModes` now adds `apply-and-reconcile`, `TraefikTrafficAutomationMaterializer` now keeps configured-intent answers at `pending`, and the recurring hosted reconciliation loop now covers both `observe-only` and `apply-and-reconcile` control-plane modes
+- `Cephalon.Edge.Traefik` now introduces `ITraefikTrafficApplyService`; the concrete observation source can now create or replace owned `IngressRoute` resources, records `ingressRouteWriteAction`, `ingressRouteAppliedGeneration`, `ownershipState`, and dependency posture, and then merges observed Traefik route state back into the same shared provider materialization answer
+- the pack now stamps owned `IngressRoute` resources with stable Cephalon ownership labels and annotations, blocks conflicting foreign resources with an explicit ownership-conflict posture, and keeps dependent middleware, TLS options, secrets, and backend services outside the current write baseline
+- targeted coverage now proves truthful configured-intent posture, `apply-and-reconcile` startup behavior, ASP.NET Core publication of the new provider metadata, public package-surface alignment through composition tests `6/6`, hosting tests `3/3`, tooling tests `177/177`, and the reference docs publish script
+
+### ENG-146 Phase 13 provider-native lifecycle execution hardening baseline
+
+Status: done
+Estimate: 5
+Completed: April 22, 2026
+
+Why:
+
+- `ENG-141` and `ENG-145` proved owned apply-and-reconcile loops, but merged provider answers still collapsed the last write lifecycle back to `observe`, which hid whether the reconciler had created, replaced, or transferred ownership of a control-plane resource
+- ownership evaluation was still too coarse: operators could not distinguish external unmanaged resources from stale or incomplete Cephalon ownership metadata on the same shared runtime surfaces
+- later prune/delete, transfer cleanup, and additional provider packs needed one truthful baseline for conflict versus orphan versus transfer semantics without inventing a second lifecycle registry
+
+Acceptance:
+
+- merged provider answers preserve the last apply lifecycle action (`create`, `replace`, or `transfer`) after live observation reconciliation instead of downgrading every successful result to `observe`
+- `Cephalon.Edge.KubernetesGateway` and `Cephalon.Edge.Traefik` classify external unmanaged resources and active foreign owners as explicit ownership conflicts, while stale or incomplete Cephalon ownership metadata becomes an orphaned transfer candidate
+- the shared `/engine/cell-traffic-automations*`, `snapshot.CellTrafficAutomations`, and provider-specific technology surfaces publish the same ownership, lifecycle-action, and previous-owner truth without circular host coupling or a second control-plane registry
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the shipped slice while prune/delete sweeps and broader lifecycle cleanup remain later work
+
+Delivered:
+
+- `KubernetesGatewayTrafficObservationSource` and `TraefikTrafficObservationSource` now resolve active owners lazily through `ICellTrafficAutomationRuntimeCatalog`, avoiding circular DI while still checking current automation ownership during apply and observe flows
+- both provider packs now distinguish `external-unmanaged-resource` and `active-foreign-owner` conflicts from `stale-owner` or `incomplete-current-owner` orphan posture, and apply-and-reconcile now keeps previous-owner metadata when a stale Cephalon-owned route is adopted as a transfer candidate
+- `KubernetesGatewayTrafficAutomationMaterializer` and `TraefikTrafficAutomationMaterializer` now preserve `providerMaterialization.lifecycleAction` from control-plane apply results after merging live observation, so shared and provider-specific surfaces keep truthful `create`, `replace`, or `transfer` answers instead of collapsing back to `observe`
+- targeted coverage now proves external-resource conflict detection, orphaned transfer candidates, and preserved apply lifecycle truth through composition tests `16/16`, hosting tests `6/6`, tooling tests `177/177`, and the reference docs publish script
+
 ### ENG-137 Phase 13 edge-runtime cell traffic materializer baseline
 
 Status: done
@@ -3740,6 +3792,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-143 phase 13 control-plane ownership lifecycle hardening baseline: `Cephalon.Abstractions` now exposes shared ownership/dependency/drift/lifecycle-action constants, `Cephalon.Engine` now derives normalized lifecycle summaries back onto the existing cell traffic automation catalog, and `Cephalon.Edge`, `Cephalon.Edge.KubernetesGateway`, plus `Cephalon.Edge.Traefik` now publish the same lifecycle vocabulary on the existing `/engine/cell-traffic-automations*`, `snapshot.CellTrafficAutomations`, and provider-specific technology surfaces without inventing provider-local lifecycle registries — **Shipped** · GitHub issue `#570` · composition tests `16/16` + hosting tests `5/5` + tooling tests `177/177` + reference docs publish script
 - ENG-144 phase 13 Traefik live observation baseline: `Cephalon.Edge.Traefik` now adds `TraefikTrafficObservationModes`, `TraefikTrafficObservationOptions`, and opt-in `observe-only` polling over Traefik `IngressRoute`, `Middleware`, `TLSOption`, backend `Service`, and TLS `Secret` resources so the existing `/engine/cell-traffic-automations*`, `snapshot.CellTrafficAutomations`, and `traefik-ingressroute-traffic-materializations` surfaces can publish live route existence, ownership, dependency, drift, and freshness truth without inventing a second control-plane registry — **Shipped** · GitHub issue `#571` · composition tests `4/4` + hosting tests `2/2` + tooling tests `177/177` + reference docs publish script
 - ENG-145 phase 13 Traefik apply-and-reconcile baseline: `Cephalon.Edge.Traefik` now adds `apply-and-reconcile` control-plane mode, keeps configured intent truthfully `pending`, creates or replaces only owned `IngressRoute` resources while treating `Middleware`, `TLSOption`, backend `Service`, and TLS `Secret` resources as pre-provisioned dependencies, and merges ownership-aware `ingressRouteWriteAction` metadata together with observed live Traefik posture back into the same `/engine/cell-traffic-automations*`, `snapshot.CellTrafficAutomations`, and `traefik-ingressroute-traffic-materializations` surfaces without inventing a second control-plane registry — **Shipped** · GitHub issue `#572` · composition tests `6/6` + hosting tests `3/3` + tooling tests `177/177` + reference docs publish script
+- ENG-146 phase 13 provider-native lifecycle execution hardening baseline: `Cephalon.Edge.KubernetesGateway` and `Cephalon.Edge.Traefik` now distinguish external unmanaged resources from orphaned transfer candidates, lazily resolve active owners through the shared traffic catalog, preserve previous-owner metadata during transfer-aware adoption, and keep merged `providerMaterialization.lifecycleAction` truth on the existing `/engine/cell-traffic-automations*`, `snapshot.CellTrafficAutomations`, and provider-specific technology surfaces instead of collapsing every successful reconciliation back to `observe` — **Shipped** · GitHub issue `#573` · composition tests `16/16` + hosting tests `6/6` + tooling tests `177/177` + reference docs publish script
 - ENG-138 phase 13 richer multi-provider cell traffic reconciliation baseline: `Cephalon.Abstractions` now extends provider and edge materializer contracts with `Priority` plus provider-side `CanMaterialize(...)`, `Cephalon.Engine` now resolves highest-priority matching materializers while deriving shared `materializationState` plus selection-rationale metadata on the existing traffic catalog, and the same `/engine/cell-traffic-automations*`, `snapshot.CellTrafficAutomations`, and `cell-traffic-automations` technology surface now publish requested, selected, and observed truth without inventing a second reconciliation registry — **Shipped** · GitHub issue `#565` · composition tests `7/7` + hosting tests `1/1` + tooling tests `175/175` + reference docs publish script
 - ENG-136 phase 13 provider-managed cell traffic materializer baseline: `Cephalon.Abstractions` now exposes `ICellTrafficAutomationProviderMaterializer` plus typed provider-materialization result/state contracts, `Cephalon.Engine` now keeps deterministic build-time validation while reconciling provider-managed automation back onto the shared runtime catalog through a startup hosted service, and the existing `/engine/cell-traffic-automations*`, `snapshot.CellTrafficAutomations`, and `cell-traffic-automations` technology surface now expose selected materializer ownership plus latest reconciliation posture without inventing a second traffic-materialization registry — **Shipped** · GitHub issue `#562` · composition tests 5/5 + hosting tests 1/1 + tooling tests 253/253 + reference docs publish script
 - ENG-135 phase 13 provider and edge-aware cell traffic automation baseline: `Cephalon.Abstractions` now extends `CellTrafficAutomationRuntimeDescriptor` plus `ICellTrafficAutomationRuntimeCatalog` with first-class `providerId` plus `edgeNodeIds` and provider/edge drill-down lookups, `Cephalon.Engine` now binds additive provider and edge targeting through `Engine:Cells:TrafficAutomation` while deriving `provider-managed`, `edge-managed`, and `provider-and-edge-managed` posture on the same runtime catalog, and `Cephalon.AspNetCore` now exposes `/engine/cell-traffic-automations/providers/{providerId}` plus `/engine/cell-traffic-automations/edge-nodes/{edgeNodeId}` so provider-aware and edge-aware automation stays on one truth — **Shipped** · GitHub issue `#561` · composition tests `3/3` + hosting tests `1/1` + tooling tests `1/1` + reference docs publish script

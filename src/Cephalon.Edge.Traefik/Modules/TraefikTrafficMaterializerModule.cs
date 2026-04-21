@@ -52,7 +52,8 @@ internal sealed class TraefikTrafficMaterializerModule(TraefikTrafficMaterialize
                 new TraefikTrafficObservationSource(
                     options,
                     serviceProvider.GetRequiredService<TimeProvider>(),
-                    serviceProvider.GetService<k8s.IKubernetes>()));
+                    serviceProvider.GetService<k8s.IKubernetes>(),
+                    () => serviceProvider.GetRequiredService<ICellTrafficAutomationRuntimeCatalog>()));
             services.TryAddSingleton<ITraefikTrafficObservationSource>(serviceProvider =>
                     serviceProvider.GetRequiredService<TraefikTrafficObservationSource>());
             services.TryAddSingleton<ITraefikTrafficApplyService>(serviceProvider =>

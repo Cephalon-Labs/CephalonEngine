@@ -60,9 +60,11 @@ This pack currently ships three truthful modes:
   `observationMode = apply-and-reconcile`, and `statusSource = control-plane-apply` during owned
   write attempts before merging the resulting `ingressRouteWriteAction` together with live
   `statusSource = traefik-ingressroute-observation` posture; the pack only creates or replaces
-  `IngressRoute` resources that Cephalon already owns or is creating from scratch, while existing
-  unmanaged routes stay blocked as ownership conflicts and the shared provider materialization state
-  still resolves from the merged observed truth instead of a second control-plane registry
+  `IngressRoute` resources that Cephalon already owns, is creating from scratch, or can adopt from
+  stale or incomplete Cephalon ownership metadata; existing unmanaged routes and active foreign
+  owners stay blocked as ownership conflicts, while the merged provider answer keeps the last write
+  lifecycle action (`create`, `replace`, or `transfer`) instead of collapsing every successful
+  reconciliation back to `observe`
 
 What this proves is that a second provider family can publish selected materializer ownership,
 provider-facing route identity, middleware and TLS intent, and the same requested/observed lifecycle
@@ -158,8 +160,9 @@ This pack intentionally does not yet claim:
   dependency, drift, freshness posture, and owned `IngressRoute` write attempts
 - `TraefikService`, parent `IngressRoute`, or richer multi-layer routing follow-through beyond the
   single route-rule and Service backend baseline
-- prune/delete, ownership transfer cleanup, orphan remediation, or broader lifecycle execution
-  beyond create/replace ownership of the selected `IngressRoute`
+- prune/delete, sweep-based ownership transfer cleanup, or broader lifecycle execution beyond the
+  shipped explicit conflict-or-orphan detection plus create/replace/transfer ownership of the
+  selected `IngressRoute`
 
 Those remain later follow-through so the current provider claim stays honest.
 

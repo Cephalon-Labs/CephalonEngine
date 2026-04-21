@@ -44,6 +44,7 @@ The pack now has three truthful operating modes:
 - default `configured-intent`, which reports `providerAction = projected-intent`, `observationMode = configured-intent`, `statusSource = configured-intent`, `ownershipState = requested`, `dependencyState = unknown`, `driftState = unknown`, and `lifecycleAction = project` while publishing deterministic `Gateway` plus `HTTPRoute` intent without claiming live cluster state or a successful apply; the shared provider materialization state stays `pending`
 - opt-in `observe-only`, which reports `providerAction = observe-only`, `statusSource = gateway-api-status`, and the same shared ownership/dependency/drift vocabulary while reading live `Gateway` plus `HTTPRoute` status back into the same shared runtime catalog without claiming that Cephalon applied resources itself
 - opt-in `apply-and-reconcile`, which reports `providerAction = apply-and-reconcile`, writes only owned `HTTPRoute` resources, keeps `Gateway` as a pre-provisioned dependency, and then merges observed `Gateway` plus `HTTPRoute` status back into the same shared runtime catalog while preserving write posture through `httpRouteWriteAction`
+  and `lifecycleAction = create|replace|transfer`
 
 What this proves is that one provider-specific pack can publish deterministic projected intent,
 selected materializer ownership, live provider status, drift, freshness answers, and now a narrow
@@ -152,8 +153,10 @@ this pack is the selected provider materializer for that route.
 
 - the pack writes only `HTTPRoute` resources
 - `Gateway` remains a pre-provisioned dependency and is never created or updated by Cephalon
-- the pack only replaces an existing `HTTPRoute` when ownership matches the current automation; foreign or conflicting resources fail with an ownership-conflict posture instead of being hijacked
+- the pack only replaces an existing `HTTPRoute` when ownership matches the current automation or when stale or incomplete Cephalon ownership metadata marks the route as an orphaned transfer candidate
+- existing unmanaged resources and active foreign Cephalon owners fail with an explicit ownership-conflict posture instead of being hijacked silently
 - owned routes carry `cephalon.io/managed-by = edge-kubernetes-gateway` plus route and automation annotations so later observation can verify ownership truthfully
+- merged live observation keeps the last write lifecycle action (`create`, `replace`, or `transfer`) visible on the same shared runtime surfaces instead of collapsing every successful reconciliation back to `observe`
 
 This pack intentionally does not yet claim:
 

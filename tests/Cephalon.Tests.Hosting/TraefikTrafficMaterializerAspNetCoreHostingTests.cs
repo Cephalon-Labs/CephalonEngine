@@ -188,7 +188,8 @@ public sealed class TraefikTrafficMaterializerAspNetCoreHostingTests
             automation.RuntimeMetadata["providerMaterialization.resourceState"] == "available" &&
             automation.RuntimeMetadata["providerMaterialization.ownershipState"] == CellTrafficAutomationOwnershipStates.Owned &&
             automation.RuntimeMetadata["providerMaterialization.dependencyState"] == CellTrafficAutomationDependencyStates.Satisfied &&
-            automation.RuntimeMetadata["providerMaterialization.driftState"] == CellTrafficAutomationDriftStates.InSync);
+            automation.RuntimeMetadata["providerMaterialization.driftState"] == CellTrafficAutomationDriftStates.InSync &&
+            automation.RuntimeMetadata["providerMaterialization.lifecycleAction"] == CellTrafficAutomationLifecycleActions.Create);
 
         Assert.NotNull(surfaces);
         var traefikSurface = Assert.Single(
@@ -199,6 +200,7 @@ public sealed class TraefikTrafficMaterializerAspNetCoreHostingTests
             entry.Metadata["providerAction"] == "apply-and-reconcile" &&
             entry.Metadata["statusSource"] == "traefik-ingressroute-observation" &&
             entry.Metadata["ingressRouteWriteAction"] == "created" &&
+            entry.Metadata["lifecycleAction"] == CellTrafficAutomationLifecycleActions.Create &&
             entry.Metadata["observedServiceRefs"] == "service/orders-runtime/orders-api:8443@weight/100");
 
         Assert.NotNull(snapshot);
