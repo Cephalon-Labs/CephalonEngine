@@ -55,6 +55,11 @@ internal sealed class DataModule(DataRuntimeOptions options) : ModuleBase, IExec
         services.TryAddSingleton<Abstractions.Data.ICdcCaptureExecutionRuntimeCatalog>(static serviceProvider =>
             serviceProvider.GetRequiredService<CdcCaptureExecutionRuntimeCatalog>());
 
+        if (options.CdcExecutionRuntimes.Count > 0)
+        {
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<ICdcCaptureExecutionRuntimeContributor, ConfiguredCdcCaptureExecutionRuntimeContributor>());
+        }
+
         if (options.EnableCdcExecution)
         {
             services.TryAddEnumerable(ServiceDescriptor.Singleton<ICdcCaptureExecutionRuntimeContributor, SharedCdcCaptureExecutionRuntimeContributor>());

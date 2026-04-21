@@ -1,6 +1,6 @@
 # Cephalon Engine Backlog
 
-Backlog status in this document reflects the repository state as of `April 20, 2026`.
+Backlog status in this document reflects the repository state as of `April 21, 2026`.
 
 ## Completed foundation work
 
@@ -2222,6 +2222,32 @@ Delivered:
 - `Cephalon.AspNetCore` now exposes `/engine/cdc-captures/execution-runtimes/{executionRuntimeId}` plus `/engine/cdc-captures/runtime/execution-runtimes/{executionRuntimeId}`, while `snapshot.CdcCaptures`, `snapshot.CdcCaptureStates`, and `snapshot.CdcCaptureExecutionRuntimes` all stay aligned with the same resolved ownership truth
 - targeted coverage now proves unbound/default-shared/requested/runtime-claim ownership resolution, ambiguous-claim rejection, shared-pump filtering, ASP.NET Core inverse drill-down route publication, JSON serialization compatibility, and package-surface alignment through composition tests `12/12`, hosting tests `1/1`, and tooling tests `171/171`
 
+### ENG-132 Phase 13 CDC external execution-runtime declaration baseline
+
+Status: done
+Estimate: 5
+Completed: April 21, 2026
+
+Why:
+
+- `ENG-130` and `ENG-131` made CDC execution topology and capture ownership queryable, but the engine still had no first-class host/config declaration path for external-managed, provider-native, or edge-owned runtimes that should appear in the same operator catalog
+- the execution-runtime payload still leaned on metadata for several ownership/topology details, which made HTTP/operator consumers infer too much instead of reading one stable contract
+- inverse capture/runtime drill-down routes still filtered ad hoc in some layers, so later alternate execution topologies risked runtime-truth drift if different surfaces recomputed ownership differently
+
+Acceptance:
+
+- `Cephalon.Abstractions` promotes stable first-class execution-runtime and execution-binding fields for ownership/topology semantics, and shared CDC catalogs can answer inverse execution-runtime lookups directly
+- `Cephalon.Data` lets hosts declare additive CDC execution runtimes through `DataRuntimeOptions` without replacing per-capture `ExecutionBinding` truth or letting the shared pump execute externally owned captures
+- `Cephalon.Engine` plus `Cephalon.AspNetCore` keep `/engine/cdc-capture-runtimes*`, `/engine/cdc-captures*`, `/engine/cdc-captures/runtime*`, and `snapshot` aligned on one ownership/runtime story for shared and externally declared runtimes alike
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the shipped slice while remaining explicit that concrete provider-native capture implementations and broader out-of-process execution automation are still later work
+
+Delivered:
+
+- `Cephalon.Abstractions` now gives `CdcCaptureExecutionRuntimeDescriptor` first-class `executionOwnership`, `executionTopology`, `acknowledgementMode`, `hostedExecutionId`, and `executionGraphId` fields, gives `CdcCaptureExecutionBindingDescriptor` first-class `executionTopology`, and extends `ICdcCaptureCatalog` plus `ICdcCaptureRuntimeStateCatalog` with shared inverse `GetByExecutionRuntimeId(...)` lookups
+- `Cephalon.Data` now ships `CdcCaptureExecutionRuntimeOptions`, `DataRuntimeOptions.CdcExecutionRuntimes`, and `ConfiguredCdcCaptureExecutionRuntimeContributor`, so hosts can declare external-managed, provider-native, or other additive execution runtimes on the same runtime catalog without falsely claiming they are Cephalon-hosted executions
+- the shared CDC runtime catalog now derives linked capture ids and aggregate runtime state from the same bound capture/runtime-state lookups used by the inverse ASP.NET Core routes, while the shared `data-cdc-capture-pump` skips captures effectively owned by configured external runtimes
+- targeted coverage now proves configured provider-native runtime declaration, inverse catalog lookups, shared-pump exclusion for externally owned captures, ASP.NET Core route publication, JSON serialization compatibility, and package-surface alignment through composition tests `14/14`, hosting tests `2/2`, tooling tests `172/172`, and the reference docs publish script
+
 ### ENG-129 Phase 13 shared CDC acknowledgement and checkpoint-commit baseline
 
 Status: done
@@ -3395,6 +3421,7 @@ Historical sprint buckets below are retrospective planning groups used to backfi
 - ENG-101 phase 12 strangler-fig migration policy and progress baseline: `Cephalon.Abstractions` now exposes `IStranglerFigMigrationRuntimeCatalog` plus `StranglerFigMigrationRuntimeDescriptor`, `Cephalon.Engine` now binds deterministic `Engine:Migration:StranglerFig` default plus per-route overlays into `snapshot.StranglerFigRoutePolicies`, and `Cephalon.AspNetCore` now exposes `/engine/strangler-fig/runtime` plus `/engine/strangler-fig/runtime/{routeId}` while host-level cutover remains later — **Shipped** · composition tests 4/4 + hosting tests 1/1 + package-surface tests 153/153
 - ENG-102 phase 12 ASP.NET Core strangler-fig cutover runtime: `Cephalon.AspNetCore` now derives host cutover execution from `IStranglerFigMigrationRuntimeCatalog`, exposes `/engine/strangler-fig/cutover` plus `/engine/strangler-fig/cutover/resolve`, rewrites rooted local targets in-process, redirects or proxies absolute HTTP or HTTPS targets through `Engine:Migration:StranglerFig:AspNetCore`, and rejects unsupported selected endpoints truthfully with `502` while broader provider-specific ingress or edge automation remains later — **Shipped** · hosting tests 5/5 + composition tests 4/4 + package-surface tests 153/153
 - ENG-131 phase 13 CDC execution ownership binding baseline: `Cephalon.Abstractions` now exposes `CdcCaptureExecutionBindingDescriptor`, `CdcCaptureDescriptor` plus `CdcCaptureRuntimeState` now carry `ExecutionBinding`, `Cephalon.Data` now resolves authored/requested/effective ownership deterministically while rejecting ambiguous competing runtime claims and scoping the shared pump to captures effectively owned by `data-cdc-capture-pump`, and `Cephalon.AspNetCore` now exposes `/engine/cdc-captures/execution-runtimes/{executionRuntimeId}` plus `/engine/cdc-captures/runtime/execution-runtimes/{executionRuntimeId}` so capture-first and runtime-first CDC ownership views stay on the same truth — **Shipped** · GitHub issue `#556` · composition tests 12/12 + hosting tests 1/1 + tooling tests 171/171 + reference docs publish script
+- ENG-132 phase 13 CDC external execution-runtime declaration baseline: `Cephalon.Abstractions` now promotes first-class execution-runtime ownership/topology fields plus inverse runtime lookups on the shared CDC catalogs, `Cephalon.Data` now accepts `DataRuntimeOptions.CdcExecutionRuntimes` declarations through `CdcCaptureExecutionRuntimeOptions` and keeps the shared pump scoped away from externally owned captures, and `Cephalon.AspNetCore` now keeps `/engine/cdc-capture-runtimes*`, inverse execution-runtime drill-down routes, and `snapshot` aligned for shared or configured external/provider-native runtimes without inventing a second registry — **Shipped** · GitHub issue `#558` · composition tests 14/14 + hosting tests 2/2 + tooling tests 172/172 + reference docs publish script
 - ENG-130 phase 13 CDC execution runtime catalog baseline: `Cephalon.Abstractions` now exposes `CdcCaptureExecutionRuntimeDescriptor`, `CdcCaptureExecutionRuntimeSummary`, and `ICdcCaptureExecutionRuntimeCatalog`, `Cephalon.Data` now contributes the shared `data-cdc-capture-pump` execution runtime with ownership/topology metadata plus an aggregate summary derived from shared CDC runtime state, `Cephalon.Engine` now projects `snapshot.CdcCaptureExecutionRuntimes`, and `Cephalon.AspNetCore` now exposes `/engine/cdc-capture-runtimes*` so shared or future provider-native CDC runners can publish one truthful execution-topology answer without replacing the existing per-capture CDC surfaces — **Shipped** · GitHub issue `#555` · composition tests 9/9 + hosting tests 1/1 + tooling tests 3/3 + reference docs publish script
 - ENG-129 phase 13 shared CDC acknowledgement and checkpoint-commit baseline: `Cephalon.Abstractions` now exposes `CdcCaptureExecutionAcknowledgement` plus `ICdcCaptureAcknowledger`, `Cephalon.Data` now lets the shared CDC pump acknowledge provider progress only after linked outbox staging succeeds, the shared runtime now reports `acknowledgement` plus `acknowledgerServiceType` metadata on success and `failureKind = acknowledgement` with pending checkpoint/change-id metadata on failure, and the `data-cdc-capture-flow` execution graph now includes `acknowledge-cdc-progress` so `/engine/execution-graphs`, `/engine/hosted-executions`, `/engine/runtime-story`, and `/engine/snapshot` stay aligned with the replay-safe loop — **Shipped** · GitHub issue `#554` · composition tests 9/9 + hosting tests 1/1 + tooling tests 2/2
 - ENG-128 phase 13 shared CDC hosted-execution substrate baseline: `Cephalon.Abstractions` now exposes `CdcCaptureExecutionResult` plus stable `ICdcCapture.CdcCaptureId` and `IOutbox.OutboxId` identities, `Cephalon.Data` now owns the optional in-process CDC pump through `DataRuntimeOptions.EnableCdcExecution`, `data.cdc.execution`, `data-cdc-capture-flow`, and `data-cdc-capture-pump`, and the broader runtime now exposes the same execution lifecycle through `/engine/execution-graphs`, `/engine/hosted-executions`, `/engine/runtime-story`, and `snapshot.OperationalStory` without replacing `/engine/cdc-captures*` — **Shipped** · GitHub issue `#525` · composition tests 6/6 + hosting tests 1/1 + tooling tests 1/1

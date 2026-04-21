@@ -30,6 +30,12 @@ Browse the published API surface by public member.
 - [AcknowledgeAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureacknowledger-acknowledgeasync-cephalon-abstractions-data-cdccaptureexecutionacknowledgement-system-threading-cancellationtoken): `Methods` on `ICdcCaptureAcknowledger` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AcknowledgeAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Commits or acknowledges provider-facing progress for one staged CDC batch.
   - `ValueTask AcknowledgeAsync(CdcCaptureExecutionAcknowledgement acknowledgement, CancellationToken cancellationToken)`
+- [AcknowledgementMode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-acknowledgementmode): `Properties` on `CdcCaptureExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AcknowledgementMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the operator-facing acknowledgement mode for the runtime when one was declared.
+  - `string AcknowledgementMode { get; }`
+- [AcknowledgementMode](cephalon-data.md#member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-acknowledgementmode): `Properties` on `CdcCaptureExecutionRuntimeOptions` in `Cephalon.Data.Configuration` (`Cephalon.Data`) [Browse](browse.html?q=AcknowledgementMode&assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration&scope=members)
+  - Gets or sets the operator-facing acknowledgement mode when the runtime reports one.
+  - `string AcknowledgementMode { get; set; }`
 - [AclToken](cephalon-observability-consuldependencies.md#member-p-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-acltoken): `Properties` on `ConsulDependencyDefinition` in `Cephalon.Observability.ConsulDependencies.Configuration` (`Cephalon.Observability.ConsulDependencies`) [Browse](browse.html?q=AclToken&assembly=Cephalon.Observability.ConsulDependencies&namespace=Cephalon.Observability.ConsulDependencies.Configuration&scope=members)
   - Gets or sets the optional Consul ACL token sent as the `X-Consul-Token` header.
   - `string AclToken { get; set; }`
@@ -1674,6 +1680,9 @@ Browse the published API surface by public member.
 - [CdcCaptureExecutionBindingDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `CdcCaptureExecutionBindingDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureExecutionBindingDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates a new CDC capture execution binding descriptor.
   - `CdcCaptureExecutionBindingDescriptor(string cdcCaptureId, string authoredExecutionRuntimeId, string requestedExecutionRuntimeId, string effectiveExecutionRuntimeId, string executionOwnership, string resolutionMode, IReadOnlyDictionary<string, string> metadata)`
+- [CdcCaptureExecutionBindingDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `CdcCaptureExecutionBindingDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureExecutionBindingDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Creates a new CDC capture execution binding descriptor with a first-class topology classification.
+  - `CdcCaptureExecutionBindingDescriptor(string cdcCaptureId, string authoredExecutionRuntimeId, string requestedExecutionRuntimeId, string effectiveExecutionRuntimeId, string executionOwnership, string executionTopology, string resolutionMode, IReadOnlyDictionary<string, string> metadata)`
 - [CdcCaptureExecutionReport](cephalon-data.md#member-m-cephalon-data-services-cdccaptureexecutionreport-ctor-system-string-system-string-system-datetimeoffset-system-int32-system-int32-system-string-system-string-system-string-cephalon-abstractions-data-cdccapturefreshnessstatus-cephalon-abstractions-data-cdccapturelagstatus-cephalon-abstractions-data-cdccapturepublicationstatus-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `CdcCaptureExecutionReport` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=CdcCaptureExecutionReport&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
   - Creates a new CDC capture runtime observation.
   - `CdcCaptureExecutionReport(string cdcCaptureId, string outcome, DateTimeOffset observedAtUtc, int capturedChangeCount, int producedMessageCount, string changeId, string checkpoint, string error, CdcCaptureFreshnessStatus freshness, CdcCaptureLagStatus lag, CdcCapturePublicationStatus publication, IReadOnlyDictionary<string, string> metadata)`
@@ -1683,6 +1692,12 @@ Browse the published API surface by public member.
 - [CdcCaptureExecutionRuntimeDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-abstractions-data-cdccaptureexecutionruntimesummary): `Constructors` on `CdcCaptureExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureExecutionRuntimeDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates a new CDC capture execution runtime descriptor.
   - `CdcCaptureExecutionRuntimeDescriptor(string id, string displayName, string description, IReadOnlyDictionary<string, string> metadata, IReadOnlyList<string> cdcCaptureIds, CdcCaptureExecutionRuntimeSummary summary)`
+- [CdcCaptureExecutionRuntimeDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-abstractions-data-cdccaptureexecutionruntimesummary): `Constructors` on `CdcCaptureExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureExecutionRuntimeDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Creates a new CDC capture execution runtime descriptor with first-class ownership and topology semantics.
+  - `CdcCaptureExecutionRuntimeDescriptor(string id, string displayName, string description, string executionOwnership, string executionTopology, string acknowledgementMode, string hostedExecutionId, string executionGraphId, IReadOnlyDictionary<string, string> metadata, IReadOnlyList<string> cdcCaptureIds, CdcCaptureExecutionRuntimeSummary summary)`
+- [CdcCaptureExecutionRuntimeOptions](cephalon-data.md#member-m-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-ctor): `Constructors` on `CdcCaptureExecutionRuntimeOptions` in `Cephalon.Data.Configuration` (`Cephalon.Data`) [Browse](browse.html?q=CdcCaptureExecutionRuntimeOptions&assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration&scope=members)
+  - Creates CDC execution runtime options with empty identity fields and a declared-runtime topology.
+  - `CdcCaptureExecutionRuntimeOptions()`
 - [CdcCaptureExecutionRuntimes](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-cdccaptureexecutionruntimes): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=CdcCaptureExecutionRuntimes&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the configured CDC capture execution runtimes visible to the runtime at the time the snapshot was created.
   - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> CdcCaptureExecutionRuntimes { get; set; }`
@@ -1710,6 +1725,9 @@ Browse the published API surface by public member.
 - [CdcCaptureIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-cdccaptureids): `Properties` on `CdcCaptureExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the CDC capture identifiers explicitly owned by the execution runtime.
   - `IReadOnlyList<string> CdcCaptureIds { get; }`
+- [CdcCaptureIds](cephalon-data.md#member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-cdccaptureids): `Properties` on `CdcCaptureExecutionRuntimeOptions` in `Cephalon.Data.Configuration` (`Cephalon.Data`) [Browse](browse.html?q=CdcCaptureIds&assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration&scope=members)
+  - Gets the CDC capture identifiers explicitly owned by the runtime when ownership is bounded to a known capture set.
+  - `IList<string> CdcCaptureIds { get; }`
 - [CdcCaptureLagStatus](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccapturelagstatus-ctor-system-string-system-nullable-system-int64-system-string): `Constructors` on `CdcCaptureLagStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureLagStatus&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates a new CDC lag status.
   - `CdcCaptureLagStatus(string state, long? pendingChangeCount, string description)`
@@ -1728,6 +1746,9 @@ Browse the published API surface by public member.
 - [CdcCaptureStates](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-cdccapturestates): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=CdcCaptureStates&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the CDC runtime-state entries visible to the runtime at the time the snapshot was created.
   - `IReadOnlyList<CdcCaptureRuntimeState> CdcCaptureStates { get; set; }`
+- [CdcExecutionRuntimes](cephalon-data.md#member-p-cephalon-data-configuration-dataruntimeoptions-cdcexecutionruntimes): `Properties` on `DataRuntimeOptions` in `Cephalon.Data.Configuration` (`Cephalon.Data`) [Browse](browse.html?q=CdcExecutionRuntimes&assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration&scope=members)
+  - Gets the host-defined CDC execution runtimes that should be available to the active data runtime.
+  - `IList<CdcCaptureExecutionRuntimeOptions> CdcExecutionRuntimes { get; }`
 - [CdcPollingIntervalSeconds](cephalon-data.md#member-p-cephalon-data-configuration-dataruntimeoptions-cdcpollingintervalseconds): `Properties` on `DataRuntimeOptions` in `Cephalon.Data.Configuration` (`Cephalon.Data`) [Browse](browse.html?q=CdcPollingIntervalSeconds&assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration&scope=members)
   - Gets or sets the polling interval, in seconds, used by the shared CDC hosted execution pump.
   - `int CdcPollingIntervalSeconds { get; set; }`
@@ -2847,6 +2868,9 @@ Browse the published API surface by public member.
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-description): `Properties` on `CdcCaptureExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the human-readable execution-runtime description.
   - `string Description { get; }`
+- [Description](cephalon-data.md#member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-description): `Properties` on `CdcCaptureExecutionRuntimeOptions` in `Cephalon.Data.Configuration` (`Cephalon.Data`) [Browse](browse.html?q=Description&assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration&scope=members)
+  - Gets or sets the human-readable execution-runtime description.
+  - `string Description { get; set; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturefreshnessstatus-description): `Properties` on `CdcCaptureFreshnessStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets an optional operator-facing freshness summary.
   - `string Description { get; }`
@@ -3171,6 +3195,9 @@ Browse the published API surface by public member.
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-displayname): `Properties` on `CdcCaptureExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing execution-runtime name.
   - `string DisplayName { get; }`
+- [DisplayName](cephalon-data.md#member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-displayname): `Properties` on `CdcCaptureExecutionRuntimeOptions` in `Cephalon.Data.Configuration` (`Cephalon.Data`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration&scope=members)
+  - Gets or sets the operator-facing execution-runtime name.
+  - `string DisplayName { get; set; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellboundarydescriptor-displayname): `Properties` on `CellBoundaryDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the operator-facing cell name.
   - `string DisplayName { get; }`
@@ -4128,6 +4155,12 @@ Browse the published API surface by public member.
 - [ExecutionGraphId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttooldescriptor-executiongraphid): `Properties` on `AgentToolDescriptor` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ExecutionGraphId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the related execution-graph identifier when one is declared.
   - `string ExecutionGraphId { get; }`
+- [ExecutionGraphId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-executiongraphid): `Properties` on `CdcCaptureExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionGraphId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the linked execution-graph identifier when the runtime is backed by a Cephalon execution graph.
+  - `string ExecutionGraphId { get; }`
+- [ExecutionGraphId](cephalon-data.md#member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-executiongraphid): `Properties` on `CdcCaptureExecutionRuntimeOptions` in `Cephalon.Data.Configuration` (`Cephalon.Data`) [Browse](browse.html?q=ExecutionGraphId&assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration&scope=members)
+  - Gets or sets the execution-graph identifier when the runtime maps to a Cephalon execution graph.
+  - `string ExecutionGraphId { get; set; }`
 - [ExecutionGraphId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-hostedexecutiondescriptor-executiongraphid): `Properties` on `HostedExecutionDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionGraphId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the related execution-graph identifier when one is declared.
   - `string ExecutionGraphId { get; }`
@@ -4173,6 +4206,21 @@ Browse the published API surface by public member.
 - [ExecutionOwnership](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-executionownership): `Properties` on `CdcCaptureExecutionBindingDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionOwnership&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing ownership mode for the effective execution runtime.
   - `string ExecutionOwnership { get; }`
+- [ExecutionOwnership](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-executionownership): `Properties` on `CdcCaptureExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionOwnership&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the operator-facing execution-ownership mode for the runtime.
+  - `string ExecutionOwnership { get; }`
+- [ExecutionOwnership](cephalon-data.md#member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-executionownership): `Properties` on `CdcCaptureExecutionRuntimeOptions` in `Cephalon.Data.Configuration` (`Cephalon.Data`) [Browse](browse.html?q=ExecutionOwnership&assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration&scope=members)
+  - Gets or sets the operator-facing ownership mode for the runtime.
+  - `string ExecutionOwnership { get; set; }`
+- [ExecutionTopology](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-executiontopology): `Properties` on `CdcCaptureExecutionBindingDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionTopology&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the operator-facing topology classification for the effective execution runtime.
+  - `string ExecutionTopology { get; }`
+- [ExecutionTopology](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-executiontopology): `Properties` on `CdcCaptureExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionTopology&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the operator-facing execution-topology classification for the runtime.
+  - `string ExecutionTopology { get; }`
+- [ExecutionTopology](cephalon-data.md#member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-executiontopology): `Properties` on `CdcCaptureExecutionRuntimeOptions` in `Cephalon.Data.Configuration` (`Cephalon.Data`) [Browse](browse.html?q=ExecutionTopology&assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration&scope=members)
+  - Gets or sets the operator-facing topology classification for the runtime.
+  - `string ExecutionTopology { get; set; }`
 - [ExitAfterApply](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-exitafterapply): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExitAfterApply&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the host exits after startup execution completes.
   - `bool ExitAfterApply { get; }`
@@ -4767,6 +4815,12 @@ Browse the published API surface by public member.
 - [GetByExecutionGraph](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-ihostedexecutionruntimecatalog-getbyexecutiongraph-system-string): `Methods` on `IHostedExecutionRuntimeCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByExecutionGraph&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets all hosted executions linked to one execution graph.
   - `IReadOnlyList<HostedExecutionDescriptor> GetByExecutionGraph(string executionGraphId)`
+- [GetByExecutionRuntimeId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccapturecatalog-getbyexecutionruntimeid-system-string): `Methods` on `ICdcCaptureCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByExecutionRuntimeId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets all CDC captures currently owned by the requested execution runtime.
+  - `IReadOnlyList<CdcCaptureDescriptor> GetByExecutionRuntimeId(string executionRuntimeId)`
+- [GetByExecutionRuntimeId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbyexecutionruntimeid-system-string): `Methods` on `ICdcCaptureRuntimeStateCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByExecutionRuntimeId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC runtime-state entries currently owned by the requested execution runtime.
+  - `IReadOnlyList<CdcCaptureRuntimeState> GetByExecutionRuntimeId(string executionRuntimeId)`
 - [GetByHealthIsolationId](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbyhealthisolationid-system-string): `Methods` on `ICellTrafficAutomationRuntimeCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByHealthIsolationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets all effective cell traffic-automation answers that reference the requested health-isolation identifier.
   - `IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> GetByHealthIsolationId(string healthIsolationId)`
@@ -5646,6 +5700,12 @@ Browse the published API surface by public member.
 - [HostedExecutionId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttooldescriptor-hostedexecutionid): `Properties` on `AgentToolDescriptor` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=HostedExecutionId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the related hosted-execution identifier when one is declared.
   - `string HostedExecutionId { get; }`
+- [HostedExecutionId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-hostedexecutionid): `Properties` on `CdcCaptureExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HostedExecutionId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the linked hosted-execution identifier when the runtime is backed by a Cephalon hosted execution.
+  - `string HostedExecutionId { get; }`
+- [HostedExecutionId](cephalon-data.md#member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-hostedexecutionid): `Properties` on `CdcCaptureExecutionRuntimeOptions` in `Cephalon.Data.Configuration` (`Cephalon.Data`) [Browse](browse.html?q=HostedExecutionId&assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration&scope=members)
+  - Gets or sets the hosted-execution identifier when the runtime maps to a Cephalon hosted execution.
+  - `string HostedExecutionId { get; set; }`
 - [HostedExecutionId](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehostedexecutionstate-hostedexecutionid): `Properties` on `RuntimeHostedExecutionState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=HostedExecutionId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The stable hosted-execution identifier.
   - `string HostedExecutionId { get; set; }`
@@ -5802,6 +5862,9 @@ Browse the published API surface by public member.
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-id): `Properties` on `CdcCaptureExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable execution-runtime identifier.
   - `string Id { get; }`
+- [Id](cephalon-data.md#member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-id): `Properties` on `CdcCaptureExecutionRuntimeOptions` in `Cephalon.Data.Configuration` (`Cephalon.Data`) [Browse](browse.html?q=Id&assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration&scope=members)
+  - Gets or sets the stable execution-runtime identifier.
+  - `string Id { get; set; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellboundarydescriptor-id): `Properties` on `CellBoundaryDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the stable cell identifier.
   - `string Id { get; }`
@@ -7083,6 +7146,9 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-metadata): `Properties` on `CdcCaptureExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets operator-facing metadata for the execution runtime.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-data.md#member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-metadata): `Properties` on `CdcCaptureExecutionRuntimeOptions` in `Cephalon.Data.Configuration` (`Cephalon.Data`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration&scope=members)
+  - Gets arbitrary operator-facing metadata that should flow through the runtime declaration.
+  - `IDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-metadata): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The operator-facing metadata captured by the latest report.
   - `IReadOnlyDictionary<string, string> Metadata { get; set; }`

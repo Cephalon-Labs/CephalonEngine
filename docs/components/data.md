@@ -10,17 +10,19 @@
 - provides the first reusable CDC runtime-state reporting/catalog bridge over `ICdcCaptureCatalog` plus optional linked outbox dispatch truth
 - extends that same CDC bridge with typed freshness, lag, and publication-posture reporting
 - provides an optional shared in-process CDC hosted-execution substrate that resolves active `ICdcCapture` plus `IOutbox` implementations, stages outbox publications, optionally acknowledges provider progress after stage success, and reports lifecycle truth through the existing execution/runtime-story surfaces
-- provides an additive CDC execution-runtime catalog so shared or provider-specific capture runners can publish one ownership/topology answer without replacing per-capture CDC truth
+- provides an additive CDC execution-runtime catalog so shared, external-managed, provider-native, or other declared capture runners can publish one ownership/topology answer without replacing per-capture CDC truth
 
 ## Main surfaces
 
 - `Configuration/DataRuntimeOptions.cs`
+- `Configuration/CdcCaptureExecutionRuntimeOptions.cs`
 - `Registration/DataEngineBuilderExtensions.cs`
 - `Services/CdcCaptureExecutionReport.cs`
 - `Services/CdcCaptureExecutionRuntimeCatalog.cs`
 - `Services/CdcCaptureExecutionRuntimeRegistry.cs`
 - `Services/CdcCaptureHostedService.cs`
 - `Services/CdcCaptureRuntimeStateCatalog.cs`
+- `Services/ConfiguredCdcCaptureExecutionRuntimeContributor.cs`
 - `Services/DataRuntimeIds.cs`
 - `Services/HandlerDispatchingReadStore.cs`
 - `Services/HandlerDispatchingWriteStore.cs`
@@ -65,12 +67,17 @@ lets the shared pump execute only captures whose effective owner is the shared r
 
 The same shared runtime now also projects one operator-facing CDC execution-runtime answer through
 `ICdcCaptureExecutionRuntimeCatalog`. The shipped `SharedCdcCaptureExecutionRuntimeContributor`
-publishes `data-cdc-capture-pump` with `executionOwnership = host-managed`,
+publishes `data-cdc-capture-pump` with first-class `executionOwnership = host-managed`,
 `executionTopology = shared-in-process-polling`, `acknowledgementMode = post-stage-provider`,
 linked `hostedExecutionId` plus `executionGraphId`, and `surface = shared-cdc-execution`, while
-`CdcCaptureExecutionRuntimeCatalog` folds the shared `ICdcCaptureRuntimeStateCatalog` into one
-aggregate `CdcCaptureExecutionRuntimeSummary` per runtime. That same ownership/topology answer now
-flows through `/engine/cdc-capture-runtimes`, `/engine/cdc-captures/execution-runtimes/{executionRuntimeId}`,
+`DataRuntimeOptions.CdcExecutionRuntimes` plus
+`ConfiguredCdcCaptureExecutionRuntimeContributor` now let hosts declare additional external,
+managed, edge, or provider-native execution runtimes on that same catalog without pretending the
+shared pump owns them. `CdcCaptureExecutionRuntimeCatalog` then folds the shared
+`ICdcCaptureRuntimeStateCatalog` into one aggregate `CdcCaptureExecutionRuntimeSummary` per runtime
+by reusing the same inverse execution-runtime lookup that capture and runtime-state surfaces already
+publish. That same ownership/topology answer now flows through `/engine/cdc-capture-runtimes`,
+`/engine/cdc-captures/execution-runtimes/{executionRuntimeId}`,
 `/engine/cdc-captures/runtime/execution-runtimes/{executionRuntimeId}`, and
 `snapshot.CdcCaptureExecutionRuntimes`, so later provider-native or out-of-process runners can
 project on the same truth instead of inventing a second host-only runner registry beside

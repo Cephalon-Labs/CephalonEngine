@@ -7,6 +7,8 @@ namespace Cephalon.Abstractions.Data;
 /// </summary>
 public sealed class CdcCaptureExecutionBindingDescriptor
 {
+    private const string ExecutionTopologyMetadataKey = "executionTopology";
+
     /// <summary>
     /// Creates a new CDC capture execution binding descriptor.
     /// </summary>
@@ -61,6 +63,50 @@ public sealed class CdcCaptureExecutionBindingDescriptor
         Metadata = metadata is null
             ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             : new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase);
+        ExecutionTopology = ResolveMetadata(Metadata, ExecutionTopologyMetadataKey, "not-configured")!;
+    }
+
+    /// <summary>
+    /// Creates a new CDC capture execution binding descriptor with a first-class topology classification.
+    /// </summary>
+    /// <param name="cdcCaptureId">The stable CDC capture identifier.</param>
+    /// <param name="authoredExecutionRuntimeId">
+    /// The execution-runtime identifier authored directly on the CDC capture when one was declared.
+    /// </param>
+    /// <param name="requestedExecutionRuntimeId">
+    /// The execution-runtime identifier requested for the CDC capture after any additive overrides are applied.
+    /// </param>
+    /// <param name="effectiveExecutionRuntimeId">
+    /// The execution-runtime identifier that currently owns execution for the CDC capture.
+    /// </param>
+    /// <param name="executionOwnership">
+    /// The operator-facing ownership mode for the effective execution runtime, such as <c>host-managed</c> or <c>external-managed</c>.
+    /// </param>
+    /// <param name="executionTopology">
+    /// The operator-facing topology classification for the effective execution runtime, such as <c>shared-in-process-polling</c> or <c>provider-native</c>.
+    /// </param>
+    /// <param name="resolutionMode">
+    /// The operator-facing reason that explains how the effective execution-runtime binding was selected.
+    /// </param>
+    /// <param name="metadata">Optional operator-facing metadata for the resolved binding.</param>
+    public CdcCaptureExecutionBindingDescriptor(
+        string cdcCaptureId,
+        string? authoredExecutionRuntimeId,
+        string? requestedExecutionRuntimeId,
+        string? effectiveExecutionRuntimeId,
+        string executionOwnership,
+        string executionTopology,
+        string resolutionMode = "unbound",
+        IReadOnlyDictionary<string, string>? metadata = null)
+        : this(
+            cdcCaptureId,
+            authoredExecutionRuntimeId,
+            requestedExecutionRuntimeId,
+            effectiveExecutionRuntimeId,
+            executionOwnership,
+            resolutionMode,
+            MergeMetadata(metadata, executionTopology))
+    {
     }
 
     /// <summary>
@@ -87,6 +133,11 @@ public sealed class CdcCaptureExecutionBindingDescriptor
     /// Gets the operator-facing ownership mode for the effective execution runtime.
     /// </summary>
     public string ExecutionOwnership { get; }
+
+    /// <summary>
+    /// Gets the operator-facing topology classification for the effective execution runtime.
+    /// </summary>
+    public string ExecutionTopology { get; }
 
     /// <summary>
     /// Gets the operator-facing explanation for how the effective execution-runtime binding was selected.
@@ -118,5 +169,37 @@ public sealed class CdcCaptureExecutionBindingDescriptor
         return string.IsNullOrWhiteSpace(value)
             ? null
             : value.Trim();
+    }
+
+    private static Dictionary<string, string> MergeMetadata(
+        IReadOnlyDictionary<string, string>? metadata,
+        string executionTopology)
+    {
+        if (string.IsNullOrWhiteSpace(executionTopology))
+        {
+            throw new ArgumentException("CDC capture execution topology is required.", nameof(executionTopology));
+        }
+
+        var normalizedMetadata = metadata is null
+            ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            : new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase);
+        normalizedMetadata[ExecutionTopologyMetadataKey] = executionTopology.Trim();
+        return normalizedMetadata;
+    }
+
+    private static string? ResolveMetadata(
+        IReadOnlyDictionary<string, string> metadata,
+        string key,
+        string? defaultValue = null)
+    {
+        if (metadata.TryGetValue(key, out var value) &&
+            !string.IsNullOrWhiteSpace(value))
+        {
+            return value.Trim();
+        }
+
+        return string.IsNullOrWhiteSpace(defaultValue)
+            ? null
+            : defaultValue.Trim();
     }
 }

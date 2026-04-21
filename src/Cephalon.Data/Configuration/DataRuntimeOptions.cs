@@ -13,6 +13,11 @@ public sealed class DataRuntimeOptions
     }
 
     /// <summary>
+    /// Gets the host-defined CDC execution runtimes that should be available to the active data runtime.
+    /// </summary>
+    public IList<CdcCaptureExecutionRuntimeOptions> CdcExecutionRuntimes { get; } = [];
+
+    /// <summary>
     /// Gets or sets a value indicating whether the pack should register the default read-store dispatcher.
     /// </summary>
     public bool RegisterReadStore { get; set; } = true;

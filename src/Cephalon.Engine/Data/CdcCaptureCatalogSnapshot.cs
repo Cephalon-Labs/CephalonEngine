@@ -10,6 +10,7 @@ internal sealed class CdcCaptureCatalogSnapshot : ICdcCaptureCatalog
     private readonly Dictionary<string, IReadOnlyList<CdcCaptureDescriptor>> cdcCapturesByProvider;
     private readonly Dictionary<string, IReadOnlyList<CdcCaptureDescriptor>> cdcCapturesByOutboxId;
     private readonly Dictionary<string, IReadOnlyList<CdcCaptureDescriptor>> cdcCapturesBySourceId;
+    private readonly Dictionary<string, IReadOnlyList<CdcCaptureDescriptor>> cdcCapturesByExecutionRuntimeId;
     private readonly Dictionary<string, IReadOnlyList<CdcCaptureDescriptor>> cdcCapturesByResourceId;
 
     public CdcCaptureCatalogSnapshot(IEnumerable<CdcCaptureDescriptor> cdcCaptures)
@@ -38,6 +39,13 @@ internal sealed class CdcCaptureCatalogSnapshot : ICdcCaptureCatalog
                 StringComparer.OrdinalIgnoreCase);
         cdcCapturesBySourceId = this.cdcCaptures
             .GroupBy(static cdcCapture => cdcCapture.SourceId, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(
+                static group => group.Key,
+                static group => (IReadOnlyList<CdcCaptureDescriptor>)group.ToArray(),
+                StringComparer.OrdinalIgnoreCase);
+        cdcCapturesByExecutionRuntimeId = this.cdcCaptures
+            .Where(static cdcCapture => !string.IsNullOrWhiteSpace(cdcCapture.ExecutionBinding.EffectiveExecutionRuntimeId))
+            .GroupBy(static cdcCapture => cdcCapture.ExecutionBinding.EffectiveExecutionRuntimeId!, StringComparer.OrdinalIgnoreCase)
             .ToDictionary(
                 static group => group.Key,
                 static group => (IReadOnlyList<CdcCaptureDescriptor>)group.ToArray(),
@@ -109,6 +117,18 @@ internal sealed class CdcCaptureCatalogSnapshot : ICdcCaptureCatalog
         }
 
         return cdcCapturesBySourceId.TryGetValue(sourceId.Trim(), out var matches)
+            ? matches
+            : [];
+    }
+
+    public IReadOnlyList<CdcCaptureDescriptor> GetByExecutionRuntimeId(string executionRuntimeId)
+    {
+        if (string.IsNullOrWhiteSpace(executionRuntimeId))
+        {
+            return [];
+        }
+
+        return cdcCapturesByExecutionRuntimeId.TryGetValue(executionRuntimeId.Trim(), out var matches)
             ? matches
             : [];
     }

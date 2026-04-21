@@ -791,6 +791,7 @@ public sealed class PackageSurfaceTests
     {
         AssertExportedTypes(
             typeof(global::Cephalon.Data.Registration.DataEngineBuilderExtensions).Assembly,
+            typeof(global::Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions),
             typeof(global::Cephalon.Data.Configuration.DataRuntimeOptions),
             typeof(global::Cephalon.Data.Services.CdcCaptureExecutionReport),
             typeof(global::Cephalon.Data.Services.CdcCaptureRuntimeOutcomes),
@@ -2559,6 +2560,16 @@ public sealed class PackageSurfaceTests
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureExecutionRuntimeCatalog)
             .GetMethod("GetById", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeDescriptor)
+            .GetProperty("ExecutionOwnership", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeDescriptor)
+            .GetProperty("ExecutionTopology", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeDescriptor)
+            .GetProperty("AcknowledgementMode", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeDescriptor)
+            .GetProperty("HostedExecutionId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeDescriptor)
+            .GetProperty("ExecutionGraphId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeDescriptor)
             .GetProperty("CdcCaptureIds", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeDescriptor)
             .GetProperty("Summary", BindingFlags.Instance | BindingFlags.Public));
@@ -2568,6 +2579,8 @@ public sealed class PackageSurfaceTests
             .GetProperty("LastAcknowledgement", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeSummary)
             .GetProperty("TotalCapturedChangeCount", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionBindingDescriptor)
+            .GetProperty("ExecutionTopology", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionBindingDescriptor)
             .GetProperty("RequestedExecutionRuntimeId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionBindingDescriptor)
@@ -2599,6 +2612,8 @@ public sealed class PackageSurfaceTests
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureCatalog)
             .GetMethod("GetBySourceId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureCatalog)
+            .GetMethod("GetByExecutionRuntimeId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureCatalog)
             .GetMethod("GetByResourceId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureRuntimeStateCatalog)
             .GetProperty("States", BindingFlags.Instance | BindingFlags.Public));
@@ -2612,6 +2627,8 @@ public sealed class PackageSurfaceTests
             .GetMethod("GetByOutboxId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureRuntimeStateCatalog)
             .GetMethod("GetBySourceId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureRuntimeStateCatalog)
+            .GetMethod("GetByExecutionRuntimeId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureRuntimeStateCatalog)
             .GetMethod("GetByResourceId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureContributor)
@@ -2654,6 +2671,21 @@ public sealed class PackageSurfaceTests
             .GetProperty("CdcCaptureStates", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot)
             .GetProperty("CdcCaptureExecutionRuntimes", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void DataRuntimeOptionsExposeConfiguredCdcExecutionRuntimeDeclarations()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Data.Configuration.DataRuntimeOptions)
+            .GetProperty("CdcExecutionRuntimes", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions)
+            .GetProperty("ExecutionOwnership", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions)
+            .GetProperty("ExecutionTopology", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions)
+            .GetProperty("CdcCaptureIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions)
+            .GetProperty("Metadata", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

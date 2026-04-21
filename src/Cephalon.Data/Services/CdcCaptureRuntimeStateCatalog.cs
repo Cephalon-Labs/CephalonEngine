@@ -115,6 +115,23 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
         }
     }
 
+    public IReadOnlyList<CdcCaptureRuntimeState> GetByExecutionRuntimeId(string executionRuntimeId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(executionRuntimeId);
+        var normalizedExecutionRuntimeId = executionRuntimeId.Trim();
+
+        lock (gate)
+        {
+            return descriptorCatalog
+                .GetByExecutionRuntimeId(normalizedExecutionRuntimeId)
+                .Select(CreateState)
+                .OrderBy(static state => state.SourceModuleId, Comparer)
+                .ThenBy(static state => state.Provider, Comparer)
+                .ThenBy(static state => state.CdcCaptureId, Comparer)
+                .ToArray();
+        }
+    }
+
     public IReadOnlyList<CdcCaptureRuntimeState> GetByResourceId(string resourceId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(resourceId);

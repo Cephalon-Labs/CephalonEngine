@@ -46,6 +46,13 @@ public interface ICdcCaptureRuntimeStateCatalog
     IReadOnlyList<CdcCaptureRuntimeState> GetBySourceId(string sourceId);
 
     /// <summary>
+    /// Gets the CDC runtime-state entries currently owned by the requested execution runtime.
+    /// </summary>
+    /// <param name="executionRuntimeId">The execution-runtime identifier to filter by.</param>
+    /// <returns>The matching runtime states, or an empty list when the runtime owns none.</returns>
+    IReadOnlyList<CdcCaptureRuntimeState> GetByExecutionRuntimeId(string executionRuntimeId);
+
+    /// <summary>
     /// Gets the CDC runtime-state entries that explicitly observe the requested resource identifier.
     /// </summary>
     /// <param name="resourceId">The resource identifier to filter by.</param>

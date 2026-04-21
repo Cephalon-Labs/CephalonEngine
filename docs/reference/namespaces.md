@@ -174,7 +174,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Data.Configuration`
 
-- [Cephalon.Data](cephalon-data.md#namespace-cephalon-data-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration)
+- [Cephalon.Data](cephalon-data.md#namespace-cephalon-data-configuration): 2 public types [Browse](browse.html?assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration)
 
 ## `Cephalon.Data.EntityFramework.Configuration`
 

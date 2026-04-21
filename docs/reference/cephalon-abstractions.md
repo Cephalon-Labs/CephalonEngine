@@ -7993,6 +7993,26 @@ Parameters:
 - `resolutionMode`: The operator-facing reason that explains how the effective execution-runtime binding was selected.
 - `metadata`: Optional operator-facing metadata for the resolved binding.
 
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionBindingDescriptor`
+
+```csharp
+CdcCaptureExecutionBindingDescriptor(string cdcCaptureId, string authoredExecutionRuntimeId, string requestedExecutionRuntimeId, string effectiveExecutionRuntimeId, string executionOwnership, string executionTopology, string resolutionMode, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new CDC capture execution binding descriptor with a first-class topology classification.
+
+Parameters:
+- `cdcCaptureId`: The stable CDC capture identifier.
+- `authoredExecutionRuntimeId`: The execution-runtime identifier authored directly on the CDC capture when one was declared.
+- `requestedExecutionRuntimeId`: The execution-runtime identifier requested for the CDC capture after any additive overrides are applied.
+- `effectiveExecutionRuntimeId`: The execution-runtime identifier that currently owns execution for the CDC capture.
+- `executionOwnership`: The operator-facing ownership mode for the effective execution runtime, such as `host-managed` or `external-managed`.
+- `executionTopology`: The operator-facing topology classification for the effective execution runtime, such as `shared-in-process-polling` or `provider-native`.
+- `resolutionMode`: The operator-facing reason that explains how the effective execution-runtime binding was selected.
+- `metadata`: Optional operator-facing metadata for the resolved binding.
+
 #### Properties
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-authoredexecutionruntimeid"></a>
@@ -8034,6 +8054,16 @@ string ExecutionOwnership { get; }
 ```
 
 Gets the operator-facing ownership mode for the effective execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-executiontopology"></a>
+
+##### `ExecutionTopology`
+
+```csharp
+string ExecutionTopology { get; }
+```
+
+Gets the operator-facing topology classification for the effective execution runtime.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-isbound"></a>
 
@@ -8248,7 +8278,40 @@ Parameters:
 - `cdcCaptureIds`: Optional CDC capture identifiers explicitly owned by the execution runtime when ownership is bounded to a known capture set.
 - `summary`: Optional aggregate runtime summary describing the latest reported operator-facing state for the execution runtime.
 
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-abstractions-data-cdccaptureexecutionruntimesummary"></a>
+
+##### `CdcCaptureExecutionRuntimeDescriptor`
+
+```csharp
+CdcCaptureExecutionRuntimeDescriptor(string id, string displayName, string description, string executionOwnership, string executionTopology, string acknowledgementMode, string hostedExecutionId, string executionGraphId, IReadOnlyDictionary<string, string> metadata, IReadOnlyList<string> cdcCaptureIds, CdcCaptureExecutionRuntimeSummary summary)
+```
+
+Creates a new CDC capture execution runtime descriptor with first-class ownership and topology semantics.
+
+Parameters:
+- `id`: The stable execution-runtime identifier.
+- `displayName`: The operator-facing execution-runtime name.
+- `description`: The human-readable execution-runtime description.
+- `executionOwnership`: The operator-facing execution-ownership mode, such as `host-managed` or `external-managed`.
+- `executionTopology`: The operator-facing execution-topology classification, such as `shared-in-process-polling` or `provider-native`.
+- `acknowledgementMode`: The operator-facing acknowledgement mode when the runtime reports one, such as `post-stage-provider`.
+- `hostedExecutionId`: The stable hosted-execution identifier when the runtime is backed by a Cephalon hosted execution.
+- `executionGraphId`: The stable execution-graph identifier when the runtime is backed by a Cephalon execution graph.
+- `metadata`: Optional operator-facing metadata for the execution runtime.
+- `cdcCaptureIds`: Optional CDC capture identifiers explicitly owned by the execution runtime when ownership is bounded to a known capture set.
+- `summary`: Optional aggregate runtime summary describing the latest reported operator-facing state for the execution runtime.
+
 #### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-acknowledgementmode"></a>
+
+##### `AcknowledgementMode`
+
+```csharp
+string AcknowledgementMode { get; }
+```
+
+Gets the operator-facing acknowledgement mode for the runtime when one was declared.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-cdccaptureids"></a>
 
@@ -8279,6 +8342,46 @@ string DisplayName { get; }
 ```
 
 Gets the operator-facing execution-runtime name.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-executiongraphid"></a>
+
+##### `ExecutionGraphId`
+
+```csharp
+string ExecutionGraphId { get; }
+```
+
+Gets the linked execution-graph identifier when the runtime is backed by a Cephalon execution graph.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-executionownership"></a>
+
+##### `ExecutionOwnership`
+
+```csharp
+string ExecutionOwnership { get; }
+```
+
+Gets the operator-facing execution-ownership mode for the runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-executiontopology"></a>
+
+##### `ExecutionTopology`
+
+```csharp
+string ExecutionTopology { get; }
+```
+
+Gets the operator-facing execution-topology classification for the runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-hostedexecutionid"></a>
+
+##### `HostedExecutionId`
+
+```csharp
+string HostedExecutionId { get; }
+```
+
+Gets the linked hosted-execution identifier when the runtime is backed by a Cephalon hosted execution.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-id"></a>
 
@@ -12409,6 +12512,21 @@ Gets all CDC capture surfaces visible to the current runtime.
 
 #### Methods
 
+<a id="member-m-cephalon-abstractions-data-icdccapturecatalog-getbyexecutionruntimeid-system-string"></a>
+
+##### `GetByExecutionRuntimeId`
+
+```csharp
+IReadOnlyList<CdcCaptureDescriptor> GetByExecutionRuntimeId(string executionRuntimeId)
+```
+
+Gets all CDC captures currently owned by the requested execution runtime.
+
+Returns: The matching CDC captures, or an empty list when the runtime owns none.
+
+Parameters:
+- `executionRuntimeId`: The execution-runtime identifier to filter by.
+
 <a id="member-m-cephalon-abstractions-data-icdccapturecatalog-getbyid-system-string"></a>
 
 ##### `GetById`
@@ -12615,6 +12733,21 @@ IReadOnlyList<CdcCaptureRuntimeState> States { get; }
 Gets the CDC runtime-state entries visible to the current runtime.
 
 #### Methods
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbyexecutionruntimeid-system-string"></a>
+
+##### `GetByExecutionRuntimeId`
+
+```csharp
+IReadOnlyList<CdcCaptureRuntimeState> GetByExecutionRuntimeId(string executionRuntimeId)
+```
+
+Gets the CDC runtime-state entries currently owned by the requested execution runtime.
+
+Returns: The matching runtime states, or an empty list when the runtime owns none.
+
+Parameters:
+- `executionRuntimeId`: The execution-runtime identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbyid-system-string"></a>
 

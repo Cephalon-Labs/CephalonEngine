@@ -29,6 +29,7 @@ using Cephalon.AspNetCore.GraphQL.Hosting;
 using Cephalon.AspNetCore.Grpc.Contracts.Discovery;
 using Cephalon.AspNetCore.Grpc.Hosting;
 using Cephalon.AspNetCore.JsonRpc.Hosting;
+using Cephalon.Data.Configuration;
 using Cephalon.Data.Registration;
 using Cephalon.Data.Services;
 using Cephalon.Edge.Registration;
@@ -3360,9 +3361,15 @@ note: visible
         var runtimeDescriptor = Assert.Single(cdcCaptureRuntimes);
         Assert.Equal("data-cdc-capture-pump", runtimeDescriptor.Id);
         Assert.Contains("tenant-profile-cdc", runtimeDescriptor.CdcCaptureIds);
-        Assert.Equal("shared-in-process-polling", runtimeDescriptor.Metadata["executionTopology"]);
+        Assert.Equal("host-managed", runtimeDescriptor.ExecutionOwnership);
+        Assert.Equal("shared-in-process-polling", runtimeDescriptor.ExecutionTopology);
+        Assert.Equal("post-stage-provider", runtimeDescriptor.AcknowledgementMode);
+        Assert.Equal("data-cdc-capture-pump", runtimeDescriptor.HostedExecutionId);
+        Assert.Equal("data-cdc-capture-flow", runtimeDescriptor.ExecutionGraphId);
         Assert.NotNull(cdcCaptureRuntime);
         Assert.Equal("data-cdc-capture-pump", cdcCaptureRuntime.Id);
+        Assert.Equal("host-managed", cdcCaptureRuntime.ExecutionOwnership);
+        Assert.Equal("shared-in-process-polling", cdcCaptureRuntime.ExecutionTopology);
         Assert.True(cdcCaptureRuntime.Summary.HasReports);
         Assert.Equal("tenant-profile-cdc", cdcCaptureRuntime.Summary.LastCdcCaptureId);
         Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, cdcCaptureRuntime.Summary.LastOutcome);
@@ -3371,10 +3378,12 @@ note: visible
         var cdcCapture = Assert.Single(cdcCapturesByRuntime!);
         Assert.Equal("tenant-profile-cdc", cdcCapture.Id);
         Assert.Equal("data-cdc-capture-pump", cdcCapture.ExecutionBinding.EffectiveExecutionRuntimeId);
+        Assert.Equal("shared-in-process-polling", cdcCapture.ExecutionBinding.ExecutionTopology);
         Assert.Equal("default-shared-runtime", cdcCapture.ExecutionBinding.ResolutionMode);
         var cdcCaptureStateByRuntime = Assert.Single(cdcCaptureStatesByRuntime!);
         Assert.Equal("tenant-profile-cdc", cdcCaptureStateByRuntime.CdcCaptureId);
         Assert.Equal("data-cdc-capture-pump", cdcCaptureStateByRuntime.ExecutionBinding.EffectiveExecutionRuntimeId);
+        Assert.Equal("shared-in-process-polling", cdcCaptureStateByRuntime.ExecutionBinding.ExecutionTopology);
 
         Assert.NotNull(story);
         var storyHostedExecution = Assert.Single(story.HostedExecutions, item => item.HostedExecutionId == "data-cdc-capture-pump");
@@ -3400,6 +3409,99 @@ note: visible
         Assert.Contains(snapshot.OperationalStory.HostedExecutions, item => item.HostedExecutionId == "data-cdc-capture-pump" && item.IsActive);
         Assert.Contains(snapshot.CdcCaptureStates, item => item.CdcCaptureId == "tenant-profile-cdc" && item.LastProducedMessageCount == 1);
         Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == "data-cdc-capture-pump" && item.Summary.TotalProducedMessageCount == 1);
+    }
+
+    [Fact]
+    public async Task MapCephalonExposesConfiguredProviderNativeCdcExecutionRuntimeSurfaces()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularVerticalSlice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Patterns:0"] = "CQRS";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new Phase8CatalogModule());
+            cephalon.AddData(options =>
+            {
+                var runtime = new CdcCaptureExecutionRuntimeOptions
+                {
+                    Id = "external-cdc-runtime",
+                    DisplayName = "Configured External CDC Runtime",
+                    Description = "Represents a provider-native CDC runner declared by the host.",
+                    ExecutionOwnership = "external-managed",
+                    ExecutionTopology = "provider-native",
+                    AcknowledgementMode = "provider-native"
+                };
+                runtime.CdcCaptureIds.Add("tenant-profile-cdc");
+                options.CdcExecutionRuntimes.Add(runtime);
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+
+        var client = app.GetTestClient();
+        var cdcCaptureRuntimes = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes");
+        var cdcCaptureRuntime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>("/engine/cdc-capture-runtimes/external-cdc-runtime");
+        var cdcCapturesByRuntime = await client.GetFromJsonAsync<CdcCaptureDescriptor[]>("/engine/cdc-captures/execution-runtimes/external-cdc-runtime");
+        var cdcCaptureStatesByRuntime = await client.GetFromJsonAsync<CdcCaptureRuntimeState[]>("/engine/cdc-captures/runtime/execution-runtimes/external-cdc-runtime");
+        var cdcCapture = await client.GetFromJsonAsync<CdcCaptureDescriptor>("/engine/cdc-captures/tenant-profile-cdc");
+        var cdcCaptureState = await client.GetFromJsonAsync<CdcCaptureRuntimeState>("/engine/cdc-captures/runtime/tenant-profile-cdc");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(cdcCaptureRuntimes);
+        var runtimeDescriptor = Assert.Single(cdcCaptureRuntimes);
+        Assert.Equal("external-cdc-runtime", runtimeDescriptor.Id);
+        Assert.Equal("external-managed", runtimeDescriptor.ExecutionOwnership);
+        Assert.Equal("provider-native", runtimeDescriptor.ExecutionTopology);
+        Assert.Equal("provider-native", runtimeDescriptor.AcknowledgementMode);
+        Assert.Equal(["tenant-profile-cdc"], runtimeDescriptor.CdcCaptureIds);
+        Assert.False(runtimeDescriptor.Summary.HasReports);
+
+        Assert.NotNull(cdcCaptureRuntime);
+        Assert.Equal("external-cdc-runtime", cdcCaptureRuntime.Id);
+        Assert.Equal("external-managed", cdcCaptureRuntime.ExecutionOwnership);
+        Assert.Equal("provider-native", cdcCaptureRuntime.ExecutionTopology);
+        Assert.Equal("provider-native", cdcCaptureRuntime.AcknowledgementMode);
+        Assert.Equal(["tenant-profile-cdc"], cdcCaptureRuntime.CdcCaptureIds);
+        Assert.False(cdcCaptureRuntime.Summary.HasReports);
+
+        var captureByRuntime = Assert.Single(cdcCapturesByRuntime!);
+        Assert.Equal("tenant-profile-cdc", captureByRuntime.Id);
+        Assert.Equal("external-cdc-runtime", captureByRuntime.ExecutionBinding.EffectiveExecutionRuntimeId);
+        Assert.Equal("external-managed", captureByRuntime.ExecutionBinding.ExecutionOwnership);
+        Assert.Equal("provider-native", captureByRuntime.ExecutionBinding.ExecutionTopology);
+        Assert.Equal("runtime-claim", captureByRuntime.ExecutionBinding.ResolutionMode);
+
+        var captureStateByRuntime = Assert.Single(cdcCaptureStatesByRuntime!);
+        Assert.Equal("tenant-profile-cdc", captureStateByRuntime.CdcCaptureId);
+        Assert.Equal("external-cdc-runtime", captureStateByRuntime.ExecutionBinding.EffectiveExecutionRuntimeId);
+        Assert.Equal("provider-native", captureStateByRuntime.ExecutionBinding.ExecutionTopology);
+        Assert.False(captureStateByRuntime.HasReports);
+
+        Assert.NotNull(cdcCapture);
+        Assert.Equal("external-cdc-runtime", cdcCapture.ExecutionBinding.EffectiveExecutionRuntimeId);
+        Assert.Equal("provider-native", cdcCapture.ExecutionBinding.ExecutionTopology);
+
+        Assert.NotNull(cdcCaptureState);
+        Assert.Equal("external-cdc-runtime", cdcCaptureState.ExecutionBinding.EffectiveExecutionRuntimeId);
+        Assert.Equal("provider-native", cdcCaptureState.ExecutionBinding.ExecutionTopology);
+        Assert.False(cdcCaptureState.HasReports);
+
+        Assert.NotNull(snapshot);
+        Assert.Contains(snapshot.CdcCaptures, item => item.Id == "tenant-profile-cdc" &&
+            item.ExecutionBinding.EffectiveExecutionRuntimeId == "external-cdc-runtime" &&
+            item.ExecutionBinding.ExecutionTopology == "provider-native");
+        Assert.Contains(snapshot.CdcCaptureStates, item => item.CdcCaptureId == "tenant-profile-cdc" &&
+            item.ExecutionBinding.EffectiveExecutionRuntimeId == "external-cdc-runtime" &&
+            item.ExecutionBinding.ExecutionTopology == "provider-native");
+        Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == "external-cdc-runtime" &&
+            item.ExecutionOwnership == "external-managed" &&
+            item.ExecutionTopology == "provider-native");
     }
 
     [Fact]

@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-21T05:02:57.2784053+00:00",
+  "GeneratedAtUtc": "2026-04-21T07:17:39.504873+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -175,7 +175,7 @@
       "Description": "Runtime-neutral data dispatching services for Cephalon workloads.",
       "FileName": "cephalon-data.md",
       "NamespaceCount": 3,
-      "TypeCount": 7
+      "TypeCount": 8
     },
     {
       "AssemblyName": "Cephalon.Data.EntityFramework",
@@ -870,7 +870,7 @@
       "AssemblyName": "Cephalon.Data",
       "FileName": "cephalon-data.md",
       "AnchorId": "namespace-cephalon-data-configuration",
-      "TypeCount": 1
+      "TypeCount": 2
     },
     {
       "NamespaceName": "Cephalon.Data.EntityFramework.Configuration",
@@ -3112,9 +3112,9 @@
       "Declaration": "public sealed class CdcCaptureExecutionBindingDescriptor",
       "Summary": "Describes how a CDC capture binds to an operator-facing execution runtime.",
       "MemberCounts": {
-        "Constructors": 1,
+        "Constructors": 2,
         "Fields": 0,
-        "Properties": 8,
+        "Properties": 9,
         "Methods": 1
       }
     },
@@ -3157,9 +3157,24 @@
       "Declaration": "public sealed class CdcCaptureExecutionRuntimeDescriptor",
       "Summary": "Describes one operator-facing CDC capture execution runtime visible to the current Cephalon runtime.",
       "MemberCounts": {
+        "Constructors": 2,
+        "Fields": 0,
+        "Properties": 11,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeOptions",
+      "NamespaceName": "Cephalon.Data.Configuration",
+      "AssemblyName": "Cephalon.Data",
+      "FileName": "cephalon-data.md",
+      "AnchorId": "type-cephalon-data-configuration-cdccaptureexecutionruntimeoptions",
+      "Declaration": "public sealed class CdcCaptureExecutionRuntimeOptions",
+      "Summary": "Configures one host-owned CDC execution runtime declaration for the runtime-neutral data pack.",
+      "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 6,
+        "Properties": 10,
         "Methods": 0
       }
     },
@@ -4029,7 +4044,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 4,
+        "Properties": 5,
         "Methods": 0
       }
     },
@@ -6130,7 +6145,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 6
+        "Methods": 7
       }
     },
     {
@@ -6235,7 +6250,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 6
+        "Methods": 7
       }
     },
     {
@@ -11832,6 +11847,28 @@
       "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureacknowledger-acknowledgeasync-cephalon-abstractions-data-cdccaptureexecutionacknowledgement-system-threading-cancellationtoken",
       "Signature": "ValueTask AcknowledgeAsync(CdcCaptureExecutionAcknowledgement acknowledgement, CancellationToken cancellationToken)",
       "Summary": "Commits or acknowledges provider-facing progress for one staged CDC batch."
+    },
+    {
+      "DisplayName": "AcknowledgementMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-acknowledgementmode",
+      "Signature": "string AcknowledgementMode { get; }",
+      "Summary": "Gets the operator-facing acknowledgement mode for the runtime when one was declared."
+    },
+    {
+      "DisplayName": "AcknowledgementMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeOptions",
+      "NamespaceName": "Cephalon.Data.Configuration",
+      "AssemblyName": "Cephalon.Data",
+      "FileName": "cephalon-data.md",
+      "AnchorId": "member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-acknowledgementmode",
+      "Signature": "string AcknowledgementMode { get; set; }",
+      "Summary": "Gets or sets the operator-facing acknowledgement mode when the runtime reports one."
     },
     {
       "DisplayName": "AclToken",
@@ -17840,6 +17877,17 @@
       "Summary": "Creates a new CDC capture execution binding descriptor."
     },
     {
+      "DisplayName": "CdcCaptureExecutionBindingDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CdcCaptureExecutionBindingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "CdcCaptureExecutionBindingDescriptor(string cdcCaptureId, string authoredExecutionRuntimeId, string requestedExecutionRuntimeId, string effectiveExecutionRuntimeId, string executionOwnership, string executionTopology, string resolutionMode, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a new CDC capture execution binding descriptor with a first-class topology classification."
+    },
+    {
       "DisplayName": "CdcCaptureExecutionReport",
       "Category": "Constructors",
       "DeclaringTypeName": "CdcCaptureExecutionReport",
@@ -17871,6 +17919,28 @@
       "AnchorId": "member-m-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-abstractions-data-cdccaptureexecutionruntimesummary",
       "Signature": "CdcCaptureExecutionRuntimeDescriptor(string id, string displayName, string description, IReadOnlyDictionary\u003Cstring, string\u003E metadata, IReadOnlyList\u003Cstring\u003E cdcCaptureIds, CdcCaptureExecutionRuntimeSummary summary)",
       "Summary": "Creates a new CDC capture execution runtime descriptor."
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-abstractions-data-cdccaptureexecutionruntimesummary",
+      "Signature": "CdcCaptureExecutionRuntimeDescriptor(string id, string displayName, string description, string executionOwnership, string executionTopology, string acknowledgementMode, string hostedExecutionId, string executionGraphId, IReadOnlyDictionary\u003Cstring, string\u003E metadata, IReadOnlyList\u003Cstring\u003E cdcCaptureIds, CdcCaptureExecutionRuntimeSummary summary)",
+      "Summary": "Creates a new CDC capture execution runtime descriptor with first-class ownership and topology semantics."
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeOptions",
+      "NamespaceName": "Cephalon.Data.Configuration",
+      "AssemblyName": "Cephalon.Data",
+      "FileName": "cephalon-data.md",
+      "AnchorId": "member-m-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-ctor",
+      "Signature": "CdcCaptureExecutionRuntimeOptions()",
+      "Summary": "Creates CDC execution runtime options with empty identity fields and a declared-runtime topology."
     },
     {
       "DisplayName": "CdcCaptureExecutionRuntimes",
@@ -17972,6 +18042,17 @@
       "Summary": "Gets the CDC capture identifiers explicitly owned by the execution runtime."
     },
     {
+      "DisplayName": "CdcCaptureIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeOptions",
+      "NamespaceName": "Cephalon.Data.Configuration",
+      "AssemblyName": "Cephalon.Data",
+      "FileName": "cephalon-data.md",
+      "AnchorId": "member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-cdccaptureids",
+      "Signature": "IList\u003Cstring\u003E CdcCaptureIds { get; }",
+      "Summary": "Gets the CDC capture identifiers explicitly owned by the runtime when ownership is bounded to a known capture set."
+    },
+    {
       "DisplayName": "CdcCaptureLagStatus",
       "Category": "Constructors",
       "DeclaringTypeName": "CdcCaptureLagStatus",
@@ -18036,6 +18117,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-cdccapturestates",
       "Signature": "IReadOnlyList\u003CCdcCaptureRuntimeState\u003E CdcCaptureStates { get; set; }",
       "Summary": "Gets the CDC runtime-state entries visible to the runtime at the time the snapshot was created."
+    },
+    {
+      "DisplayName": "CdcExecutionRuntimes",
+      "Category": "Properties",
+      "DeclaringTypeName": "DataRuntimeOptions",
+      "NamespaceName": "Cephalon.Data.Configuration",
+      "AssemblyName": "Cephalon.Data",
+      "FileName": "cephalon-data.md",
+      "AnchorId": "member-p-cephalon-data-configuration-dataruntimeoptions-cdcexecutionruntimes",
+      "Signature": "IList\u003CCdcCaptureExecutionRuntimeOptions\u003E CdcExecutionRuntimes { get; }",
+      "Summary": "Gets the host-defined CDC execution runtimes that should be available to the active data runtime."
     },
     {
       "DisplayName": "CdcPollingIntervalSeconds",
@@ -22132,6 +22224,17 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeOptions",
+      "NamespaceName": "Cephalon.Data.Configuration",
+      "AssemblyName": "Cephalon.Data",
+      "FileName": "cephalon-data.md",
+      "AnchorId": "member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-description",
+      "Signature": "string Description { get; set; }",
+      "Summary": "Gets or sets the human-readable execution-runtime description."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureFreshnessStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -23316,6 +23419,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-displayname",
       "Signature": "string DisplayName { get; }",
       "Summary": "Gets the operator-facing execution-runtime name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeOptions",
+      "NamespaceName": "Cephalon.Data.Configuration",
+      "AssemblyName": "Cephalon.Data",
+      "FileName": "cephalon-data.md",
+      "AnchorId": "member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "Gets or sets the operator-facing execution-runtime name."
     },
     {
       "DisplayName": "DisplayName",
@@ -26818,6 +26932,28 @@
     {
       "DisplayName": "ExecutionGraphId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-executiongraphid",
+      "Signature": "string ExecutionGraphId { get; }",
+      "Summary": "Gets the linked execution-graph identifier when the runtime is backed by a Cephalon execution graph."
+    },
+    {
+      "DisplayName": "ExecutionGraphId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeOptions",
+      "NamespaceName": "Cephalon.Data.Configuration",
+      "AssemblyName": "Cephalon.Data",
+      "FileName": "cephalon-data.md",
+      "AnchorId": "member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-executiongraphid",
+      "Signature": "string ExecutionGraphId { get; set; }",
+      "Summary": "Gets or sets the execution-graph identifier when the runtime maps to a Cephalon execution graph."
+    },
+    {
+      "DisplayName": "ExecutionGraphId",
+      "Category": "Properties",
       "DeclaringTypeName": "HostedExecutionDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -26979,6 +27115,61 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-executionownership",
       "Signature": "string ExecutionOwnership { get; }",
       "Summary": "Gets the operator-facing ownership mode for the effective execution runtime."
+    },
+    {
+      "DisplayName": "ExecutionOwnership",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-executionownership",
+      "Signature": "string ExecutionOwnership { get; }",
+      "Summary": "Gets the operator-facing execution-ownership mode for the runtime."
+    },
+    {
+      "DisplayName": "ExecutionOwnership",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeOptions",
+      "NamespaceName": "Cephalon.Data.Configuration",
+      "AssemblyName": "Cephalon.Data",
+      "FileName": "cephalon-data.md",
+      "AnchorId": "member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-executionownership",
+      "Signature": "string ExecutionOwnership { get; set; }",
+      "Summary": "Gets or sets the operator-facing ownership mode for the runtime."
+    },
+    {
+      "DisplayName": "ExecutionTopology",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionBindingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-executiontopology",
+      "Signature": "string ExecutionTopology { get; }",
+      "Summary": "Gets the operator-facing topology classification for the effective execution runtime."
+    },
+    {
+      "DisplayName": "ExecutionTopology",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-executiontopology",
+      "Signature": "string ExecutionTopology { get; }",
+      "Summary": "Gets the operator-facing execution-topology classification for the runtime."
+    },
+    {
+      "DisplayName": "ExecutionTopology",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeOptions",
+      "NamespaceName": "Cephalon.Data.Configuration",
+      "AssemblyName": "Cephalon.Data",
+      "FileName": "cephalon-data.md",
+      "AnchorId": "member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-executiontopology",
+      "Signature": "string ExecutionTopology { get; set; }",
+      "Summary": "Gets or sets the operator-facing topology classification for the runtime."
     },
     {
       "DisplayName": "ExitAfterApply",
@@ -29135,6 +29326,28 @@
       "AnchorId": "member-m-cephalon-abstractions-execution-ihostedexecutionruntimecatalog-getbyexecutiongraph-system-string",
       "Signature": "IReadOnlyList\u003CHostedExecutionDescriptor\u003E GetByExecutionGraph(string executionGraphId)",
       "Summary": "Gets all hosted executions linked to one execution graph."
+    },
+    {
+      "DisplayName": "GetByExecutionRuntimeId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccapturecatalog-getbyexecutionruntimeid-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureDescriptor\u003E GetByExecutionRuntimeId(string executionRuntimeId)",
+      "Summary": "Gets all CDC captures currently owned by the requested execution runtime."
+    },
+    {
+      "DisplayName": "GetByExecutionRuntimeId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureRuntimeStateCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbyexecutionruntimeid-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureRuntimeState\u003E GetByExecutionRuntimeId(string executionRuntimeId)",
+      "Summary": "Gets the CDC runtime-state entries currently owned by the requested execution runtime."
     },
     {
       "DisplayName": "GetByHealthIsolationId",
@@ -32351,6 +32564,28 @@
     {
       "DisplayName": "HostedExecutionId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-hostedexecutionid",
+      "Signature": "string HostedExecutionId { get; }",
+      "Summary": "Gets the linked hosted-execution identifier when the runtime is backed by a Cephalon hosted execution."
+    },
+    {
+      "DisplayName": "HostedExecutionId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeOptions",
+      "NamespaceName": "Cephalon.Data.Configuration",
+      "AssemblyName": "Cephalon.Data",
+      "FileName": "cephalon-data.md",
+      "AnchorId": "member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-hostedexecutionid",
+      "Signature": "string HostedExecutionId { get; set; }",
+      "Summary": "Gets or sets the hosted-execution identifier when the runtime maps to a Cephalon hosted execution."
+    },
+    {
+      "DisplayName": "HostedExecutionId",
+      "Category": "Properties",
       "DeclaringTypeName": "RuntimeHostedExecutionState",
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
@@ -32908,6 +33143,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable execution-runtime identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeOptions",
+      "NamespaceName": "Cephalon.Data.Configuration",
+      "AssemblyName": "Cephalon.Data",
+      "FileName": "cephalon-data.md",
+      "AnchorId": "member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-id",
+      "Signature": "string Id { get; set; }",
+      "Summary": "Gets or sets the stable execution-runtime identifier."
     },
     {
       "DisplayName": "Id",
@@ -37561,6 +37807,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
       "Summary": "Gets operator-facing metadata for the execution runtime."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeOptions",
+      "NamespaceName": "Cephalon.Data.Configuration",
+      "AssemblyName": "Cephalon.Data",
+      "FileName": "cephalon-data.md",
+      "AnchorId": "member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-metadata",
+      "Signature": "IDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets arbitrary operator-facing metadata that should flow through the runtime declaration."
     },
     {
       "DisplayName": "Metadata",

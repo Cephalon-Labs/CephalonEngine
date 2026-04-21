@@ -12,6 +12,7 @@ internal sealed class CdcCaptureExecutionBoundCatalog : ICdcCaptureCatalog
     private readonly Dictionary<string, IReadOnlyList<CdcCaptureDescriptor>> cdcCapturesByProvider;
     private readonly Dictionary<string, IReadOnlyList<CdcCaptureDescriptor>> cdcCapturesByOutboxId;
     private readonly Dictionary<string, IReadOnlyList<CdcCaptureDescriptor>> cdcCapturesBySourceId;
+    private readonly Dictionary<string, IReadOnlyList<CdcCaptureDescriptor>> cdcCapturesByExecutionRuntimeId;
     private readonly Dictionary<string, IReadOnlyList<CdcCaptureDescriptor>> cdcCapturesByResourceId;
 
     public CdcCaptureExecutionBoundCatalog(
@@ -53,6 +54,17 @@ internal sealed class CdcCaptureExecutionBoundCatalog : ICdcCaptureCatalog
             .ToDictionary(
                 static group => group.Key,
                 static group => (IReadOnlyList<CdcCaptureDescriptor>)group.ToArray(),
+                StringComparer.OrdinalIgnoreCase);
+        cdcCapturesByExecutionRuntimeId = this.cdcCaptures
+            .Where(static cdcCapture => !string.IsNullOrWhiteSpace(cdcCapture.ExecutionBinding.EffectiveExecutionRuntimeId))
+            .GroupBy(static cdcCapture => cdcCapture.ExecutionBinding.EffectiveExecutionRuntimeId!, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(
+                static group => group.Key,
+                static group => (IReadOnlyList<CdcCaptureDescriptor>)group
+                    .OrderBy(static cdcCapture => cdcCapture.SourceModuleId, StringComparer.OrdinalIgnoreCase)
+                    .ThenBy(static cdcCapture => cdcCapture.Provider, StringComparer.OrdinalIgnoreCase)
+                    .ThenBy(static cdcCapture => cdcCapture.Id, StringComparer.OrdinalIgnoreCase)
+                    .ToArray(),
                 StringComparer.OrdinalIgnoreCase);
         cdcCapturesByResourceId = this.cdcCaptures
             .SelectMany(static cdcCapture => cdcCapture.ResourceIds.Select(resourceId => new KeyValuePair<string, CdcCaptureDescriptor>(resourceId, cdcCapture)))
@@ -121,6 +133,18 @@ internal sealed class CdcCaptureExecutionBoundCatalog : ICdcCaptureCatalog
         }
 
         return cdcCapturesBySourceId.TryGetValue(sourceId.Trim(), out var matches)
+            ? matches
+            : [];
+    }
+
+    public IReadOnlyList<CdcCaptureDescriptor> GetByExecutionRuntimeId(string executionRuntimeId)
+    {
+        if (string.IsNullOrWhiteSpace(executionRuntimeId))
+        {
+            return [];
+        }
+
+        return cdcCapturesByExecutionRuntimeId.TryGetValue(executionRuntimeId.Trim(), out var matches)
             ? matches
             : [];
     }
@@ -240,27 +264,19 @@ internal sealed class CdcCaptureExecutionBoundCatalog : ICdcCaptureCatalog
         CdcCaptureExecutionRuntimeDescriptor runtime,
         string resolutionMode)
     {
-        var executionOwnership = runtime.Metadata.TryGetValue("executionOwnership", out var ownership) &&
-            !string.IsNullOrWhiteSpace(ownership)
-            ? ownership.Trim()
-            : "runtime-managed";
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
-            ["executionRuntimeDisplayName"] = runtime.DisplayName
+            ["executionRuntimeDisplayName"] = runtime.DisplayName,
+            ["executionTopology"] = runtime.ExecutionTopology
         };
-
-        if (runtime.Metadata.TryGetValue("executionTopology", out var topology) &&
-            !string.IsNullOrWhiteSpace(topology))
-        {
-            metadata["executionTopology"] = topology.Trim();
-        }
 
         return new CdcCaptureExecutionBindingDescriptor(
             cdcCaptureId: cdcCaptureId,
             authoredExecutionRuntimeId: authoredRuntimeId,
             requestedExecutionRuntimeId: requestedRuntimeId,
             effectiveExecutionRuntimeId: runtime.Id,
-            executionOwnership: executionOwnership,
+            executionOwnership: runtime.ExecutionOwnership,
+            executionTopology: runtime.ExecutionTopology,
             resolutionMode: resolutionMode,
             metadata: metadata);
     }

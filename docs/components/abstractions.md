@@ -175,15 +175,20 @@ execution into an ASP.NET Core-only or provider-specific registry.
 
 `CdcCaptureExecutionBindingDescriptor` now keeps the inverse per-capture ownership answer
 host-agnostic too, so CDC descriptor and runtime-state surfaces can both report authored, requested,
-and effective execution-runtime ids plus the resolved ownership mode without forcing packs or hosts
-to infer capture ownership only from runtime-side membership lists or metadata.
+and effective execution-runtime ids plus the resolved ownership mode and topology without forcing
+packs or hosts to infer capture ownership only from runtime-side membership lists or metadata.
+`ICdcCaptureCatalog` and `ICdcCaptureRuntimeStateCatalog` now also expose inverse
+`GetByExecutionRuntimeId(...)` lookups directly, so hosts and higher-level runtime catalogs can
+reuse one capture-first ownership truth instead of re-filtering runtime memberships ad hoc.
 
 `CdcCaptureExecutionRuntimeDescriptor`, `CdcCaptureExecutionRuntimeSummary`, and
 `ICdcCaptureExecutionRuntimeCatalog` then keep the execution-topology layer host-agnostic too, so
 shared or provider-specific CDC runners can publish one operator-facing runtime answer with stable
-ownership metadata, bounded linked capture ids, aggregate latest-plus-total posture, and replay-safe
-acknowledgement visibility without inventing a second host-only runner inventory beside the
-per-capture descriptor and runtime-state catalogs.
+ownership metadata, first-class `executionOwnership`, `executionTopology`,
+`acknowledgementMode`, `hostedExecutionId`, and `executionGraphId` fields, bounded linked capture
+ids, aggregate latest-plus-total posture, and replay-safe acknowledgement visibility without
+inventing a second host-only runner inventory beside the per-capture descriptor and runtime-state
+catalogs.
 
 The app-model contract now also carries a contract-first resilience family through
 `ResilienceSelection`, `RetrySelection`, `TimeoutSelection`, `CircuitBreakerSelection`,

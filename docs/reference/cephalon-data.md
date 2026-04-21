@@ -13,6 +13,133 @@ Generated from XML comments and the public API surface of the compiled assembly.
 
 ## Namespace Cephalon.Data.Configuration
 
+<a id="type-cephalon-data-configuration-cdccaptureexecutionruntimeoptions"></a>
+
+### `CdcCaptureExecutionRuntimeOptions`
+
+Configures one host-owned CDC execution runtime declaration for the runtime-neutral data pack.
+
+Remarks: These options seed additional operator-facing execution-runtime surfaces. Installed modules and companion packs can still contribute runtimes through `ICdcCaptureExecutionRuntimeContributor`.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeOptions
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-ctor"></a>
+
+##### `CdcCaptureExecutionRuntimeOptions`
+
+```csharp
+CdcCaptureExecutionRuntimeOptions()
+```
+
+Creates CDC execution runtime options with empty identity fields and a declared-runtime topology.
+
+#### Properties
+
+<a id="member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-acknowledgementmode"></a>
+
+##### `AcknowledgementMode`
+
+```csharp
+string AcknowledgementMode { get; set; }
+```
+
+Gets or sets the operator-facing acknowledgement mode when the runtime reports one.
+
+<a id="member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-cdccaptureids"></a>
+
+##### `CdcCaptureIds`
+
+```csharp
+IList<string> CdcCaptureIds { get; }
+```
+
+Gets the CDC capture identifiers explicitly owned by the runtime when ownership is bounded to a known capture set.
+
+<a id="member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; set; }
+```
+
+Gets or sets the human-readable execution-runtime description.
+
+<a id="member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; set; }
+```
+
+Gets or sets the operator-facing execution-runtime name.
+
+<a id="member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-executiongraphid"></a>
+
+##### `ExecutionGraphId`
+
+```csharp
+string ExecutionGraphId { get; set; }
+```
+
+Gets or sets the execution-graph identifier when the runtime maps to a Cephalon execution graph.
+
+<a id="member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-executionownership"></a>
+
+##### `ExecutionOwnership`
+
+```csharp
+string ExecutionOwnership { get; set; }
+```
+
+Gets or sets the operator-facing ownership mode for the runtime.
+
+<a id="member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-executiontopology"></a>
+
+##### `ExecutionTopology`
+
+```csharp
+string ExecutionTopology { get; set; }
+```
+
+Gets or sets the operator-facing topology classification for the runtime.
+
+<a id="member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-hostedexecutionid"></a>
+
+##### `HostedExecutionId`
+
+```csharp
+string HostedExecutionId { get; set; }
+```
+
+Gets or sets the hosted-execution identifier when the runtime maps to a Cephalon hosted execution.
+
+<a id="member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; set; }
+```
+
+Gets or sets the stable execution-runtime identifier.
+
+<a id="member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IDictionary<string, string> Metadata { get; }
+```
+
+Gets arbitrary operator-facing metadata that should flow through the runtime declaration.
+
 <a id="type-cephalon-data-configuration-dataruntimeoptions"></a>
 
 ### `DataRuntimeOptions`
@@ -37,6 +164,16 @@ DataRuntimeOptions()
 Initializes a new instance of the `DataRuntimeOptions` class.
 
 #### Properties
+
+<a id="member-p-cephalon-data-configuration-dataruntimeoptions-cdcexecutionruntimes"></a>
+
+##### `CdcExecutionRuntimes`
+
+```csharp
+IList<CdcCaptureExecutionRuntimeOptions> CdcExecutionRuntimes { get; }
+```
+
+Gets the host-defined CDC execution runtimes that should be available to the active data runtime.
 
 <a id="member-p-cephalon-data-configuration-dataruntimeoptions-cdcpollingintervalseconds"></a>
 

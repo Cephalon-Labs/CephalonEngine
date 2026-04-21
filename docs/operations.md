@@ -1238,7 +1238,7 @@ Current payload highlights:
 
 - each CDC capture carries a stable `id`, `displayName`, `description`, `sourceModuleId`, `provider`, `sourceId`, `outboxId`, `mode`, and `eventFormat`
 - `resourceIds`, `tags`, and free-form `metadata` let a module publish the table, collection, or resource scope plus operator-facing capture hints without tying the engine to one provider runtime
-- `executionBinding` now keeps authored/requested/effective execution-runtime truth on the same descriptor surface, including the resolved ownership mode and selection reason
+- `executionBinding` now keeps authored/requested/effective execution-runtime truth on the same descriptor surface, including the resolved ownership mode, execution topology, and selection reason
 - the same CDC capture catalog is also available through `/engine/snapshot` when operators want one merged runtime answer
 - drill-down routes narrow the same catalog by capture id, source module, provider, outbox, source, and resource through `/engine/cdc-captures/{cdcCaptureId}`, `/engine/cdc-captures/modules/{moduleId}`, `/engine/cdc-captures/providers/{provider}`, `/engine/cdc-captures/outboxes/{outboxId}`, `/engine/cdc-captures/sources/{sourceId}`, and `/engine/cdc-captures/resources/{resourceId}`
 - `/engine/cdc-captures/execution-runtimes/{executionRuntimeId}` now exposes the inverse view for every capture effectively owned by one execution runtime
@@ -1311,7 +1311,8 @@ derived from active data packs plus the shared CDC runtime-state surface.
 Current payload highlights:
 
 - each execution runtime carries a stable `id`, `displayName`, `description`, bounded
-  `cdcCaptureIds`, and operator-facing `metadata`
+  `cdcCaptureIds`, first-class `executionOwnership`, `executionTopology`,
+  `acknowledgementMode`, `hostedExecutionId`, `executionGraphId`, and operator-facing `metadata`
 - `summary` carries the aggregate latest-plus-total runtime answer for that execution runtime,
   including reported capture ids, latest outcome/observation time, latest checkpoint/change id,
   aggregate started/captured/idle/failed counts, total captured changes, total produced messages,
@@ -1322,6 +1323,10 @@ Current payload highlights:
   to one execution runtime by stable id
 - `/engine/cdc-captures*` and `/engine/cdc-captures/runtime*` now also carry first-class
   `executionBinding` answers, so runtime-first and capture-first ownership views stay aligned
+- host-level `AddData(... configure => configure.CdcExecutionRuntimes ...)` or other
+  `DataRuntimeOptions.CdcExecutionRuntimes` declarations can publish external-managed,
+  provider-native, edge, or other runtime answers on the same catalog without falsely implying the
+  engine hosts those runners itself
 
 Current note:
 

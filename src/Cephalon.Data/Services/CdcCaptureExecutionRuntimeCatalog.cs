@@ -44,7 +44,7 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         var captureIds = ResolveCaptureIds(runtime.Id);
         var summary = runtimeStateCatalog is null
             ? CdcCaptureExecutionRuntimeSummary.Empty
-            : CreateSummary(runtime, captureIds);
+            : CreateSummary(runtime);
         return new CdcCaptureExecutionRuntimeDescriptor(
             id: runtime.Id,
             displayName: runtime.DisplayName,
@@ -54,16 +54,11 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             summary: summary);
     }
 
-    private CdcCaptureExecutionRuntimeSummary CreateSummary(
-        CdcCaptureExecutionRuntimeDescriptor runtime,
-        IReadOnlyList<string> resolvedCaptureIds)
+    private CdcCaptureExecutionRuntimeSummary CreateSummary(CdcCaptureExecutionRuntimeDescriptor runtime)
     {
-        var matchingStates = runtimeStateCatalog!.States
-            .Where(state => RuntimeStateBelongsToRuntime(state, runtime.Id, resolvedCaptureIds))
-            .OrderBy(static state => state.CdcCaptureId, StringComparer.OrdinalIgnoreCase)
-            .ToArray();
+        var matchingStates = runtimeStateCatalog!.GetByExecutionRuntimeId(runtime.Id);
 
-        if (matchingStates.Length == 0)
+        if (matchingStates.Count == 0)
         {
             return CdcCaptureExecutionRuntimeSummary.Empty;
         }
@@ -91,29 +86,9 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             LastError: latestState.LastError);
     }
 
-    private static bool RuntimeStateBelongsToRuntime(
-        CdcCaptureRuntimeState state,
-        string executionRuntimeId,
-        IReadOnlyList<string> resolvedCaptureIds)
-    {
-        if (resolvedCaptureIds.Contains(state.CdcCaptureId, StringComparer.OrdinalIgnoreCase))
-        {
-            return true;
-        }
-
-        return string.Equals(
-            state.ExecutionBinding.EffectiveExecutionRuntimeId,
-            executionRuntimeId,
-            StringComparison.OrdinalIgnoreCase);
-    }
-
     private string[] ResolveCaptureIds(string executionRuntimeId)
     {
-        return captureCatalog.CdcCaptures
-            .Where(cdcCapture => string.Equals(
-                cdcCapture.ExecutionBinding.EffectiveExecutionRuntimeId,
-                executionRuntimeId,
-                StringComparison.OrdinalIgnoreCase))
+        return captureCatalog.GetByExecutionRuntimeId(executionRuntimeId)
             .Select(static cdcCapture => cdcCapture.Id)
             .OrderBy(static id => id, StringComparer.OrdinalIgnoreCase)
             .ToArray();

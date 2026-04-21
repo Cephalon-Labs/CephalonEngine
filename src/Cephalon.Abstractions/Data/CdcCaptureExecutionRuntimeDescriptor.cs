@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Cephalon.Abstractions.Data;
 
 /// <summary>
@@ -5,6 +7,12 @@ namespace Cephalon.Abstractions.Data;
 /// </summary>
 public sealed class CdcCaptureExecutionRuntimeDescriptor
 {
+    private const string ExecutionOwnershipMetadataKey = "executionOwnership";
+    private const string ExecutionTopologyMetadataKey = "executionTopology";
+    private const string AcknowledgementModeMetadataKey = "acknowledgementMode";
+    private const string HostedExecutionIdMetadataKey = "hostedExecutionId";
+    private const string ExecutionGraphIdMetadataKey = "executionGraphId";
+
     /// <summary>
     /// Creates a new CDC capture execution runtime descriptor.
     /// </summary>
@@ -16,6 +24,7 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     /// Optional CDC capture identifiers explicitly owned by the execution runtime when ownership is bounded to a known capture set.
     /// </param>
     /// <param name="summary">Optional aggregate runtime summary describing the latest reported operator-facing state for the execution runtime.</param>
+    [JsonConstructor]
     public CdcCaptureExecutionRuntimeDescriptor(
         string id,
         string displayName,
@@ -47,6 +56,65 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
             : new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase);
         CdcCaptureIds = Normalize(cdcCaptureIds);
         Summary = summary ?? CdcCaptureExecutionRuntimeSummary.Empty;
+        ExecutionOwnership = ResolveMetadata(Metadata, ExecutionOwnershipMetadataKey, "runtime-managed")!;
+        ExecutionTopology = ResolveMetadata(Metadata, ExecutionTopologyMetadataKey, "not-configured")!;
+        AcknowledgementMode = ResolveMetadata(Metadata, AcknowledgementModeMetadataKey);
+        HostedExecutionId = ResolveMetadata(Metadata, HostedExecutionIdMetadataKey);
+        ExecutionGraphId = ResolveMetadata(Metadata, ExecutionGraphIdMetadataKey);
+    }
+
+    /// <summary>
+    /// Creates a new CDC capture execution runtime descriptor with first-class ownership and topology semantics.
+    /// </summary>
+    /// <param name="id">The stable execution-runtime identifier.</param>
+    /// <param name="displayName">The operator-facing execution-runtime name.</param>
+    /// <param name="description">The human-readable execution-runtime description.</param>
+    /// <param name="executionOwnership">
+    /// The operator-facing execution-ownership mode, such as <c>host-managed</c> or <c>external-managed</c>.
+    /// </param>
+    /// <param name="executionTopology">
+    /// The operator-facing execution-topology classification, such as <c>shared-in-process-polling</c> or <c>provider-native</c>.
+    /// </param>
+    /// <param name="acknowledgementMode">
+    /// The operator-facing acknowledgement mode when the runtime reports one, such as <c>post-stage-provider</c>.
+    /// </param>
+    /// <param name="hostedExecutionId">
+    /// The stable hosted-execution identifier when the runtime is backed by a Cephalon hosted execution.
+    /// </param>
+    /// <param name="executionGraphId">
+    /// The stable execution-graph identifier when the runtime is backed by a Cephalon execution graph.
+    /// </param>
+    /// <param name="metadata">Optional operator-facing metadata for the execution runtime.</param>
+    /// <param name="cdcCaptureIds">
+    /// Optional CDC capture identifiers explicitly owned by the execution runtime when ownership is bounded to a known capture set.
+    /// </param>
+    /// <param name="summary">Optional aggregate runtime summary describing the latest reported operator-facing state for the execution runtime.</param>
+    public CdcCaptureExecutionRuntimeDescriptor(
+        string id,
+        string displayName,
+        string description,
+        string executionOwnership,
+        string executionTopology,
+        string? acknowledgementMode = null,
+        string? hostedExecutionId = null,
+        string? executionGraphId = null,
+        IReadOnlyDictionary<string, string>? metadata = null,
+        IReadOnlyList<string>? cdcCaptureIds = null,
+        CdcCaptureExecutionRuntimeSummary? summary = null)
+        : this(
+            id,
+            displayName,
+            description,
+            MergeMetadata(
+                metadata,
+                executionOwnership,
+                executionTopology,
+                acknowledgementMode,
+                hostedExecutionId,
+                executionGraphId),
+            cdcCaptureIds,
+            summary)
+    {
     }
 
     /// <summary>
@@ -70,6 +138,31 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     public IReadOnlyDictionary<string, string> Metadata { get; }
 
     /// <summary>
+    /// Gets the operator-facing execution-ownership mode for the runtime.
+    /// </summary>
+    public string ExecutionOwnership { get; }
+
+    /// <summary>
+    /// Gets the operator-facing execution-topology classification for the runtime.
+    /// </summary>
+    public string ExecutionTopology { get; }
+
+    /// <summary>
+    /// Gets the operator-facing acknowledgement mode for the runtime when one was declared.
+    /// </summary>
+    public string? AcknowledgementMode { get; }
+
+    /// <summary>
+    /// Gets the linked hosted-execution identifier when the runtime is backed by a Cephalon hosted execution.
+    /// </summary>
+    public string? HostedExecutionId { get; }
+
+    /// <summary>
+    /// Gets the linked execution-graph identifier when the runtime is backed by a Cephalon execution graph.
+    /// </summary>
+    public string? ExecutionGraphId { get; }
+
+    /// <summary>
     /// Gets the CDC capture identifiers explicitly owned by the execution runtime.
     /// </summary>
     public IReadOnlyList<string> CdcCaptureIds { get; }
@@ -87,5 +180,70 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .OrderBy(static value => value, StringComparer.OrdinalIgnoreCase)
             .ToArray() ?? [];
+    }
+
+    private static Dictionary<string, string> MergeMetadata(
+        IReadOnlyDictionary<string, string>? metadata,
+        string executionOwnership,
+        string executionTopology,
+        string? acknowledgementMode,
+        string? hostedExecutionId,
+        string? executionGraphId)
+    {
+        if (string.IsNullOrWhiteSpace(executionOwnership))
+        {
+            throw new ArgumentException("CDC capture execution-runtime ownership is required.", nameof(executionOwnership));
+        }
+
+        if (string.IsNullOrWhiteSpace(executionTopology))
+        {
+            throw new ArgumentException("CDC capture execution-runtime topology is required.", nameof(executionTopology));
+        }
+
+        var normalizedMetadata = metadata is null
+            ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            : new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase);
+
+        normalizedMetadata[ExecutionOwnershipMetadataKey] = executionOwnership.Trim();
+        normalizedMetadata[ExecutionTopologyMetadataKey] = executionTopology.Trim();
+
+        UpsertOptional(normalizedMetadata, AcknowledgementModeMetadataKey, acknowledgementMode);
+        UpsertOptional(normalizedMetadata, HostedExecutionIdMetadataKey, hostedExecutionId);
+        UpsertOptional(normalizedMetadata, ExecutionGraphIdMetadataKey, executionGraphId);
+
+        return normalizedMetadata;
+    }
+
+    private static string? ResolveMetadata(
+        IReadOnlyDictionary<string, string> metadata,
+        string key,
+        string? defaultValue = null)
+    {
+        if (metadata.TryGetValue(key, out var value) &&
+            !string.IsNullOrWhiteSpace(value))
+        {
+            return value.Trim();
+        }
+
+        return string.IsNullOrWhiteSpace(defaultValue)
+            ? null
+            : defaultValue.Trim();
+    }
+
+    private static void UpsertOptional(
+        Dictionary<string, string> metadata,
+        string key,
+        string? value)
+    {
+        var normalizedValue = string.IsNullOrWhiteSpace(value)
+            ? null
+            : value.Trim();
+        if (normalizedValue is null)
+        {
+            metadata.Remove(key);
+            return;
+        }
+
+        metadata[key] = normalizedValue;
     }
 }
