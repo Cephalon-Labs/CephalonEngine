@@ -164,6 +164,10 @@ public sealed class CellTrafficAutomationAspNetCoreHostingTests
         Assert.Equal("regional-traffic-materializer,regional-traffic-fallback", providerAutomation.RuntimeMetadata["providerSelection.matchingCandidateIds"]);
         Assert.Equal("100", providerAutomation.RuntimeMetadata["providerSelection.selectedPriority"]);
         Assert.Equal("regional-route-orders-to-reporting", providerAutomation.RuntimeMetadata["providerMaterialization.providerRouteId"]);
+        Assert.Equal(CellTrafficAutomationOwnershipStates.Owned, providerAutomation.RuntimeMetadata["materialization.ownershipState"]);
+        Assert.Equal(CellTrafficAutomationDependencyStates.Satisfied, providerAutomation.RuntimeMetadata["materialization.dependencyState"]);
+        Assert.Equal(CellTrafficAutomationDriftStates.InSync, providerAutomation.RuntimeMetadata["materialization.driftState"]);
+        Assert.Equal(CellTrafficAutomationLifecycleActions.Reconcile, providerAutomation.RuntimeMetadata["materialization.lifecycleActions"]);
 
         Assert.NotNull(edgeNodeAutomations);
         var edgeAutomation = Assert.Single(edgeNodeAutomations);
@@ -324,7 +328,11 @@ public sealed class CellTrafficAutomationAspNetCoreHostingTests
             var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 ["providerRouteId"] = $"regional-route-{automation.RouteId}",
-                ["providerAction"] = "reconciled"
+                ["providerAction"] = "reconciled",
+                ["ownershipState"] = CellTrafficAutomationOwnershipStates.Owned,
+                ["dependencyState"] = CellTrafficAutomationDependencyStates.Satisfied,
+                ["driftState"] = CellTrafficAutomationDriftStates.InSync,
+                ["lifecycleAction"] = CellTrafficAutomationLifecycleActions.Reconcile
             };
 
             return ValueTask.FromResult(new CellTrafficAutomationProviderMaterializationResult(

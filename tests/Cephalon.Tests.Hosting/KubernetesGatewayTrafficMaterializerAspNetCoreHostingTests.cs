@@ -96,7 +96,9 @@ public sealed class KubernetesGatewayTrafficMaterializerAspNetCoreHostingTests
             automation.ProviderMaterializationState == CellTrafficAutomationProviderMaterializationStates.Pending &&
             automation.MaterializationState == CellTrafficAutomationMaterializationStates.Pending &&
             automation.RuntimeMetadata["providerMaterialization.providerRouteId"] == "httproute/edge-system/orders-public-ingress" &&
-            automation.RuntimeMetadata["providerMaterialization.resourceState"] == "projection-only");
+            automation.RuntimeMetadata["providerMaterialization.resourceState"] == "projection-only" &&
+            automation.RuntimeMetadata["providerMaterialization.ownershipState"] == CellTrafficAutomationOwnershipStates.Requested &&
+            automation.RuntimeMetadata["providerMaterialization.lifecycleAction"] == CellTrafficAutomationLifecycleActions.Project);
         Assert.Contains(providerAutomations, automation =>
             automation.RouteId == "orders-to-admin-ingress" &&
             automation.ProviderMaterializerId == "kubernetes-gateway-materializer" &&
@@ -201,6 +203,9 @@ public sealed class KubernetesGatewayTrafficMaterializerAspNetCoreHostingTests
         Assert.Equal("true", automation.RuntimeMetadata["providerMaterialization.gatewayAcceptedCondition"]);
         Assert.Equal("true", automation.RuntimeMetadata["providerMaterialization.httpRouteResolvedRefsCondition"]);
         Assert.Equal("in-sync", automation.RuntimeMetadata["providerMaterialization.driftState"]);
+        Assert.Equal(CellTrafficAutomationOwnershipStates.Owned, automation.RuntimeMetadata["providerMaterialization.ownershipState"]);
+        Assert.Equal(CellTrafficAutomationDependencyStates.Satisfied, automation.RuntimeMetadata["providerMaterialization.dependencyState"]);
+        Assert.Equal(CellTrafficAutomationLifecycleActions.Observe, automation.RuntimeMetadata["providerMaterialization.lifecycleAction"]);
 
         Assert.NotNull(surfaces);
         var gatewaySurface = Assert.Single(
@@ -292,6 +297,8 @@ public sealed class KubernetesGatewayTrafficMaterializerAspNetCoreHostingTests
         Assert.Equal("gateway-api-status", automation.RuntimeMetadata["providerMaterialization.statusSource"]);
         Assert.Equal("created", automation.RuntimeMetadata["providerMaterialization.httpRouteWriteAction"]);
         Assert.Equal("owned", automation.RuntimeMetadata["providerMaterialization.ownershipState"]);
+        Assert.Equal(CellTrafficAutomationDependencyStates.Satisfied, automation.RuntimeMetadata["providerMaterialization.dependencyState"]);
+        Assert.Equal(CellTrafficAutomationLifecycleActions.Observe, automation.RuntimeMetadata["providerMaterialization.lifecycleAction"]);
         Assert.Equal("true", automation.RuntimeMetadata["providerMaterialization.gatewayAcceptedCondition"]);
 
         Assert.NotNull(surfaces);
@@ -321,10 +328,14 @@ public sealed class KubernetesGatewayTrafficMaterializerAspNetCoreHostingTests
             ["resourceState"] = "write-succeeded",
             ["driftState"] = "reconciling",
             ["driftReasons"] = string.Empty,
+            ["dependencyState"] = CellTrafficAutomationDependencyStates.Satisfied,
+            ["lifecycleAction"] = string.Equals(writeAction, "created", StringComparison.OrdinalIgnoreCase)
+                ? CellTrafficAutomationLifecycleActions.Create
+                : CellTrafficAutomationLifecycleActions.Replace,
             ["gatewayWriteAction"] = "none",
             ["gatewayWriteReason"] = "preprovisioned-dependency",
             ["httpRouteWriteAction"] = writeAction,
-            ["ownershipState"] = "owned",
+            ["ownershipState"] = CellTrafficAutomationOwnershipStates.Owned,
             ["httpRouteAppliedGeneration"] = "1",
             ["providerRouteId"] = "httproute/edge-system/orders-public-ingress",
             ["gatewayNamespace"] = "edge-system",
@@ -358,7 +369,9 @@ public sealed class KubernetesGatewayTrafficMaterializerAspNetCoreHostingTests
             ["httpRouteResolvedRefsCondition"] = "true",
             ["driftState"] = "in-sync",
             ["driftReasons"] = string.Empty,
-            ["ownershipState"] = "owned",
+            ["ownershipState"] = CellTrafficAutomationOwnershipStates.Owned,
+            ["dependencyState"] = CellTrafficAutomationDependencyStates.Satisfied,
+            ["lifecycleAction"] = CellTrafficAutomationLifecycleActions.Observe,
             ["managedBy"] = "edge-kubernetes-gateway",
             ["observedAutomationId"] = "orders-to-public-ingress",
             ["observedRouteId"] = "orders-to-public-ingress",

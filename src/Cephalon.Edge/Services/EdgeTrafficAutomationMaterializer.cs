@@ -33,7 +33,11 @@ internal sealed class EdgeTrafficAutomationMaterializer(IEdgeNodeCatalog catalog
         {
             ["materializedEdgeNodeIds"] = string.Join(",", automation.EdgeNodeIds),
             ["materializedEdgeNodeCount"] = automation.EdgeNodeIds.Count.ToString(System.Globalization.CultureInfo.InvariantCulture),
-            ["edgeAction"] = "reconciled"
+            ["edgeAction"] = "reconciled",
+            ["ownershipState"] = CellTrafficAutomationOwnershipStates.Owned,
+            ["dependencyState"] = CellTrafficAutomationDependencyStates.Satisfied,
+            ["driftState"] = CellTrafficAutomationDriftStates.InSync,
+            ["lifecycleAction"] = CellTrafficAutomationLifecycleActions.Reconcile
         };
 
         return ValueTask.FromResult(new CellTrafficAutomationMaterializationResult(

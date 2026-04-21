@@ -60,6 +60,10 @@ public sealed class TraefikTrafficMaterializerTests
         Assert.Equal("tlsoption/edge-security/strict-mtls", publicAutomation.RuntimeMetadata["providerMaterialization.tlsOptionsRef"]);
         Assert.Equal("configured-intent", publicAutomation.RuntimeMetadata["providerMaterialization.statusSource"]);
         Assert.Equal("projection-only", publicAutomation.RuntimeMetadata["providerMaterialization.resourceState"]);
+        Assert.Equal(CellTrafficAutomationOwnershipStates.Requested, publicAutomation.RuntimeMetadata["providerMaterialization.ownershipState"]);
+        Assert.Equal(CellTrafficAutomationDependencyStates.Unknown, publicAutomation.RuntimeMetadata["providerMaterialization.dependencyState"]);
+        Assert.Equal(CellTrafficAutomationDriftStates.Unknown, publicAutomation.RuntimeMetadata["providerMaterialization.driftState"]);
+        Assert.Equal(CellTrafficAutomationLifecycleActions.Project, publicAutomation.RuntimeMetadata["providerMaterialization.lifecycleAction"]);
 
         var cellSurface = Assert.Single(
             technologyCatalog.GetByTechnology("cell-based-architecture"),
@@ -235,7 +239,11 @@ public sealed class TraefikTrafficMaterializerTests
             var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 ["providerAction"] = "fallback-reconciled",
-                ["providerRouteId"] = $"fallback/{automation.RouteId}"
+                ["providerRouteId"] = $"fallback/{automation.RouteId}",
+                ["ownershipState"] = CellTrafficAutomationOwnershipStates.Owned,
+                ["dependencyState"] = CellTrafficAutomationDependencyStates.Satisfied,
+                ["driftState"] = CellTrafficAutomationDriftStates.InSync,
+                ["lifecycleAction"] = CellTrafficAutomationLifecycleActions.Reconcile
             };
 
             return ValueTask.FromResult(new CellTrafficAutomationProviderMaterializationResult(

@@ -28,6 +28,8 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot :
     private readonly Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>> automationsByHealthIsolationId;
     private readonly Dictionary<string, MaterializationObservation> edgeMaterializationObservationsByAutomationId = new(Comparer);
     private readonly Dictionary<string, MaterializationObservation> providerMaterializationObservationsByAutomationId = new(Comparer);
+    private const string ProviderMaterializationMetadataPrefix = "providerMaterialization.";
+    private const string EdgeMaterializationMetadataPrefix = "edgeMaterialization.";
 
     public CellTrafficAutomationRuntimeCatalogSnapshot(
         IEnumerable<CellRouteDescriptor> routes,
@@ -519,6 +521,14 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot :
             edgeMaterializerId,
             edgeMaterializationState,
             materializationSummary);
+        ApplyMaterializationLifecycleDefaults(
+            runtimeMetadata,
+            materializationMode,
+            providerMaterializationState,
+            edgeMaterializationState);
+        ApplyMaterializationLifecycleMetadata(
+            runtimeMetadata,
+            materializationMode);
 
         return new CellTrafficAutomationRuntimeDescriptor(
             id: selectionDescriptor.Id,
@@ -732,6 +742,14 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot :
             edgeMaterializerId,
             edgeMaterializationState,
             materializationSummary);
+        ApplyMaterializationLifecycleDefaults(
+            runtimeMetadata,
+            automation.MaterializationMode,
+            providerMaterializationState,
+            edgeMaterializationState);
+        ApplyMaterializationLifecycleMetadata(
+            runtimeMetadata,
+            automation.MaterializationMode);
 
         return new CellTrafficAutomationRuntimeDescriptor(
             id: automation.Id,
@@ -953,6 +971,83 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot :
         }
     }
 
+    private static void ApplyMaterializationLifecycleDefaults(
+        Dictionary<string, string> runtimeMetadata,
+        string materializationMode,
+        string? providerMaterializationState,
+        string? edgeMaterializationState)
+    {
+        if (UsesProviderMaterialization(materializationMode))
+        {
+            runtimeMetadata.TryAdd(
+                $"{ProviderMaterializationMetadataPrefix}ownershipState",
+                ResolveDefaultOwnershipState(providerMaterializationState));
+            runtimeMetadata.TryAdd(
+                $"{ProviderMaterializationMetadataPrefix}dependencyState",
+                CellTrafficAutomationDependencyStates.Unknown);
+            runtimeMetadata.TryAdd(
+                $"{ProviderMaterializationMetadataPrefix}driftState",
+                ResolveDefaultDriftState(providerMaterializationState));
+        }
+
+        if (UsesEdgeMaterialization(materializationMode))
+        {
+            runtimeMetadata.TryAdd(
+                $"{EdgeMaterializationMetadataPrefix}ownershipState",
+                ResolveDefaultOwnershipState(edgeMaterializationState));
+            runtimeMetadata.TryAdd(
+                $"{EdgeMaterializationMetadataPrefix}dependencyState",
+                CellTrafficAutomationDependencyStates.Unknown);
+            runtimeMetadata.TryAdd(
+                $"{EdgeMaterializationMetadataPrefix}driftState",
+                ResolveDefaultDriftState(edgeMaterializationState));
+        }
+    }
+
+    private static void ApplyMaterializationLifecycleMetadata(
+        Dictionary<string, string> runtimeMetadata,
+        string materializationMode)
+    {
+        var ownershipStates = GetDimensionMetadataValues(runtimeMetadata, materializationMode, "ownershipState");
+        if (ownershipStates.Count > 0)
+        {
+            runtimeMetadata["materialization.ownershipState"] = ResolveOwnershipSummary(ownershipStates);
+            runtimeMetadata["materialization.ownershipBreakdown"] = string.Join(
+                ",",
+                ownershipStates.Select(static value => $"{value.Dimension}:{value.Value}"));
+        }
+
+        var dependencyStates = GetDimensionMetadataValues(runtimeMetadata, materializationMode, "dependencyState");
+        if (dependencyStates.Count > 0)
+        {
+            runtimeMetadata["materialization.dependencyState"] = ResolveDependencySummary(dependencyStates);
+            runtimeMetadata["materialization.dependencyBreakdown"] = string.Join(
+                ",",
+                dependencyStates.Select(static value => $"{value.Dimension}:{value.Value}"));
+        }
+
+        var driftStates = GetDimensionMetadataValues(runtimeMetadata, materializationMode, "driftState");
+        if (driftStates.Count > 0)
+        {
+            runtimeMetadata["materialization.driftState"] = ResolveDriftSummary(driftStates);
+            runtimeMetadata["materialization.driftBreakdown"] = string.Join(
+                ",",
+                driftStates.Select(static value => $"{value.Dimension}:{value.Value}"));
+        }
+
+        var lifecycleActions = GetDimensionMetadataValues(runtimeMetadata, materializationMode, "lifecycleAction");
+        var distinctLifecycleActions = lifecycleActions
+            .Select(static value => value.Value)
+            .Distinct(Comparer)
+            .OrderBy(static value => value, Comparer)
+            .ToArray();
+        runtimeMetadata["materialization.lifecycleActionCount"] = distinctLifecycleActions.Length.ToString(CultureInfo.InvariantCulture);
+        runtimeMetadata["materialization.lifecycleActions"] = string.Join(",", distinctLifecycleActions);
+        runtimeMetadata["materialization.lifecycleActionBreakdown"] = string.Join(
+            ",",
+            lifecycleActions.Select(static value => $"{value.Dimension}:{value.Value}"));
+    }
+
     private static MaterializationSummary ResolveMaterializationSummary(
         string materializationMode,
         string? providerMaterializationState,
@@ -1071,6 +1166,125 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot :
         return breakdown;
     }
 
+    private static List<MaterializationDimensionValue> GetDimensionMetadataValues(
+        Dictionary<string, string> runtimeMetadata,
+        string materializationMode,
+        string metadataKey)
+    {
+        var values = new List<MaterializationDimensionValue>(capacity: 2);
+        if (UsesProviderMaterialization(materializationMode) &&
+            runtimeMetadata.TryGetValue($"{ProviderMaterializationMetadataPrefix}{metadataKey}", out var providerValue) &&
+            !string.IsNullOrWhiteSpace(providerValue))
+        {
+            values.Add(new MaterializationDimensionValue("provider", NormalizeMetadataValue(providerValue)));
+        }
+
+        if (UsesEdgeMaterialization(materializationMode) &&
+            runtimeMetadata.TryGetValue($"{EdgeMaterializationMetadataPrefix}{metadataKey}", out var edgeValue) &&
+            !string.IsNullOrWhiteSpace(edgeValue))
+        {
+            values.Add(new MaterializationDimensionValue("edge", NormalizeMetadataValue(edgeValue)));
+        }
+
+        return values;
+    }
+
+    private static string ResolveDefaultOwnershipState(string? materializationState)
+    {
+        if (Comparer.Equals(materializationState, CellTrafficAutomationMaterializationStates.Applied))
+        {
+            return CellTrafficAutomationOwnershipStates.Owned;
+        }
+
+        return Comparer.Equals(materializationState, CellTrafficAutomationMaterializationStates.Failed)
+            ? CellTrafficAutomationOwnershipStates.Unknown
+            : CellTrafficAutomationOwnershipStates.Requested;
+    }
+
+    private static string ResolveDefaultDriftState(string? materializationState)
+    {
+        return Comparer.Equals(materializationState, CellTrafficAutomationMaterializationStates.Applied)
+            ? CellTrafficAutomationDriftStates.InSync
+            : CellTrafficAutomationDriftStates.Unknown;
+    }
+
+    private static string ResolveOwnershipSummary(IReadOnlyList<MaterializationDimensionValue> values)
+    {
+        var distinctValues = values
+            .Select(static value => value.Value)
+            .Distinct(Comparer)
+            .ToArray();
+        if (distinctValues.Length == 1)
+        {
+            return distinctValues[0];
+        }
+
+        if (distinctValues.Any(value => Comparer.Equals(value, CellTrafficAutomationOwnershipStates.OwnershipConflict)))
+        {
+            return CellTrafficAutomationOwnershipStates.OwnershipConflict;
+        }
+
+        if (distinctValues.Any(value => Comparer.Equals(value, CellTrafficAutomationOwnershipStates.Orphaned)))
+        {
+            return CellTrafficAutomationOwnershipStates.Orphaned;
+        }
+
+        if (distinctValues.Any(value => Comparer.Equals(value, CellTrafficAutomationOwnershipStates.Transferred)))
+        {
+            return CellTrafficAutomationOwnershipStates.Transferred;
+        }
+
+        if (distinctValues.Any(value => Comparer.Equals(value, CellTrafficAutomationOwnershipStates.Pruned)))
+        {
+            return CellTrafficAutomationOwnershipStates.Pruned;
+        }
+
+        return distinctValues.All(value =>
+                Comparer.Equals(value, CellTrafficAutomationOwnershipStates.Requested) ||
+                Comparer.Equals(value, CellTrafficAutomationOwnershipStates.Owned))
+            ? CellTrafficAutomationOwnershipStates.Requested
+            : CellTrafficAutomationOwnershipStates.Mixed;
+    }
+
+    private static string ResolveDependencySummary(IReadOnlyList<MaterializationDimensionValue> values)
+    {
+        var distinctValues = values
+            .Select(static value => value.Value)
+            .Distinct(Comparer)
+            .ToArray();
+        if (distinctValues.Any(value => Comparer.Equals(value, CellTrafficAutomationDependencyStates.Missing)))
+        {
+            return CellTrafficAutomationDependencyStates.Missing;
+        }
+
+        return distinctValues.Length == 1
+            ? distinctValues[0]
+            : CellTrafficAutomationDependencyStates.Mixed;
+    }
+
+    private static string ResolveDriftSummary(IReadOnlyList<MaterializationDimensionValue> values)
+    {
+        var distinctValues = values
+            .Select(static value => value.Value)
+            .Distinct(Comparer)
+            .ToArray();
+        if (distinctValues.Any(value => Comparer.Equals(value, CellTrafficAutomationDriftStates.Drifted)))
+        {
+            return CellTrafficAutomationDriftStates.Drifted;
+        }
+
+        if (distinctValues.Any(value => Comparer.Equals(value, CellTrafficAutomationDriftStates.Reconciling)))
+        {
+            return CellTrafficAutomationDriftStates.Reconciling;
+        }
+
+        return distinctValues.Length == 1
+            ? distinctValues[0]
+            : CellTrafficAutomationDriftStates.Mixed;
+    }
+
+    private static string NormalizeMetadataValue(string value) => value.Trim().ToLowerInvariant();
+
     private sealed class MaterializationObservation
     {
         public MaterializationObservation(
@@ -1101,6 +1315,10 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot :
     }
 
     private sealed record MaterializerCandidate(string MaterializerId, int Priority);
+
+    private sealed record MaterializationDimensionValue(
+        string Dimension,
+        string Value);
 
     private sealed record MaterializationDimensionState(
         string Dimension,

@@ -76,6 +76,15 @@ The expected layering is:
 4. let module/package runtime behavior activate only when the technology is actually selected
 5. let installed modules contribute pack-specific descriptors through the pack's contributor services instead of pushing every descriptor into host startup
 
+The shared cell traffic-materialization seam now also carries one stable lifecycle vocabulary that
+provider and edge packs can reuse instead of inventing provider-local status taxonomies:
+`CellTrafficAutomationOwnershipStates`, `CellTrafficAutomationDependencyStates`,
+`CellTrafficAutomationDriftStates`, and `CellTrafficAutomationLifecycleActions`. The shared runtime
+catalog projects those values back onto `providerMaterialization.*`, `edgeMaterialization.*`, and
+derived `materialization.*` metadata so requested, observed, conflicted, drifted, or dependency-missing
+posture stays comparable across `Cephalon.Edge`, `Cephalon.Edge.KubernetesGateway`, and
+`Cephalon.Edge.Traefik`.
+
 Example:
 
 ```csharp

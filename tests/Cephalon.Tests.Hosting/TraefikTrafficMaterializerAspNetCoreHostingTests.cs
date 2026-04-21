@@ -113,7 +113,9 @@ public sealed class TraefikTrafficMaterializerAspNetCoreHostingTests
             automation.MaterializationState == CellTrafficAutomationMaterializationStates.Pending &&
             automation.RuntimeMetadata["providerMaterialization.providerRouteId"] == "ingressroute/edge-traefik/orders-public-ingress" &&
             automation.RuntimeMetadata["providerMaterialization.serviceRefs"] == "service/orders-runtime/orders-api:8443@weight/100" &&
-            automation.RuntimeMetadata["providerMaterialization.middlewareRefs"] == "middleware/edge-traefik/secure-headers,middleware/edge-security/orders-rate-limit");
+            automation.RuntimeMetadata["providerMaterialization.middlewareRefs"] == "middleware/edge-traefik/secure-headers,middleware/edge-security/orders-rate-limit" &&
+            automation.RuntimeMetadata["providerMaterialization.ownershipState"] == CellTrafficAutomationOwnershipStates.Requested &&
+            automation.RuntimeMetadata["providerMaterialization.lifecycleAction"] == CellTrafficAutomationLifecycleActions.Project);
         Assert.Contains(providerAutomations, automation =>
             automation.RouteId == "orders-to-admin-ingress" &&
             automation.ProviderMaterializerId == "traefik-materializer" &&

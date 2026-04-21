@@ -9,7 +9,7 @@
 - a provider-specific `ICellTrafficAutomationProviderMaterializer` implementation for `providerId = "traefik"`
 - deterministic projection of selected cell routes into Traefik `IngressRoute` intent, including entry points, match rules, middleware references, backend Service references, and TLS options
 - the `traefik-ingressroute-traffic-materializations` technology surface under `cell-based-architecture`
-- truthful operator metadata such as `providerRouteId`, `ingressRouteNamespace`, `ingressRouteName`, `entryPoints`, `matchRule`, `middlewareRefs`, `serviceRefs`, `tlsSecretName`, `tlsOptionsRef`, and `statusSource = configured-intent`
+- truthful operator metadata such as `providerRouteId`, `ingressRouteNamespace`, `ingressRouteName`, `entryPoints`, `matchRule`, `middlewareRefs`, `serviceRefs`, `tlsSecretName`, `tlsOptionsRef`, `statusSource = configured-intent`, and the shared ownership/dependency/drift/lifecycle-action vocabulary
 
 ## Main surfaces
 
@@ -36,13 +36,15 @@ provider-specific question: how should a `provider-managed` automation targeting
 This pack currently ships one truthful mode:
 
 - default `configured-intent`, which reports `providerAction = projected-intent`,
-  `observationMode = configured-intent`, `statusSource = configured-intent`, and
+  `observationMode = configured-intent`, `statusSource = configured-intent`,
+  `ownershipState = requested`, `dependencyState = unknown`, `driftState = unknown`, and
+  `lifecycleAction = project`, while
   `resourceState = projection-only` while publishing deterministic Traefik `IngressRoute` intent
   without claiming live cluster state or successful control-plane writes; the shared provider
   materialization state stays `pending`
 
 What this proves is that a second provider family can publish selected materializer ownership,
-provider-facing route identity, middleware and TLS intent, and the same `pending` materialization
+provider-facing route identity, middleware and TLS intent, and the same requested/observed lifecycle
 truth back onto the shared automation catalog without inventing a provider-local traffic registry.
 
 When the pack owns an automation answer, operators can inspect the same route through:

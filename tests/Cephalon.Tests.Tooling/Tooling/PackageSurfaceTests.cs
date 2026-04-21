@@ -301,6 +301,10 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationRuntimeDescriptor),
             typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationMaterializationResult),
             typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationMaterializationStates),
+            typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationOwnershipStates),
+            typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationDependencyStates),
+            typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationDriftStates),
+            typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationLifecycleActions),
             typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationProviderMaterializationResult),
             typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationProviderMaterializationStates),
             typeof(global::Cephalon.Abstractions.Technologies.ICellBoundaryCatalog),
@@ -2920,6 +2924,56 @@ public sealed class PackageSurfaceTests
             .GetField("Partial", BindingFlags.Static | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationMaterializationStates)
             .GetField("Failed", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationOwnershipStates)
+            .GetField("Requested", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationOwnershipStates)
+            .GetField("Owned", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationOwnershipStates)
+            .GetField("OwnershipConflict", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationOwnershipStates)
+            .GetField("Orphaned", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationOwnershipStates)
+            .GetField("Pruned", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationOwnershipStates)
+            .GetField("Transferred", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationOwnershipStates)
+            .GetField("Unknown", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationOwnershipStates)
+            .GetField("Mixed", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationDependencyStates)
+            .GetField("Satisfied", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationDependencyStates)
+            .GetField("Missing", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationDependencyStates)
+            .GetField("Unknown", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationDependencyStates)
+            .GetField("Mixed", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationDriftStates)
+            .GetField("InSync", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationDriftStates)
+            .GetField("Reconciling", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationDriftStates)
+            .GetField("Drifted", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationDriftStates)
+            .GetField("Unknown", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationDriftStates)
+            .GetField("Mixed", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationLifecycleActions)
+            .GetField("Project", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationLifecycleActions)
+            .GetField("Observe", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationLifecycleActions)
+            .GetField("Reconcile", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationLifecycleActions)
+            .GetField("Create", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationLifecycleActions)
+            .GetField("Replace", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationLifecycleActions)
+            .GetField("Delete", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationLifecycleActions)
+            .GetField("Prune", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationLifecycleActions)
+            .GetField("Transfer", BindingFlags.Static | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationProviderMaterializationResult)
             .GetProperty("State", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationProviderMaterializationResult)

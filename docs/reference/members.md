@@ -2499,6 +2499,9 @@ Browse the published API surface by public member.
 - [Create](cephalon-engine.md#member-m-cephalon-engine-appmodel-appprofilefactory-create-cephalon-engine-configuration-enginesettings): `Methods` on `AppProfileFactory` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=Create&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
   - Creates an app profile from the configured engine settings.
   - `AppProfile Create(EngineSettings settings)`
+- [Create](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-create): `Fields` on `CellTrafficAutomationLifecycleActions` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Create&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - The selected materializer created a new owned control-plane resource.
+  - `const string Create`
 - [Created](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorresult-created-1-0-system-string-system-string): `Methods` on `BehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Created&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Creates a created result with a payload value.
   - `BehaviorResult<T> Created<T>(T value, string message, string code)`
@@ -2877,6 +2880,9 @@ Browse the published API surface by public member.
 - [DegradedRoleCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasetopologyoperationalsummary-degradedrolecount): `Properties` on `DatabaseTopologyOperationalSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DegradedRoleCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of roles currently reporting degraded runtime state.
   - `int DegradedRoleCount { get; }`
+- [Delete](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-delete): `Fields` on `CellTrafficAutomationLifecycleActions` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Delete&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - The selected materializer deleted an owned control-plane resource.
+  - `const string Delete`
 - [DeleteBatchSize](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-audithistoryretentionselection-deletebatchsize): `Properties` on `AuditHistoryRetentionSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=DeleteBatchSize&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the maximum number of rows deleted per retention batch.
   - `int? DeleteBatchSize { get; }`
@@ -3486,6 +3492,9 @@ Browse the published API surface by public member.
 - [Domains](cephalon-abstractions.md#member-p-cephalon-abstractions-tenancy-tenantcontext-domains): `Properties` on `TenantContext` in `Cephalon.Abstractions.Tenancy` (`Cephalon.Abstractions`) [Browse](browse.html?q=Domains&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Tenancy&scope=members)
   - Gets the domains associated with the tenant.
   - `IReadOnlyList<string> Domains { get; }`
+- [Drifted](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationdriftstates-drifted): `Fields` on `CellTrafficAutomationDriftStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Drifted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - The selected materializer observed drift between desired and actual control-plane posture.
+  - `const string Drifted`
 - [DropletId](cephalon-observability-digitalocean.md#member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-dropletid): `Properties` on `DigitalOceanTelemetryExportOptions` in `Cephalon.Observability.DigitalOcean.Configuration` (`Cephalon.Observability.DigitalOcean`) [Browse](browse.html?q=DropletId&assembly=Cephalon.Observability.DigitalOcean&namespace=Cephalon.Observability.DigitalOcean.Configuration&scope=members)
   - Gets or sets the Droplet identifier to stamp onto exported resources.
   - `string DropletId { get; set; }`
@@ -6441,6 +6450,9 @@ Browse the published API surface by public member.
 - [InstanceId](cephalon-observability-grafanacloud.md#member-p-cephalon-observability-grafanacloud-configuration-grafanacloudtelemetryexportoptions-instanceid): `Properties` on `GrafanaCloudTelemetryExportOptions` in `Cephalon.Observability.GrafanaCloud.Configuration` (`Cephalon.Observability.GrafanaCloud`) [Browse](browse.html?q=InstanceId&assembly=Cephalon.Observability.GrafanaCloud&namespace=Cephalon.Observability.GrafanaCloud.Configuration&scope=members)
   - Gets or sets the Grafana Cloud instance identifier used as the Basic-auth username when the package should build the Authorization header from structured settings.
   - `string InstanceId { get; set; }`
+- [InSync](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationdriftstates-insync): `Fields` on `CellTrafficAutomationDriftStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=InSync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - The selected materializer observed the desired and actual control-plane posture in sync.
+  - `const string InSync`
 - [Intelligence](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-technologykind-intelligence): `Fields` on `TechnologyKind` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Intelligence&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Identifies an intelligence-oriented technology.
   - `const TechnologyKind Intelligence`
@@ -7707,6 +7719,18 @@ Browse the published API surface by public member.
 - [MinimumVersion](cephalon-engine.md#member-p-cephalon-engine-manifest-packagedependencymanifest-minimumversion): `Properties` on `PackageDependencyManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=MinimumVersion&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the minimum acceptable version of the required package, when declared.
   - `string MinimumVersion { get; }`
+- [Missing](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationdependencystates-missing): `Fields` on `CellTrafficAutomationDependencyStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Missing&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - The selected materializer depends on control-plane resources that are currently missing.
+  - `const string Missing`
+- [Mixed](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationdependencystates-mixed): `Fields` on `CellTrafficAutomationDependencyStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Mixed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Multiple required materialization dimensions currently disagree about dependency posture.
+  - `const string Mixed`
+- [Mixed](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationdriftstates-mixed): `Fields` on `CellTrafficAutomationDriftStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Mixed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Multiple required materialization dimensions currently disagree about drift posture.
+  - `const string Mixed`
+- [Mixed](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationownershipstates-mixed): `Fields` on `CellTrafficAutomationOwnershipStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Mixed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Multiple required materialization dimensions currently disagree about ownership posture.
+  - `const string Mixed`
 - [Mode](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditstoredescriptor-mode): `Properties` on `AuditStoreDescriptor` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Mode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the audit-store mode.
   - `string Mode { get; }`
@@ -8028,6 +8052,9 @@ Browse the published API surface by public member.
 - [Observation](cephalon-edge-kubernetesgateway.md#member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficmaterializeroptions-observation): `Properties` on `KubernetesGatewayTrafficMaterializerOptions` in `Cephalon.Edge.KubernetesGateway.Configuration` (`Cephalon.Edge.KubernetesGateway`) [Browse](browse.html?q=Observation&assembly=Cephalon.Edge.KubernetesGateway&namespace=Cephalon.Edge.KubernetesGateway.Configuration&scope=members)
   - Gets the live-observation options used to overlay Kubernetes Gateway API status back into the shared runtime catalog.
   - `KubernetesGatewayTrafficObservationOptions Observation { get; }`
+- [Observe](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-observe): `Fields` on `CellTrafficAutomationLifecycleActions` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Observe&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - The selected materializer is observing control-plane truth without writing changes.
+  - `const string Observe`
 - [ObservedAtUtc](cephalon-data.md#member-p-cephalon-data-services-cdccaptureexecutionreport-observedatutc): `Properties` on `CdcCaptureExecutionReport` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=ObservedAtUtc&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
   - Gets the UTC timestamp when the observation occurred.
   - `DateTimeOffset ObservedAtUtc { get; }`
@@ -8229,6 +8256,9 @@ Browse the published API surface by public member.
 - [OriginalSummary](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-originalsummary): `Properties` on `RestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=OriginalSummary&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the original endpoint summary before later endpoint-governance rewrites when the runtime can classify that source answer.
   - `string OriginalSummary { get; }`
+- [Orphaned](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationownershipstates-orphaned): `Fields` on `CellTrafficAutomationOwnershipStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Orphaned&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - The selected materializer observed resources that no longer have an active desired owner.
+  - `const string Orphaned`
 - [Outbox](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databasetopologyselection-outbox): `Properties` on `DatabaseTopologySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Outbox&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the outbox database target selection.
   - `DatabaseTargetSelection Outbox { get; }`
@@ -8355,9 +8385,15 @@ Browse the published API surface by public member.
 - [OverrideSelectionBasis](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-overrideselectionbasis): `Properties` on `RestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=OverrideSelectionBasis&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the earliest decisive specificity rule that selected the winning override rule when one was resolved for this endpoint's originating candidate.
   - `RestEndpointGovernanceRuleSelectionBasis? OverrideSelectionBasis { get; }`
+- [Owned](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationownershipstates-owned): `Fields` on `CellTrafficAutomationOwnershipStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Owned&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - The selected materializer currently owns the reconciled control-plane resources.
+  - `const string Owned`
 - [OwnedBehaviorRegistration](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ownedbehaviorregistration-ctor-system-string-system-string-system-type-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder): `Constructors` on `OwnedBehaviorRegistration` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnedBehaviorRegistration&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Initializes a new `OwnedBehaviorRegistration`.
   - `OwnedBehaviorRegistration(string sourceModuleId, string behaviorId, Type behaviorType, Action<IBehaviorTopologyBuilder> configureTopology)`
+- [OwnershipConflict](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationownershipstates-ownershipconflict): `Fields` on `CellTrafficAutomationOwnershipStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnershipConflict&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - The selected materializer observed a conflicting owner for the target resources.
+  - `const string OwnershipConflict`
 - [OwnerSubjectId](cephalon-abstractions.md#member-p-cephalon-abstractions-authorization-authorizationresource-ownersubjectid): `Properties` on `AuthorizationResource` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnerSubjectId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets the owning subject identifier when one is known.
   - `string OwnerSubjectId { get; }`
@@ -8883,6 +8919,9 @@ Browse the published API surface by public member.
 - [ProgressState](cephalon-engine.md#member-p-cephalon-engine-configuration-stranglerfigroutepolicysettings-progressstate): `Properties` on `StranglerFigRoutePolicySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ProgressState&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the route-specific normalized migration-progress state.
   - `string ProgressState { get; }`
+- [Project](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-project): `Fields` on `CellTrafficAutomationLifecycleActions` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Project&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - The selected materializer is projecting desired intent without applying it yet.
+  - `const string Project`
 - [ProjectAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-data-iprojection-1-projectasync-0-system-threading-cancellationtoken): `Methods` on `IProjection<TMessage>` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProjectAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Projects the supplied message into the target read model or data view.
   - `ValueTask ProjectAsync(TMessage message, CancellationToken cancellationToken)`
@@ -9054,6 +9093,12 @@ Browse the published API surface by public member.
 - [ProxyServiceName](cephalon-observability-tanzu.md#member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-proxyservicename): `Properties` on `TanzuTelemetryExportOptions` in `Cephalon.Observability.Tanzu.Configuration` (`Cephalon.Observability.Tanzu`) [Browse](browse.html?q=ProxyServiceName&assembly=Cephalon.Observability.Tanzu&namespace=Cephalon.Observability.Tanzu.Configuration&scope=members)
   - Gets or sets the proxy service name used to build the in-cluster Tanzu proxy endpoint.
   - `string ProxyServiceName { get; set; }`
+- [Prune](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-prune): `Fields` on `CellTrafficAutomationLifecycleActions` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Prune&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - The selected materializer pruned a no-longer-desired owned control-plane resource.
+  - `const string Prune`
+- [Pruned](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationownershipstates-pruned): `Fields` on `CellTrafficAutomationOwnershipStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Pruned&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - The selected materializer pruned previously owned resources.
+  - `const string Pruned`
 - [Publication](cephalon-data.md#member-p-cephalon-data-services-cdccaptureexecutionreport-publication): `Properties` on `CdcCaptureExecutionReport` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=Publication&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
   - Gets the typed publication-posture answer reported by the active provider/runtime when one was supplied.
   - `CdcCapturePublicationStatus Publication { get; }`
@@ -9252,6 +9297,12 @@ Browse the published API surface by public member.
 - [RecommendedForProduction](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-recommendedforproduction): `Properties` on `DatabaseMigrationCommandDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RecommendedForProduction&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether this command is recommended for production use.
   - `bool RecommendedForProduction { get; }`
+- [Reconcile](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-reconcile): `Fields` on `CellTrafficAutomationLifecycleActions` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Reconcile&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - The selected materializer is reconciling the desired and actual control-plane posture.
+  - `const string Reconcile`
+- [Reconciling](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationdriftstates-reconciling): `Fields` on `CellTrafficAutomationDriftStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Reconciling&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - The selected materializer is still reconciling the desired and actual control-plane posture.
+  - `const string Reconciling`
 - [RecordAsync](cephalon-audit.md#member-m-cephalon-audit-services-iauditrecorder-recordasync-cephalon-audit-services-auditrecordrequest-system-threading-cancellationtoken): `Methods` on `IAuditRecorder` in `Cephalon.Audit.Services` (`Cephalon.Audit`) [Browse](browse.html?q=RecordAsync&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Services&scope=members)
   - Records one audit entry and returns the normalized entry that was written.
   - `ValueTask<AuditEntry> RecordAsync(AuditRecordRequest request, CancellationToken cancellationToken)`
@@ -9465,6 +9516,9 @@ Browse the published API surface by public member.
 - [RenderedScaffold](cephalon-scaffolding.md#member-m-cephalon-scaffolding-generation-renderedscaffold-ctor-cephalon-abstractions-appmodel-appprofile-cephalon-scaffolding-generation-scaffoldrequest-system-collections-generic-ireadonlylist-cephalon-scaffolding-generation-renderedproject-system-collections-generic-ireadonlylist-cephalon-scaffolding-generation-renderedfolder-system-collections-generic-ireadonlylist-cephalon-scaffolding-generation-renderedfile): `Constructors` on `RenderedScaffold` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=RenderedScaffold&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Creates a new rendered scaffold.
   - `RenderedScaffold(AppProfile appProfile, ScaffoldRequest request, IReadOnlyList<RenderedProject> projects, IReadOnlyList<RenderedFolder> folders, IReadOnlyList<RenderedFile> files)`
+- [Replace](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-replace): `Fields` on `CellTrafficAutomationLifecycleActions` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Replace&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - The selected materializer replaced or updated an existing owned control-plane resource.
+  - `const string Replace`
 - [ReplaceBindings](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-replacebindings): `Fields` on `RestEndpointOverrideActionKind` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReplaceBindings&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - The rule replaces the explicit request-binding plan.
   - `const RestEndpointOverrideActionKind ReplaceBindings`
@@ -9516,6 +9570,9 @@ Browse the published API surface by public member.
 - [Requested](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-requested): `Properties` on `BehaviorResilienceRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Requested&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - The requested behavior-execution resilience contract.
   - `BehaviorExecutionResilienceSelection Requested { get; set; }`
+- [Requested](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationownershipstates-requested): `Fields` on `CellTrafficAutomationOwnershipStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Requested&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - The automation is requested for reconciliation, but ownership has not been observed yet.
+  - `const string Requested`
 - [Requested](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-requested): `Properties` on `RateLimitingRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Requested&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - The requested app-model selection that asked for rate limiting.
   - `RateLimitingSelection Requested { get; set; }`
@@ -10410,6 +10467,9 @@ Browse the published API surface by public member.
 - [SaslMechanism](cephalon-observability-kafkadependencies.md#member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-saslmechanism): `Properties` on `KafkaDependencyDefinition` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=SaslMechanism&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
   - Gets or sets the optional SASL mechanism, such as `Plain`, `ScramSha256`, or `ScramSha512`.
   - `string SaslMechanism { get; set; }`
+- [Satisfied](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationdependencystates-satisfied): `Fields` on `CellTrafficAutomationDependencyStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Satisfied&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - The selected materializer depends on control-plane resources that are currently available.
+  - `const string Satisfied`
 - [SaveSnapshotAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-eventsourcing-isnapshotstore-savesnapshotasync-1-system-string-system-int64-0-system-threading-cancellationtoken): `Methods` on `ISnapshotStore` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=SaveSnapshotAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Saves one snapshot for the requested stream.
   - `Task SaveSnapshotAsync<TState>(string streamId, long version, TState state, CancellationToken cancellationToken)`
@@ -12051,6 +12111,12 @@ Browse the published API surface by public member.
 - [TraitsFieldNumber](cephalon-aspnetcore-grpc.md#member-f-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-traitsfieldnumber): `Fields` on `HelloReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=TraitsFieldNumber&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - Field number for the "traits" field.
   - `const int TraitsFieldNumber`
+- [Transfer](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-transfer): `Fields` on `CellTrafficAutomationLifecycleActions` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Transfer&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - The selected materializer transferred ownership to another reconciler.
+  - `const string Transfer`
+- [Transferred](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationownershipstates-transferred): `Fields` on `CellTrafficAutomationOwnershipStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Transferred&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - The selected materializer transferred ownership to another reconciler.
+  - `const string Transferred`
 - [TransformAsync](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-transformers-xmlcommentsdocumenttransformer-transformasync-microsoft-openapi-openapidocument-microsoft-aspnetcore-openapi-openapidocumenttransformercontext-system-threading-cancellationtoken): `Methods` on `XmlCommentsDocumentTransformer` in `Cephalon.AspNetCore.Transformers` (`Cephalon.AspNetCore`) [Browse](browse.html?q=TransformAsync&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transformers&scope=members)
   - Applies XML comment data to the OpenAPI document schemas produced for the current request.
   - `Task TransformAsync(OpenApiDocument document, OpenApiDocumentTransformerContext context, CancellationToken cancellationToken)`
@@ -12323,6 +12389,15 @@ Browse the published API surface by public member.
   - `const string Unknown`
 - [Unknown](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturepublicationstates-unknown): `Fields` on `CdcCapturePublicationStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unknown&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Indicates that the active runtime does not yet have a publication answer.
+  - `const string Unknown`
+- [Unknown](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationdependencystates-unknown): `Fields` on `CellTrafficAutomationDependencyStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unknown&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - The dependency posture could not be determined from the current runtime truth.
+  - `const string Unknown`
+- [Unknown](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationdriftstates-unknown): `Fields` on `CellTrafficAutomationDriftStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unknown&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - The drift posture could not be determined from the current runtime truth.
+  - `const string Unknown`
+- [Unknown](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationownershipstates-unknown): `Fields` on `CellTrafficAutomationOwnershipStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unknown&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - The ownership posture could not be determined from the current runtime truth.
   - `const string Unknown`
 - [Unspecified](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointauthoringpolicysuppressionkind-unspecified): `Fields` on `RestEndpointAuthoringPolicySuppressionKind` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unspecified&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - The candidate was not classified with an authoring-policy suppression kind.

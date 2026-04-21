@@ -51,7 +51,11 @@ behavior in `apply-and-reconcile` mode while leaving generic edge-node ownership
 fallback, and `EdgeNativeDelivery` activation inside this baseline pack. A second provider-specific
 control-plane sibling now also ships through `Cephalon.Edge.Traefik`, which keeps Traefik
 IngressRoute intent on that same shared provider-materializer seam and proves the abstraction is not
-bound to Kubernetes Gateway API alone.
+bound to Kubernetes Gateway API alone. The shared automation story now also uses one stable
+lifecycle vocabulary across generic edge-runtime and provider-specific control-plane packs:
+`ownershipState`, `dependencyState`, `driftState`, and `lifecycleAction` now stay on the same
+`/engine/cell-traffic-automations*`, `snapshot.CellTrafficAutomations`, and provider-specific
+technology surfaces instead of forcing each pack to invent its own lifecycle taxonomy.
 
 ## Related docs
 

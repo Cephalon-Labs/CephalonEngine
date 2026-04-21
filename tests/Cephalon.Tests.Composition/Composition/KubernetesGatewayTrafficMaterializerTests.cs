@@ -56,6 +56,13 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
         Assert.Equal("cephalon.io/gateway-controller", publicAutomation.RuntimeMetadata["providerMaterialization.controllerName"]);
         Assert.Equal("configured-intent", publicAutomation.RuntimeMetadata["providerMaterialization.statusSource"]);
         Assert.Equal("projection-only", publicAutomation.RuntimeMetadata["providerMaterialization.resourceState"]);
+        Assert.Equal(CellTrafficAutomationOwnershipStates.Requested, publicAutomation.RuntimeMetadata["providerMaterialization.ownershipState"]);
+        Assert.Equal(CellTrafficAutomationDependencyStates.Unknown, publicAutomation.RuntimeMetadata["providerMaterialization.dependencyState"]);
+        Assert.Equal(CellTrafficAutomationDriftStates.Unknown, publicAutomation.RuntimeMetadata["providerMaterialization.driftState"]);
+        Assert.Equal(CellTrafficAutomationLifecycleActions.Project, publicAutomation.RuntimeMetadata["providerMaterialization.lifecycleAction"]);
+        Assert.Equal(CellTrafficAutomationOwnershipStates.Requested, publicAutomation.RuntimeMetadata["materialization.ownershipState"]);
+        Assert.Equal(CellTrafficAutomationDependencyStates.Unknown, publicAutomation.RuntimeMetadata["materialization.dependencyState"]);
+        Assert.Equal(CellTrafficAutomationDriftStates.Unknown, publicAutomation.RuntimeMetadata["materialization.driftState"]);
         Assert.Equal("none", publicAutomation.RuntimeMetadata["providerMaterialization.gatewayWriteAction"]);
         Assert.Equal("none", publicAutomation.RuntimeMetadata["providerMaterialization.httpRouteWriteAction"]);
         Assert.Equal("unknown", publicAutomation.RuntimeMetadata["providerMaterialization.httpRouteProgrammedCondition"]);
@@ -156,6 +163,9 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
         Assert.Equal("true", automation.RuntimeMetadata["providerMaterialization.httpRouteAcceptedCondition"]);
         Assert.Equal("true", automation.RuntimeMetadata["providerMaterialization.httpRouteResolvedRefsCondition"]);
         Assert.Equal("in-sync", automation.RuntimeMetadata["providerMaterialization.driftState"]);
+        Assert.Equal(CellTrafficAutomationOwnershipStates.Owned, automation.RuntimeMetadata["providerMaterialization.ownershipState"]);
+        Assert.Equal(CellTrafficAutomationDependencyStates.Satisfied, automation.RuntimeMetadata["providerMaterialization.dependencyState"]);
+        Assert.Equal(CellTrafficAutomationLifecycleActions.Observe, automation.RuntimeMetadata["providerMaterialization.lifecycleAction"]);
 
         var gatewaySurface = Assert.Single(
             technologyCatalog.GetByTechnology("cell-based-architecture"),
@@ -203,6 +213,9 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
         Assert.Equal("created", automation.RuntimeMetadata["providerMaterialization.httpRouteWriteAction"]);
         Assert.Equal("none", automation.RuntimeMetadata["providerMaterialization.gatewayWriteAction"]);
         Assert.Equal("owned", automation.RuntimeMetadata["providerMaterialization.ownershipState"]);
+        Assert.Equal(CellTrafficAutomationDependencyStates.Satisfied, automation.RuntimeMetadata["providerMaterialization.dependencyState"]);
+        Assert.Equal(CellTrafficAutomationDriftStates.InSync, automation.RuntimeMetadata["materialization.driftState"]);
+        Assert.Equal(CellTrafficAutomationLifecycleActions.Observe, automation.RuntimeMetadata["providerMaterialization.lifecycleAction"]);
         Assert.Equal("true", automation.RuntimeMetadata["providerMaterialization.httpRouteAcceptedCondition"]);
         Assert.Equal("in-sync", automation.RuntimeMetadata["providerMaterialization.driftState"]);
 
@@ -424,7 +437,11 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
             var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 ["providerAction"] = "fallback-reconciled",
-                ["providerRouteId"] = $"fallback/{automation.RouteId}"
+                ["providerRouteId"] = $"fallback/{automation.RouteId}",
+                ["ownershipState"] = CellTrafficAutomationOwnershipStates.Owned,
+                ["dependencyState"] = CellTrafficAutomationDependencyStates.Satisfied,
+                ["driftState"] = CellTrafficAutomationDriftStates.InSync,
+                ["lifecycleAction"] = CellTrafficAutomationLifecycleActions.Reconcile
             };
 
             return ValueTask.FromResult(new CellTrafficAutomationProviderMaterializationResult(
@@ -444,10 +461,14 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
             ["resourceState"] = "write-succeeded",
             ["driftState"] = "reconciling",
             ["driftReasons"] = string.Empty,
+            ["dependencyState"] = CellTrafficAutomationDependencyStates.Satisfied,
+            ["lifecycleAction"] = string.Equals(writeAction, "created", StringComparison.OrdinalIgnoreCase)
+                ? CellTrafficAutomationLifecycleActions.Create
+                : CellTrafficAutomationLifecycleActions.Replace,
             ["gatewayWriteAction"] = "none",
             ["gatewayWriteReason"] = "preprovisioned-dependency",
             ["httpRouteWriteAction"] = writeAction,
-            ["ownershipState"] = "owned",
+            ["ownershipState"] = CellTrafficAutomationOwnershipStates.Owned,
             ["httpRouteAppliedGeneration"] = writeAction == "created" ? "1" : "2",
             ["providerRouteId"] = "httproute/edge-system/orders-public-ingress",
             ["gatewayNamespace"] = "edge-system",
@@ -468,6 +489,9 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
         metadata["httpRouteExists"] = "false";
         metadata["driftState"] = "unknown";
         metadata["driftReasons"] = string.Empty;
+        metadata["ownershipState"] = CellTrafficAutomationOwnershipStates.Requested;
+        metadata["dependencyState"] = CellTrafficAutomationDependencyStates.Satisfied;
+        metadata["lifecycleAction"] = CellTrafficAutomationLifecycleActions.Observe;
 
         return new CellTrafficAutomationProviderMaterializationResult(
             state: CellTrafficAutomationProviderMaterializationStates.Pending,
@@ -503,7 +527,9 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
         metadata["httpRouteResolvedRefsReason"] = "ResolvedRefs";
         metadata["driftState"] = "in-sync";
         metadata["driftReasons"] = string.Empty;
-        metadata["ownershipState"] = "owned";
+        metadata["ownershipState"] = CellTrafficAutomationOwnershipStates.Owned;
+        metadata["dependencyState"] = CellTrafficAutomationDependencyStates.Satisfied;
+        metadata["lifecycleAction"] = CellTrafficAutomationLifecycleActions.Observe;
         metadata["managedBy"] = "edge-kubernetes-gateway";
         metadata["observedAutomationId"] = "orders-to-public-ingress";
         metadata["observedRouteId"] = "orders-to-public-ingress";
@@ -523,6 +549,10 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
             ["observationMode"] = KubernetesGatewayTrafficObservationModes.ObserveOnly,
             ["statusSource"] = "gateway-api-status",
             ["resourceState"] = resourceState,
+            ["ownershipState"] = CellTrafficAutomationOwnershipStates.Requested,
+            ["dependencyState"] = CellTrafficAutomationDependencyStates.Unknown,
+            ["driftState"] = CellTrafficAutomationDriftStates.Unknown,
+            ["lifecycleAction"] = CellTrafficAutomationLifecycleActions.Observe,
             ["observationFreshUntilUtc"] = DateTimeOffset.UtcNow.AddMinutes(2).ToString("O"),
             ["providerRouteId"] = $"httproute/edge-system/{routeId.Replace("orders-to-", "orders-", StringComparison.OrdinalIgnoreCase)}"
         };

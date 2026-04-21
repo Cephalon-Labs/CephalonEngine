@@ -22690,6 +22690,215 @@ IReadOnlyList<string> TransportIds { get; }
 
 Gets the normalized transport identifiers associated with this route.
 
+<a id="type-cephalon-abstractions-technologies-celltrafficautomationdependencystates"></a>
+
+### `CellTrafficAutomationDependencyStates`
+
+Defines the stable dependency states for cell traffic automation materialization answers.
+
+#### Declaration
+```csharp
+public static class CellTrafficAutomationDependencyStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationdependencystates-missing"></a>
+
+##### `Missing`
+
+```csharp
+const string Missing
+```
+
+The selected materializer depends on control-plane resources that are currently missing.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationdependencystates-mixed"></a>
+
+##### `Mixed`
+
+```csharp
+const string Mixed
+```
+
+Multiple required materialization dimensions currently disagree about dependency posture.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationdependencystates-satisfied"></a>
+
+##### `Satisfied`
+
+```csharp
+const string Satisfied
+```
+
+The selected materializer depends on control-plane resources that are currently available.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationdependencystates-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+The dependency posture could not be determined from the current runtime truth.
+
+<a id="type-cephalon-abstractions-technologies-celltrafficautomationdriftstates"></a>
+
+### `CellTrafficAutomationDriftStates`
+
+Defines the stable drift states for cell traffic automation materialization answers.
+
+#### Declaration
+```csharp
+public static class CellTrafficAutomationDriftStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationdriftstates-drifted"></a>
+
+##### `Drifted`
+
+```csharp
+const string Drifted
+```
+
+The selected materializer observed drift between desired and actual control-plane posture.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationdriftstates-insync"></a>
+
+##### `InSync`
+
+```csharp
+const string InSync
+```
+
+The selected materializer observed the desired and actual control-plane posture in sync.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationdriftstates-mixed"></a>
+
+##### `Mixed`
+
+```csharp
+const string Mixed
+```
+
+Multiple required materialization dimensions currently disagree about drift posture.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationdriftstates-reconciling"></a>
+
+##### `Reconciling`
+
+```csharp
+const string Reconciling
+```
+
+The selected materializer is still reconciling the desired and actual control-plane posture.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationdriftstates-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+The drift posture could not be determined from the current runtime truth.
+
+<a id="type-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions"></a>
+
+### `CellTrafficAutomationLifecycleActions`
+
+Defines the stable lifecycle actions for cell traffic automation materialization answers.
+
+#### Declaration
+```csharp
+public static class CellTrafficAutomationLifecycleActions
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-create"></a>
+
+##### `Create`
+
+```csharp
+const string Create
+```
+
+The selected materializer created a new owned control-plane resource.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-delete"></a>
+
+##### `Delete`
+
+```csharp
+const string Delete
+```
+
+The selected materializer deleted an owned control-plane resource.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-observe"></a>
+
+##### `Observe`
+
+```csharp
+const string Observe
+```
+
+The selected materializer is observing control-plane truth without writing changes.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-project"></a>
+
+##### `Project`
+
+```csharp
+const string Project
+```
+
+The selected materializer is projecting desired intent without applying it yet.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-prune"></a>
+
+##### `Prune`
+
+```csharp
+const string Prune
+```
+
+The selected materializer pruned a no-longer-desired owned control-plane resource.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-reconcile"></a>
+
+##### `Reconcile`
+
+```csharp
+const string Reconcile
+```
+
+The selected materializer is reconciling the desired and actual control-plane posture.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-replace"></a>
+
+##### `Replace`
+
+```csharp
+const string Replace
+```
+
+The selected materializer replaced or updated an existing owned control-plane resource.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-transfer"></a>
+
+##### `Transfer`
+
+```csharp
+const string Transfer
+```
+
+The selected materializer transferred ownership to another reconciler.
+
 <a id="type-cephalon-abstractions-technologies-celltrafficautomationmaterializationresult"></a>
 
 ### `CellTrafficAutomationMaterializationResult`
@@ -22823,6 +23032,99 @@ const string Unavailable
 ```
 
 The automation targets a runtime, but no active materializer can apply it.
+
+<a id="type-cephalon-abstractions-technologies-celltrafficautomationownershipstates"></a>
+
+### `CellTrafficAutomationOwnershipStates`
+
+Defines the stable ownership states for cell traffic automation materialization answers.
+
+#### Declaration
+```csharp
+public static class CellTrafficAutomationOwnershipStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationownershipstates-mixed"></a>
+
+##### `Mixed`
+
+```csharp
+const string Mixed
+```
+
+Multiple required materialization dimensions currently disagree about ownership posture.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationownershipstates-orphaned"></a>
+
+##### `Orphaned`
+
+```csharp
+const string Orphaned
+```
+
+The selected materializer observed resources that no longer have an active desired owner.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationownershipstates-owned"></a>
+
+##### `Owned`
+
+```csharp
+const string Owned
+```
+
+The selected materializer currently owns the reconciled control-plane resources.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationownershipstates-ownershipconflict"></a>
+
+##### `OwnershipConflict`
+
+```csharp
+const string OwnershipConflict
+```
+
+The selected materializer observed a conflicting owner for the target resources.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationownershipstates-pruned"></a>
+
+##### `Pruned`
+
+```csharp
+const string Pruned
+```
+
+The selected materializer pruned previously owned resources.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationownershipstates-requested"></a>
+
+##### `Requested`
+
+```csharp
+const string Requested
+```
+
+The automation is requested for reconciliation, but ownership has not been observed yet.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationownershipstates-transferred"></a>
+
+##### `Transferred`
+
+```csharp
+const string Transferred
+```
+
+The selected materializer transferred ownership to another reconciler.
+
+<a id="member-f-cephalon-abstractions-technologies-celltrafficautomationownershipstates-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+The ownership posture could not be determined from the current runtime truth.
 
 <a id="type-cephalon-abstractions-technologies-celltrafficautomationprovidermaterializationresult"></a>
 

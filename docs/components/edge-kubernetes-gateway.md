@@ -11,7 +11,7 @@
 - recurring live `Gateway` plus `HTTPRoute` observation in `observe-only` or `apply-and-reconcile` mode, including freshness and drift metadata
 - controlled `HTTPRoute` apply semantics in `apply-and-reconcile` mode, including ownership labels and annotations, write-result metadata, and post-apply status reconciliation
 - the `kubernetes-gateway-traffic-materializations` technology surface under `cell-based-architecture`
-- truthful operator metadata such as `providerRouteId`, `gatewayNamespace`, `gatewayName`, `controllerName`, `statusSource`, projected-or-observed Gateway API conditions, drift posture, freshness windows, ownership posture, and HTTPRoute write results
+- truthful operator metadata such as `providerRouteId`, `gatewayNamespace`, `gatewayName`, `controllerName`, `statusSource`, projected-or-observed Gateway API conditions, shared ownership/dependency/drift posture, lifecycle action, freshness windows, and HTTPRoute write results
 
 ## Main surfaces
 
@@ -41,9 +41,9 @@ control-plane truth?
 
 The pack now has three truthful operating modes:
 
-- default `configured-intent`, which reports `providerAction = projected-intent`, `observationMode = configured-intent`, and `statusSource = configured-intent` while publishing deterministic `Gateway` plus `HTTPRoute` intent without claiming live cluster state or a successful apply; the shared provider materialization state stays `pending`
-- opt-in `observe-only`, which reports `providerAction = observe-only` and `statusSource = gateway-api-status` while reading live `Gateway` plus `HTTPRoute` status back into the same shared runtime catalog without claiming that Cephalon applied resources itself
-- opt-in `apply-and-reconcile`, which reports `providerAction = apply-and-reconcile`, writes only owned `HTTPRoute` resources, keeps `Gateway` as a pre-provisioned dependency, and then merges observed `Gateway` plus `HTTPRoute` status back into the same shared runtime catalog
+- default `configured-intent`, which reports `providerAction = projected-intent`, `observationMode = configured-intent`, `statusSource = configured-intent`, `ownershipState = requested`, `dependencyState = unknown`, `driftState = unknown`, and `lifecycleAction = project` while publishing deterministic `Gateway` plus `HTTPRoute` intent without claiming live cluster state or a successful apply; the shared provider materialization state stays `pending`
+- opt-in `observe-only`, which reports `providerAction = observe-only`, `statusSource = gateway-api-status`, and the same shared ownership/dependency/drift vocabulary while reading live `Gateway` plus `HTTPRoute` status back into the same shared runtime catalog without claiming that Cephalon applied resources itself
+- opt-in `apply-and-reconcile`, which reports `providerAction = apply-and-reconcile`, writes only owned `HTTPRoute` resources, keeps `Gateway` as a pre-provisioned dependency, and then merges observed `Gateway` plus `HTTPRoute` status back into the same shared runtime catalog while preserving write posture through `httpRouteWriteAction`
 
 What this proves is that one provider-specific pack can publish deterministic projected intent,
 selected materializer ownership, live provider status, drift, freshness answers, and now a narrow
@@ -61,9 +61,9 @@ The technology surface entry lives under `surfaceId = "kubernetes-gateway-traffi
 and carries one provider-facing projection per selected route, including the projected
 `providerRouteId`, parent reference, backend reference, hostname list, controller identity, and
 Gateway resource identity. In live modes the same entries also surface condition, drift,
-freshness, ownership, and write metadata such as `gatewayAcceptedCondition`,
+freshness, ownership, dependency, lifecycle-action, and write metadata such as `gatewayAcceptedCondition`,
 `httpRouteResolvedRefsCondition`, `driftState`, `observationFreshUntilUtc`,
-`ownershipState`, `httpRouteWriteAction`, and `httpRouteAppliedGeneration`.
+`ownershipState`, `dependencyState`, `lifecycleAction`, `httpRouteWriteAction`, and `httpRouteAppliedGeneration`.
 
 ## Registration
 

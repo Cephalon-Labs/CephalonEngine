@@ -58,6 +58,10 @@ internal sealed class TraefikTrafficAutomationMaterializer : ICellTrafficAutomat
         metadata["providerAction"] = "projected-intent";
         metadata["observationMode"] = "configured-intent";
         metadata["resourceState"] = "projection-only";
+        metadata["ownershipState"] = CellTrafficAutomationOwnershipStates.Requested;
+        metadata["dependencyState"] = CellTrafficAutomationDependencyStates.Unknown;
+        metadata["driftState"] = CellTrafficAutomationDriftStates.Unknown;
+        metadata["lifecycleAction"] = CellTrafficAutomationLifecycleActions.Project;
 
         return ValueTask.FromResult(new CellTrafficAutomationProviderMaterializationResult(
             state: CellTrafficAutomationProviderMaterializationStates.Pending,

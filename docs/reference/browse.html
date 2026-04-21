@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-21T15:00:49.129817+00:00",
+  "GeneratedAtUtc": "2026-04-21T15:42:17.591985+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -111,7 +111,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 352
+      "TypeCount": 356
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -704,7 +704,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-technologies",
-      "TypeCount": 32
+      "TypeCount": 36
     },
     {
       "NamespaceName": "Cephalon.Abstractions.Tenancy",
@@ -3433,6 +3433,51 @@
       }
     },
     {
+      "DisplayName": "CellTrafficAutomationDependencyStates",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-technologies-celltrafficautomationdependencystates",
+      "Declaration": "public static class CellTrafficAutomationDependencyStates",
+      "Summary": "Defines the stable dependency states for cell traffic automation materialization answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 4,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CellTrafficAutomationDriftStates",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-technologies-celltrafficautomationdriftstates",
+      "Declaration": "public static class CellTrafficAutomationDriftStates",
+      "Summary": "Defines the stable drift states for cell traffic automation materialization answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 5,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CellTrafficAutomationLifecycleActions",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions",
+      "Declaration": "public static class CellTrafficAutomationLifecycleActions",
+      "Summary": "Defines the stable lifecycle actions for cell traffic automation materialization answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 8,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "CellTrafficAutomationMaterializationResult",
       "NamespaceName": "Cephalon.Abstractions.Technologies",
       "AssemblyName": "Cephalon.Abstractions",
@@ -3458,6 +3503,21 @@
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 5,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CellTrafficAutomationOwnershipStates",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-technologies-celltrafficautomationownershipstates",
+      "Declaration": "public static class CellTrafficAutomationOwnershipStates",
+      "Summary": "Defines the stable ownership states for cell traffic automation materialization answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 8,
         "Properties": 0,
         "Methods": 0
       }
@@ -21194,6 +21254,17 @@
       "Summary": "Creates an app profile from the configured engine settings."
     },
     {
+      "DisplayName": "Create",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationLifecycleActions",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-create",
+      "Signature": "const string Create",
+      "Summary": "The selected materializer created a new owned control-plane resource."
+    },
+    {
       "DisplayName": "Created",
       "Category": "Methods",
       "DeclaringTypeName": "BehaviorResult",
@@ -22567,6 +22638,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databasetopologyoperationalsummary-degradedrolecount",
       "Signature": "int DegradedRoleCount { get; }",
       "Summary": "Gets the number of roles currently reporting degraded runtime state."
+    },
+    {
+      "DisplayName": "Delete",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationLifecycleActions",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-delete",
+      "Signature": "const string Delete",
+      "Summary": "The selected materializer deleted an owned control-plane resource."
     },
     {
       "DisplayName": "DeleteBatchSize",
@@ -24800,6 +24882,17 @@
       "AnchorId": "member-p-cephalon-abstractions-tenancy-tenantcontext-domains",
       "Signature": "IReadOnlyList\u003Cstring\u003E Domains { get; }",
       "Summary": "Gets the domains associated with the tenant."
+    },
+    {
+      "DisplayName": "Drifted",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationDriftStates",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationdriftstates-drifted",
+      "Signature": "const string Drifted",
+      "Summary": "The selected materializer observed drift between desired and actual control-plane posture."
     },
     {
       "DisplayName": "DropletId",
@@ -35582,6 +35675,17 @@
       "Summary": "Gets or sets the Grafana Cloud instance identifier used as the Basic-auth username when the package should build the Authorization header from structured settings."
     },
     {
+      "DisplayName": "InSync",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationDriftStates",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationdriftstates-insync",
+      "Signature": "const string InSync",
+      "Summary": "The selected materializer observed the desired and actual control-plane posture in sync."
+    },
+    {
       "DisplayName": "Intelligence",
       "Category": "Fields",
       "DeclaringTypeName": "TechnologyKind",
@@ -40180,6 +40284,50 @@
       "Summary": "Gets the minimum acceptable version of the required package, when declared."
     },
     {
+      "DisplayName": "Missing",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationDependencyStates",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationdependencystates-missing",
+      "Signature": "const string Missing",
+      "Summary": "The selected materializer depends on control-plane resources that are currently missing."
+    },
+    {
+      "DisplayName": "Mixed",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationDependencyStates",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationdependencystates-mixed",
+      "Signature": "const string Mixed",
+      "Summary": "Multiple required materialization dimensions currently disagree about dependency posture."
+    },
+    {
+      "DisplayName": "Mixed",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationDriftStates",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationdriftstates-mixed",
+      "Signature": "const string Mixed",
+      "Summary": "Multiple required materialization dimensions currently disagree about drift posture."
+    },
+    {
+      "DisplayName": "Mixed",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationOwnershipStates",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationownershipstates-mixed",
+      "Signature": "const string Mixed",
+      "Summary": "Multiple required materialization dimensions currently disagree about ownership posture."
+    },
+    {
       "DisplayName": "Mode",
       "Category": "Properties",
       "DeclaringTypeName": "AuditStoreDescriptor",
@@ -41335,6 +41483,17 @@
       "Summary": "Gets the live-observation options used to overlay Kubernetes Gateway API status back into the shared runtime catalog."
     },
     {
+      "DisplayName": "Observe",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationLifecycleActions",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-observe",
+      "Signature": "const string Observe",
+      "Summary": "The selected materializer is observing control-plane truth without writing changes."
+    },
+    {
       "DisplayName": "ObservedAtUtc",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionReport",
@@ -42072,6 +42231,17 @@
       "Summary": "Gets the original endpoint summary before later endpoint-governance rewrites when the runtime can classify that source answer."
     },
     {
+      "DisplayName": "Orphaned",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationOwnershipStates",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationownershipstates-orphaned",
+      "Signature": "const string Orphaned",
+      "Summary": "The selected materializer observed resources that no longer have an active desired owner."
+    },
+    {
       "DisplayName": "Outbox",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseTopologySelection",
@@ -42534,6 +42704,17 @@
       "Summary": "Gets the earliest decisive specificity rule that selected the winning override rule when one was resolved for this endpoint\u0027s originating candidate."
     },
     {
+      "DisplayName": "Owned",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationOwnershipStates",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationownershipstates-owned",
+      "Signature": "const string Owned",
+      "Summary": "The selected materializer currently owns the reconciled control-plane resources."
+    },
+    {
       "DisplayName": "OwnedBehaviorRegistration",
       "Category": "Constructors",
       "DeclaringTypeName": "OwnedBehaviorRegistration",
@@ -42543,6 +42724,17 @@
       "AnchorId": "member-m-cephalon-abstractions-behaviors-ownedbehaviorregistration-ctor-system-string-system-string-system-type-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder",
       "Signature": "OwnedBehaviorRegistration(string sourceModuleId, string behaviorId, Type behaviorType, Action\u003CIBehaviorTopologyBuilder\u003E configureTopology)",
       "Summary": "Initializes a new \u0060OwnedBehaviorRegistration\u0060."
+    },
+    {
+      "DisplayName": "OwnershipConflict",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationOwnershipStates",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationownershipstates-ownershipconflict",
+      "Signature": "const string OwnershipConflict",
+      "Summary": "The selected materializer observed a conflicting owner for the target resources."
     },
     {
       "DisplayName": "OwnerSubjectId",
@@ -44459,6 +44651,17 @@
       "Summary": "Gets the route-specific normalized migration-progress state."
     },
     {
+      "DisplayName": "Project",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationLifecycleActions",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-project",
+      "Signature": "const string Project",
+      "Summary": "The selected materializer is projecting desired intent without applying it yet."
+    },
+    {
       "DisplayName": "ProjectAsync",
       "Category": "Methods",
       "DeclaringTypeName": "IProjection\u003CTMessage\u003E",
@@ -45084,6 +45287,28 @@
       "AnchorId": "member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-proxyservicename",
       "Signature": "string ProxyServiceName { get; set; }",
       "Summary": "Gets or sets the proxy service name used to build the in-cluster Tanzu proxy endpoint."
+    },
+    {
+      "DisplayName": "Prune",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationLifecycleActions",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-prune",
+      "Signature": "const string Prune",
+      "Summary": "The selected materializer pruned a no-longer-desired owned control-plane resource."
+    },
+    {
+      "DisplayName": "Pruned",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationOwnershipStates",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationownershipstates-pruned",
+      "Signature": "const string Pruned",
+      "Summary": "The selected materializer pruned previously owned resources."
     },
     {
       "DisplayName": "Publication",
@@ -45788,6 +46013,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-recommendedforproduction",
       "Signature": "bool RecommendedForProduction { get; }",
       "Summary": "Gets a value indicating whether this command is recommended for production use."
+    },
+    {
+      "DisplayName": "Reconcile",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationLifecycleActions",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-reconcile",
+      "Signature": "const string Reconcile",
+      "Summary": "The selected materializer is reconciling the desired and actual control-plane posture."
+    },
+    {
+      "DisplayName": "Reconciling",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationDriftStates",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationdriftstates-reconciling",
+      "Signature": "const string Reconciling",
+      "Summary": "The selected materializer is still reconciling the desired and actual control-plane posture."
     },
     {
       "DisplayName": "RecordAsync",
@@ -46571,6 +46818,17 @@
       "Summary": "Creates a new rendered scaffold."
     },
     {
+      "DisplayName": "Replace",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationLifecycleActions",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-replace",
+      "Signature": "const string Replace",
+      "Summary": "The selected materializer replaced or updated an existing owned control-plane resource."
+    },
+    {
       "DisplayName": "ReplaceBindings",
       "Category": "Fields",
       "DeclaringTypeName": "RestEndpointOverrideActionKind",
@@ -46756,6 +47014,17 @@
       "AnchorId": "member-p-cephalon-abstractions-resilience-behaviorresilienceruntimedescriptor-requested",
       "Signature": "BehaviorExecutionResilienceSelection Requested { get; set; }",
       "Summary": "The requested behavior-execution resilience contract."
+    },
+    {
+      "DisplayName": "Requested",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationOwnershipStates",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationownershipstates-requested",
+      "Signature": "const string Requested",
+      "Summary": "The automation is requested for reconciliation, but ownership has not been observed yet."
     },
     {
       "DisplayName": "Requested",
@@ -50023,6 +50292,17 @@
       "AnchorId": "member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-saslmechanism",
       "Signature": "string SaslMechanism { get; set; }",
       "Summary": "Gets or sets the optional SASL mechanism, such as \u0060Plain\u0060, \u0060ScramSha256\u0060, or \u0060ScramSha512\u0060."
+    },
+    {
+      "DisplayName": "Satisfied",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationDependencyStates",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationdependencystates-satisfied",
+      "Signature": "const string Satisfied",
+      "Summary": "The selected materializer depends on control-plane resources that are currently available."
     },
     {
       "DisplayName": "SaveSnapshotAsync",
@@ -56031,6 +56311,28 @@
       "Summary": "Field number for the \u0022traits\u0022 field."
     },
     {
+      "DisplayName": "Transfer",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationLifecycleActions",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-transfer",
+      "Signature": "const string Transfer",
+      "Summary": "The selected materializer transferred ownership to another reconciler."
+    },
+    {
+      "DisplayName": "Transferred",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationOwnershipStates",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationownershipstates-transferred",
+      "Signature": "const string Transferred",
+      "Summary": "The selected materializer transferred ownership to another reconciler."
+    },
+    {
       "DisplayName": "TransformAsync",
       "Category": "Methods",
       "DeclaringTypeName": "XmlCommentsDocumentTransformer",
@@ -57019,6 +57321,39 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccapturepublicationstates-unknown",
       "Signature": "const string Unknown",
       "Summary": "Indicates that the active runtime does not yet have a publication answer."
+    },
+    {
+      "DisplayName": "Unknown",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationDependencyStates",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationdependencystates-unknown",
+      "Signature": "const string Unknown",
+      "Summary": "The dependency posture could not be determined from the current runtime truth."
+    },
+    {
+      "DisplayName": "Unknown",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationDriftStates",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationdriftstates-unknown",
+      "Signature": "const string Unknown",
+      "Summary": "The drift posture could not be determined from the current runtime truth."
+    },
+    {
+      "DisplayName": "Unknown",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationOwnershipStates",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationownershipstates-unknown",
+      "Signature": "const string Unknown",
+      "Summary": "The ownership posture could not be determined from the current runtime truth."
     },
     {
       "DisplayName": "Unspecified",

@@ -96,8 +96,11 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
         metadata["providerAction"] = "projected-intent";
         metadata["observationMode"] = KubernetesGatewayTrafficObservationModes.ConfiguredIntent;
         metadata["resourceState"] = "projection-only";
+        metadata["ownershipState"] = CellTrafficAutomationOwnershipStates.Requested;
+        metadata["dependencyState"] = CellTrafficAutomationDependencyStates.Unknown;
         metadata["driftState"] = "unknown";
         metadata["driftReasons"] = string.Empty;
+        metadata["lifecycleAction"] = CellTrafficAutomationLifecycleActions.Project;
         metadata["gatewayWriteAction"] = "none";
         metadata["httpRouteWriteAction"] = "none";
 
@@ -138,6 +141,10 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
             metadata["providerAction"] = "observe-only";
             metadata["observationMode"] = controlPlaneMode;
             metadata["statusSource"] = "observation-unavailable";
+            metadata["ownershipState"] = CellTrafficAutomationOwnershipStates.Requested;
+            metadata["dependencyState"] = CellTrafficAutomationDependencyStates.Unknown;
+            metadata["driftState"] = CellTrafficAutomationDriftStates.Unknown;
+            metadata["lifecycleAction"] = CellTrafficAutomationLifecycleActions.Observe;
 
             return new CellTrafficAutomationProviderMaterializationResult(
                 state: CellTrafficAutomationProviderMaterializationStates.Failed,
@@ -160,6 +167,10 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
             metadata["providerAction"] = KubernetesGatewayTrafficObservationModes.ApplyAndReconcile;
             metadata["observationMode"] = KubernetesGatewayTrafficObservationModes.ApplyAndReconcile;
             metadata["statusSource"] = "apply-unavailable";
+            metadata["ownershipState"] = CellTrafficAutomationOwnershipStates.Requested;
+            metadata["dependencyState"] = CellTrafficAutomationDependencyStates.Unknown;
+            metadata["driftState"] = CellTrafficAutomationDriftStates.Unknown;
+            metadata["lifecycleAction"] = CellTrafficAutomationLifecycleActions.Reconcile;
             metadata["gatewayWriteAction"] = "none";
             metadata["httpRouteWriteAction"] = "none";
 
@@ -176,6 +187,10 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
             metadata["providerAction"] = KubernetesGatewayTrafficObservationModes.ApplyAndReconcile;
             metadata["observationMode"] = KubernetesGatewayTrafficObservationModes.ApplyAndReconcile;
             metadata["statusSource"] = "observation-unavailable";
+            metadata["ownershipState"] = CellTrafficAutomationOwnershipStates.Requested;
+            metadata["dependencyState"] = CellTrafficAutomationDependencyStates.Unknown;
+            metadata["driftState"] = CellTrafficAutomationDriftStates.Unknown;
+            metadata["lifecycleAction"] = CellTrafficAutomationLifecycleActions.Reconcile;
             metadata["gatewayWriteAction"] = "none";
             metadata["httpRouteWriteAction"] = "none";
 

@@ -60,6 +60,17 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
         Assert.Equal("edge", defaultAutomation.RuntimeMetadata["materialization.selectedDimensions"]);
         Assert.Equal(CellTrafficAutomationMaterializationStates.Partial, defaultAutomation.RuntimeMetadata["materialization.state"]);
         Assert.Equal("provider:unavailable,edge:pending", defaultAutomation.RuntimeMetadata["materialization.stateBreakdown"]);
+        Assert.Equal(CellTrafficAutomationOwnershipStates.Requested, defaultAutomation.RuntimeMetadata["providerMaterialization.ownershipState"]);
+        Assert.Equal(CellTrafficAutomationOwnershipStates.Requested, defaultAutomation.RuntimeMetadata["edgeMaterialization.ownershipState"]);
+        Assert.Equal(CellTrafficAutomationOwnershipStates.Requested, defaultAutomation.RuntimeMetadata["materialization.ownershipState"]);
+        Assert.Equal("provider:requested,edge:requested", defaultAutomation.RuntimeMetadata["materialization.ownershipBreakdown"]);
+        Assert.Equal(CellTrafficAutomationDependencyStates.Unknown, defaultAutomation.RuntimeMetadata["materialization.dependencyState"]);
+        Assert.Equal("provider:unknown,edge:unknown", defaultAutomation.RuntimeMetadata["materialization.dependencyBreakdown"]);
+        Assert.Equal(CellTrafficAutomationDriftStates.Unknown, defaultAutomation.RuntimeMetadata["materialization.driftState"]);
+        Assert.Equal("provider:unknown,edge:unknown", defaultAutomation.RuntimeMetadata["materialization.driftBreakdown"]);
+        Assert.Equal("0", defaultAutomation.RuntimeMetadata["materialization.lifecycleActionCount"]);
+        Assert.Equal(string.Empty, defaultAutomation.RuntimeMetadata["materialization.lifecycleActions"]);
+        Assert.Equal(string.Empty, defaultAutomation.RuntimeMetadata["materialization.lifecycleActionBreakdown"]);
 
         var routedAutomation = catalog.GetById("orders-to-platform-control");
         Assert.NotNull(routedAutomation);
@@ -90,6 +101,13 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
         Assert.Equal("0", routedAutomation.RuntimeMetadata["materialization.selectedDimensionCount"]);
         Assert.Equal(string.Empty, routedAutomation.RuntimeMetadata["materialization.selectedDimensions"]);
         Assert.Equal("provider:unavailable", routedAutomation.RuntimeMetadata["materialization.stateBreakdown"]);
+        Assert.Equal(CellTrafficAutomationOwnershipStates.Requested, routedAutomation.RuntimeMetadata["providerMaterialization.ownershipState"]);
+        Assert.Equal(CellTrafficAutomationOwnershipStates.Requested, routedAutomation.RuntimeMetadata["materialization.ownershipState"]);
+        Assert.Equal("provider:requested", routedAutomation.RuntimeMetadata["materialization.ownershipBreakdown"]);
+        Assert.Equal(CellTrafficAutomationDependencyStates.Unknown, routedAutomation.RuntimeMetadata["materialization.dependencyState"]);
+        Assert.Equal("provider:unknown", routedAutomation.RuntimeMetadata["materialization.dependencyBreakdown"]);
+        Assert.Equal(CellTrafficAutomationDriftStates.Unknown, routedAutomation.RuntimeMetadata["materialization.driftState"]);
+        Assert.Equal("provider:unknown", routedAutomation.RuntimeMetadata["materialization.driftBreakdown"]);
 
         var sourceModuleAutomations = catalog.GetBySourceModule("cell-traffic-tests");
         Assert.Equal(2, sourceModuleAutomations.Count);
@@ -193,6 +211,23 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
         Assert.Equal("100", defaultAutomation.RuntimeMetadata["providerSelection.selectedPriority"]);
         Assert.Equal("regional-route-orders-to-reporting", defaultAutomation.RuntimeMetadata["providerMaterialization.providerRouteId"]);
         Assert.Equal("reconciled", defaultAutomation.RuntimeMetadata["providerMaterialization.providerAction"]);
+        Assert.Equal(CellTrafficAutomationOwnershipStates.Owned, defaultAutomation.RuntimeMetadata["providerMaterialization.ownershipState"]);
+        Assert.Equal(CellTrafficAutomationDependencyStates.Satisfied, defaultAutomation.RuntimeMetadata["providerMaterialization.dependencyState"]);
+        Assert.Equal(CellTrafficAutomationDriftStates.InSync, defaultAutomation.RuntimeMetadata["providerMaterialization.driftState"]);
+        Assert.Equal(CellTrafficAutomationLifecycleActions.Reconcile, defaultAutomation.RuntimeMetadata["providerMaterialization.lifecycleAction"]);
+        Assert.Equal(CellTrafficAutomationOwnershipStates.Owned, defaultAutomation.RuntimeMetadata["edgeMaterialization.ownershipState"]);
+        Assert.Equal(CellTrafficAutomationDependencyStates.Satisfied, defaultAutomation.RuntimeMetadata["edgeMaterialization.dependencyState"]);
+        Assert.Equal(CellTrafficAutomationDriftStates.InSync, defaultAutomation.RuntimeMetadata["edgeMaterialization.driftState"]);
+        Assert.Equal(CellTrafficAutomationLifecycleActions.Reconcile, defaultAutomation.RuntimeMetadata["edgeMaterialization.lifecycleAction"]);
+        Assert.Equal(CellTrafficAutomationOwnershipStates.Owned, defaultAutomation.RuntimeMetadata["materialization.ownershipState"]);
+        Assert.Equal("provider:owned,edge:owned", defaultAutomation.RuntimeMetadata["materialization.ownershipBreakdown"]);
+        Assert.Equal(CellTrafficAutomationDependencyStates.Satisfied, defaultAutomation.RuntimeMetadata["materialization.dependencyState"]);
+        Assert.Equal("provider:satisfied,edge:satisfied", defaultAutomation.RuntimeMetadata["materialization.dependencyBreakdown"]);
+        Assert.Equal(CellTrafficAutomationDriftStates.InSync, defaultAutomation.RuntimeMetadata["materialization.driftState"]);
+        Assert.Equal("provider:in-sync,edge:in-sync", defaultAutomation.RuntimeMetadata["materialization.driftBreakdown"]);
+        Assert.Equal("1", defaultAutomation.RuntimeMetadata["materialization.lifecycleActionCount"]);
+        Assert.Equal(CellTrafficAutomationLifecycleActions.Reconcile, defaultAutomation.RuntimeMetadata["materialization.lifecycleActions"]);
+        Assert.Equal("provider:reconcile,edge:reconcile", defaultAutomation.RuntimeMetadata["materialization.lifecycleActionBreakdown"]);
 
         var routedAutomation = catalog.GetByRouteId("orders-to-platform-control");
         Assert.NotNull(routedAutomation);
@@ -223,7 +258,49 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
             entry.Metadata["providerMaterializerId"] == "regional-traffic-materializer" &&
             entry.Metadata["providerMaterializationState"] == CellTrafficAutomationProviderMaterializationStates.Applied &&
             entry.Metadata["materializationState"] == CellTrafficAutomationMaterializationStates.Applied &&
-            entry.Metadata["providerMaterialization.providerRouteId"] == "regional-route-orders-to-reporting");
+            entry.Metadata["providerMaterialization.providerRouteId"] == "regional-route-orders-to-reporting" &&
+            entry.Metadata["materialization.ownershipState"] == CellTrafficAutomationOwnershipStates.Owned &&
+            entry.Metadata["materialization.dependencyState"] == CellTrafficAutomationDependencyStates.Satisfied &&
+            entry.Metadata["materialization.driftState"] == CellTrafficAutomationDriftStates.InSync);
+    }
+
+    [Fact]
+    public async Task HostedServiceSummarizesOwnershipLifecycleWhenProviderReportsConflict()
+    {
+        var services = CreateServiceCollection(collection =>
+        {
+            collection.AddSingleton<ICellTrafficAutomationProviderMaterializer>(
+                new ConflictCellTrafficAutomationProviderMaterializer(
+                    materializerId: "regional-traffic-materializer",
+                    providerId: "regional-traffic-mesh",
+                    priority: 100));
+        });
+
+        using var provider = services.BuildServiceProvider();
+        foreach (var hostedService in provider.GetServices<IHostedService>())
+        {
+            await hostedService.StartAsync(CancellationToken.None);
+        }
+
+        var catalog = provider.GetRequiredService<ICellTrafficAutomationRuntimeCatalog>();
+
+        var automation = catalog.GetByRouteId("orders-to-reporting");
+        Assert.NotNull(automation);
+        Assert.Equal("regional-traffic-materializer", automation.ProviderMaterializerId);
+        Assert.Equal(CellTrafficAutomationProviderMaterializationStates.Failed, automation.ProviderMaterializationState);
+        Assert.Equal(CellTrafficAutomationMaterializationStates.Applied, automation.EdgeMaterializationState);
+        Assert.Equal(CellTrafficAutomationMaterializationStates.Partial, automation.MaterializationState);
+        Assert.Contains("provider:", automation.MaterializationError, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(CellTrafficAutomationOwnershipStates.OwnershipConflict, automation.RuntimeMetadata["providerMaterialization.ownershipState"]);
+        Assert.Equal(CellTrafficAutomationDependencyStates.Missing, automation.RuntimeMetadata["providerMaterialization.dependencyState"]);
+        Assert.Equal(CellTrafficAutomationDriftStates.Drifted, automation.RuntimeMetadata["providerMaterialization.driftState"]);
+        Assert.Equal(CellTrafficAutomationLifecycleActions.Transfer, automation.RuntimeMetadata["providerMaterialization.lifecycleAction"]);
+        Assert.Equal(CellTrafficAutomationOwnershipStates.OwnershipConflict, automation.RuntimeMetadata["materialization.ownershipState"]);
+        Assert.Equal(CellTrafficAutomationDependencyStates.Missing, automation.RuntimeMetadata["materialization.dependencyState"]);
+        Assert.Equal(CellTrafficAutomationDriftStates.Drifted, automation.RuntimeMetadata["materialization.driftState"]);
+        Assert.Equal("2", automation.RuntimeMetadata["materialization.lifecycleActionCount"]);
+        Assert.Equal("reconcile,transfer", automation.RuntimeMetadata["materialization.lifecycleActions"]);
+        Assert.Equal("provider:transfer,edge:reconcile", automation.RuntimeMetadata["materialization.lifecycleActionBreakdown"]);
     }
 
     [Fact]
@@ -482,7 +559,11 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
             var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 ["providerRouteId"] = $"regional-route-{automation.RouteId}",
-                ["providerAction"] = "reconciled"
+                ["providerAction"] = "reconciled",
+                ["ownershipState"] = CellTrafficAutomationOwnershipStates.Owned,
+                ["dependencyState"] = CellTrafficAutomationDependencyStates.Satisfied,
+                ["driftState"] = CellTrafficAutomationDriftStates.InSync,
+                ["lifecycleAction"] = CellTrafficAutomationLifecycleActions.Reconcile
             };
 
             return ValueTask.FromResult(new CellTrafficAutomationProviderMaterializationResult(
@@ -510,12 +591,52 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
             var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 ["materializedEdgeNodeIds"] = string.Join(",", automation.EdgeNodeIds),
-                ["edgeAction"] = "reconciled"
+                ["edgeAction"] = "reconciled",
+                ["ownershipState"] = CellTrafficAutomationOwnershipStates.Owned,
+                ["dependencyState"] = CellTrafficAutomationDependencyStates.Satisfied,
+                ["driftState"] = CellTrafficAutomationDriftStates.InSync,
+                ["lifecycleAction"] = CellTrafficAutomationLifecycleActions.Reconcile
             };
 
             return ValueTask.FromResult(new CellTrafficAutomationMaterializationResult(
                 state: CellTrafficAutomationMaterializationStates.Applied,
                 observedAtUtc: DateTimeOffset.UtcNow,
+                metadata: metadata));
+        }
+    }
+
+    private sealed class ConflictCellTrafficAutomationProviderMaterializer(
+        string materializerId,
+        string providerId,
+        int priority = 0) : ICellTrafficAutomationProviderMaterializer
+    {
+        public string MaterializerId { get; } = materializerId;
+
+        public string ProviderId { get; } = providerId;
+
+        public int Priority { get; } = priority;
+
+        public bool CanMaterialize(CellTrafficAutomationRuntimeDescriptor automation) =>
+            string.Equals(automation.ProviderId, ProviderId, StringComparison.OrdinalIgnoreCase);
+
+        public ValueTask<CellTrafficAutomationProviderMaterializationResult> MaterializeAsync(
+            CellTrafficAutomationRuntimeDescriptor automation,
+            CancellationToken cancellationToken = default)
+        {
+            var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["providerRouteId"] = $"regional-route-{automation.RouteId}",
+                ["providerAction"] = "ownership-conflict",
+                ["ownershipState"] = CellTrafficAutomationOwnershipStates.OwnershipConflict,
+                ["dependencyState"] = CellTrafficAutomationDependencyStates.Missing,
+                ["driftState"] = CellTrafficAutomationDriftStates.Drifted,
+                ["lifecycleAction"] = CellTrafficAutomationLifecycleActions.Transfer
+            };
+
+            return ValueTask.FromResult(new CellTrafficAutomationProviderMaterializationResult(
+                state: CellTrafficAutomationProviderMaterializationStates.Failed,
+                observedAtUtc: DateTimeOffset.UtcNow,
+                error: "Provider route is still managed by another controller.",
                 metadata: metadata));
         }
     }
