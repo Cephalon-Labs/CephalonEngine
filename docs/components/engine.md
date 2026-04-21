@@ -153,7 +153,11 @@ truth stays on one payload. The engine runs
 startup reconciliation through `CellTrafficAutomationProviderMaterializationHostedService` plus
 `CellTrafficAutomationEdgeMaterializationHostedService` so provider-managed, edge-managed, or
 provider-and-edge-managed routes can move from `pending` to `applied`, `failed`, `unavailable`, or
-derived `partial` posture without inventing a second traffic-materialization registry.
+derived `partial` posture without inventing a second traffic-materialization registry. The first
+provider-specific control-plane follow-through now also ships through
+`Cephalon.Edge.KubernetesGateway`, which uses that same provider-materializer contract to project
+Kubernetes Gateway API intent and the `kubernetes-gateway-traffic-materializations` technology
+surface while the engine still owns selection, reconciliation posture, and canonical runtime truth.
 
 That same engine-first runtime truth now also carries the first phase-13 data mesh and CDC
 baselines end to end. Modules and hosts can contribute `DataProductDescriptor` entries and

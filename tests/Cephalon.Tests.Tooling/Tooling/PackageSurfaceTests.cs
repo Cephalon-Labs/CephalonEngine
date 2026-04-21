@@ -864,6 +864,16 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void EdgeKubernetesGatewayAssemblyExposesOnlyTheDocumentedPackContracts()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Edge.KubernetesGateway.Registration.KubernetesGatewayEngineBuilderExtensions).Assembly,
+            typeof(global::Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficMaterializerOptions),
+            typeof(global::Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficRouteOptions),
+            typeof(global::Cephalon.Edge.KubernetesGateway.Registration.KubernetesGatewayEngineBuilderExtensions));
+    }
+
+    [Fact]
     public void SfidIdsAssemblyExposesOnlyTheDocumentedPackContracts()
     {
         AssertExportedTypes(

@@ -1,0 +1,317 @@
+using Cephalon.Abstractions.Modules;
+using Cephalon.Abstractions.Technologies;
+using Cephalon.Edge.KubernetesGateway.Configuration;
+using Cephalon.Edge.KubernetesGateway.Registration;
+using Cephalon.Engine.Composition;
+using Cephalon.Engine.Configuration;
+using Cephalon.Engine.Runtime;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+namespace Cephalon.Tests.Composition;
+
+public sealed class KubernetesGatewayTrafficMaterializerTests
+{
+    [Fact]
+    public async Task HostedServiceSelectsKubernetesGatewayMaterializerOverGenericFallbackAndProjectsTechnologySurface()
+    {
+        var services = CreateServiceCollection(
+            includeAdminProjection: false,
+            configureServices: collection =>
+            {
+                collection.AddSingleton<ICellTrafficAutomationProviderMaterializer>(
+                    new TestFallbackProviderMaterializer(
+                        materializerId: "fallback-kubernetes-provider",
+                        providerId: KubernetesGatewayTrafficMaterializerOptions.DefaultProviderId,
+                        priority: 10));
+            });
+
+        using var provider = services.BuildServiceProvider();
+        foreach (var hostedService in provider.GetServices<IHostedService>())
+        {
+            await hostedService.StartAsync(CancellationToken.None);
+        }
+
+        var catalog = provider.GetRequiredService<ICellTrafficAutomationRuntimeCatalog>();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+        var snapshot = provider.GetRequiredService<IRuntimeIntrospectionSnapshotProvider>().CreateSnapshot();
+
+        var publicAutomation = catalog.GetByRouteId("orders-to-public-ingress");
+        Assert.NotNull(publicAutomation);
+        Assert.Equal("kubernetes-gateway-materializer", publicAutomation.ProviderMaterializerId);
+        Assert.Equal(CellTrafficAutomationProviderMaterializationStates.Applied, publicAutomation.ProviderMaterializationState);
+        Assert.Equal(CellTrafficAutomationMaterializationStates.Applied, publicAutomation.MaterializationState);
+        Assert.NotNull(publicAutomation.ProviderMaterializationObservedAtUtc);
+        Assert.Equal("2", publicAutomation.RuntimeMetadata["providerSelection.matchingCandidateCount"]);
+        Assert.Equal(
+            "kubernetes-gateway-materializer,fallback-kubernetes-provider",
+            publicAutomation.RuntimeMetadata["providerSelection.matchingCandidateIds"]);
+        Assert.Equal("100", publicAutomation.RuntimeMetadata["providerSelection.selectedPriority"]);
+        Assert.Equal("projected-intent", publicAutomation.RuntimeMetadata["providerMaterialization.providerAction"]);
+        Assert.Equal("httproute/edge-system/orders-public-ingress", publicAutomation.RuntimeMetadata["providerMaterialization.providerRouteId"]);
+        Assert.Equal("edge-system", publicAutomation.RuntimeMetadata["providerMaterialization.gatewayNamespace"]);
+        Assert.Equal("public-gateway", publicAutomation.RuntimeMetadata["providerMaterialization.gatewayName"]);
+        Assert.Equal("cephalon.io/gateway-controller", publicAutomation.RuntimeMetadata["providerMaterialization.controllerName"]);
+        Assert.Equal("configured-intent", publicAutomation.RuntimeMetadata["providerMaterialization.statusSource"]);
+        Assert.Equal("unknown", publicAutomation.RuntimeMetadata["providerMaterialization.httpRouteProgrammedCondition"]);
+
+        var cellSurface = Assert.Single(
+            technologyCatalog.GetByTechnology("cell-based-architecture"),
+            static surface => surface.SurfaceId == "cell-traffic-automations");
+        Assert.Contains(cellSurface.Entries, entry =>
+            entry.Id == publicAutomation.Id &&
+            entry.Metadata["providerMaterializerId"] == "kubernetes-gateway-materializer" &&
+            entry.Metadata["providerMaterialization.providerRouteId"] == "httproute/edge-system/orders-public-ingress");
+
+        var gatewaySurface = Assert.Single(
+            technologyCatalog.GetByTechnology("cell-based-architecture"),
+            static surface => surface.SurfaceId == "kubernetes-gateway-traffic-materializations");
+        Assert.Contains(gatewaySurface.Entries, entry =>
+            entry.Id == publicAutomation.Id &&
+            entry.Metadata["routeId"] == "orders-to-public-ingress" &&
+            entry.Metadata["providerRouteId"] == "httproute/edge-system/orders-public-ingress" &&
+            entry.Metadata["gatewayName"] == "public-gateway" &&
+            entry.Metadata["httpRouteBackendRefs"] == "service/orders-runtime/orders-api:8443@weight/100" &&
+            entry.Metadata["statusSource"] == "configured-intent");
+
+        Assert.Contains(snapshot.CellTrafficAutomations, automation =>
+            automation.RouteId == "orders-to-public-ingress" &&
+            automation.ProviderMaterializerId == "kubernetes-gateway-materializer" &&
+            automation.ProviderMaterializationState == CellTrafficAutomationProviderMaterializationStates.Applied &&
+            automation.MaterializationState == CellTrafficAutomationMaterializationStates.Applied);
+    }
+
+    [Fact]
+    public async Task HostedServiceLeavesUnmappedKubernetesGatewayAutomationUnavailableWithoutFallbackMaterializer()
+    {
+        var services = CreateServiceCollection(includeAdminProjection: false);
+
+        using var provider = services.BuildServiceProvider();
+        foreach (var hostedService in provider.GetServices<IHostedService>())
+        {
+            await hostedService.StartAsync(CancellationToken.None);
+        }
+
+        var catalog = provider.GetRequiredService<ICellTrafficAutomationRuntimeCatalog>();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        var publicAutomation = catalog.GetByRouteId("orders-to-public-ingress");
+        Assert.NotNull(publicAutomation);
+        Assert.Equal("kubernetes-gateway-materializer", publicAutomation.ProviderMaterializerId);
+        Assert.Equal(CellTrafficAutomationProviderMaterializationStates.Applied, publicAutomation.ProviderMaterializationState);
+
+        var adminAutomation = catalog.GetByRouteId("orders-to-admin-ingress");
+        Assert.NotNull(adminAutomation);
+        Assert.Null(adminAutomation.ProviderMaterializerId);
+        Assert.Equal(CellTrafficAutomationProviderMaterializationStates.Unavailable, adminAutomation.ProviderMaterializationState);
+        Assert.Equal(CellTrafficAutomationMaterializationStates.Unavailable, adminAutomation.MaterializationState);
+        Assert.Equal("0", adminAutomation.RuntimeMetadata["providerSelection.matchingCandidateCount"]);
+        Assert.Equal(string.Empty, adminAutomation.RuntimeMetadata["providerSelection.matchingCandidateIds"]);
+        Assert.Equal("provider:unavailable", adminAutomation.RuntimeMetadata["materialization.stateBreakdown"]);
+
+        var gatewaySurface = Assert.Single(
+            technologyCatalog.GetByTechnology("cell-based-architecture"),
+            static surface => surface.SurfaceId == "kubernetes-gateway-traffic-materializations");
+        Assert.Contains(gatewaySurface.Entries, entry => entry.Metadata["routeId"] == "orders-to-public-ingress");
+        Assert.DoesNotContain(gatewaySurface.Entries, entry => entry.Metadata["routeId"] == "orders-to-admin-ingress");
+    }
+
+    private static ServiceCollection CreateServiceCollection(
+        bool includeAdminProjection,
+        Action<ServiceCollection>? configureServices = null)
+    {
+        var services = new ServiceCollection();
+        configureServices?.Invoke(services);
+        services.AddCephalon(engine => ConfigureEngine(engine, includeAdminProjection));
+        return services;
+    }
+
+    private static void ConfigureEngine(EngineBuilder engine, bool includeAdminProjection)
+    {
+        engine.UseSettings(new EngineSettings(
+            blueprint: "Microservice",
+            cells: new CellSettings(
+                new CellTrafficAutomationSettings(
+                    routes:
+                    [
+                        new CellTrafficAutomationRouteSettings(
+                            routeId: "orders-to-public-ingress",
+                            automationMode: "automatic",
+                            triggerMode: "source-or-target-health",
+                            actionMode: "shed-load",
+                            materializationMode: "provider-managed",
+                            notes: null,
+                            metadata: null,
+                            providerId: KubernetesGatewayTrafficMaterializerOptions.DefaultProviderId),
+                        new CellTrafficAutomationRouteSettings(
+                            routeId: "orders-to-admin-ingress",
+                            automationMode: "automatic",
+                            triggerMode: "source-health",
+                            actionMode: "prefer-local-route",
+                            materializationMode: "provider-managed",
+                            notes: null,
+                            metadata: null,
+                            providerId: KubernetesGatewayTrafficMaterializerOptions.DefaultProviderId)
+                    ]))));
+        engine.AddModule(new KubernetesGatewayTrafficTestModule());
+        engine.AddKubernetesGatewayTrafficMaterializer(options =>
+        {
+            options.ControllerName = "cephalon.io/gateway-controller";
+            options.GatewayClassName = "cephalon-public";
+            options.GatewayNamespace = "edge-system";
+            options.GatewayName = "public-gateway";
+            options.ListenerName = "https";
+            options.RouteNamespace = "edge-system";
+            options.Routes.Add(new KubernetesGatewayTrafficRouteOptions
+            {
+                RouteId = "orders-to-public-ingress",
+                HttpRouteName = "orders-public-ingress",
+                BackendNamespace = "orders-runtime",
+                BackendServiceName = "orders-api",
+                BackendPort = 8443,
+                BackendWeight = 100
+            });
+
+            if (includeAdminProjection)
+            {
+                options.Routes.Add(new KubernetesGatewayTrafficRouteOptions
+                {
+                    RouteId = "orders-to-admin-ingress",
+                    HttpRouteName = "orders-admin-ingress",
+                    GatewayName = "admin-gateway",
+                    ListenerName = "admin-https",
+                    BackendNamespace = "orders-admin",
+                    BackendServiceName = "orders-admin-api",
+                    BackendPort = 9443
+                });
+            }
+        });
+    }
+
+    private sealed class TestFallbackProviderMaterializer(
+        string materializerId,
+        string providerId,
+        int priority) : ICellTrafficAutomationProviderMaterializer
+    {
+        public string MaterializerId { get; } = materializerId;
+
+        public string ProviderId { get; } = providerId;
+
+        public int Priority { get; } = priority;
+
+        public bool CanMaterialize(CellTrafficAutomationRuntimeDescriptor automation) =>
+            string.Equals(automation.ProviderId, ProviderId, StringComparison.OrdinalIgnoreCase);
+
+        public ValueTask<CellTrafficAutomationProviderMaterializationResult> MaterializeAsync(
+            CellTrafficAutomationRuntimeDescriptor automation,
+            CancellationToken cancellationToken = default)
+        {
+            var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["providerAction"] = "fallback-reconciled",
+                ["providerRouteId"] = $"fallback/{automation.RouteId}"
+            };
+
+            return ValueTask.FromResult(new CellTrafficAutomationProviderMaterializationResult(
+                state: CellTrafficAutomationProviderMaterializationStates.Applied,
+                observedAtUtc: DateTimeOffset.UtcNow,
+                metadata: metadata));
+        }
+    }
+
+    private sealed class KubernetesGatewayTrafficTestModule :
+        ModuleBase,
+        ICellBoundaryContributor,
+        ICellRouteContributor,
+        ICellHealthIsolationContributor
+    {
+        public override ModuleDescriptor Descriptor { get; } = new(
+            id: "kubernetes-gateway-traffic-tests",
+            displayName: "Kubernetes Gateway Traffic Tests",
+            description: "Provides cell topology and health isolation for Kubernetes Gateway materializer tests.");
+
+        public void RegisterCellBoundaries(ICellBoundaryRegistry cells)
+        {
+            cells.Add(new CellBoundaryDescriptor(
+                id: "orders-cell",
+                sourceModuleId: "kubernetes-gateway-traffic-tests",
+                displayName: "Orders Cell",
+                description: "Keeps order-serving workloads together.",
+                blastRadius: "regional",
+                routingStrategy: "local-first",
+                moduleIds: ["kubernetes-gateway-traffic-tests"]));
+            cells.Add(new CellBoundaryDescriptor(
+                id: "public-edge-cell",
+                sourceModuleId: "kubernetes-gateway-traffic-tests",
+                displayName: "Public Edge Cell",
+                description: "Fronts public ingress traffic.",
+                blastRadius: "public-edge",
+                routingStrategy: "gateway-fanout"));
+            cells.Add(new CellBoundaryDescriptor(
+                id: "admin-edge-cell",
+                sourceModuleId: "kubernetes-gateway-traffic-tests",
+                displayName: "Admin Edge Cell",
+                description: "Fronts administrative ingress traffic.",
+                blastRadius: "admin-edge",
+                routingStrategy: "gateway-fanout"));
+        }
+
+        public void RegisterCellRoutes(ICellRouteRegistry routes)
+        {
+            routes.Add(new CellRouteDescriptor(
+                id: "orders-to-public-ingress",
+                sourceModuleId: "kubernetes-gateway-traffic-tests",
+                sourceCellId: "orders-cell",
+                targetCellId: "public-edge-cell",
+                displayName: "Orders To Public Ingress",
+                description: "Projects order-serving traffic to the public ingress boundary.",
+                routingStrategy: "gateway-managed",
+                governanceMode: "policy-guarded",
+                transportIds: ["rest-api"]));
+            routes.Add(new CellRouteDescriptor(
+                id: "orders-to-admin-ingress",
+                sourceModuleId: "kubernetes-gateway-traffic-tests",
+                sourceCellId: "orders-cell",
+                targetCellId: "admin-edge-cell",
+                displayName: "Orders To Admin Ingress",
+                description: "Projects administrative order traffic to the admin ingress boundary.",
+                routingStrategy: "gateway-managed",
+                governanceMode: "policy-guarded",
+                transportIds: ["rest-api"]));
+        }
+
+        public void RegisterCellHealthIsolations(ICellHealthIsolationRegistry healthIsolations)
+        {
+            healthIsolations.Add(new CellHealthIsolationDescriptor(
+                id: "orders-cell-health",
+                sourceModuleId: "kubernetes-gateway-traffic-tests",
+                cellId: "orders-cell",
+                displayName: "Orders Cell Health",
+                description: "Contains order-serving failures inside the orders cell.",
+                failureIsolationMode: "cell-quarantine",
+                readinessScope: "dependency-aware",
+                restartScope: "cell-only",
+                dependencyIds: ["orders-db"]));
+            healthIsolations.Add(new CellHealthIsolationDescriptor(
+                id: "public-edge-health",
+                sourceModuleId: "kubernetes-gateway-traffic-tests",
+                cellId: "public-edge-cell",
+                displayName: "Public Edge Health",
+                description: "Contains public ingress failures.",
+                failureIsolationMode: "degraded-serving",
+                readinessScope: "best-effort",
+                restartScope: "manual",
+                dependencyIds: ["public-gateway"]));
+            healthIsolations.Add(new CellHealthIsolationDescriptor(
+                id: "admin-edge-health",
+                sourceModuleId: "kubernetes-gateway-traffic-tests",
+                cellId: "admin-edge-cell",
+                displayName: "Admin Edge Health",
+                description: "Contains admin ingress failures.",
+                failureIsolationMode: "degraded-serving",
+                readinessScope: "dependency-aware",
+                restartScope: "manual",
+                dependencyIds: ["admin-gateway"]));
+        }
+    }
+}

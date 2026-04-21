@@ -35,6 +35,7 @@
     <ProjectReference Include="..\..\src\Cephalon.Data\Cephalon.Data.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Data.EntityFramework\Cephalon.Data.EntityFramework.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Edge\Cephalon.Edge.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Edge.KubernetesGateway\Cephalon.Edge.KubernetesGateway.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Engine\Cephalon.Engine.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Eventing\Cephalon.Eventing.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Eventing.Behaviors\Cephalon.Eventing.Behaviors.csproj" />

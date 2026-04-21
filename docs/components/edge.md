@@ -43,8 +43,13 @@ reconcile targeted `edgeNodeIds` back into the shared `ICellTrafficAutomationRun
 keeping edge-runtime implementation details inside `Cephalon.Edge`. That materializer now also
 publishes an explicit low-priority fallback posture so more specific edge companion packs can
 coexist through the shared highest-priority selection model instead of replacing the shared catalog.
+The first provider-specific control-plane follow-through now also ships separately through
+`Cephalon.Edge.KubernetesGateway`, which uses the same shared provider-materializer seam to project
+Kubernetes Gateway API intent for `provider-managed` routes while leaving generic edge-node
+ownership, edge-runtime fallback, and `EdgeNativeDelivery` activation inside this baseline pack.
 
 ## Related docs
 
+- [Cephalon.Edge.KubernetesGateway](edge-kubernetes-gateway.md)
 - [Technology packs](../technology-packs.md)
 - [Module authoring](../module-authoring.md)

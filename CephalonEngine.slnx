@@ -35,6 +35,7 @@
     <Project Path="src/Cephalon.Data.Redis/Cephalon.Data.Redis.csproj" />
     <Project Path="src/Cephalon.Data/Cephalon.Data.csproj" />
     <Project Path="src/Cephalon.Edge/Cephalon.Edge.csproj" />
+    <Project Path="src/Cephalon.Edge.KubernetesGateway/Cephalon.Edge.KubernetesGateway.csproj" />
     <Project Path="src/Cephalon.Behaviors/Cephalon.Behaviors.csproj" />
     <Project Path="src/Cephalon.Behaviors.Http/Cephalon.Behaviors.Http.csproj" />
     <Project Path="src/Cephalon.Behaviors.Messaging/Cephalon.Behaviors.Messaging.csproj" />

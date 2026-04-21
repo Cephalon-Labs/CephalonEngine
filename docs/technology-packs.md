@@ -28,7 +28,11 @@ materialization seam is now also explicit through `CellTrafficAutomationMaterial
 edge-runtime materializer while the provider-named result/state types stay available as
 compatibility helpers over the same contract. Future service-mesh, gateway, or provider companion
 packs can reconcile provider-owned or edge-owned traffic posture back onto the same shared
-automation catalog instead of publishing a second materialization registry.
+automation catalog instead of publishing a second materialization registry. The first concrete
+provider-specific control-plane follow-through is now also shipped through
+`Cephalon.Edge.KubernetesGateway`, which projects Kubernetes Gateway API `Gateway` plus `HTTPRoute`
+intent back onto the same shared automation catalog and publishes that view through the
+`kubernetes-gateway-traffic-materializations` technology surface.
 
 ## Shipped baseline packs
 
@@ -49,6 +53,9 @@ Current baseline packages:
 - `Cephalon.Edge`
   - runtime services and capability activation for `EdgeNativeDelivery`
   - registers `IEdgeNodeCatalog` when the profile is selected
+- `Cephalon.Edge.KubernetesGateway`
+  - first provider-specific control-plane materializer over the shared `cell-based-architecture` traffic-automation baseline
+  - projects Kubernetes Gateway API intent without moving cluster-specific apply loops into `Cephalon.Engine`
 
 These packages are also used as scaffold hints for the matching built-in technology profiles.
 The phase-8 data packs are companion packages rather than technology packs, but they can now enrich `EventDrivenIntegration` truth by projecting staged outbox producers and application-managed inbox stores into the eventing runtime surfaces when both baselines are active.
