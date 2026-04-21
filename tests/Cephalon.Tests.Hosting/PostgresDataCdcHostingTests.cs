@@ -1,0 +1,189 @@
+using System.Net.Http.Json;
+using Cephalon.Abstractions.Data;
+using Cephalon.Abstractions.Execution;
+using Cephalon.AspNetCore.Hosting;
+using Cephalon.Data.Postgres.Configuration;
+using Cephalon.Data.Postgres.Registration;
+using Cephalon.Data.Registration;
+using Cephalon.Data.Services;
+using Cephalon.Engine.Configuration;
+using Cephalon.Engine.Runtime;
+using Cephalon.Tests.Support;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Cephalon.Tests.Hosting;
+
+public sealed class PostgresDataCdcHostingTests
+{
+    private const string SharedRuntimeId = "data-cdc-capture-pump";
+    private const string PostgresRuntimeId = "postgresql-logical-replication-capture-pump";
+    private const string CaptureId = "pg-orders-cdc";
+
+    [Fact]
+    public async Task MapCephalonExposesPostgresProviderNativeCdcRuntimeSurfaces()
+    {
+        var executionState = new TestCdcExecutionState();
+        var harness = new PostgresDataCdcTestHarness();
+        var batch = new PostgresLogicalReplicationTestBatch();
+        batch.Metadata["publicationName"] = "orders_publication";
+        batch.Metadata["slotName"] = "orders_slot";
+        batch.Metadata["replicationCheckpointSource"] = "slot-confirmed-flush-lsn";
+        batch.Changes.Add(new PostgresLogicalReplicationTestChange
+        {
+            CommitLsn = "0/16B6E00",
+            TransactionEndLsn = "0/16B6E30",
+            ChangeId = "lsn-0001",
+            OperationName = "insert",
+            Payload = """{"orderId":"order-001","status":"created"}"""
+        });
+        harness.EnqueueBatch(batch);
+
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Services.AddSingleton(executionState);
+        builder.Services.AddPostgresDataCdcTestHarness(harness);
+        builder.Services.AddScoped<IOutbox, TestOutbox>();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularVerticalSlice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Patterns:0"] = "CQRS";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new PlatformEventingTestModule());
+            cephalon.AddData(options =>
+            {
+                options.EnableCdcExecution = true;
+                options.CdcPollingIntervalSeconds = 600;
+            });
+            cephalon.AddPostgresData(
+                connectionString: "Host=localhost;Username=postgres;Password=postgres;Database=cephalon",
+                databaseName: "cephalon",
+                configure: options =>
+                {
+                    options.CdcCaptures.Add(new PostgresLogicalReplicationCaptureOptions
+                    {
+                        Id = CaptureId,
+                        DisplayName = "PostgreSQL Orders CDC",
+                        Description = "Captures PostgreSQL order changes through a provider-native logical-replication runner.",
+                        SourceModuleId = "platform",
+                        PublicationName = "orders_publication",
+                        SlotName = "orders_slot",
+                        TableSchema = "public",
+                        TableName = "orders",
+                        OutboxId = "tenant-event-outbox",
+                        ChannelId = "orders",
+                        MessageType = "orders.postgresql.changed",
+                        InitialPosition = "slot-consistent-point",
+                        PollingIntervalSeconds = 1,
+                        MaxChangesPerRead = 64,
+                        MaxAwaitTimeSeconds = 5
+                    });
+                });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+        await app.StartAsync();
+
+        try
+        {
+            await executionState.WaitForStagedMessageAsync();
+
+            var client = app.GetTestClient();
+            var cdcState = await WaitForAsync(
+                () => client.GetFromJsonAsync<CdcCaptureRuntimeState>($"/engine/cdc-captures/runtime/{CaptureId}")!,
+                static state => state is not null && state.LastOutcome == CdcCaptureRuntimeOutcomes.Captured,
+                TimeSpan.FromSeconds(10));
+
+            var cdcCaptureRuntimes = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes");
+            var postgresRuntime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>($"/engine/cdc-capture-runtimes/{PostgresRuntimeId}");
+            var capturesByRuntime = await client.GetFromJsonAsync<CdcCaptureDescriptor[]>($"/engine/cdc-captures/execution-runtimes/{PostgresRuntimeId}");
+            var captureStatesByRuntime = await client.GetFromJsonAsync<CdcCaptureRuntimeState[]>($"/engine/cdc-captures/runtime/execution-runtimes/{PostgresRuntimeId}");
+            var hostedExecutions = await client.GetFromJsonAsync<HostedExecutionDescriptor[]>("/engine/hosted-executions");
+            var executionGraphs = await client.GetFromJsonAsync<ExecutionGraphDescriptor[]>("/engine/execution-graphs");
+            var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+            Assert.NotNull(cdcCaptureRuntimes);
+            Assert.NotNull(postgresRuntime);
+            Assert.Contains(cdcCaptureRuntimes, runtime => runtime.Id == SharedRuntimeId);
+            Assert.Contains(cdcCaptureRuntimes, runtime => runtime.Id == PostgresRuntimeId);
+
+            var sharedRuntime = Assert.Single(cdcCaptureRuntimes, runtime => runtime.Id == SharedRuntimeId);
+            Assert.Empty(sharedRuntime.CdcCaptureIds);
+
+            Assert.Equal("host-managed", postgresRuntime.ExecutionOwnership);
+            Assert.Equal("provider-native", postgresRuntime.ExecutionTopology);
+            Assert.Equal("provider-native", postgresRuntime.AcknowledgementMode);
+            Assert.Equal([CaptureId], postgresRuntime.CdcCaptureIds);
+            Assert.True(postgresRuntime.Summary.HasReports);
+            Assert.Equal(CaptureId, postgresRuntime.Summary.LastCdcCaptureId);
+            Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, postgresRuntime.Summary.LastOutcome);
+            Assert.Equal(1, postgresRuntime.Summary.TotalCapturedChangeCount);
+            Assert.Equal(1, postgresRuntime.Summary.TotalProducedMessageCount);
+
+            var capture = Assert.Single(capturesByRuntime!);
+            Assert.Equal(CaptureId, capture.Id);
+            Assert.Equal("platform", capture.SourceModuleId);
+            Assert.Equal(PostgresRuntimeId, capture.ExecutionBinding.EffectiveExecutionRuntimeId);
+            Assert.Equal("provider-native", capture.ExecutionBinding.ExecutionTopology);
+            Assert.Equal("postgres-data", capture.Metadata["contributorModuleId"]);
+
+            var captureState = Assert.Single(captureStatesByRuntime!);
+            Assert.Equal(CaptureId, captureState.CdcCaptureId);
+            Assert.Equal(PostgresRuntimeId, captureState.ExecutionBinding.EffectiveExecutionRuntimeId);
+            Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, captureState.LastOutcome);
+            Assert.Equal(CdcCapturePublicationStates.PendingPublication, captureState.Publication.State);
+
+            Assert.NotNull(cdcState);
+            Assert.Equal(PostgresRuntimeId, cdcState.ExecutionBinding.EffectiveExecutionRuntimeId);
+            Assert.Equal("postgresql-provider-native-runtime", cdcState.Metadata["captureExecution"]);
+            Assert.Equal(PostgresRuntimeId, cdcState.Metadata["cdcCaptureExecutionRuntimeId"]);
+            Assert.Equal("provider-native", cdcState.Metadata["acknowledgement"]);
+            Assert.Equal("orders_publication", cdcState.Metadata["publicationName"]);
+            Assert.Equal("orders_slot", cdcState.Metadata["slotName"]);
+            Assert.Equal("slot-confirmed-flush-lsn", cdcState.Metadata["replicationCheckpointSource"]);
+
+            var hostedExecution = Assert.Single(hostedExecutions!, item => item.Id == PostgresRuntimeId);
+            Assert.Equal("postgres-data", hostedExecution.SourceModuleId);
+            Assert.Equal("background-service", hostedExecution.Kind);
+
+            var executionGraph = Assert.Single(executionGraphs!, item => item.Id == "postgresql-logical-replication-capture-flow");
+            Assert.Equal("postgres-data", executionGraph.SourceModuleId);
+            Assert.Equal("resolve-postgresql-cdc-captures", executionGraph.EntryNodeId);
+
+            Assert.NotNull(snapshot);
+            Assert.Contains(snapshot.CdcCaptures, item => item.Id == CaptureId &&
+                item.ExecutionBinding.EffectiveExecutionRuntimeId == PostgresRuntimeId);
+            Assert.Contains(snapshot.CdcCaptureStates, item => item.CdcCaptureId == CaptureId &&
+                item.LastOutcome == CdcCaptureRuntimeOutcomes.Captured);
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == PostgresRuntimeId &&
+                item.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured);
+        }
+        finally
+        {
+            await app.StopAsync();
+        }
+    }
+
+    private static async Task<T> WaitForAsync<T>(
+        Func<Task<T>> producer,
+        Func<T, bool> predicate,
+        TimeSpan timeout)
+    {
+        using var cancellationTokenSource = new CancellationTokenSource(timeout);
+        while (!cancellationTokenSource.IsCancellationRequested)
+        {
+            var current = await producer().ConfigureAwait(false);
+            if (predicate(current))
+            {
+                return current;
+            }
+
+            await Task.Delay(200, cancellationTokenSource.Token).ConfigureAwait(false);
+        }
+
+        throw new TimeoutException("Timed out while waiting for the expected PostgreSQL CDC hosting condition.");
+    }
+}

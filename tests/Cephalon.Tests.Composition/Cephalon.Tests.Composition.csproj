@@ -28,6 +28,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Cephalon.Data.Postgres\Cephalon.Data.Postgres.csproj" />
     <ProjectReference Include="..\..\tests\Cephalon.Tests.Support\Cephalon.Tests.Support.csproj" />
   </ItemGroup>
 </Project>

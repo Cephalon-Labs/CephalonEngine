@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-21T22:38:55.6494801+00:00",
+  "GeneratedAtUtc": "2026-04-21T23:28:12.2282001+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -81,6 +81,14 @@
       "FileName": "cephalon-data-entityframework.md",
       "NamespaceCount": 4,
       "TypeCount": 11
+    },
+    {
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "Category": "Phase 13 Companion Packs",
+      "Description": "PostgreSQL provider-native logical-replication CDC companion pack for Cephalon data workloads.",
+      "FileName": "cephalon-data-postgres.md",
+      "NamespaceCount": 2,
+      "TypeCount": 3
     },
     {
       "AssemblyName": "Cephalon.Data.SqlServer",
@@ -820,6 +828,20 @@
       "FileName": "cephalon-data-entityframework.md",
       "AnchorId": "namespace-cephalon-data-entityframework-services",
       "TypeCount": 2
+    },
+    {
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "namespace-cephalon-data-postgres-configuration",
+      "TypeCount": 2
+    },
+    {
+      "NamespaceName": "Cephalon.Data.Postgres.Registration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "namespace-cephalon-data-postgres-registration",
+      "TypeCount": 1
     },
     {
       "NamespaceName": "Cephalon.Data.Registration",
@@ -9742,6 +9764,36 @@
       }
     },
     {
+      "DisplayName": "PostgresDataEngineBuilderExtensions",
+      "NamespaceName": "Cephalon.Data.Postgres.Registration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "type-cephalon-data-postgres-registration-postgresdataenginebuilderextensions",
+      "Declaration": "public static class PostgresDataEngineBuilderExtensions",
+      "Summary": "Registers the PostgreSQL logical-replication CDC companion pack with an \u0060EngineBuilder\u0060.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "PostgresDataOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "type-cephalon-data-postgres-configuration-postgresdataoptions",
+      "Declaration": "public sealed class PostgresDataOptions",
+      "Summary": "Configuration options for the PostgreSQL data provider (\u0060Engine:Data:Postgres\u0060).",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 2,
+        "Properties": 4,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "PostgresDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.PostgresDependencies",
@@ -9784,6 +9836,21 @@
         "Fields": 0,
         "Properties": 0,
         "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "PostgresLogicalReplicationCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "type-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions",
+      "Declaration": "public sealed class PostgresLogicalReplicationCaptureOptions",
+      "Summary": "Declares one provider-native PostgreSQL logical-replication capture for the active runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 21,
+        "Methods": 0
       }
     },
     {
@@ -14360,6 +14427,28 @@
       "Summary": "Adds an application or design pattern to the current app profile."
     },
     {
+      "DisplayName": "AddPostgresData",
+      "Category": "Methods",
+      "DeclaringTypeName": "PostgresDataEngineBuilderExtensions",
+      "NamespaceName": "Cephalon.Data.Postgres.Registration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-m-cephalon-data-postgres-registration-postgresdataenginebuilderextensions-addpostgresdata-cephalon-engine-composition-enginebuilder-system-action-cephalon-data-postgres-configuration-postgresdataoptions",
+      "Signature": "EngineBuilder AddPostgresData(this EngineBuilder builder, Action\u003CPostgresDataOptions\u003E configure)",
+      "Summary": "Adds the PostgreSQL logical-replication CDC pack using an options callback that can bind from configuration."
+    },
+    {
+      "DisplayName": "AddPostgresData",
+      "Category": "Methods",
+      "DeclaringTypeName": "PostgresDataEngineBuilderExtensions",
+      "NamespaceName": "Cephalon.Data.Postgres.Registration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-m-cephalon-data-postgres-registration-postgresdataenginebuilderextensions-addpostgresdata-cephalon-engine-composition-enginebuilder-system-string-system-string-system-action-cephalon-data-postgres-configuration-postgresdataoptions",
+      "Signature": "EngineBuilder AddPostgresData(this EngineBuilder builder, string connectionString, string databaseName, Action\u003CPostgresDataOptions\u003E configure)",
+      "Summary": "Adds the PostgreSQL logical-replication CDC pack with the supplied connection string and database name."
+    },
+    {
       "DisplayName": "AddReferenceDocsHosting",
       "Category": "Methods",
       "DeclaringTypeName": "EngineWebApplicationBuilderExtensions",
@@ -18817,6 +18906,17 @@
     {
       "DisplayName": "CdcCaptures",
       "Category": "Properties",
+      "DeclaringTypeName": "PostgresDataOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-p-cephalon-data-postgres-configuration-postgresdataoptions-cdccaptures",
+      "Signature": "IList\u003CPostgresLogicalReplicationCaptureOptions\u003E CdcCaptures { get; }",
+      "Summary": "Gets the provider-native PostgreSQL logical-replication captures that should be contributed to the active runtime."
+    },
+    {
+      "DisplayName": "CdcCaptures",
+      "Category": "Properties",
       "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
       "NamespaceName": "Cephalon.Engine.Runtime",
       "AssemblyName": "Cephalon.Engine",
@@ -19319,6 +19419,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-outboxmessage-channelid",
       "Signature": "string ChannelId { get; }",
       "Summary": "Gets the logical channel or destination identifier."
+    },
+    {
+      "DisplayName": "ChannelId",
+      "Category": "Properties",
+      "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-channelid",
+      "Signature": "string ChannelId { get; set; }",
+      "Summary": "Gets or sets the logical outbox channel that receives emitted publications."
     },
     {
       "DisplayName": "ChannelId",
@@ -20797,6 +20908,17 @@
     {
       "DisplayName": "ConnectionString",
       "Category": "Properties",
+      "DeclaringTypeName": "PostgresDataOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-p-cephalon-data-postgres-configuration-postgresdataoptions-connectionstring",
+      "Signature": "string ConnectionString { get; set; }",
+      "Summary": "Gets or sets the inline PostgreSQL connection string."
+    },
+    {
+      "DisplayName": "ConnectionString",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.PostgresDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.PostgresDependencies",
@@ -20881,6 +21003,17 @@
       "AnchorId": "member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-connectionstringname",
       "Signature": "string ConnectionStringName { get; }",
       "Summary": "Gets the selected named connection-string reference, if one was declared."
+    },
+    {
+      "DisplayName": "ConnectionStringName",
+      "Category": "Properties",
+      "DeclaringTypeName": "PostgresDataOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-p-cephalon-data-postgres-configuration-postgresdataoptions-connectionstringname",
+      "Signature": "string ConnectionStringName { get; set; }",
+      "Summary": "Gets or sets the root \u0060ConnectionStrings\u0060 entry name to resolve for PostgreSQL."
     },
     {
       "DisplayName": "ConnectionStringName",
@@ -21609,6 +21742,17 @@
       "Summary": "Creates the current database-migration playbook."
     },
     {
+      "DisplayName": "CreateSlotIfMissing",
+      "Category": "Properties",
+      "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-createslotifmissing",
+      "Signature": "bool CreateSlotIfMissing { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the pack should create the logical replication slot when it does not exist yet."
+    },
+    {
       "DisplayName": "CreateSnapshot",
       "Category": "Methods",
       "DeclaringTypeName": "CapabilityPolicyEvaluator",
@@ -22058,6 +22202,17 @@
       "AnchorId": "member-m-cephalon-engine-configuration-databasemigrationssettings-ctor-system-nullable-system-boolean-system-nullable-system-boolean-system-collections-generic-ireadonlylist-system-string",
       "Signature": "DatabaseMigrationsSettings(bool? applyOnStartup, bool? exitAfterApply, IReadOnlyList\u003Cstring\u003E targets)",
       "Summary": "Initializes a new instance of the \u0060DatabaseMigrationsSettings\u0060 class."
+    },
+    {
+      "DisplayName": "DatabaseName",
+      "Category": "Properties",
+      "DeclaringTypeName": "PostgresDataOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-p-cephalon-data-postgres-configuration-postgresdataoptions-databasename",
+      "Signature": "string DatabaseName { get; set; }",
+      "Summary": "Gets or sets the operator-facing database name that owns the configured logical-replication captures."
     },
     {
       "DisplayName": "DatabaseName",
@@ -23734,6 +23889,17 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-description",
+      "Signature": "string Description { get; set; }",
+      "Summary": "Gets or sets the human-readable CDC capture description."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "ProjectionDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -24885,6 +25051,17 @@
       "AnchorId": "member-p-cephalon-abstractions-patterns-patterndescriptor-displayname",
       "Signature": "string DisplayName { get; }",
       "Summary": "Gets the human-readable pattern name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "Gets or sets the operator-facing CDC capture name."
     },
     {
       "DisplayName": "DisplayName",
@@ -27602,6 +27779,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimestate-eventformat",
       "Signature": "string EventFormat { get; set; }",
       "Summary": "The emitted change-event format such as \u0060debezium-envelope\u0060."
+    },
+    {
+      "DisplayName": "EventFormat",
+      "Category": "Properties",
+      "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-eventformat",
+      "Signature": "string EventFormat { get; set; }",
+      "Summary": "Gets or sets the operator-facing event format projected on the CDC descriptor."
     },
     {
       "DisplayName": "EventFormat",
@@ -35163,6 +35351,17 @@
     {
       "DisplayName": "Id",
       "Category": "Properties",
+      "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-id",
+      "Signature": "string Id { get; set; }",
+      "Summary": "Gets or sets the stable CDC capture identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
       "DeclaringTypeName": "ProjectionDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -36105,6 +36304,17 @@
       "AnchorId": "member-f-cephalon-engine-runtime-runtimestatus-initializing",
       "Signature": "const RuntimeStatus Initializing",
       "Summary": "The runtime is initializing modules."
+    },
+    {
+      "DisplayName": "InitialPosition",
+      "Category": "Properties",
+      "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-initialposition",
+      "Signature": "string InitialPosition { get; set; }",
+      "Summary": "Gets or sets the initial position used when the logical replication slot must be created."
     },
     {
       "DisplayName": "InitialPosition",
@@ -38890,6 +39100,17 @@
       "Summary": "Gets the maximum retry attempts requested for the policy."
     },
     {
+      "DisplayName": "MaxAwaitTimeSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-maxawaittimeseconds",
+      "Signature": "int MaxAwaitTimeSeconds { get; set; }",
+      "Summary": "Gets or sets the maximum number of seconds to await committed WAL messages during one provider-native iteration."
+    },
+    {
       "DisplayName": "MaxBatchSize",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseRuntimeSelection",
@@ -38921,6 +39142,17 @@
       "AnchorId": "member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-maxchangesperpoll",
       "Signature": "int MaxChangesPerPoll { get; set; }",
       "Summary": "Gets or sets the maximum number of captured changes to stage during one polling iteration."
+    },
+    {
+      "DisplayName": "MaxChangesPerRead",
+      "Category": "Properties",
+      "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-maxchangesperread",
+      "Signature": "int MaxChangesPerRead { get; set; }",
+      "Summary": "Gets or sets the maximum number of committed logical-replication changes to stage during one iteration."
     },
     {
       "DisplayName": "MaxConcurrentExecutions",
@@ -39460,6 +39692,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-outboxmessage-messagetype",
       "Signature": "string MessageType { get; }",
       "Summary": "Gets the logical message type identifier."
+    },
+    {
+      "DisplayName": "MessageType",
+      "Category": "Properties",
+      "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-messagetype",
+      "Signature": "string MessageType { get; set; }",
+      "Summary": "Gets or sets the logical message type emitted for each captured change event."
     },
     {
       "DisplayName": "MessageType",
@@ -40285,6 +40528,17 @@
       "AnchorId": "member-p-cephalon-abstractions-patterns-patterndescriptor-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
       "Summary": "Gets optional pattern metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-metadata",
+      "Signature": "IDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets arbitrary operator-facing metadata that should flow through the capture descriptor."
     },
     {
       "DisplayName": "Metadata",
@@ -43259,6 +43513,17 @@
     {
       "DisplayName": "OutboxId",
       "Category": "Properties",
+      "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-outboxid",
+      "Signature": "string OutboxId { get; set; }",
+      "Summary": "Gets or sets the outbox identifier that receives emitted publications."
+    },
+    {
+      "DisplayName": "OutboxId",
+      "Category": "Properties",
       "DeclaringTypeName": "SqlServerCdcCaptureOptions",
       "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
       "AssemblyName": "Cephalon.Data.SqlServer",
@@ -44854,6 +45119,17 @@
     {
       "DisplayName": "PollingIntervalSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-pollingintervalseconds",
+      "Signature": "int PollingIntervalSeconds { get; set; }",
+      "Summary": "Gets or sets the polling interval, in seconds, between hosted-service iterations."
+    },
+    {
+      "DisplayName": "PollingIntervalSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "SqlServerCdcCaptureOptions",
       "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
       "AssemblyName": "Cephalon.Data.SqlServer",
@@ -45017,6 +45293,16 @@
       "Summary": "Gets or sets the SQL Server TCP port."
     },
     {
+      "DisplayName": "PostgresDataOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "PostgresDataOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-m-cephalon-data-postgres-configuration-postgresdataoptions-ctor",
+      "Signature": "PostgresDataOptions()"
+    },
+    {
       "DisplayName": "PostgresDependencyDefinition",
       "Category": "Constructors",
       "DeclaringTypeName": "PostgresDependencyDefinition",
@@ -45037,6 +45323,16 @@
       "AnchorId": "member-m-cephalon-observability-postgresdependencies-configuration-postgresdependencyhealthoptions-ctor",
       "Signature": "PostgresDependencyHealthOptions()",
       "Summary": "Initializes a new instance of the \u0060PostgresDependencyHealthOptions\u0060 class."
+    },
+    {
+      "DisplayName": "PostgresLogicalReplicationCaptureOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-m-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-ctor",
+      "Signature": "PostgresLogicalReplicationCaptureOptions()"
     },
     {
       "DisplayName": "PrecedenceRank",
@@ -46042,6 +46338,17 @@
     {
       "DisplayName": "ProviderId",
       "Category": "Fields",
+      "DeclaringTypeName": "PostgresDataOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-f-cephalon-data-postgres-configuration-postgresdataoptions-providerid",
+      "Signature": "const string ProviderId",
+      "Summary": "Gets the canonical provider identifier emitted by the pack."
+    },
+    {
+      "DisplayName": "ProviderId",
+      "Category": "Fields",
       "DeclaringTypeName": "SqlServerDataOptions",
       "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
       "AssemblyName": "Cephalon.Data.SqlServer",
@@ -46247,6 +46554,17 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-publicationid",
       "Signature": "string PublicationId { get; set; }",
       "Summary": "The stable publication identifier declared by the choreography step."
+    },
+    {
+      "DisplayName": "PublicationName",
+      "Category": "Properties",
+      "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-publicationname",
+      "Signature": "string PublicationName { get; set; }",
+      "Summary": "Gets or sets the PostgreSQL publication that should emit the tracked table changes."
     },
     {
       "DisplayName": "PublishAsync",
@@ -49276,6 +49594,17 @@
     {
       "DisplayName": "ResourceIds",
       "Category": "Properties",
+      "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-resourceids",
+      "Signature": "IList\u003Cstring\u003E ResourceIds { get; }",
+      "Summary": "Gets the resource identifiers observed by the capture."
+    },
+    {
+      "DisplayName": "ResourceIds",
+      "Category": "Properties",
       "DeclaringTypeName": "SqlServerCdcCaptureOptions",
       "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
       "AssemblyName": "Cephalon.Data.SqlServer",
@@ -51740,6 +52069,17 @@
     {
       "DisplayName": "SectionPath",
       "Category": "Fields",
+      "DeclaringTypeName": "PostgresDataOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-f-cephalon-data-postgres-configuration-postgresdataoptions-sectionpath",
+      "Signature": "const string SectionPath",
+      "Summary": "Gets the configuration section path used by default for PostgreSQL data settings."
+    },
+    {
+      "DisplayName": "SectionPath",
+      "Category": "Fields",
       "DeclaringTypeName": "SqlServerDataOptions",
       "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
       "AssemblyName": "Cephalon.Data.SqlServer",
@@ -52860,6 +53200,17 @@
       "Summary": "Gets the grouped host-governance-skipped suppression-rule outcomes summarized by rule."
     },
     {
+      "DisplayName": "SlotName",
+      "Category": "Properties",
+      "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-slotname",
+      "Signature": "string SlotName { get; set; }",
+      "Summary": "Gets or sets the PostgreSQL logical replication slot used for durable progress."
+    },
+    {
       "DisplayName": "Snapshot",
       "Category": "Properties",
       "DeclaringTypeName": "CapabilityPolicyEvaluator",
@@ -53001,6 +53352,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimestate-sourceid",
       "Signature": "string SourceId { get; set; }",
       "Summary": "The logical source stream, database, or feed identifier."
+    },
+    {
+      "DisplayName": "SourceId",
+      "Category": "Properties",
+      "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-sourceid",
+      "Signature": "string SourceId { get; set; }",
+      "Summary": "Gets or sets the logical source identifier when it should differ from the watched table path."
     },
     {
       "DisplayName": "SourceId",
@@ -53386,6 +53748,17 @@
       "AnchorId": "member-p-cephalon-abstractions-behaviors-ownedbehaviorregistration-sourcemoduleid",
       "Signature": "string SourceModuleId { get; }",
       "Summary": "Gets the stable module identifier that owns the behavior."
+    },
+    {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
+      "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; set; }",
+      "Summary": "Gets or sets the module identifier that owns the capture surface."
     },
     {
       "DisplayName": "SourceModuleId",
@@ -55709,6 +56082,17 @@
     {
       "DisplayName": "TableName",
       "Category": "Properties",
+      "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-tablename",
+      "Signature": "string TableName { get; set; }",
+      "Summary": "Gets or sets the table name of the tracked table."
+    },
+    {
+      "DisplayName": "TableName",
+      "Category": "Properties",
       "DeclaringTypeName": "SqlServerCdcCaptureOptions",
       "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
       "AssemblyName": "Cephalon.Data.SqlServer",
@@ -55716,6 +56100,17 @@
       "AnchorId": "member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-tablename",
       "Signature": "string TableName { get; set; }",
       "Summary": "Gets or sets the table name of the tracked table."
+    },
+    {
+      "DisplayName": "TableSchema",
+      "Category": "Properties",
+      "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-tableschema",
+      "Signature": "string TableSchema { get; set; }",
+      "Summary": "Gets or sets the schema name of the tracked table."
     },
     {
       "DisplayName": "TableSchema",
@@ -56057,6 +56452,17 @@
       "AnchorId": "member-p-cephalon-abstractions-patterns-patterndescriptor-tags",
       "Signature": "IReadOnlyList\u003Cstring\u003E Tags { get; }",
       "Summary": "Gets the tags associated with the pattern."
+    },
+    {
+      "DisplayName": "Tags",
+      "Category": "Properties",
+      "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-tags",
+      "Signature": "IList\u003Cstring\u003E Tags { get; }",
+      "Summary": "Gets the descriptive tags associated with the capture."
     },
     {
       "DisplayName": "Tags",

@@ -91,6 +91,7 @@
     <ProjectReference Include="..\..\src\Cephalon.Data.OpenSearch\Cephalon.Data.OpenSearch.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Data.ClickHouse\Cephalon.Data.ClickHouse.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Data.MongoDB\Cephalon.Data.MongoDB.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Data.Postgres\Cephalon.Data.Postgres.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Data.Nats\Cephalon.Data.Nats.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Data.Neo4j\Cephalon.Data.Neo4j.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Data.Qdrant\Cephalon.Data.Qdrant.csproj" />

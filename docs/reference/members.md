@@ -594,6 +594,12 @@ Browse the published API surface by public member.
 - [AddPattern](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addpattern-cephalon-abstractions-patterns-patterndescriptor): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddPattern&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Adds an application or design pattern to the current app profile.
   - `EngineBuilder AddPattern(PatternDescriptor pattern)`
+- [AddPostgresData](cephalon-data-postgres.md#member-m-cephalon-data-postgres-registration-postgresdataenginebuilderextensions-addpostgresdata-cephalon-engine-composition-enginebuilder-system-action-cephalon-data-postgres-configuration-postgresdataoptions): `Methods` on `PostgresDataEngineBuilderExtensions` in `Cephalon.Data.Postgres.Registration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=AddPostgresData&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Registration&scope=members)
+  - Adds the PostgreSQL logical-replication CDC pack using an options callback that can bind from configuration.
+  - `EngineBuilder AddPostgresData(this EngineBuilder builder, Action<PostgresDataOptions> configure)`
+- [AddPostgresData](cephalon-data-postgres.md#member-m-cephalon-data-postgres-registration-postgresdataenginebuilderextensions-addpostgresdata-cephalon-engine-composition-enginebuilder-system-string-system-string-system-action-cephalon-data-postgres-configuration-postgresdataoptions): `Methods` on `PostgresDataEngineBuilderExtensions` in `Cephalon.Data.Postgres.Registration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=AddPostgresData&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Registration&scope=members)
+  - Adds the PostgreSQL logical-replication CDC pack with the supplied connection string and database name.
+  - `EngineBuilder AddPostgresData(this EngineBuilder builder, string connectionString, string databaseName, Action<PostgresDataOptions> configure)`
 - [AddReferenceDocsHosting](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-enginewebapplicationbuilderextensions-addreferencedocshosting-microsoft-aspnetcore-builder-webapplicationbuilder-system-action-cephalon-aspnetcore-documentation-referencedocshostingoptions): `Methods` on `EngineWebApplicationBuilderExtensions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=AddReferenceDocsHosting&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Adds hosted reference-doc configuration to the ASP.NET Core host.
   - `WebApplicationBuilder AddReferenceDocsHosting(this WebApplicationBuilder builder, Action<ReferenceDocsHostingOptions> configure)`
@@ -1815,6 +1821,9 @@ Browse the published API surface by public member.
 - [CdcCaptures](cephalon-abstractions.md#member-p-cephalon-abstractions-data-icdccapturecatalog-cdccaptures): `Properties` on `ICdcCaptureCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptures&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets all CDC capture surfaces visible to the current runtime.
   - `IReadOnlyList<CdcCaptureDescriptor> CdcCaptures { get; }`
+- [CdcCaptures](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgresdataoptions-cdccaptures): `Properties` on `PostgresDataOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=CdcCaptures&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
+  - Gets the provider-native PostgreSQL logical-replication captures that should be contributed to the active runtime.
+  - `IList<PostgresLogicalReplicationCaptureOptions> CdcCaptures { get; }`
 - [CdcCaptures](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-cdccaptures): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=CdcCaptures&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the CDC captures contributed by active modules and visible to the runtime at the time the snapshot was created.
   - `IReadOnlyList<CdcCaptureDescriptor> CdcCaptures { get; set; }`
@@ -1953,6 +1962,9 @@ Browse the published API surface by public member.
 - [ChannelId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxmessage-channelid): `Properties` on `OutboxMessage` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ChannelId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the logical channel or destination identifier.
   - `string ChannelId { get; }`
+- [ChannelId](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-channelid): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=ChannelId&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
+  - Gets or sets the logical outbox channel that receives emitted publications.
+  - `string ChannelId { get; set; }`
 - [ChannelId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-channelid): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=ChannelId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The logical channel or destination identifier used by the publication.
   - `string ChannelId { get; set; }`
@@ -2355,6 +2367,9 @@ Browse the published API surface by public member.
 - [ConnectionString](cephalon-observability-oracledependencies.md#member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-connectionstring): `Properties` on `OracleDependencyDefinition` in `Cephalon.Observability.OracleDependencies.Configuration` (`Cephalon.Observability.OracleDependencies`) [Browse](browse.html?q=ConnectionString&assembly=Cephalon.Observability.OracleDependencies&namespace=Cephalon.Observability.OracleDependencies.Configuration&scope=members)
   - Gets or sets the optional full Oracle connection string used for the probe.
   - `string ConnectionString { get; set; }`
+- [ConnectionString](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgresdataoptions-connectionstring): `Properties` on `PostgresDataOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=ConnectionString&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
+  - Gets or sets the inline PostgreSQL connection string.
+  - `string ConnectionString { get; set; }`
 - [ConnectionString](cephalon-observability-postgresdependencies.md#member-p-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-connectionstring): `Properties` on `PostgresDependencyDefinition` in `Cephalon.Observability.PostgresDependencies.Configuration` (`Cephalon.Observability.PostgresDependencies`) [Browse](browse.html?q=ConnectionString&assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Configuration&scope=members)
   - Gets or sets the optional full Postgres connection string used for the probe.
   - `string ConnectionString { get; set; }`
@@ -2379,6 +2394,9 @@ Browse the published API surface by public member.
 - [ConnectionStringName](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-connectionstringname): `Properties` on `EntityFrameworkDatabaseRoleContext` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=ConnectionStringName&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
   - Gets the selected named connection-string reference, if one was declared.
   - `string ConnectionStringName { get; }`
+- [ConnectionStringName](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgresdataoptions-connectionstringname): `Properties` on `PostgresDataOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=ConnectionStringName&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
+  - Gets or sets the root `ConnectionStrings` entry name to resolve for PostgreSQL.
+  - `string ConnectionStringName { get; set; }`
 - [ConnectionStringName](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlserverdataoptions-connectionstringname): `Properties` on `SqlServerDataOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=ConnectionStringName&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
   - Gets or sets the root `ConnectionStrings` entry name to resolve for SQL Server.
   - `string ConnectionStringName { get; set; }`
@@ -2577,6 +2595,9 @@ Browse the published API surface by public member.
 - [CreatePlaybook](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idatabasemigrationoperationalplaybookprovider-createplaybook): `Methods` on `IDatabaseMigrationOperationalPlaybookProvider` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CreatePlaybook&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates the current database-migration playbook.
   - `DatabaseMigrationOperationalPlaybook CreatePlaybook()`
+- [CreateSlotIfMissing](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-createslotifmissing): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=CreateSlotIfMissing&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
+  - Gets or sets a value indicating whether the pack should create the logical replication slot when it does not exist yet.
+  - `bool CreateSlotIfMissing { get; set; }`
 - [CreateSnapshot](cephalon-engine.md#member-m-cephalon-engine-trust-capabilitypolicyevaluator-createsnapshot-cephalon-engine-configuration-trustpolicy-system-collections-generic-ireadonlylist-cephalon-engine-manifest-packagemanifest-system-collections-generic-ireadonlylist-cephalon-engine-manifest-modulemanifest-system-collections-generic-ireadonlylist-cephalon-engine-manifest-capabilitymanifest): `Methods` on `CapabilityPolicyEvaluator` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=CreateSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - Creates a trust snapshot from the supplied policy, packages, modules, and capabilities.
   - `TrustSnapshot CreateSnapshot(TrustPolicy policy, IReadOnlyList<PackageManifest> packages, IReadOnlyList<ModuleManifest> modules, IReadOnlyList<CapabilityManifest> capabilities)`
@@ -2703,6 +2724,9 @@ Browse the published API surface by public member.
 - [DatabaseMigrationsSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-databasemigrationssettings-ctor-system-nullable-system-boolean-system-nullable-system-boolean-system-collections-generic-ireadonlylist-system-string): `Constructors` on `DatabaseMigrationsSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=DatabaseMigrationsSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Initializes a new instance of the `DatabaseMigrationsSettings` class.
   - `DatabaseMigrationsSettings(bool? applyOnStartup, bool? exitAfterApply, IReadOnlyList<string> targets)`
+- [DatabaseName](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgresdataoptions-databasename): `Properties` on `PostgresDataOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=DatabaseName&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
+  - Gets or sets the operator-facing database name that owns the configured logical-replication captures.
+  - `string DatabaseName { get; set; }`
 - [DatabaseName](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlserverdataoptions-databasename): `Properties` on `SqlServerDataOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=DatabaseName&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
   - Gets or sets the operator-facing database name that owns the configured CDC captures.
   - `string DatabaseName { get; set; }`
@@ -3159,6 +3183,9 @@ Browse the published API surface by public member.
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-patterndescriptor-description): `Properties` on `PatternDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the pattern description.
   - `string Description { get; }`
+- [Description](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-description): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=Description&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
+  - Gets or sets the human-readable CDC capture description.
+  - `string Description { get; set; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-projectiondescriptor-description): `Properties` on `ProjectionDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the human-readable projection description.
   - `string Description { get; }`
@@ -3474,6 +3501,9 @@ Browse the published API surface by public member.
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-patterndescriptor-displayname): `Properties` on `PatternDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the human-readable pattern name.
   - `string DisplayName { get; }`
+- [DisplayName](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-displayname): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
+  - Gets or sets the operator-facing CDC capture name.
+  - `string DisplayName { get; set; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-data-projectiondescriptor-displayname): `Properties` on `ProjectionDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing projection name.
   - `string DisplayName { get; }`
@@ -4217,6 +4247,9 @@ Browse the published API surface by public member.
   - `string EventFormat { get; }`
 - [EventFormat](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-eventformat): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventFormat&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The emitted change-event format such as `debezium-envelope`.
+  - `string EventFormat { get; set; }`
+- [EventFormat](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-eventformat): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=EventFormat&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
+  - Gets or sets the operator-facing event format projected on the CDC descriptor.
   - `string EventFormat { get; set; }`
 - [EventFormat](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-eventformat): `Properties` on `SqlServerCdcCaptureOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=EventFormat&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
   - Gets or sets the operator-facing event format projected on the CDC descriptor.
@@ -6291,6 +6324,9 @@ Browse the published API surface by public member.
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-patterndescriptor-id): `Properties` on `PatternDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the stable pattern identifier.
   - `string Id { get; }`
+- [Id](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-id): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=Id&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
+  - Gets or sets the stable CDC capture identifier.
+  - `string Id { get; set; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-data-projectiondescriptor-id): `Properties` on `ProjectionDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable projection identifier.
   - `string Id { get; }`
@@ -6549,6 +6585,9 @@ Browse the published API surface by public member.
 - [Initializing](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimestatus-initializing): `Fields` on `RuntimeStatus` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Initializing&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The runtime is initializing modules.
   - `const RuntimeStatus Initializing`
+- [InitialPosition](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-initialposition): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=InitialPosition&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
+  - Gets or sets the initial position used when the logical replication slot must be created.
+  - `string InitialPosition { get; set; }`
 - [InitialPosition](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-initialposition): `Properties` on `SqlServerCdcCaptureOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=InitialPosition&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
   - Gets or sets the initial position used when no durable checkpoint exists yet.
   - `string InitialPosition { get; set; }`
@@ -7320,6 +7359,9 @@ Browse the published API surface by public member.
 - [MaxAttempts](cephalon-engine.md#member-p-cephalon-engine-configuration-retrysettings-maxattempts): `Properties` on `RetrySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=MaxAttempts&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the maximum retry attempts requested for the policy.
   - `int? MaxAttempts { get; }`
+- [MaxAwaitTimeSeconds](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-maxawaittimeseconds): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=MaxAwaitTimeSeconds&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
+  - Gets or sets the maximum number of seconds to await committed WAL messages during one provider-native iteration.
+  - `int MaxAwaitTimeSeconds { get; set; }`
 - [MaxBatchSize](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-databaseruntimeselection-maxbatchsize): `Properties` on `DatabaseRuntimeSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaxBatchSize&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the maximum provider batch size when one was configured.
   - `int? MaxBatchSize { get; }`
@@ -7329,6 +7371,9 @@ Browse the published API surface by public member.
 - [MaxChangesPerPoll](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-maxchangesperpoll): `Properties` on `SqlServerCdcCaptureOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=MaxChangesPerPoll&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
   - Gets or sets the maximum number of captured changes to stage during one polling iteration.
   - `int MaxChangesPerPoll { get; set; }`
+- [MaxChangesPerRead](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-maxchangesperread): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=MaxChangesPerRead&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
+  - Gets or sets the maximum number of committed logical-replication changes to stage during one iteration.
+  - `int MaxChangesPerRead { get; set; }`
 - [MaxConcurrentExecutions](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-bulkheadselection-maxconcurrentexecutions): `Properties` on `BulkheadSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaxConcurrentExecutions&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the maximum concurrent executions allowed inside the bulkhead.
   - `int? MaxConcurrentExecutions { get; }`
@@ -7476,6 +7521,9 @@ Browse the published API surface by public member.
 - [MessageType](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxmessage-messagetype): `Properties` on `OutboxMessage` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MessageType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the logical message type identifier.
   - `string MessageType { get; }`
+- [MessageType](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-messagetype): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=MessageType&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
+  - Gets or sets the logical message type emitted for each captured change event.
+  - `string MessageType { get; set; }`
 - [MessageType](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-messagetype): `Properties` on `SqlServerCdcCaptureOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=MessageType&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
   - Gets or sets the logical message type emitted for each captured change event.
   - `string MessageType { get; set; }`
@@ -7701,6 +7749,9 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-patterndescriptor-metadata): `Properties` on `PatternDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets optional pattern metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-metadata): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
+  - Gets arbitrary operator-facing metadata that should flow through the capture descriptor.
+  - `IDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-projectiondescriptor-metadata): `Properties` on `ProjectionDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets operator-facing metadata associated with the projection.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -8517,6 +8568,9 @@ Browse the published API surface by public member.
 - [OutboxId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxdispatchpolicydescriptor-outboxid): `Properties` on `OutboxDispatchPolicyDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OutboxId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable outbox identifier that the policy applies to.
   - `string OutboxId { get; }`
+- [OutboxId](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-outboxid): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=OutboxId&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
+  - Gets or sets the outbox identifier that receives emitted publications.
+  - `string OutboxId { get; set; }`
 - [OutboxId](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-outboxid): `Properties` on `SqlServerCdcCaptureOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=OutboxId&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
   - Gets or sets the outbox identifier that receives emitted publications.
   - `string OutboxId { get; set; }`
@@ -8955,6 +9009,9 @@ Browse the published API surface by public member.
 - [PollingIntervalSeconds](cephalon-edge-kubernetesgateway.md#member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationoptions-pollingintervalseconds): `Properties` on `KubernetesGatewayTrafficObservationOptions` in `Cephalon.Edge.KubernetesGateway.Configuration` (`Cephalon.Edge.KubernetesGateway`) [Browse](browse.html?q=PollingIntervalSeconds&assembly=Cephalon.Edge.KubernetesGateway&namespace=Cephalon.Edge.KubernetesGateway.Configuration&scope=members)
   - Gets or sets the polling interval, in seconds, used for recurring live observation or reconciliation after startup materialization.
   - `int PollingIntervalSeconds { get; set; }`
+- [PollingIntervalSeconds](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-pollingintervalseconds): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=PollingIntervalSeconds&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
+  - Gets or sets the polling interval, in seconds, between hosted-service iterations.
+  - `int PollingIntervalSeconds { get; set; }`
 - [PollingIntervalSeconds](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-pollingintervalseconds): `Properties` on `SqlServerCdcCaptureOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=PollingIntervalSeconds&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
   - Gets or sets the polling interval, in seconds, for one provider-native SQL Server CDC iteration.
   - `int PollingIntervalSeconds { get; set; }`
@@ -9000,12 +9057,16 @@ Browse the published API surface by public member.
 - [Port](cephalon-observability-sqlserverdependencies.md#member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-port): `Properties` on `SqlServerDependencyDefinition` in `Cephalon.Observability.SqlServerDependencies.Configuration` (`Cephalon.Observability.SqlServerDependencies`) [Browse](browse.html?q=Port&assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Configuration&scope=members)
   - Gets or sets the SQL Server TCP port.
   - `int Port { get; set; }`
+- [PostgresDataOptions](cephalon-data-postgres.md#member-m-cephalon-data-postgres-configuration-postgresdataoptions-ctor): `Constructors` on `PostgresDataOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=PostgresDataOptions&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
+  - `PostgresDataOptions()`
 - [PostgresDependencyDefinition](cephalon-observability-postgresdependencies.md#member-m-cephalon-observability-postgresdependencies-configuration-postgresdependencydefinition-ctor): `Constructors` on `PostgresDependencyDefinition` in `Cephalon.Observability.PostgresDependencies.Configuration` (`Cephalon.Observability.PostgresDependencies`) [Browse](browse.html?q=PostgresDependencyDefinition&assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Configuration&scope=members)
   - Initializes a new instance of the `PostgresDependencyDefinition` class.
   - `PostgresDependencyDefinition()`
 - [PostgresDependencyHealthOptions](cephalon-observability-postgresdependencies.md#member-m-cephalon-observability-postgresdependencies-configuration-postgresdependencyhealthoptions-ctor): `Constructors` on `PostgresDependencyHealthOptions` in `Cephalon.Observability.PostgresDependencies.Configuration` (`Cephalon.Observability.PostgresDependencies`) [Browse](browse.html?q=PostgresDependencyHealthOptions&assembly=Cephalon.Observability.PostgresDependencies&namespace=Cephalon.Observability.PostgresDependencies.Configuration&scope=members)
   - Initializes a new instance of the `PostgresDependencyHealthOptions` class.
   - `PostgresDependencyHealthOptions()`
+- [PostgresLogicalReplicationCaptureOptions](cephalon-data-postgres.md#member-m-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-ctor): `Constructors` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=PostgresLogicalReplicationCaptureOptions&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
+  - `PostgresLogicalReplicationCaptureOptions()`
 - [PrecedenceRank](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-precedencerank): `Properties` on `RestEndpointCandidateRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=PrecedenceRank&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the precedence rank used during publication resolution. Lower values win.
   - `int PrecedenceRank { get; }`
@@ -9279,6 +9340,9 @@ Browse the published API surface by public member.
 - [ProviderId](cephalon-edge-kubernetesgateway.md#member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficmaterializeroptions-providerid): `Properties` on `KubernetesGatewayTrafficMaterializerOptions` in `Cephalon.Edge.KubernetesGateway.Configuration` (`Cephalon.Edge.KubernetesGateway`) [Browse](browse.html?q=ProviderId&assembly=Cephalon.Edge.KubernetesGateway&namespace=Cephalon.Edge.KubernetesGateway.Configuration&scope=members)
   - Gets or sets the provider identifier that the materializer owns.
   - `string ProviderId { get; set; }`
+- [ProviderId](cephalon-data-postgres.md#member-f-cephalon-data-postgres-configuration-postgresdataoptions-providerid): `Fields` on `PostgresDataOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=ProviderId&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
+  - Gets the canonical provider identifier emitted by the pack.
+  - `const string ProviderId`
 - [ProviderId](cephalon-data-sqlserver.md#member-f-cephalon-data-sqlserver-configuration-sqlserverdataoptions-providerid): `Fields` on `SqlServerDataOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=ProviderId&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
   - Gets the canonical provider identifier emitted by the pack.
   - `const string ProviderId`
@@ -9336,6 +9400,9 @@ Browse the published API surface by public member.
 - [PublicationId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-publicationid): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=PublicationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The stable publication identifier declared by the choreography step.
   - `string PublicationId { get; set; }`
+- [PublicationName](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-publicationname): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=PublicationName&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
+  - Gets or sets the PostgreSQL publication that should emit the tracked table changes.
+  - `string PublicationName { get; set; }`
 - [PublishAsync](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventpublisher-publishasync-cephalon-eventing-services-eventpublication-system-threading-cancellationtoken): `Methods` on `IEventPublisher` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PublishAsync&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Publishes one integration event through the active eventing runtime.
   - `ValueTask PublishAsync(EventPublication publication, CancellationToken cancellationToken)`
@@ -10167,6 +10234,9 @@ Browse the published API surface by public member.
 - [ResourceIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-resourceids): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ResourceIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The resource identifiers observed by the capture.
   - `IReadOnlyList<string> ResourceIds { get; set; }`
+- [ResourceIds](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-resourceids): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=ResourceIds&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
+  - Gets the resource identifiers observed by the capture.
+  - `IList<string> ResourceIds { get; }`
 - [ResourceIds](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-resourceids): `Properties` on `SqlServerCdcCaptureOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=ResourceIds&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
   - Gets the resource identifiers observed by the capture.
   - `IList<string> ResourceIds { get; }`
@@ -10842,6 +10912,9 @@ Browse the published API surface by public member.
 - [SectionName](cephalon-aspnetcore.md#member-f-cephalon-aspnetcore-hosting-restapigovernanceoptions-sectionname): `Fields` on `RestApiGovernanceOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=SectionName&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Gets the root configuration section used for REST API governance settings.
   - `const string SectionName`
+- [SectionPath](cephalon-data-postgres.md#member-f-cephalon-data-postgres-configuration-postgresdataoptions-sectionpath): `Fields` on `PostgresDataOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=SectionPath&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
+  - Gets the configuration section path used by default for PostgreSQL data settings.
+  - `const string SectionPath`
 - [SectionPath](cephalon-data-sqlserver.md#member-f-cephalon-data-sqlserver-configuration-sqlserverdataoptions-sectionpath): `Fields` on `SqlServerDataOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=SectionPath&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
   - Gets the configuration section path used by default for SQL Server data settings.
   - `const string SectionPath`
@@ -11148,6 +11221,9 @@ Browse the published API surface by public member.
 - [SkippedSuppressionSummaries](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointpublicationgroupdescriptor-skippedsuppressionsummaries): `Properties` on `RestEndpointPublicationGroupDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=SkippedSuppressionSummaries&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the grouped host-governance-skipped suppression-rule outcomes summarized by rule.
   - `IReadOnlyList<RestEndpointPublicationGroupGovernanceSkippedSuppressionSummaryDescriptor> SkippedSuppressionSummaries { get; }`
+- [SlotName](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-slotname): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=SlotName&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
+  - Gets or sets the PostgreSQL logical replication slot used for durable progress.
+  - `string SlotName { get; set; }`
 - [Snapshot](cephalon-engine.md#member-p-cephalon-engine-trust-capabilitypolicyevaluator-snapshot): `Properties` on `CapabilityPolicyEvaluator` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Snapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - Gets the trust snapshot being evaluated.
   - `TrustSnapshot Snapshot { get; }`
@@ -11186,6 +11262,9 @@ Browse the published API surface by public member.
   - `string SourceId { get; }`
 - [SourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-sourceid): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The logical source stream, database, or feed identifier.
+  - `string SourceId { get; set; }`
+- [SourceId](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-sourceid): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=SourceId&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
+  - Gets or sets the logical source identifier when it should differ from the watched table path.
   - `string SourceId { get; set; }`
 - [SourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-sourceid): `Properties` on `RestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the stable source identity for the published endpoint when the runtime can classify the authored source shape behind that publication.
@@ -11292,6 +11371,9 @@ Browse the published API surface by public member.
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ownedbehaviorregistration-sourcemoduleid): `Properties` on `OwnedBehaviorRegistration` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the stable module identifier that owns the behavior.
   - `string SourceModuleId { get; }`
+- [SourceModuleId](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-sourcemoduleid): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
+  - Gets or sets the module identifier that owns the capture surface.
+  - `string SourceModuleId { get; set; }`
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-projectiondescriptor-sourcemoduleid): `Properties` on `ProjectionDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the identifier of the module that owns the projection.
   - `string SourceModuleId { get; }`
@@ -11926,9 +12008,15 @@ Browse the published API surface by public member.
 
 ## T
 
+- [TableName](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-tablename): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=TableName&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
+  - Gets or sets the table name of the tracked table.
+  - `string TableName { get; set; }`
 - [TableName](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-tablename): `Properties` on `SqlServerCdcCaptureOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=TableName&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
   - Gets or sets the table name of the tracked table.
   - `string TableName { get; set; }`
+- [TableSchema](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-tableschema): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=TableSchema&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
+  - Gets or sets the schema name of the tracked table.
+  - `string TableSchema { get; set; }`
 - [TableSchema](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-tableschema): `Properties` on `SqlServerCdcCaptureOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=TableSchema&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
   - Gets or sets the schema name of the tracked table.
   - `string TableSchema { get; set; }`
@@ -12022,6 +12110,9 @@ Browse the published API surface by public member.
 - [Tags](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-patterndescriptor-tags): `Properties` on `PatternDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the tags associated with the pattern.
   - `IReadOnlyList<string> Tags { get; }`
+- [Tags](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-tags): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=Tags&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
+  - Gets the descriptive tags associated with the capture.
+  - `IList<string> Tags { get; }`
 - [Tags](cephalon-abstractions.md#member-p-cephalon-abstractions-data-projectiondescriptor-tags): `Properties` on `ProjectionDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets descriptive tags associated with the projection.
   - `IReadOnlyList<string> Tags { get; }`

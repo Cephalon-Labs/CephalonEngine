@@ -85,6 +85,7 @@ Quick links:
 
 ### Phase 13 Companion Packs
 
+- [Cephalon.Data.Postgres](cephalon-data-postgres.md): PostgreSQL provider-native logical-replication CDC companion pack for Cephalon data workloads. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Data.Postgres)
 - [Cephalon.Data.SqlServer](cephalon-data-sqlserver.md): SQL Server provider-native CDC companion pack for Cephalon data workloads. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Data.SqlServer)
 - [Cephalon.Edge.KubernetesGateway](cephalon-edge-kubernetesgateway.md): Kubernetes Gateway API control-plane materializer and live reconciliation companion pack for Cephalon edge traffic automation. Contains 2 namespaces and 5 public types. [Browse](browse.html?assembly=Cephalon.Edge.KubernetesGateway)
 - [Cephalon.Edge.Traefik](cephalon-edge-traefik.md): Traefik IngressRoute projected-intent control-plane materializer companion pack for Cephalon edge traffic automation. Contains 2 namespaces and 6 public types. [Browse](browse.html?assembly=Cephalon.Edge.Traefik)

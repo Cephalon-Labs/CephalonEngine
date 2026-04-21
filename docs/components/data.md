@@ -124,6 +124,16 @@ checkpoint tokens only after stage success. That gives the shared data baseline 
 a relational provider-native runner without adding a second control plane beside
 `/engine/cdc-captures*`, `/engine/cdc-captures/runtime*`, or `/engine/cdc-capture-runtimes*`.
 
+`Cephalon.Data.Postgres` now proves that the same runtime story also fits logical-replication
+streaming on PostgreSQL. Its `postgresql-logical-replication-capture-pump` contributor keeps the
+same `/engine/cdc-*`, `/engine/execution-graphs`, `/engine/hosted-executions`, and `snapshot`
+surfaces while validating publication/table ownership, optionally creating the logical replication
+slot, streaming bounded pgoutput batches, staging outbox messages, and acknowledging
+slot-confirmed flush progress only after stage success. That gives the shared data baseline
+provider-native CDC proofs across document, relational change-table, and relational
+logical-streaming sources without inventing a second control plane beside `/engine/cdc-captures*`,
+`/engine/cdc-captures/runtime*`, or `/engine/cdc-capture-runtimes*`.
+
 When the outbox path already reports downstream runtime truth, the same catalog can conservatively
 merge that dispatch posture into `OutboxDispatchState` and the typed CDC publication answer. That
 keeps `Cephalon.Data` honest: it now owns the shared in-process execution substrate plus the shared
@@ -136,6 +146,7 @@ The engine-owned database-topology baseline is now in place through `Engine:Data
 
 - [Cephalon.Abstractions](abstractions.md)
 - [Cephalon.Data.EntityFramework](data-entityframework.md)
+- [Cephalon.Data.Postgres](data-postgres.md)
 - [Cephalon.Data.SqlServer](data-sqlserver.md)
 - [Cephalon.Engine](engine.md)
 - [Cephalon.Ids.Sfid](ids-sfid.md)

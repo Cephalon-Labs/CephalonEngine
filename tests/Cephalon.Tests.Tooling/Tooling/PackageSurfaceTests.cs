@@ -858,6 +858,16 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void DataPostgresAssemblyExposesOnlyTheDocumentedPackContracts()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Data.Postgres.Registration.PostgresDataEngineBuilderExtensions).Assembly,
+            typeof(global::Cephalon.Data.Postgres.Configuration.PostgresDataOptions),
+            typeof(global::Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions),
+            typeof(global::Cephalon.Data.Postgres.Registration.PostgresDataEngineBuilderExtensions));
+    }
+
+    [Fact]
     public void RetrievalAssemblyExposesOnlyTheDocumentedPackContracts()
     {
         AssertExportedTypes(
@@ -2815,6 +2825,27 @@ public sealed class PackageSurfaceTests
         Assert.NotNull(typeof(global::Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions)
             .GetProperty("OutboxId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions)
+            .GetProperty("InitialPosition", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void PostgresDataOptionsExposeProviderNativeLogicalReplicationCaptureDeclarations()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Data.Postgres.Configuration.PostgresDataOptions)
+            .GetProperty("CdcCaptures", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.Postgres.Configuration.PostgresDataOptions)
+            .GetProperty("ConnectionString", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions)
+            .GetProperty("SourceModuleId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions)
+            .GetProperty("PublicationName", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions)
+            .GetProperty("SlotName", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions)
+            .GetProperty("TableName", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions)
+            .GetProperty("OutboxId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions)
             .GetProperty("InitialPosition", BindingFlags.Instance | BindingFlags.Public));
     }
 

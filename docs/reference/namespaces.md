@@ -192,6 +192,14 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Data.EntityFramework](cephalon-data-entityframework.md#namespace-cephalon-data-entityframework-services): 2 public types [Browse](browse.html?assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Services)
 
+## `Cephalon.Data.Postgres.Configuration`
+
+- [Cephalon.Data.Postgres](cephalon-data-postgres.md#namespace-cephalon-data-postgres-configuration): 2 public types [Browse](browse.html?assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration)
+
+## `Cephalon.Data.Postgres.Registration`
+
+- [Cephalon.Data.Postgres](cephalon-data-postgres.md#namespace-cephalon-data-postgres-registration): 1 public types [Browse](browse.html?assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Registration)
+
 ## `Cephalon.Data.Registration`
 
 - [Cephalon.Data](cephalon-data.md#namespace-cephalon-data-registration): 1 public types [Browse](browse.html?assembly=Cephalon.Data&namespace=Cephalon.Data.Registration)

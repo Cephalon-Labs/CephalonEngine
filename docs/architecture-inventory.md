@@ -1,6 +1,6 @@
 # Cephalon Engine Architecture Inventory
 
-Architecture inventory in this document reflects the repository state as of `April 20, 2026`.
+Architecture inventory in this document reflects the repository state as of `April 22, 2026`.
 
 Cross-references: `docs/architecture.md`, `docs/engine-roadmap.md`, `docs/engine-backlog.md`
 
@@ -165,11 +165,12 @@ Modules are the primary composition unit. Each module registers services, capabi
 - `identity-access` — Identity Access (`Cephalon.Identity`): host-agnostic identity and authorization baseline.
 - `multi-tenancy` — Multi-Tenancy (`Cephalon.MultiTenancy`): host-agnostic tenant resolution and ambient tenant-context baseline.
 
-### Data provider modules (11)
+### Data provider modules (12)
 
 - `entity-framework-data` — Entity Framework Data (`Cephalon.Data.EntityFramework`): relational DbContext registration. Store type: relational.
 - `mongodb-data` — MongoDB Data (`Cephalon.Data.MongoDB`): document store registration plus provider-native MongoDB change-stream CDC runtime. Store type: document.
 - `sqlserver-data` — SQL Server Data (`Cephalon.Data.SqlServer`): relational provider-native SQL Server CDC runtime. Store type: relational.
+- `postgres-data` — PostgreSQL Data (`Cephalon.Data.Postgres`): relational provider-native logical-replication CDC runtime. Store type: relational.
 - `redis-data` — Redis Data (`Cephalon.Data.Redis`): key-value store registration. Store type: key-value.
 - `neo4j-data` — Neo4j Data (`Cephalon.Data.Neo4j`): graph store registration. Store type: graph.
 - `cassandra-data` — Cassandra Data (`Cephalon.Data.Cassandra`): wide-column store registration. Store type: wide-column.
@@ -240,6 +241,18 @@ Capabilities are the fine-grained feature advertisements exposed by modules.
 - `data.outbox.mongodb` — MongoDB Outbox
 - `data.inbox.mongodb` — MongoDB Inbox
 - `data.cdc.mongodb` — MongoDB Change Stream CDC
+
+### SQL Server capabilities (3)
+
+- `data.sqlserver` — SQL Server Data Provider
+- `data.relational-store` — Relational Store
+- `data.cdc.sqlserver` — SQL Server CDC
+
+### PostgreSQL capabilities (3)
+
+- `data.postgresql` — PostgreSQL Data Provider
+- `data.relational-store` — Relational Store
+- `data.cdc.postgresql` — PostgreSQL Logical Replication CDC
 
 ### Redis capabilities (4)
 
