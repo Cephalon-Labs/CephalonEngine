@@ -7,17 +7,20 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
     private readonly Dictionary<string, CdcCaptureExecutionRuntimeDescriptor> index;
     private readonly ICdcCaptureCatalog captureCatalog;
     private readonly ICdcCaptureRuntimeStateCatalog? runtimeStateCatalog;
+    private readonly TimeProvider timeProvider;
 
     public CdcCaptureExecutionRuntimeCatalog(
         CdcCaptureExecutionRuntimeDescriptorCatalog runtimeDescriptorCatalog,
         ICdcCaptureCatalog captureCatalog,
-        ICdcCaptureRuntimeStateCatalog? runtimeStateCatalog = null)
+        ICdcCaptureRuntimeStateCatalog? runtimeStateCatalog = null,
+        TimeProvider? timeProvider = null)
     {
         ArgumentNullException.ThrowIfNull(runtimeDescriptorCatalog);
         ArgumentNullException.ThrowIfNull(captureCatalog);
 
         this.captureCatalog = captureCatalog;
         this.runtimeStateCatalog = runtimeStateCatalog;
+        this.timeProvider = timeProvider ?? TimeProvider.System;
         var runtimes = runtimeDescriptorCatalog.Runtimes;
         index = runtimes.ToDictionary(static runtime => runtime.Id, StringComparer.OrdinalIgnoreCase);
     }
@@ -68,6 +71,7 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             .ThenBy(static state => state.CdcCaptureId, StringComparer.OrdinalIgnoreCase)
             .First();
         latestState.Metadata.TryGetValue("acknowledgement", out var lastAcknowledgement);
+        var activeReporterId = ResolveActiveReporterId(matchingStates, timeProvider.GetUtcNow());
 
         return new CdcCaptureExecutionRuntimeSummary(
             ReportedCdcCaptureIds: matchingStates.Select(static state => state.CdcCaptureId).ToArray(),
@@ -85,7 +89,20 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             TotalProducedMessageCount: matchingStates.Sum(static state => state.TotalProducedMessageCount),
             LastAcknowledgement: string.IsNullOrWhiteSpace(lastAcknowledgement) ? null : lastAcknowledgement.Trim(),
             LastError: latestState.LastError,
-            ObservationFreshness: AggregateObservationFreshness(matchingStates));
+            ObservationFreshness: AggregateObservationFreshness(matchingStates))
+        {
+            LastReporterId = latestState.LastReporterId,
+            ActiveReporterId = activeReporterId,
+            ReporterLeaseExpiresAtUtc = ResolveActiveReporterLeaseExpiry(matchingStates, activeReporterId),
+            ObservedEdgeNodeIds = matchingStates
+                .Select(static state => state.LastEdgeNodeId)
+                .Where(static edgeNodeId => !string.IsNullOrWhiteSpace(edgeNodeId))
+                .Select(static edgeNodeId => edgeNodeId!)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(static edgeNodeId => edgeNodeId, StringComparer.OrdinalIgnoreCase)
+                .ToArray(),
+            LastEdgeNodeId = latestState.LastEdgeNodeId
+        };
     }
 
     private static CdcCaptureFreshnessStatus AggregateObservationFreshness(
@@ -148,5 +165,47 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             .Select(static cdcCapture => cdcCapture.Id)
             .OrderBy(static id => id, StringComparer.OrdinalIgnoreCase)
             .ToArray();
+    }
+
+    private static string? ResolveActiveReporterId(
+        IReadOnlyList<CdcCaptureRuntimeState> matchingStates,
+        DateTimeOffset now)
+    {
+        var activeReporterIds = matchingStates
+            .Where(state =>
+                !string.IsNullOrWhiteSpace(state.LastReporterId) &&
+                IsReporterLeaseActive(state.ReporterLeaseExpiresAtUtc, now))
+            .Select(static state => state.LastReporterId!)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static reporterId => reporterId, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+        return activeReporterIds.Length == 1
+            ? activeReporterIds[0]
+            : null;
+    }
+
+    private static DateTimeOffset? ResolveActiveReporterLeaseExpiry(
+        IReadOnlyList<CdcCaptureRuntimeState> matchingStates,
+        string? activeReporterId)
+    {
+        if (string.IsNullOrWhiteSpace(activeReporterId))
+        {
+            return null;
+        }
+
+        return matchingStates
+            .Where(state => string.Equals(state.LastReporterId, activeReporterId, StringComparison.OrdinalIgnoreCase))
+            .Where(static state => state.ReporterLeaseExpiresAtUtc.HasValue)
+            .Select(static state => state.ReporterLeaseExpiresAtUtc)
+            .Max();
+    }
+
+    private static bool IsReporterLeaseActive(
+        DateTimeOffset? reporterLeaseExpiresAtUtc,
+        DateTimeOffset now)
+    {
+        return !reporterLeaseExpiresAtUtc.HasValue ||
+               reporterLeaseExpiresAtUtc.Value >= now;
     }
 }

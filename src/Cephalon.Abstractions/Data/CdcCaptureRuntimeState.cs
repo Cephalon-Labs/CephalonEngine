@@ -70,6 +70,21 @@ public sealed record CdcCaptureRuntimeState(
         CdcCaptureExecutionBindingDescriptor.Unbound(CdcCaptureId);
 
     /// <summary>
+    /// Gets the latest reporter identity visible for the capture when one was reported.
+    /// </summary>
+    public string? LastReporterId { get; init; }
+
+    /// <summary>
+    /// Gets the UTC timestamp when the latest reporter lease expires when one is known.
+    /// </summary>
+    public DateTimeOffset? ReporterLeaseExpiresAtUtc { get; init; }
+
+    /// <summary>
+    /// Gets the latest edge-node identifier visible for the capture when one was reported.
+    /// </summary>
+    public string? LastEdgeNodeId { get; init; }
+
+    /// <summary>
     /// Gets the total number of capture observations reported for the CDC capture.
     /// </summary>
     public int TotalReports => StartedCount + CapturedCount + IdleCount + FailedCount;
@@ -93,6 +108,11 @@ public sealed record CdcCaptureRuntimeState(
     /// Gets a value indicating whether the capture observation still has a report-freshness window.
     /// </summary>
     public bool HasObservationFreshnessWindow => ObservationFreshness.HasWindow;
+
+    /// <summary>
+    /// Gets a value indicating whether the capture currently carries reporter-lease metadata.
+    /// </summary>
+    public bool HasReporterLease => ReporterLeaseExpiresAtUtc.HasValue;
 
     /// <summary>
     /// Gets a value indicating whether the latest report is now stale according to the execution-runtime reporting policy.

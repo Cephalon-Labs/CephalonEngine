@@ -70,9 +70,24 @@ public sealed class CdcCaptureExecutionRuntimeOptions
     public bool RejectOutOfOrderReports { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets the reporter-lease window, in seconds, used to keep one external reporter authoritative for the runtime.
+    /// </summary>
+    public int? ReporterLeaseSeconds { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the runtime should reject reports from conflicting reporter identities while an active lease still exists.
+    /// </summary>
+    public bool RejectConflictingReporterIds { get; set; }
+
+    /// <summary>
     /// Gets the CDC capture identifiers explicitly owned by the runtime when ownership is bounded to a known capture set.
     /// </summary>
     public IList<string> CdcCaptureIds { get; } = [];
+
+    /// <summary>
+    /// Gets the declared edge-node identifiers that can originate observations for the runtime.
+    /// </summary>
+    public IList<string> EdgeNodeIds { get; } = [];
 
     /// <summary>
     /// Gets arbitrary operator-facing metadata that should flow through the runtime declaration.
@@ -96,6 +111,9 @@ public sealed class CdcCaptureExecutionRuntimeOptions
             metadata: Metadata.Count == 0
                 ? null
                 : new Dictionary<string, string>(Metadata, StringComparer.OrdinalIgnoreCase),
-            cdcCaptureIds: CdcCaptureIds.ToArray());
+            cdcCaptureIds: CdcCaptureIds.ToArray(),
+            reporterLeaseSeconds: ReporterLeaseSeconds,
+            rejectConflictingReporterIds: RejectConflictingReporterIds,
+            edgeNodeIds: EdgeNodeIds.ToArray());
     }
 }

@@ -27,6 +27,12 @@ public sealed class CdcCaptureRuntimeObservation
     /// <param name="lag">An optional typed lag answer reported by the active provider/runtime.</param>
     /// <param name="publication">An optional typed publication-posture answer reported by the active provider/runtime.</param>
     /// <param name="metadata">Optional operator-facing metadata captured alongside the observation.</param>
+    /// <param name="reporterId">
+    /// The optional stable reporter identity that submitted the observation, such as an external runner instance or edge agent id.
+    /// </param>
+    /// <param name="edgeNodeId">
+    /// The optional stable edge-node identifier that originated the observation when the runtime topology is edge-aware.
+    /// </param>
     [JsonConstructor]
     public CdcCaptureRuntimeObservation(
         string cdcCaptureId,
@@ -41,7 +47,9 @@ public sealed class CdcCaptureRuntimeObservation
         CdcCaptureFreshnessStatus? freshness = null,
         CdcCaptureLagStatus? lag = null,
         CdcCapturePublicationStatus? publication = null,
-        IReadOnlyDictionary<string, string>? metadata = null)
+        IReadOnlyDictionary<string, string>? metadata = null,
+        string? reporterId = null,
+        string? edgeNodeId = null)
     {
         if (string.IsNullOrWhiteSpace(cdcCaptureId))
         {
@@ -78,6 +86,8 @@ public sealed class CdcCaptureRuntimeObservation
         Metadata = metadata is null
             ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             : new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase);
+        ReporterId = string.IsNullOrWhiteSpace(reporterId) ? null : reporterId.Trim();
+        EdgeNodeId = string.IsNullOrWhiteSpace(edgeNodeId) ? null : edgeNodeId.Trim();
     }
 
     /// <summary>
@@ -144,4 +154,14 @@ public sealed class CdcCaptureRuntimeObservation
     /// Gets optional operator-facing metadata captured alongside the observation.
     /// </summary>
     public IReadOnlyDictionary<string, string> Metadata { get; }
+
+    /// <summary>
+    /// Gets the stable reporter identity that submitted the observation when one was supplied.
+    /// </summary>
+    public string? ReporterId { get; }
+
+    /// <summary>
+    /// Gets the stable edge-node identifier that originated the observation when one was supplied.
+    /// </summary>
+    public string? EdgeNodeId { get; }
 }

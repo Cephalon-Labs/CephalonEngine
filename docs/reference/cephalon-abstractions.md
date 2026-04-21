@@ -8278,12 +8278,12 @@ Parameters:
 - `cdcCaptureIds`: Optional CDC capture identifiers explicitly owned by the execution runtime when ownership is bounded to a known capture set.
 - `summary`: Optional aggregate runtime summary describing the latest reported operator-facing state for the execution runtime.
 
-<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-nullable-system-int32-system-boolean-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-abstractions-data-cdccaptureexecutionruntimesummary"></a>
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-nullable-system-int32-system-boolean-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-system-nullable-system-int32-system-boolean-system-collections-generic-ireadonlylist-system-string"></a>
 
 ##### `CdcCaptureExecutionRuntimeDescriptor`
 
 ```csharp
-CdcCaptureExecutionRuntimeDescriptor(string id, string displayName, string description, string executionOwnership, string executionTopology, string acknowledgementMode, string hostedExecutionId, string executionGraphId, int? observationStaleAfterSeconds, bool rejectOutOfOrderReports, IReadOnlyDictionary<string, string> metadata, IReadOnlyList<string> cdcCaptureIds, CdcCaptureExecutionRuntimeSummary summary)
+CdcCaptureExecutionRuntimeDescriptor(string id, string displayName, string description, string executionOwnership, string executionTopology, string acknowledgementMode, string hostedExecutionId, string executionGraphId, int? observationStaleAfterSeconds, bool rejectOutOfOrderReports, IReadOnlyDictionary<string, string> metadata, IReadOnlyList<string> cdcCaptureIds, CdcCaptureExecutionRuntimeSummary summary, int? reporterLeaseSeconds, bool rejectConflictingReporterIds, IReadOnlyList<string> edgeNodeIds)
 ```
 
 Creates a new CDC capture execution runtime descriptor with first-class ownership and topology semantics.
@@ -8302,6 +8302,9 @@ Parameters:
 - `metadata`: Optional operator-facing metadata for the execution runtime.
 - `cdcCaptureIds`: Optional CDC capture identifiers explicitly owned by the execution runtime when ownership is bounded to a known capture set.
 - `summary`: Optional aggregate runtime summary describing the latest reported operator-facing state for the execution runtime.
+- `reporterLeaseSeconds`: The optional reporter-lease window, in seconds, used to keep one external reporter authoritative for the runtime.
+- `rejectConflictingReporterIds`: A value indicating whether the runtime should reject reports from conflicting reporter identities while an active lease still exists.
+- `edgeNodeIds`: The declared edge-node identifiers that can originate observations for the runtime when the topology is edge-aware.
 
 #### Properties
 
@@ -8344,6 +8347,16 @@ string DisplayName { get; }
 ```
 
 Gets the operator-facing execution-runtime name.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-edgenodeids"></a>
+
+##### `EdgeNodeIds`
+
+```csharp
+IReadOnlyList<string> EdgeNodeIds { get; }
+```
+
+Gets the declared edge-node identifiers that can originate observations for the runtime.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-executiongraphid"></a>
 
@@ -8415,6 +8428,16 @@ int? ObservationStaleAfterSeconds { get; }
 
 Gets the report-freshness window, in seconds, used to mark external runtime observations stale when one was declared.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-rejectconflictingreporterids"></a>
+
+##### `RejectConflictingReporterIds`
+
+```csharp
+bool RejectConflictingReporterIds { get; }
+```
+
+Gets a value indicating whether the runtime rejects reports from conflicting reporter identities while an active reporter lease still exists.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-rejectoutoforderreports"></a>
 
 ##### `RejectOutOfOrderReports`
@@ -8424,6 +8447,16 @@ bool RejectOutOfOrderReports { get; }
 ```
 
 Gets a value indicating whether the runtime rejects out-of-order external runtime reports.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-reporterleaseseconds"></a>
+
+##### `ReporterLeaseSeconds`
+
+```csharp
+int? ReporterLeaseSeconds { get; }
+```
+
+Gets the optional reporter-lease window, in seconds, used to keep one external reporter authoritative for the runtime.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-summary"></a>
 
@@ -8478,6 +8511,16 @@ Parameters:
 
 #### Properties
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-activereporterid"></a>
+
+##### `ActiveReporterId`
+
+```csharp
+string ActiveReporterId { get; set; }
+```
+
+Gets the currently active reporter identity when one reporter still holds an active lease for the execution runtime.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-capturedcount"></a>
 
 ##### `CapturedCount`
@@ -8507,6 +8550,16 @@ int FailedCount { get; set; }
 ```
 
 The total number of `failed` observations visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-hasactivereporterlease"></a>
+
+##### `HasActiveReporterLease`
+
+```csharp
+bool HasActiveReporterLease { get; }
+```
+
+Gets a value indicating whether the execution runtime currently has an active reporter lease.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-hasreports"></a>
 
@@ -8578,6 +8631,16 @@ string LastCheckpoint { get; set; }
 
 The latest provider-facing checkpoint visible for the execution runtime.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-lastedgenodeid"></a>
+
+##### `LastEdgeNodeId`
+
+```csharp
+string LastEdgeNodeId { get; set; }
+```
+
+Gets the latest edge-node identifier visible for the execution runtime when one was reported.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-lasterror"></a>
 
 ##### `LastError`
@@ -8608,6 +8671,16 @@ string LastOutcome { get; set; }
 
 The latest reported capture outcome visible for the execution runtime.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-lastreporterid"></a>
+
+##### `LastReporterId`
+
+```csharp
+string LastReporterId { get; set; }
+```
+
+Gets the latest reporter identity visible for the execution runtime when one was reported.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-lastreportid"></a>
 
 ##### `LastReportId`
@@ -8628,6 +8701,16 @@ CdcCaptureFreshnessStatus ObservationFreshness { get; set; }
 
 The latest aggregate report-freshness posture visible for the execution runtime.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-observededgenodeids"></a>
+
+##### `ObservedEdgeNodeIds`
+
+```csharp
+IReadOnlyList<string> ObservedEdgeNodeIds { get; set; }
+```
+
+Gets the declared or observed edge-node identifiers that most recently reported runtime state for the execution runtime.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-reportedcapturecount"></a>
 
 ##### `ReportedCaptureCount`
@@ -8647,6 +8730,16 @@ IReadOnlyList<string> ReportedCdcCaptureIds { get; set; }
 ```
 
 The CDC capture identifiers that have reported runtime state for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-reporterleaseexpiresatutc"></a>
+
+##### `ReporterLeaseExpiresAtUtc`
+
+```csharp
+DateTimeOffset? ReporterLeaseExpiresAtUtc { get; set; }
+```
+
+Gets the UTC timestamp when the active reporter lease expires when one is known.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-startedcount"></a>
 
@@ -9100,12 +9193,12 @@ public sealed class CdcCaptureRuntimeObservation
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-data-cdccaptureruntimeobservation-ctor-system-string-system-string-system-datetimeoffset-system-string-system-int32-system-int32-system-string-system-string-system-string-cephalon-abstractions-data-cdccapturefreshnessstatus-cephalon-abstractions-data-cdccapturelagstatus-cephalon-abstractions-data-cdccapturepublicationstatus-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+<a id="member-m-cephalon-abstractions-data-cdccaptureruntimeobservation-ctor-system-string-system-string-system-datetimeoffset-system-string-system-int32-system-int32-system-string-system-string-system-string-cephalon-abstractions-data-cdccapturefreshnessstatus-cephalon-abstractions-data-cdccapturelagstatus-cephalon-abstractions-data-cdccapturepublicationstatus-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string"></a>
 
 ##### `CdcCaptureRuntimeObservation`
 
 ```csharp
-CdcCaptureRuntimeObservation(string cdcCaptureId, string outcome, DateTimeOffset observedAtUtc, string reportId, int capturedChangeCount, int producedMessageCount, string changeId, string checkpoint, string error, CdcCaptureFreshnessStatus freshness, CdcCaptureLagStatus lag, CdcCapturePublicationStatus publication, IReadOnlyDictionary<string, string> metadata)
+CdcCaptureRuntimeObservation(string cdcCaptureId, string outcome, DateTimeOffset observedAtUtc, string reportId, int capturedChangeCount, int producedMessageCount, string changeId, string checkpoint, string error, CdcCaptureFreshnessStatus freshness, CdcCaptureLagStatus lag, CdcCapturePublicationStatus publication, IReadOnlyDictionary<string, string> metadata, string reporterId, string edgeNodeId)
 ```
 
 Creates a new CDC capture runtime observation.
@@ -9124,6 +9217,8 @@ Parameters:
 - `lag`: An optional typed lag answer reported by the active provider/runtime.
 - `publication`: An optional typed publication-posture answer reported by the active provider/runtime.
 - `metadata`: Optional operator-facing metadata captured alongside the observation.
+- `reporterId`: The optional stable reporter identity that submitted the observation, such as an external runner instance or edge agent id.
+- `edgeNodeId`: The optional stable edge-node identifier that originated the observation when the runtime topology is edge-aware.
 
 #### Properties
 
@@ -9166,6 +9261,16 @@ string Checkpoint { get; }
 ```
 
 Gets the latest provider-facing checkpoint or cursor when one was reported.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-edgenodeid"></a>
+
+##### `EdgeNodeId`
+
+```csharp
+string EdgeNodeId { get; }
+```
+
+Gets the stable edge-node identifier that originated the observation when one was supplied.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-error"></a>
 
@@ -9246,6 +9351,16 @@ CdcCapturePublicationStatus Publication { get; }
 ```
 
 Gets the typed publication-posture answer reported by the active provider/runtime when one was supplied.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-reporterid"></a>
+
+##### `ReporterId`
+
+```csharp
+string ReporterId { get; }
+```
+
+Gets the stable reporter identity that submitted the observation when one was supplied.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-reportid"></a>
 
@@ -9422,6 +9537,16 @@ bool HasPendingPublications { get; }
 
 Gets a value indicating whether the capture still has provider-reported pending publications.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-hasreporterlease"></a>
+
+##### `HasReporterLease`
+
+```csharp
+bool HasReporterLease { get; }
+```
+
+Gets a value indicating whether the capture currently carries reporter-lease metadata.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-hasreports"></a>
 
 ##### `HasReports`
@@ -9502,6 +9627,16 @@ string LastCheckpoint { get; set; }
 
 The latest provider-facing checkpoint or cursor when one was reported.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-lastedgenodeid"></a>
+
+##### `LastEdgeNodeId`
+
+```csharp
+string LastEdgeNodeId { get; set; }
+```
+
+Gets the latest edge-node identifier visible for the capture when one was reported.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-lasterror"></a>
 
 ##### `LastError`
@@ -9541,6 +9676,16 @@ int LastProducedMessageCount { get; set; }
 ```
 
 The number of outbox messages produced by the latest report.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-lastreporterid"></a>
+
+##### `LastReporterId`
+
+```csharp
+string LastReporterId { get; set; }
+```
+
+Gets the latest reporter identity visible for the capture when one was reported.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-lastreportid"></a>
 
@@ -9621,6 +9766,16 @@ CdcCapturePublicationStatus Publication { get; set; }
 ```
 
 The latest publication posture answer reported for the capture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-reporterleaseexpiresatutc"></a>
+
+##### `ReporterLeaseExpiresAtUtc`
+
+```csharp
+DateTimeOffset? ReporterLeaseExpiresAtUtc { get; set; }
+```
+
+Gets the UTC timestamp when the latest reporter lease expires when one is known.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-resourceids"></a>
 

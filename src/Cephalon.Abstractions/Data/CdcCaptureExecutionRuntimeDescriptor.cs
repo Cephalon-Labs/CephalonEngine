@@ -14,6 +14,9 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     private const string ExecutionGraphIdMetadataKey = "executionGraphId";
     private const string ObservationStaleAfterSecondsMetadataKey = "observationStaleAfterSeconds";
     private const string RejectOutOfOrderReportsMetadataKey = "rejectOutOfOrderReports";
+    private const string ReporterLeaseSecondsMetadataKey = "reporterLeaseSeconds";
+    private const string RejectConflictingReporterIdsMetadataKey = "rejectConflictingReporterIds";
+    private const string EdgeNodeIdsMetadataKey = "edgeNodeIds";
 
     /// <summary>
     /// Creates a new CDC capture execution runtime descriptor.
@@ -65,6 +68,9 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
         ExecutionGraphId = ResolveMetadata(Metadata, ExecutionGraphIdMetadataKey);
         ObservationStaleAfterSeconds = ResolveNullableIntMetadata(Metadata, ObservationStaleAfterSecondsMetadataKey);
         RejectOutOfOrderReports = ResolveBooleanMetadata(Metadata, RejectOutOfOrderReportsMetadataKey);
+        ReporterLeaseSeconds = ResolveNullableIntMetadata(Metadata, ReporterLeaseSecondsMetadataKey);
+        RejectConflictingReporterIds = ResolveBooleanMetadata(Metadata, RejectConflictingReporterIdsMetadataKey);
+        EdgeNodeIds = ResolveDelimitedMetadata(Metadata, EdgeNodeIdsMetadataKey);
     }
 
     /// <summary>
@@ -99,6 +105,15 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     /// Optional CDC capture identifiers explicitly owned by the execution runtime when ownership is bounded to a known capture set.
     /// </param>
     /// <param name="summary">Optional aggregate runtime summary describing the latest reported operator-facing state for the execution runtime.</param>
+    /// <param name="reporterLeaseSeconds">
+    /// The optional reporter-lease window, in seconds, used to keep one external reporter authoritative for the runtime.
+    /// </param>
+    /// <param name="rejectConflictingReporterIds">
+    /// A value indicating whether the runtime should reject reports from conflicting reporter identities while an active lease still exists.
+    /// </param>
+    /// <param name="edgeNodeIds">
+    /// The declared edge-node identifiers that can originate observations for the runtime when the topology is edge-aware.
+    /// </param>
     public CdcCaptureExecutionRuntimeDescriptor(
         string id,
         string displayName,
@@ -112,7 +127,10 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
         bool rejectOutOfOrderReports = false,
         IReadOnlyDictionary<string, string>? metadata = null,
         IReadOnlyList<string>? cdcCaptureIds = null,
-        CdcCaptureExecutionRuntimeSummary? summary = null)
+        CdcCaptureExecutionRuntimeSummary? summary = null,
+        int? reporterLeaseSeconds = null,
+        bool rejectConflictingReporterIds = false,
+        IReadOnlyList<string>? edgeNodeIds = null)
         : this(
             id,
             displayName,
@@ -125,7 +143,10 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
                 hostedExecutionId,
                 executionGraphId,
                 observationStaleAfterSeconds,
-                rejectOutOfOrderReports),
+                rejectOutOfOrderReports,
+                reporterLeaseSeconds,
+                rejectConflictingReporterIds,
+                edgeNodeIds),
             cdcCaptureIds,
             summary)
     {
@@ -187,6 +208,21 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     public bool RejectOutOfOrderReports { get; }
 
     /// <summary>
+    /// Gets the optional reporter-lease window, in seconds, used to keep one external reporter authoritative for the runtime.
+    /// </summary>
+    public int? ReporterLeaseSeconds { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the runtime rejects reports from conflicting reporter identities while an active reporter lease still exists.
+    /// </summary>
+    public bool RejectConflictingReporterIds { get; }
+
+    /// <summary>
+    /// Gets the declared edge-node identifiers that can originate observations for the runtime.
+    /// </summary>
+    public IReadOnlyList<string> EdgeNodeIds { get; }
+
+    /// <summary>
     /// Gets the CDC capture identifiers explicitly owned by the execution runtime.
     /// </summary>
     public IReadOnlyList<string> CdcCaptureIds { get; }
@@ -214,7 +250,10 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
         string? hostedExecutionId,
         string? executionGraphId,
         int? observationStaleAfterSeconds,
-        bool rejectOutOfOrderReports)
+        bool rejectOutOfOrderReports,
+        int? reporterLeaseSeconds,
+        bool rejectConflictingReporterIds,
+        IReadOnlyList<string>? edgeNodeIds)
     {
         if (string.IsNullOrWhiteSpace(executionOwnership))
         {
@@ -238,8 +277,29 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
         UpsertOptional(normalizedMetadata, ExecutionGraphIdMetadataKey, executionGraphId);
         UpsertOptionalInt(normalizedMetadata, ObservationStaleAfterSecondsMetadataKey, observationStaleAfterSeconds);
         UpsertOptionalBoolean(normalizedMetadata, RejectOutOfOrderReportsMetadataKey, rejectOutOfOrderReports);
+        UpsertOptionalInt(normalizedMetadata, ReporterLeaseSecondsMetadataKey, reporterLeaseSeconds);
+        UpsertOptionalBoolean(normalizedMetadata, RejectConflictingReporterIdsMetadataKey, rejectConflictingReporterIds);
+        UpsertOptionalList(normalizedMetadata, EdgeNodeIdsMetadataKey, edgeNodeIds);
 
         return normalizedMetadata;
+    }
+
+    private static string[] ResolveDelimitedMetadata(
+        IReadOnlyDictionary<string, string> metadata,
+        string key)
+    {
+        if (!metadata.TryGetValue(key, out var value) ||
+            string.IsNullOrWhiteSpace(value))
+        {
+            return [];
+        }
+
+        return value
+            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Where(static item => !string.IsNullOrWhiteSpace(item))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static item => item, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
     }
 
     private static string? ResolveMetadata(
@@ -327,5 +387,20 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
         }
 
         metadata[key] = bool.TrueString;
+    }
+
+    private static void UpsertOptionalList(
+        Dictionary<string, string> metadata,
+        string key,
+        IReadOnlyList<string>? values)
+    {
+        var normalizedValues = Normalize(values);
+        if (normalizedValues.Length == 0)
+        {
+            metadata.Remove(key);
+            return;
+        }
+
+        metadata[key] = string.Join(",", normalizedValues);
     }
 }

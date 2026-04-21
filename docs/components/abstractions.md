@@ -205,13 +205,18 @@ capture observations back through the same descriptor-backed runtime-state catal
 effective ownership boundary without introducing a second HTTP-only or provider-only CDC status
 contract.
 
-That same reporting seam now also keeps retry, ordering, and freshness-expiry policy host-agnostic.
-`CdcCaptureRuntimeObservation.ReportId` gives external runners a stable idempotency key for retry
-safe submissions, `CdcCaptureExecutionRuntimeDescriptor` now exposes
-`ObservationStaleAfterSeconds` plus `RejectOutOfOrderReports` for declared runtime policy,
-`CdcCaptureRuntimeState` now preserves `LastReportId` plus typed `ObservationFreshness`, and
-`CdcCaptureExecutionRuntimeSummary` can aggregate `fresh`, `stale`, `mixed`, or `unknown`
-observation posture without forcing adapters to invent their own HTTP-local reporting contracts.
+That same reporting seam now also keeps retry, reporter identity, edge topology, ordering, and
+freshness-expiry policy host-agnostic. `CdcCaptureRuntimeObservation.ReportId` gives external
+runners a stable idempotency key for retry-safe submissions, while `ReporterId` plus `EdgeNodeId`
+keep one runner or edge agent observable without baking host-local lease or topology rules into an
+adapter. `CdcCaptureExecutionRuntimeDescriptor` now exposes `ObservationStaleAfterSeconds`,
+`RejectOutOfOrderReports`, `ReporterLeaseSeconds`, `RejectConflictingReporterIds`, and declared
+`EdgeNodeIds` for runtime policy, `CdcCaptureRuntimeState` now preserves `LastReportId`,
+`LastReporterId`, `ReporterLeaseExpiresAtUtc`, `LastEdgeNodeId`, and typed `ObservationFreshness`,
+and `CdcCaptureExecutionRuntimeSummary` can aggregate `fresh`, `stale`, `mixed`, or `unknown`
+observation posture together with `LastReporterId`, `ActiveReporterId`,
+`ReporterLeaseExpiresAtUtc`, `ObservedEdgeNodeIds`, and `LastEdgeNodeId` without forcing adapters
+to invent their own HTTP-local reporting contracts or topology coordinators.
 
 The app-model contract now also carries a contract-first resilience family through
 `ResilienceSelection`, `RetrySelection`, `TimeoutSelection`, `CircuitBreakerSelection`,

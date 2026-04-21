@@ -491,9 +491,12 @@ public sealed class DataRuntimePackTests
                     ExecutionTopology = "out-of-process-reporting",
                     AcknowledgementMode = "runtime-managed",
                     ObservationStaleAfterSeconds = 60,
-                    RejectOutOfOrderReports = true
+                    RejectOutOfOrderReports = true,
+                    ReporterLeaseSeconds = 120,
+                    RejectConflictingReporterIds = true
                 });
                 options.CdcExecutionRuntimes[0].CdcCaptureIds.Add("tenant-profile-cdc");
+                options.CdcExecutionRuntimes[0].EdgeNodeIds.Add("edge-bkk-01");
             });
         });
 
@@ -529,7 +532,9 @@ public sealed class DataRuntimePackTests
                     metadata: new Dictionary<string, string>
                     {
                         ["captureExecution"] = "external-runtime-report"
-                    })
+                    },
+                    reporterId: "edge-agent-a",
+                    edgeNodeId: "edge-bkk-01")
             ]);
 
         var state = Assert.Single(runtimeStateCatalog.GetByExecutionRuntimeId("external-cdc-runtime"));
@@ -542,9 +547,15 @@ public sealed class DataRuntimePackTests
         Assert.Equal("external-report-001", state.LastReportId);
         Assert.Equal("external-cdc-runtime", state.ExecutionBinding.EffectiveExecutionRuntimeId);
         Assert.Equal("out-of-process-reporting", state.ExecutionBinding.ExecutionTopology);
+        Assert.Equal("edge-agent-a", state.LastReporterId);
+        Assert.Equal(DateTimeOffset.Parse("2026-04-21T02:12:00Z", CultureInfo.InvariantCulture), state.ReporterLeaseExpiresAtUtc);
+        Assert.Equal("edge-bkk-01", state.LastEdgeNodeId);
         Assert.Equal("external-runtime-report", state.Metadata["captureExecution"]);
         Assert.Equal("external-cdc-runtime", state.Metadata["cdcCaptureExecutionRuntimeId"]);
         Assert.Equal("external-report-001", state.Metadata["cdcCaptureReportId"]);
+        Assert.Equal("edge-agent-a", state.Metadata["cdcCaptureReporterId"]);
+        Assert.Equal("2026-04-21T02:12:00.0000000+00:00", state.Metadata["cdcCaptureReporterLeaseExpiresAtUtc"]);
+        Assert.Equal("edge-bkk-01", state.Metadata["cdcCaptureEdgeNodeId"]);
         Assert.Equal(CdcCaptureFreshnessStates.Fresh, state.ObservationFreshness.State);
         Assert.Equal(DateTimeOffset.Parse("2026-04-21T02:11:00Z", CultureInfo.InvariantCulture), state.ObservationFreshness.FreshUntilUtc);
         Assert.Equal(CdcCaptureFreshnessStates.Fresh, state.Metadata["observationFreshnessState"]);
@@ -553,9 +564,17 @@ public sealed class DataRuntimePackTests
         var runtime = runtimeCatalog.GetById("external-cdc-runtime");
         Assert.NotNull(runtime);
         Assert.True(runtime.Summary.HasReports);
+        Assert.Equal(120, runtime.ReporterLeaseSeconds);
+        Assert.True(runtime.RejectConflictingReporterIds);
+        Assert.Equal(["edge-bkk-01"], runtime.EdgeNodeIds);
         Assert.Equal("tenant-profile-cdc", runtime.Summary.LastCdcCaptureId);
         Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, runtime.Summary.LastOutcome);
         Assert.Equal("external-report-001", runtime.Summary.LastReportId);
+        Assert.Equal("edge-agent-a", runtime.Summary.LastReporterId);
+        Assert.Equal("edge-agent-a", runtime.Summary.ActiveReporterId);
+        Assert.Equal(DateTimeOffset.Parse("2026-04-21T02:12:00Z", CultureInfo.InvariantCulture), runtime.Summary.ReporterLeaseExpiresAtUtc);
+        Assert.Equal(["edge-bkk-01"], runtime.Summary.ObservedEdgeNodeIds);
+        Assert.Equal("edge-bkk-01", runtime.Summary.LastEdgeNodeId);
         Assert.Equal(3, runtime.Summary.TotalCapturedChangeCount);
         Assert.Equal(3, runtime.Summary.TotalProducedMessageCount);
         Assert.Equal(CdcCaptureFreshnessStates.Fresh, runtime.Summary.ObservationFreshness.State);
@@ -676,6 +695,121 @@ public sealed class DataRuntimePackTests
 
         Assert.Contains("out-of-order", exception.Message, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("external-report-early", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task AddDataRejectsConflictingExternalExecutionRuntimeReporterIdsWhileLeaseIsActive()
+    {
+        var timeProvider = new MutableTimeProvider(DateTimeOffset.Parse("2026-04-21T02:45:00Z", CultureInfo.InvariantCulture));
+        var services = new ServiceCollection();
+        services.AddSingleton<TimeProvider>(timeProvider);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"]));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new Phase8CatalogModule());
+            engine.AddData(options =>
+            {
+                options.EnableExternalCdcRuntimeReporting = true;
+                options.CdcExecutionRuntimes.Add(new CdcCaptureExecutionRuntimeOptions
+                {
+                    Id = "external-cdc-runtime",
+                    DisplayName = "External CDC Runtime",
+                    Description = "Represents an externally managed out-of-process CDC runner.",
+                    ExecutionOwnership = "external-managed",
+                    ExecutionTopology = "out-of-process-reporting",
+                    ReporterLeaseSeconds = 120,
+                    RejectConflictingReporterIds = true
+                });
+                options.CdcExecutionRuntimes[0].CdcCaptureIds.Add("tenant-profile-cdc");
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var reportSink = provider.GetRequiredService<ICdcCaptureExecutionRuntimeReportSink>();
+        var runtimeStateCatalog = provider.GetRequiredService<ICdcCaptureRuntimeStateCatalog>();
+        var runtimeCatalog = provider.GetRequiredService<ICdcCaptureExecutionRuntimeCatalog>();
+
+        await reportSink.ReportAsync(
+            "external-cdc-runtime",
+            [
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: "tenant-profile-cdc",
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-21T02:44:00Z", CultureInfo.InvariantCulture),
+                    reportId: "external-report-reporter-a",
+                    reporterId: "edge-agent-a")
+            ]);
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => reportSink.ReportAsync(
+            "external-cdc-runtime",
+            [
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: "tenant-profile-cdc",
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-21T02:44:30Z", CultureInfo.InvariantCulture),
+                    reportId: "external-report-reporter-b",
+                    reporterId: "edge-agent-b")
+            ]).AsTask());
+
+        Assert.Contains("edge-agent-b", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("edge-agent-a", exception.Message, StringComparison.Ordinal);
+
+        var state = Assert.Single(runtimeStateCatalog.GetByExecutionRuntimeId("external-cdc-runtime"));
+        Assert.Equal("edge-agent-a", state.LastReporterId);
+        Assert.Equal(DateTimeOffset.Parse("2026-04-21T02:46:00Z", CultureInfo.InvariantCulture), state.ReporterLeaseExpiresAtUtc);
+
+        var runtime = runtimeCatalog.GetById("external-cdc-runtime");
+        Assert.NotNull(runtime);
+        Assert.Equal("edge-agent-a", runtime.Summary.ActiveReporterId);
+        Assert.Equal(DateTimeOffset.Parse("2026-04-21T02:46:00Z", CultureInfo.InvariantCulture), runtime.Summary.ReporterLeaseExpiresAtUtc);
+    }
+
+    [Fact]
+    public async Task AddDataRejectsExternalExecutionRuntimeReportsFromUndeclaredEdgeNodes()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"]));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new Phase8CatalogModule());
+            engine.AddData(options =>
+            {
+                options.EnableExternalCdcRuntimeReporting = true;
+                options.CdcExecutionRuntimes.Add(new CdcCaptureExecutionRuntimeOptions
+                {
+                    Id = "external-cdc-runtime",
+                    DisplayName = "External CDC Runtime",
+                    Description = "Represents an externally managed out-of-process CDC runner.",
+                    ExecutionOwnership = "external-managed",
+                    ExecutionTopology = "edge-reporting"
+                });
+                options.CdcExecutionRuntimes[0].CdcCaptureIds.Add("tenant-profile-cdc");
+                options.CdcExecutionRuntimes[0].EdgeNodeIds.Add("edge-bkk-01");
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var reportSink = provider.GetRequiredService<ICdcCaptureExecutionRuntimeReportSink>();
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => reportSink.ReportAsync(
+            "external-cdc-runtime",
+            [
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: "tenant-profile-cdc",
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-21T02:55:00Z", CultureInfo.InvariantCulture),
+                    reportId: "external-report-edge-001",
+                    edgeNodeId: "edge-bkk-02")
+            ]).AsTask());
+
+        Assert.Contains("edge-bkk-02", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("edge-bkk-01", exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]

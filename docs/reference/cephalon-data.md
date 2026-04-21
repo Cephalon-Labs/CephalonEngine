@@ -80,6 +80,16 @@ string DisplayName { get; set; }
 
 Gets or sets the operator-facing execution-runtime name.
 
+<a id="member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-edgenodeids"></a>
+
+##### `EdgeNodeIds`
+
+```csharp
+IList<string> EdgeNodeIds { get; }
+```
+
+Gets the declared edge-node identifiers that can originate observations for the runtime.
+
 <a id="member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-executiongraphid"></a>
 
 ##### `ExecutionGraphId`
@@ -150,6 +160,16 @@ int? ObservationStaleAfterSeconds { get; set; }
 
 Gets or sets the report-freshness window, in seconds, used to mark external runtime observations stale.
 
+<a id="member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-rejectconflictingreporterids"></a>
+
+##### `RejectConflictingReporterIds`
+
+```csharp
+bool RejectConflictingReporterIds { get; set; }
+```
+
+Gets or sets a value indicating whether the runtime should reject reports from conflicting reporter identities while an active lease still exists.
+
 <a id="member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-rejectoutoforderreports"></a>
 
 ##### `RejectOutOfOrderReports`
@@ -159,6 +179,16 @@ bool RejectOutOfOrderReports { get; set; }
 ```
 
 Gets or sets a value indicating whether the runtime should reject out-of-order external reports.
+
+<a id="member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-reporterleaseseconds"></a>
+
+##### `ReporterLeaseSeconds`
+
+```csharp
+int? ReporterLeaseSeconds { get; set; }
+```
+
+Gets or sets the reporter-lease window, in seconds, used to keep one external reporter authoritative for the runtime.
 
 <a id="type-cephalon-data-configuration-dataruntimeoptions"></a>
 
@@ -295,12 +325,12 @@ public sealed class CdcCaptureExecutionReport
 
 #### Constructors
 
-<a id="member-m-cephalon-data-services-cdccaptureexecutionreport-ctor-system-string-system-string-system-datetimeoffset-system-string-system-int32-system-int32-system-string-system-string-system-string-cephalon-abstractions-data-cdccapturefreshnessstatus-cephalon-abstractions-data-cdccapturefreshnessstatus-cephalon-abstractions-data-cdccapturelagstatus-cephalon-abstractions-data-cdccapturepublicationstatus-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+<a id="member-m-cephalon-data-services-cdccaptureexecutionreport-ctor-system-string-system-string-system-datetimeoffset-system-string-system-int32-system-int32-system-string-system-string-system-string-cephalon-abstractions-data-cdccapturefreshnessstatus-cephalon-abstractions-data-cdccapturefreshnessstatus-cephalon-abstractions-data-cdccapturelagstatus-cephalon-abstractions-data-cdccapturepublicationstatus-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string"></a>
 
 ##### `CdcCaptureExecutionReport`
 
 ```csharp
-CdcCaptureExecutionReport(string cdcCaptureId, string outcome, DateTimeOffset observedAtUtc, string reportId, int capturedChangeCount, int producedMessageCount, string changeId, string checkpoint, string error, CdcCaptureFreshnessStatus freshness, CdcCaptureFreshnessStatus observationFreshness, CdcCaptureLagStatus lag, CdcCapturePublicationStatus publication, IReadOnlyDictionary<string, string> metadata)
+CdcCaptureExecutionReport(string cdcCaptureId, string outcome, DateTimeOffset observedAtUtc, string reportId, int capturedChangeCount, int producedMessageCount, string changeId, string checkpoint, string error, CdcCaptureFreshnessStatus freshness, CdcCaptureFreshnessStatus observationFreshness, CdcCaptureLagStatus lag, CdcCapturePublicationStatus publication, IReadOnlyDictionary<string, string> metadata, string reporterId, string edgeNodeId)
 ```
 
 Creates a new CDC capture runtime observation.
@@ -320,6 +350,8 @@ Parameters:
 - `lag`: An optional typed lag answer reported by the active provider/runtime.
 - `publication`: An optional typed publication-posture answer reported by the active provider/runtime.
 - `metadata`: Optional operator-facing metadata captured alongside the observation.
+- `reporterId`: The optional stable reporter identity that submitted the observation.
+- `edgeNodeId`: The optional stable edge-node identifier that originated the observation.
 
 #### Properties
 
@@ -362,6 +394,16 @@ string Checkpoint { get; }
 ```
 
 Gets the latest provider-facing checkpoint or cursor when one was reported.
+
+<a id="member-p-cephalon-data-services-cdccaptureexecutionreport-edgenodeid"></a>
+
+##### `EdgeNodeId`
+
+```csharp
+string EdgeNodeId { get; }
+```
+
+Gets the stable edge-node identifier that originated the observation when one was supplied.
 
 <a id="member-p-cephalon-data-services-cdccaptureexecutionreport-error"></a>
 
@@ -452,6 +494,16 @@ CdcCapturePublicationStatus Publication { get; }
 ```
 
 Gets the typed publication-posture answer reported by the active provider/runtime when one was supplied.
+
+<a id="member-p-cephalon-data-services-cdccaptureexecutionreport-reporterid"></a>
+
+##### `ReporterId`
+
+```csharp
+string ReporterId { get; }
+```
+
+Gets the stable reporter identity that submitted the observation when one was supplied.
 
 <a id="member-p-cephalon-data-services-cdccaptureexecutionreport-reportid"></a>
 

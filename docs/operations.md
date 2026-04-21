@@ -1293,7 +1293,7 @@ Current payload highlights:
   `/engine/cdc-captures/runtime/resources/{resourceId}`
 - `/engine/cdc-captures/runtime/execution-runtimes/{executionRuntimeId}` now exposes the inverse
   runtime-state view for every capture effectively owned by one execution runtime
-- when `DataRuntimeOptions.EnableExternalCdcRuntimeReporting = true`, `POST /engine/cdc-capture-runtimes/{executionRuntimeId}/reports` accepts `CdcCaptureRuntimeObservation[]` payloads for that runtime, validates effective ownership per capture, and refreshes the same runtime-state catalog instead of a separate external-monitor surface
+- when `DataRuntimeOptions.EnableExternalCdcRuntimeReporting = true`, `POST /engine/cdc-capture-runtimes/{executionRuntimeId}/reports` accepts `CdcCaptureRuntimeObservation[]` payloads for that runtime, validates effective ownership per capture, enforces declared reporter and edge-node policy when present, and refreshes the same runtime-state catalog instead of a separate external-monitor surface
 
 Current note:
 
@@ -1302,8 +1302,9 @@ Current note:
   reports provider-native change-stream posture through the same surface instead of inventing a
   MongoDB-only monitor
 - provider packs can now project typed freshness, lag, publication posture, bounded capture
-  batches, checkpoints, and failure metadata through the shared contract today, while later
-  out-of-process or edge-aware CDC execution topologies should stay additive over the same
+  batches, checkpoints, reporter identity, reporter lease, edge provenance, and failure metadata
+  through the shared contract today, while later out-of-process or edge-aware CDC execution
+  topologies should stay additive over the same
   capture/runtime-state and execution-runtime surfaces instead of a second host-only registry
 
 ## CDC capture execution-runtime surface
@@ -1315,11 +1316,13 @@ Current payload highlights:
 
 - each execution runtime carries a stable `id`, `displayName`, `description`, bounded
   `cdcCaptureIds`, first-class `executionOwnership`, `executionTopology`,
-  `acknowledgementMode`, `hostedExecutionId`, `executionGraphId`, and operator-facing `metadata`
+  `acknowledgementMode`, `hostedExecutionId`, `executionGraphId`, `reporterLeaseSeconds`,
+  `rejectConflictingReporterIds`, declared `edgeNodeIds`, and operator-facing `metadata`
 - `summary` carries the aggregate latest-plus-total runtime answer for that execution runtime,
   including reported capture ids, latest outcome/observation time, latest checkpoint/change id,
   aggregate started/captured/idle/failed counts, total captured changes, total produced messages,
-  latest acknowledgement posture, and latest error
+  latest acknowledgement posture, latest error, `lastReporterId`, `activeReporterId`,
+  `reporterLeaseExpiresAtUtc`, `observedEdgeNodeIds`, and `lastEdgeNodeId`
 - the same execution-runtime catalog is also available through `/engine/snapshot` in
   `CdcCaptureExecutionRuntimes` when operators want one merged runtime answer
 - the drill-down route `/engine/cdc-capture-runtimes/{executionRuntimeId}` narrows the same catalog
@@ -1330,7 +1333,7 @@ Current payload highlights:
   `DataRuntimeOptions.CdcExecutionRuntimes` declarations can publish external-managed,
   provider-native, edge, or other runtime answers on the same catalog without falsely implying the
   engine hosts those runners itself
-- when `DataRuntimeOptions.EnableExternalCdcRuntimeReporting = true`, `POST /engine/cdc-capture-runtimes/{executionRuntimeId}/reports` returns the refreshed descriptor for that runtime after merging the supplied observations into the shared runtime-state catalog
+- when `DataRuntimeOptions.EnableExternalCdcRuntimeReporting = true`, `POST /engine/cdc-capture-runtimes/{executionRuntimeId}/reports` returns the refreshed descriptor for that runtime after merging the supplied observations into the shared runtime-state catalog, including refreshed reporter-lease and observed-edge-node summaries when they apply
 
 Current note:
 

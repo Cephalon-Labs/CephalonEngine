@@ -91,15 +91,23 @@ for one `executionRuntimeId`, validates that every reported `cdcCaptureId` is ef
 that runtime, stamps `metadata.cdcCaptureExecutionRuntimeId`, and then refreshes the existing
 `/engine/cdc-captures/runtime*`, `/engine/cdc-capture-runtimes*`, and `snapshot` answers through
 the same shared catalog instead of a second external-monitor path. That same seam now also lets
-declared execution runtimes opt into `ObservationStaleAfterSeconds` and
-`RejectOutOfOrderReports`, treats repeated `CdcCaptureRuntimeObservation.ReportId` values as
-idempotent retries when the payload matches, rejects older reports when the runtime requires
-ordered ingestion, and derives `ObservationFreshness` plus execution-runtime-summary freshness from
-the configured stale window even when the active runner lives out of process. The shared catalog
-also stamps `metadata.cdcCaptureReportId`, `metadata.observationFreshnessState`,
-`metadata.observationFreshUntilUtc`, and `metadata.observationStaleAfterSeconds` so operators can
-read latest report identity and expiry posture straight off `/engine/cdc-captures/runtime*`,
-`/engine/cdc-capture-runtimes*`, and `snapshot` without inventing a second watchdog registry.
+declared execution runtimes opt into `ObservationStaleAfterSeconds`,
+`RejectOutOfOrderReports`, `ReporterLeaseSeconds`, `RejectConflictingReporterIds`, and declared
+`EdgeNodeIds`, treats repeated `CdcCaptureRuntimeObservation.ReportId` values as idempotent
+retries when the payload matches, rejects older reports when the runtime requires ordered
+ingestion, rejects conflicting `ReporterId` values while an active reporter lease still exists,
+rejects `EdgeNodeId` values that fall outside the declared runtime allow-list, and derives
+`ObservationFreshness` plus execution-runtime-summary freshness from the configured stale window
+even when the active runner lives out of process. The shared catalog also stamps
+`metadata.cdcCaptureReportId`, `metadata.observationFreshnessState`,
+`metadata.observationFreshUntilUtc`, `metadata.observationStaleAfterSeconds`,
+`metadata.cdcCaptureReporterId`, `metadata.cdcCaptureReporterLeaseExpiresAtUtc`, and
+`metadata.cdcCaptureEdgeNodeId`, while `CdcCaptureRuntimeState` plus
+`CdcCaptureExecutionRuntimeSummary` now keep first-class `LastReporterId`, `ActiveReporterId`,
+`ReporterLeaseExpiresAtUtc`, `ObservedEdgeNodeIds`, and `LastEdgeNodeId` so operators can read
+latest report identity, lease ownership, and edge provenance straight off
+`/engine/cdc-captures/runtime*`, `/engine/cdc-capture-runtimes*`, and `snapshot` without
+inventing a second watchdog registry or topology-coordination surface.
 
 `Cephalon.Data.MongoDB` first proved that contract with a document-oriented provider-native runner.
 Its `mongodb-change-stream-capture-pump` contributor publishes host-managed, provider-native,

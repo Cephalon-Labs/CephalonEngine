@@ -59,6 +59,31 @@ public sealed record CdcCaptureExecutionRuntimeSummary(
         ObservationFreshness: new CdcCaptureFreshnessStatus(CdcCaptureFreshnessStates.Unknown));
 
     /// <summary>
+    /// Gets the latest reporter identity visible for the execution runtime when one was reported.
+    /// </summary>
+    public string? LastReporterId { get; init; }
+
+    /// <summary>
+    /// Gets the currently active reporter identity when one reporter still holds an active lease for the execution runtime.
+    /// </summary>
+    public string? ActiveReporterId { get; init; }
+
+    /// <summary>
+    /// Gets the UTC timestamp when the active reporter lease expires when one is known.
+    /// </summary>
+    public DateTimeOffset? ReporterLeaseExpiresAtUtc { get; init; }
+
+    /// <summary>
+    /// Gets the declared or observed edge-node identifiers that most recently reported runtime state for the execution runtime.
+    /// </summary>
+    public IReadOnlyList<string> ObservedEdgeNodeIds { get; init; } = [];
+
+    /// <summary>
+    /// Gets the latest edge-node identifier visible for the execution runtime when one was reported.
+    /// </summary>
+    public string? LastEdgeNodeId { get; init; }
+
+    /// <summary>
     /// Gets the number of distinct CDC captures that have reported runtime state for the execution runtime.
     /// </summary>
     public int ReportedCaptureCount => ReportedCdcCaptureIds.Count;
@@ -77,4 +102,9 @@ public sealed record CdcCaptureExecutionRuntimeSummary(
     /// Gets a value indicating whether at least one reported capture observation is now stale.
     /// </summary>
     public bool HasStaleObservations => string.Equals(ObservationFreshness.State, CdcCaptureFreshnessStates.Stale, StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Gets a value indicating whether the execution runtime currently has an active reporter lease.
+    /// </summary>
+    public bool HasActiveReporterLease => ReporterLeaseExpiresAtUtc.HasValue;
 }

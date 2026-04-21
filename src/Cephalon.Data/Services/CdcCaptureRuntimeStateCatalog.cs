@@ -162,7 +162,7 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
         ArgumentNullException.ThrowIfNull(report);
         cancellationToken.ThrowIfCancellationRequested();
 
-        ApplyReport(report);
+        ApplyReport(report, executionRuntime: null);
 
         return ValueTask.CompletedTask;
     }
@@ -205,6 +205,10 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
             }
 
             var observationFreshness = CreateObservationFreshness(runtimeDescriptor, observation.ObservedAtUtc);
+            var reporterLeaseExpiresAtUtc = CreateReporterLeaseExpiry(
+                runtimeDescriptor,
+                observation.ReporterId,
+                observation.ObservedAtUtc);
             ApplyReport(new CdcCaptureExecutionReport(
                 cdcCaptureId: observation.CdcCaptureId,
                 outcome: observation.Outcome,
@@ -224,7 +228,13 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                     observation.Metadata,
                     observation.ReportId,
                     observationFreshness,
-                    runtimeDescriptor?.ObservationStaleAfterSeconds)));
+                    runtimeDescriptor?.ObservationStaleAfterSeconds,
+                    observation.ReporterId,
+                    reporterLeaseExpiresAtUtc,
+                    observation.EdgeNodeId),
+                reporterId: observation.ReporterId,
+                edgeNodeId: observation.EdgeNodeId),
+                runtimeDescriptor);
         }
 
         return ValueTask.CompletedTask;
@@ -356,7 +366,9 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
         };
     }
 
-    private void ApplyReport(CdcCaptureExecutionReport report)
+    private void ApplyReport(
+        CdcCaptureExecutionReport report,
+        CdcCaptureExecutionRuntimeDescriptor? executionRuntime)
     {
         if (!descriptorsById.TryGetValue(report.CdcCaptureId, out var descriptor))
         {
@@ -374,7 +386,7 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
             var current = reportedStatesById.TryGetValue(report.CdcCaptureId, out var existing)
                 ? existing
                 : CreateDefaultState(descriptor);
-            var executionRuntime = ResolveExecutionRuntimeDescriptor(
+            executionRuntime ??= ResolveExecutionRuntimeDescriptor(
                 descriptor.ExecutionBinding.EffectiveExecutionRuntimeId,
                 report.Metadata);
             var normalizedReportId = string.IsNullOrWhiteSpace(report.ReportId)
@@ -393,6 +405,12 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                     $"CDC capture '{report.CdcCaptureId}' already recorded report '{normalizedReportId}' with different payload.");
             }
 
+            if (executionRuntime is not null)
+            {
+                ValidateExecutionRuntimeEdgeNode(report, executionRuntime);
+                ValidateExecutionRuntimeReporterIdentity(report, executionRuntime);
+            }
+
             if (executionRuntime?.RejectOutOfOrderReports == true &&
                 current.LastObservedAtUtc.HasValue &&
                 report.ObservedAtUtc < current.LastObservedAtUtc.Value)
@@ -407,6 +425,10 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
             var freshness = report.Freshness ?? current.Freshness;
             var observationFreshness = report.ObservationFreshness ?? UnknownObservationFreshness;
             var lag = report.Lag ?? current.Lag;
+            var reporterLeaseExpiresAtUtc = CreateReporterLeaseExpiry(
+                executionRuntime,
+                report.ReporterId,
+                report.ObservedAtUtc);
 
             current = normalizedOutcome switch
             {
@@ -423,6 +445,9 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                     LastChangeId = report.ChangeId,
                     LastCheckpoint = report.Checkpoint,
                     LastError = null,
+                    LastReporterId = report.ReporterId,
+                    ReporterLeaseExpiresAtUtc = reporterLeaseExpiresAtUtc,
+                    LastEdgeNodeId = report.EdgeNodeId,
                     Freshness = freshness,
                     ObservationFreshness = observationFreshness,
                     Lag = lag,
@@ -448,6 +473,9 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                     LastChangeId = report.ChangeId,
                     LastCheckpoint = report.Checkpoint,
                     LastError = null,
+                    LastReporterId = report.ReporterId,
+                    ReporterLeaseExpiresAtUtc = reporterLeaseExpiresAtUtc,
+                    LastEdgeNodeId = report.EdgeNodeId,
                     Freshness = freshness,
                     ObservationFreshness = observationFreshness,
                     Lag = lag,
@@ -473,6 +501,9 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                     LastChangeId = report.ChangeId,
                     LastCheckpoint = report.Checkpoint,
                     LastError = null,
+                    LastReporterId = report.ReporterId,
+                    ReporterLeaseExpiresAtUtc = reporterLeaseExpiresAtUtc,
+                    LastEdgeNodeId = report.EdgeNodeId,
                     Freshness = freshness,
                     ObservationFreshness = observationFreshness,
                     Lag = lag,
@@ -498,6 +529,9 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                     LastChangeId = report.ChangeId,
                     LastCheckpoint = report.Checkpoint,
                     LastError = report.Error,
+                    LastReporterId = report.ReporterId,
+                    ReporterLeaseExpiresAtUtc = reporterLeaseExpiresAtUtc,
+                    LastEdgeNodeId = report.EdgeNodeId,
                     Freshness = freshness,
                     ObservationFreshness = observationFreshness,
                     Lag = lag,
@@ -523,7 +557,10 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
         IReadOnlyDictionary<string, string> metadata,
         string? reportId,
         CdcCaptureFreshnessStatus? observationFreshness,
-        int? observationStaleAfterSeconds)
+        int? observationStaleAfterSeconds,
+        string? reporterId,
+        DateTimeOffset? reporterLeaseExpiresAtUtc,
+        string? edgeNodeId)
     {
         var merged = metadata.Count == 0
             ? new Dictionary<string, string>(Comparer)
@@ -533,6 +570,9 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
         UpsertOptional(merged, "observationFreshUntilUtc", observationFreshness?.FreshUntilUtc?.ToString("O", System.Globalization.CultureInfo.InvariantCulture));
         UpsertOptional(merged, "observationFreshnessState", observationFreshness?.State);
         UpsertOptional(merged, "observationStaleAfterSeconds", observationStaleAfterSeconds?.ToString(System.Globalization.CultureInfo.InvariantCulture));
+        UpsertOptional(merged, "cdcCaptureReporterId", reporterId);
+        UpsertOptional(merged, "cdcCaptureReporterLeaseExpiresAtUtc", reporterLeaseExpiresAtUtc?.ToString("O", System.Globalization.CultureInfo.InvariantCulture));
+        UpsertOptional(merged, "cdcCaptureEdgeNodeId", edgeNodeId);
 
         return merged;
     }
@@ -588,6 +628,8 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                string.Equals(current.LastChangeId, report.ChangeId, StringComparison.Ordinal) &&
                string.Equals(current.LastCheckpoint, report.Checkpoint, StringComparison.Ordinal) &&
                string.Equals(current.LastError, report.Error, StringComparison.Ordinal) &&
+               string.Equals(current.LastReporterId, report.ReporterId, StringComparison.Ordinal) &&
+               string.Equals(current.LastEdgeNodeId, report.EdgeNodeId, StringComparison.Ordinal) &&
                MatchesOptional(current.Freshness, report.Freshness) &&
                MatchesOptional(current.ObservationFreshness, report.ObservationFreshness) &&
                MatchesOptional(current.Lag, report.Lag) &&
@@ -636,6 +678,106 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
             CdcCaptureFreshnessStates.Fresh,
             observedAtUtc.AddSeconds(staleAfterSeconds),
             "The latest CDC runtime observation is still within the configured freshness window.");
+    }
+
+    private static DateTimeOffset? CreateReporterLeaseExpiry(
+        CdcCaptureExecutionRuntimeDescriptor? executionRuntime,
+        string? reporterId,
+        DateTimeOffset observedAtUtc)
+    {
+        if (executionRuntime?.ReporterLeaseSeconds is not int leaseSeconds ||
+            leaseSeconds <= 0 ||
+            string.IsNullOrWhiteSpace(reporterId))
+        {
+            return null;
+        }
+
+        return observedAtUtc.AddSeconds(leaseSeconds);
+    }
+
+    private static void ValidateExecutionRuntimeEdgeNode(
+        CdcCaptureExecutionReport report,
+        CdcCaptureExecutionRuntimeDescriptor executionRuntime)
+    {
+        if (string.IsNullOrWhiteSpace(report.EdgeNodeId) ||
+            executionRuntime.EdgeNodeIds.Count == 0)
+        {
+            return;
+        }
+
+        if (executionRuntime.EdgeNodeIds.Contains(report.EdgeNodeId, Comparer))
+        {
+            return;
+        }
+
+        throw new InvalidOperationException(
+            $"CDC capture '{report.CdcCaptureId}' rejected edge node '{report.EdgeNodeId}' because execution runtime '{executionRuntime.Id}' only declares edge nodes '{string.Join("', '", executionRuntime.EdgeNodeIds)}'.");
+    }
+
+    private void ValidateExecutionRuntimeReporterIdentity(
+        CdcCaptureExecutionReport report,
+        CdcCaptureExecutionRuntimeDescriptor executionRuntime)
+    {
+        if (!executionRuntime.RejectConflictingReporterIds)
+        {
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(report.ReporterId))
+        {
+            throw new InvalidOperationException(
+                $"CDC capture '{report.CdcCaptureId}' requires reporter identity for execution runtime '{executionRuntime.Id}' because it rejects conflicting reporters.");
+        }
+
+        var activeReporterStates = ResolveActiveReporterStates(executionRuntime.Id);
+        if (activeReporterStates.Length == 0)
+        {
+            return;
+        }
+
+        if (activeReporterStates.Length == 1 &&
+            Comparer.Equals(activeReporterStates[0].ReporterId, report.ReporterId))
+        {
+            return;
+        }
+
+        var activeReporterSummary = string.Join(
+            ", ",
+            activeReporterStates.Select(static state =>
+                state.ReporterLeaseExpiresAtUtc.HasValue
+                    ? $"{state.ReporterId} (lease until {state.ReporterLeaseExpiresAtUtc.Value:O})"
+                    : $"{state.ReporterId} (indefinite lease)"));
+        throw new InvalidOperationException(
+            $"CDC capture '{report.CdcCaptureId}' rejected reporter '{report.ReporterId}' because execution runtime '{executionRuntime.Id}' already has active reporter lease ownership for {activeReporterSummary}.");
+    }
+
+    private (string ReporterId, DateTimeOffset? ReporterLeaseExpiresAtUtc)[] ResolveActiveReporterStates(
+        string executionRuntimeId)
+    {
+        var now = timeProvider.GetUtcNow();
+
+        return reportedStatesById.Values
+            .Where(state =>
+                Comparer.Equals(state.ExecutionBinding.EffectiveExecutionRuntimeId, executionRuntimeId) &&
+                !string.IsNullOrWhiteSpace(state.LastReporterId) &&
+                IsReporterLeaseActive(state.ReporterLeaseExpiresAtUtc, now))
+            .GroupBy(static state => state.LastReporterId!, Comparer)
+            .Select(group => (
+                ReporterId: group.Key,
+                ReporterLeaseExpiresAtUtc: group
+                    .Where(static state => state.ReporterLeaseExpiresAtUtc.HasValue)
+                    .Select(static state => state.ReporterLeaseExpiresAtUtc)
+                    .Max()))
+            .OrderBy(static item => item.ReporterId, Comparer)
+            .ToArray();
+    }
+
+    private static bool IsReporterLeaseActive(
+        DateTimeOffset? reporterLeaseExpiresAtUtc,
+        DateTimeOffset now)
+    {
+        return !reporterLeaseExpiresAtUtc.HasValue ||
+               reporterLeaseExpiresAtUtc.Value >= now;
     }
 
     private static void UpsertOptional(
