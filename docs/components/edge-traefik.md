@@ -1,6 +1,6 @@
 # Cephalon.Edge.Traefik
 
-`Cephalon.Edge.Traefik` is the second provider-specific control-plane materializer pack for Cephalon cell traffic automation. It proves that the shared provider-materializer seam is not overfit to Kubernetes Gateway API by projecting truthful Traefik `IngressRoute` intent and, when enabled, overlaying live Traefik CRD observation, ownership-aware `IngressRoute` apply-and-reconcile posture, typed provider materialization conditions, and additive cleanup sweeps back onto the same shared runtime surfaces without moving Traefik-specific assumptions into `Cephalon.Engine`.
+`Cephalon.Edge.Traefik` is the second provider-specific control-plane materializer pack for Cephalon cell traffic automation. It proves that the shared provider-materializer seam is not overfit to Kubernetes Gateway API by projecting truthful Traefik `IngressRoute` intent and, when enabled, overlaying live Traefik CRD observation, ownership-aware `IngressRoute` apply-and-reconcile posture, typed provider materialization conditions, and additive cleanup sweeps for both primary routes and safe owned dependents back onto the same shared runtime surfaces without moving Traefik-specific assumptions into `Cephalon.Engine`.
 
 ## What it owns
 
@@ -9,10 +9,10 @@
 - a provider-specific `ICellTrafficAutomationProviderMaterializer` implementation for `providerId = "traefik"`
 - deterministic projection of selected cell routes into Traefik `IngressRoute` intent, including entry points, match rules, middleware references, backend Service references, and TLS options
 - opt-in observe-only polling over Traefik `IngressRoute`, `Middleware`, `TLSOption`, `Secret`, and backend `Service` resources so live ownership, dependency, drift, freshness, and cleanup posture can flow back into the shared runtime catalog
-- opt-in `apply-and-reconcile` ownership over Traefik `IngressRoute` resources only, while treating referenced `Middleware`, `TLSOption`, `Secret`, and backend `Service` resources as pre-provisioned dependencies that are observed rather than written by this pack
-- namespace-scoped cleanup sweeps in `apply-and-reconcile` mode that can delete transferred `IngressRoute` resources or prune orphaned Cephalon-owned routes without inventing a second lifecycle registry
+- opt-in `apply-and-reconcile` ownership over Traefik `IngressRoute` resources only, while treating referenced `Middleware`, `TLSOption`, `Secret`, and backend `Service` resources as pre-provisioned dependencies for steady-state writes
+- namespace-scoped cleanup sweeps in `apply-and-reconcile` mode that can delete transferred `IngressRoute` resources, prune orphaned Cephalon-owned routes, and remove safe owned `Middleware` or `TLSOption` dependents that no longer map to active projections without inventing a second lifecycle registry
 - the `traefik-ingressroute-traffic-materializations` technology surface under `cell-based-architecture`
-- truthful operator metadata such as `providerRouteId`, `ingressRouteNamespace`, `ingressRouteName`, `entryPoints`, `matchRule`, `middlewareRefs`, `serviceRefs`, `tlsSecretName`, `tlsOptionsRef`, `statusSource`, `observationMode`, `ingressRouteWriteAction`, freshness metadata, typed provider `MaterializationConditions`, additive cleanup-sweep summaries such as `cleanupState` plus `cleanupObservedAtUtc`, the shared ownership/dependency/drift/lifecycle-action vocabulary, and additive condition summaries such as `providerMaterialization.conditionCount` plus `providerMaterialization.highestConditionSeverity`
+- truthful operator metadata such as `providerRouteId`, `ingressRouteNamespace`, `ingressRouteName`, `entryPoints`, `matchRule`, `middlewareRefs`, `serviceRefs`, `tlsSecretName`, `tlsOptionsRef`, `statusSource`, `observationMode`, `ingressRouteWriteAction`, freshness metadata, typed provider `MaterializationConditions`, additive cleanup-sweep summaries such as `cleanupState`, `cleanupObservedAtUtc`, `cleanup.cleanupStrategy`, `cleanup.primaryCandidateCount`, `cleanup.dependencyCandidateCount`, the shared ownership/dependency/drift/lifecycle-action vocabulary, and additive condition summaries such as `providerMaterialization.conditionCount` plus `providerMaterialization.highestConditionSeverity`
 
 ## Main surfaces
 
@@ -68,7 +68,8 @@ This pack currently ships three truthful modes:
   reconciliation back to `observe`
 - optional cleanup sweeps inside `apply-and-reconcile`, which publish additive `cleanup*` metadata
   after namespace-scoped delete or prune passes while leaving the primary provider lifecycle answer
-  grounded in the selected route's actual materialization state
+  grounded in the selected route's actual materialization state and truthfully publishing
+  `cleanupStrategy = primary-and-owned-dependencies` plus primary/dependency cleanup breakdowns
 
 What this proves is that a second provider family can publish selected materializer ownership,
 provider-facing route identity, middleware and TLS intent, a typed condition taxonomy, and the
@@ -86,7 +87,8 @@ The technology surface entry lives under `surfaceId = "traefik-ingressroute-traf
 and carries one provider-facing projection per selected route, including the projected or observed
 `providerRouteId`, entry points, route match, middleware references, backend service reference, TLS
 intent, resource existence, dependency posture, `ingressRouteWriteAction`, freshness metadata, and
-additive cleanup-sweep metadata such as `cleanupState` and `cleanup.lifecycleActions`. The shared
+additive cleanup-sweep metadata such as `cleanupState`, `cleanup.cleanupStrategy`,
+`cleanup.primaryCandidateCount`, `cleanup.dependencyCandidateCount`, and `cleanup.lifecycleActions`. The shared
 automation answer for the same route now also carries typed provider conditions through
 `CellTrafficAutomationRuntimeDescriptor.MaterializationConditions` plus additive summaries such as
 `materialization.conditionCount`, `materialization.highestConditionSeverity`,
@@ -179,13 +181,14 @@ engine.AddTraefikTrafficMaterializer(options =>
 ## Ownership and cleanup model
 
 - the pack writes only `IngressRoute` resources
-- `Middleware`, `TLSOption`, backend `Service`, and TLS `Secret` resources remain pre-provisioned dependencies and are never created or updated by Cephalon
+- `Middleware`, `TLSOption`, backend `Service`, and TLS `Secret` resources remain pre-provisioned dependencies for steady-state apply-and-reconcile; this pack never creates or replaces them
 - the pack only replaces an existing `IngressRoute` when ownership matches the current automation or when stale or incomplete Cephalon ownership metadata marks the route as an orphaned transfer candidate
 - existing unmanaged resources and active foreign Cephalon owners fail with an explicit ownership-conflict posture instead of being hijacked silently
 - owned routes carry stable Cephalon ownership labels and annotations so later observation can verify ownership truthfully
 - merged live observation keeps the last write lifecycle action (`create`, `replace`, or `transfer`) visible on the same shared runtime surfaces instead of collapsing every successful reconciliation back to `observe`
 - optional cleanup sweeps run only when `EnableCleanupSweep` is true in `apply-and-reconcile` mode, scan the configured route namespaces, delete stale transferred `IngressRoute` resources with `lifecycleAction = delete`, and prune orphaned Cephalon-owned routes with `lifecycleAction = prune`
-- cleanup sweep summaries stay additive through `providerMaterialization.cleanup*` and `traefik-ingressroute-traffic-materializations` entries so operators can inspect delete/prune posture without losing the selected route's primary materialization answer
+- when ownership metadata proves safe delete and no active projection still references them, the same cleanup sweeps can also remove Cephalon-managed `Middleware` and `TLSOption` resources that became orphaned or transfer candidates; backend `Service` and TLS `Secret` dependencies remain observe-only
+- cleanup sweep summaries stay additive through `providerMaterialization.cleanup*` and `traefik-ingressroute-traffic-materializations` entries so operators can inspect delete/prune posture without losing the selected route's primary materialization answer; those summaries now publish `cleanupStrategy = primary-and-owned-dependencies` plus primary/dependency resource breakdowns
 
 ## Current limits
 
@@ -196,7 +199,7 @@ This pack intentionally does not yet claim:
   dependency checks
 - `TraefikService`, parent `IngressRoute`, or richer multi-layer routing follow-through beyond the
   single route-rule and Service backend baseline
-- broader dependency-aware teardown beyond the current owned `IngressRoute` cleanup-sweep baseline
+- broader dependency-aware teardown beyond the shipped `IngressRoute` plus safe owned `Middleware` and `TLSOption` cleanup-sweep baseline; backend `Service`, TLS `Secret`, and richer dependent-resource families remain later work
 
 Those remain later follow-through so the current provider claim stays honest.
 

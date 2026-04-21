@@ -1208,10 +1208,23 @@ internal sealed class KubernetesGatewayTrafficObservationSource(
         return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["activeAutomationCount"] = activeAutomationCount.ToString(CultureInfo.InvariantCulture),
+            ["cleanupStrategy"] = "primary-only",
             ["candidateCount"] = (deletedTransferredResourceCount + prunedOrphanResourceCount).ToString(CultureInfo.InvariantCulture),
             ["removedResourceCount"] = removedResourceIds.Count.ToString(CultureInfo.InvariantCulture),
             ["deletedTransferredResourceCount"] = deletedTransferredResourceCount.ToString(CultureInfo.InvariantCulture),
             ["prunedOrphanResourceCount"] = prunedOrphanResourceCount.ToString(CultureInfo.InvariantCulture),
+            ["primaryCandidateCount"] = (deletedTransferredResourceCount + prunedOrphanResourceCount).ToString(CultureInfo.InvariantCulture),
+            ["removedPrimaryResourceCount"] = removedResourceIds.Count.ToString(CultureInfo.InvariantCulture),
+            ["deletedTransferredPrimaryResourceCount"] = deletedTransferredResourceCount.ToString(CultureInfo.InvariantCulture),
+            ["prunedOrphanPrimaryResourceCount"] = prunedOrphanResourceCount.ToString(CultureInfo.InvariantCulture),
+            ["primaryResourceIds"] = string.Join(",", removedResourceIds.OrderBy(static value => value, Comparer)),
+            ["dependencyCandidateCount"] = "0",
+            ["removedDependencyResourceCount"] = "0",
+            ["deletedTransferredDependencyResourceCount"] = "0",
+            ["prunedOrphanDependencyResourceCount"] = "0",
+            ["dependencyResourceIds"] = string.Empty,
+            ["dependencyKinds"] = string.Empty,
+            ["dependencyNamespaces"] = string.Empty,
             ["resourceIds"] = string.Join(",", removedResourceIds.OrderBy(static value => value, Comparer)),
             ["lifecycleActions"] = string.Join(",", distinctActions),
             ["namespaces"] = string.Join(",", namespaces)

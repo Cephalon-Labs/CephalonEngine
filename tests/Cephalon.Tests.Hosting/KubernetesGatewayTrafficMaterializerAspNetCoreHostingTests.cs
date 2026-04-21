@@ -394,11 +394,14 @@ public sealed class KubernetesGatewayTrafficMaterializerAspNetCoreHostingTests
 
         Assert.NotNull(providerAutomations);
         var automation = Assert.Single(providerAutomations);
+        Assert.Equal("primary-only", automation.RuntimeMetadata["providerMaterialization.cleanup.cleanupStrategy"]);
         Assert.Equal("true", automation.RuntimeMetadata["providerMaterialization.cleanupSweepEnabled"]);
         Assert.Equal("applied", automation.RuntimeMetadata["providerMaterialization.cleanupState"]);
         Assert.Equal("2", automation.RuntimeMetadata["providerMaterialization.cleanup.candidateCount"]);
         Assert.Equal("1", automation.RuntimeMetadata["providerMaterialization.cleanup.deletedTransferredResourceCount"]);
         Assert.Equal("1", automation.RuntimeMetadata["providerMaterialization.cleanup.prunedOrphanResourceCount"]);
+        Assert.Equal("2", automation.RuntimeMetadata["providerMaterialization.cleanup.primaryCandidateCount"]);
+        Assert.Equal("0", automation.RuntimeMetadata["providerMaterialization.cleanup.dependencyCandidateCount"]);
 
         Assert.NotNull(surfaces);
         var gatewaySurface = Assert.Single(
@@ -406,7 +409,9 @@ public sealed class KubernetesGatewayTrafficMaterializerAspNetCoreHostingTests
             static surface => surface.SurfaceId == "kubernetes-gateway-traffic-materializations");
         var entry = Assert.Single(gatewaySurface.Entries, item => item.Metadata["routeId"] == "orders-to-public-ingress");
         Assert.Equal("applied", entry.Metadata["cleanupState"]);
+        Assert.Equal("primary-only", entry.Metadata["cleanup.cleanupStrategy"]);
         Assert.Equal("2", entry.Metadata["cleanup.candidateCount"]);
+        Assert.Equal("0", entry.Metadata["cleanup.dependencyCandidateCount"]);
         Assert.Equal("delete,prune", entry.Metadata["cleanup.lifecycleActions"]);
 
         Assert.NotNull(snapshot);
@@ -490,10 +495,23 @@ public sealed class KubernetesGatewayTrafficMaterializerAspNetCoreHostingTests
             metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 ["activeAutomationCount"] = "1",
+                ["cleanupStrategy"] = "primary-only",
                 ["candidateCount"] = "2",
                 ["removedResourceCount"] = "2",
                 ["deletedTransferredResourceCount"] = "1",
                 ["prunedOrphanResourceCount"] = "1",
+                ["primaryCandidateCount"] = "2",
+                ["removedPrimaryResourceCount"] = "2",
+                ["deletedTransferredPrimaryResourceCount"] = "1",
+                ["prunedOrphanPrimaryResourceCount"] = "1",
+                ["primaryResourceIds"] = "httproute/edge-system/orders-public-ingress-legacy,httproute/edge-system/orders-public-ingress-stale",
+                ["dependencyCandidateCount"] = "0",
+                ["removedDependencyResourceCount"] = "0",
+                ["deletedTransferredDependencyResourceCount"] = "0",
+                ["prunedOrphanDependencyResourceCount"] = "0",
+                ["dependencyResourceIds"] = string.Empty,
+                ["dependencyKinds"] = string.Empty,
+                ["dependencyNamespaces"] = string.Empty,
                 ["resourceIds"] = "httproute/edge-system/orders-public-ingress-legacy,httproute/edge-system/orders-public-ingress-stale",
                 ["lifecycleActions"] = "delete,prune",
                 ["namespaces"] = "edge-system"

@@ -284,11 +284,14 @@ public sealed class TraefikTrafficMaterializerAspNetCoreHostingTests
         Assert.NotNull(providerAutomations);
         Assert.Contains(providerAutomations, automation =>
             automation.RouteId == "orders-to-public-ingress" &&
+            automation.RuntimeMetadata["providerMaterialization.cleanup.cleanupStrategy"] == "primary-and-owned-dependencies" &&
             automation.RuntimeMetadata["providerMaterialization.cleanupSweepEnabled"] == "true" &&
             automation.RuntimeMetadata["providerMaterialization.cleanupState"] == "applied" &&
-            automation.RuntimeMetadata["providerMaterialization.cleanup.candidateCount"] == "2" &&
-            automation.RuntimeMetadata["providerMaterialization.cleanup.deletedTransferredResourceCount"] == "1" &&
-            automation.RuntimeMetadata["providerMaterialization.cleanup.prunedOrphanResourceCount"] == "1");
+            automation.RuntimeMetadata["providerMaterialization.cleanup.candidateCount"] == "4" &&
+            automation.RuntimeMetadata["providerMaterialization.cleanup.deletedTransferredResourceCount"] == "2" &&
+            automation.RuntimeMetadata["providerMaterialization.cleanup.prunedOrphanResourceCount"] == "2" &&
+            automation.RuntimeMetadata["providerMaterialization.cleanup.dependencyCandidateCount"] == "2" &&
+            automation.RuntimeMetadata["providerMaterialization.cleanup.removedDependencyResourceCount"] == "2");
 
         Assert.NotNull(surfaces);
         var traefikSurface = Assert.Single(
@@ -297,7 +300,9 @@ public sealed class TraefikTrafficMaterializerAspNetCoreHostingTests
         Assert.Contains(traefikSurface.Entries, entry =>
             entry.Metadata["routeId"] == "orders-to-public-ingress" &&
             entry.Metadata["cleanupState"] == "applied" &&
-            entry.Metadata["cleanup.candidateCount"] == "2" &&
+            entry.Metadata["cleanup.cleanupStrategy"] == "primary-and-owned-dependencies" &&
+            entry.Metadata["cleanup.candidateCount"] == "4" &&
+            entry.Metadata["cleanup.dependencyCandidateCount"] == "2" &&
             entry.Metadata["cleanup.lifecycleActions"] == "delete,prune");
 
         Assert.NotNull(snapshot);
@@ -473,11 +478,24 @@ public sealed class TraefikTrafficMaterializerAspNetCoreHostingTests
             metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 ["activeAutomationCount"] = "1",
-                ["candidateCount"] = "2",
-                ["removedResourceCount"] = "2",
-                ["deletedTransferredResourceCount"] = "1",
-                ["prunedOrphanResourceCount"] = "1",
-                ["resourceIds"] = "ingressroute/edge-traefik/orders-public-ingress-legacy,ingressroute/edge-traefik/orders-public-ingress-stale",
+                ["cleanupStrategy"] = "primary-and-owned-dependencies",
+                ["candidateCount"] = "4",
+                ["removedResourceCount"] = "4",
+                ["deletedTransferredResourceCount"] = "2",
+                ["prunedOrphanResourceCount"] = "2",
+                ["primaryCandidateCount"] = "2",
+                ["removedPrimaryResourceCount"] = "2",
+                ["deletedTransferredPrimaryResourceCount"] = "1",
+                ["prunedOrphanPrimaryResourceCount"] = "1",
+                ["primaryResourceIds"] = "ingressroute/edge-traefik/orders-public-ingress-legacy,ingressroute/edge-traefik/orders-public-ingress-stale",
+                ["dependencyCandidateCount"] = "2",
+                ["removedDependencyResourceCount"] = "2",
+                ["deletedTransferredDependencyResourceCount"] = "1",
+                ["prunedOrphanDependencyResourceCount"] = "1",
+                ["dependencyResourceIds"] = "middleware/edge-security/orders-rate-limit-legacy,tlsoption/edge-security/strict-mtls-stale",
+                ["dependencyKinds"] = "middleware,tlsoption",
+                ["dependencyNamespaces"] = "edge-security",
+                ["resourceIds"] = "ingressroute/edge-traefik/orders-public-ingress-legacy,ingressroute/edge-traefik/orders-public-ingress-stale,middleware/edge-security/orders-rate-limit-legacy,tlsoption/edge-security/strict-mtls-stale",
                 ["lifecycleActions"] = "delete,prune",
                 ["namespaces"] = "edge-traefik"
             });

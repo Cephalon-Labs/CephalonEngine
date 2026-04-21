@@ -376,12 +376,35 @@ internal sealed class TraefikTrafficAutomationMaterializer : ICellTrafficAutomat
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .OrderBy(static value => value, StringComparer.OrdinalIgnoreCase)
             .ToArray();
+        var dependencyNamespaces = projectionsByRouteId.Values
+            .SelectMany(static projection => projection.Middlewares.Select(static middleware => middleware.Namespace))
+            .Concat(
+                projectionsByRouteId.Values
+                    .Where(static projection => !string.IsNullOrWhiteSpace(projection.TlsOptionsName))
+                    .Select(static projection => projection.TlsOptionsNamespace))
+            .Where(static value => !string.IsNullOrWhiteSpace(value))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static value => value, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
         return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
+            ["cleanupStrategy"] = "primary-and-owned-dependencies",
             ["candidateCount"] = "0",
             ["removedResourceCount"] = "0",
             ["deletedTransferredResourceCount"] = "0",
             ["prunedOrphanResourceCount"] = "0",
+            ["primaryCandidateCount"] = "0",
+            ["removedPrimaryResourceCount"] = "0",
+            ["deletedTransferredPrimaryResourceCount"] = "0",
+            ["prunedOrphanPrimaryResourceCount"] = "0",
+            ["primaryResourceIds"] = string.Empty,
+            ["dependencyCandidateCount"] = "0",
+            ["removedDependencyResourceCount"] = "0",
+            ["deletedTransferredDependencyResourceCount"] = "0",
+            ["prunedOrphanDependencyResourceCount"] = "0",
+            ["dependencyResourceIds"] = string.Empty,
+            ["dependencyKinds"] = string.Empty,
+            ["dependencyNamespaces"] = string.Join(",", dependencyNamespaces),
             ["resourceIds"] = string.Empty,
             ["lifecycleActions"] = string.Empty,
             ["namespaces"] = string.Join(",", namespaces)

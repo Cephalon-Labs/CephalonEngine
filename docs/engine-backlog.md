@@ -2663,6 +2663,31 @@ Delivered:
 - `Cephalon.Edge` now publishes stable edge-side `runtime-observable`, `ownership`, `dependencies`, `intent-alignment`, and `reconcile-action` conditions; `Cephalon.Edge.KubernetesGateway` now publishes the same shared condition taxonomy plus provider-specific readiness conditions such as `gateway-accepted`, `gateway-programmed`, `http-route-accepted`, and `http-route-resolved-refs`; and `Cephalon.Edge.Traefik` now publishes the same shared taxonomy plus provider-specific conditions such as `ingress-route-present`, `backend-service-present`, `tls-options-present`, `tls-secret-present`, and `middleware-present`
 - targeted coverage now proves merged provider plus edge condition projection, provider-specific condition publication on shared and provider-specific HTTP surfaces, public package-surface alignment, and generated reference-doc publishing through composition tests `30/30`, hosting tests `9/9`, tooling tests `179/179`, and the reference docs publish script
 
+### ENG-151 Phase 13 broader dependency-aware teardown baseline
+
+Status: done
+Estimate: 5
+Completed: April 22, 2026
+
+Why:
+
+- `ENG-147` shipped the first delete/prune cleanup sweeps for provider-owned primary routes and `ENG-150` added typed lifecycle and condition truth, but cleanup metadata still flattened primary-versus-dependent resource answers and both provider packs still looked equivalent even though only one of them could reasonably clean up safe owned dependents
+- operators could inspect `cleanupState` and `cleanup.lifecycleActions`, yet they still could not tell whether a provider remained intentionally route-only or had actually removed related provider-owned dependencies on the same pass
+- phase 13 still needed one additive dependency-aware teardown baseline that stayed on the existing shared traffic runtime surfaces while letting each provider pack truthfully advertise how far its cleanup model currently goes
+
+Acceptance:
+
+- the shared `providerMaterialization.cleanup*` answer publishes an explicit cleanup strategy plus primary/dependency cleanup breakdowns on the existing `/engine/cell-traffic-automations*`, provider-specific technology surfaces, and `snapshot.CellTrafficAutomations` instead of a new teardown registry
+- `Cephalon.Edge.KubernetesGateway` keeps cleanup explicitly route-only through `cleanupStrategy = primary-only`, while `Cephalon.Edge.Traefik` broadens cleanup to safe owned `Middleware` and `TLSOption` dependents when ownership truth and active projection state allow it
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the shipped slice while deeper external or edge-aware CDC execution topologies and broader provider-side teardown families remain later work
+
+Delivered:
+
+- `Cephalon.Edge.KubernetesGateway` now publishes additive cleanup metadata such as `cleanupStrategy`, `primaryCandidateCount`, `removedPrimaryResourceCount`, and zeroed dependency counts so operators can see that the current pack intentionally remains `primary-only` for owned `HTTPRoute` sweeps
+- `Cephalon.Edge.Traefik` now broadens `EnableCleanupSweep` beyond primary `IngressRoute` resources by safely deleting stale transferred or orphaned Cephalon-managed `Middleware` and `TLSOption` dependents that are no longer referenced by active projections, while backend `Service` and TLS `Secret` dependencies remain observe-only
+- shared cleanup summaries now expose aggregate plus primary/dependency breakdowns such as `candidateCount`, `removedResourceCount`, `primaryCandidateCount`, `dependencyCandidateCount`, `dependencyKinds`, and additive resource-id lists on the same shared and provider-specific surfaces without inventing a second lifecycle registry
+- targeted coverage now proves the shipped cleanup-strategy metadata, route-only Kubernetes behavior, Traefik dependency cleanup disposition, shared HTTP surface publication, public package-surface alignment, and generated reference-doc publishing through composition tests `24/24`, hosting tests `8/8`, tooling tests `179/179`, and the reference docs publish script
+
 ### ENG-137 Phase 13 edge-runtime cell traffic materializer baseline
 
 Status: done

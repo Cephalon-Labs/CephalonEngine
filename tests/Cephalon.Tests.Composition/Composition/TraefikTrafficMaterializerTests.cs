@@ -403,6 +403,84 @@ public sealed class TraefikTrafficMaterializerTests
     }
 
     [Fact]
+    public void DependencyCleanupDispositionTreatsTransferredMiddlewareResourcesAsDeleteCandidates()
+    {
+        var automation = CreateAutomationDescriptor(
+            automationId: "orders-public-automation",
+            routeId: "orders-to-public-ingress",
+            sourceModuleId: "traefik-traffic-tests");
+        using var source = new TraefikTrafficObservationSource(
+            new TraefikTrafficMaterializerOptions(),
+            TimeProvider.System,
+            runtimeCatalogAccessor: () => new StaticCellTrafficAutomationRuntimeCatalog([automation]));
+
+        var disposition = source.EvaluateDependencyCleanupDisposition(
+            new TraefikResourceStub
+            {
+                Metadata = new k8s.Models.V1ObjectMeta
+                {
+                    NamespaceProperty = "edge-security",
+                    Name = "orders-rate-limit-legacy",
+                    Labels = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [TraefikOwnership.ManagedByLabel] = TraefikOwnership.ManagedByValue
+                    },
+                    Annotations = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [TraefikOwnership.AutomationIdAnnotation] = automation.Id,
+                        [TraefikOwnership.RouteIdAnnotation] = automation.RouteId,
+                        [TraefikOwnership.SourceModuleIdAnnotation] = automation.SourceModuleId
+                    }
+                }
+            },
+            "middleware",
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase));
+
+        Assert.True(disposition.ShouldRemove);
+        Assert.Equal(CellTrafficAutomationLifecycleActions.Delete, disposition.LifecycleAction);
+        Assert.Equal(CellTrafficAutomationOwnershipStates.Transferred, disposition.OwnershipState);
+        Assert.Equal("active-owner-transferred", disposition.Reason);
+        Assert.Equal("middleware/edge-security/orders-rate-limit-legacy", disposition.ResourceId);
+    }
+
+    [Fact]
+    public void DependencyCleanupDispositionTreatsStaleTlsOptionsAsPruneCandidates()
+    {
+        using var source = new TraefikTrafficObservationSource(
+            new TraefikTrafficMaterializerOptions(),
+            TimeProvider.System,
+            runtimeCatalogAccessor: () => new StaticCellTrafficAutomationRuntimeCatalog([]));
+
+        var disposition = source.EvaluateDependencyCleanupDisposition(
+            new TraefikResourceStub
+            {
+                Metadata = new k8s.Models.V1ObjectMeta
+                {
+                    NamespaceProperty = "edge-security",
+                    Name = "strict-mtls-stale",
+                    Labels = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [TraefikOwnership.ManagedByLabel] = TraefikOwnership.ManagedByValue
+                    },
+                    Annotations = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        [TraefikOwnership.AutomationIdAnnotation] = "retired-orders-automation",
+                        [TraefikOwnership.RouteIdAnnotation] = "retired-orders-route",
+                        [TraefikOwnership.SourceModuleIdAnnotation] = "retired-module"
+                    }
+                }
+            },
+            "tlsoption",
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase));
+
+        Assert.True(disposition.ShouldRemove);
+        Assert.Equal(CellTrafficAutomationLifecycleActions.Prune, disposition.LifecycleAction);
+        Assert.Equal(CellTrafficAutomationOwnershipStates.Pruned, disposition.OwnershipState);
+        Assert.Equal("stale-owner", disposition.Reason);
+        Assert.Equal("tlsoption/edge-security/strict-mtls-stale", disposition.ResourceId);
+    }
+
+    [Fact]
     public async Task ObservationHostedServiceRefreshesLiveTraefikStatusOnPollingInterval()
     {
         var source = new SequencedObservationSource(new Dictionary<string, Queue<CellTrafficAutomationProviderMaterializationResult>>(StringComparer.OrdinalIgnoreCase)
@@ -566,12 +644,18 @@ public sealed class TraefikTrafficMaterializerTests
 
         var automation = catalog.GetByRouteId("orders-to-public-ingress");
         Assert.NotNull(automation);
+        Assert.Equal("primary-and-owned-dependencies", automation.RuntimeMetadata["providerMaterialization.cleanup.cleanupStrategy"]);
         Assert.Equal("true", automation.RuntimeMetadata["providerMaterialization.cleanupSweepEnabled"]);
         Assert.Equal("applied", automation.RuntimeMetadata["providerMaterialization.cleanupState"]);
-        Assert.Equal("2", automation.RuntimeMetadata["providerMaterialization.cleanup.candidateCount"]);
-        Assert.Equal("2", automation.RuntimeMetadata["providerMaterialization.cleanup.removedResourceCount"]);
-        Assert.Equal("1", automation.RuntimeMetadata["providerMaterialization.cleanup.deletedTransferredResourceCount"]);
-        Assert.Equal("1", automation.RuntimeMetadata["providerMaterialization.cleanup.prunedOrphanResourceCount"]);
+        Assert.Equal("4", automation.RuntimeMetadata["providerMaterialization.cleanup.candidateCount"]);
+        Assert.Equal("4", automation.RuntimeMetadata["providerMaterialization.cleanup.removedResourceCount"]);
+        Assert.Equal("2", automation.RuntimeMetadata["providerMaterialization.cleanup.deletedTransferredResourceCount"]);
+        Assert.Equal("2", automation.RuntimeMetadata["providerMaterialization.cleanup.prunedOrphanResourceCount"]);
+        Assert.Equal("2", automation.RuntimeMetadata["providerMaterialization.cleanup.primaryCandidateCount"]);
+        Assert.Equal("2", automation.RuntimeMetadata["providerMaterialization.cleanup.removedPrimaryResourceCount"]);
+        Assert.Equal("2", automation.RuntimeMetadata["providerMaterialization.cleanup.dependencyCandidateCount"]);
+        Assert.Equal("2", automation.RuntimeMetadata["providerMaterialization.cleanup.removedDependencyResourceCount"]);
+        Assert.Equal("middleware,tlsoption", automation.RuntimeMetadata["providerMaterialization.cleanup.dependencyKinds"]);
         Assert.Equal("delete,prune", automation.RuntimeMetadata["providerMaterialization.cleanup.lifecycleActions"]);
     }
 
@@ -887,11 +971,24 @@ public sealed class TraefikTrafficMaterializerTests
             metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 ["activeAutomationCount"] = "1",
-                ["candidateCount"] = "2",
-                ["removedResourceCount"] = "2",
-                ["deletedTransferredResourceCount"] = "1",
-                ["prunedOrphanResourceCount"] = "1",
-                ["resourceIds"] = "ingressroute/edge-traefik/orders-public-ingress-legacy,ingressroute/edge-traefik/orders-public-ingress-stale",
+                ["cleanupStrategy"] = "primary-and-owned-dependencies",
+                ["candidateCount"] = "4",
+                ["removedResourceCount"] = "4",
+                ["deletedTransferredResourceCount"] = "2",
+                ["prunedOrphanResourceCount"] = "2",
+                ["primaryCandidateCount"] = "2",
+                ["removedPrimaryResourceCount"] = "2",
+                ["deletedTransferredPrimaryResourceCount"] = "1",
+                ["prunedOrphanPrimaryResourceCount"] = "1",
+                ["primaryResourceIds"] = "ingressroute/edge-traefik/orders-public-ingress-legacy,ingressroute/edge-traefik/orders-public-ingress-stale",
+                ["dependencyCandidateCount"] = "2",
+                ["removedDependencyResourceCount"] = "2",
+                ["deletedTransferredDependencyResourceCount"] = "1",
+                ["prunedOrphanDependencyResourceCount"] = "1",
+                ["dependencyResourceIds"] = "middleware/edge-security/orders-rate-limit-legacy,tlsoption/edge-security/strict-mtls-stale",
+                ["dependencyKinds"] = "middleware,tlsoption",
+                ["dependencyNamespaces"] = "edge-security",
+                ["resourceIds"] = "ingressroute/edge-traefik/orders-public-ingress-legacy,ingressroute/edge-traefik/orders-public-ingress-stale,middleware/edge-security/orders-rate-limit-legacy,tlsoption/edge-security/strict-mtls-stale",
                 ["lifecycleActions"] = "delete,prune",
                 ["namespaces"] = "edge-traefik"
             });

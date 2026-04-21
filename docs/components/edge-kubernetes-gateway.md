@@ -10,9 +10,9 @@
 - deterministic projection of cell routes into `GatewayClass`, `Gateway`, `HTTPRoute`, `parentRefs`, and `backendRefs` intent metadata
 - recurring live `Gateway` plus `HTTPRoute` observation in `observe-only` or `apply-and-reconcile` mode, including freshness, drift, and cleanup metadata
 - controlled `HTTPRoute` apply semantics in `apply-and-reconcile` mode, including ownership labels and annotations, write-result metadata, and post-apply status reconciliation
-- namespace-scoped cleanup sweeps in `apply-and-reconcile` mode that can delete transferred `HTTPRoute` resources or prune orphaned Cephalon-owned routes without inventing a second lifecycle registry
+- namespace-scoped cleanup sweeps in `apply-and-reconcile` mode that can delete transferred `HTTPRoute` resources or prune orphaned Cephalon-owned routes while truthfully reporting a `primary-only` cleanup strategy instead of inventing a second lifecycle registry
 - the `kubernetes-gateway-traffic-materializations` technology surface under `cell-based-architecture`
-- truthful operator metadata such as `providerRouteId`, `gatewayNamespace`, `gatewayName`, `controllerName`, `statusSource`, projected-or-observed Gateway API conditions, shared ownership/dependency/drift posture, lifecycle action, freshness windows, HTTPRoute write results, typed provider `MaterializationConditions`, and additive cleanup-sweep summaries such as `cleanupState`, `cleanupObservedAtUtc`, `cleanup.lifecycleActions`, `providerMaterialization.conditionCount`, and `providerMaterialization.highestConditionSeverity`
+- truthful operator metadata such as `providerRouteId`, `gatewayNamespace`, `gatewayName`, `controllerName`, `statusSource`, projected-or-observed Gateway API conditions, shared ownership/dependency/drift posture, lifecycle action, freshness windows, HTTPRoute write results, typed provider `MaterializationConditions`, and additive cleanup-sweep summaries such as `cleanupState`, `cleanupObservedAtUtc`, `cleanup.cleanupStrategy`, `cleanup.primaryCandidateCount`, `cleanup.dependencyCandidateCount`, `cleanup.lifecycleActions`, `providerMaterialization.conditionCount`, and `providerMaterialization.highestConditionSeverity`
 
 ## Main surfaces
 
@@ -46,7 +46,7 @@ The pack now has three truthful operating modes:
 - opt-in `observe-only`, which reports `providerAction = observe-only`, `statusSource = gateway-api-status`, and the same shared ownership/dependency/drift vocabulary while reading live `Gateway` plus `HTTPRoute` status back into the same shared runtime catalog without claiming that Cephalon applied resources itself
 - opt-in `apply-and-reconcile`, which reports `providerAction = apply-and-reconcile`, writes only owned `HTTPRoute` resources, keeps `Gateway` as a pre-provisioned dependency, and then merges observed `Gateway` plus `HTTPRoute` status back into the same shared runtime catalog while preserving write posture through `httpRouteWriteAction`
   and `lifecycleAction = create|replace|transfer`
-- optional cleanup sweeps inside `apply-and-reconcile`, which report additive `cleanup*` metadata after namespace-scoped delete or prune passes while leaving the primary provider lifecycle answer grounded in the selected route's actual materialization state
+- optional cleanup sweeps inside `apply-and-reconcile`, which report additive `cleanup*` metadata after namespace-scoped delete or prune passes while leaving the primary provider lifecycle answer grounded in the selected route's actual materialization state and truthfully publishing `cleanupStrategy = primary-only` with zero dependency-cleanup counts
 
 What this proves is that one provider-specific pack can publish deterministic projected intent,
 selected materializer ownership, live provider status, drift, freshness answers, a typed
@@ -68,7 +68,8 @@ Gateway resource identity. In live modes the same entries also surface condition
 freshness, ownership, dependency, lifecycle-action, write metadata, and additive cleanup-sweep
 metadata such as `gatewayAcceptedCondition`, `httpRouteResolvedRefsCondition`, `driftState`,
 `observationFreshUntilUtc`, `ownershipState`, `dependencyState`, `lifecycleAction`,
-`httpRouteWriteAction`, `httpRouteAppliedGeneration`, `cleanupState`, and
+`httpRouteWriteAction`, `httpRouteAppliedGeneration`, `cleanupState`, `cleanup.cleanupStrategy`,
+`cleanup.primaryCandidateCount`, `cleanup.dependencyCandidateCount`, and
 `cleanup.lifecycleActions`. The shared automation answer for the same route now also carries
 typed provider conditions through `CellTrafficAutomationRuntimeDescriptor.MaterializationConditions`
 plus additive summaries such as `materialization.conditionCount`,
@@ -181,7 +182,7 @@ this pack is the selected provider materializer for that route.
 - owned routes carry `cephalon.io/managed-by = edge-kubernetes-gateway` plus route and automation annotations so later observation can verify ownership truthfully
 - merged live observation keeps the last write lifecycle action (`create`, `replace`, or `transfer`) visible on the same shared runtime surfaces instead of collapsing every successful reconciliation back to `observe`
 - optional cleanup sweeps run only when `EnableCleanupSweep` is true in `apply-and-reconcile` mode, scan the configured route namespaces, delete stale transferred `HTTPRoute` resources with `lifecycleAction = delete`, and prune orphaned Cephalon-owned routes with `lifecycleAction = prune`
-- cleanup sweep summaries stay additive through `providerMaterialization.cleanup*` and the provider-specific technology surface so operators can inspect delete/prune posture without losing the selected route's primary materialization answer
+- cleanup sweep summaries stay additive through `providerMaterialization.cleanup*` and the provider-specific technology surface so operators can inspect delete/prune posture without losing the selected route's primary materialization answer; those summaries now publish `cleanupStrategy = primary-only` plus primary-resource counts while dependency counts stay `0`
 
 This pack intentionally does not yet claim:
 
@@ -189,7 +190,7 @@ This pack intentionally does not yet claim:
 - control-plane ownership outside `provider-managed` or `provider-and-edge-managed` routes
 - controller-driven policy or dependency semantics beyond the shipped typed readiness, ownership,
   dependency, lifecycle, and observation condition taxonomy
-- broader dependency-aware teardown beyond the current owned `HTTPRoute` sweep baseline
+- broader dependency-aware teardown beyond the current primary-only owned `HTTPRoute` sweep baseline; `Gateway` and backend dependencies remain observe-only
 
 Those remain later follow-through so the current provider claim stays honest.
 

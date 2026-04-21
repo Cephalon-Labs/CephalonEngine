@@ -526,12 +526,17 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
 
         var refreshed = catalog.GetByRouteId("orders-to-public-ingress");
         Assert.NotNull(refreshed);
+        Assert.Equal("primary-only", refreshed.RuntimeMetadata["providerMaterialization.cleanup.cleanupStrategy"]);
         Assert.Equal("true", refreshed.RuntimeMetadata["providerMaterialization.cleanupSweepEnabled"]);
         Assert.Equal("applied", refreshed.RuntimeMetadata["providerMaterialization.cleanupState"]);
         Assert.Equal("2", refreshed.RuntimeMetadata["providerMaterialization.cleanup.candidateCount"]);
         Assert.Equal("2", refreshed.RuntimeMetadata["providerMaterialization.cleanup.removedResourceCount"]);
         Assert.Equal("1", refreshed.RuntimeMetadata["providerMaterialization.cleanup.deletedTransferredResourceCount"]);
         Assert.Equal("1", refreshed.RuntimeMetadata["providerMaterialization.cleanup.prunedOrphanResourceCount"]);
+        Assert.Equal("2", refreshed.RuntimeMetadata["providerMaterialization.cleanup.primaryCandidateCount"]);
+        Assert.Equal("2", refreshed.RuntimeMetadata["providerMaterialization.cleanup.removedPrimaryResourceCount"]);
+        Assert.Equal("0", refreshed.RuntimeMetadata["providerMaterialization.cleanup.dependencyCandidateCount"]);
+        Assert.Equal("0", refreshed.RuntimeMetadata["providerMaterialization.cleanup.removedDependencyResourceCount"]);
         Assert.Equal(
             "delete,prune",
             refreshed.RuntimeMetadata["providerMaterialization.cleanup.lifecycleActions"]);
@@ -844,10 +849,23 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
             metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 ["activeAutomationCount"] = "1",
+                ["cleanupStrategy"] = "primary-only",
                 ["candidateCount"] = "2",
                 ["removedResourceCount"] = "2",
                 ["deletedTransferredResourceCount"] = "1",
                 ["prunedOrphanResourceCount"] = "1",
+                ["primaryCandidateCount"] = "2",
+                ["removedPrimaryResourceCount"] = "2",
+                ["deletedTransferredPrimaryResourceCount"] = "1",
+                ["prunedOrphanPrimaryResourceCount"] = "1",
+                ["primaryResourceIds"] = "httproute/edge-system/orders-public-ingress-legacy,httproute/edge-system/orders-public-ingress-stale",
+                ["dependencyCandidateCount"] = "0",
+                ["removedDependencyResourceCount"] = "0",
+                ["deletedTransferredDependencyResourceCount"] = "0",
+                ["prunedOrphanDependencyResourceCount"] = "0",
+                ["dependencyResourceIds"] = string.Empty,
+                ["dependencyKinds"] = string.Empty,
+                ["dependencyNamespaces"] = string.Empty,
                 ["resourceIds"] = "httproute/edge-system/orders-public-ingress-legacy,httproute/edge-system/orders-public-ingress-stale",
                 ["lifecycleActions"] = "delete,prune",
                 ["namespaces"] = "edge-system"

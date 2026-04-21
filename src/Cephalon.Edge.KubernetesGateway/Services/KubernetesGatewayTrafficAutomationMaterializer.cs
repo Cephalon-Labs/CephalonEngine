@@ -376,10 +376,23 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
             .ToArray();
         return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
+            ["cleanupStrategy"] = "primary-only",
             ["candidateCount"] = "0",
             ["removedResourceCount"] = "0",
             ["deletedTransferredResourceCount"] = "0",
             ["prunedOrphanResourceCount"] = "0",
+            ["primaryCandidateCount"] = "0",
+            ["removedPrimaryResourceCount"] = "0",
+            ["deletedTransferredPrimaryResourceCount"] = "0",
+            ["prunedOrphanPrimaryResourceCount"] = "0",
+            ["primaryResourceIds"] = string.Empty,
+            ["dependencyCandidateCount"] = "0",
+            ["removedDependencyResourceCount"] = "0",
+            ["deletedTransferredDependencyResourceCount"] = "0",
+            ["prunedOrphanDependencyResourceCount"] = "0",
+            ["dependencyResourceIds"] = string.Empty,
+            ["dependencyKinds"] = string.Empty,
+            ["dependencyNamespaces"] = string.Empty,
             ["resourceIds"] = string.Empty,
             ["lifecycleActions"] = string.Empty,
             ["namespaces"] = string.Join(",", namespaces)
