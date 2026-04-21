@@ -167,7 +167,9 @@ internal sealed record KubernetesGatewayTrafficRouteProjection(
     string? ControllerName,
     string? GatewayClassName)
 {
-    public const string GatewayApiVersion = "gateway.networking.k8s.io/v1";
+    public const string GatewayApiGroup = "gateway.networking.k8s.io";
+    public const string GatewayApiVersion = "v1";
+    public const string GatewayApiVersionLabel = GatewayApiGroup + "/" + GatewayApiVersion;
     public const string ConfiguredIntentStatusSource = "configured-intent";
     public const string UnknownConditionState = "unknown";
 
@@ -189,7 +191,7 @@ internal sealed record KubernetesGatewayTrafficRouteProjection(
     {
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
-            ["gatewayApiVersion"] = GatewayApiVersion,
+            ["gatewayApiVersion"] = GatewayApiVersionLabel,
             ["gatewayNamespace"] = GatewayNamespace,
             ["gatewayName"] = GatewayName,
             ["gatewayResourceId"] = GatewayResourceId,

@@ -6,11 +6,12 @@ using Cephalon.Engine.Technologies;
 namespace Cephalon.Edge.KubernetesGateway.Services;
 
 internal sealed class KubernetesGatewayTrafficMaterializationRuntimeContributor(
+    KubernetesGatewayTrafficProjectionCatalog projections,
     KubernetesGatewayTrafficMaterializerOptions options,
     ICellTrafficAutomationRuntimeCatalog catalog) : ITechnologyRuntimeContributor
 {
     private readonly IReadOnlyDictionary<string, KubernetesGatewayTrafficRouteProjection> projectionsByRouteId =
-        KubernetesGatewayTrafficProjectionBuilder.Build(options);
+        projections.Projections;
     private readonly StringComparer comparer = StringComparer.OrdinalIgnoreCase;
     private readonly string materializerId = string.IsNullOrWhiteSpace(options.MaterializerId)
         ? KubernetesGatewayTrafficMaterializerOptions.DefaultMaterializerId

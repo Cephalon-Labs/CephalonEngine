@@ -1,23 +1,28 @@
 # Cephalon.Edge.KubernetesGateway
 
-`Cephalon.Edge.KubernetesGateway` is the first provider-specific control-plane materializer pack for Cephalon cell traffic automation. It proves that a real gateway/control-plane family can stay outside `Cephalon.Engine` while still publishing truthful materialization answers on the shared runtime surfaces.
+`Cephalon.Edge.KubernetesGateway` is the first provider-specific control-plane materializer pack for Cephalon cell traffic automation. It proves that a real gateway/control-plane family can stay outside `Cephalon.Engine` while still publishing truthful materialization answers on the shared runtime surfaces. The pack now supports both projected-intent and opt-in live observation modes on that same shared runtime story.
 
 ## What it owns
 
-- `KubernetesGatewayTrafficMaterializerOptions` and `KubernetesGatewayTrafficRouteOptions` for declarative Kubernetes Gateway API projection
+- `KubernetesGatewayTrafficMaterializerOptions`, `KubernetesGatewayTrafficRouteOptions`, and `KubernetesGatewayTrafficObservationOptions` for declarative Kubernetes Gateway API projection plus opt-in live observation
 - the `AddKubernetesGatewayTrafficMaterializer(...)` registration entry point for attaching the pack to an `EngineBuilder`
 - a provider-specific `ICellTrafficAutomationProviderMaterializer` implementation for `providerId = "kubernetes-gateway"`
 - deterministic projection of cell routes into `GatewayClass`, `Gateway`, `HTTPRoute`, `parentRefs`, and `backendRefs` intent metadata
+- recurring live `Gateway` plus `HTTPRoute` observation in `observe-only` mode, including freshness and drift metadata
 - the `kubernetes-gateway-traffic-materializations` technology surface under `cell-based-architecture`
-- truthful operator metadata such as `providerRouteId`, `gatewayNamespace`, `gatewayName`, `controllerName`, `statusSource`, and the projected Gateway API condition placeholders
+- truthful operator metadata such as `providerRouteId`, `gatewayNamespace`, `gatewayName`, `controllerName`, `statusSource`, projected-or-observed Gateway API conditions, drift posture, and freshness windows
 
 ## Main surfaces
 
 - `Configuration/KubernetesGatewayTrafficMaterializerOptions.cs`
+- `Configuration/KubernetesGatewayTrafficObservationModes.cs`
+- `Configuration/KubernetesGatewayTrafficObservationOptions.cs`
 - `Configuration/KubernetesGatewayTrafficRouteOptions.cs`
 - `Modules/KubernetesGatewayTrafficMaterializerModule.cs`
 - `Registration/KubernetesGatewayEngineBuilderExtensions.cs`
 - `Services/KubernetesGatewayTrafficAutomationMaterializer.cs`
+- `Services/KubernetesGatewayTrafficObservationHostedService.cs`
+- `Services/KubernetesGatewayTrafficObservationSource.cs`
 - `Services/KubernetesGatewayTrafficProjectionBuilder.cs`
 - `Services/KubernetesGatewayTrafficMaterializationRuntimeContributor.cs`
 
@@ -25,21 +30,22 @@
 
 This pack sits on top of the shared Phase 13 cell-traffic contract instead of replacing it.
 `Cephalon.Abstractions` still owns `ICellTrafficAutomationProviderMaterializer`,
-`CellTrafficAutomationRuntimeDescriptor`, and the shared materialization result/state contracts.
+`ICellTrafficAutomationMaterializationReportSink`, `CellTrafficAutomationRuntimeDescriptor`, and the shared materialization result/state contracts.
 `Cephalon.Engine` still owns route ownership, health-isolation validation, deterministic
-materializer selection, startup reconciliation, and the canonical `/engine/cell-traffic-automations*`
+materializer selection, startup reconciliation, live materialization merge-back, and the canonical `/engine/cell-traffic-automations*`
 plus `snapshot.CellTrafficAutomations` truth. `Cephalon.Edge.KubernetesGateway` only answers one
 provider-specific question: how should a `provider-managed` automation targeting
-`providerId = "kubernetes-gateway"` project into Kubernetes Gateway API control-plane intent?
+`providerId = "kubernetes-gateway"` project into or observe Kubernetes Gateway API control-plane truth?
 
-The current slice stays intentionally truthful. The pack reports `providerAction = projected-intent`
-and `statusSource = configured-intent`, and it leaves `httpRouteAcceptedCondition`,
-`httpRouteResolvedRefsCondition`, and `httpRouteProgrammedCondition` at `unknown` because this PoC
-does not yet watch a live cluster or claim that it applied resources successfully. What it does
-prove is that one provider-specific pack can publish deterministic `Gateway` plus `HTTPRoute`
-intent, selected materializer ownership, and provider-specific metadata back onto the same shared
-cell runtime story without inventing a second traffic registry or pushing Kubernetes assumptions
-into the engine core.
+The pack now has two truthful operating modes:
+
+- default `configured-intent`, which reports `providerAction = projected-intent` and `statusSource = configured-intent` while publishing deterministic `Gateway` plus `HTTPRoute` intent without claiming live cluster state
+- opt-in `observe-only`, which reports `providerAction = observe-only` and `statusSource = gateway-api-status` while reading live `Gateway` plus `HTTPRoute` status back into the same shared runtime catalog without claiming that Cephalon applied resources itself
+
+What this proves is that one provider-specific pack can publish deterministic projected intent,
+selected materializer ownership, and then layer live provider status, drift, and freshness answers
+back onto the same shared cell runtime story without inventing a second traffic registry or
+pushing Kubernetes assumptions into the engine core.
 
 When the pack owns an automation answer, operators can inspect the same route through:
 
@@ -51,7 +57,9 @@ When the pack owns an automation answer, operators can inspect the same route th
 The technology surface entry lives under `surfaceId = "kubernetes-gateway-traffic-materializations"`
 and carries one provider-facing projection per selected route, including the projected
 `providerRouteId`, parent reference, backend reference, hostname list, controller identity, and
-Gateway resource identity.
+Gateway resource identity. In `observe-only` mode the same entries also surface live condition,
+drift, and freshness metadata such as `gatewayAcceptedCondition`,
+`httpRouteResolvedRefsCondition`, `driftState`, and `observationFreshUntilUtc`.
 
 ## Registration
 
@@ -74,6 +82,19 @@ engine.AddKubernetesGatewayTrafficMaterializer(options =>
         BackendPort = 8443,
         BackendWeight = 100
     });
+});
+```
+
+Opt into live observation when the pack should read Gateway API status from a cluster instead of
+staying at projected intent:
+
+```csharp
+engine.AddKubernetesGatewayTrafficMaterializer(options =>
+{
+    options.Observation.Mode = KubernetesGatewayTrafficObservationModes.ObserveOnly;
+    options.Observation.UseInClusterConfiguration = true;
+    options.Observation.PollingIntervalSeconds = 30;
+    options.Observation.StaleAfterSeconds = 90;
 });
 ```
 
@@ -112,9 +133,7 @@ this pack is the selected provider materializer for that route.
 
 This pack intentionally does not yet claim:
 
-- live Kubernetes API writes or reconciliation loops
-- Gateway or HTTPRoute status observation from a cluster
-- drift detection between projected intent and applied resources
+- live Kubernetes API writes or apply-and-reconcile loops
 - multi-route low-code generation beyond the explicitly configured route projections
 - control-plane ownership outside `provider-managed` or `provider-and-edge-managed` routes
 

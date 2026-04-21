@@ -4,6 +4,8 @@ using Cephalon.Edge.KubernetesGateway.Configuration;
 using Cephalon.Edge.KubernetesGateway.Services;
 using Cephalon.Engine.Technologies;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 
 namespace Cephalon.Edge.KubernetesGateway.Modules;
 
@@ -35,10 +37,30 @@ internal sealed class KubernetesGatewayTrafficMaterializerModule(KubernetesGatew
             return;
         }
 
-        services.AddSingleton<ICellTrafficAutomationProviderMaterializer>(
-            _ => new KubernetesGatewayTrafficAutomationMaterializer(options));
+        services.TryAddSingleton(_ => new KubernetesGatewayTrafficProjectionCatalog(options));
+        if (string.Equals(
+                KubernetesGatewayTrafficObservationModes.Normalize(options.Observation.Mode),
+                KubernetesGatewayTrafficObservationModes.ObserveOnly,
+                StringComparison.OrdinalIgnoreCase))
+        {
+            services.TryAddSingleton<IKubernetesGatewayTrafficObservationSource>(serviceProvider =>
+                new KubernetesGatewayTrafficObservationSource(
+                    options,
+                    serviceProvider.GetRequiredService<TimeProvider>(),
+                    serviceProvider.GetService<k8s.IKubernetes>()));
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, KubernetesGatewayTrafficObservationHostedService>());
+        }
+
+        services.AddSingleton(serviceProvider =>
+            new KubernetesGatewayTrafficAutomationMaterializer(
+                serviceProvider.GetRequiredService<KubernetesGatewayTrafficProjectionCatalog>(),
+                options,
+                serviceProvider.GetService<IKubernetesGatewayTrafficObservationSource>()));
+        services.AddSingleton<ICellTrafficAutomationProviderMaterializer>(serviceProvider =>
+            serviceProvider.GetRequiredService<KubernetesGatewayTrafficAutomationMaterializer>());
         services.AddSingleton<ITechnologyRuntimeContributor>(
             serviceProvider => new KubernetesGatewayTrafficMaterializationRuntimeContributor(
+                serviceProvider.GetRequiredService<KubernetesGatewayTrafficProjectionCatalog>(),
                 options,
                 serviceProvider.GetRequiredService<ICellTrafficAutomationRuntimeCatalog>()));
     }

@@ -1054,6 +1054,8 @@ public sealed class EngineBuilder
                     serviceProvider.GetServices<ICellTrafficAutomationEdgeMaterializer>()));
             Services.TryAddSingleton<ICellTrafficAutomationRuntimeCatalog>(serviceProvider =>
                 serviceProvider.GetRequiredService<CellTrafficAutomationRuntimeCatalogSnapshot>());
+            Services.TryAddSingleton<ICellTrafficAutomationMaterializationReportSink>(serviceProvider =>
+                serviceProvider.GetRequiredService<CellTrafficAutomationRuntimeCatalogSnapshot>());
             if (hasProviderMaterializationTargets)
             {
                 Services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, CellTrafficAutomationProviderMaterializationHostedService>());

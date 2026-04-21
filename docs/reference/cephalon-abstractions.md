@@ -23822,6 +23822,51 @@ Parameters:
 - `automation`: The effective traffic automation answer to materialize.
 - `cancellationToken`: The token that cancels the operation.
 
+<a id="type-cephalon-abstractions-technologies-icelltrafficautomationmaterializationreportsink"></a>
+
+### `ICellTrafficAutomationMaterializationReportSink`
+
+Accepts live cell traffic automation materialization observations that should merge back into the active runtime catalog.
+
+#### Declaration
+```csharp
+public interface ICellTrafficAutomationMaterializationReportSink
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-technologies-icelltrafficautomationmaterializationreportsink-reportedgeasync-system-string-system-string-cephalon-abstractions-technologies-celltrafficautomationmaterializationresult-system-threading-cancellationtoken"></a>
+
+##### `ReportEdgeAsync`
+
+```csharp
+ValueTask ReportEdgeAsync(string automationId, string materializerId, CellTrafficAutomationMaterializationResult result, CancellationToken cancellationToken)
+```
+
+Reports an edge-managed materialization observation for one traffic automation answer.
+
+Parameters:
+- `automationId`: The stable traffic-automation identifier that the observation applies to.
+- `materializerId`: The stable edge materializer identifier that produced the observation.
+- `result`: The observed edge-managed materialization result.
+- `cancellationToken`: The token used to observe cancellation.
+
+<a id="member-m-cephalon-abstractions-technologies-icelltrafficautomationmaterializationreportsink-reportproviderasync-system-string-system-string-cephalon-abstractions-technologies-celltrafficautomationprovidermaterializationresult-system-threading-cancellationtoken"></a>
+
+##### `ReportProviderAsync`
+
+```csharp
+ValueTask ReportProviderAsync(string automationId, string materializerId, CellTrafficAutomationProviderMaterializationResult result, CancellationToken cancellationToken)
+```
+
+Reports a provider-managed materialization observation for one traffic automation answer.
+
+Parameters:
+- `automationId`: The stable traffic-automation identifier that the observation applies to.
+- `materializerId`: The stable provider materializer identifier that produced the observation.
+- `result`: The observed provider-managed materialization result.
+- `cancellationToken`: The token used to observe cancellation.
+
 <a id="type-cephalon-abstractions-technologies-icelltrafficautomationprovidermaterializer"></a>
 
 ### `ICellTrafficAutomationProviderMaterializer`

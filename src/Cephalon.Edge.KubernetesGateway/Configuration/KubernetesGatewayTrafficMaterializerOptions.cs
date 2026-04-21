@@ -65,4 +65,9 @@ public sealed class KubernetesGatewayTrafficMaterializerOptions
     /// Gets the route-level Kubernetes Gateway projections owned by this materializer.
     /// </summary>
     public IList<KubernetesGatewayTrafficRouteOptions> Routes { get; } = [];
+
+    /// <summary>
+    /// Gets the live-observation options used to overlay Kubernetes Gateway API status back into the shared runtime catalog.
+    /// </summary>
+    public KubernetesGatewayTrafficObservationOptions Observation { get; } = new();
 }

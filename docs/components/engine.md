@@ -158,6 +158,12 @@ provider-specific control-plane follow-through now also ships through
 `Cephalon.Edge.KubernetesGateway`, which uses that same provider-materializer contract to project
 Kubernetes Gateway API intent and the `kubernetes-gateway-traffic-materializations` technology
 surface while the engine still owns selection, reconciliation posture, and canonical runtime truth.
+`ENG-140` now extends that same engine-owned catalog with `ICellTrafficAutomationMaterializationReportSink`,
+so provider or edge observers can merge live materialization answers back into the existing shared
+snapshot instead of publishing a second provider-local registry. `Cephalon.Edge.KubernetesGateway`
+uses that seam for opt-in `observe-only` Gateway API polling, which lets the existing shared
+automation payloads publish live `Accepted`, `ResolvedRefs`, drift, and freshness posture without
+moving Kubernetes polling loops into `Cephalon.Engine`.
 
 That same engine-first runtime truth now also carries the first phase-13 data mesh and CDC
 baselines end to end. Modules and hosts can contribute `DataProductDescriptor` entries and

@@ -6,9 +6,16 @@ namespace Cephalon.Edge.KubernetesGateway.Services;
 internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTrafficAutomationProviderMaterializer
 {
     private readonly IReadOnlyDictionary<string, KubernetesGatewayTrafficRouteProjection> projectionsByRouteId;
+    private readonly IKubernetesGatewayTrafficObservationSource? observationSource;
+    private readonly string observationMode;
+    private readonly int observationPollingIntervalSeconds;
 
-    public KubernetesGatewayTrafficAutomationMaterializer(KubernetesGatewayTrafficMaterializerOptions options)
+    public KubernetesGatewayTrafficAutomationMaterializer(
+        KubernetesGatewayTrafficProjectionCatalog projections,
+        KubernetesGatewayTrafficMaterializerOptions options,
+        IKubernetesGatewayTrafficObservationSource? observationSource = null)
     {
+        ArgumentNullException.ThrowIfNull(projections);
         ArgumentNullException.ThrowIfNull(options);
 
         MaterializerId = string.IsNullOrWhiteSpace(options.MaterializerId)
@@ -18,7 +25,10 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
             ? throw new InvalidOperationException("Kubernetes Gateway traffic materializer requires a provider id.")
             : options.ProviderId.Trim();
         Priority = options.Priority;
-        projectionsByRouteId = KubernetesGatewayTrafficProjectionBuilder.Build(options);
+        projectionsByRouteId = projections.Projections;
+        this.observationSource = observationSource;
+        observationMode = KubernetesGatewayTrafficObservationModes.Normalize(options.Observation.Mode);
+        observationPollingIntervalSeconds = Math.Max(1, options.Observation.PollingIntervalSeconds);
     }
 
     public string MaterializerId { get; }
@@ -26,6 +36,15 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
     public string ProviderId { get; }
 
     public int Priority { get; }
+
+    internal bool SupportsLiveObservation =>
+        string.Equals(
+            observationMode,
+            KubernetesGatewayTrafficObservationModes.ObserveOnly,
+            StringComparison.OrdinalIgnoreCase);
+
+    internal TimeSpan ObservationPollingInterval =>
+        TimeSpan.FromSeconds(observationPollingIntervalSeconds);
 
     public bool CanMaterialize(CellTrafficAutomationRuntimeDescriptor automation)
     {
@@ -36,7 +55,7 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
             projectionsByRouteId.ContainsKey(automation.RouteId);
     }
 
-    public ValueTask<CellTrafficAutomationProviderMaterializationResult> MaterializeAsync(
+    public async ValueTask<CellTrafficAutomationProviderMaterializationResult> MaterializeAsync(
         CellTrafficAutomationRuntimeDescriptor automation,
         CancellationToken cancellationToken = default)
     {
@@ -44,19 +63,55 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
 
         if (!projectionsByRouteId.TryGetValue(automation.RouteId, out var projection))
         {
-            return ValueTask.FromResult(new CellTrafficAutomationProviderMaterializationResult(
+            return new CellTrafficAutomationProviderMaterializationResult(
                 state: CellTrafficAutomationProviderMaterializationStates.Unavailable,
                 observedAtUtc: DateTimeOffset.UtcNow,
-                error: $"Kubernetes Gateway traffic materializer '{MaterializerId}' has no projection for route '{automation.RouteId}'."));
+                error: $"Kubernetes Gateway traffic materializer '{MaterializerId}' has no projection for route '{automation.RouteId}'.");
+        }
+
+        if (SupportsLiveObservation)
+        {
+            return await ObserveAsync(automation, cancellationToken).ConfigureAwait(false);
         }
 
         var metadata = projection.CreateMetadata();
         metadata["providerAction"] = "projected-intent";
 
-        return ValueTask.FromResult(new CellTrafficAutomationProviderMaterializationResult(
+        return new CellTrafficAutomationProviderMaterializationResult(
             state: CellTrafficAutomationProviderMaterializationStates.Applied,
             observedAtUtc: DateTimeOffset.UtcNow,
-            metadata: metadata));
+            metadata: metadata);
+    }
+
+    internal async ValueTask<CellTrafficAutomationProviderMaterializationResult> ObserveAsync(
+        CellTrafficAutomationRuntimeDescriptor automation,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(automation);
+
+        if (!projectionsByRouteId.TryGetValue(automation.RouteId, out var projection))
+        {
+            return new CellTrafficAutomationProviderMaterializationResult(
+                state: CellTrafficAutomationProviderMaterializationStates.Unavailable,
+                observedAtUtc: DateTimeOffset.UtcNow,
+                error: $"Kubernetes Gateway traffic materializer '{MaterializerId}' has no projection for route '{automation.RouteId}'.");
+        }
+
+        if (observationSource is null)
+        {
+            var metadata = projection.CreateMetadata();
+            metadata["providerAction"] = "observe-only";
+            metadata["observationMode"] = KubernetesGatewayTrafficObservationModes.ObserveOnly;
+            metadata["statusSource"] = "observation-unavailable";
+
+            return new CellTrafficAutomationProviderMaterializationResult(
+                state: CellTrafficAutomationProviderMaterializationStates.Failed,
+                observedAtUtc: DateTimeOffset.UtcNow,
+                error: $"Kubernetes Gateway traffic materializer '{MaterializerId}' is configured for observe-only mode, but no observation source is active.",
+                metadata: metadata);
+        }
+
+        return await observationSource.ObserveAsync(automation, projection, cancellationToken).ConfigureAwait(false);
     }
 
     private static bool UsesProviderMaterialization(string materializationMode)

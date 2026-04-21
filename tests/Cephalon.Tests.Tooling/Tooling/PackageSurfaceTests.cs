@@ -310,6 +310,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Technologies.ICellHealthIsolationContributor),
             typeof(global::Cephalon.Abstractions.Technologies.ICellHealthIsolationRegistry),
             typeof(global::Cephalon.Abstractions.Technologies.ICellTrafficAutomationEdgeMaterializer),
+            typeof(global::Cephalon.Abstractions.Technologies.ICellTrafficAutomationMaterializationReportSink),
             typeof(global::Cephalon.Abstractions.Technologies.ICellTrafficAutomationProviderMaterializer),
             typeof(global::Cephalon.Abstractions.Technologies.ICellRouteCatalog),
             typeof(global::Cephalon.Abstractions.Technologies.ICellRouteContributor),
@@ -869,6 +870,8 @@ public sealed class PackageSurfaceTests
         AssertExportedTypes(
             typeof(global::Cephalon.Edge.KubernetesGateway.Registration.KubernetesGatewayEngineBuilderExtensions).Assembly,
             typeof(global::Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficMaterializerOptions),
+            typeof(global::Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationModes),
+            typeof(global::Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationOptions),
             typeof(global::Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficRouteOptions),
             typeof(global::Cephalon.Edge.KubernetesGateway.Registration.KubernetesGatewayEngineBuilderExtensions));
     }
@@ -2866,6 +2869,10 @@ public sealed class PackageSurfaceTests
             .GetMethod("GetByEdgeNodeId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.ICellTrafficAutomationRuntimeCatalog)
             .GetMethod("GetByHealthIsolationId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.ICellTrafficAutomationMaterializationReportSink)
+            .GetMethod("ReportProviderAsync", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.ICellTrafficAutomationMaterializationReportSink)
+            .GetMethod("ReportEdgeAsync", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.ICellTrafficAutomationProviderMaterializer)
             .GetProperty("MaterializerId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.ICellTrafficAutomationProviderMaterializer)
@@ -2964,6 +2971,26 @@ public sealed class PackageSurfaceTests
             .GetProperty("DependencyIds", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot)
             .GetProperty("CellTrafficAutomations", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficMaterializerOptions)
+            .GetProperty("Observation", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationOptions)
+            .GetProperty("Mode", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationOptions)
+            .GetProperty("UseInClusterConfiguration", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationOptions)
+            .GetProperty("KubeConfigPath", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationOptions)
+            .GetProperty("KubeContext", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationOptions)
+            .GetProperty("MasterUrl", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationOptions)
+            .GetProperty("PollingIntervalSeconds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationOptions)
+            .GetProperty("StaleAfterSeconds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationModes)
+            .GetField("ConfiguredIntent", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationModes)
+            .GetField("ObserveOnly", BindingFlags.Static | BindingFlags.Public));
     }
 
     [Fact]

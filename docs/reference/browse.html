@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-21T12:41:23.4128454+00:00",
+  "GeneratedAtUtc": "2026-04-21T13:31:27.9311599+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -111,7 +111,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 351
+      "TypeCount": 352
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -688,7 +688,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-technologies",
-      "TypeCount": 31
+      "TypeCount": 32
     },
     {
       "NamespaceName": "Cephalon.Abstractions.Tenancy",
@@ -6490,6 +6490,21 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 2,
+        "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "ICellTrafficAutomationMaterializationReportSink",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-technologies-icelltrafficautomationmaterializationreportsink",
+      "Declaration": "public interface ICellTrafficAutomationMaterializationReportSink",
+      "Summary": "Accepts live cell traffic automation materialization observations that should merge back into the active runtime catalog.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
         "Methods": 2
       }
     },
@@ -45882,6 +45897,17 @@
       "Summary": "The CDC capture identifiers that have reported runtime state for the execution runtime."
     },
     {
+      "DisplayName": "ReportEdgeAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICellTrafficAutomationMaterializationReportSink",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-icelltrafficautomationmaterializationreportsink-reportedgeasync-system-string-system-string-cephalon-abstractions-technologies-celltrafficautomationmaterializationresult-system-threading-cancellationtoken",
+      "Signature": "ValueTask ReportEdgeAsync(string automationId, string materializerId, CellTrafficAutomationMaterializationResult result, CancellationToken cancellationToken)",
+      "Summary": "Reports an edge-managed materialization observation for one traffic automation answer."
+    },
+    {
       "DisplayName": "ReportedOutboxCount",
       "Category": "Properties",
       "DeclaringTypeName": "EventDispatchRuntimeSummary",
@@ -45902,6 +45928,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimesummary-reportedoutboxids",
       "Signature": "IReadOnlyList\u003Cstring\u003E ReportedOutboxIds { get; }",
       "Summary": "Gets the outbox identifiers that have reported runtime state for the dispatch runtime."
+    },
+    {
+      "DisplayName": "ReportProviderAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICellTrafficAutomationMaterializationReportSink",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-icelltrafficautomationmaterializationreportsink-reportproviderasync-system-string-system-string-cephalon-abstractions-technologies-celltrafficautomationprovidermaterializationresult-system-threading-cancellationtoken",
+      "Signature": "ValueTask ReportProviderAsync(string automationId, string materializerId, CellTrafficAutomationProviderMaterializationResult result, CancellationToken cancellationToken)",
+      "Summary": "Reports a provider-managed materialization observation for one traffic automation answer."
     },
     {
       "DisplayName": "Request",

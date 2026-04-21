@@ -4,7 +4,9 @@ using Cephalon.Engine.Configuration;
 
 namespace Cephalon.Engine.Technologies;
 
-internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTrafficAutomationRuntimeCatalog
+internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot :
+    ICellTrafficAutomationRuntimeCatalog,
+    ICellTrafficAutomationMaterializationReportSink
 {
     private static readonly StringComparer Comparer = StringComparer.OrdinalIgnoreCase;
     private const string DefaultAutomationMode = "advisory";
@@ -261,14 +263,16 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
         }
     }
 
-    internal void ReportProviderMaterialization(
+    public ValueTask ReportProviderAsync(
         string automationId,
         string materializerId,
-        CellTrafficAutomationMaterializationResult result)
+        CellTrafficAutomationProviderMaterializationResult result,
+        CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(automationId);
         ArgumentException.ThrowIfNullOrWhiteSpace(materializerId);
         ArgumentNullException.ThrowIfNull(result);
+        cancellationToken.ThrowIfCancellationRequested();
 
         var normalizedAutomationId = automationId.Trim();
         var normalizedMaterializerId = materializerId.Trim();
@@ -297,16 +301,20 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
                 result.Error,
                 result.Metadata);
         }
+
+        return ValueTask.CompletedTask;
     }
 
-    internal void ReportEdgeMaterialization(
+    public ValueTask ReportEdgeAsync(
         string automationId,
         string materializerId,
-        CellTrafficAutomationMaterializationResult result)
+        CellTrafficAutomationMaterializationResult result,
+        CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(automationId);
         ArgumentException.ThrowIfNullOrWhiteSpace(materializerId);
         ArgumentNullException.ThrowIfNull(result);
+        cancellationToken.ThrowIfCancellationRequested();
 
         var normalizedAutomationId = automationId.Trim();
         var normalizedMaterializerId = materializerId.Trim();
@@ -335,6 +343,8 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
                 result.Error,
                 result.Metadata);
         }
+
+        return ValueTask.CompletedTask;
     }
 
     private static CellTrafficAutomationRuntimeDescriptor CreateDescriptor(

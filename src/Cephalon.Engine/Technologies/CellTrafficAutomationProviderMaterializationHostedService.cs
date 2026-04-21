@@ -5,7 +5,8 @@ using Microsoft.Extensions.Logging;
 namespace Cephalon.Engine.Technologies;
 
 internal sealed class CellTrafficAutomationProviderMaterializationHostedService(
-    CellTrafficAutomationRuntimeCatalogSnapshot catalog,
+    ICellTrafficAutomationRuntimeCatalog catalog,
+    ICellTrafficAutomationMaterializationReportSink reportSink,
     IEnumerable<ICellTrafficAutomationProviderMaterializer> materializers,
     ILogger<CellTrafficAutomationProviderMaterializationHostedService> logger) : IHostedService
 {
@@ -30,8 +31,16 @@ internal sealed class CellTrafficAutomationProviderMaterializationHostedService(
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        var pendingAutomations = catalog.GetPendingProviderMaterializations();
-        if (pendingAutomations.Count == 0)
+        var pendingAutomations = catalog.Automations
+            .Where(static automation =>
+                !string.IsNullOrWhiteSpace(automation.ProviderId) &&
+                !string.IsNullOrWhiteSpace(automation.ProviderMaterializerId) &&
+                string.Equals(
+                    automation.ProviderMaterializationState,
+                    CellTrafficAutomationProviderMaterializationStates.Pending,
+                    StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+        if (pendingAutomations.Length == 0)
         {
             return;
         }
@@ -52,13 +61,14 @@ internal sealed class CellTrafficAutomationProviderMaterializationHostedService(
                     automation.Id,
                     automation.ProviderMaterializerId,
                     null);
-                catalog.ReportProviderMaterialization(
+                await reportSink.ReportProviderAsync(
                     automation.Id,
                     automation.ProviderMaterializerId,
                     new CellTrafficAutomationProviderMaterializationResult(
                         CellTrafficAutomationProviderMaterializationStates.Unavailable,
                         DateTimeOffset.UtcNow,
-                        $"Provider materializer '{automation.ProviderMaterializerId}' was not available when startup reconciliation ran."));
+                        $"Provider materializer '{automation.ProviderMaterializerId}' was not available when startup reconciliation ran."),
+                    cancellationToken).ConfigureAwait(false);
                 continue;
             }
 
@@ -72,7 +82,11 @@ internal sealed class CellTrafficAutomationProviderMaterializationHostedService(
                     null);
 
                 var result = await materializer.MaterializeAsync(automation, cancellationToken).ConfigureAwait(false);
-                catalog.ReportProviderMaterialization(automation.Id, materializer.MaterializerId, result);
+                await reportSink.ReportProviderAsync(
+                    automation.Id,
+                    materializer.MaterializerId,
+                    result,
+                    cancellationToken).ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -82,13 +96,14 @@ internal sealed class CellTrafficAutomationProviderMaterializationHostedService(
                     automation.Id,
                     exception);
 
-                catalog.ReportProviderMaterialization(
+                await reportSink.ReportProviderAsync(
                     automation.Id,
                     materializer.MaterializerId,
                     new CellTrafficAutomationProviderMaterializationResult(
                         CellTrafficAutomationProviderMaterializationStates.Failed,
                         DateTimeOffset.UtcNow,
-                        exception.Message));
+                        exception.Message),
+                    cancellationToken).ConfigureAwait(false);
             }
         }
     }

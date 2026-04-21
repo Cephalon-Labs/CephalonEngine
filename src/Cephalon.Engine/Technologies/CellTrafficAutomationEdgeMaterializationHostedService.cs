@@ -5,7 +5,8 @@ using Microsoft.Extensions.Logging;
 namespace Cephalon.Engine.Technologies;
 
 internal sealed class CellTrafficAutomationEdgeMaterializationHostedService(
-    CellTrafficAutomationRuntimeCatalogSnapshot catalog,
+    ICellTrafficAutomationRuntimeCatalog catalog,
+    ICellTrafficAutomationMaterializationReportSink reportSink,
     IEnumerable<ICellTrafficAutomationEdgeMaterializer> materializers,
     ILogger<CellTrafficAutomationEdgeMaterializationHostedService> logger) : IHostedService
 {
@@ -32,7 +33,15 @@ internal sealed class CellTrafficAutomationEdgeMaterializationHostedService(
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        var pendingAutomations = catalog.GetPendingEdgeMaterializations();
+        var pendingAutomations = catalog.Automations
+            .Where(static automation =>
+                automation.EdgeNodeIds.Count > 0 &&
+                !string.IsNullOrWhiteSpace(automation.EdgeMaterializerId) &&
+                string.Equals(
+                    automation.EdgeMaterializationState,
+                    CellTrafficAutomationMaterializationStates.Pending,
+                    StringComparison.OrdinalIgnoreCase))
+            .ToArray();
         foreach (var automation in pendingAutomations)
         {
             if (string.IsNullOrWhiteSpace(automation.EdgeMaterializerId))
@@ -47,13 +56,14 @@ internal sealed class CellTrafficAutomationEdgeMaterializationHostedService(
                     automation.Id,
                     automation.EdgeMaterializerId,
                     null);
-                catalog.ReportEdgeMaterialization(
+                await reportSink.ReportEdgeAsync(
                     automation.Id,
                     automation.EdgeMaterializerId,
                     new CellTrafficAutomationMaterializationResult(
                         CellTrafficAutomationMaterializationStates.Unavailable,
                         DateTimeOffset.UtcNow,
-                        $"Edge materializer '{automation.EdgeMaterializerId}' was not available when startup reconciliation ran."));
+                        $"Edge materializer '{automation.EdgeMaterializerId}' was not available when startup reconciliation ran."),
+                    cancellationToken).ConfigureAwait(false);
                 continue;
             }
 
@@ -66,7 +76,11 @@ internal sealed class CellTrafficAutomationEdgeMaterializationHostedService(
                     materializer.MaterializerId,
                     null);
                 var result = await materializer.MaterializeAsync(automation, cancellationToken).ConfigureAwait(false);
-                catalog.ReportEdgeMaterialization(automation.Id, materializer.MaterializerId, result);
+                await reportSink.ReportEdgeAsync(
+                    automation.Id,
+                    materializer.MaterializerId,
+                    result,
+                    cancellationToken).ConfigureAwait(false);
             }
             catch (Exception exception)
             {
@@ -75,13 +89,14 @@ internal sealed class CellTrafficAutomationEdgeMaterializationHostedService(
                     materializer.MaterializerId,
                     automation.Id,
                     exception);
-                catalog.ReportEdgeMaterialization(
+                await reportSink.ReportEdgeAsync(
                     automation.Id,
                     materializer.MaterializerId,
                     new CellTrafficAutomationMaterializationResult(
                         CellTrafficAutomationMaterializationStates.Failed,
                         DateTimeOffset.UtcNow,
-                        exception.Message));
+                        exception.Message),
+                    cancellationToken).ConfigureAwait(false);
             }
         }
     }

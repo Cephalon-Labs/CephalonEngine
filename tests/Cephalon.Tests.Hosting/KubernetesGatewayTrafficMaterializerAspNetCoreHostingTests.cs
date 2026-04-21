@@ -5,6 +5,7 @@ using Cephalon.Abstractions.Technologies;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.Edge.KubernetesGateway.Configuration;
 using Cephalon.Edge.KubernetesGateway.Registration;
+using Cephalon.Edge.KubernetesGateway.Services;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Runtime;
@@ -126,6 +127,139 @@ public sealed class KubernetesGatewayTrafficMaterializerAspNetCoreHostingTests
             automation.RouteId == "orders-to-admin-ingress" &&
             automation.ProviderMaterializerId == "kubernetes-gateway-materializer" &&
             automation.ProviderMaterializationState == CellTrafficAutomationProviderMaterializationStates.Applied);
+    }
+
+    [Fact]
+    public async Task MapCephalonExposesObservedKubernetesGatewayTrafficMaterializationSurface()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Services.AddProblemDetails();
+        builder.Services.AddHealthChecks()
+            .AddCheck("cephalon.liveness", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy(), tags: ["live", "engine"])
+            .AddCheck("cephalon.readiness", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy(), tags: ["ready", "engine"]);
+        builder.Services.AddSingleton<IRateLimitingRuntimeCatalog>(EmptyRateLimitingRuntimeCatalog.Instance);
+        builder.Services.AddSingleton<IKubernetesGatewayTrafficObservationSource>(
+            new StaticObservationSource(static () => CreateObservedAppliedResult()));
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "Microservice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:RouteId"] = "orders-to-public-ingress";
+        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:AutomationMode"] = "automatic";
+        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:TriggerMode"] = "source-or-target-health";
+        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:ActionMode"] = "shed-load";
+        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:MaterializationMode"] = "provider-managed";
+        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:ProviderId"] =
+            KubernetesGatewayTrafficMaterializerOptions.DefaultProviderId;
+        builder.Services.AddCephalon(engine =>
+        {
+            engine.UseConfiguration(builder.Configuration);
+            engine.AddModule(new KubernetesGatewayTrafficHostingTestModule());
+            engine.AddKubernetesGatewayTrafficMaterializer(options =>
+            {
+                options.ControllerName = "cephalon.io/gateway-controller";
+                options.GatewayClassName = "cephalon-public";
+                options.GatewayNamespace = "edge-system";
+                options.GatewayName = "public-gateway";
+                options.ListenerName = "https";
+                options.RouteNamespace = "edge-system";
+                options.Observation.Mode = KubernetesGatewayTrafficObservationModes.ObserveOnly;
+                options.Observation.PollingIntervalSeconds = 60;
+                options.Observation.StaleAfterSeconds = 180;
+                options.Routes.Add(new KubernetesGatewayTrafficRouteOptions
+                {
+                    RouteId = "orders-to-public-ingress",
+                    HttpRouteName = "orders-public-ingress",
+                    BackendNamespace = "orders-runtime",
+                    BackendServiceName = "orders-api",
+                    BackendPort = 8443,
+                    BackendWeight = 100
+                });
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var providerAutomations =
+            await client.GetFromJsonAsync<CellTrafficAutomationRuntimeDescriptor[]>("/engine/cell-traffic-automations/providers/kubernetes-gateway");
+        var surfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/cell-based-architecture");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(providerAutomations);
+        var automation = Assert.Single(providerAutomations);
+        Assert.Equal("orders-to-public-ingress", automation.RouteId);
+        Assert.Equal("kubernetes-gateway-materializer", automation.ProviderMaterializerId);
+        Assert.Equal(CellTrafficAutomationProviderMaterializationStates.Applied, automation.ProviderMaterializationState);
+        Assert.Equal(CellTrafficAutomationMaterializationStates.Applied, automation.MaterializationState);
+        Assert.Equal("observe-only", automation.RuntimeMetadata["providerMaterialization.providerAction"]);
+        Assert.Equal("observe-only", automation.RuntimeMetadata["providerMaterialization.observationMode"]);
+        Assert.Equal("gateway-api-status", automation.RuntimeMetadata["providerMaterialization.statusSource"]);
+        Assert.Equal("true", automation.RuntimeMetadata["providerMaterialization.gatewayAcceptedCondition"]);
+        Assert.Equal("true", automation.RuntimeMetadata["providerMaterialization.httpRouteResolvedRefsCondition"]);
+        Assert.Equal("in-sync", automation.RuntimeMetadata["providerMaterialization.driftState"]);
+
+        Assert.NotNull(surfaces);
+        var gatewaySurface = Assert.Single(
+            surfaces,
+            static surface => surface.SurfaceId == "kubernetes-gateway-traffic-materializations");
+        var observedEntry = Assert.Single(gatewaySurface.Entries, entry => entry.Metadata["routeId"] == "orders-to-public-ingress");
+        Assert.Equal("observe-only", observedEntry.Metadata["providerAction"]);
+        Assert.Equal("gateway-api-status", observedEntry.Metadata["statusSource"]);
+        Assert.Equal("true", observedEntry.Metadata["gatewayAcceptedCondition"]);
+        Assert.Equal("true", observedEntry.Metadata["httpRouteResolvedRefsCondition"]);
+        Assert.Equal("in-sync", observedEntry.Metadata["driftState"]);
+
+        Assert.NotNull(snapshot);
+        Assert.Contains(snapshot.CellTrafficAutomations, entry =>
+            entry.RouteId == "orders-to-public-ingress" &&
+            entry.ProviderMaterializerId == "kubernetes-gateway-materializer" &&
+            entry.ProviderMaterializationState == CellTrafficAutomationProviderMaterializationStates.Applied &&
+            entry.RuntimeMetadata["providerMaterialization.statusSource"] == "gateway-api-status");
+    }
+
+    private static CellTrafficAutomationProviderMaterializationResult CreateObservedAppliedResult()
+    {
+        var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["providerAction"] = "observe-only",
+            ["observationMode"] = KubernetesGatewayTrafficObservationModes.ObserveOnly,
+            ["statusSource"] = "gateway-api-status",
+            ["gatewayNamespace"] = "edge-system",
+            ["gatewayName"] = "public-gateway",
+            ["providerRouteId"] = "httproute/edge-system/orders-public-ingress",
+            ["controllerName"] = "cephalon.io/gateway-controller",
+            ["resourceState"] = "available",
+            ["gatewayExists"] = "true",
+            ["httpRouteExists"] = "true",
+            ["gatewayAcceptedCondition"] = "true",
+            ["gatewayProgrammedCondition"] = "true",
+            ["httpRouteAcceptedCondition"] = "true",
+            ["httpRouteResolvedRefsCondition"] = "true",
+            ["driftState"] = "in-sync",
+            ["driftReasons"] = string.Empty,
+            ["observationFreshUntilUtc"] = DateTimeOffset.UtcNow.AddMinutes(3).ToString("O")
+        };
+
+        return new CellTrafficAutomationProviderMaterializationResult(
+            state: CellTrafficAutomationProviderMaterializationStates.Applied,
+            observedAtUtc: DateTimeOffset.UtcNow,
+            metadata: metadata);
+    }
+
+    private sealed class StaticObservationSource(
+        Func<CellTrafficAutomationProviderMaterializationResult> factory)
+        : IKubernetesGatewayTrafficObservationSource
+    {
+        public ValueTask<CellTrafficAutomationProviderMaterializationResult> ObserveAsync(
+            CellTrafficAutomationRuntimeDescriptor automation,
+            KubernetesGatewayTrafficRouteProjection projection,
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return ValueTask.FromResult(factory());
+        }
     }
 
     private sealed class KubernetesGatewayTrafficHostingTestModule :

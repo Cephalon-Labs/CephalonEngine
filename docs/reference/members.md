@@ -9330,12 +9330,18 @@ Browse the published API surface by public member.
 - [ReportedCdcCaptureIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-reportedcdccaptureids): `Properties` on `CdcCaptureExecutionRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReportedCdcCaptureIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The CDC capture identifiers that have reported runtime state for the execution runtime.
   - `IReadOnlyList<string> ReportedCdcCaptureIds { get; set; }`
+- [ReportEdgeAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icelltrafficautomationmaterializationreportsink-reportedgeasync-system-string-system-string-cephalon-abstractions-technologies-celltrafficautomationmaterializationresult-system-threading-cancellationtoken): `Methods` on `ICellTrafficAutomationMaterializationReportSink` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReportEdgeAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Reports an edge-managed materialization observation for one traffic automation answer.
+  - `ValueTask ReportEdgeAsync(string automationId, string materializerId, CellTrafficAutomationMaterializationResult result, CancellationToken cancellationToken)`
 - [ReportedOutboxCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-reportedoutboxcount): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReportedOutboxCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of outboxes that have reported runtime state for this dispatch runtime.
   - `int ReportedOutboxCount { get; }`
 - [ReportedOutboxIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-reportedoutboxids): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReportedOutboxIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the outbox identifiers that have reported runtime state for the dispatch runtime.
   - `IReadOnlyList<string> ReportedOutboxIds { get; }`
+- [ReportProviderAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icelltrafficautomationmaterializationreportsink-reportproviderasync-system-string-system-string-cephalon-abstractions-technologies-celltrafficautomationprovidermaterializationresult-system-threading-cancellationtoken): `Methods` on `ICellTrafficAutomationMaterializationReportSink` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReportProviderAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Reports a provider-managed materialization observation for one traffic automation answer.
+  - `ValueTask ReportProviderAsync(string automationId, string materializerId, CellTrafficAutomationProviderMaterializationResult result, CancellationToken cancellationToken)`
 - [Request](cephalon-referencedocs.md#member-p-cephalon-referencedocs-generation-renderedreferencedocs-request): `Properties` on `RenderedReferenceDocs` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=Request&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Gets the original generation request.
   - `ReferenceDocsRequest Request { get; }`
