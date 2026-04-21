@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-20T03:23:37.4484343+00:00",
+  "GeneratedAtUtc": "2026-04-21T05:02:57.2784053+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -111,7 +111,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 342
+      "TypeCount": 343
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -618,7 +618,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
-      "TypeCount": 78
+      "TypeCount": 79
     },
     {
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
@@ -3082,10 +3082,10 @@
       "Declaration": "public sealed class CdcCaptureDescriptor",
       "Summary": "Describes one change-data-capture surface contributed to the active runtime.",
       "MemberCounts": {
-        "Constructors": 1,
+        "Constructors": 2,
         "Fields": 0,
-        "Properties": 12,
-        "Methods": 0
+        "Properties": 13,
+        "Methods": 1
       }
     },
     {
@@ -3101,6 +3101,21 @@
         "Fields": 0,
         "Properties": 8,
         "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionBindingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor",
+      "Declaration": "public sealed class CdcCaptureExecutionBindingDescriptor",
+      "Summary": "Describes how a CDC capture binds to an operator-facing execution runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 8,
+        "Methods": 1
       }
     },
     {
@@ -3279,7 +3294,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 33,
+        "Properties": 34,
         "Methods": 0
       }
     },
@@ -15427,6 +15442,17 @@
       "Summary": "Gets or sets the authentication token written to the Huawei Cloud \u0060Authentication\u0060 header for direct managed trace ingestion."
     },
     {
+      "DisplayName": "AuthoredExecutionRuntimeId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionBindingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-authoredexecutionruntimeid",
+      "Signature": "string AuthoredExecutionRuntimeId { get; }",
+      "Summary": "Gets the execution-runtime identifier authored directly on the CDC capture when one was declared."
+    },
+    {
       "DisplayName": "AuthoredTarget",
       "Category": "Properties",
       "DeclaringTypeName": "StranglerFigMigrationRuntimeDescriptor",
@@ -17781,6 +17807,17 @@
       "Summary": "Creates a new CDC capture descriptor."
     },
     {
+      "DisplayName": "CdcCaptureDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CdcCaptureDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-cdccapturedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "CdcCaptureDescriptor(string id, string displayName, string description, string sourceModuleId, string provider, string sourceId, string outboxId, CdcCaptureExecutionBindingDescriptor executionBinding, string mode, string eventFormat, IReadOnlyList\u003Cstring\u003E resourceIds, IReadOnlyList\u003Cstring\u003E tags, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a new CDC capture descriptor."
+    },
+    {
       "DisplayName": "CdcCaptureExecutionAcknowledgement",
       "Category": "Constructors",
       "DeclaringTypeName": "CdcCaptureExecutionAcknowledgement",
@@ -17790,6 +17827,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-cdccaptureexecutionacknowledgement-ctor-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-data-outboxmessage-system-nullable-system-int32-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
       "Signature": "CdcCaptureExecutionAcknowledgement(string cdcCaptureId, string outboxId, IReadOnlyList\u003COutboxMessage\u003E messages, int? capturedChangeCount, string changeId, string checkpoint, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
       "Summary": "Initializes a new instance of the \u0060CdcCaptureExecutionAcknowledgement\u0060 class."
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionBindingDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CdcCaptureExecutionBindingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "CdcCaptureExecutionBindingDescriptor(string cdcCaptureId, string authoredExecutionRuntimeId, string requestedExecutionRuntimeId, string effectiveExecutionRuntimeId, string executionOwnership, string resolutionMode, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a new CDC capture execution binding descriptor."
     },
     {
       "DisplayName": "CdcCaptureExecutionReport",
@@ -17867,6 +17915,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionacknowledgement-cdccaptureid",
       "Signature": "string CdcCaptureId { get; }",
       "Summary": "Gets the stable CDC capture identifier that owns the staged batch."
+    },
+    {
+      "DisplayName": "CdcCaptureId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionBindingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-cdccaptureid",
+      "Signature": "string CdcCaptureId { get; }",
+      "Summary": "Gets the stable CDC capture identifier."
     },
     {
       "DisplayName": "CdcCaptureId",
@@ -24117,6 +24176,17 @@
       "Summary": "The effective policy values after host defaults and adapter-specific normalization have been applied."
     },
     {
+      "DisplayName": "EffectiveExecutionRuntimeId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionBindingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-effectiveexecutionruntimeid",
+      "Signature": "string EffectiveExecutionRuntimeId { get; }",
+      "Summary": "Gets the execution-runtime identifier that currently owns execution for the CDC capture."
+    },
+    {
       "DisplayName": "EffectiveTarget",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseTopologyRoleResolution",
@@ -26669,6 +26739,28 @@
       "Summary": "Executes the supplied command on the write side and returns the resulting value."
     },
     {
+      "DisplayName": "ExecutionBinding",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturedescriptor-executionbinding",
+      "Signature": "CdcCaptureExecutionBindingDescriptor ExecutionBinding { get; set; }",
+      "Summary": "Gets the authored or effective execution-binding answer for the CDC capture."
+    },
+    {
+      "DisplayName": "ExecutionBinding",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureRuntimeState",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimestate-executionbinding",
+      "Signature": "CdcCaptureExecutionBindingDescriptor ExecutionBinding { get; set; }",
+      "Summary": "Gets the authored or effective execution-binding answer for the CDC capture."
+    },
+    {
       "DisplayName": "ExecutionCategory",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseMigrationCommandDescriptor",
@@ -26876,6 +26968,17 @@
       "AnchorId": "member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-executionmode",
       "Signature": "string ExecutionMode { get; set; }",
       "Summary": "The enforcement mode used by the active host, such as \u0060aspnetcore-global-middleware\u0060 or \u0060disabled\u0060."
+    },
+    {
+      "DisplayName": "ExecutionOwnership",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionBindingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-executionownership",
+      "Signature": "string ExecutionOwnership { get; }",
+      "Summary": "Gets the operator-facing ownership mode for the effective execution runtime."
     },
     {
       "DisplayName": "ExitAfterApply",
@@ -34402,6 +34505,17 @@
       "Summary": "Determines whether a technology is available in the runtime catalog."
     },
     {
+      "DisplayName": "IsBound",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionBindingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-isbound",
+      "Signature": "bool IsBound { get; }",
+      "Summary": "Gets a value indicating whether the CDC capture currently resolves to an active execution runtime."
+    },
+    {
       "DisplayName": "IsCapabilityEnabled",
       "Category": "Methods",
       "DeclaringTypeName": "EngineOptions",
@@ -37403,6 +37517,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionacknowledgement-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
       "Summary": "Gets optional operator-facing metadata captured alongside the staged batch."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionBindingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets operator-facing metadata for the resolved binding."
     },
     {
       "DisplayName": "Metadata",
@@ -44808,6 +44933,17 @@
       "Summary": "The requested app-model selection that asked for rate limiting."
     },
     {
+      "DisplayName": "RequestedExecutionRuntimeId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionBindingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-requestedexecutionruntimeid",
+      "Signature": "string RequestedExecutionRuntimeId { get; }",
+      "Summary": "Gets the execution-runtime identifier requested for the CDC capture after additive overrides are applied."
+    },
+    {
       "DisplayName": "RequestedMethod",
       "Category": "Properties",
       "DeclaringTypeName": "StranglerFigRouteResolution",
@@ -45565,6 +45701,17 @@
       "AnchorId": "member-m-cephalon-engine-configuration-resiliencesettings-ctor-cephalon-engine-configuration-retrysettings-cephalon-engine-configuration-timeoutsettings-cephalon-engine-configuration-circuitbreakersettings-cephalon-engine-configuration-bulkheadsettings-cephalon-engine-configuration-ratelimitingsettings-system-collections-generic-ireadonlylist-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings",
       "Signature": "ResilienceSettings(RetrySettings retry, TimeoutSettings timeout, CircuitBreakerSettings circuitBreaker, BulkheadSettings bulkhead, RateLimitingSettings rateLimiting, IReadOnlyList\u003CBehaviorExecutionResilienceOverrideSettings\u003E behaviorExecutionOverrides)",
       "Summary": "Initializes a new instance of the \u0060ResilienceSettings\u0060 class."
+    },
+    {
+      "DisplayName": "ResolutionMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionBindingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-resolutionmode",
+      "Signature": "string ResolutionMode { get; }",
+      "Summary": "Gets the operator-facing explanation for how the effective execution-runtime binding was selected."
     },
     {
       "DisplayName": "ResolutionMode",
@@ -54741,6 +54888,17 @@
       "Summary": "Creates an unauthorized result for the specified payload type."
     },
     {
+      "DisplayName": "Unbound",
+      "Category": "Methods",
+      "DeclaringTypeName": "CdcCaptureExecutionBindingDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-unbound-system-string",
+      "Signature": "CdcCaptureExecutionBindingDescriptor Unbound(string cdcCaptureId)",
+      "Summary": "Creates the default unbound execution-binding descriptor for the requested CDC capture."
+    },
+    {
       "DisplayName": "Unhealthy",
       "Category": "Fields",
       "DeclaringTypeName": "HealthState",
@@ -55971,6 +56129,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-outboxdescriptor-withdispatchpolicy-cephalon-abstractions-data-outboxdispatchpolicydescriptor",
       "Signature": "OutboxDescriptor WithDispatchPolicy(OutboxDispatchPolicyDescriptor dispatchPolicy)",
       "Summary": "Creates a copy of the outbox descriptor with a different dispatch policy."
+    },
+    {
+      "DisplayName": "WithExecutionBinding",
+      "Category": "Methods",
+      "DeclaringTypeName": "CdcCaptureDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-cdccapturedescriptor-withexecutionbinding-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor",
+      "Signature": "CdcCaptureDescriptor WithExecutionBinding(CdcCaptureExecutionBindingDescriptor executionBinding)",
+      "Summary": "Creates a copy of the CDC capture descriptor with a different execution-binding answer."
     },
     {
       "DisplayName": "WithMetadata",

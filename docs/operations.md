@@ -1238,8 +1238,10 @@ Current payload highlights:
 
 - each CDC capture carries a stable `id`, `displayName`, `description`, `sourceModuleId`, `provider`, `sourceId`, `outboxId`, `mode`, and `eventFormat`
 - `resourceIds`, `tags`, and free-form `metadata` let a module publish the table, collection, or resource scope plus operator-facing capture hints without tying the engine to one provider runtime
+- `executionBinding` now keeps authored/requested/effective execution-runtime truth on the same descriptor surface, including the resolved ownership mode and selection reason
 - the same CDC capture catalog is also available through `/engine/snapshot` when operators want one merged runtime answer
 - drill-down routes narrow the same catalog by capture id, source module, provider, outbox, source, and resource through `/engine/cdc-captures/{cdcCaptureId}`, `/engine/cdc-captures/modules/{moduleId}`, `/engine/cdc-captures/providers/{provider}`, `/engine/cdc-captures/outboxes/{outboxId}`, `/engine/cdc-captures/sources/{sourceId}`, and `/engine/cdc-captures/resources/{resourceId}`
+- `/engine/cdc-captures/execution-runtimes/{executionRuntimeId}` now exposes the inverse view for every capture effectively owned by one execution runtime
 
 Current note:
 
@@ -1257,6 +1259,9 @@ Current payload highlights:
   `provider`, `sourceId`, `outboxId`, `mode`, `eventFormat`, and `resourceIds`) alongside the
   latest reported `lastOutcome`, `lastObservedAtUtc`, checkpoint/change-id/error details, and
   latest/total captured-change plus produced-message counts
+- `executionBinding` keeps the same authored/requested/effective execution-runtime answer visible on
+  the live state surface, so runtime reports do not need to infer capture ownership back out of
+  metadata-only hints
 - each runtime-state entry now also carries typed `freshness`, `lag`, and `publication` answers so
   provider packs can surface freshness windows, pending source-change counts, and pending
   publication counts without forcing hosts or operators to parse ad-hoc metadata
@@ -1285,6 +1290,8 @@ Current payload highlights:
   `/engine/cdc-captures/runtime/outboxes/{outboxId}`,
   `/engine/cdc-captures/runtime/sources/{sourceId}`, and
   `/engine/cdc-captures/runtime/resources/{resourceId}`
+- `/engine/cdc-captures/runtime/execution-runtimes/{executionRuntimeId}` now exposes the inverse
+  runtime-state view for every capture effectively owned by one execution runtime
 
 Current note:
 
@@ -1313,6 +1320,8 @@ Current payload highlights:
   `CdcCaptureExecutionRuntimes` when operators want one merged runtime answer
 - the drill-down route `/engine/cdc-capture-runtimes/{executionRuntimeId}` narrows the same catalog
   to one execution runtime by stable id
+- `/engine/cdc-captures*` and `/engine/cdc-captures/runtime*` now also carry first-class
+  `executionBinding` answers, so runtime-first and capture-first ownership views stay aligned
 
 Current note:
 
@@ -1320,7 +1329,8 @@ Current note:
   `executionOwnership = host-managed`, `executionTopology = shared-in-process-polling`,
   `acknowledgementMode = post-stage-provider`, and links back to `data-cdc-capture-flow` plus
   `data-cdc-capture-pump`; `/engine/cdc-captures*` and `/engine/cdc-captures/runtime*` remain the
-  detailed per-capture ownership and live-posture surfaces
+  detailed per-capture ownership and live-posture surfaces, while the shared pump now executes only
+  captures whose effective owner resolves to that runtime
 
 ## Inbox surface
 

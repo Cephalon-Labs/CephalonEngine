@@ -7673,6 +7673,31 @@ Parameters:
 - `tags`: Optional descriptive tags associated with the CDC capture.
 - `metadata`: Optional operator-facing metadata associated with the CDC capture.
 
+<a id="member-m-cephalon-abstractions-data-cdccapturedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `CdcCaptureDescriptor`
+
+```csharp
+CdcCaptureDescriptor(string id, string displayName, string description, string sourceModuleId, string provider, string sourceId, string outboxId, CdcCaptureExecutionBindingDescriptor executionBinding, string mode, string eventFormat, IReadOnlyList<string> resourceIds, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new CDC capture descriptor.
+
+Parameters:
+- `id`: The stable CDC capture identifier.
+- `displayName`: The operator-facing CDC capture name.
+- `description`: The human-readable CDC capture description.
+- `sourceModuleId`: The module identifier that owns the CDC capture.
+- `provider`: The logical provider identifier that supplies the change feed.
+- `sourceId`: The logical source stream, database, or feed identifier.
+- `outboxId`: The outbox identifier that receives captured publications.
+- `executionBinding`: The authored or effective execution-binding answer for the CDC capture. When omitted, the capture starts unbound.
+- `mode`: The capture mode such as `wal`, `change-stream`, or `table-tail`.
+- `eventFormat`: The emitted change-event format such as `debezium-envelope`.
+- `resourceIds`: Optional resource identifiers such as tables, collections, or topics observed by the capture.
+- `tags`: Optional descriptive tags associated with the CDC capture.
+- `metadata`: Optional operator-facing metadata associated with the CDC capture.
+
 #### Properties
 
 <a id="member-p-cephalon-abstractions-data-cdccapturedescriptor-description"></a>
@@ -7704,6 +7729,16 @@ string EventFormat { get; }
 ```
 
 Gets the emitted change-event format.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturedescriptor-executionbinding"></a>
+
+##### `ExecutionBinding`
+
+```csharp
+CdcCaptureExecutionBindingDescriptor ExecutionBinding { get; set; }
+```
+
+Gets the authored or effective execution-binding answer for the CDC capture.
 
 <a id="member-p-cephalon-abstractions-data-cdccapturedescriptor-id"></a>
 
@@ -7794,6 +7829,23 @@ IReadOnlyList<string> Tags { get; }
 ```
 
 Gets descriptive tags associated with the CDC capture.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-cdccapturedescriptor-withexecutionbinding-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor"></a>
+
+##### `WithExecutionBinding`
+
+```csharp
+CdcCaptureDescriptor WithExecutionBinding(CdcCaptureExecutionBindingDescriptor executionBinding)
+```
+
+Creates a copy of the CDC capture descriptor with a different execution-binding answer.
+
+Returns: A new CDC capture descriptor with the requested execution binding.
+
+Parameters:
+- `executionBinding`: The execution-binding answer to apply.
 
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionacknowledgement"></a>
 
@@ -7908,6 +7960,137 @@ int StagedMessageCount { get; }
 ```
 
 Gets the number of publications that the shared runtime staged successfully.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor"></a>
+
+### `CdcCaptureExecutionBindingDescriptor`
+
+Describes how a CDC capture binds to an operator-facing execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionBindingDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionBindingDescriptor`
+
+```csharp
+CdcCaptureExecutionBindingDescriptor(string cdcCaptureId, string authoredExecutionRuntimeId, string requestedExecutionRuntimeId, string effectiveExecutionRuntimeId, string executionOwnership, string resolutionMode, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new CDC capture execution binding descriptor.
+
+Parameters:
+- `cdcCaptureId`: The stable CDC capture identifier.
+- `authoredExecutionRuntimeId`: The execution-runtime identifier authored directly on the CDC capture when one was declared.
+- `requestedExecutionRuntimeId`: The execution-runtime identifier requested for the CDC capture after any additive overrides are applied.
+- `effectiveExecutionRuntimeId`: The execution-runtime identifier that currently owns execution for the CDC capture.
+- `executionOwnership`: The operator-facing ownership mode for the effective execution runtime, such as `host-managed` or `external-managed`.
+- `resolutionMode`: The operator-facing reason that explains how the effective execution-runtime binding was selected.
+- `metadata`: Optional operator-facing metadata for the resolved binding.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-authoredexecutionruntimeid"></a>
+
+##### `AuthoredExecutionRuntimeId`
+
+```csharp
+string AuthoredExecutionRuntimeId { get; }
+```
+
+Gets the execution-runtime identifier authored directly on the CDC capture when one was declared.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-cdccaptureid"></a>
+
+##### `CdcCaptureId`
+
+```csharp
+string CdcCaptureId { get; }
+```
+
+Gets the stable CDC capture identifier.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-effectiveexecutionruntimeid"></a>
+
+##### `EffectiveExecutionRuntimeId`
+
+```csharp
+string EffectiveExecutionRuntimeId { get; }
+```
+
+Gets the execution-runtime identifier that currently owns execution for the CDC capture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-executionownership"></a>
+
+##### `ExecutionOwnership`
+
+```csharp
+string ExecutionOwnership { get; }
+```
+
+Gets the operator-facing ownership mode for the effective execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-isbound"></a>
+
+##### `IsBound`
+
+```csharp
+bool IsBound { get; }
+```
+
+Gets a value indicating whether the CDC capture currently resolves to an active execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets operator-facing metadata for the resolved binding.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-requestedexecutionruntimeid"></a>
+
+##### `RequestedExecutionRuntimeId`
+
+```csharp
+string RequestedExecutionRuntimeId { get; }
+```
+
+Gets the execution-runtime identifier requested for the CDC capture after additive overrides are applied.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-resolutionmode"></a>
+
+##### `ResolutionMode`
+
+```csharp
+string ResolutionMode { get; }
+```
+
+Gets the operator-facing explanation for how the effective execution-runtime binding was selected.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-unbound-system-string"></a>
+
+##### `Unbound`
+
+```csharp
+CdcCaptureExecutionBindingDescriptor Unbound(string cdcCaptureId)
+```
+
+Creates the default unbound execution-binding descriptor for the requested CDC capture.
+
+Returns: An unbound execution-binding descriptor.
+
+Parameters:
+- `cdcCaptureId`: The CDC capture identifier to bind.
 
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionresult"></a>
 
@@ -8819,6 +9002,16 @@ string EventFormat { get; set; }
 ```
 
 The emitted change-event format such as `debezium-envelope`.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-executionbinding"></a>
+
+##### `ExecutionBinding`
+
+```csharp
+CdcCaptureExecutionBindingDescriptor ExecutionBinding { get; set; }
+```
+
+Gets the authored or effective execution-binding answer for the CDC capture.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-failedcount"></a>
 

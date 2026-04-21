@@ -166,6 +166,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Data.ICommandHandler<>),
             typeof(global::Cephalon.Abstractions.Data.ICommandHandler<,>),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionAcknowledgement),
+            typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionBindingDescriptor),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeDescriptor),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeSummary),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureDescriptor),
@@ -2567,6 +2568,14 @@ public sealed class PackageSurfaceTests
             .GetProperty("LastAcknowledgement", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeSummary)
             .GetProperty("TotalCapturedChangeCount", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionBindingDescriptor)
+            .GetProperty("RequestedExecutionRuntimeId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionBindingDescriptor)
+            .GetProperty("EffectiveExecutionRuntimeId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureDescriptor)
+            .GetProperty("ExecutionBinding", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureRuntimeState)
+            .GetProperty("ExecutionBinding", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionResult)
             .GetProperty("Messages", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionResult)

@@ -55,6 +55,7 @@
 - `Data/ICdcCapture.cs`
 - `Data/CdcCaptureExecutionResult.cs`
 - `Data/CdcCaptureDescriptor.cs`
+- `Data/CdcCaptureExecutionBindingDescriptor.cs`
 - `Data/ICdcCaptureCatalog.cs`
 - `Data/ICdcCaptureContributor.cs`
 - `Data/ICdcCaptureRegistry.cs`
@@ -171,6 +172,11 @@ delivery.
 report latest capture posture, totals, checkpoints, errors, typed freshness/lag/publication
 posture, and optional linked `EventDispatchRuntimeState` publication posture without turning CDC
 execution into an ASP.NET Core-only or provider-specific registry.
+
+`CdcCaptureExecutionBindingDescriptor` now keeps the inverse per-capture ownership answer
+host-agnostic too, so CDC descriptor and runtime-state surfaces can both report authored, requested,
+and effective execution-runtime ids plus the resolved ownership mode without forcing packs or hosts
+to infer capture ownership only from runtime-side membership lists or metadata.
 
 `CdcCaptureExecutionRuntimeDescriptor`, `CdcCaptureExecutionRuntimeSummary`, and
 `ICdcCaptureExecutionRuntimeCatalog` then keep the execution-topology layer host-agnostic too, so

@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Cephalon.Abstractions.Data;
 
 /// <summary>
@@ -20,6 +22,7 @@ public sealed class CdcCaptureDescriptor
     /// <param name="resourceIds">Optional resource identifiers such as tables, collections, or topics observed by the capture.</param>
     /// <param name="tags">Optional descriptive tags associated with the CDC capture.</param>
     /// <param name="metadata">Optional operator-facing metadata associated with the CDC capture.</param>
+    [JsonConstructor]
     public CdcCaptureDescriptor(
         string id,
         string displayName,
@@ -28,6 +31,55 @@ public sealed class CdcCaptureDescriptor
         string provider,
         string sourceId,
         string outboxId,
+        string mode = "log-based",
+        string eventFormat = "debezium-envelope",
+        IReadOnlyList<string>? resourceIds = null,
+        IReadOnlyList<string>? tags = null,
+        IReadOnlyDictionary<string, string>? metadata = null)
+        : this(
+            id,
+            displayName,
+            description,
+            sourceModuleId,
+            provider,
+            sourceId,
+            outboxId,
+            CdcCaptureExecutionBindingDescriptor.Unbound(id),
+            mode,
+            eventFormat,
+            resourceIds,
+            tags,
+            metadata)
+    {
+    }
+
+    /// <summary>
+    /// Creates a new CDC capture descriptor.
+    /// </summary>
+    /// <param name="id">The stable CDC capture identifier.</param>
+    /// <param name="displayName">The operator-facing CDC capture name.</param>
+    /// <param name="description">The human-readable CDC capture description.</param>
+    /// <param name="sourceModuleId">The module identifier that owns the CDC capture.</param>
+    /// <param name="provider">The logical provider identifier that supplies the change feed.</param>
+    /// <param name="sourceId">The logical source stream, database, or feed identifier.</param>
+    /// <param name="outboxId">The outbox identifier that receives captured publications.</param>
+    /// <param name="executionBinding">
+    /// The authored or effective execution-binding answer for the CDC capture. When omitted, the capture starts unbound.
+    /// </param>
+    /// <param name="mode">The capture mode such as <c>wal</c>, <c>change-stream</c>, or <c>table-tail</c>.</param>
+    /// <param name="eventFormat">The emitted change-event format such as <c>debezium-envelope</c>.</param>
+    /// <param name="resourceIds">Optional resource identifiers such as tables, collections, or topics observed by the capture.</param>
+    /// <param name="tags">Optional descriptive tags associated with the CDC capture.</param>
+    /// <param name="metadata">Optional operator-facing metadata associated with the CDC capture.</param>
+    public CdcCaptureDescriptor(
+        string id,
+        string displayName,
+        string description,
+        string sourceModuleId,
+        string provider,
+        string sourceId,
+        string outboxId,
+        CdcCaptureExecutionBindingDescriptor executionBinding,
         string mode = "log-based",
         string eventFormat = "debezium-envelope",
         IReadOnlyList<string>? resourceIds = null,
@@ -93,6 +145,7 @@ public sealed class CdcCaptureDescriptor
         Metadata = metadata is null
             ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             : new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase);
+        ExecutionBinding = ValidateExecutionBinding(executionBinding, Id);
     }
 
     /// <summary>
@@ -155,6 +208,34 @@ public sealed class CdcCaptureDescriptor
     /// </summary>
     public IReadOnlyDictionary<string, string> Metadata { get; }
 
+    /// <summary>
+    /// Gets the authored or effective execution-binding answer for the CDC capture.
+    /// </summary>
+    public CdcCaptureExecutionBindingDescriptor ExecutionBinding { get; init; }
+
+    /// <summary>
+    /// Creates a copy of the CDC capture descriptor with a different execution-binding answer.
+    /// </summary>
+    /// <param name="executionBinding">The execution-binding answer to apply.</param>
+    /// <returns>A new CDC capture descriptor with the requested execution binding.</returns>
+    public CdcCaptureDescriptor WithExecutionBinding(CdcCaptureExecutionBindingDescriptor executionBinding)
+    {
+        return new CdcCaptureDescriptor(
+            id: Id,
+            displayName: DisplayName,
+            description: Description,
+            sourceModuleId: SourceModuleId,
+            provider: Provider,
+            sourceId: SourceId,
+            outboxId: OutboxId,
+            executionBinding: executionBinding,
+            mode: Mode,
+            eventFormat: EventFormat,
+            resourceIds: ResourceIds,
+            tags: Tags,
+            metadata: Metadata);
+    }
+
     private static string[] Normalize(IReadOnlyList<string>? values)
     {
         return values?
@@ -163,5 +244,20 @@ public sealed class CdcCaptureDescriptor
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .OrderBy(static value => value, StringComparer.OrdinalIgnoreCase)
             .ToArray() ?? [];
+    }
+
+    private static CdcCaptureExecutionBindingDescriptor ValidateExecutionBinding(
+        CdcCaptureExecutionBindingDescriptor? executionBinding,
+        string cdcCaptureId)
+    {
+        var binding = executionBinding ?? CdcCaptureExecutionBindingDescriptor.Unbound(cdcCaptureId);
+        if (!string.Equals(binding.CdcCaptureId, cdcCaptureId, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new ArgumentException(
+                $"CDC capture execution binding '{binding.CdcCaptureId}' does not match capture '{cdcCaptureId}'.",
+                nameof(executionBinding));
+        }
+
+        return binding;
     }
 }

@@ -3338,6 +3338,8 @@ note: visible
         var executionGraphs = await client.GetFromJsonAsync<ExecutionGraphDescriptor[]>("/engine/execution-graphs");
         var cdcCaptureRuntimes = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes");
         var cdcCaptureRuntime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>("/engine/cdc-capture-runtimes/data-cdc-capture-pump");
+        var cdcCapturesByRuntime = await client.GetFromJsonAsync<CdcCaptureDescriptor[]>("/engine/cdc-captures/execution-runtimes/data-cdc-capture-pump");
+        var cdcCaptureStatesByRuntime = await client.GetFromJsonAsync<CdcCaptureRuntimeState[]>("/engine/cdc-captures/runtime/execution-runtimes/data-cdc-capture-pump");
         var story = await client.GetFromJsonAsync<RuntimeOperationalStory>("/engine/runtime-story");
         var state = await client.GetFromJsonAsync<CdcCaptureRuntimeState>("/engine/cdc-captures/runtime/tenant-profile-cdc");
         var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
@@ -3366,6 +3368,13 @@ note: visible
         Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, cdcCaptureRuntime.Summary.LastOutcome);
         Assert.Equal(1, cdcCaptureRuntime.Summary.TotalProducedMessageCount);
         Assert.Equal("not-required", cdcCaptureRuntime.Summary.LastAcknowledgement);
+        var cdcCapture = Assert.Single(cdcCapturesByRuntime!);
+        Assert.Equal("tenant-profile-cdc", cdcCapture.Id);
+        Assert.Equal("data-cdc-capture-pump", cdcCapture.ExecutionBinding.EffectiveExecutionRuntimeId);
+        Assert.Equal("default-shared-runtime", cdcCapture.ExecutionBinding.ResolutionMode);
+        var cdcCaptureStateByRuntime = Assert.Single(cdcCaptureStatesByRuntime!);
+        Assert.Equal("tenant-profile-cdc", cdcCaptureStateByRuntime.CdcCaptureId);
+        Assert.Equal("data-cdc-capture-pump", cdcCaptureStateByRuntime.ExecutionBinding.EffectiveExecutionRuntimeId);
 
         Assert.NotNull(story);
         var storyHostedExecution = Assert.Single(story.HostedExecutions, item => item.HostedExecutionId == "data-cdc-capture-pump");
@@ -3380,6 +3389,8 @@ note: visible
         Assert.Equal("shared-data-runtime", state.Metadata["captureExecution"]);
         Assert.Equal("phase13-shared-hosting", state.Metadata["captureRuntime"]);
         Assert.Equal("not-required", state.Metadata["acknowledgement"]);
+        Assert.Equal("data-cdc-capture-pump", state.ExecutionBinding.EffectiveExecutionRuntimeId);
+        Assert.Equal("host-managed", state.ExecutionBinding.ExecutionOwnership);
         Assert.Equal(CdcCapturePublicationStates.PendingPublication, state.Publication.State);
         Assert.Equal(1, state.Publication.PendingPublicationCount);
 

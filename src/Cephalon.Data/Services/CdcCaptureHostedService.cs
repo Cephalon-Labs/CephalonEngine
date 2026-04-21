@@ -108,6 +108,10 @@ internal sealed class CdcCaptureHostedService(
         var captureCatalog = scope.ServiceProvider.GetRequiredService<ICdcCaptureCatalog>();
         var reporter = scope.ServiceProvider.GetRequiredService<ICdcCaptureRuntimeReporter>();
         var descriptors = captureCatalog.CdcCaptures
+            .Where(static descriptor => string.Equals(
+                descriptor.ExecutionBinding.EffectiveExecutionRuntimeId,
+                DataRuntimeIds.CdcExecutionRuntimeId,
+                StringComparison.OrdinalIgnoreCase))
             .OrderBy(static descriptor => descriptor.SourceModuleId, StringComparer.OrdinalIgnoreCase)
             .ThenBy(static descriptor => descriptor.Provider, StringComparer.OrdinalIgnoreCase)
             .ThenBy(static descriptor => descriptor.Id, StringComparer.OrdinalIgnoreCase)
@@ -402,6 +406,8 @@ internal sealed class CdcCaptureHostedService(
         {
             ["captureExecution"] = "shared-data-runtime",
             ["cdcCaptureExecutionRuntimeId"] = DataRuntimeIds.CdcExecutionRuntimeId,
+            ["executionOwnership"] = descriptor.ExecutionBinding.ExecutionOwnership,
+            ["executionResolutionMode"] = descriptor.ExecutionBinding.ResolutionMode,
             ["failureKind"] = failureKind,
             ["provider"] = descriptor.Provider,
             ["outboxId"] = descriptor.OutboxId,
@@ -421,6 +427,8 @@ internal sealed class CdcCaptureHostedService(
         {
             ["captureExecution"] = "shared-data-runtime",
             ["cdcCaptureExecutionRuntimeId"] = DataRuntimeIds.CdcExecutionRuntimeId,
+            ["executionOwnership"] = descriptor.ExecutionBinding.ExecutionOwnership,
+            ["executionResolutionMode"] = descriptor.ExecutionBinding.ResolutionMode,
             ["provider"] = descriptor.Provider,
             ["outboxId"] = descriptor.OutboxId,
             ["captureServiceType"] = capture.GetType().FullName ?? capture.GetType().Name,
@@ -428,6 +436,11 @@ internal sealed class CdcCaptureHostedService(
             ["hostedExecutionId"] = DataRuntimeIds.CdcHostedExecutionId,
             ["executionGraphId"] = DataRuntimeIds.CdcExecutionGraphId
         };
+
+        if (!string.IsNullOrWhiteSpace(descriptor.ExecutionBinding.RequestedExecutionRuntimeId))
+        {
+            merged["requestedExecutionRuntimeId"] = descriptor.ExecutionBinding.RequestedExecutionRuntimeId;
+        }
 
         if (metadata is not null)
         {

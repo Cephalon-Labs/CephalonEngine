@@ -2,8 +2,7 @@ using Cephalon.Abstractions.Data;
 
 namespace Cephalon.Data.Services;
 
-internal sealed class SharedCdcCaptureExecutionRuntimeContributor(
-    ICdcCaptureCatalog cdcCaptures) : ICdcCaptureExecutionRuntimeContributor
+internal sealed class SharedCdcCaptureExecutionRuntimeContributor : ICdcCaptureExecutionRuntimeContributor
 {
     public void RegisterExecutionRuntimes(ICdcCaptureExecutionRuntimeRegistry executionRuntimes)
     {
@@ -22,9 +21,6 @@ internal sealed class SharedCdcCaptureExecutionRuntimeContributor(
                 ["hostedExecutionId"] = DataRuntimeIds.CdcHostedExecutionId,
                 ["executionGraphId"] = DataRuntimeIds.CdcExecutionGraphId,
                 ["surface"] = "shared-cdc-execution"
-            },
-            cdcCaptureIds: cdcCaptures.CdcCaptures
-                .Select(static capture => capture.Id)
-                .ToArray()));
+            }));
     }
 }

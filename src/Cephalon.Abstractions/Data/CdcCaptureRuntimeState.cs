@@ -60,6 +60,12 @@ public sealed record CdcCaptureRuntimeState(
     IReadOnlyDictionary<string, string> Metadata)
 {
     /// <summary>
+    /// Gets the authored or effective execution-binding answer for the CDC capture.
+    /// </summary>
+    public CdcCaptureExecutionBindingDescriptor ExecutionBinding { get; init; } =
+        CdcCaptureExecutionBindingDescriptor.Unbound(CdcCaptureId);
+
+    /// <summary>
     /// Gets the total number of capture observations reported for the CDC capture.
     /// </summary>
     public int TotalReports => StartedCount + CapturedCount + IdleCount + FailedCount;

@@ -5,22 +5,20 @@ namespace Cephalon.Data.Services;
 internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRuntimeCatalog
 {
     private readonly Dictionary<string, CdcCaptureExecutionRuntimeDescriptor> index;
+    private readonly ICdcCaptureCatalog captureCatalog;
     private readonly ICdcCaptureRuntimeStateCatalog? runtimeStateCatalog;
 
     public CdcCaptureExecutionRuntimeCatalog(
-        IEnumerable<ICdcCaptureExecutionRuntimeContributor> contributors,
+        CdcCaptureExecutionRuntimeDescriptorCatalog runtimeDescriptorCatalog,
+        ICdcCaptureCatalog captureCatalog,
         ICdcCaptureRuntimeStateCatalog? runtimeStateCatalog = null)
     {
-        ArgumentNullException.ThrowIfNull(contributors);
+        ArgumentNullException.ThrowIfNull(runtimeDescriptorCatalog);
+        ArgumentNullException.ThrowIfNull(captureCatalog);
 
-        var registry = new CdcCaptureExecutionRuntimeRegistry();
-        foreach (var contributor in contributors)
-        {
-            contributor.RegisterExecutionRuntimes(registry);
-        }
-
+        this.captureCatalog = captureCatalog;
         this.runtimeStateCatalog = runtimeStateCatalog;
-        var runtimes = registry.Build();
+        var runtimes = runtimeDescriptorCatalog.Runtimes;
         index = runtimes.ToDictionary(static runtime => runtime.Id, StringComparer.OrdinalIgnoreCase);
     }
 
@@ -43,25 +41,25 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
 
     private CdcCaptureExecutionRuntimeDescriptor Enrich(CdcCaptureExecutionRuntimeDescriptor runtime)
     {
-        if (runtimeStateCatalog is null)
-        {
-            return runtime;
-        }
-
-        var summary = CreateSummary(runtime);
+        var captureIds = ResolveCaptureIds(runtime.Id);
+        var summary = runtimeStateCatalog is null
+            ? CdcCaptureExecutionRuntimeSummary.Empty
+            : CreateSummary(runtime, captureIds);
         return new CdcCaptureExecutionRuntimeDescriptor(
             id: runtime.Id,
             displayName: runtime.DisplayName,
             description: runtime.Description,
             metadata: runtime.Metadata,
-            cdcCaptureIds: runtime.CdcCaptureIds,
+            cdcCaptureIds: captureIds,
             summary: summary);
     }
 
-    private CdcCaptureExecutionRuntimeSummary CreateSummary(CdcCaptureExecutionRuntimeDescriptor runtime)
+    private CdcCaptureExecutionRuntimeSummary CreateSummary(
+        CdcCaptureExecutionRuntimeDescriptor runtime,
+        IReadOnlyList<string> resolvedCaptureIds)
     {
         var matchingStates = runtimeStateCatalog!.States
-            .Where(state => RuntimeStateBelongsToRuntime(state, runtime))
+            .Where(state => RuntimeStateBelongsToRuntime(state, runtime.Id, resolvedCaptureIds))
             .OrderBy(static state => state.CdcCaptureId, StringComparer.OrdinalIgnoreCase)
             .ToArray();
 
@@ -95,20 +93,29 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
 
     private static bool RuntimeStateBelongsToRuntime(
         CdcCaptureRuntimeState state,
-        CdcCaptureExecutionRuntimeDescriptor runtime)
+        string executionRuntimeId,
+        IReadOnlyList<string> resolvedCaptureIds)
     {
-        if (runtime.CdcCaptureIds.Contains(state.CdcCaptureId, StringComparer.OrdinalIgnoreCase))
+        if (resolvedCaptureIds.Contains(state.CdcCaptureId, StringComparer.OrdinalIgnoreCase))
         {
             return true;
         }
 
-        if (state.Metadata.TryGetValue("cdcCaptureExecutionRuntimeId", out var reportedRuntimeId) &&
-            string.Equals(reportedRuntimeId, runtime.Id, StringComparison.OrdinalIgnoreCase))
-        {
-            return true;
-        }
+        return string.Equals(
+            state.ExecutionBinding.EffectiveExecutionRuntimeId,
+            executionRuntimeId,
+            StringComparison.OrdinalIgnoreCase);
+    }
 
-        return state.Metadata.TryGetValue("captureExecutionRuntimeId", out reportedRuntimeId) &&
-            string.Equals(reportedRuntimeId, runtime.Id, StringComparison.OrdinalIgnoreCase);
+    private string[] ResolveCaptureIds(string executionRuntimeId)
+    {
+        return captureCatalog.CdcCaptures
+            .Where(cdcCapture => string.Equals(
+                cdcCapture.ExecutionBinding.EffectiveExecutionRuntimeId,
+                executionRuntimeId,
+                StringComparison.OrdinalIgnoreCase))
+            .Select(static cdcCapture => cdcCapture.Id)
+            .OrderBy(static id => id, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
     }
 }

@@ -151,11 +151,16 @@ runtime now also projects `snapshot.CdcCaptureExecutionRuntimes` from
 `ICdcCaptureExecutionRuntimeCatalog`, so operator tooling can read one execution-topology answer
 with stable runtime ids, linked capture ids, aggregate started/captured/idle/failed totals, latest
 checkpoint/change/error posture, and acknowledgement visibility without conflating that runtime
-ownership layer with the per-capture descriptor or live-state catalog. ASP.NET Core now publishes
-the same answer through `/engine/cdc-capture-runtimes`, and later provider-native or out-of-process
-CDC runners can contribute additional execution runtimes on that same contract instead of inventing
-another host-only registry. Provider-specific federation, self-serve data infrastructure, and provider-native CDC execution
-loops remain later work over those same catalogs.
+ownership layer with the per-capture descriptor or live-state catalog. `CdcCaptureDescriptor` and
+`CdcCaptureRuntimeState` now also carry first-class `ExecutionBinding` answers so authored,
+requested, and effective execution ownership stay readable on `/engine/cdc-captures*`,
+`/engine/cdc-captures/runtime*`, and `snapshot` itself. ASP.NET Core now publishes the same truth
+through `/engine/cdc-capture-runtimes` plus the inverse drill-down routes
+`/engine/cdc-captures/execution-runtimes/{executionRuntimeId}` and
+`/engine/cdc-captures/runtime/execution-runtimes/{executionRuntimeId}`, and later provider-native
+or out-of-process CDC runners can contribute additional execution runtimes on that same contract
+instead of inventing another host-only registry. Provider-specific federation, self-serve data
+infrastructure, and provider-native CDC execution loops remain later work over those same catalogs.
 
 Just as importantly, this package exists to lower ceremony for consumer apps. The engine should absorb repetitive composition, configuration binding, runtime wiring, introspection, and companion-pack coordination so Cephalon-based apps spend less code on plumbing and declarations, emit less boilerplate, and stay focused on project-specific business logic.
 

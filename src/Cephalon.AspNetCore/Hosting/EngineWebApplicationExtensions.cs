@@ -495,6 +495,22 @@ public static class EngineWebApplicationExtensions
                 return TypedResults.Ok(catalog?.GetByResourceId(resourceId) ?? []);
             })
             .WithName("GetCephalonCdcCaptureStatesByResource");
+        engineGroup.MapGet("/cdc-captures/runtime/execution-runtimes/{executionRuntimeId}", (string executionRuntimeId, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<ICdcCaptureRuntimeStateCatalog>();
+                var states = catalog?.States
+                    .Where(state => string.Equals(
+                        state.ExecutionBinding.EffectiveExecutionRuntimeId,
+                        executionRuntimeId,
+                        StringComparison.OrdinalIgnoreCase))
+                    .OrderBy(static state => state.SourceModuleId, StringComparer.OrdinalIgnoreCase)
+                    .ThenBy(static state => state.Provider, StringComparer.OrdinalIgnoreCase)
+                    .ThenBy(static state => state.CdcCaptureId, StringComparer.OrdinalIgnoreCase)
+                    .ToArray() ?? [];
+
+                return TypedResults.Ok(states);
+            })
+            .WithName("GetCephalonCdcCaptureStatesByExecutionRuntime");
         engineGroup.MapGet("/cdc-captures/{cdcCaptureId}", (string cdcCaptureId, [FromServices] ICdcCaptureCatalog catalog) =>
             {
                 var cdcCapture = catalog.GetById(cdcCaptureId);
@@ -517,6 +533,17 @@ public static class EngineWebApplicationExtensions
         engineGroup.MapGet("/cdc-captures/resources/{resourceId}", (string resourceId, [FromServices] ICdcCaptureCatalog catalog) =>
                 TypedResults.Ok(catalog.GetByResourceId(resourceId)))
             .WithName("GetCephalonCdcCapturesByResource");
+        engineGroup.MapGet("/cdc-captures/execution-runtimes/{executionRuntimeId}", (string executionRuntimeId, [FromServices] ICdcCaptureCatalog catalog) =>
+                TypedResults.Ok(catalog.CdcCaptures
+                    .Where(cdcCapture => string.Equals(
+                        cdcCapture.ExecutionBinding.EffectiveExecutionRuntimeId,
+                        executionRuntimeId,
+                        StringComparison.OrdinalIgnoreCase))
+                    .OrderBy(static cdcCapture => cdcCapture.SourceModuleId, StringComparer.OrdinalIgnoreCase)
+                    .ThenBy(static cdcCapture => cdcCapture.Provider, StringComparer.OrdinalIgnoreCase)
+                    .ThenBy(static cdcCapture => cdcCapture.Id, StringComparer.OrdinalIgnoreCase)
+                    .ToArray()))
+            .WithName("GetCephalonCdcCapturesByExecutionRuntime");
         engineGroup.MapGet("/projections", ([FromServices] IProjectionCatalog catalog) => TypedResults.Ok(catalog.Projections))
             .WithName("GetCephalonProjections");
         engineGroup.MapGet("/projections/{projectionId}", (string projectionId, [FromServices] IProjectionCatalog catalog) =>

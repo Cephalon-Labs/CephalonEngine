@@ -317,7 +317,10 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                 lastOutcome: null,
                 error: null),
             OutboxDispatchState: dispatchRuntimeCatalog?.GetByOutboxId(descriptor.OutboxId),
-            Metadata: EmptyMetadata);
+            Metadata: EmptyMetadata)
+        {
+            ExecutionBinding = descriptor.ExecutionBinding
+        };
     }
 
     private static CdcCapturePublicationStatus ResolvePublicationStatus(

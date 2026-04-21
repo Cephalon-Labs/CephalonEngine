@@ -40,18 +40,24 @@ internal sealed class DataModule(DataRuntimeOptions options) : ModuleBase, IExec
             services.TryAddScoped<Abstractions.Data.IWriteStore, HandlerDispatchingWriteStore>();
         }
 
+        services.TryAddSingleton<CdcCaptureExecutionRuntimeDescriptorCatalog>();
+        services.AddSingleton<CdcCaptureExecutionBoundCatalog>();
+        services.AddSingleton<Abstractions.Data.ICdcCaptureCatalog>(static serviceProvider =>
+            serviceProvider.GetRequiredService<CdcCaptureExecutionBoundCatalog>());
+
         services.TryAddSingleton<CdcCaptureRuntimeStateCatalog>();
         services.TryAddSingleton<Abstractions.Data.ICdcCaptureRuntimeStateCatalog>(static serviceProvider =>
             serviceProvider.GetRequiredService<CdcCaptureRuntimeStateCatalog>());
         services.TryAddSingleton<ICdcCaptureRuntimeReporter>(static serviceProvider =>
             serviceProvider.GetRequiredService<CdcCaptureRuntimeStateCatalog>());
 
+        services.TryAddSingleton<CdcCaptureExecutionRuntimeCatalog>();
+        services.TryAddSingleton<Abstractions.Data.ICdcCaptureExecutionRuntimeCatalog>(static serviceProvider =>
+            serviceProvider.GetRequiredService<CdcCaptureExecutionRuntimeCatalog>());
+
         if (options.EnableCdcExecution)
         {
             services.TryAddEnumerable(ServiceDescriptor.Singleton<ICdcCaptureExecutionRuntimeContributor, SharedCdcCaptureExecutionRuntimeContributor>());
-            services.TryAddSingleton<CdcCaptureExecutionRuntimeCatalog>();
-            services.TryAddSingleton<Abstractions.Data.ICdcCaptureExecutionRuntimeCatalog>(static serviceProvider =>
-                serviceProvider.GetRequiredService<CdcCaptureExecutionRuntimeCatalog>());
             services.AddHostedService<CdcCaptureHostedService>();
         }
     }

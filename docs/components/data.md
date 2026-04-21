@@ -55,6 +55,14 @@ That pump stays introspectable through the `data.cdc.execution` capability, the
 `data-cdc-capture-flow` execution graph, the `data-cdc-capture-pump` hosted execution, and the
 existing runtime-story/snapshot surfaces.
 
+The same catalog family now also keeps capture-side execution ownership explicit. `CdcCaptureDescriptor`
+and `CdcCaptureRuntimeState` both carry `ExecutionBinding`, so the authored/requested/effective
+execution-runtime answer lives on the per-capture truth instead of only on the runtime side.
+`CdcCaptureExecutionBoundCatalog` resolves that binding deterministically from authored capture
+intent plus active execution-runtime claims, defaults unclaimed captures to the shared
+`data-cdc-capture-pump` only when that runtime is active, rejects ambiguous competing claims, and
+lets the shared pump execute only captures whose effective owner is the shared runtime.
+
 The same shared runtime now also projects one operator-facing CDC execution-runtime answer through
 `ICdcCaptureExecutionRuntimeCatalog`. The shipped `SharedCdcCaptureExecutionRuntimeContributor`
 publishes `data-cdc-capture-pump` with `executionOwnership = host-managed`,
@@ -62,9 +70,11 @@ publishes `data-cdc-capture-pump` with `executionOwnership = host-managed`,
 linked `hostedExecutionId` plus `executionGraphId`, and `surface = shared-cdc-execution`, while
 `CdcCaptureExecutionRuntimeCatalog` folds the shared `ICdcCaptureRuntimeStateCatalog` into one
 aggregate `CdcCaptureExecutionRuntimeSummary` per runtime. That same ownership/topology answer now
-flows through `/engine/cdc-capture-runtimes` and `snapshot.CdcCaptureExecutionRuntimes`, so later
-provider-native or out-of-process runners can project on the same truth instead of inventing a
-second host-only runner registry beside `/engine/cdc-captures*`.
+flows through `/engine/cdc-capture-runtimes`, `/engine/cdc-captures/execution-runtimes/{executionRuntimeId}`,
+`/engine/cdc-captures/runtime/execution-runtimes/{executionRuntimeId}`, and
+`snapshot.CdcCaptureExecutionRuntimes`, so later provider-native or out-of-process runners can
+project on the same truth instead of inventing a second host-only runner registry beside
+`/engine/cdc-captures*`.
 
 When the outbox path already reports downstream runtime truth, the same catalog can conservatively
 merge that dispatch posture into `OutboxDispatchState` and the typed CDC publication answer. That

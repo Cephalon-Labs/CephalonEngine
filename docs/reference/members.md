@@ -1014,6 +1014,9 @@ Browse the published API surface by public member.
 - [AuthenticationToken](cephalon-observability-huaweicloud.md#member-p-cephalon-observability-huaweicloud-configuration-huaweicloudtelemetryexportoptions-authenticationtoken): `Properties` on `HuaweiCloudTelemetryExportOptions` in `Cephalon.Observability.HuaweiCloud.Configuration` (`Cephalon.Observability.HuaweiCloud`) [Browse](browse.html?q=AuthenticationToken&assembly=Cephalon.Observability.HuaweiCloud&namespace=Cephalon.Observability.HuaweiCloud.Configuration&scope=members)
   - Gets or sets the authentication token written to the Huawei Cloud `Authentication` header for direct managed trace ingestion.
   - `string AuthenticationToken { get; set; }`
+- [AuthoredExecutionRuntimeId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-authoredexecutionruntimeid): `Properties` on `CdcCaptureExecutionBindingDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AuthoredExecutionRuntimeId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the execution-runtime identifier authored directly on the CDC capture when one was declared.
+  - `string AuthoredExecutionRuntimeId { get; }`
 - [AuthoredTarget](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-authoredtarget): `Properties` on `StranglerFigMigrationRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=AuthoredTarget&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the target preferred by the authored route descriptor.
   - `StranglerFigTarget AuthoredTarget { get; }`
@@ -1662,9 +1665,15 @@ Browse the published API surface by public member.
 - [CdcCaptureDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccapturedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `CdcCaptureDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates a new CDC capture descriptor.
   - `CdcCaptureDescriptor(string id, string displayName, string description, string sourceModuleId, string provider, string sourceId, string outboxId, string mode, string eventFormat, IReadOnlyList<string> resourceIds, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
+- [CdcCaptureDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccapturedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `CdcCaptureDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Creates a new CDC capture descriptor.
+  - `CdcCaptureDescriptor(string id, string displayName, string description, string sourceModuleId, string provider, string sourceId, string outboxId, CdcCaptureExecutionBindingDescriptor executionBinding, string mode, string eventFormat, IReadOnlyList<string> resourceIds, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
 - [CdcCaptureExecutionAcknowledgement](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccaptureexecutionacknowledgement-ctor-system-string-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-data-outboxmessage-system-nullable-system-int32-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `CdcCaptureExecutionAcknowledgement` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureExecutionAcknowledgement&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Initializes a new instance of the `CdcCaptureExecutionAcknowledgement` class.
   - `CdcCaptureExecutionAcknowledgement(string cdcCaptureId, string outboxId, IReadOnlyList<OutboxMessage> messages, int? capturedChangeCount, string changeId, string checkpoint, IReadOnlyDictionary<string, string> metadata)`
+- [CdcCaptureExecutionBindingDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `CdcCaptureExecutionBindingDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureExecutionBindingDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Creates a new CDC capture execution binding descriptor.
+  - `CdcCaptureExecutionBindingDescriptor(string cdcCaptureId, string authoredExecutionRuntimeId, string requestedExecutionRuntimeId, string effectiveExecutionRuntimeId, string executionOwnership, string resolutionMode, IReadOnlyDictionary<string, string> metadata)`
 - [CdcCaptureExecutionReport](cephalon-data.md#member-m-cephalon-data-services-cdccaptureexecutionreport-ctor-system-string-system-string-system-datetimeoffset-system-int32-system-int32-system-string-system-string-system-string-cephalon-abstractions-data-cdccapturefreshnessstatus-cephalon-abstractions-data-cdccapturelagstatus-cephalon-abstractions-data-cdccapturepublicationstatus-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `CdcCaptureExecutionReport` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=CdcCaptureExecutionReport&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
   - Creates a new CDC capture runtime observation.
   - `CdcCaptureExecutionReport(string cdcCaptureId, string outcome, DateTimeOffset observedAtUtc, int capturedChangeCount, int producedMessageCount, string changeId, string checkpoint, string error, CdcCaptureFreshnessStatus freshness, CdcCaptureLagStatus lag, CdcCapturePublicationStatus publication, IReadOnlyDictionary<string, string> metadata)`
@@ -1685,6 +1694,9 @@ Browse the published API surface by public member.
   - `CdcCaptureFreshnessStatus(string state, DateTimeOffset? freshUntilUtc, string description)`
 - [CdcCaptureId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionacknowledgement-cdccaptureid): `Properties` on `CdcCaptureExecutionAcknowledgement` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable CDC capture identifier that owns the staged batch.
+  - `string CdcCaptureId { get; }`
+- [CdcCaptureId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-cdccaptureid): `Properties` on `CdcCaptureExecutionBindingDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable CDC capture identifier.
   - `string CdcCaptureId { get; }`
 - [CdcCaptureId](cephalon-data.md#member-p-cephalon-data-services-cdccaptureexecutionreport-cdccaptureid): `Properties` on `CdcCaptureExecutionReport` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=CdcCaptureId&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
   - Gets the stable CDC capture identifier that produced the observation.
@@ -3396,6 +3408,9 @@ Browse the published API surface by public member.
 - [Effective](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-effective): `Properties` on `RateLimitingRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Effective&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - The effective policy values after host defaults and adapter-specific normalization have been applied.
   - `RateLimitingSelection Effective { get; set; }`
+- [EffectiveExecutionRuntimeId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-effectiveexecutionruntimeid): `Properties` on `CdcCaptureExecutionBindingDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EffectiveExecutionRuntimeId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the execution-runtime identifier that currently owns execution for the CDC capture.
+  - `string EffectiveExecutionRuntimeId { get; }`
 - [EffectiveTarget](cephalon-engine.md#member-p-cephalon-engine-appmodel-databasetopologyroleresolution-effectivetarget): `Properties` on `DatabaseTopologyRoleResolution` in `Cephalon.Engine.AppModel` (`Cephalon.Engine`) [Browse](browse.html?q=EffectiveTarget&assembly=Cephalon.Engine&namespace=Cephalon.Engine.AppModel&scope=members)
   - Gets the effective target after applying any role reference.
   - `DatabaseTargetSelection EffectiveTarget { get; }`
@@ -4092,6 +4107,12 @@ Browse the published API surface by public member.
 - [ExecuteAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-data-iwritestore-executeasync-1-cephalon-abstractions-data-icommand-0-system-threading-cancellationtoken): `Methods` on `IWriteStore` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecuteAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Executes the supplied command on the write side and returns the resulting value.
   - `ValueTask<TResult> ExecuteAsync<TResult>(ICommand<TResult> command, CancellationToken cancellationToken)`
+- [ExecutionBinding](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturedescriptor-executionbinding): `Properties` on `CdcCaptureDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionBinding&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the authored or effective execution-binding answer for the CDC capture.
+  - `CdcCaptureExecutionBindingDescriptor ExecutionBinding { get; set; }`
+- [ExecutionBinding](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-executionbinding): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionBinding&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the authored or effective execution-binding answer for the CDC capture.
+  - `CdcCaptureExecutionBindingDescriptor ExecutionBinding { get; set; }`
 - [ExecutionCategory](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-executioncategory): `Properties` on `DatabaseMigrationCommandDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionCategory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the execution category when the provider can distinguish deploy-time, manual, or other command paths.
   - `string ExecutionCategory { get; }`
@@ -4149,6 +4170,9 @@ Browse the published API surface by public member.
 - [ExecutionMode](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-executionmode): `Properties` on `RateLimitingRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - The enforcement mode used by the active host, such as `aspnetcore-global-middleware` or `disabled`.
   - `string ExecutionMode { get; set; }`
+- [ExecutionOwnership](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-executionownership): `Properties` on `CdcCaptureExecutionBindingDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionOwnership&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the operator-facing ownership mode for the effective execution runtime.
+  - `string ExecutionOwnership { get; }`
 - [ExitAfterApply](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-exitafterapply): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExitAfterApply&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the host exits after startup execution completes.
   - `bool ExitAfterApply { get; }`
@@ -6213,6 +6237,9 @@ Browse the published API surface by public member.
 - [IsAvailable](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-technologyselection-isavailable-system-string): `Methods` on `TechnologySelection` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsAvailable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Determines whether a technology is available in the runtime catalog.
   - `bool IsAvailable(string value)`
+- [IsBound](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-isbound): `Properties` on `CdcCaptureExecutionBindingDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsBound&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the CDC capture currently resolves to an active execution runtime.
+  - `bool IsBound { get; }`
 - [IsCapabilityEnabled](cephalon-engine.md#member-m-cephalon-engine-configuration-engineoptions-iscapabilityenabled-system-string): `Methods` on `EngineOptions` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=IsCapabilityEnabled&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Determines whether a capability is enabled under the current option set.
   - `bool IsCapabilityEnabled(string capabilityKey)`
@@ -7043,6 +7070,9 @@ Browse the published API surface by public member.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionacknowledgement-metadata): `Properties` on `CdcCaptureExecutionAcknowledgement` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets optional operator-facing metadata captured alongside the staged batch.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-metadata): `Properties` on `CdcCaptureExecutionBindingDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets operator-facing metadata for the resolved binding.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-data.md#member-p-cephalon-data-services-cdccaptureexecutionreport-metadata): `Properties` on `CdcCaptureExecutionReport` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
   - Gets optional operator-facing metadata captured alongside the observation.
@@ -9078,6 +9108,9 @@ Browse the published API surface by public member.
 - [Requested](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-requested): `Properties` on `RateLimitingRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Requested&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - The requested app-model selection that asked for rate limiting.
   - `RateLimitingSelection Requested { get; set; }`
+- [RequestedExecutionRuntimeId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-requestedexecutionruntimeid): `Properties` on `CdcCaptureExecutionBindingDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequestedExecutionRuntimeId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the execution-runtime identifier requested for the CDC capture after additive overrides are applied.
+  - `string RequestedExecutionRuntimeId { get; }`
 - [RequestedMethod](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigrouteresolution-requestedmethod): `Properties` on `StranglerFigRouteResolution` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequestedMethod&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - The normalized request method that was evaluated.
   - `string RequestedMethod { get; set; }`
@@ -9285,6 +9318,9 @@ Browse the published API surface by public member.
 - [ResilienceSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-resiliencesettings-ctor-cephalon-engine-configuration-retrysettings-cephalon-engine-configuration-timeoutsettings-cephalon-engine-configuration-circuitbreakersettings-cephalon-engine-configuration-bulkheadsettings-cephalon-engine-configuration-ratelimitingsettings-system-collections-generic-ireadonlylist-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings): `Constructors` on `ResilienceSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ResilienceSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Initializes a new instance of the `ResilienceSettings` class.
   - `ResilienceSettings(RetrySettings retry, TimeoutSettings timeout, CircuitBreakerSettings circuitBreaker, BulkheadSettings bulkhead, RateLimitingSettings rateLimiting, IReadOnlyList<BehaviorExecutionResilienceOverrideSettings> behaviorExecutionOverrides)`
+- [ResolutionMode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-resolutionmode): `Properties` on `CdcCaptureExecutionBindingDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ResolutionMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the operator-facing explanation for how the effective execution-runtime binding was selected.
+  - `string ResolutionMode { get; }`
 - [ResolutionMode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-resolutionmode): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ResolutionMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the runtime resolution mode.
   - `string ResolutionMode { get; }`
@@ -11796,6 +11832,9 @@ Browse the published API surface by public member.
 - [Unauthorized](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-result-unauthorized-1-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault): `Methods` on `Result` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unauthorized&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Creates an unauthorized result for the specified payload type.
   - `Result<T> Unauthorized<T>(string code, string message, BehaviorFault fault)`
+- [Unbound](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-unbound-system-string): `Methods` on `CdcCaptureExecutionBindingDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unbound&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Creates the default unbound execution-binding descriptor for the requested CDC capture.
+  - `CdcCaptureExecutionBindingDescriptor Unbound(string cdcCaptureId)`
 - [Unhealthy](cephalon-abstractions.md#member-f-cephalon-abstractions-health-healthstate-unhealthy): `Fields` on `HealthState` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unhealthy&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - Indicates the dependency is unhealthy.
   - `const HealthState Unhealthy`
@@ -12138,6 +12177,9 @@ Browse the published API surface by public member.
 - [WithDispatchPolicy](cephalon-abstractions.md#member-m-cephalon-abstractions-data-outboxdescriptor-withdispatchpolicy-cephalon-abstractions-data-outboxdispatchpolicydescriptor): `Methods` on `OutboxDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=WithDispatchPolicy&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates a copy of the outbox descriptor with a different dispatch policy.
   - `OutboxDescriptor WithDispatchPolicy(OutboxDispatchPolicyDescriptor dispatchPolicy)`
+- [WithExecutionBinding](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccapturedescriptor-withexecutionbinding-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor): `Methods` on `CdcCaptureDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=WithExecutionBinding&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Creates a copy of the CDC capture descriptor with a different execution-binding answer.
+  - `CdcCaptureDescriptor WithExecutionBinding(CdcCaptureExecutionBindingDescriptor executionBinding)`
 - [WithMetadata](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviortopologybuilder-withmetadata-system-string-system-string): `Methods` on `IBehaviorTopologyBuilder` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=WithMetadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Adds or replaces arbitrary topology metadata for companion packs that need extra routing or runtime hints.
   - `IBehaviorTopologyBuilder WithMetadata(string key, string value)`
