@@ -1,6 +1,6 @@
 # Cephalon Operations
 
-This document captures the current operational surface for Cephalon as of `April 20, 2026`.
+This document captures the current operational surface for Cephalon as of `April 21, 2026`.
 
 For the active phase-2 follow-through inventory, see `docs/operational-hardening-gap-inventory.md`.
 
@@ -1245,8 +1245,9 @@ Current payload highlights:
 
 Current note:
 
-- the baseline is intentionally descriptor-first: provider-specific WAL/change-stream execution still belongs to the owning module or a future companion pack, while the engine owns the catalog, outbox linkage, and validation
-- invalid CDC capture source-module ownership or missing outbox references fail at build time instead of leaking broken operator metadata
+- the surface is still descriptor-first, but it is no longer descriptor-only: `Cephalon.Data.MongoDB` now ships the first provider-native capture implementation through configured MongoDB change streams while the engine still owns the catalog, outbox linkage, capture-side execution binding, and validation
+- provider packs can contribute a capture on behalf of another module without rewriting authored ownership; when that happens, `sourceModuleId` stays authoritative and metadata can also surface `contributorModuleId`
+- invalid authored source-module ownership or missing outbox references still fail at build time instead of leaking broken operator metadata
 
 ## CDC capture runtime-state surface
 
@@ -1295,13 +1296,14 @@ Current payload highlights:
 
 Current note:
 
-- the shared runtime-state catalog is reporter-driven and descriptor-backed, and the shared
-  `Cephalon.Data` pump is only the in-process execution substrate: provider-specific WAL or
-  change-stream semantics still belong to the active `ICdcCapture` implementation
-- provider packs can now project typed freshness, lag, publication posture, and bounded capture
-  batches through the shared contract today, while later out-of-process or edge-aware CDC execution
-  topologies should stay additive over the same capture/runtime-state and execution-runtime surfaces
-  instead of a second host-only registry
+- the shared runtime-state catalog is reporter-driven and descriptor-backed: the shared
+  `Cephalon.Data` pump is one in-process execution substrate, and `Cephalon.Data.MongoDB` now also
+  reports provider-native change-stream posture through the same surface instead of inventing a
+  MongoDB-only monitor
+- provider packs can now project typed freshness, lag, publication posture, bounded capture
+  batches, checkpoints, and failure metadata through the shared contract today, while later
+  out-of-process or edge-aware CDC execution topologies should stay additive over the same
+  capture/runtime-state and execution-runtime surfaces instead of a second host-only registry
 
 ## CDC capture execution-runtime surface
 
@@ -1336,6 +1338,11 @@ Current note:
   `data-cdc-capture-pump`; `/engine/cdc-captures*` and `/engine/cdc-captures/runtime*` remain the
   detailed per-capture ownership and live-posture surfaces, while the shared pump now executes only
   captures whose effective owner resolves to that runtime
+- the first shipped provider-native runtime is `mongodb-change-stream-capture-pump` from
+  `Cephalon.Data.MongoDB`; it publishes `executionOwnership = host-managed`,
+  `executionTopology = provider-native`, `acknowledgementMode = provider-native`, links to
+  `mongodb-change-stream-capture-flow`, and keeps resume-token checkpoint truth on the same
+  per-capture runtime-state catalog
 
 ## Inbox surface
 

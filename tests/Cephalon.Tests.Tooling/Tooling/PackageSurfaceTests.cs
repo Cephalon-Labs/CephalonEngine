@@ -820,6 +820,16 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void DataMongoDbAssemblyExposesOnlyTheDocumentedPackContracts()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Data.MongoDB.Registration.MongoDbDataEngineBuilderExtensions).Assembly,
+            typeof(global::Cephalon.Data.MongoDB.Configuration.MongoDbDataOptions),
+            typeof(global::Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions),
+            typeof(global::Cephalon.Data.MongoDB.Registration.MongoDbDataEngineBuilderExtensions));
+    }
+
+    [Fact]
     public void RetrievalAssemblyExposesOnlyTheDocumentedPackContracts()
     {
         AssertExportedTypes(
@@ -2686,6 +2696,21 @@ public sealed class PackageSurfaceTests
             .GetProperty("CdcCaptureIds", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions)
             .GetProperty("Metadata", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void MongoDbDataOptionsExposeProviderNativeChangeStreamCaptureDeclarations()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Data.MongoDB.Configuration.MongoDbDataOptions)
+            .GetProperty("ChangeStreamCaptures", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions)
+            .GetProperty("SourceModuleId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions)
+            .GetProperty("CollectionName", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions)
+            .GetProperty("OutboxId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions)
+            .GetProperty("FullDocumentMode", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

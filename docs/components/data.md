@@ -79,9 +79,17 @@ by reusing the same inverse execution-runtime lookup that capture and runtime-st
 publish. That same ownership/topology answer now flows through `/engine/cdc-capture-runtimes`,
 `/engine/cdc-captures/execution-runtimes/{executionRuntimeId}`,
 `/engine/cdc-captures/runtime/execution-runtimes/{executionRuntimeId}`, and
-`snapshot.CdcCaptureExecutionRuntimes`, so later provider-native or out-of-process runners can
+`snapshot.CdcCaptureExecutionRuntimes`, so additional provider-native or out-of-process runners can
 project on the same truth instead of inventing a second host-only runner registry beside
 `/engine/cdc-captures*`.
+
+`Cephalon.Data.MongoDB` now proves that contract with the first concrete provider-native runner.
+Its `mongodb-change-stream-capture-pump` contributor publishes host-managed, provider-native,
+provider-native-acknowledgement ownership through the shared execution-runtime catalog while the
+provider pack keeps per-capture `sourceModuleId` truth, stages outbox messages, persists
+resume-token checkpoints only after stage success, and reports live posture back through the same
+shared CDC runtime-state catalog. The shared `data-cdc-capture-pump` remains additive and simply
+ignores captures whose effective owner resolves to the MongoDB runtime.
 
 When the outbox path already reports downstream runtime truth, the same catalog can conservatively
 merge that dispatch posture into `OutboxDispatchState` and the typed CDC publication answer. That

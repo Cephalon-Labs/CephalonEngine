@@ -12,8 +12,25 @@ internal sealed class CdcCaptureRegistryAdapter(
 
         if (!string.Equals(cdcCapture.SourceModuleId, moduleId, StringComparison.OrdinalIgnoreCase))
         {
-            throw new InvalidOperationException(
-                $"CDC capture '{cdcCapture.Id}' declared source module '{cdcCapture.SourceModuleId}', but it was contributed by module '{moduleId}'.");
+            var metadata = new Dictionary<string, string>(cdcCapture.Metadata, StringComparer.OrdinalIgnoreCase)
+            {
+                ["contributorModuleId"] = moduleId
+            };
+
+            cdcCapture = new CdcCaptureDescriptor(
+                id: cdcCapture.Id,
+                displayName: cdcCapture.DisplayName,
+                description: cdcCapture.Description,
+                sourceModuleId: cdcCapture.SourceModuleId,
+                provider: cdcCapture.Provider,
+                sourceId: cdcCapture.SourceId,
+                outboxId: cdcCapture.OutboxId,
+                executionBinding: cdcCapture.ExecutionBinding,
+                mode: cdcCapture.Mode,
+                eventFormat: cdcCapture.EventFormat,
+                resourceIds: cdcCapture.ResourceIds,
+                tags: cdcCapture.Tags,
+                metadata: metadata);
         }
 
         cdcCaptures.Add(cdcCapture);

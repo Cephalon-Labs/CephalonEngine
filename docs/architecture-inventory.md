@@ -168,7 +168,7 @@ Modules are the primary composition unit. Each module registers services, capabi
 ### Data provider modules (10)
 
 - `entity-framework-data` — Entity Framework Data (`Cephalon.Data.EntityFramework`): relational DbContext registration. Store type: relational.
-- `mongodb-data` — MongoDB Data (`Cephalon.Data.MongoDB`): document store registration. Store type: document.
+- `mongodb-data` — MongoDB Data (`Cephalon.Data.MongoDB`): document store registration plus provider-native MongoDB change-stream CDC runtime. Store type: document.
 - `redis-data` — Redis Data (`Cephalon.Data.Redis`): key-value store registration. Store type: key-value.
 - `neo4j-data` — Neo4j Data (`Cephalon.Data.Neo4j`): graph store registration. Store type: graph.
 - `cassandra-data` — Cassandra Data (`Cephalon.Data.Cassandra`): wide-column store registration. Store type: wide-column.
@@ -232,12 +232,13 @@ Capabilities are the fine-grained feature advertisements exposed by modules.
 - `data.inbox` — Entity Framework Inbox
 - `data.projections.entity-framework` — Entity Framework Projections
 
-### MongoDB capabilities (4)
+### MongoDB capabilities (5)
 
 - `data.mongodb` — MongoDB Data Provider
 - `data.document-store` — Document Store
 - `data.outbox.mongodb` — MongoDB Outbox
 - `data.inbox.mongodb` — MongoDB Inbox
+- `data.cdc.mongodb` — MongoDB Change Stream CDC
 
 ### Redis capabilities (4)
 

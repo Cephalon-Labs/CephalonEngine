@@ -31,4 +31,9 @@ public sealed class MongoDbDataOptions
 
     /// <summary>Gets or sets a value indicating whether the pack should register the MongoDB-backed inbox implementation.</summary>
     public bool RegisterInbox { get; set; }
+
+    /// <summary>
+    /// Gets the provider-native MongoDB change-stream captures that should be contributed to the active CDC runtime.
+    /// </summary>
+    public IList<MongoDbChangeStreamCaptureOptions> ChangeStreamCaptures { get; } = [];
 }

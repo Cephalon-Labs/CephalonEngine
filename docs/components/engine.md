@@ -160,11 +160,14 @@ configuration-declared external or provider-native runtimes through the same run
 without claiming they are Cephalon-hosted executions. ASP.NET Core now publishes the same truth
 through `/engine/cdc-capture-runtimes` plus the inverse drill-down routes
 `/engine/cdc-captures/execution-runtimes/{executionRuntimeId}` and
-`/engine/cdc-captures/runtime/execution-runtimes/{executionRuntimeId}`, and later provider-native
-or out-of-process CDC runners can contribute additional execution runtimes on that same contract
-instead of inventing another host-only registry. Provider-specific federation, self-serve data
-infrastructure, and concrete provider-native CDC execution loops remain later work over those same
-catalogs.
+`/engine/cdc-captures/runtime/execution-runtimes/{executionRuntimeId}`, and additional
+provider-native or out-of-process CDC runners can contribute execution runtimes on that same
+contract instead of inventing another host-only registry. The first concrete provider-native loop
+now ships through `Cephalon.Data.MongoDB` with `mongodb-change-stream-capture-pump`, and the same
+contract can preserve authored module ownership by keeping `sourceModuleId` authoritative while
+surfacing a separate contributing-pack identity in metadata when needed. Broader provider
+federation, self-serve data infrastructure, and out-of-process or edge-aware CDC automation remain
+later work over those same catalogs.
 
 Just as importantly, this package exists to lower ceremony for consumer apps. The engine should absorb repetitive composition, configuration binding, runtime wiring, introspection, and companion-pack coordination so Cephalon-based apps spend less code on plumbing and declarations, emit less boilerplate, and stay focused on project-specific business logic.
 
