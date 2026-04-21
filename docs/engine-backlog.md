@@ -2585,6 +2585,32 @@ Delivered:
 - hosted observation loops now run optional cleanup sweeps before refreshing per-automation observation answers so delete/prune posture stays visible on the same runtime story as live provider status
 - targeted coverage now proves truthful cleanup publication through composition tests `22/22`, hosting tests `8/8`, tooling tests `177/177`, and the reference docs publish script
 
+### ENG-148 Phase 13 SQL Server provider-native CDC runner baseline
+
+Status: done
+Estimate: 5
+Completed: April 22, 2026
+
+Why:
+
+- phase 13 already proved shared CDC execution ownership, external runtime declaration, MongoDB provider-native execution, and out-of-process runtime reporting, but it still lacked a relational provider-native runner on the same ownership and runtime-story model
+- the shared `/engine/cdc-*` surfaces needed proof that authored/requested/effective execution binding, runtime summaries, freshness, lag, publication posture, and checkpoint truth were not overfit to document-change streams alone
+- the engine roadmap still called out additional provider-specific capture implementations, and SQL Server CDC is the most natural relational follow-through for the current .NET adoption path
+
+Acceptance:
+
+- a new `Cephalon.Data.SqlServer` companion pack contributes provider-native SQL Server CDC captures, execution graph, hosted execution, and execution runtime without changing `Cephalon.Engine` or `Cephalon.Abstractions`
+- configured SQL Server CDC captures stay on the shared `/engine/cdc-captures*`, `/engine/cdc-captures/runtime*`, `/engine/cdc-capture-runtimes*`, `/engine/execution-graphs`, `/engine/hosted-executions`, `/engine/runtime-story`, and `snapshot` surfaces with truthful `provider-native` ownership and `host-managed` execution ownership
+- the provider-native runner stages outbox publications, persists durable SQL Server checkpoint tokens only after stage success, and preserves authored `SourceModuleId` truth while surfacing provider-pack contribution metadata explicitly
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the shipped slice
+
+Delivered:
+
+- `Cephalon.Data.SqlServer` now ships `SqlServerDataOptions`, `SqlServerCdcCaptureOptions`, and `AddSqlServerData(...)` as the public provider-native SQL Server CDC pack surface
+- the pack now contributes `sqlserver-cdc-capture-flow`, `sqlserver-cdc-capture-pump`, and `sqlserver-cdc-capture-pump` execution-runtime truth through `SqlServerDataModule`, `SqlServerCdcExecutionRuntimeContributor`, and `SqlServerCdcCaptureHostedService`
+- the provider-native transport now polls SQL Server CDC change tables, emits deterministic `application/vnd.cephalon.sqlserver.cdc+json` outbox messages, and persists durable `startLsn|seqval|operation` checkpoints through the Cephalon-managed checkpoint table
+- targeted coverage now proves truthful relational provider-native CDC publication through composition tests `17/17`, hosting tests `1/1`, tooling tests `179/179`, and the reference docs publish script
+
 ### ENG-137 Phase 13 edge-runtime cell traffic materializer baseline
 
 Status: done

@@ -843,6 +843,16 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void DataSqlServerAssemblyExposesOnlyTheDocumentedPackContracts()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Data.SqlServer.Registration.SqlServerDataEngineBuilderExtensions).Assembly,
+            typeof(global::Cephalon.Data.SqlServer.Configuration.SqlServerDataOptions),
+            typeof(global::Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions),
+            typeof(global::Cephalon.Data.SqlServer.Registration.SqlServerDataEngineBuilderExtensions));
+    }
+
+    [Fact]
     public void RetrievalAssemblyExposesOnlyTheDocumentedPackContracts()
     {
         AssertExportedTypes(
@@ -2762,6 +2772,25 @@ public sealed class PackageSurfaceTests
             .GetProperty("OutboxId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions)
             .GetProperty("FullDocumentMode", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void SqlServerDataOptionsExposeProviderNativeCdcCaptureDeclarations()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Data.SqlServer.Configuration.SqlServerDataOptions)
+            .GetProperty("CdcCaptures", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.SqlServer.Configuration.SqlServerDataOptions)
+            .GetProperty("DatabaseName", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions)
+            .GetProperty("SourceModuleId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions)
+            .GetProperty("CaptureInstance", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions)
+            .GetProperty("TableName", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions)
+            .GetProperty("OutboxId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions)
+            .GetProperty("InitialPosition", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

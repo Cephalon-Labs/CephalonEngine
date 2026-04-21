@@ -92,13 +92,20 @@ that runtime, stamps `metadata.cdcCaptureExecutionRuntimeId`, and then refreshes
 `/engine/cdc-captures/runtime*`, `/engine/cdc-capture-runtimes*`, and `snapshot` answers through
 the same shared catalog instead of a second external-monitor path.
 
-`Cephalon.Data.MongoDB` now proves that contract with the first concrete provider-native runner.
+`Cephalon.Data.MongoDB` first proved that contract with a document-oriented provider-native runner.
 Its `mongodb-change-stream-capture-pump` contributor publishes host-managed, provider-native,
 provider-native-acknowledgement ownership through the shared execution-runtime catalog while the
 provider pack keeps per-capture `sourceModuleId` truth, stages outbox messages, persists
 resume-token checkpoints only after stage success, and reports live posture back through the same
 shared CDC runtime-state catalog. The shared `data-cdc-capture-pump` remains additive and simply
 ignores captures whose effective owner resolves to the MongoDB runtime.
+
+`Cephalon.Data.SqlServer` now proves the same ownership and runtime model on a relational source.
+Its `sqlserver-cdc-capture-pump` contributor keeps the same `/engine/cdc-*` truth model while
+polling SQL Server CDC change tables, staging outbox messages, and durably persisting LSN-based
+checkpoint tokens only after stage success. That gives the shared data baseline both a document and
+a relational provider-native runner without adding a second control plane beside
+`/engine/cdc-captures*`, `/engine/cdc-captures/runtime*`, or `/engine/cdc-capture-runtimes*`.
 
 When the outbox path already reports downstream runtime truth, the same catalog can conservatively
 merge that dispatch posture into `OutboxDispatchState` and the typed CDC publication answer. That
@@ -112,6 +119,7 @@ The engine-owned database-topology baseline is now in place through `Engine:Data
 
 - [Cephalon.Abstractions](abstractions.md)
 - [Cephalon.Data.EntityFramework](data-entityframework.md)
+- [Cephalon.Data.SqlServer](data-sqlserver.md)
 - [Cephalon.Engine](engine.md)
 - [Cephalon.Ids.Sfid](ids-sfid.md)
 - [Architecture](../architecture.md)

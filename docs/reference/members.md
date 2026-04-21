@@ -600,6 +600,12 @@ Browse the published API surface by public member.
 - [AddSfidIds](cephalon-ids-sfid.md#member-m-cephalon-ids-sfid-registration-sfidenginebuilderextensions-addsfidids-cephalon-engine-composition-enginebuilder-system-action-cephalon-ids-sfid-configuration-sfididoptions): `Methods` on `SfidEngineBuilderExtensions` in `Cephalon.Ids.Sfid.Registration` (`Cephalon.Ids.Sfid`) [Browse](browse.html?q=AddSfidIds&assembly=Cephalon.Ids.Sfid&namespace=Cephalon.Ids.Sfid.Registration&scope=members)
   - Adds the Sfid id-strategy pack to the engine.
   - `EngineBuilder AddSfidIds(this EngineBuilder builder, Action<SfidIdOptions> configure)`
+- [AddSqlServerData](cephalon-data-sqlserver.md#member-m-cephalon-data-sqlserver-registration-sqlserverdataenginebuilderextensions-addsqlserverdata-cephalon-engine-composition-enginebuilder-system-action-cephalon-data-sqlserver-configuration-sqlserverdataoptions): `Methods` on `SqlServerDataEngineBuilderExtensions` in `Cephalon.Data.SqlServer.Registration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=AddSqlServerData&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Registration&scope=members)
+  - Adds the SQL Server CDC pack using an options callback that can bind from configuration.
+  - `EngineBuilder AddSqlServerData(this EngineBuilder builder, Action<SqlServerDataOptions> configure)`
+- [AddSqlServerData](cephalon-data-sqlserver.md#member-m-cephalon-data-sqlserver-registration-sqlserverdataenginebuilderextensions-addsqlserverdata-cephalon-engine-composition-enginebuilder-system-string-system-string-system-action-cephalon-data-sqlserver-configuration-sqlserverdataoptions): `Methods` on `SqlServerDataEngineBuilderExtensions` in `Cephalon.Data.SqlServer.Registration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=AddSqlServerData&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Registration&scope=members)
+  - Adds the SQL Server CDC pack with the supplied connection string and database name.
+  - `EngineBuilder AddSqlServerData(this EngineBuilder builder, string connectionString, string databaseName, Action<SqlServerDataOptions> configure)`
 - [AddStranglerFigRoute](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addstranglerfigroute-cephalon-abstractions-patterns-stranglerfigroutedescriptor): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddStranglerFigRoute&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Adds a strangler-fig route to the current runtime composition.
   - `EngineBuilder AddStranglerFigRoute(StranglerFigRouteDescriptor route)`
@@ -1689,6 +1695,9 @@ Browse the published API surface by public member.
 - [CaptureFailed](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturepublicationstates-capturefailed): `Fields` on `CdcCapturePublicationStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CaptureFailed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Indicates that the capture itself last reported a failure before publication completed.
   - `const string CaptureFailed`
+- [CaptureInstance](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-captureinstance): `Properties` on `SqlServerCdcCaptureOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=CaptureInstance&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
+  - Gets or sets the SQL Server CDC capture-instance name.
+  - `string CaptureInstance { get; set; }`
 - [CaptureOnly](cephalon-engine.md#member-f-cephalon-engine-configuration-startupfailurebehavior-captureonly): `Fields` on `StartupFailureBehavior` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=CaptureOnly&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Capture the failure in runtime status without rethrowing it to the host.
   - `const StartupFailureBehavior CaptureOnly`
@@ -1803,6 +1812,9 @@ Browse the published API surface by public member.
 - [CdcCaptures](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-cdccaptures): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=CdcCaptures&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the CDC captures contributed by active modules and visible to the runtime at the time the snapshot was created.
   - `IReadOnlyList<CdcCaptureDescriptor> CdcCaptures { get; set; }`
+- [CdcCaptures](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlserverdataoptions-cdccaptures): `Properties` on `SqlServerDataOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=CdcCaptures&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
+  - Gets the provider-native SQL Server CDC captures that should be contributed to the active runtime.
+  - `IList<SqlServerCdcCaptureOptions> CdcCaptures { get; }`
 - [CdcCaptureStates](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-cdccapturestates): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=CdcCaptureStates&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the CDC runtime-state entries visible to the runtime at the time the snapshot was created.
   - `IReadOnlyList<CdcCaptureRuntimeState> CdcCaptureStates { get; set; }`
@@ -1935,6 +1947,9 @@ Browse the published API surface by public member.
 - [ChannelId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-channelid): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=ChannelId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The logical channel or destination identifier used by the publication.
   - `string ChannelId { get; set; }`
+- [ChannelId](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-channelid): `Properties` on `SqlServerCdcCaptureOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=ChannelId&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
+  - Gets or sets the logical outbox channel that receives emitted publications.
+  - `string ChannelId { get; set; }`
 - [ChannelIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-inboxdescriptor-channelids): `Properties` on `InboxDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ChannelIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the optional channel identifiers that this inbox is explicitly scoped to.
   - `IReadOnlyList<string> ChannelIds { get; }`
@@ -1962,6 +1977,12 @@ Browse the published API surface by public member.
 - [Checkpoint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-checkpoint): `Properties` on `CdcCaptureRuntimeObservation` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Checkpoint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest provider-facing checkpoint or cursor when one was reported.
   - `string Checkpoint { get; }`
+- [CheckpointTableName](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlserverdataoptions-checkpointtablename): `Properties` on `SqlServerDataOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=CheckpointTableName&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
+  - Gets or sets the table name that stores Cephalon-managed SQL Server CDC checkpoints.
+  - `string CheckpointTableName { get; set; }`
+- [CheckpointTableSchema](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlserverdataoptions-checkpointtableschema): `Properties` on `SqlServerDataOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=CheckpointTableSchema&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
+  - Gets or sets the schema that stores Cephalon-managed SQL Server CDC checkpoints.
+  - `string CheckpointTableSchema { get; set; }`
 - [ChecksumSha256](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-checksumsha256): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=ChecksumSha256&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the computed SHA-256 checksum of the resolved package assembly.
   - `string ChecksumSha256 { get; }`
@@ -2325,6 +2346,9 @@ Browse the published API surface by public member.
 - [ConnectionString](cephalon-observability-rabbitmqdependencies.md#member-p-cephalon-observability-rabbitmqdependencies-configuration-rabbitmqdependencydefinition-connectionstring): `Properties` on `RabbitMqDependencyDefinition` in `Cephalon.Observability.RabbitMqDependencies.Configuration` (`Cephalon.Observability.RabbitMqDependencies`) [Browse](browse.html?q=ConnectionString&assembly=Cephalon.Observability.RabbitMqDependencies&namespace=Cephalon.Observability.RabbitMqDependencies.Configuration&scope=members)
   - Gets or sets the optional AMQP connection string used for the probe.
   - `string ConnectionString { get; set; }`
+- [ConnectionString](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlserverdataoptions-connectionstring): `Properties` on `SqlServerDataOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=ConnectionString&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
+  - Gets or sets the inline SQL Server connection string.
+  - `string ConnectionString { get; set; }`
 - [ConnectionString](cephalon-observability-sqlserverdependencies.md#member-p-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-connectionstring): `Properties` on `SqlServerDependencyDefinition` in `Cephalon.Observability.SqlServerDependencies.Configuration` (`Cephalon.Observability.SqlServerDependencies`) [Browse](browse.html?q=ConnectionString&assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Configuration&scope=members)
   - Gets or sets the optional full SQL Server connection string used for the probe.
   - `string ConnectionString { get; set; }`
@@ -2340,6 +2364,9 @@ Browse the published API surface by public member.
 - [ConnectionStringName](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-connectionstringname): `Properties` on `EntityFrameworkDatabaseRoleContext` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=ConnectionStringName&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
   - Gets the selected named connection-string reference, if one was declared.
   - `string ConnectionStringName { get; }`
+- [ConnectionStringName](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlserverdataoptions-connectionstringname): `Properties` on `SqlServerDataOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=ConnectionStringName&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
+  - Gets or sets the root `ConnectionStrings` entry name to resolve for SQL Server.
+  - `string ConnectionStringName { get; set; }`
 - [ConsulDependencyDefinition](cephalon-observability-consuldependencies.md#member-m-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-ctor): `Constructors` on `ConsulDependencyDefinition` in `Cephalon.Observability.ConsulDependencies.Configuration` (`Cephalon.Observability.ConsulDependencies`) [Browse](browse.html?q=ConsulDependencyDefinition&assembly=Cephalon.Observability.ConsulDependencies&namespace=Cephalon.Observability.ConsulDependencies.Configuration&scope=members)
   - Initializes a new instance of the `ConsulDependencyDefinition` class.
   - `ConsulDependencyDefinition()`
@@ -2661,6 +2688,9 @@ Browse the published API surface by public member.
 - [DatabaseMigrationsSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-databasemigrationssettings-ctor-system-nullable-system-boolean-system-nullable-system-boolean-system-collections-generic-ireadonlylist-system-string): `Constructors` on `DatabaseMigrationsSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=DatabaseMigrationsSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Initializes a new instance of the `DatabaseMigrationsSettings` class.
   - `DatabaseMigrationsSettings(bool? applyOnStartup, bool? exitAfterApply, IReadOnlyList<string> targets)`
+- [DatabaseName](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlserverdataoptions-databasename): `Properties` on `SqlServerDataOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=DatabaseName&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
+  - Gets or sets the operator-facing database name that owns the configured CDC captures.
+  - `string DatabaseName { get; set; }`
 - [DatabaseRole](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-audithistoryselection-databaserole): `Properties` on `AuditHistorySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=DatabaseRole&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the selected database role used by the durable history path.
   - `string DatabaseRole { get; }`
@@ -3141,6 +3171,9 @@ Browse the published API surface by public member.
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-description): `Properties` on `ScaffoldPlan` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Gets the scaffold-plan description.
   - `string Description { get; }`
+- [Description](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-description): `Properties` on `SqlServerCdcCaptureOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=Description&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
+  - Gets or sets the human-readable CDC capture description.
+  - `string Description { get; set; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-description): `Properties` on `StranglerFigIngressRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the human-readable description of the migration boundary.
   - `string Description { get; }`
@@ -3438,6 +3471,9 @@ Browse the published API surface by public member.
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-displayname): `Properties` on `ScaffoldPlan` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Gets the human-readable scaffold-plan name.
   - `string DisplayName { get; }`
+- [DisplayName](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-displayname): `Properties` on `SqlServerCdcCaptureOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
+  - Gets or sets the operator-facing CDC capture name.
+  - `string DisplayName { get; set; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-displayname): `Properties` on `StranglerFigIngressRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the operator-facing route name.
   - `string DisplayName { get; }`
@@ -4136,6 +4172,9 @@ Browse the published API surface by public member.
   - `string EventFormat { get; }`
 - [EventFormat](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-eventformat): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventFormat&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The emitted change-event format such as `debezium-envelope`.
+  - `string EventFormat { get; set; }`
+- [EventFormat](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-eventformat): `Properties` on `SqlServerCdcCaptureOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=EventFormat&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
+  - Gets or sets the operator-facing event format projected on the CDC descriptor.
   - `string EventFormat { get; set; }`
 - [EventingOptions](cephalon-eventing.md#member-m-cephalon-eventing-configuration-eventingoptions-ctor): `Constructors` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=EventingOptions&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
   - Creates eventing options with the default host-owned features enabled.
@@ -6237,6 +6276,9 @@ Browse the published API surface by public member.
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-id): `Properties` on `ScaffoldProject` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Gets the stable project identifier.
   - `string Id { get; }`
+- [Id](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-id): `Properties` on `SqlServerCdcCaptureOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=Id&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
+  - Gets or sets the stable CDC capture identifier.
+  - `string Id { get; set; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigroutedescriptor-id): `Properties` on `StranglerFigRouteDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the stable route identifier.
   - `string Id { get; }`
@@ -6447,6 +6489,9 @@ Browse the published API surface by public member.
 - [Initializing](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimestatus-initializing): `Fields` on `RuntimeStatus` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Initializing&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The runtime is initializing modules.
   - `const RuntimeStatus Initializing`
+- [InitialPosition](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-initialposition): `Properties` on `SqlServerCdcCaptureOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=InitialPosition&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
+  - Gets or sets the initial position used when no durable checkpoint exists yet.
+  - `string InitialPosition { get; set; }`
 - [InMemoryBufferCapacity](cephalon-audit.md#member-p-cephalon-audit-configuration-auditruntimeoptions-inmemorybuffercapacity): `Properties` on `AuditRuntimeOptions` in `Cephalon.Audit.Configuration` (`Cephalon.Audit`) [Browse](browse.html?q=InMemoryBufferCapacity&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Configuration&scope=members)
   - Gets or sets the maximum number of audit entries retained by the default in-memory writer.
   - `int InMemoryBufferCapacity { get; set; }`
@@ -7194,6 +7239,9 @@ Browse the published API surface by public member.
 - [MaxBatchSize](cephalon-engine.md#member-p-cephalon-engine-configuration-databaseruntimesettings-maxbatchsize): `Properties` on `DatabaseRuntimeSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=MaxBatchSize&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the maximum provider batch size when one was configured.
   - `int? MaxBatchSize { get; }`
+- [MaxChangesPerPoll](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-maxchangesperpoll): `Properties` on `SqlServerCdcCaptureOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=MaxChangesPerPoll&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
+  - Gets or sets the maximum number of captured changes to stage during one polling iteration.
+  - `int MaxChangesPerPoll { get; set; }`
 - [MaxConcurrentExecutions](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-bulkheadselection-maxconcurrentexecutions): `Properties` on `BulkheadSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaxConcurrentExecutions&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the maximum concurrent executions allowed inside the bulkhead.
   - `int? MaxConcurrentExecutions { get; }`
@@ -7341,6 +7389,9 @@ Browse the published API surface by public member.
 - [MessageType](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxmessage-messagetype): `Properties` on `OutboxMessage` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MessageType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the logical message type identifier.
   - `string MessageType { get; }`
+- [MessageType](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-messagetype): `Properties` on `SqlServerCdcCaptureOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=MessageType&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
+  - Gets or sets the logical message type emitted for each captured change event.
+  - `string MessageType { get; set; }`
 - [Messaging](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-appprofile-messaging): `Properties` on `AppProfile` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Messaging&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the selected messaging inputs.
   - `MessagingSelection Messaging { get; }`
@@ -7587,6 +7638,9 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-metadata): `Properties` on `ScaffoldProject` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Gets optional project metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-metadata): `Properties` on `SqlServerCdcCaptureOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
+  - Gets arbitrary operator-facing metadata that should flow through the capture descriptor.
+  - `IDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-metadata): `Properties` on `StranglerFigIngressRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the original authored route metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -8346,6 +8400,9 @@ Browse the published API surface by public member.
 - [OutboxId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxdispatchpolicydescriptor-outboxid): `Properties` on `OutboxDispatchPolicyDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OutboxId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable outbox identifier that the policy applies to.
   - `string OutboxId { get; }`
+- [OutboxId](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-outboxid): `Properties` on `SqlServerCdcCaptureOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=OutboxId&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
+  - Gets or sets the outbox identifier that receives emitted publications.
+  - `string OutboxId { get; set; }`
 - [OutboxIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimedescriptor-outboxids): `Properties` on `EventDispatchRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OutboxIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the outbox identifiers explicitly owned by the dispatch runtime.
   - `IReadOnlyList<string> OutboxIds { get; }`
@@ -8775,6 +8832,9 @@ Browse the published API surface by public member.
 - [PollingIntervalSeconds](cephalon-edge-kubernetesgateway.md#member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationoptions-pollingintervalseconds): `Properties` on `KubernetesGatewayTrafficObservationOptions` in `Cephalon.Edge.KubernetesGateway.Configuration` (`Cephalon.Edge.KubernetesGateway`) [Browse](browse.html?q=PollingIntervalSeconds&assembly=Cephalon.Edge.KubernetesGateway&namespace=Cephalon.Edge.KubernetesGateway.Configuration&scope=members)
   - Gets or sets the polling interval, in seconds, used for recurring live observation or reconciliation after startup materialization.
   - `int PollingIntervalSeconds { get; set; }`
+- [PollingIntervalSeconds](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-pollingintervalseconds): `Properties` on `SqlServerCdcCaptureOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=PollingIntervalSeconds&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
+  - Gets or sets the polling interval, in seconds, for one provider-native SQL Server CDC iteration.
+  - `int PollingIntervalSeconds { get; set; }`
 - [PollingIntervalSeconds](cephalon-edge-traefik.md#member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-pollingintervalseconds): `Properties` on `TraefikTrafficObservationOptions` in `Cephalon.Edge.Traefik.Configuration` (`Cephalon.Edge.Traefik`) [Browse](browse.html?q=PollingIntervalSeconds&assembly=Cephalon.Edge.Traefik&namespace=Cephalon.Edge.Traefik.Configuration&scope=members)
   - Gets or sets the polling interval, in seconds, used for recurring live observation after startup materialization.
   - `int PollingIntervalSeconds { get; set; }`
@@ -9093,6 +9153,9 @@ Browse the published API surface by public member.
 - [ProviderId](cephalon-edge-kubernetesgateway.md#member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficmaterializeroptions-providerid): `Properties` on `KubernetesGatewayTrafficMaterializerOptions` in `Cephalon.Edge.KubernetesGateway.Configuration` (`Cephalon.Edge.KubernetesGateway`) [Browse](browse.html?q=ProviderId&assembly=Cephalon.Edge.KubernetesGateway&namespace=Cephalon.Edge.KubernetesGateway.Configuration&scope=members)
   - Gets or sets the provider identifier that the materializer owns.
   - `string ProviderId { get; set; }`
+- [ProviderId](cephalon-data-sqlserver.md#member-f-cephalon-data-sqlserver-configuration-sqlserverdataoptions-providerid): `Fields` on `SqlServerDataOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=ProviderId&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
+  - Gets the canonical provider identifier emitted by the pack.
+  - `const string ProviderId`
 - [ProviderId](cephalon-edge-traefik.md#member-p-cephalon-edge-traefik-configuration-traefiktrafficmaterializeroptions-providerid): `Properties` on `TraefikTrafficMaterializerOptions` in `Cephalon.Edge.Traefik.Configuration` (`Cephalon.Edge.Traefik`) [Browse](browse.html?q=ProviderId&assembly=Cephalon.Edge.Traefik&namespace=Cephalon.Edge.Traefik.Configuration&scope=members)
   - Gets or sets the provider identifier that the materializer owns.
   - `string ProviderId { get; set; }`
@@ -9936,6 +9999,9 @@ Browse the published API surface by public member.
 - [ResourceIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-resourceids): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ResourceIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The resource identifiers observed by the capture.
   - `IReadOnlyList<string> ResourceIds { get; set; }`
+- [ResourceIds](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-resourceids): `Properties` on `SqlServerCdcCaptureOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=ResourceIds&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
+  - Gets the resource identifiers observed by the capture.
+  - `IList<string> ResourceIds { get; }`
 - [Resources](cephalon-engine.md#member-p-cephalon-engine-configuration-localizationsettings-resources): `Properties` on `LocalizationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Resources&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets localized resource entries keyed by culture and resource key.
   - `IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> Resources { get; }`
@@ -10608,6 +10674,9 @@ Browse the published API surface by public member.
 - [SectionName](cephalon-aspnetcore.md#member-f-cephalon-aspnetcore-hosting-restapigovernanceoptions-sectionname): `Fields` on `RestApiGovernanceOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=SectionName&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Gets the root configuration section used for REST API governance settings.
   - `const string SectionName`
+- [SectionPath](cephalon-data-sqlserver.md#member-f-cephalon-data-sqlserver-configuration-sqlserverdataoptions-sectionpath): `Fields` on `SqlServerDataOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=SectionPath&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
+  - Gets the configuration section path used by default for SQL Server data settings.
+  - `const string SectionPath`
 - [Security](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-technologykind-security): `Fields` on `TechnologyKind` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Security&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Identifies a security-oriented technology.
   - `const TechnologyKind Security`
@@ -10950,6 +11019,9 @@ Browse the published API surface by public member.
 - [SourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-sourceid): `Properties` on `RestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the stable source identity for the published endpoint when the runtime can classify the authored source shape behind that publication.
   - `string SourceId { get; }`
+- [SourceId](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-sourceid): `Properties` on `SqlServerCdcCaptureOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=SourceId&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
+  - Gets or sets the logical source identifier when it should differ from the watched table path.
+  - `string SourceId { get; set; }`
 - [SourceKind](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviorfeaturedisabledexception-sourcekind): `Properties` on `BehaviorFeatureDisabledException` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceKind&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the ownership kind of the resolved feature flag when one exists.
   - `FeatureFlagSourceKind? SourceKind { get; }`
@@ -11067,6 +11139,9 @@ Browse the published API surface by public member.
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-sourcemoduleid): `Properties` on `SagaChoreographyRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the owning module identifier when one is known at runtime.
   - `string SourceModuleId { get; }`
+- [SourceModuleId](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-sourcemoduleid): `Properties` on `SqlServerCdcCaptureOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
+  - Gets or sets the module identifier that owns the capture surface.
+  - `string SourceModuleId { get; set; }`
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-sourcemoduleid): `Properties` on `StranglerFigIngressRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the module that owns the modern Cephalon boundary for this route.
   - `string SourceModuleId { get; }`
@@ -11139,6 +11214,10 @@ Browse the published API surface by public member.
 - [SpecificationPattern](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-specificationpattern): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=SpecificationPattern&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Gets the specification design pattern.
   - `PatternDescriptor SpecificationPattern { get; }`
+- [SqlServerCdcCaptureOptions](cephalon-data-sqlserver.md#member-m-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-ctor): `Constructors` on `SqlServerCdcCaptureOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=SqlServerCdcCaptureOptions&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
+  - `SqlServerCdcCaptureOptions()`
+- [SqlServerDataOptions](cephalon-data-sqlserver.md#member-m-cephalon-data-sqlserver-configuration-sqlserverdataoptions-ctor): `Constructors` on `SqlServerDataOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=SqlServerDataOptions&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
+  - `SqlServerDataOptions()`
 - [SqlServerDependencyDefinition](cephalon-observability-sqlserverdependencies.md#member-m-cephalon-observability-sqlserverdependencies-configuration-sqlserverdependencydefinition-ctor): `Constructors` on `SqlServerDependencyDefinition` in `Cephalon.Observability.SqlServerDependencies.Configuration` (`Cephalon.Observability.SqlServerDependencies`) [Browse](browse.html?q=SqlServerDependencyDefinition&assembly=Cephalon.Observability.SqlServerDependencies&namespace=Cephalon.Observability.SqlServerDependencies.Configuration&scope=members)
   - Initializes a new instance of the `SqlServerDependencyDefinition` class.
   - `SqlServerDependencyDefinition()`
@@ -11673,6 +11752,12 @@ Browse the published API surface by public member.
 
 ## T
 
+- [TableName](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-tablename): `Properties` on `SqlServerCdcCaptureOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=TableName&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
+  - Gets or sets the table name of the tracked table.
+  - `string TableName { get; set; }`
+- [TableSchema](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-tableschema): `Properties` on `SqlServerCdcCaptureOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=TableSchema&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
+  - Gets or sets the schema name of the tracked table.
+  - `string TableSchema { get; set; }`
 - [TagName](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointcandidateprojectiondescriptor-tagname): `Properties` on `RestEndpointCandidateProjectionDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=TagName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the projected primary OpenAPI tag name when one is available.
   - `string TagName { get; }`
@@ -11769,6 +11854,9 @@ Browse the published API surface by public member.
 - [Tags](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-tags): `Properties` on `RestEndpointRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the resolved OpenAPI tags when any are published.
   - `IReadOnlyList<string> Tags { get; }`
+- [Tags](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-tags): `Properties` on `SqlServerCdcCaptureOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=Tags&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
+  - Gets the descriptive tags associated with the capture.
+  - `IList<string> Tags { get; }`
 - [Tags](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologydescriptor-tags): `Properties` on `TechnologyDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the tags associated with the technology.
   - `IReadOnlyList<string> Tags { get; }`

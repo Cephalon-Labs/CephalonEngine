@@ -1,4 +1,5 @@
 using Cephalon.Abstractions.Capabilities;
+using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Modules;
 using Cephalon.AspNetCore.GraphQL.Hosting;
 using Cephalon.AspNetCore.GraphQL.Modules;
@@ -258,6 +259,43 @@ internal sealed class DiscoveryGraphQLQueries
             });
         descriptor.Field("principles")
             .Resolve(static _ => DiscoveryDefaults.Principles);
+    }
+}
+
+internal sealed class PlatformEventingTestModule : ModuleBase, IOutboxContributor
+{
+    private static readonly ModuleDescriptor DescriptorInstance = new(
+        id: "platform-eventing",
+        displayName: "Platform Eventing",
+        description: "Durable eventing primitives for platform-oriented test scenarios.",
+        dependsOn: [typeof(PlatformTestModule)],
+        tags: ["foundation", "eventing"],
+        version: "1.0.0",
+        metadata: new Dictionary<string, string>
+        {
+            ["layer"] = "foundation",
+            ["surface"] = "outbox"
+        });
+
+    public override ModuleDescriptor Descriptor => DescriptorInstance;
+
+    public void RegisterOutboxes(IOutboxRegistry outboxes)
+    {
+        ArgumentNullException.ThrowIfNull(outboxes);
+
+        outboxes.Add(new OutboxDescriptor(
+            id: "tenant-event-outbox",
+            displayName: "Tenant Event Outbox",
+            description: "Stages durable outbound events for platform-oriented test scenarios.",
+            sourceModuleId: Descriptor.Id,
+            provider: "test-outbox",
+            mode: "in-memory-channel",
+            channelIds: ["orders"],
+            tags: ["outbox", "test"],
+            metadata: new Dictionary<string, string>
+            {
+                ["runtime"] = "test-double"
+            }));
     }
 }
 

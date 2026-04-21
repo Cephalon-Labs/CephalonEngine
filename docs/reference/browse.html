@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-21T18:57:06.721984+00:00",
+  "GeneratedAtUtc": "2026-04-21T19:46:45.1885114+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -184,6 +184,14 @@
       "FileName": "cephalon-data-entityframework.md",
       "NamespaceCount": 4,
       "TypeCount": 11
+    },
+    {
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "Category": "Phase 13 Companion Packs",
+      "Description": "SQL Server provider-native CDC companion pack for Cephalon data workloads.",
+      "FileName": "cephalon-data-sqlserver.md",
+      "NamespaceCount": 2,
+      "TypeCount": 3
     },
     {
       "AssemblyName": "Cephalon.Edge",
@@ -929,6 +937,20 @@
       "FileName": "cephalon-data.md",
       "AnchorId": "namespace-cephalon-data-services",
       "TypeCount": 5
+    },
+    {
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "namespace-cephalon-data-sqlserver-configuration",
+      "TypeCount": 2
+    },
+    {
+      "NamespaceName": "Cephalon.Data.SqlServer.Registration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "namespace-cephalon-data-sqlserver-registration",
+      "TypeCount": 1
     },
     {
       "NamespaceName": "Cephalon.Edge.Configuration",
@@ -11428,6 +11450,51 @@
       }
     },
     {
+      "DisplayName": "SqlServerCdcCaptureOptions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "type-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions",
+      "Declaration": "public sealed class SqlServerCdcCaptureOptions",
+      "Summary": "Declares one provider-native SQL Server CDC capture for the active runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 18,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "SqlServerDataEngineBuilderExtensions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Registration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "type-cephalon-data-sqlserver-registration-sqlserverdataenginebuilderextensions",
+      "Declaration": "public static class SqlServerDataEngineBuilderExtensions",
+      "Summary": "Registers the SQL Server CDC companion pack with an \u0060EngineBuilder\u0060.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "SqlServerDataOptions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "type-cephalon-data-sqlserver-configuration-sqlserverdataoptions",
+      "Declaration": "public sealed class SqlServerDataOptions",
+      "Summary": "Configuration options for the SQL Server data provider (\u0060Engine:Data:SqlServer\u0060).",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 2,
+        "Properties": 6,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "SqlServerDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
@@ -14341,6 +14408,28 @@
       "AnchorId": "member-m-cephalon-ids-sfid-registration-sfidenginebuilderextensions-addsfidids-cephalon-engine-composition-enginebuilder-system-action-cephalon-ids-sfid-configuration-sfididoptions",
       "Signature": "EngineBuilder AddSfidIds(this EngineBuilder builder, Action\u003CSfidIdOptions\u003E configure)",
       "Summary": "Adds the Sfid id-strategy pack to the engine."
+    },
+    {
+      "DisplayName": "AddSqlServerData",
+      "Category": "Methods",
+      "DeclaringTypeName": "SqlServerDataEngineBuilderExtensions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Registration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "member-m-cephalon-data-sqlserver-registration-sqlserverdataenginebuilderextensions-addsqlserverdata-cephalon-engine-composition-enginebuilder-system-action-cephalon-data-sqlserver-configuration-sqlserverdataoptions",
+      "Signature": "EngineBuilder AddSqlServerData(this EngineBuilder builder, Action\u003CSqlServerDataOptions\u003E configure)",
+      "Summary": "Adds the SQL Server CDC pack using an options callback that can bind from configuration."
+    },
+    {
+      "DisplayName": "AddSqlServerData",
+      "Category": "Methods",
+      "DeclaringTypeName": "SqlServerDataEngineBuilderExtensions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Registration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "member-m-cephalon-data-sqlserver-registration-sqlserverdataenginebuilderextensions-addsqlserverdata-cephalon-engine-composition-enginebuilder-system-string-system-string-system-action-cephalon-data-sqlserver-configuration-sqlserverdataoptions",
+      "Signature": "EngineBuilder AddSqlServerData(this EngineBuilder builder, string connectionString, string databaseName, Action\u003CSqlServerDataOptions\u003E configure)",
+      "Summary": "Adds the SQL Server CDC pack with the supplied connection string and database name."
     },
     {
       "DisplayName": "AddStranglerFigRoute",
@@ -18314,6 +18403,17 @@
       "Summary": "Indicates that the capture itself last reported a failure before publication completed."
     },
     {
+      "DisplayName": "CaptureInstance",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerCdcCaptureOptions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-captureinstance",
+      "Signature": "string CaptureInstance { get; set; }",
+      "Summary": "Gets or sets the SQL Server CDC capture-instance name."
+    },
+    {
       "DisplayName": "CaptureOnly",
       "Category": "Fields",
       "DeclaringTypeName": "StartupFailureBehavior",
@@ -18730,6 +18830,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-cdccaptures",
       "Signature": "IReadOnlyList\u003CCdcCaptureDescriptor\u003E CdcCaptures { get; set; }",
       "Summary": "Gets the CDC captures contributed by active modules and visible to the runtime at the time the snapshot was created."
+    },
+    {
+      "DisplayName": "CdcCaptures",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerDataOptions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "member-p-cephalon-data-sqlserver-configuration-sqlserverdataoptions-cdccaptures",
+      "Signature": "IList\u003CSqlServerCdcCaptureOptions\u003E CdcCaptures { get; }",
+      "Summary": "Gets the provider-native SQL Server CDC captures that should be contributed to the active runtime."
     },
     {
       "DisplayName": "CdcCaptureStates",
@@ -19216,6 +19327,17 @@
       "Summary": "The logical channel or destination identifier used by the publication."
     },
     {
+      "DisplayName": "ChannelId",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerCdcCaptureOptions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-channelid",
+      "Signature": "string ChannelId { get; set; }",
+      "Summary": "Gets or sets the logical outbox channel that receives emitted publications."
+    },
+    {
       "DisplayName": "ChannelIds",
       "Category": "Properties",
       "DeclaringTypeName": "InboxDescriptor",
@@ -19313,6 +19435,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-checkpoint",
       "Signature": "string Checkpoint { get; }",
       "Summary": "Gets the latest provider-facing checkpoint or cursor when one was reported."
+    },
+    {
+      "DisplayName": "CheckpointTableName",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerDataOptions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "member-p-cephalon-data-sqlserver-configuration-sqlserverdataoptions-checkpointtablename",
+      "Signature": "string CheckpointTableName { get; set; }",
+      "Summary": "Gets or sets the table name that stores Cephalon-managed SQL Server CDC checkpoints."
+    },
+    {
+      "DisplayName": "CheckpointTableSchema",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerDataOptions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "member-p-cephalon-data-sqlserver-configuration-sqlserverdataoptions-checkpointtableschema",
+      "Signature": "string CheckpointTableSchema { get; set; }",
+      "Summary": "Gets or sets the schema that stores Cephalon-managed SQL Server CDC checkpoints."
     },
     {
       "DisplayName": "ChecksumSha256",
@@ -20648,6 +20792,17 @@
     {
       "DisplayName": "ConnectionString",
       "Category": "Properties",
+      "DeclaringTypeName": "SqlServerDataOptions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "member-p-cephalon-data-sqlserver-configuration-sqlserverdataoptions-connectionstring",
+      "Signature": "string ConnectionString { get; set; }",
+      "Summary": "Gets or sets the inline SQL Server connection string."
+    },
+    {
+      "DisplayName": "ConnectionString",
+      "Category": "Properties",
       "DeclaringTypeName": "SqlServerDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.SqlServerDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.SqlServerDependencies",
@@ -20699,6 +20854,17 @@
       "AnchorId": "member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-connectionstringname",
       "Signature": "string ConnectionStringName { get; }",
       "Summary": "Gets the selected named connection-string reference, if one was declared."
+    },
+    {
+      "DisplayName": "ConnectionStringName",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerDataOptions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "member-p-cephalon-data-sqlserver-configuration-sqlserverdataoptions-connectionstringname",
+      "Signature": "string ConnectionStringName { get; set; }",
+      "Summary": "Gets or sets the root \u0060ConnectionStrings\u0060 entry name to resolve for SQL Server."
     },
     {
       "DisplayName": "ConsulDependencyDefinition",
@@ -21865,6 +22031,17 @@
       "AnchorId": "member-m-cephalon-engine-configuration-databasemigrationssettings-ctor-system-nullable-system-boolean-system-nullable-system-boolean-system-collections-generic-ireadonlylist-system-string",
       "Signature": "DatabaseMigrationsSettings(bool? applyOnStartup, bool? exitAfterApply, IReadOnlyList\u003Cstring\u003E targets)",
       "Summary": "Initializes a new instance of the \u0060DatabaseMigrationsSettings\u0060 class."
+    },
+    {
+      "DisplayName": "DatabaseName",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerDataOptions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "member-p-cephalon-data-sqlserver-configuration-sqlserverdataoptions-databasename",
+      "Signature": "string DatabaseName { get; set; }",
+      "Summary": "Gets or sets the operator-facing database name that owns the configured CDC captures."
     },
     {
       "DisplayName": "DatabaseRole",
@@ -23629,6 +23806,17 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "SqlServerCdcCaptureOptions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-description",
+      "Signature": "string Description { get; set; }",
+      "Summary": "Gets or sets the human-readable CDC capture description."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "StranglerFigIngressRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Patterns",
       "AssemblyName": "Cephalon.Abstractions",
@@ -24714,6 +24902,17 @@
       "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldplan-displayname",
       "Signature": "string DisplayName { get; }",
       "Summary": "Gets the human-readable scaffold-plan name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerCdcCaptureOptions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "Gets or sets the operator-facing CDC capture name."
     },
     {
       "DisplayName": "DisplayName",
@@ -27266,6 +27465,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimestate-eventformat",
       "Signature": "string EventFormat { get; set; }",
       "Summary": "The emitted change-event format such as \u0060debezium-envelope\u0060."
+    },
+    {
+      "DisplayName": "EventFormat",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerCdcCaptureOptions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-eventformat",
+      "Signature": "string EventFormat { get; set; }",
+      "Summary": "Gets or sets the operator-facing event format projected on the CDC descriptor."
     },
     {
       "DisplayName": "EventingOptions",
@@ -34926,6 +35136,17 @@
     {
       "DisplayName": "Id",
       "Category": "Properties",
+      "DeclaringTypeName": "SqlServerCdcCaptureOptions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-id",
+      "Signature": "string Id { get; set; }",
+      "Summary": "Gets or sets the stable CDC capture identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
       "DeclaringTypeName": "StranglerFigRouteDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Patterns",
       "AssemblyName": "Cephalon.Abstractions",
@@ -35692,6 +35913,17 @@
       "AnchorId": "member-f-cephalon-engine-runtime-runtimestatus-initializing",
       "Signature": "const RuntimeStatus Initializing",
       "Summary": "The runtime is initializing modules."
+    },
+    {
+      "DisplayName": "InitialPosition",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerCdcCaptureOptions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-initialposition",
+      "Signature": "string InitialPosition { get; set; }",
+      "Summary": "Gets or sets the initial position used when no durable checkpoint exists yet."
     },
     {
       "DisplayName": "InMemoryBufferCapacity",
@@ -38389,6 +38621,17 @@
       "Summary": "Gets the maximum provider batch size when one was configured."
     },
     {
+      "DisplayName": "MaxChangesPerPoll",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerCdcCaptureOptions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-maxchangesperpoll",
+      "Signature": "int MaxChangesPerPoll { get; set; }",
+      "Summary": "Gets or sets the maximum number of captured changes to stage during one polling iteration."
+    },
+    {
       "DisplayName": "MaxConcurrentExecutions",
       "Category": "Properties",
       "DeclaringTypeName": "BulkheadSelection",
@@ -38926,6 +39169,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-outboxmessage-messagetype",
       "Signature": "string MessageType { get; }",
       "Summary": "Gets the logical message type identifier."
+    },
+    {
+      "DisplayName": "MessageType",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerCdcCaptureOptions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-messagetype",
+      "Signature": "string MessageType { get; set; }",
+      "Summary": "Gets or sets the logical message type emitted for each captured change event."
     },
     {
       "DisplayName": "Messaging",
@@ -39828,6 +40082,17 @@
       "AnchorId": "member-p-cephalon-abstractions-appmodel-scaffolding-scaffoldproject-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
       "Summary": "Gets optional project metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerCdcCaptureOptions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-metadata",
+      "Signature": "IDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets arbitrary operator-facing metadata that should flow through the capture descriptor."
     },
     {
       "DisplayName": "Metadata",
@@ -42591,6 +42856,17 @@
       "Summary": "Gets the stable outbox identifier that the policy applies to."
     },
     {
+      "DisplayName": "OutboxId",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerCdcCaptureOptions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-outboxid",
+      "Signature": "string OutboxId { get; set; }",
+      "Summary": "Gets or sets the outbox identifier that receives emitted publications."
+    },
+    {
       "DisplayName": "OutboxIds",
       "Category": "Properties",
       "DeclaringTypeName": "EventDispatchRuntimeDescriptor",
@@ -44155,6 +44431,17 @@
     {
       "DisplayName": "PollingIntervalSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "SqlServerCdcCaptureOptions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-pollingintervalseconds",
+      "Signature": "int PollingIntervalSeconds { get; set; }",
+      "Summary": "Gets or sets the polling interval, in seconds, for one provider-native SQL Server CDC iteration."
+    },
+    {
+      "DisplayName": "PollingIntervalSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "TraefikTrafficObservationOptions",
       "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
       "AssemblyName": "Cephalon.Edge.Traefik",
@@ -45317,6 +45604,17 @@
       "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficmaterializeroptions-providerid",
       "Signature": "string ProviderId { get; set; }",
       "Summary": "Gets or sets the provider identifier that the materializer owns."
+    },
+    {
+      "DisplayName": "ProviderId",
+      "Category": "Fields",
+      "DeclaringTypeName": "SqlServerDataOptions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "member-f-cephalon-data-sqlserver-configuration-sqlserverdataoptions-providerid",
+      "Signature": "const string ProviderId",
+      "Summary": "Gets the canonical provider identifier emitted by the pack."
     },
     {
       "DisplayName": "ProviderId",
@@ -48388,6 +48686,17 @@
       "Summary": "The resource identifiers observed by the capture."
     },
     {
+      "DisplayName": "ResourceIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerCdcCaptureOptions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-resourceids",
+      "Signature": "IList\u003Cstring\u003E ResourceIds { get; }",
+      "Summary": "Gets the resource identifiers observed by the capture."
+    },
+    {
       "DisplayName": "Resources",
       "Category": "Properties",
       "DeclaringTypeName": "LocalizationSettings",
@@ -50841,6 +51150,17 @@
       "Summary": "Gets the root configuration section used for REST API governance settings."
     },
     {
+      "DisplayName": "SectionPath",
+      "Category": "Fields",
+      "DeclaringTypeName": "SqlServerDataOptions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "member-f-cephalon-data-sqlserver-configuration-sqlserverdataoptions-sectionpath",
+      "Signature": "const string SectionPath",
+      "Summary": "Gets the configuration section path used by default for SQL Server data settings."
+    },
+    {
       "DisplayName": "Security",
       "Category": "Fields",
       "DeclaringTypeName": "TechnologyKind",
@@ -52095,6 +52415,17 @@
       "Summary": "Gets the stable source identity for the published endpoint when the runtime can classify the authored source shape behind that publication."
     },
     {
+      "DisplayName": "SourceId",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerCdcCaptureOptions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-sourceid",
+      "Signature": "string SourceId { get; set; }",
+      "Summary": "Gets or sets the logical source identifier when it should differ from the watched table path."
+    },
+    {
       "DisplayName": "SourceKind",
       "Category": "Properties",
       "DeclaringTypeName": "BehaviorFeatureDisabledException",
@@ -52526,6 +52857,17 @@
     {
       "DisplayName": "SourceModuleId",
       "Category": "Properties",
+      "DeclaringTypeName": "SqlServerCdcCaptureOptions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; set; }",
+      "Summary": "Gets or sets the module identifier that owns the capture surface."
+    },
+    {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
       "DeclaringTypeName": "StranglerFigIngressRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Patterns",
       "AssemblyName": "Cephalon.Abstractions",
@@ -52786,6 +53128,26 @@
       "AnchorId": "member-p-cephalon-engine-patterns-builtinpatterns-specificationpattern",
       "Signature": "PatternDescriptor SpecificationPattern { get; }",
       "Summary": "Gets the specification design pattern."
+    },
+    {
+      "DisplayName": "SqlServerCdcCaptureOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "SqlServerCdcCaptureOptions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "member-m-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-ctor",
+      "Signature": "SqlServerCdcCaptureOptions()"
+    },
+    {
+      "DisplayName": "SqlServerDataOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "SqlServerDataOptions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "member-m-cephalon-data-sqlserver-configuration-sqlserverdataoptions-ctor",
+      "Signature": "SqlServerDataOptions()"
     },
     {
       "DisplayName": "SqlServerDependencyDefinition",
@@ -54735,6 +55097,28 @@
       "Summary": "Gets the active technology runtime surfaces."
     },
     {
+      "DisplayName": "TableName",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerCdcCaptureOptions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-tablename",
+      "Signature": "string TableName { get; set; }",
+      "Summary": "Gets or sets the table name of the tracked table."
+    },
+    {
+      "DisplayName": "TableSchema",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerCdcCaptureOptions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-tableschema",
+      "Signature": "string TableSchema { get; set; }",
+      "Summary": "Gets or sets the schema name of the tracked table."
+    },
+    {
       "DisplayName": "TagName",
       "Category": "Properties",
       "DeclaringTypeName": "RestEndpointCandidateProjectionDescriptor",
@@ -55085,6 +55469,17 @@
       "AnchorId": "member-p-cephalon-abstractions-transports-restendpointruntimedescriptor-tags",
       "Signature": "IReadOnlyList\u003Cstring\u003E Tags { get; }",
       "Summary": "Gets the resolved OpenAPI tags when any are published."
+    },
+    {
+      "DisplayName": "Tags",
+      "Category": "Properties",
+      "DeclaringTypeName": "SqlServerCdcCaptureOptions",
+      "NamespaceName": "Cephalon.Data.SqlServer.Configuration",
+      "AssemblyName": "Cephalon.Data.SqlServer",
+      "FileName": "cephalon-data-sqlserver.md",
+      "AnchorId": "member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-tags",
+      "Signature": "IList\u003Cstring\u003E Tags { get; }",
+      "Summary": "Gets the descriptive tags associated with the capture."
     },
     {
       "DisplayName": "Tags",

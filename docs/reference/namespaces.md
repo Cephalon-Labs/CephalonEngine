@@ -200,6 +200,14 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Data](cephalon-data.md#namespace-cephalon-data-services): 5 public types [Browse](browse.html?assembly=Cephalon.Data&namespace=Cephalon.Data.Services)
 
+## `Cephalon.Data.SqlServer.Configuration`
+
+- [Cephalon.Data.SqlServer](cephalon-data-sqlserver.md#namespace-cephalon-data-sqlserver-configuration): 2 public types [Browse](browse.html?assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration)
+
+## `Cephalon.Data.SqlServer.Registration`
+
+- [Cephalon.Data.SqlServer](cephalon-data-sqlserver.md#namespace-cephalon-data-sqlserver-registration): 1 public types [Browse](browse.html?assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Registration)
+
 ## `Cephalon.Edge.Configuration`
 
 - [Cephalon.Edge](cephalon-edge.md#namespace-cephalon-edge-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.Edge&namespace=Cephalon.Edge.Configuration)
