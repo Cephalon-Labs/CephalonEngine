@@ -130,8 +130,14 @@ the same answers through `/engine/cells`, `/engine/cell-routes`, `/engine/cell-h
 `snapshot.CellHealthIsolations`, `snapshot.CellTrafficAutomations`, and the `cell-boundaries`,
 `cell-routes`, `cell-health-isolations`, plus `cell-traffic-automations` technology runtime
 surfaces without inventing a second host-only topology, traffic, health, or automation registry.
-Only provider-specific or edge-aware traffic automation remains later follow-through over those
-same catalogs.
+`Engine:Cells:TrafficAutomation` now also supports additive `DefaultProviderId`,
+`DefaultEdgeNodeIds`, route-level `ProviderId`, and route-level `EdgeNodeIds` overlays so the same
+runtime catalog can publish provider-aware and edge-aware automation posture without rewriting the
+underlying cell-route or health-isolation truth. The engine derives `provider-managed`,
+`edge-managed`, or `provider-and-edge-managed` materialization posture when those overlays are
+present, validates that explicit edge-node targeting only appears when `edge-native-delivery` is
+selected, and keeps concrete provider or edge control-plane materializers as later follow-through
+over those same catalogs.
 
 That same engine-first runtime truth now also carries the first phase-13 data mesh and CDC
 baselines end to end. Modules and hosts can contribute `DataProductDescriptor` entries and

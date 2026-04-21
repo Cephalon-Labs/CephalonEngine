@@ -20,8 +20,9 @@ exists. The new `cell-based-architecture` profile now follows that path: the eng
 `CellTrafficAutomationRuntimeDescriptor`, `/engine/cells`, `/engine/cell-routes`,
 `/engine/cell-health-isolations`, `/engine/cell-traffic-automations`, and the
 `cell-boundaries`, `cell-routes`, `cell-health-isolations`, plus `cell-traffic-automations`
-technology runtime surfaces today, while deeper provider-managed or edge-aware traffic automation
-can still move into a future companion pack later.
+technology runtime surfaces today. That engine-owned baseline now also carries additive
+`providerId` plus `edgeNodeIds` targeting on the shared automation catalog, while deeper concrete
+provider-managed or edge-runtime materializers can still move into a future companion pack later.
 
 ## Shipped baseline packs
 

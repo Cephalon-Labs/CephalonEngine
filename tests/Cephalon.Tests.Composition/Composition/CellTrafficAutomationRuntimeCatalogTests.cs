@@ -1,5 +1,7 @@
 using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Technologies;
+using Cephalon.Edge.Registration;
+using Cephalon.Edge.Services;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Runtime;
@@ -18,10 +20,15 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
         {
             engine.UseSettings(new EngineSettings(
                 blueprint: "Microservice",
+                technologies: ["EdgeNativeDelivery"],
                 cells: new CellSettings(
                     new CellTrafficAutomationSettings(
                         defaultAutomationMode: "automatic",
+                        defaultTriggerMode: null,
                         defaultActionMode: "shed-load",
+                        defaultMaterializationMode: null,
+                        defaultProviderId: "regional-traffic-mesh",
+                        defaultEdgeNodeIds: ["storefront-edge"],
                         routes:
                         [
                             new CellTrafficAutomationRouteSettings(
@@ -34,11 +41,26 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
                                 metadata: new Dictionary<string, string>
                                 {
                                     ["handoff"] = "ingress-provider"
-                                })
+                                },
+                                providerId: "control-plane-gateway",
+                                edgeNodeIds: ["platform-edge"])
                         ]))));
             engine.AddModule(new PlatformTestModule());
             engine.AddModule(new DiscoveryTestModule());
             engine.AddModule(new CellTrafficAutomationCatalogTestModule());
+            engine.AddEdge(options =>
+            {
+                options.Nodes.Add(new EdgeNodeDescriptor(
+                    id: "storefront-edge",
+                    displayName: "Storefront Edge",
+                    description: "Regional node that fronts storefront traffic.",
+                    tags: ["storefront", "regional"]));
+                options.Nodes.Add(new EdgeNodeDescriptor(
+                    id: "platform-edge",
+                    displayName: "Platform Edge",
+                    description: "Control-plane edge that fronts platform traffic.",
+                    tags: ["platform", "control-plane"]));
+            });
             engine.AddCellBoundary(new CellBoundaryDescriptor(
                 id: "platform-control",
                 sourceModuleId: "platform",
@@ -73,8 +95,10 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
         Assert.Equal("automatic", defaultAutomation.AutomationMode);
         Assert.Equal("source-or-target-health", defaultAutomation.TriggerMode);
         Assert.Equal("shed-load", defaultAutomation.ActionMode);
-        Assert.Equal("runtime-catalog-only", defaultAutomation.MaterializationMode);
+        Assert.Equal("provider-and-edge-managed", defaultAutomation.MaterializationMode);
         Assert.Equal("cell-default", defaultAutomation.PolicySource);
+        Assert.Equal("regional-traffic-mesh", defaultAutomation.ProviderId);
+        Assert.Equal(["storefront-edge"], defaultAutomation.EdgeNodeIds);
         Assert.Equal(["orders-cell-health"], defaultAutomation.SourceHealthIsolationIds);
         Assert.Equal(["reporting-cell-health"], defaultAutomation.TargetHealthIsolationIds);
         Assert.Equal(["orders-db", "reporting-replica"], defaultAutomation.DependencyIds);
@@ -86,6 +110,8 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
         Assert.Equal("prefer-local-route", routedAutomation.ActionMode);
         Assert.Equal("provider-managed", routedAutomation.MaterializationMode);
         Assert.Equal("cell-route", routedAutomation.PolicySource);
+        Assert.Equal("control-plane-gateway", routedAutomation.ProviderId);
+        Assert.Equal(["platform-edge"], routedAutomation.EdgeNodeIds);
         Assert.Equal(["orders-cell-health"], routedAutomation.SourceHealthIsolationIds);
         Assert.Equal(["platform-control-health"], routedAutomation.TargetHealthIsolationIds);
         Assert.Equal("Keep provider handoff explicit for control-plane traffic.", routedAutomation.RuntimeMetadata["note"]);
@@ -98,24 +124,37 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
         var reportingAutomation = Assert.Single(targetCellAutomations);
         Assert.Equal("orders-to-reporting", reportingAutomation.RouteId);
 
+        var meshAutomations = catalog.GetByProvider("regional-traffic-mesh");
+        var meshAutomation = Assert.Single(meshAutomations);
+        Assert.Equal("orders-to-reporting", meshAutomation.RouteId);
+
+        var storefrontEdgeAutomations = catalog.GetByEdgeNodeId("storefront-edge");
+        var storefrontAutomation = Assert.Single(storefrontEdgeAutomations);
+        Assert.Equal("orders-to-reporting", storefrontAutomation.RouteId);
+
         var healthIsolationAutomations = catalog.GetByHealthIsolationId("orders-cell-health");
         Assert.Equal(2, healthIsolationAutomations.Count);
 
         Assert.Equal(2, snapshot.CellTrafficAutomations.Count);
         Assert.Contains(snapshot.CellTrafficAutomations, automation =>
             automation.RouteId == "orders-to-platform-control" &&
-            automation.MaterializationMode == "provider-managed");
+            automation.ProviderId == "control-plane-gateway" &&
+            automation.EdgeNodeIds.SequenceEqual(["platform-edge"]));
 
         var surface = Assert.Single(
             technologyCatalog.GetByTechnology("cell-based-architecture"),
             static candidate => candidate.SurfaceId == "cell-traffic-automations");
         Assert.Contains(surface.Entries, entry =>
             entry.Id == "orders-to-reporting" &&
+            entry.Metadata["providerId"] == "regional-traffic-mesh" &&
+            entry.Metadata["edgeNodeIds"] == "storefront-edge" &&
             entry.Metadata["policySource"] == "cell-default" &&
             entry.Metadata["sourceHealthIsolationIds"] == "orders-cell-health" &&
             entry.Metadata["targetHealthIsolationIds"] == "reporting-cell-health");
         Assert.Contains(surface.Entries, entry =>
             entry.Id == "orders-to-platform-control" &&
+            entry.Metadata["providerId"] == "control-plane-gateway" &&
+            entry.Metadata["edgeNodeIds"] == "platform-edge" &&
             entry.Metadata["materializationMode"] == "provider-managed" &&
             entry.Metadata["handoff"] == "ingress-provider");
     }
@@ -159,6 +198,53 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
         var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
 
         Assert.Contains("missing-route", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void BuildFailsWhenTrafficAutomationTargetsEdgeNodesWithoutEdgeTechnology()
+    {
+        var builder = new EngineBuilder(new ServiceCollection());
+        builder.UseSettings(new EngineSettings(
+            blueprint: "Microservice",
+            cells: new CellSettings(
+                new CellTrafficAutomationSettings(
+                    defaultAutomationMode: null,
+                    defaultTriggerMode: null,
+                    defaultActionMode: null,
+                    defaultMaterializationMode: null,
+                    defaultProviderId: null,
+                    defaultEdgeNodeIds: ["storefront-edge"],
+                    routes:
+                    [
+                        new CellTrafficAutomationRouteSettings(
+                            routeId: "orders-to-reporting",
+                            automationMode: "automatic")
+                    ]))));
+        builder.AddModule(new PlatformTestModule());
+        builder.AddModule(new DiscoveryTestModule());
+        builder.AddModule(new CellTrafficAutomationCatalogTestModule());
+        builder.AddCellBoundary(new CellBoundaryDescriptor(
+            id: "platform-control",
+            sourceModuleId: "platform",
+            displayName: "Platform Control Cell",
+            description: "Keeps shared control-plane workflows in one boundary.",
+            blastRadius: "shared-control",
+            routingStrategy: "local-preferred",
+            moduleIds: ["platform"]));
+        builder.AddCellHealthIsolation(new CellHealthIsolationDescriptor(
+            id: "platform-control-health",
+            sourceModuleId: "platform",
+            cellId: "platform-control",
+            displayName: "Platform Control Health Isolation",
+            description: "Contains control-plane failures without leaking them into product cells.",
+            failureIsolationMode: "fail-closed",
+            readinessScope: "dependency-aware",
+            restartScope: "host-coordinated",
+            dependencyIds: ["consul-control"]));
+
+        var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+        Assert.Contains("edge-native-delivery", exception.Message, StringComparison.Ordinal);
     }
 
     private sealed class CellTrafficAutomationCatalogTestModule :

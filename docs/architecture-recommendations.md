@@ -253,7 +253,7 @@ Recommendation: keep cells as a technology/profile concern instead of a new blue
 
 Implementation outline:
 - shipped baseline: built-in `TechnologyDescriptor` `cell-based-architecture`, `CellBoundaryDescriptor`, `ICellBoundaryContributor`, `ICellBoundaryCatalog`, `CellRouteDescriptor`, `ICellRouteContributor`, `ICellRouteCatalog`, `CellHealthIsolationDescriptor`, `ICellHealthIsolationContributor`, `ICellHealthIsolationCatalog`, `CellTrafficAutomationRuntimeDescriptor`, `ICellTrafficAutomationRuntimeCatalog`, `Engine:Cells:TrafficAutomation`, `/engine/cells`, `/engine/cell-routes`, `/engine/cell-health-isolations`, `/engine/cell-traffic-automations`, `snapshot.CellBoundaries`, `snapshot.CellRoutes`, `snapshot.CellHealthIsolations`, `snapshot.CellTrafficAutomations`, and the `cell-boundaries`, `cell-routes`, `cell-health-isolations`, plus `cell-traffic-automations` technology runtime surfaces
-- later follow-through: provider-specific or edge-aware traffic automation
+- later follow-through: concrete provider-managed or edge-runtime traffic materializers on top of the shipped provider-aware and edge-aware automation catalog
 - later follow-through: module-to-cell mapping through configuration when explicit operator scenarios justify that extra layer
 
 Effort: medium for the remaining follow-through.

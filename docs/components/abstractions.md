@@ -247,8 +247,10 @@ namespace now carries `CellBoundaryDescriptor`, `ICellBoundaryContributor`,
 `CellTrafficAutomationRuntimeDescriptor`, and `ICellTrafficAutomationRuntimeCatalog` so modules,
 hosts, and operator tooling can talk about explicit module-owned blast-radius boundaries,
 governed cell-to-cell routing posture, cell health-isolation posture, and effective automation
-policy without leaking ASP.NET Core ingress, service-mesh, traffic-manager, or health-probe types
-into `Cephalon.Abstractions`.
+policy without leaking ASP.NET Core ingress, service-mesh, traffic-manager, edge-pack, or
+health-probe types into `Cephalon.Abstractions`. That same runtime descriptor now also carries
+first-class optional `providerId` and `edgeNodeIds` targeting, while the shared catalog can answer
+provider and edge-node drill-downs without depending on `Cephalon.Edge` concrete types.
 
 The same phase 12 rule now also covers backend-for-frontend REST documentation materialization.
 `BackendForFrontendRestDocumentRuntimeDescriptor` and

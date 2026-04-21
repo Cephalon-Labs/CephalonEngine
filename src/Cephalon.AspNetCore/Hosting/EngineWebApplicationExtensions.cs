@@ -1004,6 +1004,12 @@ public static class EngineWebApplicationExtensions
         engineGroup.MapGet("/cell-traffic-automations/target-cells/{cellId}", (string cellId, [FromServices] ICellTrafficAutomationRuntimeCatalog catalog) =>
                 TypedResults.Ok(catalog.GetByTargetCellId(cellId)))
             .WithName("GetCephalonCellTrafficAutomationsByTargetCell");
+        engineGroup.MapGet("/cell-traffic-automations/providers/{providerId}", (string providerId, [FromServices] ICellTrafficAutomationRuntimeCatalog catalog) =>
+                TypedResults.Ok(catalog.GetByProvider(providerId)))
+            .WithName("GetCephalonCellTrafficAutomationsByProvider");
+        engineGroup.MapGet("/cell-traffic-automations/edge-nodes/{edgeNodeId}", (string edgeNodeId, [FromServices] ICellTrafficAutomationRuntimeCatalog catalog) =>
+                TypedResults.Ok(catalog.GetByEdgeNodeId(edgeNodeId)))
+            .WithName("GetCephalonCellTrafficAutomationsByEdgeNode");
         engineGroup.MapGet("/cell-traffic-automations/health-isolations/{healthIsolationId}", (string healthIsolationId, [FromServices] ICellTrafficAutomationRuntimeCatalog catalog) =>
                 TypedResults.Ok(catalog.GetByHealthIsolationId(healthIsolationId)))
             .WithName("GetCephalonCellTrafficAutomationsByHealthIsolation");

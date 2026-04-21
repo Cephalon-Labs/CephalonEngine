@@ -104,12 +104,15 @@ and `/engine/cell-health-isolations/dependencies/{dependencyId}` when the engine
 `/engine/cell-traffic-automations/routes/{routeId}`,
 `/engine/cell-traffic-automations/source-cells/{cellId}`,
 `/engine/cell-traffic-automations/target-cells/{cellId}`, and
+`/engine/cell-traffic-automations/providers/{providerId}`,
+`/engine/cell-traffic-automations/edge-nodes/{edgeNodeId}`, and
 `/engine/cell-traffic-automations/health-isolations/{healthIsolationId}` when the engine-owned
 `ICellTrafficAutomationRuntimeCatalog` is active. `/engine/technology-surfaces/cell-based-architecture`
 keeps the same topology, routing, health-isolation posture, and effective automation posture
-visible through the existing technology-surface projection. That keeps the phase 13 cell baseline
-operator-facing without turning cell topology, traffic posture, health-partition posture, or
-traffic automation into an ASP.NET Core-only concept.
+visible through the existing technology-surface projection, including first-class `providerId` and
+`edgeNodeIds` targeting. That keeps the phase 13 cell baseline operator-facing without turning
+cell topology, traffic posture, health-partition posture, or traffic automation into an ASP.NET
+Core-only concept.
 
 The same host now also maps `/engine/data-products` plus `/engine/data-products/{dataProductId}`
 when the engine-owned `IDataProductCatalog` is active. That keeps the first data mesh/runtime

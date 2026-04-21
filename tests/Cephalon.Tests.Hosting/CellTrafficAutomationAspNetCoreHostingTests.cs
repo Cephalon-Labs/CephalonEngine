@@ -2,6 +2,8 @@ using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Resilience;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.AspNetCore.Hosting;
+using Cephalon.Edge.Registration;
+using Cephalon.Edge.Services;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Runtime;
@@ -27,13 +29,18 @@ public sealed class CellTrafficAutomationAspNetCoreHostingTests
             .AddCheck("cephalon.readiness", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy(), tags: ["ready", "engine"]);
         builder.Services.AddSingleton<IRateLimitingRuntimeCatalog>(EmptyRateLimitingRuntimeCatalog.Instance);
         builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "Microservice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Technologies:0"] = "EdgeNativeDelivery";
         builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:DefaultAutomationMode"] = "automatic";
         builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:DefaultActionMode"] = "shed-load";
+        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:DefaultProviderId"] = "regional-traffic-mesh";
+        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:DefaultEdgeNodeIds:0"] = "storefront-edge";
         builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:RouteId"] = "orders-to-platform-control";
         builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:AutomationMode"] = "advisory";
         builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:TriggerMode"] = "source-health";
         builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:ActionMode"] = "prefer-local-route";
         builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:MaterializationMode"] = "provider-managed";
+        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:ProviderId"] = "control-plane-gateway";
+        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:EdgeNodeIds:0"] = "platform-edge";
         builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:Notes"] = "Keep provider handoff explicit for control-plane traffic.";
         builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:Metadata:handoff"] = "ingress-provider";
         builder.Services.AddCephalon(engine =>
@@ -42,6 +49,19 @@ public sealed class CellTrafficAutomationAspNetCoreHostingTests
             engine.AddModule(new PlatformTestModule());
             engine.AddModule(new DiscoveryTestModule());
             engine.AddModule(new CellTrafficAutomationHostingTestModule());
+            engine.AddEdge(options =>
+            {
+                options.Nodes.Add(new EdgeNodeDescriptor(
+                    id: "storefront-edge",
+                    displayName: "Storefront Edge",
+                    description: "Regional node that fronts storefront traffic.",
+                    tags: ["storefront", "regional"]));
+                options.Nodes.Add(new EdgeNodeDescriptor(
+                    id: "platform-edge",
+                    displayName: "Platform Edge",
+                    description: "Control-plane edge that fronts platform traffic.",
+                    tags: ["platform", "control-plane"]));
+            });
             engine.AddCellBoundary(new CellBoundaryDescriptor(
                 id: "platform-control",
                 sourceModuleId: "platform",
@@ -73,6 +93,8 @@ public sealed class CellTrafficAutomationAspNetCoreHostingTests
         var routeAutomation = await client.GetFromJsonAsync<CellTrafficAutomationRuntimeDescriptor>("/engine/cell-traffic-automations/routes/orders-to-platform-control");
         var sourceCellAutomations = await client.GetFromJsonAsync<CellTrafficAutomationRuntimeDescriptor[]>("/engine/cell-traffic-automations/source-cells/orders-cell");
         var targetCellAutomations = await client.GetFromJsonAsync<CellTrafficAutomationRuntimeDescriptor[]>("/engine/cell-traffic-automations/target-cells/reporting-cell");
+        var providerAutomations = await client.GetFromJsonAsync<CellTrafficAutomationRuntimeDescriptor[]>("/engine/cell-traffic-automations/providers/regional-traffic-mesh");
+        var edgeNodeAutomations = await client.GetFromJsonAsync<CellTrafficAutomationRuntimeDescriptor[]>("/engine/cell-traffic-automations/edge-nodes/storefront-edge");
         var healthIsolationAutomations = await client.GetFromJsonAsync<CellTrafficAutomationRuntimeDescriptor[]>("/engine/cell-traffic-automations/health-isolations/orders-cell-health");
         var surfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/cell-based-architecture");
         var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
@@ -81,7 +103,10 @@ public sealed class CellTrafficAutomationAspNetCoreHostingTests
         Assert.Equal(2, automations.Length);
         Assert.Contains(automations, candidate =>
             candidate.RouteId == "orders-to-reporting" &&
-            candidate.AutomationMode == "automatic");
+            candidate.AutomationMode == "automatic" &&
+            candidate.ProviderId == "regional-traffic-mesh" &&
+            candidate.EdgeNodeIds.SequenceEqual(["storefront-edge"]) &&
+            candidate.MaterializationMode == "provider-and-edge-managed");
 
         Assert.NotNull(moduleAutomations);
         Assert.Equal(2, moduleAutomations.Length);
@@ -91,6 +116,8 @@ public sealed class CellTrafficAutomationAspNetCoreHostingTests
         Assert.Equal("source-health", routeAutomation.TriggerMode);
         Assert.Equal("prefer-local-route", routeAutomation.ActionMode);
         Assert.Equal("provider-managed", routeAutomation.MaterializationMode);
+        Assert.Equal("control-plane-gateway", routeAutomation.ProviderId);
+        Assert.Equal(["platform-edge"], routeAutomation.EdgeNodeIds);
         Assert.Equal("cell-route", routeAutomation.PolicySource);
         Assert.Equal("Keep provider handoff explicit for control-plane traffic.", routeAutomation.RuntimeMetadata["note"]);
 
@@ -101,6 +128,14 @@ public sealed class CellTrafficAutomationAspNetCoreHostingTests
         var reportingAutomation = Assert.Single(targetCellAutomations);
         Assert.Equal("orders-to-reporting", reportingAutomation.RouteId);
 
+        Assert.NotNull(providerAutomations);
+        var providerAutomation = Assert.Single(providerAutomations);
+        Assert.Equal("orders-to-reporting", providerAutomation.RouteId);
+
+        Assert.NotNull(edgeNodeAutomations);
+        var edgeAutomation = Assert.Single(edgeNodeAutomations);
+        Assert.Equal("orders-to-reporting", edgeAutomation.RouteId);
+
         Assert.NotNull(healthIsolationAutomations);
         Assert.Equal(2, healthIsolationAutomations.Length);
 
@@ -109,7 +144,14 @@ public sealed class CellTrafficAutomationAspNetCoreHostingTests
             surfaces,
             static surface => surface.SurfaceId == "cell-traffic-automations");
         Assert.Contains(trafficAutomationSurface.Entries, entry =>
+            entry.Id == "orders-to-reporting" &&
+            entry.Metadata["providerId"] == "regional-traffic-mesh" &&
+            entry.Metadata["edgeNodeIds"] == "storefront-edge" &&
+            entry.Metadata["materializationMode"] == "provider-and-edge-managed");
+        Assert.Contains(trafficAutomationSurface.Entries, entry =>
             entry.Id == "orders-to-platform-control" &&
+            entry.Metadata["providerId"] == "control-plane-gateway" &&
+            entry.Metadata["edgeNodeIds"] == "platform-edge" &&
             entry.Metadata["materializationMode"] == "provider-managed" &&
             entry.Metadata["handoff"] == "ingress-provider");
 
@@ -117,7 +159,9 @@ public sealed class CellTrafficAutomationAspNetCoreHostingTests
         Assert.Equal(2, snapshot.CellTrafficAutomations.Count);
         Assert.Contains(snapshot.CellTrafficAutomations, candidate =>
             candidate.RouteId == "orders-to-reporting" &&
-            candidate.TriggerMode == "source-or-target-health");
+            candidate.TriggerMode == "source-or-target-health" &&
+            candidate.ProviderId == "regional-traffic-mesh" &&
+            candidate.EdgeNodeIds.SequenceEqual(["storefront-edge"]));
     }
 
     private sealed class CellTrafficAutomationHostingTestModule :

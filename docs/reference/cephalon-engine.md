@@ -2344,6 +2344,27 @@ Parameters:
 - `notes`: Optional operator-facing notes for this route-specific overlay.
 - `metadata`: Optional route-specific runtime metadata.
 
+<a id="member-m-cephalon-engine-configuration-celltrafficautomationroutesettings-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `CellTrafficAutomationRouteSettings`
+
+```csharp
+CellTrafficAutomationRouteSettings(string routeId, string automationMode, string triggerMode, string actionMode, string materializationMode, string notes, IReadOnlyDictionary<string, string> metadata, string providerId, IReadOnlyList<string> edgeNodeIds)
+```
+
+Creates cell traffic-automation route settings with provider and edge targeting.
+
+Parameters:
+- `routeId`: The stable governed route identifier.
+- `automationMode`: The optional normalized automation posture for this route.
+- `triggerMode`: The optional normalized trigger posture for this route.
+- `actionMode`: The optional normalized action posture for this route.
+- `materializationMode`: The optional normalized materialization posture for this route.
+- `notes`: Optional operator-facing notes for this route-specific overlay.
+- `metadata`: Optional route-specific runtime metadata.
+- `providerId`: The optional external provider or control-plane identifier for this route.
+- `edgeNodeIds`: The optional edge-node identifiers for this route.
+
 #### Properties
 
 <a id="member-p-cephalon-engine-configuration-celltrafficautomationroutesettings-actionmode"></a>
@@ -2365,6 +2386,16 @@ string AutomationMode { get; }
 ```
 
 Gets the optional normalized automation posture for this route.
+
+<a id="member-p-cephalon-engine-configuration-celltrafficautomationroutesettings-edgenodeids"></a>
+
+##### `EdgeNodeIds`
+
+```csharp
+IReadOnlyList<string> EdgeNodeIds { get; }
+```
+
+Gets the optional edge-node identifiers for this route.
 
 <a id="member-p-cephalon-engine-configuration-celltrafficautomationroutesettings-materializationmode"></a>
 
@@ -2395,6 +2426,16 @@ string Notes { get; }
 ```
 
 Gets optional operator-facing notes for this route-specific overlay.
+
+<a id="member-p-cephalon-engine-configuration-celltrafficautomationroutesettings-providerid"></a>
+
+##### `ProviderId`
+
+```csharp
+string ProviderId { get; }
+```
+
+Gets the optional external provider or control-plane identifier for this route.
 
 <a id="member-p-cephalon-engine-configuration-celltrafficautomationroutesettings-routeid"></a>
 
@@ -2463,6 +2504,25 @@ Parameters:
 - `defaultMaterializationMode`: The default normalized materialization posture for active governed routes.
 - `routes`: The route-specific cell traffic-automation overrides.
 
+<a id="member-m-cephalon-engine-configuration-celltrafficautomationsettings-ctor-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-engine-configuration-celltrafficautomationroutesettings"></a>
+
+##### `CellTrafficAutomationSettings`
+
+```csharp
+CellTrafficAutomationSettings(string defaultAutomationMode, string defaultTriggerMode, string defaultActionMode, string defaultMaterializationMode, string defaultProviderId, IReadOnlyList<string> defaultEdgeNodeIds, IReadOnlyList<CellTrafficAutomationRouteSettings> routes)
+```
+
+Creates cell traffic-automation settings with provider and edge defaults.
+
+Parameters:
+- `defaultAutomationMode`: The default normalized automation posture for active governed routes.
+- `defaultTriggerMode`: The default normalized trigger posture for active governed routes.
+- `defaultActionMode`: The default normalized action posture for active governed routes.
+- `defaultMaterializationMode`: The default normalized materialization posture for active governed routes.
+- `defaultProviderId`: The optional default external provider or control-plane identifier.
+- `defaultEdgeNodeIds`: The optional default edge-node identifiers.
+- `routes`: The route-specific cell traffic-automation overrides.
+
 #### Properties
 
 <a id="member-p-cephalon-engine-configuration-celltrafficautomationsettings-defaultactionmode"></a>
@@ -2485,6 +2545,16 @@ string DefaultAutomationMode { get; }
 
 Gets the default normalized automation posture for active governed routes.
 
+<a id="member-p-cephalon-engine-configuration-celltrafficautomationsettings-defaultedgenodeids"></a>
+
+##### `DefaultEdgeNodeIds`
+
+```csharp
+IReadOnlyList<string> DefaultEdgeNodeIds { get; }
+```
+
+Gets the optional default edge-node identifiers.
+
 <a id="member-p-cephalon-engine-configuration-celltrafficautomationsettings-defaultmaterializationmode"></a>
 
 ##### `DefaultMaterializationMode`
@@ -2494,6 +2564,16 @@ string DefaultMaterializationMode { get; }
 ```
 
 Gets the default normalized materialization posture for active governed routes.
+
+<a id="member-p-cephalon-engine-configuration-celltrafficautomationsettings-defaultproviderid"></a>
+
+##### `DefaultProviderId`
+
+```csharp
+string DefaultProviderId { get; }
+```
+
+Gets the optional default external provider or control-plane identifier.
 
 <a id="member-p-cephalon-engine-configuration-celltrafficautomationsettings-defaulttriggermode"></a>
 

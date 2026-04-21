@@ -2821,9 +2821,17 @@ public sealed class PackageSurfaceTests
         Assert.NotNull(typeof(global::Cephalon.Engine.Configuration.CellSettings)
             .GetProperty("TrafficAutomation", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Engine.Configuration.CellTrafficAutomationSettings)
+            .GetProperty("DefaultProviderId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Engine.Configuration.CellTrafficAutomationSettings)
+            .GetProperty("DefaultEdgeNodeIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Engine.Configuration.CellTrafficAutomationSettings)
             .GetProperty("Routes", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Engine.Configuration.CellTrafficAutomationRouteSettings)
             .GetProperty("RouteId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Engine.Configuration.CellTrafficAutomationRouteSettings)
+            .GetProperty("ProviderId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Engine.Configuration.CellTrafficAutomationRouteSettings)
+            .GetProperty("EdgeNodeIds", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.ICellTrafficAutomationRuntimeCatalog)
             .GetProperty("Automations", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.ICellTrafficAutomationRuntimeCatalog)
@@ -2837,6 +2845,10 @@ public sealed class PackageSurfaceTests
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.ICellTrafficAutomationRuntimeCatalog)
             .GetMethod("GetByTargetCellId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.ICellTrafficAutomationRuntimeCatalog)
+            .GetMethod("GetByProvider", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.ICellTrafficAutomationRuntimeCatalog)
+            .GetMethod("GetByEdgeNodeId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.ICellTrafficAutomationRuntimeCatalog)
             .GetMethod("GetByHealthIsolationId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationRuntimeDescriptor)
             .GetProperty("RouteId", BindingFlags.Instance | BindingFlags.Public));
@@ -2848,6 +2860,10 @@ public sealed class PackageSurfaceTests
             .GetProperty("ActionMode", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationRuntimeDescriptor)
             .GetProperty("MaterializationMode", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationRuntimeDescriptor)
+            .GetProperty("ProviderId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationRuntimeDescriptor)
+            .GetProperty("EdgeNodeIds", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationRuntimeDescriptor)
             .GetProperty("PolicySource", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Technologies.CellTrafficAutomationRuntimeDescriptor)

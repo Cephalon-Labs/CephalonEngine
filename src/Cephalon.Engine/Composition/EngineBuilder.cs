@@ -1008,7 +1008,8 @@ public sealed class EngineBuilder
             var cellTrafficAutomationCatalog = new CellTrafficAutomationRuntimeCatalogSnapshot(
                 activeCellRoutes,
                 activeCellHealthIsolations,
-                cellSettings.TrafficAutomation);
+                cellSettings.TrafficAutomation,
+                technologySelection.IsSelected(BuiltInTechnologies.EdgeNativeDelivery.Id));
             var localizedResources = new LocalizedResourceRegistry();
             foreach (var module in orderedModules.OfType<ILocalizedResourceContributor>())
             {

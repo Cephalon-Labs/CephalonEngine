@@ -25,6 +25,41 @@ public sealed class CellTrafficAutomationRouteSettings
         string? materializationMode = null,
         string? notes = null,
         IReadOnlyDictionary<string, string>? metadata = null)
+        : this(
+            routeId,
+            automationMode,
+            triggerMode,
+            actionMode,
+            materializationMode,
+            notes,
+            metadata,
+            providerId: null,
+            edgeNodeIds: null)
+    {
+    }
+
+    /// <summary>
+    /// Creates cell traffic-automation route settings with provider and edge targeting.
+    /// </summary>
+    /// <param name="routeId">The stable governed route identifier.</param>
+    /// <param name="automationMode">The optional normalized automation posture for this route.</param>
+    /// <param name="triggerMode">The optional normalized trigger posture for this route.</param>
+    /// <param name="actionMode">The optional normalized action posture for this route.</param>
+    /// <param name="materializationMode">The optional normalized materialization posture for this route.</param>
+    /// <param name="notes">Optional operator-facing notes for this route-specific overlay.</param>
+    /// <param name="metadata">Optional route-specific runtime metadata.</param>
+    /// <param name="providerId">The optional external provider or control-plane identifier for this route.</param>
+    /// <param name="edgeNodeIds">The optional edge-node identifiers for this route.</param>
+    public CellTrafficAutomationRouteSettings(
+        string routeId,
+        string? automationMode,
+        string? triggerMode,
+        string? actionMode,
+        string? materializationMode,
+        string? notes,
+        IReadOnlyDictionary<string, string>? metadata,
+        string? providerId,
+        IReadOnlyList<string>? edgeNodeIds = null)
     {
         if (string.IsNullOrWhiteSpace(routeId))
         {
@@ -36,6 +71,8 @@ public sealed class CellTrafficAutomationRouteSettings
         TriggerMode = NormalizeOptionalToken(triggerMode);
         ActionMode = NormalizeOptionalToken(actionMode);
         MaterializationMode = NormalizeOptionalToken(materializationMode);
+        ProviderId = NormalizeOptionalValue(providerId);
+        EdgeNodeIds = NormalizeValues(edgeNodeIds);
         Notes = string.IsNullOrWhiteSpace(notes)
             ? null
             : notes.Trim();
@@ -70,6 +107,16 @@ public sealed class CellTrafficAutomationRouteSettings
     public string? MaterializationMode { get; }
 
     /// <summary>
+    /// Gets the optional external provider or control-plane identifier for this route.
+    /// </summary>
+    public string? ProviderId { get; }
+
+    /// <summary>
+    /// Gets the optional edge-node identifiers for this route.
+    /// </summary>
+    public IReadOnlyList<string> EdgeNodeIds { get; }
+
+    /// <summary>
     /// Gets optional operator-facing notes for this route-specific overlay.
     /// </summary>
     public string? Notes { get; }
@@ -96,7 +143,9 @@ public sealed class CellTrafficAutomationRouteSettings
             actionMode: section["ActionMode"],
             materializationMode: section["MaterializationMode"],
             notes: section["Notes"],
-            metadata: ReadMetadata(section.GetSection("Metadata")));
+            metadata: ReadMetadata(section.GetSection("Metadata")),
+            providerId: section["ProviderId"],
+            edgeNodeIds: ReadValues(section.GetSection("EdgeNodeIds")));
     }
 
     private static string? NormalizeOptionalToken(string? value)
@@ -104,6 +153,23 @@ public sealed class CellTrafficAutomationRouteSettings
         return string.IsNullOrWhiteSpace(value)
             ? null
             : value.Trim().ToLowerInvariant();
+    }
+
+    private static string? NormalizeOptionalValue(string? value)
+    {
+        return string.IsNullOrWhiteSpace(value)
+            ? null
+            : value.Trim();
+    }
+
+    private static string[] NormalizeValues(IReadOnlyList<string>? values)
+    {
+        return values?
+            .Where(static value => !string.IsNullOrWhiteSpace(value))
+            .Select(static value => value.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static value => value, StringComparer.OrdinalIgnoreCase)
+            .ToArray() ?? [];
     }
 
     private static Dictionary<string, string> ReadMetadata(IConfigurationSection section)
@@ -120,5 +186,20 @@ public sealed class CellTrafficAutomationRouteSettings
                 static child => child.Key.Trim(),
                 static child => child.Value!.Trim(),
                 StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static string[] ReadValues(IConfigurationSection section)
+    {
+        if (!section.Exists())
+        {
+            return [];
+        }
+
+        return NormalizeValues(section
+            .GetChildren()
+            .Select(static child => child.Value)
+            .Where(static value => !string.IsNullOrWhiteSpace(value))
+            .Select(static value => value!)
+            .ToArray());
     }
 }

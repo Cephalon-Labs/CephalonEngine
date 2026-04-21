@@ -26,11 +26,42 @@ public sealed class CellTrafficAutomationSettings
         string? defaultActionMode = null,
         string? defaultMaterializationMode = null,
         IReadOnlyList<CellTrafficAutomationRouteSettings>? routes = null)
+        : this(
+            defaultAutomationMode,
+            defaultTriggerMode,
+            defaultActionMode,
+            defaultMaterializationMode,
+            defaultProviderId: null,
+            defaultEdgeNodeIds: null,
+            routes)
+    {
+    }
+
+    /// <summary>
+    /// Creates cell traffic-automation settings with provider and edge defaults.
+    /// </summary>
+    /// <param name="defaultAutomationMode">The default normalized automation posture for active governed routes.</param>
+    /// <param name="defaultTriggerMode">The default normalized trigger posture for active governed routes.</param>
+    /// <param name="defaultActionMode">The default normalized action posture for active governed routes.</param>
+    /// <param name="defaultMaterializationMode">The default normalized materialization posture for active governed routes.</param>
+    /// <param name="defaultProviderId">The optional default external provider or control-plane identifier.</param>
+    /// <param name="defaultEdgeNodeIds">The optional default edge-node identifiers.</param>
+    /// <param name="routes">The route-specific cell traffic-automation overrides.</param>
+    public CellTrafficAutomationSettings(
+        string? defaultAutomationMode,
+        string? defaultTriggerMode,
+        string? defaultActionMode,
+        string? defaultMaterializationMode,
+        string? defaultProviderId,
+        IReadOnlyList<string>? defaultEdgeNodeIds = null,
+        IReadOnlyList<CellTrafficAutomationRouteSettings>? routes = null)
     {
         DefaultAutomationMode = NormalizeOptionalToken(defaultAutomationMode);
         DefaultTriggerMode = NormalizeOptionalToken(defaultTriggerMode);
         DefaultActionMode = NormalizeOptionalToken(defaultActionMode);
         DefaultMaterializationMode = NormalizeOptionalToken(defaultMaterializationMode);
+        DefaultProviderId = NormalizeOptionalValue(defaultProviderId);
+        DefaultEdgeNodeIds = NormalizeValues(defaultEdgeNodeIds);
         Routes = NormalizeRoutes(routes);
     }
 
@@ -55,6 +86,16 @@ public sealed class CellTrafficAutomationSettings
     public string? DefaultMaterializationMode { get; }
 
     /// <summary>
+    /// Gets the optional default external provider or control-plane identifier.
+    /// </summary>
+    public string? DefaultProviderId { get; }
+
+    /// <summary>
+    /// Gets the optional default edge-node identifiers.
+    /// </summary>
+    public IReadOnlyList<string> DefaultEdgeNodeIds { get; }
+
+    /// <summary>
     /// Gets the route-specific cell traffic-automation overrides.
     /// </summary>
     public IReadOnlyList<CellTrafficAutomationRouteSettings> Routes { get; }
@@ -66,7 +107,9 @@ public sealed class CellTrafficAutomationSettings
         DefaultAutomationMode is not null ||
         DefaultTriggerMode is not null ||
         DefaultActionMode is not null ||
-        DefaultMaterializationMode is not null;
+        DefaultMaterializationMode is not null ||
+        DefaultProviderId is not null ||
+        DefaultEdgeNodeIds.Count > 0;
 
     /// <summary>
     /// Gets a value indicating whether any cell traffic-automation settings were explicitly supplied.
@@ -97,6 +140,8 @@ public sealed class CellTrafficAutomationSettings
             defaultTriggerMode: section["DefaultTriggerMode"],
             defaultActionMode: section["DefaultActionMode"],
             defaultMaterializationMode: section["DefaultMaterializationMode"],
+            defaultProviderId: section["DefaultProviderId"],
+            defaultEdgeNodeIds: ReadValues(section.GetSection("DefaultEdgeNodeIds")),
             routes: routeOverrides);
     }
 
@@ -105,6 +150,23 @@ public sealed class CellTrafficAutomationSettings
         return string.IsNullOrWhiteSpace(value)
             ? null
             : value.Trim().ToLowerInvariant();
+    }
+
+    private static string? NormalizeOptionalValue(string? value)
+    {
+        return string.IsNullOrWhiteSpace(value)
+            ? null
+            : value.Trim();
+    }
+
+    private static string[] NormalizeValues(IReadOnlyList<string>? values)
+    {
+        return values?
+            .Where(static value => !string.IsNullOrWhiteSpace(value))
+            .Select(static value => value.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static value => value, StringComparer.OrdinalIgnoreCase)
+            .ToArray() ?? [];
     }
 
     private static CellTrafficAutomationRouteSettings[] NormalizeRoutes(
@@ -131,5 +193,20 @@ public sealed class CellTrafficAutomationSettings
         }
 
         return normalized;
+    }
+
+    private static string[] ReadValues(IConfigurationSection section)
+    {
+        if (!section.Exists())
+        {
+            return [];
+        }
+
+        return NormalizeValues(section
+            .GetChildren()
+            .Select(static child => child.Value)
+            .Where(static value => !string.IsNullOrWhiteSpace(value))
+            .Select(static value => value!)
+            .ToArray());
     }
 }

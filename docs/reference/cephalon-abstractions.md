@@ -22736,6 +22736,41 @@ Parameters:
 - `metadata`: The original authored route metadata.
 - `runtimeMetadata`: Additional runtime-only metadata such as policy notes or overlay provenance.
 
+<a id="member-m-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `CellTrafficAutomationRuntimeDescriptor`
+
+```csharp
+CellTrafficAutomationRuntimeDescriptor(string id, string routeId, string sourceModuleId, string sourceCellId, string targetCellId, string displayName, string description, string routingStrategy, string governanceMode, string automationMode, string triggerMode, string actionMode, string materializationMode, string policySource, IReadOnlyList<string> transportIds, string requiredCapabilityKey, IReadOnlyList<string> sourceHealthIsolationIds, IReadOnlyList<string> targetHealthIsolationIds, IReadOnlyList<string> dependencyIds, IReadOnlyDictionary<string, string> metadata, IReadOnlyDictionary<string, string> runtimeMetadata, string providerId, IReadOnlyList<string> edgeNodeIds)
+```
+
+Creates a cell traffic-automation runtime descriptor with provider and edge targeting.
+
+Parameters:
+- `id`: The stable traffic-automation identifier.
+- `routeId`: The stable governed cell-route identifier that this automation answer applies to.
+- `sourceModuleId`: The Cephalon module that owns the governed route.
+- `sourceCellId`: The source cell identifier.
+- `targetCellId`: The target cell identifier.
+- `displayName`: The operator-facing traffic-automation name.
+- `description`: The human-readable description of the traffic-automation posture.
+- `routingStrategy`: The operator-facing routing strategy inherited from the governed route.
+- `governanceMode`: The operator-facing governance posture inherited from the governed route.
+- `automationMode`: The normalized automation posture, such as `advisory` or `automatic`.
+- `triggerMode`: The normalized trigger posture, such as `source-health` or `source-or-target-health`.
+- `actionMode`: The normalized action posture, such as `quarantine-route` or `shed-load`.
+- `materializationMode`: The normalized materialization posture, such as `runtime-catalog-only`, `provider-managed`, or `edge-managed`.
+- `policySource`: The source of the effective automation policy, such as `cell-default` or `cell-route`.
+- `transportIds`: Optional transport identifiers inherited from the governed route.
+- `requiredCapabilityKey`: An optional capability key inherited from the governed route.
+- `sourceHealthIsolationIds`: The normalized health-isolation identifiers attached to the source cell.
+- `targetHealthIsolationIds`: The normalized health-isolation identifiers attached to the target cell.
+- `dependencyIds`: The normalized dependency identifiers observed across the related health-isolation answers.
+- `metadata`: The original authored route metadata.
+- `runtimeMetadata`: Additional runtime-only metadata such as policy notes or overlay provenance.
+- `providerId`: The optional external provider or control-plane identifier that materializes this automation.
+- `edgeNodeIds`: The optional edge-node identifiers associated with this automation answer.
+
 #### Properties
 
 <a id="member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-actionmode"></a>
@@ -22788,6 +22823,16 @@ string DisplayName { get; }
 
 Gets the operator-facing traffic-automation name.
 
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-edgenodeids"></a>
+
+##### `EdgeNodeIds`
+
+```csharp
+IReadOnlyList<string> EdgeNodeIds { get; }
+```
+
+Gets the optional edge-node identifiers associated with this automation answer.
+
 <a id="member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-governancemode"></a>
 
 ##### `GovernanceMode`
@@ -22837,6 +22882,16 @@ string PolicySource { get; }
 ```
 
 Gets the source of the effective automation policy.
+
+<a id="member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-providerid"></a>
+
+##### `ProviderId`
+
+```csharp
+string ProviderId { get; }
+```
+
+Gets the optional external provider or control-plane identifier that materializes this automation.
 
 <a id="member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-requiredcapabilitykey"></a>
 
@@ -23354,6 +23409,21 @@ Gets all effective cell traffic-automation answers visible to the current runtim
 
 #### Methods
 
+<a id="member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbyedgenodeid-system-string"></a>
+
+##### `GetByEdgeNodeId`
+
+```csharp
+IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> GetByEdgeNodeId(string edgeNodeId)
+```
+
+Gets all effective cell traffic-automation answers that target the requested edge node.
+
+Returns: The matching runtime descriptors, or an empty list when none are active.
+
+Parameters:
+- `edgeNodeId`: The edge-node identifier to filter by.
+
 <a id="member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbyhealthisolationid-system-string"></a>
 
 ##### `GetByHealthIsolationId`
@@ -23383,6 +23453,21 @@ Returns: The matching runtime descriptor, or `null` when it is not active.
 
 Parameters:
 - `automationId`: The traffic-automation identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbyprovider-system-string"></a>
+
+##### `GetByProvider`
+
+```csharp
+IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> GetByProvider(string provider)
+```
+
+Gets all effective cell traffic-automation answers that target the requested external provider.
+
+Returns: The matching runtime descriptors, or an empty list when none are active.
+
+Parameters:
+- `provider`: The provider identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbyrouteid-system-string"></a>
 

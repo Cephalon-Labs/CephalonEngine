@@ -30,7 +30,11 @@
 
 ## How it fits
 
-This pack lets Cephalon model edge topology and deployment concerns through the same technology selection and introspection flow used by the other future-tech companions.
+This pack lets Cephalon model edge topology and deployment concerns through the same technology
+selection and introspection flow used by the other future-tech companions. Phase 13 cell traffic
+automation can now target `edgeNodeIds` on the shared `ICellTrafficAutomationRuntimeCatalog`
+without taking a direct dependency on `Cephalon.Edge`; operators can correlate those automation
+answers with the `edge-nodes` technology surface when `EdgeNativeDelivery` is active.
 
 ## Related docs
 

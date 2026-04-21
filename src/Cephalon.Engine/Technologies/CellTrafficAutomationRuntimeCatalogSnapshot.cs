@@ -19,12 +19,15 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
     private readonly Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>> automationsBySourceModule;
     private readonly Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>> automationsBySourceCellId;
     private readonly Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>> automationsByTargetCellId;
+    private readonly Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>> automationsByProvider;
+    private readonly Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>> automationsByEdgeNodeId;
     private readonly Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>> automationsByHealthIsolationId;
 
     public CellTrafficAutomationRuntimeCatalogSnapshot(
         IEnumerable<CellRouteDescriptor> routes,
         IEnumerable<CellHealthIsolationDescriptor> healthIsolations,
-        CellTrafficAutomationSettings? settings = null)
+        CellTrafficAutomationSettings? settings = null,
+        bool edgeTechnologySelected = false)
     {
         ArgumentNullException.ThrowIfNull(routes);
         ArgumentNullException.ThrowIfNull(healthIsolations);
@@ -49,6 +52,8 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
             automationsBySourceModule = new Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>>(StringComparer.OrdinalIgnoreCase);
             automationsBySourceCellId = new Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>>(StringComparer.OrdinalIgnoreCase);
             automationsByTargetCellId = new Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>>(StringComparer.OrdinalIgnoreCase);
+            automationsByProvider = new Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>>(StringComparer.OrdinalIgnoreCase);
+            automationsByEdgeNodeId = new Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>>(StringComparer.OrdinalIgnoreCase);
             automationsByHealthIsolationId = new Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>>(StringComparer.OrdinalIgnoreCase);
             return;
         }
@@ -68,7 +73,7 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
                 .ToArray();
 
         automations = selectedRoutes
-            .Select(route => CreateDescriptor(route, healthIsolationsByCellId, configuredSettings, routePoliciesById))
+            .Select(route => CreateDescriptor(route, healthIsolationsByCellId, configuredSettings, routePoliciesById, edgeTechnologySelected))
             .OrderBy(static automation => automation.SourceCellId, StringComparer.OrdinalIgnoreCase)
             .ThenBy(static automation => automation.TargetCellId, StringComparer.OrdinalIgnoreCase)
             .ThenBy(static automation => automation.SourceModuleId, StringComparer.OrdinalIgnoreCase)
@@ -81,6 +86,17 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
         automationsBySourceModule = CreateIndex(automations, static automation => automation.SourceModuleId);
         automationsBySourceCellId = CreateIndex(automations, static automation => automation.SourceCellId);
         automationsByTargetCellId = CreateIndex(automations, static automation => automation.TargetCellId);
+        automationsByProvider = CreateOptionalIndex(automations, static automation => automation.ProviderId);
+        automationsByEdgeNodeId = automations
+            .SelectMany(static automation => automation.EdgeNodeIds
+                .Select(edgeNodeId => new KeyValuePair<string, CellTrafficAutomationRuntimeDescriptor>(edgeNodeId, automation)))
+            .GroupBy(static pair => pair.Key, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(
+                static group => group.Key,
+                static group => (IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>)group
+                    .Select(static pair => pair.Value)
+                    .ToArray(),
+                StringComparer.OrdinalIgnoreCase);
         automationsByHealthIsolationId = automations
             .SelectMany(static automation =>
                 automation.SourceHealthIsolationIds
@@ -158,6 +174,30 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
             : [];
     }
 
+    public IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> GetByProvider(string provider)
+    {
+        if (string.IsNullOrWhiteSpace(provider))
+        {
+            return [];
+        }
+
+        return automationsByProvider.TryGetValue(provider.Trim(), out var matches)
+            ? matches
+            : [];
+    }
+
+    public IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> GetByEdgeNodeId(string edgeNodeId)
+    {
+        if (string.IsNullOrWhiteSpace(edgeNodeId))
+        {
+            return [];
+        }
+
+        return automationsByEdgeNodeId.TryGetValue(edgeNodeId.Trim(), out var matches)
+            ? matches
+            : [];
+    }
+
     public IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> GetByHealthIsolationId(string healthIsolationId)
     {
         if (string.IsNullOrWhiteSpace(healthIsolationId))
@@ -174,7 +214,8 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
         CellRouteDescriptor route,
         Dictionary<string, CellHealthIsolationDescriptor[]> healthIsolationsByCellId,
         CellTrafficAutomationSettings settings,
-        Dictionary<string, CellTrafficAutomationRouteSettings> routePoliciesById)
+        Dictionary<string, CellTrafficAutomationRouteSettings> routePoliciesById,
+        bool edgeTechnologySelected)
     {
         var sourceHealthIsolations = healthIsolationsByCellId.TryGetValue(route.SourceCellId, out var sourceMatches)
             ? sourceMatches
@@ -192,6 +233,17 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
         var routePolicy = routePoliciesById.TryGetValue(route.Id, out var policy)
             ? policy
             : null;
+        var providerId = routePolicy?.ProviderId ?? settings.DefaultProviderId;
+        var edgeNodeIds = routePolicy is not null && routePolicy.EdgeNodeIds.Count > 0
+            ? routePolicy.EdgeNodeIds
+            : settings.DefaultEdgeNodeIds;
+
+        if (edgeNodeIds.Count > 0 && !edgeTechnologySelected)
+        {
+            throw new InvalidOperationException(
+                $"Cell traffic automation route '{route.Id}' targets edge nodes but the '{BuiltInTechnologies.EdgeNativeDelivery.Id}' technology is not active.");
+        }
+
         var sourceHealthIsolationIds = sourceHealthIsolations
             .Select(static isolation => isolation.Id)
             .ToArray();
@@ -210,12 +262,18 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
         {
             ["sourceHealthIsolationCount"] = sourceHealthIsolationIds.Length.ToString(CultureInfo.InvariantCulture),
             ["targetHealthIsolationCount"] = targetHealthIsolationIds.Length.ToString(CultureInfo.InvariantCulture),
-            ["dependencyCount"] = dependencyIds.Length.ToString(CultureInfo.InvariantCulture)
+            ["dependencyCount"] = dependencyIds.Length.ToString(CultureInfo.InvariantCulture),
+            ["edgeNodeCount"] = edgeNodeIds.Count.ToString(CultureInfo.InvariantCulture)
         };
 
         if (!string.IsNullOrWhiteSpace(routePolicy?.Notes))
         {
             runtimeMetadata["note"] = routePolicy.Notes!;
+        }
+
+        if (!string.IsNullOrWhiteSpace(providerId))
+        {
+            runtimeMetadata["providerId"] = providerId!;
         }
 
         if (routePolicy is not null)
@@ -247,7 +305,7 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
                 ?? DefaultActionMode,
             materializationMode: routePolicy?.MaterializationMode
                 ?? settings.DefaultMaterializationMode
-                ?? DefaultMaterializationMode,
+                ?? ResolveDefaultMaterializationMode(providerId, edgeNodeIds.Count),
             policySource: routePolicy is null
                 ? "cell-default"
                 : "cell-route",
@@ -257,7 +315,9 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
             targetHealthIsolationIds: targetHealthIsolationIds,
             dependencyIds: dependencyIds,
             metadata: route.Metadata,
-            runtimeMetadata: runtimeMetadata);
+            runtimeMetadata: runtimeMetadata,
+            providerId: providerId,
+            edgeNodeIds: edgeNodeIds);
     }
 
     private static string ResolveDefaultTriggerMode(int sourceHealthIsolationCount, int targetHealthIsolationCount)
@@ -268,6 +328,17 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
             (true, false) => DefaultTriggerModeSource,
             (false, true) => DefaultTriggerModeTarget,
             _ => throw new InvalidOperationException("Cell traffic automation requires one source or target health isolation.")
+        };
+    }
+
+    private static string ResolveDefaultMaterializationMode(string? providerId, int edgeNodeCount)
+    {
+        return (!string.IsNullOrWhiteSpace(providerId), edgeNodeCount > 0) switch
+        {
+            (true, true) => "provider-and-edge-managed",
+            (true, false) => "provider-managed",
+            (false, true) => "edge-managed",
+            _ => DefaultMaterializationMode
         };
     }
 
@@ -303,6 +374,22 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
             .ToDictionary(
                 static group => group.Key,
                 static group => (IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>)group.ToArray(),
+                StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>> CreateOptionalIndex(
+        IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> automations,
+        Func<CellTrafficAutomationRuntimeDescriptor, string?> keySelector)
+    {
+        return automations
+            .Select(automation => new KeyValuePair<string?, CellTrafficAutomationRuntimeDescriptor>(keySelector(automation), automation))
+            .Where(static pair => !string.IsNullOrWhiteSpace(pair.Key))
+            .GroupBy(static pair => pair.Key!, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(
+                static group => group.Key,
+                static group => (IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>)group
+                    .Select(static pair => pair.Value)
+                    .ToArray(),
                 StringComparer.OrdinalIgnoreCase);
     }
 

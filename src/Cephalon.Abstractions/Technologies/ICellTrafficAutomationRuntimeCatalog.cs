@@ -46,6 +46,20 @@ public interface ICellTrafficAutomationRuntimeCatalog
     IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> GetByTargetCellId(string targetCellId);
 
     /// <summary>
+    /// Gets all effective cell traffic-automation answers that target the requested external provider.
+    /// </summary>
+    /// <param name="provider">The provider identifier to filter by.</param>
+    /// <returns>The matching runtime descriptors, or an empty list when none are active.</returns>
+    IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> GetByProvider(string provider);
+
+    /// <summary>
+    /// Gets all effective cell traffic-automation answers that target the requested edge node.
+    /// </summary>
+    /// <param name="edgeNodeId">The edge-node identifier to filter by.</param>
+    /// <returns>The matching runtime descriptors, or an empty list when none are active.</returns>
+    IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> GetByEdgeNodeId(string edgeNodeId);
+
+    /// <summary>
     /// Gets all effective cell traffic-automation answers that reference the requested health-isolation identifier.
     /// </summary>
     /// <param name="healthIsolationId">The health-isolation identifier to filter by.</param>

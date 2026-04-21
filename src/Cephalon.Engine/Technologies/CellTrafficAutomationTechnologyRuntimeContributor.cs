@@ -40,12 +40,19 @@ internal sealed class CellTrafficAutomationTechnologyRuntimeContributor(
             ["sourceHealthIsolationIds"] = string.Join(",", automation.SourceHealthIsolationIds),
             ["targetHealthIsolationIds"] = string.Join(",", automation.TargetHealthIsolationIds),
             ["dependencyIds"] = string.Join(",", automation.DependencyIds),
-            ["transportIds"] = string.Join(",", automation.TransportIds)
+            ["transportIds"] = string.Join(",", automation.TransportIds),
+            ["edgeNodeCount"] = automation.EdgeNodeIds.Count.ToString(CultureInfo.InvariantCulture),
+            ["edgeNodeIds"] = string.Join(",", automation.EdgeNodeIds)
         };
 
         if (!string.IsNullOrWhiteSpace(automation.RequiredCapabilityKey))
         {
             metadata["requiredCapabilityKey"] = automation.RequiredCapabilityKey!;
+        }
+
+        if (!string.IsNullOrWhiteSpace(automation.ProviderId))
+        {
+            metadata["providerId"] = automation.ProviderId!;
         }
 
         foreach (var pair in automation.Metadata)

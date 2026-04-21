@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Cephalon.Abstractions.Technologies;
 
 /// <summary>
@@ -51,6 +53,84 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
         IReadOnlyList<string>? dependencyIds = null,
         IReadOnlyDictionary<string, string>? metadata = null,
         IReadOnlyDictionary<string, string>? runtimeMetadata = null)
+        : this(
+            id,
+            routeId,
+            sourceModuleId,
+            sourceCellId,
+            targetCellId,
+            displayName,
+            description,
+            routingStrategy,
+            governanceMode,
+            automationMode,
+            triggerMode,
+            actionMode,
+            materializationMode,
+            policySource,
+            transportIds,
+            requiredCapabilityKey,
+            sourceHealthIsolationIds,
+            targetHealthIsolationIds,
+            dependencyIds,
+            metadata,
+            runtimeMetadata,
+            providerId: null,
+            edgeNodeIds: null)
+    {
+    }
+
+    /// <summary>
+    /// Creates a cell traffic-automation runtime descriptor with provider and edge targeting.
+    /// </summary>
+    /// <param name="id">The stable traffic-automation identifier.</param>
+    /// <param name="routeId">The stable governed cell-route identifier that this automation answer applies to.</param>
+    /// <param name="sourceModuleId">The Cephalon module that owns the governed route.</param>
+    /// <param name="sourceCellId">The source cell identifier.</param>
+    /// <param name="targetCellId">The target cell identifier.</param>
+    /// <param name="displayName">The operator-facing traffic-automation name.</param>
+    /// <param name="description">The human-readable description of the traffic-automation posture.</param>
+    /// <param name="routingStrategy">The operator-facing routing strategy inherited from the governed route.</param>
+    /// <param name="governanceMode">The operator-facing governance posture inherited from the governed route.</param>
+    /// <param name="automationMode">The normalized automation posture, such as <c>advisory</c> or <c>automatic</c>.</param>
+    /// <param name="triggerMode">The normalized trigger posture, such as <c>source-health</c> or <c>source-or-target-health</c>.</param>
+    /// <param name="actionMode">The normalized action posture, such as <c>quarantine-route</c> or <c>shed-load</c>.</param>
+    /// <param name="materializationMode">The normalized materialization posture, such as <c>runtime-catalog-only</c>, <c>provider-managed</c>, or <c>edge-managed</c>.</param>
+    /// <param name="policySource">The source of the effective automation policy, such as <c>cell-default</c> or <c>cell-route</c>.</param>
+    /// <param name="transportIds">Optional transport identifiers inherited from the governed route.</param>
+    /// <param name="requiredCapabilityKey">An optional capability key inherited from the governed route.</param>
+    /// <param name="sourceHealthIsolationIds">The normalized health-isolation identifiers attached to the source cell.</param>
+    /// <param name="targetHealthIsolationIds">The normalized health-isolation identifiers attached to the target cell.</param>
+    /// <param name="dependencyIds">The normalized dependency identifiers observed across the related health-isolation answers.</param>
+    /// <param name="metadata">The original authored route metadata.</param>
+    /// <param name="runtimeMetadata">Additional runtime-only metadata such as policy notes or overlay provenance.</param>
+    /// <param name="providerId">The optional external provider or control-plane identifier that materializes this automation.</param>
+    /// <param name="edgeNodeIds">The optional edge-node identifiers associated with this automation answer.</param>
+    [JsonConstructor]
+    public CellTrafficAutomationRuntimeDescriptor(
+        string id,
+        string routeId,
+        string sourceModuleId,
+        string sourceCellId,
+        string targetCellId,
+        string displayName,
+        string description,
+        string routingStrategy,
+        string governanceMode,
+        string automationMode,
+        string triggerMode,
+        string actionMode,
+        string materializationMode,
+        string policySource,
+        IReadOnlyList<string>? transportIds,
+        string? requiredCapabilityKey,
+        IReadOnlyList<string>? sourceHealthIsolationIds,
+        IReadOnlyList<string>? targetHealthIsolationIds,
+        IReadOnlyList<string>? dependencyIds,
+        IReadOnlyDictionary<string, string>? metadata,
+        IReadOnlyDictionary<string, string>? runtimeMetadata,
+        string? providerId,
+        IReadOnlyList<string>? edgeNodeIds = null)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -136,6 +216,10 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
         ActionMode = actionMode.Trim();
         MaterializationMode = materializationMode.Trim();
         PolicySource = policySource.Trim();
+        ProviderId = string.IsNullOrWhiteSpace(providerId)
+            ? null
+            : providerId.Trim();
+        EdgeNodeIds = NormalizeValues(edgeNodeIds);
         TransportIds = NormalizeValues(transportIds);
         RequiredCapabilityKey = string.IsNullOrWhiteSpace(requiredCapabilityKey)
             ? null
@@ -215,6 +299,16 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
     /// Gets the normalized materialization posture.
     /// </summary>
     public string MaterializationMode { get; }
+
+    /// <summary>
+    /// Gets the optional external provider or control-plane identifier that materializes this automation.
+    /// </summary>
+    public string? ProviderId { get; }
+
+    /// <summary>
+    /// Gets the optional edge-node identifiers associated with this automation answer.
+    /// </summary>
+    public IReadOnlyList<string> EdgeNodeIds { get; }
 
     /// <summary>
     /// Gets the source of the effective automation policy.
