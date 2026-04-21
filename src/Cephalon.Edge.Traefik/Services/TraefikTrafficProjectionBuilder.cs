@@ -1,5 +1,5 @@
 using System.Globalization;
-using System.Text;
+using Cephalon.Abstractions.Technologies;
 using Cephalon.Edge.Traefik.Configuration;
 
 namespace Cephalon.Edge.Traefik.Services;
@@ -217,6 +217,91 @@ internal sealed record TraefikIngressRouteProjection(
         string.IsNullOrWhiteSpace(TlsOptionsName)
             ? null
             : $"tlsoption/{TlsOptionsNamespace}/{TlsOptionsName}";
+
+    public TraefikIngressRouteResource CreateIngressRouteResource(
+        CellTrafficAutomationRuntimeDescriptor automation,
+        string? resourceVersion = null,
+        TraefikIngressRouteResource? existing = null)
+    {
+        ArgumentNullException.ThrowIfNull(automation);
+
+        var labels = existing?.Metadata?.Labels is null
+            ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            : new Dictionary<string, string>(existing.Metadata.Labels, StringComparer.OrdinalIgnoreCase);
+        var annotations = existing?.Metadata?.Annotations is null
+            ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            : new Dictionary<string, string>(existing.Metadata.Annotations, StringComparer.OrdinalIgnoreCase);
+
+        labels[TraefikOwnership.ManagedByLabel] = TraefikOwnership.ManagedByValue;
+        annotations[TraefikOwnership.AutomationIdAnnotation] = automation.Id;
+        annotations[TraefikOwnership.RouteIdAnnotation] = automation.RouteId;
+        annotations[TraefikOwnership.SourceModuleIdAnnotation] = automation.SourceModuleId;
+
+        return new TraefikIngressRouteResource
+        {
+            ApiVersion = TraefikApiVersion,
+            Kind = "IngressRoute",
+            Metadata = new k8s.Models.V1ObjectMeta
+            {
+                Name = IngressRouteName,
+                NamespaceProperty = RouteNamespace,
+                ResourceVersion = resourceVersion,
+                Labels = labels,
+                Annotations = annotations
+            },
+            Spec = new TraefikIngressRouteSpec
+            {
+                EntryPoints = EntryPoints.Count == 0 ? null : [.. EntryPoints],
+                Routes =
+                [
+                    new TraefikIngressRouteRoute
+                    {
+                        Match = MatchRule,
+                        Kind = "Rule",
+                        Priority = Priority,
+                        Middlewares = Middlewares.Count == 0
+                            ? null
+                            : [.. Middlewares.Select(middleware => new TraefikIngressRouteMiddlewareReference
+                            {
+                                Name = middleware.Name,
+                                NamespaceProperty = StringComparer.OrdinalIgnoreCase.Equals(middleware.Namespace, RouteNamespace)
+                                    ? null
+                                    : middleware.Namespace
+                            })],
+                        Services =
+                        [
+                            new TraefikIngressRouteServiceReference
+                            {
+                                Name = BackendServiceName,
+                                NamespaceProperty = StringComparer.OrdinalIgnoreCase.Equals(BackendNamespace, RouteNamespace)
+                                    ? null
+                                    : BackendNamespace,
+                                Port = BackendPort,
+                                Weight = BackendWeight,
+                                Scheme = BackendScheme,
+                                PassHostHeader = PassHostHeader
+                            }
+                        ]
+                    }
+                ],
+                Tls = string.IsNullOrWhiteSpace(TlsSecretName) && string.IsNullOrWhiteSpace(TlsOptionsName)
+                    ? null
+                    : new TraefikIngressRouteTls
+                    {
+                        SecretName = TlsSecretName,
+                        Options = string.IsNullOrWhiteSpace(TlsOptionsName)
+                            ? null
+                            : new TraefikIngressRouteTlsOptionsReference
+                            {
+                                Name = TlsOptionsName,
+                                NamespaceProperty = StringComparer.OrdinalIgnoreCase.Equals(TlsOptionsNamespace, RouteNamespace)
+                                    ? null
+                                    : TlsOptionsNamespace
+                            }
+                    }
+            }
+        };
+    }
 
     public Dictionary<string, string> CreateMetadata()
     {

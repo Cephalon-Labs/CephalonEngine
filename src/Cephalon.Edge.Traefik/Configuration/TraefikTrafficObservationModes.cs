@@ -15,6 +15,11 @@ public static class TraefikTrafficObservationModes
     /// </summary>
     public const string ObserveOnly = "observe-only";
 
+    /// <summary>
+    /// Applies owned Traefik IngressRoute resources and then observes live control-plane posture from the same runtime surface.
+    /// </summary>
+    public const string ApplyAndReconcile = "apply-and-reconcile";
+
     internal static string Normalize(string? mode)
     {
         var normalized = string.IsNullOrWhiteSpace(mode)
@@ -25,6 +30,7 @@ public static class TraefikTrafficObservationModes
         {
             ConfiguredIntent => ConfiguredIntent,
             ObserveOnly => ObserveOnly,
+            ApplyAndReconcile => ApplyAndReconcile,
             _ => throw new InvalidOperationException(
                 $"Traefik traffic observation mode '{mode}' is not supported.")
         };

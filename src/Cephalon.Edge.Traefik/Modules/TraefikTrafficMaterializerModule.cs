@@ -42,6 +42,10 @@ internal sealed class TraefikTrafficMaterializerModule(TraefikTrafficMaterialize
         if (string.Equals(
                 controlPlaneMode,
                 TraefikTrafficObservationModes.ObserveOnly,
+                StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(
+                controlPlaneMode,
+                TraefikTrafficObservationModes.ApplyAndReconcile,
                 StringComparison.OrdinalIgnoreCase))
         {
             services.TryAddSingleton<TraefikTrafficObservationSource>(serviceProvider =>
@@ -50,6 +54,8 @@ internal sealed class TraefikTrafficMaterializerModule(TraefikTrafficMaterialize
                     serviceProvider.GetRequiredService<TimeProvider>(),
                     serviceProvider.GetService<k8s.IKubernetes>()));
             services.TryAddSingleton<ITraefikTrafficObservationSource>(serviceProvider =>
+                    serviceProvider.GetRequiredService<TraefikTrafficObservationSource>());
+            services.TryAddSingleton<ITraefikTrafficApplyService>(serviceProvider =>
                 serviceProvider.GetRequiredService<TraefikTrafficObservationSource>());
             services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, TraefikTrafficObservationHostedService>());
         }
@@ -58,7 +64,8 @@ internal sealed class TraefikTrafficMaterializerModule(TraefikTrafficMaterialize
             new TraefikTrafficAutomationMaterializer(
                 serviceProvider.GetRequiredService<TraefikTrafficProjectionCatalog>(),
                 options,
-                serviceProvider.GetService<ITraefikTrafficObservationSource>()));
+                serviceProvider.GetService<ITraefikTrafficObservationSource>(),
+                serviceProvider.GetService<ITraefikTrafficApplyService>()));
         services.AddSingleton<ICellTrafficAutomationProviderMaterializer>(serviceProvider =>
             serviceProvider.GetRequiredService<TraefikTrafficAutomationMaterializer>());
         services.AddSingleton<ITechnologyRuntimeContributor>(

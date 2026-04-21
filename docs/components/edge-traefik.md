@@ -1,16 +1,17 @@
 # Cephalon.Edge.Traefik
 
-`Cephalon.Edge.Traefik` is the second provider-specific control-plane materializer pack for Cephalon cell traffic automation. It proves that the shared provider-materializer seam is not overfit to Kubernetes Gateway API by projecting truthful Traefik `IngressRoute` intent and, when enabled, overlaying live Traefik CRD observation back onto the same shared runtime surfaces without moving Traefik-specific assumptions into `Cephalon.Engine`.
+`Cephalon.Edge.Traefik` is the second provider-specific control-plane materializer pack for Cephalon cell traffic automation. It proves that the shared provider-materializer seam is not overfit to Kubernetes Gateway API by projecting truthful Traefik `IngressRoute` intent and, when enabled, overlaying live Traefik CRD observation or ownership-aware `IngressRoute` apply-and-reconcile posture back onto the same shared runtime surfaces without moving Traefik-specific assumptions into `Cephalon.Engine`.
 
 ## What it owns
 
-- `TraefikTrafficMaterializerOptions`, `TraefikTrafficObservationModes`, `TraefikTrafficObservationOptions`, `TraefikIngressRouteOptions`, and `TraefikMiddlewareReferenceOptions` for declarative Traefik `IngressRoute` projection plus opt-in live observation
+- `TraefikTrafficMaterializerOptions`, `TraefikTrafficObservationModes`, `TraefikTrafficObservationOptions`, `TraefikIngressRouteOptions`, and `TraefikMiddlewareReferenceOptions` for declarative Traefik `IngressRoute` projection plus opt-in live observation or apply-and-reconcile execution
 - the `AddTraefikTrafficMaterializer(...)` registration entry point for attaching the pack to an `EngineBuilder`
 - a provider-specific `ICellTrafficAutomationProviderMaterializer` implementation for `providerId = "traefik"`
 - deterministic projection of selected cell routes into Traefik `IngressRoute` intent, including entry points, match rules, middleware references, backend Service references, and TLS options
 - opt-in observe-only polling over Traefik `IngressRoute`, `Middleware`, `TLSOption`, `Secret`, and backend `Service` resources so live ownership, dependency, drift, and freshness posture can flow back into the shared runtime catalog
+- opt-in `apply-and-reconcile` ownership over Traefik `IngressRoute` resources only, while treating referenced `Middleware`, `TLSOption`, `Secret`, and backend `Service` resources as pre-provisioned dependencies that are observed rather than written by this pack
 - the `traefik-ingressroute-traffic-materializations` technology surface under `cell-based-architecture`
-- truthful operator metadata such as `providerRouteId`, `ingressRouteNamespace`, `ingressRouteName`, `entryPoints`, `matchRule`, `middlewareRefs`, `serviceRefs`, `tlsSecretName`, `tlsOptionsRef`, `statusSource`, `observationMode`, freshness metadata, and the shared ownership/dependency/drift/lifecycle-action vocabulary
+- truthful operator metadata such as `providerRouteId`, `ingressRouteNamespace`, `ingressRouteName`, `entryPoints`, `matchRule`, `middlewareRefs`, `serviceRefs`, `tlsSecretName`, `tlsOptionsRef`, `statusSource`, `observationMode`, `ingressRouteWriteAction`, freshness metadata, and the shared ownership/dependency/drift/lifecycle-action vocabulary
 
 ## Main surfaces
 
@@ -37,9 +38,10 @@ materializer selection, startup reconciliation, and the canonical `/engine/cell-
 plus `snapshot.CellTrafficAutomations` truth. `Cephalon.Edge.Traefik` only answers one
 provider-specific question: how should a `provider-managed` automation targeting
 `providerId = "traefik"` project into Traefik `IngressRoute` intent and, when observation is
-enabled, how should the pack read live CRD posture back into that same shared truth?
+enabled, how should the pack read live CRD posture or owned `IngressRoute` write posture back into
+that same shared truth?
 
-This pack currently ships two truthful modes:
+This pack currently ships three truthful modes:
 
 - default `configured-intent`, which reports `providerAction = projected-intent`,
   `observationMode = configured-intent`, `statusSource = configured-intent`,
@@ -54,6 +56,13 @@ This pack currently ships two truthful modes:
   the shared provider materialization state can move to `applied`, `pending`, or `failed` based on
   observed route existence, dependency readiness, ownership, drift, and freshness instead of
   staying projection-only
+- opt-in `apply-and-reconcile`, which reports `providerAction = apply-and-reconcile`,
+  `observationMode = apply-and-reconcile`, and `statusSource = control-plane-apply` during owned
+  write attempts before merging the resulting `ingressRouteWriteAction` together with live
+  `statusSource = traefik-ingressroute-observation` posture; the pack only creates or replaces
+  `IngressRoute` resources that Cephalon already owns or is creating from scratch, while existing
+  unmanaged routes stay blocked as ownership conflicts and the shared provider materialization state
+  still resolves from the merged observed truth instead of a second control-plane registry
 
 What this proves is that a second provider family can publish selected materializer ownership,
 provider-facing route identity, middleware and TLS intent, and the same requested/observed lifecycle
@@ -69,7 +78,7 @@ When the pack owns an automation answer, operators can inspect the same route th
 The technology surface entry lives under `surfaceId = "traefik-ingressroute-traffic-materializations"`
 and carries one provider-facing projection per selected route, including the projected or observed
 `providerRouteId`, entry points, route match, middleware references, backend service reference, TLS
-intent, resource existence, dependency posture, and freshness metadata.
+intent, resource existence, dependency posture, `ingressRouteWriteAction`, and freshness metadata.
 
 ## Registration
 
@@ -145,11 +154,12 @@ this pack is the selected provider materializer for that route.
 
 This pack intentionally does not yet claim:
 
-- apply-and-reconcile ownership over Traefik CRDs
 - controller-driven success or condition semantics beyond observed CRD existence, ownership,
-  dependency, drift, and freshness posture
+  dependency, drift, freshness posture, and owned `IngressRoute` write attempts
 - `TraefikService`, parent `IngressRoute`, or richer multi-layer routing follow-through beyond the
   single route-rule and Service backend baseline
+- prune/delete, ownership transfer cleanup, orphan remediation, or broader lifecycle execution
+  beyond create/replace ownership of the selected `IngressRoute`
 
 Those remain later follow-through so the current provider claim stays honest.
 

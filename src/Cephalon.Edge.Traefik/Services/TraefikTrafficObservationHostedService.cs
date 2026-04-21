@@ -30,21 +30,23 @@ internal sealed class TraefikTrafficObservationHostedService(
 
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
-        if (!materializer.SupportsLiveObservation)
+        if (!materializer.SupportsLiveReconciliation)
         {
             return;
         }
 
         LogObservationLoopStarted(
             logger,
-            TraefikTrafficObservationModes.ObserveOnly,
+            materializer.UsesApplyAndReconcile
+                ? TraefikTrafficObservationModes.ApplyAndReconcile
+                : TraefikTrafficObservationModes.ObserveOnly,
             (int)materializer.ObservationPollingInterval.TotalSeconds);
         await base.StartAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public override async Task StopAsync(CancellationToken cancellationToken)
     {
-        if (!materializer.SupportsLiveObservation)
+        if (!materializer.SupportsLiveReconciliation)
         {
             return;
         }
@@ -55,7 +57,7 @@ internal sealed class TraefikTrafficObservationHostedService(
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        if (!materializer.SupportsLiveObservation)
+        if (!materializer.SupportsLiveReconciliation)
         {
             return;
         }

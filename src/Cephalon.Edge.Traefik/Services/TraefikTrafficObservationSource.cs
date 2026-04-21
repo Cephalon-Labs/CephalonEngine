@@ -12,16 +12,182 @@ namespace Cephalon.Edge.Traefik.Services;
 internal sealed class TraefikTrafficObservationSource(
     TraefikTrafficMaterializerOptions options,
     TimeProvider timeProvider,
-    IKubernetes? providedClient = null) : ITraefikTrafficObservationSource, IDisposable
+    IKubernetes? providedClient = null) : ITraefikTrafficObservationSource, ITraefikTrafficApplyService, IDisposable
 {
     private const string LiveStatusSource = "traefik-ingressroute-observation";
     private const string ObservationUnavailableStatusSource = "observation-unavailable";
     private const string ObservationErrorStatusSource = "observation-error";
+    private const string ApplyStatusSource = "control-plane-apply";
+    private const string ApplyUnavailableStatusSource = "apply-unavailable";
+    private const string ApplyErrorStatusSource = "apply-error";
     private static readonly StringComparer Comparer = StringComparer.OrdinalIgnoreCase;
 
     private readonly TraefikTrafficObservationOptions observationOptions = options.Observation;
     private Kubernetes? ownedClient;
     private bool disposed;
+
+    public async ValueTask<CellTrafficAutomationProviderMaterializationResult> ApplyAsync(
+        CellTrafficAutomationRuntimeDescriptor automation,
+        TraefikIngressRouteProjection projection,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(automation);
+        ArgumentNullException.ThrowIfNull(projection);
+
+        var observedAtUtc = timeProvider.GetUtcNow();
+        var metadata = projection.CreateMetadata();
+        metadata["providerAction"] = TraefikTrafficObservationModes.ApplyAndReconcile;
+        metadata["observationMode"] = TraefikTrafficObservationModes.ApplyAndReconcile;
+        metadata["statusSource"] = ApplyStatusSource;
+        metadata["ownershipState"] = CellTrafficAutomationOwnershipStates.Requested;
+        metadata["dependencyState"] = CellTrafficAutomationDependencyStates.Unknown;
+        metadata["driftState"] = CellTrafficAutomationDriftStates.Unknown;
+        metadata["driftReasons"] = string.Empty;
+        metadata["missingMiddlewareRefs"] = string.Empty;
+        metadata["dependencyMissingRefs"] = string.Empty;
+        metadata["lifecycleAction"] = CellTrafficAutomationLifecycleActions.Reconcile;
+        metadata["ingressRouteWriteAction"] = "none";
+
+        try
+        {
+            var client = GetClient();
+            if (client is null)
+            {
+                metadata["statusSource"] = ApplyUnavailableStatusSource;
+                metadata["resourceState"] = "client-unavailable";
+
+                return new CellTrafficAutomationProviderMaterializationResult(
+                    CellTrafficAutomationProviderMaterializationStates.Failed,
+                    observedAtUtc,
+                    "Apply-and-reconcile Traefik materialization requires either a registered IKubernetes client, an explicit kubeconfig path, or in-cluster configuration.",
+                    metadata);
+            }
+
+            var ingressRoute = await TryReadIngressRouteAsync(client, projection, cancellationToken).ConfigureAwait(false);
+            if (!string.IsNullOrWhiteSpace(ingressRoute.Error))
+            {
+                metadata["statusSource"] = ApplyErrorStatusSource;
+                metadata["resourceState"] = "ingressroute-read-failed";
+
+                return new CellTrafficAutomationProviderMaterializationResult(
+                    CellTrafficAutomationProviderMaterializationStates.Failed,
+                    observedAtUtc,
+                    ingressRoute.Error,
+                    metadata);
+            }
+
+            metadata["ingressRouteExists"] = ingressRoute.Resource is null ? "false" : "true";
+
+            if (ingressRoute.Resource is not null)
+            {
+                ApplyObservedIngressRouteMetadata(metadata, ingressRoute.Resource);
+                var ownership = EvaluateApplyOwnership(ingressRoute.Resource, automation);
+                ApplyOwnershipMetadata(metadata, ingressRoute.Resource, ownership);
+                if (ownership.IsConflict)
+                {
+                    metadata["statusSource"] = ApplyErrorStatusSource;
+                    metadata["resourceState"] = "ownership-conflict";
+                    metadata["driftState"] = CellTrafficAutomationDriftStates.Unknown;
+                    metadata["driftReasons"] = string.Empty;
+                    metadata["ingressRouteWriteAction"] = "blocked";
+
+                    return new CellTrafficAutomationProviderMaterializationResult(
+                        CellTrafficAutomationProviderMaterializationStates.Failed,
+                        observedAtUtc,
+                        ownership.Error,
+                        metadata);
+                }
+            }
+
+            using var ingressRouteClient = new GenericClient(
+                client,
+                TraefikIngressRouteProjection.TraefikApiGroup,
+                TraefikIngressRouteProjection.TraefikResourceVersion,
+                "ingressroutes",
+                disposeClient: false);
+            var desiredRoute = projection.CreateIngressRouteResource(
+                automation,
+                ingressRoute.Resource?.Metadata?.ResourceVersion,
+                ingressRoute.Resource);
+            TraefikIngressRouteResource persistedRoute;
+            if (ingressRoute.Resource is null)
+            {
+                persistedRoute = await ingressRouteClient.CreateNamespacedAsync(
+                    desiredRoute,
+                    projection.RouteNamespace,
+                    cancellationToken).ConfigureAwait(false);
+                metadata["ingressRouteWriteAction"] = "created";
+                metadata["lifecycleAction"] = CellTrafficAutomationLifecycleActions.Create;
+            }
+            else
+            {
+                persistedRoute = await ingressRouteClient.ReplaceNamespacedAsync(
+                    desiredRoute,
+                    projection.RouteNamespace,
+                    projection.IngressRouteName,
+                    cancellationToken).ConfigureAwait(false);
+                metadata["ingressRouteWriteAction"] = "replaced";
+                metadata["lifecycleAction"] = CellTrafficAutomationLifecycleActions.Replace;
+            }
+
+            metadata["resourceState"] = "write-succeeded";
+            metadata["ingressRouteExists"] = "true";
+            metadata["ownershipState"] = CellTrafficAutomationOwnershipStates.Owned;
+            metadata["driftState"] = CellTrafficAutomationDriftStates.Reconciling;
+            metadata["driftReasons"] = string.Empty;
+            ApplyObservedIngressRouteMetadata(metadata, persistedRoute);
+            ApplyOwnershipMetadata(
+                metadata,
+                persistedRoute,
+                new OwnershipEvaluation(CellTrafficAutomationOwnershipStates.Owned, false, null));
+
+            if (!string.IsNullOrWhiteSpace(persistedRoute.Metadata?.ResourceVersion))
+            {
+                metadata["ingressRouteAppliedResourceVersion"] = persistedRoute.Metadata.ResourceVersion!;
+            }
+
+            if (persistedRoute.Metadata?.Generation is not null)
+            {
+                metadata["ingressRouteAppliedGeneration"] =
+                    persistedRoute.Metadata.Generation.Value.ToString(CultureInfo.InvariantCulture);
+            }
+
+            return new CellTrafficAutomationProviderMaterializationResult(
+                CellTrafficAutomationProviderMaterializationStates.Pending,
+                observedAtUtc,
+                metadata: metadata);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (HttpOperationException exception)
+        {
+            metadata["statusSource"] = ApplyErrorStatusSource;
+            metadata["resourceState"] = "apply-error";
+            metadata["ingressRouteWriteAction"] = "failed";
+
+            return new CellTrafficAutomationProviderMaterializationResult(
+                CellTrafficAutomationProviderMaterializationStates.Failed,
+                observedAtUtc,
+                string.IsNullOrWhiteSpace(exception.Message)
+                    ? "The Traefik Kubernetes CRD API rejected the IngressRoute apply request."
+                    : exception.Message,
+                metadata);
+        }
+        catch (Exception exception)
+        {
+            metadata["statusSource"] = ApplyErrorStatusSource;
+            metadata["resourceState"] = "apply-error";
+            metadata["ingressRouteWriteAction"] = "failed";
+
+            return new CellTrafficAutomationProviderMaterializationResult(
+                CellTrafficAutomationProviderMaterializationStates.Failed,
+                observedAtUtc,
+                exception.Message,
+                metadata);
+        }
+    }
 
     public async ValueTask<CellTrafficAutomationProviderMaterializationResult> ObserveAsync(
         CellTrafficAutomationRuntimeDescriptor automation,
@@ -684,6 +850,27 @@ internal sealed class TraefikTrafficObservationSource(
         }
 
         return new OwnershipEvaluation(CellTrafficAutomationOwnershipStates.Requested, false, null);
+    }
+
+    private static OwnershipEvaluation EvaluateApplyOwnership(
+        TraefikIngressRouteResource ingressRoute,
+        CellTrafficAutomationRuntimeDescriptor automation)
+    {
+        var ownership = EvaluateOwnership(ingressRoute, automation);
+        if (ownership.IsConflict)
+        {
+            return ownership;
+        }
+
+        if (Comparer.Equals(ownership.State, CellTrafficAutomationOwnershipStates.Owned))
+        {
+            return ownership;
+        }
+
+        return new OwnershipEvaluation(
+            CellTrafficAutomationOwnershipStates.OwnershipConflict,
+            true,
+            $"Traefik IngressRoute '{ingressRoute.Metadata?.Name ?? automation.RouteId}' already exists but is not marked as owned by Cephalon automation '{automation.Id}'.");
     }
 
     private static List<string> NormalizeValues(IReadOnlyList<string>? values)

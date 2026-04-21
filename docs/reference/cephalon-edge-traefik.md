@@ -372,6 +372,16 @@ public static class TraefikTrafficObservationModes
 
 #### Fields
 
+<a id="member-f-cephalon-edge-traefik-configuration-traefiktrafficobservationmodes-applyandreconcile"></a>
+
+##### `ApplyAndReconcile`
+
+```csharp
+const string ApplyAndReconcile
+```
+
+Applies owned Traefik IngressRoute resources and then observes live control-plane posture from the same runtime surface.
+
 <a id="member-f-cephalon-edge-traefik-configuration-traefiktrafficobservationmodes-configuredintent"></a>
 
 ##### `ConfiguredIntent`
@@ -457,7 +467,7 @@ string Mode { get; set; }
 
 Gets or sets the control-plane mode used by the Traefik materializer.
 
-Remarks: The default value keeps the pack in configured-intent mode so projected-intent behavior remains additive without claiming a live apply. Set this to `observe-only` when the pack should read live Traefik Kubernetes CRD resources and project the observed posture back into the shared runtime catalog.
+Remarks: The default value keeps the pack in configured-intent mode so projected-intent behavior remains additive without claiming a live apply. Set this to `observe-only` when the pack should read live Traefik Kubernetes CRD resources and project the observed posture back into the shared runtime catalog, or to `apply-and-reconcile` when the pack should write owned `IngressRoute` resources before observing live Traefik posture back into that same shared runtime catalog.
 
 <a id="member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-pollingintervalseconds"></a>
 

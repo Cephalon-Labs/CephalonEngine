@@ -18,7 +18,9 @@ public sealed class TraefikTrafficObservationOptions
     /// <remarks>
     /// The default value keeps the pack in configured-intent mode so projected-intent behavior remains additive without
     /// claiming a live apply. Set this to <c>observe-only</c> when the pack should read live Traefik Kubernetes CRD
-    /// resources and project the observed posture back into the shared runtime catalog.
+    /// resources and project the observed posture back into the shared runtime catalog, or to
+    /// <c>apply-and-reconcile</c> when the pack should write owned <c>IngressRoute</c> resources before observing live
+    /// Traefik posture back into that same shared runtime catalog.
     /// </remarks>
     public string Mode { get; set; } = TraefikTrafficObservationModes.ConfiguredIntent;
 

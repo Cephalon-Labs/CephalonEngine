@@ -52,7 +52,8 @@ public sealed class TraefikTrafficMaterializerAspNetCoreHostingTests
             automation.RuntimeMetadata["providerMaterialization.serviceRefs"] == "service/orders-runtime/orders-api:8443@weight/100" &&
             automation.RuntimeMetadata["providerMaterialization.middlewareRefs"] == "middleware/edge-traefik/secure-headers,middleware/edge-security/orders-rate-limit" &&
             automation.RuntimeMetadata["providerMaterialization.ownershipState"] == CellTrafficAutomationOwnershipStates.Requested &&
-            automation.RuntimeMetadata["providerMaterialization.lifecycleAction"] == CellTrafficAutomationLifecycleActions.Project);
+            automation.RuntimeMetadata["providerMaterialization.lifecycleAction"] == CellTrafficAutomationLifecycleActions.Project &&
+            automation.RuntimeMetadata["providerMaterialization.ingressRouteWriteAction"] == "none");
         Assert.Contains(providerAutomations, automation =>
             automation.RouteId == "orders-to-admin-ingress" &&
             automation.ProviderMaterializerId == "traefik-materializer" &&
@@ -146,6 +147,66 @@ public sealed class TraefikTrafficMaterializerAspNetCoreHostingTests
             automation.ProviderMaterializerId == "traefik-materializer" &&
             automation.ProviderMaterializationState == CellTrafficAutomationProviderMaterializationStates.Applied &&
             automation.RuntimeMetadata["providerMaterialization.statusSource"] == "traefik-ingressroute-observation");
+    }
+
+    [Fact]
+    public async Task MapCephalonExposesApplyAndReconcileTraefikTrafficMaterializationSurface()
+    {
+        var builder = CreateBuilder();
+        builder.Services.AddSingleton<ITraefikTrafficApplyService>(
+            new StaticApplyService(() => CreateApplyPendingResult("created")));
+        builder.Services.AddSingleton<ITraefikTrafficObservationSource>(
+            new StaticObservationSource(() => CreateObservedAppliedResult()));
+        builder.Services.AddCephalon(engine =>
+        {
+            engine.UseConfiguration(builder.Configuration);
+            engine.AddModule(new TraefikTrafficHostingTestModule());
+            ConfigureTraefik(engine, controlPlaneMode: TraefikTrafficObservationModes.ApplyAndReconcile);
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var providerAutomations =
+            await client.GetFromJsonAsync<CellTrafficAutomationRuntimeDescriptor[]>("/engine/cell-traffic-automations/providers/traefik");
+        var surfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/cell-based-architecture");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(providerAutomations);
+        Assert.Contains(providerAutomations, automation =>
+            automation.RouteId == "orders-to-public-ingress" &&
+            automation.ProviderMaterializerId == "traefik-materializer" &&
+            automation.ProviderMaterializationState == CellTrafficAutomationProviderMaterializationStates.Applied &&
+            automation.MaterializationState == CellTrafficAutomationMaterializationStates.Applied &&
+            automation.RuntimeMetadata["providerMaterialization.providerAction"] == "apply-and-reconcile" &&
+            automation.RuntimeMetadata["providerMaterialization.observationMode"] == TraefikTrafficObservationModes.ApplyAndReconcile &&
+            automation.RuntimeMetadata["providerMaterialization.statusSource"] == "traefik-ingressroute-observation" &&
+            automation.RuntimeMetadata["providerMaterialization.ingressRouteWriteAction"] == "created" &&
+            automation.RuntimeMetadata["providerMaterialization.resourceState"] == "available" &&
+            automation.RuntimeMetadata["providerMaterialization.ownershipState"] == CellTrafficAutomationOwnershipStates.Owned &&
+            automation.RuntimeMetadata["providerMaterialization.dependencyState"] == CellTrafficAutomationDependencyStates.Satisfied &&
+            automation.RuntimeMetadata["providerMaterialization.driftState"] == CellTrafficAutomationDriftStates.InSync);
+
+        Assert.NotNull(surfaces);
+        var traefikSurface = Assert.Single(
+            surfaces,
+            static surface => surface.SurfaceId == "traefik-ingressroute-traffic-materializations");
+        Assert.Contains(traefikSurface.Entries, entry =>
+            entry.Metadata["routeId"] == "orders-to-public-ingress" &&
+            entry.Metadata["providerAction"] == "apply-and-reconcile" &&
+            entry.Metadata["statusSource"] == "traefik-ingressroute-observation" &&
+            entry.Metadata["ingressRouteWriteAction"] == "created" &&
+            entry.Metadata["observedServiceRefs"] == "service/orders-runtime/orders-api:8443@weight/100");
+
+        Assert.NotNull(snapshot);
+        Assert.Contains(snapshot.CellTrafficAutomations, automation =>
+            automation.RouteId == "orders-to-public-ingress" &&
+            automation.ProviderMaterializerId == "traefik-materializer" &&
+            automation.ProviderMaterializationState == CellTrafficAutomationProviderMaterializationStates.Applied &&
+            automation.RuntimeMetadata["providerMaterialization.ingressRouteWriteAction"] == "created");
     }
 
     private static WebApplicationBuilder CreateBuilder()
@@ -275,11 +336,57 @@ public sealed class TraefikTrafficMaterializerAspNetCoreHostingTests
             metadata: metadata);
     }
 
+    private static CellTrafficAutomationProviderMaterializationResult CreateApplyPendingResult(string writeAction)
+    {
+        var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["providerAction"] = TraefikTrafficObservationModes.ApplyAndReconcile,
+            ["observationMode"] = TraefikTrafficObservationModes.ApplyAndReconcile,
+            ["statusSource"] = "control-plane-apply",
+            ["resourceState"] = "write-succeeded",
+            ["ingressRouteExists"] = "true",
+            ["providerRouteId"] = "ingressroute/edge-traefik/orders-public-ingress",
+            ["ingressRouteResourceId"] = "ingressroute/edge-traefik/orders-public-ingress",
+            ["ingressRouteNamespace"] = "edge-traefik",
+            ["ingressRouteName"] = "orders-public-ingress",
+            ["ownershipState"] = CellTrafficAutomationOwnershipStates.Owned,
+            ["dependencyState"] = CellTrafficAutomationDependencyStates.Unknown,
+            ["driftState"] = CellTrafficAutomationDriftStates.Reconciling,
+            ["driftReasons"] = string.Empty,
+            ["missingMiddlewareRefs"] = string.Empty,
+            ["dependencyMissingRefs"] = string.Empty,
+            ["lifecycleAction"] = string.Equals(writeAction, "created", StringComparison.OrdinalIgnoreCase)
+                ? CellTrafficAutomationLifecycleActions.Create
+                : CellTrafficAutomationLifecycleActions.Replace,
+            ["ingressRouteWriteAction"] = writeAction,
+            ["ingressRouteAppliedGeneration"] = writeAction == "created" ? "1" : "2"
+        };
+
+        return new CellTrafficAutomationProviderMaterializationResult(
+            CellTrafficAutomationProviderMaterializationStates.Pending,
+            DateTimeOffset.UtcNow,
+            metadata: metadata);
+    }
+
     private sealed class StaticObservationSource(
         Func<CellTrafficAutomationProviderMaterializationResult> factory)
         : ITraefikTrafficObservationSource
     {
         public ValueTask<CellTrafficAutomationProviderMaterializationResult> ObserveAsync(
+            CellTrafficAutomationRuntimeDescriptor automation,
+            TraefikIngressRouteProjection projection,
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return ValueTask.FromResult(factory());
+        }
+    }
+
+    private sealed class StaticApplyService(
+        Func<CellTrafficAutomationProviderMaterializationResult> factory)
+        : ITraefikTrafficApplyService
+    {
+        public ValueTask<CellTrafficAutomationProviderMaterializationResult> ApplyAsync(
             CellTrafficAutomationRuntimeDescriptor automation,
             TraefikIngressRouteProjection projection,
             CancellationToken cancellationToken = default)

@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-21T16:25:39.0376527+00:00",
+  "GeneratedAtUtc": "2026-04-21T16:57:41.5384968+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -11889,7 +11889,7 @@
       "Summary": "Defines the stable control-plane modes supported by the Traefik traffic materializer.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 2,
+        "Fields": 3,
         "Properties": 0,
         "Methods": 0
       }
@@ -15096,6 +15096,17 @@
       "AnchorId": "member-f-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationmodes-applyandreconcile",
       "Signature": "const string ApplyAndReconcile",
       "Summary": "Applies owned HTTPRoute resources and then reconciles the observed Gateway API status back into the shared runtime catalog."
+    },
+    {
+      "DisplayName": "ApplyAndReconcile",
+      "Category": "Fields",
+      "DeclaringTypeName": "TraefikTrafficObservationModes",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-f-cephalon-edge-traefik-configuration-traefiktrafficobservationmodes-applyandreconcile",
+      "Signature": "const string ApplyAndReconcile",
+      "Summary": "Applies owned Traefik IngressRoute resources and then observes live control-plane posture from the same runtime surface."
     },
     {
       "DisplayName": "ApplyCephalonRateLimiting",
