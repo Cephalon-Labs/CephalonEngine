@@ -21,6 +21,11 @@ public static class CellTrafficAutomationMaterializationStates
     public const string Applied = "applied";
 
     /// <summary>
+    /// The automation spans multiple materialization dimensions whose observed postures do not currently agree.
+    /// </summary>
+    public const string Partial = "partial";
+
+    /// <summary>
     /// The selected materializer last reported a failure while reconciling the automation.
     /// </summary>
     public const string Failed = "failed";

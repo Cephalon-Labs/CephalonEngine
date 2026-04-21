@@ -5,8 +5,11 @@ namespace Cephalon.Edge.Services;
 internal sealed class EdgeTrafficAutomationMaterializer(IEdgeNodeCatalog catalog) : ICellTrafficAutomationEdgeMaterializer
 {
     public const string DefaultMaterializerId = "edge-runtime-materializer";
+    public const int DefaultPriority = 0;
 
     public string MaterializerId => DefaultMaterializerId;
+
+    public int Priority => DefaultPriority;
 
     public bool CanMaterialize(CellTrafficAutomationRuntimeDescriptor automation)
     {

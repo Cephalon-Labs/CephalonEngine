@@ -144,11 +144,16 @@ shipped there: `ICellTrafficAutomationProviderMaterializer` plus
 `ICellTrafficAutomationEdgeMaterializer` stay host-agnostic in `Cephalon.Abstractions`,
 `CellTrafficAutomationRuntimeCatalogSnapshot` keeps one shared automation truth with selected
 `ProviderMaterializerId` plus `ProviderMaterializationState`/`ObservedAtUtc`/`Error` and
-`EdgeMaterializerId` plus `EdgeMaterializationState`/`ObservedAtUtc`/`Error`, and the engine runs
+`EdgeMaterializerId` plus `EdgeMaterializationState`/`ObservedAtUtc`/`Error`. `ENG-138` now
+hardens that same runtime by selecting the highest-priority provider or edge materializer that
+matches `CanMaterialize(...)`, failing only on ambiguous same-priority ties, and deriving
+`MaterializationState`/`ObservedAtUtc`/`Error` plus `providerSelection.*`,
+`edgeSelection.*`, and `materialization.*` runtime metadata so requested, selected, and observed
+truth stays on one payload. The engine runs
 startup reconciliation through `CellTrafficAutomationProviderMaterializationHostedService` plus
 `CellTrafficAutomationEdgeMaterializationHostedService` so provider-managed, edge-managed, or
-provider-and-edge-managed routes can move from `pending` to `applied`, `failed`, or `unavailable`
-without inventing a second traffic-materialization registry.
+provider-and-edge-managed routes can move from `pending` to `applied`, `failed`, `unavailable`, or
+derived `partial` posture without inventing a second traffic-materialization registry.
 
 That same engine-first runtime truth now also carries the first phase-13 data mesh and CDC
 baselines end to end. Modules and hosts can contribute `DataProductDescriptor` entries and

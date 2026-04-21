@@ -44,9 +44,22 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
         Assert.Equal(CellTrafficAutomationProviderMaterializationStates.Unavailable, defaultAutomation.ProviderMaterializationState);
         Assert.Null(defaultAutomation.ProviderMaterializationObservedAtUtc);
         Assert.Null(defaultAutomation.ProviderMaterializationError);
+        Assert.Equal(CellTrafficAutomationMaterializationStates.Partial, defaultAutomation.MaterializationState);
+        Assert.Null(defaultAutomation.MaterializationObservedAtUtc);
+        Assert.Null(defaultAutomation.MaterializationError);
         Assert.Equal(["orders-cell-health"], defaultAutomation.SourceHealthIsolationIds);
         Assert.Equal(["reporting-cell-health"], defaultAutomation.TargetHealthIsolationIds);
         Assert.Equal(["orders-db", "reporting-replica"], defaultAutomation.DependencyIds);
+        Assert.Equal("0", defaultAutomation.RuntimeMetadata["providerSelection.matchingCandidateCount"]);
+        Assert.Equal(string.Empty, defaultAutomation.RuntimeMetadata["providerSelection.matchingCandidateIds"]);
+        Assert.Equal("1", defaultAutomation.RuntimeMetadata["edgeSelection.matchingCandidateCount"]);
+        Assert.Equal("edge-runtime-materializer", defaultAutomation.RuntimeMetadata["edgeSelection.matchingCandidateIds"]);
+        Assert.Equal("0", defaultAutomation.RuntimeMetadata["edgeSelection.selectedPriority"]);
+        Assert.Equal("provider,edge", defaultAutomation.RuntimeMetadata["materialization.requiredDimensions"]);
+        Assert.Equal("1", defaultAutomation.RuntimeMetadata["materialization.selectedDimensionCount"]);
+        Assert.Equal("edge", defaultAutomation.RuntimeMetadata["materialization.selectedDimensions"]);
+        Assert.Equal(CellTrafficAutomationMaterializationStates.Partial, defaultAutomation.RuntimeMetadata["materialization.state"]);
+        Assert.Equal("provider:unavailable,edge:pending", defaultAutomation.RuntimeMetadata["materialization.stateBreakdown"]);
 
         var routedAutomation = catalog.GetById("orders-to-platform-control");
         Assert.NotNull(routedAutomation);
@@ -65,10 +78,18 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
         Assert.Equal(CellTrafficAutomationProviderMaterializationStates.Unavailable, routedAutomation.ProviderMaterializationState);
         Assert.Null(routedAutomation.ProviderMaterializationObservedAtUtc);
         Assert.Null(routedAutomation.ProviderMaterializationError);
+        Assert.Equal(CellTrafficAutomationMaterializationStates.Unavailable, routedAutomation.MaterializationState);
+        Assert.Null(routedAutomation.MaterializationObservedAtUtc);
+        Assert.Null(routedAutomation.MaterializationError);
         Assert.Equal(["orders-cell-health"], routedAutomation.SourceHealthIsolationIds);
         Assert.Equal(["platform-control-health"], routedAutomation.TargetHealthIsolationIds);
         Assert.Equal("Keep provider handoff explicit for control-plane traffic.", routedAutomation.RuntimeMetadata["note"]);
         Assert.Equal("ingress-provider", routedAutomation.RuntimeMetadata["handoff"]);
+        Assert.Equal("0", routedAutomation.RuntimeMetadata["providerSelection.matchingCandidateCount"]);
+        Assert.Equal("provider", routedAutomation.RuntimeMetadata["materialization.requiredDimensions"]);
+        Assert.Equal("0", routedAutomation.RuntimeMetadata["materialization.selectedDimensionCount"]);
+        Assert.Equal(string.Empty, routedAutomation.RuntimeMetadata["materialization.selectedDimensions"]);
+        Assert.Equal("provider:unavailable", routedAutomation.RuntimeMetadata["materialization.stateBreakdown"]);
 
         var sourceModuleAutomations = catalog.GetBySourceModule("cell-traffic-tests");
         Assert.Equal(2, sourceModuleAutomations.Count);
@@ -92,10 +113,12 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
         Assert.Contains(snapshot.CellTrafficAutomations, automation =>
             automation.RouteId == "orders-to-reporting" &&
             automation.EdgeMaterializerId == "edge-runtime-materializer" &&
-            automation.EdgeMaterializationState == CellTrafficAutomationMaterializationStates.Pending);
+            automation.EdgeMaterializationState == CellTrafficAutomationMaterializationStates.Pending &&
+            automation.MaterializationState == CellTrafficAutomationMaterializationStates.Partial);
         Assert.Contains(snapshot.CellTrafficAutomations, automation =>
             automation.RouteId == "orders-to-platform-control" &&
             automation.ProviderMaterializationState == CellTrafficAutomationProviderMaterializationStates.Unavailable &&
+            automation.MaterializationState == CellTrafficAutomationMaterializationStates.Unavailable &&
             automation.ProviderId == "control-plane-gateway" &&
             automation.EdgeNodeIds.SequenceEqual(["platform-edge"]));
 
@@ -109,6 +132,7 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
             entry.Metadata["edgeMaterializerId"] == "edge-runtime-materializer" &&
             entry.Metadata["edgeMaterializationState"] == CellTrafficAutomationMaterializationStates.Pending &&
             entry.Metadata["providerMaterializationState"] == CellTrafficAutomationProviderMaterializationStates.Unavailable &&
+            entry.Metadata["materializationState"] == CellTrafficAutomationMaterializationStates.Partial &&
             entry.Metadata["policySource"] == "cell-default" &&
             entry.Metadata["sourceHealthIsolationIds"] == "orders-cell-health" &&
             entry.Metadata["targetHealthIsolationIds"] == "reporting-cell-health");
@@ -117,6 +141,7 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
             entry.Metadata["providerId"] == "control-plane-gateway" &&
             entry.Metadata["edgeNodeIds"] == "platform-edge" &&
             entry.Metadata["providerMaterializationState"] == CellTrafficAutomationProviderMaterializationStates.Unavailable &&
+            entry.Metadata["materializationState"] == CellTrafficAutomationMaterializationStates.Unavailable &&
             entry.Metadata["materializationMode"] == "provider-managed" &&
             entry.Metadata["handoff"] == "ingress-provider");
     }
@@ -129,7 +154,13 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
             collection.AddSingleton<ICellTrafficAutomationProviderMaterializer>(
                 new TestCellTrafficAutomationProviderMaterializer(
                     materializerId: "regional-traffic-materializer",
-                    providerId: "regional-traffic-mesh"));
+                    providerId: "regional-traffic-mesh",
+                    priority: 100));
+            collection.AddSingleton<ICellTrafficAutomationProviderMaterializer>(
+                new TestCellTrafficAutomationProviderMaterializer(
+                    materializerId: "regional-traffic-fallback",
+                    providerId: "regional-traffic-mesh",
+                    priority: 10));
         });
 
         using var provider = services.BuildServiceProvider();
@@ -154,6 +185,12 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
         Assert.Equal(CellTrafficAutomationProviderMaterializationStates.Applied, defaultAutomation.ProviderMaterializationState);
         Assert.NotNull(defaultAutomation.ProviderMaterializationObservedAtUtc);
         Assert.Null(defaultAutomation.ProviderMaterializationError);
+        Assert.Equal(CellTrafficAutomationMaterializationStates.Applied, defaultAutomation.MaterializationState);
+        Assert.NotNull(defaultAutomation.MaterializationObservedAtUtc);
+        Assert.Null(defaultAutomation.MaterializationError);
+        Assert.Equal("2", defaultAutomation.RuntimeMetadata["providerSelection.matchingCandidateCount"]);
+        Assert.Equal("regional-traffic-materializer,regional-traffic-fallback", defaultAutomation.RuntimeMetadata["providerSelection.matchingCandidateIds"]);
+        Assert.Equal("100", defaultAutomation.RuntimeMetadata["providerSelection.selectedPriority"]);
         Assert.Equal("regional-route-orders-to-reporting", defaultAutomation.RuntimeMetadata["providerMaterialization.providerRouteId"]);
         Assert.Equal("reconciled", defaultAutomation.RuntimeMetadata["providerMaterialization.providerAction"]);
 
@@ -165,13 +202,15 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
         Assert.Null(routedAutomation.ProviderMaterializerId);
         Assert.Equal(CellTrafficAutomationProviderMaterializationStates.Unavailable, routedAutomation.ProviderMaterializationState);
         Assert.Null(routedAutomation.ProviderMaterializationObservedAtUtc);
+        Assert.Equal(CellTrafficAutomationMaterializationStates.Unavailable, routedAutomation.MaterializationState);
 
         Assert.Contains(snapshot.CellTrafficAutomations, automation =>
             automation.RouteId == "orders-to-reporting" &&
             automation.EdgeMaterializerId == "edge-runtime-materializer" &&
             automation.EdgeMaterializationState == CellTrafficAutomationMaterializationStates.Applied &&
             automation.ProviderMaterializerId == "regional-traffic-materializer" &&
-            automation.ProviderMaterializationState == CellTrafficAutomationProviderMaterializationStates.Applied);
+            automation.ProviderMaterializationState == CellTrafficAutomationProviderMaterializationStates.Applied &&
+            automation.MaterializationState == CellTrafficAutomationMaterializationStates.Applied);
 
         var surface = Assert.Single(
             technologyCatalog.GetByTechnology("cell-based-architecture"),
@@ -183,40 +222,75 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
             entry.Metadata["edgeMaterialization.materializedEdgeNodeIds"] == "storefront-edge" &&
             entry.Metadata["providerMaterializerId"] == "regional-traffic-materializer" &&
             entry.Metadata["providerMaterializationState"] == CellTrafficAutomationProviderMaterializationStates.Applied &&
+            entry.Metadata["materializationState"] == CellTrafficAutomationMaterializationStates.Applied &&
             entry.Metadata["providerMaterialization.providerRouteId"] == "regional-route-orders-to-reporting");
     }
 
     [Fact]
-    public void BuildFailsWhenMultipleProviderMaterializersClaimSameProvider()
+    public void BuildFailsWhenMultipleProviderMaterializersMatchSameAutomationAtSamePriority()
     {
         var services = CreateServiceCollection(collection =>
         {
             collection.AddSingleton<ICellTrafficAutomationProviderMaterializer>(
                 new TestCellTrafficAutomationProviderMaterializer(
                     materializerId: "regional-traffic-materializer-a",
-                    providerId: "regional-traffic-mesh"));
+                    providerId: "regional-traffic-mesh",
+                    priority: 100));
             collection.AddSingleton<ICellTrafficAutomationProviderMaterializer>(
                 new TestCellTrafficAutomationProviderMaterializer(
                     materializerId: "regional-traffic-materializer-b",
-                    providerId: "regional-traffic-mesh"));
+                    providerId: "regional-traffic-mesh",
+                    priority: 100));
         });
 
         using var provider = services.BuildServiceProvider();
 
         var exception = Assert.Throws<InvalidOperationException>(() => provider.GetRequiredService<ICellTrafficAutomationRuntimeCatalog>());
 
+        Assert.Contains("orders-to-reporting", exception.Message, StringComparison.Ordinal);
         Assert.Contains("regional-traffic-mesh", exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]
-    public void BuildFailsWhenMultipleEdgeMaterializersMatchAutomation()
+    public void BuildSelectsHighestPriorityEdgeMaterializerWhenMultipleMatchAutomation()
     {
         var services = CreateServiceCollection(collection =>
         {
             collection.AddSingleton<ICellTrafficAutomationEdgeMaterializer>(
-                new TestEdgeTrafficAutomationMaterializer("edge-materializer-a"));
+                new TestEdgeTrafficAutomationMaterializer(
+                    materializerId: "priority-edge-materializer",
+                    priority: 100));
             collection.AddSingleton<ICellTrafficAutomationEdgeMaterializer>(
-                new TestEdgeTrafficAutomationMaterializer("edge-materializer-b"));
+                new TestEdgeTrafficAutomationMaterializer(
+                    materializerId: "fallback-edge-materializer",
+                    priority: 10));
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var catalog = provider.GetRequiredService<ICellTrafficAutomationRuntimeCatalog>();
+
+        var defaultAutomation = catalog.GetByRouteId("orders-to-reporting");
+        Assert.NotNull(defaultAutomation);
+        Assert.Equal("priority-edge-materializer", defaultAutomation.EdgeMaterializerId);
+        Assert.Equal(CellTrafficAutomationMaterializationStates.Pending, defaultAutomation.EdgeMaterializationState);
+        Assert.Equal("2", defaultAutomation.RuntimeMetadata["edgeSelection.matchingCandidateCount"]);
+        Assert.Equal("priority-edge-materializer,fallback-edge-materializer", defaultAutomation.RuntimeMetadata["edgeSelection.matchingCandidateIds"]);
+        Assert.Equal("100", defaultAutomation.RuntimeMetadata["edgeSelection.selectedPriority"]);
+    }
+
+    [Fact]
+    public void BuildFailsWhenMultipleEdgeMaterializersMatchAutomationAtSamePriority()
+    {
+        var services = CreateServiceCollection(collection =>
+        {
+            collection.AddSingleton<ICellTrafficAutomationEdgeMaterializer>(
+                new TestEdgeTrafficAutomationMaterializer(
+                    materializerId: "edge-materializer-a",
+                    priority: 100));
+            collection.AddSingleton<ICellTrafficAutomationEdgeMaterializer>(
+                new TestEdgeTrafficAutomationMaterializer(
+                    materializerId: "edge-materializer-b",
+                    priority: 100));
         });
 
         using var provider = services.BuildServiceProvider();
@@ -389,11 +463,17 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
 
     private sealed class TestCellTrafficAutomationProviderMaterializer(
         string materializerId,
-        string providerId) : ICellTrafficAutomationProviderMaterializer
+        string providerId,
+        int priority = 0) : ICellTrafficAutomationProviderMaterializer
     {
         public string MaterializerId { get; } = materializerId;
 
         public string ProviderId { get; } = providerId;
+
+        public int Priority { get; } = priority;
+
+        public bool CanMaterialize(CellTrafficAutomationRuntimeDescriptor automation) =>
+            string.Equals(automation.ProviderId, ProviderId, StringComparison.OrdinalIgnoreCase);
 
         public ValueTask<CellTrafficAutomationProviderMaterializationResult> MaterializeAsync(
             CellTrafficAutomationRuntimeDescriptor automation,
@@ -412,9 +492,13 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
         }
     }
 
-    private sealed class TestEdgeTrafficAutomationMaterializer(string materializerId) : ICellTrafficAutomationEdgeMaterializer
+    private sealed class TestEdgeTrafficAutomationMaterializer(
+        string materializerId,
+        int priority = 0) : ICellTrafficAutomationEdgeMaterializer
     {
         public string MaterializerId { get; } = materializerId;
+
+        public int Priority { get; } = priority;
 
         public bool CanMaterialize(CellTrafficAutomationRuntimeDescriptor automation) =>
             automation.EdgeNodeIds.Count > 0;

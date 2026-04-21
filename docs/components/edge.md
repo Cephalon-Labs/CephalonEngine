@@ -40,7 +40,9 @@ also contributes the first concrete `ICellTrafficAutomationEdgeMaterializer` thr
 `EdgeTrafficAutomationMaterializer`, so `edge-managed` or `provider-and-edge-managed` routes can
 reconcile targeted `edgeNodeIds` back into the shared `ICellTrafficAutomationRuntimeCatalog`,
 `snapshot.CellTrafficAutomations`, and the `cell-traffic-automations` technology surface while
-keeping edge-runtime implementation details inside `Cephalon.Edge`.
+keeping edge-runtime implementation details inside `Cephalon.Edge`. That materializer now also
+publishes an explicit low-priority fallback posture so more specific edge companion packs can
+coexist through the shared highest-priority selection model instead of replacing the shared catalog.
 
 ## Related docs
 

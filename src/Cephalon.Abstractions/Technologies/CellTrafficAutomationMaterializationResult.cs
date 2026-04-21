@@ -62,6 +62,7 @@ public class CellTrafficAutomationMaterializationResult
         {
             CellTrafficAutomationMaterializationStates.Pending => CellTrafficAutomationMaterializationStates.Pending,
             CellTrafficAutomationMaterializationStates.Applied => CellTrafficAutomationMaterializationStates.Applied,
+            CellTrafficAutomationMaterializationStates.Partial => CellTrafficAutomationMaterializationStates.Partial,
             CellTrafficAutomationMaterializationStates.Failed => CellTrafficAutomationMaterializationStates.Failed,
             CellTrafficAutomationMaterializationStates.Unavailable => CellTrafficAutomationMaterializationStates.Unavailable,
             _ => throw new ArgumentOutOfRangeException(nameof(state), state, "Materialization state is not supported.")

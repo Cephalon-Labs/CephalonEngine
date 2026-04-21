@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-21T11:31:06.448567+00:00",
+  "GeneratedAtUtc": "2026-04-21T12:06:49.1060211+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -3310,7 +3310,7 @@
       "Summary": "Defines the stable materialization states for cell traffic automation runtime answers.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 4,
+        "Fields": 5,
         "Properties": 0,
         "Methods": 0
       }
@@ -3371,7 +3371,7 @@
       "MemberCounts": {
         "Constructors": 3,
         "Fields": 0,
-        "Properties": 31,
+        "Properties": 34,
         "Methods": 0
       }
     },
@@ -6386,7 +6386,7 @@
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
-        "Properties": 1,
+        "Properties": 2,
         "Methods": 2
       }
     },
@@ -6401,8 +6401,8 @@
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
-        "Properties": 2,
-        "Methods": 1
+        "Properties": 3,
+        "Methods": 2
       }
     },
     {
@@ -17521,6 +17521,17 @@
     },
     {
       "DisplayName": "CanMaterialize",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICellTrafficAutomationProviderMaterializer",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-icelltrafficautomationprovidermaterializer-canmaterialize-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor",
+      "Signature": "bool CanMaterialize(CellTrafficAutomationRuntimeDescriptor automation)",
+      "Summary": "Determines whether this materializer owns the requested traffic automation answer for the declared provider."
+    },
+    {
+      "DisplayName": "CanMaterialize",
       "Category": "Properties",
       "DeclaringTypeName": "StranglerFigIngressRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Patterns",
@@ -18417,8 +18428,8 @@
       "NamespaceName": "Cephalon.Abstractions.Technologies",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string",
-      "Signature": "CellTrafficAutomationRuntimeDescriptor(string id, string routeId, string sourceModuleId, string sourceCellId, string targetCellId, string displayName, string description, string routingStrategy, string governanceMode, string automationMode, string triggerMode, string actionMode, string materializationMode, string policySource, IReadOnlyList\u003Cstring\u003E transportIds, string requiredCapabilityKey, IReadOnlyList\u003Cstring\u003E sourceHealthIsolationIds, IReadOnlyList\u003Cstring\u003E targetHealthIsolationIds, IReadOnlyList\u003Cstring\u003E dependencyIds, IReadOnlyDictionary\u003Cstring, string\u003E metadata, IReadOnlyDictionary\u003Cstring, string\u003E runtimeMetadata, string providerId, IReadOnlyList\u003Cstring\u003E edgeNodeIds, string edgeMaterializerId, string edgeMaterializationState, DateTimeOffset? edgeMaterializationObservedAtUtc, string edgeMaterializationError, string providerMaterializerId, string providerMaterializationState, DateTimeOffset? providerMaterializationObservedAtUtc, string providerMaterializationError)",
+      "AnchorId": "member-m-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-nullable-system-datetimeoffset-system-string",
+      "Signature": "CellTrafficAutomationRuntimeDescriptor(string id, string routeId, string sourceModuleId, string sourceCellId, string targetCellId, string displayName, string description, string routingStrategy, string governanceMode, string automationMode, string triggerMode, string actionMode, string materializationMode, string policySource, IReadOnlyList\u003Cstring\u003E transportIds, string requiredCapabilityKey, IReadOnlyList\u003Cstring\u003E sourceHealthIsolationIds, IReadOnlyList\u003Cstring\u003E targetHealthIsolationIds, IReadOnlyList\u003Cstring\u003E dependencyIds, IReadOnlyDictionary\u003Cstring, string\u003E metadata, IReadOnlyDictionary\u003Cstring, string\u003E runtimeMetadata, string providerId, IReadOnlyList\u003Cstring\u003E edgeNodeIds, string edgeMaterializerId, string edgeMaterializationState, DateTimeOffset? edgeMaterializationObservedAtUtc, string edgeMaterializationError, string providerMaterializerId, string providerMaterializationState, DateTimeOffset? providerMaterializationObservedAtUtc, string providerMaterializationError, string materializationState, DateTimeOffset? materializationObservedAtUtc, string materializationError)",
       "Summary": "Creates a cell traffic-automation runtime descriptor with provider, edge, and materialization state."
     },
     {
@@ -37254,6 +37265,17 @@
       "Summary": "Gets the included tags that matched the published endpoint."
     },
     {
+      "DisplayName": "MaterializationError",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-materializationerror",
+      "Signature": "string MaterializationError { get; }",
+      "Summary": "Gets the optional operator-facing overall materialization error summary."
+    },
+    {
       "DisplayName": "MaterializationMode",
       "Category": "Properties",
       "DeclaringTypeName": "CellTrafficAutomationRouteSettings",
@@ -37274,6 +37296,28 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-materializationmode",
       "Signature": "string MaterializationMode { get; }",
       "Summary": "Gets the normalized materialization posture."
+    },
+    {
+      "DisplayName": "MaterializationObservedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-materializationobservedatutc",
+      "Signature": "DateTimeOffset? MaterializationObservedAtUtc { get; }",
+      "Summary": "Gets the optional UTC timestamp when the overall materialization state was last observed."
+    },
+    {
+      "DisplayName": "MaterializationState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CellTrafficAutomationRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-materializationstate",
+      "Signature": "string MaterializationState { get; }",
+      "Summary": "Gets the optional overall materialization state derived from the selected provider and edge reconciliation posture."
     },
     {
       "DisplayName": "MaterializeAsync",
@@ -41962,6 +42006,17 @@
       "Summary": "Gets the parent tenant identifier when one is known."
     },
     {
+      "DisplayName": "Partial",
+      "Category": "Fields",
+      "DeclaringTypeName": "CellTrafficAutomationMaterializationStates",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationstates-partial",
+      "Signature": "const string Partial",
+      "Summary": "The automation spans multiple materialization dimensions whose observed postures do not currently agree."
+    },
+    {
       "DisplayName": "Password",
       "Category": "Properties",
       "DeclaringTypeName": "CassandraDependencyDefinition",
@@ -43302,6 +43357,28 @@
       "AnchorId": "member-f-cephalon-aspnetcore-grpc-contracts-discovery-principlereply-principlefieldnumber",
       "Signature": "const int PrincipleFieldNumber",
       "Summary": "Field number for the \u0022principle\u0022 field."
+    },
+    {
+      "DisplayName": "Priority",
+      "Category": "Properties",
+      "DeclaringTypeName": "ICellTrafficAutomationEdgeMaterializer",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-icelltrafficautomationedgematerializer-priority",
+      "Signature": "int Priority { get; }",
+      "Summary": "Gets the priority used when multiple edge materializers can reconcile the same automation answer. Higher values win, while ties still fail deterministically."
+    },
+    {
+      "DisplayName": "Priority",
+      "Category": "Properties",
+      "DeclaringTypeName": "ICellTrafficAutomationProviderMaterializer",
+      "NamespaceName": "Cephalon.Abstractions.Technologies",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-technologies-icelltrafficautomationprovidermaterializer-priority",
+      "Signature": "int Priority { get; }",
+      "Summary": "Gets the priority used when multiple provider materializers can reconcile the same automation answer. Higher values win, while ties still fail deterministically."
     },
     {
       "DisplayName": "Probe",

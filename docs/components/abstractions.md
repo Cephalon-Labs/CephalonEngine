@@ -260,8 +260,12 @@ provider and edge-node drill-downs without depending on `Cephalon.Edge` concrete
 host-agnostic surface now also includes `CellTrafficAutomationMaterializationResult`,
 `CellTrafficAutomationMaterializationStates`, `ICellTrafficAutomationProviderMaterializer`, and
 `ICellTrafficAutomationEdgeMaterializer`; the provider-named result/state types stay available as
-compatibility helpers over that generic materialization contract. `CellTrafficAutomationRuntimeDescriptor`
-now carries `edgeMaterializerId`, `edgeMaterializationState`,
+compatibility helpers over that generic materialization contract. Provider materializers now expose
+`Priority` plus `CanMaterialize(...)`, edge materializers now expose `Priority`, and the engine can
+therefore keep deterministic highest-priority selection host-agnostic without leaking control-plane
+SDK or edge runtime types into `Cephalon.Abstractions`. `CellTrafficAutomationRuntimeDescriptor`
+now carries `materializationState`, `materializationObservedAtUtc`, `materializationError`,
+`edgeMaterializerId`, `edgeMaterializationState`,
 `edgeMaterializationObservedAtUtc`, `edgeMaterializationError`, `providerMaterializerId`,
 `providerMaterializationState`, `providerMaterializationObservedAtUtc`, and
 `providerMaterializationError` so provider-managed, edge-managed, or provider-and-edge-managed

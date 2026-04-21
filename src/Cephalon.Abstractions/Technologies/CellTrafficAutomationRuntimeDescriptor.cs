@@ -84,7 +84,10 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
             providerMaterializerId: null,
             providerMaterializationState: null,
             providerMaterializationObservedAtUtc: null,
-            providerMaterializationError: null)
+            providerMaterializationError: null,
+            materializationState: null,
+            materializationObservedAtUtc: null,
+            materializationError: null)
     {
     }
 
@@ -169,7 +172,10 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
             providerMaterializerId: null,
             providerMaterializationState: null,
             providerMaterializationObservedAtUtc: null,
-            providerMaterializationError: null)
+            providerMaterializationError: null,
+            materializationState: null,
+            materializationObservedAtUtc: null,
+            materializationError: null)
     {
     }
 
@@ -207,6 +213,9 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
     /// <param name="providerMaterializationState">The optional provider-materialization state for this automation.</param>
     /// <param name="providerMaterializationObservedAtUtc">The optional UTC timestamp when the provider-materialization state was last observed.</param>
     /// <param name="providerMaterializationError">The optional operator-facing provider-materialization error summary.</param>
+    /// <param name="materializationState">The optional overall materialization state derived from the selected provider and edge reconciliation posture.</param>
+    /// <param name="materializationObservedAtUtc">The optional UTC timestamp when the overall materialization state was last observed.</param>
+    /// <param name="materializationError">The optional operator-facing overall materialization error summary.</param>
     [JsonConstructor]
     public CellTrafficAutomationRuntimeDescriptor(
         string id,
@@ -239,7 +248,10 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
         string? providerMaterializerId,
         string? providerMaterializationState,
         DateTimeOffset? providerMaterializationObservedAtUtc,
-        string? providerMaterializationError)
+        string? providerMaterializationError,
+        string? materializationState,
+        DateTimeOffset? materializationObservedAtUtc,
+        string? materializationError)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -349,6 +361,13 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
         ProviderMaterializationError = string.IsNullOrWhiteSpace(providerMaterializationError)
             ? null
             : providerMaterializationError.Trim();
+        MaterializationState = string.IsNullOrWhiteSpace(materializationState)
+            ? null
+            : materializationState.Trim().ToLowerInvariant();
+        MaterializationObservedAtUtc = materializationObservedAtUtc;
+        MaterializationError = string.IsNullOrWhiteSpace(materializationError)
+            ? null
+            : materializationError.Trim();
         TransportIds = NormalizeValues(transportIds);
         RequiredCapabilityKey = string.IsNullOrWhiteSpace(requiredCapabilityKey)
             ? null
@@ -478,6 +497,21 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
     /// Gets the optional operator-facing provider-materialization error summary.
     /// </summary>
     public string? ProviderMaterializationError { get; }
+
+    /// <summary>
+    /// Gets the optional overall materialization state derived from the selected provider and edge reconciliation posture.
+    /// </summary>
+    public string? MaterializationState { get; }
+
+    /// <summary>
+    /// Gets the optional UTC timestamp when the overall materialization state was last observed.
+    /// </summary>
+    public DateTimeOffset? MaterializationObservedAtUtc { get; }
+
+    /// <summary>
+    /// Gets the optional operator-facing overall materialization error summary.
+    /// </summary>
+    public string? MaterializationError { get; }
 
     /// <summary>
     /// Gets the source of the effective automation policy.

@@ -111,7 +111,12 @@ and `/engine/cell-health-isolations/dependencies/{dependencyId}` when the engine
 keeps the same topology, routing, health-isolation posture, and effective automation posture
 visible through the existing technology-surface projection, including first-class `providerId` and
 `edgeNodeIds` targeting. That same shared route set now also surfaces `providerMaterializerId`,
-`providerMaterializationState`, `providerMaterializationObservedAtUtc`, and
+`providerMaterializationState`, `providerMaterializationObservedAtUtc`,
+`providerMaterializationError`, `edgeMaterializerId`, `edgeMaterializationState`,
+`edgeMaterializationObservedAtUtc`, `edgeMaterializationError`, and the derived
+`materializationState`, `materializationObservedAtUtc`, plus `materializationError`, so the same
+HTTP payload family can publish requested, selected, and observed provider-plus-edge reconciliation
+truth without inventing a second control-plane or edge-only route family.
 `providerMaterializationError`, plus `edgeMaterializerId`, `edgeMaterializationState`,
 `edgeMaterializationObservedAtUtc`, and `edgeMaterializationError` when provider-managed or
 edge-managed automation is reconciled through the engine catalog, so operators can inspect

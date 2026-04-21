@@ -11,6 +11,12 @@ public interface ICellTrafficAutomationEdgeMaterializer
     string MaterializerId { get; }
 
     /// <summary>
+    /// Gets the priority used when multiple edge materializers can reconcile the same automation answer.
+    /// Higher values win, while ties still fail deterministically.
+    /// </summary>
+    int Priority { get; }
+
+    /// <summary>
     /// Determines whether this materializer owns the requested traffic automation answer.
     /// </summary>
     /// <param name="automation">The effective traffic automation answer to evaluate.</param>
