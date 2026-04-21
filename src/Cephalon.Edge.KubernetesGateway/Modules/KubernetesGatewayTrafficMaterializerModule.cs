@@ -38,16 +38,25 @@ internal sealed class KubernetesGatewayTrafficMaterializerModule(KubernetesGatew
         }
 
         services.TryAddSingleton(_ => new KubernetesGatewayTrafficProjectionCatalog(options));
+        var controlPlaneMode = KubernetesGatewayTrafficObservationModes.Normalize(options.Observation.Mode);
         if (string.Equals(
-                KubernetesGatewayTrafficObservationModes.Normalize(options.Observation.Mode),
+                controlPlaneMode,
                 KubernetesGatewayTrafficObservationModes.ObserveOnly,
+                StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(
+                controlPlaneMode,
+                KubernetesGatewayTrafficObservationModes.ApplyAndReconcile,
                 StringComparison.OrdinalIgnoreCase))
         {
-            services.TryAddSingleton<IKubernetesGatewayTrafficObservationSource>(serviceProvider =>
+            services.TryAddSingleton<KubernetesGatewayTrafficObservationSource>(serviceProvider =>
                 new KubernetesGatewayTrafficObservationSource(
                     options,
                     serviceProvider.GetRequiredService<TimeProvider>(),
                     serviceProvider.GetService<k8s.IKubernetes>()));
+            services.TryAddSingleton<IKubernetesGatewayTrafficObservationSource>(serviceProvider =>
+                serviceProvider.GetRequiredService<KubernetesGatewayTrafficObservationSource>());
+            services.TryAddSingleton<IKubernetesGatewayTrafficApplyService>(serviceProvider =>
+                serviceProvider.GetRequiredService<KubernetesGatewayTrafficObservationSource>());
             services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, KubernetesGatewayTrafficObservationHostedService>());
         }
 
@@ -55,7 +64,8 @@ internal sealed class KubernetesGatewayTrafficMaterializerModule(KubernetesGatew
             new KubernetesGatewayTrafficAutomationMaterializer(
                 serviceProvider.GetRequiredService<KubernetesGatewayTrafficProjectionCatalog>(),
                 options,
-                serviceProvider.GetService<IKubernetesGatewayTrafficObservationSource>()));
+                serviceProvider.GetService<IKubernetesGatewayTrafficObservationSource>(),
+                serviceProvider.GetService<IKubernetesGatewayTrafficApplyService>()));
         services.AddSingleton<ICellTrafficAutomationProviderMaterializer>(serviceProvider =>
             serviceProvider.GetRequiredService<KubernetesGatewayTrafficAutomationMaterializer>());
         services.AddSingleton<ITechnologyRuntimeContributor>(

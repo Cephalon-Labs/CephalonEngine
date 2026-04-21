@@ -10,16 +10,179 @@ namespace Cephalon.Edge.KubernetesGateway.Services;
 internal sealed class KubernetesGatewayTrafficObservationSource(
     KubernetesGatewayTrafficMaterializerOptions options,
     TimeProvider timeProvider,
-    IKubernetes? providedClient = null) : IKubernetesGatewayTrafficObservationSource, IDisposable
+    IKubernetes? providedClient = null) : IKubernetesGatewayTrafficObservationSource, IKubernetesGatewayTrafficApplyService, IDisposable
 {
     private const string LiveStatusSource = "gateway-api-status";
     private const string ObservationUnavailableStatusSource = "observation-unavailable";
     private const string ObservationErrorStatusSource = "observation-error";
+    private const string ApplyStatusSource = "control-plane-apply";
+    private const string ApplyUnavailableStatusSource = "apply-unavailable";
+    private const string ApplyErrorStatusSource = "apply-error";
     private static readonly StringComparer Comparer = StringComparer.OrdinalIgnoreCase;
 
     private readonly KubernetesGatewayTrafficObservationOptions observationOptions = options.Observation;
     private Kubernetes? ownedClient;
     private bool disposed;
+
+    public async ValueTask<CellTrafficAutomationProviderMaterializationResult> ApplyAsync(
+        CellTrafficAutomationRuntimeDescriptor automation,
+        KubernetesGatewayTrafficRouteProjection projection,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(automation);
+        ArgumentNullException.ThrowIfNull(projection);
+
+        var observedAtUtc = timeProvider.GetUtcNow();
+        var metadata = projection.CreateMetadata();
+        metadata["providerAction"] = KubernetesGatewayTrafficObservationModes.ApplyAndReconcile;
+        metadata["observationMode"] = KubernetesGatewayTrafficObservationModes.ApplyAndReconcile;
+        metadata["statusSource"] = ApplyStatusSource;
+        metadata["gatewayWriteAction"] = "none";
+        metadata["gatewayWriteReason"] = "preprovisioned-dependency";
+
+        try
+        {
+            var client = GetClient();
+            if (client is null)
+            {
+                metadata["statusSource"] = ApplyUnavailableStatusSource;
+                metadata["resourceState"] = "client-unavailable";
+                metadata["driftState"] = "unknown";
+                metadata["driftReasons"] = string.Empty;
+                metadata["httpRouteWriteAction"] = "none";
+
+                return new CellTrafficAutomationProviderMaterializationResult(
+                    CellTrafficAutomationProviderMaterializationStates.Failed,
+                    observedAtUtc,
+                    "Apply-and-reconcile Kubernetes Gateway materialization requires either a registered IKubernetes client, an explicit kubeconfig path, or in-cluster configuration.",
+                    metadata);
+            }
+
+            var httpRoute = await TryReadHttpRouteAsync(client, projection, cancellationToken).ConfigureAwait(false);
+            if (!string.IsNullOrWhiteSpace(httpRoute.Error))
+            {
+                metadata["statusSource"] = ApplyErrorStatusSource;
+                metadata["resourceState"] = "httproute-read-failed";
+                metadata["driftState"] = "unknown";
+                metadata["driftReasons"] = string.Empty;
+                metadata["httpRouteWriteAction"] = "none";
+
+                return new CellTrafficAutomationProviderMaterializationResult(
+                    CellTrafficAutomationProviderMaterializationStates.Failed,
+                    observedAtUtc,
+                    httpRoute.Error,
+                    metadata);
+            }
+
+            if (httpRoute.Resource is not null)
+            {
+                ApplyOwnershipMetadata(metadata, httpRoute.Resource, automation);
+                var ownership = EvaluateOwnership(httpRoute.Resource, automation);
+                if (!ownership.IsOwned)
+                {
+                    metadata["statusSource"] = ApplyErrorStatusSource;
+                    metadata["resourceState"] = "ownership-conflict";
+                    metadata["driftState"] = "unknown";
+                    metadata["driftReasons"] = string.Empty;
+                    metadata["httpRouteWriteAction"] = "blocked";
+                    metadata["ownershipState"] = ownership.State;
+
+                    return new CellTrafficAutomationProviderMaterializationResult(
+                        CellTrafficAutomationProviderMaterializationStates.Failed,
+                        observedAtUtc,
+                        ownership.Error,
+                        metadata);
+                }
+            }
+            else
+            {
+                metadata["ownershipState"] = "missing";
+            }
+
+            using var httpRouteClient = new GenericClient(
+                client,
+                KubernetesGatewayTrafficRouteProjection.GatewayApiGroup,
+                KubernetesGatewayTrafficRouteProjection.GatewayApiVersion,
+                "httproutes",
+                disposeClient: false);
+            var desiredRoute = projection.CreateHttpRouteResource(
+                automation,
+                httpRoute.Resource?.Metadata?.ResourceVersion,
+                httpRoute.Resource);
+            KubernetesGatewayHttpRouteResource persistedRoute;
+            if (httpRoute.Resource is null)
+            {
+                persistedRoute = await httpRouteClient.CreateNamespacedAsync(
+                    desiredRoute,
+                    projection.RouteNamespace,
+                    cancellationToken).ConfigureAwait(false);
+                metadata["httpRouteWriteAction"] = "created";
+            }
+            else
+            {
+                persistedRoute = await httpRouteClient.ReplaceNamespacedAsync(
+                    desiredRoute,
+                    projection.RouteNamespace,
+                    projection.HttpRouteName,
+                    cancellationToken).ConfigureAwait(false);
+                metadata["httpRouteWriteAction"] = "replaced";
+            }
+
+            metadata["resourceState"] = "write-succeeded";
+            metadata["driftState"] = "reconciling";
+            metadata["driftReasons"] = string.Empty;
+            metadata["ownershipState"] = "owned";
+            if (!string.IsNullOrWhiteSpace(persistedRoute.Metadata?.ResourceVersion))
+            {
+                metadata["httpRouteAppliedResourceVersion"] = persistedRoute.Metadata.ResourceVersion!;
+            }
+
+            if (persistedRoute.Metadata?.Generation is not null)
+            {
+                metadata["httpRouteAppliedGeneration"] =
+                    persistedRoute.Metadata.Generation.Value.ToString(CultureInfo.InvariantCulture);
+            }
+
+            return new CellTrafficAutomationProviderMaterializationResult(
+                CellTrafficAutomationProviderMaterializationStates.Pending,
+                observedAtUtc,
+                metadata: metadata);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (HttpOperationException exception)
+        {
+            metadata["statusSource"] = ApplyErrorStatusSource;
+            metadata["resourceState"] = "apply-error";
+            metadata["driftState"] = "unknown";
+            metadata["driftReasons"] = string.Empty;
+            metadata["httpRouteWriteAction"] = "failed";
+
+            return new CellTrafficAutomationProviderMaterializationResult(
+                CellTrafficAutomationProviderMaterializationStates.Failed,
+                observedAtUtc,
+                string.IsNullOrWhiteSpace(exception.Message)
+                    ? "The Kubernetes Gateway API rejected the HTTPRoute apply request."
+                    : exception.Message,
+                metadata);
+        }
+        catch (Exception exception)
+        {
+            metadata["statusSource"] = ApplyErrorStatusSource;
+            metadata["resourceState"] = "apply-error";
+            metadata["driftState"] = "unknown";
+            metadata["driftReasons"] = string.Empty;
+            metadata["httpRouteWriteAction"] = "failed";
+
+            return new CellTrafficAutomationProviderMaterializationResult(
+                CellTrafficAutomationProviderMaterializationStates.Failed,
+                observedAtUtc,
+                exception.Message,
+                metadata);
+        }
+    }
 
     public async ValueTask<CellTrafficAutomationProviderMaterializationResult> ObserveAsync(
         CellTrafficAutomationRuntimeDescriptor automation,
@@ -83,6 +246,9 @@ internal sealed class KubernetesGatewayTrafficObservationSource(
             metadata["statusSource"] = LiveStatusSource;
             metadata["gatewayExists"] = gateway.Resource is null ? "false" : "true";
             metadata["httpRouteExists"] = httpRoute.Resource is null ? "false" : "true";
+            metadata["ownershipState"] = httpRoute.Resource is null
+                ? "missing"
+                : EvaluateOwnership(httpRoute.Resource, automation).State;
 
             if (gateway.Resource is null || httpRoute.Resource is null)
             {
@@ -99,6 +265,7 @@ internal sealed class KubernetesGatewayTrafficObservationSource(
             ApplyGatewayMetadata(metadata, gateway.Resource);
             var parentStatus = SelectParentStatus(httpRoute.Resource, projection);
             ApplyHttpRouteMetadata(metadata, httpRoute.Resource, parentStatus, projection);
+            ApplyOwnershipMetadata(metadata, httpRoute.Resource, automation);
 
             var driftReasons = DetectDriftReasons(gateway.Resource, httpRoute.Resource, projection, parentStatus);
             metadata["resourceState"] = "available";
@@ -251,7 +418,7 @@ internal sealed class KubernetesGatewayTrafficObservationSource(
         DateTimeOffset observedAtUtc)
     {
         metadata["providerAction"] = "observe-only";
-        metadata["observationMode"] = KubernetesGatewayTrafficObservationModes.ObserveOnly;
+        metadata["observationMode"] = KubernetesGatewayTrafficObservationModes.Normalize(observationOptions.Mode);
         metadata["observationPollingIntervalSeconds"] =
             Math.Max(1, observationOptions.PollingIntervalSeconds).ToString(CultureInfo.InvariantCulture);
         metadata["observationStaleAfterSeconds"] =
@@ -306,6 +473,24 @@ internal sealed class KubernetesGatewayTrafficObservationSource(
 
         metadata["httpRouteExpectedParentRef"] = projection.ParentReference;
         metadata["httpRouteExpectedBackendRef"] = projection.BackendReference;
+    }
+
+    private static void ApplyOwnershipMetadata(
+        Dictionary<string, string> metadata,
+        KubernetesGatewayHttpRouteResource httpRoute,
+        CellTrafficAutomationRuntimeDescriptor automation)
+    {
+        var managedBy = ReadMetadataValue(httpRoute.Metadata?.Labels, KubernetesGatewayOwnership.ManagedByLabel);
+        var automationId = ReadMetadataValue(httpRoute.Metadata?.Annotations, KubernetesGatewayOwnership.AutomationIdAnnotation);
+        var sourceModuleId = ReadMetadataValue(httpRoute.Metadata?.Annotations, KubernetesGatewayOwnership.SourceModuleIdAnnotation);
+        var routeId = ReadMetadataValue(httpRoute.Metadata?.Annotations, KubernetesGatewayOwnership.RouteIdAnnotation);
+        var ownership = EvaluateOwnership(httpRoute, automation);
+
+        metadata["ownershipState"] = ownership.State;
+        metadata["managedBy"] = managedBy ?? string.Empty;
+        metadata["observedAutomationId"] = automationId ?? string.Empty;
+        metadata["observedSourceModuleId"] = sourceModuleId ?? string.Empty;
+        metadata["observedRouteId"] = routeId ?? string.Empty;
     }
 
     private static List<string> DetectDriftReasons(
@@ -559,6 +744,50 @@ internal sealed class KubernetesGatewayTrafficObservationSource(
         exception.Response is not null &&
         exception.Response.StatusCode == HttpStatusCode.NotFound;
 
+    private static OwnershipEvaluation EvaluateOwnership(
+        KubernetesGatewayHttpRouteResource httpRoute,
+        CellTrafficAutomationRuntimeDescriptor automation)
+    {
+        var observedAutomationId = ReadMetadataValue(httpRoute.Metadata?.Annotations, KubernetesGatewayOwnership.AutomationIdAnnotation);
+        if (string.IsNullOrWhiteSpace(observedAutomationId))
+        {
+            return new OwnershipEvaluation(
+                State: "unowned",
+                IsOwned: false,
+                Error: $"Kubernetes Gateway HTTPRoute '{httpRoute.Metadata?.Name ?? automation.RouteId}' exists but is not marked as owned by Cephalon automation '{automation.Id}'.");
+        }
+
+        if (!Comparer.Equals(observedAutomationId, automation.Id))
+        {
+            return new OwnershipEvaluation(
+                State: "foreign-automation",
+                IsOwned: false,
+                Error: $"Kubernetes Gateway HTTPRoute '{httpRoute.Metadata?.Name ?? automation.RouteId}' is already owned by Cephalon automation '{observedAutomationId}' and cannot be reassigned to '{automation.Id}'.");
+        }
+
+        return new OwnershipEvaluation("owned", true, null);
+    }
+
+    private static string? ReadMetadataValue(
+        IReadOnlyDictionary<string, string>? values,
+        string key)
+    {
+        if (values is null)
+        {
+            return null;
+        }
+
+        foreach (var pair in values)
+        {
+            if (Comparer.Equals(pair.Key, key))
+            {
+                return NormalizeOptional(pair.Value);
+            }
+        }
+
+        return null;
+    }
+
     private static string? NormalizeOptional(string? value) =>
         string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 
@@ -566,6 +795,8 @@ internal sealed class KubernetesGatewayTrafficObservationSource(
         where T : class;
 
     private sealed record ObservedStateEvaluation(string State, string? Error);
+
+    private sealed record OwnershipEvaluation(string State, bool IsOwned, string? Error);
 }
 
 internal sealed class KubernetesGatewayResource : KubernetesObject
@@ -612,6 +843,10 @@ internal sealed class KubernetesGatewayHttpRouteRule
 
 internal sealed class KubernetesGatewayHttpRouteBackendRef
 {
+    public string? Group { get; set; }
+
+    public string? Kind { get; set; }
+
     public string? Name { get; set; }
 
     public string? Namespace { get; set; }
@@ -637,6 +872,10 @@ internal sealed class KubernetesGatewayHttpRouteParentStatus
 
 internal sealed class KubernetesGatewayHttpRouteParentReference
 {
+    public string? Group { get; set; }
+
+    public string? Kind { get; set; }
+
     public string? Name { get; set; }
 
     public string? Namespace { get; set; }
@@ -646,9 +885,17 @@ internal sealed class KubernetesGatewayHttpRouteParentReference
 
 internal sealed class KubernetesGatewayObjectMetadata
 {
+    public string? Name { get; set; }
+
     public string? Namespace { get; set; }
 
+    public string? ResourceVersion { get; set; }
+
     public long? Generation { get; set; }
+
+    public Dictionary<string, string>? Labels { get; set; }
+
+    public Dictionary<string, string>? Annotations { get; set; }
 }
 
 internal sealed class KubernetesGatewayCondition
@@ -662,4 +909,13 @@ internal sealed class KubernetesGatewayCondition
     public string? Reason { get; set; }
 
     public string? Message { get; set; }
+}
+
+internal static class KubernetesGatewayOwnership
+{
+    public const string ManagedByLabel = "cephalon.io/managed-by";
+    public const string ManagedByValue = "edge-kubernetes-gateway";
+    public const string AutomationIdAnnotation = "cephalon.io/cell-traffic-automation-id";
+    public const string RouteIdAnnotation = "cephalon.io/cell-route-id";
+    public const string SourceModuleIdAnnotation = "cephalon.io/source-module-id";
 }

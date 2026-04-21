@@ -7,13 +7,15 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
 {
     private readonly IReadOnlyDictionary<string, KubernetesGatewayTrafficRouteProjection> projectionsByRouteId;
     private readonly IKubernetesGatewayTrafficObservationSource? observationSource;
-    private readonly string observationMode;
+    private readonly IKubernetesGatewayTrafficApplyService? applyService;
+    private readonly string controlPlaneMode;
     private readonly int observationPollingIntervalSeconds;
 
     public KubernetesGatewayTrafficAutomationMaterializer(
         KubernetesGatewayTrafficProjectionCatalog projections,
         KubernetesGatewayTrafficMaterializerOptions options,
-        IKubernetesGatewayTrafficObservationSource? observationSource = null)
+        IKubernetesGatewayTrafficObservationSource? observationSource = null,
+        IKubernetesGatewayTrafficApplyService? applyService = null)
     {
         ArgumentNullException.ThrowIfNull(projections);
         ArgumentNullException.ThrowIfNull(options);
@@ -27,7 +29,8 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
         Priority = options.Priority;
         projectionsByRouteId = projections.Projections;
         this.observationSource = observationSource;
-        observationMode = KubernetesGatewayTrafficObservationModes.Normalize(options.Observation.Mode);
+        this.applyService = applyService;
+        controlPlaneMode = KubernetesGatewayTrafficObservationModes.Normalize(options.Observation.Mode);
         observationPollingIntervalSeconds = Math.Max(1, options.Observation.PollingIntervalSeconds);
     }
 
@@ -37,10 +40,20 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
 
     public int Priority { get; }
 
-    internal bool SupportsLiveObservation =>
+    internal bool SupportsLiveReconciliation =>
         string.Equals(
-            observationMode,
+            controlPlaneMode,
             KubernetesGatewayTrafficObservationModes.ObserveOnly,
+            StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(
+            controlPlaneMode,
+            KubernetesGatewayTrafficObservationModes.ApplyAndReconcile,
+            StringComparison.OrdinalIgnoreCase);
+
+    internal bool UsesApplyAndReconcile =>
+        string.Equals(
+            controlPlaneMode,
+            KubernetesGatewayTrafficObservationModes.ApplyAndReconcile,
             StringComparison.OrdinalIgnoreCase);
 
     internal TimeSpan ObservationPollingInterval =>
@@ -69,18 +82,40 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
                 error: $"Kubernetes Gateway traffic materializer '{MaterializerId}' has no projection for route '{automation.RouteId}'.");
         }
 
-        if (SupportsLiveObservation)
+        if (UsesApplyAndReconcile)
+        {
+            return await ApplyAndReconcileAsync(automation, projection, cancellationToken).ConfigureAwait(false);
+        }
+
+        if (SupportsLiveReconciliation)
         {
             return await ObserveAsync(automation, cancellationToken).ConfigureAwait(false);
         }
 
         var metadata = projection.CreateMetadata();
         metadata["providerAction"] = "projected-intent";
+        metadata["observationMode"] = KubernetesGatewayTrafficObservationModes.ConfiguredIntent;
+        metadata["resourceState"] = "projection-only";
+        metadata["driftState"] = "unknown";
+        metadata["driftReasons"] = string.Empty;
+        metadata["gatewayWriteAction"] = "none";
+        metadata["httpRouteWriteAction"] = "none";
 
         return new CellTrafficAutomationProviderMaterializationResult(
-            state: CellTrafficAutomationProviderMaterializationStates.Applied,
+            state: CellTrafficAutomationProviderMaterializationStates.Pending,
             observedAtUtc: DateTimeOffset.UtcNow,
             metadata: metadata);
+    }
+
+    internal async ValueTask<CellTrafficAutomationProviderMaterializationResult> RefreshAsync(
+        CellTrafficAutomationRuntimeDescriptor automation,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(automation);
+
+        return UsesApplyAndReconcile
+            ? await MaterializeAsync(automation, cancellationToken).ConfigureAwait(false)
+            : await ObserveAsync(automation, cancellationToken).ConfigureAwait(false);
     }
 
     internal async ValueTask<CellTrafficAutomationProviderMaterializationResult> ObserveAsync(
@@ -101,7 +136,7 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
         {
             var metadata = projection.CreateMetadata();
             metadata["providerAction"] = "observe-only";
-            metadata["observationMode"] = KubernetesGatewayTrafficObservationModes.ObserveOnly;
+            metadata["observationMode"] = controlPlaneMode;
             metadata["statusSource"] = "observation-unavailable";
 
             return new CellTrafficAutomationProviderMaterializationResult(
@@ -112,6 +147,78 @@ internal sealed class KubernetesGatewayTrafficAutomationMaterializer : ICellTraf
         }
 
         return await observationSource.ObserveAsync(automation, projection, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async ValueTask<CellTrafficAutomationProviderMaterializationResult> ApplyAndReconcileAsync(
+        CellTrafficAutomationRuntimeDescriptor automation,
+        KubernetesGatewayTrafficRouteProjection projection,
+        CancellationToken cancellationToken)
+    {
+        if (applyService is null)
+        {
+            var metadata = projection.CreateMetadata();
+            metadata["providerAction"] = KubernetesGatewayTrafficObservationModes.ApplyAndReconcile;
+            metadata["observationMode"] = KubernetesGatewayTrafficObservationModes.ApplyAndReconcile;
+            metadata["statusSource"] = "apply-unavailable";
+            metadata["gatewayWriteAction"] = "none";
+            metadata["httpRouteWriteAction"] = "none";
+
+            return new CellTrafficAutomationProviderMaterializationResult(
+                state: CellTrafficAutomationProviderMaterializationStates.Failed,
+                observedAtUtc: DateTimeOffset.UtcNow,
+                error: $"Kubernetes Gateway traffic materializer '{MaterializerId}' is configured for apply-and-reconcile mode, but no apply service is active.",
+                metadata: metadata);
+        }
+
+        if (observationSource is null)
+        {
+            var metadata = projection.CreateMetadata();
+            metadata["providerAction"] = KubernetesGatewayTrafficObservationModes.ApplyAndReconcile;
+            metadata["observationMode"] = KubernetesGatewayTrafficObservationModes.ApplyAndReconcile;
+            metadata["statusSource"] = "observation-unavailable";
+            metadata["gatewayWriteAction"] = "none";
+            metadata["httpRouteWriteAction"] = "none";
+
+            return new CellTrafficAutomationProviderMaterializationResult(
+                state: CellTrafficAutomationProviderMaterializationStates.Failed,
+                observedAtUtc: DateTimeOffset.UtcNow,
+                error: $"Kubernetes Gateway traffic materializer '{MaterializerId}' is configured for apply-and-reconcile mode, but no observation source is active.",
+                metadata: metadata);
+        }
+
+        var applyResult = await applyService.ApplyAsync(automation, projection, cancellationToken).ConfigureAwait(false);
+        if (string.Equals(
+                applyResult.State,
+                CellTrafficAutomationProviderMaterializationStates.Failed,
+                StringComparison.OrdinalIgnoreCase))
+        {
+            return applyResult;
+        }
+
+        var observedResult = await observationSource.ObserveAsync(automation, projection, cancellationToken).ConfigureAwait(false);
+        return MergeApplyAndObservedResult(applyResult, observedResult);
+    }
+
+    private static CellTrafficAutomationProviderMaterializationResult MergeApplyAndObservedResult(
+        CellTrafficAutomationProviderMaterializationResult applyResult,
+        CellTrafficAutomationProviderMaterializationResult observedResult)
+    {
+        var metadata = applyResult.Metadata.Count == 0
+            ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            : new Dictionary<string, string>(applyResult.Metadata, StringComparer.OrdinalIgnoreCase);
+        foreach (var pair in observedResult.Metadata)
+        {
+            metadata[pair.Key] = pair.Value;
+        }
+
+        metadata["providerAction"] = KubernetesGatewayTrafficObservationModes.ApplyAndReconcile;
+        metadata["observationMode"] = KubernetesGatewayTrafficObservationModes.ApplyAndReconcile;
+
+        return new CellTrafficAutomationProviderMaterializationResult(
+            state: observedResult.State,
+            observedAtUtc: observedResult.ObservedAtUtc,
+            error: observedResult.Error,
+            metadata: metadata);
     }
 
     private static bool UsesProviderMaterialization(string materializationMode)

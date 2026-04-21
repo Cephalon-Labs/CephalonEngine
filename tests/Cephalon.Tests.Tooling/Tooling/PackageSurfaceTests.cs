@@ -2991,6 +2991,8 @@ public sealed class PackageSurfaceTests
             .GetField("ConfiguredIntent", BindingFlags.Static | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationModes)
             .GetField("ObserveOnly", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationModes)
+            .GetField("ApplyAndReconcile", BindingFlags.Static | BindingFlags.Public));
     }
 
     [Fact]

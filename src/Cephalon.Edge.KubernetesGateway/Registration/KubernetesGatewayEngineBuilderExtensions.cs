@@ -15,7 +15,7 @@ public static class KubernetesGatewayEngineBuilderExtensions
     /// <param name="builder">The engine builder to extend.</param>
     /// <param name="configure">
     /// An optional callback that configures how provider-managed cell traffic automation should project into
-    /// Kubernetes Gateway API intent.
+    /// Kubernetes Gateway API intent and, when enabled, reconcile owned HTTPRoute resources.
     /// </param>
     /// <returns>The same engine builder for fluent composition.</returns>
     /// <remarks>

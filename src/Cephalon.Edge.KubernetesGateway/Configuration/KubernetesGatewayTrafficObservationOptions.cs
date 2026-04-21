@@ -1,17 +1,18 @@
 namespace Cephalon.Edge.KubernetesGateway.Configuration;
 
 /// <summary>
-/// Configures how the Kubernetes Gateway traffic materializer observes live Gateway API status.
+/// Configures how the Kubernetes Gateway traffic materializer interacts with the Kubernetes Gateway API control plane.
 /// </summary>
 public sealed class KubernetesGatewayTrafficObservationOptions
 {
     /// <summary>
-    /// Gets or sets the observation mode used by the Kubernetes Gateway materializer.
+    /// Gets or sets the control-plane mode used by the Kubernetes Gateway materializer.
     /// </summary>
     /// <remarks>
-    /// The default value keeps the pack in configured-intent mode so existing projected-intent behavior remains additive.
-    /// Set this to <c>observe-only</c> when the pack should read live Gateway API resources and project observed status back
-    /// into the shared cell traffic automation runtime surfaces.
+    /// The default value keeps the pack in configured-intent mode so existing projected-intent behavior remains additive
+    /// without claiming a live apply. Set this to <c>observe-only</c> when the pack should read live Gateway API resources
+    /// without writing them, or <c>apply-and-reconcile</c> when the pack should manage owned HTTPRoute resources and
+    /// continuously reconcile observed status back into the shared runtime surfaces.
     /// </remarks>
     public string Mode { get; set; } = KubernetesGatewayTrafficObservationModes.ConfiguredIntent;
 
@@ -36,7 +37,7 @@ public sealed class KubernetesGatewayTrafficObservationOptions
     public string? MasterUrl { get; set; }
 
     /// <summary>
-    /// Gets or sets the polling interval, in seconds, used for recurring live observation after startup reconciliation.
+    /// Gets or sets the polling interval, in seconds, used for recurring live observation or reconciliation after startup materialization.
     /// </summary>
     public int PollingIntervalSeconds { get; set; } = 30;
 

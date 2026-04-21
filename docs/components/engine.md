@@ -163,7 +163,12 @@ so provider or edge observers can merge live materialization answers back into t
 snapshot instead of publishing a second provider-local registry. `Cephalon.Edge.KubernetesGateway`
 uses that seam for opt-in `observe-only` Gateway API polling, which lets the existing shared
 automation payloads publish live `Accepted`, `ResolvedRefs`, drift, and freshness posture without
-moving Kubernetes polling loops into `Cephalon.Engine`.
+moving Kubernetes polling loops into `Cephalon.Engine`. `ENG-141` now hardens that same provider
+seam with `apply-and-reconcile` control-plane mode: `Cephalon.Edge.KubernetesGateway` can now keep
+`configured-intent` truthful as `pending`, apply only owned `HTTPRoute` resources, treat
+`Gateway` as a pre-provisioned dependency, and then merge observed `Gateway` plus `HTTPRoute`
+condition, drift, freshness, ownership, and write-result metadata back into the same shared
+automation payloads without moving Kubernetes client or ownership policy into `Cephalon.Engine`.
 
 That same engine-first runtime truth now also carries the first phase-13 data mesh and CDC
 baselines end to end. Modules and hosts can contribute `DataProductDescriptor` entries and

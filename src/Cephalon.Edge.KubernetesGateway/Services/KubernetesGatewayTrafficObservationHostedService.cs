@@ -1,4 +1,5 @@
 using Cephalon.Abstractions.Technologies;
+using Cephalon.Edge.KubernetesGateway.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -11,36 +12,41 @@ internal sealed class KubernetesGatewayTrafficObservationHostedService(
     TimeProvider timeProvider,
     ILogger<KubernetesGatewayTrafficObservationHostedService> logger) : BackgroundService
 {
-    private static readonly Action<ILogger, int, Exception?> LogObservationLoopStartedMessage =
-        LoggerMessage.Define<int>(
+    private static readonly Action<ILogger, string, int, Exception?> LogObservationLoopStartedMessage =
+        LoggerMessage.Define<string, int>(
             LogLevel.Information,
             new EventId(21400, nameof(LogObservationLoopStarted)),
-            "Kubernetes Gateway live observation loop started with polling interval {PollingIntervalSeconds}s.");
+            "Kubernetes Gateway control-plane reconciliation loop started in mode '{Mode}' with polling interval {PollingIntervalSeconds}s.");
     private static readonly Action<ILogger, Exception?> LogObservationLoopStoppedMessage =
         LoggerMessage.Define(
             LogLevel.Information,
             new EventId(21401, nameof(LogObservationLoopStopped)),
-            "Kubernetes Gateway live observation loop stopped.");
+            "Kubernetes Gateway control-plane reconciliation loop stopped.");
     private static readonly Action<ILogger, string, string?, Exception?> LogObservationFailedMessage =
         LoggerMessage.Define<string, string?>(
             LogLevel.Warning,
             new EventId(21402, nameof(LogObservationFailed)),
-            "Kubernetes Gateway live observation failed for automation '{AutomationId}' on provider '{ProviderId}'.");
+            "Kubernetes Gateway control-plane reconciliation failed for automation '{AutomationId}' on provider '{ProviderId}'.");
 
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
-        if (!materializer.SupportsLiveObservation)
+        if (!materializer.SupportsLiveReconciliation)
         {
             return;
         }
 
-        LogObservationLoopStarted(logger, (int)materializer.ObservationPollingInterval.TotalSeconds);
+        LogObservationLoopStarted(
+            logger,
+            materializer.UsesApplyAndReconcile
+                ? KubernetesGatewayTrafficObservationModes.ApplyAndReconcile
+                : KubernetesGatewayTrafficObservationModes.ObserveOnly,
+            (int)materializer.ObservationPollingInterval.TotalSeconds);
         await base.StartAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public override async Task StopAsync(CancellationToken cancellationToken)
     {
-        if (!materializer.SupportsLiveObservation)
+        if (!materializer.SupportsLiveReconciliation)
         {
             return;
         }
@@ -51,7 +57,7 @@ internal sealed class KubernetesGatewayTrafficObservationHostedService(
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        if (!materializer.SupportsLiveObservation)
+        if (!materializer.SupportsLiveReconciliation)
         {
             return;
         }
@@ -87,7 +93,7 @@ internal sealed class KubernetesGatewayTrafficObservationHostedService(
 
             try
             {
-                var result = await materializer.ObserveAsync(automation, cancellationToken).ConfigureAwait(false);
+                var result = await materializer.RefreshAsync(automation, cancellationToken).ConfigureAwait(false);
                 await reportSink.ReportProviderAsync(
                     automation.Id,
                     materializer.MaterializerId,
@@ -113,8 +119,8 @@ internal sealed class KubernetesGatewayTrafficObservationHostedService(
         }
     }
 
-    private static void LogObservationLoopStarted(ILogger logger, int pollingIntervalSeconds) =>
-        LogObservationLoopStartedMessage(logger, pollingIntervalSeconds, null);
+    private static void LogObservationLoopStarted(ILogger logger, string mode, int pollingIntervalSeconds) =>
+        LogObservationLoopStartedMessage(logger, mode, pollingIntervalSeconds, null);
 
     private static void LogObservationLoopStopped(ILogger logger) =>
         LogObservationLoopStoppedMessage(logger, null);

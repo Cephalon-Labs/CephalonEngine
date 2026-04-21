@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text;
+using Cephalon.Abstractions.Technologies;
 using Cephalon.Edge.KubernetesGateway.Configuration;
 
 namespace Cephalon.Edge.KubernetesGateway.Services;
@@ -186,6 +187,75 @@ internal sealed record KubernetesGatewayTrafficRouteProjection(
         BackendWeight is > 0
             ? $"service/{BackendNamespace}/{BackendServiceName}:{BackendPort.ToString(CultureInfo.InvariantCulture)}@weight/{BackendWeight.Value.ToString(CultureInfo.InvariantCulture)}"
             : $"service/{BackendNamespace}/{BackendServiceName}:{BackendPort.ToString(CultureInfo.InvariantCulture)}";
+
+    public KubernetesGatewayHttpRouteResource CreateHttpRouteResource(
+        CellTrafficAutomationRuntimeDescriptor automation,
+        string? resourceVersion = null,
+        KubernetesGatewayHttpRouteResource? existing = null)
+    {
+        ArgumentNullException.ThrowIfNull(automation);
+
+        var labels = existing?.Metadata?.Labels is null
+            ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            : new Dictionary<string, string>(existing.Metadata.Labels, StringComparer.OrdinalIgnoreCase);
+        var annotations = existing?.Metadata?.Annotations is null
+            ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            : new Dictionary<string, string>(existing.Metadata.Annotations, StringComparer.OrdinalIgnoreCase);
+
+        labels[KubernetesGatewayOwnership.ManagedByLabel] = KubernetesGatewayOwnership.ManagedByValue;
+        annotations[KubernetesGatewayOwnership.AutomationIdAnnotation] = automation.Id;
+        annotations[KubernetesGatewayOwnership.RouteIdAnnotation] = automation.RouteId;
+        annotations[KubernetesGatewayOwnership.SourceModuleIdAnnotation] = automation.SourceModuleId;
+
+        return new KubernetesGatewayHttpRouteResource
+        {
+            ApiVersion = GatewayApiVersionLabel,
+            Kind = "HTTPRoute",
+            Metadata = new KubernetesGatewayObjectMetadata
+            {
+                Name = HttpRouteName,
+                Namespace = RouteNamespace,
+                ResourceVersion = resourceVersion,
+                Labels = labels,
+                Annotations = annotations
+            },
+            Spec = new KubernetesGatewayHttpRouteSpec
+            {
+                ParentRefs =
+                [
+                    new KubernetesGatewayHttpRouteParentReference
+                    {
+                        Group = GatewayApiGroup,
+                        Kind = "Gateway",
+                        Name = GatewayName,
+                        Namespace = GatewayNamespace,
+                        SectionName = ListenerName
+                    }
+                ],
+                Hostnames = Hostnames.Count == 0 ? null : [.. Hostnames],
+                Rules =
+                [
+                    new KubernetesGatewayHttpRouteRule
+                    {
+                        BackendRefs =
+                        [
+                            new KubernetesGatewayHttpRouteBackendRef
+                            {
+                                Group = string.Empty,
+                                Kind = "Service",
+                                Name = BackendServiceName,
+                                Namespace = StringComparer.OrdinalIgnoreCase.Equals(BackendNamespace, RouteNamespace)
+                                    ? null
+                                    : BackendNamespace,
+                                Port = BackendPort,
+                                Weight = BackendWeight
+                            }
+                        ]
+                    }
+                ]
+            }
+        };
+    }
 
     public Dictionary<string, string> CreateMetadata()
     {

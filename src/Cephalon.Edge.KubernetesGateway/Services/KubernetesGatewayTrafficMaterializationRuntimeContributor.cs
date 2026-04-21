@@ -23,7 +23,7 @@ internal sealed class KubernetesGatewayTrafficMaterializationRuntimeContributor(
             technologyId: BuiltInTechnologies.CellBasedArchitecture.Id,
             surfaceId: "kubernetes-gateway-traffic-materializations",
             displayName: "Kubernetes Gateway Traffic Materializations",
-            description: "Provider-managed Kubernetes Gateway API intent projected from the shared cell traffic automation catalog.",
+            description: "Provider-managed Kubernetes Gateway API materialization truth projected and reconciled from the shared cell traffic automation catalog.",
             entries: catalog.Automations
                 .Where(OwnsAutomation)
                 .Select(CreateEntry)

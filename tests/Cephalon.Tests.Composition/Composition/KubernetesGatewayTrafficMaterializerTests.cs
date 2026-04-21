@@ -14,7 +14,7 @@ namespace Cephalon.Tests.Composition;
 public sealed class KubernetesGatewayTrafficMaterializerTests
 {
     [Fact]
-    public async Task HostedServiceSelectsKubernetesGatewayMaterializerOverGenericFallbackAndProjectsTechnologySurface()
+    public async Task HostedServiceSelectsKubernetesGatewayMaterializerOverGenericFallbackAndProjectsTruthfulConfiguredIntentSurface()
     {
         var services = CreateServiceCollection(
             includeAdminProjection: false,
@@ -40,8 +40,8 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
         var publicAutomation = catalog.GetByRouteId("orders-to-public-ingress");
         Assert.NotNull(publicAutomation);
         Assert.Equal("kubernetes-gateway-materializer", publicAutomation.ProviderMaterializerId);
-        Assert.Equal(CellTrafficAutomationProviderMaterializationStates.Applied, publicAutomation.ProviderMaterializationState);
-        Assert.Equal(CellTrafficAutomationMaterializationStates.Applied, publicAutomation.MaterializationState);
+        Assert.Equal(CellTrafficAutomationProviderMaterializationStates.Pending, publicAutomation.ProviderMaterializationState);
+        Assert.Equal(CellTrafficAutomationMaterializationStates.Pending, publicAutomation.MaterializationState);
         Assert.NotNull(publicAutomation.ProviderMaterializationObservedAtUtc);
         Assert.Equal("2", publicAutomation.RuntimeMetadata["providerSelection.matchingCandidateCount"]);
         Assert.Equal(
@@ -49,11 +49,15 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
             publicAutomation.RuntimeMetadata["providerSelection.matchingCandidateIds"]);
         Assert.Equal("100", publicAutomation.RuntimeMetadata["providerSelection.selectedPriority"]);
         Assert.Equal("projected-intent", publicAutomation.RuntimeMetadata["providerMaterialization.providerAction"]);
+        Assert.Equal("configured-intent", publicAutomation.RuntimeMetadata["providerMaterialization.observationMode"]);
         Assert.Equal("httproute/edge-system/orders-public-ingress", publicAutomation.RuntimeMetadata["providerMaterialization.providerRouteId"]);
         Assert.Equal("edge-system", publicAutomation.RuntimeMetadata["providerMaterialization.gatewayNamespace"]);
         Assert.Equal("public-gateway", publicAutomation.RuntimeMetadata["providerMaterialization.gatewayName"]);
         Assert.Equal("cephalon.io/gateway-controller", publicAutomation.RuntimeMetadata["providerMaterialization.controllerName"]);
         Assert.Equal("configured-intent", publicAutomation.RuntimeMetadata["providerMaterialization.statusSource"]);
+        Assert.Equal("projection-only", publicAutomation.RuntimeMetadata["providerMaterialization.resourceState"]);
+        Assert.Equal("none", publicAutomation.RuntimeMetadata["providerMaterialization.gatewayWriteAction"]);
+        Assert.Equal("none", publicAutomation.RuntimeMetadata["providerMaterialization.httpRouteWriteAction"]);
         Assert.Equal("unknown", publicAutomation.RuntimeMetadata["providerMaterialization.httpRouteProgrammedCondition"]);
 
         var cellSurface = Assert.Single(
@@ -78,8 +82,8 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
         Assert.Contains(snapshot.CellTrafficAutomations, automation =>
             automation.RouteId == "orders-to-public-ingress" &&
             automation.ProviderMaterializerId == "kubernetes-gateway-materializer" &&
-            automation.ProviderMaterializationState == CellTrafficAutomationProviderMaterializationStates.Applied &&
-            automation.MaterializationState == CellTrafficAutomationMaterializationStates.Applied);
+            automation.ProviderMaterializationState == CellTrafficAutomationProviderMaterializationStates.Pending &&
+            automation.MaterializationState == CellTrafficAutomationMaterializationStates.Pending);
     }
 
     [Fact]
@@ -99,7 +103,7 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
         var publicAutomation = catalog.GetByRouteId("orders-to-public-ingress");
         Assert.NotNull(publicAutomation);
         Assert.Equal("kubernetes-gateway-materializer", publicAutomation.ProviderMaterializerId);
-        Assert.Equal(CellTrafficAutomationProviderMaterializationStates.Applied, publicAutomation.ProviderMaterializationState);
+        Assert.Equal(CellTrafficAutomationProviderMaterializationStates.Pending, publicAutomation.ProviderMaterializationState);
 
         var adminAutomation = catalog.GetByRouteId("orders-to-admin-ingress");
         Assert.NotNull(adminAutomation);
@@ -122,7 +126,7 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
     {
         var services = CreateServiceCollection(
             includeAdminProjection: false,
-            observeOnly: true,
+            controlPlaneMode: KubernetesGatewayTrafficObservationModes.ObserveOnly,
             configureServices: collection =>
             {
                 collection.AddSingleton<IKubernetesGatewayTrafficObservationSource>(
@@ -164,6 +168,55 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
     }
 
     [Fact]
+    public async Task HostedServiceAppliesOwnedHttpRoutesAndProjectsObservedTruthWhenApplyAndReconcileModeIsEnabled()
+    {
+        var services = CreateServiceCollection(
+            includeAdminProjection: false,
+            controlPlaneMode: KubernetesGatewayTrafficObservationModes.ApplyAndReconcile,
+            configureServices: collection =>
+            {
+                collection.AddSingleton<IKubernetesGatewayTrafficApplyService>(
+                    new StaticApplyService(
+                        static (automation, projection) => CreateApplyPendingResult(automation.RouteId, "created")));
+                collection.AddSingleton<IKubernetesGatewayTrafficObservationSource>(
+                    new StaticObservationSource(
+                        static (automation, projection) => CreateObservedAppliedResult(automation, projection)));
+            });
+
+        using var provider = services.BuildServiceProvider();
+        foreach (var hostedService in provider.GetServices<IHostedService>())
+        {
+            await hostedService.StartAsync(CancellationToken.None);
+        }
+
+        var catalog = provider.GetRequiredService<ICellTrafficAutomationRuntimeCatalog>();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        var automation = catalog.GetByRouteId("orders-to-public-ingress");
+        Assert.NotNull(automation);
+        Assert.Equal("kubernetes-gateway-materializer", automation.ProviderMaterializerId);
+        Assert.Equal(CellTrafficAutomationProviderMaterializationStates.Applied, automation.ProviderMaterializationState);
+        Assert.Equal(CellTrafficAutomationMaterializationStates.Applied, automation.MaterializationState);
+        Assert.Equal("apply-and-reconcile", automation.RuntimeMetadata["providerMaterialization.providerAction"]);
+        Assert.Equal("apply-and-reconcile", automation.RuntimeMetadata["providerMaterialization.observationMode"]);
+        Assert.Equal("gateway-api-status", automation.RuntimeMetadata["providerMaterialization.statusSource"]);
+        Assert.Equal("created", automation.RuntimeMetadata["providerMaterialization.httpRouteWriteAction"]);
+        Assert.Equal("none", automation.RuntimeMetadata["providerMaterialization.gatewayWriteAction"]);
+        Assert.Equal("owned", automation.RuntimeMetadata["providerMaterialization.ownershipState"]);
+        Assert.Equal("true", automation.RuntimeMetadata["providerMaterialization.httpRouteAcceptedCondition"]);
+        Assert.Equal("in-sync", automation.RuntimeMetadata["providerMaterialization.driftState"]);
+
+        var gatewaySurface = Assert.Single(
+            technologyCatalog.GetByTechnology("cell-based-architecture"),
+            static surface => surface.SurfaceId == "kubernetes-gateway-traffic-materializations");
+        Assert.Contains(gatewaySurface.Entries, entry =>
+            entry.Id == automation.Id &&
+            entry.Metadata["providerAction"] == "apply-and-reconcile" &&
+            entry.Metadata["httpRouteWriteAction"] == "created" &&
+            entry.Metadata["statusSource"] == "gateway-api-status");
+    }
+
+    [Fact]
     public async Task ObservationHostedServiceRefreshesLiveGatewayStatusOnPollingInterval()
     {
         var source = new SequencedObservationSource(new Dictionary<string, Queue<CellTrafficAutomationProviderMaterializationResult>>(StringComparer.OrdinalIgnoreCase)
@@ -176,7 +229,7 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
         });
         var services = CreateServiceCollection(
             includeAdminProjection: false,
-            observeOnly: true,
+            controlPlaneMode: KubernetesGatewayTrafficObservationModes.ObserveOnly,
             pollingIntervalSeconds: 1,
             configureServices: collection =>
             {
@@ -207,22 +260,77 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
         Assert.Equal("gateway-api-status", refreshed.RuntimeMetadata["providerMaterialization.statusSource"]);
     }
 
+    [Fact]
+    public async Task ApplyAndReconcileRefreshesControlPlaneStateOnPollingInterval()
+    {
+        var observationSource = new SequencedObservationSource(new Dictionary<string, Queue<CellTrafficAutomationProviderMaterializationResult>>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["orders-to-public-ingress"] = new Queue<CellTrafficAutomationProviderMaterializationResult>(
+            [
+                CreateObservedPendingResult("orders-to-public-ingress"),
+                CreateObservedAppliedResult("orders-to-public-ingress")
+            ])
+        });
+        var applyService = new SequencedApplyService(new Dictionary<string, Queue<CellTrafficAutomationProviderMaterializationResult>>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["orders-to-public-ingress"] = new Queue<CellTrafficAutomationProviderMaterializationResult>(
+            [
+                CreateApplyPendingResult("orders-to-public-ingress", "created"),
+                CreateApplyPendingResult("orders-to-public-ingress", "replaced")
+            ])
+        });
+        var services = CreateServiceCollection(
+            includeAdminProjection: false,
+            controlPlaneMode: KubernetesGatewayTrafficObservationModes.ApplyAndReconcile,
+            pollingIntervalSeconds: 1,
+            configureServices: collection =>
+            {
+                collection.AddSingleton<IKubernetesGatewayTrafficApplyService>(applyService);
+                collection.AddSingleton<IKubernetesGatewayTrafficObservationSource>(observationSource);
+            });
+
+        using var provider = services.BuildServiceProvider();
+        foreach (var hostedService in provider.GetServices<IHostedService>())
+        {
+            await hostedService.StartAsync(CancellationToken.None);
+        }
+
+        var catalog = provider.GetRequiredService<ICellTrafficAutomationRuntimeCatalog>();
+
+        var initial = catalog.GetByRouteId("orders-to-public-ingress");
+        Assert.NotNull(initial);
+        Assert.Equal(CellTrafficAutomationProviderMaterializationStates.Pending, initial.ProviderMaterializationState);
+        Assert.Equal("apply-and-reconcile", initial.RuntimeMetadata["providerMaterialization.providerAction"]);
+        Assert.Equal("created", initial.RuntimeMetadata["providerMaterialization.httpRouteWriteAction"]);
+
+        await Task.Delay(TimeSpan.FromMilliseconds(1400));
+
+        var refreshed = catalog.GetByRouteId("orders-to-public-ingress");
+        Assert.NotNull(refreshed);
+        Assert.Equal(CellTrafficAutomationProviderMaterializationStates.Applied, refreshed.ProviderMaterializationState);
+        Assert.Equal(CellTrafficAutomationMaterializationStates.Applied, refreshed.MaterializationState);
+        Assert.Equal("apply-and-reconcile", refreshed.RuntimeMetadata["providerMaterialization.providerAction"]);
+        Assert.Equal("replaced", refreshed.RuntimeMetadata["providerMaterialization.httpRouteWriteAction"]);
+        Assert.Equal("gateway-api-status", refreshed.RuntimeMetadata["providerMaterialization.statusSource"]);
+        Assert.Equal("in-sync", refreshed.RuntimeMetadata["providerMaterialization.driftState"]);
+    }
+
     private static ServiceCollection CreateServiceCollection(
         bool includeAdminProjection,
-        bool observeOnly = false,
+        string controlPlaneMode = KubernetesGatewayTrafficObservationModes.ConfiguredIntent,
         int pollingIntervalSeconds = 30,
         Action<ServiceCollection>? configureServices = null)
     {
         var services = new ServiceCollection();
         configureServices?.Invoke(services);
-        services.AddCephalon(engine => ConfigureEngine(engine, includeAdminProjection, observeOnly, pollingIntervalSeconds));
+        services.AddCephalon(engine => ConfigureEngine(engine, includeAdminProjection, controlPlaneMode, pollingIntervalSeconds));
         return services;
     }
 
     private static void ConfigureEngine(
         EngineBuilder engine,
         bool includeAdminProjection,
-        bool observeOnly = false,
+        string controlPlaneMode = KubernetesGatewayTrafficObservationModes.ConfiguredIntent,
         int pollingIntervalSeconds = 30)
     {
         engine.UseSettings(new EngineSettings(
@@ -259,9 +367,12 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
             options.GatewayName = "public-gateway";
             options.ListenerName = "https";
             options.RouteNamespace = "edge-system";
-            if (observeOnly)
+            options.Observation.Mode = controlPlaneMode;
+            if (!string.Equals(
+                    controlPlaneMode,
+                    KubernetesGatewayTrafficObservationModes.ConfiguredIntent,
+                    StringComparison.OrdinalIgnoreCase))
             {
-                options.Observation.Mode = KubernetesGatewayTrafficObservationModes.ObserveOnly;
                 options.Observation.PollingIntervalSeconds = pollingIntervalSeconds;
                 options.Observation.StaleAfterSeconds = Math.Max(5, pollingIntervalSeconds * 3);
             }
@@ -323,6 +434,33 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
         }
     }
 
+    private static CellTrafficAutomationProviderMaterializationResult CreateApplyPendingResult(string routeId, string writeAction)
+    {
+        var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["providerAction"] = KubernetesGatewayTrafficObservationModes.ApplyAndReconcile,
+            ["observationMode"] = KubernetesGatewayTrafficObservationModes.ApplyAndReconcile,
+            ["statusSource"] = "control-plane-apply",
+            ["resourceState"] = "write-succeeded",
+            ["driftState"] = "reconciling",
+            ["driftReasons"] = string.Empty,
+            ["gatewayWriteAction"] = "none",
+            ["gatewayWriteReason"] = "preprovisioned-dependency",
+            ["httpRouteWriteAction"] = writeAction,
+            ["ownershipState"] = "owned",
+            ["httpRouteAppliedGeneration"] = writeAction == "created" ? "1" : "2",
+            ["providerRouteId"] = "httproute/edge-system/orders-public-ingress",
+            ["gatewayNamespace"] = "edge-system",
+            ["gatewayName"] = "public-gateway",
+            ["controllerName"] = "cephalon.io/gateway-controller"
+        };
+
+        return new CellTrafficAutomationProviderMaterializationResult(
+            state: CellTrafficAutomationProviderMaterializationStates.Pending,
+            observedAtUtc: DateTimeOffset.UtcNow,
+            metadata: metadata);
+    }
+
     private static CellTrafficAutomationProviderMaterializationResult CreateObservedPendingResult(string routeId)
     {
         var metadata = CreateObservedMetadata(routeId, resourceState: "missing-httproute");
@@ -365,6 +503,11 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
         metadata["httpRouteResolvedRefsReason"] = "ResolvedRefs";
         metadata["driftState"] = "in-sync";
         metadata["driftReasons"] = string.Empty;
+        metadata["ownershipState"] = "owned";
+        metadata["managedBy"] = "edge-kubernetes-gateway";
+        metadata["observedAutomationId"] = "orders-to-public-ingress";
+        metadata["observedRouteId"] = "orders-to-public-ingress";
+        metadata["observedSourceModuleId"] = "kubernetes-gateway-traffic-tests";
 
         return new CellTrafficAutomationProviderMaterializationResult(
             state: CellTrafficAutomationProviderMaterializationStates.Applied,
@@ -381,7 +524,7 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
             ["statusSource"] = "gateway-api-status",
             ["resourceState"] = resourceState,
             ["observationFreshUntilUtc"] = DateTimeOffset.UtcNow.AddMinutes(2).ToString("O"),
-            ["providerRouteId"] = $"httproute/edge-system/{routeId.Replace("orders-to-", "orders-").Replace("-ingress", "-ingress", StringComparison.OrdinalIgnoreCase)}"
+            ["providerRouteId"] = $"httproute/edge-system/{routeId.Replace("orders-to-", "orders-", StringComparison.OrdinalIgnoreCase)}"
         };
 
         if (string.Equals(routeId, "orders-to-public-ingress", StringComparison.OrdinalIgnoreCase))
@@ -393,6 +536,52 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
         }
 
         return metadata;
+    }
+
+    private sealed class StaticApplyService(
+        Func<CellTrafficAutomationRuntimeDescriptor, KubernetesGatewayTrafficRouteProjection, CellTrafficAutomationProviderMaterializationResult> factory)
+        : IKubernetesGatewayTrafficApplyService
+    {
+        public ValueTask<CellTrafficAutomationProviderMaterializationResult> ApplyAsync(
+            CellTrafficAutomationRuntimeDescriptor automation,
+            KubernetesGatewayTrafficRouteProjection projection,
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return ValueTask.FromResult(factory(automation, projection));
+        }
+    }
+
+    private sealed class SequencedApplyService(
+        Dictionary<string, Queue<CellTrafficAutomationProviderMaterializationResult>> resultsByRouteId)
+        : IKubernetesGatewayTrafficApplyService
+    {
+        private readonly Lock gate = new();
+
+        public ValueTask<CellTrafficAutomationProviderMaterializationResult> ApplyAsync(
+            CellTrafficAutomationRuntimeDescriptor automation,
+            KubernetesGatewayTrafficRouteProjection projection,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(automation);
+            cancellationToken.ThrowIfCancellationRequested();
+
+            lock (gate)
+            {
+                if (!resultsByRouteId.TryGetValue(automation.RouteId, out var queue) || queue.Count == 0)
+                {
+                    return ValueTask.FromResult(CreateApplyPendingResult(automation.RouteId, "replaced"));
+                }
+
+                var result = queue.Dequeue();
+                if (queue.Count == 0)
+                {
+                    queue.Enqueue(result);
+                }
+
+                return ValueTask.FromResult(result);
+            }
+        }
     }
 
     private sealed class StaticObservationSource(

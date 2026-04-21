@@ -33,8 +33,9 @@ provider-specific control-plane follow-through is now also shipped through
 `Cephalon.Edge.KubernetesGateway`, which projects Kubernetes Gateway API `Gateway` plus `HTTPRoute`
 intent back onto the same shared automation catalog and publishes that view through the
 `kubernetes-gateway-traffic-materializations` technology surface. That same pack now also supports
-opt-in live `observe-only` Gateway API polling so projected intent and observed control-plane
-status can stay on one runtime truth instead of spawning a second provider-local view.
+opt-in live `observe-only` Gateway API polling plus `apply-and-reconcile` ownership-aware
+`HTTPRoute` writes so projected intent, write posture, and observed control-plane status can stay
+on one runtime truth instead of spawning a second provider-local view.
 
 ## Shipped baseline packs
 
@@ -57,7 +58,7 @@ Current baseline packages:
   - registers `IEdgeNodeCatalog` when the profile is selected
 - `Cephalon.Edge.KubernetesGateway`
   - first provider-specific control-plane materializer over the shared `cell-based-architecture` traffic-automation baseline
-  - projects Kubernetes Gateway API intent and can now overlay live Gateway API observation without moving cluster-specific apply loops into `Cephalon.Engine`
+  - projects Kubernetes Gateway API intent and can now overlay live Gateway API observation plus owned `HTTPRoute` apply-and-reconcile without moving cluster-specific ownership or reconcile policy into `Cephalon.Engine`
 
 These packages are also used as scaffold hints for the matching built-in technology profiles.
 The phase-8 data packs are companion packages rather than technology packs, but they can now enrich `EventDrivenIntegration` truth by projecting staged outbox producers and application-managed inbox stores into the eventing runtime surfaces when both baselines are active.
