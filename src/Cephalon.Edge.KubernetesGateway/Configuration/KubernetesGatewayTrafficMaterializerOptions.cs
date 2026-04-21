@@ -6,6 +6,13 @@ namespace Cephalon.Edge.KubernetesGateway.Configuration;
 public sealed class KubernetesGatewayTrafficMaterializerOptions
 {
     /// <summary>
+    /// Initializes a new instance of the <see cref="KubernetesGatewayTrafficMaterializerOptions" /> class.
+    /// </summary>
+    public KubernetesGatewayTrafficMaterializerOptions()
+    {
+    }
+
+    /// <summary>
     /// Gets the default provider identifier used by the Kubernetes Gateway traffic materializer.
     /// </summary>
     public const string DefaultProviderId = "kubernetes-gateway";

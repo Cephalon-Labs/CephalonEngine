@@ -6,6 +6,13 @@ namespace Cephalon.Edge.KubernetesGateway.Configuration;
 public sealed class KubernetesGatewayTrafficRouteOptions
 {
     /// <summary>
+    /// Initializes a new instance of the <see cref="KubernetesGatewayTrafficRouteOptions" /> class.
+    /// </summary>
+    public KubernetesGatewayTrafficRouteOptions()
+    {
+    }
+
+    /// <summary>
     /// Gets or sets the Cephalon cell-route identifier that this provider projection owns.
     /// </summary>
     public string? RouteId { get; set; }

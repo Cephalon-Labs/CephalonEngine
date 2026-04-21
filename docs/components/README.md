@@ -27,6 +27,7 @@ See also: [Docs hub](../README.md)
 - [Cephalon.Retrieval](retrieval.md)
 - [Cephalon.Edge](edge.md)
 - [Cephalon.Edge.KubernetesGateway](edge-kubernetes-gateway.md)
+- [Cephalon.Edge.Traefik](edge-traefik.md)
 
 ## Phase 9 companion packs
 

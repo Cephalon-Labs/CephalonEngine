@@ -48,10 +48,14 @@ The first provider-specific control-plane follow-through now also ships separate
 Kubernetes Gateway API intent for `provider-managed` routes and can now also overlay live
 Gateway/HTTPRoute observation in `observe-only` mode plus owned `HTTPRoute` apply-and-reconcile
 behavior in `apply-and-reconcile` mode while leaving generic edge-node ownership, edge-runtime
-fallback, and `EdgeNativeDelivery` activation inside this baseline pack.
+fallback, and `EdgeNativeDelivery` activation inside this baseline pack. A second provider-specific
+control-plane sibling now also ships through `Cephalon.Edge.Traefik`, which keeps Traefik
+IngressRoute intent on that same shared provider-materializer seam and proves the abstraction is not
+bound to Kubernetes Gateway API alone.
 
 ## Related docs
 
 - [Cephalon.Edge.KubernetesGateway](edge-kubernetes-gateway.md)
+- [Cephalon.Edge.Traefik](edge-traefik.md)
 - [Technology packs](../technology-packs.md)
 - [Module authoring](../module-authoring.md)

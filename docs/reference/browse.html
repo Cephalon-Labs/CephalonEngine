@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-21T14:18:38.4198377+00:00",
+  "GeneratedAtUtc": "2026-04-21T15:00:49.129817+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -192,6 +192,22 @@
       "FileName": "cephalon-edge.md",
       "NamespaceCount": 3,
       "TypeCount": 6
+    },
+    {
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "Category": "Phase 13 Companion Packs",
+      "Description": "Kubernetes Gateway API control-plane materializer and live reconciliation companion pack for Cephalon edge traffic automation.",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "NamespaceCount": 2,
+      "TypeCount": 5
+    },
+    {
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "Category": "Phase 13 Companion Packs",
+      "Description": "Traefik IngressRoute projected-intent control-plane materializer companion pack for Cephalon edge traffic automation.",
+      "FileName": "cephalon-edge-traefik.md",
+      "NamespaceCount": 2,
+      "TypeCount": 4
     },
     {
       "AssemblyName": "Cephalon.Engine",
@@ -922,6 +938,20 @@
       "TypeCount": 1
     },
     {
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "namespace-cephalon-edge-kubernetesgateway-configuration",
+      "TypeCount": 4
+    },
+    {
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Registration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "namespace-cephalon-edge-kubernetesgateway-registration",
+      "TypeCount": 1
+    },
+    {
       "NamespaceName": "Cephalon.Edge.Registration",
       "AssemblyName": "Cephalon.Edge",
       "FileName": "cephalon-edge.md",
@@ -934,6 +964,20 @@
       "FileName": "cephalon-edge.md",
       "AnchorId": "namespace-cephalon-edge-services",
       "TypeCount": 4
+    },
+    {
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "namespace-cephalon-edge-traefik-configuration",
+      "TypeCount": 3
+    },
+    {
+      "NamespaceName": "Cephalon.Edge.Traefik.Registration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "namespace-cephalon-edge-traefik-registration",
+      "TypeCount": 1
     },
     {
       "NamespaceName": "Cephalon.Engine.AppModel",
@@ -8579,6 +8623,81 @@
       }
     },
     {
+      "DisplayName": "KubernetesGatewayEngineBuilderExtensions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Registration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "type-cephalon-edge-kubernetesgateway-registration-kubernetesgatewayenginebuilderextensions",
+      "Declaration": "public static class KubernetesGatewayEngineBuilderExtensions",
+      "Summary": "Registers the Kubernetes Gateway API traffic materializer companion pack with an \u0060EngineBuilder\u0060.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "KubernetesGatewayTrafficMaterializerOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "type-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficmaterializeroptions",
+      "Declaration": "public sealed class KubernetesGatewayTrafficMaterializerOptions",
+      "Summary": "Configures the Kubernetes Gateway API control-plane materializer for provider-managed cell traffic automation.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 2,
+        "Properties": 11,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "KubernetesGatewayTrafficObservationModes",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "type-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationmodes",
+      "Declaration": "public static class KubernetesGatewayTrafficObservationModes",
+      "Summary": "Defines the stable control-plane modes supported by the Kubernetes Gateway traffic materializer.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 3,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "KubernetesGatewayTrafficObservationOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "type-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationoptions",
+      "Declaration": "public sealed class KubernetesGatewayTrafficObservationOptions",
+      "Summary": "Configures how the Kubernetes Gateway traffic materializer interacts with the Kubernetes Gateway API control plane.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 7,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "KubernetesGatewayTrafficRouteOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "type-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficrouteoptions",
+      "Declaration": "public sealed class KubernetesGatewayTrafficRouteOptions",
+      "Summary": "Configures one cell traffic automation route that should materialize into Kubernetes Gateway API intent.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 13,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "KubernetesHostApplicationBuilderExtensions",
       "NamespaceName": "Cephalon.Observability.Kubernetes.Hosting",
       "AssemblyName": "Cephalon.Observability.Kubernetes",
@@ -11744,6 +11863,66 @@
       }
     },
     {
+      "DisplayName": "TraefikEngineBuilderExtensions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Registration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "type-cephalon-edge-traefik-registration-traefikenginebuilderextensions",
+      "Declaration": "public static class TraefikEngineBuilderExtensions",
+      "Summary": "Registers the Traefik traffic materializer companion pack with an \u0060EngineBuilder\u0060.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "TraefikIngressRouteOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "type-cephalon-edge-traefik-configuration-traefikingressrouteoptions",
+      "Declaration": "public sealed class TraefikIngressRouteOptions",
+      "Summary": "Configures one cell traffic automation route that should materialize into Traefik IngressRoute intent.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 16,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TraefikMiddlewareReferenceOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "type-cephalon-edge-traefik-configuration-traefikmiddlewarereferenceoptions",
+      "Declaration": "public sealed class TraefikMiddlewareReferenceOptions",
+      "Summary": "Configures one Traefik middleware reference that should attach to a projected IngressRoute rule.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 2,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TraefikTrafficMaterializerOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "type-cephalon-edge-traefik-configuration-traefiktrafficmaterializeroptions",
+      "Declaration": "public sealed class TraefikTrafficMaterializerOptions",
+      "Summary": "Configures the Traefik IngressRoute control-plane materializer for provider-managed cell traffic automation.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 2,
+        "Properties": 6,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "TransportDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Transports",
       "AssemblyName": "Cephalon.Abstractions",
@@ -13865,6 +14044,17 @@
       "Summary": "Adds the JSON-RPC transport mapper to a \u0060WebApplicationBuilder\u0060."
     },
     {
+      "DisplayName": "AddKubernetesGatewayTrafficMaterializer",
+      "Category": "Methods",
+      "DeclaringTypeName": "KubernetesGatewayEngineBuilderExtensions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Registration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-m-cephalon-edge-kubernetesgateway-registration-kubernetesgatewayenginebuilderextensions-addkubernetesgatewaytrafficmaterializer-cephalon-engine-composition-enginebuilder-system-action-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficmaterializeroptions",
+      "Signature": "EngineBuilder AddKubernetesGatewayTrafficMaterializer(this EngineBuilder builder, Action\u003CKubernetesGatewayTrafficMaterializerOptions\u003E configure)",
+      "Summary": "Adds the Kubernetes Gateway API traffic materializer companion pack to the engine."
+    },
+    {
       "DisplayName": "AddLanguageResources",
       "Category": "Methods",
       "DeclaringTypeName": "EngineBuilder",
@@ -14094,6 +14284,17 @@
       "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-addtechnology-cephalon-abstractions-technologies-technologydescriptor",
       "Signature": "EngineBuilder AddTechnology(TechnologyDescriptor technology)",
       "Summary": "Selects a technology profile for the current app profile."
+    },
+    {
+      "DisplayName": "AddTraefikTrafficMaterializer",
+      "Category": "Methods",
+      "DeclaringTypeName": "TraefikEngineBuilderExtensions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Registration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-m-cephalon-edge-traefik-registration-traefikenginebuilderextensions-addtraefiktrafficmaterializer-cephalon-engine-composition-enginebuilder-system-action-cephalon-edge-traefik-configuration-traefiktrafficmaterializeroptions",
+      "Signature": "EngineBuilder AddTraefikTrafficMaterializer(this EngineBuilder builder, Action\u003CTraefikTrafficMaterializerOptions\u003E configure)",
+      "Summary": "Adds the Traefik IngressRoute traffic materializer companion pack to the engine."
     },
     {
       "DisplayName": "AddTransport",
@@ -14897,6 +15098,17 @@
       "AnchorId": "member-m-cephalon-abstractions-eventsourcing-iaggregate-1-apply-0-cephalon-abstractions-eventsourcing-idomainevent",
       "Signature": "TState Apply(TState current, IDomainEvent evt)",
       "Summary": "Applies one event to the current state and returns the next state snapshot."
+    },
+    {
+      "DisplayName": "ApplyAndReconcile",
+      "Category": "Fields",
+      "DeclaringTypeName": "KubernetesGatewayTrafficObservationModes",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-f-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationmodes-applyandreconcile",
+      "Signature": "const string ApplyAndReconcile",
+      "Summary": "Applies owned HTTPRoute resources and then reconciles the observed Gateway API status back into the shared runtime catalog."
     },
     {
       "DisplayName": "ApplyCephalonRateLimiting",
@@ -16140,6 +16352,105 @@
       "AnchorId": "member-m-cephalon-engine-configuration-backendforfrontendsettings-ctor-system-collections-generic-ireadonlylist-cephalon-engine-configuration-backendforfrontendclientbindingsettings",
       "Signature": "BackendForFrontendSettings(IReadOnlyList\u003CBackendForFrontendClientBindingSettings\u003E bindings)",
       "Summary": "Creates backend-for-frontend settings."
+    },
+    {
+      "DisplayName": "BackendNamespace",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficRouteOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficrouteoptions-backendnamespace",
+      "Signature": "string BackendNamespace { get; set; }",
+      "Summary": "Gets or sets the Kubernetes namespace that contains the projected backend Service. When omitted, the materializer falls back to the effective target route namespace."
+    },
+    {
+      "DisplayName": "BackendNamespace",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikIngressRouteOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefikingressrouteoptions-backendnamespace",
+      "Signature": "string BackendNamespace { get; set; }",
+      "Summary": "Gets or sets the Kubernetes namespace that owns the backend Service. When omitted, the materializer falls back to the effective IngressRoute namespace."
+    },
+    {
+      "DisplayName": "BackendPort",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficRouteOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficrouteoptions-backendport",
+      "Signature": "int? BackendPort { get; set; }",
+      "Summary": "Gets or sets the backend Service port referenced by the projected HTTPRoute."
+    },
+    {
+      "DisplayName": "BackendPort",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikIngressRouteOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefikingressrouteoptions-backendport",
+      "Signature": "int? BackendPort { get; set; }",
+      "Summary": "Gets or sets the backend Service port referenced by the projected route."
+    },
+    {
+      "DisplayName": "BackendScheme",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikIngressRouteOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefikingressrouteoptions-backendscheme",
+      "Signature": "string BackendScheme { get; set; }",
+      "Summary": "Gets or sets the optional backend scheme such as \u0060http\u0060 or \u0060https\u0060."
+    },
+    {
+      "DisplayName": "BackendServiceName",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficRouteOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficrouteoptions-backendservicename",
+      "Signature": "string BackendServiceName { get; set; }",
+      "Summary": "Gets or sets the backend Kubernetes Service name referenced by the projected HTTPRoute."
+    },
+    {
+      "DisplayName": "BackendServiceName",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikIngressRouteOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefikingressrouteoptions-backendservicename",
+      "Signature": "string BackendServiceName { get; set; }",
+      "Summary": "Gets or sets the backend Kubernetes Service name referenced by the projected route."
+    },
+    {
+      "DisplayName": "BackendWeight",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficRouteOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficrouteoptions-backendweight",
+      "Signature": "int? BackendWeight { get; set; }",
+      "Summary": "Gets or sets the optional backend weight applied to the projected Service reference."
+    },
+    {
+      "DisplayName": "BackendWeight",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikIngressRouteOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefikingressrouteoptions-backendweight",
+      "Signature": "int? BackendWeight { get; set; }",
+      "Summary": "Gets or sets the optional backend weight applied to the projected Service reference."
     },
     {
       "DisplayName": "Backfilling",
@@ -19860,6 +20171,17 @@
       "Summary": "Adds the Cephalon outbox entity mapping to the supplied model."
     },
     {
+      "DisplayName": "ConfiguredIntent",
+      "Category": "Fields",
+      "DeclaringTypeName": "KubernetesGatewayTrafficObservationModes",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-f-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationmodes-configuredintent",
+      "Signature": "const string ConfiguredIntent",
+      "Summary": "Publishes configured Kubernetes Gateway API intent without reading or writing live control-plane resources."
+    },
+    {
       "DisplayName": "ConfigureGraphQLMutation",
       "Category": "Methods",
       "DeclaringTypeName": "GraphQLTransportServiceCollectionExtensions",
@@ -20529,6 +20851,28 @@
       "AnchorId": "member-m-cephalon-abstractions-eventsourcing-ieventstorecontributor-contribute",
       "Signature": "IReadOnlyList\u003CEventStreamDescriptor\u003E Contribute()",
       "Summary": "Returns the event-stream descriptors contributed by the current module or package."
+    },
+    {
+      "DisplayName": "ControllerName",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficMaterializerOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficmaterializeroptions-controllername",
+      "Signature": "string ControllerName { get; set; }",
+      "Summary": "Gets or sets the optional Gateway controller name that owns the configured GatewayClass."
+    },
+    {
+      "DisplayName": "ControllerName",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficRouteOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficrouteoptions-controllername",
+      "Signature": "string ControllerName { get; set; }",
+      "Summary": "Gets or sets the optional controller name associated with the parent GatewayClass. When omitted, the materializer falls back to the pack-level \u0060ControllerName\u0060."
     },
     {
       "DisplayName": "Conventions",
@@ -22027,6 +22371,28 @@
       "Summary": "Gets the default normalized materialization posture for active governed routes."
     },
     {
+      "DisplayName": "DefaultMaterializerId",
+      "Category": "Fields",
+      "DeclaringTypeName": "KubernetesGatewayTrafficMaterializerOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-f-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficmaterializeroptions-defaultmaterializerid",
+      "Signature": "const string DefaultMaterializerId",
+      "Summary": "Gets the default materializer identifier used by the Kubernetes Gateway traffic materializer."
+    },
+    {
+      "DisplayName": "DefaultMaterializerId",
+      "Category": "Fields",
+      "DeclaringTypeName": "TraefikTrafficMaterializerOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-f-cephalon-edge-traefik-configuration-traefiktrafficmaterializeroptions-defaultmaterializerid",
+      "Signature": "const string DefaultMaterializerId",
+      "Summary": "Gets the default materializer identifier used by the Traefik traffic materializer."
+    },
+    {
       "DisplayName": "DefaultMaxEntries",
       "Category": "Fields",
       "DeclaringTypeName": "AuditHistoryExportRequest",
@@ -22091,6 +22457,28 @@
       "AnchorId": "member-p-cephalon-engine-configuration-celltrafficautomationsettings-defaultproviderid",
       "Signature": "string DefaultProviderId { get; }",
       "Summary": "Gets the optional default external provider or control-plane identifier."
+    },
+    {
+      "DisplayName": "DefaultProviderId",
+      "Category": "Fields",
+      "DeclaringTypeName": "KubernetesGatewayTrafficMaterializerOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-f-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficmaterializeroptions-defaultproviderid",
+      "Signature": "const string DefaultProviderId",
+      "Summary": "Gets the default provider identifier used by the Kubernetes Gateway traffic materializer."
+    },
+    {
+      "DisplayName": "DefaultProviderId",
+      "Category": "Fields",
+      "DeclaringTypeName": "TraefikTrafficMaterializerOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-f-cephalon-edge-traefik-configuration-traefiktrafficmaterializeroptions-defaultproviderid",
+      "Signature": "const string DefaultProviderId",
+      "Summary": "Gets the default provider identifier used by the Traefik traffic materializer."
     },
     {
       "DisplayName": "DefaultRootFolderName",
@@ -26394,6 +26782,28 @@
       "Summary": "Gets the transport-specific entry point, route prefix, or endpoint handle when one is known."
     },
     {
+      "DisplayName": "EntryPoints",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikIngressRouteOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefikingressrouteoptions-entrypoints",
+      "Signature": "IList\u003Cstring\u003E EntryPoints { get; }",
+      "Summary": "Gets the Traefik entry points that should accept requests for the projected route. When empty, the materializer falls back to the pack-level \u0060EntryPoints\u0060 list."
+    },
+    {
+      "DisplayName": "EntryPoints",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikTrafficMaterializerOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefiktrafficmaterializeroptions-entrypoints",
+      "Signature": "IList\u003Cstring\u003E EntryPoints { get; }",
+      "Summary": "Gets the default Traefik entry points applied when a route-level override is absent."
+    },
+    {
       "DisplayName": "EnvironmentName",
       "Category": "Properties",
       "DeclaringTypeName": "FeatureFlagEvaluationContext",
@@ -29384,6 +29794,72 @@
       "AnchorId": "member-m-cephalon-engine-configuration-stranglerfigroutepolicysettings-fromsection-microsoft-extensions-configuration-iconfigurationsection",
       "Signature": "StranglerFigRoutePolicySettings FromSection(IConfigurationSection section)",
       "Summary": "Reads one route-specific strangler-fig migration-policy override from configuration."
+    },
+    {
+      "DisplayName": "GatewayClassName",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficMaterializerOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficmaterializeroptions-gatewayclassname",
+      "Signature": "string GatewayClassName { get; set; }",
+      "Summary": "Gets or sets the optional default GatewayClass name that backs the projected traffic intent."
+    },
+    {
+      "DisplayName": "GatewayClassName",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficRouteOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficrouteoptions-gatewayclassname",
+      "Signature": "string GatewayClassName { get; set; }",
+      "Summary": "Gets or sets the optional GatewayClass name associated with the parent Gateway. When omitted, the materializer falls back to the pack-level \u0060GatewayClassName\u0060."
+    },
+    {
+      "DisplayName": "GatewayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficMaterializerOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficmaterializeroptions-gatewayname",
+      "Signature": "string GatewayName { get; set; }",
+      "Summary": "Gets or sets the default Gateway name targeted by projected HTTPRoute parent references."
+    },
+    {
+      "DisplayName": "GatewayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficRouteOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficrouteoptions-gatewayname",
+      "Signature": "string GatewayName { get; set; }",
+      "Summary": "Gets or sets the parent Gateway name targeted by the projected HTTPRoute. When omitted, the materializer falls back to the pack-level \u0060GatewayName\u0060."
+    },
+    {
+      "DisplayName": "GatewayNamespace",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficMaterializerOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficmaterializeroptions-gatewaynamespace",
+      "Signature": "string GatewayNamespace { get; set; }",
+      "Summary": "Gets or sets the default Kubernetes namespace that contains the projected Gateway resource."
+    },
+    {
+      "DisplayName": "GatewayNamespace",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficRouteOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficrouteoptions-gatewaynamespace",
+      "Signature": "string GatewayNamespace { get; set; }",
+      "Summary": "Gets or sets the Kubernetes namespace that contains the parent Gateway. When omitted, the materializer falls back to the pack-level \u0060GatewayNamespace\u0060."
     },
     {
       "DisplayName": "GcpTelemetryExportOptions",
@@ -33368,6 +33844,17 @@
       "Summary": "Gets the host name associated with the current request when one is known."
     },
     {
+      "DisplayName": "Hostnames",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficRouteOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficrouteoptions-hostnames",
+      "Signature": "IList\u003Cstring\u003E Hostnames { get; }",
+      "Summary": "Gets the optional hostnames published by the projected HTTPRoute."
+    },
+    {
       "DisplayName": "HttpDependencyDefinition",
       "Category": "Constructors",
       "DeclaringTypeName": "HttpDependencyDefinition",
@@ -33399,6 +33886,17 @@
       "AnchorId": "member-m-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-ctor",
       "Signature": "HttpRequestResponseLoggingOptions()",
       "Summary": "Creates request and response logging options with body capture disabled by default."
+    },
+    {
+      "DisplayName": "HttpRouteName",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficRouteOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficrouteoptions-httproutename",
+      "Signature": "string HttpRouteName { get; set; }",
+      "Summary": "Gets or sets the HTTPRoute resource name that should represent the route in Kubernetes Gateway API. When omitted, the materializer derives a deterministic DNS-safe name from \u0060RouteId\u0060."
     },
     {
       "DisplayName": "HuaweiCloudTelemetryExportOptions",
@@ -34930,6 +35428,17 @@
       "Summary": "Gets the normalized ingress follow-through mode, such as \u0060pass-through\u0060, \u0060rewrite-local-path\u0060, \u0060proxy-absolute-uri\u0060, or \u0060opaque-endpoint\u0060."
     },
     {
+      "DisplayName": "IngressRouteName",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikIngressRouteOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefikingressrouteoptions-ingressroutename",
+      "Signature": "string IngressRouteName { get; set; }",
+      "Summary": "Gets or sets the IngressRoute resource name that should represent the route in Traefik. When omitted, the materializer derives a deterministic DNS-safe name from \u0060RouteId\u0060."
+    },
+    {
       "DisplayName": "InitializeAsync",
       "Category": "Methods",
       "DeclaringTypeName": "EngineRuntime",
@@ -35920,6 +36429,61 @@
       "Summary": "Gets the built-in knowledge-retrieval technology profile."
     },
     {
+      "DisplayName": "KubeConfigPath",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficObservationOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationoptions-kubeconfigpath",
+      "Signature": "string KubeConfigPath { get; set; }",
+      "Summary": "Gets or sets the explicit kubeconfig path used when the pack creates its own client outside the cluster."
+    },
+    {
+      "DisplayName": "KubeContext",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficObservationOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationoptions-kubecontext",
+      "Signature": "string KubeContext { get; set; }",
+      "Summary": "Gets or sets the optional kubeconfig context override used when the pack creates its own client."
+    },
+    {
+      "DisplayName": "KubernetesGatewayTrafficMaterializerOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "KubernetesGatewayTrafficMaterializerOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-m-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficmaterializeroptions-ctor",
+      "Signature": "KubernetesGatewayTrafficMaterializerOptions()",
+      "Summary": "Initializes a new instance of the \u0060KubernetesGatewayTrafficMaterializerOptions\u0060 class."
+    },
+    {
+      "DisplayName": "KubernetesGatewayTrafficObservationOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "KubernetesGatewayTrafficObservationOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-m-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationoptions-ctor",
+      "Signature": "KubernetesGatewayTrafficObservationOptions()",
+      "Summary": "Initializes a new instance of the \u0060KubernetesGatewayTrafficObservationOptions\u0060 class."
+    },
+    {
+      "DisplayName": "KubernetesGatewayTrafficRouteOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "KubernetesGatewayTrafficRouteOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-m-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficrouteoptions-ctor",
+      "Signature": "KubernetesGatewayTrafficRouteOptions()",
+      "Summary": "Initializes a new instance of the \u0060KubernetesGatewayTrafficRouteOptions\u0060 class."
+    },
+    {
       "DisplayName": "KubernetesTelemetryExportOptions",
       "Category": "Constructors",
       "DeclaringTypeName": "KubernetesTelemetryExportOptions",
@@ -36712,6 +37276,28 @@
       "Summary": "Gets the normalized page size used for the query."
     },
     {
+      "DisplayName": "ListenerName",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficMaterializerOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficmaterializeroptions-listenername",
+      "Signature": "string ListenerName { get; set; }",
+      "Summary": "Gets or sets the optional default Gateway listener or section name used by projected parent references."
+    },
+    {
+      "DisplayName": "ListenerName",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficRouteOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficrouteoptions-listenername",
+      "Signature": "string ListenerName { get; set; }",
+      "Summary": "Gets or sets the optional Gateway listener or section name used by the projected parent reference. When omitted, the materializer falls back to the pack-level \u0060ListenerName\u0060."
+    },
+    {
       "DisplayName": "Liveness",
       "Category": "Properties",
       "DeclaringTypeName": "DiagnosticsSurface",
@@ -37218,6 +37804,17 @@
       "Summary": "Records one inbound message as processed."
     },
     {
+      "DisplayName": "MasterUrl",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficObservationOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationoptions-masterurl",
+      "Signature": "string MasterUrl { get; set; }",
+      "Summary": "Gets or sets the optional API-server override used when the pack creates its own client from kubeconfig."
+    },
+    {
       "DisplayName": "Matched",
       "Category": "Properties",
       "DeclaringTypeName": "FeatureFlagEvaluationResult",
@@ -37383,6 +37980,17 @@
       "Summary": "Gets the included tags that matched the published endpoint."
     },
     {
+      "DisplayName": "MatchRule",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikIngressRouteOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefikingressrouteoptions-matchrule",
+      "Signature": "string MatchRule { get; set; }",
+      "Summary": "Gets or sets the Traefik rule expression such as \u0060Host(\u0060api.example.com\u0060) \u0026\u0026 PathPrefix(\u0060/orders\u0060)\u0060."
+    },
+    {
       "DisplayName": "MaterializationError",
       "Category": "Properties",
       "DeclaringTypeName": "CellTrafficAutomationRuntimeDescriptor",
@@ -37480,6 +38088,28 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-icelltrafficautomationprovidermaterializer-materializerid",
       "Signature": "string MaterializerId { get; }",
       "Summary": "Gets the stable materializer identifier that should appear on operator-facing runtime answers."
+    },
+    {
+      "DisplayName": "MaterializerId",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficMaterializerOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficmaterializeroptions-materializerid",
+      "Signature": "string MaterializerId { get; set; }",
+      "Summary": "Gets or sets the stable materializer identifier that should appear on operator-facing runtime answers."
+    },
+    {
+      "DisplayName": "MaterializerId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikTrafficMaterializerOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefiktrafficmaterializeroptions-materializerid",
+      "Signature": "string MaterializerId { get; set; }",
+      "Summary": "Gets or sets the stable materializer identifier that should appear on operator-facing runtime answers."
     },
     {
       "DisplayName": "MaxAgeDays",
@@ -39385,6 +40015,17 @@
       "Summary": "Gets the microservice deployment topology pattern."
     },
     {
+      "DisplayName": "Middlewares",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikIngressRouteOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefikingressrouteoptions-middlewares",
+      "Signature": "IList\u003CTraefikMiddlewareReferenceOptions\u003E Middlewares { get; }",
+      "Summary": "Gets the middleware references that should attach to the projected route in declaration order."
+    },
+    {
       "DisplayName": "Migration",
       "Category": "Properties",
       "DeclaringTypeName": "EngineSettings",
@@ -39614,6 +40255,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-inboxdescriptor-mode",
       "Signature": "string Mode { get; }",
       "Summary": "Gets the inbox mode."
+    },
+    {
+      "DisplayName": "Mode",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficObservationOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationoptions-mode",
+      "Signature": "string Mode { get; set; }",
+      "Summary": "Gets or sets the control-plane mode used by the Kubernetes Gateway materializer."
     },
     {
       "DisplayName": "Mode",
@@ -40221,6 +40873,17 @@
       "Summary": "Gets the route/query/header/body member name when one is available."
     },
     {
+      "DisplayName": "Name",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikMiddlewareReferenceOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefikmiddlewarereferenceoptions-name",
+      "Signature": "string Name { get; set; }",
+      "Summary": "Gets or sets the Traefik middleware resource name."
+    },
+    {
       "DisplayName": "NameFieldNumber",
       "Category": "Fields",
       "DeclaringTypeName": "HelloRequest",
@@ -40274,6 +40937,17 @@
       "AnchorId": "member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-namespace",
       "Signature": "string Namespace { get; set; }",
       "Summary": "Gets or sets the workload namespace to stamp onto exported resources."
+    },
+    {
+      "DisplayName": "Namespace",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikMiddlewareReferenceOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefikmiddlewarereferenceoptions-namespace",
+      "Signature": "string Namespace { get; set; }",
+      "Summary": "Gets or sets the optional Kubernetes namespace that owns the middleware. When omitted, the materializer falls back to the effective IngressRoute namespace."
     },
     {
       "DisplayName": "NamespaceIndexPath",
@@ -40650,6 +41324,17 @@
       "Summary": "Creates observability options with the default startup diagnostics behavior."
     },
     {
+      "DisplayName": "Observation",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficMaterializerOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficmaterializeroptions-observation",
+      "Signature": "KubernetesGatewayTrafficObservationOptions Observation { get; }",
+      "Summary": "Gets the live-observation options used to overlay Kubernetes Gateway API status back into the shared runtime catalog."
+    },
+    {
       "DisplayName": "ObservedAtUtc",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionReport",
@@ -40725,6 +41410,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionexecutionreport-observedatutc",
       "Signature": "DateTimeOffset ObservedAtUtc { get; }",
       "Summary": "Gets the UTC timestamp when the observation occurred."
+    },
+    {
+      "DisplayName": "ObserveOnly",
+      "Category": "Fields",
+      "DeclaringTypeName": "KubernetesGatewayTrafficObservationModes",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-f-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationmodes-observeonly",
+      "Signature": "const string ObserveOnly",
+      "Summary": "Reads live Kubernetes Gateway API status and projects the observed posture back into the shared runtime catalog."
     },
     {
       "DisplayName": "OccurredAtUtc",
@@ -42135,6 +42831,17 @@
       "Summary": "The automation spans multiple materialization dimensions whose observed postures do not currently agree."
     },
     {
+      "DisplayName": "PassHostHeader",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikIngressRouteOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefikingressrouteoptions-passhostheader",
+      "Signature": "bool? PassHostHeader { get; set; }",
+      "Summary": "Gets or sets the optional pass-host-header posture applied to the projected backend Service reference."
+    },
+    {
       "DisplayName": "Password",
       "Category": "Properties",
       "DeclaringTypeName": "CassandraDependencyDefinition",
@@ -43103,6 +43810,17 @@
       "Summary": "Gets the source of the effective automation policy."
     },
     {
+      "DisplayName": "PollingIntervalSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficObservationOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationoptions-pollingintervalseconds",
+      "Signature": "int PollingIntervalSeconds { get; set; }",
+      "Summary": "Gets or sets the polling interval, in seconds, used for recurring live observation or reconciliation after startup materialization."
+    },
+    {
       "DisplayName": "Port",
       "Category": "Properties",
       "DeclaringTypeName": "CassandraDependencyDefinition",
@@ -43497,6 +44215,39 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-icelltrafficautomationprovidermaterializer-priority",
       "Signature": "int Priority { get; }",
       "Summary": "Gets the priority used when multiple provider materializers can reconcile the same automation answer. Higher values win, while ties still fail deterministically."
+    },
+    {
+      "DisplayName": "Priority",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficMaterializerOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficmaterializeroptions-priority",
+      "Signature": "int Priority { get; set; }",
+      "Summary": "Gets or sets the priority used when multiple provider materializers can reconcile the same automation answer. Higher values win while ties still fail deterministically in the engine."
+    },
+    {
+      "DisplayName": "Priority",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikIngressRouteOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefikingressrouteoptions-priority",
+      "Signature": "int? Priority { get; set; }",
+      "Summary": "Gets or sets the optional explicit Traefik route priority."
+    },
+    {
+      "DisplayName": "Priority",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikTrafficMaterializerOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefiktrafficmaterializeroptions-priority",
+      "Signature": "int Priority { get; set; }",
+      "Summary": "Gets or sets the priority used when multiple provider materializers can reconcile the same automation answer. Higher values win while ties still fail deterministically in the engine."
     },
     {
       "DisplayName": "Probe",
@@ -44201,6 +44952,28 @@
       "AnchorId": "member-p-cephalon-abstractions-features-ifeatureflagprovider-providerid",
       "Signature": "string ProviderId { get; }",
       "Summary": "Gets the stable provider identifier used by feature-flag bindings."
+    },
+    {
+      "DisplayName": "ProviderId",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficMaterializerOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficmaterializeroptions-providerid",
+      "Signature": "string ProviderId { get; set; }",
+      "Summary": "Gets or sets the provider identifier that the materializer owns."
+    },
+    {
+      "DisplayName": "ProviderId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikTrafficMaterializerOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefiktrafficmaterializeroptions-providerid",
+      "Signature": "string ProviderId { get; set; }",
+      "Summary": "Gets or sets the provider identifier that the materializer owns."
     },
     {
       "DisplayName": "ProviderMaterializationError",
@@ -48374,6 +49147,17 @@
     {
       "DisplayName": "RouteId",
       "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficRouteOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficrouteoptions-routeid",
+      "Signature": "string RouteId { get; set; }",
+      "Summary": "Gets or sets the Cephalon cell-route identifier that this provider projection owns."
+    },
+    {
+      "DisplayName": "RouteId",
+      "Category": "Properties",
       "DeclaringTypeName": "StranglerFigIngressRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Patterns",
       "AssemblyName": "Cephalon.Abstractions",
@@ -48414,6 +49198,61 @@
       "AnchorId": "member-p-cephalon-abstractions-patterns-stranglerfigrouteresolution-routeid",
       "Signature": "string RouteId { get; set; }",
       "Summary": "The matched route identifier."
+    },
+    {
+      "DisplayName": "RouteId",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikIngressRouteOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefikingressrouteoptions-routeid",
+      "Signature": "string RouteId { get; set; }",
+      "Summary": "Gets or sets the Cephalon cell-route identifier that this provider projection owns."
+    },
+    {
+      "DisplayName": "RouteNamespace",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficMaterializerOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficmaterializeroptions-routenamespace",
+      "Signature": "string RouteNamespace { get; set; }",
+      "Summary": "Gets or sets the default namespace used for projected HTTPRoute resources when a route-level override is absent."
+    },
+    {
+      "DisplayName": "RouteNamespace",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficRouteOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficrouteoptions-routenamespace",
+      "Signature": "string RouteNamespace { get; set; }",
+      "Summary": "Gets or sets the Kubernetes namespace that should own the projected HTTPRoute resource. When omitted, the materializer falls back to the pack-level \u0060RouteNamespace\u0060 and then the effective Gateway namespace."
+    },
+    {
+      "DisplayName": "RouteNamespace",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikIngressRouteOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefikingressrouteoptions-routenamespace",
+      "Signature": "string RouteNamespace { get; set; }",
+      "Summary": "Gets or sets the Kubernetes namespace that should own the projected IngressRoute resource. When omitted, the materializer falls back to the pack-level \u0060RouteNamespace\u0060."
+    },
+    {
+      "DisplayName": "RouteNamespace",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikTrafficMaterializerOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefiktrafficmaterializeroptions-routenamespace",
+      "Signature": "string RouteNamespace { get; set; }",
+      "Summary": "Gets or sets the default Kubernetes namespace that contains projected IngressRoute resources."
     },
     {
       "DisplayName": "RoutePattern",
@@ -48528,6 +49367,17 @@
     {
       "DisplayName": "Routes",
       "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficMaterializerOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficmaterializeroptions-routes",
+      "Signature": "IList\u003CKubernetesGatewayTrafficRouteOptions\u003E Routes { get; }",
+      "Summary": "Gets the route-level Kubernetes Gateway projections owned by this materializer."
+    },
+    {
+      "DisplayName": "Routes",
+      "Category": "Properties",
       "DeclaringTypeName": "StranglerFigMigrationSettings",
       "NamespaceName": "Cephalon.Engine.Configuration",
       "AssemblyName": "Cephalon.Engine",
@@ -48535,6 +49385,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-stranglerfigmigrationsettings-routes",
       "Signature": "IReadOnlyList\u003CStranglerFigRoutePolicySettings\u003E Routes { get; }",
       "Summary": "Gets the route-specific strangler-fig migration-policy entries."
+    },
+    {
+      "DisplayName": "Routes",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikTrafficMaterializerOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefiktrafficmaterializeroptions-routes",
+      "Signature": "IList\u003CTraefikIngressRouteOptions\u003E Routes { get; }",
+      "Summary": "Gets the route-level Traefik IngressRoute projections owned by this materializer."
     },
     {
       "DisplayName": "RoutingStrategy",
@@ -51582,6 +52443,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccapturefreshnessstates-stale",
       "Signature": "const string Stale",
       "Summary": "Indicates that the provider reports the capture as stale."
+    },
+    {
+      "DisplayName": "StaleAfterSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficObservationOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationoptions-staleafterseconds",
+      "Signature": "int StaleAfterSeconds { get; set; }",
+      "Summary": "Gets or sets the freshness window, in seconds, that observed status should advertise to operators."
     },
     {
       "DisplayName": "StartAsync",
@@ -54752,6 +55624,39 @@
       "Summary": "Gets or sets the short response title."
     },
     {
+      "DisplayName": "TlsOptionsName",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikIngressRouteOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefikingressrouteoptions-tlsoptionsname",
+      "Signature": "string TlsOptionsName { get; set; }",
+      "Summary": "Gets or sets the optional TLSOption resource name associated with the projected route."
+    },
+    {
+      "DisplayName": "TlsOptionsNamespace",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikIngressRouteOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefikingressrouteoptions-tlsoptionsnamespace",
+      "Signature": "string TlsOptionsNamespace { get; set; }",
+      "Summary": "Gets or sets the optional Kubernetes namespace that owns the referenced TLSOption. When omitted, the materializer falls back to the effective IngressRoute namespace."
+    },
+    {
+      "DisplayName": "TlsSecretName",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikIngressRouteOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefikingressrouteoptions-tlssecretname",
+      "Signature": "string TlsSecretName { get; set; }",
+      "Summary": "Gets or sets the optional TLS Secret name that should terminate the projected IngressRoute."
+    },
+    {
       "DisplayName": "TlsServerName",
       "Category": "Properties",
       "DeclaringTypeName": "MqttDependencyDefinition",
@@ -55058,6 +55963,39 @@
       "AnchorId": "member-p-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-tracedatakey",
       "Signature": "string TraceDataKey { get; set; }",
       "Summary": "Gets or sets the Oracle Cloud APM trace data key used for direct managed trace ingestion."
+    },
+    {
+      "DisplayName": "TraefikIngressRouteOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "TraefikIngressRouteOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-m-cephalon-edge-traefik-configuration-traefikingressrouteoptions-ctor",
+      "Signature": "TraefikIngressRouteOptions()",
+      "Summary": "Initializes a new instance of the \u0060TraefikIngressRouteOptions\u0060 class."
+    },
+    {
+      "DisplayName": "TraefikMiddlewareReferenceOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "TraefikMiddlewareReferenceOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-m-cephalon-edge-traefik-configuration-traefikmiddlewarereferenceoptions-ctor",
+      "Signature": "TraefikMiddlewareReferenceOptions()",
+      "Summary": "Initializes a new instance of the \u0060TraefikMiddlewareReferenceOptions\u0060 class."
+    },
+    {
+      "DisplayName": "TraefikTrafficMaterializerOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "TraefikTrafficMaterializerOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-m-cephalon-edge-traefik-configuration-traefiktrafficmaterializeroptions-ctor",
+      "Signature": "TraefikTrafficMaterializerOptions()",
+      "Summary": "Initializes a new instance of the \u0060TraefikTrafficMaterializerOptions\u0060 class."
     },
     {
       "DisplayName": "TrafficAutomation",
@@ -56345,6 +57283,17 @@
       "AnchorId": "member-p-cephalon-observability-openshift-configuration-openshifttelemetryexportoptions-useinclustercollectorservice",
       "Signature": "bool UseInClusterCollectorService { get; set; }",
       "Summary": "Gets or sets a value indicating whether the package should target an in-cluster OpenShift collector service when no shared endpoint is configured."
+    },
+    {
+      "DisplayName": "UseInClusterConfiguration",
+      "Category": "Properties",
+      "DeclaringTypeName": "KubernetesGatewayTrafficObservationOptions",
+      "NamespaceName": "Cephalon.Edge.KubernetesGateway.Configuration",
+      "AssemblyName": "Cephalon.Edge.KubernetesGateway",
+      "FileName": "cephalon-edge-kubernetesgateway.md",
+      "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationoptions-useinclusterconfiguration",
+      "Signature": "bool UseInClusterConfiguration { get; set; }",
+      "Summary": "Gets or sets a value indicating whether in-cluster Kubernetes configuration should be used when the pack creates its own client."
     },
     {
       "DisplayName": "UseInClusterProxyService",

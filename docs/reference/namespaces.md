@@ -204,6 +204,14 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Edge](cephalon-edge.md#namespace-cephalon-edge-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.Edge&namespace=Cephalon.Edge.Configuration)
 
+## `Cephalon.Edge.KubernetesGateway.Configuration`
+
+- [Cephalon.Edge.KubernetesGateway](cephalon-edge-kubernetesgateway.md#namespace-cephalon-edge-kubernetesgateway-configuration): 4 public types [Browse](browse.html?assembly=Cephalon.Edge.KubernetesGateway&namespace=Cephalon.Edge.KubernetesGateway.Configuration)
+
+## `Cephalon.Edge.KubernetesGateway.Registration`
+
+- [Cephalon.Edge.KubernetesGateway](cephalon-edge-kubernetesgateway.md#namespace-cephalon-edge-kubernetesgateway-registration): 1 public types [Browse](browse.html?assembly=Cephalon.Edge.KubernetesGateway&namespace=Cephalon.Edge.KubernetesGateway.Registration)
+
 ## `Cephalon.Edge.Registration`
 
 - [Cephalon.Edge](cephalon-edge.md#namespace-cephalon-edge-registration): 1 public types [Browse](browse.html?assembly=Cephalon.Edge&namespace=Cephalon.Edge.Registration)
@@ -211,6 +219,14 @@ Browse the published API surface by namespace.
 ## `Cephalon.Edge.Services`
 
 - [Cephalon.Edge](cephalon-edge.md#namespace-cephalon-edge-services): 4 public types [Browse](browse.html?assembly=Cephalon.Edge&namespace=Cephalon.Edge.Services)
+
+## `Cephalon.Edge.Traefik.Configuration`
+
+- [Cephalon.Edge.Traefik](cephalon-edge-traefik.md#namespace-cephalon-edge-traefik-configuration): 3 public types [Browse](browse.html?assembly=Cephalon.Edge.Traefik&namespace=Cephalon.Edge.Traefik.Configuration)
+
+## `Cephalon.Edge.Traefik.Registration`
+
+- [Cephalon.Edge.Traefik](cephalon-edge-traefik.md#namespace-cephalon-edge-traefik-registration): 1 public types [Browse](browse.html?assembly=Cephalon.Edge.Traefik&namespace=Cephalon.Edge.Traefik.Registration)
 
 ## `Cephalon.Engine.AppModel`
 

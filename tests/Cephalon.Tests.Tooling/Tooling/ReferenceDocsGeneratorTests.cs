@@ -408,6 +408,8 @@ public sealed class ReferenceDocsGeneratorTests
                 "Cephalon.Data",
                 "Cephalon.Data.EntityFramework",
                 "Cephalon.Edge",
+                "Cephalon.Edge.KubernetesGateway",
+                "Cephalon.Edge.Traefik",
                 "Cephalon.Engine",
                 "Cephalon.EventSourcing",
                 "Cephalon.EventSourcing.EntityFramework",
@@ -499,6 +501,8 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-eventsourcing.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-eventsourcing-entityframework.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-edge-kubernetesgateway.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-edge-traefik.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-cassandradependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-clickhousedependencies.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-observability-consuldependencies.md");
@@ -544,6 +548,12 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.EventSourcing.EntityFramework", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Edge.KubernetesGateway", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Edge.Traefik", StringComparison.Ordinal));
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Observability.CassandraDependencies", StringComparison.Ordinal));

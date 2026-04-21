@@ -83,6 +83,11 @@ Quick links:
 - [Cephalon.ReferenceDocs](cephalon-referencedocs.md): Reference-doc generation pipeline for XML comments and public APIs. Contains 3 namespaces and 6 public types. [Browse](browse.html?assembly=Cephalon.ReferenceDocs)
 - [Cephalon.Scaffolding](cephalon-scaffolding.md): Blueprint scaffold generation primitives and filesystem output. Contains 2 namespaces and 7 public types. [Browse](browse.html?assembly=Cephalon.Scaffolding)
 
+### Phase 13 Companion Packs
+
+- [Cephalon.Edge.KubernetesGateway](cephalon-edge-kubernetesgateway.md): Kubernetes Gateway API control-plane materializer and live reconciliation companion pack for Cephalon edge traffic automation. Contains 2 namespaces and 5 public types. [Browse](browse.html?assembly=Cephalon.Edge.KubernetesGateway)
+- [Cephalon.Edge.Traefik](cephalon-edge-traefik.md): Traefik IngressRoute projected-intent control-plane materializer companion pack for Cephalon edge traffic automation. Contains 2 namespaces and 4 public types. [Browse](browse.html?assembly=Cephalon.Edge.Traefik)
+
 ### Phase 12 Companion Packs
 
 - [Cephalon.Eventing.Behaviors](cephalon-eventing-behaviors.md): Explicit bridge that routes behavior saga choreography publications through the shared Cephalon eventing publish path. Contains 1 namespaces and 1 public types. [Browse](browse.html?assembly=Cephalon.Eventing.Behaviors)

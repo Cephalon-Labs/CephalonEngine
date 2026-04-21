@@ -877,6 +877,17 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void EdgeTraefikAssemblyExposesOnlyTheDocumentedPackContracts()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Edge.Traefik.Registration.TraefikEngineBuilderExtensions).Assembly,
+            typeof(global::Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions),
+            typeof(global::Cephalon.Edge.Traefik.Configuration.TraefikMiddlewareReferenceOptions),
+            typeof(global::Cephalon.Edge.Traefik.Configuration.TraefikTrafficMaterializerOptions),
+            typeof(global::Cephalon.Edge.Traefik.Registration.TraefikEngineBuilderExtensions));
+    }
+
+    [Fact]
     public void SfidIdsAssemblyExposesOnlyTheDocumentedPackContracts()
     {
         AssertExportedTypes(

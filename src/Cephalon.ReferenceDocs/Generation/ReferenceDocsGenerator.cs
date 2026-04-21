@@ -76,6 +76,8 @@ public static class ReferenceDocsGenerator
         new("Cephalon.MultiTenancy", "Phase 8 Companion Packs", "Host-agnostic tenant-resolution and ambient tenant-context baseline for Cephalon runtimes."),
         new("Cephalon.Retrieval", "Technology Packs", "Knowledge retrieval runtime services and extension points."),
         new("Cephalon.Edge", "Technology Packs", "Edge-native delivery runtime services and extension points."),
+        new("Cephalon.Edge.KubernetesGateway", "Phase 13 Companion Packs", "Kubernetes Gateway API control-plane materializer and live reconciliation companion pack for Cephalon edge traffic automation."),
+        new("Cephalon.Edge.Traefik", "Phase 13 Companion Packs", "Traefik IngressRoute projected-intent control-plane materializer companion pack for Cephalon edge traffic automation."),
         new("Cephalon.Cli", "Tooling", "Command-line surface for blueprint-aware generation."),
         new("Cephalon.Scaffolding", "Tooling", "Blueprint scaffold generation primitives and filesystem output."),
         new("Cephalon.ReferenceDocs", "Tooling", "Reference-doc generation pipeline for XML comments and public APIs.")
@@ -94,6 +96,8 @@ public static class ReferenceDocsGenerator
         "Cephalon.Data",
         "Cephalon.Data.EntityFramework",
         "Cephalon.Edge",
+        "Cephalon.Edge.KubernetesGateway",
+        "Cephalon.Edge.Traefik",
         "Cephalon.Engine",
         "Cephalon.EventSourcing",
         "Cephalon.EventSourcing.EntityFramework",

@@ -6,6 +6,13 @@ namespace Cephalon.Edge.KubernetesGateway.Configuration;
 public sealed class KubernetesGatewayTrafficObservationOptions
 {
     /// <summary>
+    /// Initializes a new instance of the <see cref="KubernetesGatewayTrafficObservationOptions" /> class.
+    /// </summary>
+    public KubernetesGatewayTrafficObservationOptions()
+    {
+    }
+
+    /// <summary>
     /// Gets or sets the control-plane mode used by the Kubernetes Gateway materializer.
     /// </summary>
     /// <remarks>

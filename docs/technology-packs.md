@@ -59,6 +59,9 @@ Current baseline packages:
 - `Cephalon.Edge.KubernetesGateway`
   - first provider-specific control-plane materializer over the shared `cell-based-architecture` traffic-automation baseline
   - projects Kubernetes Gateway API intent and can now overlay live Gateway API observation plus owned `HTTPRoute` apply-and-reconcile without moving cluster-specific ownership or reconcile policy into `Cephalon.Engine`
+- `Cephalon.Edge.Traefik`
+  - second provider-specific control-plane materializer over the shared `cell-based-architecture` traffic-automation baseline
+  - projects deterministic Traefik IngressRoute intent, middleware references, backend Service references, and TLS posture back onto the same shared automation catalog without moving Traefik CRD semantics into `Cephalon.Engine`
 
 These packages are also used as scaffold hints for the matching built-in technology profiles.
 The phase-8 data packs are companion packages rather than technology packs, but they can now enrich `EventDrivenIntegration` truth by projecting staged outbox producers and application-managed inbox stores into the eventing runtime surfaces when both baselines are active.
