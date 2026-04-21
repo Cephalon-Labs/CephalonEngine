@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-21T08:25:26.5184511+00:00",
+  "GeneratedAtUtc": "2026-04-21T09:13:15.5814852+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -111,7 +111,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 343
+      "TypeCount": 345
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -618,7 +618,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
-      "TypeCount": 79
+      "TypeCount": 81
     },
     {
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
@@ -3284,6 +3284,21 @@
       }
     },
     {
+      "DisplayName": "CdcCaptureRuntimeObservation",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureruntimeobservation",
+      "Declaration": "public sealed class CdcCaptureRuntimeObservation",
+      "Summary": "Describes one operator-facing runtime observation reported for a CDC capture by an execution runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 12,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "CdcCaptureRuntimeOutcomes",
       "NamespaceName": "Cephalon.Data.Services",
       "AssemblyName": "Cephalon.Data",
@@ -4044,7 +4059,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 5,
+        "Properties": 6,
         "Methods": 0
       }
     },
@@ -6201,6 +6216,21 @@
       "AnchorId": "type-cephalon-data-services-icdccaptureexecutionruntimeregistry",
       "Declaration": "public interface ICdcCaptureExecutionRuntimeRegistry",
       "Summary": "Receives operator-facing CDC capture execution runtime descriptors contributed by active data packs.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "ICdcCaptureExecutionRuntimeReportSink",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-icdccaptureexecutionruntimereportsink",
+      "Declaration": "public interface ICdcCaptureExecutionRuntimeReportSink",
+      "Summary": "Accepts operator-facing CDC runtime observations that are reported on behalf of one execution runtime.",
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
@@ -17679,6 +17709,17 @@
       "Summary": "Gets the number of source changes observed by the capture batch."
     },
     {
+      "DisplayName": "CapturedChangeCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureRuntimeObservation",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-capturedchangecount",
+      "Signature": "int CapturedChangeCount { get; }",
+      "Summary": "Gets the number of source changes observed by this report."
+    },
+    {
       "DisplayName": "CapturedCount",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeSummary",
@@ -18011,6 +18052,17 @@
     {
       "DisplayName": "CdcCaptureId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureRuntimeObservation",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-cdccaptureid",
+      "Signature": "string CdcCaptureId { get; }",
+      "Summary": "Gets the stable CDC capture identifier that produced the observation."
+    },
+    {
+      "DisplayName": "CdcCaptureId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureRuntimeState",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -18073,6 +18125,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-cdccapturepublicationstatus-ctor-system-string-system-nullable-system-int64-system-string",
       "Signature": "CdcCapturePublicationStatus(string state, long? pendingPublicationCount, string description)",
       "Summary": "Creates a new CDC publication status."
+    },
+    {
+      "DisplayName": "CdcCaptureRuntimeObservation",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CdcCaptureRuntimeObservation",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-cdccaptureruntimeobservation-ctor-system-string-system-string-system-datetimeoffset-system-int32-system-int32-system-string-system-string-system-string-cephalon-abstractions-data-cdccapturefreshnessstatus-cephalon-abstractions-data-cdccapturelagstatus-cephalon-abstractions-data-cdccapturepublicationstatus-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "CdcCaptureRuntimeObservation(string cdcCaptureId, string outcome, DateTimeOffset observedAtUtc, int capturedChangeCount, int producedMessageCount, string changeId, string checkpoint, string error, CdcCaptureFreshnessStatus freshness, CdcCaptureLagStatus lag, CdcCapturePublicationStatus publication, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a new CDC capture runtime observation."
     },
     {
       "DisplayName": "CdcCaptureRuntimeState",
@@ -18372,6 +18435,17 @@
       "Summary": "Gets the latest provider-facing change identifier when one was reported."
     },
     {
+      "DisplayName": "ChangeId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureRuntimeObservation",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-changeid",
+      "Signature": "string ChangeId { get; }",
+      "Summary": "Gets the latest provider-facing change identifier when one was reported."
+    },
+    {
       "DisplayName": "Changes",
       "Category": "Properties",
       "DeclaringTypeName": "AuditEntry",
@@ -18599,6 +18673,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionresult-checkpoint",
+      "Signature": "string Checkpoint { get; }",
+      "Summary": "Gets the latest provider-facing checkpoint or cursor when one was reported."
+    },
+    {
+      "DisplayName": "Checkpoint",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureRuntimeObservation",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-checkpoint",
       "Signature": "string Checkpoint { get; }",
       "Summary": "Gets the latest provider-facing checkpoint or cursor when one was reported."
     },
@@ -25357,6 +25442,17 @@
       "Summary": "Gets or sets a value indicating whether tool execution features are enabled."
     },
     {
+      "DisplayName": "EnableExternalCdcRuntimeReporting",
+      "Category": "Properties",
+      "DeclaringTypeName": "DataRuntimeOptions",
+      "NamespaceName": "Cephalon.Data.Configuration",
+      "AssemblyName": "Cephalon.Data",
+      "FileName": "cephalon-data.md",
+      "AnchorId": "member-p-cephalon-data-configuration-dataruntimeoptions-enableexternalcdcruntimereporting",
+      "Signature": "bool EnableExternalCdcRuntimeReporting { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the pack should accept external CDC execution-runtime reports through the shared runtime-state catalog."
+    },
+    {
       "DisplayName": "EnableHostWiring",
       "Category": "Properties",
       "DeclaringTypeName": "WolverineEventingOptions",
@@ -26024,6 +26120,17 @@
       "AssemblyName": "Cephalon.Data",
       "FileName": "cephalon-data.md",
       "AnchorId": "member-p-cephalon-data-services-cdccaptureexecutionreport-error",
+      "Signature": "string Error { get; }",
+      "Summary": "Gets the operator-facing error summary when the observation represents a failure."
+    },
+    {
+      "DisplayName": "Error",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureRuntimeObservation",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-error",
       "Signature": "string Error { get; }",
       "Summary": "Gets the operator-facing error summary when the observation represents a failure."
     },
@@ -28039,6 +28146,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionresult-freshness",
       "Signature": "CdcCaptureFreshnessStatus Freshness { get; }",
       "Summary": "Gets the typed freshness answer reported by the capture implementation when one was supplied."
+    },
+    {
+      "DisplayName": "Freshness",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureRuntimeObservation",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-freshness",
+      "Signature": "CdcCaptureFreshnessStatus Freshness { get; }",
+      "Summary": "Gets the typed freshness answer reported by the active provider/runtime when one was supplied."
     },
     {
       "DisplayName": "Freshness",
@@ -35479,6 +35597,17 @@
     {
       "DisplayName": "Lag",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureRuntimeObservation",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-lag",
+      "Signature": "CdcCaptureLagStatus Lag { get; }",
+      "Summary": "Gets the typed lag answer reported by the active provider/runtime when one was supplied."
+    },
+    {
+      "DisplayName": "Lag",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureRuntimeState",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -37822,6 +37951,17 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureRuntimeObservation",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional operator-facing metadata captured alongside the observation."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureRuntimeState",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -40077,6 +40217,17 @@
     {
       "DisplayName": "ObservedAtUtc",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureRuntimeObservation",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-observedatutc",
+      "Signature": "DateTimeOffset ObservedAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp when the observation occurred."
+    },
+    {
+      "DisplayName": "ObservedAtUtc",
+      "Category": "Properties",
       "DeclaringTypeName": "DatabaseRoleDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -41094,6 +41245,17 @@
       "AssemblyName": "Cephalon.Data",
       "FileName": "cephalon-data.md",
       "AnchorId": "member-p-cephalon-data-services-cdccaptureexecutionreport-outcome",
+      "Signature": "string Outcome { get; }",
+      "Summary": "Gets the stable outcome identifier for the observed CDC activity."
+    },
+    {
+      "DisplayName": "Outcome",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureRuntimeObservation",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-outcome",
       "Signature": "string Outcome { get; }",
       "Summary": "Gets the stable outcome identifier for the observed CDC activity."
     },
@@ -42891,6 +43053,17 @@
       "Summary": "Gets the number of outbox publications produced by the capture batch."
     },
     {
+      "DisplayName": "ProducedMessageCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureRuntimeObservation",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-producedmessagecount",
+      "Signature": "int ProducedMessageCount { get; }",
+      "Summary": "Gets the number of outbox messages produced by this report."
+    },
+    {
       "DisplayName": "ProductionCommand",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseMigrationOperationalStep",
@@ -43571,6 +43744,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionresult-publication",
       "Signature": "CdcCapturePublicationStatus Publication { get; }",
       "Summary": "Gets the typed publication-posture answer reported by the capture implementation when one was supplied."
+    },
+    {
+      "DisplayName": "Publication",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureRuntimeObservation",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-publication",
+      "Signature": "CdcCapturePublicationStatus Publication { get; }",
+      "Summary": "Gets the typed publication-posture answer reported by the active provider/runtime when one was supplied."
     },
     {
       "DisplayName": "Publication",
@@ -45056,6 +45240,17 @@
       "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviorcontext-replyasync-system-object-system-threading-cancellationtoken",
       "Signature": "Task ReplyAsync(object reply, CancellationToken cancellationToken)",
       "Summary": "Sends a reply message back to the caller through the active transport."
+    },
+    {
+      "DisplayName": "ReportAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeReportSink",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimereportsink-reportasync-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-data-cdccaptureruntimeobservation-system-threading-cancellationtoken",
+      "Signature": "ValueTask ReportAsync(string executionRuntimeId, IReadOnlyList\u003CCdcCaptureRuntimeObservation\u003E observations, CancellationToken cancellationToken)",
+      "Summary": "Reports one or more CDC runtime observations for the supplied execution runtime."
     },
     {
       "DisplayName": "ReportAsync",

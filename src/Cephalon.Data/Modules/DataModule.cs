@@ -50,6 +50,11 @@ internal sealed class DataModule(DataRuntimeOptions options) : ModuleBase, IExec
             serviceProvider.GetRequiredService<CdcCaptureRuntimeStateCatalog>());
         services.TryAddSingleton<ICdcCaptureRuntimeReporter>(static serviceProvider =>
             serviceProvider.GetRequiredService<CdcCaptureRuntimeStateCatalog>());
+        if (options.EnableExternalCdcRuntimeReporting)
+        {
+            services.TryAddSingleton<Abstractions.Data.ICdcCaptureExecutionRuntimeReportSink>(static serviceProvider =>
+                serviceProvider.GetRequiredService<CdcCaptureRuntimeStateCatalog>());
+        }
 
         services.TryAddSingleton<CdcCaptureExecutionRuntimeCatalog>();
         services.TryAddSingleton<Abstractions.Data.ICdcCaptureExecutionRuntimeCatalog>(static serviceProvider =>

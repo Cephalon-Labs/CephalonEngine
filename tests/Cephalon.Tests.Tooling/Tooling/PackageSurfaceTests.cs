@@ -171,11 +171,13 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeSummary),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureDescriptor),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionResult),
+            typeof(global::Cephalon.Abstractions.Data.CdcCaptureRuntimeObservation),
             typeof(global::Cephalon.Abstractions.Data.ICdcCaptureAcknowledger),
             typeof(global::Cephalon.Abstractions.Data.ICdcCapture),
             typeof(global::Cephalon.Abstractions.Data.ICdcCaptureCatalog),
             typeof(global::Cephalon.Abstractions.Data.ICdcCaptureContributor),
             typeof(global::Cephalon.Abstractions.Data.ICdcCaptureExecutionRuntimeCatalog),
+            typeof(global::Cephalon.Abstractions.Data.ICdcCaptureExecutionRuntimeReportSink),
             typeof(global::Cephalon.Abstractions.Data.ICdcCaptureRegistry),
             typeof(global::Cephalon.Abstractions.Data.ICdcCaptureRuntimeStateCatalog),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureFreshnessStates),
@@ -2688,6 +2690,8 @@ public sealed class PackageSurfaceTests
     {
         Assert.NotNull(typeof(global::Cephalon.Data.Configuration.DataRuntimeOptions)
             .GetProperty("CdcExecutionRuntimes", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.Configuration.DataRuntimeOptions)
+            .GetProperty("EnableExternalCdcRuntimeReporting", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions)
             .GetProperty("ExecutionOwnership", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions)
@@ -2696,6 +2700,17 @@ public sealed class PackageSurfaceTests
             .GetProperty("CdcCaptureIds", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions)
             .GetProperty("Metadata", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void CdcExecutionRuntimeReportContractsExposeObservationSink()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureRuntimeObservation)
+            .GetProperty("ObservedAtUtc", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureRuntimeObservation)
+            .GetProperty("Metadata", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.ICdcCaptureExecutionRuntimeReportSink)
+            .GetMethod("ReportAsync", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

@@ -467,6 +467,130 @@ public sealed class DataRuntimePackTests
     }
 
     [Fact]
+    public async Task AddDataAcceptsExecutionRuntimeObservationsThroughExternalReportSink()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"]));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new Phase8CatalogModule());
+            engine.AddData(options =>
+            {
+                options.EnableExternalCdcRuntimeReporting = true;
+                options.CdcExecutionRuntimes.Add(new CdcCaptureExecutionRuntimeOptions
+                {
+                    Id = "external-cdc-runtime",
+                    DisplayName = "External CDC Runtime",
+                    Description = "Represents an externally managed out-of-process CDC runner.",
+                    ExecutionOwnership = "external-managed",
+                    ExecutionTopology = "out-of-process-reporting",
+                    AcknowledgementMode = "runtime-managed"
+                });
+                options.CdcExecutionRuntimes[0].CdcCaptureIds.Add("tenant-profile-cdc");
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var reportSink = provider.GetRequiredService<ICdcCaptureExecutionRuntimeReportSink>();
+        var runtimeStateCatalog = provider.GetRequiredService<ICdcCaptureRuntimeStateCatalog>();
+        var runtimeCatalog = provider.GetRequiredService<ICdcCaptureExecutionRuntimeCatalog>();
+
+        await reportSink.ReportAsync(
+            "external-cdc-runtime",
+            [
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: "tenant-profile-cdc",
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-21T02:10:00Z", CultureInfo.InvariantCulture),
+                    capturedChangeCount: 3,
+                    producedMessageCount: 3,
+                    changeId: "lsn-ext-0003",
+                    checkpoint: "ext-checkpoint-0003",
+                    freshness: new CdcCaptureFreshnessStatus(
+                        CdcCaptureFreshnessStates.Fresh,
+                        DateTimeOffset.Parse("2026-04-21T02:15:00Z", CultureInfo.InvariantCulture),
+                        "The external runtime is still within the expected freshness window."),
+                    lag: new CdcCaptureLagStatus(
+                        CdcCaptureLagStates.Lagging,
+                        pendingChangeCount: 2,
+                        description: "The external runtime still has pending source changes."),
+                    publication: new CdcCapturePublicationStatus(
+                        CdcCapturePublicationStates.PendingPublication,
+                        pendingPublicationCount: 2,
+                        description: "The external runtime still has pending publications."),
+                    metadata: new Dictionary<string, string>
+                    {
+                        ["captureExecution"] = "external-runtime-report"
+                    })
+            ]);
+
+        var state = Assert.Single(runtimeStateCatalog.GetByExecutionRuntimeId("external-cdc-runtime"));
+        Assert.Equal("tenant-profile-cdc", state.CdcCaptureId);
+        Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, state.LastOutcome);
+        Assert.Equal(3, state.TotalCapturedChangeCount);
+        Assert.Equal(3, state.TotalProducedMessageCount);
+        Assert.Equal("lsn-ext-0003", state.LastChangeId);
+        Assert.Equal("ext-checkpoint-0003", state.LastCheckpoint);
+        Assert.Equal("external-cdc-runtime", state.ExecutionBinding.EffectiveExecutionRuntimeId);
+        Assert.Equal("out-of-process-reporting", state.ExecutionBinding.ExecutionTopology);
+        Assert.Equal("external-runtime-report", state.Metadata["captureExecution"]);
+        Assert.Equal("external-cdc-runtime", state.Metadata["cdcCaptureExecutionRuntimeId"]);
+
+        var runtime = runtimeCatalog.GetById("external-cdc-runtime");
+        Assert.NotNull(runtime);
+        Assert.True(runtime.Summary.HasReports);
+        Assert.Equal("tenant-profile-cdc", runtime.Summary.LastCdcCaptureId);
+        Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, runtime.Summary.LastOutcome);
+        Assert.Equal(3, runtime.Summary.TotalCapturedChangeCount);
+        Assert.Equal(3, runtime.Summary.TotalProducedMessageCount);
+    }
+
+    [Fact]
+    public async Task AddDataRejectsExecutionRuntimeObservationsWhenCaptureIsOwnedByAnotherRuntime()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"]));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new Phase8CatalogModule());
+            engine.AddData(options =>
+            {
+                options.EnableExternalCdcRuntimeReporting = true;
+                options.CdcExecutionRuntimes.Add(new CdcCaptureExecutionRuntimeOptions
+                {
+                    Id = "external-cdc-runtime",
+                    DisplayName = "External CDC Runtime",
+                    Description = "Represents an externally managed out-of-process CDC runner.",
+                    ExecutionOwnership = "external-managed",
+                    ExecutionTopology = "out-of-process-reporting"
+                });
+                options.CdcExecutionRuntimes[0].CdcCaptureIds.Add("tenant-profile-cdc");
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var reportSink = provider.GetRequiredService<ICdcCaptureExecutionRuntimeReportSink>();
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => reportSink.ReportAsync(
+            "another-cdc-runtime",
+            [
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: "tenant-profile-cdc",
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-21T02:20:00Z", CultureInfo.InvariantCulture))
+            ]).AsTask());
+
+        Assert.Contains("tenant-profile-cdc", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("external-cdc-runtime", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void AddDataRejectsAmbiguousClaimedCdcExecutionOwnership()
     {
         var services = new ServiceCollection();

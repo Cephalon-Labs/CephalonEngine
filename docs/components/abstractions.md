@@ -67,6 +67,8 @@
 - `Data/CdcCaptureExecutionRuntimeDescriptor.cs`
 - `Data/CdcCaptureExecutionRuntimeSummary.cs`
 - `Data/ICdcCaptureExecutionRuntimeCatalog.cs`
+- `Data/CdcCaptureRuntimeObservation.cs`
+- `Data/ICdcCaptureExecutionRuntimeReportSink.cs`
 - `Data/IReadStore.cs`
 - `Data/ProjectionDescriptor.cs`
 - `Data/InboxDescriptor.cs`
@@ -189,6 +191,13 @@ ownership metadata, first-class `executionOwnership`, `executionTopology`,
 ids, aggregate latest-plus-total posture, and replay-safe acknowledgement visibility without
 inventing a second host-only runner inventory beside the per-capture descriptor and runtime-state
 catalogs.
+
+`CdcCaptureRuntimeObservation` plus `ICdcCaptureExecutionRuntimeReportSink` now keep the
+out-of-process reporting seam host-agnostic too. External or managed execution runtimes can report
+capture observations back through the same descriptor-backed runtime-state catalog by stable
+`executionRuntimeId` and `cdcCaptureId`, while higher-level hosts and adapters can validate the
+effective ownership boundary without introducing a second HTTP-only or provider-only CDC status
+contract.
 
 The app-model contract now also carries a contract-first resilience family through
 `ResilienceSelection`, `RetrySelection`, `TimeoutSelection`, `CircuitBreakerSelection`,

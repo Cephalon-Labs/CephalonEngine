@@ -1293,6 +1293,7 @@ Current payload highlights:
   `/engine/cdc-captures/runtime/resources/{resourceId}`
 - `/engine/cdc-captures/runtime/execution-runtimes/{executionRuntimeId}` now exposes the inverse
   runtime-state view for every capture effectively owned by one execution runtime
+- when `DataRuntimeOptions.EnableExternalCdcRuntimeReporting = true`, `POST /engine/cdc-capture-runtimes/{executionRuntimeId}/reports` accepts `CdcCaptureRuntimeObservation[]` payloads for that runtime, validates effective ownership per capture, and refreshes the same runtime-state catalog instead of a separate external-monitor surface
 
 Current note:
 
@@ -1329,6 +1330,7 @@ Current payload highlights:
   `DataRuntimeOptions.CdcExecutionRuntimes` declarations can publish external-managed,
   provider-native, edge, or other runtime answers on the same catalog without falsely implying the
   engine hosts those runners itself
+- when `DataRuntimeOptions.EnableExternalCdcRuntimeReporting = true`, `POST /engine/cdc-capture-runtimes/{executionRuntimeId}/reports` returns the refreshed descriptor for that runtime after merging the supplied observations into the shared runtime-state catalog
 
 Current note:
 
@@ -1343,6 +1345,7 @@ Current note:
   `executionTopology = provider-native`, `acknowledgementMode = provider-native`, links to
   `mongodb-change-stream-capture-flow`, and keeps resume-token checkpoint truth on the same
   per-capture runtime-state catalog
+- the external report-ingest route is additive and opt-in, not a second ownership source: capture ownership still comes from `executionBinding`, and the route rejects reports that do not match the effective `executionRuntimeId`
 
 ## Inbox surface
 

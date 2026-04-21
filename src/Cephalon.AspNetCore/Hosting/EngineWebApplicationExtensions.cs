@@ -451,6 +451,41 @@ public static class EngineWebApplicationExtensions
                 return runtimeDescriptor is null ? Results.NotFound() : Results.Ok(runtimeDescriptor);
             })
             .WithName("GetCephalonCdcCaptureRuntime");
+        if (app.Services.GetService<ICdcCaptureExecutionRuntimeReportSink>() is not null)
+        {
+            engineGroup.MapPost("/cdc-capture-runtimes/{executionRuntimeId}/reports", async (
+                    string executionRuntimeId,
+                    CdcCaptureRuntimeObservation[]? observations,
+                    HttpContext httpContext,
+                    CancellationToken cancellationToken) =>
+                {
+                    if (observations is null || observations.Length == 0)
+                    {
+                        return Results.BadRequest("At least one CDC capture runtime observation is required.");
+                    }
+
+                    var runtimeCatalog = httpContext.RequestServices.GetService<ICdcCaptureExecutionRuntimeCatalog>();
+                    var runtimeDescriptor = runtimeCatalog?.GetById(executionRuntimeId);
+                    if (runtimeDescriptor is null)
+                    {
+                        return Results.NotFound();
+                    }
+
+                    var reportSink = httpContext.RequestServices.GetRequiredService<ICdcCaptureExecutionRuntimeReportSink>();
+
+                    try
+                    {
+                        await reportSink.ReportAsync(executionRuntimeId, observations, cancellationToken);
+                    }
+                    catch (InvalidOperationException exception)
+                    {
+                        return Results.BadRequest(exception.Message);
+                    }
+
+                    return Results.Ok(runtimeCatalog?.GetById(executionRuntimeId) ?? runtimeDescriptor);
+                })
+                .WithName("PostCephalonCdcCaptureRuntimeReports");
+        }
         engineGroup.MapGet("/cdc-captures/runtime", (HttpContext httpContext) =>
             {
                 var catalog = httpContext.RequestServices.GetService<ICdcCaptureRuntimeStateCatalog>();

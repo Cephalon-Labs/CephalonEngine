@@ -33,6 +33,11 @@ public sealed class DataRuntimeOptions
     public bool EnableCdcExecution { get; set; }
 
     /// <summary>
+    /// Gets or sets a value indicating whether the pack should accept external CDC execution-runtime reports through the shared runtime-state catalog.
+    /// </summary>
+    public bool EnableExternalCdcRuntimeReporting { get; set; }
+
+    /// <summary>
     /// Gets or sets the polling interval, in seconds, used by the shared CDC hosted execution pump.
     /// </summary>
     public int CdcPollingIntervalSeconds { get; set; } = 30;

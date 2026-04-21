@@ -11,6 +11,7 @@
 - extends that same CDC bridge with typed freshness, lag, and publication-posture reporting
 - provides an optional shared in-process CDC hosted-execution substrate that resolves active `ICdcCapture` plus `IOutbox` implementations, stages outbox publications, optionally acknowledges provider progress after stage success, and reports lifecycle truth through the existing execution/runtime-story surfaces
 - provides an additive CDC execution-runtime catalog so shared, external-managed, provider-native, or other declared capture runners can publish one ownership/topology answer without replacing per-capture CDC truth
+- provides an opt-in external CDC execution-runtime report sink so out-of-process runners can refresh the same runtime-state and execution-runtime summaries without inventing a second registry
 
 ## Main surfaces
 
@@ -82,6 +83,14 @@ publish. That same ownership/topology answer now flows through `/engine/cdc-capt
 `snapshot.CdcCaptureExecutionRuntimes`, so additional provider-native or out-of-process runners can
 project on the same truth instead of inventing a second host-only runner registry beside
 `/engine/cdc-captures*`.
+
+When `DataRuntimeOptions.EnableExternalCdcRuntimeReporting` is enabled, the same package now also
+registers `ICdcCaptureExecutionRuntimeReportSink` on top of the shared
+`CdcCaptureRuntimeStateCatalog`. That opt-in sink accepts `CdcCaptureRuntimeObservation` batches
+for one `executionRuntimeId`, validates that every reported `cdcCaptureId` is effectively owned by
+that runtime, stamps `metadata.cdcCaptureExecutionRuntimeId`, and then refreshes the existing
+`/engine/cdc-captures/runtime*`, `/engine/cdc-capture-runtimes*`, and `snapshot` answers through
+the same shared catalog instead of a second external-monitor path.
 
 `Cephalon.Data.MongoDB` now proves that contract with the first concrete provider-native runner.
 Its `mongodb-change-stream-capture-pump` contributor publishes host-managed, provider-native,

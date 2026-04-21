@@ -195,6 +195,16 @@ bool EnableCdcExecution { get; set; }
 
 Gets or sets a value indicating whether the pack should register the shared CDC hosted execution pump.
 
+<a id="member-p-cephalon-data-configuration-dataruntimeoptions-enableexternalcdcruntimereporting"></a>
+
+##### `EnableExternalCdcRuntimeReporting`
+
+```csharp
+bool EnableExternalCdcRuntimeReporting { get; set; }
+```
+
+Gets or sets a value indicating whether the pack should accept external CDC execution-runtime reports through the shared runtime-state catalog.
+
 <a id="member-p-cephalon-data-configuration-dataruntimeoptions-registerreadstore"></a>
 
 ##### `RegisterReadStore`

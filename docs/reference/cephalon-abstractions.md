@@ -9023,6 +9023,165 @@ string State { get; }
 
 Gets the stable publication-state identifier.
 
+<a id="type-cephalon-abstractions-data-cdccaptureruntimeobservation"></a>
+
+### `CdcCaptureRuntimeObservation`
+
+Describes one operator-facing runtime observation reported for a CDC capture by an execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureRuntimeObservation
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureruntimeobservation-ctor-system-string-system-string-system-datetimeoffset-system-int32-system-int32-system-string-system-string-system-string-cephalon-abstractions-data-cdccapturefreshnessstatus-cephalon-abstractions-data-cdccapturelagstatus-cephalon-abstractions-data-cdccapturepublicationstatus-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `CdcCaptureRuntimeObservation`
+
+```csharp
+CdcCaptureRuntimeObservation(string cdcCaptureId, string outcome, DateTimeOffset observedAtUtc, int capturedChangeCount, int producedMessageCount, string changeId, string checkpoint, string error, CdcCaptureFreshnessStatus freshness, CdcCaptureLagStatus lag, CdcCapturePublicationStatus publication, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new CDC capture runtime observation.
+
+Parameters:
+- `cdcCaptureId`: The stable CDC capture identifier that produced the observation.
+- `outcome`: The stable outcome identifier, such as `started`, `captured`, `idle`, or `failed`.
+- `observedAtUtc`: The UTC timestamp when the observation occurred.
+- `capturedChangeCount`: The number of source changes observed by this report.
+- `producedMessageCount`: The number of outbox messages produced by this report.
+- `changeId`: The latest provider-facing change identifier when available.
+- `checkpoint`: The latest provider-facing checkpoint or cursor when available.
+- `error`: The operator-facing error summary when the observation represents a failure.
+- `freshness`: An optional typed freshness answer reported by the active provider/runtime.
+- `lag`: An optional typed lag answer reported by the active provider/runtime.
+- `publication`: An optional typed publication-posture answer reported by the active provider/runtime.
+- `metadata`: Optional operator-facing metadata captured alongside the observation.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-capturedchangecount"></a>
+
+##### `CapturedChangeCount`
+
+```csharp
+int CapturedChangeCount { get; }
+```
+
+Gets the number of source changes observed by this report.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-cdccaptureid"></a>
+
+##### `CdcCaptureId`
+
+```csharp
+string CdcCaptureId { get; }
+```
+
+Gets the stable CDC capture identifier that produced the observation.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-changeid"></a>
+
+##### `ChangeId`
+
+```csharp
+string ChangeId { get; }
+```
+
+Gets the latest provider-facing change identifier when one was reported.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-checkpoint"></a>
+
+##### `Checkpoint`
+
+```csharp
+string Checkpoint { get; }
+```
+
+Gets the latest provider-facing checkpoint or cursor when one was reported.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-error"></a>
+
+##### `Error`
+
+```csharp
+string Error { get; }
+```
+
+Gets the operator-facing error summary when the observation represents a failure.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-freshness"></a>
+
+##### `Freshness`
+
+```csharp
+CdcCaptureFreshnessStatus Freshness { get; }
+```
+
+Gets the typed freshness answer reported by the active provider/runtime when one was supplied.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-lag"></a>
+
+##### `Lag`
+
+```csharp
+CdcCaptureLagStatus Lag { get; }
+```
+
+Gets the typed lag answer reported by the active provider/runtime when one was supplied.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional operator-facing metadata captured alongside the observation.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-observedatutc"></a>
+
+##### `ObservedAtUtc`
+
+```csharp
+DateTimeOffset ObservedAtUtc { get; }
+```
+
+Gets the UTC timestamp when the observation occurred.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+string Outcome { get; }
+```
+
+Gets the stable outcome identifier for the observed CDC activity.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-producedmessagecount"></a>
+
+##### `ProducedMessageCount`
+
+```csharp
+int ProducedMessageCount { get; }
+```
+
+Gets the number of outbox messages produced by this report.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-publication"></a>
+
+##### `Publication`
+
+```csharp
+CdcCapturePublicationStatus Publication { get; }
+```
+
+Gets the typed publication-posture answer reported by the active provider/runtime when one was supplied.
+
 <a id="type-cephalon-abstractions-data-cdccaptureruntimestate"></a>
 
 ### `CdcCaptureRuntimeState`
@@ -12682,6 +12841,34 @@ Returns: The matching execution-runtime descriptor, or `null` when none exists.
 
 Parameters:
 - `executionRuntimeId`: The stable execution-runtime identifier to resolve.
+
+<a id="type-cephalon-abstractions-data-icdccaptureexecutionruntimereportsink"></a>
+
+### `ICdcCaptureExecutionRuntimeReportSink`
+
+Accepts operator-facing CDC runtime observations that are reported on behalf of one execution runtime.
+
+#### Declaration
+```csharp
+public interface ICdcCaptureExecutionRuntimeReportSink
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimereportsink-reportasync-system-string-system-collections-generic-ireadonlylist-cephalon-abstractions-data-cdccaptureruntimeobservation-system-threading-cancellationtoken"></a>
+
+##### `ReportAsync`
+
+```csharp
+ValueTask ReportAsync(string executionRuntimeId, IReadOnlyList<CdcCaptureRuntimeObservation> observations, CancellationToken cancellationToken)
+```
+
+Reports one or more CDC runtime observations for the supplied execution runtime.
+
+Parameters:
+- `executionRuntimeId`: The stable execution-runtime identifier that owns the reported captures.
+- `observations`: The capture observations to merge into the active runtime-state catalog.
+- `cancellationToken`: The token used to observe cancellation.
 
 <a id="type-cephalon-abstractions-data-icdccaptureregistry"></a>
 
