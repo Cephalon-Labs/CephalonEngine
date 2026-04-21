@@ -783,6 +783,9 @@ Browse the published API surface by public member.
 - [AppId](cephalon-observability-digitalocean.md#member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-appid): `Properties` on `DigitalOceanTelemetryExportOptions` in `Cephalon.Observability.DigitalOcean.Configuration` (`Cephalon.Observability.DigitalOcean`) [Browse](browse.html?q=AppId&assembly=Cephalon.Observability.DigitalOcean&namespace=Cephalon.Observability.DigitalOcean.Configuration&scope=members)
   - Gets or sets the App Platform application identifier to stamp onto exported resources.
   - `string AppId { get; set; }`
+- [Applied](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationprovidermaterializationstates-applied): `Fields` on `CellTrafficAutomationProviderMaterializationStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Applied&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - The automation was reconciled successfully by the selected provider materializer.
+  - `const string Applied`
 - [AppliedActionKinds](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointoverridedescriptor-appliedactionkinds): `Properties` on `RestEndpointOverrideDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=AppliedActionKinds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the union of override action dimensions that materially changed one or more runtime candidates.
   - `IReadOnlyList<RestEndpointOverrideActionKind> AppliedActionKinds { get; }`
@@ -1794,6 +1797,9 @@ Browse the published API surface by public member.
 - [CellSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-cellsettings-ctor-cephalon-engine-configuration-celltrafficautomationsettings): `Constructors` on `CellSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=CellSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Creates cell settings.
   - `CellSettings(CellTrafficAutomationSettings trafficAutomation)`
+- [CellTrafficAutomationProviderMaterializationResult](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-celltrafficautomationprovidermaterializationresult-ctor-system-string-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `CellTrafficAutomationProviderMaterializationResult` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=CellTrafficAutomationProviderMaterializationResult&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Creates a provider-managed materialization result.
+  - `CellTrafficAutomationProviderMaterializationResult(string state, DateTimeOffset observedAtUtc, string error, IReadOnlyDictionary<string, string> metadata)`
 - [CellTrafficAutomationRouteSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-celltrafficautomationroutesettings-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `CellTrafficAutomationRouteSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=CellTrafficAutomationRouteSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Creates cell traffic-automation route settings.
   - `CellTrafficAutomationRouteSettings(string routeId, string automationMode, string triggerMode, string actionMode, string materializationMode, string notes, IReadOnlyDictionary<string, string> metadata)`
@@ -1806,6 +1812,9 @@ Browse the published API surface by public member.
 - [CellTrafficAutomationRuntimeDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string): `Constructors` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=CellTrafficAutomationRuntimeDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Creates a cell traffic-automation runtime descriptor with provider and edge targeting.
   - `CellTrafficAutomationRuntimeDescriptor(string id, string routeId, string sourceModuleId, string sourceCellId, string targetCellId, string displayName, string description, string routingStrategy, string governanceMode, string automationMode, string triggerMode, string actionMode, string materializationMode, string policySource, IReadOnlyList<string> transportIds, string requiredCapabilityKey, IReadOnlyList<string> sourceHealthIsolationIds, IReadOnlyList<string> targetHealthIsolationIds, IReadOnlyList<string> dependencyIds, IReadOnlyDictionary<string, string> metadata, IReadOnlyDictionary<string, string> runtimeMetadata, string providerId, IReadOnlyList<string> edgeNodeIds)`
+- [CellTrafficAutomationRuntimeDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string): `Constructors` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=CellTrafficAutomationRuntimeDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Creates a cell traffic-automation runtime descriptor with provider, edge, and provider-materialization state.
+  - `CellTrafficAutomationRuntimeDescriptor(string id, string routeId, string sourceModuleId, string sourceCellId, string targetCellId, string displayName, string description, string routingStrategy, string governanceMode, string automationMode, string triggerMode, string actionMode, string materializationMode, string policySource, IReadOnlyList<string> transportIds, string requiredCapabilityKey, IReadOnlyList<string> sourceHealthIsolationIds, IReadOnlyList<string> targetHealthIsolationIds, IReadOnlyList<string> dependencyIds, IReadOnlyDictionary<string, string> metadata, IReadOnlyDictionary<string, string> runtimeMetadata, string providerId, IReadOnlyList<string> edgeNodeIds, string providerMaterializerId, string providerMaterializationState, DateTimeOffset? providerMaterializationObservedAtUtc, string providerMaterializationError)`
 - [CellTrafficAutomations](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-celltrafficautomations): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=CellTrafficAutomations&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the effective cell traffic-automation answers visible to the runtime at the time the snapshot was created.
   - `IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> CellTrafficAutomations { get; set; }`
@@ -3951,6 +3960,9 @@ Browse the published API surface by public member.
 - [Error](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-error): `Properties` on `CdcCaptureRuntimeObservation` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Error&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing error summary when the observation represents a failure.
   - `string Error { get; }`
+- [Error](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationprovidermaterializationresult-error): `Properties` on `CellTrafficAutomationProviderMaterializationResult` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Error&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the operator-facing error summary when the materialization failed.
+  - `string Error { get; }`
 - [Error](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-compatibilityseverity-error): `Fields` on `CompatibilitySeverity` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Error&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - The violation prevents application startup.
   - `const CompatibilitySeverity Error`
@@ -4307,6 +4319,9 @@ Browse the published API surface by public member.
   - `const AuditOutcome Failed`
 - [Failed](cephalon-data.md#member-f-cephalon-data-services-cdccaptureruntimeoutcomes-failed): `Fields` on `CdcCaptureRuntimeOutcomes` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=Failed&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
   - Gets the outcome identifier used when a capture fails.
+  - `const string Failed`
+- [Failed](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationprovidermaterializationstates-failed): `Fields` on `CellTrafficAutomationProviderMaterializationStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Failed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - The selected provider materializer last reported a failure while reconciling the automation.
   - `const string Failed`
 - [Failed](cephalon-abstractions.md#member-f-cephalon-abstractions-data-databasemigrationstatus-failed): `Fields` on `DatabaseMigrationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Failed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The migration target failed during execution.
@@ -6957,6 +6972,12 @@ Browse the published API surface by public member.
 - [MaterializationMode](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-materializationmode): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaterializationMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the normalized materialization posture.
   - `string MaterializationMode { get; }`
+- [MaterializeAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icelltrafficautomationprovidermaterializer-materializeasync-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-system-threading-cancellationtoken): `Methods` on `ICellTrafficAutomationProviderMaterializer` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaterializeAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Applies or reconciles the requested traffic automation answer against the owned provider.
+  - `ValueTask<CellTrafficAutomationProviderMaterializationResult> MaterializeAsync(CellTrafficAutomationRuntimeDescriptor automation, CancellationToken cancellationToken)`
+- [MaterializerId](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-icelltrafficautomationprovidermaterializer-materializerid): `Properties` on `ICellTrafficAutomationProviderMaterializer` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaterializerId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the stable materializer identifier that should appear on operator-facing runtime answers.
+  - `string MaterializerId { get; }`
 - [MaxAgeDays](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-audithistoryretentionselection-maxagedays): `Properties` on `AuditHistoryRetentionSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaxAgeDays&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the maximum age, in days, to retain durable audit rows.
   - `int? MaxAgeDays { get; }`
@@ -7217,6 +7238,9 @@ Browse the published API surface by public member.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellroutedescriptor-metadata): `Properties` on `CellRouteDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets optional operator-facing metadata for this route.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationprovidermaterializationresult-metadata): `Properties` on `CellTrafficAutomationProviderMaterializationResult` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets optional provider-facing metadata captured alongside the result.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-engine.md#member-p-cephalon-engine-configuration-celltrafficautomationroutesettings-metadata): `Properties` on `CellTrafficAutomationRouteSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets optional route-specific runtime metadata.
@@ -7830,6 +7854,9 @@ Browse the published API surface by public member.
 - [ObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-observedatutc): `Properties` on `CdcCaptureRuntimeObservation` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the UTC timestamp when the observation occurred.
   - `DateTimeOffset ObservedAtUtc { get; }`
+- [ObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationprovidermaterializationresult-observedatutc): `Properties` on `CellTrafficAutomationProviderMaterializationResult` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=ObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the UTC timestamp when the result was observed.
+  - `DateTimeOffset ObservedAtUtc { get; }`
 - [ObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-observedatutc): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the UTC timestamp when runtime state was last observed for the database role, when available.
   - `DateTimeOffset? ObservedAtUtc { get; }`
@@ -8370,6 +8397,9 @@ Browse the published API surface by public member.
 - [PayloadType](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionpendingsignal-payloadtype): `Properties` on `DurableExecutionPendingSignal` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=PayloadType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the expected payload type name when the awaited signal declares one.
   - `string PayloadType { get; }`
+- [Pending](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationprovidermaterializationstates-pending): `Fields` on `CellTrafficAutomationProviderMaterializationStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Pending&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - The automation targets a provider and an active materializer is expected to reconcile it.
+  - `const string Pending`
 - [PendingChangeCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturelagstatus-pendingchangecount): `Properties` on `CdcCaptureLagStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PendingChangeCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of source-side changes still pending capture when the provider reports that answer.
   - `long? PendingChangeCount { get; }`
@@ -8772,9 +8802,24 @@ Browse the published API surface by public member.
 - [ProviderId](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagproviderevaluationresult-providerid): `Properties` on `FeatureFlagProviderEvaluationResult` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
   - The external provider identifier.
   - `string ProviderId { get; set; }`
+- [ProviderId](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-icelltrafficautomationprovidermaterializer-providerid): `Properties` on `ICellTrafficAutomationProviderMaterializer` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the external provider identifier that this materializer reconciles.
+  - `string ProviderId { get; }`
 - [ProviderId](cephalon-abstractions.md#member-p-cephalon-abstractions-features-ifeatureflagprovider-providerid): `Properties` on `IFeatureFlagProvider` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
   - Gets the stable provider identifier used by feature-flag bindings.
   - `string ProviderId { get; }`
+- [ProviderMaterializationError](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-providermaterializationerror): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderMaterializationError&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the optional operator-facing provider-materialization error summary.
+  - `string ProviderMaterializationError { get; }`
+- [ProviderMaterializationObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-providermaterializationobservedatutc): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderMaterializationObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the optional UTC timestamp when the provider-materialization state was last observed.
+  - `DateTimeOffset? ProviderMaterializationObservedAtUtc { get; }`
+- [ProviderMaterializationState](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-providermaterializationstate): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderMaterializationState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the optional provider-materialization state for this automation.
+  - `string ProviderMaterializationState { get; }`
+- [ProviderMaterializerId](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-providermaterializerid): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderMaterializerId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the optional selected provider materializer identifier.
+  - `string ProviderMaterializerId { get; }`
 - [ProviderResults](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagevaluationresult-providerresults): `Properties` on `FeatureFlagEvaluationResult` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderResults&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
   - Gets the external provider evaluation results that participated in the final answer.
   - `IReadOnlyList<FeatureFlagProviderEvaluationResult> ProviderResults { get; set; }`
@@ -10860,6 +10905,9 @@ Browse the published API surface by public member.
 - [State](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturepublicationstatus-state): `Properties` on `CdcCapturePublicationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=State&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable publication-state identifier.
   - `string State { get; }`
+- [State](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationprovidermaterializationresult-state): `Properties` on `CellTrafficAutomationProviderMaterializationResult` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=State&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - Gets the stable provider-materialization state.
+  - `string State { get; }`
 - [State](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-state): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=State&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - The current health state.
   - `HealthState State { get; set; }`
@@ -11976,6 +12024,9 @@ Browse the published API surface by public member.
 - [Unauthorized](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-result-unauthorized-1-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault): `Methods` on `Result` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unauthorized&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Creates an unauthorized result for the specified payload type.
   - `Result<T> Unauthorized<T>(string code, string message, BehaviorFault fault)`
+- [Unavailable](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationprovidermaterializationstates-unavailable): `Fields` on `CellTrafficAutomationProviderMaterializationStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unavailable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
+  - The automation targets a provider but no active materializer can apply it.
+  - `const string Unavailable`
 - [Unbound](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-unbound-system-string): `Methods` on `CdcCaptureExecutionBindingDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unbound&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates the default unbound execution-binding descriptor for the requested CDC capture.
   - `CdcCaptureExecutionBindingDescriptor Unbound(string cdcCaptureId)`

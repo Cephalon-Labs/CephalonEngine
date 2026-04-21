@@ -137,7 +137,13 @@ underlying cell-route or health-isolation truth. The engine derives `provider-ma
 `edge-managed`, or `provider-and-edge-managed` materialization posture when those overlays are
 present, validates that explicit edge-node targeting only appears when `edge-native-delivery` is
 selected, and keeps concrete provider or edge control-plane materializers as later follow-through
-over those same catalogs.
+over those same catalogs. The first provider-managed follow-through is now also shipped there:
+`ICellTrafficAutomationProviderMaterializer` stays host-agnostic in `Cephalon.Abstractions`,
+`CellTrafficAutomationRuntimeCatalogSnapshot` keeps one shared automation truth with selected
+`ProviderMaterializerId` plus `ProviderMaterializationState`/`ObservedAtUtc`/`Error`, and the
+engine runs startup reconciliation through `CellTrafficAutomationProviderMaterializationHostedService`
+so provider-managed or provider-and-edge-managed routes can move from `pending` to `applied`,
+`failed`, or `unavailable` without inventing a second traffic-materialization registry.
 
 That same engine-first runtime truth now also carries the first phase-13 data mesh and CDC
 baselines end to end. Modules and hosts can contribute `DataProductDescriptor` entries and

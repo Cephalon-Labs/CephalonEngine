@@ -23,6 +23,11 @@ exists. The new `cell-based-architecture` profile now follows that path: the eng
 technology runtime surfaces today. That engine-owned baseline now also carries additive
 `providerId` plus `edgeNodeIds` targeting on the shared automation catalog, while deeper concrete
 provider-managed or edge-runtime materializers can still move into a future companion pack later.
+The first provider-managed seam is now also explicit through
+`ICellTrafficAutomationProviderMaterializer` plus typed provider-materialization result/state
+contracts, so a future service-mesh, gateway, or edge companion pack can reconcile provider-owned
+traffic posture back onto the same shared automation catalog instead of publishing a second
+materialization registry.
 
 ## Shipped baseline packs
 

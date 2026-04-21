@@ -415,7 +415,7 @@ The first shipped follow-through on that rule is `Cephalon.Audit.EntityFramework
 - richer capability metadata and policy
 - startup hooks and lifecycle events
 - execution runners, lifecycle events, and event-bus coordination on top of the shipped execution-graph contract
-- concrete provider-managed or edge-runtime traffic materializers on top of the shipped cell-boundary, cell-route, cell-health-isolation, and provider-aware plus edge-aware traffic-automation catalogs
+- edge-runtime traffic materializers plus broader provider and edge reconciliation follow-through on top of the shipped cell-boundary, cell-route, cell-health-isolation, provider-aware plus edge-aware traffic-automation catalogs, and the new shared provider-materializer contract
 - richer operator-runtime answers, cloud-targeted tracing/export follow-through, and any additional provider-specific dependency-health packs only when concrete adoption needs justify expanding beyond the shipped Cassandra, ClickHouse, Consul, Elasticsearch, HTTP, Kafka, Memcached, MongoDB, MQTT, MySQL, NATS, Neo4j, OpenSearch, Oracle, Postgres, RabbitMQ, Redis, SQL Server, OpenTelemetry, AWS, and Azure Monitor observability companions
 - richer parameterized templates and generators driven by scaffold plans
 - richer localization catalogs and package-provided language packs

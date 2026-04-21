@@ -7,6 +7,7 @@ using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Runtime;
 using Cephalon.Tests.Support;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Cephalon.Tests.Composition;
 
@@ -15,71 +16,7 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
     [Fact]
     public void BuildCollectsCellTrafficAutomationsAndProjectsTechnologySurface()
     {
-        var services = new ServiceCollection();
-        services.AddCephalon(engine =>
-        {
-            engine.UseSettings(new EngineSettings(
-                blueprint: "Microservice",
-                technologies: ["EdgeNativeDelivery"],
-                cells: new CellSettings(
-                    new CellTrafficAutomationSettings(
-                        defaultAutomationMode: "automatic",
-                        defaultTriggerMode: null,
-                        defaultActionMode: "shed-load",
-                        defaultMaterializationMode: null,
-                        defaultProviderId: "regional-traffic-mesh",
-                        defaultEdgeNodeIds: ["storefront-edge"],
-                        routes:
-                        [
-                            new CellTrafficAutomationRouteSettings(
-                                routeId: "orders-to-platform-control",
-                                automationMode: "advisory",
-                                triggerMode: "source-health",
-                                actionMode: "prefer-local-route",
-                                materializationMode: "provider-managed",
-                                notes: "Keep provider handoff explicit for control-plane traffic.",
-                                metadata: new Dictionary<string, string>
-                                {
-                                    ["handoff"] = "ingress-provider"
-                                },
-                                providerId: "control-plane-gateway",
-                                edgeNodeIds: ["platform-edge"])
-                        ]))));
-            engine.AddModule(new PlatformTestModule());
-            engine.AddModule(new DiscoveryTestModule());
-            engine.AddModule(new CellTrafficAutomationCatalogTestModule());
-            engine.AddEdge(options =>
-            {
-                options.Nodes.Add(new EdgeNodeDescriptor(
-                    id: "storefront-edge",
-                    displayName: "Storefront Edge",
-                    description: "Regional node that fronts storefront traffic.",
-                    tags: ["storefront", "regional"]));
-                options.Nodes.Add(new EdgeNodeDescriptor(
-                    id: "platform-edge",
-                    displayName: "Platform Edge",
-                    description: "Control-plane edge that fronts platform traffic.",
-                    tags: ["platform", "control-plane"]));
-            });
-            engine.AddCellBoundary(new CellBoundaryDescriptor(
-                id: "platform-control",
-                sourceModuleId: "platform",
-                displayName: "Platform Control Cell",
-                description: "Keeps shared control-plane workflows in one boundary.",
-                blastRadius: "shared-control",
-                routingStrategy: "local-preferred",
-                moduleIds: ["platform"]));
-            engine.AddCellHealthIsolation(new CellHealthIsolationDescriptor(
-                id: "platform-control-health",
-                sourceModuleId: "platform",
-                cellId: "platform-control",
-                displayName: "Platform Control Health Isolation",
-                description: "Contains control-plane failures without leaking them into product cells.",
-                failureIsolationMode: "fail-closed",
-                readinessScope: "dependency-aware",
-                restartScope: "host-coordinated",
-                dependencyIds: ["consul-control", "postgres-control"]));
-        });
+        var services = CreateServiceCollection();
 
         using var provider = services.BuildServiceProvider();
         var runtime = provider.GetRequiredService<IRuntime>();
@@ -99,6 +36,10 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
         Assert.Equal("cell-default", defaultAutomation.PolicySource);
         Assert.Equal("regional-traffic-mesh", defaultAutomation.ProviderId);
         Assert.Equal(["storefront-edge"], defaultAutomation.EdgeNodeIds);
+        Assert.Null(defaultAutomation.ProviderMaterializerId);
+        Assert.Equal(CellTrafficAutomationProviderMaterializationStates.Unavailable, defaultAutomation.ProviderMaterializationState);
+        Assert.Null(defaultAutomation.ProviderMaterializationObservedAtUtc);
+        Assert.Null(defaultAutomation.ProviderMaterializationError);
         Assert.Equal(["orders-cell-health"], defaultAutomation.SourceHealthIsolationIds);
         Assert.Equal(["reporting-cell-health"], defaultAutomation.TargetHealthIsolationIds);
         Assert.Equal(["orders-db", "reporting-replica"], defaultAutomation.DependencyIds);
@@ -112,6 +53,10 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
         Assert.Equal("cell-route", routedAutomation.PolicySource);
         Assert.Equal("control-plane-gateway", routedAutomation.ProviderId);
         Assert.Equal(["platform-edge"], routedAutomation.EdgeNodeIds);
+        Assert.Null(routedAutomation.ProviderMaterializerId);
+        Assert.Equal(CellTrafficAutomationProviderMaterializationStates.Unavailable, routedAutomation.ProviderMaterializationState);
+        Assert.Null(routedAutomation.ProviderMaterializationObservedAtUtc);
+        Assert.Null(routedAutomation.ProviderMaterializationError);
         Assert.Equal(["orders-cell-health"], routedAutomation.SourceHealthIsolationIds);
         Assert.Equal(["platform-control-health"], routedAutomation.TargetHealthIsolationIds);
         Assert.Equal("Keep provider handoff explicit for control-plane traffic.", routedAutomation.RuntimeMetadata["note"]);
@@ -138,6 +83,7 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
         Assert.Equal(2, snapshot.CellTrafficAutomations.Count);
         Assert.Contains(snapshot.CellTrafficAutomations, automation =>
             automation.RouteId == "orders-to-platform-control" &&
+            automation.ProviderMaterializationState == CellTrafficAutomationProviderMaterializationStates.Unavailable &&
             automation.ProviderId == "control-plane-gateway" &&
             automation.EdgeNodeIds.SequenceEqual(["platform-edge"]));
 
@@ -148,6 +94,7 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
             entry.Id == "orders-to-reporting" &&
             entry.Metadata["providerId"] == "regional-traffic-mesh" &&
             entry.Metadata["edgeNodeIds"] == "storefront-edge" &&
+            entry.Metadata["providerMaterializationState"] == CellTrafficAutomationProviderMaterializationStates.Unavailable &&
             entry.Metadata["policySource"] == "cell-default" &&
             entry.Metadata["sourceHealthIsolationIds"] == "orders-cell-health" &&
             entry.Metadata["targetHealthIsolationIds"] == "reporting-cell-health");
@@ -155,8 +102,82 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
             entry.Id == "orders-to-platform-control" &&
             entry.Metadata["providerId"] == "control-plane-gateway" &&
             entry.Metadata["edgeNodeIds"] == "platform-edge" &&
+            entry.Metadata["providerMaterializationState"] == CellTrafficAutomationProviderMaterializationStates.Unavailable &&
             entry.Metadata["materializationMode"] == "provider-managed" &&
             entry.Metadata["handoff"] == "ingress-provider");
+    }
+
+    [Fact]
+    public async Task HostedServiceMaterializesProviderManagedTrafficAutomationWhenProviderMaterializerIsRegistered()
+    {
+        var services = CreateServiceCollection(collection =>
+        {
+            collection.AddSingleton<ICellTrafficAutomationProviderMaterializer>(
+                new TestCellTrafficAutomationProviderMaterializer(
+                    materializerId: "regional-traffic-materializer",
+                    providerId: "regional-traffic-mesh"));
+        });
+
+        using var provider = services.BuildServiceProvider();
+        foreach (var hostedService in provider.GetServices<IHostedService>())
+        {
+            await hostedService.StartAsync(CancellationToken.None);
+        }
+
+        var catalog = provider.GetRequiredService<ICellTrafficAutomationRuntimeCatalog>();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+        var snapshot = provider.GetRequiredService<IRuntimeIntrospectionSnapshotProvider>().CreateSnapshot();
+
+        var defaultAutomation = catalog.GetByRouteId("orders-to-reporting");
+        Assert.NotNull(defaultAutomation);
+        Assert.Equal("regional-traffic-materializer", defaultAutomation.ProviderMaterializerId);
+        Assert.Equal(CellTrafficAutomationProviderMaterializationStates.Applied, defaultAutomation.ProviderMaterializationState);
+        Assert.NotNull(defaultAutomation.ProviderMaterializationObservedAtUtc);
+        Assert.Null(defaultAutomation.ProviderMaterializationError);
+        Assert.Equal("regional-route-orders-to-reporting", defaultAutomation.RuntimeMetadata["providerMaterialization.providerRouteId"]);
+        Assert.Equal("reconciled", defaultAutomation.RuntimeMetadata["providerMaterialization.providerAction"]);
+
+        var routedAutomation = catalog.GetByRouteId("orders-to-platform-control");
+        Assert.NotNull(routedAutomation);
+        Assert.Null(routedAutomation.ProviderMaterializerId);
+        Assert.Equal(CellTrafficAutomationProviderMaterializationStates.Unavailable, routedAutomation.ProviderMaterializationState);
+        Assert.Null(routedAutomation.ProviderMaterializationObservedAtUtc);
+
+        Assert.Contains(snapshot.CellTrafficAutomations, automation =>
+            automation.RouteId == "orders-to-reporting" &&
+            automation.ProviderMaterializerId == "regional-traffic-materializer" &&
+            automation.ProviderMaterializationState == CellTrafficAutomationProviderMaterializationStates.Applied);
+
+        var surface = Assert.Single(
+            technologyCatalog.GetByTechnology("cell-based-architecture"),
+            static candidate => candidate.SurfaceId == "cell-traffic-automations");
+        Assert.Contains(surface.Entries, entry =>
+            entry.Id == "orders-to-reporting" &&
+            entry.Metadata["providerMaterializerId"] == "regional-traffic-materializer" &&
+            entry.Metadata["providerMaterializationState"] == CellTrafficAutomationProviderMaterializationStates.Applied &&
+            entry.Metadata["providerMaterialization.providerRouteId"] == "regional-route-orders-to-reporting");
+    }
+
+    [Fact]
+    public void BuildFailsWhenMultipleProviderMaterializersClaimSameProvider()
+    {
+        var services = CreateServiceCollection(collection =>
+        {
+            collection.AddSingleton<ICellTrafficAutomationProviderMaterializer>(
+                new TestCellTrafficAutomationProviderMaterializer(
+                    materializerId: "regional-traffic-materializer-a",
+                    providerId: "regional-traffic-mesh"));
+            collection.AddSingleton<ICellTrafficAutomationProviderMaterializer>(
+                new TestCellTrafficAutomationProviderMaterializer(
+                    materializerId: "regional-traffic-materializer-b",
+                    providerId: "regional-traffic-mesh"));
+        });
+
+        using var provider = services.BuildServiceProvider();
+
+        var exception = Assert.Throws<InvalidOperationException>(() => provider.GetRequiredService<ICellTrafficAutomationRuntimeCatalog>());
+
+        Assert.Contains("regional-traffic-mesh", exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -245,6 +266,104 @@ public sealed class CellTrafficAutomationRuntimeCatalogTests
         var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
 
         Assert.Contains("edge-native-delivery", exception.Message, StringComparison.Ordinal);
+    }
+
+    private static ServiceCollection CreateServiceCollection(Action<ServiceCollection>? configureServices = null)
+    {
+        var services = new ServiceCollection();
+        configureServices?.Invoke(services);
+        services.AddCephalon(ConfigureEngine);
+        return services;
+    }
+
+    private static void ConfigureEngine(EngineBuilder engine)
+    {
+        engine.UseSettings(new EngineSettings(
+            blueprint: "Microservice",
+            technologies: ["EdgeNativeDelivery"],
+            cells: new CellSettings(
+                new CellTrafficAutomationSettings(
+                    defaultAutomationMode: "automatic",
+                    defaultTriggerMode: null,
+                    defaultActionMode: "shed-load",
+                    defaultMaterializationMode: null,
+                    defaultProviderId: "regional-traffic-mesh",
+                    defaultEdgeNodeIds: ["storefront-edge"],
+                    routes:
+                    [
+                        new CellTrafficAutomationRouteSettings(
+                            routeId: "orders-to-platform-control",
+                            automationMode: "advisory",
+                            triggerMode: "source-health",
+                            actionMode: "prefer-local-route",
+                            materializationMode: "provider-managed",
+                            notes: "Keep provider handoff explicit for control-plane traffic.",
+                            metadata: new Dictionary<string, string>
+                            {
+                                ["handoff"] = "ingress-provider"
+                            },
+                            providerId: "control-plane-gateway",
+                            edgeNodeIds: ["platform-edge"])
+                    ]))));
+        engine.AddModule(new PlatformTestModule());
+        engine.AddModule(new DiscoveryTestModule());
+        engine.AddModule(new CellTrafficAutomationCatalogTestModule());
+        engine.AddEdge(options =>
+        {
+            options.Nodes.Add(new EdgeNodeDescriptor(
+                id: "storefront-edge",
+                displayName: "Storefront Edge",
+                description: "Regional node that fronts storefront traffic.",
+                tags: ["storefront", "regional"]));
+            options.Nodes.Add(new EdgeNodeDescriptor(
+                id: "platform-edge",
+                displayName: "Platform Edge",
+                description: "Control-plane edge that fronts platform traffic.",
+                tags: ["platform", "control-plane"]));
+        });
+        engine.AddCellBoundary(new CellBoundaryDescriptor(
+            id: "platform-control",
+            sourceModuleId: "platform",
+            displayName: "Platform Control Cell",
+            description: "Keeps shared control-plane workflows in one boundary.",
+            blastRadius: "shared-control",
+            routingStrategy: "local-preferred",
+            moduleIds: ["platform"]));
+        engine.AddCellHealthIsolation(new CellHealthIsolationDescriptor(
+            id: "platform-control-health",
+            sourceModuleId: "platform",
+            cellId: "platform-control",
+            displayName: "Platform Control Health Isolation",
+            description: "Contains control-plane failures without leaking them into product cells.",
+            failureIsolationMode: "fail-closed",
+            readinessScope: "dependency-aware",
+            restartScope: "host-coordinated",
+            dependencyIds: ["consul-control", "postgres-control"]));
+    }
+
+    private sealed class TestCellTrafficAutomationProviderMaterializer(
+        string materializerId,
+        string providerId) : ICellTrafficAutomationProviderMaterializer
+    {
+        public string MaterializerId { get; } = materializerId;
+
+        public string ProviderId { get; } = providerId;
+
+        public ValueTask<CellTrafficAutomationProviderMaterializationResult> MaterializeAsync(
+            CellTrafficAutomationRuntimeDescriptor automation,
+            CancellationToken cancellationToken = default)
+        {
+            var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["providerRouteId"] = $"regional-route-{automation.RouteId}",
+                ["providerAction"] = "reconciled"
+            };
+
+            return ValueTask.FromResult(new CellTrafficAutomationProviderMaterializationResult(
+                state: CellTrafficAutomationProviderMaterializationStates.Applied,
+                observedAtUtc: DateTimeOffset.UtcNow,
+                metadata: metadata));
+        }
     }
 
     private sealed class CellTrafficAutomationCatalogTestModule :

@@ -55,6 +55,26 @@ internal sealed class CellTrafficAutomationTechnologyRuntimeContributor(
             metadata["providerId"] = automation.ProviderId!;
         }
 
+        if (!string.IsNullOrWhiteSpace(automation.ProviderMaterializerId))
+        {
+            metadata["providerMaterializerId"] = automation.ProviderMaterializerId!;
+        }
+
+        if (!string.IsNullOrWhiteSpace(automation.ProviderMaterializationState))
+        {
+            metadata["providerMaterializationState"] = automation.ProviderMaterializationState!;
+        }
+
+        if (automation.ProviderMaterializationObservedAtUtc is not null)
+        {
+            metadata["providerMaterializationObservedAtUtc"] = automation.ProviderMaterializationObservedAtUtc.Value.ToString("O", CultureInfo.InvariantCulture);
+        }
+
+        if (!string.IsNullOrWhiteSpace(automation.ProviderMaterializationError))
+        {
+            metadata["providerMaterializationError"] = automation.ProviderMaterializationError!;
+        }
+
         foreach (var pair in automation.Metadata)
         {
             metadata.TryAdd(pair.Key, pair.Value);

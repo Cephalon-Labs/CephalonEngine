@@ -396,8 +396,9 @@ Deliverables:
 - Cell-Based Architecture technology descriptor and boundary abstraction — shipped baseline
 - Data Mesh data product abstraction — shipped baseline
 - CDC capture abstraction plus typed runtime-state/freshness/lag/publication follow-through — shipped baseline
+- provider-aware and edge-aware cell traffic automation plus the first provider-managed materialization contract over the shared automation catalog — shipped baseline
 
 Exit criteria:
-- modules can declare cell boundaries, governed cell routes, and cell health-isolation posture with explicit blast-radius isolation and operators can inspect the same answers through `/engine/cells`, `/engine/cell-routes`, `/engine/cell-health-isolations`, `/engine/technology-surfaces/cell-based-architecture`, and `/engine/snapshot`
+- modules can declare cell boundaries, governed cell routes, and cell health-isolation posture with explicit blast-radius isolation, configuration can overlay deterministic traffic automation including provider and edge targeting, provider-managed automation can publish selected materializer and latest reconciliation posture on that same catalog, and operators can inspect the same answers through `/engine/cells`, `/engine/cell-routes`, `/engine/cell-health-isolations`, `/engine/cell-traffic-automations`, `/engine/technology-surfaces/cell-based-architecture`, and `/engine/snapshot`
 - modules can expose queryable data products through the runtime catalog
 - modules can declare CDC captures linked to an outbox through the runtime catalog today, operators can inspect latest capture/freshness/lag/post-publication posture through `/engine/cdc-captures`, `/engine/cdc-captures/runtime`, and `/engine/snapshot`, and later provider-specific execution can capture and publish those changes without inventing a second registry

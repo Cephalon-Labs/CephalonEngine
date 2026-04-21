@@ -6,6 +6,7 @@ namespace Cephalon.Engine.Technologies;
 
 internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTrafficAutomationRuntimeCatalog
 {
+    private static readonly StringComparer Comparer = StringComparer.OrdinalIgnoreCase;
     private const string DefaultAutomationMode = "advisory";
     private const string DefaultActionMode = "quarantine-route";
     private const string DefaultMaterializationMode = "runtime-catalog-only";
@@ -13,6 +14,7 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
     private const string DefaultTriggerModeTarget = "target-health";
     private const string DefaultTriggerModeBoth = "source-or-target-health";
 
+    private readonly Lock gate = new();
     private readonly CellTrafficAutomationRuntimeDescriptor[] automations;
     private readonly Dictionary<string, CellTrafficAutomationRuntimeDescriptor> automationsById;
     private readonly Dictionary<string, CellTrafficAutomationRuntimeDescriptor> automationsByRouteId;
@@ -22,50 +24,53 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
     private readonly Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>> automationsByProvider;
     private readonly Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>> automationsByEdgeNodeId;
     private readonly Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>> automationsByHealthIsolationId;
+    private readonly Dictionary<string, ProviderMaterializationObservation> providerMaterializationObservationsByAutomationId = new(Comparer);
 
     public CellTrafficAutomationRuntimeCatalogSnapshot(
         IEnumerable<CellRouteDescriptor> routes,
         IEnumerable<CellHealthIsolationDescriptor> healthIsolations,
         CellTrafficAutomationSettings? settings = null,
-        bool edgeTechnologySelected = false)
+        bool edgeTechnologySelected = false,
+        IEnumerable<ICellTrafficAutomationProviderMaterializer>? providerMaterializers = null)
     {
         ArgumentNullException.ThrowIfNull(routes);
         ArgumentNullException.ThrowIfNull(healthIsolations);
 
         var configuredSettings = settings ?? CellTrafficAutomationSettings.Empty;
+        var providerMaterializersByProvider = CreateProviderMaterializerIndex(providerMaterializers);
         var orderedRoutes = routes
-            .OrderBy(static route => route.SourceCellId, StringComparer.OrdinalIgnoreCase)
-            .ThenBy(static route => route.TargetCellId, StringComparer.OrdinalIgnoreCase)
-            .ThenBy(static route => route.SourceModuleId, StringComparer.OrdinalIgnoreCase)
-            .ThenBy(static route => route.Id, StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static route => route.SourceCellId, Comparer)
+            .ThenBy(static route => route.TargetCellId, Comparer)
+            .ThenBy(static route => route.SourceModuleId, Comparer)
+            .ThenBy(static route => route.Id, Comparer)
             .ToArray();
         var routePoliciesById = configuredSettings.Routes.ToDictionary(
             static route => route.RouteId,
-            StringComparer.OrdinalIgnoreCase);
+            Comparer);
         ValidateKnownRoutes(routePoliciesById.Keys, orderedRoutes);
 
         if (!configuredSettings.HasValues)
         {
             automations = [];
-            automationsById = new Dictionary<string, CellTrafficAutomationRuntimeDescriptor>(StringComparer.OrdinalIgnoreCase);
-            automationsByRouteId = new Dictionary<string, CellTrafficAutomationRuntimeDescriptor>(StringComparer.OrdinalIgnoreCase);
-            automationsBySourceModule = new Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>>(StringComparer.OrdinalIgnoreCase);
-            automationsBySourceCellId = new Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>>(StringComparer.OrdinalIgnoreCase);
-            automationsByTargetCellId = new Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>>(StringComparer.OrdinalIgnoreCase);
-            automationsByProvider = new Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>>(StringComparer.OrdinalIgnoreCase);
-            automationsByEdgeNodeId = new Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>>(StringComparer.OrdinalIgnoreCase);
-            automationsByHealthIsolationId = new Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>>(StringComparer.OrdinalIgnoreCase);
+            automationsById = new Dictionary<string, CellTrafficAutomationRuntimeDescriptor>(Comparer);
+            automationsByRouteId = new Dictionary<string, CellTrafficAutomationRuntimeDescriptor>(Comparer);
+            automationsBySourceModule = new Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>>(Comparer);
+            automationsBySourceCellId = new Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>>(Comparer);
+            automationsByTargetCellId = new Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>>(Comparer);
+            automationsByProvider = new Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>>(Comparer);
+            automationsByEdgeNodeId = new Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>>(Comparer);
+            automationsByHealthIsolationId = new Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>>(Comparer);
             return;
         }
 
         var healthIsolationsByCellId = healthIsolations
-            .GroupBy(static isolation => isolation.CellId, StringComparer.OrdinalIgnoreCase)
+            .GroupBy(static isolation => isolation.CellId, Comparer)
             .ToDictionary(
                 static group => group.Key,
                 static group => group
-                    .OrderBy(static isolation => isolation.Id, StringComparer.OrdinalIgnoreCase)
+                    .OrderBy(static isolation => isolation.Id, Comparer)
                     .ToArray(),
-                StringComparer.OrdinalIgnoreCase);
+                Comparer);
         var selectedRoutes = configuredSettings.HasDefaultValues
             ? orderedRoutes
             : orderedRoutes
@@ -73,16 +78,16 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
                 .ToArray();
 
         automations = selectedRoutes
-            .Select(route => CreateDescriptor(route, healthIsolationsByCellId, configuredSettings, routePoliciesById, edgeTechnologySelected))
-            .OrderBy(static automation => automation.SourceCellId, StringComparer.OrdinalIgnoreCase)
-            .ThenBy(static automation => automation.TargetCellId, StringComparer.OrdinalIgnoreCase)
-            .ThenBy(static automation => automation.SourceModuleId, StringComparer.OrdinalIgnoreCase)
-            .ThenBy(static automation => automation.RouteId, StringComparer.OrdinalIgnoreCase)
+            .Select(route => CreateDescriptor(route, healthIsolationsByCellId, configuredSettings, routePoliciesById, edgeTechnologySelected, providerMaterializersByProvider))
+            .OrderBy(static automation => automation.SourceCellId, Comparer)
+            .ThenBy(static automation => automation.TargetCellId, Comparer)
+            .ThenBy(static automation => automation.SourceModuleId, Comparer)
+            .ThenBy(static automation => automation.RouteId, Comparer)
             .ToArray();
         ValidateDuplicateIds(automations);
 
-        automationsById = automations.ToDictionary(static automation => automation.Id, StringComparer.OrdinalIgnoreCase);
-        automationsByRouteId = automations.ToDictionary(static automation => automation.RouteId, StringComparer.OrdinalIgnoreCase);
+        automationsById = automations.ToDictionary(static automation => automation.Id, Comparer);
+        automationsByRouteId = automations.ToDictionary(static automation => automation.RouteId, Comparer);
         automationsBySourceModule = CreateIndex(automations, static automation => automation.SourceModuleId);
         automationsBySourceCellId = CreateIndex(automations, static automation => automation.SourceCellId);
         automationsByTargetCellId = CreateIndex(automations, static automation => automation.TargetCellId);
@@ -90,29 +95,40 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
         automationsByEdgeNodeId = automations
             .SelectMany(static automation => automation.EdgeNodeIds
                 .Select(edgeNodeId => new KeyValuePair<string, CellTrafficAutomationRuntimeDescriptor>(edgeNodeId, automation)))
-            .GroupBy(static pair => pair.Key, StringComparer.OrdinalIgnoreCase)
+            .GroupBy(static pair => pair.Key, Comparer)
             .ToDictionary(
                 static group => group.Key,
                 static group => (IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>)group
                     .Select(static pair => pair.Value)
                     .ToArray(),
-                StringComparer.OrdinalIgnoreCase);
+                Comparer);
         automationsByHealthIsolationId = automations
             .SelectMany(static automation =>
                 automation.SourceHealthIsolationIds
                     .Concat(automation.TargetHealthIsolationIds)
-                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .Distinct(Comparer)
                     .Select(healthIsolationId => new KeyValuePair<string, CellTrafficAutomationRuntimeDescriptor>(healthIsolationId, automation)))
-            .GroupBy(static pair => pair.Key, StringComparer.OrdinalIgnoreCase)
+            .GroupBy(static pair => pair.Key, Comparer)
             .ToDictionary(
                 static group => group.Key,
                 static group => (IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>)group
                     .Select(static pair => pair.Value)
                     .ToArray(),
-                StringComparer.OrdinalIgnoreCase);
+                Comparer);
     }
 
-    public IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> Automations => automations;
+    public IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> Automations
+    {
+        get
+        {
+            lock (gate)
+            {
+                return automations
+                    .Select(Enrich)
+                    .ToArray();
+            }
+        }
+    }
 
     public CellTrafficAutomationRuntimeDescriptor? GetById(string automationId)
     {
@@ -122,7 +138,7 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
         }
 
         return automationsById.TryGetValue(automationId.Trim(), out var automation)
-            ? automation
+            ? Enrich(automation)
             : null;
     }
 
@@ -134,7 +150,7 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
         }
 
         return automationsByRouteId.TryGetValue(routeId.Trim(), out var automation)
-            ? automation
+            ? Enrich(automation)
             : null;
     }
 
@@ -146,7 +162,7 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
         }
 
         return automationsBySourceModule.TryGetValue(sourceModuleId.Trim(), out var matches)
-            ? matches
+            ? matches.Select(Enrich).ToArray()
             : [];
     }
 
@@ -158,7 +174,7 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
         }
 
         return automationsBySourceCellId.TryGetValue(sourceCellId.Trim(), out var matches)
-            ? matches
+            ? matches.Select(Enrich).ToArray()
             : [];
     }
 
@@ -170,7 +186,7 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
         }
 
         return automationsByTargetCellId.TryGetValue(targetCellId.Trim(), out var matches)
-            ? matches
+            ? matches.Select(Enrich).ToArray()
             : [];
     }
 
@@ -182,7 +198,7 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
         }
 
         return automationsByProvider.TryGetValue(provider.Trim(), out var matches)
-            ? matches
+            ? matches.Select(Enrich).ToArray()
             : [];
     }
 
@@ -194,7 +210,7 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
         }
 
         return automationsByEdgeNodeId.TryGetValue(edgeNodeId.Trim(), out var matches)
-            ? matches
+            ? matches.Select(Enrich).ToArray()
             : [];
     }
 
@@ -206,8 +222,62 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
         }
 
         return automationsByHealthIsolationId.TryGetValue(healthIsolationId.Trim(), out var matches)
-            ? matches
+            ? matches.Select(Enrich).ToArray()
             : [];
+    }
+
+    internal IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> GetPendingProviderMaterializations()
+    {
+        lock (gate)
+        {
+            return automations
+                .Where(static automation =>
+                    !string.IsNullOrWhiteSpace(automation.ProviderId) &&
+                    !string.IsNullOrWhiteSpace(automation.ProviderMaterializerId) &&
+                    Comparer.Equals(
+                        automation.ProviderMaterializationState,
+                        CellTrafficAutomationProviderMaterializationStates.Pending))
+                .Select(Enrich)
+                .ToArray();
+        }
+    }
+
+    internal void ReportProviderMaterialization(
+        string automationId,
+        string materializerId,
+        CellTrafficAutomationProviderMaterializationResult result)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(automationId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(materializerId);
+        ArgumentNullException.ThrowIfNull(result);
+
+        var normalizedAutomationId = automationId.Trim();
+        var normalizedMaterializerId = materializerId.Trim();
+
+        if (!automationsById.TryGetValue(normalizedAutomationId, out var automation))
+        {
+            throw new InvalidOperationException(
+                $"Cell traffic automation '{normalizedAutomationId}' is not registered in the active runtime.");
+        }
+
+        if (!Comparer.Equals(automation.ProviderMaterializerId, normalizedMaterializerId))
+        {
+            var selectedMaterializer = string.IsNullOrWhiteSpace(automation.ProviderMaterializerId)
+                ? "none"
+                : automation.ProviderMaterializerId;
+            throw new InvalidOperationException(
+                $"Cell traffic automation '{normalizedAutomationId}' is assigned to provider materializer '{selectedMaterializer}' and cannot report through '{normalizedMaterializerId}'.");
+        }
+
+        lock (gate)
+        {
+            providerMaterializationObservationsByAutomationId[normalizedAutomationId] = new ProviderMaterializationObservation(
+                normalizedMaterializerId,
+                result.State,
+                result.ObservedAtUtc,
+                result.Error,
+                result.Metadata);
+        }
     }
 
     private static CellTrafficAutomationRuntimeDescriptor CreateDescriptor(
@@ -215,7 +285,8 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
         Dictionary<string, CellHealthIsolationDescriptor[]> healthIsolationsByCellId,
         CellTrafficAutomationSettings settings,
         Dictionary<string, CellTrafficAutomationRouteSettings> routePoliciesById,
-        bool edgeTechnologySelected)
+        bool edgeTechnologySelected,
+        Dictionary<string, ICellTrafficAutomationProviderMaterializer> providerMaterializersByProvider)
     {
         var sourceHealthIsolations = healthIsolationsByCellId.TryGetValue(route.SourceCellId, out var sourceMatches)
             ? sourceMatches
@@ -237,6 +308,25 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
         var edgeNodeIds = routePolicy is not null && routePolicy.EdgeNodeIds.Count > 0
             ? routePolicy.EdgeNodeIds
             : settings.DefaultEdgeNodeIds;
+        var materializationMode = routePolicy?.MaterializationMode
+            ?? settings.DefaultMaterializationMode
+            ?? ResolveDefaultMaterializationMode(providerId, edgeNodeIds.Count);
+
+        string? providerMaterializerId = null;
+        string? providerMaterializationState = null;
+        if (!string.IsNullOrWhiteSpace(providerId) &&
+            UsesProviderMaterialization(materializationMode))
+        {
+            if (providerMaterializersByProvider.TryGetValue(providerId!, out var providerMaterializer))
+            {
+                providerMaterializerId = providerMaterializer.MaterializerId;
+                providerMaterializationState = CellTrafficAutomationProviderMaterializationStates.Pending;
+            }
+            else
+            {
+                providerMaterializationState = CellTrafficAutomationProviderMaterializationStates.Unavailable;
+            }
+        }
 
         if (edgeNodeIds.Count > 0 && !edgeTechnologySelected)
         {
@@ -303,9 +393,7 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
             actionMode: routePolicy?.ActionMode
                 ?? settings.DefaultActionMode
                 ?? DefaultActionMode,
-            materializationMode: routePolicy?.MaterializationMode
-                ?? settings.DefaultMaterializationMode
-                ?? ResolveDefaultMaterializationMode(providerId, edgeNodeIds.Count),
+            materializationMode: materializationMode,
             policySource: routePolicy is null
                 ? "cell-default"
                 : "cell-route",
@@ -317,7 +405,11 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
             metadata: route.Metadata,
             runtimeMetadata: runtimeMetadata,
             providerId: providerId,
-            edgeNodeIds: edgeNodeIds);
+            edgeNodeIds: edgeNodeIds,
+            providerMaterializerId: providerMaterializerId,
+            providerMaterializationState: providerMaterializationState,
+            providerMaterializationObservedAtUtc: null,
+            providerMaterializationError: null);
     }
 
     private static string ResolveDefaultTriggerMode(int sourceHealthIsolationCount, int targetHealthIsolationCount)
@@ -342,6 +434,16 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
         };
     }
 
+    private static bool UsesProviderMaterialization(string materializationMode)
+    {
+        return materializationMode.Trim().ToLowerInvariant() switch
+        {
+            "provider-managed" => true,
+            "provider-and-edge-managed" => true,
+            _ => false
+        };
+    }
+
     private static void ValidateKnownRoutes(
         Dictionary<string, CellTrafficAutomationRouteSettings>.KeyCollection configuredRouteIds,
         IReadOnlyCollection<CellRouteDescriptor> routes)
@@ -353,10 +455,10 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
 
         var knownRouteIds = routes
             .Select(static route => route.Id)
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+            .ToHashSet(Comparer);
         var unknownRouteIds = configuredRouteIds
             .Where(routeId => !knownRouteIds.Contains(routeId))
-            .OrderBy(static routeId => routeId, StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static routeId => routeId, Comparer)
             .ToArray();
         if (unknownRouteIds.Length > 0)
         {
@@ -370,11 +472,11 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
         Func<CellTrafficAutomationRuntimeDescriptor, string> keySelector)
     {
         return automations
-            .GroupBy(keySelector, StringComparer.OrdinalIgnoreCase)
+            .GroupBy(keySelector, Comparer)
             .ToDictionary(
                 static group => group.Key,
                 static group => (IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>)group.ToArray(),
-                StringComparer.OrdinalIgnoreCase);
+                Comparer);
     }
 
     private static Dictionary<string, IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>> CreateOptionalIndex(
@@ -384,19 +486,19 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
         return automations
             .Select(automation => new KeyValuePair<string?, CellTrafficAutomationRuntimeDescriptor>(keySelector(automation), automation))
             .Where(static pair => !string.IsNullOrWhiteSpace(pair.Key))
-            .GroupBy(static pair => pair.Key!, StringComparer.OrdinalIgnoreCase)
+            .GroupBy(static pair => pair.Key!, Comparer)
             .ToDictionary(
                 static group => group.Key,
                 static group => (IReadOnlyList<CellTrafficAutomationRuntimeDescriptor>)group
                     .Select(static pair => pair.Value)
                     .ToArray(),
-                StringComparer.OrdinalIgnoreCase);
+                Comparer);
     }
 
     private static void ValidateDuplicateIds(IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> automations)
     {
         var duplicateId = automations
-            .GroupBy(static automation => automation.Id, StringComparer.OrdinalIgnoreCase)
+            .GroupBy(static automation => automation.Id, Comparer)
             .FirstOrDefault(static group => group.Count() > 1);
         if (duplicateId is null)
         {
@@ -405,10 +507,121 @@ internal sealed class CellTrafficAutomationRuntimeCatalogSnapshot : ICellTraffic
 
         var owners = duplicateId
             .Select(static automation => automation.SourceModuleId)
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .OrderBy(static value => value, StringComparer.OrdinalIgnoreCase);
+            .Distinct(Comparer)
+            .OrderBy(static value => value, Comparer);
 
         throw new InvalidOperationException(
             $"Cell traffic automation '{duplicateId.Key}' is registered multiple times by: {string.Join(", ", owners)}.");
+    }
+
+    private CellTrafficAutomationRuntimeDescriptor Enrich(CellTrafficAutomationRuntimeDescriptor automation)
+    {
+        if (!providerMaterializationObservationsByAutomationId.TryGetValue(automation.Id, out var observation))
+        {
+            return automation;
+        }
+
+        var runtimeMetadata = automation.RuntimeMetadata.Count == 0
+            ? new Dictionary<string, string>(Comparer)
+            : new Dictionary<string, string>(automation.RuntimeMetadata, Comparer);
+        foreach (var pair in observation.Metadata)
+        {
+            runtimeMetadata[$"providerMaterialization.{pair.Key}"] = pair.Value;
+        }
+
+        return new CellTrafficAutomationRuntimeDescriptor(
+            id: automation.Id,
+            routeId: automation.RouteId,
+            sourceModuleId: automation.SourceModuleId,
+            sourceCellId: automation.SourceCellId,
+            targetCellId: automation.TargetCellId,
+            displayName: automation.DisplayName,
+            description: automation.Description,
+            routingStrategy: automation.RoutingStrategy,
+            governanceMode: automation.GovernanceMode,
+            automationMode: automation.AutomationMode,
+            triggerMode: automation.TriggerMode,
+            actionMode: automation.ActionMode,
+            materializationMode: automation.MaterializationMode,
+            policySource: automation.PolicySource,
+            transportIds: automation.TransportIds,
+            requiredCapabilityKey: automation.RequiredCapabilityKey,
+            sourceHealthIsolationIds: automation.SourceHealthIsolationIds,
+            targetHealthIsolationIds: automation.TargetHealthIsolationIds,
+            dependencyIds: automation.DependencyIds,
+            metadata: automation.Metadata,
+            runtimeMetadata: runtimeMetadata,
+            providerId: automation.ProviderId,
+            edgeNodeIds: automation.EdgeNodeIds,
+            providerMaterializerId: observation.MaterializerId,
+            providerMaterializationState: observation.State,
+            providerMaterializationObservedAtUtc: observation.ObservedAtUtc,
+            providerMaterializationError: observation.Error);
+    }
+
+    private static Dictionary<string, ICellTrafficAutomationProviderMaterializer> CreateProviderMaterializerIndex(
+        IEnumerable<ICellTrafficAutomationProviderMaterializer>? providerMaterializers)
+    {
+        var index = new Dictionary<string, ICellTrafficAutomationProviderMaterializer>(Comparer);
+
+        if (providerMaterializers is null)
+        {
+            return index;
+        }
+
+        foreach (var materializer in providerMaterializers)
+        {
+            ArgumentNullException.ThrowIfNull(materializer);
+
+            if (string.IsNullOrWhiteSpace(materializer.ProviderId))
+            {
+                throw new InvalidOperationException(
+                    $"Cell traffic automation provider materializer '{materializer.GetType().FullName}' must declare a provider id.");
+            }
+
+            if (string.IsNullOrWhiteSpace(materializer.MaterializerId))
+            {
+                throw new InvalidOperationException(
+                    $"Cell traffic automation provider materializer '{materializer.GetType().FullName}' must declare a materializer id.");
+            }
+
+            var normalizedProviderId = materializer.ProviderId.Trim();
+            if (!index.TryAdd(normalizedProviderId, materializer))
+            {
+                throw new InvalidOperationException(
+                    $"Multiple cell traffic automation provider materializers are registered for provider '{normalizedProviderId}'.");
+            }
+        }
+
+        return index;
+    }
+
+    private sealed class ProviderMaterializationObservation
+    {
+        public ProviderMaterializationObservation(
+            string materializerId,
+            string state,
+            DateTimeOffset observedAtUtc,
+            string? error,
+            IReadOnlyDictionary<string, string> metadata)
+        {
+            MaterializerId = materializerId;
+            State = state;
+            ObservedAtUtc = observedAtUtc;
+            Error = error;
+            Metadata = metadata.Count == 0
+                ? new Dictionary<string, string>(Comparer)
+                : new Dictionary<string, string>(metadata, Comparer);
+        }
+
+        public string MaterializerId { get; }
+
+        public string State { get; }
+
+        public DateTimeOffset ObservedAtUtc { get; }
+
+        public string? Error { get; }
+
+        public IReadOnlyDictionary<string, string> Metadata { get; }
     }
 }

@@ -28,6 +28,10 @@ public sealed class CellTrafficAutomationAspNetCoreHostingTests
             .AddCheck("cephalon.liveness", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy(), tags: ["live", "engine"])
             .AddCheck("cephalon.readiness", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy(), tags: ["ready", "engine"]);
         builder.Services.AddSingleton<IRateLimitingRuntimeCatalog>(EmptyRateLimitingRuntimeCatalog.Instance);
+        builder.Services.AddSingleton<ICellTrafficAutomationProviderMaterializer>(
+            new TestCellTrafficAutomationProviderMaterializer(
+                materializerId: "regional-traffic-materializer",
+                providerId: "regional-traffic-mesh"));
         builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "Microservice";
         builder.Configuration[$"{EngineSettings.SectionName}:Technologies:0"] = "EdgeNativeDelivery";
         builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:DefaultAutomationMode"] = "automatic";
@@ -106,7 +110,9 @@ public sealed class CellTrafficAutomationAspNetCoreHostingTests
             candidate.AutomationMode == "automatic" &&
             candidate.ProviderId == "regional-traffic-mesh" &&
             candidate.EdgeNodeIds.SequenceEqual(["storefront-edge"]) &&
-            candidate.MaterializationMode == "provider-and-edge-managed");
+            candidate.MaterializationMode == "provider-and-edge-managed" &&
+            candidate.ProviderMaterializerId == "regional-traffic-materializer" &&
+            candidate.ProviderMaterializationState == CellTrafficAutomationProviderMaterializationStates.Applied);
 
         Assert.NotNull(moduleAutomations);
         Assert.Equal(2, moduleAutomations.Length);
@@ -118,6 +124,8 @@ public sealed class CellTrafficAutomationAspNetCoreHostingTests
         Assert.Equal("provider-managed", routeAutomation.MaterializationMode);
         Assert.Equal("control-plane-gateway", routeAutomation.ProviderId);
         Assert.Equal(["platform-edge"], routeAutomation.EdgeNodeIds);
+        Assert.Null(routeAutomation.ProviderMaterializerId);
+        Assert.Equal(CellTrafficAutomationProviderMaterializationStates.Unavailable, routeAutomation.ProviderMaterializationState);
         Assert.Equal("cell-route", routeAutomation.PolicySource);
         Assert.Equal("Keep provider handoff explicit for control-plane traffic.", routeAutomation.RuntimeMetadata["note"]);
 
@@ -131,6 +139,10 @@ public sealed class CellTrafficAutomationAspNetCoreHostingTests
         Assert.NotNull(providerAutomations);
         var providerAutomation = Assert.Single(providerAutomations);
         Assert.Equal("orders-to-reporting", providerAutomation.RouteId);
+        Assert.Equal("regional-traffic-materializer", providerAutomation.ProviderMaterializerId);
+        Assert.Equal(CellTrafficAutomationProviderMaterializationStates.Applied, providerAutomation.ProviderMaterializationState);
+        Assert.NotNull(providerAutomation.ProviderMaterializationObservedAtUtc);
+        Assert.Equal("regional-route-orders-to-reporting", providerAutomation.RuntimeMetadata["providerMaterialization.providerRouteId"]);
 
         Assert.NotNull(edgeNodeAutomations);
         var edgeAutomation = Assert.Single(edgeNodeAutomations);
@@ -147,11 +159,15 @@ public sealed class CellTrafficAutomationAspNetCoreHostingTests
             entry.Id == "orders-to-reporting" &&
             entry.Metadata["providerId"] == "regional-traffic-mesh" &&
             entry.Metadata["edgeNodeIds"] == "storefront-edge" &&
-            entry.Metadata["materializationMode"] == "provider-and-edge-managed");
+            entry.Metadata["materializationMode"] == "provider-and-edge-managed" &&
+            entry.Metadata["providerMaterializerId"] == "regional-traffic-materializer" &&
+            entry.Metadata["providerMaterializationState"] == CellTrafficAutomationProviderMaterializationStates.Applied &&
+            entry.Metadata["providerMaterialization.providerRouteId"] == "regional-route-orders-to-reporting");
         Assert.Contains(trafficAutomationSurface.Entries, entry =>
             entry.Id == "orders-to-platform-control" &&
             entry.Metadata["providerId"] == "control-plane-gateway" &&
             entry.Metadata["edgeNodeIds"] == "platform-edge" &&
+            entry.Metadata["providerMaterializationState"] == CellTrafficAutomationProviderMaterializationStates.Unavailable &&
             entry.Metadata["materializationMode"] == "provider-managed" &&
             entry.Metadata["handoff"] == "ingress-provider");
 
@@ -161,6 +177,8 @@ public sealed class CellTrafficAutomationAspNetCoreHostingTests
             candidate.RouteId == "orders-to-reporting" &&
             candidate.TriggerMode == "source-or-target-health" &&
             candidate.ProviderId == "regional-traffic-mesh" &&
+            candidate.ProviderMaterializerId == "regional-traffic-materializer" &&
+            candidate.ProviderMaterializationState == CellTrafficAutomationProviderMaterializationStates.Applied &&
             candidate.EdgeNodeIds.SequenceEqual(["storefront-edge"]));
     }
 
@@ -254,5 +272,30 @@ public sealed class CellTrafficAutomationAspNetCoreHostingTests
         public RateLimitingRuntimeDescriptor? GetById(string policyId) => null;
 
         public IReadOnlyList<RateLimitingRuntimeDescriptor> GetByTransportId(string transportId) => [];
+    }
+
+    private sealed class TestCellTrafficAutomationProviderMaterializer(
+        string materializerId,
+        string providerId) : ICellTrafficAutomationProviderMaterializer
+    {
+        public string MaterializerId { get; } = materializerId;
+
+        public string ProviderId { get; } = providerId;
+
+        public ValueTask<CellTrafficAutomationProviderMaterializationResult> MaterializeAsync(
+            CellTrafficAutomationRuntimeDescriptor automation,
+            CancellationToken cancellationToken = default)
+        {
+            var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["providerRouteId"] = $"regional-route-{automation.RouteId}",
+                ["providerAction"] = "reconciled"
+            };
+
+            return ValueTask.FromResult(new CellTrafficAutomationProviderMaterializationResult(
+                state: CellTrafficAutomationProviderMaterializationStates.Applied,
+                observedAtUtc: DateTimeOffset.UtcNow,
+                metadata: metadata));
+        }
     }
 }

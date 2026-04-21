@@ -250,7 +250,15 @@ governed cell-to-cell routing posture, cell health-isolation posture, and effect
 policy without leaking ASP.NET Core ingress, service-mesh, traffic-manager, edge-pack, or
 health-probe types into `Cephalon.Abstractions`. That same runtime descriptor now also carries
 first-class optional `providerId` and `edgeNodeIds` targeting, while the shared catalog can answer
-provider and edge-node drill-downs without depending on `Cephalon.Edge` concrete types.
+provider and edge-node drill-downs without depending on `Cephalon.Edge` concrete types. The same
+host-agnostic surface now also includes `ICellTrafficAutomationProviderMaterializer`,
+`CellTrafficAutomationProviderMaterializationResult`, and
+`CellTrafficAutomationProviderMaterializationStates`, while
+`CellTrafficAutomationRuntimeDescriptor` carries `providerMaterializerId`,
+`providerMaterializationState`, `providerMaterializationObservedAtUtc`, and
+`providerMaterializationError` so provider-managed automation reconciliation can stay visible on
+the shared runtime catalog without leaking control-plane SDK or host-adapter types into
+`Cephalon.Abstractions`.
 
 The same phase 12 rule now also covers backend-for-frontend REST documentation materialization.
 `BackendForFrontendRestDocumentRuntimeDescriptor` and

@@ -76,7 +76,11 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
             metadata,
             runtimeMetadata,
             providerId: null,
-            edgeNodeIds: null)
+            edgeNodeIds: null,
+            providerMaterializerId: null,
+            providerMaterializationState: null,
+            providerMaterializationObservedAtUtc: null,
+            providerMaterializationError: null)
     {
     }
 
@@ -106,7 +110,6 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
     /// <param name="runtimeMetadata">Additional runtime-only metadata such as policy notes or overlay provenance.</param>
     /// <param name="providerId">The optional external provider or control-plane identifier that materializes this automation.</param>
     /// <param name="edgeNodeIds">The optional edge-node identifiers associated with this automation answer.</param>
-    [JsonConstructor]
     public CellTrafficAutomationRuntimeDescriptor(
         string id,
         string routeId,
@@ -131,6 +134,96 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
         IReadOnlyDictionary<string, string>? runtimeMetadata,
         string? providerId,
         IReadOnlyList<string>? edgeNodeIds = null)
+        : this(
+            id,
+            routeId,
+            sourceModuleId,
+            sourceCellId,
+            targetCellId,
+            displayName,
+            description,
+            routingStrategy,
+            governanceMode,
+            automationMode,
+            triggerMode,
+            actionMode,
+            materializationMode,
+            policySource,
+            transportIds,
+            requiredCapabilityKey,
+            sourceHealthIsolationIds,
+            targetHealthIsolationIds,
+            dependencyIds,
+            metadata,
+            runtimeMetadata,
+            providerId,
+            edgeNodeIds,
+            providerMaterializerId: null,
+            providerMaterializationState: null,
+            providerMaterializationObservedAtUtc: null,
+            providerMaterializationError: null)
+    {
+    }
+
+    /// <summary>
+    /// Creates a cell traffic-automation runtime descriptor with provider, edge, and provider-materialization state.
+    /// </summary>
+    /// <param name="id">The stable traffic-automation identifier.</param>
+    /// <param name="routeId">The stable governed cell-route identifier that this automation answer applies to.</param>
+    /// <param name="sourceModuleId">The Cephalon module that owns the governed route.</param>
+    /// <param name="sourceCellId">The source cell identifier.</param>
+    /// <param name="targetCellId">The target cell identifier.</param>
+    /// <param name="displayName">The operator-facing traffic-automation name.</param>
+    /// <param name="description">The human-readable description of the traffic-automation posture.</param>
+    /// <param name="routingStrategy">The operator-facing routing strategy inherited from the governed route.</param>
+    /// <param name="governanceMode">The operator-facing governance posture inherited from the governed route.</param>
+    /// <param name="automationMode">The normalized automation posture, such as <c>advisory</c> or <c>automatic</c>.</param>
+    /// <param name="triggerMode">The normalized trigger posture, such as <c>source-health</c> or <c>source-or-target-health</c>.</param>
+    /// <param name="actionMode">The normalized action posture, such as <c>quarantine-route</c> or <c>shed-load</c>.</param>
+    /// <param name="materializationMode">The normalized materialization posture, such as <c>runtime-catalog-only</c>, <c>provider-managed</c>, or <c>edge-managed</c>.</param>
+    /// <param name="policySource">The source of the effective automation policy, such as <c>cell-default</c> or <c>cell-route</c>.</param>
+    /// <param name="transportIds">Optional transport identifiers inherited from the governed route.</param>
+    /// <param name="requiredCapabilityKey">An optional capability key inherited from the governed route.</param>
+    /// <param name="sourceHealthIsolationIds">The normalized health-isolation identifiers attached to the source cell.</param>
+    /// <param name="targetHealthIsolationIds">The normalized health-isolation identifiers attached to the target cell.</param>
+    /// <param name="dependencyIds">The normalized dependency identifiers observed across the related health-isolation answers.</param>
+    /// <param name="metadata">The original authored route metadata.</param>
+    /// <param name="runtimeMetadata">Additional runtime-only metadata such as policy notes or overlay provenance.</param>
+    /// <param name="providerId">The optional external provider or control-plane identifier that materializes this automation.</param>
+    /// <param name="edgeNodeIds">The optional edge-node identifiers associated with this automation answer.</param>
+    /// <param name="providerMaterializerId">The optional selected provider materializer identifier.</param>
+    /// <param name="providerMaterializationState">The optional provider-materialization state for this automation.</param>
+    /// <param name="providerMaterializationObservedAtUtc">The optional UTC timestamp when the provider-materialization state was last observed.</param>
+    /// <param name="providerMaterializationError">The optional operator-facing provider-materialization error summary.</param>
+    [JsonConstructor]
+    public CellTrafficAutomationRuntimeDescriptor(
+        string id,
+        string routeId,
+        string sourceModuleId,
+        string sourceCellId,
+        string targetCellId,
+        string displayName,
+        string description,
+        string routingStrategy,
+        string governanceMode,
+        string automationMode,
+        string triggerMode,
+        string actionMode,
+        string materializationMode,
+        string policySource,
+        IReadOnlyList<string>? transportIds,
+        string? requiredCapabilityKey,
+        IReadOnlyList<string>? sourceHealthIsolationIds,
+        IReadOnlyList<string>? targetHealthIsolationIds,
+        IReadOnlyList<string>? dependencyIds,
+        IReadOnlyDictionary<string, string>? metadata,
+        IReadOnlyDictionary<string, string>? runtimeMetadata,
+        string? providerId,
+        IReadOnlyList<string>? edgeNodeIds,
+        string? providerMaterializerId,
+        string? providerMaterializationState,
+        DateTimeOffset? providerMaterializationObservedAtUtc,
+        string? providerMaterializationError)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -220,6 +313,16 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
             ? null
             : providerId.Trim();
         EdgeNodeIds = NormalizeValues(edgeNodeIds);
+        ProviderMaterializerId = string.IsNullOrWhiteSpace(providerMaterializerId)
+            ? null
+            : providerMaterializerId.Trim();
+        ProviderMaterializationState = string.IsNullOrWhiteSpace(providerMaterializationState)
+            ? null
+            : providerMaterializationState.Trim().ToLowerInvariant();
+        ProviderMaterializationObservedAtUtc = providerMaterializationObservedAtUtc;
+        ProviderMaterializationError = string.IsNullOrWhiteSpace(providerMaterializationError)
+            ? null
+            : providerMaterializationError.Trim();
         TransportIds = NormalizeValues(transportIds);
         RequiredCapabilityKey = string.IsNullOrWhiteSpace(requiredCapabilityKey)
             ? null
@@ -309,6 +412,26 @@ public sealed class CellTrafficAutomationRuntimeDescriptor
     /// Gets the optional edge-node identifiers associated with this automation answer.
     /// </summary>
     public IReadOnlyList<string> EdgeNodeIds { get; }
+
+    /// <summary>
+    /// Gets the optional selected provider materializer identifier.
+    /// </summary>
+    public string? ProviderMaterializerId { get; }
+
+    /// <summary>
+    /// Gets the optional provider-materialization state for this automation.
+    /// </summary>
+    public string? ProviderMaterializationState { get; }
+
+    /// <summary>
+    /// Gets the optional UTC timestamp when the provider-materialization state was last observed.
+    /// </summary>
+    public DateTimeOffset? ProviderMaterializationObservedAtUtc { get; }
+
+    /// <summary>
+    /// Gets the optional operator-facing provider-materialization error summary.
+    /// </summary>
+    public string? ProviderMaterializationError { get; }
 
     /// <summary>
     /// Gets the source of the effective automation policy.

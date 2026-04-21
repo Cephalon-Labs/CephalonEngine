@@ -29,6 +29,7 @@ using Cephalon.Engine.Transports;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using System.Reflection;
@@ -1005,11 +1006,12 @@ public sealed class EngineBuilder
             var appProfile = appProfileBuilder.Build();
             var technologyCatalog = new TechnologyCatalogSnapshot(appProfileBuilder.GetTechnologyCatalog());
             var technologySelection = new TechnologySelection(appProfile.Technologies, technologyCatalog.Technologies);
-            var cellTrafficAutomationCatalog = new CellTrafficAutomationRuntimeCatalogSnapshot(
+            ValidateCellTrafficAutomation(
                 activeCellRoutes,
                 activeCellHealthIsolations,
                 cellSettings.TrafficAutomation,
                 technologySelection.IsSelected(BuiltInTechnologies.EdgeNativeDelivery.Id));
+            var hasProviderMaterializationTargets = HasProviderMaterializationTargets(cellSettings.TrafficAutomation);
             var localizedResources = new LocalizedResourceRegistry();
             foreach (var module in orderedModules.OfType<ILocalizedResourceContributor>())
             {
@@ -1041,8 +1043,19 @@ public sealed class EngineBuilder
                 new CellHealthIsolationCatalogSnapshot(activeCellHealthIsolations));
             Services.TryAddSingleton<ICellHealthIsolationCatalog>(serviceProvider =>
                 serviceProvider.GetRequiredService<CellHealthIsolationCatalogSnapshot>());
-            Services.TryAddSingleton(cellTrafficAutomationCatalog);
-            Services.TryAddSingleton<ICellTrafficAutomationRuntimeCatalog>(cellTrafficAutomationCatalog);
+            Services.TryAddSingleton<CellTrafficAutomationRuntimeCatalogSnapshot>(serviceProvider =>
+                new CellTrafficAutomationRuntimeCatalogSnapshot(
+                    activeCellRoutes,
+                    activeCellHealthIsolations,
+                    cellSettings.TrafficAutomation,
+                    technologySelection.IsSelected(BuiltInTechnologies.EdgeNativeDelivery.Id),
+                    serviceProvider.GetServices<ICellTrafficAutomationProviderMaterializer>()));
+            Services.TryAddSingleton<ICellTrafficAutomationRuntimeCatalog>(serviceProvider =>
+                serviceProvider.GetRequiredService<CellTrafficAutomationRuntimeCatalogSnapshot>());
+            if (hasProviderMaterializationTargets)
+            {
+                Services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, CellTrafficAutomationProviderMaterializationHostedService>());
+            }
             Services.TryAddSingleton<BackendForFrontendRuntimeCatalogSnapshot>(_ =>
                 new BackendForFrontendRuntimeCatalogSnapshot(activeBackendForFrontendBindings));
             Services.TryAddSingleton<IBackendForFrontendRuntimeCatalog>(serviceProvider =>
@@ -1658,6 +1671,35 @@ public sealed class EngineBuilder
     private static string GetPackageId(LoadedPackage package)
     {
         return package.Request.Id;
+    }
+
+    private static bool HasProviderMaterializationTargets(CellTrafficAutomationSettings settings)
+    {
+        ArgumentNullException.ThrowIfNull(settings);
+
+        if (!string.IsNullOrWhiteSpace(settings.DefaultProviderId))
+        {
+            return true;
+        }
+
+        return settings.Routes.Any(static route => !string.IsNullOrWhiteSpace(route.ProviderId));
+    }
+
+    private static void ValidateCellTrafficAutomation(
+        IReadOnlyList<CellRouteDescriptor> activeCellRoutes,
+        IReadOnlyList<CellHealthIsolationDescriptor> activeCellHealthIsolations,
+        CellTrafficAutomationSettings settings,
+        bool edgeTechnologySelected)
+    {
+        ArgumentNullException.ThrowIfNull(activeCellRoutes);
+        ArgumentNullException.ThrowIfNull(activeCellHealthIsolations);
+        ArgumentNullException.ThrowIfNull(settings);
+
+        _ = new CellTrafficAutomationRuntimeCatalogSnapshot(
+            activeCellRoutes,
+            activeCellHealthIsolations,
+            settings,
+            edgeTechnologySelected);
     }
 
     private static bool IsAssemblyTrusted(string? assemblyName, TrustPolicy trustPolicy)
