@@ -222,7 +222,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Edge.Traefik.Configuration`
 
-- [Cephalon.Edge.Traefik](cephalon-edge-traefik.md#namespace-cephalon-edge-traefik-configuration): 3 public types [Browse](browse.html?assembly=Cephalon.Edge.Traefik&namespace=Cephalon.Edge.Traefik.Configuration)
+- [Cephalon.Edge.Traefik](cephalon-edge-traefik.md#namespace-cephalon-edge-traefik-configuration): 5 public types [Browse](browse.html?assembly=Cephalon.Edge.Traefik&namespace=Cephalon.Edge.Traefik.Configuration)
 
 ## `Cephalon.Edge.Traefik.Registration`
 

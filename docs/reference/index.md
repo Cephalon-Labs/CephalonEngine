@@ -86,7 +86,7 @@ Quick links:
 ### Phase 13 Companion Packs
 
 - [Cephalon.Edge.KubernetesGateway](cephalon-edge-kubernetesgateway.md): Kubernetes Gateway API control-plane materializer and live reconciliation companion pack for Cephalon edge traffic automation. Contains 2 namespaces and 5 public types. [Browse](browse.html?assembly=Cephalon.Edge.KubernetesGateway)
-- [Cephalon.Edge.Traefik](cephalon-edge-traefik.md): Traefik IngressRoute projected-intent control-plane materializer companion pack for Cephalon edge traffic automation. Contains 2 namespaces and 4 public types. [Browse](browse.html?assembly=Cephalon.Edge.Traefik)
+- [Cephalon.Edge.Traefik](cephalon-edge-traefik.md): Traefik IngressRoute projected-intent control-plane materializer companion pack for Cephalon edge traffic automation. Contains 2 namespaces and 6 public types. [Browse](browse.html?assembly=Cephalon.Edge.Traefik)
 
 ### Phase 12 Companion Packs
 

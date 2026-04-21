@@ -2223,6 +2223,9 @@ Browse the published API surface by public member.
 - [ConfiguredIntent](cephalon-edge-kubernetesgateway.md#member-f-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationmodes-configuredintent): `Fields` on `KubernetesGatewayTrafficObservationModes` in `Cephalon.Edge.KubernetesGateway.Configuration` (`Cephalon.Edge.KubernetesGateway`) [Browse](browse.html?q=ConfiguredIntent&assembly=Cephalon.Edge.KubernetesGateway&namespace=Cephalon.Edge.KubernetesGateway.Configuration&scope=members)
   - Publishes configured Kubernetes Gateway API intent without reading or writing live control-plane resources.
   - `const string ConfiguredIntent`
+- [ConfiguredIntent](cephalon-edge-traefik.md#member-f-cephalon-edge-traefik-configuration-traefiktrafficobservationmodes-configuredintent): `Fields` on `TraefikTrafficObservationModes` in `Cephalon.Edge.Traefik.Configuration` (`Cephalon.Edge.Traefik`) [Browse](browse.html?q=ConfiguredIntent&assembly=Cephalon.Edge.Traefik&namespace=Cephalon.Edge.Traefik.Configuration&scope=members)
+  - Publishes configured Traefik IngressRoute intent without reading live control-plane resources.
+  - `const string ConfiguredIntent`
 - [ConfigureGraphQLMutation](cephalon-aspnetcore-graphql.md#member-m-cephalon-aspnetcore-graphql-hosting-graphqltransportservicecollectionextensions-configuregraphqlmutation-microsoft-extensions-dependencyinjection-iservicecollection-system-action-hotchocolate-types-iobjecttypedescriptor): `Methods` on `GraphQLTransportServiceCollectionExtensions` in `Cephalon.AspNetCore.GraphQL.Hosting` (`Cephalon.AspNetCore.GraphQL`) [Browse](browse.html?q=ConfigureGraphQLMutation&assembly=Cephalon.AspNetCore.GraphQL&namespace=Cephalon.AspNetCore.GraphQL.Hosting&scope=members)
   - Adds fields to the shared GraphQL mutation root used by Cephalon modules.
   - `IServiceCollection ConfigureGraphQLMutation(this IServiceCollection services, Action<IObjectTypeDescriptor> configure)`
@@ -6693,7 +6696,13 @@ Browse the published API surface by public member.
 - [KubeConfigPath](cephalon-edge-kubernetesgateway.md#member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationoptions-kubeconfigpath): `Properties` on `KubernetesGatewayTrafficObservationOptions` in `Cephalon.Edge.KubernetesGateway.Configuration` (`Cephalon.Edge.KubernetesGateway`) [Browse](browse.html?q=KubeConfigPath&assembly=Cephalon.Edge.KubernetesGateway&namespace=Cephalon.Edge.KubernetesGateway.Configuration&scope=members)
   - Gets or sets the explicit kubeconfig path used when the pack creates its own client outside the cluster.
   - `string KubeConfigPath { get; set; }`
+- [KubeConfigPath](cephalon-edge-traefik.md#member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-kubeconfigpath): `Properties` on `TraefikTrafficObservationOptions` in `Cephalon.Edge.Traefik.Configuration` (`Cephalon.Edge.Traefik`) [Browse](browse.html?q=KubeConfigPath&assembly=Cephalon.Edge.Traefik&namespace=Cephalon.Edge.Traefik.Configuration&scope=members)
+  - Gets or sets the explicit kubeconfig path used when the pack creates its own client outside the cluster.
+  - `string KubeConfigPath { get; set; }`
 - [KubeContext](cephalon-edge-kubernetesgateway.md#member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationoptions-kubecontext): `Properties` on `KubernetesGatewayTrafficObservationOptions` in `Cephalon.Edge.KubernetesGateway.Configuration` (`Cephalon.Edge.KubernetesGateway`) [Browse](browse.html?q=KubeContext&assembly=Cephalon.Edge.KubernetesGateway&namespace=Cephalon.Edge.KubernetesGateway.Configuration&scope=members)
+  - Gets or sets the optional kubeconfig context override used when the pack creates its own client.
+  - `string KubeContext { get; set; }`
+- [KubeContext](cephalon-edge-traefik.md#member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-kubecontext): `Properties` on `TraefikTrafficObservationOptions` in `Cephalon.Edge.Traefik.Configuration` (`Cephalon.Edge.Traefik`) [Browse](browse.html?q=KubeContext&assembly=Cephalon.Edge.Traefik&namespace=Cephalon.Edge.Traefik.Configuration&scope=members)
   - Gets or sets the optional kubeconfig context override used when the pack creates its own client.
   - `string KubeContext { get; set; }`
 - [KubernetesGatewayTrafficMaterializerOptions](cephalon-edge-kubernetesgateway.md#member-m-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficmaterializeroptions-ctor): `Constructors` on `KubernetesGatewayTrafficMaterializerOptions` in `Cephalon.Edge.KubernetesGateway.Configuration` (`Cephalon.Edge.KubernetesGateway`) [Browse](browse.html?q=KubernetesGatewayTrafficMaterializerOptions&assembly=Cephalon.Edge.KubernetesGateway&namespace=Cephalon.Edge.KubernetesGateway.Configuration&scope=members)
@@ -7072,6 +7081,9 @@ Browse the published API surface by public member.
   - Records one inbound message as processed.
   - `ValueTask MarkProcessedAsync(InboxMessage message, CancellationToken cancellationToken)`
 - [MasterUrl](cephalon-edge-kubernetesgateway.md#member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationoptions-masterurl): `Properties` on `KubernetesGatewayTrafficObservationOptions` in `Cephalon.Edge.KubernetesGateway.Configuration` (`Cephalon.Edge.KubernetesGateway`) [Browse](browse.html?q=MasterUrl&assembly=Cephalon.Edge.KubernetesGateway&namespace=Cephalon.Edge.KubernetesGateway.Configuration&scope=members)
+  - Gets or sets the optional API-server override used when the pack creates its own client from kubeconfig.
+  - `string MasterUrl { get; set; }`
+- [MasterUrl](cephalon-edge-traefik.md#member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-masterurl): `Properties` on `TraefikTrafficObservationOptions` in `Cephalon.Edge.Traefik.Configuration` (`Cephalon.Edge.Traefik`) [Browse](browse.html?q=MasterUrl&assembly=Cephalon.Edge.Traefik&namespace=Cephalon.Edge.Traefik.Configuration&scope=members)
   - Gets or sets the optional API-server override used when the pack creates its own client from kubeconfig.
   - `string MasterUrl { get; set; }`
 - [Matched](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagevaluationresult-matched): `Properties` on `FeatureFlagEvaluationResult` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=Matched&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
@@ -7767,6 +7779,9 @@ Browse the published API surface by public member.
 - [Mode](cephalon-engine.md#member-p-cephalon-engine-configuration-tenancysettings-mode): `Properties` on `TenancySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Mode&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the selected tenancy mode.
   - `string Mode { get; }`
+- [Mode](cephalon-edge-traefik.md#member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-mode): `Properties` on `TraefikTrafficObservationOptions` in `Cephalon.Edge.Traefik.Configuration` (`Cephalon.Edge.Traefik`) [Browse](browse.html?q=Mode&assembly=Cephalon.Edge.Traefik&namespace=Cephalon.Edge.Traefik.Configuration&scope=members)
+  - Gets or sets the control-plane mode used by the Traefik materializer.
+  - `string Mode { get; set; }`
 - [Modern](cephalon-abstractions.md#member-f-cephalon-abstractions-patterns-stranglerfigtarget-modern): `Fields` on `StranglerFigTarget` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Modern&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Routes traffic to the modern Cephalon boundary.
   - `const StranglerFigTarget Modern`
@@ -8052,6 +8067,9 @@ Browse the published API surface by public member.
 - [Observation](cephalon-edge-kubernetesgateway.md#member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficmaterializeroptions-observation): `Properties` on `KubernetesGatewayTrafficMaterializerOptions` in `Cephalon.Edge.KubernetesGateway.Configuration` (`Cephalon.Edge.KubernetesGateway`) [Browse](browse.html?q=Observation&assembly=Cephalon.Edge.KubernetesGateway&namespace=Cephalon.Edge.KubernetesGateway.Configuration&scope=members)
   - Gets the live-observation options used to overlay Kubernetes Gateway API status back into the shared runtime catalog.
   - `KubernetesGatewayTrafficObservationOptions Observation { get; }`
+- [Observation](cephalon-edge-traefik.md#member-p-cephalon-edge-traefik-configuration-traefiktrafficmaterializeroptions-observation): `Properties` on `TraefikTrafficMaterializerOptions` in `Cephalon.Edge.Traefik.Configuration` (`Cephalon.Edge.Traefik`) [Browse](browse.html?q=Observation&assembly=Cephalon.Edge.Traefik&namespace=Cephalon.Edge.Traefik.Configuration&scope=members)
+  - Gets the live-observation options used to overlay Traefik IngressRoute status back into the shared runtime catalog.
+  - `TraefikTrafficObservationOptions Observation { get; }`
 - [Observe](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-observe): `Fields` on `CellTrafficAutomationLifecycleActions` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Observe&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - The selected materializer is observing control-plane truth without writing changes.
   - `const string Observe`
@@ -8078,6 +8096,9 @@ Browse the published API surface by public member.
   - `DateTimeOffset ObservedAtUtc { get; }`
 - [ObserveOnly](cephalon-edge-kubernetesgateway.md#member-f-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationmodes-observeonly): `Fields` on `KubernetesGatewayTrafficObservationModes` in `Cephalon.Edge.KubernetesGateway.Configuration` (`Cephalon.Edge.KubernetesGateway`) [Browse](browse.html?q=ObserveOnly&assembly=Cephalon.Edge.KubernetesGateway&namespace=Cephalon.Edge.KubernetesGateway.Configuration&scope=members)
   - Reads live Kubernetes Gateway API status and projects the observed posture back into the shared runtime catalog.
+  - `const string ObserveOnly`
+- [ObserveOnly](cephalon-edge-traefik.md#member-f-cephalon-edge-traefik-configuration-traefiktrafficobservationmodes-observeonly): `Fields` on `TraefikTrafficObservationModes` in `Cephalon.Edge.Traefik.Configuration` (`Cephalon.Edge.Traefik`) [Browse](browse.html?q=ObserveOnly&assembly=Cephalon.Edge.Traefik&namespace=Cephalon.Edge.Traefik.Configuration&scope=members)
+  - Reads live Traefik Kubernetes CRD resources and projects the observed posture back into the shared runtime catalog.
   - `const string ObserveOnly`
 - [OccurredAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditentry-occurredatutc): `Properties` on `AuditEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=OccurredAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the time at which the audited operation occurred.
@@ -8744,6 +8765,9 @@ Browse the published API surface by public member.
   - `string PolicySource { get; }`
 - [PollingIntervalSeconds](cephalon-edge-kubernetesgateway.md#member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationoptions-pollingintervalseconds): `Properties` on `KubernetesGatewayTrafficObservationOptions` in `Cephalon.Edge.KubernetesGateway.Configuration` (`Cephalon.Edge.KubernetesGateway`) [Browse](browse.html?q=PollingIntervalSeconds&assembly=Cephalon.Edge.KubernetesGateway&namespace=Cephalon.Edge.KubernetesGateway.Configuration&scope=members)
   - Gets or sets the polling interval, in seconds, used for recurring live observation or reconciliation after startup materialization.
+  - `int PollingIntervalSeconds { get; set; }`
+- [PollingIntervalSeconds](cephalon-edge-traefik.md#member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-pollingintervalseconds): `Properties` on `TraefikTrafficObservationOptions` in `Cephalon.Edge.Traefik.Configuration` (`Cephalon.Edge.Traefik`) [Browse](browse.html?q=PollingIntervalSeconds&assembly=Cephalon.Edge.Traefik&namespace=Cephalon.Edge.Traefik.Configuration&scope=members)
+  - Gets or sets the polling interval, in seconds, used for recurring live observation after startup materialization.
   - `int PollingIntervalSeconds { get; set; }`
 - [Port](cephalon-observability-cassandradependencies.md#member-p-cephalon-observability-cassandradependencies-configuration-cassandradependencydefinition-port): `Properties` on `CassandraDependencyDefinition` in `Cephalon.Observability.CassandraDependencies.Configuration` (`Cephalon.Observability.CassandraDependencies`) [Browse](browse.html?q=Port&assembly=Cephalon.Observability.CassandraDependencies&namespace=Cephalon.Observability.CassandraDependencies.Configuration&scope=members)
   - Gets or sets the Cassandra native-protocol TCP port.
@@ -11133,6 +11157,9 @@ Browse the published API surface by public member.
 - [StaleAfterSeconds](cephalon-edge-kubernetesgateway.md#member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationoptions-staleafterseconds): `Properties` on `KubernetesGatewayTrafficObservationOptions` in `Cephalon.Edge.KubernetesGateway.Configuration` (`Cephalon.Edge.KubernetesGateway`) [Browse](browse.html?q=StaleAfterSeconds&assembly=Cephalon.Edge.KubernetesGateway&namespace=Cephalon.Edge.KubernetesGateway.Configuration&scope=members)
   - Gets or sets the freshness window, in seconds, that observed status should advertise to operators.
   - `int StaleAfterSeconds { get; set; }`
+- [StaleAfterSeconds](cephalon-edge-traefik.md#member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-staleafterseconds): `Properties` on `TraefikTrafficObservationOptions` in `Cephalon.Edge.Traefik.Configuration` (`Cephalon.Edge.Traefik`) [Browse](browse.html?q=StaleAfterSeconds&assembly=Cephalon.Edge.Traefik&namespace=Cephalon.Edge.Traefik.Configuration&scope=members)
+  - Gets or sets the freshness window, in seconds, that observed status should advertise to operators.
+  - `int StaleAfterSeconds { get; set; }`
 - [StartAsync](cephalon-engine.md#member-m-cephalon-engine-runtime-engineruntime-startasync-system-iserviceprovider-system-threading-cancellationtoken): `Methods` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=StartAsync&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Starts the runtime and its modules.
   - `Task StartAsync(IServiceProvider services, CancellationToken cancellationToken)`
@@ -12102,6 +12129,9 @@ Browse the published API surface by public member.
 - [TraefikTrafficMaterializerOptions](cephalon-edge-traefik.md#member-m-cephalon-edge-traefik-configuration-traefiktrafficmaterializeroptions-ctor): `Constructors` on `TraefikTrafficMaterializerOptions` in `Cephalon.Edge.Traefik.Configuration` (`Cephalon.Edge.Traefik`) [Browse](browse.html?q=TraefikTrafficMaterializerOptions&assembly=Cephalon.Edge.Traefik&namespace=Cephalon.Edge.Traefik.Configuration&scope=members)
   - Initializes a new instance of the `TraefikTrafficMaterializerOptions` class.
   - `TraefikTrafficMaterializerOptions()`
+- [TraefikTrafficObservationOptions](cephalon-edge-traefik.md#member-m-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-ctor): `Constructors` on `TraefikTrafficObservationOptions` in `Cephalon.Edge.Traefik.Configuration` (`Cephalon.Edge.Traefik`) [Browse](browse.html?q=TraefikTrafficObservationOptions&assembly=Cephalon.Edge.Traefik&namespace=Cephalon.Edge.Traefik.Configuration&scope=members)
+  - Initializes a new instance of the `TraefikTrafficObservationOptions` class.
+  - `TraefikTrafficObservationOptions()`
 - [TrafficAutomation](cephalon-engine.md#member-p-cephalon-engine-configuration-cellsettings-trafficautomation): `Properties` on `CellSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=TrafficAutomation&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the configuration-driven traffic-automation settings for governed cell routes.
   - `CellTrafficAutomationSettings TrafficAutomation { get; }`
@@ -12472,6 +12502,9 @@ Browse the published API surface by public member.
   - Gets or sets a value indicating whether the package should target an in-cluster OpenShift collector service when no shared endpoint is configured.
   - `bool UseInClusterCollectorService { get; set; }`
 - [UseInClusterConfiguration](cephalon-edge-kubernetesgateway.md#member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationoptions-useinclusterconfiguration): `Properties` on `KubernetesGatewayTrafficObservationOptions` in `Cephalon.Edge.KubernetesGateway.Configuration` (`Cephalon.Edge.KubernetesGateway`) [Browse](browse.html?q=UseInClusterConfiguration&assembly=Cephalon.Edge.KubernetesGateway&namespace=Cephalon.Edge.KubernetesGateway.Configuration&scope=members)
+  - Gets or sets a value indicating whether in-cluster Kubernetes configuration should be used when the pack creates its own client.
+  - `bool UseInClusterConfiguration { get; set; }`
+- [UseInClusterConfiguration](cephalon-edge-traefik.md#member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-useinclusterconfiguration): `Properties` on `TraefikTrafficObservationOptions` in `Cephalon.Edge.Traefik.Configuration` (`Cephalon.Edge.Traefik`) [Browse](browse.html?q=UseInClusterConfiguration&assembly=Cephalon.Edge.Traefik&namespace=Cephalon.Edge.Traefik.Configuration&scope=members)
   - Gets or sets a value indicating whether in-cluster Kubernetes configuration should be used when the pack creates its own client.
   - `bool UseInClusterConfiguration { get; set; }`
 - [UseInClusterProxyService](cephalon-observability-tanzu.md#member-p-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-useinclusterproxyservice): `Properties` on `TanzuTelemetryExportOptions` in `Cephalon.Observability.Tanzu.Configuration` (`Cephalon.Observability.Tanzu`) [Browse](browse.html?q=UseInClusterProxyService&assembly=Cephalon.Observability.Tanzu&namespace=Cephalon.Observability.Tanzu.Configuration&scope=members)

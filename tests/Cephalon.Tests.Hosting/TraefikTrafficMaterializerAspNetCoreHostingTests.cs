@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net.Http.Json;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Resilience;
@@ -5,6 +6,7 @@ using Cephalon.Abstractions.Technologies;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.Edge.Traefik.Configuration;
 using Cephalon.Edge.Traefik.Registration;
+using Cephalon.Edge.Traefik.Services;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Runtime;
@@ -20,77 +22,12 @@ public sealed class TraefikTrafficMaterializerAspNetCoreHostingTests
     [Fact]
     public async Task MapCephalonExposesTraefikTrafficMaterializationSurface()
     {
-        var builder = WebApplication.CreateSlimBuilder();
-        builder.WebHost.UseTestServer();
-        builder.Services.AddProblemDetails();
-        builder.Services.AddHealthChecks()
-            .AddCheck("cephalon.liveness", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy(), tags: ["live", "engine"])
-            .AddCheck("cephalon.readiness", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy(), tags: ["ready", "engine"]);
-        builder.Services.AddSingleton<IRateLimitingRuntimeCatalog>(EmptyRateLimitingRuntimeCatalog.Instance);
-        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "Microservice";
-        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:RouteId"] = "orders-to-public-ingress";
-        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:AutomationMode"] = "automatic";
-        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:TriggerMode"] = "source-or-target-health";
-        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:ActionMode"] = "shed-load";
-        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:MaterializationMode"] = "provider-managed";
-        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:ProviderId"] =
-            TraefikTrafficMaterializerOptions.DefaultProviderId;
-        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:1:RouteId"] = "orders-to-admin-ingress";
-        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:1:AutomationMode"] = "automatic";
-        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:1:TriggerMode"] = "source-health";
-        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:1:ActionMode"] = "prefer-local-route";
-        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:1:MaterializationMode"] = "provider-managed";
-        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:1:ProviderId"] =
-            TraefikTrafficMaterializerOptions.DefaultProviderId;
+        var builder = CreateBuilder();
         builder.Services.AddCephalon(engine =>
         {
             engine.UseConfiguration(builder.Configuration);
             engine.AddModule(new TraefikTrafficHostingTestModule());
-            engine.AddTraefikTrafficMaterializer(options =>
-            {
-                options.RouteNamespace = "edge-traefik";
-                options.EntryPoints.Add("websecure");
-                options.Routes.Add(new TraefikIngressRouteOptions
-                {
-                    RouteId = "orders-to-public-ingress",
-                    IngressRouteName = "orders-public-ingress",
-                    MatchRule = "Host(`orders.example.com`) && PathPrefix(`/orders`)",
-                    BackendNamespace = "orders-runtime",
-                    BackendServiceName = "orders-api",
-                    BackendPort = 8443,
-                    BackendWeight = 100,
-                    BackendScheme = "https",
-                    PassHostHeader = true,
-                    TlsSecretName = "orders-public-tls",
-                    TlsOptionsName = "strict-mtls",
-                    TlsOptionsNamespace = "edge-security"
-                });
-                options.Routes[0].Middlewares.Add(new TraefikMiddlewareReferenceOptions
-                {
-                    Name = "secure-headers"
-                });
-                options.Routes[0].Middlewares.Add(new TraefikMiddlewareReferenceOptions
-                {
-                    Name = "orders-rate-limit",
-                    Namespace = "edge-security"
-                });
-                options.Routes.Add(new TraefikIngressRouteOptions
-                {
-                    RouteId = "orders-to-admin-ingress",
-                    IngressRouteName = "orders-admin-ingress",
-                    MatchRule = "Host(`admin.example.com`) && PathPrefix(`/orders`)",
-                    BackendNamespace = "orders-admin",
-                    BackendServiceName = "orders-admin-api",
-                    BackendPort = 9443,
-                    TlsSecretName = "orders-admin-tls"
-                });
-                options.Routes[1].EntryPoints.Add("admin-websecure");
-                options.Routes[1].Middlewares.Add(new TraefikMiddlewareReferenceOptions
-                {
-                    Name = "admin-authn",
-                    Namespace = "edge-security"
-                });
-            });
+            ConfigureTraefik(engine, controlPlaneMode: TraefikTrafficObservationModes.ConfiguredIntent);
         });
 
         await using var app = builder.Build();
@@ -149,6 +86,207 @@ public sealed class TraefikTrafficMaterializerAspNetCoreHostingTests
             automation.RouteId == "orders-to-admin-ingress" &&
             automation.ProviderMaterializerId == "traefik-materializer" &&
             automation.ProviderMaterializationState == CellTrafficAutomationProviderMaterializationStates.Pending);
+    }
+
+    [Fact]
+    public async Task MapCephalonExposesObservedTraefikTrafficMaterializationSurface()
+    {
+        var builder = CreateBuilder();
+        builder.Services.AddSingleton<ITraefikTrafficObservationSource>(
+            new StaticObservationSource(() => CreateObservedAppliedResult()));
+        builder.Services.AddCephalon(engine =>
+        {
+            engine.UseConfiguration(builder.Configuration);
+            engine.AddModule(new TraefikTrafficHostingTestModule());
+            ConfigureTraefik(engine, controlPlaneMode: TraefikTrafficObservationModes.ObserveOnly);
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var providerAutomations =
+            await client.GetFromJsonAsync<CellTrafficAutomationRuntimeDescriptor[]>("/engine/cell-traffic-automations/providers/traefik");
+        var surfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/cell-based-architecture");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(providerAutomations);
+        Assert.Equal(2, providerAutomations.Length);
+        Assert.Contains(providerAutomations, automation =>
+            automation.RouteId == "orders-to-public-ingress" &&
+            automation.ProviderMaterializerId == "traefik-materializer" &&
+            automation.ProviderMaterializationState == CellTrafficAutomationProviderMaterializationStates.Applied &&
+            automation.MaterializationState == CellTrafficAutomationMaterializationStates.Applied &&
+            automation.RuntimeMetadata["providerMaterialization.providerAction"] == "observe-only" &&
+            automation.RuntimeMetadata["providerMaterialization.observationMode"] == TraefikTrafficObservationModes.ObserveOnly &&
+            automation.RuntimeMetadata["providerMaterialization.statusSource"] == "traefik-ingressroute-observation" &&
+            automation.RuntimeMetadata["providerMaterialization.resourceState"] == "available" &&
+            automation.RuntimeMetadata["providerMaterialization.ingressRouteExists"] == "true" &&
+            automation.RuntimeMetadata["providerMaterialization.observedServiceRefs"] == "service/orders-runtime/orders-api:8443@weight/100" &&
+            automation.RuntimeMetadata["providerMaterialization.ownershipState"] == CellTrafficAutomationOwnershipStates.Owned &&
+            automation.RuntimeMetadata["providerMaterialization.dependencyState"] == CellTrafficAutomationDependencyStates.Satisfied &&
+            automation.RuntimeMetadata["providerMaterialization.driftState"] == CellTrafficAutomationDriftStates.InSync);
+
+        Assert.NotNull(surfaces);
+        var traefikSurface = Assert.Single(
+            surfaces,
+            static surface => surface.SurfaceId == "traefik-ingressroute-traffic-materializations");
+        Assert.Contains(traefikSurface.Entries, entry =>
+            entry.Metadata["routeId"] == "orders-to-public-ingress" &&
+            entry.Metadata["providerAction"] == "observe-only" &&
+            entry.Metadata["statusSource"] == "traefik-ingressroute-observation" &&
+            entry.Metadata["observedServiceRefs"] == "service/orders-runtime/orders-api:8443@weight/100" &&
+            entry.Metadata["observedTlsOptionsRef"] == "tlsoption/edge-security/strict-mtls");
+
+        Assert.NotNull(snapshot);
+        Assert.Contains(snapshot.CellTrafficAutomations, automation =>
+            automation.RouteId == "orders-to-public-ingress" &&
+            automation.ProviderMaterializerId == "traefik-materializer" &&
+            automation.ProviderMaterializationState == CellTrafficAutomationProviderMaterializationStates.Applied &&
+            automation.RuntimeMetadata["providerMaterialization.statusSource"] == "traefik-ingressroute-observation");
+    }
+
+    private static WebApplicationBuilder CreateBuilder()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Services.AddProblemDetails();
+        builder.Services.AddHealthChecks()
+            .AddCheck("cephalon.liveness", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy(), tags: ["live", "engine"])
+            .AddCheck("cephalon.readiness", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy(), tags: ["ready", "engine"]);
+        builder.Services.AddSingleton<IRateLimitingRuntimeCatalog>(EmptyRateLimitingRuntimeCatalog.Instance);
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "Microservice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:RouteId"] = "orders-to-public-ingress";
+        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:AutomationMode"] = "automatic";
+        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:TriggerMode"] = "source-or-target-health";
+        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:ActionMode"] = "shed-load";
+        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:MaterializationMode"] = "provider-managed";
+        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:0:ProviderId"] =
+            TraefikTrafficMaterializerOptions.DefaultProviderId;
+        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:1:RouteId"] = "orders-to-admin-ingress";
+        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:1:AutomationMode"] = "automatic";
+        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:1:TriggerMode"] = "source-health";
+        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:1:ActionMode"] = "prefer-local-route";
+        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:1:MaterializationMode"] = "provider-managed";
+        builder.Configuration[$"{EngineSettings.SectionName}:Cells:TrafficAutomation:Routes:1:ProviderId"] =
+            TraefikTrafficMaterializerOptions.DefaultProviderId;
+        return builder;
+    }
+
+    private static void ConfigureTraefik(EngineBuilder engine, string controlPlaneMode)
+    {
+        engine.AddTraefikTrafficMaterializer(options =>
+        {
+            options.RouteNamespace = "edge-traefik";
+            options.EntryPoints.Add("websecure");
+            options.Observation.Mode = controlPlaneMode;
+            options.Observation.PollingIntervalSeconds = 60;
+            options.Observation.StaleAfterSeconds = 180;
+            options.Routes.Add(new TraefikIngressRouteOptions
+            {
+                RouteId = "orders-to-public-ingress",
+                IngressRouteName = "orders-public-ingress",
+                MatchRule = "Host(`orders.example.com`) && PathPrefix(`/orders`)",
+                BackendNamespace = "orders-runtime",
+                BackendServiceName = "orders-api",
+                BackendPort = 8443,
+                BackendWeight = 100,
+                BackendScheme = "https",
+                PassHostHeader = true,
+                TlsSecretName = "orders-public-tls",
+                TlsOptionsName = "strict-mtls",
+                TlsOptionsNamespace = "edge-security"
+            });
+            options.Routes[0].Middlewares.Add(new TraefikMiddlewareReferenceOptions
+            {
+                Name = "secure-headers"
+            });
+            options.Routes[0].Middlewares.Add(new TraefikMiddlewareReferenceOptions
+            {
+                Name = "orders-rate-limit",
+                Namespace = "edge-security"
+            });
+            options.Routes.Add(new TraefikIngressRouteOptions
+            {
+                RouteId = "orders-to-admin-ingress",
+                IngressRouteName = "orders-admin-ingress",
+                MatchRule = "Host(`admin.example.com`) && PathPrefix(`/orders`)",
+                BackendNamespace = "orders-admin",
+                BackendServiceName = "orders-admin-api",
+                BackendPort = 9443,
+                TlsSecretName = "orders-admin-tls"
+            });
+            options.Routes[1].EntryPoints.Add("admin-websecure");
+            options.Routes[1].Middlewares.Add(new TraefikMiddlewareReferenceOptions
+            {
+                Name = "admin-authn",
+                Namespace = "edge-security"
+            });
+        });
+    }
+
+    private static CellTrafficAutomationProviderMaterializationResult CreateObservedAppliedResult()
+    {
+        var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["providerAction"] = "observe-only",
+            ["observationMode"] = TraefikTrafficObservationModes.ObserveOnly,
+            ["statusSource"] = "traefik-ingressroute-observation",
+            ["resourceState"] = "available",
+            ["providerRouteId"] = "ingressroute/edge-traefik/orders-public-ingress",
+            ["ingressRouteResourceId"] = "ingressroute/edge-traefik/orders-public-ingress",
+            ["ingressRouteExists"] = "true",
+            ["observedIngressRouteName"] = "orders-public-ingress",
+            ["observedIngressRouteNamespace"] = "edge-traefik",
+            ["observedIngressRouteGeneration"] = "3",
+            ["observedEntryPoints"] = "websecure",
+            ["observedEntryPointCount"] = "1",
+            ["observedRouteCount"] = "1",
+            ["observedMatchRule"] = "Host(`orders.example.com`) && PathPrefix(`/orders`)",
+            ["observedRouteKind"] = "Rule",
+            ["observedMiddlewareRefs"] = "middleware/edge-traefik/secure-headers,middleware/edge-security/orders-rate-limit",
+            ["observedServiceRefs"] = "service/orders-runtime/orders-api:8443@weight/100",
+            ["observedBackendScheme"] = "https",
+            ["observedBackendPassHostHeader"] = "true",
+            ["observedTlsSecretName"] = "orders-public-tls",
+            ["observedTlsOptionsRef"] = "tlsoption/edge-security/strict-mtls",
+            ["ownershipState"] = CellTrafficAutomationOwnershipStates.Owned,
+            ["managedBy"] = "edge-traefik",
+            ["observedAutomationId"] = "orders-to-public-ingress",
+            ["observedRouteId"] = "orders-to-public-ingress",
+            ["observedSourceModuleId"] = "traefik-traffic-hosting-tests",
+            ["dependencyState"] = CellTrafficAutomationDependencyStates.Satisfied,
+            ["backendServiceExists"] = "true",
+            ["tlsOptionsExists"] = "true",
+            ["tlsSecretExists"] = "true",
+            ["missingMiddlewareRefs"] = string.Empty,
+            ["dependencyMissingRefs"] = string.Empty,
+            ["driftState"] = CellTrafficAutomationDriftStates.InSync,
+            ["driftReasons"] = string.Empty,
+            ["lifecycleAction"] = CellTrafficAutomationLifecycleActions.Observe,
+            ["observationFreshUntilUtc"] = DateTimeOffset.UtcNow.AddMinutes(3).ToString("O", CultureInfo.InvariantCulture)
+        };
+
+        return new CellTrafficAutomationProviderMaterializationResult(
+            CellTrafficAutomationProviderMaterializationStates.Applied,
+            DateTimeOffset.UtcNow,
+            metadata: metadata);
+    }
+
+    private sealed class StaticObservationSource(
+        Func<CellTrafficAutomationProviderMaterializationResult> factory)
+        : ITraefikTrafficObservationSource
+    {
+        public ValueTask<CellTrafficAutomationProviderMaterializationResult> ObserveAsync(
+            CellTrafficAutomationRuntimeDescriptor automation,
+            TraefikIngressRouteProjection projection,
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return ValueTask.FromResult(factory());
+        }
     }
 
     private sealed class TraefikTrafficHostingTestModule :

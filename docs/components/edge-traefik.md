@@ -1,24 +1,29 @@
 # Cephalon.Edge.Traefik
 
-`Cephalon.Edge.Traefik` is the second provider-specific control-plane materializer pack for Cephalon cell traffic automation. It proves that the shared provider-materializer seam is not overfit to Kubernetes Gateway API by projecting truthful Traefik IngressRoute intent back onto the same shared runtime surfaces without moving Traefik CRD assumptions into `Cephalon.Engine`.
+`Cephalon.Edge.Traefik` is the second provider-specific control-plane materializer pack for Cephalon cell traffic automation. It proves that the shared provider-materializer seam is not overfit to Kubernetes Gateway API by projecting truthful Traefik `IngressRoute` intent and, when enabled, overlaying live Traefik CRD observation back onto the same shared runtime surfaces without moving Traefik-specific assumptions into `Cephalon.Engine`.
 
 ## What it owns
 
-- `TraefikTrafficMaterializerOptions`, `TraefikIngressRouteOptions`, and `TraefikMiddlewareReferenceOptions` for declarative Traefik IngressRoute projection
+- `TraefikTrafficMaterializerOptions`, `TraefikTrafficObservationModes`, `TraefikTrafficObservationOptions`, `TraefikIngressRouteOptions`, and `TraefikMiddlewareReferenceOptions` for declarative Traefik `IngressRoute` projection plus opt-in live observation
 - the `AddTraefikTrafficMaterializer(...)` registration entry point for attaching the pack to an `EngineBuilder`
 - a provider-specific `ICellTrafficAutomationProviderMaterializer` implementation for `providerId = "traefik"`
 - deterministic projection of selected cell routes into Traefik `IngressRoute` intent, including entry points, match rules, middleware references, backend Service references, and TLS options
+- opt-in observe-only polling over Traefik `IngressRoute`, `Middleware`, `TLSOption`, `Secret`, and backend `Service` resources so live ownership, dependency, drift, and freshness posture can flow back into the shared runtime catalog
 - the `traefik-ingressroute-traffic-materializations` technology surface under `cell-based-architecture`
-- truthful operator metadata such as `providerRouteId`, `ingressRouteNamespace`, `ingressRouteName`, `entryPoints`, `matchRule`, `middlewareRefs`, `serviceRefs`, `tlsSecretName`, `tlsOptionsRef`, `statusSource = configured-intent`, and the shared ownership/dependency/drift/lifecycle-action vocabulary
+- truthful operator metadata such as `providerRouteId`, `ingressRouteNamespace`, `ingressRouteName`, `entryPoints`, `matchRule`, `middlewareRefs`, `serviceRefs`, `tlsSecretName`, `tlsOptionsRef`, `statusSource`, `observationMode`, freshness metadata, and the shared ownership/dependency/drift/lifecycle-action vocabulary
 
 ## Main surfaces
 
 - `Configuration/TraefikTrafficMaterializerOptions.cs`
+- `Configuration/TraefikTrafficObservationModes.cs`
+- `Configuration/TraefikTrafficObservationOptions.cs`
 - `Configuration/TraefikIngressRouteOptions.cs`
 - `Configuration/TraefikMiddlewareReferenceOptions.cs`
 - `Modules/TraefikTrafficMaterializerModule.cs`
 - `Registration/TraefikEngineBuilderExtensions.cs`
 - `Services/TraefikTrafficAutomationMaterializer.cs`
+- `Services/TraefikTrafficObservationHostedService.cs`
+- `Services/TraefikTrafficObservationSource.cs`
 - `Services/TraefikTrafficProjectionBuilder.cs`
 - `Services/TraefikTrafficMaterializationRuntimeContributor.cs`
 
@@ -31,17 +36,24 @@ contracts. `Cephalon.Engine` still owns route ownership, health-isolation valida
 materializer selection, startup reconciliation, and the canonical `/engine/cell-traffic-automations*`
 plus `snapshot.CellTrafficAutomations` truth. `Cephalon.Edge.Traefik` only answers one
 provider-specific question: how should a `provider-managed` automation targeting
-`providerId = "traefik"` project into Traefik IngressRoute intent?
+`providerId = "traefik"` project into Traefik `IngressRoute` intent and, when observation is
+enabled, how should the pack read live CRD posture back into that same shared truth?
 
-This pack currently ships one truthful mode:
+This pack currently ships two truthful modes:
 
 - default `configured-intent`, which reports `providerAction = projected-intent`,
   `observationMode = configured-intent`, `statusSource = configured-intent`,
   `ownershipState = requested`, `dependencyState = unknown`, `driftState = unknown`, and
-  `lifecycleAction = project`, while
+  `lifecycleAction = project`, with
   `resourceState = projection-only` while publishing deterministic Traefik `IngressRoute` intent
   without claiming live cluster state or successful control-plane writes; the shared provider
   materialization state stays `pending`
+- opt-in `observe-only`, which reports `providerAction = observe-only`,
+  `observationMode = observe-only`, `statusSource = traefik-ingressroute-observation`, and
+  `lifecycleAction = observe` while polling live Traefik CRDs and dependent Kubernetes resources so
+  the shared provider materialization state can move to `applied`, `pending`, or `failed` based on
+  observed route existence, dependency readiness, ownership, drift, and freshness instead of
+  staying projection-only
 
 What this proves is that a second provider family can publish selected materializer ownership,
 provider-facing route identity, middleware and TLS intent, and the same requested/observed lifecycle
@@ -55,9 +67,9 @@ When the pack owns an automation answer, operators can inspect the same route th
 - `/engine/snapshot`
 
 The technology surface entry lives under `surfaceId = "traefik-ingressroute-traffic-materializations"`
-and carries one provider-facing projection per selected route, including the projected
-`providerRouteId`, entry points, route match, middleware references, backend service reference, and
-TLS intent.
+and carries one provider-facing projection per selected route, including the projected or observed
+`providerRouteId`, entry points, route match, middleware references, backend service reference, TLS
+intent, resource existence, dependency posture, and freshness metadata.
 
 ## Registration
 
@@ -66,6 +78,9 @@ engine.AddTraefikTrafficMaterializer(options =>
 {
     options.RouteNamespace = "edge-traefik";
     options.EntryPoints.Add("websecure");
+    options.Observation.Mode = TraefikTrafficObservationModes.ObserveOnly;
+    options.Observation.KubeConfigPath = "/etc/cephalon/traefik-kubeconfig";
+    options.Observation.PollingIntervalSeconds = 30;
 
     options.Routes.Add(new TraefikIngressRouteOptions
     {
@@ -130,9 +145,11 @@ this pack is the selected provider materializer for that route.
 
 This pack intentionally does not yet claim:
 
-- live Traefik reconciliation or status polling
 - apply-and-reconcile ownership over Traefik CRDs
-- `TraefikService`, parent `IngressRoute`, or richer multi-layer routing follow-through beyond the single projected route rule and Service backend baseline
+- controller-driven success or condition semantics beyond observed CRD existence, ownership,
+  dependency, drift, and freshness posture
+- `TraefikService`, parent `IngressRoute`, or richer multi-layer routing follow-through beyond the
+  single route-rule and Service backend baseline
 
 Those remain later follow-through so the current provider claim stays honest.
 

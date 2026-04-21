@@ -199,7 +199,9 @@ internal sealed record TraefikIngressRouteProjection(
     string? TlsOptionsName,
     string TlsOptionsNamespace)
 {
-    public const string TraefikApiVersion = "traefik.io/v1alpha1";
+    public const string TraefikApiGroup = "traefik.io";
+    public const string TraefikResourceVersion = "v1alpha1";
+    public const string TraefikApiVersion = $"{TraefikApiGroup}/{TraefikResourceVersion}";
     public const string ConfiguredIntentStatusSource = "configured-intent";
 
     public string ProviderRouteId => $"ingressroute/{RouteNamespace}/{IngressRouteName}";

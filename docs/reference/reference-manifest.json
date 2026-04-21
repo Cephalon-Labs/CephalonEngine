@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-21T15:42:17.591985+00:00",
+  "GeneratedAtUtc": "2026-04-21T16:25:39.0376527+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -104,7 +104,7 @@
       "Description": "Traefik IngressRoute projected-intent control-plane materializer companion pack for Cephalon edge traffic automation.",
       "FileName": "cephalon-edge-traefik.md",
       "NamespaceCount": 2,
-      "TypeCount": 4
+      "TypeCount": 6
     },
     {
       "AssemblyName": "Cephalon.Engine",
@@ -867,7 +867,7 @@
       "AssemblyName": "Cephalon.Edge.Traefik",
       "FileName": "cephalon-edge-traefik.md",
       "AnchorId": "namespace-cephalon-edge-traefik-configuration",
-      "TypeCount": 3
+      "TypeCount": 5
     },
     {
       "NamespaceName": "Cephalon.Edge.Traefik.Registration",
@@ -11875,7 +11875,37 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 2,
-        "Properties": 6,
+        "Properties": 7,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TraefikTrafficObservationModes",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "type-cephalon-edge-traefik-configuration-traefiktrafficobservationmodes",
+      "Declaration": "public static class TraefikTrafficObservationModes",
+      "Summary": "Defines the stable control-plane modes supported by the Traefik traffic materializer.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 2,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TraefikTrafficObservationOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "type-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions",
+      "Declaration": "public sealed class TraefikTrafficObservationOptions",
+      "Summary": "Configures how the Traefik traffic materializer reads live Kubernetes resources.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 7,
         "Methods": 0
       }
     },
@@ -20137,6 +20167,17 @@
       "AnchorId": "member-f-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationmodes-configuredintent",
       "Signature": "const string ConfiguredIntent",
       "Summary": "Publishes configured Kubernetes Gateway API intent without reading or writing live control-plane resources."
+    },
+    {
+      "DisplayName": "ConfiguredIntent",
+      "Category": "Fields",
+      "DeclaringTypeName": "TraefikTrafficObservationModes",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-f-cephalon-edge-traefik-configuration-traefiktrafficobservationmodes-configuredintent",
+      "Signature": "const string ConfiguredIntent",
+      "Summary": "Publishes configured Traefik IngressRoute intent without reading live control-plane resources."
     },
     {
       "DisplayName": "ConfigureGraphQLMutation",
@@ -36441,6 +36482,17 @@
       "Summary": "Gets or sets the explicit kubeconfig path used when the pack creates its own client outside the cluster."
     },
     {
+      "DisplayName": "KubeConfigPath",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikTrafficObservationOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-kubeconfigpath",
+      "Signature": "string KubeConfigPath { get; set; }",
+      "Summary": "Gets or sets the explicit kubeconfig path used when the pack creates its own client outside the cluster."
+    },
+    {
       "DisplayName": "KubeContext",
       "Category": "Properties",
       "DeclaringTypeName": "KubernetesGatewayTrafficObservationOptions",
@@ -36448,6 +36500,17 @@
       "AssemblyName": "Cephalon.Edge.KubernetesGateway",
       "FileName": "cephalon-edge-kubernetesgateway.md",
       "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationoptions-kubecontext",
+      "Signature": "string KubeContext { get; set; }",
+      "Summary": "Gets or sets the optional kubeconfig context override used when the pack creates its own client."
+    },
+    {
+      "DisplayName": "KubeContext",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikTrafficObservationOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-kubecontext",
       "Signature": "string KubeContext { get; set; }",
       "Summary": "Gets or sets the optional kubeconfig context override used when the pack creates its own client."
     },
@@ -37812,6 +37875,17 @@
       "AssemblyName": "Cephalon.Edge.KubernetesGateway",
       "FileName": "cephalon-edge-kubernetesgateway.md",
       "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationoptions-masterurl",
+      "Signature": "string MasterUrl { get; set; }",
+      "Summary": "Gets or sets the optional API-server override used when the pack creates its own client from kubeconfig."
+    },
+    {
+      "DisplayName": "MasterUrl",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikTrafficObservationOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-masterurl",
       "Signature": "string MasterUrl { get; set; }",
       "Summary": "Gets or sets the optional API-server override used when the pack creates its own client from kubeconfig."
     },
@@ -40357,6 +40431,17 @@
       "Summary": "Gets the selected tenancy mode."
     },
     {
+      "DisplayName": "Mode",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikTrafficObservationOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-mode",
+      "Signature": "string Mode { get; set; }",
+      "Summary": "Gets or sets the control-plane mode used by the Traefik materializer."
+    },
+    {
       "DisplayName": "Modern",
       "Category": "Fields",
       "DeclaringTypeName": "StranglerFigTarget",
@@ -41380,6 +41465,17 @@
       "Summary": "Gets the live-observation options used to overlay Kubernetes Gateway API status back into the shared runtime catalog."
     },
     {
+      "DisplayName": "Observation",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikTrafficMaterializerOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefiktrafficmaterializeroptions-observation",
+      "Signature": "TraefikTrafficObservationOptions Observation { get; }",
+      "Summary": "Gets the live-observation options used to overlay Traefik IngressRoute status back into the shared runtime catalog."
+    },
+    {
       "DisplayName": "Observe",
       "Category": "Fields",
       "DeclaringTypeName": "CellTrafficAutomationLifecycleActions",
@@ -41477,6 +41573,17 @@
       "AnchorId": "member-f-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationmodes-observeonly",
       "Signature": "const string ObserveOnly",
       "Summary": "Reads live Kubernetes Gateway API status and projects the observed posture back into the shared runtime catalog."
+    },
+    {
+      "DisplayName": "ObserveOnly",
+      "Category": "Fields",
+      "DeclaringTypeName": "TraefikTrafficObservationModes",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-f-cephalon-edge-traefik-configuration-traefiktrafficobservationmodes-observeonly",
+      "Signature": "const string ObserveOnly",
+      "Summary": "Reads live Traefik Kubernetes CRD resources and projects the observed posture back into the shared runtime catalog."
     },
     {
       "DisplayName": "OccurredAtUtc",
@@ -43908,6 +44015,17 @@
       "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationoptions-pollingintervalseconds",
       "Signature": "int PollingIntervalSeconds { get; set; }",
       "Summary": "Gets or sets the polling interval, in seconds, used for recurring live observation or reconciliation after startup materialization."
+    },
+    {
+      "DisplayName": "PollingIntervalSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikTrafficObservationOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-pollingintervalseconds",
+      "Signature": "int PollingIntervalSeconds { get; set; }",
+      "Summary": "Gets or sets the polling interval, in seconds, used for recurring live observation after startup materialization."
     },
     {
       "DisplayName": "Port",
@@ -52633,6 +52751,17 @@
       "Summary": "Gets or sets the freshness window, in seconds, that observed status should advertise to operators."
     },
     {
+      "DisplayName": "StaleAfterSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikTrafficObservationOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-staleafterseconds",
+      "Signature": "int StaleAfterSeconds { get; set; }",
+      "Summary": "Gets or sets the freshness window, in seconds, that observed status should advertise to operators."
+    },
+    {
       "DisplayName": "StartAsync",
       "Category": "Methods",
       "DeclaringTypeName": "EngineRuntime",
@@ -56175,6 +56304,17 @@
       "Summary": "Initializes a new instance of the \u0060TraefikTrafficMaterializerOptions\u0060 class."
     },
     {
+      "DisplayName": "TraefikTrafficObservationOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "TraefikTrafficObservationOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-m-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-ctor",
+      "Signature": "TraefikTrafficObservationOptions()",
+      "Summary": "Initializes a new instance of the \u0060TraefikTrafficObservationOptions\u0060 class."
+    },
+    {
       "DisplayName": "TrafficAutomation",
       "Category": "Properties",
       "DeclaringTypeName": "CellSettings",
@@ -57524,6 +57664,17 @@
       "AssemblyName": "Cephalon.Edge.KubernetesGateway",
       "FileName": "cephalon-edge-kubernetesgateway.md",
       "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationoptions-useinclusterconfiguration",
+      "Signature": "bool UseInClusterConfiguration { get; set; }",
+      "Summary": "Gets or sets a value indicating whether in-cluster Kubernetes configuration should be used when the pack creates its own client."
+    },
+    {
+      "DisplayName": "UseInClusterConfiguration",
+      "Category": "Properties",
+      "DeclaringTypeName": "TraefikTrafficObservationOptions",
+      "NamespaceName": "Cephalon.Edge.Traefik.Configuration",
+      "AssemblyName": "Cephalon.Edge.Traefik",
+      "FileName": "cephalon-edge-traefik.md",
+      "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-useinclusterconfiguration",
       "Signature": "bool UseInClusterConfiguration { get; set; }",
       "Summary": "Gets or sets a value indicating whether in-cluster Kubernetes configuration should be used when the pack creates its own client."
     },

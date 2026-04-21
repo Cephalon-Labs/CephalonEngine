@@ -50,8 +50,9 @@ Gateway/HTTPRoute observation in `observe-only` mode plus owned `HTTPRoute` appl
 behavior in `apply-and-reconcile` mode while leaving generic edge-node ownership, edge-runtime
 fallback, and `EdgeNativeDelivery` activation inside this baseline pack. A second provider-specific
 control-plane sibling now also ships through `Cephalon.Edge.Traefik`, which keeps Traefik
-IngressRoute intent on that same shared provider-materializer seam and proves the abstraction is not
-bound to Kubernetes Gateway API alone. The shared automation story now also uses one stable
+IngressRoute intent on that same shared provider-materializer seam, can now also overlay live
+observe-only `IngressRoute` plus dependency posture back onto the shared runtime catalog, and proves
+the abstraction is not bound to Kubernetes Gateway API alone. The shared automation story now also uses one stable
 lifecycle vocabulary across generic edge-runtime and provider-specific control-plane packs:
 `ownershipState`, `dependencyState`, `driftState`, and `lifecycleAction` now stay on the same
 `/engine/cell-traffic-automations*`, `snapshot.CellTrafficAutomations`, and provider-specific

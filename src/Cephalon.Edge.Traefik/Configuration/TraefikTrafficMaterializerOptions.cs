@@ -52,4 +52,9 @@ public sealed class TraefikTrafficMaterializerOptions
     /// Gets the route-level Traefik IngressRoute projections owned by this materializer.
     /// </summary>
     public IList<TraefikIngressRouteOptions> Routes { get; } = [];
+
+    /// <summary>
+    /// Gets the live-observation options used to overlay Traefik IngressRoute status back into the shared runtime catalog.
+    /// </summary>
+    public TraefikTrafficObservationOptions Observation { get; } = new();
 }

@@ -888,6 +888,8 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions),
             typeof(global::Cephalon.Edge.Traefik.Configuration.TraefikMiddlewareReferenceOptions),
             typeof(global::Cephalon.Edge.Traefik.Configuration.TraefikTrafficMaterializerOptions),
+            typeof(global::Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationModes),
+            typeof(global::Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationOptions),
             typeof(global::Cephalon.Edge.Traefik.Registration.TraefikEngineBuilderExtensions));
     }
 
@@ -3058,6 +3060,26 @@ public sealed class PackageSurfaceTests
             .GetField("ObserveOnly", BindingFlags.Static | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationModes)
             .GetField("ApplyAndReconcile", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Edge.Traefik.Configuration.TraefikTrafficMaterializerOptions)
+            .GetProperty("Observation", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationOptions)
+            .GetProperty("Mode", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationOptions)
+            .GetProperty("UseInClusterConfiguration", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationOptions)
+            .GetProperty("KubeConfigPath", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationOptions)
+            .GetProperty("KubeContext", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationOptions)
+            .GetProperty("MasterUrl", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationOptions)
+            .GetProperty("PollingIntervalSeconds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationOptions)
+            .GetProperty("StaleAfterSeconds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationModes)
+            .GetField("ConfiguredIntent", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationModes)
+            .GetField("ObserveOnly", BindingFlags.Static | BindingFlags.Public));
     }
 
     [Fact]

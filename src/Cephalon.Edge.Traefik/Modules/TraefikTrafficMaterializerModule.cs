@@ -5,6 +5,7 @@ using Cephalon.Edge.Traefik.Services;
 using Cephalon.Engine.Technologies;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 
 namespace Cephalon.Edge.Traefik.Modules;
 
@@ -37,10 +38,27 @@ internal sealed class TraefikTrafficMaterializerModule(TraefikTrafficMaterialize
         }
 
         services.TryAddSingleton(_ => new TraefikTrafficProjectionCatalog(options));
+        var controlPlaneMode = TraefikTrafficObservationModes.Normalize(options.Observation.Mode);
+        if (string.Equals(
+                controlPlaneMode,
+                TraefikTrafficObservationModes.ObserveOnly,
+                StringComparison.OrdinalIgnoreCase))
+        {
+            services.TryAddSingleton<TraefikTrafficObservationSource>(serviceProvider =>
+                new TraefikTrafficObservationSource(
+                    options,
+                    serviceProvider.GetRequiredService<TimeProvider>(),
+                    serviceProvider.GetService<k8s.IKubernetes>()));
+            services.TryAddSingleton<ITraefikTrafficObservationSource>(serviceProvider =>
+                serviceProvider.GetRequiredService<TraefikTrafficObservationSource>());
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, TraefikTrafficObservationHostedService>());
+        }
+
         services.AddSingleton<TraefikTrafficAutomationMaterializer>(serviceProvider =>
             new TraefikTrafficAutomationMaterializer(
                 serviceProvider.GetRequiredService<TraefikTrafficProjectionCatalog>(),
-                options));
+                options,
+                serviceProvider.GetService<ITraefikTrafficObservationSource>()));
         services.AddSingleton<ICellTrafficAutomationProviderMaterializer>(serviceProvider =>
             serviceProvider.GetRequiredService<TraefikTrafficAutomationMaterializer>());
         services.AddSingleton<ITechnologyRuntimeContributor>(

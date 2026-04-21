@@ -22,7 +22,7 @@ internal sealed class TraefikTrafficMaterializationRuntimeContributor(
             technologyId: BuiltInTechnologies.CellBasedArchitecture.Id,
             surfaceId: "traefik-ingressroute-traffic-materializations",
             displayName: "Traefik IngressRoute Traffic Materializations",
-            description: "Provider-managed Traefik IngressRoute materialization truth projected from the shared cell traffic automation catalog.",
+            description: "Provider-managed Traefik IngressRoute projected and observed materialization truth from the shared cell traffic automation catalog.",
             entries: catalog.Automations
                 .Where(OwnsAutomation)
                 .Select(CreateEntry)

@@ -309,6 +309,16 @@ string MaterializerId { get; set; }
 
 Gets or sets the stable materializer identifier that should appear on operator-facing runtime answers.
 
+<a id="member-p-cephalon-edge-traefik-configuration-traefiktrafficmaterializeroptions-observation"></a>
+
+##### `Observation`
+
+```csharp
+TraefikTrafficObservationOptions Observation { get; }
+```
+
+Gets the live-observation options used to overlay Traefik IngressRoute status back into the shared runtime catalog.
+
 <a id="member-p-cephalon-edge-traefik-configuration-traefiktrafficmaterializeroptions-priority"></a>
 
 ##### `Priority`
@@ -348,6 +358,136 @@ IList<TraefikIngressRouteOptions> Routes { get; }
 ```
 
 Gets the route-level Traefik IngressRoute projections owned by this materializer.
+
+<a id="type-cephalon-edge-traefik-configuration-traefiktrafficobservationmodes"></a>
+
+### `TraefikTrafficObservationModes`
+
+Defines the stable control-plane modes supported by the Traefik traffic materializer.
+
+#### Declaration
+```csharp
+public static class TraefikTrafficObservationModes
+```
+
+#### Fields
+
+<a id="member-f-cephalon-edge-traefik-configuration-traefiktrafficobservationmodes-configuredintent"></a>
+
+##### `ConfiguredIntent`
+
+```csharp
+const string ConfiguredIntent
+```
+
+Publishes configured Traefik IngressRoute intent without reading live control-plane resources.
+
+<a id="member-f-cephalon-edge-traefik-configuration-traefiktrafficobservationmodes-observeonly"></a>
+
+##### `ObserveOnly`
+
+```csharp
+const string ObserveOnly
+```
+
+Reads live Traefik Kubernetes CRD resources and projects the observed posture back into the shared runtime catalog.
+
+<a id="type-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions"></a>
+
+### `TraefikTrafficObservationOptions`
+
+Configures how the Traefik traffic materializer reads live Kubernetes resources.
+
+#### Declaration
+```csharp
+public sealed class TraefikTrafficObservationOptions
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-ctor"></a>
+
+##### `TraefikTrafficObservationOptions`
+
+```csharp
+TraefikTrafficObservationOptions()
+```
+
+Initializes a new instance of the `TraefikTrafficObservationOptions` class.
+
+#### Properties
+
+<a id="member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-kubeconfigpath"></a>
+
+##### `KubeConfigPath`
+
+```csharp
+string KubeConfigPath { get; set; }
+```
+
+Gets or sets the explicit kubeconfig path used when the pack creates its own client outside the cluster.
+
+<a id="member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-kubecontext"></a>
+
+##### `KubeContext`
+
+```csharp
+string KubeContext { get; set; }
+```
+
+Gets or sets the optional kubeconfig context override used when the pack creates its own client.
+
+<a id="member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-masterurl"></a>
+
+##### `MasterUrl`
+
+```csharp
+string MasterUrl { get; set; }
+```
+
+Gets or sets the optional API-server override used when the pack creates its own client from kubeconfig.
+
+<a id="member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-mode"></a>
+
+##### `Mode`
+
+```csharp
+string Mode { get; set; }
+```
+
+Gets or sets the control-plane mode used by the Traefik materializer.
+
+Remarks: The default value keeps the pack in configured-intent mode so projected-intent behavior remains additive without claiming a live apply. Set this to `observe-only` when the pack should read live Traefik Kubernetes CRD resources and project the observed posture back into the shared runtime catalog.
+
+<a id="member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-pollingintervalseconds"></a>
+
+##### `PollingIntervalSeconds`
+
+```csharp
+int PollingIntervalSeconds { get; set; }
+```
+
+Gets or sets the polling interval, in seconds, used for recurring live observation after startup materialization.
+
+<a id="member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-staleafterseconds"></a>
+
+##### `StaleAfterSeconds`
+
+```csharp
+int StaleAfterSeconds { get; set; }
+```
+
+Gets or sets the freshness window, in seconds, that observed status should advertise to operators.
+
+<a id="member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-useinclusterconfiguration"></a>
+
+##### `UseInClusterConfiguration`
+
+```csharp
+bool UseInClusterConfiguration { get; set; }
+```
+
+Gets or sets a value indicating whether in-cluster Kubernetes configuration should be used when the pack creates its own client.
 
 <a id="namespace-cephalon-edge-traefik-registration"></a>
 
