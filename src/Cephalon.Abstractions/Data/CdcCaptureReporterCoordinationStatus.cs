@@ -76,6 +76,16 @@ public sealed record CdcCaptureReporterCoordinationStatus
     public IReadOnlyList<CdcCaptureReporterParticipantStatus> ReporterParticipants { get; init; } = [];
 
     /// <summary>
+    /// Gets the stable reporter-takeover posture currently visible in the coordination story.
+    /// </summary>
+    public string TakeoverState { get; init; } = CdcCaptureReporterTakeoverStates.NotApplicable;
+
+    /// <summary>
+    /// Gets the stable degraded-reason identifier when reporter coordination is currently degraded.
+    /// </summary>
+    public string DegradedReason { get; init; } = CdcCaptureReporterCoordinationIssueReasons.None;
+
+    /// <summary>
     /// Gets a value indicating whether the coordination answer currently has one active reporter owner.
     /// </summary>
     public bool HasActiveReporter => !string.IsNullOrWhiteSpace(ActiveReporterId);
@@ -93,7 +103,26 @@ public sealed record CdcCaptureReporterCoordinationStatus
         string.Equals(participant.Role, CdcCaptureReporterParticipantRoles.Rejected, StringComparison.OrdinalIgnoreCase));
 
     /// <summary>
+    /// Gets a value indicating whether the coordination answer is currently waiting for a replacement reporter to take over.
+    /// </summary>
+    public bool RequiresTakeover => string.Equals(
+        TakeoverState,
+        CdcCaptureReporterTakeoverStates.AwaitingTakeover,
+        StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Gets a value indicating whether the coordination answer records a completed reporter takeover.
+    /// </summary>
+    public bool HasCompletedTakeover => string.Equals(
+        TakeoverState,
+        CdcCaptureReporterTakeoverStates.Completed,
+        StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
     /// Gets a value indicating whether the coordination answer currently reports degraded reporter ownership.
     /// </summary>
-    public bool IsDegraded => string.Equals(State, CdcCaptureReporterCoordinationStates.Conflicted, StringComparison.OrdinalIgnoreCase);
+    public bool IsDegraded =>
+        string.Equals(State, CdcCaptureReporterCoordinationStates.Conflicted, StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(State, CdcCaptureReporterCoordinationStates.LeaseExpired, StringComparison.OrdinalIgnoreCase) ||
+        !string.Equals(DegradedReason, CdcCaptureReporterCoordinationIssueReasons.None, StringComparison.OrdinalIgnoreCase);
 }

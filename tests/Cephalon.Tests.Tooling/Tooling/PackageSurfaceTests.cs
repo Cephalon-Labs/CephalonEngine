@@ -186,10 +186,12 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureLagStatus),
             typeof(global::Cephalon.Abstractions.Data.CdcCapturePublicationStates),
             typeof(global::Cephalon.Abstractions.Data.CdcCapturePublicationStatus),
+            typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterCoordinationIssueReasons),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterParticipantRoles),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterParticipantStatus),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterCoordinationStates),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterCoordinationStatus),
+            typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterTakeoverStates),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureRuntimeState),
             typeof(global::Cephalon.Abstractions.Data.DataProductDescriptor),
             typeof(global::Cephalon.Abstractions.Data.IDataProduct<>),
@@ -2748,6 +2750,18 @@ public sealed class PackageSurfaceTests
             .GetProperty("Publication", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterCoordinationStates)
             .GetField("Active", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterCoordinationStates)
+            .GetField("LeaseExpired", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterCoordinationIssueReasons)
+            .GetField("AwaitingTakeover", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterCoordinationIssueReasons)
+            .GetField("RejectedReporterConflict", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterCoordinationIssueReasons)
+            .GetField("MultipleActiveReporters", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterTakeoverStates)
+            .GetField("AwaitingTakeover", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterTakeoverStates)
+            .GetField("Completed", BindingFlags.Static | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterCoordinationStatus)
             .GetProperty("ActiveReporterId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterCoordinationStatus)
@@ -2756,6 +2770,14 @@ public sealed class PackageSurfaceTests
             .GetProperty("LastTakeoverObservedAtUtc", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterCoordinationStatus)
             .GetProperty("LastConflictingReporterId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterCoordinationStatus)
+            .GetProperty("TakeoverState", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterCoordinationStatus)
+            .GetProperty("DegradedReason", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterCoordinationStatus)
+            .GetProperty("RequiresTakeover", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterCoordinationStatus)
+            .GetProperty("HasCompletedTakeover", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureFreshnessStates)
             .GetField("Mixed", BindingFlags.Static | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureFreshnessStatus)

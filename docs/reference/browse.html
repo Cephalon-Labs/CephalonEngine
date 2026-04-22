@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-22T06:14:31.3634676+00:00",
+  "GeneratedAtUtc": "2026-04-22T07:07:16.9906327+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -111,7 +111,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 365
+      "TypeCount": 367
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -650,7 +650,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
-      "TypeCount": 85
+      "TypeCount": 87
     },
     {
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
@@ -3372,6 +3372,21 @@
       }
     },
     {
+      "DisplayName": "CdcCaptureReporterCoordinationIssueReasons",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccapturereportercoordinationissuereasons",
+      "Declaration": "public static class CdcCaptureReporterCoordinationIssueReasons",
+      "Summary": "Defines the stable degraded-reason identifiers used by CDC reporter-coordination answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 4,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "CdcCaptureReporterCoordinationStates",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -3397,7 +3412,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 14,
+        "Properties": 18,
         "Methods": 0
       }
     },
@@ -3428,6 +3443,21 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 7,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureReporterTakeoverStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccapturereportertakeoverstates",
+      "Declaration": "public static class CdcCaptureReporterTakeoverStates",
+      "Summary": "Defines the stable takeover-state identifiers used by CDC reporter-coordination answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 4,
+        "Properties": 0,
         "Methods": 0
       }
     },
@@ -16669,6 +16699,28 @@
       "Summary": "Whether the configured documentation directory and default document were found and mapped."
     },
     {
+      "DisplayName": "AwaitingTakeover",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureReporterCoordinationIssueReasons",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccapturereportercoordinationissuereasons-awaitingtakeover",
+      "Signature": "const string AwaitingTakeover",
+      "Summary": "The latest known reporter lease expired and the runtime is still awaiting takeover by a replacement reporter."
+    },
+    {
+      "DisplayName": "AwaitingTakeover",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureReporterTakeoverStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccapturereportertakeoverstates-awaitingtakeover",
+      "Signature": "const string AwaitingTakeover",
+      "Summary": "The latest known reporter lease expired and the execution runtime is awaiting takeover by a replacement reporter."
+    },
+    {
       "DisplayName": "AwsTelemetryExportOptions",
       "Category": "Constructors",
       "DeclaringTypeName": "AwsTelemetryExportOptions",
@@ -20651,6 +20703,17 @@
       "Summary": "Gets the stable behavior identifier to invoke when the compensation action maps to another Cephalon behavior."
     },
     {
+      "DisplayName": "Completed",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureReporterTakeoverStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccapturereportertakeoverstates-completed",
+      "Signature": "const string Completed",
+      "Summary": "A replacement reporter already took over after the previous lease expired."
+    },
+    {
       "DisplayName": "CompletedAtUtc",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseMigrationDescriptor",
@@ -23278,6 +23341,17 @@
       "AnchorId": "member-f-cephalon-engine-runtime-runtimehealthstate-degraded",
       "Signature": "const RuntimeHealthState Degraded",
       "Summary": "The runtime is available, but one or more dependencies need attention."
+    },
+    {
+      "DisplayName": "DegradedReason",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureReporterCoordinationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-degradedreason",
+      "Signature": "string DegradedReason { get; set; }",
+      "Summary": "Gets the stable degraded-reason identifier when reporter coordination is currently degraded."
     },
     {
       "DisplayName": "DegradedRoleCount",
@@ -33004,6 +33078,17 @@
       "Summary": "Gets a value indicating whether one or more operator-facing compensation actions are currently available for the stream."
     },
     {
+      "DisplayName": "HasCompletedTakeover",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureReporterCoordinationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-hascompletedtakeover",
+      "Signature": "bool HasCompletedTakeover { get; }",
+      "Summary": "Gets a value indicating whether the coordination answer records a completed reporter takeover."
+    },
+    {
       "DisplayName": "HasDefaultValues",
       "Category": "Properties",
       "DeclaringTypeName": "CellTrafficAutomationSettings",
@@ -38512,7 +38597,7 @@
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-f-cephalon-abstractions-data-cdccapturereportercoordinationstates-leaseexpired",
       "Signature": "const string LeaseExpired",
-      "Summary": "The latest known reporter lease expired before a replacement reporter took over."
+      "Summary": "The latest known reporter lease expired before a replacement reporter took over, so the runtime is awaiting takeover."
     },
     {
       "DisplayName": "LeaseExpiredAtUtc",
@@ -42310,6 +42395,17 @@
       "Summary": "Initializes a new instance of the \u0060MqttDependencyHealthOptions\u0060 class."
     },
     {
+      "DisplayName": "MultipleActiveReporters",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureReporterCoordinationIssueReasons",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccapturereportercoordinationissuereasons-multipleactivereporters",
+      "Signature": "const string MultipleActiveReporters",
+      "Summary": "Multiple reporters currently appear to hold active leases for the same execution runtime."
+    },
+    {
       "DisplayName": "MultiTenancy",
       "Category": "Properties",
       "DeclaringTypeName": "BuiltInTechnologies",
@@ -42741,6 +42837,17 @@
     {
       "DisplayName": "None",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureReporterCoordinationIssueReasons",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccapturereportercoordinationissuereasons-none",
+      "Signature": "const string None",
+      "Summary": "Reporter coordination is not currently degraded."
+    },
+    {
+      "DisplayName": "None",
+      "Category": "Fields",
       "DeclaringTypeName": "TransportFeatures",
       "NamespaceName": "Cephalon.Abstractions.Transports",
       "AssemblyName": "Cephalon.Abstractions",
@@ -42770,6 +42877,17 @@
       "AnchorId": "member-f-cephalon-abstractions-transports-restendpointauthoringpolicysuppressionkind-notallowedauthoringstyle",
       "Signature": "const RestEndpointAuthoringPolicySuppressionKind NotAllowedAuthoringStyle",
       "Summary": "The candidate authoring style is outside the explicitly allowed authoring-style set."
+    },
+    {
+      "DisplayName": "NotApplicable",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureReporterTakeoverStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccapturereportertakeoverstates-notapplicable",
+      "Signature": "const string NotApplicable",
+      "Summary": "Reporter takeover does not currently apply to the coordination answer."
     },
     {
       "DisplayName": "NotConfigured",
@@ -42858,6 +42976,17 @@
       "AnchorId": "member-m-cephalon-abstractions-behaviors-result-notfound-1-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault",
       "Signature": "Result\u003CT\u003E NotFound\u003CT\u003E(string code, string message, BehaviorFault fault)",
       "Summary": "Creates a not-found result for the specified payload type."
+    },
+    {
+      "DisplayName": "NotRequired",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureReporterTakeoverStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccapturereportertakeoverstates-notrequired",
+      "Signature": "const string NotRequired",
+      "Summary": "Reporter takeover is not currently required because the execution runtime still has a single active reporter owner."
     },
     {
       "DisplayName": "ObservabilityOptions",
@@ -48380,6 +48509,17 @@
       "Summary": "The reporter most recently attempted to report while another reporter still owned the active lease."
     },
     {
+      "DisplayName": "RejectedReporterConflict",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureReporterCoordinationIssueReasons",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccapturereportercoordinationissuereasons-rejectedreporterconflict",
+      "Signature": "const string RejectedReporterConflict",
+      "Summary": "At least one conflicting reporter remains visible while another reporter still holds the active lease."
+    },
+    {
       "DisplayName": "RejectionStatusCode",
       "Category": "Properties",
       "DeclaringTypeName": "RateLimitingRuntimeDescriptor",
@@ -49577,6 +49717,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databasemigrationoperationalstep-requiresphysicaltargetcoordination",
       "Signature": "bool RequiresPhysicalTargetCoordination { get; }",
       "Summary": "Gets a value indicating whether this step needs shared-physical-target coordination."
+    },
+    {
+      "DisplayName": "RequiresTakeover",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureReporterCoordinationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-requirestakeover",
+      "Signature": "bool RequiresTakeover { get; }",
+      "Summary": "Gets a value indicating whether the coordination answer is currently waiting for a replacement reporter to take over."
     },
     {
       "DisplayName": "RequiresTechnologies",
@@ -57077,6 +57228,17 @@
       "AnchorId": "member-p-cephalon-abstractions-transports-transportdescriptor-tags",
       "Signature": "IReadOnlyList\u003Cstring\u003E Tags { get; }",
       "Summary": "Gets the tags associated with the transport."
+    },
+    {
+      "DisplayName": "TakeoverState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureReporterCoordinationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-takeoverstate",
+      "Signature": "string TakeoverState { get; set; }",
+      "Summary": "Gets the stable reporter-takeover posture currently visible in the coordination story."
     },
     {
       "DisplayName": "TanzuTelemetryExportOptions",

@@ -1298,6 +1298,10 @@ Current payload highlights:
   `hasStandbyReporters` and `hasRejectedReporters` summaries so operators can see which reporters
   are currently active, waiting in standby after takeover, or explicitly rejected for lease
   conflicts without inferring that story from metadata alone
+- that same `reporterCoordination` answer now also publishes `takeoverState`, `degradedReason`,
+  `requiresTakeover`, and `hasCompletedTakeover`, so operator flows can distinguish
+  `awaiting-takeover`, `rejected-reporter-conflict`, and `multiple-active-reporters` posture
+  directly on the shared capture/runtime-state surface
 
 Current note:
 
@@ -1331,6 +1335,10 @@ Current payload highlights:
 - that same `reporterCoordination` answer now keeps participant-level `reporterParticipants` plus
   additive `hasStandbyReporters` and `hasRejectedReporters` summaries so runtime-first operator
   views can explain active versus standby versus rejected reporters directly
+- that same runtime-first coordination answer now also keeps `takeoverState`, `degradedReason`,
+  `requiresTakeover`, and `hasCompletedTakeover`, so operators can read whether one runtime is
+  awaiting failover, already completed a takeover, still carrying rejected conflicts, or exposing
+  a multiple-active ambiguity without re-deriving it from raw lease timestamps
 - the same execution-runtime catalog is also available through `/engine/snapshot` in
   `CdcCaptureExecutionRuntimes` when operators want one merged runtime answer
 - the drill-down route `/engine/cdc-capture-runtimes/{executionRuntimeId}` narrows the same catalog
@@ -1338,7 +1346,7 @@ Current payload highlights:
 - `/engine/cdc-captures*` and `/engine/cdc-captures/runtime*` now also carry first-class
   `executionBinding` plus typed `reporterCoordination` answers, so runtime-first and capture-first
   ownership views stay aligned even when an external reporter lease expires, a new reporter takes
-  over, or a conflicting reporter is rejected
+  over, a conflicting reporter is rejected, or two captures make one runtime look multiply active
 - host-level `AddData(... configure => configure.CdcExecutionRuntimes ...)` or other
   `DataRuntimeOptions.CdcExecutionRuntimes` declarations can publish external-managed,
   provider-native, edge, or other runtime answers on the same catalog without falsely implying the

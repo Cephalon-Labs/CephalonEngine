@@ -2736,6 +2736,52 @@ Delivered:
 - the provider-native runner now validates declared publication/table ownership, optionally creates the replication slot, reads one bounded committed pgoutput batch per iteration, stages deterministic outbox publications with content type `application/vnd.cephalon.postgresql.logical-replication+json`, and only confirms slot flush progress after stage success while keeping `replicationCheckpointSource = slot-confirmed-flush-lsn` on the shared runtime story
 - targeted coverage now proves the provider-native PostgreSQL runtime story through composition tests `22/22`, hosting tests `1/1`, tooling tests `181/181`, and the reference docs publish script
 
+### ENG-157 Phase 13 stronger reporter takeover and degraded-posture hardening baseline
+
+Status: done
+Estimate: 5
+Completed: April 22, 2026
+
+Why:
+
+- `ENG-156` kept participant-level `active`, `standby`, and `rejected` truth visible, but the
+  shared runtime story still needed a stable way to distinguish an expired lease awaiting
+  takeover, a rejected conflict, and a runtime-level multiple-active ambiguity
+- operators still needed the existing `/engine/cdc-captures/runtime*`,
+  `/engine/cdc-capture-runtimes*`, and `snapshot` surfaces to answer when reporter coordination
+  was degraded even though the raw coordination state was not always just `conflicted`
+- stronger takeover and degraded-posture semantics still had to stay additive over the shipped
+  shared coordination contract and external reporting seam instead of inventing a second operator
+  taxonomy in ASP.NET Core or one provider pack
+
+Acceptance:
+
+- `Cephalon.Abstractions` extends the shared CDC reporter-coordination contract with stable
+  takeover-state and degraded-reason identifiers plus derived helpers so capture-first and
+  runtime-first surfaces can expose one operator-facing posture
+- `Cephalon.Data` derives awaiting-takeover, rejected-conflict, completed-takeover, and
+  multiple-active ambiguity answers from the shared runtime-state catalog while keeping
+  `/engine/cdc-captures/runtime*`, `/engine/cdc-capture-runtimes*`, and `snapshot` aligned on the
+  same typed coordination story
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice while broader external follow-through and later provider-specific capture
+  implementations remain later work
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships `CdcCaptureReporterCoordinationIssueReasons` plus
+  `CdcCaptureReporterTakeoverStates`, while `CdcCaptureReporterCoordinationStatus` now carries
+  `TakeoverState`, `DegradedReason`, `RequiresTakeover`, and `HasCompletedTakeover`
+- `Cephalon.Data` now treats `lease-expired` coordination as degraded when a runtime is still
+  awaiting failover, keeps completed takeovers non-degraded, classifies rejected conflicts through
+  `rejected-reporter-conflict`, and now also surfaces runtime-level
+  `multiple-active-reporters` ambiguity on both per-capture runtime-state and execution-runtime
+  summary answers without inventing a second operator-story registry
+- targeted coverage now proves rejected-conflict, multi-capture multiple-active ambiguity,
+  lease-expiry awaiting-takeover, completed takeover, ASP.NET Core surface publication, and public
+  package-surface truth through composition tests `24/24`, hosting tests `3/3`, tooling tests
+  `181/181`, and the reference docs publish script
+
 ### ENG-156 Phase 13 richer multi-reporter reconciliation and operator-story hardening baseline
 
 Status: done

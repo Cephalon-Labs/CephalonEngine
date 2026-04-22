@@ -806,7 +806,9 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                 CdcCaptureReporterCoordinationStates.NotConfigured,
                 "The execution runtime does not currently declare reporter-lease coordination.")
             {
-                ActiveReporterId = current?.LastReporterId
+                ActiveReporterId = current?.LastReporterId,
+                TakeoverState = CdcCaptureReporterTakeoverStates.NotApplicable,
+                DegradedReason = CdcCaptureReporterCoordinationIssueReasons.None
             };
         }
 
@@ -814,7 +816,11 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
         {
             return new CdcCaptureReporterCoordinationStatus(
                 CdcCaptureReporterCoordinationStates.Unreported,
-                "The execution runtime has not reported any external reporter observations yet.");
+                "The execution runtime has not reported any external reporter observations yet.")
+            {
+                TakeoverState = CdcCaptureReporterTakeoverStates.NotApplicable,
+                DegradedReason = CdcCaptureReporterCoordinationIssueReasons.None
+            };
         }
 
         var now = timeProvider.GetUtcNow();
@@ -843,13 +849,19 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                 LastTakeoverObservedAtUtc = memory.LastTakeoverObservedAtUtc,
                 LastConflictingReporterId = latestRejectedReporter?.ReporterId,
                 LastConflictedAtUtc = latestRejectedReporter?.ObservedAtUtc,
-                ReporterParticipants = participants
+                ReporterParticipants = participants,
+                TakeoverState = CdcCaptureReporterTakeoverStates.NotApplicable,
+                DegradedReason = CdcCaptureReporterCoordinationIssueReasons.MultipleActiveReporters
             };
         }
 
         if (activeParticipants.Length == 1)
         {
             var activeParticipant = activeParticipants[0];
+            var takeoverState = !string.IsNullOrWhiteSpace(memory.PreviousReporterId) &&
+                                memory.LastTakeoverObservedAtUtc.HasValue
+                ? CdcCaptureReporterTakeoverStates.Completed
+                : CdcCaptureReporterTakeoverStates.NotRequired;
             var description = rejectedParticipants.Length > 0
                 ? $"Reporter '{activeParticipant.ReporterId}' currently holds the active lease while {rejectedParticipants.Length} rejected reporter(s) remain visible."
                 : standbyParticipants.Length > 0
@@ -871,7 +883,11 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                 LastTakeoverObservedAtUtc = memory.LastTakeoverObservedAtUtc,
                 LastConflictingReporterId = latestRejectedReporter?.ReporterId,
                 LastConflictedAtUtc = latestRejectedReporter?.ObservedAtUtc,
-                ReporterParticipants = participants
+                ReporterParticipants = participants,
+                TakeoverState = takeoverState,
+                DegradedReason = rejectedParticipants.Length > 0
+                    ? CdcCaptureReporterCoordinationIssueReasons.RejectedReporterConflict
+                    : CdcCaptureReporterCoordinationIssueReasons.None
             };
         }
 
@@ -892,7 +908,9 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                 LastTakeoverObservedAtUtc = memory.LastTakeoverObservedAtUtc,
                 LastConflictingReporterId = latestRejectedReporter?.ReporterId,
                 LastConflictedAtUtc = latestRejectedReporter?.ObservedAtUtc,
-                ReporterParticipants = participants
+                ReporterParticipants = participants,
+                TakeoverState = CdcCaptureReporterTakeoverStates.AwaitingTakeover,
+                DegradedReason = CdcCaptureReporterCoordinationIssueReasons.AwaitingTakeover
             };
         }
 
@@ -908,7 +926,9 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
             {
                 LastConflictingReporterId = latestRejectedParticipant.ReporterId,
                 LastConflictedAtUtc = latestRejectedParticipant.LastObservedAtUtc,
-                ReporterParticipants = participants
+                ReporterParticipants = participants,
+                TakeoverState = CdcCaptureReporterTakeoverStates.NotApplicable,
+                DegradedReason = CdcCaptureReporterCoordinationIssueReasons.RejectedReporterConflict
             };
         }
 
@@ -921,7 +941,9 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
             LastTakeoverObservedAtUtc = memory.LastTakeoverObservedAtUtc,
             LastConflictingReporterId = latestRejectedReporter?.ReporterId,
             LastConflictedAtUtc = latestRejectedReporter?.ObservedAtUtc,
-            ReporterParticipants = participants
+            ReporterParticipants = participants,
+            TakeoverState = CdcCaptureReporterTakeoverStates.NotApplicable,
+            DegradedReason = CdcCaptureReporterCoordinationIssueReasons.None
         };
     }
 

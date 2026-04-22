@@ -26,7 +26,7 @@ public static class CdcCaptureReporterCoordinationStates
     public const string Active = "active";
 
     /// <summary>
-    /// The latest known reporter lease expired before a replacement reporter took over.
+    /// The latest known reporter lease expired before a replacement reporter took over, so the runtime is awaiting takeover.
     /// </summary>
     public const string LeaseExpired = "lease-expired";
 

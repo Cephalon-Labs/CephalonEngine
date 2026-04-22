@@ -1161,6 +1161,12 @@ Browse the published API surface by public member.
 - [Available](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocssurface-available): `Properties` on `ReferenceDocsSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Available&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - Whether the configured documentation directory and default document were found and mapped.
   - `bool Available { get; set; }`
+- [AwaitingTakeover](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturereportercoordinationissuereasons-awaitingtakeover): `Fields` on `CdcCaptureReporterCoordinationIssueReasons` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AwaitingTakeover&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The latest known reporter lease expired and the runtime is still awaiting takeover by a replacement reporter.
+  - `const string AwaitingTakeover`
+- [AwaitingTakeover](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturereportertakeoverstates-awaitingtakeover): `Fields` on `CdcCaptureReporterTakeoverStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AwaitingTakeover&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The latest known reporter lease expired and the execution runtime is awaiting takeover by a replacement reporter.
+  - `const string AwaitingTakeover`
 - [AwsTelemetryExportOptions](cephalon-observability-aws.md#member-m-cephalon-observability-aws-configuration-awstelemetryexportoptions-ctor): `Constructors` on `AwsTelemetryExportOptions` in `Cephalon.Observability.Aws.Configuration` (`Cephalon.Observability.Aws`) [Browse](browse.html?q=AwsTelemetryExportOptions&assembly=Cephalon.Observability.Aws&namespace=Cephalon.Observability.Aws.Configuration&scope=members)
   - Initializes a new instance of the `AwsTelemetryExportOptions` class.
   - `AwsTelemetryExportOptions()`
@@ -2253,6 +2259,9 @@ Browse the published API surface by public member.
 - [CompensationBehaviorId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutioncompensationaction-compensationbehaviorid): `Properties` on `DurableExecutionCompensationAction` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=CompensationBehaviorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the stable behavior identifier to invoke when the compensation action maps to another Cephalon behavior.
   - `string CompensationBehaviorId { get; }`
+- [Completed](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturereportertakeoverstates-completed): `Fields` on `CdcCaptureReporterTakeoverStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Completed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - A replacement reporter already took over after the previous lease expired.
+  - `const string Completed`
 - [CompletedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-completedatutc): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CompletedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest completion time observed for this target.
   - `DateTimeOffset? CompletedAtUtc { get; }`
@@ -2973,6 +2982,9 @@ Browse the published API surface by public member.
 - [Degraded](cephalon-engine.md#member-f-cephalon-engine-runtime-runtimehealthstate-degraded): `Fields` on `RuntimeHealthState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Degraded&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The runtime is available, but one or more dependencies need attention.
   - `const RuntimeHealthState Degraded`
+- [DegradedReason](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-degradedreason): `Properties` on `CdcCaptureReporterCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DegradedReason&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable degraded-reason identifier when reporter coordination is currently degraded.
+  - `string DegradedReason { get; set; }`
 - [DegradedRoleCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasetopologyoperationalsummary-degradedrolecount): `Properties` on `DatabaseTopologyOperationalSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DegradedRoleCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of roles currently reporting degraded runtime state.
   - `int DegradedRoleCount { get; }`
@@ -5637,6 +5649,9 @@ Browse the published API surface by public member.
 - [HasCompensationActions](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-hascompensationactions): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasCompensationActions&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets a value indicating whether one or more operator-facing compensation actions are currently available for the stream.
   - `bool HasCompensationActions { get; }`
+- [HasCompletedTakeover](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-hascompletedtakeover): `Properties` on `CdcCaptureReporterCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasCompletedTakeover&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the coordination answer records a completed reporter takeover.
+  - `bool HasCompletedTakeover { get; }`
 - [HasDefaultValues](cephalon-engine.md#member-p-cephalon-engine-configuration-celltrafficautomationsettings-hasdefaultvalues): `Properties` on `CellTrafficAutomationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasDefaultValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether any default traffic-automation values were explicitly supplied.
   - `bool HasDefaultValues { get; }`
@@ -7150,7 +7165,7 @@ Browse the published API surface by public member.
   - Gets the layered-architecture pattern.
   - `PatternDescriptor LayeredArchitecture { get; }`
 - [LeaseExpired](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturereportercoordinationstates-leaseexpired): `Fields` on `CdcCaptureReporterCoordinationStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LeaseExpired&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
-  - The latest known reporter lease expired before a replacement reporter took over.
+  - The latest known reporter lease expired before a replacement reporter took over, so the runtime is awaiting takeover.
   - `const string LeaseExpired`
 - [LeaseExpiredAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-leaseexpiredatutc): `Properties` on `CdcCaptureReporterCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LeaseExpiredAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the UTC timestamp when the previous reporter lease expired before failover or takeover when one is known.
@@ -8190,6 +8205,9 @@ Browse the published API surface by public member.
 - [MqttDependencyHealthOptions](cephalon-observability-mqttdependencies.md#member-m-cephalon-observability-mqttdependencies-configuration-mqttdependencyhealthoptions-ctor): `Constructors` on `MqttDependencyHealthOptions` in `Cephalon.Observability.MqttDependencies.Configuration` (`Cephalon.Observability.MqttDependencies`) [Browse](browse.html?q=MqttDependencyHealthOptions&assembly=Cephalon.Observability.MqttDependencies&namespace=Cephalon.Observability.MqttDependencies.Configuration&scope=members)
   - Initializes a new instance of the `MqttDependencyHealthOptions` class.
   - `MqttDependencyHealthOptions()`
+- [MultipleActiveReporters](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturereportercoordinationissuereasons-multipleactivereporters): `Fields` on `CdcCaptureReporterCoordinationIssueReasons` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MultipleActiveReporters&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Multiple reporters currently appear to hold active leases for the same execution runtime.
+  - `const string MultipleActiveReporters`
 - [MultiTenancy](cephalon-engine.md#member-p-cephalon-engine-technologies-builtintechnologies-multitenancy): `Properties` on `BuiltInTechnologies` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=MultiTenancy&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
   - Gets the built-in multi-tenancy technology profile.
   - `TechnologyDescriptor MultiTenancy { get; }`
@@ -8310,6 +8328,9 @@ Browse the published API surface by public member.
 - [Nodes](cephalon-edge.md#member-p-cephalon-edge-services-iedgenodecatalog-nodes): `Properties` on `IEdgeNodeCatalog` in `Cephalon.Edge.Services` (`Cephalon.Edge`) [Browse](browse.html?q=Nodes&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Services&scope=members)
   - Gets the effective node set after host options and module contributors have both been applied.
   - `IReadOnlyList<EdgeNodeDescriptor> Nodes { get; }`
+- [None](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturereportercoordinationissuereasons-none): `Fields` on `CdcCaptureReporterCoordinationIssueReasons` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=None&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Reporter coordination is not currently degraded.
+  - `const string None`
 - [None](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-transportfeatures-none): `Fields` on `TransportFeatures` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=None&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Indicates no transport features.
   - `const TransportFeatures None`
@@ -8319,6 +8340,9 @@ Browse the published API surface by public member.
 - [NotAllowedAuthoringStyle](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointauthoringpolicysuppressionkind-notallowedauthoringstyle): `Fields` on `RestEndpointAuthoringPolicySuppressionKind` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotAllowedAuthoringStyle&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - The candidate authoring style is outside the explicitly allowed authoring-style set.
   - `const RestEndpointAuthoringPolicySuppressionKind NotAllowedAuthoringStyle`
+- [NotApplicable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturereportertakeoverstates-notapplicable): `Fields` on `CdcCaptureReporterTakeoverStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotApplicable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Reporter takeover does not currently apply to the coordination answer.
+  - `const string NotApplicable`
 - [NotConfigured](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturereportercoordinationstates-notconfigured): `Fields` on `CdcCaptureReporterCoordinationStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotConfigured&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The execution runtime does not currently declare reporter-lease coordination semantics.
   - `const string NotConfigured`
@@ -8343,6 +8367,9 @@ Browse the published API surface by public member.
 - [NotFound](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-result-notfound-1-system-string-system-string-cephalon-abstractions-behaviors-behaviorfault): `Methods` on `Result` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotFound&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Creates a not-found result for the specified payload type.
   - `Result<T> NotFound<T>(string code, string message, BehaviorFault fault)`
+- [NotRequired](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturereportertakeoverstates-notrequired): `Fields` on `CdcCaptureReporterTakeoverStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotRequired&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Reporter takeover is not currently required because the execution runtime still has a single active reporter owner.
+  - `const string NotRequired`
 
 ## O
 
@@ -9859,6 +9886,9 @@ Browse the published API surface by public member.
 - [Rejected](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturereporterparticipantroles-rejected): `Fields` on `CdcCaptureReporterParticipantRoles` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Rejected&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The reporter most recently attempted to report while another reporter still owned the active lease.
   - `const string Rejected`
+- [RejectedReporterConflict](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturereportercoordinationissuereasons-rejectedreporterconflict): `Fields` on `CdcCaptureReporterCoordinationIssueReasons` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RejectedReporterConflict&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - At least one conflicting reporter remains visible while another reporter still holds the active lease.
+  - `const string RejectedReporterConflict`
 - [RejectionStatusCode](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-rejectionstatuscode): `Properties` on `RateLimitingRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=RejectionStatusCode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - The HTTP status code returned when the limiter rejects a request.
   - `int RejectionStatusCode { get; set; }`
@@ -10186,6 +10216,9 @@ Browse the published API surface by public member.
 - [RequiresPhysicalTargetCoordination](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationoperationalstep-requiresphysicaltargetcoordination): `Properties` on `DatabaseMigrationOperationalStep` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiresPhysicalTargetCoordination&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether this step needs shared-physical-target coordination.
   - `bool RequiresPhysicalTargetCoordination { get; }`
+- [RequiresTakeover](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-requirestakeover): `Properties` on `CdcCaptureReporterCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiresTakeover&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the coordination answer is currently waiting for a replacement reporter to take over.
+  - `bool RequiresTakeover { get; }`
 - [RequiresTechnologies](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologydescriptor-requirestechnologies): `Properties` on `TechnologyDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiresTechnologies&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the technology identifiers required by the technology.
   - `IReadOnlyList<string> RequiresTechnologies { get; }`
@@ -12236,6 +12269,9 @@ Browse the published API surface by public member.
 - [Tags](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-transportdescriptor-tags): `Properties` on `TransportDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the tags associated with the transport.
   - `IReadOnlyList<string> Tags { get; }`
+- [TakeoverState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-takeoverstate): `Properties` on `CdcCaptureReporterCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TakeoverState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable reporter-takeover posture currently visible in the coordination story.
+  - `string TakeoverState { get; set; }`
 - [TanzuTelemetryExportOptions](cephalon-observability-tanzu.md#member-m-cephalon-observability-tanzu-configuration-tanzutelemetryexportoptions-ctor): `Constructors` on `TanzuTelemetryExportOptions` in `Cephalon.Observability.Tanzu.Configuration` (`Cephalon.Observability.Tanzu`) [Browse](browse.html?q=TanzuTelemetryExportOptions&assembly=Cephalon.Observability.Tanzu&namespace=Cephalon.Observability.Tanzu.Configuration&scope=members)
   - Initializes a new instance of the `TanzuTelemetryExportOptions` class.
   - `TanzuTelemetryExportOptions()`

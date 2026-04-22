@@ -113,7 +113,11 @@ coordination answer now also derives participant-level `active`, `standby`, and 
 reporter stories through `ReporterParticipants`, `HasStandbyReporters`, and
 `HasRejectedReporters`, so accepted takeovers keep previous owners visible as standby evidence and
 rejected conflicts stay visible without collapsing the operator story back to one last-conflicting
-reporter field.
+reporter field. It now also keeps stable `TakeoverState` plus `DegradedReason` identifiers and the
+derived `RequiresTakeover` / `HasCompletedTakeover` helpers, so the same shared `/engine/cdc-*`
+and `snapshot` surfaces can distinguish an expired lease still awaiting failover, a rejected
+conflicting reporter, a multi-capture multiple-active ambiguity, and a completed takeover without
+inventing a second coordination registry.
 
 `Cephalon.Data.MongoDB` first proved that contract with a document-oriented provider-native runner.
 Its `mongodb-change-stream-capture-pump` contributor publishes host-managed, provider-native,

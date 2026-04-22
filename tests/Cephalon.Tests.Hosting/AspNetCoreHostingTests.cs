@@ -3887,6 +3887,10 @@ note: visible
         Assert.Equal("edge-agent-a", state.ReporterCoordination.ActiveReporterId);
         Assert.Equal("edge-agent-b", state.ReporterCoordination.LastConflictingReporterId);
         Assert.Equal(DateTimeOffset.Parse("2026-04-21T03:40:30Z", CultureInfo.InvariantCulture), state.ReporterCoordination.LastConflictedAtUtc);
+        Assert.Equal(CdcCaptureReporterTakeoverStates.NotRequired, state.ReporterCoordination.TakeoverState);
+        Assert.Equal(CdcCaptureReporterCoordinationIssueReasons.RejectedReporterConflict, state.ReporterCoordination.DegradedReason);
+        Assert.True(state.ReporterCoordination.IsDegraded);
+        Assert.True(state.HasReporterCoordinationIssue);
         Assert.False(state.ReporterCoordination.HasStandbyReporters);
         Assert.True(state.ReporterCoordination.HasRejectedReporters);
         Assert.Collection(
@@ -3909,6 +3913,10 @@ note: visible
         Assert.Equal(CdcCaptureReporterCoordinationStates.Conflicted, runtime.Summary.ReporterCoordination.State);
         Assert.Equal("edge-agent-a", runtime.Summary.ReporterCoordination.ActiveReporterId);
         Assert.Equal("edge-agent-b", runtime.Summary.ReporterCoordination.LastConflictingReporterId);
+        Assert.Equal(CdcCaptureReporterTakeoverStates.NotRequired, runtime.Summary.ReporterCoordination.TakeoverState);
+        Assert.Equal(CdcCaptureReporterCoordinationIssueReasons.RejectedReporterConflict, runtime.Summary.ReporterCoordination.DegradedReason);
+        Assert.True(runtime.Summary.ReporterCoordination.IsDegraded);
+        Assert.True(runtime.Summary.HasReporterCoordinationIssue);
         Assert.Collection(
             runtime.Summary.ReporterCoordination.ReporterParticipants,
             participant =>
@@ -3983,6 +3991,10 @@ note: visible
         Assert.Equal(CdcCaptureReporterCoordinationStates.LeaseExpired, state.ReporterCoordination.State);
         Assert.Equal("edge-agent-a", state.ReporterCoordination.PreviousReporterId);
         Assert.Equal(DateTimeOffset.Parse("2026-04-21T03:42:00Z", CultureInfo.InvariantCulture), state.ReporterCoordination.LeaseExpiredAtUtc);
+        Assert.Equal(CdcCaptureReporterTakeoverStates.AwaitingTakeover, state.ReporterCoordination.TakeoverState);
+        Assert.Equal(CdcCaptureReporterCoordinationIssueReasons.AwaitingTakeover, state.ReporterCoordination.DegradedReason);
+        Assert.True(state.ReporterCoordination.IsDegraded);
+        Assert.True(state.HasReporterCoordinationIssue);
         Assert.True(state.ReporterCoordination.HasStandbyReporters);
         Assert.False(state.ReporterCoordination.HasRejectedReporters);
         Assert.Collection(
@@ -3999,6 +4011,10 @@ note: visible
         Assert.Equal(CdcCaptureReporterCoordinationStates.LeaseExpired, runtime.Summary.ReporterCoordination.State);
         Assert.Equal("edge-agent-a", runtime.Summary.ReporterCoordination.PreviousReporterId);
         Assert.Equal(DateTimeOffset.Parse("2026-04-21T03:42:00Z", CultureInfo.InvariantCulture), runtime.Summary.ReporterCoordination.LeaseExpiredAtUtc);
+        Assert.Equal(CdcCaptureReporterTakeoverStates.AwaitingTakeover, runtime.Summary.ReporterCoordination.TakeoverState);
+        Assert.Equal(CdcCaptureReporterCoordinationIssueReasons.AwaitingTakeover, runtime.Summary.ReporterCoordination.DegradedReason);
+        Assert.True(runtime.Summary.ReporterCoordination.IsDegraded);
+        Assert.True(runtime.Summary.HasReporterCoordinationIssue);
         Assert.Collection(
             runtime.Summary.ReporterCoordination.ReporterParticipants,
             participant =>
@@ -4091,6 +4107,11 @@ note: visible
         Assert.Equal("edge-agent-a", state.ReporterCoordination.PreviousReporterId);
         Assert.Equal(DateTimeOffset.Parse("2026-04-21T03:42:00Z", CultureInfo.InvariantCulture), state.ReporterCoordination.LeaseExpiredAtUtc);
         Assert.Equal(DateTimeOffset.Parse("2026-04-21T03:42:30Z", CultureInfo.InvariantCulture), state.ReporterCoordination.LastTakeoverObservedAtUtc);
+        Assert.Equal(CdcCaptureReporterTakeoverStates.Completed, state.ReporterCoordination.TakeoverState);
+        Assert.Equal(CdcCaptureReporterCoordinationIssueReasons.None, state.ReporterCoordination.DegradedReason);
+        Assert.False(state.ReporterCoordination.IsDegraded);
+        Assert.False(state.HasReporterCoordinationIssue);
+        Assert.True(state.ReporterCoordination.HasCompletedTakeover);
         Assert.True(state.ReporterCoordination.HasStandbyReporters);
         Assert.False(state.ReporterCoordination.HasRejectedReporters);
         Assert.Collection(
@@ -4115,6 +4136,11 @@ note: visible
         Assert.Equal("edge-agent-a", runtime.Summary.ReporterCoordination.PreviousReporterId);
         Assert.Equal(DateTimeOffset.Parse("2026-04-21T03:42:00Z", CultureInfo.InvariantCulture), runtime.Summary.ReporterCoordination.LeaseExpiredAtUtc);
         Assert.Equal(DateTimeOffset.Parse("2026-04-21T03:42:30Z", CultureInfo.InvariantCulture), runtime.Summary.ReporterCoordination.LastTakeoverObservedAtUtc);
+        Assert.Equal(CdcCaptureReporterTakeoverStates.Completed, runtime.Summary.ReporterCoordination.TakeoverState);
+        Assert.Equal(CdcCaptureReporterCoordinationIssueReasons.None, runtime.Summary.ReporterCoordination.DegradedReason);
+        Assert.False(runtime.Summary.ReporterCoordination.IsDegraded);
+        Assert.False(runtime.Summary.HasReporterCoordinationIssue);
+        Assert.True(runtime.Summary.ReporterCoordination.HasCompletedTakeover);
         Assert.Collection(
             runtime.Summary.ReporterCoordination.ReporterParticipants,
             participant =>
@@ -4136,6 +4162,124 @@ note: visible
             item.Id == "external-cdc-runtime" &&
             item.Summary.ReporterCoordination.ActiveReporterId == "edge-agent-b" &&
             item.Summary.ReporterCoordination.LastTakeoverObservedAtUtc == DateTimeOffset.Parse("2026-04-21T03:42:30Z", CultureInfo.InvariantCulture));
+    }
+
+    [Fact]
+    public async Task MapCephalonMarksExternalCdcRuntimeAsConflictedWhenMultipleReportersHoldActiveLeases()
+    {
+        var timeProvider = new MutableTimeProvider(DateTimeOffset.Parse("2026-04-21T03:44:45Z", CultureInfo.InvariantCulture));
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Services.AddSingleton<TimeProvider>(timeProvider);
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularVerticalSlice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Patterns:0"] = "CQRS";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new MultiCaptureExecutionRuntimeHostingTestModule());
+            cephalon.AddData(options =>
+            {
+                options.EnableExternalCdcRuntimeReporting = true;
+                options.CdcExecutionRuntimes.Add(new CdcCaptureExecutionRuntimeOptions
+                {
+                    Id = "external-cdc-runtime",
+                    DisplayName = "External CDC Runtime",
+                    Description = "Represents an externally managed out-of-process CDC runner.",
+                    ExecutionOwnership = "external-managed",
+                    ExecutionTopology = "out-of-process-reporting",
+                    ReporterLeaseSeconds = 120,
+                    RejectConflictingReporterIds = false
+                });
+                options.CdcExecutionRuntimes[0].CdcCaptureIds.Add("multi-capture-cdc-a");
+                options.CdcExecutionRuntimes[0].CdcCaptureIds.Add("multi-capture-cdc-b");
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+
+        var client = app.GetTestClient();
+        var response = await client.PostAsJsonAsync(
+            "/engine/cdc-capture-runtimes/external-cdc-runtime/reports",
+            new[]
+            {
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: "multi-capture-cdc-a",
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-21T03:44:00Z", CultureInfo.InvariantCulture),
+                    reportId: "external-report-capture-a",
+                    reporterId: "edge-agent-a"),
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: "multi-capture-cdc-b",
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-21T03:44:30Z", CultureInfo.InvariantCulture),
+                    reportId: "external-report-capture-b",
+                    reporterId: "edge-agent-b")
+            });
+        response.EnsureSuccessStatusCode();
+
+        var runtime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>("/engine/cdc-capture-runtimes/external-cdc-runtime");
+        var statesByRuntime = await client.GetFromJsonAsync<CdcCaptureRuntimeState[]>("/engine/cdc-captures/runtime/execution-runtimes/external-cdc-runtime");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(statesByRuntime);
+        Assert.Equal(2, statesByRuntime.Length);
+        Assert.All(statesByRuntime, state =>
+        {
+            Assert.Equal(CdcCaptureReporterCoordinationStates.Conflicted, state.ReporterCoordination.State);
+            Assert.Null(state.ReporterCoordination.ActiveReporterId);
+            Assert.Equal(CdcCaptureReporterTakeoverStates.NotApplicable, state.ReporterCoordination.TakeoverState);
+            Assert.Equal(CdcCaptureReporterCoordinationIssueReasons.MultipleActiveReporters, state.ReporterCoordination.DegradedReason);
+            Assert.True(state.ReporterCoordination.IsDegraded);
+            Assert.True(state.HasReporterCoordinationIssue);
+            Assert.False(state.HasActiveReporterOwner);
+            Assert.False(state.ReporterCoordination.HasStandbyReporters);
+            Assert.False(state.ReporterCoordination.HasRejectedReporters);
+            Assert.Equal(2, state.ReporterCoordination.ReporterParticipants.Count);
+            Assert.Contains(
+                state.ReporterCoordination.ReporterParticipants,
+                participant => participant.ReporterId == "edge-agent-a" &&
+                    participant.Role == CdcCaptureReporterParticipantRoles.Active);
+            Assert.Contains(
+                state.ReporterCoordination.ReporterParticipants,
+                participant => participant.ReporterId == "edge-agent-b" &&
+                    participant.Role == CdcCaptureReporterParticipantRoles.Active);
+        });
+
+        Assert.NotNull(runtime);
+        Assert.Null(runtime.Summary.ActiveReporterId);
+        Assert.Null(runtime.Summary.ReporterLeaseExpiresAtUtc);
+        Assert.Equal(CdcCaptureReporterCoordinationStates.Conflicted, runtime.Summary.ReporterCoordination.State);
+        Assert.Equal(CdcCaptureReporterTakeoverStates.NotApplicable, runtime.Summary.ReporterCoordination.TakeoverState);
+        Assert.Equal(CdcCaptureReporterCoordinationIssueReasons.MultipleActiveReporters, runtime.Summary.ReporterCoordination.DegradedReason);
+        Assert.True(runtime.Summary.ReporterCoordination.IsDegraded);
+        Assert.True(runtime.Summary.HasReporterCoordinationIssue);
+        Assert.Equal(2, runtime.Summary.ReporterCoordination.ReporterParticipants.Count);
+        Assert.Contains(
+            runtime.Summary.ReporterCoordination.ReporterParticipants,
+            participant => participant.ReporterId == "edge-agent-a" &&
+                participant.Role == CdcCaptureReporterParticipantRoles.Active);
+        Assert.Contains(
+            runtime.Summary.ReporterCoordination.ReporterParticipants,
+            participant => participant.ReporterId == "edge-agent-b" &&
+                participant.Role == CdcCaptureReporterParticipantRoles.Active);
+
+        Assert.NotNull(snapshot);
+        Assert.Contains(
+            snapshot.CdcCaptureStates,
+            item => item.CdcCaptureId == "multi-capture-cdc-a" &&
+                item.ReporterCoordination.DegradedReason == CdcCaptureReporterCoordinationIssueReasons.MultipleActiveReporters);
+        Assert.Contains(
+            snapshot.CdcCaptureStates,
+            item => item.CdcCaptureId == "multi-capture-cdc-b" &&
+                item.ReporterCoordination.DegradedReason == CdcCaptureReporterCoordinationIssueReasons.MultipleActiveReporters);
+        Assert.Contains(
+            snapshot.CdcCaptureExecutionRuntimes,
+            item => item.Id == "external-cdc-runtime" &&
+                item.Summary.ReporterCoordination.DegradedReason == CdcCaptureReporterCoordinationIssueReasons.MultipleActiveReporters);
     }
 
     [Fact]
@@ -4695,6 +4839,60 @@ note: visible
                 {
                     ["document"] = "storefront"
                 }));
+        }
+    }
+
+    private sealed class MultiCaptureExecutionRuntimeHostingTestModule : ModuleBase, ICdcCaptureContributor, IOutboxContributor
+    {
+        private static readonly ModuleDescriptor DescriptorInstance = new(
+            id: "multi-capture-execution-runtime-hosting-tests",
+            displayName: "Multi-Capture Execution Runtime Hosting Tests",
+            description: "Contributes two CDC captures so ASP.NET Core hosting can prove runtime-level reporter ambiguity.",
+            version: "1.0.0",
+            tags: ["cdc", "execution-runtime", "hosting-tests"]);
+
+        public override ModuleDescriptor Descriptor => DescriptorInstance;
+
+        public override void RegisterCapabilities(ICapabilityRegistry capabilities)
+        {
+        }
+
+        public void RegisterCdcCaptures(ICdcCaptureRegistry cdcCaptures)
+        {
+            cdcCaptures.Add(new CdcCaptureDescriptor(
+                id: "multi-capture-cdc-a",
+                displayName: "Multi Capture CDC A",
+                description: "First CDC capture used to exercise runtime-level reporter ambiguity in hosting tests.",
+                sourceModuleId: Descriptor.Id,
+                provider: "postgresql",
+                sourceId: "multi-capture-db-a",
+                outboxId: "multi-capture-outbox-a",
+                resourceIds: ["public.multi_capture_a"]));
+            cdcCaptures.Add(new CdcCaptureDescriptor(
+                id: "multi-capture-cdc-b",
+                displayName: "Multi Capture CDC B",
+                description: "Second CDC capture used to exercise runtime-level reporter ambiguity in hosting tests.",
+                sourceModuleId: Descriptor.Id,
+                provider: "postgresql",
+                sourceId: "multi-capture-db-b",
+                outboxId: "multi-capture-outbox-b",
+                resourceIds: ["public.multi_capture_b"]));
+        }
+
+        public void RegisterOutboxes(IOutboxRegistry outboxes)
+        {
+            outboxes.Add(new OutboxDescriptor(
+                id: "multi-capture-outbox-a",
+                displayName: "Multi Capture Outbox A",
+                description: "Outbox for the first hosting-test CDC capture.",
+                sourceModuleId: Descriptor.Id,
+                provider: "relational"));
+            outboxes.Add(new OutboxDescriptor(
+                id: "multi-capture-outbox-b",
+                displayName: "Multi Capture Outbox B",
+                description: "Outbox for the second hosting-test CDC capture.",
+                sourceModuleId: Descriptor.Id,
+                provider: "relational"));
         }
     }
 

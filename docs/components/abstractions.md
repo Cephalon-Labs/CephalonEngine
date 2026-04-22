@@ -62,6 +62,8 @@
 - `Data/CdcCaptureFreshnessStatus.cs`
 - `Data/CdcCaptureLagStatus.cs`
 - `Data/CdcCapturePublicationStatus.cs`
+- `Data/CdcCaptureReporterCoordinationIssueReasons.cs`
+- `Data/CdcCaptureReporterTakeoverStates.cs`
 - `Data/CdcCaptureRuntimeState.cs`
 - `Data/ICdcCaptureRuntimeStateCatalog.cs`
 - `Data/CdcCaptureExecutionRuntimeDescriptor.cs`
@@ -225,7 +227,11 @@ contracts. It now also keeps participant-level operator truth through
 `CdcCaptureReporterCoordinationStatus.ReporterParticipants`, so shared CDC surfaces can answer
 which reporters are currently `active`, `standby`, or `rejected` together with the additive
 `HasStandbyReporters` and `HasRejectedReporters` summaries instead of leaving operator flows to
-infer that story from one last-conflict field.
+infer that story from one last-conflict field. The same shared contract now also publishes stable
+`TakeoverState` and `DegradedReason` identifiers together with derived `RequiresTakeover` and
+`HasCompletedTakeover` helpers, so hosts and tooling can distinguish an `awaiting-takeover`
+expired lease from a `rejected-reporter-conflict`, a `multiple-active-reporters` ambiguity, or a
+completed handoff without inventing a second operator taxonomy.
 
 The app-model contract now also carries a contract-first resilience family through
 `ResilienceSelection`, `RetrySelection`, `TimeoutSelection`, `CircuitBreakerSelection`,

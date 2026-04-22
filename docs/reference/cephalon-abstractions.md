@@ -9200,6 +9200,59 @@ string State { get; }
 
 Gets the stable publication-state identifier.
 
+<a id="type-cephalon-abstractions-data-cdccapturereportercoordinationissuereasons"></a>
+
+### `CdcCaptureReporterCoordinationIssueReasons`
+
+Defines the stable degraded-reason identifiers used by CDC reporter-coordination answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureReporterCoordinationIssueReasons
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccapturereportercoordinationissuereasons-awaitingtakeover"></a>
+
+##### `AwaitingTakeover`
+
+```csharp
+const string AwaitingTakeover
+```
+
+The latest known reporter lease expired and the runtime is still awaiting takeover by a replacement reporter.
+
+<a id="member-f-cephalon-abstractions-data-cdccapturereportercoordinationissuereasons-multipleactivereporters"></a>
+
+##### `MultipleActiveReporters`
+
+```csharp
+const string MultipleActiveReporters
+```
+
+Multiple reporters currently appear to hold active leases for the same execution runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccapturereportercoordinationissuereasons-none"></a>
+
+##### `None`
+
+```csharp
+const string None
+```
+
+Reporter coordination is not currently degraded.
+
+<a id="member-f-cephalon-abstractions-data-cdccapturereportercoordinationissuereasons-rejectedreporterconflict"></a>
+
+##### `RejectedReporterConflict`
+
+```csharp
+const string RejectedReporterConflict
+```
+
+At least one conflicting reporter remains visible while another reporter still holds the active lease.
+
 <a id="type-cephalon-abstractions-data-cdccapturereportercoordinationstates"></a>
 
 ### `CdcCaptureReporterCoordinationStates`
@@ -9241,7 +9294,7 @@ Reporter coordination is currently degraded because conflicting or ambiguous rep
 const string LeaseExpired
 ```
 
-The latest known reporter lease expired before a replacement reporter took over.
+The latest known reporter lease expired before a replacement reporter took over, so the runtime is awaiting takeover.
 
 <a id="member-f-cephalon-abstractions-data-cdccapturereportercoordinationstates-notconfigured"></a>
 
@@ -9322,6 +9375,16 @@ DateTimeOffset? ActiveReporterLeaseExpiresAtUtc { get; set; }
 
 Gets the UTC timestamp when the active reporter lease expires when one is known.
 
+<a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-degradedreason"></a>
+
+##### `DegradedReason`
+
+```csharp
+string DegradedReason { get; set; }
+```
+
+Gets the stable degraded-reason identifier when reporter coordination is currently degraded.
+
 <a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-description"></a>
 
 ##### `Description`
@@ -9341,6 +9404,16 @@ bool HasActiveReporter { get; }
 ```
 
 Gets a value indicating whether the coordination answer currently has one active reporter owner.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-hascompletedtakeover"></a>
+
+##### `HasCompletedTakeover`
+
+```csharp
+bool HasCompletedTakeover { get; }
+```
+
+Gets a value indicating whether the coordination answer records a completed reporter takeover.
 
 <a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-hasrejectedreporters"></a>
 
@@ -9432,6 +9505,16 @@ IReadOnlyList<CdcCaptureReporterParticipantStatus> ReporterParticipants { get; s
 
 Gets the reporter participants currently visible in the coordination story.
 
+<a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-requirestakeover"></a>
+
+##### `RequiresTakeover`
+
+```csharp
+bool RequiresTakeover { get; }
+```
+
+Gets a value indicating whether the coordination answer is currently waiting for a replacement reporter to take over.
+
 <a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-state"></a>
 
 ##### `State`
@@ -9441,6 +9524,16 @@ string State { get; }
 ```
 
 Gets the stable reporter-coordination state.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-takeoverstate"></a>
+
+##### `TakeoverState`
+
+```csharp
+string TakeoverState { get; set; }
+```
+
+Gets the stable reporter-takeover posture currently visible in the coordination story.
 
 <a id="type-cephalon-abstractions-data-cdccapturereporterparticipantroles"></a>
 
@@ -9584,6 +9677,59 @@ string Role { get; }
 ```
 
 Gets the stable reporter role visible in the current coordination story.
+
+<a id="type-cephalon-abstractions-data-cdccapturereportertakeoverstates"></a>
+
+### `CdcCaptureReporterTakeoverStates`
+
+Defines the stable takeover-state identifiers used by CDC reporter-coordination answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureReporterTakeoverStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccapturereportertakeoverstates-awaitingtakeover"></a>
+
+##### `AwaitingTakeover`
+
+```csharp
+const string AwaitingTakeover
+```
+
+The latest known reporter lease expired and the execution runtime is awaiting takeover by a replacement reporter.
+
+<a id="member-f-cephalon-abstractions-data-cdccapturereportertakeoverstates-completed"></a>
+
+##### `Completed`
+
+```csharp
+const string Completed
+```
+
+A replacement reporter already took over after the previous lease expired.
+
+<a id="member-f-cephalon-abstractions-data-cdccapturereportertakeoverstates-notapplicable"></a>
+
+##### `NotApplicable`
+
+```csharp
+const string NotApplicable
+```
+
+Reporter takeover does not currently apply to the coordination answer.
+
+<a id="member-f-cephalon-abstractions-data-cdccapturereportertakeoverstates-notrequired"></a>
+
+##### `NotRequired`
+
+```csharp
+const string NotRequired
+```
+
+Reporter takeover is not currently required because the execution runtime still has a single active reporter owner.
 
 <a id="type-cephalon-abstractions-data-cdccaptureruntimeobservation"></a>
 
