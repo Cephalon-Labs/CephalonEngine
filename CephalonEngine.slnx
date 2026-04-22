@@ -28,6 +28,7 @@
     <Project Path="src/Cephalon.Data.ClickHouse/Cephalon.Data.ClickHouse.csproj" />
     <Project Path="src/Cephalon.Data.Elasticsearch/Cephalon.Data.Elasticsearch.csproj" />
     <Project Path="src/Cephalon.Data.MongoDB/Cephalon.Data.MongoDB.csproj" />
+    <Project Path="src/Cephalon.Data.MySql/Cephalon.Data.MySql.csproj" />
     <Project Path="src/Cephalon.Data.Postgres/Cephalon.Data.Postgres.csproj" />
     <Project Path="src/Cephalon.Data.SqlServer/Cephalon.Data.SqlServer.csproj" />
     <Project Path="src/Cephalon.Data.Nats/Cephalon.Data.Nats.csproj" />

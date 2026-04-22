@@ -864,6 +864,16 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void DataMySqlAssemblyExposesOnlyTheDocumentedPackContracts()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Data.MySql.Registration.MySqlDataEngineBuilderExtensions).Assembly,
+            typeof(global::Cephalon.Data.MySql.Configuration.MySqlDataOptions),
+            typeof(global::Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions),
+            typeof(global::Cephalon.Data.MySql.Registration.MySqlDataEngineBuilderExtensions));
+    }
+
+    [Fact]
     public void DataPostgresAssemblyExposesOnlyTheDocumentedPackContracts()
     {
         AssertExportedTypes(
@@ -2883,6 +2893,29 @@ public sealed class PackageSurfaceTests
         Assert.NotNull(typeof(global::Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions)
             .GetProperty("OutboxId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions)
+            .GetProperty("InitialPosition", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void MySqlDataOptionsExposeProviderNativeBinlogCaptureDeclarations()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Data.MySql.Configuration.MySqlDataOptions)
+            .GetProperty("CdcCaptures", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.MySql.Configuration.MySqlDataOptions)
+            .GetProperty("DatabaseName", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.MySql.Configuration.MySqlDataOptions)
+            .GetProperty("CheckpointTableName", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions)
+            .GetProperty("SourceModuleId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions)
+            .GetProperty("TableSchema", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions)
+            .GetProperty("TableName", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions)
+            .GetProperty("ServerId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions)
+            .GetProperty("OutboxId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions)
             .GetProperty("InitialPosition", BindingFlags.Instance | BindingFlags.Public));
     }
 

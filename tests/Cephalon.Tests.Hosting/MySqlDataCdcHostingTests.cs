@@ -1,0 +1,192 @@
+using System.Net.Http.Json;
+using Cephalon.Abstractions.Data;
+using Cephalon.Abstractions.Execution;
+using Cephalon.AspNetCore.Hosting;
+using Cephalon.Data.MySql.Configuration;
+using Cephalon.Data.MySql.Registration;
+using Cephalon.Data.Registration;
+using Cephalon.Data.Services;
+using Cephalon.Engine.Configuration;
+using Cephalon.Engine.Runtime;
+using Cephalon.Tests.Support;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Cephalon.Tests.Hosting;
+
+public sealed class MySqlDataCdcHostingTests
+{
+    private const string SharedRuntimeId = "data-cdc-capture-pump";
+    private const string MySqlRuntimeId = "mysql-binlog-capture-pump";
+    private const string CaptureId = "mysql-orders-cdc";
+
+    [Fact]
+    public async Task MapCephalonExposesMySqlProviderNativeCdcRuntimeSurfaces()
+    {
+        var executionState = new TestCdcExecutionState();
+        var harness = new MySqlDataCdcTestHarness();
+        var batch = new MySqlBinlogTestBatch();
+        batch.Metadata["checkpointStore"] = "cephalon.cephalon_cdc_checkpoints";
+        batch.Metadata["binlogCheckpointSource"] = "cephalon-checkpoint-table";
+        batch.Metadata["binlogResumeMode"] = "earliest-available";
+        batch.Metadata["binlogFile"] = "mysql-bin.000001";
+        batch.Metadata["binlogPosition"] = "1260";
+        batch.Changes.Add(new MySqlBinlogTestChange
+        {
+            BinlogFile = "mysql-bin.000001",
+            BinlogPosition = 1260,
+            ChangeId = "binlog-0001",
+            OperationName = "insert",
+            Payload = """{"orderId":"order-001","status":"created"}"""
+        });
+        harness.EnqueueBatch(batch);
+
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Services.AddSingleton(executionState);
+        builder.Services.AddMySqlDataCdcTestHarness(harness);
+        builder.Services.AddScoped<IOutbox, TestOutbox>();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularVerticalSlice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Patterns:0"] = "CQRS";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new PlatformEventingTestModule());
+            cephalon.AddData(options =>
+            {
+                options.EnableCdcExecution = true;
+                options.CdcPollingIntervalSeconds = 600;
+            });
+            cephalon.AddMySqlData(
+                connectionString: "Server=localhost;User ID=root;Password=mysql;Database=cephalon",
+                databaseName: "cephalon",
+                configure: options =>
+                {
+                    options.CdcCaptures.Add(new MySqlBinlogCaptureOptions
+                    {
+                        Id = CaptureId,
+                        DisplayName = "MySQL Orders CDC",
+                        Description = "Captures MySQL order changes through a provider-native binlog runner.",
+                        SourceModuleId = "platform",
+                        TableSchema = "cephalon",
+                        TableName = "orders",
+                        ServerId = 700101,
+                        OutboxId = "tenant-event-outbox",
+                        ChannelId = "orders",
+                        MessageType = "orders.mysql.changed",
+                        InitialPosition = "earliest-available",
+                        PollingIntervalSeconds = 1,
+                        MaxChangesPerRead = 64,
+                        MaxAwaitTimeSeconds = 5
+                    });
+                });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+        await app.StartAsync();
+
+        try
+        {
+            await executionState.WaitForStagedMessageAsync();
+
+            var client = app.GetTestClient();
+            var cdcState = await WaitForAsync(
+                () => client.GetFromJsonAsync<CdcCaptureRuntimeState>($"/engine/cdc-captures/runtime/{CaptureId}")!,
+                static state => state is not null && state.LastOutcome == CdcCaptureRuntimeOutcomes.Captured,
+                TimeSpan.FromSeconds(10));
+
+            var cdcCaptureRuntimes = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes");
+            var mySqlRuntime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>($"/engine/cdc-capture-runtimes/{MySqlRuntimeId}");
+            var capturesByRuntime = await client.GetFromJsonAsync<CdcCaptureDescriptor[]>($"/engine/cdc-captures/execution-runtimes/{MySqlRuntimeId}");
+            var captureStatesByRuntime = await client.GetFromJsonAsync<CdcCaptureRuntimeState[]>($"/engine/cdc-captures/runtime/execution-runtimes/{MySqlRuntimeId}");
+            var hostedExecutions = await client.GetFromJsonAsync<HostedExecutionDescriptor[]>("/engine/hosted-executions");
+            var executionGraphs = await client.GetFromJsonAsync<ExecutionGraphDescriptor[]>("/engine/execution-graphs");
+            var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+            Assert.NotNull(cdcCaptureRuntimes);
+            Assert.NotNull(mySqlRuntime);
+            Assert.Contains(cdcCaptureRuntimes, runtime => runtime.Id == SharedRuntimeId);
+            Assert.Contains(cdcCaptureRuntimes, runtime => runtime.Id == MySqlRuntimeId);
+
+            var sharedRuntime = Assert.Single(cdcCaptureRuntimes, runtime => runtime.Id == SharedRuntimeId);
+            Assert.Empty(sharedRuntime.CdcCaptureIds);
+
+            Assert.Equal("host-managed", mySqlRuntime.ExecutionOwnership);
+            Assert.Equal("provider-native", mySqlRuntime.ExecutionTopology);
+            Assert.Equal("provider-native", mySqlRuntime.AcknowledgementMode);
+            Assert.Equal([CaptureId], mySqlRuntime.CdcCaptureIds);
+            Assert.True(mySqlRuntime.Summary.HasReports);
+            Assert.Equal(CaptureId, mySqlRuntime.Summary.LastCdcCaptureId);
+            Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, mySqlRuntime.Summary.LastOutcome);
+            Assert.Equal(1, mySqlRuntime.Summary.TotalCapturedChangeCount);
+            Assert.Equal(1, mySqlRuntime.Summary.TotalProducedMessageCount);
+
+            var capture = Assert.Single(capturesByRuntime!);
+            Assert.Equal(CaptureId, capture.Id);
+            Assert.Equal("platform", capture.SourceModuleId);
+            Assert.Equal(MySqlRuntimeId, capture.ExecutionBinding.EffectiveExecutionRuntimeId);
+            Assert.Equal("provider-native", capture.ExecutionBinding.ExecutionTopology);
+            Assert.Equal("mysql-data", capture.Metadata["contributorModuleId"]);
+
+            var captureState = Assert.Single(captureStatesByRuntime!);
+            Assert.Equal(CaptureId, captureState.CdcCaptureId);
+            Assert.Equal(MySqlRuntimeId, captureState.ExecutionBinding.EffectiveExecutionRuntimeId);
+            Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, captureState.LastOutcome);
+            Assert.Equal(CdcCapturePublicationStates.PendingPublication, captureState.Publication.State);
+
+            Assert.NotNull(cdcState);
+            Assert.Equal(MySqlRuntimeId, cdcState.ExecutionBinding.EffectiveExecutionRuntimeId);
+            Assert.Equal("mysql-provider-native-runtime", cdcState.Metadata["captureExecution"]);
+            Assert.Equal(MySqlRuntimeId, cdcState.Metadata["cdcCaptureExecutionRuntimeId"]);
+            Assert.Equal("provider-native", cdcState.Metadata["acknowledgement"]);
+            Assert.Equal("cephalon.cephalon_cdc_checkpoints", cdcState.Metadata["checkpointStore"]);
+            Assert.Equal("cephalon-checkpoint-table", cdcState.Metadata["binlogCheckpointSource"]);
+            Assert.Equal("earliest-available", cdcState.Metadata["binlogResumeMode"]);
+            Assert.Equal("mysql-bin.000001", cdcState.Metadata["binlogFile"]);
+            Assert.Equal("1260", cdcState.Metadata["binlogPosition"]);
+
+            var hostedExecution = Assert.Single(hostedExecutions!, item => item.Id == MySqlRuntimeId);
+            Assert.Equal("mysql-data", hostedExecution.SourceModuleId);
+            Assert.Equal("background-service", hostedExecution.Kind);
+
+            var executionGraph = Assert.Single(executionGraphs!, item => item.Id == "mysql-binlog-capture-flow");
+            Assert.Equal("mysql-data", executionGraph.SourceModuleId);
+            Assert.Equal("resolve-mysql-cdc-captures", executionGraph.EntryNodeId);
+
+            Assert.NotNull(snapshot);
+            Assert.Contains(snapshot.CdcCaptures, item => item.Id == CaptureId &&
+                item.ExecutionBinding.EffectiveExecutionRuntimeId == MySqlRuntimeId);
+            Assert.Contains(snapshot.CdcCaptureStates, item => item.CdcCaptureId == CaptureId &&
+                item.LastOutcome == CdcCaptureRuntimeOutcomes.Captured);
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == MySqlRuntimeId &&
+                item.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured);
+        }
+        finally
+        {
+            await app.StopAsync();
+        }
+    }
+
+    private static async Task<T> WaitForAsync<T>(
+        Func<Task<T>> producer,
+        Func<T, bool> predicate,
+        TimeSpan timeout)
+    {
+        using var cancellationTokenSource = new CancellationTokenSource(timeout);
+        while (!cancellationTokenSource.IsCancellationRequested)
+        {
+            var current = await producer().ConfigureAwait(false);
+            if (predicate(current))
+            {
+                return current;
+            }
+
+            await Task.Delay(200, cancellationTokenSource.Token).ConfigureAwait(false);
+        }
+
+        throw new TimeoutException("Timed out while waiting for the expected MySQL CDC hosting condition.");
+    }
+}

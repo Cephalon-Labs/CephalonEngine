@@ -2736,6 +2736,54 @@ Delivered:
 - the provider-native runner now validates declared publication/table ownership, optionally creates the replication slot, reads one bounded committed pgoutput batch per iteration, stages deterministic outbox publications with content type `application/vnd.cephalon.postgresql.logical-replication+json`, and only confirms slot flush progress after stage success while keeping `replicationCheckpointSource = slot-confirmed-flush-lsn` on the shared runtime story
 - targeted coverage now proves the provider-native PostgreSQL runtime story through composition tests `22/22`, hosting tests `1/1`, tooling tests `181/181`, and the reference docs publish script
 
+### ENG-158 Phase 13 MySQL binlog provider-native CDC baseline
+
+Status: done
+Estimate: 5
+Completed: April 22, 2026
+
+Why:
+
+- `ENG-157` hardened the shared external reporter story, but phase 13 still lacked a provider-native
+  MySQL capture implementation on the same shared `/engine/cdc-*`, `/engine/execution-graphs`,
+  `/engine/hosted-executions`, and `snapshot` surfaces already proven by MongoDB, SQL Server, and
+  PostgreSQL
+- the engine still needed one truthful binlog-based relational proof that kept durable
+  file-plus-position checkpoints, provider-owned execution, and outbox-stage-first checkpoint commit
+  on the existing runtime story instead of inventing a MySQL-specific monitor or registry
+- MySQL-specific transport seams still had to stay additive over the shipped shared CDC descriptor,
+  runtime-state, execution-runtime, execution-graph, hosted-execution, and runtime-story contracts
+  instead of bypassing them with a provider-local operator surface
+
+Acceptance:
+
+- `Cephalon.Data.MySql` contributes provider-native MySQL binlog captures through `AddMySqlData(...)`,
+  `MySqlDataOptions`, and `MySqlBinlogCaptureOptions` while keeping descriptor ownership, execution
+  binding, runtime-state truth, execution-runtime summaries, execution graphs, hosted executions, and
+  runtime-story truth on the existing shared surfaces
+- the MySQL runner resolves its starting position from a durable Cephalon-managed checkpoint row or
+  a bounded configured initial position, reads one bounded binlog row-event batch per iteration,
+  stages linked outbox publications, and only persists the next checkpoint after outbox stage success
+  while keeping `binlogFile`, `binlogPosition`, `binlogResumeMode`, and checkpoint-store truth on
+  the shared runtime story
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the
+  shipped slice while MySQL-specific lifecycle and resume hardening plus broader external CDC
+  follow-through remain later work
+
+Delivered:
+
+- `Cephalon.Data.MySql` now ships `MySqlDataOptions`, `MySqlBinlogCaptureOptions`,
+  `MySqlDataModule`, `AddMySqlData(...)`, `mysql-binlog-capture-flow`,
+  `mysql-binlog-capture-pump`, `MySqlBinlogTransport`, and durable checkpoint tokens serialized as
+  `binlogFile|position`
+- the provider-native runner now resolves bounded starting position from the Cephalon-managed
+  checkpoint table or from configured initial binlog posture, reads one bounded row-event batch per
+  iteration, stages deterministic outbox publications with content type
+  `application/vnd.cephalon.mysql.binlog+json`, and only persists the next durable checkpoint after
+  stage success while keeping provider-native binlog checkpoint truth on the shared runtime story
+- targeted coverage now proves the provider-native MySQL runtime story through composition tests
+  `25/25`, hosting tests `1/1`, tooling tests `183/183`, and the reference docs publish script
+
 ### ENG-157 Phase 13 stronger reporter takeover and degraded-posture hardening baseline
 
 Status: done

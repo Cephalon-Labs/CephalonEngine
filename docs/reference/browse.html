@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-22T07:07:16.9906327+00:00",
+  "GeneratedAtUtc": "2026-04-22T08:15:07.3532621+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -184,6 +184,14 @@
       "FileName": "cephalon-data-entityframework.md",
       "NamespaceCount": 4,
       "TypeCount": 11
+    },
+    {
+      "AssemblyName": "Cephalon.Data.MySql",
+      "Category": "Phase 13 Companion Packs",
+      "Description": "MySQL provider-native binlog CDC companion pack for Cephalon data workloads.",
+      "FileName": "cephalon-data-mysql.md",
+      "NamespaceCount": 2,
+      "TypeCount": 3
     },
     {
       "AssemblyName": "Cephalon.Data.Postgres",
@@ -931,6 +939,20 @@
       "FileName": "cephalon-data-entityframework.md",
       "AnchorId": "namespace-cephalon-data-entityframework-services",
       "TypeCount": 2
+    },
+    {
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "namespace-cephalon-data-mysql-configuration",
+      "TypeCount": 2
+    },
+    {
+      "NamespaceName": "Cephalon.Data.MySql.Registration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "namespace-cephalon-data-mysql-registration",
+      "TypeCount": 1
     },
     {
       "NamespaceName": "Cephalon.Data.Postgres.Configuration",
@@ -9357,6 +9379,51 @@
       }
     },
     {
+      "DisplayName": "MySqlBinlogCaptureOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "type-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions",
+      "Declaration": "public sealed class MySqlBinlogCaptureOptions",
+      "Summary": "Declares one provider-native MySQL binlog capture for the active runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 19,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "MySqlDataEngineBuilderExtensions",
+      "NamespaceName": "Cephalon.Data.MySql.Registration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "type-cephalon-data-mysql-registration-mysqldataenginebuilderextensions",
+      "Declaration": "public static class MySqlDataEngineBuilderExtensions",
+      "Summary": "Registers the MySQL binlog CDC companion pack with an \u0060EngineBuilder\u0060.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "MySqlDataOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "type-cephalon-data-mysql-configuration-mysqldataoptions",
+      "Declaration": "public sealed class MySqlDataOptions",
+      "Summary": "Configuration options for the MySQL data provider (\u0060Engine:Data:MySql\u0060).",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 2,
+        "Properties": 5,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "MySqlDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.MySqlDependencies",
@@ -14576,6 +14643,28 @@
       "Summary": "Adds the Cephalon multi-tenancy companion pack to the engine."
     },
     {
+      "DisplayName": "AddMySqlData",
+      "Category": "Methods",
+      "DeclaringTypeName": "MySqlDataEngineBuilderExtensions",
+      "NamespaceName": "Cephalon.Data.MySql.Registration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-m-cephalon-data-mysql-registration-mysqldataenginebuilderextensions-addmysqldata-cephalon-engine-composition-enginebuilder-system-action-cephalon-data-mysql-configuration-mysqldataoptions",
+      "Signature": "EngineBuilder AddMySqlData(this EngineBuilder builder, Action\u003CMySqlDataOptions\u003E configure)",
+      "Summary": "Adds the MySQL binlog CDC pack using an options callback that can bind from configuration."
+    },
+    {
+      "DisplayName": "AddMySqlData",
+      "Category": "Methods",
+      "DeclaringTypeName": "MySqlDataEngineBuilderExtensions",
+      "NamespaceName": "Cephalon.Data.MySql.Registration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-m-cephalon-data-mysql-registration-mysqldataenginebuilderextensions-addmysqldata-cephalon-engine-composition-enginebuilder-system-string-system-string-system-action-cephalon-data-mysql-configuration-mysqldataoptions",
+      "Signature": "EngineBuilder AddMySqlData(this EngineBuilder builder, string connectionString, string databaseName, Action\u003CMySqlDataOptions\u003E configure)",
+      "Summary": "Adds the MySQL binlog CDC pack with the supplied connection string and database name."
+    },
+    {
       "DisplayName": "AddPackage",
       "Category": "Methods",
       "DeclaringTypeName": "EngineBuilder",
@@ -19187,6 +19276,17 @@
     {
       "DisplayName": "CdcCaptures",
       "Category": "Properties",
+      "DeclaringTypeName": "MySqlDataOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqldataoptions-cdccaptures",
+      "Signature": "IList\u003CMySqlBinlogCaptureOptions\u003E CdcCaptures { get; }",
+      "Summary": "Gets the provider-native MySQL binlog captures that should be contributed to the active runtime."
+    },
+    {
+      "DisplayName": "CdcCaptures",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresDataOptions",
       "NamespaceName": "Cephalon.Data.Postgres.Configuration",
       "AssemblyName": "Cephalon.Data.Postgres",
@@ -19693,6 +19793,17 @@
     {
       "DisplayName": "ChannelId",
       "Category": "Properties",
+      "DeclaringTypeName": "MySqlBinlogCaptureOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-channelid",
+      "Signature": "string ChannelId { get; set; }",
+      "Summary": "Gets or sets the logical outbox channel that receives emitted publications."
+    },
+    {
+      "DisplayName": "ChannelId",
+      "Category": "Properties",
       "DeclaringTypeName": "OutboxMessage",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -19832,6 +19943,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-checkpoint",
       "Signature": "string Checkpoint { get; }",
       "Summary": "Gets the latest provider-facing checkpoint or cursor when one was reported."
+    },
+    {
+      "DisplayName": "CheckpointTableName",
+      "Category": "Properties",
+      "DeclaringTypeName": "MySqlDataOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqldataoptions-checkpointtablename",
+      "Signature": "string CheckpointTableName { get; set; }",
+      "Summary": "Gets or sets the Cephalon-managed checkpoint table name used for durable MySQL binlog progress."
     },
     {
       "DisplayName": "CheckpointTableName",
@@ -21189,6 +21311,17 @@
     {
       "DisplayName": "ConnectionString",
       "Category": "Properties",
+      "DeclaringTypeName": "MySqlDataOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqldataoptions-connectionstring",
+      "Signature": "string ConnectionString { get; set; }",
+      "Summary": "Gets or sets the inline MySQL connection string."
+    },
+    {
+      "DisplayName": "ConnectionString",
+      "Category": "Properties",
       "DeclaringTypeName": "MySqlDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.MySqlDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.MySqlDependencies",
@@ -21306,6 +21439,17 @@
       "AnchorId": "member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-connectionstringname",
       "Signature": "string ConnectionStringName { get; }",
       "Summary": "Gets the selected named connection-string reference, if one was declared."
+    },
+    {
+      "DisplayName": "ConnectionStringName",
+      "Category": "Properties",
+      "DeclaringTypeName": "MySqlDataOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqldataoptions-connectionstringname",
+      "Signature": "string ConnectionStringName { get; set; }",
+      "Summary": "Gets or sets the root \u0060ConnectionStrings\u0060 entry name to resolve for MySQL."
     },
     {
       "DisplayName": "ConnectionStringName",
@@ -22505,6 +22649,17 @@
       "AnchorId": "member-m-cephalon-engine-configuration-databasemigrationssettings-ctor-system-nullable-system-boolean-system-nullable-system-boolean-system-collections-generic-ireadonlylist-system-string",
       "Signature": "DatabaseMigrationsSettings(bool? applyOnStartup, bool? exitAfterApply, IReadOnlyList\u003Cstring\u003E targets)",
       "Summary": "Initializes a new instance of the \u0060DatabaseMigrationsSettings\u0060 class."
+    },
+    {
+      "DisplayName": "DatabaseName",
+      "Category": "Properties",
+      "DeclaringTypeName": "MySqlDataOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqldataoptions-databasename",
+      "Signature": "string DatabaseName { get; set; }",
+      "Summary": "Gets or sets the operator-facing database name that owns the configured binlog captures."
     },
     {
       "DisplayName": "DatabaseName",
@@ -24181,6 +24336,17 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "MySqlBinlogCaptureOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-description",
+      "Signature": "string Description { get; set; }",
+      "Summary": "Gets or sets the human-readable CDC capture description."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "OpenApiTagMetadata",
       "NamespaceName": "Cephalon.AspNetCore.Documentation",
       "AssemblyName": "Cephalon.AspNetCore",
@@ -25354,6 +25520,17 @@
       "AnchorId": "member-p-cephalon-engine-manifest-modulemanifest-displayname",
       "Signature": "string DisplayName { get; }",
       "Summary": "Gets the operator-facing display name for the module."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "MySqlBinlogCaptureOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "Gets or sets the operator-facing CDC capture name."
     },
     {
       "DisplayName": "DisplayName",
@@ -28115,6 +28292,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimestate-eventformat",
       "Signature": "string EventFormat { get; set; }",
       "Summary": "The emitted change-event format such as \u0060debezium-envelope\u0060."
+    },
+    {
+      "DisplayName": "EventFormat",
+      "Category": "Properties",
+      "DeclaringTypeName": "MySqlBinlogCaptureOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-eventformat",
+      "Signature": "string EventFormat { get; set; }",
+      "Summary": "Gets or sets the operator-facing event format projected on the CDC descriptor."
     },
     {
       "DisplayName": "EventFormat",
@@ -35709,6 +35897,17 @@
     {
       "DisplayName": "Id",
       "Category": "Properties",
+      "DeclaringTypeName": "MySqlBinlogCaptureOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-id",
+      "Signature": "string Id { get; set; }",
+      "Summary": "Gets or sets the stable CDC capture identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
       "DeclaringTypeName": "OutboxDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -36717,6 +36916,17 @@
       "AnchorId": "member-f-cephalon-engine-runtime-runtimestatus-initializing",
       "Signature": "const RuntimeStatus Initializing",
       "Summary": "The runtime is initializing modules."
+    },
+    {
+      "DisplayName": "InitialPosition",
+      "Category": "Properties",
+      "DeclaringTypeName": "MySqlBinlogCaptureOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-initialposition",
+      "Signature": "string InitialPosition { get; set; }",
+      "Summary": "Gets or sets the initial position used when no durable checkpoint exists yet."
     },
     {
       "DisplayName": "InitialPosition",
@@ -39614,6 +39824,17 @@
     {
       "DisplayName": "MaxAwaitTimeSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "MySqlBinlogCaptureOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-maxawaittimeseconds",
+      "Signature": "int MaxAwaitTimeSeconds { get; set; }",
+      "Summary": "Gets or sets the maximum number of seconds to await row events during one provider-native iteration."
+    },
+    {
+      "DisplayName": "MaxAwaitTimeSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
       "NamespaceName": "Cephalon.Data.Postgres.Configuration",
       "AssemblyName": "Cephalon.Data.Postgres",
@@ -39654,6 +39875,17 @@
       "AnchorId": "member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-maxchangesperpoll",
       "Signature": "int MaxChangesPerPoll { get; set; }",
       "Summary": "Gets or sets the maximum number of captured changes to stage during one polling iteration."
+    },
+    {
+      "DisplayName": "MaxChangesPerRead",
+      "Category": "Properties",
+      "DeclaringTypeName": "MySqlBinlogCaptureOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-maxchangesperread",
+      "Signature": "int MaxChangesPerRead { get; set; }",
+      "Summary": "Gets or sets the maximum number of captured row changes to stage during one provider-native iteration."
     },
     {
       "DisplayName": "MaxChangesPerRead",
@@ -40193,6 +40425,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-inboxmessage-messagetype",
       "Signature": "string MessageType { get; }",
       "Summary": "Gets the logical message type identifier."
+    },
+    {
+      "DisplayName": "MessageType",
+      "Category": "Properties",
+      "DeclaringTypeName": "MySqlBinlogCaptureOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-messagetype",
+      "Signature": "string MessageType { get; set; }",
+      "Summary": "Gets or sets the logical message type emitted for each captured change event."
     },
     {
       "DisplayName": "MessageType",
@@ -40996,6 +41239,17 @@
       "AnchorId": "member-p-cephalon-engine-manifest-modulemanifest-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
       "Summary": "Gets arbitrary descriptor metadata published by the module."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "MySqlBinlogCaptureOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-metadata",
+      "Signature": "IDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets arbitrary operator-facing metadata that should flow through the capture descriptor."
     },
     {
       "DisplayName": "Metadata",
@@ -42426,6 +42680,26 @@
       "AnchorId": "member-m-cephalon-multitenancy-configuration-multitenancyruntimeoptions-ctor",
       "Signature": "MultiTenancyRuntimeOptions()",
       "Summary": "Initializes a new instance of the \u0060MultiTenancyRuntimeOptions\u0060 class."
+    },
+    {
+      "DisplayName": "MySqlBinlogCaptureOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "MySqlBinlogCaptureOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-m-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-ctor",
+      "Signature": "MySqlBinlogCaptureOptions()"
+    },
+    {
+      "DisplayName": "MySqlDataOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "MySqlDataOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-m-cephalon-data-mysql-configuration-mysqldataoptions-ctor",
+      "Signature": "MySqlDataOptions()"
     },
     {
       "DisplayName": "MySqlDependencyDefinition",
@@ -44080,6 +44354,17 @@
     {
       "DisplayName": "OutboxId",
       "Category": "Properties",
+      "DeclaringTypeName": "MySqlBinlogCaptureOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-outboxid",
+      "Signature": "string OutboxId { get; set; }",
+      "Summary": "Gets or sets the outbox identifier that receives emitted publications."
+    },
+    {
+      "DisplayName": "OutboxId",
+      "Category": "Properties",
       "DeclaringTypeName": "OutboxDispatchPolicyDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -45697,6 +45982,17 @@
     {
       "DisplayName": "PollingIntervalSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "MySqlBinlogCaptureOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-pollingintervalseconds",
+      "Signature": "int PollingIntervalSeconds { get; set; }",
+      "Summary": "Gets or sets the polling interval, in seconds, between hosted-service iterations."
+    },
+    {
+      "DisplayName": "PollingIntervalSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
       "NamespaceName": "Cephalon.Data.Postgres.Configuration",
       "AssemblyName": "Cephalon.Data.Postgres",
@@ -46923,6 +47219,17 @@
       "AnchorId": "member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficmaterializeroptions-providerid",
       "Signature": "string ProviderId { get; set; }",
       "Summary": "Gets or sets the provider identifier that the materializer owns."
+    },
+    {
+      "DisplayName": "ProviderId",
+      "Category": "Fields",
+      "DeclaringTypeName": "MySqlDataOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-f-cephalon-data-mysql-configuration-mysqldataoptions-providerid",
+      "Signature": "const string ProviderId",
+      "Summary": "Gets the canonical provider identifier emitted by the pack."
     },
     {
       "DisplayName": "ProviderId",
@@ -50271,6 +50578,17 @@
     {
       "DisplayName": "ResourceIds",
       "Category": "Properties",
+      "DeclaringTypeName": "MySqlBinlogCaptureOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-resourceids",
+      "Signature": "IList\u003Cstring\u003E ResourceIds { get; }",
+      "Summary": "Gets the resource identifiers observed by the capture."
+    },
+    {
+      "DisplayName": "ResourceIds",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
       "NamespaceName": "Cephalon.Data.Postgres.Configuration",
       "AssemblyName": "Cephalon.Data.Postgres",
@@ -52757,6 +53075,17 @@
     {
       "DisplayName": "SectionPath",
       "Category": "Fields",
+      "DeclaringTypeName": "MySqlDataOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-f-cephalon-data-mysql-configuration-mysqldataoptions-sectionpath",
+      "Signature": "const string SectionPath",
+      "Summary": "Gets the configuration section path used by default for MySQL data settings."
+    },
+    {
+      "DisplayName": "SectionPath",
+      "Category": "Fields",
       "DeclaringTypeName": "PostgresDataOptions",
       "NamespaceName": "Cephalon.Data.Postgres.Configuration",
       "AssemblyName": "Cephalon.Data.Postgres",
@@ -53160,6 +53489,17 @@
       "AnchorId": "member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-selectionmode",
       "Signature": "string SelectionMode { get; }",
       "Summary": "Gets the runtime selection result, such as \u0060requested-target\u0060 or \u0060fallback-target\u0060."
+    },
+    {
+      "DisplayName": "ServerId",
+      "Category": "Properties",
+      "DeclaringTypeName": "MySqlBinlogCaptureOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-serverid",
+      "Signature": "int ServerId { get; set; }",
+      "Summary": "Gets or sets the replication-client server identifier used for this capture connection."
     },
     {
       "DisplayName": "ServerlessHosting",
@@ -54044,6 +54384,17 @@
     {
       "DisplayName": "SourceId",
       "Category": "Properties",
+      "DeclaringTypeName": "MySqlBinlogCaptureOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-sourceid",
+      "Signature": "string SourceId { get; set; }",
+      "Summary": "Gets or sets the logical source identifier when it should differ from the watched table path."
+    },
+    {
+      "DisplayName": "SourceId",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
       "NamespaceName": "Cephalon.Data.Postgres.Configuration",
       "AssemblyName": "Cephalon.Data.Postgres",
@@ -54414,6 +54765,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-inboxdescriptor-sourcemoduleid",
       "Signature": "string SourceModuleId { get; }",
       "Summary": "Gets the identifier of the module that owns the inbox surface."
+    },
+    {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
+      "DeclaringTypeName": "MySqlBinlogCaptureOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; set; }",
+      "Summary": "Gets or sets the module identifier that owns the capture surface."
     },
     {
       "DisplayName": "SourceModuleId",
@@ -56792,6 +57154,17 @@
     {
       "DisplayName": "TableName",
       "Category": "Properties",
+      "DeclaringTypeName": "MySqlBinlogCaptureOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-tablename",
+      "Signature": "string TableName { get; set; }",
+      "Summary": "Gets or sets the table name of the tracked table."
+    },
+    {
+      "DisplayName": "TableName",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
       "NamespaceName": "Cephalon.Data.Postgres.Configuration",
       "AssemblyName": "Cephalon.Data.Postgres",
@@ -56810,6 +57183,17 @@
       "AnchorId": "member-p-cephalon-data-sqlserver-configuration-sqlservercdccaptureoptions-tablename",
       "Signature": "string TableName { get; set; }",
       "Summary": "Gets or sets the table name of the tracked table."
+    },
+    {
+      "DisplayName": "TableSchema",
+      "Category": "Properties",
+      "DeclaringTypeName": "MySqlBinlogCaptureOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-tableschema",
+      "Signature": "string TableSchema { get; set; }",
+      "Summary": "Gets or sets the MySQL schema name of the tracked table."
     },
     {
       "DisplayName": "TableSchema",
@@ -57140,6 +57524,17 @@
       "AnchorId": "member-p-cephalon-engine-manifest-modulemanifest-tags",
       "Signature": "IReadOnlyList\u003Cstring\u003E Tags { get; }",
       "Summary": "Gets the descriptor tags published by the module."
+    },
+    {
+      "DisplayName": "Tags",
+      "Category": "Properties",
+      "DeclaringTypeName": "MySqlBinlogCaptureOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-tags",
+      "Signature": "IList\u003Cstring\u003E Tags { get; }",
+      "Summary": "Gets the descriptive tags associated with the capture."
     },
     {
       "DisplayName": "Tags",

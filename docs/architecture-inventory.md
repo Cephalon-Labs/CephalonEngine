@@ -165,12 +165,13 @@ Modules are the primary composition unit. Each module registers services, capabi
 - `identity-access` — Identity Access (`Cephalon.Identity`): host-agnostic identity and authorization baseline.
 - `multi-tenancy` — Multi-Tenancy (`Cephalon.MultiTenancy`): host-agnostic tenant resolution and ambient tenant-context baseline.
 
-### Data provider modules (12)
+### Data provider modules (13)
 
 - `entity-framework-data` — Entity Framework Data (`Cephalon.Data.EntityFramework`): relational DbContext registration. Store type: relational.
 - `mongodb-data` — MongoDB Data (`Cephalon.Data.MongoDB`): document store registration plus provider-native MongoDB change-stream CDC runtime. Store type: document.
 - `sqlserver-data` — SQL Server Data (`Cephalon.Data.SqlServer`): relational provider-native SQL Server CDC runtime. Store type: relational.
 - `postgres-data` — PostgreSQL Data (`Cephalon.Data.Postgres`): relational provider-native logical-replication CDC runtime. Store type: relational.
+- `mysql-data` — MySQL Data (`Cephalon.Data.MySql`): relational provider-native MySQL binlog CDC runtime. Store type: relational.
 - `redis-data` — Redis Data (`Cephalon.Data.Redis`): key-value store registration. Store type: key-value.
 - `neo4j-data` — Neo4j Data (`Cephalon.Data.Neo4j`): graph store registration. Store type: graph.
 - `cassandra-data` — Cassandra Data (`Cephalon.Data.Cassandra`): wide-column store registration. Store type: wide-column.
@@ -554,7 +555,7 @@ The engine exposes operator-facing runtime information through these endpoints:
 - Technologies: **11**
 - Transports: **6** + 3 messaging bindings = **9**
 - Execution strategies: **7**
-- Modules: 6 core + 10 data + 10 event-sourcing + 5 specialized + 1 identifier = **32**
+- Modules: 6 core + 13 data + 10 event-sourcing + 5 specialized + 1 identifier = **35**
 - Capabilities: **71+**
 - Data abstractions: **24+** interfaces
 - Diagnostics sources: **9**

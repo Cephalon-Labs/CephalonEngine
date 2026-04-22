@@ -32,6 +32,8 @@ public sealed class DocumentationCoverageTests
             ["Cephalon.MultiTenancy"] = "multi-tenancy.md",
             // "ReferenceDocs" → "reference-docs"
             ["Cephalon.ReferenceDocs"] = "reference-docs.md",
+            // "KubernetesGateway" → "kubernetes-gateway"
+            ["Cephalon.Edge.KubernetesGateway"] = "edge-kubernetes-gateway.md",
             // Observability slugs that split compound words with a hyphen
             ["Cephalon.Observability.AlibabaCloud"] = "observability-alibaba-cloud.md",
             ["Cephalon.Observability.AzureMonitor"] = "observability-azure-monitor.md",
