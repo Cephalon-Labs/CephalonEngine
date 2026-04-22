@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-22T19:31:48.4928903+00:00",
+  "GeneratedAtUtc": "2026-04-22T20:17:43.4486877+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -111,7 +111,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 367
+      "TypeCount": 369
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -674,7 +674,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
-      "TypeCount": 87
+      "TypeCount": 89
     },
     {
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
@@ -3333,6 +3333,21 @@
       }
     },
     {
+      "DisplayName": "CdcCaptureExecutionRuntimeReporterCoordinationRollup",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup",
+      "Declaration": "public sealed class CdcCaptureExecutionRuntimeReporterCoordinationRollup",
+      "Summary": "Describes the grouped reporter-coordination story currently visible for one CDC capture execution runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 14,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "CdcCaptureExecutionRuntimeSummary",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -3343,7 +3358,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 29,
+        "Properties": 30,
         "Methods": 0
       }
     },
@@ -3434,6 +3449,21 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 4,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureReporterCoordinationBreakdownEntry",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccapturereportercoordinationbreakdownentry",
+      "Declaration": "public sealed class CdcCaptureReporterCoordinationBreakdownEntry",
+      "Summary": "Describes one grouped reporter-coordination bucket visible on an execution-runtime rollup.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 2,
         "Methods": 0
       }
     },
@@ -13100,6 +13130,17 @@
     {
       "DisplayName": "ActiveReporterCount",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeReporterCoordinationRollup",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-activereportercount",
+      "Signature": "int ActiveReporterCount { get; }",
+      "Summary": "Gets the number of distinct active reporters currently visible across the execution runtime."
+    },
+    {
+      "DisplayName": "ActiveReporterCount",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureReporterCoordinationStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -13129,6 +13170,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-activereporterid",
       "Signature": "string ActiveReporterId { get; set; }",
       "Summary": "Gets the reporter identity that currently holds the active lease when one is known."
+    },
+    {
+      "DisplayName": "ActiveReporterIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeReporterCoordinationRollup",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-activereporterids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ActiveReporterIds { get; set; }",
+      "Summary": "Gets the reporter identities currently visible as active owners on at least one CDC capture."
     },
     {
       "DisplayName": "ActiveReporterLeaseExpiresAtUtc",
@@ -19280,6 +19332,17 @@
       "Summary": "Creates CDC execution runtime options with empty identity fields and a declared-runtime topology."
     },
     {
+      "DisplayName": "CdcCaptureExecutionRuntimeReporterCoordinationRollup",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeReporterCoordinationRollup",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-data-cdccapturereportercoordinationbreakdownentry-system-collections-generic-ireadonlylist-cephalon-abstractions-data-cdccapturereportercoordinationbreakdownentry",
+      "Signature": "CdcCaptureExecutionRuntimeReporterCoordinationRollup(IReadOnlyList\u003CCdcCaptureReporterCoordinationBreakdownEntry\u003E CoordinationStateBreakdown, IReadOnlyList\u003CCdcCaptureReporterCoordinationBreakdownEntry\u003E DegradedReasonBreakdown)",
+      "Summary": "Describes the grouped reporter-coordination story currently visible for one CDC capture execution runtime."
+    },
+    {
       "DisplayName": "CdcCaptureExecutionRuntimes",
       "Category": "Properties",
       "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
@@ -19421,6 +19484,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-cdccapturepublicationstatus-ctor-system-string-system-nullable-system-int64-system-string",
       "Signature": "CdcCapturePublicationStatus(string state, long? pendingPublicationCount, string description)",
       "Summary": "Creates a new CDC publication status."
+    },
+    {
+      "DisplayName": "CdcCaptureReporterCoordinationBreakdownEntry",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CdcCaptureReporterCoordinationBreakdownEntry",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-cdccapturereportercoordinationbreakdownentry-ctor-system-string-system-int32",
+      "Signature": "CdcCaptureReporterCoordinationBreakdownEntry(string id, int count)",
+      "Summary": "Creates a new grouped reporter-coordination bucket."
     },
     {
       "DisplayName": "CdcCaptureReporterCoordinationStatus",
@@ -22173,6 +22247,17 @@
       "Summary": "Gets the number of targets that share one physical database target with another migration target."
     },
     {
+      "DisplayName": "CoordinationStateBreakdown",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeReporterCoordinationRollup",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-coordinationstatebreakdown",
+      "Signature": "IReadOnlyList\u003CCdcCaptureReporterCoordinationBreakdownEntry\u003E CoordinationStateBreakdown { get; set; }",
+      "Summary": "The grouped reporter-coordination states currently visible across the execution runtime\u0027s reported CDC captures."
+    },
+    {
       "DisplayName": "CorrelationId",
       "Category": "Properties",
       "DeclaringTypeName": "AuditEntry",
@@ -22347,6 +22432,17 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-correlationid",
       "Signature": "string CorrelationId { get; set; }",
       "Summary": "The correlation identifier associated with the publication when one exists."
+    },
+    {
+      "DisplayName": "Count",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureReporterCoordinationBreakdownEntry",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereportercoordinationbreakdownentry-count",
+      "Signature": "int Count { get; }",
+      "Summary": "Gets the number of CDC captures currently reporting the bucket."
     },
     {
       "DisplayName": "Counters",
@@ -23842,6 +23938,28 @@
       "Summary": "The runtime is available, but one or more dependencies need attention."
     },
     {
+      "DisplayName": "DegradedCdcCaptureCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeReporterCoordinationRollup",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-degradedcdccapturecount",
+      "Signature": "int DegradedCdcCaptureCount { get; }",
+      "Summary": "Gets the number of CDC captures currently reporting degraded coordination posture."
+    },
+    {
+      "DisplayName": "DegradedCdcCaptureIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeReporterCoordinationRollup",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-degradedcdccaptureids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E DegradedCdcCaptureIds { get; set; }",
+      "Summary": "Gets the CDC capture identifiers whose current coordination posture is degraded."
+    },
+    {
       "DisplayName": "DegradedReason",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureReporterCoordinationStatus",
@@ -23851,6 +23969,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-degradedreason",
       "Signature": "string DegradedReason { get; set; }",
       "Summary": "Gets the stable degraded-reason identifier when reporter coordination is currently degraded."
+    },
+    {
+      "DisplayName": "DegradedReasonBreakdown",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeReporterCoordinationRollup",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-degradedreasonbreakdown",
+      "Signature": "IReadOnlyList\u003CCdcCaptureReporterCoordinationBreakdownEntry\u003E DegradedReasonBreakdown { get; set; }",
+      "Summary": "The grouped degraded-reason answers currently visible across the execution runtime\u0027s reported CDC captures."
     },
     {
       "DisplayName": "DegradedRoleCount",
@@ -26865,6 +26994,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-bulkheadsettings-empty",
       "Signature": "BulkheadSettings Empty { get; }",
       "Summary": "Gets an empty bulkhead-settings instance."
+    },
+    {
+      "DisplayName": "Empty",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeReporterCoordinationRollup",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-empty",
+      "Signature": "CdcCaptureExecutionRuntimeReporterCoordinationRollup Empty { get; }",
+      "Summary": "Gets an empty rollup for execution runtimes that have not reported state yet."
     },
     {
       "DisplayName": "Empty",
@@ -33885,6 +34025,17 @@
       "Summary": "Gets a value indicating whether any default traffic-automation values were explicitly supplied."
     },
     {
+      "DisplayName": "HasDegradedCdcCaptures",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeReporterCoordinationRollup",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-hasdegradedcdccaptures",
+      "Signature": "bool HasDegradedCdcCaptures { get; }",
+      "Summary": "Gets a value indicating whether any CDC capture currently reports degraded coordination posture for the execution runtime."
+    },
+    {
       "DisplayName": "HasDispatchReports",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureRuntimeState",
@@ -34052,6 +34203,17 @@
     {
       "DisplayName": "HasRejectedReporters",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeReporterCoordinationRollup",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-hasrejectedreporters",
+      "Signature": "bool HasRejectedReporters { get; }",
+      "Summary": "Gets a value indicating whether the execution runtime currently exposes rejected reporters anywhere in its coordination story."
+    },
+    {
+      "DisplayName": "HasRejectedReporters",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureReporterCoordinationStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -34136,6 +34298,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-hasstaleobservations",
       "Signature": "bool HasStaleObservations { get; }",
       "Summary": "Gets a value indicating whether at least one reported capture observation is now stale."
+    },
+    {
+      "DisplayName": "HasStandbyReporters",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeReporterCoordinationRollup",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-hasstandbyreporters",
+      "Signature": "bool HasStandbyReporters { get; }",
+      "Summary": "Gets a value indicating whether the execution runtime currently exposes standby reporters anywhere in its coordination story."
     },
     {
       "DisplayName": "HasStandbyReporters",
@@ -36083,6 +36256,17 @@
       "AnchorId": "member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-id",
       "Signature": "string Id { get; set; }",
       "Summary": "Gets or sets the stable execution-runtime identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureReporterCoordinationBreakdownEntry",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereportercoordinationbreakdownentry-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable reporter-coordination identifier carried by the bucket."
     },
     {
       "DisplayName": "Id",
@@ -49677,6 +49861,17 @@
     {
       "DisplayName": "RejectedReporterCount",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeReporterCoordinationRollup",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-rejectedreportercount",
+      "Signature": "int RejectedReporterCount { get; }",
+      "Summary": "Gets the number of distinct rejected reporters currently visible across the execution runtime."
+    },
+    {
+      "DisplayName": "RejectedReporterCount",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureReporterCoordinationStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -49684,6 +49879,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-rejectedreportercount",
       "Signature": "int RejectedReporterCount { get; }",
       "Summary": "Gets the number of rejected reporters currently visible in the coordination story."
+    },
+    {
+      "DisplayName": "RejectedReporterIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeReporterCoordinationRollup",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-rejectedreporterids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E RejectedReporterIds { get; set; }",
+      "Summary": "Gets the reporter identities currently visible as rejected participants on at least one CDC capture."
     },
     {
       "DisplayName": "RejectionStatusCode",
@@ -50047,6 +50253,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimestate-reportercoordination",
       "Signature": "CdcCaptureReporterCoordinationStatus ReporterCoordination { get; set; }",
       "Summary": "Gets the reporter-coordination posture currently visible for the capture\u0027s execution runtime."
+    },
+    {
+      "DisplayName": "ReporterCoordinationRollup",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-reportercoordinationrollup",
+      "Signature": "CdcCaptureExecutionRuntimeReporterCoordinationRollup ReporterCoordinationRollup { get; set; }",
+      "Summary": "Gets the grouped reporter-coordination rollup currently visible across the execution runtime\u0027s reported CDC captures."
     },
     {
       "DisplayName": "ReporterId",
@@ -56297,6 +56514,17 @@
     {
       "DisplayName": "StandbyReporterCount",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeReporterCoordinationRollup",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-standbyreportercount",
+      "Signature": "int StandbyReporterCount { get; }",
+      "Summary": "Gets the number of distinct standby reporters currently visible across the execution runtime."
+    },
+    {
+      "DisplayName": "StandbyReporterCount",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureReporterCoordinationStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -56304,6 +56532,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-standbyreportercount",
       "Signature": "int StandbyReporterCount { get; }",
       "Summary": "Gets the number of standby reporters currently visible in the coordination story."
+    },
+    {
+      "DisplayName": "StandbyReporterIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeReporterCoordinationRollup",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-standbyreporterids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E StandbyReporterIds { get; set; }",
+      "Summary": "Gets the reporter identities currently visible as standby participants on at least one CDC capture."
     },
     {
       "DisplayName": "StartAsync",

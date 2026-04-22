@@ -3027,6 +3027,32 @@ Delivered:
 - targeted coverage now proves the operator-story drill-down baseline through composition tests
   `1/1`, hosting tests `1/1`, tooling tests `185/185`, and the reference docs publish script
 
+### ENG-166 Phase 13 richer CDC operator-story rollups
+
+Status: done
+Estimate: 5
+Completed: April 23, 2026
+
+Why:
+
+- `ENG-163` made the shared external CDC runtime story queryable by reporter, edge node, coordination state, and degraded reason, but execution-runtime summaries still mostly surfaced the latest linked `ReporterCoordination` answer instead of one aggregate operator rollup
+- operators still had to reopen multiple per-capture runtime payloads and mentally union active, standby, rejected, and degraded posture when one external runtime owned more than one capture
+- the next shared follow-through needed to keep richer operator rollups additive over `/engine/cdc-capture-runtimes*` and `snapshot.CdcCaptureExecutionRuntimes` instead of inventing a second coordination registry or a Debezium-only summary surface
+
+Acceptance:
+
+- `Cephalon.Abstractions` ships a stable execution-runtime coordination-rollup contract that can publish grouped coordination-state and degraded-reason breakdowns together with active, standby, rejected, and degraded capture ids
+- `CdcCaptureExecutionRuntimeSummary` can now expose that additive rollup on the same shared execution-runtime surface without replacing the existing latest `ReporterCoordination` answer
+- the shared execution-runtime catalog now derives those rollups from the linked capture runtime-state story so provider-native and external-managed runtimes both benefit from the same operator-summary answer
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the shipped slice while broader external-runtime hardening remains separate work
+
+Delivered:
+
+- the 2026-04-23 `ENG-166` slice added `CdcCaptureExecutionRuntimeReporterCoordinationRollup` plus `CdcCaptureReporterCoordinationBreakdownEntry` to `Cephalon.Abstractions`, and `CdcCaptureExecutionRuntimeSummary` now carries additive `ReporterCoordinationRollup` beside the existing latest `ReporterCoordination` answer
+- `Cephalon.Data` now derives runtime-level coordination-state breakdowns, degraded-reason breakdowns, distinct active or standby or rejected reporter ids, and degraded capture ids from the linked capture runtime-state catalog without inventing a second operator index
+- the same shared `/engine/cdc-capture-runtimes*` routes and `snapshot.CdcCaptureExecutionRuntimes` answers now project runtime-level active-versus-standby-versus-rejected posture directly, so operators no longer have to re-aggregate one Debezium or external-runtime story by hand
+- targeted coverage now proves the richer CDC operator-rollup slice through composition tests `27/27`, hosting tests `3/3`, tooling tests `207/207`, and the reference docs publish script
+
 ### ENG-165 Phase 13 Debezium lifecycle and reconciliation hardening
 
 Status: done

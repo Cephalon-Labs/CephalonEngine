@@ -65,6 +65,12 @@ public sealed record CdcCaptureExecutionRuntimeSummary(
         new(CdcCaptureReporterCoordinationStates.Unknown);
 
     /// <summary>
+    /// Gets the grouped reporter-coordination rollup currently visible across the execution runtime's reported CDC captures.
+    /// </summary>
+    public CdcCaptureExecutionRuntimeReporterCoordinationRollup ReporterCoordinationRollup { get; init; } =
+        CdcCaptureExecutionRuntimeReporterCoordinationRollup.Empty;
+
+    /// <summary>
     /// Gets the latest reporter identity visible for the execution runtime when one was reported.
     /// </summary>
     public string? LastReporterId { get; init; }

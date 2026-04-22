@@ -800,6 +800,26 @@ public sealed class DataRuntimePackTests
         Assert.Equal(CdcCaptureReporterCoordinationIssueReasons.RejectedReporterConflict, runtime.Summary.ReporterCoordination.DegradedReason);
         Assert.True(runtime.Summary.ReporterCoordination.IsDegraded);
         Assert.True(runtime.Summary.HasReporterCoordinationIssue);
+        Assert.Equal(["edge-agent-a"], runtime.Summary.ReporterCoordinationRollup.ActiveReporterIds);
+        Assert.Empty(runtime.Summary.ReporterCoordinationRollup.StandbyReporterIds);
+        Assert.Equal(["edge-agent-b"], runtime.Summary.ReporterCoordinationRollup.RejectedReporterIds);
+        Assert.Equal(["tenant-profile-cdc"], runtime.Summary.ReporterCoordinationRollup.DegradedCdcCaptureIds);
+        Assert.True(runtime.Summary.ReporterCoordinationRollup.HasRejectedReporters);
+        Assert.True(runtime.Summary.ReporterCoordinationRollup.HasDegradedCdcCaptures);
+        Assert.Collection(
+            runtime.Summary.ReporterCoordinationRollup.CoordinationStateBreakdown,
+            breakdown =>
+            {
+                Assert.Equal(CdcCaptureReporterCoordinationStates.Conflicted, breakdown.Id);
+                Assert.Equal(1, breakdown.Count);
+            });
+        Assert.Collection(
+            runtime.Summary.ReporterCoordinationRollup.DegradedReasonBreakdown,
+            breakdown =>
+            {
+                Assert.Equal(CdcCaptureReporterCoordinationIssueReasons.RejectedReporterConflict, breakdown.Id);
+                Assert.Equal(1, breakdown.Count);
+            });
         Assert.Collection(
             runtime.Summary.ReporterCoordination.ReporterParticipants,
             participant =>
@@ -985,6 +1005,25 @@ public sealed class DataRuntimePackTests
         Assert.Equal(CdcCaptureReporterCoordinationIssueReasons.MultipleActiveReporters, runtime.Summary.ReporterCoordination.DegradedReason);
         Assert.True(runtime.Summary.ReporterCoordination.IsDegraded);
         Assert.True(runtime.Summary.HasReporterCoordinationIssue);
+        Assert.Equal(["edge-agent-a", "edge-agent-b"], runtime.Summary.ReporterCoordinationRollup.ActiveReporterIds);
+        Assert.Empty(runtime.Summary.ReporterCoordinationRollup.StandbyReporterIds);
+        Assert.Empty(runtime.Summary.ReporterCoordinationRollup.RejectedReporterIds);
+        Assert.Equal(["multi-capture-cdc-a", "multi-capture-cdc-b"], runtime.Summary.ReporterCoordinationRollup.DegradedCdcCaptureIds);
+        Assert.True(runtime.Summary.ReporterCoordinationRollup.HasDegradedCdcCaptures);
+        Assert.Collection(
+            runtime.Summary.ReporterCoordinationRollup.CoordinationStateBreakdown,
+            breakdown =>
+            {
+                Assert.Equal(CdcCaptureReporterCoordinationStates.Conflicted, breakdown.Id);
+                Assert.Equal(2, breakdown.Count);
+            });
+        Assert.Collection(
+            runtime.Summary.ReporterCoordinationRollup.DegradedReasonBreakdown,
+            breakdown =>
+            {
+                Assert.Equal(CdcCaptureReporterCoordinationIssueReasons.MultipleActiveReporters, breakdown.Id);
+                Assert.Equal(2, breakdown.Count);
+            });
         Assert.Collection(
             runtime.Summary.ReporterCoordination.ReporterParticipants,
             participant =>
@@ -1194,6 +1233,27 @@ public sealed class DataRuntimePackTests
         Assert.False(runtime.Summary.ReporterCoordination.IsDegraded);
         Assert.False(runtime.Summary.HasReporterCoordinationIssue);
         Assert.True(runtime.Summary.ReporterCoordination.HasCompletedTakeover);
+        Assert.Equal(["edge-agent-b"], runtime.Summary.ReporterCoordinationRollup.ActiveReporterIds);
+        Assert.Equal(["edge-agent-a"], runtime.Summary.ReporterCoordinationRollup.StandbyReporterIds);
+        Assert.Empty(runtime.Summary.ReporterCoordinationRollup.RejectedReporterIds);
+        Assert.Empty(runtime.Summary.ReporterCoordinationRollup.DegradedCdcCaptureIds);
+        Assert.True(runtime.Summary.ReporterCoordinationRollup.HasStandbyReporters);
+        Assert.False(runtime.Summary.ReporterCoordinationRollup.HasRejectedReporters);
+        Assert.False(runtime.Summary.ReporterCoordinationRollup.HasDegradedCdcCaptures);
+        Assert.Collection(
+            runtime.Summary.ReporterCoordinationRollup.CoordinationStateBreakdown,
+            breakdown =>
+            {
+                Assert.Equal(CdcCaptureReporterCoordinationStates.Active, breakdown.Id);
+                Assert.Equal(1, breakdown.Count);
+            });
+        Assert.Collection(
+            runtime.Summary.ReporterCoordinationRollup.DegradedReasonBreakdown,
+            breakdown =>
+            {
+                Assert.Equal(CdcCaptureReporterCoordinationIssueReasons.None, breakdown.Id);
+                Assert.Equal(1, breakdown.Count);
+            });
         Assert.Collection(
             runtime.Summary.ReporterCoordination.ReporterParticipants,
             participant =>

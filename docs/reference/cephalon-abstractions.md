@@ -8468,6 +8468,175 @@ CdcCaptureExecutionRuntimeSummary Summary { get; }
 
 Gets the latest aggregate runtime summary reported for the execution runtime.
 
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup"></a>
+
+### `CdcCaptureExecutionRuntimeReporterCoordinationRollup`
+
+Describes the grouped reporter-coordination story currently visible for one CDC capture execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeReporterCoordinationRollup
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-data-cdccapturereportercoordinationbreakdownentry-system-collections-generic-ireadonlylist-cephalon-abstractions-data-cdccapturereportercoordinationbreakdownentry"></a>
+
+##### `CdcCaptureExecutionRuntimeReporterCoordinationRollup`
+
+```csharp
+CdcCaptureExecutionRuntimeReporterCoordinationRollup(IReadOnlyList<CdcCaptureReporterCoordinationBreakdownEntry> CoordinationStateBreakdown, IReadOnlyList<CdcCaptureReporterCoordinationBreakdownEntry> DegradedReasonBreakdown)
+```
+
+Describes the grouped reporter-coordination story currently visible for one CDC capture execution runtime.
+
+Parameters:
+- `CoordinationStateBreakdown`: The grouped reporter-coordination states currently visible across the execution runtime's reported CDC captures.
+- `DegradedReasonBreakdown`: The grouped degraded-reason answers currently visible across the execution runtime's reported CDC captures.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-activereportercount"></a>
+
+##### `ActiveReporterCount`
+
+```csharp
+int ActiveReporterCount { get; }
+```
+
+Gets the number of distinct active reporters currently visible across the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-activereporterids"></a>
+
+##### `ActiveReporterIds`
+
+```csharp
+IReadOnlyList<string> ActiveReporterIds { get; set; }
+```
+
+Gets the reporter identities currently visible as active owners on at least one CDC capture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-coordinationstatebreakdown"></a>
+
+##### `CoordinationStateBreakdown`
+
+```csharp
+IReadOnlyList<CdcCaptureReporterCoordinationBreakdownEntry> CoordinationStateBreakdown { get; set; }
+```
+
+The grouped reporter-coordination states currently visible across the execution runtime's reported CDC captures.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-degradedcdccapturecount"></a>
+
+##### `DegradedCdcCaptureCount`
+
+```csharp
+int DegradedCdcCaptureCount { get; }
+```
+
+Gets the number of CDC captures currently reporting degraded coordination posture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-degradedcdccaptureids"></a>
+
+##### `DegradedCdcCaptureIds`
+
+```csharp
+IReadOnlyList<string> DegradedCdcCaptureIds { get; set; }
+```
+
+Gets the CDC capture identifiers whose current coordination posture is degraded.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-degradedreasonbreakdown"></a>
+
+##### `DegradedReasonBreakdown`
+
+```csharp
+IReadOnlyList<CdcCaptureReporterCoordinationBreakdownEntry> DegradedReasonBreakdown { get; set; }
+```
+
+The grouped degraded-reason answers currently visible across the execution runtime's reported CDC captures.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-empty"></a>
+
+##### `Empty`
+
+```csharp
+CdcCaptureExecutionRuntimeReporterCoordinationRollup Empty { get; }
+```
+
+Gets an empty rollup for execution runtimes that have not reported state yet.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-hasdegradedcdccaptures"></a>
+
+##### `HasDegradedCdcCaptures`
+
+```csharp
+bool HasDegradedCdcCaptures { get; }
+```
+
+Gets a value indicating whether any CDC capture currently reports degraded coordination posture for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-hasrejectedreporters"></a>
+
+##### `HasRejectedReporters`
+
+```csharp
+bool HasRejectedReporters { get; }
+```
+
+Gets a value indicating whether the execution runtime currently exposes rejected reporters anywhere in its coordination story.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-hasstandbyreporters"></a>
+
+##### `HasStandbyReporters`
+
+```csharp
+bool HasStandbyReporters { get; }
+```
+
+Gets a value indicating whether the execution runtime currently exposes standby reporters anywhere in its coordination story.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-rejectedreportercount"></a>
+
+##### `RejectedReporterCount`
+
+```csharp
+int RejectedReporterCount { get; }
+```
+
+Gets the number of distinct rejected reporters currently visible across the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-rejectedreporterids"></a>
+
+##### `RejectedReporterIds`
+
+```csharp
+IReadOnlyList<string> RejectedReporterIds { get; set; }
+```
+
+Gets the reporter identities currently visible as rejected participants on at least one CDC capture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-standbyreportercount"></a>
+
+##### `StandbyReporterCount`
+
+```csharp
+int StandbyReporterCount { get; }
+```
+
+Gets the number of distinct standby reporters currently visible across the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-standbyreporterids"></a>
+
+##### `StandbyReporterIds`
+
+```csharp
+IReadOnlyList<string> StandbyReporterIds { get; set; }
+```
+
+Gets the reporter identities currently visible as standby participants on at least one CDC capture.
+
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimesummary"></a>
 
 ### `CdcCaptureExecutionRuntimeSummary`
@@ -8750,6 +8919,16 @@ CdcCaptureReporterCoordinationStatus ReporterCoordination { get; set; }
 ```
 
 Gets the reporter-coordination posture currently visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-reportercoordinationrollup"></a>
+
+##### `ReporterCoordinationRollup`
+
+```csharp
+CdcCaptureExecutionRuntimeReporterCoordinationRollup ReporterCoordinationRollup { get; set; }
+```
+
+Gets the grouped reporter-coordination rollup currently visible across the execution runtime's reported CDC captures.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-reporterleaseexpiresatutc"></a>
 
@@ -9199,6 +9378,55 @@ string State { get; }
 ```
 
 Gets the stable publication-state identifier.
+
+<a id="type-cephalon-abstractions-data-cdccapturereportercoordinationbreakdownentry"></a>
+
+### `CdcCaptureReporterCoordinationBreakdownEntry`
+
+Describes one grouped reporter-coordination bucket visible on an execution-runtime rollup.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureReporterCoordinationBreakdownEntry
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccapturereportercoordinationbreakdownentry-ctor-system-string-system-int32"></a>
+
+##### `CdcCaptureReporterCoordinationBreakdownEntry`
+
+```csharp
+CdcCaptureReporterCoordinationBreakdownEntry(string id, int count)
+```
+
+Creates a new grouped reporter-coordination bucket.
+
+Parameters:
+- `id`: The stable reporter-coordination identifier carried by the bucket, such as a coordination state or degraded reason.
+- `count`: The number of CDC captures currently reporting the bucket.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationbreakdownentry-count"></a>
+
+##### `Count`
+
+```csharp
+int Count { get; }
+```
+
+Gets the number of CDC captures currently reporting the bucket.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationbreakdownentry-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable reporter-coordination identifier carried by the bucket.
 
 <a id="type-cephalon-abstractions-data-cdccapturereportercoordinationissuereasons"></a>
 

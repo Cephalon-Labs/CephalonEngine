@@ -124,6 +124,15 @@ evidence after later accepted reports and drops takeover-only standby participan
 replacement reporter reaffirms its lease, while historical takeover fields remain queryable on the
 same shared runtime story.
 
+That same execution-runtime story now also carries additive operator rollups instead of forcing
+operators to reopen one capture payload and re-aggregate the participant story manually.
+`CdcCaptureExecutionRuntimeSummary.ReporterCoordinationRollup` now publishes stable breakdowns for
+coordination states and degraded reasons together with distinct `ActiveReporterIds`,
+`StandbyReporterIds`, `RejectedReporterIds`, and `DegradedCdcCaptureIds`. The same rollup flows
+through `/engine/cdc-capture-runtimes*` and `snapshot.CdcCaptureExecutionRuntimes`, so runtime
+summaries can answer active-versus-standby-versus-rejected posture directly without inventing a
+second operator index.
+
 That same shared operator story is now directly queryable by reporter, edge node, coordination
 state, and degraded reason as well. `ICdcCaptureRuntimeStateCatalog` plus
 `ICdcCaptureExecutionRuntimeCatalog` now expose `GetByReporterId(...)`, `GetByEdgeNodeId(...)`,
@@ -175,6 +184,13 @@ the shared data baseline provider-native CDC proofs across document, relational 
 logical-streaming, binlog, and redo-log families without inventing a second control plane beside
 `/engine/cdc-captures*`, `/engine/cdc-captures/runtime*`, or `/engine/cdc-capture-runtimes*`.
 
+`Cephalon.Data.Debezium` now proves that the same runtime story also fits external managed
+connectors without faking a Cephalon-hosted execution loop. Its managed-connector descriptors plus
+shared report-sink bridge keep Debezium or Kafka Connect style lifecycle, reconciliation, and
+reporter-coordination truth on the same `/engine/cdc-*`, `/engine/runtime-story`, and `snapshot`
+surfaces, while the shared execution-runtime catalog now rolls that connector posture back into
+typed runtime-level operator summaries instead of inventing a Debezium-only status registry.
+
 When the outbox path already reports downstream runtime truth, the same catalog can conservatively
 merge that dispatch posture into `OutboxDispatchState` and the typed CDC publication answer. That
 keeps `Cephalon.Data` honest: it now owns the shared in-process execution substrate plus the shared
@@ -186,6 +202,7 @@ The engine-owned database-topology baseline is now in place through `Engine:Data
 ## Related docs
 
 - [Cephalon.Abstractions](abstractions.md)
+- [Cephalon.Data.Debezium](data-debezium.md)
 - [Cephalon.Data.EntityFramework](data-entityframework.md)
 - [Cephalon.Data.MySql](data-mysql.md)
 - [Cephalon.Data.Oracle](data-oracle.md)

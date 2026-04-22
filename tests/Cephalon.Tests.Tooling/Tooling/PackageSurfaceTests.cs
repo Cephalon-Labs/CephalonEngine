@@ -168,6 +168,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionAcknowledgement),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionBindingDescriptor),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeDescriptor),
+            typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeReporterCoordinationRollup),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeSummary),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureDescriptor),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionResult),
@@ -186,6 +187,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureLagStatus),
             typeof(global::Cephalon.Abstractions.Data.CdcCapturePublicationStates),
             typeof(global::Cephalon.Abstractions.Data.CdcCapturePublicationStatus),
+            typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterCoordinationBreakdownEntry),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterCoordinationIssueReasons),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterParticipantRoles),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterParticipantStatus),
@@ -2707,6 +2709,8 @@ public sealed class PackageSurfaceTests
             .GetProperty("ObservationFreshness", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeSummary)
             .GetProperty("ReporterCoordination", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeSummary)
+            .GetProperty("ReporterCoordinationRollup", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionBindingDescriptor)
             .GetProperty("ExecutionTopology", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionBindingDescriptor)
@@ -2851,6 +2855,22 @@ public sealed class PackageSurfaceTests
             .GetProperty("HasStandbyReporters", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterCoordinationStatus)
             .GetProperty("HasRejectedReporters", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterCoordinationBreakdownEntry)
+            .GetProperty("Id", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterCoordinationBreakdownEntry)
+            .GetProperty("Count", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeReporterCoordinationRollup)
+            .GetProperty("CoordinationStateBreakdown", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeReporterCoordinationRollup)
+            .GetProperty("DegradedReasonBreakdown", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeReporterCoordinationRollup)
+            .GetProperty("ActiveReporterIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeReporterCoordinationRollup)
+            .GetProperty("StandbyReporterIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeReporterCoordinationRollup)
+            .GetProperty("RejectedReporterIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeReporterCoordinationRollup)
+            .GetProperty("DegradedCdcCaptureIds", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureRuntimeState)
             .GetProperty("OutboxDispatchState", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureRuntimeState)

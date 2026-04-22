@@ -147,6 +147,7 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             ObservationFreshness: AggregateObservationFreshness(matchingStates))
         {
             ReporterCoordination = latestState.ReporterCoordination,
+            ReporterCoordinationRollup = CreateReporterCoordinationRollup(matchingStates),
             LastReporterId = latestState.LastReporterId,
             ActiveReporterId = activeReporterId,
             ReporterLeaseExpiresAtUtc = ResolveActiveReporterLeaseExpiry(matchingStates, activeReporterId),
@@ -269,6 +270,71 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             CdcCaptureFreshnessStates.Mixed,
             freshUntilUtc: earliestFreshExpiry,
             description: "CDC capture observations owned by the execution runtime do not currently share the same freshness posture.");
+    }
+
+    private static CdcCaptureExecutionRuntimeReporterCoordinationRollup CreateReporterCoordinationRollup(
+        IReadOnlyList<CdcCaptureRuntimeState> matchingStates)
+    {
+        if (matchingStates.Count == 0)
+        {
+            return CdcCaptureExecutionRuntimeReporterCoordinationRollup.Empty;
+        }
+
+        return new CdcCaptureExecutionRuntimeReporterCoordinationRollup(
+            CoordinationStateBreakdown: CreateReporterCoordinationBreakdown(
+                matchingStates.Select(static state => state.ReporterCoordination.State),
+                CdcCaptureReporterCoordinationStates.Unknown),
+            DegradedReasonBreakdown: CreateReporterCoordinationBreakdown(
+                matchingStates.Select(static state => state.ReporterCoordination.DegradedReason),
+                CdcCaptureReporterCoordinationIssueReasons.None))
+        {
+            ActiveReporterIds = GetReporterIdsByRole(
+                matchingStates,
+                CdcCaptureReporterParticipantRoles.Active),
+            StandbyReporterIds = GetReporterIdsByRole(
+                matchingStates,
+                CdcCaptureReporterParticipantRoles.Standby),
+            RejectedReporterIds = GetReporterIdsByRole(
+                matchingStates,
+                CdcCaptureReporterParticipantRoles.Rejected),
+            DegradedCdcCaptureIds = matchingStates
+                .Where(static state => state.HasReporterCoordinationIssue)
+                .Select(static state => state.CdcCaptureId)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(static cdcCaptureId => cdcCaptureId, StringComparer.OrdinalIgnoreCase)
+                .ToArray()
+        };
+    }
+
+    private static CdcCaptureReporterCoordinationBreakdownEntry[] CreateReporterCoordinationBreakdown(
+        IEnumerable<string?> values,
+        string fallbackId)
+    {
+        ArgumentNullException.ThrowIfNull(values);
+        ArgumentException.ThrowIfNullOrWhiteSpace(fallbackId);
+
+        return values
+            .Select(value => string.IsNullOrWhiteSpace(value) ? fallbackId.Trim() : value.Trim())
+            .GroupBy(static value => value, StringComparer.OrdinalIgnoreCase)
+            .Select(static group => new CdcCaptureReporterCoordinationBreakdownEntry(group.Key, group.Count()))
+            .OrderBy(static item => item.Id, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+    }
+
+    private static string[] GetReporterIdsByRole(
+        IReadOnlyList<CdcCaptureRuntimeState> matchingStates,
+        string role)
+    {
+        ArgumentNullException.ThrowIfNull(matchingStates);
+        ArgumentException.ThrowIfNullOrWhiteSpace(role);
+
+        return matchingStates
+            .SelectMany(static state => state.ReporterCoordination.ReporterParticipants)
+            .Where(participant => string.Equals(participant.Role, role, StringComparison.OrdinalIgnoreCase))
+            .Select(static participant => participant.ReporterId)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static reporterId => reporterId, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
     }
 
     private string[] ResolveCaptureIds(string executionRuntimeId)

@@ -175,6 +175,7 @@ The `ENG-165` follow-through keeps lifecycle truth additive over the shared repo
 - runtime reports can now include raw Debezium-facing keys such as `connectorState`, `reportedTaskIds`, `activeTaskIds`, `failedTaskIds`, `pausedTaskIds`, `restartingTaskIds`, `taskStateSummary`, `rebalanceState`, `connectorGeneration`, and `workerId`
 - the Debezium report sink now normalizes those raw values into stable `debeziumConnectorLifecycleState`, `debeziumTaskReconciliationState`, `debeziumReconciliationState`, `debeziumReconciliationReason`, and additive task-summary metadata on the shared capture runtime-state catalog
 - the shared execution-runtime catalog now also promotes runtime-scoped Debezium reconciliation metadata back onto `/engine/cdc-capture-runtimes*` and `snapshot.CdcCaptureExecutionRuntimes`, so operators do not need to re-open one capture payload just to understand the connector's latest reported lifecycle posture
+- that same shared execution-runtime catalog now also derives `ReporterCoordinationRollup` on `CdcCaptureExecutionRuntimeSummary`, so Debezium-managed runtimes can answer active versus standby versus rejected reporter posture, degraded-capture ids, and coordination-state or degraded-reason breakdowns directly through `/engine/cdc-capture-runtimes*` and `snapshot.CdcCaptureExecutionRuntimes` without a second Debezium rollup surface
 
 ## Not shipped in this slice
 
