@@ -30,6 +30,13 @@ public sealed class PostgresDataCdcHostingTests
         batch.Metadata["publicationName"] = "orders_publication";
         batch.Metadata["slotName"] = "orders_slot";
         batch.Metadata["replicationCheckpointSource"] = "slot-confirmed-flush-lsn";
+        batch.Metadata["publicationState"] = "includes-table";
+        batch.Metadata["slotLifecycleState"] = "ready";
+        batch.Metadata["slotLifecycleAction"] = "reuse";
+        batch.Metadata["slotResumeMode"] = "slot-confirmed-flush-lsn";
+        batch.Metadata["slotRestartLsn"] = "0/16B6D80";
+        batch.Metadata["slotConfirmedFlushLsn"] = "0/16B6E00";
+        batch.Metadata["slotWalStatus"] = "reserved";
         batch.Changes.Add(new PostgresLogicalReplicationTestChange
         {
             CommitLsn = "0/16B6E00",
@@ -76,6 +83,7 @@ public sealed class PostgresDataCdcHostingTests
                         ChannelId = "orders",
                         MessageType = "orders.postgresql.changed",
                         InitialPosition = "slot-consistent-point",
+                        RecreateSlotIfInvalidated = true,
                         PollingIntervalSeconds = 1,
                         MaxChangesPerRead = 64,
                         MaxAwaitTimeSeconds = 5
@@ -144,6 +152,12 @@ public sealed class PostgresDataCdcHostingTests
             Assert.Equal("orders_publication", cdcState.Metadata["publicationName"]);
             Assert.Equal("orders_slot", cdcState.Metadata["slotName"]);
             Assert.Equal("slot-confirmed-flush-lsn", cdcState.Metadata["replicationCheckpointSource"]);
+            Assert.Equal("ready", cdcState.Metadata["slotLifecycleState"]);
+            Assert.Equal("reuse", cdcState.Metadata["slotLifecycleAction"]);
+            Assert.Equal("slot-confirmed-flush-lsn", cdcState.Metadata["slotResumeMode"]);
+            Assert.Equal("0/16B6D80", cdcState.Metadata["slotRestartLsn"]);
+            Assert.Equal("0/16B6E00", cdcState.Metadata["slotConfirmedFlushLsn"]);
+            Assert.Equal("reserved", cdcState.Metadata["slotWalStatus"]);
 
             var hostedExecution = Assert.Single(hostedExecutions!, item => item.Id == PostgresRuntimeId);
             Assert.Equal("postgres-data", hostedExecution.SourceModuleId);
@@ -160,6 +174,117 @@ public sealed class PostgresDataCdcHostingTests
                 item.LastOutcome == CdcCaptureRuntimeOutcomes.Captured);
             Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == PostgresRuntimeId &&
                 item.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured);
+        }
+        finally
+        {
+            await app.StopAsync();
+        }
+    }
+
+    [Fact]
+    public async Task MapCephalonExposesPostgresLifecycleFailureMetadata()
+    {
+        var executionState = new TestCdcExecutionState();
+        var harness = new PostgresDataCdcTestHarness();
+        var batch = new PostgresLogicalReplicationTestBatch
+        {
+            FailureKind = "slot-invalidated",
+            FailureMessage = "PostgreSQL replication slot 'orders_slot' is no longer usable because invalidation reason 'wal_removed' WAL status 'lost'. Set RecreateSlotIfInvalidated to true or recreate the slot before starting the Cephalon PostgreSQL CDC runner."
+        };
+        batch.Metadata["publicationName"] = "orders_publication";
+        batch.Metadata["slotName"] = "orders_slot";
+        batch.Metadata["replicationCheckpointSource"] = "slot-confirmed-flush-lsn";
+        batch.Metadata["publicationState"] = "includes-table";
+        batch.Metadata["slotExists"] = "true";
+        batch.Metadata["slotLifecycleState"] = "invalidated";
+        batch.Metadata["slotLifecycleAction"] = "fail";
+        batch.Metadata["slotResumeMode"] = "slot-confirmed-flush-lsn";
+        batch.Metadata["slotRestartLsn"] = "0/16B6D80";
+        batch.Metadata["slotConfirmedFlushLsn"] = "0/16B6E00";
+        batch.Metadata["slotWalStatus"] = "lost";
+        batch.Metadata["slotInvalidationReason"] = "wal_removed";
+        harness.EnqueueBatch(batch);
+
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Services.AddSingleton(executionState);
+        builder.Services.AddPostgresDataCdcTestHarness(harness);
+        builder.Services.AddScoped<IOutbox, TestOutbox>();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularVerticalSlice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Patterns:0"] = "CQRS";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new PlatformEventingTestModule());
+            cephalon.AddData(options =>
+            {
+                options.EnableCdcExecution = true;
+                options.CdcPollingIntervalSeconds = 600;
+            });
+            cephalon.AddPostgresData(
+                connectionString: "Host=localhost;Username=postgres;Password=postgres;Database=cephalon",
+                databaseName: "cephalon",
+                configure: options =>
+                {
+                    options.CdcCaptures.Add(new PostgresLogicalReplicationCaptureOptions
+                    {
+                        Id = CaptureId,
+                        DisplayName = "PostgreSQL Orders CDC",
+                        SourceModuleId = "platform",
+                        PublicationName = "orders_publication",
+                        SlotName = "orders_slot",
+                        TableSchema = "public",
+                        TableName = "orders",
+                        OutboxId = "tenant-event-outbox",
+                        ChannelId = "orders",
+                        MessageType = "orders.postgresql.changed",
+                        InitialPosition = "slot-consistent-point",
+                        RecreateSlotIfInvalidated = false,
+                        PollingIntervalSeconds = 1,
+                        MaxChangesPerRead = 64,
+                        MaxAwaitTimeSeconds = 5
+                    });
+                });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+        await app.StartAsync();
+
+        try
+        {
+            var client = app.GetTestClient();
+            var cdcState = await WaitForAsync(
+                () => client.GetFromJsonAsync<CdcCaptureRuntimeState>($"/engine/cdc-captures/runtime/{CaptureId}")!,
+                static state => state is not null && state.LastOutcome == CdcCaptureRuntimeOutcomes.Failed,
+                TimeSpan.FromSeconds(10));
+
+            var postgresRuntime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>($"/engine/cdc-capture-runtimes/{PostgresRuntimeId}");
+            var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+            Assert.NotNull(cdcState);
+            Assert.Equal("slot-invalidated", cdcState.Metadata["failureKind"]);
+            Assert.Equal("invalidated", cdcState.Metadata["slotLifecycleState"]);
+            Assert.Equal("fail", cdcState.Metadata["slotLifecycleAction"]);
+            Assert.Equal("slot-confirmed-flush-lsn", cdcState.Metadata["slotResumeMode"]);
+            Assert.Equal("0/16B6D80", cdcState.Metadata["slotRestartLsn"]);
+            Assert.Equal("0/16B6E00", cdcState.Metadata["slotConfirmedFlushLsn"]);
+            Assert.Equal("lost", cdcState.Metadata["slotWalStatus"]);
+            Assert.Equal("wal_removed", cdcState.Metadata["slotInvalidationReason"]);
+            Assert.Equal("false", cdcState.Metadata["recreateSlotIfInvalidated"]);
+            Assert.Equal("fail-on-invalidated-slot", cdcState.Metadata["slotLifecyclePolicy"]);
+
+            Assert.NotNull(postgresRuntime);
+            Assert.True(postgresRuntime.Summary.HasReports);
+            Assert.Equal(CdcCaptureRuntimeOutcomes.Failed, postgresRuntime.Summary.LastOutcome);
+            Assert.Equal(CaptureId, postgresRuntime.Summary.LastCdcCaptureId);
+
+            Assert.NotNull(snapshot);
+            Assert.Contains(snapshot.CdcCaptureStates, item => item.CdcCaptureId == CaptureId &&
+                item.LastOutcome == CdcCaptureRuntimeOutcomes.Failed &&
+                item.Metadata.TryGetValue("failureKind", out var failureKind) &&
+                string.Equals(failureKind, "slot-invalidated", StringComparison.OrdinalIgnoreCase));
         }
         finally
         {

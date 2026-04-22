@@ -32,6 +32,10 @@ public sealed class PostgresLogicalReplicationTestBatch
 
     public bool HasMoreChanges { get; set; }
 
+    public string? FailureKind { get; set; }
+
+    public string? FailureMessage { get; set; }
+
     public IDictionary<string, string> Metadata { get; } =
         new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 }
@@ -142,6 +146,16 @@ public sealed class PostgresDataCdcTestHarness
             cancellationToken.ThrowIfCancellationRequested();
 
             var batch = owner.DequeueBatch();
+            if (!string.IsNullOrWhiteSpace(batch.FailureKind))
+            {
+                throw new PostgresLogicalReplicationCaptureException(
+                    string.IsNullOrWhiteSpace(batch.FailureMessage)
+                        ? $"The PostgreSQL CDC test harness raised '{batch.FailureKind}'."
+                        : batch.FailureMessage.Trim(),
+                    batch.FailureKind.Trim(),
+                    new Dictionary<string, string>(batch.Metadata, StringComparer.OrdinalIgnoreCase));
+            }
+
             if (batch.Changes.Count == 0)
             {
                 return Task.FromResult(PostgresLogicalReplicationReadBatch.Idle(

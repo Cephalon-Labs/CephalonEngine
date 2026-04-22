@@ -9601,6 +9601,9 @@ Browse the published API surface by public member.
 - [RecordAsync](cephalon-audit.md#member-m-cephalon-audit-services-iauditrecorder-recordasync-cephalon-audit-services-auditrecordrequest-system-threading-cancellationtoken): `Methods` on `IAuditRecorder` in `Cephalon.Audit.Services` (`Cephalon.Audit`) [Browse](browse.html?q=RecordAsync&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Services&scope=members)
   - Records one audit entry and returns the normalized entry that was written.
   - `ValueTask<AuditEntry> RecordAsync(AuditRecordRequest request, CancellationToken cancellationToken)`
+- [RecreateSlotIfInvalidated](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-recreateslotifinvalidated): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=RecreateSlotIfInvalidated&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
+  - Gets or sets a value indicating whether the pack should drop and recreate the logical replication slot when it exists but is no longer usable.
+  - `bool RecreateSlotIfInvalidated { get; set; }`
 - [RedactedFieldNames](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions-redactedfieldnames): `Properties` on `HttpRequestResponseLoggingOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=RedactedFieldNames&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Gets or sets the field names that should be treated as sensitive when request and response content is logged.
   - `IReadOnlyList<string> RedactedFieldNames { get; set; }`

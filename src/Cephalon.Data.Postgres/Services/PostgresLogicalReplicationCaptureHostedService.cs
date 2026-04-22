@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Reflection;
 using Cephalon.Abstractions.Data;
 using Cephalon.Data.Postgres.Configuration;
 using Cephalon.Data.Services;
@@ -119,17 +120,25 @@ internal sealed class PostgresLogicalReplicationCaptureHostedService(
             {
                 if (reporter is not null && descriptor is not null)
                 {
+                    var failure = ResolveCaptureFailure(exception);
+                    var failureKind = failure is not null
+                        ? failure.FailureKind
+                        : "capture";
+                    var additionalMetadata = failure is not null
+                        ? failure.Metadata
+                        : null;
                     await ReportFailureAsync(
                             reporter,
                             descriptor,
                             captureOptions,
                             outbox,
                             exception.Message,
-                            "capture",
+                            failureKind,
                             null,
                             null,
                             0,
-                            cancellationToken)
+                            cancellationToken,
+                            additionalMetadata: additionalMetadata)
                         .ConfigureAwait(false);
                 }
 
@@ -141,6 +150,67 @@ internal sealed class PostgresLogicalReplicationCaptureHostedService(
                     cancellationToken)
                 .ConfigureAwait(false);
         }
+    }
+
+    private static PostgresLogicalReplicationCaptureFailure? ResolveCaptureFailure(Exception exception)
+    {
+        foreach (var current in EnumerateExceptionChain(exception))
+        {
+            if (TryResolveCaptureFailure(current, out var failure))
+            {
+                return failure;
+            }
+        }
+
+        return null;
+    }
+
+    private static IEnumerable<Exception> EnumerateExceptionChain(Exception exception)
+    {
+        for (var current = exception; current is not null; current = current.InnerException)
+        {
+            yield return current;
+        }
+
+        var baseException = exception.GetBaseException();
+        if (!ReferenceEquals(baseException, exception))
+        {
+            yield return baseException;
+        }
+    }
+
+    private static bool TryResolveCaptureFailure(
+        Exception exception,
+        out PostgresLogicalReplicationCaptureFailure? failure)
+    {
+        if (exception is PostgresLogicalReplicationCaptureException direct)
+        {
+            failure = new PostgresLogicalReplicationCaptureFailure(direct.FailureKind, direct.Metadata);
+            return true;
+        }
+
+        const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+        var failureKindProperty = exception.GetType().GetProperty("FailureKind", bindingFlags);
+        if (failureKindProperty?.GetValue(exception) is not string failureKind || string.IsNullOrWhiteSpace(failureKind))
+        {
+            failure = null;
+            return false;
+        }
+
+        IReadOnlyDictionary<string, string>? metadata = null;
+        var metadataProperty = exception.GetType().GetProperty("Metadata", bindingFlags);
+        var metadataValue = metadataProperty?.GetValue(exception);
+        if (metadataValue is IReadOnlyDictionary<string, string> typedMetadata)
+        {
+            metadata = typedMetadata;
+        }
+        else if (metadataValue is IEnumerable<KeyValuePair<string, string>> sequence)
+        {
+            metadata = new Dictionary<string, string>(sequence, StringComparer.OrdinalIgnoreCase);
+        }
+
+        failure = new PostgresLogicalReplicationCaptureFailure(failureKind.Trim(), metadata);
+        return true;
     }
 
     private async Task RunIterationAsync(
@@ -367,6 +437,11 @@ internal sealed class PostgresLogicalReplicationCaptureHostedService(
             ["messageType"] = captureOptions.MessageType.Trim(),
             ["initialPosition"] = captureOptions.InitialPosition.Trim(),
             ["createSlotIfMissing"] = captureOptions.CreateSlotIfMissing ? "true" : "false",
+            ["recreateSlotIfInvalidated"] = captureOptions.RecreateSlotIfInvalidated ? "true" : "false",
+            ["slotLifecyclePolicy"] = captureOptions.RecreateSlotIfInvalidated
+                ? "recreate-invalidated-slot"
+                : "fail-on-invalidated-slot",
+            ["slotResumeMode"] = "slot-confirmed-flush-lsn",
             ["maxChangesPerRead"] = captureOptions.MaxChangesPerRead.ToString(CultureInfo.InvariantCulture),
             ["maxAwaitTimeSeconds"] = captureOptions.MaxAwaitTimeSeconds.ToString(CultureInfo.InvariantCulture),
             ["pollingIntervalSeconds"] = captureOptions.PollingIntervalSeconds.ToString(CultureInfo.InvariantCulture),
@@ -441,4 +516,8 @@ internal sealed class PostgresLogicalReplicationCaptureHostedService(
 
     private static void LogCaptureLoopFailure(ILogger logger, string cdcCaptureId, Exception exception) =>
         LogCaptureLoopFailureMessage(logger, cdcCaptureId, exception);
+
+    private sealed record PostgresLogicalReplicationCaptureFailure(
+        string FailureKind,
+        IReadOnlyDictionary<string, string>? Metadata);
 }

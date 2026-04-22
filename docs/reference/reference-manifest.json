@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-21T23:28:12.2282001+00:00",
+  "GeneratedAtUtc": "2026-04-22T04:56:15.6882115+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -9849,7 +9849,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 21,
+        "Properties": 22,
         "Methods": 0
       }
     },
@@ -47269,6 +47269,17 @@
       "AnchorId": "member-m-cephalon-audit-services-iauditrecorder-recordasync-cephalon-audit-services-auditrecordrequest-system-threading-cancellationtoken",
       "Signature": "ValueTask\u003CAuditEntry\u003E RecordAsync(AuditRecordRequest request, CancellationToken cancellationToken)",
       "Summary": "Records one audit entry and returns the normalized entry that was written."
+    },
+    {
+      "DisplayName": "RecreateSlotIfInvalidated",
+      "Category": "Properties",
+      "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Postgres.Configuration",
+      "AssemblyName": "Cephalon.Data.Postgres",
+      "FileName": "cephalon-data-postgres.md",
+      "AnchorId": "member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-recreateslotifinvalidated",
+      "Signature": "bool RecreateSlotIfInvalidated { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the pack should drop and recreate the logical replication slot when it exists but is no longer usable."
     },
     {
       "DisplayName": "RedactedFieldNames",

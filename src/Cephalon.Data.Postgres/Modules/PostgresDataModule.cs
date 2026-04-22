@@ -120,6 +120,11 @@ internal sealed class PostgresDataModule(PostgresDataOptions options)
                 ["messageType"] = capture.MessageType.Trim(),
                 ["initialPosition"] = capture.InitialPosition.Trim(),
                 ["createSlotIfMissing"] = capture.CreateSlotIfMissing ? "true" : "false",
+                ["recreateSlotIfInvalidated"] = capture.RecreateSlotIfInvalidated ? "true" : "false",
+                ["slotLifecyclePolicy"] = capture.RecreateSlotIfInvalidated
+                    ? "recreate-invalidated-slot"
+                    : "fail-on-invalidated-slot",
+                ["slotResumeMode"] = "slot-confirmed-flush-lsn",
                 ["maxChangesPerRead"] = capture.MaxChangesPerRead.ToString(CultureInfo.InvariantCulture),
                 ["maxAwaitTimeSeconds"] = capture.MaxAwaitTimeSeconds.ToString(CultureInfo.InvariantCulture),
                 ["pollingIntervalSeconds"] = capture.PollingIntervalSeconds.ToString(CultureInfo.InvariantCulture),

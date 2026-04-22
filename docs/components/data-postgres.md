@@ -7,7 +7,7 @@
 - contributes configured provider-native PostgreSQL logical-replication captures through `PostgresLogicalReplicationCaptureOptions` and keeps those descriptors on the shared `/engine/cdc-captures*` catalog with `provider = "postgresql"` and `mode = "logical-replication"`
 - publishes capability metadata `data.postgresql`, `data.relational-store`, and `data.cdc.postgresql` introspectable at runtime through the manifest
 - publishes the provider-native CDC execution graph `postgresql-logical-replication-capture-flow`, hosted execution `postgresql-logical-replication-capture-pump`, and execution runtime `postgresql-logical-replication-capture-pump` when PostgreSQL CDC captures are configured
-- runs a provider-native hosted service that validates publication/table ownership, streams one bounded logical-replication batch per configured capture, stages outbox publications, confirms replication-slot progress only after outbox stage success, and reports runtime posture through the shared `ICdcCaptureRuntimeReporter` surface
+- runs a provider-native hosted service that validates publication/table ownership, classifies logical-replication slot lifecycle posture, optionally recreates inactive invalidated slots when configured, streams one bounded logical-replication batch per configured capture, stages outbox publications, confirms replication-slot progress only after outbox stage success, and reports runtime posture through the shared `ICdcCaptureRuntimeReporter` surface
 - keeps durable PostgreSQL CDC checkpoints on the logical replication slot itself, using confirmed flush position as the provider-native acknowledgement boundary instead of a Cephalon-managed checkpoint table
 - preserves authored capture ownership through `CdcCaptureDescriptor.SourceModuleId` while surfacing `metadata.contributorModuleId = "postgres-data"` when the provider pack contributes the descriptor on behalf of another module
 
@@ -101,6 +101,7 @@ engine.AddPostgresData(options =>
             "MessageType": "OrdersChanged",
             "InitialPosition": "slot-consistent-point",
             "CreateSlotIfMissing": true,
+            "RecreateSlotIfInvalidated": false,
             "MaxChangesPerRead": 128,
             "MaxAwaitTimeSeconds": 5,
             "PollingIntervalSeconds": 5
@@ -142,6 +143,7 @@ engine.AddPostgresData(options =>
 | `EventFormat` | `string` | `"postgresql-logical-replication-event"` | Operator-facing event format projected on the descriptor |
 | `InitialPosition` | `string` | `"slot-consistent-point"` | Initial position when the slot must be created; supported values are `slot-consistent-point` and `latest-available` |
 | `CreateSlotIfMissing` | `bool` | `true` | Creates the logical replication slot when it does not exist yet |
+| `RecreateSlotIfInvalidated` | `bool` | `false` | Drops and recreates the logical replication slot when PostgreSQL reports that the existing slot is invalidated and inactive |
 | `MaxChangesPerRead` | `int` | `128` | Maximum number of captured changes to stage during one provider-native iteration |
 | `MaxAwaitTimeSeconds` | `int` | `5` | Maximum number of seconds to await committed WAL messages during one provider-native iteration |
 | `PollingIntervalSeconds` | `int` | `5` | Polling interval in seconds for one provider-native loop iteration |
@@ -156,10 +158,10 @@ When `CdcCaptures` are configured:
 - each capture is published through `/engine/cdc-captures*` with `provider = "postgresql"`, `mode = "logical-replication"`, and an `executionBinding` whose authored and requested runtime id is `postgresql-logical-replication-capture-pump`
 - the execution runtime is published through `/engine/cdc-capture-runtimes*` and `snapshot.CdcCaptureExecutionRuntimes` with `executionOwnership = host-managed`, `executionTopology = provider-native`, and `acknowledgementMode = provider-native`
 - the same runtime publishes through `/engine/execution-graphs`, `/engine/hosted-executions`, `/engine/runtime-story`, and `snapshot` under `postgresql-logical-replication-capture-flow` plus `postgresql-logical-replication-capture-pump`
-- the hosted runner validates that the declared publication publishes the declared table, optionally creates the logical replication slot, reads one bounded committed pgoutput batch per iteration, stages one outbox message per captured change, and only confirms slot progress after the linked outbox accepted the batch
+- the hosted runner validates that the declared publication publishes the declared table, validates slot type/plugin/database ownership, optionally creates the logical replication slot, can drop and recreate an inactive invalidated slot when `RecreateSlotIfInvalidated = true`, reads one bounded committed pgoutput batch per iteration, stages one outbox message per captured change, and only confirms slot progress after the linked outbox accepted the batch
 - each staged outbox message uses deterministic id `{commitLsn}:{ordinal}`, content type `application/vnd.cephalon.postgresql.logical-replication+json`, headers for `provider`, `cdcCaptureId`, `databaseName`, `schemaName`, `tableName`, `publicationName`, `slotName`, and `operation`, plus metadata for `sourceId`, `eventFormat`, and `checkpointToken`
-- the runtime-state surface keeps typed freshness, lag, pending-publication posture, checkpoint, change id, last operation type, reporter metadata, and failure-kind metadata on the same `/engine/cdc-captures/runtime*` catalog instead of inventing a PostgreSQL-specific monitor
-- durable checkpoint tokens are serialized as `slotName|commitLsn|transactionEndLsn`, and runtime metadata keeps `replicationCheckpointSource = "slot-confirmed-flush-lsn"` so operators can see that PostgreSQL progress is grounded in slot acknowledgement instead of a Cephalon-managed checkpoint table
+- the runtime-state surface keeps typed freshness, lag, pending-publication posture, checkpoint, change id, last operation type, reporter metadata, failure-kind metadata, and slot lifecycle metadata such as `slotLifecycleState`, `slotLifecycleAction`, `slotResumeMode`, `slotRestartLsn`, `slotConfirmedFlushLsn`, `slotWalStatus`, and `slotInvalidationReason` on the same `/engine/cdc-captures/runtime*` catalog instead of inventing a PostgreSQL-specific monitor
+- durable checkpoint tokens are serialized as `slotName|commitLsn|transactionEndLsn`, runtime metadata keeps `replicationCheckpointSource = "slot-confirmed-flush-lsn"`, and restart or resume posture stays grounded in the slot's confirmed flush position instead of a Cephalon-managed checkpoint table
 
 ## Runtime capabilities
 
@@ -178,10 +180,10 @@ This pack intentionally still does not claim:
 - `IReadStore` / `IWriteStore` dispatch backed directly by PostgreSQL
 - Entity Framework or `DbContext` integration
 - PostgreSQL-backed `IOutbox`, `IInbox`, or event-dispatch storage
-- publication or table creation/migration orchestration beyond validating one declared publication/table path
+- publication or table creation/migration orchestration beyond validating one declared publication/table path and optionally recreating an inactive invalidated slot
 - logical decoding plugins beyond the shipped `pgoutput` path
 - multi-table slot orchestration, fan-out, or low-code generation beyond one configured capture per table path
-- provider-native failover, lease, or external edge execution ownership beyond the shared `/engine/cdc-*` topology surfaces
+- automatic slot failover, multi-consumer lease orchestration, or external edge execution ownership beyond the shared `/engine/cdc-*` topology surfaces
 
 These remain later slices so the current provider claim stays truthful.
 

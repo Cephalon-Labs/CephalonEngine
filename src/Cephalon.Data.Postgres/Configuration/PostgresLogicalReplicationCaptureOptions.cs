@@ -84,6 +84,14 @@ public sealed class PostgresLogicalReplicationCaptureOptions
     public bool CreateSlotIfMissing { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a value indicating whether the pack should drop and recreate the logical replication slot when it exists but is no longer usable.
+    /// </summary>
+    /// <remarks>
+    /// This only applies when the slot is inactive. Active slots still fail fast because PostgreSQL allows only one logical decoding consumer at a time.
+    /// </remarks>
+    public bool RecreateSlotIfInvalidated { get; set; }
+
+    /// <summary>
     /// Gets or sets the maximum number of committed logical-replication changes to stage during one iteration.
     /// </summary>
     public int MaxChangesPerRead { get; set; } = 128;

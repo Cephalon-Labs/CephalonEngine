@@ -266,6 +266,18 @@ string PublicationName { get; set; }
 
 Gets or sets the PostgreSQL publication that should emit the tracked table changes.
 
+<a id="member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-recreateslotifinvalidated"></a>
+
+##### `RecreateSlotIfInvalidated`
+
+```csharp
+bool RecreateSlotIfInvalidated { get; set; }
+```
+
+Gets or sets a value indicating whether the pack should drop and recreate the logical replication slot when it exists but is no longer usable.
+
+Remarks: This only applies when the slot is inactive. Active slots still fail fast because PostgreSQL allows only one logical decoding consumer at a time.
+
 <a id="member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-resourceids"></a>
 
 ##### `ResourceIds`

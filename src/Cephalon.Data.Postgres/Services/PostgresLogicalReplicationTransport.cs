@@ -34,6 +34,7 @@ internal sealed class PostgresLogicalReplicationTransport(
         ArgumentNullException.ThrowIfNull(descriptor);
 
         ValidateCaptureOptions(captureOptions);
+        var expectedDatabaseName = ResolveExpectedDatabaseName(descriptor);
 
         lock (pendingGate)
         {
@@ -47,8 +48,15 @@ internal sealed class PostgresLogicalReplicationTransport(
         var publicationStatus = await ReadPublicationAndSlotStatusAsync(captureOptions, cancellationToken).ConfigureAwait(false);
         if (!publicationStatus.PublicationIncludesTable)
         {
-            throw new InvalidOperationException(
-                $"PostgreSQL publication '{captureOptions.PublicationName}' does not publish table '{captureOptions.TableSchema}.{captureOptions.TableName}'. Configure publication ownership before starting the Cephalon PostgreSQL CDC runner.");
+            throw new PostgresLogicalReplicationCaptureException(
+                $"PostgreSQL publication '{captureOptions.PublicationName}' does not publish table '{captureOptions.TableSchema}.{captureOptions.TableName}'. Configure publication ownership before starting the Cephalon PostgreSQL CDC runner.",
+                "publication-table-missing",
+                MergeMetadata(
+                    publicationStatus.ToMetadata(captureOptions, expectedDatabaseName),
+                    new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        ["slotLifecycleAction"] = "none"
+                    }));
         }
 
         LogicalReplicationConnection? replicationConnection = null;
@@ -64,12 +72,16 @@ internal sealed class PostgresLogicalReplicationTransport(
                     replicationConnection,
                     captureOptions,
                     descriptor.Id,
-                    publicationStatus.SlotExists,
+                    expectedDatabaseName,
+                    publicationStatus,
                     cancellationToken)
                 .ConfigureAwait(false);
+            var batchMetadata = MergeMetadata(
+                publicationStatus.ToMetadata(captureOptions, expectedDatabaseName),
+                slot.Metadata);
 
             var stream = replicationConnection.StartReplication(
-                slot,
+                slot.Slot,
                 new PgOutputReplicationOptions(
                     captureOptions.PublicationName.Trim(),
                     PgOutputProtocolVersion.V1,
@@ -262,12 +274,7 @@ internal sealed class PostgresLogicalReplicationTransport(
                             return new PostgresLogicalReplicationReadBatch(
                                 capturedChanges,
                                 hasMoreChanges,
-                                new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-                                {
-                                    ["publicationName"] = captureOptions.PublicationName.Trim(),
-                                    ["slotName"] = captureOptions.SlotName.Trim(),
-                                    ["replicationCheckpointSource"] = "slot-confirmed-flush-lsn"
-                                });
+                                new Dictionary<string, string>(batchMetadata, StringComparer.OrdinalIgnoreCase));
                         }
 
                         pendingSession = new PendingReplicationSession(
@@ -283,22 +290,12 @@ internal sealed class PostgresLogicalReplicationTransport(
                         return new PostgresLogicalReplicationReadBatch(
                             capturedChanges,
                             hasMoreChanges,
-                            new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-                            {
-                                ["publicationName"] = captureOptions.PublicationName.Trim(),
-                                ["slotName"] = captureOptions.SlotName.Trim(),
-                                ["replicationCheckpointSource"] = "slot-confirmed-flush-lsn"
-                            });
+                            new Dictionary<string, string>(batchMetadata, StringComparer.OrdinalIgnoreCase));
                     }
                 }
             }
 
-            return PostgresLogicalReplicationReadBatch.Idle(new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-            {
-                ["publicationName"] = captureOptions.PublicationName.Trim(),
-                ["slotName"] = captureOptions.SlotName.Trim(),
-                ["replicationCheckpointSource"] = "slot-confirmed-flush-lsn"
-            });
+            return PostgresLogicalReplicationReadBatch.Idle(new Dictionary<string, string>(batchMetadata, StringComparer.OrdinalIgnoreCase));
         }
         finally
         {
@@ -399,55 +396,218 @@ SELECT EXISTS (
 
         await using var slotCommand = new NpgsqlCommand(
             """
-SELECT plugin
+SELECT *
 FROM pg_catalog.pg_replication_slots
 WHERE slot_name = @slotName;
 """,
             connection);
         slotCommand.Parameters.AddWithValue("slotName", captureOptions.SlotName.Trim());
-        var slotPlugin = await slotCommand.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) as string;
-        if (slotPlugin is not null &&
-            !string.Equals(slotPlugin, "pgoutput", StringComparison.OrdinalIgnoreCase))
+        await using var slotReader = await slotCommand.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        if (!await slotReader.ReadAsync(cancellationToken).ConfigureAwait(false))
         {
-            throw new InvalidOperationException(
-                $"PostgreSQL replication slot '{captureOptions.SlotName}' already exists, but it uses plugin '{slotPlugin}' instead of 'pgoutput'.");
+            return PublicationAndSlotStatus.Missing(publicationIncludesTable);
         }
 
-        return new PublicationAndSlotStatus(publicationIncludesTable, slotPlugin is not null);
+        var ordinals = Enumerable.Range(0, slotReader.FieldCount)
+            .ToDictionary(slotReader.GetName, static index => index, StringComparer.OrdinalIgnoreCase);
+
+        return new PublicationAndSlotStatus(
+            PublicationIncludesTable: publicationIncludesTable,
+            SlotExists: true,
+            SlotType: ReadString(slotReader, ordinals, "slot_type"),
+            SlotDatabaseName: ReadString(slotReader, ordinals, "database"),
+            SlotPlugin: ReadString(slotReader, ordinals, "plugin"),
+            SlotTemporary: ReadBoolean(slotReader, ordinals, "temporary"),
+            SlotActive: ReadBoolean(slotReader, ordinals, "active"),
+            SlotActivePid: ReadInt32(slotReader, ordinals, "active_pid"),
+            SlotRestartLsn: ReadString(slotReader, ordinals, "restart_lsn"),
+            SlotConfirmedFlushLsn: ReadString(slotReader, ordinals, "confirmed_flush_lsn"),
+            SlotWalStatus: ReadString(slotReader, ordinals, "wal_status"),
+            SlotSafeWalSize: ReadInt64(slotReader, ordinals, "safe_wal_size"),
+            SlotInactiveSinceUtc: ReadDateTimeOffset(slotReader, ordinals, "inactive_since"),
+            SlotConflicting: ReadBoolean(slotReader, ordinals, "conflicting"),
+            SlotInvalidationReason: ReadString(slotReader, ordinals, "invalidation_reason"),
+            SlotFailover: ReadBoolean(slotReader, ordinals, "failover"),
+            SlotSynced: ReadBoolean(slotReader, ordinals, "synced"));
     }
 
-    private async Task<PgOutputReplicationSlot> EnsureReplicationSlotAsync(
+    private async Task<SlotResolution> EnsureReplicationSlotAsync(
         LogicalReplicationConnection connection,
         PostgresLogicalReplicationCaptureOptions captureOptions,
         string cdcCaptureId,
-        bool slotExists,
+        string? expectedDatabaseName,
+        PublicationAndSlotStatus slotStatus,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(connection);
 
         var normalizedInitialPosition = NormalizeInitialPosition(captureOptions.InitialPosition);
-        _ = normalizedInitialPosition;
+        var baseMetadata = slotStatus.ToMetadata(captureOptions, expectedDatabaseName);
 
-        if (slotExists)
+        if (slotStatus.HasTypeMismatch)
         {
-            return new PgOutputReplicationSlot(captureOptions.SlotName.Trim());
+            throw new PostgresLogicalReplicationCaptureException(
+                $"PostgreSQL replication slot '{captureOptions.SlotName}' already exists, but it uses slot type '{slotStatus.SlotType}' instead of the required logical decoding path.",
+                "slot-type-mismatch",
+                MergeMetadata(
+                    baseMetadata,
+                    new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        ["slotLifecycleAction"] = "fail"
+                    }));
+        }
+
+        if (slotStatus.HasPluginMismatch)
+        {
+            throw new PostgresLogicalReplicationCaptureException(
+                $"PostgreSQL replication slot '{captureOptions.SlotName}' already exists, but it uses plugin '{slotStatus.SlotPlugin}' instead of 'pgoutput'.",
+                "slot-plugin-mismatch",
+                MergeMetadata(
+                    baseMetadata,
+                    new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        ["slotLifecycleAction"] = "fail"
+                    }));
+        }
+
+        if (slotStatus.HasDatabaseMismatch(expectedDatabaseName))
+        {
+            throw new PostgresLogicalReplicationCaptureException(
+                $"PostgreSQL replication slot '{captureOptions.SlotName}' belongs to database '{slotStatus.SlotDatabaseName}' instead of '{expectedDatabaseName}'. Recreate the slot against the configured database before starting the Cephalon PostgreSQL CDC runner.",
+                "slot-database-mismatch",
+                MergeMetadata(
+                    baseMetadata,
+                    new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        ["slotLifecycleAction"] = "fail"
+                    }));
+        }
+
+        if (slotStatus.IsSyncedStandbySlot)
+        {
+            throw new PostgresLogicalReplicationCaptureException(
+                $"PostgreSQL replication slot '{captureOptions.SlotName}' is synchronized from a primary server and cannot be used for logical decoding on this standby. Promote a primary-owned slot or switch the Cephalon runner to the writable publisher before resuming capture.",
+                "slot-synced-standby",
+                MergeMetadata(
+                    baseMetadata,
+                    new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        ["slotLifecycleAction"] = "fail"
+                    }));
+        }
+
+        if (slotStatus.SlotActive == true)
+        {
+            throw new PostgresLogicalReplicationCaptureException(
+                slotStatus.SlotActivePid.HasValue
+                    ? $"PostgreSQL replication slot '{captureOptions.SlotName}' is already active on walsender pid {slotStatus.SlotActivePid.Value}. Stop the current consumer before starting the Cephalon PostgreSQL CDC runner."
+                    : $"PostgreSQL replication slot '{captureOptions.SlotName}' is already active. Stop the current consumer before starting the Cephalon PostgreSQL CDC runner.",
+                "slot-active",
+                MergeMetadata(
+                    baseMetadata,
+                    new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        ["slotLifecycleAction"] = "fail"
+                    }));
+        }
+
+        if (slotStatus.IsInvalidated || slotStatus.IsLost)
+        {
+            if (!captureOptions.RecreateSlotIfInvalidated)
+            {
+                throw new PostgresLogicalReplicationCaptureException(
+                    CreateInvalidatedSlotMessage(captureOptions, slotStatus),
+                    slotStatus.IsLost ? "slot-lost" : "slot-invalidated",
+                    MergeMetadata(
+                        baseMetadata,
+                        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                        {
+                            ["slotLifecycleAction"] = "fail"
+                        }));
+            }
+
+            try
+            {
+                await connection.DropReplicationSlot(captureOptions.SlotName.Trim(), false, cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception exception)
+            {
+                throw new PostgresLogicalReplicationCaptureException(
+                    $"PostgreSQL replication slot '{captureOptions.SlotName}' could not be dropped before recreation. Resolve the slot lifecycle conflict and retry the Cephalon PostgreSQL CDC runner.",
+                    "slot-recreate",
+                    MergeMetadata(
+                        baseMetadata,
+                        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                        {
+                            ["slotLifecycleAction"] = "recreate"
+                        }),
+                    exception);
+            }
+
+            var recreatedSlot = await CreateReplicationSlotAsync(
+                    connection,
+                    captureOptions,
+                    cdcCaptureId,
+                    normalizedInitialPosition,
+                    cancellationToken)
+                .ConfigureAwait(false);
+            var recreatedMetadata = CreateCreatedSlotMetadata(
+                captureOptions,
+                expectedDatabaseName,
+                recreatedSlot,
+                "recreate",
+                normalizedInitialPosition);
+            if (!string.IsNullOrWhiteSpace(slotStatus.SlotInvalidationReason))
+            {
+                recreatedMetadata["slotPreviousInvalidationReason"] = slotStatus.SlotInvalidationReason;
+            }
+
+            if (!string.IsNullOrWhiteSpace(slotStatus.SlotWalStatus))
+            {
+                recreatedMetadata["slotPreviousWalStatus"] = slotStatus.SlotWalStatus;
+            }
+
+            return new SlotResolution(recreatedSlot, recreatedMetadata);
+        }
+
+        if (slotStatus.SlotExists)
+        {
+            return new SlotResolution(
+                new PgOutputReplicationSlot(captureOptions.SlotName.Trim()),
+                new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["slotLifecycleAction"] = "reuse"
+                });
         }
 
         if (!captureOptions.CreateSlotIfMissing)
         {
-            throw new InvalidOperationException(
-                $"PostgreSQL replication slot '{captureOptions.SlotName}' was not found. Set CreateSlotIfMissing to true or provision the slot before starting the Cephalon PostgreSQL CDC runner.");
+            throw new PostgresLogicalReplicationCaptureException(
+                $"PostgreSQL replication slot '{captureOptions.SlotName}' was not found. Set CreateSlotIfMissing to true or provision the slot before starting the Cephalon PostgreSQL CDC runner.",
+                "slot-missing",
+                MergeMetadata(
+                    baseMetadata,
+                    new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        ["slotLifecycleAction"] = "fail"
+                    }));
         }
 
-        var slot = await connection.CreatePgOutputReplicationSlot(
-                captureOptions.SlotName.Trim(),
-                false,
-                null,
-                false,
+        var slot = await CreateReplicationSlotAsync(
+                connection,
+                captureOptions,
+                cdcCaptureId,
+                normalizedInitialPosition,
                 cancellationToken)
             .ConfigureAwait(false);
-        LogCreatedReplicationSlot(logger, cdcCaptureId, captureOptions.SlotName.Trim());
-        return slot;
+        return new SlotResolution(
+            slot,
+            CreateCreatedSlotMetadata(
+                captureOptions,
+                expectedDatabaseName,
+                slot,
+                "create",
+                normalizedInitialPosition));
     }
 
     private static PostgresLogicalReplicationCapturedChange CreateCapturedChange(
@@ -576,6 +736,41 @@ WHERE slot_name = @slotName;
         };
     }
 
+    private async Task<PgOutputReplicationSlot> CreateReplicationSlotAsync(
+        LogicalReplicationConnection connection,
+        PostgresLogicalReplicationCaptureOptions captureOptions,
+        string cdcCaptureId,
+        string normalizedInitialPosition,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var slot = await connection.CreatePgOutputReplicationSlot(
+                    captureOptions.SlotName.Trim(),
+                    false,
+                    ResolveSnapshotInitMode(normalizedInitialPosition),
+                    false,
+                    cancellationToken)
+                .ConfigureAwait(false);
+            LogCreatedReplicationSlot(logger, cdcCaptureId, captureOptions.SlotName.Trim());
+            return slot;
+        }
+        catch (Exception exception)
+        {
+            throw new PostgresLogicalReplicationCaptureException(
+                $"PostgreSQL replication slot '{captureOptions.SlotName}' could not be created for the Cephalon PostgreSQL CDC runner.",
+                "slot-create",
+                new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["publicationName"] = captureOptions.PublicationName.Trim(),
+                    ["slotName"] = captureOptions.SlotName.Trim(),
+                    ["slotLifecycleAction"] = "create",
+                    ["slotResumeMode"] = normalizedInitialPosition
+                },
+                exception);
+        }
+    }
+
     private static string NormalizeInitialPosition(string? initialPosition)
     {
         var normalized = string.IsNullOrWhiteSpace(initialPosition)
@@ -588,6 +783,15 @@ WHERE slot_name = @slotName;
             "latest-available" => normalized,
             _ => throw new InvalidOperationException(
                 $"PostgreSQL logical-replication initial position '{initialPosition}' is not supported. Use slot-consistent-point or latest-available.")
+        };
+    }
+
+    private static LogicalSlotSnapshotInitMode ResolveSnapshotInitMode(string normalizedInitialPosition)
+    {
+        return normalizedInitialPosition switch
+        {
+            "latest-available" => LogicalSlotSnapshotInitMode.NoExport,
+            _ => LogicalSlotSnapshotInitMode.Export
         };
     }
 
@@ -621,6 +825,178 @@ WHERE slot_name = @slotName;
         }
 
         _ = NormalizeInitialPosition(captureOptions.InitialPosition);
+    }
+
+    private static string? ResolveExpectedDatabaseName(CdcCaptureDescriptor descriptor)
+    {
+        return descriptor.Metadata.TryGetValue("databaseName", out var databaseName) &&
+               !string.IsNullOrWhiteSpace(databaseName)
+            ? databaseName.Trim()
+            : null;
+    }
+
+    private static Dictionary<string, string> MergeMetadata(
+        IReadOnlyDictionary<string, string> metadata,
+        IReadOnlyDictionary<string, string>? overrides)
+    {
+        var merged = new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase);
+        if (overrides is null)
+        {
+            return merged;
+        }
+
+        foreach (var pair in overrides)
+        {
+            merged[pair.Key] = pair.Value;
+        }
+
+        return merged;
+    }
+
+    private static string CreateInvalidatedSlotMessage(
+        PostgresLogicalReplicationCaptureOptions captureOptions,
+        PublicationAndSlotStatus slotStatus)
+    {
+        var reason = !string.IsNullOrWhiteSpace(slotStatus.SlotInvalidationReason)
+            ? $" invalidation reason '{slotStatus.SlotInvalidationReason}'"
+            : string.Empty;
+        var walStatus = !string.IsNullOrWhiteSpace(slotStatus.SlotWalStatus)
+            ? $" WAL status '{slotStatus.SlotWalStatus}'"
+            : string.Empty;
+
+        return
+            $"PostgreSQL replication slot '{captureOptions.SlotName}' is no longer usable.{reason}{walStatus}. Set RecreateSlotIfInvalidated to true or recreate the slot before starting the Cephalon PostgreSQL CDC runner.";
+    }
+
+    private static Dictionary<string, string> CreateCreatedSlotMetadata(
+        PostgresLogicalReplicationCaptureOptions captureOptions,
+        string? expectedDatabaseName,
+        PgOutputReplicationSlot slot,
+        string slotLifecycleAction,
+        string normalizedInitialPosition)
+    {
+        var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["publicationName"] = captureOptions.PublicationName.Trim(),
+            ["slotName"] = captureOptions.SlotName.Trim(),
+            ["publicationState"] = "includes-table",
+            ["slotExists"] = "true",
+            ["slotLifecycleState"] = "created",
+            ["slotLifecycleAction"] = slotLifecycleAction,
+            ["slotResumeMode"] = normalizedInitialPosition,
+            ["slotType"] = "logical",
+            ["slotPlugin"] = "pgoutput",
+            ["slotTemporary"] = "false",
+            ["slotActive"] = "false",
+            ["slotCreated"] = "true",
+            ["slotCreationSnapshotMode"] = ResolveSnapshotInitMode(normalizedInitialPosition) == LogicalSlotSnapshotInitMode.NoExport
+                ? "no-export"
+                : "export",
+            ["slotCreationConsistentPoint"] = slot.ConsistentPoint.ToString()
+        };
+
+        if (!string.IsNullOrWhiteSpace(expectedDatabaseName))
+        {
+            metadata["slotExpectedDatabaseName"] = expectedDatabaseName;
+            metadata["slotDatabaseName"] = expectedDatabaseName;
+        }
+
+        if (!string.IsNullOrWhiteSpace(slot.SnapshotName))
+        {
+            metadata["slotCreationSnapshotName"] = slot.SnapshotName;
+        }
+
+        return metadata;
+    }
+
+    private static string? ReadString(
+        NpgsqlDataReader reader,
+        Dictionary<string, int> ordinals,
+        string columnName)
+    {
+        return !ordinals.TryGetValue(columnName, out var ordinal) || reader.IsDBNull(ordinal)
+            ? null
+            : reader.GetValue(ordinal)?.ToString();
+    }
+
+    private static bool? ReadBoolean(
+        NpgsqlDataReader reader,
+        Dictionary<string, int> ordinals,
+        string columnName)
+    {
+        return !ordinals.TryGetValue(columnName, out var ordinal) || reader.IsDBNull(ordinal)
+            ? null
+            : reader.GetBoolean(ordinal);
+    }
+
+    private static int? ReadInt32(
+        NpgsqlDataReader reader,
+        Dictionary<string, int> ordinals,
+        string columnName)
+    {
+        return !ordinals.TryGetValue(columnName, out var ordinal) || reader.IsDBNull(ordinal)
+            ? null
+            : reader.GetInt32(ordinal);
+    }
+
+    private static long? ReadInt64(
+        NpgsqlDataReader reader,
+        Dictionary<string, int> ordinals,
+        string columnName)
+    {
+        return !ordinals.TryGetValue(columnName, out var ordinal) || reader.IsDBNull(ordinal)
+            ? null
+            : reader.GetInt64(ordinal);
+    }
+
+    private static DateTimeOffset? ReadDateTimeOffset(
+        NpgsqlDataReader reader,
+        Dictionary<string, int> ordinals,
+        string columnName)
+    {
+        return !ordinals.TryGetValue(columnName, out var ordinal) || reader.IsDBNull(ordinal)
+            ? null
+            : reader.GetFieldValue<DateTimeOffset>(ordinal);
+    }
+
+    private static void UpsertOptional(IDictionary<string, string> metadata, string key, string? value)
+    {
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            metadata[key] = value;
+        }
+    }
+
+    private static void UpsertOptional(IDictionary<string, string> metadata, string key, bool? value)
+    {
+        if (value.HasValue)
+        {
+            metadata[key] = value.Value ? "true" : "false";
+        }
+    }
+
+    private static void UpsertOptional(IDictionary<string, string> metadata, string key, int? value)
+    {
+        if (value.HasValue)
+        {
+            metadata[key] = value.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
+    }
+
+    private static void UpsertOptional(IDictionary<string, string> metadata, string key, long? value)
+    {
+        if (value.HasValue)
+        {
+            metadata[key] = value.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
+    }
+
+    private static void UpsertOptional(IDictionary<string, string> metadata, string key, DateTimeOffset? value)
+    {
+        if (value.HasValue)
+        {
+            metadata[key] = value.Value.ToString("O", System.Globalization.CultureInfo.InvariantCulture);
+        }
     }
 
     private void StorePendingSession(PendingReplicationSession session)
@@ -658,7 +1034,180 @@ WHERE slot_name = @slotName;
     private static void LogCreatedReplicationSlot(ILogger logger, string cdcCaptureId, string slotName) =>
         LogCreatedReplicationSlotMessage(logger, cdcCaptureId, slotName, null);
 
-    private sealed record PublicationAndSlotStatus(bool PublicationIncludesTable, bool SlotExists);
+    private sealed record PublicationAndSlotStatus(
+        bool PublicationIncludesTable,
+        bool SlotExists,
+        string? SlotType,
+        string? SlotDatabaseName,
+        string? SlotPlugin,
+        bool? SlotTemporary,
+        bool? SlotActive,
+        int? SlotActivePid,
+        string? SlotRestartLsn,
+        string? SlotConfirmedFlushLsn,
+        string? SlotWalStatus,
+        long? SlotSafeWalSize,
+        DateTimeOffset? SlotInactiveSinceUtc,
+        bool? SlotConflicting,
+        string? SlotInvalidationReason,
+        bool? SlotFailover,
+        bool? SlotSynced)
+    {
+        public static PublicationAndSlotStatus Missing(bool publicationIncludesTable) =>
+            new(
+                PublicationIncludesTable: publicationIncludesTable,
+                SlotExists: false,
+                SlotType: null,
+                SlotDatabaseName: null,
+                SlotPlugin: null,
+                SlotTemporary: null,
+                SlotActive: null,
+                SlotActivePid: null,
+                SlotRestartLsn: null,
+                SlotConfirmedFlushLsn: null,
+                SlotWalStatus: null,
+                SlotSafeWalSize: null,
+                SlotInactiveSinceUtc: null,
+                SlotConflicting: null,
+                SlotInvalidationReason: null,
+                SlotFailover: null,
+                SlotSynced: null);
+
+        public bool HasPluginMismatch =>
+            SlotExists &&
+            !string.IsNullOrWhiteSpace(SlotPlugin) &&
+            !string.Equals(SlotPlugin, "pgoutput", StringComparison.OrdinalIgnoreCase);
+
+        public bool HasTypeMismatch =>
+            SlotExists &&
+            !string.IsNullOrWhiteSpace(SlotType) &&
+            !string.Equals(SlotType, "logical", StringComparison.OrdinalIgnoreCase);
+
+        public bool IsInvalidated => !string.IsNullOrWhiteSpace(SlotInvalidationReason);
+
+        public bool IsLost => string.Equals(SlotWalStatus, "lost", StringComparison.OrdinalIgnoreCase);
+
+        public bool IsSyncedStandbySlot => SlotSynced == true;
+
+        public bool HasDatabaseMismatch(string? expectedDatabaseName) =>
+            SlotExists &&
+            !string.IsNullOrWhiteSpace(expectedDatabaseName) &&
+            !string.IsNullOrWhiteSpace(SlotDatabaseName) &&
+            !string.Equals(SlotDatabaseName, expectedDatabaseName, StringComparison.OrdinalIgnoreCase);
+
+        public string LifecycleState
+        {
+            get
+            {
+                if (!SlotExists)
+                {
+                    return "missing";
+                }
+
+                if (IsSyncedStandbySlot)
+                {
+                    return "synced-standby";
+                }
+
+                if (IsLost)
+                {
+                    return "lost";
+                }
+
+                if (IsInvalidated)
+                {
+                    return "invalidated";
+                }
+
+                if (SlotActive == true)
+                {
+                    return "active";
+                }
+
+                if (string.Equals(SlotWalStatus, "unreserved", StringComparison.OrdinalIgnoreCase))
+                {
+                    return "wal-at-risk";
+                }
+
+                if (SlotTemporary == true)
+                {
+                    return "temporary";
+                }
+
+                return "ready";
+            }
+        }
+
+        public string ResumeMode
+        {
+            get
+            {
+                if (!SlotExists)
+                {
+                    return "slot-create-required";
+                }
+
+                if (IsSyncedStandbySlot)
+                {
+                    return "standby-synced-slot";
+                }
+
+                if (!string.IsNullOrWhiteSpace(SlotConfirmedFlushLsn))
+                {
+                    return "slot-confirmed-flush-lsn";
+                }
+
+                if (!string.IsNullOrWhiteSpace(SlotRestartLsn))
+                {
+                    return "slot-restart-lsn";
+                }
+
+                return "slot-consistent-point";
+            }
+        }
+
+        public Dictionary<string, string> ToMetadata(
+            PostgresLogicalReplicationCaptureOptions captureOptions,
+            string? expectedDatabaseName)
+        {
+            var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["publicationName"] = captureOptions.PublicationName.Trim(),
+                ["slotName"] = captureOptions.SlotName.Trim(),
+                ["publicationState"] = PublicationIncludesTable ? "includes-table" : "missing-table",
+                ["slotExists"] = SlotExists ? "true" : "false",
+                ["slotLifecycleState"] = LifecycleState,
+                ["slotResumeMode"] = ResumeMode,
+                ["replicationCheckpointSource"] = "slot-confirmed-flush-lsn"
+            };
+
+            if (!string.IsNullOrWhiteSpace(expectedDatabaseName))
+            {
+                metadata["slotExpectedDatabaseName"] = expectedDatabaseName;
+            }
+
+            UpsertOptional(metadata, "slotType", SlotType);
+            UpsertOptional(metadata, "slotDatabaseName", SlotDatabaseName);
+            UpsertOptional(metadata, "slotPlugin", SlotPlugin);
+            UpsertOptional(metadata, "slotTemporary", SlotTemporary);
+            UpsertOptional(metadata, "slotActive", SlotActive);
+            UpsertOptional(metadata, "slotActivePid", SlotActivePid);
+            UpsertOptional(metadata, "slotRestartLsn", SlotRestartLsn);
+            UpsertOptional(metadata, "slotConfirmedFlushLsn", SlotConfirmedFlushLsn);
+            UpsertOptional(metadata, "slotWalStatus", SlotWalStatus);
+            UpsertOptional(metadata, "slotSafeWalSize", SlotSafeWalSize);
+            UpsertOptional(metadata, "slotInactiveSinceUtc", SlotInactiveSinceUtc);
+            UpsertOptional(metadata, "slotConflicting", SlotConflicting);
+            UpsertOptional(metadata, "slotInvalidationReason", SlotInvalidationReason);
+            UpsertOptional(metadata, "slotFailover", SlotFailover);
+            UpsertOptional(metadata, "slotSynced", SlotSynced);
+            return metadata;
+        }
+    }
+
+    private sealed record SlotResolution(
+        PgOutputReplicationSlot Slot,
+        IReadOnlyDictionary<string, string> Metadata);
 
     private sealed record BufferedReplicationOperation(
         string OperationName,
