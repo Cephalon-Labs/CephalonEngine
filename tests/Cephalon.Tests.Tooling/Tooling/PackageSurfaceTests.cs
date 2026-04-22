@@ -894,6 +894,17 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void DataDebeziumAssemblyExposesOnlyTheDocumentedPackContracts()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Data.Debezium.Registration.DebeziumDataEngineBuilderExtensions).Assembly,
+            typeof(global::Cephalon.Data.Debezium.Configuration.DebeziumDataOptions),
+            typeof(global::Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions),
+            typeof(global::Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions),
+            typeof(global::Cephalon.Data.Debezium.Registration.DebeziumDataEngineBuilderExtensions));
+    }
+
+    [Fact]
     public void RetrievalAssemblyExposesOnlyTheDocumentedPackContracts()
     {
         AssertExportedTypes(
@@ -2985,6 +2996,29 @@ public sealed class PackageSurfaceTests
             .GetProperty("OutboxId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions)
             .GetProperty("InitialPosition", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void DebeziumDataOptionsExposeManagedConnectorCaptureDeclarations()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Data.Debezium.Configuration.DebeziumDataOptions)
+            .GetProperty("Connectors", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions)
+            .GetProperty("ConnectClusterId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions)
+            .GetProperty("ConnectorClass", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions)
+            .GetProperty("SourceProviderId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions)
+            .GetProperty("CdcCaptures", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions)
+            .GetProperty("SourceModuleId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions)
+            .GetProperty("OutboxId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions)
+            .GetProperty("TopicName", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions)
+            .GetProperty("SnapshotMode", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

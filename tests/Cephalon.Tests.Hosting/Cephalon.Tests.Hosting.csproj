@@ -24,6 +24,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Cephalon.Data.Debezium\Cephalon.Data.Debezium.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Data.MySql\Cephalon.Data.MySql.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Data.Oracle\Cephalon.Data.Oracle.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Data.Postgres\Cephalon.Data.Postgres.csproj" />

@@ -3027,6 +3027,33 @@ Delivered:
 - targeted coverage now proves the operator-story drill-down baseline through composition tests
   `1/1`, hosting tests `1/1`, tooling tests `185/185`, and the reference docs publish script
 
+### ENG-164 Phase 13 Debezium external managed-connector CDC baseline
+
+Status: done
+Estimate: 5
+Completed: April 23, 2026
+
+Why:
+
+- `ENG-155` through `ENG-163` made the shared external CDC runtime story truthful for reporter failover, edge-node provenance, degraded posture, and operator drill-downs, but the repo still did not prove that story against a real external managed-connector family such as Debezium or Kafka Connect
+- the phase-13 CDC line still needed one slice that projected external managed capture ownership onto the shared `/engine/cdc-*`, `/engine/runtime-story`, and `snapshot` surfaces without faking a hosted execution, execution graph, or Debezium-only registry
+- hosts still had to remember `EnableExternalCdcRuntimeReporting = true` explicitly even when the active pack itself was an external managed-connector family, which kept the adoption story noisier than necessary
+
+Acceptance:
+
+- a Debezium companion pack contributes managed connector runtimes and capture descriptors on the shared CDC runtime surfaces without inventing a Debezium-only registry
+- the Debezium pack keeps execution ownership truthful as `external-managed` plus `managed-connector` and does not fake hosted execution or execution-graph surfaces that Cephalon does not own
+- hosts that already add `Cephalon.Data` can accept Debezium-managed runtime reports without also setting the base external-reporting flag manually
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the shipped slice while later Debezium lifecycle and reconciliation hardening remains separate follow-through
+
+Delivered:
+
+- the 2026-04-23 `ENG-164` slice shipped `Cephalon.Data.Debezium` with `DebeziumDataOptions`, `DebeziumConnectorOptions`, `DebeziumCaptureOptions`, and `AddDebeziumData(...)`
+- Debezium-managed connectors now publish shared execution-runtime descriptors with `executionOwnership = external-managed`, `executionTopology = managed-connector`, `acknowledgementMode = connector-offset-commit`, optional reporter-lease and stale-observation posture, declared task ids, and declared edge-node ids through the existing `/engine/cdc-capture-runtimes*` and `snapshot` surfaces
+- Debezium-managed captures now publish through the existing `/engine/cdc-captures*` surfaces with authored capture ownership preserved, connector/runtime metadata kept additive, and `metadata.contributorModuleId = "debezium-data"` instead of inventing a second Debezium catalog
+- the Debezium pack now auto-registers the shared `ICdcCaptureExecutionRuntimeReportSink` bridge whenever Debezium connectors are configured, so `POST /engine/cdc-capture-runtimes/{executionRuntimeId}/reports` stays available without requiring `EnableExternalCdcRuntimeReporting = true` explicitly on the host
+- targeted coverage now proves the Debezium managed-connector baseline through composition tests `1/1`, hosting tests `1/1`, tooling tests `185/185`, and the reference docs publish script
+
 ### ENG-157 Phase 13 stronger reporter takeover and degraded-posture hardening baseline
 
 Status: done

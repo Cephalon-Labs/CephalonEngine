@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-22T15:32:31.6990475+00:00",
+  "GeneratedAtUtc": "2026-04-22T18:45:43.2651825+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -73,6 +73,14 @@
       "FileName": "cephalon-data.md",
       "NamespaceCount": 3,
       "TypeCount": 8
+    },
+    {
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "Category": "Phase 13 Companion Packs",
+      "Description": "Debezium-managed external connector CDC companion pack for Cephalon data workloads.",
+      "FileName": "cephalon-data-debezium.md",
+      "NamespaceCount": 2,
+      "TypeCount": 4
     },
     {
       "AssemblyName": "Cephalon.Data.EntityFramework",
@@ -816,6 +824,20 @@
       "FileName": "cephalon-data.md",
       "AnchorId": "namespace-cephalon-data-configuration",
       "TypeCount": 2
+    },
+    {
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "namespace-cephalon-data-debezium-configuration",
+      "TypeCount": 3
+    },
+    {
+      "NamespaceName": "Cephalon.Data.Debezium.Registration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "namespace-cephalon-data-debezium-registration",
+      "TypeCount": 1
     },
     {
       "NamespaceName": "Cephalon.Data.EntityFramework.Configuration",
@@ -4405,6 +4427,66 @@
         "Fields": 0,
         "Properties": 6,
         "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "DebeziumCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "type-cephalon-data-debezium-configuration-debeziumcaptureoptions",
+      "Declaration": "public sealed class DebeziumCaptureOptions",
+      "Summary": "Declares one Debezium-managed CDC capture that should publish truth through the shared Cephalon CDC runtime surfaces.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 13,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "DebeziumConnectorOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "type-cephalon-data-debezium-configuration-debeziumconnectoroptions",
+      "Declaration": "public sealed class DebeziumConnectorOptions",
+      "Summary": "Declares one external Debezium-managed connector runtime for the active Cephalon data runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 18,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "DebeziumDataEngineBuilderExtensions",
+      "NamespaceName": "Cephalon.Data.Debezium.Registration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "type-cephalon-data-debezium-registration-debeziumdataenginebuilderextensions",
+      "Declaration": "public static class DebeziumDataEngineBuilderExtensions",
+      "Summary": "Registers the Debezium-managed external CDC companion pack with an \u0060EngineBuilder\u0060.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "DebeziumDataOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "type-cephalon-data-debezium-configuration-debeziumdataoptions",
+      "Declaration": "public sealed class DebeziumDataOptions",
+      "Summary": "Configuration options for the Debezium-managed external CDC pack (\u0060Engine:Data:Debezium\u0060).",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 2,
+        "Properties": 1,
+        "Methods": 0
       }
     },
     {
@@ -12605,6 +12687,17 @@
       "Summary": "Gets or sets the operator-facing acknowledgement mode when the runtime reports one."
     },
     {
+      "DisplayName": "AcknowledgementMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "DebeziumConnectorOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-acknowledgementmode",
+      "Signature": "string AcknowledgementMode { get; set; }",
+      "Summary": "Gets or sets the acknowledgement mode published for the connector runtime."
+    },
+    {
       "DisplayName": "AclToken",
       "Category": "Properties",
       "DeclaringTypeName": "ConsulDependencyDefinition",
@@ -14308,6 +14401,17 @@
       "AnchorId": "member-m-cephalon-data-registration-dataenginebuilderextensions-adddata-cephalon-engine-composition-enginebuilder-system-action-cephalon-data-configuration-dataruntimeoptions",
       "Signature": "EngineBuilder AddData(this EngineBuilder builder, Action\u003CDataRuntimeOptions\u003E configure)",
       "Summary": "Adds the data runtime pack to the engine."
+    },
+    {
+      "DisplayName": "AddDebeziumData",
+      "Category": "Methods",
+      "DeclaringTypeName": "DebeziumDataEngineBuilderExtensions",
+      "NamespaceName": "Cephalon.Data.Debezium.Registration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-m-cephalon-data-debezium-registration-debeziumdataenginebuilderextensions-adddebeziumdata-cephalon-engine-composition-enginebuilder-system-action-cephalon-data-debezium-configuration-debeziumdataoptions",
+      "Signature": "EngineBuilder AddDebeziumData(this EngineBuilder builder, Action\u003CDebeziumDataOptions\u003E configure)",
+      "Summary": "Adds the Debezium-managed external CDC pack using an options callback that can bind from configuration."
     },
     {
       "DisplayName": "AddEdge",
@@ -19262,6 +19366,17 @@
     {
       "DisplayName": "CdcCaptures",
       "Category": "Properties",
+      "DeclaringTypeName": "DebeziumConnectorOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-cdccaptures",
+      "Signature": "IList\u003CDebeziumCaptureOptions\u003E CdcCaptures { get; }",
+      "Summary": "Gets the Debezium-managed CDC captures that should bind to this connector runtime."
+    },
+    {
+      "DisplayName": "CdcCaptures",
+      "Category": "Properties",
       "DeclaringTypeName": "ICdcCaptureCatalog",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -21262,6 +21377,17 @@
       "Summary": "Gets the technology identifiers that conflict with the technology."
     },
     {
+      "DisplayName": "ConnectClusterId",
+      "Category": "Properties",
+      "DeclaringTypeName": "DebeziumConnectorOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-connectclusterid",
+      "Signature": "string ConnectClusterId { get; set; }",
+      "Summary": "Gets or sets the operator-facing Kafka Connect or Debezium cluster identifier that owns the connector."
+    },
+    {
       "DisplayName": "ConnectionMode",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseRoleDescriptor",
@@ -21524,6 +21650,28 @@
       "AnchorId": "member-p-cephalon-data-sqlserver-configuration-sqlserverdataoptions-connectionstringname",
       "Signature": "string ConnectionStringName { get; set; }",
       "Summary": "Gets or sets the root \u0060ConnectionStrings\u0060 entry name to resolve for SQL Server."
+    },
+    {
+      "DisplayName": "ConnectorClass",
+      "Category": "Properties",
+      "DeclaringTypeName": "DebeziumConnectorOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-connectorclass",
+      "Signature": "string ConnectorClass { get; set; }",
+      "Summary": "Gets or sets the Debezium connector-class identifier when the runtime should publish it on shared operator surfaces."
+    },
+    {
+      "DisplayName": "Connectors",
+      "Category": "Properties",
+      "DeclaringTypeName": "DebeziumDataOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumdataoptions-connectors",
+      "Signature": "IList\u003CDebeziumConnectorOptions\u003E Connectors { get; }",
+      "Summary": "Gets the Debezium-managed connector runtimes that should contribute captures and external execution ownership to the active runtime."
     },
     {
       "DisplayName": "ConsulDependencyDefinition",
@@ -23143,6 +23291,36 @@
       "Summary": "The UTC timestamp when the hosted execution most recently became inactive because the runtime stopped."
     },
     {
+      "DisplayName": "DebeziumCaptureOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "DebeziumCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-m-cephalon-data-debezium-configuration-debeziumcaptureoptions-ctor",
+      "Signature": "DebeziumCaptureOptions()"
+    },
+    {
+      "DisplayName": "DebeziumConnectorOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "DebeziumConnectorOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-m-cephalon-data-debezium-configuration-debeziumconnectoroptions-ctor",
+      "Signature": "DebeziumConnectorOptions()"
+    },
+    {
+      "DisplayName": "DebeziumDataOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "DebeziumDataOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-m-cephalon-data-debezium-configuration-debeziumdataoptions-ctor",
+      "Signature": "DebeziumDataOptions()"
+    },
+    {
       "DisplayName": "Debug",
       "Category": "Fields",
       "DeclaringTypeName": "DiagnosticSeverity",
@@ -24142,6 +24320,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-dataproductdescriptor-description",
       "Signature": "string Description { get; }",
       "Summary": "Gets the human-readable data product description."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "DebeziumCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumcaptureoptions-description",
+      "Signature": "string Description { get; set; }",
+      "Summary": "Gets or sets the human-readable CDC capture description."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "DebeziumConnectorOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-description",
+      "Signature": "string Description { get; set; }",
+      "Summary": "Gets or sets the human-readable connector description."
     },
     {
       "DisplayName": "Description",
@@ -25367,6 +25567,28 @@
     {
       "DisplayName": "DisplayName",
       "Category": "Properties",
+      "DeclaringTypeName": "DebeziumCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumcaptureoptions-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "Gets or sets the operator-facing CDC capture name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "DebeziumConnectorOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "Gets or sets the operator-facing connector name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
       "DeclaringTypeName": "DependencyHealthReport",
       "NamespaceName": "Cephalon.Abstractions.Health",
       "AssemblyName": "Cephalon.Abstractions",
@@ -26265,6 +26487,17 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-edgenodeids",
       "Signature": "IReadOnlyList\u003Cstring\u003E EdgeNodeIds { get; }",
       "Summary": "Gets the optional edge-node identifiers associated with this automation answer."
+    },
+    {
+      "DisplayName": "EdgeNodeIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "DebeziumConnectorOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-edgenodeids",
+      "Signature": "IList\u003Cstring\u003E EdgeNodeIds { get; }",
+      "Summary": "Gets the declared edge-node identifiers that can originate observations for the managed connector runtime."
     },
     {
       "DisplayName": "EdgeRuntimeOptions",
@@ -28381,6 +28614,17 @@
     {
       "DisplayName": "EventFormat",
       "Category": "Properties",
+      "DeclaringTypeName": "DebeziumCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumcaptureoptions-eventformat",
+      "Signature": "string EventFormat { get; set; }",
+      "Summary": "Gets or sets the operator-facing event format projected on the shared descriptor."
+    },
+    {
+      "DisplayName": "EventFormat",
+      "Category": "Properties",
       "DeclaringTypeName": "MySqlBinlogCaptureOptions",
       "NamespaceName": "Cephalon.Data.MySql.Configuration",
       "AssemblyName": "Cephalon.Data.MySql",
@@ -29292,6 +29536,17 @@
       "Summary": "Gets or sets the operator-facing ownership mode for the runtime."
     },
     {
+      "DisplayName": "ExecutionOwnership",
+      "Category": "Properties",
+      "DeclaringTypeName": "DebeziumConnectorOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-executionownership",
+      "Signature": "string ExecutionOwnership { get; set; }",
+      "Summary": "Gets or sets the execution-ownership mode published for the connector runtime."
+    },
+    {
       "DisplayName": "ExecutionTopology",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionBindingDescriptor",
@@ -29323,6 +29578,17 @@
       "AnchorId": "member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-executiontopology",
       "Signature": "string ExecutionTopology { get; set; }",
       "Summary": "Gets or sets the operator-facing topology classification for the runtime."
+    },
+    {
+      "DisplayName": "ExecutionTopology",
+      "Category": "Properties",
+      "DeclaringTypeName": "DebeziumConnectorOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-executiontopology",
+      "Signature": "string ExecutionTopology { get; set; }",
+      "Summary": "Gets or sets the execution-topology classification published for the connector runtime."
     },
     {
       "DisplayName": "ExitAfterApply",
@@ -35828,6 +36094,28 @@
     {
       "DisplayName": "Id",
       "Category": "Properties",
+      "DeclaringTypeName": "DebeziumCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumcaptureoptions-id",
+      "Signature": "string Id { get; set; }",
+      "Summary": "Gets or sets the stable CDC capture identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "DebeziumConnectorOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-id",
+      "Signature": "string Id { get; set; }",
+      "Summary": "Gets or sets the stable execution-runtime identifier for the managed connector."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
       "DeclaringTypeName": "DependencyHealthReport",
       "NamespaceName": "Cephalon.Abstractions.Health",
       "AssemblyName": "Cephalon.Abstractions",
@@ -41218,6 +41506,28 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "DebeziumCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumcaptureoptions-metadata",
+      "Signature": "IDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets arbitrary operator-facing metadata that should flow through the capture descriptor."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "DebeziumConnectorOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-metadata",
+      "Signature": "IDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets arbitrary operator-facing metadata that should flow through the execution-runtime descriptor."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "DurableExecutionCompensationAction",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -42391,6 +42701,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-dataproductdescriptor-mode",
       "Signature": "string Mode { get; }",
       "Summary": "Gets the declared access mode for the data product."
+    },
+    {
+      "DisplayName": "Mode",
+      "Category": "Properties",
+      "DeclaringTypeName": "DebeziumCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumcaptureoptions-mode",
+      "Signature": "string Mode { get; set; }",
+      "Summary": "Gets or sets the operator-facing capture mode projected on the shared descriptor."
     },
     {
       "DisplayName": "Mode",
@@ -43656,6 +43977,17 @@
       "Summary": "Gets or sets the report-freshness window, in seconds, used to mark external runtime observations stale."
     },
     {
+      "DisplayName": "ObservationStaleAfterSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "DebeziumConnectorOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-observationstaleafterseconds",
+      "Signature": "int? ObservationStaleAfterSeconds { get; set; }",
+      "Summary": "Gets or sets the report-freshness window, in seconds, used to mark connector observations stale."
+    },
+    {
       "DisplayName": "Observe",
       "Category": "Fields",
       "DeclaringTypeName": "CellTrafficAutomationLifecycleActions",
@@ -44620,6 +44952,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimestate-outboxid",
       "Signature": "string OutboxId { get; set; }",
       "Summary": "The outbox identifier that receives captured publications."
+    },
+    {
+      "DisplayName": "OutboxId",
+      "Category": "Properties",
+      "DeclaringTypeName": "DebeziumCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumcaptureoptions-outboxid",
+      "Signature": "string OutboxId { get; set; }",
+      "Summary": "Gets or sets the outbox identifier that the external managed connector logically feeds."
     },
     {
       "DisplayName": "OutboxId",
@@ -47493,6 +47836,17 @@
     {
       "DisplayName": "ProviderId",
       "Category": "Fields",
+      "DeclaringTypeName": "DebeziumDataOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-f-cephalon-data-debezium-configuration-debeziumdataoptions-providerid",
+      "Signature": "const string ProviderId",
+      "Summary": "Gets the canonical provider identifier emitted by the pack."
+    },
+    {
+      "DisplayName": "ProviderId",
+      "Category": "Fields",
       "DeclaringTypeName": "EntityFrameworkDataOptions",
       "NamespaceName": "Cephalon.Data.EntityFramework.Configuration",
       "AssemblyName": "Cephalon.Data.EntityFramework",
@@ -49163,6 +49517,17 @@
       "Summary": "Gets or sets a value indicating whether the runtime should reject reports from conflicting reporter identities while an active lease still exists."
     },
     {
+      "DisplayName": "RejectConflictingReporterIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "DebeziumConnectorOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-rejectconflictingreporterids",
+      "Signature": "bool RejectConflictingReporterIds { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the connector rejects conflicting reporter identities while an active lease still exists."
+    },
+    {
       "DisplayName": "Rejected",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureReporterParticipantRoles",
@@ -49227,6 +49592,17 @@
       "AnchorId": "member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-rejectoutoforderreports",
       "Signature": "bool RejectOutOfOrderReports { get; set; }",
       "Summary": "Gets or sets a value indicating whether the runtime should reject out-of-order external reports."
+    },
+    {
+      "DisplayName": "RejectOutOfOrderReports",
+      "Category": "Properties",
+      "DeclaringTypeName": "DebeziumConnectorOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-rejectoutoforderreports",
+      "Signature": "bool RejectOutOfOrderReports { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the connector rejects out-of-order external reports."
     },
     {
       "DisplayName": "RelativePattern",
@@ -49623,6 +49999,17 @@
       "AnchorId": "member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-reporterleaseseconds",
       "Signature": "int? ReporterLeaseSeconds { get; set; }",
       "Summary": "Gets or sets the reporter-lease window, in seconds, used to keep one external reporter authoritative for the runtime."
+    },
+    {
+      "DisplayName": "ReporterLeaseSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "DebeziumConnectorOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-reporterleaseseconds",
+      "Signature": "int? ReporterLeaseSeconds { get; set; }",
+      "Summary": "Gets or sets the reporter-lease window, in seconds, used to keep one reporter authoritative for the connector."
     },
     {
       "DisplayName": "ReporterParticipants",
@@ -50943,6 +51330,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimestate-resourceids",
       "Signature": "IReadOnlyList\u003Cstring\u003E ResourceIds { get; set; }",
       "Summary": "The resource identifiers observed by the capture."
+    },
+    {
+      "DisplayName": "ResourceIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "DebeziumCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumcaptureoptions-resourceids",
+      "Signature": "IList\u003Cstring\u003E ResourceIds { get; }",
+      "Summary": "Gets the resource identifiers observed by the capture, such as tables, topics, or collections."
     },
     {
       "DisplayName": "ResourceIds",
@@ -53466,6 +53864,17 @@
     {
       "DisplayName": "SectionPath",
       "Category": "Fields",
+      "DeclaringTypeName": "DebeziumDataOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-f-cephalon-data-debezium-configuration-debeziumdataoptions-sectionpath",
+      "Signature": "const string SectionPath",
+      "Summary": "Gets the default configuration section path for Debezium data settings."
+    },
+    {
+      "DisplayName": "SectionPath",
+      "Category": "Fields",
       "DeclaringTypeName": "MySqlDataOptions",
       "NamespaceName": "Cephalon.Data.MySql.Configuration",
       "AssemblyName": "Cephalon.Data.MySql",
@@ -54652,6 +55061,17 @@
       "Summary": "Gets the trust snapshot being evaluated."
     },
     {
+      "DisplayName": "SnapshotMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "DebeziumCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumcaptureoptions-snapshotmode",
+      "Signature": "string SnapshotMode { get; set; }",
+      "Summary": "Gets or sets the Debezium snapshot mode when the pack should publish it as operator-facing metadata."
+    },
+    {
       "DisplayName": "Solution",
       "Category": "Fields",
       "DeclaringTypeName": "ScaffoldScopes",
@@ -54782,6 +55202,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimestate-sourceid",
       "Signature": "string SourceId { get; set; }",
       "Summary": "The logical source stream, database, or feed identifier."
+    },
+    {
+      "DisplayName": "SourceId",
+      "Category": "Properties",
+      "DeclaringTypeName": "DebeziumCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumcaptureoptions-sourceid",
+      "Signature": "string SourceId { get; set; }",
+      "Summary": "Gets or sets the logical source identifier when it should differ from the derived connector or topic path."
     },
     {
       "DisplayName": "SourceId",
@@ -55079,6 +55510,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-dataproductdescriptor-sourcemoduleid",
       "Signature": "string SourceModuleId { get; }",
       "Summary": "Gets the identifier of the module that owns the data product."
+    },
+    {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
+      "DeclaringTypeName": "DebeziumCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumcaptureoptions-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; set; }",
+      "Summary": "Gets or sets the module identifier that owns the capture surface."
     },
     {
       "DisplayName": "SourceModuleId",
@@ -55508,6 +55950,17 @@
       "AnchorId": "member-p-cephalon-scaffolding-generation-renderedproject-sourceprojectid",
       "Signature": "string SourceProjectId { get; }",
       "Summary": "Gets the source scaffold project identifier that produced this instance."
+    },
+    {
+      "DisplayName": "SourceProviderId",
+      "Category": "Properties",
+      "DeclaringTypeName": "DebeziumConnectorOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-sourceproviderid",
+      "Signature": "string SourceProviderId { get; set; }",
+      "Summary": "Gets or sets the upstream provider identifier behind the managed connector, such as \u0060postgresql\u0060 or \u0060sqlserver\u0060."
     },
     {
       "DisplayName": "SourceRepository",
@@ -57853,6 +58306,17 @@
     {
       "DisplayName": "Tags",
       "Category": "Properties",
+      "DeclaringTypeName": "DebeziumCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumcaptureoptions-tags",
+      "Signature": "IList\u003Cstring\u003E Tags { get; }",
+      "Summary": "Gets the descriptive tags associated with the capture."
+    },
+    {
+      "DisplayName": "Tags",
+      "Category": "Properties",
       "DeclaringTypeName": "EdgeNodeDescriptor",
       "NamespaceName": "Cephalon.Edge.Services",
       "AssemblyName": "Cephalon.Edge",
@@ -58377,6 +58841,17 @@
       "AnchorId": "member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-targeturi",
       "Signature": "string TargetUri { get; }",
       "Summary": "Gets the normalized absolute URI that traffic should target when the selected endpoint is absolute."
+    },
+    {
+      "DisplayName": "TaskIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "DebeziumConnectorOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-taskids",
+      "Signature": "IList\u003Cstring\u003E TaskIds { get; }",
+      "Summary": "Gets the declared task identifiers that belong to the managed connector runtime."
     },
     {
       "DisplayName": "Technologies",
@@ -59213,6 +59688,28 @@
       "AnchorId": "member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-topic",
       "Signature": "string Topic { get; set; }",
       "Summary": "Gets or sets the optional topic name that should be present in returned cluster metadata."
+    },
+    {
+      "DisplayName": "TopicName",
+      "Category": "Properties",
+      "DeclaringTypeName": "DebeziumCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumcaptureoptions-topicname",
+      "Signature": "string TopicName { get; set; }",
+      "Summary": "Gets or sets the external topic name that carries the Debezium envelope for this capture."
+    },
+    {
+      "DisplayName": "TopicPrefix",
+      "Category": "Properties",
+      "DeclaringTypeName": "DebeziumConnectorOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-topicprefix",
+      "Signature": "string TopicPrefix { get; set; }",
+      "Summary": "Gets or sets the Debezium topic prefix when the connector fans out into one or more topics."
     },
     {
       "DisplayName": "TotalActionCount",

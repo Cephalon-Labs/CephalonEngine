@@ -85,6 +85,7 @@ Quick links:
 
 ### Phase 13 Companion Packs
 
+- [Cephalon.Data.Debezium](cephalon-data-debezium.md): Debezium-managed external connector CDC companion pack for Cephalon data workloads. Contains 2 namespaces and 4 public types. [Browse](browse.html?assembly=Cephalon.Data.Debezium)
 - [Cephalon.Data.MySql](cephalon-data-mysql.md): MySQL provider-native binlog CDC companion pack for Cephalon data workloads. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Data.MySql)
 - [Cephalon.Data.Oracle](cephalon-data-oracle.md): Oracle provider-native LogMiner CDC companion pack for Cephalon data workloads. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Data.Oracle)
 - [Cephalon.Data.Postgres](cephalon-data-postgres.md): PostgreSQL provider-native logical-replication CDC companion pack for Cephalon data workloads. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Data.Postgres)

@@ -176,6 +176,14 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Data](cephalon-data.md#namespace-cephalon-data-configuration): 2 public types [Browse](browse.html?assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration)
 
+## `Cephalon.Data.Debezium.Configuration`
+
+- [Cephalon.Data.Debezium](cephalon-data-debezium.md#namespace-cephalon-data-debezium-configuration): 3 public types [Browse](browse.html?assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration)
+
+## `Cephalon.Data.Debezium.Registration`
+
+- [Cephalon.Data.Debezium](cephalon-data-debezium.md#namespace-cephalon-data-debezium-registration): 1 public types [Browse](browse.html?assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Registration)
+
 ## `Cephalon.Data.EntityFramework.Configuration`
 
 - [Cephalon.Data.EntityFramework](cephalon-data-entityframework.md#namespace-cephalon-data-entityframework-configuration): 3 public types [Browse](browse.html?assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration)

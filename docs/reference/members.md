@@ -36,6 +36,9 @@ Browse the published API surface by public member.
 - [AcknowledgementMode](cephalon-data.md#member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-acknowledgementmode): `Properties` on `CdcCaptureExecutionRuntimeOptions` in `Cephalon.Data.Configuration` (`Cephalon.Data`) [Browse](browse.html?q=AcknowledgementMode&assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration&scope=members)
   - Gets or sets the operator-facing acknowledgement mode when the runtime reports one.
   - `string AcknowledgementMode { get; set; }`
+- [AcknowledgementMode](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-acknowledgementmode): `Properties` on `DebeziumConnectorOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=AcknowledgementMode&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets or sets the acknowledgement mode published for the connector runtime.
+  - `string AcknowledgementMode { get; set; }`
 - [AclToken](cephalon-observability-consuldependencies.md#member-p-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-acltoken): `Properties` on `ConsulDependencyDefinition` in `Cephalon.Observability.ConsulDependencies.Configuration` (`Cephalon.Observability.ConsulDependencies`) [Browse](browse.html?q=AclToken&assembly=Cephalon.Observability.ConsulDependencies&namespace=Cephalon.Observability.ConsulDependencies.Configuration&scope=members)
   - Gets or sets the optional Consul ACL token sent as the `X-Consul-Token` header.
   - `string AclToken { get; set; }`
@@ -501,6 +504,9 @@ Browse the published API surface by public member.
 - [AddData](cephalon-data.md#member-m-cephalon-data-registration-dataenginebuilderextensions-adddata-cephalon-engine-composition-enginebuilder-system-action-cephalon-data-configuration-dataruntimeoptions): `Methods` on `DataEngineBuilderExtensions` in `Cephalon.Data.Registration` (`Cephalon.Data`) [Browse](browse.html?q=AddData&assembly=Cephalon.Data&namespace=Cephalon.Data.Registration&scope=members)
   - Adds the data runtime pack to the engine.
   - `EngineBuilder AddData(this EngineBuilder builder, Action<DataRuntimeOptions> configure)`
+- [AddDebeziumData](cephalon-data-debezium.md#member-m-cephalon-data-debezium-registration-debeziumdataenginebuilderextensions-adddebeziumdata-cephalon-engine-composition-enginebuilder-system-action-cephalon-data-debezium-configuration-debeziumdataoptions): `Methods` on `DebeziumDataEngineBuilderExtensions` in `Cephalon.Data.Debezium.Registration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=AddDebeziumData&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Registration&scope=members)
+  - Adds the Debezium-managed external CDC pack using an options callback that can bind from configuration.
+  - `EngineBuilder AddDebeziumData(this EngineBuilder builder, Action<DebeziumDataOptions> configure)`
 - [AddEdge](cephalon-edge.md#member-m-cephalon-edge-registration-edgeenginebuilderextensions-addedge-cephalon-engine-composition-enginebuilder-system-action-cephalon-edge-configuration-edgeruntimeoptions): `Methods` on `EdgeEngineBuilderExtensions` in `Cephalon.Edge.Registration` (`Cephalon.Edge`) [Browse](browse.html?q=AddEdge&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Registration&scope=members)
   - Adds the edge runtime pack to the engine.
   - `EngineBuilder AddEdge(this EngineBuilder builder, Action<EdgeRuntimeOptions> configure)`
@@ -1857,6 +1863,9 @@ Browse the published API surface by public member.
 - [CdcCaptureRuntimeState](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccaptureruntimestate-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-int64-system-int64-system-string-system-string-system-string-cephalon-abstractions-data-cdccapturefreshnessstatus-cephalon-abstractions-data-cdccapturefreshnessstatus-cephalon-abstractions-data-cdccapturelagstatus-cephalon-abstractions-data-cdccapturepublicationstatus-cephalon-abstractions-data-eventdispatchruntimestate-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureRuntimeState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Describes the latest operator-facing runtime state visible for one active CDC capture.
   - `CdcCaptureRuntimeState(string CdcCaptureId, string SourceModuleId, string Provider, string SourceId, string OutboxId, string Mode, string EventFormat, IReadOnlyList<string> ResourceIds, string LastOutcome, DateTimeOffset? LastObservedAtUtc, string LastReportId, int LastCapturedChangeCount, int LastProducedMessageCount, int StartedCount, int CapturedCount, int IdleCount, int FailedCount, long TotalCapturedChangeCount, long TotalProducedMessageCount, string LastChangeId, string LastCheckpoint, string LastError, CdcCaptureFreshnessStatus Freshness, CdcCaptureFreshnessStatus ObservationFreshness, CdcCaptureLagStatus Lag, CdcCapturePublicationStatus Publication, EventDispatchRuntimeState OutboxDispatchState, IReadOnlyDictionary<string, string> Metadata)`
+- [CdcCaptures](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-cdccaptures): `Properties` on `DebeziumConnectorOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=CdcCaptures&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets the Debezium-managed CDC captures that should bind to this connector runtime.
+  - `IList<DebeziumCaptureOptions> CdcCaptures { get; }`
 - [CdcCaptures](cephalon-abstractions.md#member-p-cephalon-abstractions-data-icdccapturecatalog-cdccaptures): `Properties` on `ICdcCaptureCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptures&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets all CDC capture surfaces visible to the current runtime.
   - `IReadOnlyList<CdcCaptureDescriptor> CdcCaptures { get; }`
@@ -2403,6 +2412,9 @@ Browse the published API surface by public member.
 - [ConflictsWith](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologydescriptor-conflictswith): `Properties` on `TechnologyDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConflictsWith&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the technology identifiers that conflict with the technology.
   - `IReadOnlyList<string> ConflictsWith { get; }`
+- [ConnectClusterId](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-connectclusterid): `Properties` on `DebeziumConnectorOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=ConnectClusterId&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets or sets the operator-facing Kafka Connect or Debezium cluster identifier that owns the connector.
+  - `string ConnectClusterId { get; set; }`
 - [ConnectionMode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-connectionmode): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConnectionMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the effective connection mode.
   - `string ConnectionMode { get; }`
@@ -2475,6 +2487,12 @@ Browse the published API surface by public member.
 - [ConnectionStringName](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlserverdataoptions-connectionstringname): `Properties` on `SqlServerDataOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=ConnectionStringName&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
   - Gets or sets the root `ConnectionStrings` entry name to resolve for SQL Server.
   - `string ConnectionStringName { get; set; }`
+- [ConnectorClass](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-connectorclass): `Properties` on `DebeziumConnectorOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=ConnectorClass&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets or sets the Debezium connector-class identifier when the runtime should publish it on shared operator surfaces.
+  - `string ConnectorClass { get; set; }`
+- [Connectors](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumdataoptions-connectors): `Properties` on `DebeziumDataOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=Connectors&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets the Debezium-managed connector runtimes that should contribute captures and external execution ownership to the active runtime.
+  - `IList<DebeziumConnectorOptions> Connectors { get; }`
 - [ConsulDependencyDefinition](cephalon-observability-consuldependencies.md#member-m-cephalon-observability-consuldependencies-configuration-consuldependencydefinition-ctor): `Constructors` on `ConsulDependencyDefinition` in `Cephalon.Observability.ConsulDependencies.Configuration` (`Cephalon.Observability.ConsulDependencies`) [Browse](browse.html?q=ConsulDependencyDefinition&assembly=Cephalon.Observability.ConsulDependencies&namespace=Cephalon.Observability.ConsulDependencies.Configuration&scope=members)
   - Initializes a new instance of the `ConsulDependencyDefinition` class.
   - `ConsulDependencyDefinition()`
@@ -2919,6 +2937,12 @@ Browse the published API surface by public member.
 - [DeactivatedAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehostedexecutionstate-deactivatedatutc): `Properties` on `RuntimeHostedExecutionState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=DeactivatedAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The UTC timestamp when the hosted execution most recently became inactive because the runtime stopped.
   - `DateTimeOffset? DeactivatedAtUtc { get; set; }`
+- [DebeziumCaptureOptions](cephalon-data-debezium.md#member-m-cephalon-data-debezium-configuration-debeziumcaptureoptions-ctor): `Constructors` on `DebeziumCaptureOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=DebeziumCaptureOptions&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - `DebeziumCaptureOptions()`
+- [DebeziumConnectorOptions](cephalon-data-debezium.md#member-m-cephalon-data-debezium-configuration-debeziumconnectoroptions-ctor): `Constructors` on `DebeziumConnectorOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=DebeziumConnectorOptions&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - `DebeziumConnectorOptions()`
+- [DebeziumDataOptions](cephalon-data-debezium.md#member-m-cephalon-data-debezium-configuration-debeziumdataoptions-ctor): `Constructors` on `DebeziumDataOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=DebeziumDataOptions&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - `DebeziumDataOptions()`
 - [Debug](cephalon-engine.md#member-f-cephalon-engine-diagnostics-diagnosticseverity-debug): `Fields` on `DiagnosticSeverity` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Debug&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - The event is intended for debug-oriented diagnostics.
   - `const DiagnosticSeverity Debug`
@@ -3192,6 +3216,12 @@ Browse the published API surface by public member.
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-dataproductdescriptor-description): `Properties` on `DataProductDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the human-readable data product description.
   - `string Description { get; }`
+- [Description](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumcaptureoptions-description): `Properties` on `DebeziumCaptureOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=Description&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets or sets the human-readable CDC capture description.
+  - `string Description { get; set; }`
+- [Description](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-description): `Properties` on `DebeziumConnectorOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=Description&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets or sets the human-readable connector description.
+  - `string Description { get; set; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-description): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - The operator-facing health description.
   - `string Description { get; set; }`
@@ -3525,6 +3555,12 @@ Browse the published API surface by public member.
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-data-dataproductdescriptor-displayname): `Properties` on `DataProductDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing data product name.
   - `string DisplayName { get; }`
+- [DisplayName](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumcaptureoptions-displayname): `Properties` on `DebeziumCaptureOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets or sets the operator-facing CDC capture name.
+  - `string DisplayName { get; set; }`
+- [DisplayName](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-displayname): `Properties` on `DebeziumConnectorOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets or sets the operator-facing connector name.
+  - `string DisplayName { get; set; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-displayname): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - The human-readable dependency name.
   - `string DisplayName { get; set; }`
@@ -3774,6 +3810,9 @@ Browse the published API surface by public member.
 - [EdgeNodeIds](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-edgenodeids): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=EdgeNodeIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the optional edge-node identifiers associated with this automation answer.
   - `IReadOnlyList<string> EdgeNodeIds { get; }`
+- [EdgeNodeIds](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-edgenodeids): `Properties` on `DebeziumConnectorOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=EdgeNodeIds&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets the declared edge-node identifiers that can originate observations for the managed connector runtime.
+  - `IList<string> EdgeNodeIds { get; }`
 - [EdgeRuntimeOptions](cephalon-edge.md#member-m-cephalon-edge-configuration-edgeruntimeoptions-ctor): `Constructors` on `EdgeRuntimeOptions` in `Cephalon.Edge.Configuration` (`Cephalon.Edge`) [Browse](browse.html?q=EdgeRuntimeOptions&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Configuration&scope=members)
   - Creates edge runtime options with the default host-owned features enabled.
   - `EdgeRuntimeOptions()`
@@ -4350,6 +4389,9 @@ Browse the published API surface by public member.
 - [EventFormat](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-eventformat): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventFormat&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The emitted change-event format such as `debezium-envelope`.
   - `string EventFormat { get; set; }`
+- [EventFormat](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumcaptureoptions-eventformat): `Properties` on `DebeziumCaptureOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=EventFormat&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets or sets the operator-facing event format projected on the shared descriptor.
+  - `string EventFormat { get; set; }`
 - [EventFormat](cephalon-data-mysql.md#member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-eventformat): `Properties` on `MySqlBinlogCaptureOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=EventFormat&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
   - Gets or sets the operator-facing event format projected on the CDC descriptor.
   - `string EventFormat { get; set; }`
@@ -4599,6 +4641,9 @@ Browse the published API surface by public member.
 - [ExecutionOwnership](cephalon-data.md#member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-executionownership): `Properties` on `CdcCaptureExecutionRuntimeOptions` in `Cephalon.Data.Configuration` (`Cephalon.Data`) [Browse](browse.html?q=ExecutionOwnership&assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration&scope=members)
   - Gets or sets the operator-facing ownership mode for the runtime.
   - `string ExecutionOwnership { get; set; }`
+- [ExecutionOwnership](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-executionownership): `Properties` on `DebeziumConnectorOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=ExecutionOwnership&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets or sets the execution-ownership mode published for the connector runtime.
+  - `string ExecutionOwnership { get; set; }`
 - [ExecutionTopology](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-executiontopology): `Properties` on `CdcCaptureExecutionBindingDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionTopology&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing topology classification for the effective execution runtime.
   - `string ExecutionTopology { get; }`
@@ -4607,6 +4652,9 @@ Browse the published API surface by public member.
   - `string ExecutionTopology { get; }`
 - [ExecutionTopology](cephalon-data.md#member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-executiontopology): `Properties` on `CdcCaptureExecutionRuntimeOptions` in `Cephalon.Data.Configuration` (`Cephalon.Data`) [Browse](browse.html?q=ExecutionTopology&assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration&scope=members)
   - Gets or sets the operator-facing topology classification for the runtime.
+  - `string ExecutionTopology { get; set; }`
+- [ExecutionTopology](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-executiontopology): `Properties` on `DebeziumConnectorOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=ExecutionTopology&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets or sets the execution-topology classification published for the connector runtime.
   - `string ExecutionTopology { get; set; }`
 - [ExitAfterApply](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-exitafterapply): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExitAfterApply&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the host exits after startup execution completes.
@@ -6393,6 +6441,12 @@ Browse the published API surface by public member.
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-data-dataproductdescriptor-id): `Properties` on `DataProductDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable data product identifier.
   - `string Id { get; }`
+- [Id](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumcaptureoptions-id): `Properties` on `DebeziumCaptureOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=Id&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets or sets the stable CDC capture identifier.
+  - `string Id { get; set; }`
+- [Id](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-id): `Properties` on `DebeziumConnectorOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=Id&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets or sets the stable execution-runtime identifier for the managed connector.
+  - `string Id { get; set; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-health-dependencyhealthreport-id): `Properties` on `DependencyHealthReport` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - The stable dependency identifier.
   - `string Id { get; set; }`
@@ -7875,6 +7929,12 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-dataproductdescriptor-metadata): `Properties` on `DataProductDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets operator-facing metadata associated with the data product.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumcaptureoptions-metadata): `Properties` on `DebeziumCaptureOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets arbitrary operator-facing metadata that should flow through the capture descriptor.
+  - `IDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-metadata): `Properties` on `DebeziumConnectorOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets arbitrary operator-facing metadata that should flow through the execution-runtime descriptor.
+  - `IDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutioncompensationaction-metadata): `Properties` on `DurableExecutionCompensationAction` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets additional operator-facing metadata describing the compensation action.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -8196,6 +8256,9 @@ Browse the published API surface by public member.
 - [Mode](cephalon-abstractions.md#member-p-cephalon-abstractions-data-dataproductdescriptor-mode): `Properties` on `DataProductDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Mode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the declared access mode for the data product.
   - `string Mode { get; }`
+- [Mode](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumcaptureoptions-mode): `Properties` on `DebeziumCaptureOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=Mode&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets or sets the operator-facing capture mode projected on the shared descriptor.
+  - `string Mode { get; set; }`
 - [Mode](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-mode): `Properties` on `EventStreamDescriptor` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=Mode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Gets the normalized stream persistence mode.
   - `string Mode { get; }`
@@ -8545,6 +8608,9 @@ Browse the published API surface by public member.
 - [ObservationStaleAfterSeconds](cephalon-data.md#member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-observationstaleafterseconds): `Properties` on `CdcCaptureExecutionRuntimeOptions` in `Cephalon.Data.Configuration` (`Cephalon.Data`) [Browse](browse.html?q=ObservationStaleAfterSeconds&assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration&scope=members)
   - Gets or sets the report-freshness window, in seconds, used to mark external runtime observations stale.
   - `int? ObservationStaleAfterSeconds { get; set; }`
+- [ObservationStaleAfterSeconds](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-observationstaleafterseconds): `Properties` on `DebeziumConnectorOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=ObservationStaleAfterSeconds&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets or sets the report-freshness window, in seconds, used to mark connector observations stale.
+  - `int? ObservationStaleAfterSeconds { get; set; }`
 - [Observe](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-observe): `Fields` on `CellTrafficAutomationLifecycleActions` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Observe&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - The selected materializer is observing control-plane truth without writing changes.
   - `const string Observe`
@@ -8806,6 +8872,9 @@ Browse the published API surface by public member.
   - `string OutboxId { get; }`
 - [OutboxId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-outboxid): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OutboxId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The outbox identifier that receives captured publications.
+  - `string OutboxId { get; set; }`
+- [OutboxId](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumcaptureoptions-outboxid): `Properties` on `DebeziumCaptureOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=OutboxId&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets or sets the outbox identifier that the external managed connector logically feeds.
   - `string OutboxId { get; set; }`
 - [OutboxId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchexecutionreport-outboxid): `Properties` on `EventDispatchExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=OutboxId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the stable outbox identifier that owns the dispatch path.
@@ -9591,6 +9660,9 @@ Browse the published API surface by public member.
 - [ProviderId](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-providerid): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the optional external provider or control-plane identifier that materializes this automation.
   - `string ProviderId { get; }`
+- [ProviderId](cephalon-data-debezium.md#member-f-cephalon-data-debezium-configuration-debeziumdataoptions-providerid): `Fields` on `DebeziumDataOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=ProviderId&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets the canonical provider identifier emitted by the pack.
+  - `const string ProviderId`
 - [ProviderId](cephalon-data-entityframework.md#member-f-cephalon-data-entityframework-configuration-entityframeworkdataoptions-providerid): `Fields` on `EntityFrameworkDataOptions` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=ProviderId&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
   - Gets the canonical provider identifier emitted by the pack.
   - `const string ProviderId`
@@ -10053,6 +10125,9 @@ Browse the published API surface by public member.
 - [RejectConflictingReporterIds](cephalon-data.md#member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-rejectconflictingreporterids): `Properties` on `CdcCaptureExecutionRuntimeOptions` in `Cephalon.Data.Configuration` (`Cephalon.Data`) [Browse](browse.html?q=RejectConflictingReporterIds&assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration&scope=members)
   - Gets or sets a value indicating whether the runtime should reject reports from conflicting reporter identities while an active lease still exists.
   - `bool RejectConflictingReporterIds { get; set; }`
+- [RejectConflictingReporterIds](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-rejectconflictingreporterids): `Properties` on `DebeziumConnectorOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=RejectConflictingReporterIds&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets or sets a value indicating whether the connector rejects conflicting reporter identities while an active lease still exists.
+  - `bool RejectConflictingReporterIds { get; set; }`
 - [Rejected](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturereporterparticipantroles-rejected): `Fields` on `CdcCaptureReporterParticipantRoles` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Rejected&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The reporter most recently attempted to report while another reporter still owned the active lease.
   - `const string Rejected`
@@ -10070,6 +10145,9 @@ Browse the published API surface by public member.
   - `bool RejectOutOfOrderReports { get; }`
 - [RejectOutOfOrderReports](cephalon-data.md#member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-rejectoutoforderreports): `Properties` on `CdcCaptureExecutionRuntimeOptions` in `Cephalon.Data.Configuration` (`Cephalon.Data`) [Browse](browse.html?q=RejectOutOfOrderReports&assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration&scope=members)
   - Gets or sets a value indicating whether the runtime should reject out-of-order external reports.
+  - `bool RejectOutOfOrderReports { get; set; }`
+- [RejectOutOfOrderReports](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-rejectoutoforderreports): `Properties` on `DebeziumConnectorOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=RejectOutOfOrderReports&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets or sets a value indicating whether the connector rejects out-of-order external reports.
   - `bool RejectOutOfOrderReports { get; set; }`
 - [RelativePattern](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointcandidateprojectiondescriptor-relativepattern): `Properties` on `RestEndpointCandidateProjectionDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=RelativePattern&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the projected route pattern relative to the owning route group.
@@ -10178,6 +10256,9 @@ Browse the published API surface by public member.
   - `int? ReporterLeaseSeconds { get; }`
 - [ReporterLeaseSeconds](cephalon-data.md#member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-reporterleaseseconds): `Properties` on `CdcCaptureExecutionRuntimeOptions` in `Cephalon.Data.Configuration` (`Cephalon.Data`) [Browse](browse.html?q=ReporterLeaseSeconds&assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration&scope=members)
   - Gets or sets the reporter-lease window, in seconds, used to keep one external reporter authoritative for the runtime.
+  - `int? ReporterLeaseSeconds { get; set; }`
+- [ReporterLeaseSeconds](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-reporterleaseseconds): `Properties` on `DebeziumConnectorOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=ReporterLeaseSeconds&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets or sets the reporter-lease window, in seconds, used to keep one reporter authoritative for the connector.
   - `int? ReporterLeaseSeconds { get; set; }`
 - [ReporterParticipants](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-reporterparticipants): `Properties` on `CdcCaptureReporterCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReporterParticipants&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the reporter participants currently visible in the coordination story.
@@ -10539,6 +10620,9 @@ Browse the published API surface by public member.
 - [ResourceIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-resourceids): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ResourceIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The resource identifiers observed by the capture.
   - `IReadOnlyList<string> ResourceIds { get; set; }`
+- [ResourceIds](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumcaptureoptions-resourceids): `Properties` on `DebeziumCaptureOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=ResourceIds&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets the resource identifiers observed by the capture, such as tables, topics, or collections.
+  - `IList<string> ResourceIds { get; }`
 - [ResourceIds](cephalon-data-mysql.md#member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-resourceids): `Properties` on `MySqlBinlogCaptureOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=ResourceIds&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
   - Gets the resource identifiers observed by the capture.
   - `IList<string> ResourceIds { get; }`
@@ -11229,6 +11313,9 @@ Browse the published API surface by public member.
 - [SectionName](cephalon-aspnetcore.md#member-f-cephalon-aspnetcore-hosting-restapigovernanceoptions-sectionname): `Fields` on `RestApiGovernanceOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=SectionName&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Gets the root configuration section used for REST API governance settings.
   - `const string SectionName`
+- [SectionPath](cephalon-data-debezium.md#member-f-cephalon-data-debezium-configuration-debeziumdataoptions-sectionpath): `Fields` on `DebeziumDataOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=SectionPath&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets the default configuration section path for Debezium data settings.
+  - `const string SectionPath`
 - [SectionPath](cephalon-data-mysql.md#member-f-cephalon-data-mysql-configuration-mysqldataoptions-sectionpath): `Fields` on `MySqlDataOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=SectionPath&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
   - Gets the configuration section path used by default for MySQL data settings.
   - `const string SectionPath`
@@ -11553,6 +11640,9 @@ Browse the published API surface by public member.
 - [Snapshot](cephalon-engine.md#member-p-cephalon-engine-trust-capabilitypolicyevaluator-snapshot): `Properties` on `CapabilityPolicyEvaluator` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=Snapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - Gets the trust snapshot being evaluated.
   - `TrustSnapshot Snapshot { get; }`
+- [SnapshotMode](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumcaptureoptions-snapshotmode): `Properties` on `DebeziumCaptureOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=SnapshotMode&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets or sets the Debezium snapshot mode when the pack should publish it as operator-facing metadata.
+  - `string SnapshotMode { get; set; }`
 - [Solution](cephalon-abstractions.md#member-f-cephalon-abstractions-appmodel-scaffolding-scaffoldscopes-solution): `Fields` on `ScaffoldScopes` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Solution&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Identifies a solution-level scaffold scope.
   - `const string Solution`
@@ -11588,6 +11678,9 @@ Browse the published API surface by public member.
   - `string SourceId { get; }`
 - [SourceId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-sourceid): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The logical source stream, database, or feed identifier.
+  - `string SourceId { get; set; }`
+- [SourceId](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumcaptureoptions-sourceid): `Properties` on `DebeziumCaptureOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=SourceId&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets or sets the logical source identifier when it should differ from the derived connector or topic path.
   - `string SourceId { get; set; }`
 - [SourceId](cephalon-data-mysql.md#member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-sourceid): `Properties` on `MySqlBinlogCaptureOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=SourceId&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
   - Gets or sets the logical source identifier when it should differ from the watched table path.
@@ -11670,6 +11763,9 @@ Browse the published API surface by public member.
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-dataproductdescriptor-sourcemoduleid): `Properties` on `DataProductDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the identifier of the module that owns the data product.
   - `string SourceModuleId { get; }`
+- [SourceModuleId](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumcaptureoptions-sourcemoduleid): `Properties` on `DebeziumCaptureOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets or sets the module identifier that owns the capture surface.
+  - `string SourceModuleId { get; set; }`
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-sourcemoduleid): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the owning module identifier when one is known at runtime.
   - `string SourceModuleId { get; }`
@@ -11787,6 +11883,9 @@ Browse the published API surface by public member.
 - [SourceProjectId](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-renderedproject-sourceprojectid): `Properties` on `RenderedProject` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=SourceProjectId&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the source scaffold project identifier that produced this instance.
   - `string SourceProjectId { get; }`
+- [SourceProviderId](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-sourceproviderid): `Properties` on `DebeziumConnectorOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=SourceProviderId&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets or sets the upstream provider identifier behind the managed connector, such as `postgresql` or `sqlserver`.
+  - `string SourceProviderId { get; set; }`
 - [SourceRepository](cephalon-engine.md#member-p-cephalon-engine-manifest-packageprovenancemanifest-sourcerepository): `Properties` on `PackageProvenanceManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=SourceRepository&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the declared source repository URI, when available.
   - `string SourceRepository { get; }`
@@ -12427,6 +12526,9 @@ Browse the published API surface by public member.
 - [Tags](cephalon-abstractions.md#member-p-cephalon-abstractions-data-dataproductdescriptor-tags): `Properties` on `DataProductDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets descriptive tags associated with the data product.
   - `IReadOnlyList<string> Tags { get; }`
+- [Tags](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumcaptureoptions-tags): `Properties` on `DebeziumCaptureOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=Tags&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets the descriptive tags associated with the capture.
+  - `IList<string> Tags { get; }`
 - [Tags](cephalon-edge.md#member-p-cephalon-edge-services-edgenodedescriptor-tags): `Properties` on `EdgeNodeDescriptor` in `Cephalon.Edge.Services` (`Cephalon.Edge`) [Browse](browse.html?q=Tags&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Services&scope=members)
   - Gets the normalized tag set associated with the node.
   - `IReadOnlyList<string> Tags { get; }`
@@ -12571,6 +12673,9 @@ Browse the published API surface by public member.
 - [TargetUri](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigingressruntimedescriptor-targeturi): `Properties` on `StranglerFigIngressRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=TargetUri&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the normalized absolute URI that traffic should target when the selected endpoint is absolute.
   - `string TargetUri { get; }`
+- [TaskIds](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-taskids): `Properties` on `DebeziumConnectorOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=TaskIds&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets the declared task identifiers that belong to the managed connector runtime.
+  - `IList<string> TaskIds { get; }`
 - [Technologies](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-appprofile-technologies): `Properties` on `AppProfile` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Technologies&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the selected technology profiles.
   - `IReadOnlyList<TechnologyDescriptor> Technologies { get; }`
@@ -12799,6 +12904,12 @@ Browse the published API surface by public member.
 - [Topic](cephalon-observability-kafkadependencies.md#member-p-cephalon-observability-kafkadependencies-configuration-kafkadependencydefinition-topic): `Properties` on `KafkaDependencyDefinition` in `Cephalon.Observability.KafkaDependencies.Configuration` (`Cephalon.Observability.KafkaDependencies`) [Browse](browse.html?q=Topic&assembly=Cephalon.Observability.KafkaDependencies&namespace=Cephalon.Observability.KafkaDependencies.Configuration&scope=members)
   - Gets or sets the optional topic name that should be present in returned cluster metadata.
   - `string Topic { get; set; }`
+- [TopicName](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumcaptureoptions-topicname): `Properties` on `DebeziumCaptureOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=TopicName&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets or sets the external topic name that carries the Debezium envelope for this capture.
+  - `string TopicName { get; set; }`
+- [TopicPrefix](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-topicprefix): `Properties` on `DebeziumConnectorOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=TopicPrefix&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
+  - Gets or sets the Debezium topic prefix when the connector fans out into one or more topics.
+  - `string TopicPrefix { get; set; }`
 - [TotalActionCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasetopologyoperationalactionplan-totalactioncount): `Properties` on `DatabaseTopologyOperationalActionPlan` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalActionCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the total number of operator actions in the plan.
   - `int TotalActionCount { get; }`

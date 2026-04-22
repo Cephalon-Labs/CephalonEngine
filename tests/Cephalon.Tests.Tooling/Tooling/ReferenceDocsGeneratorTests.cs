@@ -500,6 +500,7 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-identity-aspnetcore.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-data-mysql.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-data-debezium.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-data-oracle.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-eventsourcing.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-eventsourcing-entityframework.md");
@@ -547,6 +548,9 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Data.MySql", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Data.Debezium", StringComparison.Ordinal));
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.Data.Oracle", StringComparison.Ordinal));
