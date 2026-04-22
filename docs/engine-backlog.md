@@ -2736,6 +2736,30 @@ Delivered:
 - the provider-native runner now validates declared publication/table ownership, optionally creates the replication slot, reads one bounded committed pgoutput batch per iteration, stages deterministic outbox publications with content type `application/vnd.cephalon.postgresql.logical-replication+json`, and only confirms slot flush progress after stage success while keeping `replicationCheckpointSource = slot-confirmed-flush-lsn` on the shared runtime story
 - targeted coverage now proves the provider-native PostgreSQL runtime story through composition tests `22/22`, hosting tests `1/1`, tooling tests `181/181`, and the reference docs publish script
 
+### ENG-155 Phase 13 richer external and edge-aware CDC failover and takeover baseline
+
+Status: done
+Estimate: 5
+Completed: April 22, 2026
+
+Why:
+
+- `ENG-152` introduced reporter and edge identity plus reporter-lease enforcement, but the shared runtime story still only answered accept-or-reject behavior while active leases existed
+- operators still needed the existing `/engine/cdc-captures/runtime*`, `/engine/cdc-capture-runtimes*`, and `snapshot` surfaces to say whether one runtime currently had an active owner, an expired lease waiting for takeover, or a degraded conflicting reporter posture without inventing a second coordinator
+- richer failover and takeover truth still had to stay additive over the shipped shared CDC descriptor, runtime-state, execution-runtime summary, and edge-aware reporting contracts instead of pushing reporter-failover logic into an HTTP-only host adapter
+
+Acceptance:
+
+- `Cephalon.Abstractions` extends the shared CDC runtime-state and execution-runtime summary contracts with first-class reporter-coordination posture that can answer active ownership, expired-lease posture, takeover history, and conflicting reporter evidence without replacing the existing reporter and edge identity fields
+- `Cephalon.Data` records rejected conflicting reporters plus accepted reporter takeovers on the existing runtime-state catalog, derives `active`, `lease-expired`, `conflicted`, `not-configured`, and `unreported` coordination states from shared lease truth, and keeps `/engine/cdc-captures/runtime*`, `/engine/cdc-capture-runtimes*`, and `snapshot` aligned on one operator-facing answer
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the shipped slice while richer multi-reporter reconciliation, stronger takeover policy, and later provider-specific capture implementations remain later work
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships `CdcCaptureReporterCoordinationStates` plus `CdcCaptureReporterCoordinationStatus`, while `CdcCaptureRuntimeState` and `CdcCaptureExecutionRuntimeSummary` now expose first-class `ReporterCoordination` answers alongside the existing reporter and edge identity fields
+- `Cephalon.Data` now records rejected conflicting reporters, detects lease-expiry takeovers, projects `active`, `lease-expired`, `conflicted`, `not-configured`, and `unreported` coordination states from the shared runtime-state catalog, and keeps those answers additive over the existing `LastReporterId`, `ActiveReporterId`, `ReporterLeaseExpiresAtUtc`, and `ObservedEdgeNodeIds` story instead of inventing a second failover registry
+- targeted coverage now proves rejected-conflict truth, lease-expiry posture, reporter takeover projection, ASP.NET Core surface publication, public package-surface alignment, and the reference docs publish script through composition tests `23/23`, hosting tests `4/4`, tooling tests `181/181`, and the reference docs publish script
+
 ### ENG-154 Phase 13 PostgreSQL publication and slot lifecycle hardening baseline
 
 Status: done

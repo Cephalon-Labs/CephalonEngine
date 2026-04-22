@@ -85,6 +85,12 @@ public sealed record CdcCaptureRuntimeState(
     public string? LastEdgeNodeId { get; init; }
 
     /// <summary>
+    /// Gets the reporter-coordination posture currently visible for the capture's execution runtime.
+    /// </summary>
+    public CdcCaptureReporterCoordinationStatus ReporterCoordination { get; init; } =
+        new(CdcCaptureReporterCoordinationStates.Unknown);
+
+    /// <summary>
     /// Gets the total number of capture observations reported for the CDC capture.
     /// </summary>
     public int TotalReports => StartedCount + CapturedCount + IdleCount + FailedCount;
@@ -113,6 +119,16 @@ public sealed record CdcCaptureRuntimeState(
     /// Gets a value indicating whether the capture currently carries reporter-lease metadata.
     /// </summary>
     public bool HasReporterLease => ReporterLeaseExpiresAtUtc.HasValue;
+
+    /// <summary>
+    /// Gets a value indicating whether the capture's execution runtime currently has one active reporter owner.
+    /// </summary>
+    public bool HasActiveReporterOwner => ReporterCoordination.HasActiveReporter;
+
+    /// <summary>
+    /// Gets a value indicating whether the capture's execution runtime currently reports degraded reporter ownership.
+    /// </summary>
+    public bool HasReporterCoordinationIssue => ReporterCoordination.IsDegraded;
 
     /// <summary>
     /// Gets a value indicating whether the latest report is now stale according to the execution-runtime reporting policy.

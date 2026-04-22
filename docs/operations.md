@@ -1322,13 +1322,16 @@ Current payload highlights:
   including reported capture ids, latest outcome/observation time, latest checkpoint/change id,
   aggregate started/captured/idle/failed counts, total captured changes, total produced messages,
   latest acknowledgement posture, latest error, `lastReporterId`, `activeReporterId`,
-  `reporterLeaseExpiresAtUtc`, `observedEdgeNodeIds`, and `lastEdgeNodeId`
+  `reporterLeaseExpiresAtUtc`, `observedEdgeNodeIds`, `lastEdgeNodeId`, and typed
+  `reporterCoordination`
 - the same execution-runtime catalog is also available through `/engine/snapshot` in
   `CdcCaptureExecutionRuntimes` when operators want one merged runtime answer
 - the drill-down route `/engine/cdc-capture-runtimes/{executionRuntimeId}` narrows the same catalog
   to one execution runtime by stable id
 - `/engine/cdc-captures*` and `/engine/cdc-captures/runtime*` now also carry first-class
-  `executionBinding` answers, so runtime-first and capture-first ownership views stay aligned
+  `executionBinding` plus typed `reporterCoordination` answers, so runtime-first and capture-first
+  ownership views stay aligned even when an external reporter lease expires, a new reporter takes
+  over, or a conflicting reporter is rejected
 - host-level `AddData(... configure => configure.CdcExecutionRuntimes ...)` or other
   `DataRuntimeOptions.CdcExecutionRuntimes` declarations can publish external-managed,
   provider-native, edge, or other runtime answers on the same catalog without falsely implying the

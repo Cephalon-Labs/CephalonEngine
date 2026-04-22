@@ -212,11 +212,15 @@ keep one runner or edge agent observable without baking host-local lease or topo
 adapter. `CdcCaptureExecutionRuntimeDescriptor` now exposes `ObservationStaleAfterSeconds`,
 `RejectOutOfOrderReports`, `ReporterLeaseSeconds`, `RejectConflictingReporterIds`, and declared
 `EdgeNodeIds` for runtime policy, `CdcCaptureRuntimeState` now preserves `LastReportId`,
-`LastReporterId`, `ReporterLeaseExpiresAtUtc`, `LastEdgeNodeId`, and typed `ObservationFreshness`,
-and `CdcCaptureExecutionRuntimeSummary` can aggregate `fresh`, `stale`, `mixed`, or `unknown`
-observation posture together with `LastReporterId`, `ActiveReporterId`,
-`ReporterLeaseExpiresAtUtc`, `ObservedEdgeNodeIds`, and `LastEdgeNodeId` without forcing adapters
-to invent their own HTTP-local reporting contracts or topology coordinators.
+`LastReporterId`, `ReporterLeaseExpiresAtUtc`, `LastEdgeNodeId`, typed `ObservationFreshness`, and
+typed `ReporterCoordination`, while `CdcCaptureExecutionRuntimeSummary` can aggregate `fresh`,
+`stale`, `mixed`, or `unknown` observation posture together with `LastReporterId`,
+`ActiveReporterId`, `ReporterLeaseExpiresAtUtc`, `ObservedEdgeNodeIds`, `LastEdgeNodeId`, and the
+same `ReporterCoordination` answer. That coordination answer now keeps first-class `active`,
+`lease-expired`, `conflicted`, `not-configured`, and `unreported` posture together with active
+owner, previous owner, lease-expiry, last takeover, and last conflicting reporter metadata without
+forcing adapters to invent their own HTTP-local failover, takeover, or degraded-topology
+contracts.
 
 The app-model contract now also carries a contract-first resilience family through
 `ResilienceSelection`, `RetrySelection`, `TimeoutSelection`, `CircuitBreakerSelection`,

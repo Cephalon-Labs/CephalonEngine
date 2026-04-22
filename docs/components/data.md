@@ -104,8 +104,9 @@ even when the active runner lives out of process. The shared catalog also stamps
 `metadata.cdcCaptureReporterId`, `metadata.cdcCaptureReporterLeaseExpiresAtUtc`, and
 `metadata.cdcCaptureEdgeNodeId`, while `CdcCaptureRuntimeState` plus
 `CdcCaptureExecutionRuntimeSummary` now keep first-class `LastReporterId`, `ActiveReporterId`,
-`ReporterLeaseExpiresAtUtc`, `ObservedEdgeNodeIds`, and `LastEdgeNodeId` so operators can read
-latest report identity, lease ownership, and edge provenance straight off
+`ReporterLeaseExpiresAtUtc`, `ObservedEdgeNodeIds`, `LastEdgeNodeId`, and typed
+`ReporterCoordination` so operators can read latest report identity, active owner, lease-expiry,
+takeover history, degraded conflict posture, and edge provenance straight off
 `/engine/cdc-captures/runtime*`, `/engine/cdc-capture-runtimes*`, and `snapshot` without
 inventing a second watchdog registry or topology-coordination surface.
 

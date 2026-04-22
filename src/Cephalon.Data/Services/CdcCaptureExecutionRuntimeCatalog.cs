@@ -63,7 +63,10 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
 
         if (matchingStates.Count == 0)
         {
-            return CdcCaptureExecutionRuntimeSummary.Empty;
+            return CdcCaptureExecutionRuntimeSummary.Empty with
+            {
+                ReporterCoordination = CreateReporterCoordination(runtime)
+            };
         }
 
         var latestState = matchingStates
@@ -91,6 +94,7 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             LastError: latestState.LastError,
             ObservationFreshness: AggregateObservationFreshness(matchingStates))
         {
+            ReporterCoordination = latestState.ReporterCoordination,
             LastReporterId = latestState.LastReporterId,
             ActiveReporterId = activeReporterId,
             ReporterLeaseExpiresAtUtc = ResolveActiveReporterLeaseExpiry(matchingStates, activeReporterId),
@@ -103,6 +107,22 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
                 .ToArray(),
             LastEdgeNodeId = latestState.LastEdgeNodeId
         };
+    }
+
+    private static CdcCaptureReporterCoordinationStatus CreateReporterCoordination(
+        CdcCaptureExecutionRuntimeDescriptor runtime)
+    {
+        if (runtime.ReporterLeaseSeconds is not int reporterLeaseSeconds ||
+            reporterLeaseSeconds <= 0)
+        {
+            return new CdcCaptureReporterCoordinationStatus(
+                CdcCaptureReporterCoordinationStates.NotConfigured,
+                "The execution runtime does not currently declare reporter-lease coordination.");
+        }
+
+        return new CdcCaptureReporterCoordinationStatus(
+            CdcCaptureReporterCoordinationStates.Unreported,
+            "The execution runtime has not reported any external reporter observations yet.");
     }
 
     private static CdcCaptureFreshnessStatus AggregateObservationFreshness(

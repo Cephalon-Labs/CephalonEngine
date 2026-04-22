@@ -19,6 +19,7 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
     private readonly Dictionary<string, CdcCaptureExecutionRuntimeDescriptor> runtimeDescriptorsById = runtimeDescriptorCatalog.Runtimes
         .ToDictionary(static runtime => runtime.Id, Comparer);
     private readonly Dictionary<string, CdcCaptureRuntimeState> reportedStatesById = new(Comparer);
+    private readonly Dictionary<string, RuntimeReporterCoordinationMemory> runtimeReporterCoordinationById = new(Comparer);
     private readonly TimeProvider timeProvider = timeProvider ?? TimeProvider.System;
 
     private static readonly CdcCaptureFreshnessStatus UnknownFreshness =
@@ -29,6 +30,8 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
         new(CdcCaptureLagStates.Unknown);
     private static readonly CdcCapturePublicationStatus UnknownPublication =
         new(CdcCapturePublicationStates.Unknown);
+    private static readonly CdcCaptureReporterCoordinationStatus UnknownReporterCoordination =
+        new(CdcCaptureReporterCoordinationStates.Unknown);
 
     public IReadOnlyList<CdcCaptureRuntimeState> States
     {
@@ -245,6 +248,7 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
         if (reportedStatesById.TryGetValue(descriptor.Id, out var existing))
         {
             var dispatchState = dispatchRuntimeCatalog?.GetByOutboxId(descriptor.OutboxId);
+            var reporterCoordination = ResolveReporterCoordination(descriptor, existing);
             return existing with
             {
                 ObservationFreshness = ResolveObservationFreshness(existing.ObservationFreshness),
@@ -254,7 +258,8 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                     dispatchState,
                     existing.LastOutcome,
                     existing.LastError),
-                OutboxDispatchState = dispatchState
+                OutboxDispatchState = dispatchState,
+                ReporterCoordination = reporterCoordination
             };
         }
 
@@ -298,7 +303,8 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
             OutboxDispatchState: dispatchRuntimeCatalog?.GetByOutboxId(descriptor.OutboxId),
             Metadata: EmptyMetadata)
         {
-            ExecutionBinding = descriptor.ExecutionBinding
+            ExecutionBinding = descriptor.ExecutionBinding,
+            ReporterCoordination = ResolveReporterCoordination(descriptor, current: null)
         };
     }
 
@@ -392,6 +398,9 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
             var normalizedReportId = string.IsNullOrWhiteSpace(report.ReportId)
                 ? null
                 : report.ReportId.Trim();
+            var reporterSnapshot = executionRuntime is null
+                ? RuntimeReporterLeaseSnapshot.Empty
+                : SnapshotRuntimeReporterLease(executionRuntime.Id, timeProvider.GetUtcNow());
 
             if (normalizedReportId is not null &&
                 Comparer.Equals(current.LastReportId, normalizedReportId))
@@ -408,7 +417,7 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
             if (executionRuntime is not null)
             {
                 ValidateExecutionRuntimeEdgeNode(report, executionRuntime);
-                ValidateExecutionRuntimeReporterIdentity(report, executionRuntime);
+                ValidateExecutionRuntimeReporterIdentity(report, executionRuntime, reporterSnapshot);
             }
 
             if (executionRuntime?.RejectOutOfOrderReports == true &&
@@ -429,6 +438,9 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                 executionRuntime,
                 report.ReporterId,
                 report.ObservedAtUtc);
+            var reporterTakeover = executionRuntime is null
+                ? null
+                : DetectReporterTakeover(executionRuntime, report, reporterSnapshot);
 
             current = normalizedOutcome switch
             {
@@ -547,6 +559,20 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                 _ => throw new InvalidOperationException(
                     $"CDC capture outcome '{report.Outcome}' is not supported by the active runtime.")
             };
+
+            if (executionRuntime is not null)
+            {
+                RecordAcceptedReporterObservation(
+                    executionRuntime.Id,
+                    report,
+                    reporterSnapshot,
+                    reporterTakeover);
+
+                current = current with
+                {
+                    ReporterCoordination = ResolveReporterCoordination(descriptor, current)
+                };
+            }
 
             reportedStatesById[report.CdcCaptureId] = current;
         }
@@ -716,7 +742,8 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
 
     private void ValidateExecutionRuntimeReporterIdentity(
         CdcCaptureExecutionReport report,
-        CdcCaptureExecutionRuntimeDescriptor executionRuntime)
+        CdcCaptureExecutionRuntimeDescriptor executionRuntime,
+        RuntimeReporterLeaseSnapshot reporterSnapshot)
     {
         if (!executionRuntime.RejectConflictingReporterIds)
         {
@@ -729,7 +756,7 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                 $"CDC capture '{report.CdcCaptureId}' requires reporter identity for execution runtime '{executionRuntime.Id}' because it rejects conflicting reporters.");
         }
 
-        var activeReporterStates = ResolveActiveReporterStates(executionRuntime.Id);
+        var activeReporterStates = reporterSnapshot.ActiveReporterStates;
         if (activeReporterStates.Length == 0)
         {
             return;
@@ -740,6 +767,8 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
         {
             return;
         }
+
+        RecordRejectedReporterConflict(executionRuntime.Id, report);
 
         var activeReporterSummary = string.Join(
             ", ",
@@ -780,6 +809,234 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                reporterLeaseExpiresAtUtc.Value >= now;
     }
 
+    private CdcCaptureReporterCoordinationStatus ResolveReporterCoordination(
+        CdcCaptureDescriptor descriptor,
+        CdcCaptureRuntimeState? current)
+    {
+        var executionRuntimeId = descriptor.ExecutionBinding.EffectiveExecutionRuntimeId;
+        var executionRuntime = ResolveExecutionRuntimeDescriptor(executionRuntimeId, current?.Metadata);
+        if (executionRuntime is null)
+        {
+            return UnknownReporterCoordination;
+        }
+
+        if (executionRuntime.ReporterLeaseSeconds is not int reporterLeaseSeconds ||
+            reporterLeaseSeconds <= 0)
+        {
+            return new CdcCaptureReporterCoordinationStatus(
+                CdcCaptureReporterCoordinationStates.NotConfigured,
+                "The execution runtime does not currently declare reporter-lease coordination.")
+            {
+                ActiveReporterId = current?.LastReporterId
+            };
+        }
+
+        if (current is null || !current.HasReports)
+        {
+            return new CdcCaptureReporterCoordinationStatus(
+                CdcCaptureReporterCoordinationStates.Unreported,
+                "The execution runtime has not reported any external reporter observations yet.");
+        }
+
+        var now = timeProvider.GetUtcNow();
+        var reporterSnapshot = SnapshotRuntimeReporterLease(executionRuntime.Id, now);
+        var memory = ResolveRuntimeReporterCoordinationMemory(executionRuntime.Id);
+        var hasCurrentConflict = memory.LastConflictedAtUtc.HasValue &&
+                                 (!memory.LastTakeoverObservedAtUtc.HasValue ||
+                                  memory.LastConflictedAtUtc.Value > memory.LastTakeoverObservedAtUtc.Value);
+
+        if (reporterSnapshot.ActiveReporterStates.Length > 1)
+        {
+            return new CdcCaptureReporterCoordinationStatus(
+                CdcCaptureReporterCoordinationStates.Conflicted,
+                "Multiple external reporters currently hold active leases for the same execution runtime.")
+            {
+                PreviousReporterId = memory.PreviousReporterId,
+                LeaseExpiredAtUtc = memory.LeaseExpiredAtUtc,
+                LastTakeoverObservedAtUtc = memory.LastTakeoverObservedAtUtc,
+                LastConflictingReporterId = memory.LastConflictingReporterId,
+                LastConflictedAtUtc = memory.LastConflictedAtUtc
+            };
+        }
+
+        if (!string.IsNullOrWhiteSpace(reporterSnapshot.ActiveReporterId))
+        {
+            var description = hasCurrentConflict
+                ? $"Reporter '{reporterSnapshot.ActiveReporterId}' still holds the active lease while a conflicting reporter was rejected."
+                : !string.IsNullOrWhiteSpace(memory.PreviousReporterId) && memory.LastTakeoverObservedAtUtc.HasValue
+                    ? $"Reporter '{reporterSnapshot.ActiveReporterId}' currently holds the active lease after taking over from '{memory.PreviousReporterId}'."
+                    : $"Reporter '{reporterSnapshot.ActiveReporterId}' currently holds the active lease for the execution runtime.";
+
+            return new CdcCaptureReporterCoordinationStatus(
+                hasCurrentConflict
+                    ? CdcCaptureReporterCoordinationStates.Conflicted
+                    : CdcCaptureReporterCoordinationStates.Active,
+                description)
+            {
+                ActiveReporterId = reporterSnapshot.ActiveReporterId,
+                ActiveReporterLeaseExpiresAtUtc = reporterSnapshot.ActiveReporterLeaseExpiresAtUtc,
+                PreviousReporterId = memory.PreviousReporterId,
+                LeaseExpiredAtUtc = memory.LeaseExpiredAtUtc,
+                LastTakeoverObservedAtUtc = memory.LastTakeoverObservedAtUtc,
+                LastConflictingReporterId = memory.LastConflictingReporterId,
+                LastConflictedAtUtc = memory.LastConflictedAtUtc
+            };
+        }
+
+        var latestReporterId = reporterSnapshot.LatestReporterId ?? current.LastReporterId;
+        var latestReporterLeaseExpiresAtUtc = reporterSnapshot.LatestReporterLeaseExpiresAtUtc ?? current.ReporterLeaseExpiresAtUtc;
+        if (!string.IsNullOrWhiteSpace(latestReporterId) &&
+            latestReporterLeaseExpiresAtUtc.HasValue &&
+            latestReporterLeaseExpiresAtUtc.Value < now)
+        {
+            return new CdcCaptureReporterCoordinationStatus(
+                CdcCaptureReporterCoordinationStates.LeaseExpired,
+                $"Reporter '{latestReporterId}' no longer holds an active lease; the execution runtime is awaiting failover or takeover.")
+            {
+                PreviousReporterId = latestReporterId,
+                LeaseExpiredAtUtc = latestReporterLeaseExpiresAtUtc,
+                LastTakeoverObservedAtUtc = memory.LastTakeoverObservedAtUtc,
+                LastConflictingReporterId = memory.LastConflictingReporterId,
+                LastConflictedAtUtc = memory.LastConflictedAtUtc
+            };
+        }
+
+        return new CdcCaptureReporterCoordinationStatus(
+            CdcCaptureReporterCoordinationStates.Unknown,
+            "The execution runtime reported external reporter identity, but the current lease posture cannot be determined.")
+        {
+            PreviousReporterId = memory.PreviousReporterId,
+            LeaseExpiredAtUtc = memory.LeaseExpiredAtUtc,
+            LastTakeoverObservedAtUtc = memory.LastTakeoverObservedAtUtc,
+            LastConflictingReporterId = memory.LastConflictingReporterId,
+            LastConflictedAtUtc = memory.LastConflictedAtUtc
+        };
+    }
+
+    private RuntimeReporterCoordinationMemory ResolveRuntimeReporterCoordinationMemory(string executionRuntimeId)
+    {
+        return runtimeReporterCoordinationById.TryGetValue(executionRuntimeId, out var memory)
+            ? memory
+            : RuntimeReporterCoordinationMemory.Empty;
+    }
+
+    private RuntimeReporterLeaseSnapshot SnapshotRuntimeReporterLease(
+        string executionRuntimeId,
+        DateTimeOffset now)
+    {
+        var runtimeStates = reportedStatesById.Values
+            .Where(state =>
+                Comparer.Equals(state.ExecutionBinding.EffectiveExecutionRuntimeId, executionRuntimeId) &&
+                !string.IsNullOrWhiteSpace(state.LastReporterId))
+            .ToArray();
+        if (runtimeStates.Length == 0)
+        {
+            return RuntimeReporterLeaseSnapshot.Empty;
+        }
+
+        var activeReporterStates = runtimeStates
+            .GroupBy(static state => state.LastReporterId!, Comparer)
+            .Select(group => (
+                ReporterId: group.Key,
+                ReporterLeaseExpiresAtUtc: group
+                    .Where(static state => state.ReporterLeaseExpiresAtUtc.HasValue)
+                    .Select(static state => state.ReporterLeaseExpiresAtUtc)
+                    .Max()))
+            .Where(state => IsReporterLeaseActive(state.ReporterLeaseExpiresAtUtc, now))
+            .OrderBy(static state => state.ReporterId, Comparer)
+            .ToArray();
+        var latestState = runtimeStates
+            .OrderByDescending(static state => state.LastObservedAtUtc ?? DateTimeOffset.MinValue)
+            .ThenBy(static state => state.CdcCaptureId, Comparer)
+            .First();
+
+        return new RuntimeReporterLeaseSnapshot(
+            LatestReporterId: latestState.LastReporterId,
+            LatestReporterLeaseExpiresAtUtc: latestState.ReporterLeaseExpiresAtUtc,
+            ActiveReporterStates: activeReporterStates);
+    }
+
+    private static ReporterTakeoverTransition? DetectReporterTakeover(
+        CdcCaptureExecutionRuntimeDescriptor executionRuntime,
+        CdcCaptureExecutionReport report,
+        RuntimeReporterLeaseSnapshot reporterSnapshot)
+    {
+        if (string.IsNullOrWhiteSpace(report.ReporterId) ||
+            executionRuntime.ReporterLeaseSeconds is not int reporterLeaseSeconds ||
+            reporterLeaseSeconds <= 0 ||
+            reporterSnapshot.ActiveReporterStates.Length > 1 ||
+            !string.IsNullOrWhiteSpace(reporterSnapshot.ActiveReporterId) ||
+            string.IsNullOrWhiteSpace(reporterSnapshot.LatestReporterId) ||
+            !reporterSnapshot.LatestReporterLeaseExpiresAtUtc.HasValue ||
+            Comparer.Equals(reporterSnapshot.LatestReporterId, report.ReporterId) ||
+            reporterSnapshot.LatestReporterLeaseExpiresAtUtc.Value >= report.ObservedAtUtc)
+        {
+            return null;
+        }
+
+        return new ReporterTakeoverTransition(
+            reporterSnapshot.LatestReporterId,
+            reporterSnapshot.LatestReporterLeaseExpiresAtUtc.Value,
+            report.ObservedAtUtc);
+    }
+
+    private void RecordRejectedReporterConflict(
+        string executionRuntimeId,
+        CdcCaptureExecutionReport report)
+    {
+        var existing = ResolveRuntimeReporterCoordinationMemory(executionRuntimeId);
+        runtimeReporterCoordinationById[executionRuntimeId] = existing with
+        {
+            LastConflictingReporterId = report.ReporterId,
+            LastConflictedAtUtc = report.ObservedAtUtc
+        };
+    }
+
+    private void RecordAcceptedReporterObservation(
+        string executionRuntimeId,
+        CdcCaptureExecutionReport report,
+        RuntimeReporterLeaseSnapshot reporterSnapshot,
+        ReporterTakeoverTransition? reporterTakeover)
+    {
+        if (string.IsNullOrWhiteSpace(report.ReporterId))
+        {
+            return;
+        }
+
+        var existing = ResolveRuntimeReporterCoordinationMemory(executionRuntimeId);
+        var updated = existing;
+
+        if (reporterTakeover is not null)
+        {
+            updated = updated with
+            {
+                PreviousReporterId = reporterTakeover.PreviousReporterId,
+                LeaseExpiredAtUtc = reporterTakeover.LeaseExpiredAtUtc,
+                LastTakeoverObservedAtUtc = reporterTakeover.ObservedAtUtc,
+                LastConflictingReporterId = null,
+                LastConflictedAtUtc = null
+            };
+        }
+        else if ((!string.IsNullOrWhiteSpace(reporterSnapshot.ActiveReporterId) &&
+                  Comparer.Equals(reporterSnapshot.ActiveReporterId, report.ReporterId)) ||
+                 (string.IsNullOrWhiteSpace(reporterSnapshot.ActiveReporterId) &&
+                  !string.IsNullOrWhiteSpace(reporterSnapshot.LatestReporterId) &&
+                  Comparer.Equals(reporterSnapshot.LatestReporterId, report.ReporterId)))
+        {
+            updated = updated with
+            {
+                LastConflictingReporterId = null,
+                LastConflictedAtUtc = null
+            };
+        }
+
+        if (!runtimeReporterCoordinationById.ContainsKey(executionRuntimeId) ||
+            !EqualityComparer<RuntimeReporterCoordinationMemory>.Default.Equals(existing, updated))
+        {
+            runtimeReporterCoordinationById[executionRuntimeId] = updated;
+        }
+    }
+
     private static void UpsertOptional(
         Dictionary<string, string> metadata,
         string key,
@@ -793,4 +1050,37 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
 
         metadata[key] = value.Trim();
     }
+
+    private sealed record RuntimeReporterCoordinationMemory(
+        string? PreviousReporterId,
+        DateTimeOffset? LeaseExpiredAtUtc,
+        DateTimeOffset? LastTakeoverObservedAtUtc,
+        string? LastConflictingReporterId,
+        DateTimeOffset? LastConflictedAtUtc)
+    {
+        public static RuntimeReporterCoordinationMemory Empty { get; } =
+            new(null, null, null, null, null);
+    }
+
+    private sealed record RuntimeReporterLeaseSnapshot(
+        string? LatestReporterId,
+        DateTimeOffset? LatestReporterLeaseExpiresAtUtc,
+        (string ReporterId, DateTimeOffset? ReporterLeaseExpiresAtUtc)[] ActiveReporterStates)
+    {
+        public static RuntimeReporterLeaseSnapshot Empty { get; } =
+            new(null, null, []);
+
+        public string? ActiveReporterId => ActiveReporterStates.Length == 1
+            ? ActiveReporterStates[0].ReporterId
+            : null;
+
+        public DateTimeOffset? ActiveReporterLeaseExpiresAtUtc => ActiveReporterStates.Length == 1
+            ? ActiveReporterStates[0].ReporterLeaseExpiresAtUtc
+            : null;
+    }
+
+    private sealed record ReporterTakeoverTransition(
+        string PreviousReporterId,
+        DateTimeOffset LeaseExpiredAtUtc,
+        DateTimeOffset ObservedAtUtc);
 }

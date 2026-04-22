@@ -8561,6 +8561,16 @@ bool HasActiveReporterLease { get; }
 
 Gets a value indicating whether the execution runtime currently has an active reporter lease.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-hasreportercoordinationissue"></a>
+
+##### `HasReporterCoordinationIssue`
+
+```csharp
+bool HasReporterCoordinationIssue { get; }
+```
+
+Gets a value indicating whether the execution runtime currently reports degraded reporter ownership.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-hasreports"></a>
 
 ##### `HasReports`
@@ -8730,6 +8740,16 @@ IReadOnlyList<string> ReportedCdcCaptureIds { get; set; }
 ```
 
 The CDC capture identifiers that have reported runtime state for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-reportercoordination"></a>
+
+##### `ReporterCoordination`
+
+```csharp
+CdcCaptureReporterCoordinationStatus ReporterCoordination { get; set; }
+```
+
+Gets the reporter-coordination posture currently visible for the execution runtime.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-reporterleaseexpiresatutc"></a>
 
@@ -9180,6 +9200,218 @@ string State { get; }
 
 Gets the stable publication-state identifier.
 
+<a id="type-cephalon-abstractions-data-cdccapturereportercoordinationstates"></a>
+
+### `CdcCaptureReporterCoordinationStates`
+
+Defines the stable reporter-coordination state identifiers used by CDC runtime-state and execution-runtime summaries.
+
+#### Declaration
+```csharp
+public static class CdcCaptureReporterCoordinationStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccapturereportercoordinationstates-active"></a>
+
+##### `Active`
+
+```csharp
+const string Active
+```
+
+Exactly one reporter currently holds the active lease for the execution runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccapturereportercoordinationstates-conflicted"></a>
+
+##### `Conflicted`
+
+```csharp
+const string Conflicted
+```
+
+Reporter coordination is currently degraded because conflicting or ambiguous reporters are visible.
+
+<a id="member-f-cephalon-abstractions-data-cdccapturereportercoordinationstates-leaseexpired"></a>
+
+##### `LeaseExpired`
+
+```csharp
+const string LeaseExpired
+```
+
+The latest known reporter lease expired before a replacement reporter took over.
+
+<a id="member-f-cephalon-abstractions-data-cdccapturereportercoordinationstates-notconfigured"></a>
+
+##### `NotConfigured`
+
+```csharp
+const string NotConfigured
+```
+
+The execution runtime does not currently declare reporter-lease coordination semantics.
+
+<a id="member-f-cephalon-abstractions-data-cdccapturereportercoordinationstates-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+The runtime cannot currently determine the reporter-coordination posture.
+
+<a id="member-f-cephalon-abstractions-data-cdccapturereportercoordinationstates-unreported"></a>
+
+##### `Unreported`
+
+```csharp
+const string Unreported
+```
+
+The execution runtime has not reported any capture observations yet.
+
+<a id="type-cephalon-abstractions-data-cdccapturereportercoordinationstatus"></a>
+
+### `CdcCaptureReporterCoordinationStatus`
+
+Describes the reporter-coordination posture currently visible for one CDC capture or execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureReporterCoordinationStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccapturereportercoordinationstatus-ctor-system-string-system-string"></a>
+
+##### `CdcCaptureReporterCoordinationStatus`
+
+```csharp
+CdcCaptureReporterCoordinationStatus(string state, string description)
+```
+
+Creates a new CDC reporter-coordination status.
+
+Parameters:
+- `state`: The stable reporter-coordination state, such as `active`, `lease-expired`, or `conflicted`.
+- `description`: An optional operator-facing reporter-coordination summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-activereporterid"></a>
+
+##### `ActiveReporterId`
+
+```csharp
+string ActiveReporterId { get; set; }
+```
+
+Gets the reporter identity that currently holds the active lease when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-activereporterleaseexpiresatutc"></a>
+
+##### `ActiveReporterLeaseExpiresAtUtc`
+
+```csharp
+DateTimeOffset? ActiveReporterLeaseExpiresAtUtc { get; set; }
+```
+
+Gets the UTC timestamp when the active reporter lease expires when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing reporter-coordination summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-hasactivereporter"></a>
+
+##### `HasActiveReporter`
+
+```csharp
+bool HasActiveReporter { get; }
+```
+
+Gets a value indicating whether the coordination answer currently has one active reporter owner.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-isdegraded"></a>
+
+##### `IsDegraded`
+
+```csharp
+bool IsDegraded { get; }
+```
+
+Gets a value indicating whether the coordination answer currently reports degraded reporter ownership.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-lastconflictedatutc"></a>
+
+##### `LastConflictedAtUtc`
+
+```csharp
+DateTimeOffset? LastConflictedAtUtc { get; set; }
+```
+
+Gets the UTC timestamp when the last conflicting reporter was observed or rejected when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-lastconflictingreporterid"></a>
+
+##### `LastConflictingReporterId`
+
+```csharp
+string LastConflictingReporterId { get; set; }
+```
+
+Gets the last conflicting reporter identity that was observed or rejected when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-lasttakeoverobservedatutc"></a>
+
+##### `LastTakeoverObservedAtUtc`
+
+```csharp
+DateTimeOffset? LastTakeoverObservedAtUtc { get; set; }
+```
+
+Gets the UTC timestamp when the current reporter most recently took over after the previous lease expired.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-leaseexpiredatutc"></a>
+
+##### `LeaseExpiredAtUtc`
+
+```csharp
+DateTimeOffset? LeaseExpiredAtUtc { get; set; }
+```
+
+Gets the UTC timestamp when the previous reporter lease expired before failover or takeover when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-previousreporterid"></a>
+
+##### `PreviousReporterId`
+
+```csharp
+string PreviousReporterId { get; set; }
+```
+
+Gets the previous active reporter identity when the current reporter took over after lease expiry.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable reporter-coordination state.
+
 <a id="type-cephalon-abstractions-data-cdccaptureruntimeobservation"></a>
 
 ### `CdcCaptureRuntimeObservation`
@@ -9487,6 +9719,16 @@ CdcCaptureFreshnessStatus Freshness { get; set; }
 
 The latest provider-facing freshness answer reported for the capture.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-hasactivereporterowner"></a>
+
+##### `HasActiveReporterOwner`
+
+```csharp
+bool HasActiveReporterOwner { get; }
+```
+
+Gets a value indicating whether the capture's execution runtime currently has one active reporter owner.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-hasdispatchreports"></a>
 
 ##### `HasDispatchReports`
@@ -9536,6 +9778,16 @@ bool HasPendingPublications { get; }
 ```
 
 Gets a value indicating whether the capture still has provider-reported pending publications.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-hasreportercoordinationissue"></a>
+
+##### `HasReporterCoordinationIssue`
+
+```csharp
+bool HasReporterCoordinationIssue { get; }
+```
+
+Gets a value indicating whether the capture's execution runtime currently reports degraded reporter ownership.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-hasreporterlease"></a>
 
@@ -9766,6 +10018,16 @@ CdcCapturePublicationStatus Publication { get; set; }
 ```
 
 The latest publication posture answer reported for the capture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-reportercoordination"></a>
+
+##### `ReporterCoordination`
+
+```csharp
+CdcCaptureReporterCoordinationStatus ReporterCoordination { get; set; }
+```
+
+Gets the reporter-coordination posture currently visible for the capture's execution runtime.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureruntimestate-reporterleaseexpiresatutc"></a>
 

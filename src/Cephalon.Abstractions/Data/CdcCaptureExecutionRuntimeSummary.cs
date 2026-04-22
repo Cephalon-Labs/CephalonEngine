@@ -59,6 +59,12 @@ public sealed record CdcCaptureExecutionRuntimeSummary(
         ObservationFreshness: new CdcCaptureFreshnessStatus(CdcCaptureFreshnessStates.Unknown));
 
     /// <summary>
+    /// Gets the reporter-coordination posture currently visible for the execution runtime.
+    /// </summary>
+    public CdcCaptureReporterCoordinationStatus ReporterCoordination { get; init; } =
+        new(CdcCaptureReporterCoordinationStates.Unknown);
+
+    /// <summary>
     /// Gets the latest reporter identity visible for the execution runtime when one was reported.
     /// </summary>
     public string? LastReporterId { get; init; }
@@ -107,4 +113,9 @@ public sealed record CdcCaptureExecutionRuntimeSummary(
     /// Gets a value indicating whether the execution runtime currently has an active reporter lease.
     /// </summary>
     public bool HasActiveReporterLease => ReporterLeaseExpiresAtUtc.HasValue;
+
+    /// <summary>
+    /// Gets a value indicating whether the execution runtime currently reports degraded reporter ownership.
+    /// </summary>
+    public bool HasReporterCoordinationIssue => ReporterCoordination.IsDegraded;
 }
