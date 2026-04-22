@@ -4165,6 +4165,275 @@ note: visible
     }
 
     [Fact]
+    public async Task MapCephalonClearsRejectedReporterConflictAfterActiveReporterReaffirmsLease()
+    {
+        var timeProvider = new MutableTimeProvider(DateTimeOffset.Parse("2026-04-21T03:40:45Z", CultureInfo.InvariantCulture));
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Services.AddSingleton<TimeProvider>(timeProvider);
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularVerticalSlice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Patterns:0"] = "CQRS";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new Phase8CatalogModule());
+            cephalon.AddData(options =>
+            {
+                options.EnableExternalCdcRuntimeReporting = true;
+                options.CdcExecutionRuntimes.Add(new CdcCaptureExecutionRuntimeOptions
+                {
+                    Id = "external-cdc-runtime",
+                    DisplayName = "External CDC Runtime",
+                    Description = "Represents an externally managed out-of-process CDC runner.",
+                    ExecutionOwnership = "external-managed",
+                    ExecutionTopology = "out-of-process-reporting",
+                    ReporterLeaseSeconds = 120,
+                    RejectConflictingReporterIds = true
+                });
+                options.CdcExecutionRuntimes[0].CdcCaptureIds.Add("tenant-profile-cdc");
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+
+        var client = app.GetTestClient();
+        var firstResponse = await client.PostAsJsonAsync(
+            "/engine/cdc-capture-runtimes/external-cdc-runtime/reports",
+            new[]
+            {
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: "tenant-profile-cdc",
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-21T03:40:00Z", CultureInfo.InvariantCulture),
+                    reportId: "external-report-reporter-a",
+                    reporterId: "edge-agent-a")
+            });
+        firstResponse.EnsureSuccessStatusCode();
+
+        var rejectedResponse = await client.PostAsJsonAsync(
+            "/engine/cdc-capture-runtimes/external-cdc-runtime/reports",
+            new[]
+            {
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: "tenant-profile-cdc",
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-21T03:40:30Z", CultureInfo.InvariantCulture),
+                    reportId: "external-report-reporter-b",
+                    reporterId: "edge-agent-b")
+            });
+        Assert.Equal(HttpStatusCode.BadRequest, rejectedResponse.StatusCode);
+
+        var recoveryResponse = await client.PostAsJsonAsync(
+            "/engine/cdc-capture-runtimes/external-cdc-runtime/reports",
+            new[]
+            {
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: "tenant-profile-cdc",
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-21T03:41:00Z", CultureInfo.InvariantCulture),
+                    reportId: "external-report-reporter-a-2",
+                    reporterId: "edge-agent-a")
+            });
+        recoveryResponse.EnsureSuccessStatusCode();
+
+        var state = await client.GetFromJsonAsync<CdcCaptureRuntimeState>("/engine/cdc-captures/runtime/tenant-profile-cdc");
+        var runtime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>("/engine/cdc-capture-runtimes/external-cdc-runtime");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(state);
+        Assert.Equal(CdcCaptureReporterCoordinationStates.Active, state.ReporterCoordination.State);
+        Assert.Equal("edge-agent-a", state.ReporterCoordination.ActiveReporterId);
+        Assert.Equal(DateTimeOffset.Parse("2026-04-21T03:43:00Z", CultureInfo.InvariantCulture), state.ReporterCoordination.ActiveReporterLeaseExpiresAtUtc);
+        Assert.Null(state.ReporterCoordination.LastConflictingReporterId);
+        Assert.Null(state.ReporterCoordination.LastConflictedAtUtc);
+        Assert.Equal(CdcCaptureReporterTakeoverStates.NotRequired, state.ReporterCoordination.TakeoverState);
+        Assert.Equal(CdcCaptureReporterCoordinationIssueReasons.None, state.ReporterCoordination.DegradedReason);
+        Assert.Equal(1, state.ReporterCoordination.ParticipantCount);
+        Assert.Equal(1, state.ReporterCoordination.ActiveReporterCount);
+        Assert.Equal(0, state.ReporterCoordination.StandbyReporterCount);
+        Assert.Equal(0, state.ReporterCoordination.RejectedReporterCount);
+        Assert.False(state.ReporterCoordination.HasRejectedReporters);
+        Assert.False(state.ReporterCoordination.IsDegraded);
+        Assert.False(state.HasReporterCoordinationIssue);
+        Assert.Collection(
+            state.ReporterCoordination.ReporterParticipants,
+            participant =>
+            {
+                Assert.Equal("edge-agent-a", participant.ReporterId);
+                Assert.Equal(CdcCaptureReporterParticipantRoles.Active, participant.Role);
+                Assert.Equal(DateTimeOffset.Parse("2026-04-21T03:41:00Z", CultureInfo.InvariantCulture), participant.LastObservedAtUtc);
+            });
+
+        Assert.NotNull(runtime);
+        Assert.Equal(CdcCaptureReporterCoordinationStates.Active, runtime.Summary.ReporterCoordination.State);
+        Assert.Null(runtime.Summary.ReporterCoordination.LastConflictingReporterId);
+        Assert.Null(runtime.Summary.ReporterCoordination.LastConflictedAtUtc);
+        Assert.Equal(1, runtime.Summary.ReporterCoordination.ParticipantCount);
+        Assert.Equal(1, runtime.Summary.ReporterCoordination.ActiveReporterCount);
+        Assert.Equal(0, runtime.Summary.ReporterCoordination.RejectedReporterCount);
+        Assert.False(runtime.Summary.ReporterCoordination.HasRejectedReporters);
+        Assert.False(runtime.Summary.ReporterCoordination.IsDegraded);
+        Assert.False(runtime.Summary.HasReporterCoordinationIssue);
+        Assert.Collection(
+            runtime.Summary.ReporterCoordination.ReporterParticipants,
+            participant =>
+            {
+                Assert.Equal("edge-agent-a", participant.ReporterId);
+                Assert.Equal(CdcCaptureReporterParticipantRoles.Active, participant.Role);
+            });
+
+        Assert.NotNull(snapshot);
+        Assert.Contains(snapshot.CdcCaptureStates, item =>
+            item.CdcCaptureId == "tenant-profile-cdc" &&
+            item.ReporterCoordination.State == CdcCaptureReporterCoordinationStates.Active &&
+            item.ReporterCoordination.RejectedReporterCount == 0);
+        Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item =>
+            item.Id == "external-cdc-runtime" &&
+            item.Summary.ReporterCoordination.State == CdcCaptureReporterCoordinationStates.Active &&
+            item.Summary.ReporterCoordination.RejectedReporterCount == 0);
+    }
+
+    [Fact]
+    public async Task MapCephalonRemovesHistoricalStandbyReporterAfterReplacementReporterReaffirmsLease()
+    {
+        var timeProvider = new MutableTimeProvider(DateTimeOffset.Parse("2026-04-21T03:40:45Z", CultureInfo.InvariantCulture));
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Services.AddSingleton<TimeProvider>(timeProvider);
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularVerticalSlice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Patterns:0"] = "CQRS";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new Phase8CatalogModule());
+            cephalon.AddData(options =>
+            {
+                options.EnableExternalCdcRuntimeReporting = true;
+                options.CdcExecutionRuntimes.Add(new CdcCaptureExecutionRuntimeOptions
+                {
+                    Id = "external-cdc-runtime",
+                    DisplayName = "External CDC Runtime",
+                    Description = "Represents an externally managed out-of-process CDC runner.",
+                    ExecutionOwnership = "external-managed",
+                    ExecutionTopology = "out-of-process-reporting",
+                    ReporterLeaseSeconds = 120,
+                    RejectConflictingReporterIds = true
+                });
+                options.CdcExecutionRuntimes[0].CdcCaptureIds.Add("tenant-profile-cdc");
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+
+        var client = app.GetTestClient();
+        var firstResponse = await client.PostAsJsonAsync(
+            "/engine/cdc-capture-runtimes/external-cdc-runtime/reports",
+            new[]
+            {
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: "tenant-profile-cdc",
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-21T03:40:00Z", CultureInfo.InvariantCulture),
+                    reportId: "external-report-reporter-a",
+                    reporterId: "edge-agent-a")
+            });
+        firstResponse.EnsureSuccessStatusCode();
+
+        timeProvider.Advance(TimeSpan.FromSeconds(76));
+
+        var secondResponse = await client.PostAsJsonAsync(
+            "/engine/cdc-capture-runtimes/external-cdc-runtime/reports",
+            new[]
+            {
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: "tenant-profile-cdc",
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-21T03:42:30Z", CultureInfo.InvariantCulture),
+                    reportId: "external-report-reporter-b",
+                    reporterId: "edge-agent-b")
+            });
+        secondResponse.EnsureSuccessStatusCode();
+
+        var thirdResponse = await client.PostAsJsonAsync(
+            "/engine/cdc-capture-runtimes/external-cdc-runtime/reports",
+            new[]
+            {
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: "tenant-profile-cdc",
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-21T03:43:00Z", CultureInfo.InvariantCulture),
+                    reportId: "external-report-reporter-b-2",
+                    reporterId: "edge-agent-b")
+            });
+        thirdResponse.EnsureSuccessStatusCode();
+
+        var state = await client.GetFromJsonAsync<CdcCaptureRuntimeState>("/engine/cdc-captures/runtime/tenant-profile-cdc");
+        var runtime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>("/engine/cdc-capture-runtimes/external-cdc-runtime");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(state);
+        Assert.Equal(CdcCaptureReporterCoordinationStates.Active, state.ReporterCoordination.State);
+        Assert.Equal("edge-agent-b", state.ReporterCoordination.ActiveReporterId);
+        Assert.Equal(DateTimeOffset.Parse("2026-04-21T03:45:00Z", CultureInfo.InvariantCulture), state.ReporterCoordination.ActiveReporterLeaseExpiresAtUtc);
+        Assert.Equal("edge-agent-a", state.ReporterCoordination.PreviousReporterId);
+        Assert.Equal(DateTimeOffset.Parse("2026-04-21T03:42:30Z", CultureInfo.InvariantCulture), state.ReporterCoordination.LastTakeoverObservedAtUtc);
+        Assert.Equal(CdcCaptureReporterTakeoverStates.Completed, state.ReporterCoordination.TakeoverState);
+        Assert.Equal(CdcCaptureReporterCoordinationIssueReasons.None, state.ReporterCoordination.DegradedReason);
+        Assert.Equal(1, state.ReporterCoordination.ParticipantCount);
+        Assert.Equal(1, state.ReporterCoordination.ActiveReporterCount);
+        Assert.Equal(0, state.ReporterCoordination.StandbyReporterCount);
+        Assert.False(state.ReporterCoordination.HasStandbyReporters);
+        Assert.True(state.ReporterCoordination.HasCompletedTakeover);
+        Assert.False(state.ReporterCoordination.IsDegraded);
+        Assert.False(state.HasReporterCoordinationIssue);
+        Assert.Collection(
+            state.ReporterCoordination.ReporterParticipants,
+            participant =>
+            {
+                Assert.Equal("edge-agent-b", participant.ReporterId);
+                Assert.Equal(CdcCaptureReporterParticipantRoles.Active, participant.Role);
+                Assert.Equal(DateTimeOffset.Parse("2026-04-21T03:43:00Z", CultureInfo.InvariantCulture), participant.LastObservedAtUtc);
+            });
+
+        Assert.NotNull(runtime);
+        Assert.Equal(CdcCaptureReporterCoordinationStates.Active, runtime.Summary.ReporterCoordination.State);
+        Assert.Equal("edge-agent-a", runtime.Summary.ReporterCoordination.PreviousReporterId);
+        Assert.Equal(CdcCaptureReporterTakeoverStates.Completed, runtime.Summary.ReporterCoordination.TakeoverState);
+        Assert.Equal(1, runtime.Summary.ReporterCoordination.ParticipantCount);
+        Assert.Equal(1, runtime.Summary.ReporterCoordination.ActiveReporterCount);
+        Assert.Equal(0, runtime.Summary.ReporterCoordination.StandbyReporterCount);
+        Assert.False(runtime.Summary.ReporterCoordination.HasStandbyReporters);
+        Assert.True(runtime.Summary.ReporterCoordination.HasCompletedTakeover);
+        Assert.False(runtime.Summary.ReporterCoordination.IsDegraded);
+        Assert.False(runtime.Summary.HasReporterCoordinationIssue);
+        Assert.Collection(
+            runtime.Summary.ReporterCoordination.ReporterParticipants,
+            participant =>
+            {
+                Assert.Equal("edge-agent-b", participant.ReporterId);
+                Assert.Equal(CdcCaptureReporterParticipantRoles.Active, participant.Role);
+            });
+
+        Assert.NotNull(snapshot);
+        Assert.Contains(snapshot.CdcCaptureStates, item =>
+            item.CdcCaptureId == "tenant-profile-cdc" &&
+            item.ReporterCoordination.ParticipantCount == 1 &&
+            item.ReporterCoordination.HasCompletedTakeover);
+        Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item =>
+            item.Id == "external-cdc-runtime" &&
+            item.Summary.ReporterCoordination.ParticipantCount == 1 &&
+            item.Summary.ReporterCoordination.HasCompletedTakeover);
+    }
+
+    [Fact]
     public async Task MapCephalonMarksExternalCdcRuntimeAsConflictedWhenMultipleReportersHoldActiveLeases()
     {
         var timeProvider = new MutableTimeProvider(DateTimeOffset.Parse("2026-04-21T03:44:45Z", CultureInfo.InvariantCulture));

@@ -2832,6 +2832,53 @@ Delivered:
   tests `26/26`, hosting tests `2/2`, tooling package-surface plus docs coverage validation, and
   the reference docs publish script
 
+### ENG-160 Phase 13 external CDC reporter rejoin and stale-conflict cleanup baseline
+
+Status: done
+Estimate: 5
+Completed: April 22, 2026
+
+Why:
+
+- `ENG-155` through `ENG-157` made failover, takeover, and participant-level coordination truth
+  visible, but the shared runtime story could still carry rejected-conflict evidence or
+  takeover-only standby participants longer than the latest accepted reporter posture warranted
+- operators still needed the existing `/engine/cdc-captures/runtime*`,
+  `/engine/cdc-capture-runtimes*`, and `snapshot` surfaces to answer the current coordination
+  story after a successful reporter rejoin or a stable post-takeover reassertion without inventing
+  a second cleanup coordinator
+- richer operator guidance also still needed lightweight participant-count helpers on the shared
+  coordination contract so tooling could summarize active versus standby versus rejected posture
+  without always iterating the full participant array
+
+Acceptance:
+
+- `Cephalon.Abstractions` extends the shared CDC reporter-coordination contract with additive
+  participant-count helpers while preserving the same participant list and takeover/degraded
+  taxonomy
+- `Cephalon.Data` clears stale rejected-conflict evidence after later accepted reports, keeps
+  rejected conflicts scoped to the current accepted coordination story, and drops takeover-only
+  standby participants after the replacement reporter reaffirms lease ownership while preserving
+  historical takeover fields on the same shared runtime-state catalog
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice while additional provider-specific capture implementations and later external
+  topology hardening remain later work
+
+Delivered:
+
+- `CdcCaptureReporterCoordinationStatus` now publishes additive `ParticipantCount`,
+  `ActiveReporterCount`, `StandbyReporterCount`, `RejectedReporterCount`, and
+  `HasMultipleActiveReporters` helpers over the same shared participant list and takeover/degraded
+  contract
+- `Cephalon.Data` now clears stale rejected-conflict evidence after later accepted reports,
+  suppresses takeover-only standby participants once the replacement reporter has reasserted lease
+  ownership, and keeps historical `PreviousReporterId`, `LeaseExpiredAtUtc`, and
+  `LastTakeoverObservedAtUtc` available on the same `/engine/cdc-captures/runtime*`,
+  `/engine/cdc-capture-runtimes*`, and `snapshot` surfaces without inventing a second coordinator
+- targeted coverage now proves active-reaffirmation cleanup and takeover standby normalization
+  through composition tests `26/26`, hosting tests `5/5`, tooling package-surface validation, and
+  the reference docs publish script
+
 ### ENG-157 Phase 13 stronger reporter takeover and degraded-posture hardening baseline
 
 Status: done

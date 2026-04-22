@@ -117,6 +117,9 @@ Browse the published API surface by public member.
 - [Active](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturereporterparticipantroles-active): `Fields` on `CdcCaptureReporterParticipantRoles` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Active&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The reporter currently holds one active lease for the execution runtime.
   - `const string Active`
+- [ActiveReporterCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-activereportercount): `Properties` on `CdcCaptureReporterCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActiveReporterCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the number of active reporters currently visible in the coordination story.
+  - `int ActiveReporterCount { get; }`
 - [ActiveReporterId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-activereporterid): `Properties` on `CdcCaptureExecutionRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActiveReporterId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the currently active reporter identity when one reporter still holds an active lease for the execution runtime.
   - `string ActiveReporterId { get; set; }`
@@ -5703,6 +5706,9 @@ Browse the published API surface by public member.
 - [HasMore](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-audithistoryqueryresult-hasmore): `Properties` on `AuditHistoryQueryResult` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasMore&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets a value indicating whether more entries remain beyond this page.
   - `bool HasMore { get; }`
+- [HasMultipleActiveReporters](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-hasmultipleactivereporters): `Properties` on `CdcCaptureReporterCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasMultipleActiveReporters&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the coordination answer currently carries more than one active reporter.
+  - `bool HasMultipleActiveReporters { get; }`
 - [HasObservationFreshnessWindow](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-hasobservationfreshnesswindow): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasObservationFreshnessWindow&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the capture observation still has a report-freshness window.
   - `bool HasObservationFreshnessWindow { get; }`
@@ -8902,6 +8908,9 @@ Browse the published API surface by public member.
 - [Partial](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationstates-partial): `Fields` on `CellTrafficAutomationMaterializationStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Partial&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - The automation spans multiple materialization dimensions whose observed postures do not currently agree.
   - `const string Partial`
+- [ParticipantCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-participantcount): `Properties` on `CdcCaptureReporterCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ParticipantCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the total number of reporter participants currently visible in the coordination story.
+  - `int ParticipantCount { get; }`
 - [PassHostHeader](cephalon-edge-traefik.md#member-p-cephalon-edge-traefik-configuration-traefikingressrouteoptions-passhostheader): `Properties` on `TraefikIngressRouteOptions` in `Cephalon.Edge.Traefik.Configuration` (`Cephalon.Edge.Traefik`) [Browse](browse.html?q=PassHostHeader&assembly=Cephalon.Edge.Traefik&namespace=Cephalon.Edge.Traefik.Configuration&scope=members)
   - Gets or sets the optional pass-host-header posture applied to the projected backend Service reference.
   - `bool? PassHostHeader { get; set; }`
@@ -9956,6 +9965,9 @@ Browse the published API surface by public member.
 - [RejectedReporterConflict](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturereportercoordinationissuereasons-rejectedreporterconflict): `Fields` on `CdcCaptureReporterCoordinationIssueReasons` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RejectedReporterConflict&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - At least one conflicting reporter remains visible while another reporter still holds the active lease.
   - `const string RejectedReporterConflict`
+- [RejectedReporterCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-rejectedreportercount): `Properties` on `CdcCaptureReporterCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RejectedReporterCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the number of rejected reporters currently visible in the coordination story.
+  - `int RejectedReporterCount { get; }`
 - [RejectionStatusCode](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-rejectionstatuscode): `Properties` on `RateLimitingRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=RejectionStatusCode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - The HTTP status code returned when the limiter rejects a request.
   - `int RejectionStatusCode { get; set; }`
@@ -11721,6 +11733,9 @@ Browse the published API surface by public member.
 - [Standby](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturereporterparticipantroles-standby): `Fields` on `CdcCaptureReporterParticipantRoles` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Standby&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The reporter is still visible through accepted runtime observations, but does not currently hold the active lease.
   - `const string Standby`
+- [StandbyReporterCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-standbyreportercount): `Properties` on `CdcCaptureReporterCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=StandbyReporterCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the number of standby reporters currently visible in the coordination story.
+  - `int StandbyReporterCount { get; }`
 - [StartAsync](cephalon-engine.md#member-m-cephalon-engine-runtime-engineruntime-startasync-system-iserviceprovider-system-threading-cancellationtoken): `Methods` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=StartAsync&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Starts the runtime and its modules.
   - `Task StartAsync(IServiceProvider services, CancellationToken cancellationToken)`

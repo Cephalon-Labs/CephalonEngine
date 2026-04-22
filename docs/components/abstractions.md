@@ -226,12 +226,16 @@ contracts. It now also keeps participant-level operator truth through
 `CdcCaptureReporterParticipantRoles`, `CdcCaptureReporterParticipantStatus`, and
 `CdcCaptureReporterCoordinationStatus.ReporterParticipants`, so shared CDC surfaces can answer
 which reporters are currently `active`, `standby`, or `rejected` together with the additive
-`HasStandbyReporters` and `HasRejectedReporters` summaries instead of leaving operator flows to
+`HasStandbyReporters`, `HasRejectedReporters`, `ParticipantCount`, `ActiveReporterCount`,
+`StandbyReporterCount`, and `RejectedReporterCount` summaries instead of leaving operator flows to
 infer that story from one last-conflict field. The same shared contract now also publishes stable
-`TakeoverState` and `DegradedReason` identifiers together with derived `RequiresTakeover` and
-`HasCompletedTakeover` helpers, so hosts and tooling can distinguish an `awaiting-takeover`
-expired lease from a `rejected-reporter-conflict`, a `multiple-active-reporters` ambiguity, or a
-completed handoff without inventing a second operator taxonomy.
+`TakeoverState` and `DegradedReason` identifiers together with derived `RequiresTakeover`,
+`HasCompletedTakeover`, and `HasMultipleActiveReporters` helpers, so hosts and tooling can
+distinguish an `awaiting-takeover` expired lease from a `rejected-reporter-conflict`, a
+`multiple-active-reporters` ambiguity, or a completed handoff without inventing a second operator
+taxonomy. Later accepted reports can now also normalize stale rejected-conflict evidence and old
+takeover standby evidence without changing this shared contract shape, so operator surfaces stay
+truthful while historical `PreviousReporterId` plus takeover timestamps remain available.
 
 The app-model contract now also carries a contract-first resilience family through
 `ResilienceSelection`, `RetrySelection`, `TimeoutSelection`, `CircuitBreakerSelection`,

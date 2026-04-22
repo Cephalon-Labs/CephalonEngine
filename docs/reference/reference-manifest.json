@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-22T08:51:50.2022868+00:00",
+  "GeneratedAtUtc": "2026-04-22T09:21:16.4464715+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -3331,7 +3331,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 18,
+        "Properties": 23,
         "Methods": 0
       }
     },
@@ -12833,6 +12833,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccapturereporterparticipantroles-active",
       "Signature": "const string Active",
       "Summary": "The reporter currently holds one active lease for the execution runtime."
+    },
+    {
+      "DisplayName": "ActiveReporterCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureReporterCoordinationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-activereportercount",
+      "Signature": "int ActiveReporterCount { get; }",
+      "Summary": "Gets the number of active reporters currently visible in the coordination story."
     },
     {
       "DisplayName": "ActiveReporterId",
@@ -33240,6 +33251,17 @@
       "Summary": "Gets a value indicating whether more entries remain beyond this page."
     },
     {
+      "DisplayName": "HasMultipleActiveReporters",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureReporterCoordinationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-hasmultipleactivereporters",
+      "Signature": "bool HasMultipleActiveReporters { get; }",
+      "Summary": "Gets a value indicating whether the coordination answer currently carries more than one active reporter."
+    },
+    {
       "DisplayName": "HasObservationFreshnessWindow",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureRuntimeState",
@@ -44887,6 +44909,17 @@
       "Summary": "The automation spans multiple materialization dimensions whose observed postures do not currently agree."
     },
     {
+      "DisplayName": "ParticipantCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureReporterCoordinationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-participantcount",
+      "Signature": "int ParticipantCount { get; }",
+      "Summary": "Gets the total number of reporter participants currently visible in the coordination story."
+    },
+    {
       "DisplayName": "PassHostHeader",
       "Category": "Properties",
       "DeclaringTypeName": "TraefikIngressRouteOptions",
@@ -48733,6 +48766,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccapturereportercoordinationissuereasons-rejectedreporterconflict",
       "Signature": "const string RejectedReporterConflict",
       "Summary": "At least one conflicting reporter remains visible while another reporter still holds the active lease."
+    },
+    {
+      "DisplayName": "RejectedReporterCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureReporterCoordinationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-rejectedreportercount",
+      "Signature": "int RejectedReporterCount { get; }",
+      "Summary": "Gets the number of rejected reporters currently visible in the coordination story."
     },
     {
       "DisplayName": "RejectionStatusCode",
@@ -55199,6 +55243,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccapturereporterparticipantroles-standby",
       "Signature": "const string Standby",
       "Summary": "The reporter is still visible through accepted runtime observations, but does not currently hold the active lease."
+    },
+    {
+      "DisplayName": "StandbyReporterCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureReporterCoordinationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-standbyreportercount",
+      "Signature": "int StandbyReporterCount { get; }",
+      "Summary": "Gets the number of standby reporters currently visible in the coordination story."
     },
     {
       "DisplayName": "StartAsync",

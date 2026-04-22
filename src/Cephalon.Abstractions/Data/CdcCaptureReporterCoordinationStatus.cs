@@ -76,6 +76,29 @@ public sealed record CdcCaptureReporterCoordinationStatus
     public IReadOnlyList<CdcCaptureReporterParticipantStatus> ReporterParticipants { get; init; } = [];
 
     /// <summary>
+    /// Gets the total number of reporter participants currently visible in the coordination story.
+    /// </summary>
+    public int ParticipantCount => ReporterParticipants.Count;
+
+    /// <summary>
+    /// Gets the number of active reporters currently visible in the coordination story.
+    /// </summary>
+    public int ActiveReporterCount => ReporterParticipants.Count(static participant =>
+        string.Equals(participant.Role, CdcCaptureReporterParticipantRoles.Active, StringComparison.OrdinalIgnoreCase));
+
+    /// <summary>
+    /// Gets the number of standby reporters currently visible in the coordination story.
+    /// </summary>
+    public int StandbyReporterCount => ReporterParticipants.Count(static participant =>
+        string.Equals(participant.Role, CdcCaptureReporterParticipantRoles.Standby, StringComparison.OrdinalIgnoreCase));
+
+    /// <summary>
+    /// Gets the number of rejected reporters currently visible in the coordination story.
+    /// </summary>
+    public int RejectedReporterCount => ReporterParticipants.Count(static participant =>
+        string.Equals(participant.Role, CdcCaptureReporterParticipantRoles.Rejected, StringComparison.OrdinalIgnoreCase));
+
+    /// <summary>
     /// Gets the stable reporter-takeover posture currently visible in the coordination story.
     /// </summary>
     public string TakeoverState { get; init; } = CdcCaptureReporterTakeoverStates.NotApplicable;
@@ -93,14 +116,17 @@ public sealed record CdcCaptureReporterCoordinationStatus
     /// <summary>
     /// Gets a value indicating whether the coordination answer currently carries standby reporter evidence.
     /// </summary>
-    public bool HasStandbyReporters => ReporterParticipants.Any(static participant =>
-        string.Equals(participant.Role, CdcCaptureReporterParticipantRoles.Standby, StringComparison.OrdinalIgnoreCase));
+    public bool HasStandbyReporters => StandbyReporterCount > 0;
 
     /// <summary>
     /// Gets a value indicating whether the coordination answer currently carries rejected reporter evidence.
     /// </summary>
-    public bool HasRejectedReporters => ReporterParticipants.Any(static participant =>
-        string.Equals(participant.Role, CdcCaptureReporterParticipantRoles.Rejected, StringComparison.OrdinalIgnoreCase));
+    public bool HasRejectedReporters => RejectedReporterCount > 0;
+
+    /// <summary>
+    /// Gets a value indicating whether the coordination answer currently carries more than one active reporter.
+    /// </summary>
+    public bool HasMultipleActiveReporters => ActiveReporterCount > 1;
 
     /// <summary>
     /// Gets a value indicating whether the coordination answer is currently waiting for a replacement reporter to take over.

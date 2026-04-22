@@ -1069,7 +1069,10 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
         var existing = ResolveRuntimeReporterCoordinationMemory(executionRuntimeId);
         var updated = existing with
         {
-            RejectedReporters = RemoveRejectedReporter(existing.RejectedReporters, report.ReporterId)
+            RejectedReporters = PruneRejectedReporters(
+                existing.RejectedReporters,
+                report.ObservedAtUtc,
+                report.ReporterId)
         };
 
         if (reporterTakeover is not null)
@@ -1144,7 +1147,7 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
         }
 
         if (!string.IsNullOrWhiteSpace(memory.PreviousReporterId) &&
-            participants.All(participant => !Comparer.Equals(participant.ReporterId, memory.PreviousReporterId)))
+            ShouldAddHistoricalStandbyParticipant(memory, participants))
         {
             participants.Add(new CdcCaptureReporterParticipantStatus(
                 memory.PreviousReporterId,
@@ -1218,6 +1221,27 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
             .FirstOrDefault();
     }
 
+    private static bool ShouldAddHistoricalStandbyParticipant(
+        RuntimeReporterCoordinationMemory memory,
+        IReadOnlyList<CdcCaptureReporterParticipantStatus> participants)
+    {
+        if (string.IsNullOrWhiteSpace(memory.PreviousReporterId) ||
+            participants.Any(participant => Comparer.Equals(participant.ReporterId, memory.PreviousReporterId)))
+        {
+            return false;
+        }
+
+        if (!memory.LastTakeoverObservedAtUtc.HasValue)
+        {
+            return true;
+        }
+
+        return !participants.Any(participant =>
+            string.Equals(participant.Role, CdcCaptureReporterParticipantRoles.Active, StringComparison.OrdinalIgnoreCase) &&
+            participant.LastObservedAtUtc.HasValue &&
+            participant.LastObservedAtUtc.Value > memory.LastTakeoverObservedAtUtc.Value);
+    }
+
     private static RuntimeRejectedReporterMemory[] UpsertRejectedReporter(
         RuntimeRejectedReporterMemory[] existing,
         RuntimeRejectedReporterMemory rejectedReporter)
@@ -1229,17 +1253,20 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
             .ToArray();
     }
 
-    private static RuntimeRejectedReporterMemory[] RemoveRejectedReporter(
+    private static RuntimeRejectedReporterMemory[] PruneRejectedReporters(
         RuntimeRejectedReporterMemory[] existing,
+        DateTimeOffset acceptedObservedAtUtc,
         string? reporterId)
     {
-        if (string.IsNullOrWhiteSpace(reporterId))
+        if (existing.Length == 0)
         {
             return existing;
         }
 
         return existing
-            .Where(item => !Comparer.Equals(item.ReporterId, reporterId))
+            .Where(item =>
+                item.ObservedAtUtc > acceptedObservedAtUtc &&
+                !Comparer.Equals(item.ReporterId, reporterId))
             .OrderBy(static item => item.ReporterId, Comparer)
             .ToArray();
     }

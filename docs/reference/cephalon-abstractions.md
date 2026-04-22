@@ -9355,6 +9355,16 @@ Parameters:
 
 #### Properties
 
+<a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-activereportercount"></a>
+
+##### `ActiveReporterCount`
+
+```csharp
+int ActiveReporterCount { get; }
+```
+
+Gets the number of active reporters currently visible in the coordination story.
+
 <a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-activereporterid"></a>
 
 ##### `ActiveReporterId`
@@ -9414,6 +9424,16 @@ bool HasCompletedTakeover { get; }
 ```
 
 Gets a value indicating whether the coordination answer records a completed reporter takeover.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-hasmultipleactivereporters"></a>
+
+##### `HasMultipleActiveReporters`
+
+```csharp
+bool HasMultipleActiveReporters { get; }
+```
+
+Gets a value indicating whether the coordination answer currently carries more than one active reporter.
 
 <a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-hasrejectedreporters"></a>
 
@@ -9485,6 +9505,16 @@ DateTimeOffset? LeaseExpiredAtUtc { get; set; }
 
 Gets the UTC timestamp when the previous reporter lease expired before failover or takeover when one is known.
 
+<a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-participantcount"></a>
+
+##### `ParticipantCount`
+
+```csharp
+int ParticipantCount { get; }
+```
+
+Gets the total number of reporter participants currently visible in the coordination story.
+
 <a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-previousreporterid"></a>
 
 ##### `PreviousReporterId`
@@ -9494,6 +9524,16 @@ string PreviousReporterId { get; set; }
 ```
 
 Gets the previous active reporter identity when the current reporter took over after lease expiry.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-rejectedreportercount"></a>
+
+##### `RejectedReporterCount`
+
+```csharp
+int RejectedReporterCount { get; }
+```
+
+Gets the number of rejected reporters currently visible in the coordination story.
 
 <a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-reporterparticipants"></a>
 
@@ -9514,6 +9554,16 @@ bool RequiresTakeover { get; }
 ```
 
 Gets a value indicating whether the coordination answer is currently waiting for a replacement reporter to take over.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-standbyreportercount"></a>
+
+##### `StandbyReporterCount`
+
+```csharp
+int StandbyReporterCount { get; }
+```
+
+Gets the number of standby reporters currently visible in the coordination story.
 
 <a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-state"></a>
 

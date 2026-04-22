@@ -111,13 +111,18 @@ takeover history, degraded conflict posture, and edge provenance straight off
 inventing a second watchdog registry or topology-coordination surface. That same shared
 coordination answer now also derives participant-level `active`, `standby`, and `rejected`
 reporter stories through `ReporterParticipants`, `HasStandbyReporters`, and
-`HasRejectedReporters`, so accepted takeovers keep previous owners visible as standby evidence and
-rejected conflicts stay visible without collapsing the operator story back to one last-conflicting
-reporter field. It now also keeps stable `TakeoverState` plus `DegradedReason` identifiers and the
-derived `RequiresTakeover` / `HasCompletedTakeover` helpers, so the same shared `/engine/cdc-*`
-and `snapshot` surfaces can distinguish an expired lease still awaiting failover, a rejected
-conflicting reporter, a multi-capture multiple-active ambiguity, and a completed takeover without
-inventing a second coordination registry.
+`HasRejectedReporters`, plus additive participant counters such as `ParticipantCount`,
+`ActiveReporterCount`, `StandbyReporterCount`, and `RejectedReporterCount`, so accepted takeovers
+keep previous owners visible as standby evidence and rejected conflicts stay visible without
+collapsing the operator story back to one last-conflicting reporter field. It now also keeps
+stable `TakeoverState` plus `DegradedReason` identifiers and the derived `RequiresTakeover` /
+`HasCompletedTakeover` helpers, so the same shared `/engine/cdc-*` and `snapshot` surfaces can
+distinguish an expired lease still awaiting failover, a rejected conflicting reporter, a
+multi-capture multiple-active ambiguity, and a completed takeover without inventing a second
+coordination registry. The shared runtime-state catalog now also clears stale rejected-conflict
+evidence after later accepted reports and drops takeover-only standby participants once the
+replacement reporter reaffirms its lease, while historical takeover fields remain queryable on the
+same shared runtime story.
 
 `Cephalon.Data.MongoDB` first proved that contract with a document-oriented provider-native runner.
 Its `mongodb-change-stream-capture-pump` contributor publishes host-managed, provider-native,

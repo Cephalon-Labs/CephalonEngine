@@ -1295,13 +1295,18 @@ Current payload highlights:
   runtime-state view for every capture effectively owned by one execution runtime
 - when `DataRuntimeOptions.EnableExternalCdcRuntimeReporting = true`, `POST /engine/cdc-capture-runtimes/{executionRuntimeId}/reports` accepts `CdcCaptureRuntimeObservation[]` payloads for that runtime, validates effective ownership per capture, enforces declared reporter and edge-node policy when present, and refreshes the same runtime-state catalog instead of a separate external-monitor surface
 - `reporterCoordination` now also keeps participant-level `reporterParticipants` plus additive
-  `hasStandbyReporters` and `hasRejectedReporters` summaries so operators can see which reporters
-  are currently active, waiting in standby after takeover, or explicitly rejected for lease
-  conflicts without inferring that story from metadata alone
+  `hasStandbyReporters`, `hasRejectedReporters`, `participantCount`, `activeReporterCount`,
+  `standbyReporterCount`, and `rejectedReporterCount` summaries so operators can see which
+  reporters are currently active, waiting in standby after takeover, or explicitly rejected for
+  lease conflicts without inferring that story from metadata alone
 - that same `reporterCoordination` answer now also publishes `takeoverState`, `degradedReason`,
   `requiresTakeover`, and `hasCompletedTakeover`, so operator flows can distinguish
   `awaiting-takeover`, `rejected-reporter-conflict`, and `multiple-active-reporters` posture
   directly on the shared capture/runtime-state surface
+- later accepted reports now clear stale rejected-conflict evidence and completed takeovers now
+  stop surfacing previous owners as standby participants after the replacement reporter reaffirms
+  its lease, while `previousReporterId`, `leaseExpiredAtUtc`, and `lastTakeoverObservedAtUtc`
+  still preserve the historical handoff story
 
 Current note:
 
@@ -1333,12 +1338,17 @@ Current payload highlights:
   `reporterLeaseExpiresAtUtc`, `observedEdgeNodeIds`, `lastEdgeNodeId`, and typed
   `reporterCoordination`
 - that same `reporterCoordination` answer now keeps participant-level `reporterParticipants` plus
-  additive `hasStandbyReporters` and `hasRejectedReporters` summaries so runtime-first operator
-  views can explain active versus standby versus rejected reporters directly
+  additive `hasStandbyReporters`, `hasRejectedReporters`, `participantCount`,
+  `activeReporterCount`, `standbyReporterCount`, and `rejectedReporterCount` summaries so
+  runtime-first operator views can explain active versus standby versus rejected reporters directly
 - that same runtime-first coordination answer now also keeps `takeoverState`, `degradedReason`,
   `requiresTakeover`, and `hasCompletedTakeover`, so operators can read whether one runtime is
   awaiting failover, already completed a takeover, still carrying rejected conflicts, or exposing
   a multiple-active ambiguity without re-deriving it from raw lease timestamps
+- later accepted reports now clear stale rejected-conflict evidence and completed takeovers now
+  stop surfacing historical previous owners as standby participants after the replacement reporter
+  has reasserted lease ownership, while the same summary still keeps historical takeover fields
+  available for operator readback
 - the same execution-runtime catalog is also available through `/engine/snapshot` in
   `CdcCaptureExecutionRuntimes` when operators want one merged runtime answer
 - the drill-down route `/engine/cdc-capture-runtimes/{executionRuntimeId}` narrows the same catalog
