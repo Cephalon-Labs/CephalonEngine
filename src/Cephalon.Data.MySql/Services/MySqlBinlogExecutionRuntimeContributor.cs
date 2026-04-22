@@ -19,7 +19,7 @@ internal sealed class MySqlBinlogExecutionRuntimeContributor(MySqlDataOptions op
         executionRuntimes.Add(new CdcCaptureExecutionRuntimeDescriptor(
             id: MySqlDataRuntimeIds.CdcExecutionRuntimeId,
             displayName: "MySQL Binlog Capture Pump",
-            description: "Runs the provider-native MySQL binlog background pump that tails configured row events, stages outbox publications, and persists durable binlog checkpoints after stage success.",
+            description: "Runs the provider-native MySQL binlog background pump that validates source-server identity plus binlog lifecycle posture, tails configured row events, stages outbox publications, and persists durable binlog checkpoints after stage success.",
             executionOwnership: "host-managed",
             executionTopology: "provider-native",
             acknowledgementMode: "provider-native",
@@ -31,7 +31,12 @@ internal sealed class MySqlBinlogExecutionRuntimeContributor(MySqlDataOptions op
                 ["provider"] = MySqlDataOptions.ProviderId,
                 ["surface"] = "mysql-cdc",
                 ["databaseName"] = options.DatabaseName.Trim(),
-                ["binlogCheckpointSource"] = "cephalon-checkpoint-table"
+                ["binlogCheckpointSource"] = "cephalon-checkpoint-table",
+                ["binlogLifecyclePolicy"] = "checkpoint-validation",
+                ["sourceServerIdentityMode"] = options.CdcCaptures.Any(static capture => !string.IsNullOrWhiteSpace(capture.ExpectedSourceServerUuid))
+                    ? "configured-or-observe"
+                    : "observe-only",
+                ["gtidMetadataMode"] = "observe-only"
             },
             cdcCaptureIds: options.CdcCaptures
                 .Where(static capture => !string.IsNullOrWhiteSpace(capture.Id))

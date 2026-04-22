@@ -2784,6 +2784,54 @@ Delivered:
 - targeted coverage now proves the provider-native MySQL runtime story through composition tests
   `25/25`, hosting tests `1/1`, tooling tests `183/183`, and the reference docs publish script
 
+### ENG-159 Phase 13 MySQL lifecycle and resume hardening follow-through
+
+Status: done
+Estimate: 5
+Completed: April 22, 2026
+
+Why:
+
+- `ENG-158` proved the provider-native MySQL binlog runner, but the shared CDC runtime story still
+  needed truthful provider-native answers for retained-binlog lifecycle, restart-safe resume
+  metadata, and source-server identity instead of stopping at file-plus-position checkpoints alone
+- operators still needed the existing shared `/engine/cdc-*`, `/engine/execution-graphs`,
+  `/engine/hosted-executions`, and `snapshot` surfaces to explain why a MySQL capture can resume,
+  why it fails fast, and whether it is still pointed at the expected upstream without inventing a
+  MySQL-only lifecycle monitor
+- MySQL-specific GTID, server-identity, and checkpoint-schema seams still had to stay additive over
+  the shipped shared CDC descriptor, runtime-state, execution-runtime, execution-graph,
+  hosted-execution, and runtime-story contracts
+
+Acceptance:
+
+- `Cephalon.Data.MySql` keeps the same shared CDC runtime surfaces while validating retained-binlog
+  lifecycle posture, validating optional expected source-server UUID ownership, and surfacing
+  provider-native lifecycle plus identity answers through additive metadata instead of a new
+  MySQL-only operator registry
+- durable MySQL checkpoints keep restart-safe provider-native context such as source-server UUID,
+  source-server id, GTID set, binlog format, and row-image posture while preserving
+  `binlogFile|position` as the stable serialized checkpoint token
+- provider-native runtime state, execution-runtime summaries, staged change metadata, docs, and
+  generated reference docs all stay aligned with the richer MySQL lifecycle and resume truth while
+  GTID-driven orchestration and broader external CDC follow-through remain later work
+
+Delivered:
+
+- `Cephalon.Data.MySql` now validates source-server identity plus retained-binlog lifecycle during
+  provider-native execution, upgrades the Cephalon-managed checkpoint table with
+  `SourceServerUuid`, `SourceServerId`, `GtidExecutedSet`, `BinlogFormat`, and `BinlogRowImage`,
+  and publishes additive `binlogLifecycle*`, `sourceServerIdentity*`, `checkpoint*`, and GTID
+  metadata through the existing shared runtime-state and execution-runtime surfaces
+- `MySqlBinlogCaptureOptions` now supports `ExpectedSourceServerUuid`, descriptor metadata now
+  exposes `binlogLifecyclePolicy`, `sourceServerIdentityMode`, and `gtidMetadataMode`, and the
+  provider-native transport now distinguishes lifecycle and identity failures such as
+  `binary-logging-disabled`, `source-server-mismatch`, and `checkpoint-binlog-unavailable` on the
+  same shared runtime story
+- targeted coverage now proves the hardened MySQL lifecycle and resume story through composition
+  tests `26/26`, hosting tests `2/2`, tooling package-surface plus docs coverage validation, and
+  the reference docs publish script
+
 ### ENG-157 Phase 13 stronger reporter takeover and degraded-posture hardening baseline
 
 Status: done

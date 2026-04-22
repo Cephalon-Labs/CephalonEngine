@@ -4581,6 +4581,9 @@ Browse the published API surface by public member.
 - [ExitAfterApply](cephalon-engine.md#member-p-cephalon-engine-configuration-databasemigrationssettings-exitafterapply): `Properties` on `DatabaseMigrationsSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ExitAfterApply&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether the host should exit after applying migrations.
   - `bool? ExitAfterApply { get; }`
+- [ExpectedSourceServerUuid](cephalon-data-mysql.md#member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-expectedsourceserveruuid): `Properties` on `MySqlBinlogCaptureOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=ExpectedSourceServerUuid&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
+  - Gets or sets the expected MySQL source-server UUID when the capture should fail fast if the runtime connects to a different upstream.
+  - `string ExpectedSourceServerUuid { get; set; }`
 - [ExpectedStatusCodes](cephalon-observability-httpdependencies.md#member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-expectedstatuscodes): `Properties` on `HttpDependencyDefinition` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=ExpectedStatusCodes&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Gets or sets the explicit HTTP status codes that should be treated as healthy.
   - `IReadOnlyList<int> ExpectedStatusCodes { get; set; }`

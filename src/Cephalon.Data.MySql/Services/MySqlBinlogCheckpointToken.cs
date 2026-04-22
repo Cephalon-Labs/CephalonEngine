@@ -4,7 +4,12 @@ namespace Cephalon.Data.MySql.Services;
 
 internal readonly record struct MySqlBinlogCheckpointToken(
     string BinlogFile,
-    long Position)
+    long Position,
+    string? SourceServerUuid = null,
+    long? SourceServerId = null,
+    string? GtidExecutedSet = null,
+    string? BinlogFormat = null,
+    string? BinlogRowImage = null)
 {
     public string Serialize()
     {

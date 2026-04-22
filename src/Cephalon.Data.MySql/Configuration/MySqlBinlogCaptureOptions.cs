@@ -81,6 +81,15 @@ public sealed class MySqlBinlogCaptureOptions
     public string InitialPosition { get; set; } = "latest-available";
 
     /// <summary>
+    /// Gets or sets the expected MySQL source-server UUID when the capture should fail fast if the runtime connects to a different upstream.
+    /// </summary>
+    /// <remarks>
+    /// Leave this blank when the capture should observe source-server identity for diagnostics only. When set, the provider-native runner
+    /// validates the live server UUID before it starts or resumes binlog consumption.
+    /// </remarks>
+    public string ExpectedSourceServerUuid { get; set; } = string.Empty;
+
+    /// <summary>
     /// Gets or sets the maximum number of captured row changes to stage during one provider-native iteration.
     /// </summary>
     public int MaxChangesPerRead { get; set; } = 128;

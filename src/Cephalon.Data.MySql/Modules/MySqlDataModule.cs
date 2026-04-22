@@ -125,9 +125,19 @@ internal sealed class MySqlDataModule(MySqlDataOptions options)
                 ["pollingIntervalSeconds"] = capture.PollingIntervalSeconds.ToString(CultureInfo.InvariantCulture),
                 ["checkpointStore"] = $"{options.DatabaseName.Trim()}.{options.CheckpointTableName.Trim()}",
                 ["binlogCheckpointSource"] = "cephalon-checkpoint-table",
+                ["binlogResumeMode"] = "checkpoint-or-initial-position",
+                ["binlogLifecyclePolicy"] = "checkpoint-validation",
+                ["sourceServerIdentityMode"] = string.IsNullOrWhiteSpace(capture.ExpectedSourceServerUuid)
+                    ? "observe-only"
+                    : "configured-uuid-match",
+                ["gtidMetadataMode"] = "observe-only",
                 ["executionRuntimeId"] = MySqlDataRuntimeIds.CdcExecutionRuntimeId,
                 ["contributorModuleId"] = Descriptor.Id
             };
+            if (!string.IsNullOrWhiteSpace(capture.ExpectedSourceServerUuid))
+            {
+                metadata["expectedSourceServerUuid"] = capture.ExpectedSourceServerUuid.Trim();
+            }
 
             var resourceIds = capture.ResourceIds.Count == 0
                 ? [CreateDefaultResourceId(normalizedSchema, capture.TableName.Trim())]

@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-22T08:15:07.3532621+00:00",
+  "GeneratedAtUtc": "2026-04-22T08:51:50.2022868+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -9389,7 +9389,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 19,
+        "Properties": 20,
         "Methods": 0
       }
     },
@@ -29260,6 +29260,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-databasemigrationssettings-exitafterapply",
       "Signature": "bool? ExitAfterApply { get; }",
       "Summary": "Gets a value indicating whether the host should exit after applying migrations."
+    },
+    {
+      "DisplayName": "ExpectedSourceServerUuid",
+      "Category": "Properties",
+      "DeclaringTypeName": "MySqlBinlogCaptureOptions",
+      "NamespaceName": "Cephalon.Data.MySql.Configuration",
+      "AssemblyName": "Cephalon.Data.MySql",
+      "FileName": "cephalon-data-mysql.md",
+      "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-expectedsourceserveruuid",
+      "Signature": "string ExpectedSourceServerUuid { get; set; }",
+      "Summary": "Gets or sets the expected MySQL source-server UUID when the capture should fail fast if the runtime connects to a different upstream."
     },
     {
       "DisplayName": "ExpectedStatusCodes",

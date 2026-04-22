@@ -144,7 +144,20 @@ public sealed class MySqlDataCdcTestHarness
             var changes = batch.Changes
                 .Select((change, index) =>
                 {
-                    var token = new MySqlBinlogCheckpointToken(change.BinlogFile, change.BinlogPosition);
+                    var sourceServerUuid = ReadOptionalValue(change.Metadata, batch.Metadata, "sourceServerUuid");
+                    var sourceServerId = ParseInt64(ReadOptionalValue(change.Metadata, batch.Metadata, "sourceServerId"));
+                    var gtidExecutedSet = ReadOptionalValue(change.Metadata, batch.Metadata, "gtidExecutedSet");
+                    var binlogFormat = ReadOptionalValue(change.Metadata, batch.Metadata, "binlogFormat");
+                    var binlogRowImage = ReadOptionalValue(change.Metadata, batch.Metadata, "binlogRowImage");
+                    var gtidMode = ReadOptionalValue(change.Metadata, batch.Metadata, "gtidMode");
+                    var token = new MySqlBinlogCheckpointToken(
+                        change.BinlogFile,
+                        change.BinlogPosition,
+                        sourceServerUuid,
+                        sourceServerId,
+                        gtidExecutedSet,
+                        binlogFormat,
+                        binlogRowImage);
                     var serializedCheckpoint = token.Serialize();
                     var changeId = string.IsNullOrWhiteSpace(change.ChangeId)
                         ? $"{change.BinlogFile}:{change.BinlogPosition}:{(index + 1).ToString("D4", System.Globalization.CultureInfo.InvariantCulture)}"
@@ -161,6 +174,10 @@ public sealed class MySqlDataCdcTestHarness
                         ["operation"] = change.OperationName.Trim(),
                         ["binlogFile"] = change.BinlogFile
                     };
+                    if (!string.IsNullOrWhiteSpace(sourceServerUuid))
+                    {
+                        headers["sourceServerUuid"] = sourceServerUuid;
+                    }
 
                     var metadata = new Dictionary<string, string>(change.Metadata, StringComparer.OrdinalIgnoreCase)
                     {
@@ -168,6 +185,15 @@ public sealed class MySqlDataCdcTestHarness
                         ["eventFormat"] = descriptor.EventFormat,
                         ["checkpointToken"] = serializedCheckpoint
                     };
+                    if (!string.IsNullOrWhiteSpace(gtidMode))
+                    {
+                        metadata["gtidMode"] = gtidMode;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(gtidExecutedSet))
+                    {
+                        metadata["gtidExecutedSet"] = gtidExecutedSet;
+                    }
 
                     return new MySqlBinlogCapturedChange(
                         changeId,
@@ -201,6 +227,28 @@ public sealed class MySqlDataCdcTestHarness
             owner.RecordCommittedCheckpoint(checkpointToken.Serialize());
             return Task.CompletedTask;
         }
+    }
+
+    private static string? ReadOptionalValue(
+        IDictionary<string, string> primary,
+        IDictionary<string, string> secondary,
+        string key)
+    {
+        if (primary.TryGetValue(key, out var primaryValue) && !string.IsNullOrWhiteSpace(primaryValue))
+        {
+            return primaryValue.Trim();
+        }
+
+        return secondary.TryGetValue(key, out var secondaryValue) && !string.IsNullOrWhiteSpace(secondaryValue)
+            ? secondaryValue.Trim()
+            : null;
+    }
+
+    private static long? ParseInt64(string? value)
+    {
+        return long.TryParse(value, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var parsed)
+            ? parsed
+            : null;
     }
 }
 

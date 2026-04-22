@@ -75,6 +75,18 @@ string EventFormat { get; set; }
 
 Gets or sets the operator-facing event format projected on the CDC descriptor.
 
+<a id="member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-expectedsourceserveruuid"></a>
+
+##### `ExpectedSourceServerUuid`
+
+```csharp
+string ExpectedSourceServerUuid { get; set; }
+```
+
+Gets or sets the expected MySQL source-server UUID when the capture should fail fast if the runtime connects to a different upstream.
+
+Remarks: Leave this blank when the capture should observe source-server identity for diagnostics only. When set, the provider-native runner validates the live server UUID before it starts or resumes binlog consumption.
+
 <a id="member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-id"></a>
 
 ##### `Id`

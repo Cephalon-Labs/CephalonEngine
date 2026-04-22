@@ -49,30 +49,21 @@ internal sealed class MySqlBinlogTransport(
 
         var normalizedSchema = ResolveTableSchema(captureOptions);
         var checkpoint = await ReadCheckpointAsync(connection, descriptor.Id, cancellationToken).ConfigureAwait(false);
+        var serverProfile = await ReadServerProfileAsync(connection, cancellationToken).ConfigureAwait(false);
+        var availableBinlogFiles = await ReadAvailableBinlogFilesAsync(connection, serverProfile, cancellationToken).ConfigureAwait(false);
+        var batchMetadata = CreateBatchMetadata(
+            captureOptions,
+            normalizedSchema,
+            checkpoint,
+            serverProfile,
+            availableBinlogFiles);
+
+        ValidateServerProfile(captureOptions, serverProfile, batchMetadata);
+        ValidateSourceServerIdentity(captureOptions, checkpoint, serverProfile, batchMetadata);
+
         var startingPosition = checkpoint is not null
-            ? new MySqlBinlogStartPosition(checkpoint.Value.BinlogFile, checkpoint.Value.Position)
-            : await ResolveInitialPositionAsync(connection, captureOptions, cancellationToken).ConfigureAwait(false);
-
-        var batchMetadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["databaseName"] = options.DatabaseName.Trim(),
-            ["tableSchema"] = normalizedSchema,
-            ["tableName"] = captureOptions.TableName.Trim(),
-            ["serverId"] = captureOptions.ServerId.ToString(System.Globalization.CultureInfo.InvariantCulture),
-            ["initialPosition"] = captureOptions.InitialPosition.Trim(),
-            ["checkpointStore"] = $"{options.DatabaseName.Trim()}.{options.CheckpointTableName.Trim()}",
-            ["binlogCheckpointSource"] = "cephalon-checkpoint-table",
-            ["binlogFile"] = startingPosition.BinlogFile,
-            ["binlogPosition"] = startingPosition.Position.ToString(System.Globalization.CultureInfo.InvariantCulture),
-            ["binlogResumeMode"] = checkpoint is null
-                ? NormalizeInitialPosition(captureOptions.InitialPosition)
-                : "checkpoint"
-        };
-
-        if (checkpoint is not null)
-        {
-            batchMetadata["resumeCheckpoint"] = checkpoint.Value.Serialize();
-        }
+            ? ResolveCheckpointStartPosition(captureOptions, checkpoint.Value, availableBinlogFiles, batchMetadata)
+            : ResolveInitialPosition(captureOptions, serverProfile, availableBinlogFiles, batchMetadata);
 
         var hasMoreChanges = false;
         var capturedChanges = new List<MySqlBinlogCapturedChange>();
@@ -133,6 +124,7 @@ internal sealed class MySqlBinlogTransport(
                             descriptor,
                             captureOptions,
                             currentBinlogFile,
+                            serverProfile,
                             tableMap,
                             normalizedSchema,
                             batchMetadata,
@@ -147,6 +139,7 @@ internal sealed class MySqlBinlogTransport(
                             descriptor,
                             captureOptions,
                             currentBinlogFile,
+                            serverProfile,
                             tableMap,
                             normalizedSchema,
                             batchMetadata,
@@ -161,6 +154,7 @@ internal sealed class MySqlBinlogTransport(
                             descriptor,
                             captureOptions,
                             currentBinlogFile,
+                            serverProfile,
                             tableMap,
                             normalizedSchema,
                             batchMetadata,
@@ -219,6 +213,11 @@ CREATE TABLE IF NOT EXISTS `{EscapeIdentifier(options.CheckpointTableName.Trim()
     `BinlogFile` varchar(255) NOT NULL,
     `BinlogPosition` bigint NOT NULL,
     `CheckpointToken` varchar(512) NOT NULL,
+    `SourceServerUuid` varchar(128) NULL,
+    `SourceServerId` bigint NULL,
+    `GtidExecutedSet` longtext NULL,
+    `BinlogFormat` varchar(32) NULL,
+    `BinlogRowImage` varchar(32) NULL,
     `UpdatedAtUtc` datetime(6) NOT NULL,
     PRIMARY KEY (`CdcCaptureId`)
 ) ENGINE=InnoDB;
@@ -227,6 +226,7 @@ CREATE TABLE IF NOT EXISTS `{EscapeIdentifier(options.CheckpointTableName.Trim()
         await using var command = connection.CreateCommand();
         command.CommandText = commandText;
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        await EnsureCheckpointStoreColumnsAsync(connection, cancellationToken).ConfigureAwait(false);
 
         lock (checkpointInitializationGate)
         {
@@ -234,54 +234,132 @@ CREATE TABLE IF NOT EXISTS `{EscapeIdentifier(options.CheckpointTableName.Trim()
         }
     }
 
-    private async Task<MySqlBinlogStartPosition> ResolveInitialPositionAsync(
+    private async Task EnsureCheckpointStoreColumnsAsync(
         MySqlConnection connection,
-        MySqlBinlogCaptureOptions captureOptions,
         CancellationToken cancellationToken)
+    {
+        await using var command = connection.CreateCommand();
+        command.CommandText = """
+SELECT `COLUMN_NAME`
+FROM `information_schema`.`COLUMNS`
+WHERE `TABLE_SCHEMA` = @tableSchema
+  AND `TABLE_NAME` = @tableName;
+""";
+        command.Parameters.AddWithValue("@tableSchema", options.DatabaseName.Trim());
+        command.Parameters.AddWithValue("@tableName", options.CheckpointTableName.Trim());
+
+        var existingColumns = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        await using (var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false))
+        {
+            while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            {
+                existingColumns.Add(reader.GetString(0));
+            }
+        }
+
+        var missingColumns = new List<string>();
+        if (!existingColumns.Contains("SourceServerUuid"))
+        {
+            missingColumns.Add("ADD COLUMN `SourceServerUuid` varchar(128) NULL AFTER `CheckpointToken`");
+        }
+
+        if (!existingColumns.Contains("SourceServerId"))
+        {
+            missingColumns.Add("ADD COLUMN `SourceServerId` bigint NULL AFTER `SourceServerUuid`");
+        }
+
+        if (!existingColumns.Contains("GtidExecutedSet"))
+        {
+            missingColumns.Add("ADD COLUMN `GtidExecutedSet` longtext NULL AFTER `SourceServerId`");
+        }
+
+        if (!existingColumns.Contains("BinlogFormat"))
+        {
+            missingColumns.Add("ADD COLUMN `BinlogFormat` varchar(32) NULL AFTER `GtidExecutedSet`");
+        }
+
+        if (!existingColumns.Contains("BinlogRowImage"))
+        {
+            missingColumns.Add("ADD COLUMN `BinlogRowImage` varchar(32) NULL AFTER `BinlogFormat`");
+        }
+
+        if (missingColumns.Count == 0)
+        {
+            return;
+        }
+
+        foreach (var alterStatement in missingColumns)
+        {
+            await using var alterCommand = connection.CreateCommand();
+            alterCommand.CommandText =
+                $"ALTER TABLE `{EscapeIdentifier(options.CheckpointTableName.Trim())}` {alterStatement};";
+            await alterCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        }
+    }
+
+    private static MySqlBinlogStartPosition ResolveInitialPosition(
+        MySqlBinlogCaptureOptions captureOptions,
+        MySqlBinlogServerProfile serverProfile,
+        IReadOnlyList<string> availableBinlogFiles,
+        Dictionary<string, string> batchMetadata)
     {
         var normalizedInitialPosition = NormalizeInitialPosition(captureOptions.InitialPosition);
 
-        await using var command = connection.CreateCommand();
-        command.CommandText = normalizedInitialPosition == "earliest-available"
-            ? "SHOW BINARY LOGS;"
-            : "SHOW MASTER STATUS;";
-
-        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
-        if (!await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
-        {
-            throw new MySqlBinlogCaptureException(
-                $"MySQL binlog capture '{captureOptions.Id}' could not resolve an initial binlog position because the server did not return binary-log metadata.",
-                "binlog-unavailable",
-                new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-                {
-                    ["databaseName"] = options.DatabaseName.Trim(),
-                    ["tableSchema"] = ResolveTableSchema(captureOptions),
-                    ["tableName"] = captureOptions.TableName.Trim(),
-                    ["serverId"] = captureOptions.ServerId.ToString(System.Globalization.CultureInfo.InvariantCulture),
-                    ["initialPosition"] = normalizedInitialPosition,
-                    ["checkpointStore"] = $"{options.DatabaseName.Trim()}.{options.CheckpointTableName.Trim()}",
-                    ["binlogCheckpointSource"] = "cephalon-checkpoint-table"
-                });
-        }
-
         if (normalizedInitialPosition == "earliest-available")
         {
-            return new MySqlBinlogStartPosition(reader.GetString(0), 4);
+            if (availableBinlogFiles.Count == 0)
+            {
+                batchMetadata["binlogLifecycleState"] = "unavailable";
+                batchMetadata["binlogLifecycleAction"] = "fail";
+
+                throw new MySqlBinlogCaptureException(
+                    $"MySQL binlog capture '{captureOptions.Id}' could not resolve the earliest binlog file because the server did not return any retained binary logs.",
+                    "binlog-unavailable",
+                    new Dictionary<string, string>(batchMetadata, StringComparer.OrdinalIgnoreCase));
+            }
+
+            batchMetadata["binlogResumeMode"] = normalizedInitialPosition;
+            batchMetadata["binlogLifecycleState"] = "available";
+            batchMetadata["binlogLifecycleAction"] = "start";
+            batchMetadata["binlogFile"] = availableBinlogFiles[0];
+            batchMetadata["binlogPosition"] = "4";
+            return new MySqlBinlogStartPosition(availableBinlogFiles[0], 4);
         }
 
-        var file = reader.GetString(reader.GetOrdinal("File"));
-        var position = reader.GetInt64(reader.GetOrdinal("Position"));
-        return new MySqlBinlogStartPosition(file, position);
+        if (string.IsNullOrWhiteSpace(serverProfile.CurrentBinlogFile) || serverProfile.CurrentBinlogPosition is null)
+        {
+            batchMetadata["binlogLifecycleState"] = "unavailable";
+            batchMetadata["binlogLifecycleAction"] = "fail";
+
+            throw new MySqlBinlogCaptureException(
+                $"MySQL binlog capture '{captureOptions.Id}' could not resolve the latest binlog position because the server did not return current binary-log metadata.",
+                "binlog-unavailable",
+                new Dictionary<string, string>(batchMetadata, StringComparer.OrdinalIgnoreCase));
+        }
+
+        batchMetadata["binlogResumeMode"] = normalizedInitialPosition;
+        batchMetadata["binlogLifecycleState"] = "available";
+        batchMetadata["binlogLifecycleAction"] = "start";
+        batchMetadata["binlogFile"] = serverProfile.CurrentBinlogFile;
+        batchMetadata["binlogPosition"] = serverProfile.CurrentBinlogPosition.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        return new MySqlBinlogStartPosition(serverProfile.CurrentBinlogFile, serverProfile.CurrentBinlogPosition.Value);
     }
 
-    private async Task<MySqlBinlogCheckpointToken?> ReadCheckpointAsync(
+    private async Task<MySqlBinlogStoredCheckpoint?> ReadCheckpointAsync(
         MySqlConnection connection,
         string cdcCaptureId,
         CancellationToken cancellationToken)
     {
         await using var command = connection.CreateCommand();
         command.CommandText = $"""
-SELECT `BinlogFile`, `BinlogPosition`
+SELECT `BinlogFile`,
+       `BinlogPosition`,
+       `SourceServerUuid`,
+       `SourceServerId`,
+       `GtidExecutedSet`,
+       `BinlogFormat`,
+       `BinlogRowImage`,
+       `UpdatedAtUtc`
 FROM `{EscapeIdentifier(options.CheckpointTableName.Trim())}`
 WHERE `CdcCaptureId` = @cdcCaptureId;
 """;
@@ -293,9 +371,20 @@ WHERE `CdcCaptureId` = @cdcCaptureId;
             return null;
         }
 
-        return new MySqlBinlogCheckpointToken(
-            reader.GetString(0),
-            reader.GetInt64(1));
+        var sourceServerIdOrdinal = reader.GetOrdinal("SourceServerId");
+        var updatedAtUtcOrdinal = reader.GetOrdinal("UpdatedAtUtc");
+
+        return new MySqlBinlogStoredCheckpoint(
+            reader.GetString(reader.GetOrdinal("BinlogFile")),
+            reader.GetInt64(reader.GetOrdinal("BinlogPosition")),
+            ReadNullableString(reader, reader.GetOrdinal("SourceServerUuid")),
+            reader.IsDBNull(sourceServerIdOrdinal) ? null : reader.GetInt64(sourceServerIdOrdinal),
+            ReadNullableString(reader, reader.GetOrdinal("GtidExecutedSet")),
+            ReadNullableString(reader, reader.GetOrdinal("BinlogFormat")),
+            ReadNullableString(reader, reader.GetOrdinal("BinlogRowImage")),
+            reader.IsDBNull(updatedAtUtcOrdinal)
+                ? null
+                : new DateTimeOffset(DateTime.SpecifyKind(reader.GetDateTime(updatedAtUtcOrdinal), DateTimeKind.Utc)));
     }
 
     private async Task UpsertCheckpointAsync(
@@ -312,6 +401,11 @@ INSERT INTO `{EscapeIdentifier(options.CheckpointTableName.Trim())}`
     `BinlogFile`,
     `BinlogPosition`,
     `CheckpointToken`,
+    `SourceServerUuid`,
+    `SourceServerId`,
+    `GtidExecutedSet`,
+    `BinlogFormat`,
+    `BinlogRowImage`,
     `UpdatedAtUtc`
 )
 VALUES
@@ -320,20 +414,393 @@ VALUES
     @binlogFile,
     @binlogPosition,
     @checkpointToken,
+    @sourceServerUuid,
+    @sourceServerId,
+    @gtidExecutedSet,
+    @binlogFormat,
+    @binlogRowImage,
     @updatedAtUtc
 )
 ON DUPLICATE KEY UPDATE
     `BinlogFile` = VALUES(`BinlogFile`),
     `BinlogPosition` = VALUES(`BinlogPosition`),
     `CheckpointToken` = VALUES(`CheckpointToken`),
+    `SourceServerUuid` = VALUES(`SourceServerUuid`),
+    `SourceServerId` = VALUES(`SourceServerId`),
+    `GtidExecutedSet` = VALUES(`GtidExecutedSet`),
+    `BinlogFormat` = VALUES(`BinlogFormat`),
+    `BinlogRowImage` = VALUES(`BinlogRowImage`),
     `UpdatedAtUtc` = VALUES(`UpdatedAtUtc`);
 """;
         command.Parameters.AddWithValue("@cdcCaptureId", cdcCaptureId);
         command.Parameters.AddWithValue("@binlogFile", checkpointToken.BinlogFile);
         command.Parameters.AddWithValue("@binlogPosition", checkpointToken.Position);
         command.Parameters.AddWithValue("@checkpointToken", checkpointToken.Serialize());
+        command.Parameters.AddWithValue("@sourceServerUuid", (object?)checkpointToken.SourceServerUuid ?? DBNull.Value);
+        command.Parameters.AddWithValue("@sourceServerId", checkpointToken.SourceServerId is null ? DBNull.Value : checkpointToken.SourceServerId.Value);
+        command.Parameters.AddWithValue("@gtidExecutedSet", (object?)checkpointToken.GtidExecutedSet ?? DBNull.Value);
+        command.Parameters.AddWithValue("@binlogFormat", (object?)checkpointToken.BinlogFormat ?? DBNull.Value);
+        command.Parameters.AddWithValue("@binlogRowImage", (object?)checkpointToken.BinlogRowImage ?? DBNull.Value);
         command.Parameters.AddWithValue("@updatedAtUtc", DateTime.UtcNow);
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    private static async Task<MySqlBinlogServerProfile> ReadServerProfileAsync(
+        MySqlConnection connection,
+        CancellationToken cancellationToken)
+    {
+        var variables = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        await using (var variablesCommand = connection.CreateCommand())
+        {
+            variablesCommand.CommandText = """
+SHOW VARIABLES
+WHERE `Variable_name` IN ('server_uuid', 'server_id', 'gtid_mode', 'gtid_executed', 'log_bin', 'binlog_format', 'binlog_row_image');
+""";
+
+            await using var variablesReader = await variablesCommand.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+            while (await variablesReader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            {
+                variables[variablesReader.GetString(0)] = variablesReader.GetString(1);
+            }
+        }
+
+        string? currentBinlogFile = null;
+        long? currentBinlogPosition = null;
+        string? executedGtidSetFromStatus = null;
+        await using (var masterStatusCommand = connection.CreateCommand())
+        {
+            masterStatusCommand.CommandText = "SHOW MASTER STATUS;";
+            await using var masterStatusReader = await masterStatusCommand.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+            if (await masterStatusReader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            {
+                var ordinals = Enumerable.Range(0, masterStatusReader.FieldCount)
+                    .ToDictionary(masterStatusReader.GetName, static index => index, StringComparer.OrdinalIgnoreCase);
+
+                if (ordinals.TryGetValue("File", out var fileOrdinal) && !masterStatusReader.IsDBNull(fileOrdinal))
+                {
+                    currentBinlogFile = masterStatusReader.GetString(fileOrdinal);
+                }
+
+                if (ordinals.TryGetValue("Position", out var positionOrdinal) && !masterStatusReader.IsDBNull(positionOrdinal))
+                {
+                    currentBinlogPosition = masterStatusReader.GetInt64(positionOrdinal);
+                }
+
+                if (ordinals.TryGetValue("Executed_Gtid_Set", out var gtidOrdinal) && !masterStatusReader.IsDBNull(gtidOrdinal))
+                {
+                    executedGtidSetFromStatus = masterStatusReader.GetString(gtidOrdinal);
+                }
+            }
+        }
+
+        var binaryLoggingEnabled = ParseBoolean(variables.TryGetValue("log_bin", out var logBinValue) ? logBinValue : null)
+            ?? !string.IsNullOrWhiteSpace(currentBinlogFile);
+
+        return new MySqlBinlogServerProfile(
+            ReadOptionalValue(variables, "server_uuid"),
+            ParseInt64(ReadOptionalValue(variables, "server_id")),
+            ReadOptionalValue(variables, "gtid_mode"),
+            string.IsNullOrWhiteSpace(executedGtidSetFromStatus)
+                ? ReadOptionalValue(variables, "gtid_executed")
+                : executedGtidSetFromStatus,
+            binaryLoggingEnabled,
+            ReadOptionalValue(variables, "binlog_format"),
+            ReadOptionalValue(variables, "binlog_row_image"),
+            currentBinlogFile,
+            currentBinlogPosition);
+    }
+
+    private static async Task<IReadOnlyList<string>> ReadAvailableBinlogFilesAsync(
+        MySqlConnection connection,
+        MySqlBinlogServerProfile serverProfile,
+        CancellationToken cancellationToken)
+    {
+        if (!serverProfile.BinaryLoggingEnabled)
+        {
+            return Array.Empty<string>();
+        }
+
+        await using var command = connection.CreateCommand();
+        command.CommandText = "SHOW BINARY LOGS;";
+
+        var files = new List<string>();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+        {
+            files.Add(reader.GetString(0));
+        }
+
+        return files;
+    }
+
+    private Dictionary<string, string> CreateBatchMetadata(
+        MySqlBinlogCaptureOptions captureOptions,
+        string normalizedSchema,
+        MySqlBinlogStoredCheckpoint? checkpoint,
+        MySqlBinlogServerProfile serverProfile,
+        IReadOnlyList<string> availableBinlogFiles)
+    {
+        var normalizedInitialPosition = NormalizeInitialPosition(captureOptions.InitialPosition);
+        var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["databaseName"] = options.DatabaseName.Trim(),
+            ["tableSchema"] = normalizedSchema,
+            ["tableName"] = captureOptions.TableName.Trim(),
+            ["serverId"] = captureOptions.ServerId.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            ["initialPosition"] = normalizedInitialPosition,
+            ["checkpointStore"] = $"{options.DatabaseName.Trim()}.{options.CheckpointTableName.Trim()}",
+            ["binlogCheckpointSource"] = "cephalon-checkpoint-table",
+            ["binlogResumeMode"] = checkpoint is null ? normalizedInitialPosition : "checkpoint",
+            ["sourceServerIdentityState"] = "observed",
+            ["sourceServerIdentityAction"] = "accept",
+            ["gtidMetadataMode"] = "observe-only"
+        };
+
+        AddOptionalMetadata(metadata, "expectedSourceServerUuid", captureOptions.ExpectedSourceServerUuid);
+        AddOptionalMetadata(metadata, "sourceServerUuid", serverProfile.ServerUuid);
+        AddOptionalMetadata(metadata, "sourceServerId", serverProfile.SourceServerId);
+        AddOptionalMetadata(metadata, "gtidMode", serverProfile.GtidMode);
+        AddOptionalMetadata(metadata, "gtidExecutedSet", serverProfile.GtidExecutedSet);
+        AddOptionalMetadata(metadata, "binaryLoggingEnabled", serverProfile.BinaryLoggingEnabled);
+        AddOptionalMetadata(metadata, "binlogFormat", serverProfile.BinlogFormat);
+        AddOptionalMetadata(metadata, "binlogRowImage", serverProfile.BinlogRowImage);
+        AddOptionalMetadata(metadata, "currentBinlogFile", serverProfile.CurrentBinlogFile);
+        AddOptionalMetadata(metadata, "currentBinlogPosition", serverProfile.CurrentBinlogPosition);
+
+        if (availableBinlogFiles.Count > 0)
+        {
+            metadata["availableBinlogFileCount"] = availableBinlogFiles.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            metadata["earliestAvailableBinlogFile"] = availableBinlogFiles[0];
+            metadata["latestAvailableBinlogFile"] = availableBinlogFiles[^1];
+        }
+
+        if (checkpoint is not null)
+        {
+            metadata["resumeCheckpoint"] = checkpoint.Value.Serialize();
+            metadata["binlogFile"] = checkpoint.Value.BinlogFile;
+            metadata["binlogPosition"] = checkpoint.Value.Position.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            AddOptionalMetadata(metadata, "checkpointSourceServerUuid", checkpoint.Value.SourceServerUuid);
+            AddOptionalMetadata(metadata, "checkpointSourceServerId", checkpoint.Value.SourceServerId);
+            AddOptionalMetadata(metadata, "checkpointGtidExecutedSet", checkpoint.Value.GtidExecutedSet);
+            AddOptionalMetadata(metadata, "checkpointBinlogFormat", checkpoint.Value.BinlogFormat);
+            AddOptionalMetadata(metadata, "checkpointBinlogRowImage", checkpoint.Value.BinlogRowImage);
+            AddOptionalMetadata(metadata, "checkpointUpdatedAtUtc", checkpoint.Value.UpdatedAtUtc);
+        }
+
+        return metadata;
+    }
+
+    private static void ValidateServerProfile(
+        MySqlBinlogCaptureOptions captureOptions,
+        MySqlBinlogServerProfile serverProfile,
+        Dictionary<string, string> batchMetadata)
+    {
+        if (!serverProfile.BinaryLoggingEnabled)
+        {
+            batchMetadata["binlogLifecycleState"] = "unavailable";
+            batchMetadata["binlogLifecycleAction"] = "fail";
+
+            throw new MySqlBinlogCaptureException(
+                $"MySQL binlog capture '{captureOptions.Id}' requires binary logging to be enabled on the source server before the Cephalon MySQL CDC runner can start.",
+                "binary-logging-disabled",
+                new Dictionary<string, string>(batchMetadata, StringComparer.OrdinalIgnoreCase));
+        }
+
+        if (!string.Equals(serverProfile.BinlogFormat, "ROW", StringComparison.OrdinalIgnoreCase))
+        {
+            batchMetadata["binlogLifecycleState"] = "unsupported-format";
+            batchMetadata["binlogLifecycleAction"] = "fail";
+
+            throw new MySqlBinlogCaptureException(
+                $"MySQL binlog capture '{captureOptions.Id}' requires ROW binlog_format, but the source server reported '{serverProfile.BinlogFormat ?? "unknown"}'. Configure row-based binary logging before starting the Cephalon MySQL CDC runner.",
+                "binlog-format-unsupported",
+                new Dictionary<string, string>(batchMetadata, StringComparer.OrdinalIgnoreCase));
+        }
+    }
+
+    private static void ValidateSourceServerIdentity(
+        MySqlBinlogCaptureOptions captureOptions,
+        MySqlBinlogStoredCheckpoint? checkpoint,
+        MySqlBinlogServerProfile serverProfile,
+        Dictionary<string, string> batchMetadata)
+    {
+        var expectedSourceServerUuid = captureOptions.ExpectedSourceServerUuid.Trim();
+        if (!string.IsNullOrWhiteSpace(expectedSourceServerUuid))
+        {
+            if (string.IsNullOrWhiteSpace(serverProfile.ServerUuid))
+            {
+                batchMetadata["sourceServerIdentityState"] = "unknown";
+                batchMetadata["sourceServerIdentityAction"] = "fail";
+
+                throw new MySqlBinlogCaptureException(
+                    $"MySQL binlog capture '{captureOptions.Id}' expected source server UUID '{expectedSourceServerUuid}', but the source server did not report server_uuid.",
+                    "source-server-identity-unavailable",
+                    new Dictionary<string, string>(batchMetadata, StringComparer.OrdinalIgnoreCase));
+            }
+
+            if (!string.Equals(serverProfile.ServerUuid, expectedSourceServerUuid, StringComparison.OrdinalIgnoreCase))
+            {
+                batchMetadata["sourceServerIdentityState"] = "mismatch";
+                batchMetadata["sourceServerIdentityAction"] = "fail";
+
+                throw new MySqlBinlogCaptureException(
+                    $"MySQL binlog capture '{captureOptions.Id}' expected source server UUID '{expectedSourceServerUuid}', but the live source server reported '{serverProfile.ServerUuid}'.",
+                    "source-server-mismatch",
+                    new Dictionary<string, string>(batchMetadata, StringComparer.OrdinalIgnoreCase));
+            }
+
+            batchMetadata["sourceServerIdentityState"] = "expected-match";
+            batchMetadata["sourceServerIdentityAction"] = "accept";
+            return;
+        }
+
+        if (checkpoint is null || string.IsNullOrWhiteSpace(checkpoint.Value.SourceServerUuid))
+        {
+            if (string.IsNullOrWhiteSpace(serverProfile.ServerUuid))
+            {
+                batchMetadata["sourceServerIdentityState"] = "unknown";
+                batchMetadata["sourceServerIdentityAction"] = "observe";
+            }
+
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(serverProfile.ServerUuid))
+        {
+            batchMetadata["sourceServerIdentityState"] = "unknown";
+            batchMetadata["sourceServerIdentityAction"] = "fail";
+
+            throw new MySqlBinlogCaptureException(
+                $"MySQL binlog capture '{captureOptions.Id}' needs live source-server identity to validate checkpoint '{checkpoint.Value.Serialize()}', but the source server did not report server_uuid.",
+                "source-server-identity-unavailable",
+                new Dictionary<string, string>(batchMetadata, StringComparer.OrdinalIgnoreCase));
+        }
+
+        if (!string.Equals(serverProfile.ServerUuid, checkpoint.Value.SourceServerUuid, StringComparison.OrdinalIgnoreCase))
+        {
+            batchMetadata["sourceServerIdentityState"] = "checkpoint-mismatch";
+            batchMetadata["sourceServerIdentityAction"] = "fail";
+
+            throw new MySqlBinlogCaptureException(
+                $"MySQL binlog capture '{captureOptions.Id}' cannot resume checkpoint '{checkpoint.Value.Serialize()}' because it was recorded against source server UUID '{checkpoint.Value.SourceServerUuid}', but the live source server reported '{serverProfile.ServerUuid}'.",
+                "checkpoint-source-server-mismatch",
+                new Dictionary<string, string>(batchMetadata, StringComparer.OrdinalIgnoreCase));
+        }
+
+        batchMetadata["sourceServerIdentityState"] = "checkpoint-match";
+        batchMetadata["sourceServerIdentityAction"] = "resume";
+    }
+
+    private static MySqlBinlogStartPosition ResolveCheckpointStartPosition(
+        MySqlBinlogCaptureOptions captureOptions,
+        MySqlBinlogStoredCheckpoint checkpoint,
+        IReadOnlyList<string> availableBinlogFiles,
+        Dictionary<string, string> batchMetadata)
+    {
+        batchMetadata["binlogResumeMode"] = "checkpoint";
+
+        if (!availableBinlogFiles.Contains(checkpoint.BinlogFile, StringComparer.OrdinalIgnoreCase))
+        {
+            batchMetadata["binlogLifecycleState"] = "purged";
+            batchMetadata["binlogLifecycleAction"] = "fail";
+
+            throw new MySqlBinlogCaptureException(
+                $"MySQL binlog capture '{captureOptions.Id}' cannot resume checkpoint '{checkpoint.Serialize()}' because binlog file '{checkpoint.BinlogFile}' is no longer retained on the source server. Reset the checkpoint or restore the missing binlog file before starting the Cephalon MySQL CDC runner.",
+                "checkpoint-binlog-unavailable",
+                new Dictionary<string, string>(batchMetadata, StringComparer.OrdinalIgnoreCase));
+        }
+
+        batchMetadata["binlogLifecycleState"] = "checkpoint-available";
+        batchMetadata["binlogLifecycleAction"] = "resume";
+        batchMetadata["binlogFile"] = checkpoint.BinlogFile;
+        batchMetadata["binlogPosition"] = checkpoint.Position.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
+        return checkpoint.ToStartPosition();
+    }
+
+    private static string? ReadOptionalValue(
+        Dictionary<string, string> values,
+        string key)
+    {
+        return values.TryGetValue(key, out var value) && !string.IsNullOrWhiteSpace(value)
+            ? value.Trim()
+            : null;
+    }
+
+    private static void AddOptionalMetadata(
+        Dictionary<string, string> metadata,
+        string key,
+        string? value)
+    {
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            metadata[key] = value.Trim();
+        }
+    }
+
+    private static void AddOptionalMetadata(
+        Dictionary<string, string> metadata,
+        string key,
+        long? value)
+    {
+        if (value is not null)
+        {
+            metadata[key] = value.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
+    }
+
+    private static void AddOptionalMetadata(
+        Dictionary<string, string> metadata,
+        string key,
+        bool value)
+    {
+        metadata[key] = value ? "true" : "false";
+    }
+
+    private static void AddOptionalMetadata(
+        Dictionary<string, string> metadata,
+        string key,
+        DateTimeOffset? value)
+    {
+        if (value is not null)
+        {
+            metadata[key] = value.Value.ToString("O", System.Globalization.CultureInfo.InvariantCulture);
+        }
+    }
+
+    private static string? ReadNullableString(System.Data.Common.DbDataReader reader, int ordinal)
+    {
+        return reader.IsDBNull(ordinal)
+            ? null
+            : reader.GetString(ordinal);
+    }
+
+    private static bool? ParseBoolean(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return null;
+        }
+
+        return value.Trim().ToUpperInvariant() switch
+        {
+            "1" => true,
+            "ON" => true,
+            "TRUE" => true,
+            "YES" => true,
+            "0" => false,
+            "OFF" => false,
+            "FALSE" => false,
+            "NO" => false,
+            _ => null
+        };
+    }
+
+    private static long? ParseInt64(string? value)
+    {
+        return long.TryParse(value, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var parsed)
+            ? parsed
+            : null;
     }
 
     private MySqlConnection CreateOperationalConnection()
@@ -440,6 +907,7 @@ ON DUPLICATE KEY UPDATE
         CdcCaptureDescriptor descriptor,
         MySqlBinlogCaptureOptions captureOptions,
         string currentBinlogFile,
+        MySqlBinlogServerProfile serverProfile,
         IReadOnlyDictionary<long, MySqlBinlogTableAddress> tableMap,
         string normalizedSchema,
         Dictionary<string, string> batchMetadata,
@@ -459,7 +927,14 @@ ON DUPLICATE KEY UPDATE
         }
 
         var checkpointPosition = rowsEvent.Position + rowsEvent.EventSize;
-        var checkpointToken = new MySqlBinlogCheckpointToken(currentBinlogFile, checkpointPosition);
+        var checkpointToken = new MySqlBinlogCheckpointToken(
+            currentBinlogFile,
+            checkpointPosition,
+            serverProfile.ServerUuid,
+            serverProfile.SourceServerId,
+            serverProfile.GtidExecutedSet,
+            serverProfile.BinlogFormat,
+            serverProfile.BinlogRowImage);
         batchMetadata["binlogFile"] = currentBinlogFile;
         batchMetadata["binlogPosition"] = checkpointPosition.ToString(System.Globalization.CultureInfo.InvariantCulture);
 
@@ -489,12 +964,26 @@ ON DUPLICATE KEY UPDATE
                 ["operation"] = operationName,
                 ["binlogFile"] = currentBinlogFile
             };
+            if (!string.IsNullOrWhiteSpace(serverProfile.ServerUuid))
+            {
+                headers["sourceServerUuid"] = serverProfile.ServerUuid;
+            }
+
             var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 ["sourceId"] = descriptor.SourceId,
                 ["eventFormat"] = descriptor.EventFormat,
                 ["checkpointToken"] = checkpointToken.Serialize()
             };
+            if (!string.IsNullOrWhiteSpace(serverProfile.GtidMode))
+            {
+                metadata["gtidMode"] = serverProfile.GtidMode;
+            }
+
+            if (!string.IsNullOrWhiteSpace(serverProfile.GtidExecutedSet))
+            {
+                metadata["gtidExecutedSet"] = serverProfile.GtidExecutedSet;
+            }
 
             capturedChanges.Add(new MySqlBinlogCapturedChange(
                 changeId,
@@ -739,6 +1228,38 @@ ON DUPLICATE KEY UPDATE
         string Server,
         string Username,
         string Password);
+
+    private readonly record struct MySqlBinlogStoredCheckpoint(
+        string BinlogFile,
+        long Position,
+        string? SourceServerUuid,
+        long? SourceServerId,
+        string? GtidExecutedSet,
+        string? BinlogFormat,
+        string? BinlogRowImage,
+        DateTimeOffset? UpdatedAtUtc)
+    {
+        public string Serialize()
+        {
+            return new MySqlBinlogCheckpointToken(BinlogFile, Position).Serialize();
+        }
+
+        public MySqlBinlogStartPosition ToStartPosition()
+        {
+            return new MySqlBinlogStartPosition(BinlogFile, Position);
+        }
+    }
+
+    private readonly record struct MySqlBinlogServerProfile(
+        string? ServerUuid,
+        long? SourceServerId,
+        string? GtidMode,
+        string? GtidExecutedSet,
+        bool BinaryLoggingEnabled,
+        string? BinlogFormat,
+        string? BinlogRowImage,
+        string? CurrentBinlogFile,
+        long? CurrentBinlogPosition);
 
     private readonly record struct MySqlBinlogStartPosition(
         string BinlogFile,

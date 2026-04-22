@@ -16,6 +16,7 @@ public sealed class MySqlDataCdcPackTests
     private const string SharedRuntimeId = "data-cdc-capture-pump";
     private const string MySqlRuntimeId = "mysql-binlog-capture-pump";
     private const string CaptureId = "mysql-orders-cdc";
+    private const string SourceServerUuid = "6f9619ff-8b86-d011-b42d-00cf4fc964ff";
 
     [Fact]
     public async Task AddMySqlData_ProviderNativeCdcRuntimeStagesPublicationsAndCommitsCheckpoint()
@@ -26,8 +27,25 @@ public sealed class MySqlDataCdcPackTests
         batch.Metadata["checkpointStore"] = "cephalon.cephalon_cdc_checkpoints";
         batch.Metadata["binlogCheckpointSource"] = "cephalon-checkpoint-table";
         batch.Metadata["binlogResumeMode"] = "earliest-available";
+        batch.Metadata["binlogLifecycleState"] = "available";
+        batch.Metadata["binlogLifecycleAction"] = "start";
         batch.Metadata["binlogFile"] = "mysql-bin.000001";
         batch.Metadata["binlogPosition"] = "1260";
+        batch.Metadata["currentBinlogFile"] = "mysql-bin.000001";
+        batch.Metadata["currentBinlogPosition"] = "1260";
+        batch.Metadata["sourceServerUuid"] = SourceServerUuid;
+        batch.Metadata["sourceServerId"] = "210101";
+        batch.Metadata["sourceServerIdentityState"] = "expected-match";
+        batch.Metadata["sourceServerIdentityAction"] = "accept";
+        batch.Metadata["gtidMode"] = "ON";
+        batch.Metadata["gtidExecutedSet"] = $"{SourceServerUuid}:1-24";
+        batch.Metadata["gtidMetadataMode"] = "observe-only";
+        batch.Metadata["binaryLoggingEnabled"] = "true";
+        batch.Metadata["binlogFormat"] = "ROW";
+        batch.Metadata["binlogRowImage"] = "FULL";
+        batch.Metadata["availableBinlogFileCount"] = "2";
+        batch.Metadata["earliestAvailableBinlogFile"] = "mysql-bin.000001";
+        batch.Metadata["latestAvailableBinlogFile"] = "mysql-bin.000002";
         batch.Changes.Add(new MySqlBinlogTestChange
         {
             BinlogFile = "mysql-bin.000001",
@@ -72,6 +90,7 @@ public sealed class MySqlDataCdcPackTests
                         ChannelId = "orders",
                         MessageType = "orders.mysql.changed",
                         InitialPosition = "earliest-available",
+                        ExpectedSourceServerUuid = SourceServerUuid,
                         PollingIntervalSeconds = 1,
                         MaxChangesPerRead = 64,
                         MaxAwaitTimeSeconds = 5
@@ -115,8 +134,21 @@ public sealed class MySqlDataCdcPackTests
             Assert.Equal("cephalon.cephalon_cdc_checkpoints", state.Metadata["checkpointStore"]);
             Assert.Equal("cephalon-checkpoint-table", state.Metadata["binlogCheckpointSource"]);
             Assert.Equal("earliest-available", state.Metadata["binlogResumeMode"]);
+            Assert.Equal("available", state.Metadata["binlogLifecycleState"]);
+            Assert.Equal("start", state.Metadata["binlogLifecycleAction"]);
             Assert.Equal("mysql-bin.000001", state.Metadata["binlogFile"]);
             Assert.Equal("1260", state.Metadata["binlogPosition"]);
+            Assert.Equal("mysql-bin.000001", state.Metadata["currentBinlogFile"]);
+            Assert.Equal("1260", state.Metadata["currentBinlogPosition"]);
+            Assert.Equal(SourceServerUuid, state.Metadata["sourceServerUuid"]);
+            Assert.Equal("210101", state.Metadata["sourceServerId"]);
+            Assert.Equal("expected-match", state.Metadata["sourceServerIdentityState"]);
+            Assert.Equal("accept", state.Metadata["sourceServerIdentityAction"]);
+            Assert.Equal("ON", state.Metadata["gtidMode"]);
+            Assert.Equal($"{SourceServerUuid}:1-24", state.Metadata["gtidExecutedSet"]);
+            Assert.Equal("ROW", state.Metadata["binlogFormat"]);
+            Assert.Equal("FULL", state.Metadata["binlogRowImage"]);
+            Assert.Equal("true", state.Metadata["binaryLoggingEnabled"]);
             Assert.Equal(CdcCapturePublicationStates.PendingPublication, state.Publication.State);
             Assert.Equal(1, state.Publication.PendingPublicationCount);
 
@@ -131,6 +163,9 @@ public sealed class MySqlDataCdcPackTests
             Assert.Equal("700101", stagedMessage.Headers["serverId"]);
             Assert.Equal("insert", stagedMessage.Headers["operation"]);
             Assert.Equal("mysql-bin.000001", stagedMessage.Headers["binlogFile"]);
+            Assert.Equal(SourceServerUuid, stagedMessage.Headers["sourceServerUuid"]);
+            Assert.Equal("ON", stagedMessage.Metadata["gtidMode"]);
+            Assert.Equal($"{SourceServerUuid}:1-24", stagedMessage.Metadata["gtidExecutedSet"]);
 
             Assert.Equal(["mysql-bin.000001|1260"], harness.CommittedCheckpoints);
 
@@ -144,6 +179,11 @@ public sealed class MySqlDataCdcPackTests
             Assert.Equal("mysql-data", capture.Metadata["contributorModuleId"]);
             Assert.Equal("cephalon", capture.Metadata["tableSchema"]);
             Assert.Equal("orders", capture.Metadata["tableName"]);
+            Assert.Equal("checkpoint-or-initial-position", capture.Metadata["binlogResumeMode"]);
+            Assert.Equal("checkpoint-validation", capture.Metadata["binlogLifecyclePolicy"]);
+            Assert.Equal("configured-uuid-match", capture.Metadata["sourceServerIdentityMode"]);
+            Assert.Equal("observe-only", capture.Metadata["gtidMetadataMode"]);
+            Assert.Equal(SourceServerUuid, capture.Metadata["expectedSourceServerUuid"]);
 
             var sharedRuntime = runtimeCatalog.GetById(SharedRuntimeId);
             Assert.NotNull(sharedRuntime);
@@ -161,6 +201,133 @@ public sealed class MySqlDataCdcPackTests
             Assert.Equal(1, mySqlRuntime.Summary.TotalCapturedChangeCount);
             Assert.Equal(1, mySqlRuntime.Summary.TotalProducedMessageCount);
             Assert.Equal("provider-native", mySqlRuntime.Summary.LastAcknowledgement);
+        }
+        finally
+        {
+            foreach (var hostedService in hostedServices.Reverse())
+            {
+                await hostedService.StopAsync(CancellationToken.None);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task AddMySqlData_MySqlLifecycleFailureSurfacesRetentionAndIdentityMetadata()
+    {
+        var executionState = new TestCdcExecutionState();
+        var harness = new MySqlDataCdcTestHarness();
+        var batch = new MySqlBinlogTestBatch
+        {
+            FailureKind = "checkpoint-binlog-unavailable",
+            FailureMessage = "MySQL binlog capture 'mysql-orders-cdc' cannot resume checkpoint 'mysql-bin.000001|1260' because binlog file 'mysql-bin.000001' is no longer retained on the source server. Reset the checkpoint or restore the missing binlog file before starting the Cephalon MySQL CDC runner."
+        };
+        batch.Metadata["checkpointStore"] = "cephalon.cephalon_cdc_checkpoints";
+        batch.Metadata["binlogCheckpointSource"] = "cephalon-checkpoint-table";
+        batch.Metadata["binlogResumeMode"] = "checkpoint";
+        batch.Metadata["binlogLifecycleState"] = "purged";
+        batch.Metadata["binlogLifecycleAction"] = "fail";
+        batch.Metadata["binlogFile"] = "mysql-bin.000001";
+        batch.Metadata["binlogPosition"] = "1260";
+        batch.Metadata["resumeCheckpoint"] = "mysql-bin.000001|1260";
+        batch.Metadata["sourceServerUuid"] = SourceServerUuid;
+        batch.Metadata["sourceServerId"] = "210101";
+        batch.Metadata["checkpointSourceServerUuid"] = SourceServerUuid;
+        batch.Metadata["sourceServerIdentityState"] = "checkpoint-match";
+        batch.Metadata["sourceServerIdentityAction"] = "resume";
+        batch.Metadata["gtidMode"] = "ON";
+        batch.Metadata["gtidExecutedSet"] = $"{SourceServerUuid}:1-24";
+        batch.Metadata["binaryLoggingEnabled"] = "true";
+        batch.Metadata["binlogFormat"] = "ROW";
+        batch.Metadata["binlogRowImage"] = "FULL";
+        batch.Metadata["earliestAvailableBinlogFile"] = "mysql-bin.000010";
+        batch.Metadata["latestAvailableBinlogFile"] = "mysql-bin.000012";
+        harness.EnqueueBatch(batch);
+
+        var services = new ServiceCollection();
+        services.AddSingleton(executionState);
+        services.AddMySqlDataCdcTestHarness(harness);
+        services.AddScoped<IOutbox, TestOutbox>();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"]));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new PlatformEventingTestModule());
+            engine.AddData(options =>
+            {
+                options.EnableCdcExecution = true;
+                options.CdcPollingIntervalSeconds = 600;
+            });
+            engine.AddMySqlData(
+                connectionString: "Server=localhost;User ID=root;Password=mysql;Database=cephalon",
+                databaseName: "cephalon",
+                configure: options =>
+                {
+                    options.CdcCaptures.Add(new MySqlBinlogCaptureOptions
+                    {
+                        Id = CaptureId,
+                        DisplayName = "MySQL Orders CDC",
+                        SourceModuleId = "platform",
+                        TableSchema = "cephalon",
+                        TableName = "orders",
+                        ServerId = 700101,
+                        OutboxId = "tenant-event-outbox",
+                        ChannelId = "orders",
+                        MessageType = "orders.mysql.changed",
+                        InitialPosition = "latest-available",
+                        ExpectedSourceServerUuid = SourceServerUuid,
+                        PollingIntervalSeconds = 1,
+                        MaxChangesPerRead = 64,
+                        MaxAwaitTimeSeconds = 5
+                    });
+                });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var hostedServices = provider.GetServices<IHostedService>().ToArray();
+        foreach (var hostedService in hostedServices)
+        {
+            await hostedService.StartAsync(CancellationToken.None);
+        }
+
+        try
+        {
+            var stateCatalog = provider.GetRequiredService<ICdcCaptureRuntimeStateCatalog>();
+            var runtimeCatalog = provider.GetRequiredService<ICdcCaptureExecutionRuntimeCatalog>();
+
+            var state = await WaitForAsync(
+                () => Task.FromResult(stateCatalog.GetById(CaptureId)),
+                static current => current is not null && current.LastOutcome == CdcCaptureRuntimeOutcomes.Failed,
+                TimeSpan.FromSeconds(10));
+
+            Assert.NotNull(state);
+            Assert.Equal(MySqlRuntimeId, state.ExecutionBinding.EffectiveExecutionRuntimeId);
+            Assert.Equal(CdcCaptureRuntimeOutcomes.Failed, state.LastOutcome);
+            Assert.Equal("checkpoint-binlog-unavailable", state.Metadata["failureKind"]);
+            Assert.Contains("mysql-bin.000001", state.LastError);
+            Assert.Equal("checkpoint", state.Metadata["binlogResumeMode"]);
+            Assert.Equal("purged", state.Metadata["binlogLifecycleState"]);
+            Assert.Equal("fail", state.Metadata["binlogLifecycleAction"]);
+            Assert.Equal("mysql-bin.000001", state.Metadata["binlogFile"]);
+            Assert.Equal("1260", state.Metadata["binlogPosition"]);
+            Assert.Equal("mysql-bin.000001|1260", state.Metadata["resumeCheckpoint"]);
+            Assert.Equal(SourceServerUuid, state.Metadata["sourceServerUuid"]);
+            Assert.Equal(SourceServerUuid, state.Metadata["checkpointSourceServerUuid"]);
+            Assert.Equal("checkpoint-match", state.Metadata["sourceServerIdentityState"]);
+            Assert.Equal("resume", state.Metadata["sourceServerIdentityAction"]);
+            Assert.Equal("ON", state.Metadata["gtidMode"]);
+            Assert.Equal($"{SourceServerUuid}:1-24", state.Metadata["gtidExecutedSet"]);
+            Assert.Equal("ROW", state.Metadata["binlogFormat"]);
+            Assert.Equal("FULL", state.Metadata["binlogRowImage"]);
+            Assert.Equal("mysql-bin.000010", state.Metadata["earliestAvailableBinlogFile"]);
+            Assert.Equal("mysql-bin.000012", state.Metadata["latestAvailableBinlogFile"]);
+
+            var mySqlRuntime = runtimeCatalog.GetById(MySqlRuntimeId);
+            Assert.NotNull(mySqlRuntime);
+            Assert.True(mySqlRuntime.Summary.HasReports);
+            Assert.Equal(CaptureId, mySqlRuntime.Summary.LastCdcCaptureId);
+            Assert.Equal(CdcCaptureRuntimeOutcomes.Failed, mySqlRuntime.Summary.LastOutcome);
         }
         finally
         {
