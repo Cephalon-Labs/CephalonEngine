@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-22T20:17:43.4486877+00:00",
+  "GeneratedAtUtc": "2026-04-22T21:06:06.6859343+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 369
+      "TypeCount": 371
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -571,7 +571,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
-      "TypeCount": 89
+      "TypeCount": 91
     },
     {
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
@@ -3245,6 +3245,36 @@
       }
     },
     {
+      "DisplayName": "CdcCaptureExecutionRuntimeReportingCoverageStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestates",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeReportingCoverageStates",
+      "Summary": "Defines the stable reporting-coverage state identifiers used by CDC execution-runtime summaries.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 5,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeReportingCoverageStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus",
+      "Declaration": "public sealed class CdcCaptureExecutionRuntimeReportingCoverageStatus",
+      "Summary": "Describes the declared-versus-reported coverage currently visible for one CDC execution runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 8,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "CdcCaptureExecutionRuntimeSummary",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -3255,7 +3285,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 30,
+        "Properties": 33,
         "Methods": 0
       }
     },
@@ -19240,6 +19270,17 @@
       "Summary": "Describes the grouped reporter-coordination story currently visible for one CDC capture execution runtime."
     },
     {
+      "DisplayName": "CdcCaptureExecutionRuntimeReportingCoverageStatus",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeReportingCoverageStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus-ctor-system-string-system-string",
+      "Signature": "CdcCaptureExecutionRuntimeReportingCoverageStatus(string state, string description)",
+      "Summary": "Creates a new execution-runtime reporting-coverage answer."
+    },
+    {
       "DisplayName": "CdcCaptureExecutionRuntimes",
       "Category": "Properties",
       "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
@@ -23428,6 +23469,17 @@
       "Summary": "The event is intended for debug-oriented diagnostics."
     },
     {
+      "DisplayName": "DeclaredCaptureCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeReportingCoverageStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus-declaredcapturecount",
+      "Signature": "int DeclaredCaptureCount { get; set; }",
+      "Summary": "Gets the number of declared CDC captures currently owned by the execution runtime."
+    },
+    {
       "DisplayName": "Default",
       "Category": "Properties",
       "DeclaringTypeName": "FailurePolicy",
@@ -24284,6 +24336,17 @@
       "AnchorId": "member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-description",
       "Signature": "string Description { get; set; }",
       "Summary": "Gets or sets the human-readable execution-runtime description."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeReportingCoverageStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets an optional operator-facing reporting-coverage summary."
     },
     {
       "DisplayName": "Description",
@@ -31568,6 +31631,17 @@
       "Summary": "Reads one route-specific strangler-fig migration-policy override from configuration."
     },
     {
+      "DisplayName": "FullyReported",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeReportingCoverageStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestates-fullyreported",
+      "Signature": "const string FullyReported",
+      "Summary": "Every declared CDC capture owned by the execution runtime has reported runtime state."
+    },
+    {
       "DisplayName": "GatewayClassName",
       "Category": "Properties",
       "DeclaringTypeName": "KubernetesGatewayTrafficMaterializerOptions",
@@ -33955,6 +34029,28 @@
       "Summary": "Gets a value indicating whether the capture still has a provider-reported freshness window."
     },
     {
+      "DisplayName": "HasFullCaptureCoverage",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-hasfullcapturecoverage",
+      "Signature": "bool HasFullCaptureCoverage { get; }",
+      "Summary": "Gets a value indicating whether the execution runtime has reported every declared CDC capture it currently owns."
+    },
+    {
+      "DisplayName": "HasFullCoverage",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeReportingCoverageStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus-hasfullcoverage",
+      "Signature": "bool HasFullCoverage { get; }",
+      "Summary": "Gets a value indicating whether the execution runtime has reported every declared CDC capture."
+    },
+    {
       "DisplayName": "HasManualCommandsForAllTargets",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseMigrationOperationalExecutionGroup",
@@ -34239,6 +34335,28 @@
       "AnchorId": "member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-hasstrategyvalues",
       "Signature": "bool HasStrategyValues { get; }",
       "Summary": "Gets a value indicating whether any strategy-level override settings were explicitly supplied."
+    },
+    {
+      "DisplayName": "HasUnreportedCdcCaptures",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeReportingCoverageStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus-hasunreportedcdccaptures",
+      "Signature": "bool HasUnreportedCdcCaptures { get; }",
+      "Summary": "Gets a value indicating whether any declared CDC captures still have not reported runtime state."
+    },
+    {
+      "DisplayName": "HasUnreportedDeclaredCaptures",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-hasunreporteddeclaredcaptures",
+      "Signature": "bool HasUnreportedDeclaredCaptures { get; }",
+      "Summary": "Gets a value indicating whether any declared CDC captures still have not reported runtime state."
     },
     {
       "DisplayName": "HasValue",
@@ -43985,6 +44103,17 @@
       "Summary": "Reporter takeover does not currently apply to the coordination answer."
     },
     {
+      "DisplayName": "NotBound",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeReportingCoverageStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestates-notbound",
+      "Signature": "const string NotBound",
+      "Summary": "The execution runtime does not currently own any declared CDC captures."
+    },
+    {
       "DisplayName": "NotConfigured",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureReporterCoordinationStates",
@@ -45851,6 +45980,17 @@
       "AnchorId": "member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationstates-partial",
       "Signature": "const string Partial",
       "Summary": "The automation spans multiple materialization dimensions whose observed postures do not currently agree."
+    },
+    {
+      "DisplayName": "PartiallyReported",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeReportingCoverageStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestates-partiallyreported",
+      "Signature": "const string PartiallyReported",
+      "Summary": "The execution runtime owns declared CDC captures and only part of that declared set has reported runtime state."
     },
     {
       "DisplayName": "ParticipantCount",
@@ -50077,6 +50217,17 @@
     {
       "DisplayName": "ReportedCaptureCount",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeReportingCoverageStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus-reportedcapturecount",
+      "Signature": "int ReportedCaptureCount { get; set; }",
+      "Summary": "Gets the number of declared CDC captures that have reported runtime state."
+    },
+    {
+      "DisplayName": "ReportedCaptureCount",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeSummary",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -50282,6 +50433,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-reportid",
       "Signature": "string ReportId { get; }",
       "Summary": "Gets the optional stable report identifier used to make repeated submissions idempotent."
+    },
+    {
+      "DisplayName": "ReportingCoverage",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-reportingcoverage",
+      "Signature": "CdcCaptureExecutionRuntimeReportingCoverageStatus ReportingCoverage { get; set; }",
+      "Summary": "Gets the declared-versus-reported coverage currently visible for the execution runtime."
     },
     {
       "DisplayName": "ReportProviderAsync",
@@ -56708,6 +56870,17 @@
     {
       "DisplayName": "State",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeReportingCoverageStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus-state",
+      "Signature": "string State { get; }",
+      "Summary": "Gets the stable reporting-coverage state."
+    },
+    {
+      "DisplayName": "State",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureFreshnessStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -61218,6 +61391,17 @@
     {
       "DisplayName": "Unknown",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeReportingCoverageStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestates-unknown",
+      "Signature": "const string Unknown",
+      "Summary": "The execution runtime cannot currently determine reporting coverage."
+    },
+    {
+      "DisplayName": "Unknown",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureFreshnessStates",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -61317,6 +61501,17 @@
     {
       "DisplayName": "Unreported",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeReportingCoverageStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestates-unreported",
+      "Signature": "const string Unreported",
+      "Summary": "The execution runtime owns declared CDC captures, but none of them have reported runtime state yet."
+    },
+    {
+      "DisplayName": "Unreported",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureReporterCoordinationStates",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -61324,6 +61519,28 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccapturereportercoordinationstates-unreported",
       "Signature": "const string Unreported",
       "Summary": "The execution runtime has not reported any capture observations yet."
+    },
+    {
+      "DisplayName": "UnreportedCaptureCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeReportingCoverageStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus-unreportedcapturecount",
+      "Signature": "int UnreportedCaptureCount { get; }",
+      "Summary": "Gets the number of declared CDC captures that have not reported runtime state yet."
+    },
+    {
+      "DisplayName": "UnreportedCdcCaptureIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeReportingCoverageStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus-unreportedcdccaptureids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E UnreportedCdcCaptureIds { get; set; }",
+      "Summary": "Gets the declared CDC capture identifiers that have not reported runtime state yet."
     },
     {
       "DisplayName": "Unspecified",

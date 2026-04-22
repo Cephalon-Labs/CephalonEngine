@@ -168,6 +168,8 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionAcknowledgement),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionBindingDescriptor),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeDescriptor),
+            typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeReportingCoverageStates),
+            typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeReportingCoverageStatus),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeReporterCoordinationRollup),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeSummary),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureDescriptor),
@@ -2711,6 +2713,12 @@ public sealed class PackageSurfaceTests
             .GetProperty("ReporterCoordination", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeSummary)
             .GetProperty("ReporterCoordinationRollup", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeSummary)
+            .GetProperty("ReportingCoverage", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeSummary)
+            .GetProperty("HasUnreportedDeclaredCaptures", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeSummary)
+            .GetProperty("HasFullCaptureCoverage", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionBindingDescriptor)
             .GetProperty("ExecutionTopology", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionBindingDescriptor)
@@ -2871,6 +2879,14 @@ public sealed class PackageSurfaceTests
             .GetProperty("RejectedReporterIds", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeReporterCoordinationRollup)
             .GetProperty("DegradedCdcCaptureIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeReportingCoverageStatus)
+            .GetProperty("DeclaredCaptureCount", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeReportingCoverageStatus)
+            .GetProperty("ReportedCaptureCount", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeReportingCoverageStatus)
+            .GetProperty("UnreportedCdcCaptureIds", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeReportingCoverageStatus)
+            .GetProperty("HasFullCoverage", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureRuntimeState)
             .GetProperty("OutboxDispatchState", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureRuntimeState)

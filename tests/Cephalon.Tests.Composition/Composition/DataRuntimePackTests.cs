@@ -930,6 +930,100 @@ public sealed class DataRuntimePackTests
     }
 
     [Fact]
+    public async Task AddDataTracksExternalExecutionRuntimeReportingCoverageAcrossDeclaredCaptures()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"]));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new MultiCaptureExecutionRuntimeCdcModule());
+            engine.AddData(options =>
+            {
+                options.EnableExternalCdcRuntimeReporting = true;
+                options.CdcExecutionRuntimes.Add(new CdcCaptureExecutionRuntimeOptions
+                {
+                    Id = "external-cdc-runtime",
+                    DisplayName = "External CDC Runtime",
+                    Description = "Represents an externally managed out-of-process CDC runner.",
+                    ExecutionOwnership = "external-managed",
+                    ExecutionTopology = "out-of-process-reporting",
+                    ReporterLeaseSeconds = 120,
+                    RejectConflictingReporterIds = false
+                });
+                options.CdcExecutionRuntimes[0].CdcCaptureIds.Add("multi-capture-cdc-a");
+                options.CdcExecutionRuntimes[0].CdcCaptureIds.Add("multi-capture-cdc-b");
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var reportSink = provider.GetRequiredService<ICdcCaptureExecutionRuntimeReportSink>();
+        var runtimeCatalog = provider.GetRequiredService<ICdcCaptureExecutionRuntimeCatalog>();
+        var snapshotProvider = provider.GetRequiredService<IRuntimeIntrospectionSnapshotProvider>();
+
+        var initialRuntime = runtimeCatalog.GetById("external-cdc-runtime");
+        Assert.NotNull(initialRuntime);
+        Assert.Equal(CdcCaptureExecutionRuntimeReportingCoverageStates.Unreported, initialRuntime.Summary.ReportingCoverage.State);
+        Assert.Equal(2, initialRuntime.Summary.ReportingCoverage.DeclaredCaptureCount);
+        Assert.Equal(0, initialRuntime.Summary.ReportingCoverage.ReportedCaptureCount);
+        Assert.Equal(["multi-capture-cdc-a", "multi-capture-cdc-b"], initialRuntime.Summary.ReportingCoverage.UnreportedCdcCaptureIds);
+        Assert.True(initialRuntime.Summary.HasUnreportedDeclaredCaptures);
+        Assert.False(initialRuntime.Summary.HasFullCaptureCoverage);
+
+        await reportSink.ReportAsync(
+            "external-cdc-runtime",
+            [
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: "multi-capture-cdc-a",
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-23T08:00:00Z", CultureInfo.InvariantCulture),
+                    reportId: "external-report-coverage-a",
+                    reporterId: "edge-agent-a")
+            ]);
+
+        var partiallyReportedRuntime = runtimeCatalog.GetById("external-cdc-runtime");
+        Assert.NotNull(partiallyReportedRuntime);
+        Assert.Equal(CdcCaptureExecutionRuntimeReportingCoverageStates.PartiallyReported, partiallyReportedRuntime.Summary.ReportingCoverage.State);
+        Assert.Equal(2, partiallyReportedRuntime.Summary.ReportingCoverage.DeclaredCaptureCount);
+        Assert.Equal(1, partiallyReportedRuntime.Summary.ReportingCoverage.ReportedCaptureCount);
+        Assert.Equal(["multi-capture-cdc-b"], partiallyReportedRuntime.Summary.ReportingCoverage.UnreportedCdcCaptureIds);
+        Assert.Equal(["multi-capture-cdc-a"], partiallyReportedRuntime.Summary.ReportedCdcCaptureIds);
+        Assert.True(partiallyReportedRuntime.Summary.HasUnreportedDeclaredCaptures);
+        Assert.False(partiallyReportedRuntime.Summary.HasFullCaptureCoverage);
+
+        await reportSink.ReportAsync(
+            "external-cdc-runtime",
+            [
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: "multi-capture-cdc-b",
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-23T08:00:30Z", CultureInfo.InvariantCulture),
+                    reportId: "external-report-coverage-b",
+                    reporterId: "edge-agent-a")
+            ]);
+
+        var fullyReportedRuntime = runtimeCatalog.GetById("external-cdc-runtime");
+        Assert.NotNull(fullyReportedRuntime);
+        Assert.Equal(CdcCaptureExecutionRuntimeReportingCoverageStates.FullyReported, fullyReportedRuntime.Summary.ReportingCoverage.State);
+        Assert.Equal(2, fullyReportedRuntime.Summary.ReportingCoverage.DeclaredCaptureCount);
+        Assert.Equal(2, fullyReportedRuntime.Summary.ReportingCoverage.ReportedCaptureCount);
+        Assert.Empty(fullyReportedRuntime.Summary.ReportingCoverage.UnreportedCdcCaptureIds);
+        Assert.Equal(["multi-capture-cdc-a", "multi-capture-cdc-b"], fullyReportedRuntime.Summary.ReportedCdcCaptureIds.OrderBy(static id => id, StringComparer.OrdinalIgnoreCase));
+        Assert.False(fullyReportedRuntime.Summary.HasUnreportedDeclaredCaptures);
+        Assert.True(fullyReportedRuntime.Summary.HasFullCaptureCoverage);
+
+        var snapshot = snapshotProvider.CreateSnapshot();
+        var snapshotRuntime = snapshot.CdcCaptureExecutionRuntimes.Single(item => item.Id == "external-cdc-runtime");
+        Assert.Equal(CdcCaptureExecutionRuntimeReportingCoverageStates.FullyReported, snapshotRuntime.Summary.ReportingCoverage.State);
+        Assert.Equal(2, snapshotRuntime.Summary.ReportingCoverage.DeclaredCaptureCount);
+        Assert.Equal(2, snapshotRuntime.Summary.ReportingCoverage.ReportedCaptureCount);
+        Assert.Empty(snapshotRuntime.Summary.ReportingCoverage.UnreportedCdcCaptureIds);
+        Assert.True(snapshotRuntime.Summary.HasFullCaptureCoverage);
+    }
+
+    [Fact]
     public async Task AddDataMarksExternalExecutionRuntimeAsConflictedWhenMultipleCaptureReportersHoldActiveLeases()
     {
         var timeProvider = new MutableTimeProvider(DateTimeOffset.Parse("2026-04-21T02:45:00Z", CultureInfo.InvariantCulture));

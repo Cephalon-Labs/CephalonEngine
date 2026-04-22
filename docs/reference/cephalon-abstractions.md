@@ -8637,6 +8637,178 @@ IReadOnlyList<string> StandbyReporterIds { get; set; }
 
 Gets the reporter identities currently visible as standby participants on at least one CDC capture.
 
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestates"></a>
+
+### `CdcCaptureExecutionRuntimeReportingCoverageStates`
+
+Defines the stable reporting-coverage state identifiers used by CDC execution-runtime summaries.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeReportingCoverageStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestates-fullyreported"></a>
+
+##### `FullyReported`
+
+```csharp
+const string FullyReported
+```
+
+Every declared CDC capture owned by the execution runtime has reported runtime state.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestates-notbound"></a>
+
+##### `NotBound`
+
+```csharp
+const string NotBound
+```
+
+The execution runtime does not currently own any declared CDC captures.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestates-partiallyreported"></a>
+
+##### `PartiallyReported`
+
+```csharp
+const string PartiallyReported
+```
+
+The execution runtime owns declared CDC captures and only part of that declared set has reported runtime state.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestates-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+The execution runtime cannot currently determine reporting coverage.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestates-unreported"></a>
+
+##### `Unreported`
+
+```csharp
+const string Unreported
+```
+
+The execution runtime owns declared CDC captures, but none of them have reported runtime state yet.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus"></a>
+
+### `CdcCaptureExecutionRuntimeReportingCoverageStatus`
+
+Describes the declared-versus-reported coverage currently visible for one CDC execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeReportingCoverageStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus-ctor-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionRuntimeReportingCoverageStatus`
+
+```csharp
+CdcCaptureExecutionRuntimeReportingCoverageStatus(string state, string description)
+```
+
+Creates a new execution-runtime reporting-coverage answer.
+
+Parameters:
+- `state`: The stable reporting-coverage state, such as `unreported`, `partially-reported`, or `fully-reported`.
+- `description`: An optional operator-facing reporting-coverage summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus-declaredcapturecount"></a>
+
+##### `DeclaredCaptureCount`
+
+```csharp
+int DeclaredCaptureCount { get; set; }
+```
+
+Gets the number of declared CDC captures currently owned by the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing reporting-coverage summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus-hasfullcoverage"></a>
+
+##### `HasFullCoverage`
+
+```csharp
+bool HasFullCoverage { get; }
+```
+
+Gets a value indicating whether the execution runtime has reported every declared CDC capture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus-hasunreportedcdccaptures"></a>
+
+##### `HasUnreportedCdcCaptures`
+
+```csharp
+bool HasUnreportedCdcCaptures { get; }
+```
+
+Gets a value indicating whether any declared CDC captures still have not reported runtime state.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus-reportedcapturecount"></a>
+
+##### `ReportedCaptureCount`
+
+```csharp
+int ReportedCaptureCount { get; set; }
+```
+
+Gets the number of declared CDC captures that have reported runtime state.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable reporting-coverage state.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus-unreportedcapturecount"></a>
+
+##### `UnreportedCaptureCount`
+
+```csharp
+int UnreportedCaptureCount { get; }
+```
+
+Gets the number of declared CDC captures that have not reported runtime state yet.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus-unreportedcdccaptureids"></a>
+
+##### `UnreportedCdcCaptureIds`
+
+```csharp
+IReadOnlyList<string> UnreportedCdcCaptureIds { get; set; }
+```
+
+Gets the declared CDC capture identifiers that have not reported runtime state yet.
+
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimesummary"></a>
 
 ### `CdcCaptureExecutionRuntimeSummary`
@@ -8730,6 +8902,16 @@ bool HasActiveReporterLease { get; }
 
 Gets a value indicating whether the execution runtime currently has an active reporter lease.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-hasfullcapturecoverage"></a>
+
+##### `HasFullCaptureCoverage`
+
+```csharp
+bool HasFullCaptureCoverage { get; }
+```
+
+Gets a value indicating whether the execution runtime has reported every declared CDC capture it currently owns.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-hasreportercoordinationissue"></a>
 
 ##### `HasReporterCoordinationIssue`
@@ -8759,6 +8941,16 @@ bool HasStaleObservations { get; }
 ```
 
 Gets a value indicating whether at least one reported capture observation is now stale.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-hasunreporteddeclaredcaptures"></a>
+
+##### `HasUnreportedDeclaredCaptures`
+
+```csharp
+bool HasUnreportedDeclaredCaptures { get; }
+```
+
+Gets a value indicating whether any declared CDC captures still have not reported runtime state.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-idlecount"></a>
 
@@ -8939,6 +9131,16 @@ DateTimeOffset? ReporterLeaseExpiresAtUtc { get; set; }
 ```
 
 Gets the UTC timestamp when the active reporter lease expires when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-reportingcoverage"></a>
+
+##### `ReportingCoverage`
+
+```csharp
+CdcCaptureExecutionRuntimeReportingCoverageStatus ReportingCoverage { get; set; }
+```
+
+Gets the declared-versus-reported coverage currently visible for the execution runtime.
 
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-startedcount"></a>
 

@@ -67,6 +67,8 @@
 - `Data/CdcCaptureRuntimeState.cs`
 - `Data/ICdcCaptureRuntimeStateCatalog.cs`
 - `Data/CdcCaptureExecutionRuntimeDescriptor.cs`
+- `Data/CdcCaptureExecutionRuntimeReportingCoverageStates.cs`
+- `Data/CdcCaptureExecutionRuntimeReportingCoverageStatus.cs`
 - `Data/CdcCaptureExecutionRuntimeSummary.cs`
 - `Data/ICdcCaptureExecutionRuntimeCatalog.cs`
 - `Data/CdcCaptureRuntimeObservation.cs`
@@ -235,7 +237,14 @@ distinguish an `awaiting-takeover` expired lease from a `rejected-reporter-confl
 `multiple-active-reporters` ambiguity, or a completed handoff without inventing a second operator
 taxonomy. Later accepted reports can now also normalize stale rejected-conflict evidence and old
 takeover standby evidence without changing this shared contract shape, so operator surfaces stay
-truthful while historical `PreviousReporterId` plus takeover timestamps remain available.
+truthful while historical `PreviousReporterId` plus takeover timestamps remain available. That
+same shared execution-runtime contract now also publishes declared-versus-reported coverage
+through `CdcCaptureExecutionRuntimeReportingCoverageStates`,
+`CdcCaptureExecutionRuntimeReportingCoverageStatus`,
+`CdcCaptureExecutionRuntimeSummary.ReportingCoverage`, and the derived
+`HasUnreportedDeclaredCaptures` / `HasFullCaptureCoverage` helpers, so hosts and tooling can tell
+whether one runtime is `not-bound`, `unreported`, `partially-reported`, or `fully-reported`
+without inventing a second external-runtime coverage vocabulary.
 
 The app-model contract now also carries a contract-first resilience family through
 `ResilienceSelection`, `RetrySelection`, `TimeoutSelection`, `CircuitBreakerSelection`,

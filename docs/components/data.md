@@ -133,6 +133,16 @@ through `/engine/cdc-capture-runtimes*` and `snapshot.CdcCaptureExecutionRuntime
 summaries can answer active-versus-standby-versus-rejected posture directly without inventing a
 second operator index.
 
+That same shared execution-runtime story now also keeps declared-versus-reported coverage explicit.
+`CdcCaptureExecutionRuntimeSummary.ReportingCoverage` now publishes stable
+`not-bound` / `unreported` / `partially-reported` / `fully-reported` posture together with
+declared and reported capture counts, still-unreported capture ids, and derived
+`HasUnreportedDeclaredCaptures` / `HasFullCaptureCoverage` helpers. `ReportedCdcCaptureIds` now
+only lists captures that have submitted real observations instead of descriptor-backed placeholder
+state, and the same coverage truth flows through `/engine/cdc-capture-runtimes*` plus
+`snapshot.CdcCaptureExecutionRuntimes` without inventing a second external-runtime coverage
+registry.
+
 That same shared operator story is now directly queryable by reporter, edge node, coordination
 state, and degraded reason as well. `ICdcCaptureRuntimeStateCatalog` plus
 `ICdcCaptureExecutionRuntimeCatalog` now expose `GetByReporterId(...)`, `GetByEdgeNodeId(...)`,

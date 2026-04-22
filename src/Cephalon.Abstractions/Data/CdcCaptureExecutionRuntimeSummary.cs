@@ -65,6 +65,12 @@ public sealed record CdcCaptureExecutionRuntimeSummary(
         new(CdcCaptureReporterCoordinationStates.Unknown);
 
     /// <summary>
+    /// Gets the declared-versus-reported coverage currently visible for the execution runtime.
+    /// </summary>
+    public CdcCaptureExecutionRuntimeReportingCoverageStatus ReportingCoverage { get; init; } =
+        new(CdcCaptureExecutionRuntimeReportingCoverageStates.Unknown);
+
+    /// <summary>
     /// Gets the grouped reporter-coordination rollup currently visible across the execution runtime's reported CDC captures.
     /// </summary>
     public CdcCaptureExecutionRuntimeReporterCoordinationRollup ReporterCoordinationRollup { get; init; } =
@@ -109,6 +115,16 @@ public sealed record CdcCaptureExecutionRuntimeSummary(
     /// Gets a value indicating whether the execution runtime has reported any runtime observations yet.
     /// </summary>
     public bool HasReports => TotalReports > 0;
+
+    /// <summary>
+    /// Gets a value indicating whether any declared CDC captures still have not reported runtime state.
+    /// </summary>
+    public bool HasUnreportedDeclaredCaptures => ReportingCoverage.HasUnreportedCdcCaptures;
+
+    /// <summary>
+    /// Gets a value indicating whether the execution runtime has reported every declared CDC capture it currently owns.
+    /// </summary>
+    public bool HasFullCaptureCoverage => ReportingCoverage.HasFullCoverage;
 
     /// <summary>
     /// Gets a value indicating whether at least one reported capture observation is now stale.

@@ -4582,6 +4582,116 @@ note: visible
     }
 
     [Fact]
+    public async Task MapCephalonTracksExternalCdcRuntimeReportingCoverageAcrossDeclaredCaptures()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularVerticalSlice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Patterns:0"] = "CQRS";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new MultiCaptureExecutionRuntimeHostingTestModule());
+            cephalon.AddData(options =>
+            {
+                options.EnableExternalCdcRuntimeReporting = true;
+                options.CdcExecutionRuntimes.Add(new CdcCaptureExecutionRuntimeOptions
+                {
+                    Id = "external-cdc-runtime",
+                    DisplayName = "External CDC Runtime",
+                    Description = "Represents an externally managed out-of-process CDC runner.",
+                    ExecutionOwnership = "external-managed",
+                    ExecutionTopology = "out-of-process-reporting",
+                    ReporterLeaseSeconds = 120,
+                    RejectConflictingReporterIds = false
+                });
+                options.CdcExecutionRuntimes[0].CdcCaptureIds.Add("multi-capture-cdc-a");
+                options.CdcExecutionRuntimes[0].CdcCaptureIds.Add("multi-capture-cdc-b");
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+
+        var client = app.GetTestClient();
+        var initialRuntime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>("/engine/cdc-capture-runtimes/external-cdc-runtime");
+        var initialSnapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(initialRuntime);
+        Assert.Equal(CdcCaptureExecutionRuntimeReportingCoverageStates.Unreported, initialRuntime.Summary.ReportingCoverage.State);
+        Assert.Equal(2, initialRuntime.Summary.ReportingCoverage.DeclaredCaptureCount);
+        Assert.Equal(0, initialRuntime.Summary.ReportingCoverage.ReportedCaptureCount);
+        Assert.Equal(["multi-capture-cdc-a", "multi-capture-cdc-b"], initialRuntime.Summary.ReportingCoverage.UnreportedCdcCaptureIds);
+        Assert.NotNull(initialSnapshot);
+        Assert.Contains(
+            initialSnapshot.CdcCaptureExecutionRuntimes,
+            item => item.Id == "external-cdc-runtime" &&
+                item.Summary.ReportingCoverage.State == CdcCaptureExecutionRuntimeReportingCoverageStates.Unreported &&
+                item.Summary.ReportingCoverage.UnreportedCdcCaptureIds.Count == 2);
+
+        var partialResponse = await client.PostAsJsonAsync(
+            "/engine/cdc-capture-runtimes/external-cdc-runtime/reports",
+            new[]
+            {
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: "multi-capture-cdc-a",
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-23T08:10:00Z", CultureInfo.InvariantCulture),
+                    reportId: "external-report-coverage-a",
+                    reporterId: "edge-agent-a")
+            });
+        partialResponse.EnsureSuccessStatusCode();
+
+        var partiallyReportedRuntime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>("/engine/cdc-capture-runtimes/external-cdc-runtime");
+        var partiallyReportedSnapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(partiallyReportedRuntime);
+        Assert.Equal(CdcCaptureExecutionRuntimeReportingCoverageStates.PartiallyReported, partiallyReportedRuntime.Summary.ReportingCoverage.State);
+        Assert.Equal(2, partiallyReportedRuntime.Summary.ReportingCoverage.DeclaredCaptureCount);
+        Assert.Equal(1, partiallyReportedRuntime.Summary.ReportingCoverage.ReportedCaptureCount);
+        Assert.Equal(["multi-capture-cdc-b"], partiallyReportedRuntime.Summary.ReportingCoverage.UnreportedCdcCaptureIds);
+        Assert.Equal(["multi-capture-cdc-a"], partiallyReportedRuntime.Summary.ReportedCdcCaptureIds);
+        Assert.NotNull(partiallyReportedSnapshot);
+        Assert.Contains(
+            partiallyReportedSnapshot.CdcCaptureExecutionRuntimes,
+            item => item.Id == "external-cdc-runtime" &&
+                item.Summary.ReportingCoverage.State == CdcCaptureExecutionRuntimeReportingCoverageStates.PartiallyReported &&
+                item.Summary.ReportingCoverage.UnreportedCdcCaptureIds.SequenceEqual(["multi-capture-cdc-b"]));
+
+        var fullResponse = await client.PostAsJsonAsync(
+            "/engine/cdc-capture-runtimes/external-cdc-runtime/reports",
+            new[]
+            {
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: "multi-capture-cdc-b",
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-23T08:10:30Z", CultureInfo.InvariantCulture),
+                    reportId: "external-report-coverage-b",
+                    reporterId: "edge-agent-a")
+            });
+        fullResponse.EnsureSuccessStatusCode();
+
+        var fullyReportedRuntime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>("/engine/cdc-capture-runtimes/external-cdc-runtime");
+        var fullyReportedSnapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.NotNull(fullyReportedRuntime);
+        Assert.Equal(CdcCaptureExecutionRuntimeReportingCoverageStates.FullyReported, fullyReportedRuntime.Summary.ReportingCoverage.State);
+        Assert.Equal(2, fullyReportedRuntime.Summary.ReportingCoverage.DeclaredCaptureCount);
+        Assert.Equal(2, fullyReportedRuntime.Summary.ReportingCoverage.ReportedCaptureCount);
+        Assert.Empty(fullyReportedRuntime.Summary.ReportingCoverage.UnreportedCdcCaptureIds);
+        Assert.True(fullyReportedRuntime.Summary.HasFullCaptureCoverage);
+        Assert.NotNull(fullyReportedSnapshot);
+        Assert.Contains(
+            fullyReportedSnapshot.CdcCaptureExecutionRuntimes,
+            item => item.Id == "external-cdc-runtime" &&
+                item.Summary.ReportingCoverage.State == CdcCaptureExecutionRuntimeReportingCoverageStates.FullyReported &&
+                item.Summary.HasFullCaptureCoverage);
+    }
+
+    [Fact]
     public async Task MapCephalonMarksExternalCdcRuntimeAsConflictedWhenMultipleReportersHoldActiveLeases()
     {
         var timeProvider = new MutableTimeProvider(DateTimeOffset.Parse("2026-04-21T03:44:45Z", CultureInfo.InvariantCulture));

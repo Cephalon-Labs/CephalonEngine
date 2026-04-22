@@ -100,7 +100,7 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         var matchingStates = runtimeStateCatalog?.GetByExecutionRuntimeId(runtime.Id) ?? [];
         var summary = matchingStates.Count == 0
             ? CreateEmptySummary(runtime)
-            : CreateSummary(matchingStates);
+            : CreateSummary(runtime, matchingStates);
         return new CdcCaptureExecutionRuntimeDescriptor(
             id: runtime.Id,
             displayName: runtime.DisplayName,
@@ -114,13 +114,22 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
     {
         return CdcCaptureExecutionRuntimeSummary.Empty with
         {
-            ReporterCoordination = CreateReporterCoordination(runtime)
+            ReporterCoordination = CreateReporterCoordination(runtime),
+            ReportingCoverage = CreateReportingCoverage(runtime.CdcCaptureIds, [])
         };
     }
 
     private CdcCaptureExecutionRuntimeSummary CreateSummary(
+        CdcCaptureExecutionRuntimeDescriptor runtime,
         IReadOnlyList<CdcCaptureRuntimeState> matchingStates)
     {
+        var reportedCaptureIds = matchingStates
+            .Where(static state => state.HasReports)
+            .Select(static state => state.CdcCaptureId)
+            .Where(static cdcCaptureId => !string.IsNullOrWhiteSpace(cdcCaptureId))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static cdcCaptureId => cdcCaptureId, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
         var latestState = matchingStates
             .OrderByDescending(static state => state.LastObservedAtUtc ?? DateTimeOffset.MinValue)
             .ThenBy(static state => state.CdcCaptureId, StringComparer.OrdinalIgnoreCase)
@@ -129,7 +138,7 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         var activeReporterId = ResolveActiveReporterId(matchingStates, timeProvider.GetUtcNow());
 
         return new CdcCaptureExecutionRuntimeSummary(
-            ReportedCdcCaptureIds: matchingStates.Select(static state => state.CdcCaptureId).ToArray(),
+            ReportedCdcCaptureIds: reportedCaptureIds,
             LastCdcCaptureId: latestState.CdcCaptureId,
             LastOutcome: latestState.LastOutcome,
             LastObservedAtUtc: latestState.LastObservedAtUtc,
@@ -147,6 +156,7 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             ObservationFreshness: AggregateObservationFreshness(matchingStates))
         {
             ReporterCoordination = latestState.ReporterCoordination,
+            ReportingCoverage = CreateReportingCoverage(runtime.CdcCaptureIds, matchingStates),
             ReporterCoordinationRollup = CreateReporterCoordinationRollup(matchingStates),
             LastReporterId = latestState.LastReporterId,
             ActiveReporterId = activeReporterId,
@@ -216,6 +226,79 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         return new CdcCaptureReporterCoordinationStatus(
             CdcCaptureReporterCoordinationStates.Unreported,
             "The execution runtime has not reported any external reporter observations yet.");
+    }
+
+    private static CdcCaptureExecutionRuntimeReportingCoverageStatus CreateReportingCoverage(
+        IReadOnlyList<string> declaredCaptureIds,
+        IReadOnlyList<CdcCaptureRuntimeState> matchingStates)
+    {
+        var normalizedDeclaredCaptureIds = declaredCaptureIds
+            .Where(static cdcCaptureId => !string.IsNullOrWhiteSpace(cdcCaptureId))
+            .Select(static cdcCaptureId => cdcCaptureId.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static cdcCaptureId => cdcCaptureId, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        var reportedCaptureIds = matchingStates
+            .Where(static state => state.HasReports)
+            .Select(static state => state.CdcCaptureId)
+            .Where(static cdcCaptureId => !string.IsNullOrWhiteSpace(cdcCaptureId))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static cdcCaptureId => cdcCaptureId, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+        if (normalizedDeclaredCaptureIds.Length == 0)
+        {
+            return new CdcCaptureExecutionRuntimeReportingCoverageStatus(
+                CdcCaptureExecutionRuntimeReportingCoverageStates.NotBound,
+                "The execution runtime does not currently resolve to any CDC captures.")
+            {
+                DeclaredCaptureCount = 0,
+                ReportedCaptureCount = reportedCaptureIds.Length
+            };
+        }
+
+        var unreportedCaptureIds = normalizedDeclaredCaptureIds
+            .Except(reportedCaptureIds, StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static cdcCaptureId => cdcCaptureId, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+        if (reportedCaptureIds.Length == 0)
+        {
+            return new CdcCaptureExecutionRuntimeReportingCoverageStatus(
+                CdcCaptureExecutionRuntimeReportingCoverageStates.Unreported,
+                normalizedDeclaredCaptureIds.Length == 1
+                    ? $"Declared CDC capture '{normalizedDeclaredCaptureIds[0]}' has not reported runtime state yet."
+                    : $"{normalizedDeclaredCaptureIds.Length} declared CDC captures have not reported runtime state yet.")
+            {
+                DeclaredCaptureCount = normalizedDeclaredCaptureIds.Length,
+                ReportedCaptureCount = 0,
+                UnreportedCdcCaptureIds = normalizedDeclaredCaptureIds
+            };
+        }
+
+        if (unreportedCaptureIds.Length > 0)
+        {
+            return new CdcCaptureExecutionRuntimeReportingCoverageStatus(
+                CdcCaptureExecutionRuntimeReportingCoverageStates.PartiallyReported,
+                unreportedCaptureIds.Length == 1
+                    ? $"Declared CDC capture '{unreportedCaptureIds[0]}' has not reported runtime state yet."
+                    : $"{unreportedCaptureIds.Length} declared CDC captures have not reported runtime state yet.")
+            {
+                DeclaredCaptureCount = normalizedDeclaredCaptureIds.Length,
+                ReportedCaptureCount = reportedCaptureIds.Length,
+                UnreportedCdcCaptureIds = unreportedCaptureIds
+            };
+        }
+
+        return new CdcCaptureExecutionRuntimeReportingCoverageStatus(
+            CdcCaptureExecutionRuntimeReportingCoverageStates.FullyReported,
+            normalizedDeclaredCaptureIds.Length == 1
+                ? "The declared CDC capture has reported runtime state for the execution runtime."
+                : "All declared CDC captures have reported runtime state for the execution runtime.")
+        {
+            DeclaredCaptureCount = normalizedDeclaredCaptureIds.Length,
+            ReportedCaptureCount = reportedCaptureIds.Length
+        };
     }
 
     private static CdcCaptureFreshnessStatus AggregateObservationFreshness(

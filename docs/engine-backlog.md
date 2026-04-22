@@ -3027,6 +3027,56 @@ Delivered:
 - targeted coverage now proves the operator-story drill-down baseline through composition tests
   `1/1`, hosting tests `1/1`, tooling tests `185/185`, and the reference docs publish script
 
+### ENG-167 Phase 13 broader external-runtime reporting-coverage hardening
+
+Status: done
+Estimate: 5
+Completed: April 23, 2026
+
+Why:
+
+- `ENG-166` made the shared external CDC runtime story easier to read at the coordination-rollup
+  level, but execution-runtime summaries could still treat descriptor-backed placeholder state as
+  if a declared capture had already reported runtime truth
+- operators still had to diff declared capture ownership against the raw runtime-state set by hand
+  to answer whether one external runtime had reported every declared capture, especially when one
+  runtime owned more than one capture
+- the next shared follow-through needed to keep declared-versus-reported coverage additive over
+  `/engine/cdc-capture-runtimes*` and `snapshot.CdcCaptureExecutionRuntimes` instead of inventing
+  a second external-runtime coverage registry or overloading reporter-coordination semantics
+
+Acceptance:
+
+- `Cephalon.Abstractions` ships a stable execution-runtime reporting-coverage contract that can
+  publish `not-bound`, `unreported`, `partially-reported`, and `fully-reported` posture together
+  with declared and reported counts plus the still-unreported capture ids
+- `CdcCaptureExecutionRuntimeSummary` can now expose that additive reporting-coverage answer on the
+  same shared execution-runtime surface while also keeping derived helper booleans for
+  has-unreported and full-coverage posture
+- the shared execution-runtime catalog now derives `ReportedCdcCaptureIds` and reporting-coverage
+  truth only from captures that have submitted real observations instead of descriptor-backed
+  placeholder state
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice while broader external-runtime hardening remains separate work
+
+Delivered:
+
+- the 2026-04-23 `ENG-167` slice added `CdcCaptureExecutionRuntimeReportingCoverageStates` plus
+  `CdcCaptureExecutionRuntimeReportingCoverageStatus` to `Cephalon.Abstractions`, and
+  `CdcCaptureExecutionRuntimeSummary` now carries additive `ReportingCoverage` beside the existing
+  reporter-coordination answer
+- `Cephalon.Data` now derives `ReportedCdcCaptureIds` and reporting-coverage posture only from
+  captures whose runtime state has actual reports, so one declared external runtime can truthfully
+  answer `unreported`, `partially-reported`, or `fully-reported` instead of looking complete as
+  soon as placeholder runtime state is projected
+- the same shared `/engine/cdc-capture-runtimes*` routes and `snapshot.CdcCaptureExecutionRuntimes`
+  answers now project declared-versus-reported coverage counts plus missing capture ids directly,
+  so operators no longer have to diff declared capture ownership against one runtime-state set by
+  hand
+- targeted coverage now proves the broader external-runtime reporting-coverage slice through
+  composition tests `28/28`, hosting tests `4/4`, tooling tests `207/207`, and the reference docs
+  publish script
+
 ### ENG-166 Phase 13 richer CDC operator-story rollups
 
 Status: done

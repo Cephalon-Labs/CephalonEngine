@@ -1821,6 +1821,9 @@ Browse the published API surface by public member.
 - [CdcCaptureExecutionRuntimeReporterCoordinationRollup](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-data-cdccapturereportercoordinationbreakdownentry-system-collections-generic-ireadonlylist-cephalon-abstractions-data-cdccapturereportercoordinationbreakdownentry): `Constructors` on `CdcCaptureExecutionRuntimeReporterCoordinationRollup` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureExecutionRuntimeReporterCoordinationRollup&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Describes the grouped reporter-coordination story currently visible for one CDC capture execution runtime.
   - `CdcCaptureExecutionRuntimeReporterCoordinationRollup(IReadOnlyList<CdcCaptureReporterCoordinationBreakdownEntry> CoordinationStateBreakdown, IReadOnlyList<CdcCaptureReporterCoordinationBreakdownEntry> DegradedReasonBreakdown)`
+- [CdcCaptureExecutionRuntimeReportingCoverageStatus](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus-ctor-system-string-system-string): `Constructors` on `CdcCaptureExecutionRuntimeReportingCoverageStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureExecutionRuntimeReportingCoverageStatus&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Creates a new execution-runtime reporting-coverage answer.
+  - `CdcCaptureExecutionRuntimeReportingCoverageStatus(string state, string description)`
 - [CdcCaptureExecutionRuntimes](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-cdccaptureexecutionruntimes): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=CdcCaptureExecutionRuntimes&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the configured CDC capture execution runtimes visible to the runtime at the time the snapshot was created.
   - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> CdcCaptureExecutionRuntimes { get; set; }`
@@ -2964,6 +2967,9 @@ Browse the published API surface by public member.
 - [Debug](cephalon-engine.md#member-f-cephalon-engine-diagnostics-diagnosticseverity-debug): `Fields` on `DiagnosticSeverity` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Debug&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - The event is intended for debug-oriented diagnostics.
   - `const DiagnosticSeverity Debug`
+- [DeclaredCaptureCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus-declaredcapturecount): `Properties` on `CdcCaptureExecutionRuntimeReportingCoverageStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DeclaredCaptureCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the number of declared CDC captures currently owned by the execution runtime.
+  - `int DeclaredCaptureCount { get; set; }`
 - [Default](cephalon-engine.md#member-p-cephalon-engine-configuration-failurepolicy-default): `Properties` on `FailurePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Default&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the default failure policy used when no explicit configuration is supplied.
   - `FailurePolicy Default { get; }`
@@ -3198,6 +3204,9 @@ Browse the published API surface by public member.
 - [Description](cephalon-data.md#member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-description): `Properties` on `CdcCaptureExecutionRuntimeOptions` in `Cephalon.Data.Configuration` (`Cephalon.Data`) [Browse](browse.html?q=Description&assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration&scope=members)
   - Gets or sets the human-readable execution-runtime description.
   - `string Description { get; set; }`
+- [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus-description): `Properties` on `CdcCaptureExecutionRuntimeReportingCoverageStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets an optional operator-facing reporting-coverage summary.
+  - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturefreshnessstatus-description): `Properties` on `CdcCaptureFreshnessStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets an optional operator-facing freshness summary.
   - `string Description { get; }`
@@ -5190,6 +5199,9 @@ Browse the published API surface by public member.
 - [FromSection](cephalon-engine.md#member-m-cephalon-engine-configuration-stranglerfigroutepolicysettings-fromsection-microsoft-extensions-configuration-iconfigurationsection): `Methods` on `StranglerFigRoutePolicySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromSection&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Reads one route-specific strangler-fig migration-policy override from configuration.
   - `StranglerFigRoutePolicySettings FromSection(IConfigurationSection section)`
+- [FullyReported](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestates-fullyreported): `Fields` on `CdcCaptureExecutionRuntimeReportingCoverageStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=FullyReported&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Every declared CDC capture owned by the execution runtime has reported runtime state.
+  - `const string FullyReported`
 
 ## G
 
@@ -5847,6 +5859,12 @@ Browse the published API surface by public member.
 - [HasFreshnessWindow](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-hasfreshnesswindow): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasFreshnessWindow&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the capture still has a provider-reported freshness window.
   - `bool HasFreshnessWindow { get; }`
+- [HasFullCaptureCoverage](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-hasfullcapturecoverage): `Properties` on `CdcCaptureExecutionRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasFullCaptureCoverage&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the execution runtime has reported every declared CDC capture it currently owns.
+  - `bool HasFullCaptureCoverage { get; }`
+- [HasFullCoverage](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus-hasfullcoverage): `Properties` on `CdcCaptureExecutionRuntimeReportingCoverageStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasFullCoverage&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the execution runtime has reported every declared CDC capture.
+  - `bool HasFullCoverage { get; }`
 - [HasManualCommandsForAllTargets](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-hasmanualcommandsforalltargets): `Properties` on `DatabaseMigrationOperationalExecutionGroup` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasManualCommandsForAllTargets&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether every target in this group publishes a direct or manual command path.
   - `bool HasManualCommandsForAllTargets { get; }`
@@ -5925,6 +5943,12 @@ Browse the published API surface by public member.
 - [HasStrategyValues](cephalon-engine.md#member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-hasstrategyvalues): `Properties` on `BehaviorExecutionResilienceOverrideSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=HasStrategyValues&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether any strategy-level override settings were explicitly supplied.
   - `bool HasStrategyValues { get; }`
+- [HasUnreportedCdcCaptures](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus-hasunreportedcdccaptures): `Properties` on `CdcCaptureExecutionRuntimeReportingCoverageStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasUnreportedCdcCaptures&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether any declared CDC captures still have not reported runtime state.
+  - `bool HasUnreportedCdcCaptures { get; }`
+- [HasUnreportedDeclaredCaptures](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-hasunreporteddeclaredcaptures): `Properties` on `CdcCaptureExecutionRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasUnreportedDeclaredCaptures&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether any declared CDC captures still have not reported runtime state.
+  - `bool HasUnreportedDeclaredCaptures { get; }`
 - [HasValue](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehaviorresult-hasvalue): `Properties` on `IBehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasValue&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets a value indicating whether the result carries a payload value.
   - `bool HasValue { get; }`
@@ -8599,6 +8623,9 @@ Browse the published API surface by public member.
 - [NotApplicable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturereportertakeoverstates-notapplicable): `Fields` on `CdcCaptureReporterTakeoverStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotApplicable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Reporter takeover does not currently apply to the coordination answer.
   - `const string NotApplicable`
+- [NotBound](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestates-notbound): `Fields` on `CdcCaptureExecutionRuntimeReportingCoverageStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotBound&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The execution runtime does not currently own any declared CDC captures.
+  - `const string NotBound`
 - [NotConfigured](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturereportercoordinationstates-notconfigured): `Fields` on `CdcCaptureReporterCoordinationStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NotConfigured&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The execution runtime does not currently declare reporter-lease coordination semantics.
   - `const string NotConfigured`
@@ -9113,6 +9140,9 @@ Browse the published API surface by public member.
 - [Partial](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationstates-partial): `Fields` on `CellTrafficAutomationMaterializationStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Partial&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - The automation spans multiple materialization dimensions whose observed postures do not currently agree.
   - `const string Partial`
+- [PartiallyReported](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestates-partiallyreported): `Fields` on `CdcCaptureExecutionRuntimeReportingCoverageStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PartiallyReported&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The execution runtime owns declared CDC captures and only part of that declared set has reported runtime state.
+  - `const string PartiallyReported`
 - [ParticipantCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-participantcount): `Properties` on `CdcCaptureReporterCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ParticipantCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the total number of reporter participants currently visible in the coordination story.
   - `int ParticipantCount { get; }`
@@ -10269,6 +10299,9 @@ Browse the published API surface by public member.
 - [ReportAsync](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventsubscriptionruntimereporter-reportasync-cephalon-eventing-services-eventsubscriptionexecutionreport-system-threading-cancellationtoken): `Methods` on `IEventSubscriptionRuntimeReporter` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ReportAsync&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Records one application-managed execution observation for a declared event subscription.
   - `ValueTask ReportAsync(EventSubscriptionExecutionReport report, CancellationToken cancellationToken)`
+- [ReportedCaptureCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus-reportedcapturecount): `Properties` on `CdcCaptureExecutionRuntimeReportingCoverageStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReportedCaptureCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the number of declared CDC captures that have reported runtime state.
+  - `int ReportedCaptureCount { get; set; }`
 - [ReportedCaptureCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-reportedcapturecount): `Properties` on `CdcCaptureExecutionRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReportedCaptureCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of distinct CDC captures that have reported runtime state for the execution runtime.
   - `int ReportedCaptureCount { get; }`
@@ -10326,6 +10359,9 @@ Browse the published API surface by public member.
 - [ReportId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-reportid): `Properties` on `CdcCaptureRuntimeObservation` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReportId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the optional stable report identifier used to make repeated submissions idempotent.
   - `string ReportId { get; }`
+- [ReportingCoverage](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-reportingcoverage): `Properties` on `CdcCaptureExecutionRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReportingCoverage&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the declared-versus-reported coverage currently visible for the execution runtime.
+  - `CdcCaptureExecutionRuntimeReportingCoverageStatus ReportingCoverage { get; set; }`
 - [ReportProviderAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icelltrafficautomationmaterializationreportsink-reportproviderasync-system-string-system-string-cephalon-abstractions-technologies-celltrafficautomationprovidermaterializationresult-system-threading-cancellationtoken): `Methods` on `ICellTrafficAutomationMaterializationReportSink` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReportProviderAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Reports a provider-managed materialization observation for one traffic automation answer.
   - `ValueTask ReportProviderAsync(string automationId, string materializerId, CellTrafficAutomationProviderMaterializationResult result, CancellationToken cancellationToken)`
@@ -12079,6 +12115,9 @@ Browse the published API surface by public member.
 - [StartupReadinessDelay](cephalon-engine.md#member-p-cephalon-engine-configuration-failurepolicy-startupreadinessdelay): `Properties` on `FailurePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=StartupReadinessDelay&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the readiness warmup window that applies after startup succeeds.
   - `TimeSpan StartupReadinessDelay { get; }`
+- [State](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus-state): `Properties` on `CdcCaptureExecutionRuntimeReportingCoverageStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=State&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable reporting-coverage state.
+  - `string State { get; }`
 - [State](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturefreshnessstatus-state): `Properties` on `CdcCaptureFreshnessStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=State&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable freshness-state identifier.
   - `string State { get; }`
@@ -13315,6 +13354,9 @@ Browse the published API surface by public member.
 - [Unknown](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behavioridempotencymode-unknown): `Fields` on `BehaviorIdempotencyMode` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unknown&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - No explicit idempotency contract was declared for the behavior.
   - `const BehaviorIdempotencyMode Unknown`
+- [Unknown](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestates-unknown): `Fields` on `CdcCaptureExecutionRuntimeReportingCoverageStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unknown&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The execution runtime cannot currently determine reporting coverage.
+  - `const string Unknown`
 - [Unknown](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturefreshnessstates-unknown): `Fields` on `CdcCaptureFreshnessStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unknown&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Indicates that the active runtime does not yet have a freshness answer.
   - `const string Unknown`
@@ -13342,9 +13384,18 @@ Browse the published API surface by public member.
 - [Unmet](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditionstates-unmet): `Fields` on `CellTrafficAutomationMaterializationConditionStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unmet&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - The condition is not satisfied.
   - `const string Unmet`
+- [Unreported](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestates-unreported): `Fields` on `CdcCaptureExecutionRuntimeReportingCoverageStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unreported&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The execution runtime owns declared CDC captures, but none of them have reported runtime state yet.
+  - `const string Unreported`
 - [Unreported](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturereportercoordinationstates-unreported): `Fields` on `CdcCaptureReporterCoordinationStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unreported&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The execution runtime has not reported any capture observations yet.
   - `const string Unreported`
+- [UnreportedCaptureCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus-unreportedcapturecount): `Properties` on `CdcCaptureExecutionRuntimeReportingCoverageStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=UnreportedCaptureCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the number of declared CDC captures that have not reported runtime state yet.
+  - `int UnreportedCaptureCount { get; }`
+- [UnreportedCdcCaptureIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus-unreportedcdccaptureids): `Properties` on `CdcCaptureExecutionRuntimeReportingCoverageStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=UnreportedCdcCaptureIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the declared CDC capture identifiers that have not reported runtime state yet.
+  - `IReadOnlyList<string> UnreportedCdcCaptureIds { get; set; }`
 - [Unspecified](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointauthoringpolicysuppressionkind-unspecified): `Fields` on `RestEndpointAuthoringPolicySuppressionKind` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Unspecified&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - The candidate was not classified with an authoring-policy suppression kind.
   - `const RestEndpointAuthoringPolicySuppressionKind Unspecified`
