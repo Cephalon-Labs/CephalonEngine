@@ -124,6 +124,22 @@ evidence after later accepted reports and drops takeover-only standby participan
 replacement reporter reaffirms its lease, while historical takeover fields remain queryable on the
 same shared runtime story.
 
+That same shared operator story is now directly queryable by reporter, edge node, coordination
+state, and degraded reason as well. `ICdcCaptureRuntimeStateCatalog` plus
+`ICdcCaptureExecutionRuntimeCatalog` now expose `GetByReporterId(...)`, `GetByEdgeNodeId(...)`,
+`GetByReporterCoordinationState(...)`, and `GetByReporterCoordinationIssueReason(...)`, so host
+code, provider packs, and tooling can narrow the shared CDC runtime story without rebuilding a
+second coordination index. ASP.NET Core maps those same filters through
+`/engine/cdc-captures/runtime/reporters/{reporterId}`,
+`/engine/cdc-captures/runtime/edge-nodes/{edgeNodeId}`,
+`/engine/cdc-captures/runtime/reporter-coordination/{coordinationState}`,
+`/engine/cdc-captures/runtime/reporter-coordination/issues/{degradedReason}`,
+`/engine/cdc-capture-runtimes/reporters/{reporterId}`,
+`/engine/cdc-capture-runtimes/edge-nodes/{edgeNodeId}`,
+`/engine/cdc-capture-runtimes/reporter-coordination/{coordinationState}`, and
+`/engine/cdc-capture-runtimes/reporter-coordination/issues/{degradedReason}` so the live host
+surface stays aligned with the same shared runtime-state and execution-runtime catalogs.
+
 `Cephalon.Data.MongoDB` first proved that contract with a document-oriented provider-native runner.
 Its `mongodb-change-stream-capture-pump` contributor publishes host-managed, provider-native,
 provider-native-acknowledgement ownership through the shared execution-runtime catalog while the

@@ -1291,6 +1291,11 @@ Current payload highlights:
   `/engine/cdc-captures/runtime/outboxes/{outboxId}`,
   `/engine/cdc-captures/runtime/sources/{sourceId}`, and
   `/engine/cdc-captures/runtime/resources/{resourceId}`
+- that same runtime-state catalog now also supports reporter-, edge-, and coordination-aware
+  drill-down through `/engine/cdc-captures/runtime/reporters/{reporterId}`,
+  `/engine/cdc-captures/runtime/edge-nodes/{edgeNodeId}`,
+  `/engine/cdc-captures/runtime/reporter-coordination/{coordinationState}`, and
+  `/engine/cdc-captures/runtime/reporter-coordination/issues/{degradedReason}`
 - `/engine/cdc-captures/runtime/execution-runtimes/{executionRuntimeId}` now exposes the inverse
   runtime-state view for every capture effectively owned by one execution runtime
 - when `DataRuntimeOptions.EnableExternalCdcRuntimeReporting = true`, `POST /engine/cdc-capture-runtimes/{executionRuntimeId}/reports` accepts `CdcCaptureRuntimeObservation[]` payloads for that runtime, validates effective ownership per capture, enforces declared reporter and edge-node policy when present, and refreshes the same runtime-state catalog instead of a separate external-monitor surface
@@ -1353,6 +1358,11 @@ Current payload highlights:
   `CdcCaptureExecutionRuntimes` when operators want one merged runtime answer
 - the drill-down route `/engine/cdc-capture-runtimes/{executionRuntimeId}` narrows the same catalog
   to one execution runtime by stable id
+- that same runtime-first catalog now also supports reporter-, edge-, and coordination-aware
+  drill-down through `/engine/cdc-capture-runtimes/reporters/{reporterId}`,
+  `/engine/cdc-capture-runtimes/edge-nodes/{edgeNodeId}`,
+  `/engine/cdc-capture-runtimes/reporter-coordination/{coordinationState}`, and
+  `/engine/cdc-capture-runtimes/reporter-coordination/issues/{degradedReason}`
 - `/engine/cdc-captures*` and `/engine/cdc-captures/runtime*` now also carry first-class
   `executionBinding` plus typed `reporterCoordination` answers, so runtime-first and capture-first
   ownership views stay aligned even when an external reporter lease expires, a new reporter takes

@@ -142,6 +142,51 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
         }
     }
 
+    public IReadOnlyList<CdcCaptureRuntimeState> GetByReporterId(string reporterId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(reporterId);
+        var normalizedReporterId = reporterId.Trim();
+
+        lock (gate)
+        {
+            return FilterStates(state => state.ReporterCoordination.ReporterParticipants.Any(
+                participant => Comparer.Equals(participant.ReporterId, normalizedReporterId)));
+        }
+    }
+
+    public IReadOnlyList<CdcCaptureRuntimeState> GetByEdgeNodeId(string edgeNodeId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(edgeNodeId);
+        var normalizedEdgeNodeId = edgeNodeId.Trim();
+
+        lock (gate)
+        {
+            return FilterStates(state => Comparer.Equals(state.LastEdgeNodeId, normalizedEdgeNodeId));
+        }
+    }
+
+    public IReadOnlyList<CdcCaptureRuntimeState> GetByReporterCoordinationState(string coordinationState)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(coordinationState);
+        var normalizedCoordinationState = coordinationState.Trim();
+
+        lock (gate)
+        {
+            return FilterStates(state => Comparer.Equals(state.ReporterCoordination.State, normalizedCoordinationState));
+        }
+    }
+
+    public IReadOnlyList<CdcCaptureRuntimeState> GetByReporterCoordinationIssueReason(string degradedReason)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(degradedReason);
+        var normalizedDegradedReason = degradedReason.Trim();
+
+        lock (gate)
+        {
+            return FilterStates(state => Comparer.Equals(state.ReporterCoordination.DegradedReason, normalizedDegradedReason));
+        }
+    }
+
     public IReadOnlyList<CdcCaptureRuntimeState> GetByResourceId(string resourceId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(resourceId);
@@ -149,13 +194,21 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
 
         lock (gate)
         {
-            return descriptors
-                .Where(descriptor => descriptor.ResourceIds.Contains(normalizedResourceId, Comparer))
-                .Select(CreateState)
-                .OrderBy(static state => state.SourceModuleId, Comparer)
-                .ThenBy(static state => state.CdcCaptureId, Comparer)
-                .ToArray();
+            return FilterStates(state => state.ResourceIds.Contains(normalizedResourceId, Comparer));
         }
+    }
+
+    private CdcCaptureRuntimeState[] FilterStates(Func<CdcCaptureRuntimeState, bool> predicate)
+    {
+        ArgumentNullException.ThrowIfNull(predicate);
+
+        return descriptors
+            .Select(CreateState)
+            .Where(predicate)
+            .OrderBy(static state => state.SourceModuleId, Comparer)
+            .ThenBy(static state => state.Provider, Comparer)
+            .ThenBy(static state => state.CdcCaptureId, Comparer)
+            .ToArray();
     }
 
     public ValueTask ReportAsync(

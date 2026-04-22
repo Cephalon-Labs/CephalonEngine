@@ -42,6 +42,57 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             : null;
     }
 
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByReporterId(string reporterId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(reporterId);
+        var normalizedReporterId = reporterId.Trim();
+
+        return FilterRuntimes(runtime => runtime.Summary.ReporterCoordination.ReporterParticipants.Any(
+            participant => string.Equals(participant.ReporterId, normalizedReporterId, StringComparison.OrdinalIgnoreCase)));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByEdgeNodeId(string edgeNodeId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(edgeNodeId);
+        var normalizedEdgeNodeId = edgeNodeId.Trim();
+
+        return FilterRuntimes(runtime => runtime.Summary.ObservedEdgeNodeIds.Contains(normalizedEdgeNodeId, StringComparer.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByReporterCoordinationState(string coordinationState)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(coordinationState);
+        var normalizedCoordinationState = coordinationState.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.Summary.ReporterCoordination.State,
+            normalizedCoordinationState,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByReporterCoordinationIssueReason(string degradedReason)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(degradedReason);
+        var normalizedDegradedReason = degradedReason.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.Summary.ReporterCoordination.DegradedReason,
+            normalizedDegradedReason,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
+    private CdcCaptureExecutionRuntimeDescriptor[] FilterRuntimes(
+        Func<CdcCaptureExecutionRuntimeDescriptor, bool> predicate)
+    {
+        ArgumentNullException.ThrowIfNull(predicate);
+
+        return index.Values
+            .Select(Enrich)
+            .Where(predicate)
+            .OrderBy(static runtime => runtime.DisplayName, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+    }
+
     private CdcCaptureExecutionRuntimeDescriptor Enrich(CdcCaptureExecutionRuntimeDescriptor runtime)
     {
         var captureIds = ResolveCaptureIds(runtime.Id);

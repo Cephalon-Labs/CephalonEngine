@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-22T12:53:15.1011715+00:00",
+  "GeneratedAtUtc": "2026-04-22T15:32:31.6990475+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -6504,7 +6504,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 1
+        "Methods": 5
       }
     },
     {
@@ -6594,7 +6594,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 7
+        "Methods": 11
       }
     },
     {
@@ -31604,6 +31604,28 @@
     {
       "DisplayName": "GetByEdgeNodeId",
       "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbyedgenodeid-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByEdgeNodeId(string edgeNodeId)",
+      "Summary": "Gets the CDC capture execution runtimes whose current runtime story mentions the requested edge node."
+    },
+    {
+      "DisplayName": "GetByEdgeNodeId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureRuntimeStateCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbyedgenodeid-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureRuntimeState\u003E GetByEdgeNodeId(string edgeNodeId)",
+      "Summary": "Gets the CDC runtime-state entries whose latest runtime story mentions the requested edge node."
+    },
+    {
+      "DisplayName": "GetByEdgeNodeId",
+      "Category": "Methods",
       "DeclaringTypeName": "ICellTrafficAutomationRuntimeCatalog",
       "NamespaceName": "Cephalon.Abstractions.Technologies",
       "AssemblyName": "Cephalon.Abstractions",
@@ -32249,6 +32271,72 @@
       "AnchorId": "member-m-cephalon-abstractions-data-ioutboxcatalog-getbyprovider-system-string",
       "Signature": "IReadOnlyList\u003COutboxDescriptor\u003E GetByProvider(string provider)",
       "Summary": "Gets all outboxes backed by the requested provider identifier."
+    },
+    {
+      "DisplayName": "GetByReporterCoordinationIssueReason",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbyreportercoordinationissuereason-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByReporterCoordinationIssueReason(string degradedReason)",
+      "Summary": "Gets the CDC capture execution runtimes whose current reporter-coordination answer matches the requested degraded-reason identifier."
+    },
+    {
+      "DisplayName": "GetByReporterCoordinationIssueReason",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureRuntimeStateCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbyreportercoordinationissuereason-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureRuntimeState\u003E GetByReporterCoordinationIssueReason(string degradedReason)",
+      "Summary": "Gets the CDC runtime-state entries whose current reporter-coordination answer matches the requested degraded-reason identifier."
+    },
+    {
+      "DisplayName": "GetByReporterCoordinationState",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbyreportercoordinationstate-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByReporterCoordinationState(string coordinationState)",
+      "Summary": "Gets the CDC capture execution runtimes whose current reporter-coordination answer matches the requested state."
+    },
+    {
+      "DisplayName": "GetByReporterCoordinationState",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureRuntimeStateCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbyreportercoordinationstate-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureRuntimeState\u003E GetByReporterCoordinationState(string coordinationState)",
+      "Summary": "Gets the CDC runtime-state entries whose current reporter-coordination answer matches the requested state."
+    },
+    {
+      "DisplayName": "GetByReporterId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbyreporterid-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByReporterId(string reporterId)",
+      "Summary": "Gets the CDC capture execution runtimes whose current reporter-coordination story mentions the requested reporter."
+    },
+    {
+      "DisplayName": "GetByReporterId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureRuntimeStateCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbyreporterid-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureRuntimeState\u003E GetByReporterId(string reporterId)",
+      "Summary": "Gets the CDC runtime-state entries whose current reporter-coordination story mentions the requested reporter."
     },
     {
       "DisplayName": "GetByResolvedRole",

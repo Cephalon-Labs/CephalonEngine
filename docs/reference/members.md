@@ -5235,6 +5235,12 @@ Browse the published API surface by public member.
 - [GetByDomainId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idataproductcatalog-getbydomainid-system-string): `Methods` on `IDataProductCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByDomainId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets all data products that belong to the requested domain.
   - `IReadOnlyList<DataProductDescriptor> GetByDomainId(string domainId)`
+- [GetByEdgeNodeId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbyedgenodeid-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByEdgeNodeId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC capture execution runtimes whose current runtime story mentions the requested edge node.
+  - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByEdgeNodeId(string edgeNodeId)`
+- [GetByEdgeNodeId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbyedgenodeid-system-string): `Methods` on `ICdcCaptureRuntimeStateCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByEdgeNodeId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC runtime-state entries whose latest runtime story mentions the requested edge node.
+  - `IReadOnlyList<CdcCaptureRuntimeState> GetByEdgeNodeId(string edgeNodeId)`
 - [GetByEdgeNodeId](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbyedgenodeid-system-string): `Methods` on `ICellTrafficAutomationRuntimeCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByEdgeNodeId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets all effective cell traffic-automation answers that target the requested edge node.
   - `IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> GetByEdgeNodeId(string edgeNodeId)`
@@ -5412,6 +5418,24 @@ Browse the published API surface by public member.
 - [GetByProvider](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ioutboxcatalog-getbyprovider-system-string): `Methods` on `IOutboxCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByProvider&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets all outboxes backed by the requested provider identifier.
   - `IReadOnlyList<OutboxDescriptor> GetByProvider(string provider)`
+- [GetByReporterCoordinationIssueReason](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbyreportercoordinationissuereason-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByReporterCoordinationIssueReason&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC capture execution runtimes whose current reporter-coordination answer matches the requested degraded-reason identifier.
+  - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByReporterCoordinationIssueReason(string degradedReason)`
+- [GetByReporterCoordinationIssueReason](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbyreportercoordinationissuereason-system-string): `Methods` on `ICdcCaptureRuntimeStateCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByReporterCoordinationIssueReason&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC runtime-state entries whose current reporter-coordination answer matches the requested degraded-reason identifier.
+  - `IReadOnlyList<CdcCaptureRuntimeState> GetByReporterCoordinationIssueReason(string degradedReason)`
+- [GetByReporterCoordinationState](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbyreportercoordinationstate-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByReporterCoordinationState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC capture execution runtimes whose current reporter-coordination answer matches the requested state.
+  - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByReporterCoordinationState(string coordinationState)`
+- [GetByReporterCoordinationState](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbyreportercoordinationstate-system-string): `Methods` on `ICdcCaptureRuntimeStateCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByReporterCoordinationState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC runtime-state entries whose current reporter-coordination answer matches the requested state.
+  - `IReadOnlyList<CdcCaptureRuntimeState> GetByReporterCoordinationState(string coordinationState)`
+- [GetByReporterId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbyreporterid-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByReporterId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC capture execution runtimes whose current reporter-coordination story mentions the requested reporter.
+  - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByReporterId(string reporterId)`
+- [GetByReporterId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbyreporterid-system-string): `Methods` on `ICdcCaptureRuntimeStateCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByReporterId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the CDC runtime-state entries whose current reporter-coordination story mentions the requested reporter.
+  - `IReadOnlyList<CdcCaptureRuntimeState> GetByReporterId(string reporterId)`
 - [GetByResolvedRole](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idatabaserolecatalog-getbyresolvedrole-system-string): `Methods` on `IDatabaseRoleCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByResolvedRole&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets every database role that resolves to the supplied concrete role identifier.
   - `IReadOnlyList<DatabaseRoleDescriptor> GetByResolvedRole(string resolvedRoleId)`

@@ -53,6 +53,34 @@ public interface ICdcCaptureRuntimeStateCatalog
     IReadOnlyList<CdcCaptureRuntimeState> GetByExecutionRuntimeId(string executionRuntimeId);
 
     /// <summary>
+    /// Gets the CDC runtime-state entries whose current reporter-coordination story mentions the requested reporter.
+    /// </summary>
+    /// <param name="reporterId">The reporter identifier to filter by.</param>
+    /// <returns>The matching runtime states, or an empty list when the reporter is not currently visible.</returns>
+    IReadOnlyList<CdcCaptureRuntimeState> GetByReporterId(string reporterId);
+
+    /// <summary>
+    /// Gets the CDC runtime-state entries whose latest runtime story mentions the requested edge node.
+    /// </summary>
+    /// <param name="edgeNodeId">The edge-node identifier to filter by.</param>
+    /// <returns>The matching runtime states, or an empty list when the edge node is not currently visible.</returns>
+    IReadOnlyList<CdcCaptureRuntimeState> GetByEdgeNodeId(string edgeNodeId);
+
+    /// <summary>
+    /// Gets the CDC runtime-state entries whose current reporter-coordination answer matches the requested state.
+    /// </summary>
+    /// <param name="coordinationState">The stable coordination-state identifier to filter by.</param>
+    /// <returns>The matching runtime states, or an empty list when no capture currently reports that state.</returns>
+    IReadOnlyList<CdcCaptureRuntimeState> GetByReporterCoordinationState(string coordinationState);
+
+    /// <summary>
+    /// Gets the CDC runtime-state entries whose current reporter-coordination answer matches the requested degraded-reason identifier.
+    /// </summary>
+    /// <param name="degradedReason">The stable degraded-reason identifier to filter by.</param>
+    /// <returns>The matching runtime states, or an empty list when no capture currently reports that degraded reason.</returns>
+    IReadOnlyList<CdcCaptureRuntimeState> GetByReporterCoordinationIssueReason(string degradedReason);
+
+    /// <summary>
     /// Gets the CDC runtime-state entries that explicitly observe the requested resource identifier.
     /// </summary>
     /// <param name="resourceId">The resource identifier to filter by.</param>

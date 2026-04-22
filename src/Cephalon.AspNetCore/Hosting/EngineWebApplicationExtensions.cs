@@ -442,6 +442,42 @@ public static class EngineWebApplicationExtensions
                 return Results.Ok(runtimes);
             })
             .WithName("GetCephalonCdcCaptureRuntimes");
+        engineGroup.MapGet("/cdc-capture-runtimes/reporters/{reporterId}", (string reporterId, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByReporterId(reporterId) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByReporter");
+        engineGroup.MapGet("/cdc-capture-runtimes/edge-nodes/{edgeNodeId}", (string edgeNodeId, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByEdgeNodeId(edgeNodeId) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByEdgeNode");
+        engineGroup.MapGet("/cdc-capture-runtimes/reporter-coordination/{coordinationState}", (string coordinationState, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByReporterCoordinationState(coordinationState) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByReporterCoordinationState");
+        engineGroup.MapGet("/cdc-capture-runtimes/reporter-coordination/issues/{degradedReason}", (string degradedReason, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByReporterCoordinationIssueReason(degradedReason) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByReporterCoordinationIssueReason");
         engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}", (string executionRuntimeId, HttpContext httpContext) =>
             {
                 var runtimeDescriptor = httpContext.RequestServices
@@ -538,6 +574,30 @@ public static class EngineWebApplicationExtensions
                 return TypedResults.Ok(states);
             })
             .WithName("GetCephalonCdcCaptureStatesByExecutionRuntime");
+        engineGroup.MapGet("/cdc-captures/runtime/reporters/{reporterId}", (string reporterId, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<ICdcCaptureRuntimeStateCatalog>();
+                return TypedResults.Ok(catalog?.GetByReporterId(reporterId) ?? []);
+            })
+            .WithName("GetCephalonCdcCaptureStatesByReporter");
+        engineGroup.MapGet("/cdc-captures/runtime/edge-nodes/{edgeNodeId}", (string edgeNodeId, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<ICdcCaptureRuntimeStateCatalog>();
+                return TypedResults.Ok(catalog?.GetByEdgeNodeId(edgeNodeId) ?? []);
+            })
+            .WithName("GetCephalonCdcCaptureStatesByEdgeNode");
+        engineGroup.MapGet("/cdc-captures/runtime/reporter-coordination/{coordinationState}", (string coordinationState, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<ICdcCaptureRuntimeStateCatalog>();
+                return TypedResults.Ok(catalog?.GetByReporterCoordinationState(coordinationState) ?? []);
+            })
+            .WithName("GetCephalonCdcCaptureStatesByReporterCoordinationState");
+        engineGroup.MapGet("/cdc-captures/runtime/reporter-coordination/issues/{degradedReason}", (string degradedReason, HttpContext httpContext) =>
+            {
+                var catalog = httpContext.RequestServices.GetService<ICdcCaptureRuntimeStateCatalog>();
+                return TypedResults.Ok(catalog?.GetByReporterCoordinationIssueReason(degradedReason) ?? []);
+            })
+            .WithName("GetCephalonCdcCaptureStatesByReporterCoordinationIssueReason");
         engineGroup.MapGet("/cdc-captures/{cdcCaptureId}", (string cdcCaptureId, [FromServices] ICdcCaptureCatalog catalog) =>
             {
                 var cdcCapture = catalog.GetById(cdcCaptureId);

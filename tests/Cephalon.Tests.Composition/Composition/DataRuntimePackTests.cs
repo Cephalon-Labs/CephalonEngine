@@ -815,6 +815,101 @@ public sealed class DataRuntimePackTests
     }
 
     [Fact]
+    public async Task AddDataSupportsReporterAndEdgeAwareOperatorStoryDrillDowns()
+    {
+        var timeProvider = new MutableTimeProvider(DateTimeOffset.Parse("2026-04-21T02:45:00Z", CultureInfo.InvariantCulture));
+        var services = new ServiceCollection();
+        services.AddSingleton<TimeProvider>(timeProvider);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"]));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new Phase8CatalogModule());
+            engine.AddData(options =>
+            {
+                options.EnableExternalCdcRuntimeReporting = true;
+                options.CdcExecutionRuntimes.Add(new CdcCaptureExecutionRuntimeOptions
+                {
+                    Id = "external-cdc-runtime",
+                    DisplayName = "External CDC Runtime",
+                    Description = "Represents an externally managed out-of-process CDC runner.",
+                    ExecutionOwnership = "external-managed",
+                    ExecutionTopology = "edge-reporting",
+                    ReporterLeaseSeconds = 120,
+                    RejectConflictingReporterIds = true
+                });
+                options.CdcExecutionRuntimes[0].CdcCaptureIds.Add("tenant-profile-cdc");
+                options.CdcExecutionRuntimes[0].EdgeNodeIds.Add("edge-bkk-01");
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var reportSink = provider.GetRequiredService<ICdcCaptureExecutionRuntimeReportSink>();
+        var runtimeStateCatalog = provider.GetRequiredService<ICdcCaptureRuntimeStateCatalog>();
+        var runtimeCatalog = provider.GetRequiredService<ICdcCaptureExecutionRuntimeCatalog>();
+
+        await reportSink.ReportAsync(
+            "external-cdc-runtime",
+            [
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: "tenant-profile-cdc",
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-21T02:44:00Z", CultureInfo.InvariantCulture),
+                    reportId: "external-report-reporter-a",
+                    reporterId: "edge-agent-a",
+                    edgeNodeId: "edge-bkk-01")
+            ]);
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => reportSink.ReportAsync(
+            "external-cdc-runtime",
+            [
+                new CdcCaptureRuntimeObservation(
+                    cdcCaptureId: "tenant-profile-cdc",
+                    outcome: CdcCaptureRuntimeOutcomes.Captured,
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-21T02:44:30Z", CultureInfo.InvariantCulture),
+                    reportId: "external-report-reporter-b",
+                    reporterId: "edge-agent-b",
+                    edgeNodeId: "edge-bkk-01")
+            ]).AsTask());
+
+        Assert.Contains("edge-agent-b", exception.Message, StringComparison.Ordinal);
+
+        var statesByReporterA = runtimeStateCatalog.GetByReporterId("edge-agent-a");
+        var statesByReporterB = runtimeStateCatalog.GetByReporterId("edge-agent-b");
+        var statesByEdgeNode = runtimeStateCatalog.GetByEdgeNodeId("edge-bkk-01");
+        var statesByCoordination = runtimeStateCatalog.GetByReporterCoordinationState(CdcCaptureReporterCoordinationStates.Conflicted);
+        var statesByIssue = runtimeStateCatalog.GetByReporterCoordinationIssueReason(CdcCaptureReporterCoordinationIssueReasons.RejectedReporterConflict);
+
+        var runtimesByReporterA = runtimeCatalog.GetByReporterId("edge-agent-a");
+        var runtimesByReporterB = runtimeCatalog.GetByReporterId("edge-agent-b");
+        var runtimesByEdgeNode = runtimeCatalog.GetByEdgeNodeId("edge-bkk-01");
+        var runtimesByCoordination = runtimeCatalog.GetByReporterCoordinationState(CdcCaptureReporterCoordinationStates.Conflicted);
+        var runtimesByIssue = runtimeCatalog.GetByReporterCoordinationIssueReason(CdcCaptureReporterCoordinationIssueReasons.RejectedReporterConflict);
+
+        var reporterAState = Assert.Single(statesByReporterA);
+        Assert.Equal("tenant-profile-cdc", reporterAState.CdcCaptureId);
+        var reporterBState = Assert.Single(statesByReporterB);
+        Assert.Equal("tenant-profile-cdc", reporterBState.CdcCaptureId);
+        var edgeNodeState = Assert.Single(statesByEdgeNode);
+        Assert.Equal("tenant-profile-cdc", edgeNodeState.CdcCaptureId);
+        Assert.Single(statesByCoordination);
+        Assert.Single(statesByIssue);
+        Assert.Empty(runtimeStateCatalog.GetByReporterId("edge-agent-c"));
+
+        var reporterARuntime = Assert.Single(runtimesByReporterA);
+        Assert.Equal("external-cdc-runtime", reporterARuntime.Id);
+        var reporterBRuntime = Assert.Single(runtimesByReporterB);
+        Assert.Equal("external-cdc-runtime", reporterBRuntime.Id);
+        var edgeNodeRuntime = Assert.Single(runtimesByEdgeNode);
+        Assert.Equal("external-cdc-runtime", edgeNodeRuntime.Id);
+        Assert.Single(runtimesByCoordination);
+        Assert.Single(runtimesByIssue);
+        Assert.Empty(runtimeCatalog.GetByEdgeNodeId("edge-bkk-99"));
+    }
+
+    [Fact]
     public async Task AddDataMarksExternalExecutionRuntimeAsConflictedWhenMultipleCaptureReportersHoldActiveLeases()
     {
         var timeProvider = new MutableTimeProvider(DateTimeOffset.Parse("2026-04-21T02:45:00Z", CultureInfo.InvariantCulture));

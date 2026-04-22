@@ -13730,6 +13730,21 @@ Gets the configured CDC capture execution runtimes visible to the current runtim
 
 #### Methods
 
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbyedgenodeid-system-string"></a>
+
+##### `GetByEdgeNodeId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByEdgeNodeId(string edgeNodeId)
+```
+
+Gets the CDC capture execution runtimes whose current runtime story mentions the requested edge node.
+
+Returns: The matching execution-runtime descriptors, or an empty list when the edge node is not currently visible.
+
+Parameters:
+- `edgeNodeId`: The edge-node identifier to filter by.
+
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbyid-system-string"></a>
 
 ##### `GetById`
@@ -13744,6 +13759,51 @@ Returns: The matching execution-runtime descriptor, or `null` when none exists.
 
 Parameters:
 - `executionRuntimeId`: The stable execution-runtime identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbyreportercoordinationissuereason-system-string"></a>
+
+##### `GetByReporterCoordinationIssueReason`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByReporterCoordinationIssueReason(string degradedReason)
+```
+
+Gets the CDC capture execution runtimes whose current reporter-coordination answer matches the requested degraded-reason identifier.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that degraded reason.
+
+Parameters:
+- `degradedReason`: The stable degraded-reason identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbyreportercoordinationstate-system-string"></a>
+
+##### `GetByReporterCoordinationState`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByReporterCoordinationState(string coordinationState)
+```
+
+Gets the CDC capture execution runtimes whose current reporter-coordination answer matches the requested state.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that state.
+
+Parameters:
+- `coordinationState`: The stable coordination-state identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbyreporterid-system-string"></a>
+
+##### `GetByReporterId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByReporterId(string reporterId)
+```
+
+Gets the CDC capture execution runtimes whose current reporter-coordination story mentions the requested reporter.
+
+Returns: The matching execution-runtime descriptors, or an empty list when the reporter is not currently visible.
+
+Parameters:
+- `reporterId`: The reporter identifier to filter by.
 
 <a id="type-cephalon-abstractions-data-icdccaptureexecutionruntimereportsink"></a>
 
@@ -13824,6 +13884,21 @@ Gets the CDC runtime-state entries visible to the current runtime.
 
 #### Methods
 
+<a id="member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbyedgenodeid-system-string"></a>
+
+##### `GetByEdgeNodeId`
+
+```csharp
+IReadOnlyList<CdcCaptureRuntimeState> GetByEdgeNodeId(string edgeNodeId)
+```
+
+Gets the CDC runtime-state entries whose latest runtime story mentions the requested edge node.
+
+Returns: The matching runtime states, or an empty list when the edge node is not currently visible.
+
+Parameters:
+- `edgeNodeId`: The edge-node identifier to filter by.
+
 <a id="member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbyexecutionruntimeid-system-string"></a>
 
 ##### `GetByExecutionRuntimeId`
@@ -13883,6 +13958,51 @@ Returns: The matching runtime states, or an empty list when the provider contrib
 
 Parameters:
 - `provider`: The provider identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbyreportercoordinationissuereason-system-string"></a>
+
+##### `GetByReporterCoordinationIssueReason`
+
+```csharp
+IReadOnlyList<CdcCaptureRuntimeState> GetByReporterCoordinationIssueReason(string degradedReason)
+```
+
+Gets the CDC runtime-state entries whose current reporter-coordination answer matches the requested degraded-reason identifier.
+
+Returns: The matching runtime states, or an empty list when no capture currently reports that degraded reason.
+
+Parameters:
+- `degradedReason`: The stable degraded-reason identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbyreportercoordinationstate-system-string"></a>
+
+##### `GetByReporterCoordinationState`
+
+```csharp
+IReadOnlyList<CdcCaptureRuntimeState> GetByReporterCoordinationState(string coordinationState)
+```
+
+Gets the CDC runtime-state entries whose current reporter-coordination answer matches the requested state.
+
+Returns: The matching runtime states, or an empty list when no capture currently reports that state.
+
+Parameters:
+- `coordinationState`: The stable coordination-state identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbyreporterid-system-string"></a>
+
+##### `GetByReporterId`
+
+```csharp
+IReadOnlyList<CdcCaptureRuntimeState> GetByReporterId(string reporterId)
+```
+
+Gets the CDC runtime-state entries whose current reporter-coordination story mentions the requested reporter.
+
+Returns: The matching runtime states, or an empty list when the reporter is not currently visible.
+
+Parameters:
+- `reporterId`: The reporter identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbyresourceid-system-string"></a>
 

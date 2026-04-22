@@ -2973,6 +2973,60 @@ Delivered:
   tests `28/28`, hosting tests `2/2`, tooling tests `185/185`, and the reference docs publish
   script
 
+### ENG-163 Phase 13 external and edge-aware CDC operator-story drill-down baseline
+
+Status: done
+Estimate: 5
+Completed: April 22, 2026
+
+Why:
+
+- `ENG-155` through `ENG-160` made the shared external CDC runtime story truthful for reporter
+  failover, takeover, degraded posture, and stale-conflict cleanup, but operators still had to
+  scan the whole `/engine/cdc-captures/runtime*` or `/engine/cdc-capture-runtimes*` catalog to
+  answer which captures or runtimes belonged to one reporter, one edge node, or one degraded
+  coordination posture
+- hosts and tooling still needed the existing shared runtime-state and execution-runtime catalogs
+  to answer reporter-centric and edge-centric operator questions without inventing an ASP.NET
+  Core-only filter layer or a second coordination registry
+- shared CDC operator-story drill-downs still had to stay additive over the shipped
+  `ICdcCaptureRuntimeStateCatalog`, `ICdcCaptureExecutionRuntimeCatalog`, `/engine/cdc-*`, and
+  `snapshot` surfaces instead of baking provider- or host-specific coordination queries into one
+  companion pack
+
+Acceptance:
+
+- the shared CDC runtime-state and execution-runtime catalogs expose additive reporter, edge-node,
+  coordination-state, and degraded-reason drill-down methods without changing the existing runtime
+  contract shape
+- ASP.NET Core publishes those same reporter, edge-node, coordination-state, and degraded-reason
+  filters through the existing `/engine/cdc-captures/runtime*` and `/engine/cdc-capture-runtimes*`
+  route families so operator flows can stay on the shared runtime story
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice while later provider-specific capture expansion remains separate follow-through
+
+Delivered:
+
+- `ICdcCaptureRuntimeStateCatalog` now exposes `GetByReporterId(...)`, `GetByEdgeNodeId(...)`,
+  `GetByReporterCoordinationState(...)`, and `GetByReporterCoordinationIssueReason(...)`, while
+  `ICdcCaptureExecutionRuntimeCatalog` now exposes the same four additive drill-down methods over
+  runtime-first summaries
+- `Cephalon.Data` now projects those reporter-centric, edge-centric, coordination-state, and
+  degraded-reason queries off the same shared runtime-state plus execution-runtime catalogs,
+  preserving existing participant, lease, takeover, and degraded-posture truth instead of
+  materializing a second operator cache
+- `Cephalon.AspNetCore` now maps `/engine/cdc-captures/runtime/reporters/{reporterId}`,
+  `/engine/cdc-captures/runtime/edge-nodes/{edgeNodeId}`,
+  `/engine/cdc-captures/runtime/reporter-coordination/{coordinationState}`,
+  `/engine/cdc-captures/runtime/reporter-coordination/issues/{degradedReason}`,
+  `/engine/cdc-capture-runtimes/reporters/{reporterId}`,
+  `/engine/cdc-capture-runtimes/edge-nodes/{edgeNodeId}`,
+  `/engine/cdc-capture-runtimes/reporter-coordination/{coordinationState}`, and
+  `/engine/cdc-capture-runtimes/reporter-coordination/issues/{degradedReason}` so host routes stay
+  aligned with the same shared operator story
+- targeted coverage now proves the operator-story drill-down baseline through composition tests
+  `1/1`, hosting tests `1/1`, tooling tests `185/185`, and the reference docs publish script
+
 ### ENG-157 Phase 13 stronger reporter takeover and degraded-posture hardening baseline
 
 Status: done

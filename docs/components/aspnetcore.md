@@ -23,6 +23,7 @@
 - `/engine/cdc-captures` when the engine-owned CDC capture catalog is active
 - `/engine/cdc-captures/runtime` when the shared CDC runtime-state catalog is active, including typed freshness, lag, and publication posture
 - `/engine/cdc-capture-runtimes` when the shared CDC execution-runtime catalog is active
+- reporter-, edge-, and coordination-aware CDC drill-downs under the existing `/engine/cdc-captures/runtime/*` and `/engine/cdc-capture-runtimes/*` route families when the shared external CDC operator-story catalog is active
 - `/engine/cdc-capture-runtimes/{executionRuntimeId}/reports` when the opt-in external CDC runtime report sink is active
 - `/engine/rate-limiting` when ASP.NET Core rate-limiting enforcement is active
 - `/engine/rest-endpoint-candidates` when the module-owned REST candidate catalog is active
@@ -149,6 +150,14 @@ counts, checkpoints, errors, typed freshness/lag/publication posture, and option
 `OutboxDispatchState` derived from the shared runtime catalog instead of inventing an ASP.NET
 Core-only live CDC monitor.
 
+That same route family now also maps
+`/engine/cdc-captures/runtime/reporters/{reporterId}`,
+`/engine/cdc-captures/runtime/edge-nodes/{edgeNodeId}`,
+`/engine/cdc-captures/runtime/reporter-coordination/{coordinationState}`, and
+`/engine/cdc-captures/runtime/reporter-coordination/issues/{degradedReason}` so operator flows can
+ask the shared runtime-state catalog for one reporter, one edge node, one coordination posture, or
+one degraded reason directly instead of re-filtering the whole capture-state payload client-side.
+
 The same host now also maps `/engine/cdc-capture-runtimes`,
 `/engine/cdc-capture-runtimes/{executionRuntimeId}`,
 `/engine/cdc-captures/execution-runtimes/{executionRuntimeId}`, and
@@ -157,6 +166,14 @@ The same host now also maps `/engine/cdc-capture-runtimes`,
 are active. That keeps runtime-first and capture-first CDC ownership answers on one shared catalog
 path, including configuration-declared external or provider-native runtimes, instead of adding an
 ASP.NET Core-only runner registry.
+
+That same runtime-first route family now also maps
+`/engine/cdc-capture-runtimes/reporters/{reporterId}`,
+`/engine/cdc-capture-runtimes/edge-nodes/{edgeNodeId}`,
+`/engine/cdc-capture-runtimes/reporter-coordination/{coordinationState}`, and
+`/engine/cdc-capture-runtimes/reporter-coordination/issues/{degradedReason}` so operator flows can
+narrow execution-runtime summaries by active or rejected reporter provenance, observed edge node,
+coordination posture, or degraded reason on the same shared catalog path.
 
 When `ICdcCaptureExecutionRuntimeReportSink` is active, the same host also maps
 `POST /engine/cdc-capture-runtimes/{executionRuntimeId}/reports`. That route is intentionally
