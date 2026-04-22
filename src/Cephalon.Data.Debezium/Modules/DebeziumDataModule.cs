@@ -87,6 +87,13 @@ internal sealed class DebeziumDataModule(DebeziumDataOptions options)
             }
 
             var runtimeId = NormalizeConnectorId(connector);
+            var declaredTaskIds = connector.TaskIds
+                .Where(static value => !string.IsNullOrWhiteSpace(value))
+                .Select(static value => value.Trim())
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(static value => value, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+            var expectedTaskCount = connector.ExpectedTaskCount ?? (declaredTaskIds.Length > 0 ? declaredTaskIds.Length : null);
             foreach (var capture in connector.CdcCaptures)
             {
                 var captureId = NormalizeCaptureId(capture);
@@ -102,7 +109,10 @@ internal sealed class DebeziumDataModule(DebeziumDataOptions options)
                     ["reportingMode"] = "external-runtime-reporting",
                     ["snapshotMode"] = NormalizeOptional(capture.SnapshotMode) ?? "connector-default",
                     ["executionRuntimeId"] = runtimeId,
-                    ["contributorModuleId"] = Descriptor.Id
+                    ["contributorModuleId"] = Descriptor.Id,
+                    ["debeziumManagementMode"] = NormalizeRequired(
+                        connector.ManagementMode,
+                        $"{nameof(DebeziumConnectorOptions.ManagementMode)} is required for Debezium connector '{runtimeId}'.")
                 };
 
                 AddIfPresent(metadata, "connectClusterId", connector.ConnectClusterId);
@@ -111,13 +121,12 @@ internal sealed class DebeziumDataModule(DebeziumDataOptions options)
                 AddIfPresent(metadata, "topicPrefix", connector.TopicPrefix);
                 AddIfPresent(metadata, "topicName", topicName);
                 AddIfPresent(metadata, "acknowledgementMode", connector.AcknowledgementMode);
+                AddIfPresent(metadata, "debeziumExpectedTaskCount", expectedTaskCount?.ToString(System.Globalization.CultureInfo.InvariantCulture));
 
-                if (connector.TaskIds.Count > 0)
+                if (declaredTaskIds.Length > 0)
                 {
-                    metadata["taskIds"] = string.Join(",", connector.TaskIds
-                        .Where(static value => !string.IsNullOrWhiteSpace(value))
-                        .Select(static value => value.Trim())
-                        .Distinct(StringComparer.OrdinalIgnoreCase));
+                    metadata["taskIds"] = string.Join(",", declaredTaskIds);
+                    metadata["debeziumDeclaredTaskIds"] = string.Join(",", declaredTaskIds);
                 }
 
                 if (connector.EdgeNodeIds.Count > 0)

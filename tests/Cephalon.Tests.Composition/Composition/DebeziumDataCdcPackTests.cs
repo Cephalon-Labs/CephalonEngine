@@ -42,11 +42,14 @@ public sealed class DebeziumDataCdcPackTests
                     ExecutionOwnership = "external-managed",
                     ExecutionTopology = "managed-connector",
                     AcknowledgementMode = "connector-offset-commit",
+                    ManagementMode = "observe-only",
                     ObservationStaleAfterSeconds = 180,
                     ReporterLeaseSeconds = 120,
-                    RejectConflictingReporterIds = true
+                    RejectConflictingReporterIds = true,
+                    ExpectedTaskCount = 2
                 };
                 connector.TaskIds.Add("0");
+                connector.TaskIds.Add("1");
                 connector.EdgeNodeIds.Add("edge-bkk-01");
                 connector.CdcCaptures.Add(new DebeziumCaptureOptions
                 {
@@ -94,6 +97,9 @@ public sealed class DebeziumDataCdcPackTests
         Assert.True(runtime.RejectConflictingReporterIds);
         Assert.Equal(["edge-bkk-01"], runtime.EdgeNodeIds);
         Assert.Equal([CaptureId], runtime.CdcCaptureIds);
+        Assert.Equal("observe-only", runtime.Metadata["debeziumManagementMode"]);
+        Assert.Equal("2", runtime.Metadata["debeziumExpectedTaskCount"]);
+        Assert.Equal("0,1", runtime.Metadata["debeziumDeclaredTaskIds"]);
 
         await reportSink.ReportAsync(
             RuntimeId,
@@ -113,7 +119,12 @@ public sealed class DebeziumDataCdcPackTests
                     {
                         ["captureExecution"] = "external-runtime-report",
                         ["acknowledgement"] = "connector-offset-commit",
-                        ["connectorState"] = "RUNNING"
+                        ["connectorState"] = "RUNNING",
+                        ["reportedTaskIds"] = "0,2",
+                        ["activeTaskIds"] = "0,2",
+                        ["taskStateSummary"] = "RUNNING:2",
+                        ["connectorGeneration"] = "42",
+                        ["workerId"] = "connect-worker-a-1"
                     },
                     reporterId: "connect-worker-a",
                     edgeNodeId: "edge-bkk-01")
@@ -134,6 +145,19 @@ public sealed class DebeziumDataCdcPackTests
         Assert.Equal("connect-worker-a", state.Metadata["cdcCaptureReporterId"]);
         Assert.Equal("edge-bkk-01", state.Metadata["cdcCaptureEdgeNodeId"]);
         Assert.Equal("RUNNING", state.Metadata["connectorState"]);
+        Assert.Equal("running", state.Metadata["debeziumConnectorState"]);
+        Assert.Equal("running", state.Metadata["debeziumConnectorLifecycleState"]);
+        Assert.Equal("task-mismatch", state.Metadata["debeziumTaskReconciliationState"]);
+        Assert.Equal("task-mismatch", state.Metadata["debeziumReconciliationState"]);
+        Assert.Equal("The Debezium connector declared tasks '0,1' but last reported '0,2'.", state.Metadata["debeziumReconciliationReason"]);
+        Assert.Equal("observe-only", state.Metadata["debeziumManagementMode"]);
+        Assert.Equal("2", state.Metadata["debeziumExpectedTaskCount"]);
+        Assert.Equal("0,1", state.Metadata["debeziumDeclaredTaskIds"]);
+        Assert.Equal("0,2", state.Metadata["debeziumReportedTaskIds"]);
+        Assert.Equal("0,2", state.Metadata["debeziumActiveTaskIds"]);
+        Assert.Equal("RUNNING:2", state.Metadata["debeziumTaskStateSummary"]);
+        Assert.Equal("42", state.Metadata["debeziumConnectorGeneration"]);
+        Assert.Equal("connect-worker-a-1", state.Metadata["debeziumWorkerId"]);
         Assert.Equal(CdcCaptureFreshnessStates.Fresh, state.Metadata["observationFreshnessState"]);
         Assert.Equal("180", state.Metadata["observationStaleAfterSeconds"]);
         Assert.Equal("2026-04-23T05:02:00.0000000+00:00", state.Metadata["cdcCaptureReporterLeaseExpiresAtUtc"]);
@@ -153,5 +177,16 @@ public sealed class DebeziumDataCdcPackTests
         Assert.Equal(3, runtime.Summary.TotalProducedMessageCount);
         Assert.Equal("connector-offset-commit", runtime.Summary.LastAcknowledgement);
         Assert.Equal(CdcCaptureFreshnessStates.Fresh, runtime.Summary.ObservationFreshness.State);
+        Assert.Equal("running", runtime.Metadata["debeziumConnectorState"]);
+        Assert.Equal("running", runtime.Metadata["debeziumConnectorLifecycleState"]);
+        Assert.Equal("task-mismatch", runtime.Metadata["debeziumTaskReconciliationState"]);
+        Assert.Equal("task-mismatch", runtime.Metadata["debeziumReconciliationState"]);
+        Assert.Equal("The Debezium connector declared tasks '0,1' but last reported '0,2'.", runtime.Metadata["debeziumReconciliationReason"]);
+        Assert.Equal("0,1", runtime.Metadata["debeziumDeclaredTaskIds"]);
+        Assert.Equal("0,2", runtime.Metadata["debeziumReportedTaskIds"]);
+        Assert.Equal("0,2", runtime.Metadata["debeziumActiveTaskIds"]);
+        Assert.Equal("RUNNING:2", runtime.Metadata["debeziumTaskStateSummary"]);
+        Assert.Equal("42", runtime.Metadata["debeziumConnectorGeneration"]);
+        Assert.Equal("connect-worker-a-1", runtime.Metadata["debeziumWorkerId"]);
     }
 }

@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-22T18:45:43.2651825+00:00",
+  "GeneratedAtUtc": "2026-04-22T19:31:48.4928903+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -4455,7 +4455,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 18,
+        "Properties": 20,
         "Methods": 0
       }
     },
@@ -29668,6 +29668,17 @@
       "Summary": "Gets or sets the explicit HTTP status codes that should be treated as healthy."
     },
     {
+      "DisplayName": "ExpectedTaskCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "DebeziumConnectorOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-expectedtaskcount",
+      "Signature": "int? ExpectedTaskCount { get; set; }",
+      "Summary": "Gets or sets the expected Debezium task count when the connector should publish that expectation even if task ids are not declared individually."
+    },
+    {
       "DisplayName": "ExpectedVersion",
       "Category": "Properties",
       "DeclaringTypeName": "EventStreamConcurrencyException",
@@ -39731,6 +39742,17 @@
       "AnchorId": "member-p-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions-managedhttptracesendpoint",
       "Signature": "string ManagedHttpTracesEndpoint { get; set; }",
       "Summary": "Gets or sets the Alibaba Cloud Managed Service for OpenTelemetry OTLP/HTTP traces endpoint used for direct managed ingestion."
+    },
+    {
+      "DisplayName": "ManagementMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "DebeziumConnectorOptions",
+      "NamespaceName": "Cephalon.Data.Debezium.Configuration",
+      "AssemblyName": "Cephalon.Data.Debezium",
+      "FileName": "cephalon-data-debezium.md",
+      "AnchorId": "member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-managementmode",
+      "Signature": "string ManagementMode { get; set; }",
+      "Summary": "Gets or sets the operator-facing lifecycle-management mode published for the connector runtime."
     },
     {
       "DisplayName": "Manifest",

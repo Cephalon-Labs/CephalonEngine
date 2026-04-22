@@ -3027,6 +3027,32 @@ Delivered:
 - targeted coverage now proves the operator-story drill-down baseline through composition tests
   `1/1`, hosting tests `1/1`, tooling tests `185/185`, and the reference docs publish script
 
+### ENG-165 Phase 13 Debezium lifecycle and reconciliation hardening
+
+Status: done
+Estimate: 5
+Completed: April 23, 2026
+
+Why:
+
+- `ENG-164` proved the Debezium managed-connector baseline on the shared CDC runtime story, but the pack still projected mostly raw connector metadata without a stable operator-facing lifecycle or task-reconciliation answer
+- operators still had to inspect individual report payloads and infer whether the connector was current, paused, rebalancing, or diverged from its declared task ownership instead of reading that truth back from the existing shared `/engine/cdc-*` and `snapshot` surfaces
+- the next Debezium follow-through needed to stay truthful about observe-only lifecycle posture and shared report-driven reconciliation without inventing a Debezium-only registry, hosted execution, or Kafka Connect control plane
+
+Acceptance:
+
+- `DebeziumConnectorOptions` can now declare lifecycle-management and task-expectation truth such as `ManagementMode`, `ExpectedTaskCount`, and declared task ids on the shared runtime descriptors
+- Debezium runtime reports can now normalize connector or task lifecycle and reconciliation metadata into stable additive `debezium*` answers on the existing shared capture runtime-state surfaces
+- the shared execution-runtime catalog can now project runtime-scoped Debezium reconciliation metadata back onto `/engine/cdc-capture-runtimes*` and `snapshot.CdcCaptureExecutionRuntimes` without inventing a second Debezium runtime registry
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the shipped slice while later Debezium management or broader operator-rollup follow-through remains separate work
+
+Delivered:
+
+- the 2026-04-23 `ENG-165` slice extended `DebeziumConnectorOptions` with `ManagementMode` plus `ExpectedTaskCount`, and now publishes that expectation alongside declared task ids on shared capture and execution-runtime descriptors
+- `Cephalon.Data.Debezium` now normalizes raw report metadata such as connector state, task ids, task summaries, rebalance posture, connector generation, and worker identity into stable `debeziumConnectorLifecycleState`, `debeziumTaskReconciliationState`, `debeziumReconciliationState`, `debeziumReconciliationReason`, and additive task-detail metadata instead of leaving the operator story to raw connector payloads
+- the shared `CdcCaptureExecutionRuntimeCatalog` now promotes runtime-scoped report metadata back onto execution-runtime descriptors, so Debezium lifecycle and reconciliation truth shows up on `/engine/cdc-capture-runtimes*` plus `snapshot.CdcCaptureExecutionRuntimes` without re-reading one capture payload manually
+- targeted coverage now proves the Debezium lifecycle and reconciliation hardening slice through composition tests `1/1`, hosting tests `1/1`, tooling tests `207/207`, and the reference docs publish script
+
 ### ENG-164 Phase 13 Debezium external managed-connector CDC baseline
 
 Status: done

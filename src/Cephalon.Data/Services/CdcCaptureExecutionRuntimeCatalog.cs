@@ -4,6 +4,7 @@ namespace Cephalon.Data.Services;
 
 internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRuntimeCatalog
 {
+    private const string ExecutionRuntimeMetadataPrefix = "executionRuntime.";
     private readonly Dictionary<string, CdcCaptureExecutionRuntimeDescriptor> index;
     private readonly ICdcCaptureCatalog captureCatalog;
     private readonly ICdcCaptureRuntimeStateCatalog? runtimeStateCatalog;
@@ -96,30 +97,30 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
     private CdcCaptureExecutionRuntimeDescriptor Enrich(CdcCaptureExecutionRuntimeDescriptor runtime)
     {
         var captureIds = ResolveCaptureIds(runtime.Id);
-        var summary = runtimeStateCatalog is null
-            ? CdcCaptureExecutionRuntimeSummary.Empty
-            : CreateSummary(runtime);
+        var matchingStates = runtimeStateCatalog?.GetByExecutionRuntimeId(runtime.Id) ?? [];
+        var summary = matchingStates.Count == 0
+            ? CreateEmptySummary(runtime)
+            : CreateSummary(matchingStates);
         return new CdcCaptureExecutionRuntimeDescriptor(
             id: runtime.Id,
             displayName: runtime.DisplayName,
             description: runtime.Description,
-            metadata: runtime.Metadata,
+            metadata: MergeRuntimeMetadata(runtime.Metadata, matchingStates),
             cdcCaptureIds: captureIds,
             summary: summary);
     }
 
-    private CdcCaptureExecutionRuntimeSummary CreateSummary(CdcCaptureExecutionRuntimeDescriptor runtime)
+    private static CdcCaptureExecutionRuntimeSummary CreateEmptySummary(CdcCaptureExecutionRuntimeDescriptor runtime)
     {
-        var matchingStates = runtimeStateCatalog!.GetByExecutionRuntimeId(runtime.Id);
-
-        if (matchingStates.Count == 0)
+        return CdcCaptureExecutionRuntimeSummary.Empty with
         {
-            return CdcCaptureExecutionRuntimeSummary.Empty with
-            {
-                ReporterCoordination = CreateReporterCoordination(runtime)
-            };
-        }
+            ReporterCoordination = CreateReporterCoordination(runtime)
+        };
+    }
 
+    private CdcCaptureExecutionRuntimeSummary CreateSummary(
+        IReadOnlyList<CdcCaptureRuntimeState> matchingStates)
+    {
         var latestState = matchingStates
             .OrderByDescending(static state => state.LastObservedAtUtc ?? DateTimeOffset.MinValue)
             .ThenBy(static state => state.CdcCaptureId, StringComparer.OrdinalIgnoreCase)
@@ -158,6 +159,46 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
                 .ToArray(),
             LastEdgeNodeId = latestState.LastEdgeNodeId
         };
+    }
+
+    private static Dictionary<string, string> MergeRuntimeMetadata(
+        IReadOnlyDictionary<string, string> runtimeMetadata,
+        IReadOnlyList<CdcCaptureRuntimeState> matchingStates)
+    {
+        var merged = new Dictionary<string, string>(runtimeMetadata, StringComparer.OrdinalIgnoreCase);
+        if (matchingStates.Count == 0)
+        {
+            return merged;
+        }
+
+        var latestState = matchingStates
+            .OrderByDescending(static state => state.LastObservedAtUtc ?? DateTimeOffset.MinValue)
+            .ThenBy(static state => state.CdcCaptureId, StringComparer.OrdinalIgnoreCase)
+            .First();
+
+        foreach (var pair in latestState.Metadata)
+        {
+            if (!pair.Key.StartsWith(ExecutionRuntimeMetadataPrefix, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            var normalizedKey = pair.Key[ExecutionRuntimeMetadataPrefix.Length..].Trim();
+            if (string.IsNullOrWhiteSpace(normalizedKey))
+            {
+                continue;
+            }
+
+            if (string.IsNullOrWhiteSpace(pair.Value))
+            {
+                merged.Remove(normalizedKey);
+                continue;
+            }
+
+            merged[normalizedKey] = pair.Value.Trim();
+        }
+
+        return merged;
     }
 
     private static CdcCaptureReporterCoordinationStatus CreateReporterCoordination(

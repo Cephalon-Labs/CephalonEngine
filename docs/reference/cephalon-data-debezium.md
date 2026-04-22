@@ -278,6 +278,16 @@ string ExecutionTopology { get; set; }
 
 Gets or sets the execution-topology classification published for the connector runtime.
 
+<a id="member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-expectedtaskcount"></a>
+
+##### `ExpectedTaskCount`
+
+```csharp
+int? ExpectedTaskCount { get; set; }
+```
+
+Gets or sets the expected Debezium task count when the connector should publish that expectation even if task ids are not declared individually.
+
 <a id="member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-id"></a>
 
 ##### `Id`
@@ -287,6 +297,16 @@ string Id { get; set; }
 ```
 
 Gets or sets the stable execution-runtime identifier for the managed connector.
+
+<a id="member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-managementmode"></a>
+
+##### `ManagementMode`
+
+```csharp
+string ManagementMode { get; set; }
+```
+
+Gets or sets the operator-facing lifecycle-management mode published for the connector runtime.
 
 <a id="member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-metadata"></a>
 

@@ -56,6 +56,11 @@ public sealed class DebeziumConnectorOptions
     public string AcknowledgementMode { get; set; } = "connector-offset-commit";
 
     /// <summary>
+    /// Gets or sets the operator-facing lifecycle-management mode published for the connector runtime.
+    /// </summary>
+    public string ManagementMode { get; set; } = "observe-only";
+
+    /// <summary>
     /// Gets or sets the report-freshness window, in seconds, used to mark connector observations stale.
     /// </summary>
     public int? ObservationStaleAfterSeconds { get; set; } = 300;
@@ -74,6 +79,11 @@ public sealed class DebeziumConnectorOptions
     /// Gets or sets a value indicating whether the connector rejects conflicting reporter identities while an active lease still exists.
     /// </summary>
     public bool RejectConflictingReporterIds { get; set; }
+
+    /// <summary>
+    /// Gets or sets the expected Debezium task count when the connector should publish that expectation even if task ids are not declared individually.
+    /// </summary>
+    public int? ExpectedTaskCount { get; set; }
 
     /// <summary>
     /// Gets the declared task identifiers that belong to the managed connector runtime.

@@ -32,20 +32,29 @@ internal sealed class DebeziumExecutionRuntimeContributor(DebeziumDataOptions op
                 ["pack"] = "Cephalon.Data.Debezium",
                 ["provider"] = DebeziumDataOptions.ProviderId,
                 ["surface"] = "debezium-cdc",
-                ["connectorId"] = runtimeId
+                ["connectorId"] = runtimeId,
+                ["debeziumManagementMode"] = NormalizeRequired(
+                    connector.ManagementMode,
+                    $"{nameof(DebeziumConnectorOptions.ManagementMode)} is required for Debezium connector '{runtimeId}'.")
             };
+            var declaredTaskIds = connector.TaskIds
+                .Where(static value => !string.IsNullOrWhiteSpace(value))
+                .Select(static value => value.Trim())
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(static value => value, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+            var expectedTaskCount = connector.ExpectedTaskCount ?? (declaredTaskIds.Length > 0 ? declaredTaskIds.Length : null);
 
             AddIfPresent(metadata, "connectClusterId", connector.ConnectClusterId);
             AddIfPresent(metadata, "connectorClass", connector.ConnectorClass);
             AddIfPresent(metadata, "sourceProviderId", connector.SourceProviderId);
             AddIfPresent(metadata, "topicPrefix", connector.TopicPrefix);
+            AddIfPresent(metadata, "debeziumExpectedTaskCount", expectedTaskCount?.ToString(System.Globalization.CultureInfo.InvariantCulture));
 
-            if (connector.TaskIds.Count > 0)
+            if (declaredTaskIds.Length > 0)
             {
-                metadata["taskIds"] = string.Join(",", connector.TaskIds
-                    .Where(static value => !string.IsNullOrWhiteSpace(value))
-                    .Select(static value => value.Trim())
-                    .Distinct(StringComparer.OrdinalIgnoreCase));
+                metadata["taskIds"] = string.Join(",", declaredTaskIds);
+                metadata["debeziumDeclaredTaskIds"] = string.Join(",", declaredTaskIds);
             }
 
             executionRuntimes.Add(new CdcCaptureExecutionRuntimeDescriptor(
