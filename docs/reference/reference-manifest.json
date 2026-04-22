@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-22T05:37:14.0219691+00:00",
+  "GeneratedAtUtc": "2026-04-22T06:14:31.3634676+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 363
+      "TypeCount": 365
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -547,7 +547,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
-      "TypeCount": 83
+      "TypeCount": 85
     },
     {
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
@@ -3294,7 +3294,37 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 11,
+        "Properties": 14,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureReporterParticipantRoles",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccapturereporterparticipantroles",
+      "Declaration": "public static class CdcCaptureReporterParticipantRoles",
+      "Summary": "Defines the stable participant-role identifiers used by CDC reporter-coordination stories.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 3,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureReporterParticipantStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccapturereporterparticipantstatus",
+      "Declaration": "public sealed class CdcCaptureReporterParticipantStatus",
+      "Summary": "Describes one reporter participant currently visible in the CDC reporter-coordination story for one execution runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 7,
         "Methods": 0
       }
     },
@@ -12697,6 +12727,17 @@
       "Summary": "Exactly one reporter currently holds the active lease for the execution runtime."
     },
     {
+      "DisplayName": "Active",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureReporterParticipantRoles",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccapturereporterparticipantroles-active",
+      "Signature": "const string Active",
+      "Summary": "The reporter currently holds one active lease for the execution runtime."
+    },
+    {
       "DisplayName": "ActiveReporterId",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeSummary",
@@ -18945,6 +18986,17 @@
       "Summary": "Creates a new CDC reporter-coordination status."
     },
     {
+      "DisplayName": "CdcCaptureReporterParticipantStatus",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CdcCaptureReporterParticipantStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-cdccapturereporterparticipantstatus-ctor-system-string-system-string-system-string",
+      "Signature": "CdcCaptureReporterParticipantStatus(string reporterId, string role, string description)",
+      "Summary": "Creates a new CDC reporter participant status."
+    },
+    {
       "DisplayName": "CdcCaptureRuntimeObservation",
       "Category": "Constructors",
       "DeclaringTypeName": "CdcCaptureRuntimeObservation",
@@ -23574,6 +23626,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-description",
       "Signature": "string Description { get; }",
       "Summary": "Gets an optional operator-facing reporter-coordination summary."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureReporterParticipantStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereporterparticipantstatus-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets an optional operator-facing participant summary."
     },
     {
       "DisplayName": "Description",
@@ -33003,6 +33066,17 @@
       "Summary": "Gets a value indicating whether every target in this group publishes a production-recommended command."
     },
     {
+      "DisplayName": "HasRejectedReporters",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureReporterCoordinationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-hasrejectedreporters",
+      "Signature": "bool HasRejectedReporters { get; }",
+      "Summary": "Gets a value indicating whether the coordination answer currently carries rejected reporter evidence."
+    },
+    {
       "DisplayName": "HasReporterCoordinationIssue",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeSummary",
@@ -33078,6 +33152,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-hasstaleobservations",
       "Signature": "bool HasStaleObservations { get; }",
       "Summary": "Gets a value indicating whether at least one reported capture observation is now stale."
+    },
+    {
+      "DisplayName": "HasStandbyReporters",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureReporterCoordinationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-hasstandbyreporters",
+      "Signature": "bool HasStandbyReporters { get; }",
+      "Summary": "Gets a value indicating whether the coordination answer currently carries standby reporter evidence."
     },
     {
       "DisplayName": "HasStrategyValues",
@@ -37623,6 +37708,17 @@
       "Summary": "The CDC capture identifier that produced the latest runtime observation."
     },
     {
+      "DisplayName": "LastCdcCaptureId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureReporterParticipantStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereporterparticipantstatus-lastcdccaptureid",
+      "Signature": "string LastCdcCaptureId { get; set; }",
+      "Summary": "Gets the latest CDC capture identifier associated with this reporter when one is known."
+    },
+    {
       "DisplayName": "LastChangeId",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeSummary",
@@ -37940,6 +38036,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-lastobservedatutc",
       "Signature": "DateTimeOffset? LastObservedAtUtc { get; set; }",
       "Summary": "The UTC timestamp when the latest runtime observation was reported."
+    },
+    {
+      "DisplayName": "LastObservedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureReporterParticipantStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereporterparticipantstatus-lastobservedatutc",
+      "Signature": "DateTimeOffset? LastObservedAtUtc { get; set; }",
+      "Summary": "Gets the UTC timestamp when this reporter most recently produced an accepted or rejected observation."
     },
     {
       "DisplayName": "LastObservedAtUtc",
@@ -38314,6 +38421,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-leaseexpiredatutc",
       "Signature": "DateTimeOffset? LeaseExpiredAtUtc { get; set; }",
       "Summary": "Gets the UTC timestamp when the previous reporter lease expired before failover or takeover when one is known."
+    },
+    {
+      "DisplayName": "LeaseExpiresAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureReporterParticipantStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereporterparticipantstatus-leaseexpiresatutc",
+      "Signature": "DateTimeOffset? LeaseExpiresAtUtc { get; set; }",
+      "Summary": "Gets the latest observed lease expiry for the reporter when one is known."
     },
     {
       "DisplayName": "Legacy",
@@ -42835,6 +42953,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-observededgenodeids",
       "Signature": "IReadOnlyList\u003Cstring\u003E ObservedEdgeNodeIds { get; set; }",
       "Summary": "Gets the declared or observed edge-node identifiers that most recently reported runtime state for the execution runtime."
+    },
+    {
+      "DisplayName": "ObservedEdgeNodeIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureReporterParticipantStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereporterparticipantstatus-observededgenodeids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ObservedEdgeNodeIds { get; set; }",
+      "Summary": "Gets the edge-node identifiers most recently associated with this reporter."
     },
     {
       "DisplayName": "ObserveOnly",
@@ -48137,6 +48266,17 @@
       "Summary": "Gets or sets a value indicating whether the runtime should reject reports from conflicting reporter identities while an active lease still exists."
     },
     {
+      "DisplayName": "Rejected",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureReporterParticipantRoles",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccapturereporterparticipantroles-rejected",
+      "Signature": "const string Rejected",
+      "Summary": "The reporter most recently attempted to report while another reporter still owned the active lease."
+    },
+    {
       "DisplayName": "RejectionStatusCode",
       "Category": "Properties",
       "DeclaringTypeName": "RateLimitingRuntimeDescriptor",
@@ -48502,6 +48642,17 @@
     {
       "DisplayName": "ReporterId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureReporterParticipantStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereporterparticipantstatus-reporterid",
+      "Signature": "string ReporterId { get; }",
+      "Summary": "Gets the stable reporter identity."
+    },
+    {
+      "DisplayName": "ReporterId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureRuntimeObservation",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -48553,6 +48704,17 @@
       "AnchorId": "member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-reporterleaseseconds",
       "Signature": "int? ReporterLeaseSeconds { get; set; }",
       "Summary": "Gets or sets the reporter-lease window, in seconds, used to keep one external reporter authoritative for the runtime."
+    },
+    {
+      "DisplayName": "ReporterParticipants",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureReporterCoordinationStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-reporterparticipants",
+      "Signature": "IReadOnlyList\u003CCdcCaptureReporterParticipantStatus\u003E ReporterParticipants { get; set; }",
+      "Summary": "Gets the reporter participants currently visible in the coordination story."
     },
     {
       "DisplayName": "ReportId",
@@ -50742,6 +50904,17 @@
       "AnchorId": "member-m-cephalon-engine-configuration-retrysettings-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-boolean",
       "Signature": "RetrySettings(bool? enabled, int? maxAttempts, string backoff, int? baseDelayMilliseconds, int? maxDelayMilliseconds, bool? useJitter)",
       "Summary": "Initializes a new instance of the \u0060RetrySettings\u0060 class."
+    },
+    {
+      "DisplayName": "Role",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureReporterParticipantStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereporterparticipantstatus-role",
+      "Signature": "string Role { get; }",
+      "Summary": "Gets the stable reporter role visible in the current coordination story."
     },
     {
       "DisplayName": "Role",
@@ -54491,6 +54664,17 @@
       "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-staleafterseconds",
       "Signature": "int StaleAfterSeconds { get; set; }",
       "Summary": "Gets or sets the freshness window, in seconds, that observed status should advertise to operators."
+    },
+    {
+      "DisplayName": "Standby",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureReporterParticipantRoles",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccapturereporterparticipantroles-standby",
+      "Signature": "const string Standby",
+      "Summary": "The reporter is still visible through accepted runtime observations, but does not currently hold the active lease."
     },
     {
       "DisplayName": "StartAsync",

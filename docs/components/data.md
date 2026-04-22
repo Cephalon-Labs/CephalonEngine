@@ -108,7 +108,12 @@ even when the active runner lives out of process. The shared catalog also stamps
 `ReporterCoordination` so operators can read latest report identity, active owner, lease-expiry,
 takeover history, degraded conflict posture, and edge provenance straight off
 `/engine/cdc-captures/runtime*`, `/engine/cdc-capture-runtimes*`, and `snapshot` without
-inventing a second watchdog registry or topology-coordination surface.
+inventing a second watchdog registry or topology-coordination surface. That same shared
+coordination answer now also derives participant-level `active`, `standby`, and `rejected`
+reporter stories through `ReporterParticipants`, `HasStandbyReporters`, and
+`HasRejectedReporters`, so accepted takeovers keep previous owners visible as standby evidence and
+rejected conflicts stay visible without collapsing the operator story back to one last-conflicting
+reporter field.
 
 `Cephalon.Data.MongoDB` first proved that contract with a document-oriented provider-native runner.
 Its `mongodb-change-stream-capture-pump` contributor publishes host-managed, provider-native,

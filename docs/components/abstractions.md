@@ -220,7 +220,12 @@ same `ReporterCoordination` answer. That coordination answer now keeps first-cla
 `lease-expired`, `conflicted`, `not-configured`, and `unreported` posture together with active
 owner, previous owner, lease-expiry, last takeover, and last conflicting reporter metadata without
 forcing adapters to invent their own HTTP-local failover, takeover, or degraded-topology
-contracts.
+contracts. It now also keeps participant-level operator truth through
+`CdcCaptureReporterParticipantRoles`, `CdcCaptureReporterParticipantStatus`, and
+`CdcCaptureReporterCoordinationStatus.ReporterParticipants`, so shared CDC surfaces can answer
+which reporters are currently `active`, `standby`, or `rejected` together with the additive
+`HasStandbyReporters` and `HasRejectedReporters` summaries instead of leaving operator flows to
+infer that story from one last-conflict field.
 
 The app-model contract now also carries a contract-first resilience family through
 `ResilienceSelection`, `RetrySelection`, `TimeoutSelection`, `CircuitBreakerSelection`,

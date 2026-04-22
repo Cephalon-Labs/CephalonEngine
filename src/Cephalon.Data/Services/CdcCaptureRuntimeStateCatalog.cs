@@ -780,27 +780,6 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
             $"CDC capture '{report.CdcCaptureId}' rejected reporter '{report.ReporterId}' because execution runtime '{executionRuntime.Id}' already has active reporter lease ownership for {activeReporterSummary}.");
     }
 
-    private (string ReporterId, DateTimeOffset? ReporterLeaseExpiresAtUtc)[] ResolveActiveReporterStates(
-        string executionRuntimeId)
-    {
-        var now = timeProvider.GetUtcNow();
-
-        return reportedStatesById.Values
-            .Where(state =>
-                Comparer.Equals(state.ExecutionBinding.EffectiveExecutionRuntimeId, executionRuntimeId) &&
-                !string.IsNullOrWhiteSpace(state.LastReporterId) &&
-                IsReporterLeaseActive(state.ReporterLeaseExpiresAtUtc, now))
-            .GroupBy(static state => state.LastReporterId!, Comparer)
-            .Select(group => (
-                ReporterId: group.Key,
-                ReporterLeaseExpiresAtUtc: group
-                    .Where(static state => state.ReporterLeaseExpiresAtUtc.HasValue)
-                    .Select(static state => state.ReporterLeaseExpiresAtUtc)
-                    .Max()))
-            .OrderBy(static item => item.ReporterId, Comparer)
-            .ToArray();
-    }
-
     private static bool IsReporterLeaseActive(
         DateTimeOffset? reporterLeaseExpiresAtUtc,
         DateTimeOffset now)
@@ -841,11 +820,19 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
         var now = timeProvider.GetUtcNow();
         var reporterSnapshot = SnapshotRuntimeReporterLease(executionRuntime.Id, now);
         var memory = ResolveRuntimeReporterCoordinationMemory(executionRuntime.Id);
-        var hasCurrentConflict = memory.LastConflictedAtUtc.HasValue &&
-                                 (!memory.LastTakeoverObservedAtUtc.HasValue ||
-                                  memory.LastConflictedAtUtc.Value > memory.LastTakeoverObservedAtUtc.Value);
+        var participants = CreateReporterParticipants(reporterSnapshot, memory, now);
+        var activeParticipants = participants
+            .Where(static participant => string.Equals(participant.Role, CdcCaptureReporterParticipantRoles.Active, StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+        var standbyParticipants = participants
+            .Where(static participant => string.Equals(participant.Role, CdcCaptureReporterParticipantRoles.Standby, StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+        var rejectedParticipants = participants
+            .Where(static participant => string.Equals(participant.Role, CdcCaptureReporterParticipantRoles.Rejected, StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+        var latestRejectedReporter = ResolveLatestRejectedReporter(memory);
 
-        if (reporterSnapshot.ActiveReporterStates.Length > 1)
+        if (activeParticipants.Length > 1)
         {
             return new CdcCaptureReporterCoordinationStatus(
                 CdcCaptureReporterCoordinationStates.Conflicted,
@@ -854,50 +841,74 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                 PreviousReporterId = memory.PreviousReporterId,
                 LeaseExpiredAtUtc = memory.LeaseExpiredAtUtc,
                 LastTakeoverObservedAtUtc = memory.LastTakeoverObservedAtUtc,
-                LastConflictingReporterId = memory.LastConflictingReporterId,
-                LastConflictedAtUtc = memory.LastConflictedAtUtc
+                LastConflictingReporterId = latestRejectedReporter?.ReporterId,
+                LastConflictedAtUtc = latestRejectedReporter?.ObservedAtUtc,
+                ReporterParticipants = participants
             };
         }
 
-        if (!string.IsNullOrWhiteSpace(reporterSnapshot.ActiveReporterId))
+        if (activeParticipants.Length == 1)
         {
-            var description = hasCurrentConflict
-                ? $"Reporter '{reporterSnapshot.ActiveReporterId}' still holds the active lease while a conflicting reporter was rejected."
-                : !string.IsNullOrWhiteSpace(memory.PreviousReporterId) && memory.LastTakeoverObservedAtUtc.HasValue
-                    ? $"Reporter '{reporterSnapshot.ActiveReporterId}' currently holds the active lease after taking over from '{memory.PreviousReporterId}'."
-                    : $"Reporter '{reporterSnapshot.ActiveReporterId}' currently holds the active lease for the execution runtime.";
+            var activeParticipant = activeParticipants[0];
+            var description = rejectedParticipants.Length > 0
+                ? $"Reporter '{activeParticipant.ReporterId}' currently holds the active lease while {rejectedParticipants.Length} rejected reporter(s) remain visible."
+                : standbyParticipants.Length > 0
+                    ? $"Reporter '{activeParticipant.ReporterId}' currently holds the active lease while {standbyParticipants.Length} standby reporter(s) remain visible from earlier observations."
+                    : !string.IsNullOrWhiteSpace(memory.PreviousReporterId) && memory.LastTakeoverObservedAtUtc.HasValue
+                        ? $"Reporter '{activeParticipant.ReporterId}' currently holds the active lease after taking over from '{memory.PreviousReporterId}'."
+                        : $"Reporter '{activeParticipant.ReporterId}' currently holds the active lease for the execution runtime.";
 
             return new CdcCaptureReporterCoordinationStatus(
-                hasCurrentConflict
+                rejectedParticipants.Length > 0
                     ? CdcCaptureReporterCoordinationStates.Conflicted
                     : CdcCaptureReporterCoordinationStates.Active,
                 description)
             {
-                ActiveReporterId = reporterSnapshot.ActiveReporterId,
-                ActiveReporterLeaseExpiresAtUtc = reporterSnapshot.ActiveReporterLeaseExpiresAtUtc,
+                ActiveReporterId = activeParticipant.ReporterId,
+                ActiveReporterLeaseExpiresAtUtc = activeParticipant.LeaseExpiresAtUtc,
                 PreviousReporterId = memory.PreviousReporterId,
                 LeaseExpiredAtUtc = memory.LeaseExpiredAtUtc,
                 LastTakeoverObservedAtUtc = memory.LastTakeoverObservedAtUtc,
-                LastConflictingReporterId = memory.LastConflictingReporterId,
-                LastConflictedAtUtc = memory.LastConflictedAtUtc
+                LastConflictingReporterId = latestRejectedReporter?.ReporterId,
+                LastConflictedAtUtc = latestRejectedReporter?.ObservedAtUtc,
+                ReporterParticipants = participants
             };
         }
 
-        var latestReporterId = reporterSnapshot.LatestReporterId ?? current.LastReporterId;
-        var latestReporterLeaseExpiresAtUtc = reporterSnapshot.LatestReporterLeaseExpiresAtUtc ?? current.ReporterLeaseExpiresAtUtc;
-        if (!string.IsNullOrWhiteSpace(latestReporterId) &&
-            latestReporterLeaseExpiresAtUtc.HasValue &&
-            latestReporterLeaseExpiresAtUtc.Value < now)
+        if (standbyParticipants.Length > 0)
         {
+            var latestStandbyParticipant = standbyParticipants
+                .OrderByDescending(static participant => participant.LastObservedAtUtc ?? DateTimeOffset.MinValue)
+                .ThenBy(static participant => participant.ReporterId, Comparer)
+                .First();
             return new CdcCaptureReporterCoordinationStatus(
                 CdcCaptureReporterCoordinationStates.LeaseExpired,
-                $"Reporter '{latestReporterId}' no longer holds an active lease; the execution runtime is awaiting failover or takeover.")
+                rejectedParticipants.Length > 0
+                    ? $"Reporter '{latestStandbyParticipant.ReporterId}' no longer holds an active lease; the execution runtime is awaiting failover or takeover while rejected reporter evidence remains visible."
+                    : $"Reporter '{latestStandbyParticipant.ReporterId}' no longer holds an active lease; the execution runtime is awaiting failover or takeover.")
             {
-                PreviousReporterId = latestReporterId,
-                LeaseExpiredAtUtc = latestReporterLeaseExpiresAtUtc,
+                PreviousReporterId = latestStandbyParticipant.ReporterId,
+                LeaseExpiredAtUtc = latestStandbyParticipant.LeaseExpiresAtUtc ?? memory.LeaseExpiredAtUtc,
                 LastTakeoverObservedAtUtc = memory.LastTakeoverObservedAtUtc,
-                LastConflictingReporterId = memory.LastConflictingReporterId,
-                LastConflictedAtUtc = memory.LastConflictedAtUtc
+                LastConflictingReporterId = latestRejectedReporter?.ReporterId,
+                LastConflictedAtUtc = latestRejectedReporter?.ObservedAtUtc,
+                ReporterParticipants = participants
+            };
+        }
+
+        if (rejectedParticipants.Length > 0)
+        {
+            var latestRejectedParticipant = rejectedParticipants
+                .OrderByDescending(static participant => participant.LastObservedAtUtc ?? DateTimeOffset.MinValue)
+                .ThenBy(static participant => participant.ReporterId, Comparer)
+                .First();
+            return new CdcCaptureReporterCoordinationStatus(
+                CdcCaptureReporterCoordinationStates.Conflicted,
+                $"Reporter '{latestRejectedParticipant.ReporterId}' most recently attempted to report while another reporter still held the active lease.")
+            {
+                LastConflictingReporterId = latestRejectedParticipant.ReporterId,
+                LastConflictedAtUtc = latestRejectedParticipant.LastObservedAtUtc,
+                ReporterParticipants = participants
             };
         }
 
@@ -908,8 +919,9 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
             PreviousReporterId = memory.PreviousReporterId,
             LeaseExpiredAtUtc = memory.LeaseExpiredAtUtc,
             LastTakeoverObservedAtUtc = memory.LastTakeoverObservedAtUtc,
-            LastConflictingReporterId = memory.LastConflictingReporterId,
-            LastConflictedAtUtc = memory.LastConflictedAtUtc
+            LastConflictingReporterId = latestRejectedReporter?.ReporterId,
+            LastConflictedAtUtc = latestRejectedReporter?.ObservedAtUtc,
+            ReporterParticipants = participants
         };
     }
 
@@ -934,15 +946,33 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
             return RuntimeReporterLeaseSnapshot.Empty;
         }
 
-        var activeReporterStates = runtimeStates
+        var reporterStates = runtimeStates
             .GroupBy(static state => state.LastReporterId!, Comparer)
-            .Select(group => (
-                ReporterId: group.Key,
-                ReporterLeaseExpiresAtUtc: group
+            .Select(group =>
+            {
+                var latestReporterState = group
+                    .OrderByDescending(static state => state.LastObservedAtUtc ?? DateTimeOffset.MinValue)
+                    .ThenBy(static state => state.CdcCaptureId, Comparer)
+                    .First();
+                var reporterLeaseExpiresAtUtc = group
                     .Where(static state => state.ReporterLeaseExpiresAtUtc.HasValue)
                     .Select(static state => state.ReporterLeaseExpiresAtUtc)
-                    .Max()))
-            .Where(state => IsReporterLeaseActive(state.ReporterLeaseExpiresAtUtc, now))
+                    .Max();
+
+                return new RuntimeReporterLeaseState(
+                    ReporterId: group.Key,
+                    ReporterLeaseExpiresAtUtc: reporterLeaseExpiresAtUtc,
+                    LastObservedAtUtc: latestReporterState.LastObservedAtUtc,
+                    LastCdcCaptureId: latestReporterState.CdcCaptureId,
+                    ObservedEdgeNodeIds: group
+                        .Select(static state => state.LastEdgeNodeId)
+                        .Where(static edgeNodeId => !string.IsNullOrWhiteSpace(edgeNodeId))
+                        .Select(static edgeNodeId => edgeNodeId!)
+                        .Distinct(Comparer)
+                        .OrderBy(static edgeNodeId => edgeNodeId, Comparer)
+                        .ToArray(),
+                    HasActiveLease: IsReporterLeaseActive(reporterLeaseExpiresAtUtc, now));
+            })
             .OrderBy(static state => state.ReporterId, Comparer)
             .ToArray();
         var latestState = runtimeStates
@@ -953,7 +983,7 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
         return new RuntimeReporterLeaseSnapshot(
             LatestReporterId: latestState.LastReporterId,
             LatestReporterLeaseExpiresAtUtc: latestState.ReporterLeaseExpiresAtUtc,
-            ActiveReporterStates: activeReporterStates);
+            ReporterStates: reporterStates);
     }
 
     private static ReporterTakeoverTransition? DetectReporterTakeover(
@@ -974,10 +1004,16 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
             return null;
         }
 
+        var previousReporterState = reporterSnapshot.ReporterStates
+            .FirstOrDefault(state => Comparer.Equals(state.ReporterId, reporterSnapshot.LatestReporterId));
+
         return new ReporterTakeoverTransition(
             reporterSnapshot.LatestReporterId,
             reporterSnapshot.LatestReporterLeaseExpiresAtUtc.Value,
-            report.ObservedAtUtc);
+            report.ObservedAtUtc,
+            previousReporterState?.LastObservedAtUtc,
+            previousReporterState?.LastCdcCaptureId,
+            previousReporterState?.ObservedEdgeNodeIds ?? []);
     }
 
     private void RecordRejectedReporterConflict(
@@ -987,8 +1023,13 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
         var existing = ResolveRuntimeReporterCoordinationMemory(executionRuntimeId);
         runtimeReporterCoordinationById[executionRuntimeId] = existing with
         {
-            LastConflictingReporterId = report.ReporterId,
-            LastConflictedAtUtc = report.ObservedAtUtc
+            RejectedReporters = UpsertRejectedReporter(
+                existing.RejectedReporters,
+                new RuntimeRejectedReporterMemory(
+                    report.ReporterId!,
+                    report.ObservedAtUtc,
+                    report.CdcCaptureId,
+                    report.EdgeNodeId))
         };
     }
 
@@ -1004,7 +1045,10 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
         }
 
         var existing = ResolveRuntimeReporterCoordinationMemory(executionRuntimeId);
-        var updated = existing;
+        var updated = existing with
+        {
+            RejectedReporters = RemoveRejectedReporter(existing.RejectedReporters, report.ReporterId)
+        };
 
         if (reporterTakeover is not null)
         {
@@ -1013,20 +1057,9 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                 PreviousReporterId = reporterTakeover.PreviousReporterId,
                 LeaseExpiredAtUtc = reporterTakeover.LeaseExpiredAtUtc,
                 LastTakeoverObservedAtUtc = reporterTakeover.ObservedAtUtc,
-                LastConflictingReporterId = null,
-                LastConflictedAtUtc = null
-            };
-        }
-        else if ((!string.IsNullOrWhiteSpace(reporterSnapshot.ActiveReporterId) &&
-                  Comparer.Equals(reporterSnapshot.ActiveReporterId, report.ReporterId)) ||
-                 (string.IsNullOrWhiteSpace(reporterSnapshot.ActiveReporterId) &&
-                  !string.IsNullOrWhiteSpace(reporterSnapshot.LatestReporterId) &&
-                  Comparer.Equals(reporterSnapshot.LatestReporterId, report.ReporterId)))
-        {
-            updated = updated with
-            {
-                LastConflictingReporterId = null,
-                LastConflictedAtUtc = null
+                PreviousReporterLastObservedAtUtc = reporterTakeover.PreviousReporterLastObservedAtUtc,
+                PreviousReporterLastCdcCaptureId = reporterTakeover.PreviousReporterLastCdcCaptureId,
+                PreviousReporterObservedEdgeNodeIds = reporterTakeover.PreviousReporterObservedEdgeNodeIds
             };
         }
 
@@ -1035,6 +1068,158 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
         {
             runtimeReporterCoordinationById[executionRuntimeId] = updated;
         }
+    }
+
+    private static CdcCaptureReporterParticipantStatus[] CreateReporterParticipants(
+        RuntimeReporterLeaseSnapshot reporterSnapshot,
+        RuntimeReporterCoordinationMemory memory,
+        DateTimeOffset now)
+    {
+        var participants = new List<CdcCaptureReporterParticipantStatus>();
+        var rejectedReportersById = memory.RejectedReporters.ToDictionary(static item => item.ReporterId, Comparer);
+
+        foreach (var reporterState in reporterSnapshot.ReporterStates)
+        {
+            rejectedReportersById.TryGetValue(reporterState.ReporterId, out var rejectedReporter);
+
+            if (reporterState.HasActiveLease)
+            {
+                participants.Add(new CdcCaptureReporterParticipantStatus(
+                    reporterState.ReporterId,
+                    CdcCaptureReporterParticipantRoles.Active,
+                    $"Reporter '{reporterState.ReporterId}' currently holds the active lease for the execution runtime.")
+                {
+                    LastObservedAtUtc = reporterState.LastObservedAtUtc,
+                    LeaseExpiresAtUtc = reporterState.ReporterLeaseExpiresAtUtc,
+                    LastCdcCaptureId = reporterState.LastCdcCaptureId,
+                    ObservedEdgeNodeIds = reporterState.ObservedEdgeNodeIds
+                });
+
+                continue;
+            }
+
+            if (rejectedReporter is not null &&
+                (!reporterState.LastObservedAtUtc.HasValue ||
+                 rejectedReporter.ObservedAtUtc >= reporterState.LastObservedAtUtc.Value))
+            {
+                participants.Add(CreateRejectedReporterParticipant(rejectedReporter));
+                rejectedReportersById.Remove(rejectedReporter.ReporterId);
+                continue;
+            }
+
+            participants.Add(new CdcCaptureReporterParticipantStatus(
+                reporterState.ReporterId,
+                CdcCaptureReporterParticipantRoles.Standby,
+                reporterState.ReporterLeaseExpiresAtUtc.HasValue && reporterState.ReporterLeaseExpiresAtUtc.Value < now
+                    ? $"Reporter '{reporterState.ReporterId}' no longer holds an active lease but remains visible from accepted runtime observations."
+                    : $"Reporter '{reporterState.ReporterId}' remains visible from accepted runtime observations without holding the single active lease.")
+            {
+                LastObservedAtUtc = reporterState.LastObservedAtUtc,
+                LeaseExpiresAtUtc = reporterState.ReporterLeaseExpiresAtUtc,
+                LastCdcCaptureId = reporterState.LastCdcCaptureId,
+                ObservedEdgeNodeIds = reporterState.ObservedEdgeNodeIds
+            });
+        }
+
+        if (!string.IsNullOrWhiteSpace(memory.PreviousReporterId) &&
+            participants.All(participant => !Comparer.Equals(participant.ReporterId, memory.PreviousReporterId)))
+        {
+            participants.Add(new CdcCaptureReporterParticipantStatus(
+                memory.PreviousReporterId,
+                CdcCaptureReporterParticipantRoles.Standby,
+                $"Reporter '{memory.PreviousReporterId}' previously held the active lease and is now visible as a standby reporter after takeover.")
+            {
+                LastObservedAtUtc = memory.PreviousReporterLastObservedAtUtc,
+                LeaseExpiresAtUtc = memory.LeaseExpiredAtUtc,
+                LastCdcCaptureId = memory.PreviousReporterLastCdcCaptureId,
+                ObservedEdgeNodeIds = memory.PreviousReporterObservedEdgeNodeIds
+            });
+        }
+
+        foreach (var rejectedReporter in rejectedReportersById.Values
+                     .OrderByDescending(static item => item.ObservedAtUtc)
+                     .ThenBy(static item => item.ReporterId, Comparer))
+        {
+            participants.Add(CreateRejectedReporterParticipant(rejectedReporter));
+        }
+
+        return participants
+            .OrderBy(static participant => GetParticipantRoleOrder(participant.Role))
+            .ThenBy(static participant => participant.ReporterId, Comparer)
+            .ToArray();
+    }
+
+    private static CdcCaptureReporterParticipantStatus CreateRejectedReporterParticipant(
+        RuntimeRejectedReporterMemory rejectedReporter)
+    {
+        var observedEdgeNodeIds = string.IsNullOrWhiteSpace(rejectedReporter.EdgeNodeId)
+            ? Array.Empty<string>()
+            : [rejectedReporter.EdgeNodeId];
+
+        return new CdcCaptureReporterParticipantStatus(
+            rejectedReporter.ReporterId,
+            CdcCaptureReporterParticipantRoles.Rejected,
+            $"Reporter '{rejectedReporter.ReporterId}' most recently attempted to report while another reporter still held the active lease.")
+        {
+            LastObservedAtUtc = rejectedReporter.ObservedAtUtc,
+            LastCdcCaptureId = rejectedReporter.CdcCaptureId,
+            ObservedEdgeNodeIds = observedEdgeNodeIds
+        };
+    }
+
+    private static int GetParticipantRoleOrder(string role)
+    {
+        if (string.Equals(role, CdcCaptureReporterParticipantRoles.Active, StringComparison.OrdinalIgnoreCase))
+        {
+            return 0;
+        }
+
+        if (string.Equals(role, CdcCaptureReporterParticipantRoles.Standby, StringComparison.OrdinalIgnoreCase))
+        {
+            return 1;
+        }
+
+        if (string.Equals(role, CdcCaptureReporterParticipantRoles.Rejected, StringComparison.OrdinalIgnoreCase))
+        {
+            return 2;
+        }
+
+        return 3;
+    }
+
+    private static RuntimeRejectedReporterMemory? ResolveLatestRejectedReporter(
+        RuntimeReporterCoordinationMemory memory)
+    {
+        return memory.RejectedReporters
+            .OrderByDescending(static item => item.ObservedAtUtc)
+            .ThenBy(static item => item.ReporterId, Comparer)
+            .FirstOrDefault();
+    }
+
+    private static RuntimeRejectedReporterMemory[] UpsertRejectedReporter(
+        RuntimeRejectedReporterMemory[] existing,
+        RuntimeRejectedReporterMemory rejectedReporter)
+    {
+        return existing
+            .Where(item => !Comparer.Equals(item.ReporterId, rejectedReporter.ReporterId))
+            .Append(rejectedReporter)
+            .OrderBy(static item => item.ReporterId, Comparer)
+            .ToArray();
+    }
+
+    private static RuntimeRejectedReporterMemory[] RemoveRejectedReporter(
+        RuntimeRejectedReporterMemory[] existing,
+        string? reporterId)
+    {
+        if (string.IsNullOrWhiteSpace(reporterId))
+        {
+            return existing;
+        }
+
+        return existing
+            .Where(item => !Comparer.Equals(item.ReporterId, reporterId))
+            .OrderBy(static item => item.ReporterId, Comparer)
+            .ToArray();
     }
 
     private static void UpsertOptional(
@@ -1055,20 +1240,26 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
         string? PreviousReporterId,
         DateTimeOffset? LeaseExpiredAtUtc,
         DateTimeOffset? LastTakeoverObservedAtUtc,
-        string? LastConflictingReporterId,
-        DateTimeOffset? LastConflictedAtUtc)
+        DateTimeOffset? PreviousReporterLastObservedAtUtc,
+        string? PreviousReporterLastCdcCaptureId,
+        string[] PreviousReporterObservedEdgeNodeIds,
+        RuntimeRejectedReporterMemory[] RejectedReporters)
     {
         public static RuntimeReporterCoordinationMemory Empty { get; } =
-            new(null, null, null, null, null);
+            new(null, null, null, null, null, [], []);
     }
 
     private sealed record RuntimeReporterLeaseSnapshot(
         string? LatestReporterId,
         DateTimeOffset? LatestReporterLeaseExpiresAtUtc,
-        (string ReporterId, DateTimeOffset? ReporterLeaseExpiresAtUtc)[] ActiveReporterStates)
+        RuntimeReporterLeaseState[] ReporterStates)
     {
         public static RuntimeReporterLeaseSnapshot Empty { get; } =
             new(null, null, []);
+
+        public RuntimeReporterLeaseState[] ActiveReporterStates => ReporterStates
+            .Where(static state => state.HasActiveLease)
+            .ToArray();
 
         public string? ActiveReporterId => ActiveReporterStates.Length == 1
             ? ActiveReporterStates[0].ReporterId
@@ -1079,8 +1270,25 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
             : null;
     }
 
+    private sealed record RuntimeReporterLeaseState(
+        string ReporterId,
+        DateTimeOffset? ReporterLeaseExpiresAtUtc,
+        DateTimeOffset? LastObservedAtUtc,
+        string? LastCdcCaptureId,
+        string[] ObservedEdgeNodeIds,
+        bool HasActiveLease);
+
+    private sealed record RuntimeRejectedReporterMemory(
+        string ReporterId,
+        DateTimeOffset ObservedAtUtc,
+        string CdcCaptureId,
+        string? EdgeNodeId);
+
     private sealed record ReporterTakeoverTransition(
         string PreviousReporterId,
         DateTimeOffset LeaseExpiredAtUtc,
-        DateTimeOffset ObservedAtUtc);
+        DateTimeOffset ObservedAtUtc,
+        DateTimeOffset? PreviousReporterLastObservedAtUtc,
+        string? PreviousReporterLastCdcCaptureId,
+        string[] PreviousReporterObservedEdgeNodeIds);
 }

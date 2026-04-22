@@ -9342,6 +9342,26 @@ bool HasActiveReporter { get; }
 
 Gets a value indicating whether the coordination answer currently has one active reporter owner.
 
+<a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-hasrejectedreporters"></a>
+
+##### `HasRejectedReporters`
+
+```csharp
+bool HasRejectedReporters { get; }
+```
+
+Gets a value indicating whether the coordination answer currently carries rejected reporter evidence.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-hasstandbyreporters"></a>
+
+##### `HasStandbyReporters`
+
+```csharp
+bool HasStandbyReporters { get; }
+```
+
+Gets a value indicating whether the coordination answer currently carries standby reporter evidence.
+
 <a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-isdegraded"></a>
 
 ##### `IsDegraded`
@@ -9402,6 +9422,16 @@ string PreviousReporterId { get; set; }
 
 Gets the previous active reporter identity when the current reporter took over after lease expiry.
 
+<a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-reporterparticipants"></a>
+
+##### `ReporterParticipants`
+
+```csharp
+IReadOnlyList<CdcCaptureReporterParticipantStatus> ReporterParticipants { get; set; }
+```
+
+Gets the reporter participants currently visible in the coordination story.
+
 <a id="member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-state"></a>
 
 ##### `State`
@@ -9411,6 +9441,149 @@ string State { get; }
 ```
 
 Gets the stable reporter-coordination state.
+
+<a id="type-cephalon-abstractions-data-cdccapturereporterparticipantroles"></a>
+
+### `CdcCaptureReporterParticipantRoles`
+
+Defines the stable participant-role identifiers used by CDC reporter-coordination stories.
+
+#### Declaration
+```csharp
+public static class CdcCaptureReporterParticipantRoles
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccapturereporterparticipantroles-active"></a>
+
+##### `Active`
+
+```csharp
+const string Active
+```
+
+The reporter currently holds one active lease for the execution runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccapturereporterparticipantroles-rejected"></a>
+
+##### `Rejected`
+
+```csharp
+const string Rejected
+```
+
+The reporter most recently attempted to report while another reporter still owned the active lease.
+
+<a id="member-f-cephalon-abstractions-data-cdccapturereporterparticipantroles-standby"></a>
+
+##### `Standby`
+
+```csharp
+const string Standby
+```
+
+The reporter is still visible through accepted runtime observations, but does not currently hold the active lease.
+
+<a id="type-cephalon-abstractions-data-cdccapturereporterparticipantstatus"></a>
+
+### `CdcCaptureReporterParticipantStatus`
+
+Describes one reporter participant currently visible in the CDC reporter-coordination story for one execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureReporterParticipantStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccapturereporterparticipantstatus-ctor-system-string-system-string-system-string"></a>
+
+##### `CdcCaptureReporterParticipantStatus`
+
+```csharp
+CdcCaptureReporterParticipantStatus(string reporterId, string role, string description)
+```
+
+Creates a new CDC reporter participant status.
+
+Parameters:
+- `reporterId`: The stable reporter identity.
+- `role`: The stable reporter role, such as `active`, `standby`, or `rejected`.
+- `description`: An optional operator-facing participant summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccapturereporterparticipantstatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing participant summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturereporterparticipantstatus-lastcdccaptureid"></a>
+
+##### `LastCdcCaptureId`
+
+```csharp
+string LastCdcCaptureId { get; set; }
+```
+
+Gets the latest CDC capture identifier associated with this reporter when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturereporterparticipantstatus-lastobservedatutc"></a>
+
+##### `LastObservedAtUtc`
+
+```csharp
+DateTimeOffset? LastObservedAtUtc { get; set; }
+```
+
+Gets the UTC timestamp when this reporter most recently produced an accepted or rejected observation.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturereporterparticipantstatus-leaseexpiresatutc"></a>
+
+##### `LeaseExpiresAtUtc`
+
+```csharp
+DateTimeOffset? LeaseExpiresAtUtc { get; set; }
+```
+
+Gets the latest observed lease expiry for the reporter when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturereporterparticipantstatus-observededgenodeids"></a>
+
+##### `ObservedEdgeNodeIds`
+
+```csharp
+IReadOnlyList<string> ObservedEdgeNodeIds { get; set; }
+```
+
+Gets the edge-node identifiers most recently associated with this reporter.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturereporterparticipantstatus-reporterid"></a>
+
+##### `ReporterId`
+
+```csharp
+string ReporterId { get; }
+```
+
+Gets the stable reporter identity.
+
+<a id="member-p-cephalon-abstractions-data-cdccapturereporterparticipantstatus-role"></a>
+
+##### `Role`
+
+```csharp
+string Role { get; }
+```
+
+Gets the stable reporter role visible in the current coordination story.
 
 <a id="type-cephalon-abstractions-data-cdccaptureruntimeobservation"></a>
 

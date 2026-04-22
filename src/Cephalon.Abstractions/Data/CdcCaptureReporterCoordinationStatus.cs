@@ -71,9 +71,26 @@ public sealed record CdcCaptureReporterCoordinationStatus
     public DateTimeOffset? LastConflictedAtUtc { get; init; }
 
     /// <summary>
+    /// Gets the reporter participants currently visible in the coordination story.
+    /// </summary>
+    public IReadOnlyList<CdcCaptureReporterParticipantStatus> ReporterParticipants { get; init; } = [];
+
+    /// <summary>
     /// Gets a value indicating whether the coordination answer currently has one active reporter owner.
     /// </summary>
     public bool HasActiveReporter => !string.IsNullOrWhiteSpace(ActiveReporterId);
+
+    /// <summary>
+    /// Gets a value indicating whether the coordination answer currently carries standby reporter evidence.
+    /// </summary>
+    public bool HasStandbyReporters => ReporterParticipants.Any(static participant =>
+        string.Equals(participant.Role, CdcCaptureReporterParticipantRoles.Standby, StringComparison.OrdinalIgnoreCase));
+
+    /// <summary>
+    /// Gets a value indicating whether the coordination answer currently carries rejected reporter evidence.
+    /// </summary>
+    public bool HasRejectedReporters => ReporterParticipants.Any(static participant =>
+        string.Equals(participant.Role, CdcCaptureReporterParticipantRoles.Rejected, StringComparison.OrdinalIgnoreCase));
 
     /// <summary>
     /// Gets a value indicating whether the coordination answer currently reports degraded reporter ownership.

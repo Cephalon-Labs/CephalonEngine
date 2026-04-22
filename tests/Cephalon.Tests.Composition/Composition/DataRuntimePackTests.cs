@@ -765,6 +765,25 @@ public sealed class DataRuntimePackTests
         Assert.Equal(DateTimeOffset.Parse("2026-04-21T02:46:00Z", CultureInfo.InvariantCulture), state.ReporterCoordination.ActiveReporterLeaseExpiresAtUtc);
         Assert.Equal("edge-agent-b", state.ReporterCoordination.LastConflictingReporterId);
         Assert.Equal(DateTimeOffset.Parse("2026-04-21T02:44:30Z", CultureInfo.InvariantCulture), state.ReporterCoordination.LastConflictedAtUtc);
+        Assert.False(state.ReporterCoordination.HasStandbyReporters);
+        Assert.True(state.ReporterCoordination.HasRejectedReporters);
+        Assert.Collection(
+            state.ReporterCoordination.ReporterParticipants,
+            participant =>
+            {
+                Assert.Equal("edge-agent-a", participant.ReporterId);
+                Assert.Equal(CdcCaptureReporterParticipantRoles.Active, participant.Role);
+                Assert.Equal(DateTimeOffset.Parse("2026-04-21T02:44:00Z", CultureInfo.InvariantCulture), participant.LastObservedAtUtc);
+                Assert.Equal(DateTimeOffset.Parse("2026-04-21T02:46:00Z", CultureInfo.InvariantCulture), participant.LeaseExpiresAtUtc);
+                Assert.Equal("tenant-profile-cdc", participant.LastCdcCaptureId);
+            },
+            participant =>
+            {
+                Assert.Equal("edge-agent-b", participant.ReporterId);
+                Assert.Equal(CdcCaptureReporterParticipantRoles.Rejected, participant.Role);
+                Assert.Equal(DateTimeOffset.Parse("2026-04-21T02:44:30Z", CultureInfo.InvariantCulture), participant.LastObservedAtUtc);
+                Assert.Equal("tenant-profile-cdc", participant.LastCdcCaptureId);
+            });
 
         var runtime = runtimeCatalog.GetById("external-cdc-runtime");
         Assert.NotNull(runtime);
@@ -773,6 +792,18 @@ public sealed class DataRuntimePackTests
         Assert.Equal(CdcCaptureReporterCoordinationStates.Conflicted, runtime.Summary.ReporterCoordination.State);
         Assert.Equal("edge-agent-a", runtime.Summary.ReporterCoordination.ActiveReporterId);
         Assert.Equal("edge-agent-b", runtime.Summary.ReporterCoordination.LastConflictingReporterId);
+        Assert.Collection(
+            runtime.Summary.ReporterCoordination.ReporterParticipants,
+            participant =>
+            {
+                Assert.Equal("edge-agent-a", participant.ReporterId);
+                Assert.Equal(CdcCaptureReporterParticipantRoles.Active, participant.Role);
+            },
+            participant =>
+            {
+                Assert.Equal("edge-agent-b", participant.ReporterId);
+                Assert.Equal(CdcCaptureReporterParticipantRoles.Rejected, participant.Role);
+            });
     }
 
     [Fact]
@@ -828,6 +859,17 @@ public sealed class DataRuntimePackTests
         Assert.Equal("edge-agent-a", state.ReporterCoordination.PreviousReporterId);
         Assert.Equal(DateTimeOffset.Parse("2026-04-21T02:46:00Z", CultureInfo.InvariantCulture), state.ReporterCoordination.LeaseExpiredAtUtc);
         Assert.False(state.HasActiveReporterOwner);
+        Assert.True(state.ReporterCoordination.HasStandbyReporters);
+        Assert.False(state.ReporterCoordination.HasRejectedReporters);
+        Assert.Collection(
+            state.ReporterCoordination.ReporterParticipants,
+            participant =>
+            {
+                Assert.Equal("edge-agent-a", participant.ReporterId);
+                Assert.Equal(CdcCaptureReporterParticipantRoles.Standby, participant.Role);
+                Assert.Equal(DateTimeOffset.Parse("2026-04-21T02:44:00Z", CultureInfo.InvariantCulture), participant.LastObservedAtUtc);
+                Assert.Equal(DateTimeOffset.Parse("2026-04-21T02:46:00Z", CultureInfo.InvariantCulture), participant.LeaseExpiresAtUtc);
+            });
 
         var runtime = runtimeCatalog.GetById("external-cdc-runtime");
         Assert.NotNull(runtime);
@@ -836,6 +878,13 @@ public sealed class DataRuntimePackTests
         Assert.Equal(CdcCaptureReporterCoordinationStates.LeaseExpired, runtime.Summary.ReporterCoordination.State);
         Assert.Equal("edge-agent-a", runtime.Summary.ReporterCoordination.PreviousReporterId);
         Assert.Equal(DateTimeOffset.Parse("2026-04-21T02:46:00Z", CultureInfo.InvariantCulture), runtime.Summary.ReporterCoordination.LeaseExpiredAtUtc);
+        Assert.Collection(
+            runtime.Summary.ReporterCoordination.ReporterParticipants,
+            participant =>
+            {
+                Assert.Equal("edge-agent-a", participant.ReporterId);
+                Assert.Equal(CdcCaptureReporterParticipantRoles.Standby, participant.Role);
+            });
     }
 
     [Fact]
@@ -906,6 +955,24 @@ public sealed class DataRuntimePackTests
         Assert.Equal(DateTimeOffset.Parse("2026-04-21T02:46:00Z", CultureInfo.InvariantCulture), state.ReporterCoordination.LeaseExpiredAtUtc);
         Assert.Equal(DateTimeOffset.Parse("2026-04-21T02:46:30Z", CultureInfo.InvariantCulture), state.ReporterCoordination.LastTakeoverObservedAtUtc);
         Assert.Null(state.ReporterCoordination.LastConflictingReporterId);
+        Assert.True(state.ReporterCoordination.HasStandbyReporters);
+        Assert.False(state.ReporterCoordination.HasRejectedReporters);
+        Assert.Collection(
+            state.ReporterCoordination.ReporterParticipants,
+            participant =>
+            {
+                Assert.Equal("edge-agent-b", participant.ReporterId);
+                Assert.Equal(CdcCaptureReporterParticipantRoles.Active, participant.Role);
+                Assert.Equal(DateTimeOffset.Parse("2026-04-21T02:46:30Z", CultureInfo.InvariantCulture), participant.LastObservedAtUtc);
+                Assert.Equal(DateTimeOffset.Parse("2026-04-21T02:48:30Z", CultureInfo.InvariantCulture), participant.LeaseExpiresAtUtc);
+            },
+            participant =>
+            {
+                Assert.Equal("edge-agent-a", participant.ReporterId);
+                Assert.Equal(CdcCaptureReporterParticipantRoles.Standby, participant.Role);
+                Assert.Equal(DateTimeOffset.Parse("2026-04-21T02:44:00Z", CultureInfo.InvariantCulture), participant.LastObservedAtUtc);
+                Assert.Equal(DateTimeOffset.Parse("2026-04-21T02:46:00Z", CultureInfo.InvariantCulture), participant.LeaseExpiresAtUtc);
+            });
 
         var runtime = runtimeCatalog.GetById("external-cdc-runtime");
         Assert.NotNull(runtime);
@@ -916,6 +983,18 @@ public sealed class DataRuntimePackTests
         Assert.Equal("edge-agent-a", runtime.Summary.ReporterCoordination.PreviousReporterId);
         Assert.Equal(DateTimeOffset.Parse("2026-04-21T02:46:00Z", CultureInfo.InvariantCulture), runtime.Summary.ReporterCoordination.LeaseExpiredAtUtc);
         Assert.Equal(DateTimeOffset.Parse("2026-04-21T02:46:30Z", CultureInfo.InvariantCulture), runtime.Summary.ReporterCoordination.LastTakeoverObservedAtUtc);
+        Assert.Collection(
+            runtime.Summary.ReporterCoordination.ReporterParticipants,
+            participant =>
+            {
+                Assert.Equal("edge-agent-b", participant.ReporterId);
+                Assert.Equal(CdcCaptureReporterParticipantRoles.Active, participant.Role);
+            },
+            participant =>
+            {
+                Assert.Equal("edge-agent-a", participant.ReporterId);
+                Assert.Equal(CdcCaptureReporterParticipantRoles.Standby, participant.Role);
+            });
     }
 
     [Fact]

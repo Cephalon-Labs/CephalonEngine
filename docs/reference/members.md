@@ -114,6 +114,9 @@ Browse the published API surface by public member.
 - [Active](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturereportercoordinationstates-active): `Fields` on `CdcCaptureReporterCoordinationStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Active&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Exactly one reporter currently holds the active lease for the execution runtime.
   - `const string Active`
+- [Active](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturereporterparticipantroles-active): `Fields` on `CdcCaptureReporterParticipantRoles` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Active&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The reporter currently holds one active lease for the execution runtime.
+  - `const string Active`
 - [ActiveReporterId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-activereporterid): `Properties` on `CdcCaptureExecutionRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActiveReporterId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the currently active reporter identity when one reporter still holds an active lease for the execution runtime.
   - `string ActiveReporterId { get; set; }`
@@ -1824,6 +1827,9 @@ Browse the published API surface by public member.
 - [CdcCaptureReporterCoordinationStatus](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccapturereportercoordinationstatus-ctor-system-string-system-string): `Constructors` on `CdcCaptureReporterCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureReporterCoordinationStatus&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates a new CDC reporter-coordination status.
   - `CdcCaptureReporterCoordinationStatus(string state, string description)`
+- [CdcCaptureReporterParticipantStatus](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccapturereporterparticipantstatus-ctor-system-string-system-string-system-string): `Constructors` on `CdcCaptureReporterParticipantStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureReporterParticipantStatus&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Creates a new CDC reporter participant status.
+  - `CdcCaptureReporterParticipantStatus(string reporterId, string role, string description)`
 - [CdcCaptureRuntimeObservation](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccaptureruntimeobservation-ctor-system-string-system-string-system-datetimeoffset-system-string-system-int32-system-int32-system-string-system-string-system-string-cephalon-abstractions-data-cdccapturefreshnessstatus-cephalon-abstractions-data-cdccapturelagstatus-cephalon-abstractions-data-cdccapturepublicationstatus-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string): `Constructors` on `CdcCaptureRuntimeObservation` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureRuntimeObservation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates a new CDC capture runtime observation.
   - `CdcCaptureRuntimeObservation(string cdcCaptureId, string outcome, DateTimeOffset observedAtUtc, string reportId, int capturedChangeCount, int producedMessageCount, string changeId, string checkpoint, string error, CdcCaptureFreshnessStatus freshness, CdcCaptureLagStatus lag, CdcCapturePublicationStatus publication, IReadOnlyDictionary<string, string> metadata, string reporterId, string edgeNodeId)`
@@ -3089,6 +3095,9 @@ Browse the published API surface by public member.
   - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-description): `Properties` on `CdcCaptureReporterCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets an optional operator-facing reporter-coordination summary.
+  - `string Description { get; }`
+- [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereporterparticipantstatus-description): `Properties` on `CdcCaptureReporterParticipantStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets an optional operator-facing participant summary.
   - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-cellboundarydescriptor-description): `Properties` on `CellBoundaryDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the human-readable description of the cell boundary.
@@ -5673,6 +5682,9 @@ Browse the published API surface by public member.
 - [HasProductionRecommendedCommandsForAllTargets](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-hasproductionrecommendedcommandsforalltargets): `Properties` on `DatabaseMigrationOperationalExecutionGroup` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasProductionRecommendedCommandsForAllTargets&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether every target in this group publishes a production-recommended command.
   - `bool HasProductionRecommendedCommandsForAllTargets { get; }`
+- [HasRejectedReporters](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-hasrejectedreporters): `Properties` on `CdcCaptureReporterCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasRejectedReporters&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the coordination answer currently carries rejected reporter evidence.
+  - `bool HasRejectedReporters { get; }`
 - [HasReporterCoordinationIssue](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-hasreportercoordinationissue): `Properties` on `CdcCaptureExecutionRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasReporterCoordinationIssue&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the execution runtime currently reports degraded reporter ownership.
   - `bool HasReporterCoordinationIssue { get; }`
@@ -5694,6 +5706,9 @@ Browse the published API surface by public member.
 - [HasStaleObservations](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-hasstaleobservations): `Properties` on `CdcCaptureExecutionRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasStaleObservations&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether at least one reported capture observation is now stale.
   - `bool HasStaleObservations { get; }`
+- [HasStandbyReporters](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-hasstandbyreporters): `Properties` on `CdcCaptureReporterCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasStandbyReporters&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the coordination answer currently carries standby reporter evidence.
+  - `bool HasStandbyReporters { get; }`
 - [HasStrategyValues](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-behaviorexecutionresilienceoverrideselection-hasstrategyvalues): `Properties` on `BehaviorExecutionResilienceOverrideSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasStrategyValues&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets a value indicating whether any strategy-level override values were explicitly supplied.
   - `bool HasStrategyValues { get; }`
@@ -6945,6 +6960,9 @@ Browse the published API surface by public member.
 - [LastCdcCaptureId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-lastcdccaptureid): `Properties` on `CdcCaptureExecutionRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastCdcCaptureId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The CDC capture identifier that produced the latest runtime observation.
   - `string LastCdcCaptureId { get; set; }`
+- [LastCdcCaptureId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereporterparticipantstatus-lastcdccaptureid): `Properties` on `CdcCaptureReporterParticipantStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastCdcCaptureId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the latest CDC capture identifier associated with this reporter when one is known.
+  - `string LastCdcCaptureId { get; set; }`
 - [LastChangeId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-lastchangeid): `Properties` on `CdcCaptureExecutionRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastChangeId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The latest provider-facing change identifier visible for the execution runtime.
   - `string LastChangeId { get; set; }`
@@ -7031,6 +7049,9 @@ Browse the published API surface by public member.
   - `string LastMessageId { get; set; }`
 - [LastObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-lastobservedatutc): `Properties` on `CdcCaptureExecutionRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The UTC timestamp when the latest runtime observation was reported.
+  - `DateTimeOffset? LastObservedAtUtc { get; set; }`
+- [LastObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereporterparticipantstatus-lastobservedatutc): `Properties` on `CdcCaptureReporterParticipantStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the UTC timestamp when this reporter most recently produced an accepted or rejected observation.
   - `DateTimeOffset? LastObservedAtUtc { get; set; }`
 - [LastObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-lastobservedatutc): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LastObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The UTC timestamp when the latest capture observation was reported.
@@ -7134,6 +7155,9 @@ Browse the published API surface by public member.
 - [LeaseExpiredAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-leaseexpiredatutc): `Properties` on `CdcCaptureReporterCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LeaseExpiredAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the UTC timestamp when the previous reporter lease expired before failover or takeover when one is known.
   - `DateTimeOffset? LeaseExpiredAtUtc { get; set; }`
+- [LeaseExpiresAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereporterparticipantstatus-leaseexpiresatutc): `Properties` on `CdcCaptureReporterParticipantStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LeaseExpiresAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the latest observed lease expiry for the reporter when one is known.
+  - `DateTimeOffset? LeaseExpiresAtUtc { get; set; }`
 - [Legacy](cephalon-abstractions.md#member-f-cephalon-abstractions-patterns-stranglerfigtarget-legacy): `Fields` on `StranglerFigTarget` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Legacy&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Routes traffic to the legacy boundary.
   - `const StranglerFigTarget Legacy`
@@ -8375,6 +8399,9 @@ Browse the published API surface by public member.
   - `DateTimeOffset ObservedAtUtc { get; }`
 - [ObservedEdgeNodeIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-observededgenodeids): `Properties` on `CdcCaptureExecutionRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ObservedEdgeNodeIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the declared or observed edge-node identifiers that most recently reported runtime state for the execution runtime.
+  - `IReadOnlyList<string> ObservedEdgeNodeIds { get; set; }`
+- [ObservedEdgeNodeIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereporterparticipantstatus-observededgenodeids): `Properties` on `CdcCaptureReporterParticipantStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ObservedEdgeNodeIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the edge-node identifiers most recently associated with this reporter.
   - `IReadOnlyList<string> ObservedEdgeNodeIds { get; set; }`
 - [ObserveOnly](cephalon-edge-kubernetesgateway.md#member-f-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficobservationmodes-observeonly): `Fields` on `KubernetesGatewayTrafficObservationModes` in `Cephalon.Edge.KubernetesGateway.Configuration` (`Cephalon.Edge.KubernetesGateway`) [Browse](browse.html?q=ObserveOnly&assembly=Cephalon.Edge.KubernetesGateway&namespace=Cephalon.Edge.KubernetesGateway.Configuration&scope=members)
   - Reads live Kubernetes Gateway API status and projects the observed posture back into the shared runtime catalog.
@@ -9829,6 +9856,9 @@ Browse the published API surface by public member.
 - [RejectConflictingReporterIds](cephalon-data.md#member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-rejectconflictingreporterids): `Properties` on `CdcCaptureExecutionRuntimeOptions` in `Cephalon.Data.Configuration` (`Cephalon.Data`) [Browse](browse.html?q=RejectConflictingReporterIds&assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration&scope=members)
   - Gets or sets a value indicating whether the runtime should reject reports from conflicting reporter identities while an active lease still exists.
   - `bool RejectConflictingReporterIds { get; set; }`
+- [Rejected](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturereporterparticipantroles-rejected): `Fields` on `CdcCaptureReporterParticipantRoles` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Rejected&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The reporter most recently attempted to report while another reporter still owned the active lease.
+  - `const string Rejected`
 - [RejectionStatusCode](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-rejectionstatuscode): `Properties` on `RateLimitingRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=RejectionStatusCode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - The HTTP status code returned when the limiter rejects a request.
   - `int RejectionStatusCode { get; set; }`
@@ -9928,6 +9958,9 @@ Browse the published API surface by public member.
 - [ReporterId](cephalon-data.md#member-p-cephalon-data-services-cdccaptureexecutionreport-reporterid): `Properties` on `CdcCaptureExecutionReport` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=ReporterId&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
   - Gets the stable reporter identity that submitted the observation when one was supplied.
   - `string ReporterId { get; }`
+- [ReporterId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereporterparticipantstatus-reporterid): `Properties` on `CdcCaptureReporterParticipantStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReporterId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable reporter identity.
+  - `string ReporterId { get; }`
 - [ReporterId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-reporterid): `Properties` on `CdcCaptureRuntimeObservation` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReporterId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable reporter identity that submitted the observation when one was supplied.
   - `string ReporterId { get; }`
@@ -9943,6 +9976,9 @@ Browse the published API surface by public member.
 - [ReporterLeaseSeconds](cephalon-data.md#member-p-cephalon-data-configuration-cdccaptureexecutionruntimeoptions-reporterleaseseconds): `Properties` on `CdcCaptureExecutionRuntimeOptions` in `Cephalon.Data.Configuration` (`Cephalon.Data`) [Browse](browse.html?q=ReporterLeaseSeconds&assembly=Cephalon.Data&namespace=Cephalon.Data.Configuration&scope=members)
   - Gets or sets the reporter-lease window, in seconds, used to keep one external reporter authoritative for the runtime.
   - `int? ReporterLeaseSeconds { get; set; }`
+- [ReporterParticipants](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-reporterparticipants): `Properties` on `CdcCaptureReporterCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReporterParticipants&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the reporter participants currently visible in the coordination story.
+  - `IReadOnlyList<CdcCaptureReporterParticipantStatus> ReporterParticipants { get; set; }`
 - [ReportId](cephalon-data.md#member-p-cephalon-data-services-cdccaptureexecutionreport-reportid): `Properties` on `CdcCaptureExecutionReport` in `Cephalon.Data.Services` (`Cephalon.Data`) [Browse](browse.html?q=ReportId&assembly=Cephalon.Data&namespace=Cephalon.Data.Services&scope=members)
   - Gets the optional stable report identifier used to make repeated submissions idempotent.
   - `string ReportId { get; }`
@@ -10540,6 +10576,9 @@ Browse the published API surface by public member.
 - [RetrySettings](cephalon-engine.md#member-m-cephalon-engine-configuration-retrysettings-ctor-system-nullable-system-boolean-system-nullable-system-int32-system-string-system-nullable-system-int32-system-nullable-system-int32-system-nullable-system-boolean): `Constructors` on `RetrySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=RetrySettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Initializes a new instance of the `RetrySettings` class.
   - `RetrySettings(bool? enabled, int? maxAttempts, string backoff, int? baseDelayMilliseconds, int? maxDelayMilliseconds, bool? useJitter)`
+- [Role](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereporterparticipantstatus-role): `Properties` on `CdcCaptureReporterParticipantStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Role&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable reporter role visible in the current coordination story.
+  - `string Role { get; }`
 - [Role](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-role): `Properties` on `EntityFrameworkDatabaseRoleContext` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=Role&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
   - Gets the convenience role identifier used by most host callbacks.
   - `string Role { get; }`
@@ -11564,6 +11603,9 @@ Browse the published API surface by public member.
 - [StaleAfterSeconds](cephalon-edge-traefik.md#member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-staleafterseconds): `Properties` on `TraefikTrafficObservationOptions` in `Cephalon.Edge.Traefik.Configuration` (`Cephalon.Edge.Traefik`) [Browse](browse.html?q=StaleAfterSeconds&assembly=Cephalon.Edge.Traefik&namespace=Cephalon.Edge.Traefik.Configuration&scope=members)
   - Gets or sets the freshness window, in seconds, that observed status should advertise to operators.
   - `int StaleAfterSeconds { get; set; }`
+- [Standby](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturereporterparticipantroles-standby): `Fields` on `CdcCaptureReporterParticipantRoles` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Standby&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The reporter is still visible through accepted runtime observations, but does not currently hold the active lease.
+  - `const string Standby`
 - [StartAsync](cephalon-engine.md#member-m-cephalon-engine-runtime-engineruntime-startasync-system-iserviceprovider-system-threading-cancellationtoken): `Methods` on `EngineRuntime` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=StartAsync&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Starts the runtime and its modules.
   - `Task StartAsync(IServiceProvider services, CancellationToken cancellationToken)`

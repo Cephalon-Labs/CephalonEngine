@@ -2736,6 +2736,50 @@ Delivered:
 - the provider-native runner now validates declared publication/table ownership, optionally creates the replication slot, reads one bounded committed pgoutput batch per iteration, stages deterministic outbox publications with content type `application/vnd.cephalon.postgresql.logical-replication+json`, and only confirms slot flush progress after stage success while keeping `replicationCheckpointSource = slot-confirmed-flush-lsn` on the shared runtime story
 - targeted coverage now proves the provider-native PostgreSQL runtime story through composition tests `22/22`, hosting tests `1/1`, tooling tests `181/181`, and the reference docs publish script
 
+### ENG-156 Phase 13 richer multi-reporter reconciliation and operator-story hardening baseline
+
+Status: done
+Estimate: 5
+Completed: April 22, 2026
+
+Why:
+
+- `ENG-155` added reporter failover and takeover truth, but the shared runtime story still mostly
+  answered one active owner plus one last conflicting or previous reporter at a time
+- operators still needed the existing `/engine/cdc-captures/runtime*`,
+  `/engine/cdc-capture-runtimes*`, and `snapshot` surfaces to say which reporters were currently
+  active, standing by after lease-expiry takeover, or explicitly rejected for lease conflicts
+  without inventing a second coordinator or host-only projection
+- richer multi-reporter reconciliation still had to stay additive over the shipped shared
+  runtime-state, execution-runtime summary, and external reporting contracts instead of baking a
+  separate operator-story model into ASP.NET Core or one provider pack
+
+Acceptance:
+
+- `Cephalon.Abstractions` extends the shared CDC reporter-coordination contract with participant
+  roles and participant descriptors so per-capture and per-runtime answers can publish `active`,
+  `standby`, and `rejected` reporter stories on the same typed contract
+- `Cephalon.Data` derives participant-level coordination truth from accepted reports, expired-lease
+  takeover memory, and rejected conflicts while keeping `/engine/cdc-captures/runtime*`,
+  `/engine/cdc-capture-runtimes*`, and `snapshot` aligned on one operator-facing answer
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice while stronger takeover policy, degraded-posture hardening, and later
+  provider-specific capture implementations remain later work
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships `CdcCaptureReporterParticipantRoles` plus
+  `CdcCaptureReporterParticipantStatus`, while `CdcCaptureReporterCoordinationStatus` now carries
+  `ReporterParticipants`, `HasStandbyReporters`, and `HasRejectedReporters` beside the existing
+  coordination posture
+- `Cephalon.Data` now keeps previous active owners visible as standby participants after accepted
+  lease-expiry takeovers, keeps rejected conflicting reporters visible as rejected participants,
+  and derives the same participant story on both per-capture runtime state and execution-runtime
+  summary surfaces without inventing a second reporter registry
+- targeted coverage now proves rejected-conflict, lease-expiry, takeover, ASP.NET Core surface,
+  and public package-surface truth through composition tests `23/23`, hosting tests `4/4`,
+  tooling tests `181/181`, and the reference docs publish script
+
 ### ENG-155 Phase 13 richer external and edge-aware CDC failover and takeover baseline
 
 Status: done

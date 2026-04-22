@@ -1294,6 +1294,10 @@ Current payload highlights:
 - `/engine/cdc-captures/runtime/execution-runtimes/{executionRuntimeId}` now exposes the inverse
   runtime-state view for every capture effectively owned by one execution runtime
 - when `DataRuntimeOptions.EnableExternalCdcRuntimeReporting = true`, `POST /engine/cdc-capture-runtimes/{executionRuntimeId}/reports` accepts `CdcCaptureRuntimeObservation[]` payloads for that runtime, validates effective ownership per capture, enforces declared reporter and edge-node policy when present, and refreshes the same runtime-state catalog instead of a separate external-monitor surface
+- `reporterCoordination` now also keeps participant-level `reporterParticipants` plus additive
+  `hasStandbyReporters` and `hasRejectedReporters` summaries so operators can see which reporters
+  are currently active, waiting in standby after takeover, or explicitly rejected for lease
+  conflicts without inferring that story from metadata alone
 
 Current note:
 
@@ -1324,6 +1328,9 @@ Current payload highlights:
   latest acknowledgement posture, latest error, `lastReporterId`, `activeReporterId`,
   `reporterLeaseExpiresAtUtc`, `observedEdgeNodeIds`, `lastEdgeNodeId`, and typed
   `reporterCoordination`
+- that same `reporterCoordination` answer now keeps participant-level `reporterParticipants` plus
+  additive `hasStandbyReporters` and `hasRejectedReporters` summaries so runtime-first operator
+  views can explain active versus standby versus rejected reporters directly
 - the same execution-runtime catalog is also available through `/engine/snapshot` in
   `CdcCaptureExecutionRuntimes` when operators want one merged runtime answer
 - the drill-down route `/engine/cdc-capture-runtimes/{executionRuntimeId}` narrows the same catalog

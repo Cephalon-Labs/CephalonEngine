@@ -186,6 +186,8 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureLagStatus),
             typeof(global::Cephalon.Abstractions.Data.CdcCapturePublicationStates),
             typeof(global::Cephalon.Abstractions.Data.CdcCapturePublicationStatus),
+            typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterParticipantRoles),
+            typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterParticipantStatus),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterCoordinationStates),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterCoordinationStatus),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureRuntimeState),
@@ -2762,6 +2764,24 @@ public sealed class PackageSurfaceTests
             .GetProperty("PendingChangeCount", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCapturePublicationStatus)
             .GetProperty("PendingPublicationCount", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterParticipantRoles)
+            .GetField("Active", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterParticipantRoles)
+            .GetField("Standby", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterParticipantRoles)
+            .GetField("Rejected", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterParticipantStatus)
+            .GetProperty("ReporterId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterParticipantStatus)
+            .GetProperty("Role", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterParticipantStatus)
+            .GetProperty("LastObservedAtUtc", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterCoordinationStatus)
+            .GetProperty("ReporterParticipants", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterCoordinationStatus)
+            .GetProperty("HasStandbyReporters", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureReporterCoordinationStatus)
+            .GetProperty("HasRejectedReporters", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureRuntimeState)
             .GetProperty("OutboxDispatchState", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Data.CdcCaptureRuntimeState)

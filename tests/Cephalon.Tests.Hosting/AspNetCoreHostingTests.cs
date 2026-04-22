@@ -3887,10 +3887,40 @@ note: visible
         Assert.Equal("edge-agent-a", state.ReporterCoordination.ActiveReporterId);
         Assert.Equal("edge-agent-b", state.ReporterCoordination.LastConflictingReporterId);
         Assert.Equal(DateTimeOffset.Parse("2026-04-21T03:40:30Z", CultureInfo.InvariantCulture), state.ReporterCoordination.LastConflictedAtUtc);
+        Assert.False(state.ReporterCoordination.HasStandbyReporters);
+        Assert.True(state.ReporterCoordination.HasRejectedReporters);
+        Assert.Collection(
+            state.ReporterCoordination.ReporterParticipants,
+            participant =>
+            {
+                Assert.Equal("edge-agent-a", participant.ReporterId);
+                Assert.Equal(CdcCaptureReporterParticipantRoles.Active, participant.Role);
+                Assert.Equal(DateTimeOffset.Parse("2026-04-21T03:40:00Z", CultureInfo.InvariantCulture), participant.LastObservedAtUtc);
+                Assert.Equal("tenant-profile-cdc", participant.LastCdcCaptureId);
+            },
+            participant =>
+            {
+                Assert.Equal("edge-agent-b", participant.ReporterId);
+                Assert.Equal(CdcCaptureReporterParticipantRoles.Rejected, participant.Role);
+                Assert.Equal(DateTimeOffset.Parse("2026-04-21T03:40:30Z", CultureInfo.InvariantCulture), participant.LastObservedAtUtc);
+                Assert.Equal("tenant-profile-cdc", participant.LastCdcCaptureId);
+            });
         Assert.NotNull(runtime);
         Assert.Equal(CdcCaptureReporterCoordinationStates.Conflicted, runtime.Summary.ReporterCoordination.State);
         Assert.Equal("edge-agent-a", runtime.Summary.ReporterCoordination.ActiveReporterId);
         Assert.Equal("edge-agent-b", runtime.Summary.ReporterCoordination.LastConflictingReporterId);
+        Assert.Collection(
+            runtime.Summary.ReporterCoordination.ReporterParticipants,
+            participant =>
+            {
+                Assert.Equal("edge-agent-a", participant.ReporterId);
+                Assert.Equal(CdcCaptureReporterParticipantRoles.Active, participant.Role);
+            },
+            participant =>
+            {
+                Assert.Equal("edge-agent-b", participant.ReporterId);
+                Assert.Equal(CdcCaptureReporterParticipantRoles.Rejected, participant.Role);
+            });
     }
 
     [Fact]
@@ -3953,12 +3983,29 @@ note: visible
         Assert.Equal(CdcCaptureReporterCoordinationStates.LeaseExpired, state.ReporterCoordination.State);
         Assert.Equal("edge-agent-a", state.ReporterCoordination.PreviousReporterId);
         Assert.Equal(DateTimeOffset.Parse("2026-04-21T03:42:00Z", CultureInfo.InvariantCulture), state.ReporterCoordination.LeaseExpiredAtUtc);
+        Assert.True(state.ReporterCoordination.HasStandbyReporters);
+        Assert.False(state.ReporterCoordination.HasRejectedReporters);
+        Assert.Collection(
+            state.ReporterCoordination.ReporterParticipants,
+            participant =>
+            {
+                Assert.Equal("edge-agent-a", participant.ReporterId);
+                Assert.Equal(CdcCaptureReporterParticipantRoles.Standby, participant.Role);
+                Assert.Equal(DateTimeOffset.Parse("2026-04-21T03:40:00Z", CultureInfo.InvariantCulture), participant.LastObservedAtUtc);
+            });
         Assert.NotNull(runtime);
         Assert.Null(runtime.Summary.ActiveReporterId);
         Assert.Null(runtime.Summary.ReporterLeaseExpiresAtUtc);
         Assert.Equal(CdcCaptureReporterCoordinationStates.LeaseExpired, runtime.Summary.ReporterCoordination.State);
         Assert.Equal("edge-agent-a", runtime.Summary.ReporterCoordination.PreviousReporterId);
         Assert.Equal(DateTimeOffset.Parse("2026-04-21T03:42:00Z", CultureInfo.InvariantCulture), runtime.Summary.ReporterCoordination.LeaseExpiredAtUtc);
+        Assert.Collection(
+            runtime.Summary.ReporterCoordination.ReporterParticipants,
+            participant =>
+            {
+                Assert.Equal("edge-agent-a", participant.ReporterId);
+                Assert.Equal(CdcCaptureReporterParticipantRoles.Standby, participant.Role);
+            });
         Assert.NotNull(snapshot);
         Assert.Contains(snapshot.CdcCaptureStates, item =>
             item.CdcCaptureId == "tenant-profile-cdc" &&
@@ -4044,6 +4091,22 @@ note: visible
         Assert.Equal("edge-agent-a", state.ReporterCoordination.PreviousReporterId);
         Assert.Equal(DateTimeOffset.Parse("2026-04-21T03:42:00Z", CultureInfo.InvariantCulture), state.ReporterCoordination.LeaseExpiredAtUtc);
         Assert.Equal(DateTimeOffset.Parse("2026-04-21T03:42:30Z", CultureInfo.InvariantCulture), state.ReporterCoordination.LastTakeoverObservedAtUtc);
+        Assert.True(state.ReporterCoordination.HasStandbyReporters);
+        Assert.False(state.ReporterCoordination.HasRejectedReporters);
+        Assert.Collection(
+            state.ReporterCoordination.ReporterParticipants,
+            participant =>
+            {
+                Assert.Equal("edge-agent-b", participant.ReporterId);
+                Assert.Equal(CdcCaptureReporterParticipantRoles.Active, participant.Role);
+                Assert.Equal(DateTimeOffset.Parse("2026-04-21T03:42:30Z", CultureInfo.InvariantCulture), participant.LastObservedAtUtc);
+            },
+            participant =>
+            {
+                Assert.Equal("edge-agent-a", participant.ReporterId);
+                Assert.Equal(CdcCaptureReporterParticipantRoles.Standby, participant.Role);
+                Assert.Equal(DateTimeOffset.Parse("2026-04-21T03:40:00Z", CultureInfo.InvariantCulture), participant.LastObservedAtUtc);
+            });
         Assert.NotNull(runtime);
         Assert.Equal("edge-agent-b", runtime.Summary.ActiveReporterId);
         Assert.Equal(DateTimeOffset.Parse("2026-04-21T03:44:30Z", CultureInfo.InvariantCulture), runtime.Summary.ReporterLeaseExpiresAtUtc);
@@ -4052,6 +4115,18 @@ note: visible
         Assert.Equal("edge-agent-a", runtime.Summary.ReporterCoordination.PreviousReporterId);
         Assert.Equal(DateTimeOffset.Parse("2026-04-21T03:42:00Z", CultureInfo.InvariantCulture), runtime.Summary.ReporterCoordination.LeaseExpiredAtUtc);
         Assert.Equal(DateTimeOffset.Parse("2026-04-21T03:42:30Z", CultureInfo.InvariantCulture), runtime.Summary.ReporterCoordination.LastTakeoverObservedAtUtc);
+        Assert.Collection(
+            runtime.Summary.ReporterCoordination.ReporterParticipants,
+            participant =>
+            {
+                Assert.Equal("edge-agent-b", participant.ReporterId);
+                Assert.Equal(CdcCaptureReporterParticipantRoles.Active, participant.Role);
+            },
+            participant =>
+            {
+                Assert.Equal("edge-agent-a", participant.ReporterId);
+                Assert.Equal(CdcCaptureReporterParticipantRoles.Standby, participant.Role);
+            });
         Assert.NotNull(snapshot);
         Assert.Contains(snapshot.CdcCaptureStates, item =>
             item.CdcCaptureId == "tenant-profile-cdc" &&
