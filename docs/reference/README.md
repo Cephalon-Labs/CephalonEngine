@@ -86,6 +86,7 @@ Quick links:
 ### Phase 13 Companion Packs
 
 - [Cephalon.Data.MySql](cephalon-data-mysql.md): MySQL provider-native binlog CDC companion pack for Cephalon data workloads. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Data.MySql)
+- [Cephalon.Data.Oracle](cephalon-data-oracle.md): Oracle provider-native LogMiner CDC companion pack for Cephalon data workloads. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Data.Oracle)
 - [Cephalon.Data.Postgres](cephalon-data-postgres.md): PostgreSQL provider-native logical-replication CDC companion pack for Cephalon data workloads. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Data.Postgres)
 - [Cephalon.Data.SqlServer](cephalon-data-sqlserver.md): SQL Server provider-native CDC companion pack for Cephalon data workloads. Contains 2 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.Data.SqlServer)
 - [Cephalon.Edge.KubernetesGateway](cephalon-edge-kubernetesgateway.md): Kubernetes Gateway API control-plane materializer and live reconciliation companion pack for Cephalon edge traffic automation. Contains 2 namespaces and 5 public types. [Browse](browse.html?assembly=Cephalon.Edge.KubernetesGateway)

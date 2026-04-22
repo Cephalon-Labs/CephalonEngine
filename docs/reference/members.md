@@ -591,6 +591,12 @@ Browse the published API surface by public member.
 - [AddMySqlData](cephalon-data-mysql.md#member-m-cephalon-data-mysql-registration-mysqldataenginebuilderextensions-addmysqldata-cephalon-engine-composition-enginebuilder-system-string-system-string-system-action-cephalon-data-mysql-configuration-mysqldataoptions): `Methods` on `MySqlDataEngineBuilderExtensions` in `Cephalon.Data.MySql.Registration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=AddMySqlData&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Registration&scope=members)
   - Adds the MySQL binlog CDC pack with the supplied connection string and database name.
   - `EngineBuilder AddMySqlData(this EngineBuilder builder, string connectionString, string databaseName, Action<MySqlDataOptions> configure)`
+- [AddOracleData](cephalon-data-oracle.md#member-m-cephalon-data-oracle-registration-oracledataenginebuilderextensions-addoracledata-cephalon-engine-composition-enginebuilder-system-action-cephalon-data-oracle-configuration-oracledataoptions): `Methods` on `OracleDataEngineBuilderExtensions` in `Cephalon.Data.Oracle.Registration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=AddOracleData&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Registration&scope=members)
+  - Adds the Oracle LogMiner CDC pack using an options callback that can bind from configuration.
+  - `EngineBuilder AddOracleData(this EngineBuilder builder, Action<OracleDataOptions> configure)`
+- [AddOracleData](cephalon-data-oracle.md#member-m-cephalon-data-oracle-registration-oracledataenginebuilderextensions-addoracledata-cephalon-engine-composition-enginebuilder-system-string-system-string-system-action-cephalon-data-oracle-configuration-oracledataoptions): `Methods` on `OracleDataEngineBuilderExtensions` in `Cephalon.Data.Oracle.Registration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=AddOracleData&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Registration&scope=members)
+  - Adds the Oracle LogMiner CDC pack with the supplied connection string and database name.
+  - `EngineBuilder AddOracleData(this EngineBuilder builder, string connectionString, string databaseName, Action<OracleDataOptions> configure)`
 - [AddPackage](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addpackage-cephalon-engine-configuration-modulepackagereference): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddPackage&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
   - Adds an explicit package reference to the builder.
   - `EngineBuilder AddPackage(ModulePackageReference package)`
@@ -1857,6 +1863,9 @@ Browse the published API surface by public member.
 - [CdcCaptures](cephalon-data-mysql.md#member-p-cephalon-data-mysql-configuration-mysqldataoptions-cdccaptures): `Properties` on `MySqlDataOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=CdcCaptures&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
   - Gets the provider-native MySQL binlog captures that should be contributed to the active runtime.
   - `IList<MySqlBinlogCaptureOptions> CdcCaptures { get; }`
+- [CdcCaptures](cephalon-data-oracle.md#member-p-cephalon-data-oracle-configuration-oracledataoptions-cdccaptures): `Properties` on `OracleDataOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=CdcCaptures&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
+  - Gets the provider-native Oracle LogMiner captures that should be contributed to the active runtime.
+  - `IList<OracleLogMinerCaptureOptions> CdcCaptures { get; }`
 - [CdcCaptures](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgresdataoptions-cdccaptures): `Properties` on `PostgresDataOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=CdcCaptures&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
   - Gets the provider-native PostgreSQL logical-replication captures that should be contributed to the active runtime.
   - `IList<PostgresLogicalReplicationCaptureOptions> CdcCaptures { get; }`
@@ -1998,6 +2007,9 @@ Browse the published API surface by public member.
 - [ChannelId](cephalon-data-mysql.md#member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-channelid): `Properties` on `MySqlBinlogCaptureOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=ChannelId&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
   - Gets or sets the logical outbox channel that receives emitted publications.
   - `string ChannelId { get; set; }`
+- [ChannelId](cephalon-data-oracle.md#member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-channelid): `Properties` on `OracleLogMinerCaptureOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=ChannelId&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
+  - Gets or sets the logical outbox channel that receives emitted publications.
+  - `string ChannelId { get; set; }`
 - [ChannelId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxmessage-channelid): `Properties` on `OutboxMessage` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ChannelId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the logical channel or destination identifier.
   - `string ChannelId { get; }`
@@ -2039,6 +2051,9 @@ Browse the published API surface by public member.
   - `string Checkpoint { get; }`
 - [CheckpointTableName](cephalon-data-mysql.md#member-p-cephalon-data-mysql-configuration-mysqldataoptions-checkpointtablename): `Properties` on `MySqlDataOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=CheckpointTableName&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
   - Gets or sets the Cephalon-managed checkpoint table name used for durable MySQL binlog progress.
+  - `string CheckpointTableName { get; set; }`
+- [CheckpointTableName](cephalon-data-oracle.md#member-p-cephalon-data-oracle-configuration-oracledataoptions-checkpointtablename): `Properties` on `OracleDataOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=CheckpointTableName&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
+  - Gets or sets the Cephalon-managed checkpoint table name used for durable Oracle LogMiner progress.
   - `string CheckpointTableName { get; set; }`
 - [CheckpointTableName](cephalon-data-sqlserver.md#member-p-cephalon-data-sqlserver-configuration-sqlserverdataoptions-checkpointtablename): `Properties` on `SqlServerDataOptions` in `Cephalon.Data.SqlServer.Configuration` (`Cephalon.Data.SqlServer`) [Browse](browse.html?q=CheckpointTableName&assembly=Cephalon.Data.SqlServer&namespace=Cephalon.Data.SqlServer.Configuration&scope=members)
   - Gets or sets the table name that stores Cephalon-managed SQL Server CDC checkpoints.
@@ -2415,6 +2430,9 @@ Browse the published API surface by public member.
 - [ConnectionString](cephalon-observability-mysqldependencies.md#member-p-cephalon-observability-mysqldependencies-configuration-mysqldependencydefinition-connectionstring): `Properties` on `MySqlDependencyDefinition` in `Cephalon.Observability.MySqlDependencies.Configuration` (`Cephalon.Observability.MySqlDependencies`) [Browse](browse.html?q=ConnectionString&assembly=Cephalon.Observability.MySqlDependencies&namespace=Cephalon.Observability.MySqlDependencies.Configuration&scope=members)
   - Gets or sets the optional full MySQL connection string used for the probe.
   - `string ConnectionString { get; set; }`
+- [ConnectionString](cephalon-data-oracle.md#member-p-cephalon-data-oracle-configuration-oracledataoptions-connectionstring): `Properties` on `OracleDataOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=ConnectionString&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
+  - Gets or sets the inline Oracle connection string.
+  - `string ConnectionString { get; set; }`
 - [ConnectionString](cephalon-observability-oracledependencies.md#member-p-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-connectionstring): `Properties` on `OracleDependencyDefinition` in `Cephalon.Observability.OracleDependencies.Configuration` (`Cephalon.Observability.OracleDependencies`) [Browse](browse.html?q=ConnectionString&assembly=Cephalon.Observability.OracleDependencies&namespace=Cephalon.Observability.OracleDependencies.Configuration&scope=members)
   - Gets or sets the optional full Oracle connection string used for the probe.
   - `string ConnectionString { get; set; }`
@@ -2447,6 +2465,9 @@ Browse the published API surface by public member.
   - `string ConnectionStringName { get; }`
 - [ConnectionStringName](cephalon-data-mysql.md#member-p-cephalon-data-mysql-configuration-mysqldataoptions-connectionstringname): `Properties` on `MySqlDataOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=ConnectionStringName&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
   - Gets or sets the root `ConnectionStrings` entry name to resolve for MySQL.
+  - `string ConnectionStringName { get; set; }`
+- [ConnectionStringName](cephalon-data-oracle.md#member-p-cephalon-data-oracle-configuration-oracledataoptions-connectionstringname): `Properties` on `OracleDataOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=ConnectionStringName&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
+  - Gets or sets the root `ConnectionStrings` entry name to resolve for Oracle.
   - `string ConnectionStringName { get; set; }`
 - [ConnectionStringName](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgresdataoptions-connectionstringname): `Properties` on `PostgresDataOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=ConnectionStringName&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
   - Gets or sets the root `ConnectionStrings` entry name to resolve for PostgreSQL.
@@ -2780,6 +2801,9 @@ Browse the published API surface by public member.
   - `DatabaseMigrationsSettings(bool? applyOnStartup, bool? exitAfterApply, IReadOnlyList<string> targets)`
 - [DatabaseName](cephalon-data-mysql.md#member-p-cephalon-data-mysql-configuration-mysqldataoptions-databasename): `Properties` on `MySqlDataOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=DatabaseName&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
   - Gets or sets the operator-facing database name that owns the configured binlog captures.
+  - `string DatabaseName { get; set; }`
+- [DatabaseName](cephalon-data-oracle.md#member-p-cephalon-data-oracle-configuration-oracledataoptions-databasename): `Properties` on `OracleDataOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=DatabaseName&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
+  - Gets or sets the operator-facing database name that owns the configured LogMiner captures.
   - `string DatabaseName { get; set; }`
 - [DatabaseName](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgresdataoptions-databasename): `Properties` on `PostgresDataOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=DatabaseName&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
   - Gets or sets the operator-facing database name that owns the configured logical-replication captures.
@@ -3243,6 +3267,9 @@ Browse the published API surface by public member.
 - [Description](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-openapitagmetadata-description): `Properties` on `OpenApiTagMetadata` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Description&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - The optional tag description shown in OpenAPI and Scalar.
   - `string Description { get; set; }`
+- [Description](cephalon-data-oracle.md#member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-description): `Properties` on `OracleLogMinerCaptureOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=Description&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
+  - Gets or sets the human-readable CDC capture description.
+  - `string Description { get; set; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxdescriptor-description): `Properties` on `OutboxDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the human-readable outbox description.
   - `string Description { get; }`
@@ -3562,6 +3589,9 @@ Browse the published API surface by public member.
   - Gets the operator-facing display name for the module.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-data-mysql.md#member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-displayname): `Properties` on `MySqlBinlogCaptureOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
+  - Gets or sets the operator-facing CDC capture name.
+  - `string DisplayName { get; set; }`
+- [DisplayName](cephalon-data-oracle.md#member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-displayname): `Properties` on `OracleLogMinerCaptureOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
   - Gets or sets the operator-facing CDC capture name.
   - `string DisplayName { get; set; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxdescriptor-displayname): `Properties` on `OutboxDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -4321,6 +4351,9 @@ Browse the published API surface by public member.
   - The emitted change-event format such as `debezium-envelope`.
   - `string EventFormat { get; set; }`
 - [EventFormat](cephalon-data-mysql.md#member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-eventformat): `Properties` on `MySqlBinlogCaptureOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=EventFormat&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
+  - Gets or sets the operator-facing event format projected on the CDC descriptor.
+  - `string EventFormat { get; set; }`
+- [EventFormat](cephalon-data-oracle.md#member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-eventformat): `Properties` on `OracleLogMinerCaptureOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=EventFormat&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
   - Gets or sets the operator-facing event format projected on the CDC descriptor.
   - `string EventFormat { get; set; }`
 - [EventFormat](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-eventformat): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=EventFormat&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
@@ -6414,6 +6447,9 @@ Browse the published API surface by public member.
 - [Id](cephalon-data-mysql.md#member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-id): `Properties` on `MySqlBinlogCaptureOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=Id&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
   - Gets or sets the stable CDC capture identifier.
   - `string Id { get; set; }`
+- [Id](cephalon-data-oracle.md#member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-id): `Properties` on `OracleLogMinerCaptureOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=Id&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
+  - Gets or sets the stable CDC capture identifier.
+  - `string Id { get; set; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxdescriptor-id): `Properties` on `OutboxDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable outbox identifier.
   - `string Id { get; }`
@@ -6691,6 +6727,9 @@ Browse the published API surface by public member.
   - The runtime is initializing modules.
   - `const RuntimeStatus Initializing`
 - [InitialPosition](cephalon-data-mysql.md#member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-initialposition): `Properties` on `MySqlBinlogCaptureOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=InitialPosition&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
+  - Gets or sets the initial position used when no durable checkpoint exists yet.
+  - `string InitialPosition { get; set; }`
+- [InitialPosition](cephalon-data-oracle.md#member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-initialposition): `Properties` on `OracleLogMinerCaptureOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=InitialPosition&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
   - Gets or sets the initial position used when no durable checkpoint exists yet.
   - `string InitialPosition { get; set; }`
 - [InitialPosition](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-initialposition): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=InitialPosition&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
@@ -7497,6 +7536,9 @@ Browse the published API surface by public member.
 - [MaxAwaitTimeSeconds](cephalon-data-mysql.md#member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-maxawaittimeseconds): `Properties` on `MySqlBinlogCaptureOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=MaxAwaitTimeSeconds&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
   - Gets or sets the maximum number of seconds to await row events during one provider-native iteration.
   - `int MaxAwaitTimeSeconds { get; set; }`
+- [MaxAwaitTimeSeconds](cephalon-data-oracle.md#member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-maxawaittimeseconds): `Properties` on `OracleLogMinerCaptureOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=MaxAwaitTimeSeconds&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
+  - Gets or sets the maximum number of seconds to await committed redo during one provider-native iteration.
+  - `int MaxAwaitTimeSeconds { get; set; }`
 - [MaxAwaitTimeSeconds](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-maxawaittimeseconds): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=MaxAwaitTimeSeconds&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
   - Gets or sets the maximum number of seconds to await committed WAL messages during one provider-native iteration.
   - `int MaxAwaitTimeSeconds { get; set; }`
@@ -7510,6 +7552,9 @@ Browse the published API surface by public member.
   - Gets or sets the maximum number of captured changes to stage during one polling iteration.
   - `int MaxChangesPerPoll { get; set; }`
 - [MaxChangesPerRead](cephalon-data-mysql.md#member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-maxchangesperread): `Properties` on `MySqlBinlogCaptureOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=MaxChangesPerRead&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
+  - Gets or sets the maximum number of captured row changes to stage during one provider-native iteration.
+  - `int MaxChangesPerRead { get; set; }`
+- [MaxChangesPerRead](cephalon-data-oracle.md#member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-maxchangesperread): `Properties` on `OracleLogMinerCaptureOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=MaxChangesPerRead&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
   - Gets or sets the maximum number of captured row changes to stage during one provider-native iteration.
   - `int MaxChangesPerRead { get; set; }`
 - [MaxChangesPerRead](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-maxchangesperread): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=MaxChangesPerRead&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
@@ -7660,6 +7705,9 @@ Browse the published API surface by public member.
   - Gets the logical message type identifier.
   - `string MessageType { get; }`
 - [MessageType](cephalon-data-mysql.md#member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-messagetype): `Properties` on `MySqlBinlogCaptureOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=MessageType&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
+  - Gets or sets the logical message type emitted for each captured change event.
+  - `string MessageType { get; set; }`
+- [MessageType](cephalon-data-oracle.md#member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-messagetype): `Properties` on `OracleLogMinerCaptureOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=MessageType&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
   - Gets or sets the logical message type emitted for each captured change event.
   - `string MessageType { get; set; }`
 - [MessageType](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxmessage-messagetype): `Properties` on `OutboxMessage` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MessageType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -7882,6 +7930,9 @@ Browse the published API surface by public member.
   - Gets arbitrary descriptor metadata published by the module.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-data-mysql.md#member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-metadata): `Properties` on `MySqlBinlogCaptureOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
+  - Gets arbitrary operator-facing metadata that should flow through the capture descriptor.
+  - `IDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-data-oracle.md#member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-metadata): `Properties` on `OracleLogMinerCaptureOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
   - Gets arbitrary operator-facing metadata that should flow through the capture descriptor.
   - `IDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxdescriptor-metadata): `Properties` on `OutboxDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -8635,12 +8686,16 @@ Browse the published API surface by public member.
 - [OracleCloudTelemetryExportOptions](cephalon-observability-oraclecloud.md#member-m-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-ctor): `Constructors` on `OracleCloudTelemetryExportOptions` in `Cephalon.Observability.OracleCloud.Configuration` (`Cephalon.Observability.OracleCloud`) [Browse](browse.html?q=OracleCloudTelemetryExportOptions&assembly=Cephalon.Observability.OracleCloud&namespace=Cephalon.Observability.OracleCloud.Configuration&scope=members)
   - Initializes a new instance of the `OracleCloudTelemetryExportOptions` class.
   - `OracleCloudTelemetryExportOptions()`
+- [OracleDataOptions](cephalon-data-oracle.md#member-m-cephalon-data-oracle-configuration-oracledataoptions-ctor): `Constructors` on `OracleDataOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=OracleDataOptions&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
+  - `OracleDataOptions()`
 - [OracleDependencyDefinition](cephalon-observability-oracledependencies.md#member-m-cephalon-observability-oracledependencies-configuration-oracledependencydefinition-ctor): `Constructors` on `OracleDependencyDefinition` in `Cephalon.Observability.OracleDependencies.Configuration` (`Cephalon.Observability.OracleDependencies`) [Browse](browse.html?q=OracleDependencyDefinition&assembly=Cephalon.Observability.OracleDependencies&namespace=Cephalon.Observability.OracleDependencies.Configuration&scope=members)
   - Initializes a new instance of the `OracleDependencyDefinition` class.
   - `OracleDependencyDefinition()`
 - [OracleDependencyHealthOptions](cephalon-observability-oracledependencies.md#member-m-cephalon-observability-oracledependencies-configuration-oracledependencyhealthoptions-ctor): `Constructors` on `OracleDependencyHealthOptions` in `Cephalon.Observability.OracleDependencies.Configuration` (`Cephalon.Observability.OracleDependencies`) [Browse](browse.html?q=OracleDependencyHealthOptions&assembly=Cephalon.Observability.OracleDependencies&namespace=Cephalon.Observability.OracleDependencies.Configuration&scope=members)
   - Initializes a new instance of the `OracleDependencyHealthOptions` class.
   - `OracleDependencyHealthOptions()`
+- [OracleLogMinerCaptureOptions](cephalon-data-oracle.md#member-m-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-ctor): `Constructors` on `OracleLogMinerCaptureOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=OracleLogMinerCaptureOptions&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
+  - `OracleLogMinerCaptureOptions()`
 - [Order](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroup-order): `Properties` on `DatabaseMigrationOperationalExecutionGroup` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Order&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the positive execution-group order in the playbook.
   - `int Order { get; }`
@@ -8735,6 +8790,9 @@ Browse the published API surface by public member.
   - Gets the stable outbox identifier owned by this implementation.
   - `string OutboxId { get; }`
 - [OutboxId](cephalon-data-mysql.md#member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-outboxid): `Properties` on `MySqlBinlogCaptureOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=OutboxId&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
+  - Gets or sets the outbox identifier that receives emitted publications.
+  - `string OutboxId { get; set; }`
+- [OutboxId](cephalon-data-oracle.md#member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-outboxid): `Properties` on `OracleLogMinerCaptureOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=OutboxId&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
   - Gets or sets the outbox identifier that receives emitted publications.
   - `string OutboxId { get; set; }`
 - [OutboxId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxdispatchpolicydescriptor-outboxid): `Properties` on `OutboxDispatchPolicyDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OutboxId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -9187,6 +9245,9 @@ Browse the published API surface by public member.
 - [PollingIntervalSeconds](cephalon-data-mysql.md#member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-pollingintervalseconds): `Properties` on `MySqlBinlogCaptureOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=PollingIntervalSeconds&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
   - Gets or sets the polling interval, in seconds, between hosted-service iterations.
   - `int PollingIntervalSeconds { get; set; }`
+- [PollingIntervalSeconds](cephalon-data-oracle.md#member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-pollingintervalseconds): `Properties` on `OracleLogMinerCaptureOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=PollingIntervalSeconds&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
+  - Gets or sets the polling interval, in seconds, between hosted-service iterations.
+  - `int PollingIntervalSeconds { get; set; }`
 - [PollingIntervalSeconds](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-pollingintervalseconds): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=PollingIntervalSeconds&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
   - Gets or sets the polling interval, in seconds, between hosted-service iterations.
   - `int PollingIntervalSeconds { get; set; }`
@@ -9522,6 +9583,9 @@ Browse the published API surface by public member.
   - Gets or sets the provider identifier that the materializer owns.
   - `string ProviderId { get; set; }`
 - [ProviderId](cephalon-data-mysql.md#member-f-cephalon-data-mysql-configuration-mysqldataoptions-providerid): `Fields` on `MySqlDataOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=ProviderId&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
+  - Gets the canonical provider identifier emitted by the pack.
+  - `const string ProviderId`
+- [ProviderId](cephalon-data-oracle.md#member-f-cephalon-data-oracle-configuration-oracledataoptions-providerid): `Fields` on `OracleDataOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=ProviderId&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
   - Gets the canonical provider identifier emitted by the pack.
   - `const string ProviderId`
 - [ProviderId](cephalon-data-postgres.md#member-f-cephalon-data-postgres-configuration-postgresdataoptions-providerid): `Fields` on `PostgresDataOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=ProviderId&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
@@ -10448,6 +10512,9 @@ Browse the published API surface by public member.
 - [ResourceIds](cephalon-data-mysql.md#member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-resourceids): `Properties` on `MySqlBinlogCaptureOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=ResourceIds&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
   - Gets the resource identifiers observed by the capture.
   - `IList<string> ResourceIds { get; }`
+- [ResourceIds](cephalon-data-oracle.md#member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-resourceids): `Properties` on `OracleLogMinerCaptureOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=ResourceIds&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
+  - Gets the resource identifiers observed by the capture.
+  - `IList<string> ResourceIds { get; }`
 - [ResourceIds](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-resourceids): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=ResourceIds&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
   - Gets the resource identifiers observed by the capture.
   - `IList<string> ResourceIds { get; }`
@@ -11132,6 +11199,9 @@ Browse the published API surface by public member.
 - [SectionPath](cephalon-data-mysql.md#member-f-cephalon-data-mysql-configuration-mysqldataoptions-sectionpath): `Fields` on `MySqlDataOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=SectionPath&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
   - Gets the configuration section path used by default for MySQL data settings.
   - `const string SectionPath`
+- [SectionPath](cephalon-data-oracle.md#member-f-cephalon-data-oracle-configuration-oracledataoptions-sectionpath): `Fields` on `OracleDataOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=SectionPath&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
+  - Gets the configuration section path used by default for Oracle data settings.
+  - `const string SectionPath`
 - [SectionPath](cephalon-data-postgres.md#member-f-cephalon-data-postgres-configuration-postgresdataoptions-sectionpath): `Fields` on `PostgresDataOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=SectionPath&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
   - Gets the configuration section path used by default for PostgreSQL data settings.
   - `const string SectionPath`
@@ -11489,6 +11559,9 @@ Browse the published API surface by public member.
 - [SourceId](cephalon-data-mysql.md#member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-sourceid): `Properties` on `MySqlBinlogCaptureOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=SourceId&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
   - Gets or sets the logical source identifier when it should differ from the watched table path.
   - `string SourceId { get; set; }`
+- [SourceId](cephalon-data-oracle.md#member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-sourceid): `Properties` on `OracleLogMinerCaptureOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=SourceId&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
+  - Gets or sets the logical source identifier when it should differ from the watched table path.
+  - `string SourceId { get; set; }`
 - [SourceId](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-sourceid): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=SourceId&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
   - Gets or sets the logical source identifier when it should differ from the watched table path.
   - `string SourceId { get; set; }`
@@ -11592,6 +11665,9 @@ Browse the published API surface by public member.
   - Gets the identifier of the module that owns the inbox surface.
   - `string SourceModuleId { get; }`
 - [SourceModuleId](cephalon-data-mysql.md#member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-sourcemoduleid): `Properties` on `MySqlBinlogCaptureOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
+  - Gets or sets the module identifier that owns the capture surface.
+  - `string SourceModuleId { get; set; }`
+- [SourceModuleId](cephalon-data-oracle.md#member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-sourcemoduleid): `Properties` on `OracleLogMinerCaptureOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
   - Gets or sets the module identifier that owns the capture surface.
   - `string SourceModuleId { get; set; }`
 - [SourceModuleId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxdescriptor-sourcemoduleid): `Properties` on `OutboxDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SourceModuleId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
@@ -12249,6 +12325,9 @@ Browse the published API surface by public member.
 - [TableName](cephalon-data-mysql.md#member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-tablename): `Properties` on `MySqlBinlogCaptureOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=TableName&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
   - Gets or sets the table name of the tracked table.
   - `string TableName { get; set; }`
+- [TableName](cephalon-data-oracle.md#member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-tablename): `Properties` on `OracleLogMinerCaptureOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=TableName&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
+  - Gets or sets the table name of the tracked table.
+  - `string TableName { get; set; }`
 - [TableName](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-tablename): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=TableName&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
   - Gets or sets the table name of the tracked table.
   - `string TableName { get; set; }`
@@ -12257,6 +12336,9 @@ Browse the published API surface by public member.
   - `string TableName { get; set; }`
 - [TableSchema](cephalon-data-mysql.md#member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-tableschema): `Properties` on `MySqlBinlogCaptureOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=TableSchema&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
   - Gets or sets the MySQL schema name of the tracked table.
+  - `string TableSchema { get; set; }`
+- [TableSchema](cephalon-data-oracle.md#member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-tableschema): `Properties` on `OracleLogMinerCaptureOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=TableSchema&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
+  - Gets or sets the Oracle schema name of the tracked table.
   - `string TableSchema { get; set; }`
 - [TableSchema](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-tableschema): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=TableSchema&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
   - Gets or sets the schema name of the tracked table.
@@ -12349,6 +12431,9 @@ Browse the published API surface by public member.
   - Gets the descriptor tags published by the module.
   - `IReadOnlyList<string> Tags { get; }`
 - [Tags](cephalon-data-mysql.md#member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-tags): `Properties` on `MySqlBinlogCaptureOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=Tags&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
+  - Gets the descriptive tags associated with the capture.
+  - `IList<string> Tags { get; }`
+- [Tags](cephalon-data-oracle.md#member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-tags): `Properties` on `OracleLogMinerCaptureOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=Tags&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
   - Gets the descriptive tags associated with the capture.
   - `IList<string> Tags { get; }`
 - [Tags](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxdescriptor-tags): `Properties` on `OutboxDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)

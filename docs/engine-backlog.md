@@ -2879,6 +2879,53 @@ Delivered:
   through composition tests `26/26`, hosting tests `5/5`, tooling package-surface validation, and
   the reference docs publish script
 
+### ENG-161 Phase 13 Oracle LogMiner provider-native CDC baseline
+
+Status: done
+Estimate: 5
+Completed: April 22, 2026
+
+Why:
+
+- `ENG-160` left phase 13 ready for the next provider-specific capture implementation, but the
+  shared CDC runtime story still lacked an Oracle-native relational redo-log proof alongside the
+  shipped MongoDB, SQL Server, PostgreSQL, and MySQL runners
+- operators still needed the existing `/engine/cdc-*`, `/engine/execution-graphs`,
+  `/engine/hosted-executions`, `/engine/runtime-story`, and `snapshot` surfaces to answer Oracle
+  LogMiner ownership, progress, and checkpoint truth without inventing an Oracle-only control
+  plane or monitor
+- Oracle-specific SCN windows, redo-file selection, committed-only LogMiner execution, and durable
+  `commitScn|changeScn|rsId|ssn` checkpoints still had to stay additive over the shipped shared
+  CDC descriptor, runtime-state, execution-runtime, execution-graph, hosted-execution, and
+  runtime-story contracts
+
+Acceptance:
+
+- `Cephalon.Data.Oracle` contributes provider-native Oracle LogMiner captures through the shared
+  CDC catalog family, keeps authored `SourceModuleId` truth intact, and publishes capability,
+  execution-runtime, execution-graph, hosted-execution, and runtime-story answers on the existing
+  shared surfaces instead of a provider-local registry
+- the Oracle hosted runner resolves bounded SCN windows, selects covering redo and archive log
+  files, stages deterministic outbox publications for committed table changes, and only persists
+  durable `commitScn|changeScn|rsId|ssn` checkpoints after stage success
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice while Oracle-specific lifecycle and resume hardening remain later work
+
+Delivered:
+
+- `Cephalon.Data.Oracle` now ships `OracleDataOptions`, `OracleLogMinerCaptureOptions`,
+  `AddOracleData(...)`, `oracle-logminer-capture-flow`, `oracle-logminer-capture-pump`, the
+  `oracle-data` module, and a provider-native LogMiner hosted runner over the same shared CDC
+  runtime story used by the existing provider packs
+- Oracle runtime-state and staged change metadata now keep additive `startScn`, `endScn`,
+  `currentScn`, `earliestAvailableScn`, `resumeMode`, `checkpointStore`, `checkpointSource`,
+  `logMinerDictionary`, `logMinerMode`, `redoCursor`, and `logFileCount` truth on the same
+  `/engine/cdc-captures/runtime*`, `/engine/cdc-capture-runtimes*`, `/engine/execution-graphs`,
+  `/engine/hosted-executions`, and `snapshot` surfaces without inventing a second operator
+  registry
+- targeted coverage now proves the Oracle provider-native CDC baseline through composition tests
+  `27/27`, hosting tests `1/1`, tooling tests `263/263`, and the reference docs publish script
+
 ### ENG-157 Phase 13 stronger reporter takeover and degraded-posture hardening baseline
 
 Status: done

@@ -165,13 +165,14 @@ Modules are the primary composition unit. Each module registers services, capabi
 - `identity-access` — Identity Access (`Cephalon.Identity`): host-agnostic identity and authorization baseline.
 - `multi-tenancy` — Multi-Tenancy (`Cephalon.MultiTenancy`): host-agnostic tenant resolution and ambient tenant-context baseline.
 
-### Data provider modules (13)
+### Data provider modules (14)
 
 - `entity-framework-data` — Entity Framework Data (`Cephalon.Data.EntityFramework`): relational DbContext registration. Store type: relational.
 - `mongodb-data` — MongoDB Data (`Cephalon.Data.MongoDB`): document store registration plus provider-native MongoDB change-stream CDC runtime. Store type: document.
 - `sqlserver-data` — SQL Server Data (`Cephalon.Data.SqlServer`): relational provider-native SQL Server CDC runtime. Store type: relational.
 - `postgres-data` — PostgreSQL Data (`Cephalon.Data.Postgres`): relational provider-native logical-replication CDC runtime. Store type: relational.
 - `mysql-data` — MySQL Data (`Cephalon.Data.MySql`): relational provider-native MySQL binlog CDC runtime. Store type: relational.
+- `oracle-data` — Oracle Data (`Cephalon.Data.Oracle`): relational provider-native Oracle LogMiner CDC runtime. Store type: relational.
 - `redis-data` — Redis Data (`Cephalon.Data.Redis`): key-value store registration. Store type: key-value.
 - `neo4j-data` — Neo4j Data (`Cephalon.Data.Neo4j`): graph store registration. Store type: graph.
 - `cassandra-data` — Cassandra Data (`Cephalon.Data.Cassandra`): wide-column store registration. Store type: wide-column.
@@ -254,6 +255,18 @@ Capabilities are the fine-grained feature advertisements exposed by modules.
 - `data.postgresql` — PostgreSQL Data Provider
 - `data.relational-store` — Relational Store
 - `data.cdc.postgresql` — PostgreSQL Logical Replication CDC
+
+### MySQL capabilities (3)
+
+- `data.mysql` — MySQL Data Provider
+- `data.relational-store` — Relational Store
+- `data.cdc.mysql` — MySQL Binlog CDC
+
+### Oracle capabilities (3)
+
+- `data.oracle` — Oracle Data Provider
+- `data.relational-store` — Relational Store
+- `data.cdc.oracle` — Oracle LogMiner CDC
 
 ### Redis capabilities (4)
 
@@ -555,8 +568,8 @@ The engine exposes operator-facing runtime information through these endpoints:
 - Technologies: **11**
 - Transports: **6** + 3 messaging bindings = **9**
 - Execution strategies: **7**
-- Modules: 6 core + 13 data + 10 event-sourcing + 5 specialized + 1 identifier = **35**
-- Capabilities: **71+**
+- Modules: 6 core + 14 data + 10 event-sourcing + 6 specialized + 1 identifier = **37**
+- Capabilities: **76+**
 - Data abstractions: **24+** interfaces
 - Diagnostics sources: **9**
 - Dependency health probes: **18**

@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-22T09:21:16.4464715+00:00",
+  "GeneratedAtUtc": "2026-04-22T10:18:15.8625725+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -190,6 +190,14 @@
       "Category": "Phase 13 Companion Packs",
       "Description": "MySQL provider-native binlog CDC companion pack for Cephalon data workloads.",
       "FileName": "cephalon-data-mysql.md",
+      "NamespaceCount": 2,
+      "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "Category": "Phase 13 Companion Packs",
+      "Description": "Oracle provider-native LogMiner CDC companion pack for Cephalon data workloads.",
+      "FileName": "cephalon-data-oracle.md",
       "NamespaceCount": 2,
       "TypeCount": 3
     },
@@ -952,6 +960,20 @@
       "AssemblyName": "Cephalon.Data.MySql",
       "FileName": "cephalon-data-mysql.md",
       "AnchorId": "namespace-cephalon-data-mysql-registration",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "namespace-cephalon-data-oracle-configuration",
+      "TypeCount": 2
+    },
+    {
+      "NamespaceName": "Cephalon.Data.Oracle.Registration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "namespace-cephalon-data-oracle-registration",
       "TypeCount": 1
     },
     {
@@ -9769,6 +9791,36 @@
       }
     },
     {
+      "DisplayName": "OracleDataEngineBuilderExtensions",
+      "NamespaceName": "Cephalon.Data.Oracle.Registration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "type-cephalon-data-oracle-registration-oracledataenginebuilderextensions",
+      "Declaration": "public static class OracleDataEngineBuilderExtensions",
+      "Summary": "Registers the Oracle LogMiner CDC companion pack with an \u0060EngineBuilder\u0060.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "OracleDataOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "type-cephalon-data-oracle-configuration-oracledataoptions",
+      "Declaration": "public sealed class OracleDataOptions",
+      "Summary": "Configuration options for the Oracle data provider (\u0060Engine:Data:Oracle\u0060).",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 2,
+        "Properties": 5,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "OracleDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.OracleDependencies",
@@ -9811,6 +9863,21 @@
         "Fields": 0,
         "Properties": 0,
         "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "OracleLogMinerCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "type-cephalon-data-oracle-configuration-oraclelogminercaptureoptions",
+      "Declaration": "public sealed class OracleLogMinerCaptureOptions",
+      "Summary": "Declares one provider-native Oracle LogMiner capture for the active runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 18,
+        "Methods": 0
       }
     },
     {
@@ -14676,6 +14743,28 @@
       "Summary": "Adds the MySQL binlog CDC pack with the supplied connection string and database name."
     },
     {
+      "DisplayName": "AddOracleData",
+      "Category": "Methods",
+      "DeclaringTypeName": "OracleDataEngineBuilderExtensions",
+      "NamespaceName": "Cephalon.Data.Oracle.Registration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-m-cephalon-data-oracle-registration-oracledataenginebuilderextensions-addoracledata-cephalon-engine-composition-enginebuilder-system-action-cephalon-data-oracle-configuration-oracledataoptions",
+      "Signature": "EngineBuilder AddOracleData(this EngineBuilder builder, Action\u003COracleDataOptions\u003E configure)",
+      "Summary": "Adds the Oracle LogMiner CDC pack using an options callback that can bind from configuration."
+    },
+    {
+      "DisplayName": "AddOracleData",
+      "Category": "Methods",
+      "DeclaringTypeName": "OracleDataEngineBuilderExtensions",
+      "NamespaceName": "Cephalon.Data.Oracle.Registration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-m-cephalon-data-oracle-registration-oracledataenginebuilderextensions-addoracledata-cephalon-engine-composition-enginebuilder-system-string-system-string-system-action-cephalon-data-oracle-configuration-oracledataoptions",
+      "Signature": "EngineBuilder AddOracleData(this EngineBuilder builder, string connectionString, string databaseName, Action\u003COracleDataOptions\u003E configure)",
+      "Summary": "Adds the Oracle LogMiner CDC pack with the supplied connection string and database name."
+    },
+    {
       "DisplayName": "AddPackage",
       "Category": "Methods",
       "DeclaringTypeName": "EngineBuilder",
@@ -19298,6 +19387,17 @@
     {
       "DisplayName": "CdcCaptures",
       "Category": "Properties",
+      "DeclaringTypeName": "OracleDataOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-p-cephalon-data-oracle-configuration-oracledataoptions-cdccaptures",
+      "Signature": "IList\u003COracleLogMinerCaptureOptions\u003E CdcCaptures { get; }",
+      "Summary": "Gets the provider-native Oracle LogMiner captures that should be contributed to the active runtime."
+    },
+    {
+      "DisplayName": "CdcCaptures",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresDataOptions",
       "NamespaceName": "Cephalon.Data.Postgres.Configuration",
       "AssemblyName": "Cephalon.Data.Postgres",
@@ -19815,6 +19915,17 @@
     {
       "DisplayName": "ChannelId",
       "Category": "Properties",
+      "DeclaringTypeName": "OracleLogMinerCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-channelid",
+      "Signature": "string ChannelId { get; set; }",
+      "Summary": "Gets or sets the logical outbox channel that receives emitted publications."
+    },
+    {
+      "DisplayName": "ChannelId",
+      "Category": "Properties",
       "DeclaringTypeName": "OutboxMessage",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -19965,6 +20076,17 @@
       "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqldataoptions-checkpointtablename",
       "Signature": "string CheckpointTableName { get; set; }",
       "Summary": "Gets or sets the Cephalon-managed checkpoint table name used for durable MySQL binlog progress."
+    },
+    {
+      "DisplayName": "CheckpointTableName",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleDataOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-p-cephalon-data-oracle-configuration-oracledataoptions-checkpointtablename",
+      "Signature": "string CheckpointTableName { get; set; }",
+      "Summary": "Gets or sets the Cephalon-managed checkpoint table name used for durable Oracle LogMiner progress."
     },
     {
       "DisplayName": "CheckpointTableName",
@@ -21344,6 +21466,17 @@
     {
       "DisplayName": "ConnectionString",
       "Category": "Properties",
+      "DeclaringTypeName": "OracleDataOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-p-cephalon-data-oracle-configuration-oracledataoptions-connectionstring",
+      "Signature": "string ConnectionString { get; set; }",
+      "Summary": "Gets or sets the inline Oracle connection string."
+    },
+    {
+      "DisplayName": "ConnectionString",
+      "Category": "Properties",
       "DeclaringTypeName": "OracleDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.OracleDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.OracleDependencies",
@@ -21461,6 +21594,17 @@
       "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqldataoptions-connectionstringname",
       "Signature": "string ConnectionStringName { get; set; }",
       "Summary": "Gets or sets the root \u0060ConnectionStrings\u0060 entry name to resolve for MySQL."
+    },
+    {
+      "DisplayName": "ConnectionStringName",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleDataOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-p-cephalon-data-oracle-configuration-oracledataoptions-connectionstringname",
+      "Signature": "string ConnectionStringName { get; set; }",
+      "Summary": "Gets or sets the root \u0060ConnectionStrings\u0060 entry name to resolve for Oracle."
     },
     {
       "DisplayName": "ConnectionStringName",
@@ -22671,6 +22815,17 @@
       "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqldataoptions-databasename",
       "Signature": "string DatabaseName { get; set; }",
       "Summary": "Gets or sets the operator-facing database name that owns the configured binlog captures."
+    },
+    {
+      "DisplayName": "DatabaseName",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleDataOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-p-cephalon-data-oracle-configuration-oracledataoptions-databasename",
+      "Signature": "string DatabaseName { get; set; }",
+      "Summary": "Gets or sets the operator-facing database name that owns the configured LogMiner captures."
     },
     {
       "DisplayName": "DatabaseName",
@@ -24369,6 +24524,17 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "OracleLogMinerCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-description",
+      "Signature": "string Description { get; set; }",
+      "Summary": "Gets or sets the human-readable CDC capture description."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "OutboxDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -25540,6 +25706,17 @@
       "AssemblyName": "Cephalon.Data.MySql",
       "FileName": "cephalon-data-mysql.md",
       "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-displayname",
+      "Signature": "string DisplayName { get; set; }",
+      "Summary": "Gets or sets the operator-facing CDC capture name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleLogMinerCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-displayname",
       "Signature": "string DisplayName { get; set; }",
       "Summary": "Gets or sets the operator-facing CDC capture name."
     },
@@ -28312,6 +28489,17 @@
       "AssemblyName": "Cephalon.Data.MySql",
       "FileName": "cephalon-data-mysql.md",
       "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-eventformat",
+      "Signature": "string EventFormat { get; set; }",
+      "Summary": "Gets or sets the operator-facing event format projected on the CDC descriptor."
+    },
+    {
+      "DisplayName": "EventFormat",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleLogMinerCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-eventformat",
       "Signature": "string EventFormat { get; set; }",
       "Summary": "Gets or sets the operator-facing event format projected on the CDC descriptor."
     },
@@ -35941,6 +36129,17 @@
     {
       "DisplayName": "Id",
       "Category": "Properties",
+      "DeclaringTypeName": "OracleLogMinerCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-id",
+      "Signature": "string Id { get; set; }",
+      "Summary": "Gets or sets the stable CDC capture identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
       "DeclaringTypeName": "OutboxDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -36958,6 +37157,17 @@
       "AssemblyName": "Cephalon.Data.MySql",
       "FileName": "cephalon-data-mysql.md",
       "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-initialposition",
+      "Signature": "string InitialPosition { get; set; }",
+      "Summary": "Gets or sets the initial position used when no durable checkpoint exists yet."
+    },
+    {
+      "DisplayName": "InitialPosition",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleLogMinerCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-initialposition",
       "Signature": "string InitialPosition { get; set; }",
       "Summary": "Gets or sets the initial position used when no durable checkpoint exists yet."
     },
@@ -39868,6 +40078,17 @@
     {
       "DisplayName": "MaxAwaitTimeSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "OracleLogMinerCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-maxawaittimeseconds",
+      "Signature": "int MaxAwaitTimeSeconds { get; set; }",
+      "Summary": "Gets or sets the maximum number of seconds to await committed redo during one provider-native iteration."
+    },
+    {
+      "DisplayName": "MaxAwaitTimeSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
       "NamespaceName": "Cephalon.Data.Postgres.Configuration",
       "AssemblyName": "Cephalon.Data.Postgres",
@@ -39917,6 +40138,17 @@
       "AssemblyName": "Cephalon.Data.MySql",
       "FileName": "cephalon-data-mysql.md",
       "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-maxchangesperread",
+      "Signature": "int MaxChangesPerRead { get; set; }",
+      "Summary": "Gets or sets the maximum number of captured row changes to stage during one provider-native iteration."
+    },
+    {
+      "DisplayName": "MaxChangesPerRead",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleLogMinerCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-maxchangesperread",
       "Signature": "int MaxChangesPerRead { get; set; }",
       "Summary": "Gets or sets the maximum number of captured row changes to stage during one provider-native iteration."
     },
@@ -40467,6 +40699,17 @@
       "AssemblyName": "Cephalon.Data.MySql",
       "FileName": "cephalon-data-mysql.md",
       "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-messagetype",
+      "Signature": "string MessageType { get; set; }",
+      "Summary": "Gets or sets the logical message type emitted for each captured change event."
+    },
+    {
+      "DisplayName": "MessageType",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleLogMinerCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-messagetype",
       "Signature": "string MessageType { get; set; }",
       "Summary": "Gets or sets the logical message type emitted for each captured change event."
     },
@@ -41281,6 +41524,17 @@
       "AssemblyName": "Cephalon.Data.MySql",
       "FileName": "cephalon-data-mysql.md",
       "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-metadata",
+      "Signature": "IDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets arbitrary operator-facing metadata that should flow through the capture descriptor."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleLogMinerCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-metadata",
       "Signature": "IDictionary\u003Cstring, string\u003E Metadata { get; }",
       "Summary": "Gets arbitrary operator-facing metadata that should flow through the capture descriptor."
     },
@@ -44022,6 +44276,16 @@
       "Summary": "Initializes a new instance of the \u0060OracleCloudTelemetryExportOptions\u0060 class."
     },
     {
+      "DisplayName": "OracleDataOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "OracleDataOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-m-cephalon-data-oracle-configuration-oracledataoptions-ctor",
+      "Signature": "OracleDataOptions()"
+    },
+    {
       "DisplayName": "OracleDependencyDefinition",
       "Category": "Constructors",
       "DeclaringTypeName": "OracleDependencyDefinition",
@@ -44042,6 +44306,16 @@
       "AnchorId": "member-m-cephalon-observability-oracledependencies-configuration-oracledependencyhealthoptions-ctor",
       "Signature": "OracleDependencyHealthOptions()",
       "Summary": "Initializes a new instance of the \u0060OracleDependencyHealthOptions\u0060 class."
+    },
+    {
+      "DisplayName": "OracleLogMinerCaptureOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "OracleLogMinerCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-m-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-ctor",
+      "Signature": "OracleLogMinerCaptureOptions()"
     },
     {
       "DisplayName": "Order",
@@ -44392,6 +44666,17 @@
       "AssemblyName": "Cephalon.Data.MySql",
       "FileName": "cephalon-data-mysql.md",
       "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-outboxid",
+      "Signature": "string OutboxId { get; set; }",
+      "Summary": "Gets or sets the outbox identifier that receives emitted publications."
+    },
+    {
+      "DisplayName": "OutboxId",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleLogMinerCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-outboxid",
       "Signature": "string OutboxId { get; set; }",
       "Summary": "Gets or sets the outbox identifier that receives emitted publications."
     },
@@ -46037,6 +46322,17 @@
     {
       "DisplayName": "PollingIntervalSeconds",
       "Category": "Properties",
+      "DeclaringTypeName": "OracleLogMinerCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-pollingintervalseconds",
+      "Signature": "int PollingIntervalSeconds { get; set; }",
+      "Summary": "Gets or sets the polling interval, in seconds, between hosted-service iterations."
+    },
+    {
+      "DisplayName": "PollingIntervalSeconds",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
       "NamespaceName": "Cephalon.Data.Postgres.Configuration",
       "AssemblyName": "Cephalon.Data.Postgres",
@@ -47272,6 +47568,17 @@
       "AssemblyName": "Cephalon.Data.MySql",
       "FileName": "cephalon-data-mysql.md",
       "AnchorId": "member-f-cephalon-data-mysql-configuration-mysqldataoptions-providerid",
+      "Signature": "const string ProviderId",
+      "Summary": "Gets the canonical provider identifier emitted by the pack."
+    },
+    {
+      "DisplayName": "ProviderId",
+      "Category": "Fields",
+      "DeclaringTypeName": "OracleDataOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-f-cephalon-data-oracle-configuration-oracledataoptions-providerid",
       "Signature": "const string ProviderId",
       "Summary": "Gets the canonical provider identifier emitted by the pack."
     },
@@ -50644,6 +50951,17 @@
     {
       "DisplayName": "ResourceIds",
       "Category": "Properties",
+      "DeclaringTypeName": "OracleLogMinerCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-resourceids",
+      "Signature": "IList\u003Cstring\u003E ResourceIds { get; }",
+      "Summary": "Gets the resource identifiers observed by the capture."
+    },
+    {
+      "DisplayName": "ResourceIds",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
       "NamespaceName": "Cephalon.Data.Postgres.Configuration",
       "AssemblyName": "Cephalon.Data.Postgres",
@@ -53141,6 +53459,17 @@
     {
       "DisplayName": "SectionPath",
       "Category": "Fields",
+      "DeclaringTypeName": "OracleDataOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-f-cephalon-data-oracle-configuration-oracledataoptions-sectionpath",
+      "Signature": "const string SectionPath",
+      "Summary": "Gets the configuration section path used by default for Oracle data settings."
+    },
+    {
+      "DisplayName": "SectionPath",
+      "Category": "Fields",
       "DeclaringTypeName": "PostgresDataOptions",
       "NamespaceName": "Cephalon.Data.Postgres.Configuration",
       "AssemblyName": "Cephalon.Data.Postgres",
@@ -54450,6 +54779,17 @@
     {
       "DisplayName": "SourceId",
       "Category": "Properties",
+      "DeclaringTypeName": "OracleLogMinerCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-sourceid",
+      "Signature": "string SourceId { get; set; }",
+      "Summary": "Gets or sets the logical source identifier when it should differ from the watched table path."
+    },
+    {
+      "DisplayName": "SourceId",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
       "NamespaceName": "Cephalon.Data.Postgres.Configuration",
       "AssemblyName": "Cephalon.Data.Postgres",
@@ -54829,6 +55169,17 @@
       "AssemblyName": "Cephalon.Data.MySql",
       "FileName": "cephalon-data-mysql.md",
       "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-sourcemoduleid",
+      "Signature": "string SourceModuleId { get; set; }",
+      "Summary": "Gets or sets the module identifier that owns the capture surface."
+    },
+    {
+      "DisplayName": "SourceModuleId",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleLogMinerCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-sourcemoduleid",
       "Signature": "string SourceModuleId { get; set; }",
       "Summary": "Gets or sets the module identifier that owns the capture surface."
     },
@@ -57231,6 +57582,17 @@
     {
       "DisplayName": "TableName",
       "Category": "Properties",
+      "DeclaringTypeName": "OracleLogMinerCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-tablename",
+      "Signature": "string TableName { get; set; }",
+      "Summary": "Gets or sets the table name of the tracked table."
+    },
+    {
+      "DisplayName": "TableName",
+      "Category": "Properties",
       "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
       "NamespaceName": "Cephalon.Data.Postgres.Configuration",
       "AssemblyName": "Cephalon.Data.Postgres",
@@ -57260,6 +57622,17 @@
       "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-tableschema",
       "Signature": "string TableSchema { get; set; }",
       "Summary": "Gets or sets the MySQL schema name of the tracked table."
+    },
+    {
+      "DisplayName": "TableSchema",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleLogMinerCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-tableschema",
+      "Signature": "string TableSchema { get; set; }",
+      "Summary": "Gets or sets the Oracle schema name of the tracked table."
     },
     {
       "DisplayName": "TableSchema",
@@ -57599,6 +57972,17 @@
       "AssemblyName": "Cephalon.Data.MySql",
       "FileName": "cephalon-data-mysql.md",
       "AnchorId": "member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-tags",
+      "Signature": "IList\u003Cstring\u003E Tags { get; }",
+      "Summary": "Gets the descriptive tags associated with the capture."
+    },
+    {
+      "DisplayName": "Tags",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleLogMinerCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-tags",
       "Signature": "IList\u003Cstring\u003E Tags { get; }",
       "Summary": "Gets the descriptive tags associated with the capture."
     },

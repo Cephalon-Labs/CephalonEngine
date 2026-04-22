@@ -200,6 +200,14 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Data.MySql](cephalon-data-mysql.md#namespace-cephalon-data-mysql-registration): 1 public types [Browse](browse.html?assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Registration)
 
+## `Cephalon.Data.Oracle.Configuration`
+
+- [Cephalon.Data.Oracle](cephalon-data-oracle.md#namespace-cephalon-data-oracle-configuration): 2 public types [Browse](browse.html?assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration)
+
+## `Cephalon.Data.Oracle.Registration`
+
+- [Cephalon.Data.Oracle](cephalon-data-oracle.md#namespace-cephalon-data-oracle-registration): 1 public types [Browse](browse.html?assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Registration)
+
 ## `Cephalon.Data.Postgres.Configuration`
 
 - [Cephalon.Data.Postgres](cephalon-data-postgres.md#namespace-cephalon-data-postgres-configuration): 2 public types [Browse](browse.html?assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration)

@@ -874,6 +874,16 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void DataOracleAssemblyExposesOnlyTheDocumentedPackContracts()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Data.Oracle.Registration.OracleDataEngineBuilderExtensions).Assembly,
+            typeof(global::Cephalon.Data.Oracle.Configuration.OracleDataOptions),
+            typeof(global::Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions),
+            typeof(global::Cephalon.Data.Oracle.Registration.OracleDataEngineBuilderExtensions));
+    }
+
+    [Fact]
     public void DataPostgresAssemblyExposesOnlyTheDocumentedPackContracts()
     {
         AssertExportedTypes(
@@ -2916,6 +2926,27 @@ public sealed class PackageSurfaceTests
         Assert.NotNull(typeof(global::Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions)
             .GetProperty("OutboxId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions)
+            .GetProperty("InitialPosition", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
+    public void OracleDataOptionsExposeProviderNativeLogMinerCaptureDeclarations()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Data.Oracle.Configuration.OracleDataOptions)
+            .GetProperty("CdcCaptures", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.Oracle.Configuration.OracleDataOptions)
+            .GetProperty("DatabaseName", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.Oracle.Configuration.OracleDataOptions)
+            .GetProperty("CheckpointTableName", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions)
+            .GetProperty("SourceModuleId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions)
+            .GetProperty("TableSchema", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions)
+            .GetProperty("TableName", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions)
+            .GetProperty("OutboxId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions)
             .GetProperty("InitialPosition", BindingFlags.Instance | BindingFlags.Public));
     }
 
