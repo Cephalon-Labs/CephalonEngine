@@ -174,6 +174,30 @@ string EventFormat { get; set; }
 
 Gets or sets the operator-facing event format projected on the CDC descriptor.
 
+<a id="member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-expecteddatabaseid"></a>
+
+##### `ExpectedDatabaseId`
+
+```csharp
+decimal? ExpectedDatabaseId { get; set; }
+```
+
+Gets or sets the expected Oracle database identifier when the capture should fail fast if the runtime connects to a different upstream.
+
+Remarks: Leave this unset when the capture should observe Oracle database identity for diagnostics only. When set, the provider-native runner validates the live `DBID` before it starts or resumes LogMiner execution.
+
+<a id="member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-expecteddatabaseuniquename"></a>
+
+##### `ExpectedDatabaseUniqueName`
+
+```csharp
+string ExpectedDatabaseUniqueName { get; set; }
+```
+
+Gets or sets the expected Oracle database unique name when the capture should fail fast if the runtime connects to a different upstream.
+
+Remarks: Leave this blank when the capture should observe Oracle database identity for diagnostics only. When set, the provider-native runner validates the live `DB_UNIQUE_NAME` before it starts or resumes LogMiner execution.
+
 <a id="member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-id"></a>
 
 ##### `Id`
@@ -265,6 +289,18 @@ IList<string> ResourceIds { get; }
 ```
 
 Gets the resource identifiers observed by the capture.
+
+<a id="member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-resumefromearliestavailablescnifcheckpointunavailable"></a>
+
+##### `ResumeFromEarliestAvailableScnIfCheckpointUnavailable`
+
+```csharp
+bool ResumeFromEarliestAvailableScnIfCheckpointUnavailable { get; set; }
+```
+
+Gets or sets a value indicating whether the provider-native runner should reseed from the earliest retained SCN when a durable checkpoint is older than the retained archive-log window.
+
+Remarks: The default is `false` so Oracle LogMiner fails fast instead of silently skipping the gap between the durable checkpoint and the earliest retained archive-log SCN.
 
 <a id="member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-sourceid"></a>
 

@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-22T10:18:15.8625725+00:00",
+  "GeneratedAtUtc": "2026-04-22T12:53:15.1011715+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -9773,7 +9773,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 18,
+        "Properties": 21,
         "Methods": 0
       }
     },
@@ -29356,6 +29356,28 @@
       "AnchorId": "member-p-cephalon-engine-configuration-databasemigrationssettings-exitafterapply",
       "Signature": "bool? ExitAfterApply { get; }",
       "Summary": "Gets a value indicating whether the host should exit after applying migrations."
+    },
+    {
+      "DisplayName": "ExpectedDatabaseId",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleLogMinerCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-expecteddatabaseid",
+      "Signature": "decimal? ExpectedDatabaseId { get; set; }",
+      "Summary": "Gets or sets the expected Oracle database identifier when the capture should fail fast if the runtime connects to a different upstream."
+    },
+    {
+      "DisplayName": "ExpectedDatabaseUniqueName",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleLogMinerCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-expecteddatabaseuniquename",
+      "Signature": "string ExpectedDatabaseUniqueName { get; set; }",
+      "Summary": "Gets or sets the expected Oracle database unique name when the capture should fail fast if the runtime connects to a different upstream."
     },
     {
       "DisplayName": "ExpectedSourceServerUuid",
@@ -51504,6 +51526,17 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-resulttype",
       "Signature": "string ResultType { get; }",
       "Summary": "Gets the behavior result-contract type name."
+    },
+    {
+      "DisplayName": "ResumeFromEarliestAvailableScnIfCheckpointUnavailable",
+      "Category": "Properties",
+      "DeclaringTypeName": "OracleLogMinerCaptureOptions",
+      "NamespaceName": "Cephalon.Data.Oracle.Configuration",
+      "AssemblyName": "Cephalon.Data.Oracle",
+      "FileName": "cephalon-data-oracle.md",
+      "AnchorId": "member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-resumefromearliestavailablescnifcheckpointunavailable",
+      "Signature": "bool ResumeFromEarliestAvailableScnIfCheckpointUnavailable { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the provider-native runner should reseed from the earliest retained SCN when a durable checkpoint is older than the retained archive-log window."
     },
     {
       "DisplayName": "RetainedCandidateIds",

@@ -69,6 +69,32 @@ public sealed class OracleLogMinerCaptureOptions
     public string InitialPosition { get; set; } = "latest-available";
 
     /// <summary>
+    /// Gets or sets the expected Oracle database identifier when the capture should fail fast if the runtime connects to a different upstream.
+    /// </summary>
+    /// <remarks>
+    /// Leave this unset when the capture should observe Oracle database identity for diagnostics only. When set, the provider-native runner
+    /// validates the live <c>DBID</c> before it starts or resumes LogMiner execution.
+    /// </remarks>
+    public decimal? ExpectedDatabaseId { get; set; }
+
+    /// <summary>
+    /// Gets or sets the expected Oracle database unique name when the capture should fail fast if the runtime connects to a different upstream.
+    /// </summary>
+    /// <remarks>
+    /// Leave this blank when the capture should observe Oracle database identity for diagnostics only. When set, the provider-native runner
+    /// validates the live <c>DB_UNIQUE_NAME</c> before it starts or resumes LogMiner execution.
+    /// </remarks>
+    public string ExpectedDatabaseUniqueName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the provider-native runner should reseed from the earliest retained SCN when a durable checkpoint is older than the retained archive-log window.
+    /// </summary>
+    /// <remarks>
+    /// The default is <see langword="false" /> so Oracle LogMiner fails fast instead of silently skipping the gap between the durable checkpoint and the earliest retained archive-log SCN.
+    /// </remarks>
+    public bool ResumeFromEarliestAvailableScnIfCheckpointUnavailable { get; set; }
+
+    /// <summary>
     /// Gets or sets the maximum number of captured row changes to stage during one provider-native iteration.
     /// </summary>
     public int MaxChangesPerRead { get; set; } = 128;

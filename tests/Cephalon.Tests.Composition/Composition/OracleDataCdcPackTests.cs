@@ -16,6 +16,8 @@ public sealed class OracleDataCdcPackTests
     private const string SharedRuntimeId = "data-cdc-capture-pump";
     private const string OracleRuntimeId = "oracle-logminer-capture-pump";
     private const string CaptureId = "oracle-orders-cdc";
+    private const decimal ExpectedDatabaseId = 147258369m;
+    private const string ExpectedDatabaseUniqueName = "CEPHALON_XEPDB1";
 
     [Fact]
     public async Task AddOracleData_ProviderNativeCdcRuntimeStagesPublicationsAndCommitsCheckpoint()
@@ -28,12 +30,25 @@ public sealed class OracleDataCdcPackTests
         batch.Metadata["currentScn"] = "1100";
         batch.Metadata["earliestAvailableScn"] = "900";
         batch.Metadata["resumeMode"] = "earliest-available";
+        batch.Metadata["databaseId"] = ExpectedDatabaseId.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        batch.Metadata["databaseUniqueName"] = ExpectedDatabaseUniqueName;
+        batch.Metadata["databaseRole"] = "PRIMARY";
+        batch.Metadata["databaseOpenMode"] = "READ WRITE";
+        batch.Metadata["archiveLogMode"] = "ARCHIVELOG";
+        batch.Metadata["resetLogsChangeNumber"] = "500";
+        batch.Metadata["supplementalLogDataMin"] = "YES";
+        batch.Metadata["databaseIdentityState"] = "expected-match";
+        batch.Metadata["databaseIdentityAction"] = "accept";
+        batch.Metadata["archiveLogLifecycleState"] = "available";
+        batch.Metadata["archiveLogLifecycleAction"] = "start";
         batch.Metadata["checkpointStore"] = "CEPHALON_CDC_CHECKPOINTS";
         batch.Metadata["checkpointSource"] = "cephalon-checkpoint-table";
         batch.Metadata["logMinerDictionary"] = "online-catalog";
         batch.Metadata["logMinerMode"] = "committed-only";
         batch.Metadata["redoCursor"] = "commit-scn|change-scn|rs-id|ssn";
         batch.Metadata["logFileCount"] = "2";
+        batch.Metadata["resumeFromEarliestAvailableScnIfCheckpointUnavailable"] = "false";
+        batch.Metadata["archiveLogLifecyclePolicy"] = "fail-when-checkpoint-unavailable";
         batch.Changes.Add(new OracleLogMinerTestChange
         {
             CommitScn = 1100m,
@@ -80,6 +95,8 @@ public sealed class OracleDataCdcPackTests
                         ChannelId = "orders",
                         MessageType = "orders.oracle.changed",
                         InitialPosition = "earliest-available",
+                        ExpectedDatabaseId = ExpectedDatabaseId,
+                        ExpectedDatabaseUniqueName = ExpectedDatabaseUniqueName,
                         PollingIntervalSeconds = 1,
                         MaxChangesPerRead = 64,
                         MaxAwaitTimeSeconds = 5
@@ -126,11 +143,24 @@ public sealed class OracleDataCdcPackTests
             Assert.Equal("1100", state.Metadata["currentScn"]);
             Assert.Equal("900", state.Metadata["earliestAvailableScn"]);
             Assert.Equal("earliest-available", state.Metadata["resumeMode"]);
+            Assert.Equal(ExpectedDatabaseId.ToString(System.Globalization.CultureInfo.InvariantCulture), state.Metadata["databaseId"]);
+            Assert.Equal(ExpectedDatabaseUniqueName, state.Metadata["databaseUniqueName"]);
+            Assert.Equal("PRIMARY", state.Metadata["databaseRole"]);
+            Assert.Equal("READ WRITE", state.Metadata["databaseOpenMode"]);
+            Assert.Equal("ARCHIVELOG", state.Metadata["archiveLogMode"]);
+            Assert.Equal("500", state.Metadata["resetLogsChangeNumber"]);
+            Assert.Equal("YES", state.Metadata["supplementalLogDataMin"]);
+            Assert.Equal("expected-match", state.Metadata["databaseIdentityState"]);
+            Assert.Equal("accept", state.Metadata["databaseIdentityAction"]);
+            Assert.Equal("available", state.Metadata["archiveLogLifecycleState"]);
+            Assert.Equal("start", state.Metadata["archiveLogLifecycleAction"]);
             Assert.Equal("CEPHALON_CDC_CHECKPOINTS", state.Metadata["checkpointStore"]);
             Assert.Equal("cephalon-checkpoint-table", state.Metadata["checkpointSource"]);
             Assert.Equal("online-catalog", state.Metadata["logMinerDictionary"]);
             Assert.Equal("committed-only", state.Metadata["logMinerMode"]);
             Assert.Equal("commit-scn|change-scn|rs-id|ssn", state.Metadata["redoCursor"]);
+            Assert.Equal("false", state.Metadata["resumeFromEarliestAvailableScnIfCheckpointUnavailable"]);
+            Assert.Equal("fail-when-checkpoint-unavailable", state.Metadata["archiveLogLifecyclePolicy"]);
             Assert.Equal(CdcCapturePublicationStates.PendingPublication, state.Publication.State);
             Assert.Equal(1, state.Publication.PendingPublicationCount);
 
@@ -164,6 +194,10 @@ public sealed class OracleDataCdcPackTests
             Assert.Equal("committed-only", capture.Metadata["logMinerMode"]);
             Assert.Equal("online-catalog", capture.Metadata["logMinerDictionary"]);
             Assert.Equal("commit-scn|change-scn|rs-id|ssn", capture.Metadata["redoCursor"]);
+            Assert.Equal(ExpectedDatabaseId.ToString(System.Globalization.CultureInfo.InvariantCulture), capture.Metadata["expectedDatabaseId"]);
+            Assert.Equal(ExpectedDatabaseUniqueName, capture.Metadata["expectedDatabaseUniqueName"]);
+            Assert.Equal("false", capture.Metadata["resumeFromEarliestAvailableScnIfCheckpointUnavailable"]);
+            Assert.Equal("fail-when-checkpoint-unavailable", capture.Metadata["archiveLogLifecyclePolicy"]);
 
             var sharedRuntime = runtimeCatalog.GetById(SharedRuntimeId);
             Assert.NotNull(sharedRuntime);
@@ -181,6 +215,139 @@ public sealed class OracleDataCdcPackTests
             Assert.Equal(1, oracleRuntime.Summary.TotalCapturedChangeCount);
             Assert.Equal(1, oracleRuntime.Summary.TotalProducedMessageCount);
             Assert.Equal("provider-native", oracleRuntime.Summary.LastAcknowledgement);
+        }
+        finally
+        {
+            foreach (var hostedService in hostedServices.Reverse())
+            {
+                await hostedService.StopAsync(CancellationToken.None);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task AddOracleData_OracleLifecycleFailureSurfacesArchiveLogAndIdentityMetadata()
+    {
+        var executionState = new TestCdcExecutionState();
+        var harness = new OracleDataCdcTestHarness();
+        var batch = new OracleLogMinerTestBatch
+        {
+            FailureKind = "checkpoint-scn-unavailable",
+            FailureMessage = "Oracle LogMiner capture 'oracle-orders-cdc' cannot resume checkpoint '1200|1190|0x009|4' because checkpoint SCN '1190' is older than the earliest retained archive-log SCN '1300'. Set ResumeFromEarliestAvailableScnIfCheckpointUnavailable to true to reseed from the earliest retained SCN."
+        };
+        batch.Metadata["currentScn"] = "1400";
+        batch.Metadata["earliestAvailableScn"] = "1300";
+        batch.Metadata["resumeMode"] = "checkpoint";
+        batch.Metadata["resumeCheckpoint"] = "1200|1190|0x009|4";
+        batch.Metadata["checkpointUpdatedAtUtc"] = "2026-04-22T08:30:00.0000000+00:00";
+        batch.Metadata["databaseId"] = ExpectedDatabaseId.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        batch.Metadata["databaseUniqueName"] = ExpectedDatabaseUniqueName;
+        batch.Metadata["databaseRole"] = "PRIMARY";
+        batch.Metadata["databaseOpenMode"] = "READ WRITE";
+        batch.Metadata["archiveLogMode"] = "ARCHIVELOG";
+        batch.Metadata["resetLogsChangeNumber"] = "500";
+        batch.Metadata["supplementalLogDataMin"] = "YES";
+        batch.Metadata["checkpointDatabaseId"] = ExpectedDatabaseId.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        batch.Metadata["checkpointDatabaseUniqueName"] = ExpectedDatabaseUniqueName;
+        batch.Metadata["checkpointResetLogsChangeNumber"] = "500";
+        batch.Metadata["databaseIdentityState"] = "checkpoint-match";
+        batch.Metadata["databaseIdentityAction"] = "resume";
+        batch.Metadata["archiveLogLifecycleState"] = "checkpoint-pruned";
+        batch.Metadata["archiveLogLifecycleAction"] = "fail";
+        batch.Metadata["checkpointStore"] = "CEPHALON_CDC_CHECKPOINTS";
+        batch.Metadata["checkpointSource"] = "cephalon-checkpoint-table";
+        batch.Metadata["logMinerDictionary"] = "online-catalog";
+        batch.Metadata["logMinerMode"] = "committed-only";
+        batch.Metadata["redoCursor"] = "commit-scn|change-scn|rs-id|ssn";
+        batch.Metadata["resumeFromEarliestAvailableScnIfCheckpointUnavailable"] = "false";
+        batch.Metadata["archiveLogLifecyclePolicy"] = "fail-when-checkpoint-unavailable";
+        harness.EnqueueBatch(batch);
+
+        var services = new ServiceCollection();
+        services.AddSingleton(executionState);
+        services.AddOracleDataCdcTestHarness(harness);
+        services.AddScoped<IOutbox, TestOutbox>();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"]));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new PlatformEventingTestModule());
+            engine.AddData(options =>
+            {
+                options.EnableCdcExecution = true;
+                options.CdcPollingIntervalSeconds = 600;
+            });
+            engine.AddOracleData(
+                connectionString: "User Id=cephalon;Password=oracle;Data Source=localhost/XEPDB1",
+                databaseName: "XEPDB1",
+                configure: options =>
+                {
+                    options.CdcCaptures.Add(new OracleLogMinerCaptureOptions
+                    {
+                        Id = CaptureId,
+                        DisplayName = "Oracle Orders CDC",
+                        SourceModuleId = "platform",
+                        TableSchema = "SALES",
+                        TableName = "ORDERS",
+                        OutboxId = "tenant-event-outbox",
+                        ChannelId = "orders",
+                        MessageType = "orders.oracle.changed",
+                        InitialPosition = "latest-available",
+                        ExpectedDatabaseId = ExpectedDatabaseId,
+                        ExpectedDatabaseUniqueName = ExpectedDatabaseUniqueName,
+                        PollingIntervalSeconds = 1,
+                        MaxChangesPerRead = 64,
+                        MaxAwaitTimeSeconds = 5
+                    });
+                });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var hostedServices = provider.GetServices<IHostedService>().ToArray();
+        foreach (var hostedService in hostedServices)
+        {
+            await hostedService.StartAsync(CancellationToken.None);
+        }
+
+        try
+        {
+            var stateCatalog = provider.GetRequiredService<ICdcCaptureRuntimeStateCatalog>();
+            var runtimeCatalog = provider.GetRequiredService<ICdcCaptureExecutionRuntimeCatalog>();
+
+            var state = await WaitForAsync(
+                () => Task.FromResult(stateCatalog.GetById(CaptureId)),
+                static current => current is not null && current.LastOutcome == CdcCaptureRuntimeOutcomes.Failed,
+                TimeSpan.FromSeconds(10));
+
+            Assert.NotNull(state);
+            Assert.Equal(OracleRuntimeId, state.ExecutionBinding.EffectiveExecutionRuntimeId);
+            Assert.Equal(CdcCaptureRuntimeOutcomes.Failed, state.LastOutcome);
+            Assert.Equal("checkpoint-scn-unavailable", state.Metadata["failureKind"]);
+            Assert.Contains("1200|1190|0x009|4", state.LastError);
+            Assert.Equal("checkpoint", state.Metadata["resumeMode"]);
+            Assert.Equal("1200|1190|0x009|4", state.Metadata["resumeCheckpoint"]);
+            Assert.Equal(ExpectedDatabaseId.ToString(System.Globalization.CultureInfo.InvariantCulture), state.Metadata["databaseId"]);
+            Assert.Equal(ExpectedDatabaseUniqueName, state.Metadata["databaseUniqueName"]);
+            Assert.Equal(ExpectedDatabaseUniqueName, state.Metadata["checkpointDatabaseUniqueName"]);
+            Assert.Equal("checkpoint-match", state.Metadata["databaseIdentityState"]);
+            Assert.Equal("resume", state.Metadata["databaseIdentityAction"]);
+            Assert.Equal("ARCHIVELOG", state.Metadata["archiveLogMode"]);
+            Assert.Equal("checkpoint-pruned", state.Metadata["archiveLogLifecycleState"]);
+            Assert.Equal("fail", state.Metadata["archiveLogLifecycleAction"]);
+            Assert.Equal("1400", state.Metadata["currentScn"]);
+            Assert.Equal("1300", state.Metadata["earliestAvailableScn"]);
+            Assert.Equal("false", state.Metadata["resumeFromEarliestAvailableScnIfCheckpointUnavailable"]);
+            Assert.Equal("fail-when-checkpoint-unavailable", state.Metadata["archiveLogLifecyclePolicy"]);
+            Assert.Empty(executionState.StagedMessages);
+            Assert.Empty(harness.CommittedCheckpoints);
+
+            var oracleRuntime = runtimeCatalog.GetById(OracleRuntimeId);
+            Assert.NotNull(oracleRuntime);
+            Assert.True(oracleRuntime.Summary.HasReports);
+            Assert.Equal(CaptureId, oracleRuntime.Summary.LastCdcCaptureId);
+            Assert.Equal(CdcCaptureRuntimeOutcomes.Failed, oracleRuntime.Summary.LastOutcome);
         }
         finally
         {

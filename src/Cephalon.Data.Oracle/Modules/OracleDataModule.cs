@@ -124,9 +124,24 @@ internal sealed class OracleDataModule(OracleDataOptions options)
                 ["logMinerDictionary"] = "online-catalog",
                 ["logMinerMode"] = "committed-only",
                 ["redoCursor"] = "commit-scn|change-scn|rs-id|ssn",
+                ["resumeFromEarliestAvailableScnIfCheckpointUnavailable"] =
+                    capture.ResumeFromEarliestAvailableScnIfCheckpointUnavailable ? "true" : "false",
+                ["archiveLogLifecyclePolicy"] = capture.ResumeFromEarliestAvailableScnIfCheckpointUnavailable
+                    ? "resume-from-earliest-available-when-checkpoint-unavailable"
+                    : "fail-when-checkpoint-unavailable",
                 ["executionRuntimeId"] = OracleDataRuntimeIds.CdcExecutionRuntimeId,
                 ["contributorModuleId"] = Descriptor.Id
             };
+
+            if (capture.ExpectedDatabaseId.HasValue)
+            {
+                metadata["expectedDatabaseId"] = capture.ExpectedDatabaseId.Value.ToString(CultureInfo.InvariantCulture);
+            }
+
+            if (!string.IsNullOrWhiteSpace(capture.ExpectedDatabaseUniqueName))
+            {
+                metadata["expectedDatabaseUniqueName"] = capture.ExpectedDatabaseUniqueName.Trim();
+            }
 
             var resourceIds = capture.ResourceIds.Count == 0
                 ? [CreateDefaultResourceId(normalizedSchema, normalizedTableName)]

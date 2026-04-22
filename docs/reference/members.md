@@ -4617,6 +4617,12 @@ Browse the published API surface by public member.
 - [ExitAfterApply](cephalon-engine.md#member-p-cephalon-engine-configuration-databasemigrationssettings-exitafterapply): `Properties` on `DatabaseMigrationsSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ExitAfterApply&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether the host should exit after applying migrations.
   - `bool? ExitAfterApply { get; }`
+- [ExpectedDatabaseId](cephalon-data-oracle.md#member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-expecteddatabaseid): `Properties` on `OracleLogMinerCaptureOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=ExpectedDatabaseId&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
+  - Gets or sets the expected Oracle database identifier when the capture should fail fast if the runtime connects to a different upstream.
+  - `decimal? ExpectedDatabaseId { get; set; }`
+- [ExpectedDatabaseUniqueName](cephalon-data-oracle.md#member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-expecteddatabaseuniquename): `Properties` on `OracleLogMinerCaptureOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=ExpectedDatabaseUniqueName&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
+  - Gets or sets the expected Oracle database unique name when the capture should fail fast if the runtime connects to a different upstream.
+  - `string ExpectedDatabaseUniqueName { get; set; }`
 - [ExpectedSourceServerUuid](cephalon-data-mysql.md#member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-expectedsourceserveruuid): `Properties` on `MySqlBinlogCaptureOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=ExpectedSourceServerUuid&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
   - Gets or sets the expected MySQL source-server UUID when the capture should fail fast if the runtime connects to a different upstream.
   - `string ExpectedSourceServerUuid { get; set; }`
@@ -10692,6 +10698,9 @@ Browse the published API surface by public member.
 - [ResultType](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-resulttype): `Properties` on `SagaChoreographyRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=ResultType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the behavior result-contract type name.
   - `string ResultType { get; }`
+- [ResumeFromEarliestAvailableScnIfCheckpointUnavailable](cephalon-data-oracle.md#member-p-cephalon-data-oracle-configuration-oraclelogminercaptureoptions-resumefromearliestavailablescnifcheckpointunavailable): `Properties` on `OracleLogMinerCaptureOptions` in `Cephalon.Data.Oracle.Configuration` (`Cephalon.Data.Oracle`) [Browse](browse.html?q=ResumeFromEarliestAvailableScnIfCheckpointUnavailable&assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration&scope=members)
+  - Gets or sets a value indicating whether the provider-native runner should reseed from the earliest retained SCN when a durable checkpoint is older than the retained archive-log window.
+  - `bool ResumeFromEarliestAvailableScnIfCheckpointUnavailable { get; set; }`
 - [RetainedCandidateIds](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointauthoringpolicyauthoringstyledescriptor-retainedcandidateids): `Properties` on `RestEndpointAuthoringPolicyAuthoringStyleDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetainedCandidateIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the ordered candidate identifiers that survived authoring-policy enforcement for this authoring style.
   - `IReadOnlyList<string> RetainedCandidateIds { get; }`

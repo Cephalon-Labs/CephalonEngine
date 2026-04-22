@@ -2926,6 +2926,53 @@ Delivered:
 - targeted coverage now proves the Oracle provider-native CDC baseline through composition tests
   `27/27`, hosting tests `1/1`, tooling tests `263/263`, and the reference docs publish script
 
+### ENG-162 Phase 13 Oracle LogMiner lifecycle and resume hardening baseline
+
+Status: done
+Estimate: 5
+Completed: April 22, 2026
+
+Why:
+
+- `ENG-161` proved the Oracle LogMiner provider-native baseline, but the shared CDC runtime
+  story still needed Oracle-specific lifecycle and restart truth for source identity, retained
+  archive-log windows, and checkpoint provenance
+- operators still needed the existing `/engine/cdc-*`, `/engine/execution-graphs`,
+  `/engine/hosted-executions`, `/engine/runtime-story`, and `snapshot` surfaces to explain
+  `DBID`, `DB_UNIQUE_NAME`, archive-log posture, resetlogs posture, and checkpoint-gap decisions
+  without inventing an Oracle-only lifecycle registry
+- durable checkpoint commits still had to stay additive over the shared provider-native runtime
+  contract while preserving enough Oracle provenance to reject mismatched resumes truthfully
+
+Acceptance:
+
+- `OracleLogMinerCaptureOptions` exposes additive lifecycle controls for expected database
+  identity and checkpoint-gap policy without changing the shared CDC descriptor/runtime contract
+- the Oracle provider-native transport validates live database identity plus archive-log posture,
+  stores restart-safe provenance on the Cephalon-managed checkpoint table, and keeps Oracle
+  restart decisions grounded in deterministic `databaseIdentity*`, `archiveLogLifecycle*`, and
+  `checkpoint*` metadata on the shared runtime surfaces
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice without reopening an Oracle-only operator registry
+
+Delivered:
+
+- `Cephalon.Data.Oracle` now supports `ExpectedDatabaseId`,
+  `ExpectedDatabaseUniqueName`, and `ResumeFromEarliestAvailableScnIfCheckpointUnavailable` on
+  `OracleLogMinerCaptureOptions`, projects those policies through descriptor metadata, and
+  validates live `DBID`, `DB_UNIQUE_NAME`, `ARCHIVELOG`, and checkpoint provenance before one
+  provider-native LogMiner iteration starts
+- the Cephalon-managed Oracle checkpoint table now keeps additive `DatabaseId`,
+  `DatabaseUniqueName`, `ResetLogsChangeNumber`, `ArchiveLogMode`, and
+  `SupplementalLogDataMin` columns, while shared runtime-state metadata now publishes
+  `databaseIdentityState`, `databaseIdentityAction`, `archiveLogLifecycleState`,
+  `archiveLogLifecycleAction`, `checkpointDatabase*`, and checkpoint-gap policy truth on the same
+  `/engine/cdc-captures/runtime*`, `/engine/cdc-capture-runtimes*`, `/engine/execution-graphs`,
+  `/engine/hosted-executions`, and `snapshot` surfaces without inventing a second Oracle monitor
+- targeted coverage now proves the Oracle lifecycle/resume hardening baseline through composition
+  tests `28/28`, hosting tests `2/2`, tooling tests `185/185`, and the reference docs publish
+  script
+
 ### ENG-157 Phase 13 stronger reporter takeover and degraded-posture hardening baseline
 
 Status: done

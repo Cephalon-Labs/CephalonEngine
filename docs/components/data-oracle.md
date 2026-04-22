@@ -1,14 +1,14 @@
 # Cephalon.Data.Oracle
 
-`Cephalon.Data.Oracle` is the Oracle provider-native CDC companion pack for Cephalon. It proves that the shared `Cephalon.Data` CDC execution and runtime catalog family also fits redo-log style relational capture through Oracle LogMiner with SCN-backed progress, provider-owned execution, durable `commitScn|changeScn|rsId|ssn` checkpoints, and module-preserving capture ownership truth without an Oracle-specific registry in `Cephalon.Engine`.
+`Cephalon.Data.Oracle` is the Oracle provider-native CDC companion pack for Cephalon. It proves that the shared `Cephalon.Data` CDC execution and runtime catalog family also fits redo-log style relational capture through Oracle LogMiner with SCN-backed progress, provider-owned execution, durable `commitScn|changeScn|rsId|ssn` checkpoints, source-database identity truth, archive-log lifecycle validation, and module-preserving capture ownership without an Oracle-specific registry in `Cephalon.Engine`.
 
 ## What it owns
 
 - contributes configured provider-native Oracle LogMiner captures through `OracleLogMinerCaptureOptions` and keeps those descriptors on the shared `/engine/cdc-captures*` catalog with `provider = "oracle"` and `mode = "logminer"`
 - publishes capability metadata `data.oracle`, `data.relational-store`, and `data.cdc.oracle` introspectable at runtime through the manifest
 - publishes the provider-native CDC execution graph `oracle-logminer-capture-flow`, hosted execution `oracle-logminer-capture-pump`, and execution runtime `oracle-logminer-capture-pump` when Oracle LogMiner captures are configured
-- runs a provider-native hosted service that resolves the starting SCN from the Cephalon-managed checkpoint table or from the configured initial posture, opens one bounded Oracle LogMiner session over the current SCN range, stages outbox publications for committed table changes, persists the next durable checkpoint only after outbox stage success, and reports runtime posture through the shared `ICdcCaptureRuntimeReporter` surface
-- stores durable Oracle LogMiner checkpoints in a Cephalon-managed checkpoint table, defaulting to `CEPHALON_CDC_CHECKPOINTS`
+- runs a provider-native hosted service that resolves the starting SCN from the Cephalon-managed checkpoint row or the configured initial posture, validates Oracle database identity plus archive-log posture before LogMiner starts, opens one bounded Oracle LogMiner session over the current SCN range, stages outbox publications for committed table changes, persists the next durable checkpoint only after outbox stage success, and reports runtime posture through the shared `ICdcCaptureRuntimeReporter` surface
+- stores durable Oracle LogMiner checkpoints in a Cephalon-managed checkpoint table, defaulting to `CEPHALON_CDC_CHECKPOINTS`, while preserving additive checkpoint provenance such as `DatabaseId`, `DatabaseUniqueName`, `ResetLogsChangeNumber`, `ArchiveLogMode`, and `SupplementalLogDataMin`
 - preserves authored capture ownership through `CdcCaptureDescriptor.SourceModuleId` while surfacing `metadata.contributorModuleId = "oracle-data"` when the provider pack contributes the descriptor on behalf of another module
 
 ## Main surfaces
@@ -26,11 +26,11 @@
 
 ## How it fits
 
-This pack sits on top of `Cephalon.Data`, not in place of it. `Cephalon.Data` still owns the runtime-neutral CDC descriptor catalog, capture-side execution binding, shared runtime-state catalog, additive execution-runtime catalog, external runtime reporting seam, and the shared `/engine/cdc-*`, `/engine/execution-graphs`, `/engine/hosted-executions`, `/engine/runtime-story`, and `snapshot` truth model. `Cephalon.Data.Oracle` adds the Oracle-specific LogMiner reader, SCN-window log-file resolution, durable checkpoint store, and provider-native hosted execution loop needed to project truthful Oracle behavior into those shared surfaces.
+This pack sits on top of `Cephalon.Data`, not in place of it. `Cephalon.Data` still owns the runtime-neutral CDC descriptor catalog, capture-side execution binding, shared runtime-state catalog, additive execution-runtime catalog, external runtime reporting seam, and the shared `/engine/cdc-*`, `/engine/execution-graphs`, `/engine/hosted-executions`, `/engine/runtime-story`, and `snapshot` truth model. `Cephalon.Data.Oracle` adds the Oracle-specific LogMiner reader, SCN-window plus redo-log selection, database-identity validation, archive-log lifecycle policy, durable checkpoint store, and provider-native hosted execution loop needed to project truthful Oracle behavior into those shared surfaces.
 
-That keeps the engine honest. The shared `data-cdc-capture-pump` still exists as the generic in-process runtime, but it simply ignores captures whose effective owner resolves to `oracle-logminer-capture-pump`. The Oracle pack becomes the fifth concrete provider-native CDC runner after MongoDB, SQL Server, PostgreSQL, and MySQL, and the first explicit redo-log style proof on the same ownership and topology model.
+That keeps the engine honest. The shared `data-cdc-capture-pump` still exists as the generic in-process runtime, but it ignores captures whose effective owner resolves to `oracle-logminer-capture-pump`. The Oracle pack becomes the fifth concrete provider-native CDC runner after MongoDB, SQL Server, PostgreSQL, and MySQL, and now also carries provider-native lifecycle and resume hardening on the same ownership and topology model.
 
-The slice stays intentionally scoped. `Cephalon.Data.Oracle` does not claim general-purpose `IReadStore` or `IWriteStore` dispatch, Entity Framework integration, Oracle-backed outbox or inbox storage, GoldenGate or XStream orchestration, standby/failover ownership semantics, or an Oracle-specific operator registry outside the shared runtime story. If a host wants relational read or write persistence today, `Cephalon.Data.EntityFramework` remains the honest baseline. `Cephalon.Data.Oracle` claims provider-native LogMiner CDC capture plus durable checkpoint truth on the shared runtime surfaces.
+The slice stays intentionally scoped. `Cephalon.Data.Oracle` does not claim general-purpose `IReadStore` or `IWriteStore` dispatch, Entity Framework integration, Oracle-backed outbox or inbox storage, GoldenGate or XStream orchestration, Data Guard ownership handoff, or an Oracle-specific operator registry outside the shared runtime story. If a host wants relational read or write persistence today, `Cephalon.Data.EntityFramework` remains the honest baseline. `Cephalon.Data.Oracle` claims provider-native LogMiner CDC capture plus lifecycle and checkpoint truth on the shared runtime surfaces.
 
 ## Registration
 
@@ -54,7 +54,9 @@ engine.AddOracleData(
             TableName = "ORDERS",
             OutboxId = "tenant-event-outbox",
             ChannelId = "orders",
-            MessageType = "OrdersChanged"
+            MessageType = "OrdersChanged",
+            ExpectedDatabaseId = 147258369m,
+            ExpectedDatabaseUniqueName = "CEPHALON_XEPDB1"
         });
     });
 ```
@@ -97,6 +99,9 @@ engine.AddOracleData(options =>
             "ChannelId": "orders",
             "MessageType": "OrdersChanged",
             "InitialPosition": "latest-available",
+            "ExpectedDatabaseId": 147258369,
+            "ExpectedDatabaseUniqueName": "CEPHALON_XEPDB1",
+            "ResumeFromEarliestAvailableScnIfCheckpointUnavailable": false,
             "MaxChangesPerRead": 128,
             "MaxAwaitTimeSeconds": 5,
             "PollingIntervalSeconds": 5
@@ -136,6 +141,9 @@ engine.AddOracleData(options =>
 | `MessageType` | `string` | required | Logical message type for emitted publications |
 | `EventFormat` | `string` | `"oracle-logminer-redo-event"` | Operator-facing event format projected on the descriptor |
 | `InitialPosition` | `string` | `"latest-available"` | Initial position when no durable checkpoint exists yet; supported values are `latest-available` and `earliest-available` |
+| `ExpectedDatabaseId` | `decimal?` | `null` | Optional expected Oracle `DBID`; when set, the provider-native runner fails fast if the live source database reports a different database id |
+| `ExpectedDatabaseUniqueName` | `string` | empty | Optional expected `DB_UNIQUE_NAME`; when set, the provider-native runner fails fast if the live source database reports a different unique name |
+| `ResumeFromEarliestAvailableScnIfCheckpointUnavailable` | `bool` | `false` | Controls whether a checkpoint older than the retained archive-log window fails fast or reseeds from the earliest retained SCN |
 | `MaxChangesPerRead` | `int` | `128` | Maximum number of captured row changes to stage during one provider-native iteration |
 | `MaxAwaitTimeSeconds` | `int` | `5` | Maximum number of seconds to await committed redo during one provider-native iteration |
 | `PollingIntervalSeconds` | `int` | `5` | Polling interval in seconds for one provider-native loop iteration |
@@ -150,9 +158,9 @@ When `CdcCaptures` are configured:
 - each capture is published through `/engine/cdc-captures*` with `provider = "oracle"`, `mode = "logminer"`, and an `executionBinding` whose authored and requested runtime id is `oracle-logminer-capture-pump`
 - the execution runtime is published through `/engine/cdc-capture-runtimes*` and `snapshot.CdcCaptureExecutionRuntimes` with `executionOwnership = host-managed`, `executionTopology = provider-native`, and `acknowledgementMode = provider-native`
 - the same runtime publishes through `/engine/execution-graphs`, `/engine/hosted-executions`, `/engine/runtime-story`, and `snapshot` under `oracle-logminer-capture-flow` plus `oracle-logminer-capture-pump`
-- the hosted runner resolves its starting point from the durable Cephalon checkpoint row when one exists, otherwise from the configured initial SCN posture, resolves the current SCN plus earliest available SCN, selects the redo and archive log files that cover the SCN window, starts one bounded committed-only LogMiner session, stages one outbox message per captured change, and only persists the next durable checkpoint after the linked outbox accepted the batch
-- each staged outbox message uses content type `application/vnd.cephalon.oracle.logminer+json`, keeps deterministic change ids and checkpoint tokens, and publishes operator-facing metadata such as `startScn`, `endScn`, `currentScn`, `earliestAvailableScn`, `resumeMode`, `checkpointStore`, `checkpointSource`, `logMinerDictionary`, `logMinerMode`, `redoCursor`, and `logFileCount` on the same shared runtime story
-- provider-specific failures currently distinguish LogMiner window or session problems such as `log-files-unavailable` and `logminer-start`, while shared stage or checkpoint failures still remain visible as the shared `missing-outbox`, `outbox-stage`, and `checkpoint` categories on the same runtime surfaces
+- the hosted runner resolves its starting point from the durable Cephalon checkpoint row when one exists, otherwise from the configured initial SCN posture, reads live `DBID`, `DB_UNIQUE_NAME`, `CURRENT_SCN`, archive-log mode, and resetlogs posture from `V$DATABASE`, validates configured or checkpoint-derived source identity before starting LogMiner, validates archive-log posture, resolves the earliest retained SCN, and then selects the redo plus archive-log files that cover the SCN window
+- each staged outbox message uses content type `application/vnd.cephalon.oracle.logminer+json`, keeps deterministic change ids and checkpoint tokens, and publishes additive metadata such as `startScn`, `endScn`, `currentScn`, `earliestAvailableScn`, `resumeMode`, `checkpointStore`, `checkpointSource`, `databaseId`, `databaseUniqueName`, `databaseIdentityState`, `databaseIdentityAction`, `archiveLogMode`, `archiveLogLifecycleState`, `archiveLogLifecycleAction`, `resetLogsChangeNumber`, `supplementalLogDataMin`, `logMinerDictionary`, `logMinerMode`, `redoCursor`, and `logFileCount` on the same shared runtime story
+- provider-specific failures now distinguish lifecycle and restart posture such as `archive-log-disabled`, `database-identity-mismatch`, `database-identity-unavailable`, `checkpoint-database-mismatch`, `checkpoint-scn-unavailable`, `checkpoint-scn-ahead-of-current`, `log-files-unavailable`, and `logminer-start`, while shared stage or checkpoint failures still remain visible as the shared `missing-outbox`, `outbox-stage`, and `checkpoint` categories on the same runtime surfaces
 
 ### Checkpoint table schema (`CEPHALON_CDC_CHECKPOINTS`)
 
@@ -166,6 +174,11 @@ The default table name is `CheckpointTableName`.
 | `RecordSetId` | `VARCHAR2(64)` | Latest durable LogMiner record-set id (`RS_ID`) |
 | `SqlSequenceNumber` | `NUMBER(19)` | Latest durable SQL sequence number (`SSN`) |
 | `CheckpointToken` | `VARCHAR2(512)` | Serialized checkpoint token in `commitScn|changeScn|rsId|ssn` form |
+| `DatabaseId` | `NUMBER(38)` | Latest durable Oracle `DBID` observed when the checkpoint was committed |
+| `DatabaseUniqueName` | `VARCHAR2(128)` | Latest durable Oracle `DB_UNIQUE_NAME` observed when the checkpoint was committed |
+| `ResetLogsChangeNumber` | `NUMBER(38)` | Latest durable `RESETLOGS_CHANGE#` observed when the checkpoint was committed |
+| `ArchiveLogMode` | `VARCHAR2(32)` | Archive-log posture observed when the checkpoint was committed |
+| `SupplementalLogDataMin` | `VARCHAR2(32)` | Additive supplemental-log metadata observed when the checkpoint was committed |
 | `UpdatedAtUtc` | `TIMESTAMP WITH TIME ZONE` | UTC timestamp of the last durable checkpoint write |
 
 ## Not shipped in this slice
@@ -175,8 +188,8 @@ This pack intentionally still does not claim:
 - `IReadStore` or `IWriteStore` dispatch backed directly by Oracle
 - Entity Framework or `DbContext` integration
 - Oracle-backed `IOutbox`, `IInbox`, or event-dispatch storage
-- archive-log retention validation, source-database identity hardening, or restart taxonomy beyond the baseline shared runtime story
-- GoldenGate, XStream, or out-of-process Oracle CDC execution ownership beyond the shared `/engine/cdc-*` topology surfaces
+- GoldenGate, XStream, Data Guard failover ownership, or out-of-process Oracle CDC execution ownership beyond the shared `/engine/cdc-*` topology surfaces
+- automatic operator remediation for archive-log gaps beyond the explicit fail-fast or reseed policy on one capture
 - low-code generation or multi-table orchestration beyond one configured capture per table path
 
 These remain later slices so the current provider claim stays truthful.
