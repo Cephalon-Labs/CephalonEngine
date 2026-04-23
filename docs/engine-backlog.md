@@ -3027,6 +3027,77 @@ Delivered:
 - targeted coverage now proves the operator-story drill-down baseline through composition tests
   `1/1`, hosting tests `1/1`, tooling tests `185/185`, and the reference docs publish script
 
+### ENG-177 Phase 13 managed-connector write-path command-envelope baseline
+
+Status: done
+Estimate: 5
+Completed: April 23, 2026
+
+Why:
+
+- `ENG-168`, `ENG-169`, `ENG-170`, `ENG-171`, `ENG-172`, `ENG-173`, `ENG-174`, `ENG-175`, and
+  `ENG-176` shipped shared coverage, remediation, governance, desired-versus-observed drift,
+  action-planning, write-path readiness, preflight, dry-run, execution-intent, and execution-approval
+  truth, but operators still lacked one typed answer for what canonical write-path envelope Cephalon
+  would actually carry forward on the same shared runtime surface
+- that next follow-through needed to keep connector-management command-envelope truth additive on the
+  existing `/engine/cdc-capture-runtimes*`, `/engine/runtime-story`, and
+  `snapshot.CdcCaptureExecutionRuntimes` surfaces instead of inventing a Debezium-only execution
+  registry or prematurely claiming Kafka Connect write-path ownership
+- teams also needed route-level drill-downs for command-envelope state, command-envelope category,
+  and intended operation without losing the underlying coverage, remediation, governance, drift,
+  action-plan, write-path-readiness, preflight, dry-run, execution-intent, and execution-approval
+  truth that already shipped
+
+Acceptance:
+
+- `Cephalon.Abstractions` ships a stable managed-connector command-envelope contract on
+  `CdcCaptureExecutionRuntimeDescriptor` that can publish `not-applicable`, `blocked`,
+  `operator-only`, `approval-gated`, and `engine-ready` posture together with command-envelope
+  categories, the intended operation id, source coverage/remediation/governance/drift/action-plan/
+  write-path-readiness/preflight/dry-run/execution-intent/execution-approval state, the current
+  primary action id, source truth, target identity, deterministic command fingerprints, and safety
+  flags
+- the shared execution-runtime catalog now derives that command-envelope answer from merged
+  execution-approval, execution-intent, dry-run, preflight, write-path-readiness, action-planning,
+  drift, governance, remediation, and coverage truth instead of forcing hosts or providers to rebuild
+  a second execution registry
+- `ICdcCaptureExecutionRuntimeCatalog` exposes additive command-envelope-state,
+  command-envelope-category, and command-envelope-operation drill-down methods, and ASP.NET Core
+  publishes those same filters on the existing `/engine/cdc-capture-runtimes*` route family
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the
+  shipped slice while later managed-connector execution work or broader write-path command issuance
+  remains separate follow-through
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships
+  `CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStates`,
+  `CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeCategories`,
+  `CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeOperationIds`,
+  `CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeSources`, and
+  `CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus`, while
+  `CdcCaptureExecutionRuntimeDescriptor` now carries additive `ManagedConnectorCommandEnvelope`
+- `Cephalon.Data` now derives runtime-level `not-applicable`, `blocked`, `operator-only`,
+  `approval-gated`, and `engine-ready` posture plus stable category ids such as
+  `observe-only-mode`, `blocking-remediation`, `runtime-truth-incomplete`,
+  `governance-out-of-policy`, `control-plane-ownership-gap`, `change-planned`,
+  `destructive-operation`, `approval-required`, `approval-ready`, `approval-gated`,
+  `engine-ready`, and `no-execution-needed`, together with intended operation ids such as `none`,
+  `reconcile`, `pause`, and `delete`, source truth, target connector identity, deterministic
+  command fingerprints, and safety flags from merged execution-approval, execution-intent, dry-run,
+  preflight, write-path-readiness, action-plan, drift, governance, remediation, and coverage truth
+- `ICdcCaptureExecutionRuntimeCatalog` now exposes
+  `GetByManagedConnectorCommandEnvelopeState(...)`,
+  `GetByManagedConnectorCommandEnvelopeCategory(...)`, and
+  `GetByManagedConnectorCommandEnvelopeOperationId(...)`, while `Cephalon.AspNetCore` now maps
+  `/engine/cdc-capture-runtimes/command-envelopes/{commandState}`,
+  `/engine/cdc-capture-runtimes/command-envelopes/categories/{commandCategory}`, and
+  `/engine/cdc-capture-runtimes/command-envelopes/operations/{operationId}` so host routes stay
+  aligned with the same shared runtime story
+- targeted coverage now proves the command-envelope baseline through composition tests `37/37`,
+  hosting tests `15/15`, tooling tests `207/207`, and the reference docs publish script
+
 ### ENG-176 Phase 13 managed-connector execution-approval and safety-gating baseline
 
 Status: done

@@ -280,6 +280,12 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     public CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus ManagedConnectorExecutionApproval { get; init; } =
         new(CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStates.NotApplicable);
 
+    /// <summary>
+    /// Gets the operator-facing managed-connector write-path command envelope derived from execution approval, execution intent, dry-run, preflight, and the broader shared runtime truth.
+    /// </summary>
+    public CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus ManagedConnectorCommandEnvelope { get; init; } =
+        new(CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStates.NotApplicable);
+
     private static string[] Normalize(IReadOnlyList<string>? values)
     {
         return values?

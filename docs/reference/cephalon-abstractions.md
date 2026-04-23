@@ -8418,6 +8418,16 @@ CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus ManagedConnectorActio
 
 Gets the operator-facing managed-connector action plan derived from remediation, governance, and drift posture.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorcommandenvelope"></a>
+
+##### `ManagedConnectorCommandEnvelope`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus ManagedConnectorCommandEnvelope { get; set; }
+```
+
+Gets the operator-facing managed-connector write-path command envelope derived from execution approval, execution intent, dry-run, preflight, and the broader shared runtime truth.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectordrift"></a>
 
 ##### `ManagedConnectorDrift`
@@ -8975,6 +8985,777 @@ string State { get; }
 ```
 
 Gets the stable managed-connector action-plan state.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopecategories"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeCategories`
+
+Defines the stable category identifiers used by managed-connector command-envelope answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeCategories
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopecategories-approvalgated"></a>
+
+##### `ApprovalGated`
+
+```csharp
+const string ApprovalGated
+```
+
+The command envelope is currently approval-gated on the shared execution lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopecategories-approvalready"></a>
+
+##### `ApprovalReady`
+
+```csharp
+const string ApprovalReady
+```
+
+The command envelope is currently approval-ready on the shared execution lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopecategories-approvalrequired"></a>
+
+##### `ApprovalRequired`
+
+```csharp
+const string ApprovalRequired
+```
+
+The command envelope still reflects a higher-risk approval requirement.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopecategories-blockingremediation"></a>
+
+##### `BlockingRemediation`
+
+```csharp
+const string BlockingRemediation
+```
+
+The command envelope is blocked by remediation that still needs to clear first.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopecategories-changeplanned"></a>
+
+##### `ChangePlanned`
+
+```csharp
+const string ChangePlanned
+```
+
+The command envelope still reflects one or more shared write-path changes.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopecategories-controlplaneownershipgap"></a>
+
+##### `ControlPlaneOwnershipGap`
+
+```csharp
+const string ControlPlaneOwnershipGap
+```
+
+The command envelope is constrained because control-plane ownership still remains outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopecategories-destructiveoperation"></a>
+
+##### `DestructiveOperation`
+
+```csharp
+const string DestructiveOperation
+```
+
+The command envelope still reflects a destructive write-path such as connector deletion.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopecategories-engineready"></a>
+
+##### `EngineReady`
+
+```csharp
+const string EngineReady
+```
+
+The command envelope is currently ready on the shared execution lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopecategories-governanceoutofpolicy"></a>
+
+##### `GovernanceOutOfPolicy`
+
+```csharp
+const string GovernanceOutOfPolicy
+```
+
+The command envelope is constrained by governance that is currently out of policy.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopecategories-incompletereportingcoverage"></a>
+
+##### `IncompleteReportingCoverage`
+
+```csharp
+const string IncompleteReportingCoverage
+```
+
+The command envelope is constrained by incomplete reporting coverage.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopecategories-lifecyclechange"></a>
+
+##### `LifecycleChange`
+
+```csharp
+const string LifecycleChange
+```
+
+The command envelope still reflects a lifecycle transition such as pause, resume, restart, or delete.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopecategories-noexecutionneeded"></a>
+
+##### `NoExecutionNeeded`
+
+```csharp
+const string NoExecutionNeeded
+```
+
+The command envelope does not currently require additional write-path changes.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopecategories-observeonlymode"></a>
+
+##### `ObserveOnlyMode`
+
+```csharp
+const string ObserveOnlyMode
+```
+
+The command envelope is not currently applicable because the runtime remains observe-only.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopecategories-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+The command envelope currently remains operator-owned.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopecategories-runtimetruthincomplete"></a>
+
+##### `RuntimeTruthIncomplete`
+
+```csharp
+const string RuntimeTruthIncomplete
+```
+
+The command envelope is constrained by incomplete runtime truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopecategories-staleobservation"></a>
+
+##### `StaleObservation`
+
+```csharp
+const string StaleObservation
+```
+
+The command envelope is constrained by stale observation posture.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopeoperationids"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeOperationIds`
+
+Defines the stable managed-connector operation identifiers used by command-envelope answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeOperationIds
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopeoperationids-delete"></a>
+
+##### `Delete`
+
+```csharp
+const string Delete
+```
+
+The command envelope currently targets connector deletion.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopeoperationids-none"></a>
+
+##### `None`
+
+```csharp
+const string None
+```
+
+No management operation is currently associated with the command envelope.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopeoperationids-pause"></a>
+
+##### `Pause`
+
+```csharp
+const string Pause
+```
+
+The command envelope currently targets connector pause.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopeoperationids-reconcile"></a>
+
+##### `Reconcile`
+
+```csharp
+const string Reconcile
+```
+
+The command envelope currently targets connector reconciliation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopeoperationids-restart"></a>
+
+##### `Restart`
+
+```csharp
+const string Restart
+```
+
+The command envelope currently targets connector restart.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopeoperationids-resume"></a>
+
+##### `Resume`
+
+```csharp
+const string Resume
+```
+
+The command envelope currently targets connector resume.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopesources"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeSources`
+
+Defines the stable source identifiers used by managed-connector command-envelope answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeSources
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopesources-dryrun"></a>
+
+##### `DryRun`
+
+```csharp
+const string DryRun
+```
+
+The command envelope is primarily grounded in shared dry-run truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopesources-executionapproval"></a>
+
+##### `ExecutionApproval`
+
+```csharp
+const string ExecutionApproval
+```
+
+The command envelope is primarily grounded in shared execution-approval truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopesources-executionintent"></a>
+
+##### `ExecutionIntent`
+
+```csharp
+const string ExecutionIntent
+```
+
+The command envelope is primarily grounded in shared execution-intent truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopesources-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+The command envelope does not currently have a more specific primary source.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestates"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStates`
+
+Defines the stable state identifiers used by managed-connector command-envelope answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestates-approvalgated"></a>
+
+##### `ApprovalGated`
+
+```csharp
+const string ApprovalGated
+```
+
+Cephalon can describe the command envelope, but the write-path still requires approval before future engine execution.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestates-blocked"></a>
+
+##### `Blocked`
+
+```csharp
+const string Blocked
+```
+
+The managed connector still has one or more blockers before Cephalon can trust a runnable command envelope.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestates-engineready"></a>
+
+##### `EngineReady`
+
+```csharp
+const string EngineReady
+```
+
+Cephalon can describe the command envelope and the shared execution lane is ready for later engine execution work.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestates-notapplicable"></a>
+
+##### `NotApplicable`
+
+```csharp
+const string NotApplicable
+```
+
+The execution runtime does not currently produce a managed-connector command envelope.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestates-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+Cephalon can describe the command envelope, but the write-path remains operator-owned.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus`
+
+Describes the current operator-facing managed-connector write-path command envelope for one CDC execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-ctor-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus(string state, string description)
+```
+
+Creates a new managed-connector command-envelope answer.
+
+Parameters:
+- `state`: The stable command-envelope state, such as `blocked`, `operator-only`, `approval-gated`, `engine-ready`, or `not-applicable`.
+- `description`: An optional operator-facing command-envelope summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-actionplanstate"></a>
+
+##### `ActionPlanState`
+
+```csharp
+string ActionPlanState { get; set; }
+```
+
+Gets the current managed-connector action-plan state that informed the command envelope.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-appliestomanagedconnector"></a>
+
+##### `AppliesToManagedConnector`
+
+```csharp
+bool AppliesToManagedConnector { get; }
+```
+
+Gets a value indicating whether the execution runtime currently represents a managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-canpreparefutureexecutionlane"></a>
+
+##### `CanPrepareFutureExecutionLane`
+
+```csharp
+bool CanPrepareFutureExecutionLane { get; }
+```
+
+Gets a value indicating whether the command envelope currently fits a future engine-execution lane.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-categorycount"></a>
+
+##### `CategoryCount`
+
+```csharp
+int CategoryCount { get; }
+```
+
+Gets the number of active command-envelope categories currently visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-categoryids"></a>
+
+##### `CategoryIds`
+
+```csharp
+IReadOnlyList<string> CategoryIds { get; set; }
+```
+
+Gets the stable command-envelope categories currently active for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-cdccaptureids"></a>
+
+##### `CdcCaptureIds`
+
+```csharp
+IReadOnlyList<string> CdcCaptureIds { get; set; }
+```
+
+Gets the CDC capture identifiers currently associated with the command envelope.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-commandfingerprint"></a>
+
+##### `CommandFingerprint`
+
+```csharp
+string CommandFingerprint { get; set; }
+```
+
+Gets the deterministic command fingerprint Cephalon currently derives for the managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-connectclusterid"></a>
+
+##### `ConnectClusterId`
+
+```csharp
+string ConnectClusterId { get; set; }
+```
+
+Gets the best available connector-cluster identifier Cephalon would target for the command envelope.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-connectorclass"></a>
+
+##### `ConnectorClass`
+
+```csharp
+string ConnectorClass { get; set; }
+```
+
+Gets the best available connector-class identifier Cephalon would target for the command envelope.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing command-envelope summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-driftstate"></a>
+
+##### `DriftState`
+
+```csharp
+string DriftState { get; set; }
+```
+
+Gets the current managed-connector drift state that informed the command envelope.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-dryrunstate"></a>
+
+##### `DryRunState`
+
+```csharp
+string DryRunState { get; set; }
+```
+
+Gets the current managed-connector dry-run state that informed the command envelope.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-executionapprovalsourceid"></a>
+
+##### `ExecutionApprovalSourceId`
+
+```csharp
+string ExecutionApprovalSourceId { get; set; }
+```
+
+Gets the primary safety-gating source identifier already associated with managed-connector execution approval.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-executionapprovalstate"></a>
+
+##### `ExecutionApprovalState`
+
+```csharp
+string ExecutionApprovalState { get; set; }
+```
+
+Gets the current managed-connector execution-approval state that informed the command envelope.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-executionintentconfidencesourceid"></a>
+
+##### `ExecutionIntentConfidenceSourceId`
+
+```csharp
+string ExecutionIntentConfidenceSourceId { get; set; }
+```
+
+Gets the primary confidence-source identifier already associated with managed-connector execution intent.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-executionintentstate"></a>
+
+##### `ExecutionIntentState`
+
+```csharp
+string ExecutionIntentState { get; set; }
+```
+
+Gets the current managed-connector execution-intent state that informed the command envelope.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-executionruntimeid"></a>
+
+##### `ExecutionRuntimeId`
+
+```csharp
+string ExecutionRuntimeId { get; set; }
+```
+
+Gets the stable execution-runtime identifier currently associated with the command envelope.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-governancestate"></a>
+
+##### `GovernanceState`
+
+```csharp
+string GovernanceState { get; set; }
+```
+
+Gets the current managed-connector governance state that informed the command envelope.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-hascommandtarget"></a>
+
+##### `HasCommandTarget`
+
+```csharp
+bool HasCommandTarget { get; }
+```
+
+Gets a value indicating whether the command envelope currently targets a concrete managed-connector operation.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-isapprovalgated"></a>
+
+##### `IsApprovalGated`
+
+```csharp
+bool IsApprovalGated { get; }
+```
+
+Gets a value indicating whether the managed connector currently sits behind an approval gate.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-isblocked"></a>
+
+##### `IsBlocked`
+
+```csharp
+bool IsBlocked { get; }
+```
+
+Gets a value indicating whether the managed connector currently remains blocked before Cephalon can trust the command envelope.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-isdestructiveoperation"></a>
+
+##### `IsDestructiveOperation`
+
+```csharp
+bool IsDestructiveOperation { get; set; }
+```
+
+Gets a value indicating whether the current command envelope targets a destructive connector operation.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-isengineready"></a>
+
+##### `IsEngineReady`
+
+```csharp
+bool IsEngineReady { get; }
+```
+
+Gets a value indicating whether the managed connector currently sits on an engine-ready execution lane.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-isoperatoronly"></a>
+
+##### `IsOperatorOnly`
+
+```csharp
+bool IsOperatorOnly { get; }
+```
+
+Gets a value indicating whether the managed connector currently remains operator-owned.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-managementmode"></a>
+
+##### `ManagementMode`
+
+```csharp
+string ManagementMode { get; set; }
+```
+
+Gets the declared managed-connector management mode when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-operationid"></a>
+
+##### `OperationId`
+
+```csharp
+string OperationId { get; set; }
+```
+
+Gets the stable management-operation identifier currently associated with the command envelope.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-potentialchangecount"></a>
+
+##### `PotentialChangeCount`
+
+```csharp
+int PotentialChangeCount { get; set; }
+```
+
+Gets the number of visible potential shared write-path changes currently associated with the command envelope.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-preflightstate"></a>
+
+##### `PreflightState`
+
+```csharp
+string PreflightState { get; set; }
+```
+
+Gets the current managed-connector preflight state that informed the command envelope.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-primaryactionid"></a>
+
+##### `PrimaryActionId`
+
+```csharp
+string PrimaryActionId { get; set; }
+```
+
+Gets the primary action identifier currently associated with the runtime's managed-connector action plan.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-remediationstate"></a>
+
+##### `RemediationState`
+
+```csharp
+string RemediationState { get; set; }
+```
+
+Gets the current runtime-level remediation state that informed the command envelope.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-reportingcoveragestate"></a>
+
+##### `ReportingCoverageState`
+
+```csharp
+string ReportingCoverageState { get; set; }
+```
+
+Gets the current runtime-level reporting-coverage state that informed the command envelope.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-requiresattention"></a>
+
+##### `RequiresAttention`
+
+```csharp
+bool RequiresAttention { get; }
+```
+
+Gets a value indicating whether the managed connector currently requires additional command-envelope attention.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-requiresexplicitapproval"></a>
+
+##### `RequiresExplicitApproval`
+
+```csharp
+bool RequiresExplicitApproval { get; set; }
+```
+
+Gets a value indicating whether the current command envelope still requires an explicit approval gate.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-sourceid"></a>
+
+##### `SourceId`
+
+```csharp
+string SourceId { get; set; }
+```
+
+Gets the primary source identifier Cephalon used to derive the command envelope.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-sourceproviderid"></a>
+
+##### `SourceProviderId`
+
+```csharp
+string SourceProviderId { get; set; }
+```
+
+Gets the best available source-provider identifier Cephalon would target for the command envelope.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable managed-connector command-envelope state.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-wouldapplychanges"></a>
+
+##### `WouldApplyChanges`
+
+```csharp
+bool WouldApplyChanges { get; set; }
+```
+
+Gets a value indicating whether the current command envelope would still apply one or more shared write-path changes.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-writepathreadinessstate"></a>
+
+##### `WritePathReadinessState`
+
+```csharp
+string WritePathReadinessState { get; set; }
+```
+
+Gets the current managed-connector write-path readiness state that informed the command envelope.
 
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftactionids"></a>
 
@@ -18691,6 +19472,51 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 
 Parameters:
 - `actionPlanState`: The stable managed-connector action-plan state identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcommandenvelopecategory-system-string"></a>
+
+##### `GetByManagedConnectorCommandEnvelopeCategory`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandEnvelopeCategory(string commandCategory)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector command envelope includes the requested category.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that command-envelope category.
+
+Parameters:
+- `commandCategory`: The stable managed-connector command-envelope category identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcommandenvelopeoperationid-system-string"></a>
+
+##### `GetByManagedConnectorCommandEnvelopeOperationId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandEnvelopeOperationId(string operationId)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector command envelope currently targets the requested operation.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.
+
+Parameters:
+- `operationId`: The stable managed-connector command-envelope operation identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcommandenvelopestate-system-string"></a>
+
+##### `GetByManagedConnectorCommandEnvelopeState`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandEnvelopeState(string commandState)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector command envelope matches the requested state.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that command-envelope state.
+
+Parameters:
+- `commandState`: The stable managed-connector command-envelope state identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectordriftcategory-system-string"></a>
 

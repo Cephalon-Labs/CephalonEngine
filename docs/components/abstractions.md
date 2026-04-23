@@ -347,6 +347,57 @@ coverage/remediation/governance/drift/action-plan/write-path-readiness/preflight
 current primary action id, and additive potential-change detail instead of inventing a
 Debezium-only dry-run contract.
 
+That same host-agnostic CDC runtime surface now also carries
+`CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStates`,
+`CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentCategories`,
+`CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentOperationIds`,
+`CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentSources`,
+`CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStatus`,
+`CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorExecutionIntent`, and additive
+`ICdcCaptureExecutionRuntimeCatalog.GetByManagedConnectorExecutionIntentState(...)` /
+`GetByManagedConnectorExecutionIntentCategory(...)` /
+`GetByManagedConnectorExecutionIntentOperationId(...)` filters. That keeps managed connectors
+queryable as shared `not-applicable`, `deferred`, `blocked`, `operator-action`,
+`requires-approval`, or `ready-to-execute` answers together with stable execution-intent
+categories, the intended operation id, source
+coverage/remediation/governance/drift/action-plan/write-path-readiness/preflight/dry-run state,
+the current primary action id, confidence-source truth, and additive potential-change detail
+instead of inventing a Debezium-only execution planner.
+
+That same host-agnostic CDC runtime surface now also carries
+`CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStates`,
+`CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalCategories`,
+`CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalOperationIds`,
+`CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalSources`,
+`CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus`,
+`CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorExecutionApproval`, and additive
+`ICdcCaptureExecutionRuntimeCatalog.GetByManagedConnectorExecutionApprovalState(...)` /
+`GetByManagedConnectorExecutionApprovalCategory(...)` /
+`GetByManagedConnectorExecutionApprovalOperationId(...)` filters. That keeps managed connectors
+queryable as shared `not-applicable`, `auto-blocked`, `policy-blocked`, `approval-required`,
+`approval-ready`, or `auto-eligible` answers together with stable execution-approval categories,
+the intended operation id, source
+coverage/remediation/governance/drift/action-plan/write-path-readiness/preflight/dry-run/execution-intent
+state, the current primary action id, safety-gating source truth, and explicit-approval detail
+instead of inventing a Debezium-only approval registry.
+
+That same host-agnostic CDC runtime surface now also carries
+`CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStates`,
+`CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeCategories`,
+`CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeOperationIds`,
+`CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeSources`,
+`CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus`,
+`CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorCommandEnvelope`, and additive
+`ICdcCaptureExecutionRuntimeCatalog.GetByManagedConnectorCommandEnvelopeState(...)` /
+`GetByManagedConnectorCommandEnvelopeCategory(...)` /
+`GetByManagedConnectorCommandEnvelopeOperationId(...)` filters. That keeps managed connectors
+queryable as shared `not-applicable`, `blocked`, `operator-only`, `approval-gated`, or
+`engine-ready` answers together with stable command-envelope categories, the intended operation
+id, source coverage/remediation/governance/drift/action-plan/write-path-readiness/preflight/
+dry-run/execution-intent/execution-approval state, the current primary action id, target
+connector identity, deterministic command fingerprints, and safety flags instead of inventing a
+Debezium-only execution registry.
+
 The app-model contract now also carries a contract-first resilience family through
 `ResilienceSelection`, `RetrySelection`, `TimeoutSelection`, `CircuitBreakerSelection`,
 `BulkheadSelection`, and `RateLimitingSelection`. `RateLimitingSelection` now also carries additive
