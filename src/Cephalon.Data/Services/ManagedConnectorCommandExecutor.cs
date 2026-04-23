@@ -91,15 +91,17 @@ internal sealed class ManagedConnectorCommandExecutor(
                 normalizedInvocationSourceId,
                 CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionInvocationSources.AutomaticRetry,
                 StringComparison.OrdinalIgnoreCase) &&
-            !runtime.ManagedConnectorDistributedRetryOrchestration.CanScheduleAutomaticRetryOnCurrentNode)
+            !runtime.ManagedConnectorMultiNodeLeaseExecution.CanExecuteAutomaticRetryOnCurrentNode)
         {
-            var orchestration = runtime.ManagedConnectorDistributedRetryOrchestration;
-            var coordinationState = orchestration.IsOperatorOnly
+            var multiNodeLeaseExecution = runtime.ManagedConnectorMultiNodeLeaseExecution;
+            var coordinationState = multiNodeLeaseExecution.IsOperatorOnly
                 ? CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.OperatorOnly
                 : CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Blocked;
-            var coordinationDescription = string.IsNullOrWhiteSpace(orchestration.Description)
-                ? "Automatic background retry is not currently allowed to execute on this node."
-                : orchestration.Description;
+            var coordinationDescription = string.IsNullOrWhiteSpace(multiNodeLeaseExecution.Description)
+                ? string.IsNullOrWhiteSpace(runtime.ManagedConnectorDistributedRetryOrchestration.Description)
+                    ? "Automatic background retry is not currently allowed to execute on this node."
+                    : runtime.ManagedConnectorDistributedRetryOrchestration.Description
+                : multiNodeLeaseExecution.Description;
 
             return CreateResult(
                 runtime,

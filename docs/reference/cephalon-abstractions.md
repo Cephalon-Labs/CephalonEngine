@@ -8588,6 +8588,16 @@ CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus ManagedConnectorGover
 
 Gets the operator-facing managed-connector governance posture for the execution runtime.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectormultinodeleaseexecution"></a>
+
+##### `ManagedConnectorMultiNodeLeaseExecution`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus ManagedConnectorMultiNodeLeaseExecution { get; set; }
+```
+
+Gets the operator-facing managed-connector broader multi-node lease-execution posture derived from coordination, lease, cross-node hardening, and distributed retry orchestration truth.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorpreflight"></a>
 
 ##### `ManagedConnectorPreflight`
@@ -21993,6 +22003,744 @@ string TaskReconciliationState { get; set; }
 
 Gets the latest reported task-reconciliation state when one is known.
 
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionCategories`
+
+Defines the stable category identifiers used by managed-connector broader multi-node lease-execution answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionCategories
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-activeleasevisible"></a>
+
+##### `ActiveLeaseVisible`
+
+```csharp
+const string ActiveLeaseVisible
+```
+
+The current runtime still exposes one active reporter lease.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-activereportervisible"></a>
+
+##### `ActiveReporterVisible`
+
+```csharp
+const string ActiveReporterVisible
+```
+
+The current runtime still exposes one active reporter identifier.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-cooldownwindow"></a>
+
+##### `CooldownWindow`
+
+```csharp
+const string CooldownWindow
+```
+
+The current retry policy is still waiting for a cooldown window to elapse.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-crossnodeidempotencyrisk"></a>
+
+##### `CrossNodeIdempotencyRisk`
+
+```csharp
+const string CrossNodeIdempotencyRisk
+```
+
+Cross-node idempotency currently remains risky for the current multi-node lease posture.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-crossnodeidempotentsafe"></a>
+
+##### `CrossNodeIdempotentSafe`
+
+```csharp
+const string CrossNodeIdempotentSafe
+```
+
+Cross-node idempotency currently looks safe for the current multi-node lease posture.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-currentnodeblocked"></a>
+
+##### `CurrentNodeBlocked`
+
+```csharp
+const string CurrentNodeBlocked
+```
+
+The current node cannot yet execute the next bounded automatic retry step.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-currentnodeexecutable"></a>
+
+##### `CurrentNodeExecutable`
+
+```csharp
+const string CurrentNodeExecutable
+```
+
+The current node can execute the next bounded automatic retry step.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-leaseblocked"></a>
+
+##### `LeaseBlocked`
+
+```csharp
+const string LeaseBlocked
+```
+
+The current multi-node lease posture still blocks execution on this node.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-leaseconflict"></a>
+
+##### `LeaseConflict`
+
+```csharp
+const string LeaseConflict
+```
+
+The current runtime still exposes conflicting retry lease ownership.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-leasecoordinatedruntime"></a>
+
+##### `LeaseCoordinatedRuntime`
+
+```csharp
+const string LeaseCoordinatedRuntime
+```
+
+The runtime depends on cross-node lease ownership before automatic retry should execute.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-leaseexecutable"></a>
+
+##### `LeaseExecutable`
+
+```csharp
+const string LeaseExecutable
+```
+
+The current multi-node lease posture allows execution on this node.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-leaseheld"></a>
+
+##### `LeaseHeld`
+
+```csharp
+const string LeaseHeld
+```
+
+The current runtime still exposes an active retry lease.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-leasemissing"></a>
+
+##### `LeaseMissing`
+
+```csharp
+const string LeaseMissing
+```
+
+The current runtime does not currently expose an active retry lease.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-nofurtherretryneeded"></a>
+
+##### `NoFurtherRetryNeeded`
+
+```csharp
+const string NoFurtherRetryNeeded
+```
+
+The current shared runtime truth does not currently need another automatic retry attempt.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+Multi-node lease execution still remains operator-owned outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-ownermatch"></a>
+
+##### `OwnerMatch`
+
+```csharp
+const string OwnerMatch
+```
+
+The current host coordination owner matches the active reporter lease.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-ownermismatch"></a>
+
+##### `OwnerMismatch`
+
+```csharp
+const string OwnerMismatch
+```
+
+The current host coordination owner does not match the active reporter lease.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-schedulerdisabled"></a>
+
+##### `SchedulerDisabled`
+
+```csharp
+const string SchedulerDisabled
+```
+
+The shared bounded retry scheduler is currently disabled for the runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-singlenoderuntime"></a>
+
+##### `SingleNodeRuntime`
+
+```csharp
+const string SingleNodeRuntime
+```
+
+The runtime currently executes automatic retry on a single node without cross-node lease ownership.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-staleleaserisk"></a>
+
+##### `StaleLeaseRisk`
+
+```csharp
+const string StaleLeaseRisk
+```
+
+The current multi-node lease posture still looks stale.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionsources"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionSources`
+
+Defines the stable source identifiers used by managed-connector broader multi-node lease-execution answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionSources
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionsources-automaticretrycoordination"></a>
+
+##### `AutomaticRetryCoordination`
+
+```csharp
+const string AutomaticRetryCoordination
+```
+
+The multi-node lease-execution answer was derived primarily from automatic-retry coordination truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionsources-crossnodeidempotencyhardening"></a>
+
+##### `CrossNodeIdempotencyHardening`
+
+```csharp
+const string CrossNodeIdempotencyHardening
+```
+
+The multi-node lease-execution answer was derived primarily from cross-node idempotency-hardening truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionsources-distributedretrylease"></a>
+
+##### `DistributedRetryLease`
+
+```csharp
+const string DistributedRetryLease
+```
+
+The multi-node lease-execution answer was derived primarily from distributed retry lease truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionsources-distributedretryorchestration"></a>
+
+##### `DistributedRetryOrchestration`
+
+```csharp
+const string DistributedRetryOrchestration
+```
+
+The multi-node lease-execution answer was derived primarily from distributed retry orchestration truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionsources-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+The multi-node lease-execution answer does not currently resolve to one specific source.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstates"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStates`
+
+Defines the stable state identifiers used by managed-connector broader multi-node lease-execution answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstates-leaseblocked"></a>
+
+##### `LeaseBlocked`
+
+```csharp
+const string LeaseBlocked
+```
+
+The current node cannot yet execute the next bounded automatic retry step even though lease execution applies.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstates-leaseconflicted"></a>
+
+##### `LeaseConflicted`
+
+```csharp
+const string LeaseConflicted
+```
+
+The current multi-node lease posture remains conflicted across nodes.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstates-leaseexecutable"></a>
+
+##### `LeaseExecutable`
+
+```csharp
+const string LeaseExecutable
+```
+
+The current node can execute the next bounded automatic retry step under the active multi-node lease posture.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstates-notapplicable"></a>
+
+##### `NotApplicable`
+
+```csharp
+const string NotApplicable
+```
+
+Multi-node lease execution does not currently apply to the execution runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstates-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+Multi-node lease execution still remains operator-owned outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstates-singlenode"></a>
+
+##### `SingleNode`
+
+```csharp
+const string SingleNode
+```
+
+The runtime currently executes automatic retry on a single node without cross-node lease ownership.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstates-staleleaserisk"></a>
+
+##### `StaleLeaseRisk`
+
+```csharp
+const string StaleLeaseRisk
+```
+
+The current multi-node lease posture remains risky because ownership truth still looks stale.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus`
+
+Describes the current operator-facing broader multi-node lease-execution posture for one CDC execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-ctor-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus(string state, string description)
+```
+
+Creates a new managed-connector broader multi-node lease-execution answer.
+
+Parameters:
+- `state`: The stable broader multi-node lease-execution state, such as `not-applicable`, `operator-only`, `single-node`, `lease-executable`, `lease-blocked`, `lease-conflicted`, or `stale-lease-risk`.
+- `description`: An optional operator-facing broader multi-node lease-execution summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-activereporterid"></a>
+
+##### `ActiveReporterId`
+
+```csharp
+string ActiveReporterId { get; set; }
+```
+
+Gets the active reporter identifier currently visible for the execution runtime when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-activereporterleaseexpiresatutc"></a>
+
+##### `ActiveReporterLeaseExpiresAtUtc`
+
+```csharp
+DateTimeOffset? ActiveReporterLeaseExpiresAtUtc { get; set; }
+```
+
+Gets the UTC timestamp when the active reporter lease expires when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-appliestomanagedconnector"></a>
+
+##### `AppliesToManagedConnector`
+
+```csharp
+bool AppliesToManagedConnector { get; }
+```
+
+Gets a value indicating whether the execution runtime currently represents a managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-automaticretrycoordinationstate"></a>
+
+##### `AutomaticRetryCoordinationState`
+
+```csharp
+string AutomaticRetryCoordinationState { get; set; }
+```
+
+Gets the current managed-connector automatic background retry coordination state that informed broader multi-node lease execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-canexecuteautomaticretryoncurrentnode"></a>
+
+##### `CanExecuteAutomaticRetryOnCurrentNode`
+
+```csharp
+bool CanExecuteAutomaticRetryOnCurrentNode { get; set; }
+```
+
+Gets a value indicating whether the current node can execute the next bounded automatic retry step.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-categorycount"></a>
+
+##### `CategoryCount`
+
+```csharp
+int CategoryCount { get; }
+```
+
+Gets the number of active broader multi-node lease-execution categories currently visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-categoryids"></a>
+
+##### `CategoryIds`
+
+```csharp
+IReadOnlyList<string> CategoryIds { get; set; }
+```
+
+Gets the stable broader multi-node lease-execution categories currently active for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-cdccaptureids"></a>
+
+##### `CdcCaptureIds`
+
+```csharp
+IReadOnlyList<string> CdcCaptureIds { get; set; }
+```
+
+Gets the CDC capture identifiers currently associated with broader multi-node lease execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-cooldownuntilutc"></a>
+
+##### `CooldownUntilUtc`
+
+```csharp
+DateTimeOffset? CooldownUntilUtc { get; set; }
+```
+
+Gets the timestamp when the active retry cooldown window ends, when one applies.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-coordinationownerid"></a>
+
+##### `CoordinationOwnerId`
+
+```csharp
+string CoordinationOwnerId { get; set; }
+```
+
+Gets the host-owned coordination owner identifier when one was configured for automatic retry.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-coordinationownermatchesactivereporter"></a>
+
+##### `CoordinationOwnerMatchesActiveReporter`
+
+```csharp
+bool CoordinationOwnerMatchesActiveReporter { get; set; }
+```
+
+Gets a value indicating whether the current host coordination owner matches the active reporter identifier.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-crossnodeidempotencyhardeningstate"></a>
+
+##### `CrossNodeIdempotencyHardeningState`
+
+```csharp
+string CrossNodeIdempotencyHardeningState { get; set; }
+```
+
+Gets the current managed-connector cross-node idempotency-hardening state that informed broader multi-node lease execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing broader multi-node lease-execution summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-distributedretryleasestate"></a>
+
+##### `DistributedRetryLeaseState`
+
+```csharp
+string DistributedRetryLeaseState { get; set; }
+```
+
+Gets the current managed-connector distributed retry lease state that informed broader multi-node lease execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-distributedretryorchestrationstate"></a>
+
+##### `DistributedRetryOrchestrationState`
+
+```csharp
+string DistributedRetryOrchestrationState { get; set; }
+```
+
+Gets the current managed-connector distributed retry orchestration state that informed broader multi-node lease execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-executionownership"></a>
+
+##### `ExecutionOwnership`
+
+```csharp
+string ExecutionOwnership { get; set; }
+```
+
+Gets the operator-facing execution-ownership mode that informed broader multi-node lease execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-executionruntimeid"></a>
+
+##### `ExecutionRuntimeId`
+
+```csharp
+string ExecutionRuntimeId { get; set; }
+```
+
+Gets the stable execution-runtime identifier currently associated with broader multi-node lease execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-executiontopology"></a>
+
+##### `ExecutionTopology`
+
+```csharp
+string ExecutionTopology { get; set; }
+```
+
+Gets the operator-facing execution-topology classification that informed broader multi-node lease execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-hasactivereporterlease"></a>
+
+##### `HasActiveReporterLease`
+
+```csharp
+bool HasActiveReporterLease { get; }
+```
+
+Gets a value indicating whether the runtime currently exposes one active reporter lease.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-isleaseblocked"></a>
+
+##### `IsLeaseBlocked`
+
+```csharp
+bool IsLeaseBlocked { get; }
+```
+
+Gets a value indicating whether the current multi-node lease posture still blocks execution on this node.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-isleaseconflicted"></a>
+
+##### `IsLeaseConflicted`
+
+```csharp
+bool IsLeaseConflicted { get; }
+```
+
+Gets a value indicating whether the current multi-node lease posture remains conflicted across nodes.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-isleaseexecutable"></a>
+
+##### `IsLeaseExecutable`
+
+```csharp
+bool IsLeaseExecutable { get; }
+```
+
+Gets a value indicating whether the current node can execute the next bounded automatic retry step under the active multi-node lease posture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-isoperatoronly"></a>
+
+##### `IsOperatorOnly`
+
+```csharp
+bool IsOperatorOnly { get; }
+```
+
+Gets a value indicating whether broader multi-node lease execution still remains operator-owned outside Cephalon.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-issinglenode"></a>
+
+##### `IsSingleNode`
+
+```csharp
+bool IsSingleNode { get; }
+```
+
+Gets a value indicating whether broader multi-node lease execution currently runs as a single-node posture.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-isstaleleaserisk"></a>
+
+##### `IsStaleLeaseRisk`
+
+```csharp
+bool IsStaleLeaseRisk { get; }
+```
+
+Gets a value indicating whether the current multi-node lease posture still looks stale.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-latestautomaticretryattemptid"></a>
+
+##### `LatestAutomaticRetryAttemptId`
+
+```csharp
+string LatestAutomaticRetryAttemptId { get; set; }
+```
+
+Gets the latest automatic retry attempt identifier currently associated with broader multi-node lease execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-latestautomaticretryrecordedatutc"></a>
+
+##### `LatestAutomaticRetryRecordedAtUtc`
+
+```csharp
+DateTimeOffset? LatestAutomaticRetryRecordedAtUtc { get; set; }
+```
+
+Gets the timestamp when Cephalon recorded the latest automatic retry attempt when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-managementmode"></a>
+
+##### `ManagementMode`
+
+```csharp
+string ManagementMode { get; set; }
+```
+
+Gets the declared managed-connector management mode when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-operationid"></a>
+
+##### `OperationId`
+
+```csharp
+string OperationId { get; set; }
+```
+
+Gets the stable management-operation identifier currently associated with broader multi-node lease execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-pollingintervalseconds"></a>
+
+##### `PollingIntervalSeconds`
+
+```csharp
+int PollingIntervalSeconds { get; set; }
+```
+
+Gets the bounded retry scheduler polling interval, in seconds, when one is configured.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-retryfingerprint"></a>
+
+##### `RetryFingerprint`
+
+```csharp
+string RetryFingerprint { get; set; }
+```
+
+Gets the deterministic retry fingerprint currently associated with broader multi-node lease execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-schedulerid"></a>
+
+##### `SchedulerId`
+
+```csharp
+string SchedulerId { get; set; }
+```
+
+Gets the stable shared scheduler identifier currently associated with broader multi-node lease execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-schedulerkind"></a>
+
+##### `SchedulerKind`
+
+```csharp
+string SchedulerKind { get; set; }
+```
+
+Gets the stable shared scheduler kind currently associated with broader multi-node lease execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-sourceid"></a>
+
+##### `SourceId`
+
+```csharp
+string SourceId { get; set; }
+```
+
+Gets the primary source identifier Cephalon used to derive broader multi-node lease execution.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable managed-connector broader multi-node lease-execution state.
+
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorpreflightcategories"></a>
 
 ### `CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories`
@@ -30648,6 +31396,51 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 
 Parameters:
 - `governanceState`: The stable governance-state identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectormultinodeleaseexecutioncategory-system-string"></a>
+
+##### `GetByManagedConnectorMultiNodeLeaseExecutionCategory`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorMultiNodeLeaseExecutionCategory(string leaseExecutionCategory)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector broader multi-node lease-execution answer reports the requested category identifier.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that broader multi-node lease-execution category.
+
+Parameters:
+- `leaseExecutionCategory`: The stable broader multi-node lease-execution category identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectormultinodeleaseexecutionownerid-system-string"></a>
+
+##### `GetByManagedConnectorMultiNodeLeaseExecutionOwnerId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorMultiNodeLeaseExecutionOwnerId(string ownerId)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector broader multi-node lease-execution answer references the requested local coordination owner identifier.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that owner identifier.
+
+Parameters:
+- `ownerId`: The stable local coordination owner identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectormultinodeleaseexecutionstate-system-string"></a>
+
+##### `GetByManagedConnectorMultiNodeLeaseExecutionState`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorMultiNodeLeaseExecutionState(string leaseExecutionState)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector broader multi-node lease-execution answer matches the requested state identifier.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that broader multi-node lease-execution state.
+
+Parameters:
+- `leaseExecutionState`: The stable broader multi-node lease-execution state identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorpreflightcategory-system-string"></a>
 

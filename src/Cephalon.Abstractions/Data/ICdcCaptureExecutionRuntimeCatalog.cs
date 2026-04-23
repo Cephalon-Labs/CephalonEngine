@@ -459,6 +459,27 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDistributedRetryOrchestrationOwnerId(string ownerId);
 
     /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector broader multi-node lease-execution answer matches the requested state identifier.
+    /// </summary>
+    /// <param name="leaseExecutionState">The stable broader multi-node lease-execution state identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that broader multi-node lease-execution state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorMultiNodeLeaseExecutionState(string leaseExecutionState);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector broader multi-node lease-execution answer reports the requested category identifier.
+    /// </summary>
+    /// <param name="leaseExecutionCategory">The stable broader multi-node lease-execution category identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that broader multi-node lease-execution category.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorMultiNodeLeaseExecutionCategory(string leaseExecutionCategory);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector broader multi-node lease-execution answer references the requested local coordination owner identifier.
+    /// </summary>
+    /// <param name="ownerId">The stable local coordination owner identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that owner identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorMultiNodeLeaseExecutionOwnerId(string ownerId);
+
+    /// <summary>
     /// Gets the bounded managed-connector command-execution history currently recorded for one execution runtime.
     /// </summary>
     /// <param name="executionRuntimeId">The stable execution-runtime identifier to resolve.</param>

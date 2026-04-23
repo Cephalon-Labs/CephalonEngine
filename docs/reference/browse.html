@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-23T22:50:56.4554229+00:00",
+  "GeneratedAtUtc": "2026-04-23T23:15:10.9546539+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -111,7 +111,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 469
+      "TypeCount": 473
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -674,7 +674,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
-      "TypeCount": 189
+      "TypeCount": 193
     },
     {
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
@@ -3313,7 +3313,7 @@
       "MemberCounts": {
         "Constructors": 2,
         "Fields": 0,
-        "Properties": 37,
+        "Properties": 38,
         "Methods": 0
       }
     },
@@ -4529,6 +4529,66 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 23,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionCategories",
+      "Summary": "Defines the stable category identifiers used by managed-connector broader multi-node lease-execution answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 20,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionsources",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionSources",
+      "Summary": "Defines the stable source identifiers used by managed-connector broader multi-node lease-execution answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 5,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstates",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStates",
+      "Summary": "Defines the stable state identifiers used by managed-connector broader multi-node lease-execution answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 7,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus",
+      "Declaration": "public sealed class CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "Summary": "Describes the current operator-facing broader multi-node lease-execution posture for one CDC execution runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 35,
         "Methods": 0
       }
     },
@@ -8189,7 +8249,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 65
+        "Methods": 68
       }
     },
     {
@@ -14848,6 +14908,17 @@
       "Summary": "The current runtime still exposes one active reporter lease."
     },
     {
+      "DisplayName": "ActiveLeaseVisible",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-activeleasevisible",
+      "Signature": "const string ActiveLeaseVisible",
+      "Summary": "The current runtime still exposes one active reporter lease."
+    },
+    {
       "DisplayName": "ActiveReporterCount",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeReporterCoordinationRollup",
@@ -14910,6 +14981,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-activereporterid",
+      "Signature": "string ActiveReporterId { get; set; }",
+      "Summary": "Gets the active reporter identifier currently visible for the execution runtime when one exists."
+    },
+    {
+      "DisplayName": "ActiveReporterId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-activereporterid",
       "Signature": "string ActiveReporterId { get; set; }",
       "Summary": "Gets the active reporter identifier currently visible for the execution runtime when one exists."
     },
@@ -14993,6 +15075,17 @@
     {
       "DisplayName": "ActiveReporterLeaseExpiresAtUtc",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-activereporterleaseexpiresatutc",
+      "Signature": "DateTimeOffset? ActiveReporterLeaseExpiresAtUtc { get; set; }",
+      "Summary": "Gets the UTC timestamp when the active reporter lease expires when one is known."
+    },
+    {
+      "DisplayName": "ActiveReporterLeaseExpiresAtUtc",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureReporterCoordinationStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -15020,6 +15113,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-activereportervisible",
+      "Signature": "const string ActiveReporterVisible",
+      "Summary": "The current runtime still exposes one active reporter identifier."
+    },
+    {
+      "DisplayName": "ActiveReporterVisible",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-activereportervisible",
       "Signature": "const string ActiveReporterVisible",
       "Summary": "The current runtime still exposes one active reporter identifier."
     },
@@ -18106,6 +18210,17 @@
     {
       "DisplayName": "AppliesToManagedConnector",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-appliestomanagedconnector",
+      "Signature": "bool AppliesToManagedConnector { get; }",
+      "Summary": "Gets a value indicating whether the execution runtime currently represents a managed connector."
+    },
+    {
+      "DisplayName": "AppliesToManagedConnector",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -19545,6 +19660,17 @@
       "Summary": "The distributed retry lease answer was derived primarily from automatic-retry coordination truth."
     },
     {
+      "DisplayName": "AutomaticRetryCoordination",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionsources-automaticretrycoordination",
+      "Signature": "const string AutomaticRetryCoordination",
+      "Summary": "The multi-node lease-execution answer was derived primarily from automatic-retry coordination truth."
+    },
+    {
       "DisplayName": "AutomaticRetryCoordinationState",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
@@ -19587,6 +19713,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-automaticretrycoordinationstate",
       "Signature": "string AutomaticRetryCoordinationState { get; set; }",
       "Summary": "Gets the current managed-connector automatic background retry coordination state that informed distributed retry orchestration."
+    },
+    {
+      "DisplayName": "AutomaticRetryCoordinationState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-automaticretrycoordinationstate",
+      "Signature": "string AutomaticRetryCoordinationState { get; set; }",
+      "Summary": "Gets the current managed-connector automatic background retry coordination state that informed broader multi-node lease execution."
     },
     {
       "DisplayName": "AutomaticRetryDisabled",
@@ -21866,6 +22003,17 @@
       "Summary": "Gets a value indicating whether automatic retry can safely execute on the current node."
     },
     {
+      "DisplayName": "CanExecuteAutomaticRetryOnCurrentNode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-canexecuteautomaticretryoncurrentnode",
+      "Signature": "bool CanExecuteAutomaticRetryOnCurrentNode { get; set; }",
+      "Summary": "Gets a value indicating whether the current node can execute the next bounded automatic retry step."
+    },
+    {
       "DisplayName": "CanExecuteOnCurrentNode",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus",
@@ -22660,6 +22808,17 @@
     {
       "DisplayName": "CategoryCount",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-categorycount",
+      "Signature": "int CategoryCount { get; }",
+      "Summary": "Gets the number of active broader multi-node lease-execution categories currently visible for the execution runtime."
+    },
+    {
+      "DisplayName": "CategoryCount",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -22887,6 +23046,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-categoryids",
       "Signature": "IReadOnlyList\u003Cstring\u003E CategoryIds { get; set; }",
       "Summary": "Gets the stable managed-connector governance categories currently active for the execution runtime."
+    },
+    {
+      "DisplayName": "CategoryIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-categoryids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E CategoryIds { get; set; }",
+      "Summary": "Gets the stable broader multi-node lease-execution categories currently active for the execution runtime."
     },
     {
       "DisplayName": "CategoryIds",
@@ -23241,6 +23411,17 @@
       "Summary": "Creates a new managed-connector governance answer."
     },
     {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-ctor-system-string-system-string",
+      "Signature": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus(string state, string description)",
+      "Summary": "Creates a new managed-connector broader multi-node lease-execution answer."
+    },
+    {
       "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus",
       "Category": "Constructors",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus",
@@ -23547,6 +23728,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadapterstatus-cdccaptureids",
       "Signature": "IReadOnlyList\u003Cstring\u003E CdcCaptureIds { get; set; }",
       "Summary": "Gets the CDC capture identifiers currently associated with the execution adapter."
+    },
+    {
+      "DisplayName": "CdcCaptureIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-cdccaptureids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E CdcCaptureIds { get; set; }",
+      "Summary": "Gets the CDC capture identifiers currently associated with broader multi-node lease execution."
     },
     {
       "DisplayName": "CdcCaptureIds",
@@ -27533,6 +27725,17 @@
     {
       "DisplayName": "CooldownUntilUtc",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-cooldownuntilutc",
+      "Signature": "DateTimeOffset? CooldownUntilUtc { get; set; }",
+      "Summary": "Gets the timestamp when the active retry cooldown window ends, when one applies."
+    },
+    {
+      "DisplayName": "CooldownUntilUtc",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -27549,6 +27752,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-cooldownwindow",
+      "Signature": "const string CooldownWindow",
+      "Summary": "The current retry policy is still waiting for a cooldown window to elapse."
+    },
+    {
+      "DisplayName": "CooldownWindow",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-cooldownwindow",
       "Signature": "const string CooldownWindow",
       "Summary": "The current retry policy is still waiting for a cooldown window to elapse."
     },
@@ -27663,6 +27877,17 @@
       "Summary": "Gets the host-owned coordination owner identifier when one was configured for automatic retry."
     },
     {
+      "DisplayName": "CoordinationOwnerId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-coordinationownerid",
+      "Signature": "string CoordinationOwnerId { get; set; }",
+      "Summary": "Gets the host-owned coordination owner identifier when one was configured for automatic retry."
+    },
+    {
       "DisplayName": "CoordinationOwnerMatchesActiveReporter",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus",
@@ -27693,6 +27918,17 @@
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-coordinationownermatchesactivereporter",
       "Signature": "bool CoordinationOwnerMatchesActiveReporter { get; }",
+      "Summary": "Gets a value indicating whether the current host coordination owner matches the active reporter identifier."
+    },
+    {
+      "DisplayName": "CoordinationOwnerMatchesActiveReporter",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-coordinationownermatchesactivereporter",
+      "Signature": "bool CoordinationOwnerMatchesActiveReporter { get; set; }",
       "Summary": "Gets a value indicating whether the current host coordination owner matches the active reporter identifier."
     },
     {
@@ -28213,6 +28449,28 @@
       "Summary": "The distributed retry orchestration answer was derived primarily from cross-node idempotency-hardening truth."
     },
     {
+      "DisplayName": "CrossNodeIdempotencyHardening",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionsources-crossnodeidempotencyhardening",
+      "Signature": "const string CrossNodeIdempotencyHardening",
+      "Summary": "The multi-node lease-execution answer was derived primarily from cross-node idempotency-hardening truth."
+    },
+    {
+      "DisplayName": "CrossNodeIdempotencyHardeningState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-crossnodeidempotencyhardeningstate",
+      "Signature": "string CrossNodeIdempotencyHardeningState { get; set; }",
+      "Summary": "Gets the current managed-connector cross-node idempotency-hardening state that informed broader multi-node lease execution."
+    },
+    {
       "DisplayName": "CrossNodeIdempotencyRisk",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories",
@@ -28235,6 +28493,17 @@
       "Summary": "Cross-node idempotency currently remains risky for automatic retry."
     },
     {
+      "DisplayName": "CrossNodeIdempotencyRisk",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-crossnodeidempotencyrisk",
+      "Signature": "const string CrossNodeIdempotencyRisk",
+      "Summary": "Cross-node idempotency currently remains risky for the current multi-node lease posture."
+    },
+    {
       "DisplayName": "CrossNodeIdempotentSafe",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories",
@@ -28255,6 +28524,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-crossnodeidempotentsafe",
       "Signature": "const string CrossNodeIdempotentSafe",
       "Summary": "Cross-node idempotency currently looks safe for automatic retry."
+    },
+    {
+      "DisplayName": "CrossNodeIdempotentSafe",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-crossnodeidempotentsafe",
+      "Signature": "const string CrossNodeIdempotentSafe",
+      "Summary": "Cross-node idempotency currently looks safe for the current multi-node lease posture."
     },
     {
       "DisplayName": "CrossNodeRuntime",
@@ -28312,6 +28592,17 @@
       "Summary": "Gets the tenant context currently active for the ambient runtime scope."
     },
     {
+      "DisplayName": "CurrentNodeBlocked",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-currentnodeblocked",
+      "Signature": "const string CurrentNodeBlocked",
+      "Summary": "The current node cannot yet execute the next bounded automatic retry step."
+    },
+    {
       "DisplayName": "CurrentNodeExecutable",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories",
@@ -28332,6 +28623,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-currentnodeexecutable",
       "Signature": "const string CurrentNodeExecutable",
       "Summary": "The current host can execute automatic retry safely on this node."
+    },
+    {
+      "DisplayName": "CurrentNodeExecutable",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-currentnodeexecutable",
+      "Signature": "const string CurrentNodeExecutable",
+      "Summary": "The current node can execute the next bounded automatic retry step."
     },
     {
       "DisplayName": "CurrentNodeSchedulable",
@@ -30474,6 +30776,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-description",
       "Signature": "string Description { get; }",
       "Summary": "Gets an optional operator-facing governance summary."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets an optional operator-facing broader multi-node lease-execution summary."
     },
     {
       "DisplayName": "Description",
@@ -32621,6 +32934,17 @@
       "Summary": "The distributed retry orchestration answer was derived primarily from distributed retry lease truth."
     },
     {
+      "DisplayName": "DistributedRetryLease",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionsources-distributedretrylease",
+      "Signature": "const string DistributedRetryLease",
+      "Summary": "The multi-node lease-execution answer was derived primarily from distributed retry lease truth."
+    },
+    {
       "DisplayName": "DistributedRetryLeaseState",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningStatus",
@@ -32641,6 +32965,39 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-distributedretryleasestate",
       "Signature": "string DistributedRetryLeaseState { get; set; }",
       "Summary": "Gets the current managed-connector distributed retry lease state that informed distributed retry orchestration."
+    },
+    {
+      "DisplayName": "DistributedRetryLeaseState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-distributedretryleasestate",
+      "Signature": "string DistributedRetryLeaseState { get; set; }",
+      "Summary": "Gets the current managed-connector distributed retry lease state that informed broader multi-node lease execution."
+    },
+    {
+      "DisplayName": "DistributedRetryOrchestration",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionsources-distributedretryorchestration",
+      "Signature": "const string DistributedRetryOrchestration",
+      "Summary": "The multi-node lease-execution answer was derived primarily from distributed retry orchestration truth."
+    },
+    {
+      "DisplayName": "DistributedRetryOrchestrationState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-distributedretryorchestrationstate",
+      "Signature": "string DistributedRetryOrchestrationState { get; set; }",
+      "Summary": "Gets the current managed-connector distributed retry orchestration state that informed broader multi-node lease execution."
     },
     {
       "DisplayName": "Distribution",
@@ -37188,6 +37545,17 @@
     {
       "DisplayName": "ExecutionOwnership",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-executionownership",
+      "Signature": "string ExecutionOwnership { get; set; }",
+      "Summary": "Gets the operator-facing execution-ownership mode that informed broader multi-node lease execution."
+    },
+    {
+      "DisplayName": "ExecutionOwnership",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeOptions",
       "NamespaceName": "Cephalon.Data.Configuration",
       "AssemblyName": "Cephalon.Data",
@@ -37342,6 +37710,17 @@
     {
       "DisplayName": "ExecutionRuntimeId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-executionruntimeid",
+      "Signature": "string ExecutionRuntimeId { get; set; }",
+      "Summary": "Gets the stable execution-runtime identifier currently associated with broader multi-node lease execution."
+    },
+    {
+      "DisplayName": "ExecutionRuntimeId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -37426,6 +37805,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-executiontopology",
       "Signature": "string ExecutionTopology { get; set; }",
       "Summary": "Gets the operator-facing execution-topology classification that informed distributed retry orchestration."
+    },
+    {
+      "DisplayName": "ExecutionTopology",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-executiontopology",
+      "Signature": "string ExecutionTopology { get; set; }",
+      "Summary": "Gets the operator-facing execution-topology classification that informed broader multi-node lease execution."
     },
     {
       "DisplayName": "ExecutionTopology",
@@ -40871,6 +41261,39 @@
       "Summary": "Gets the CDC capture execution runtimes whose current managed-connector governance answer matches the requested state."
     },
     {
+      "DisplayName": "GetByManagedConnectorMultiNodeLeaseExecutionCategory",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectormultinodeleaseexecutioncategory-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorMultiNodeLeaseExecutionCategory(string leaseExecutionCategory)",
+      "Summary": "Gets the CDC capture execution runtimes whose current managed-connector broader multi-node lease-execution answer reports the requested category identifier."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorMultiNodeLeaseExecutionOwnerId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectormultinodeleaseexecutionownerid-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorMultiNodeLeaseExecutionOwnerId(string ownerId)",
+      "Summary": "Gets the CDC capture execution runtimes whose current managed-connector broader multi-node lease-execution answer references the requested local coordination owner identifier."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorMultiNodeLeaseExecutionState",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectormultinodeleaseexecutionstate-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorMultiNodeLeaseExecutionState(string leaseExecutionState)",
+      "Summary": "Gets the CDC capture execution runtimes whose current managed-connector broader multi-node lease-execution answer matches the requested state identifier."
+    },
+    {
       "DisplayName": "GetByManagedConnectorPreflightCategory",
       "Category": "Methods",
       "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
@@ -42673,6 +43096,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-hasactivereporterlease",
       "Signature": "bool HasActiveReporterLease { get; }",
       "Summary": "Gets a value indicating whether the execution runtime currently exposes one active reporter lease."
+    },
+    {
+      "DisplayName": "HasActiveReporterLease",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-hasactivereporterlease",
+      "Signature": "bool HasActiveReporterLease { get; }",
+      "Summary": "Gets a value indicating whether the runtime currently exposes one active reporter lease."
     },
     {
       "DisplayName": "HasActiveReporterLease",
@@ -48549,6 +48983,17 @@
       "Summary": "Gets a value indicating whether the managed connector has been marked as issued on the shared issuance lane."
     },
     {
+      "DisplayName": "IsLeaseBlocked",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-isleaseblocked",
+      "Signature": "bool IsLeaseBlocked { get; }",
+      "Summary": "Gets a value indicating whether the current multi-node lease posture still blocks execution on this node."
+    },
+    {
       "DisplayName": "IsLeaseConflicted",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStatus",
@@ -48558,6 +49003,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-isleaseconflicted",
       "Signature": "bool IsLeaseConflicted { get; }",
       "Summary": "Gets a value indicating whether cross-node lease ownership or coordination remains conflicted."
+    },
+    {
+      "DisplayName": "IsLeaseConflicted",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-isleaseconflicted",
+      "Signature": "bool IsLeaseConflicted { get; }",
+      "Summary": "Gets a value indicating whether the current multi-node lease posture remains conflicted across nodes."
+    },
+    {
+      "DisplayName": "IsLeaseExecutable",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-isleaseexecutable",
+      "Signature": "bool IsLeaseExecutable { get; }",
+      "Summary": "Gets a value indicating whether the current node can execute the next bounded automatic retry step under the active multi-node lease posture."
     },
     {
       "DisplayName": "IsLeaseHeld",
@@ -48859,6 +49326,17 @@
     {
       "DisplayName": "IsOperatorOnly",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-isoperatoronly",
+      "Signature": "bool IsOperatorOnly { get; }",
+      "Summary": "Gets a value indicating whether broader multi-node lease execution still remains operator-owned outside Cephalon."
+    },
+    {
+      "DisplayName": "IsOperatorOnly",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -49141,6 +49619,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestatus-issinglenode",
       "Signature": "bool IsSingleNode { get; }",
       "Summary": "Gets a value indicating whether automatic retry can execute on a single node without cross-node lease coordination."
+    },
+    {
+      "DisplayName": "IsSingleNode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-issinglenode",
+      "Signature": "bool IsSingleNode { get; }",
+      "Summary": "Gets a value indicating whether broader multi-node lease execution currently runs as a single-node posture."
+    },
+    {
+      "DisplayName": "IsStaleLeaseRisk",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-isstaleleaserisk",
+      "Signature": "bool IsStaleLeaseRisk { get; }",
+      "Summary": "Gets a value indicating whether the current multi-node lease posture still looks stale."
     },
     {
       "DisplayName": "IsStaleOwnerRisk",
@@ -50760,6 +51260,17 @@
       "Summary": "Gets the latest automatic retry attempt identifier currently associated with distributed retry orchestration."
     },
     {
+      "DisplayName": "LatestAutomaticRetryAttemptId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-latestautomaticretryattemptid",
+      "Signature": "string LatestAutomaticRetryAttemptId { get; set; }",
+      "Summary": "Gets the latest automatic retry attempt identifier currently associated with broader multi-node lease execution."
+    },
+    {
       "DisplayName": "LatestAutomaticRetryExecutionFingerprint",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus",
@@ -50811,6 +51322,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-latestautomaticretryrecordedatutc",
+      "Signature": "DateTimeOffset? LatestAutomaticRetryRecordedAtUtc { get; set; }",
+      "Summary": "Gets the timestamp when Cephalon recorded the latest automatic retry attempt when one exists."
+    },
+    {
+      "DisplayName": "LatestAutomaticRetryRecordedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-latestautomaticretryrecordedatutc",
       "Signature": "DateTimeOffset? LatestAutomaticRetryRecordedAtUtc { get; set; }",
       "Summary": "Gets the timestamp when Cephalon recorded the latest automatic retry attempt when one exists."
     },
@@ -51211,6 +51733,28 @@
       "Summary": "Gets the layered-architecture pattern."
     },
     {
+      "DisplayName": "LeaseBlocked",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-leaseblocked",
+      "Signature": "const string LeaseBlocked",
+      "Summary": "The current multi-node lease posture still blocks execution on this node."
+    },
+    {
+      "DisplayName": "LeaseBlocked",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstates-leaseblocked",
+      "Signature": "const string LeaseBlocked",
+      "Summary": "The current node cannot yet execute the next bounded automatic retry step even though lease execution applies."
+    },
+    {
       "DisplayName": "LeaseConflict",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories",
@@ -51233,6 +51777,17 @@
       "Summary": "Cross-node lease coordination remains conflicted."
     },
     {
+      "DisplayName": "LeaseConflict",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-leaseconflict",
+      "Signature": "const string LeaseConflict",
+      "Summary": "The current runtime still exposes conflicting retry lease ownership."
+    },
+    {
       "DisplayName": "LeaseConflicted",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseStates",
@@ -51242,6 +51797,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestates-leaseconflicted",
       "Signature": "const string LeaseConflicted",
       "Summary": "Automatic retry cannot run because lease ownership or multi-node coordination remains conflicted."
+    },
+    {
+      "DisplayName": "LeaseConflicted",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstates-leaseconflicted",
+      "Signature": "const string LeaseConflicted",
+      "Summary": "The current multi-node lease posture remains conflicted across nodes."
     },
     {
       "DisplayName": "LeaseCoordinatedRuntime",
@@ -51275,6 +51841,39 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-leasecoordinatedruntime",
       "Signature": "const string LeaseCoordinatedRuntime",
       "Summary": "The runtime depends on cross-node lease coordination before automatic retry should execute."
+    },
+    {
+      "DisplayName": "LeaseCoordinatedRuntime",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-leasecoordinatedruntime",
+      "Signature": "const string LeaseCoordinatedRuntime",
+      "Summary": "The runtime depends on cross-node lease ownership before automatic retry should execute."
+    },
+    {
+      "DisplayName": "LeaseExecutable",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-leaseexecutable",
+      "Signature": "const string LeaseExecutable",
+      "Summary": "The current multi-node lease posture allows execution on this node."
+    },
+    {
+      "DisplayName": "LeaseExecutable",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstates-leaseexecutable",
+      "Signature": "const string LeaseExecutable",
+      "Summary": "The current node can execute the next bounded automatic retry step under the active multi-node lease posture."
     },
     {
       "DisplayName": "LeaseExpired",
@@ -51343,6 +51942,17 @@
       "Summary": "The current node holds the active retry lease, but Cephalon has not yet proven cross-node idempotency from retained history."
     },
     {
+      "DisplayName": "LeaseHeld",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-leaseheld",
+      "Signature": "const string LeaseHeld",
+      "Summary": "The current runtime still exposes an active retry lease."
+    },
+    {
       "DisplayName": "LeaseMissing",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories",
@@ -51396,6 +52006,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasestates-leasemissing",
       "Signature": "const string LeaseMissing",
       "Summary": "Automatic retry cannot run because no active retry lease is currently visible."
+    },
+    {
+      "DisplayName": "LeaseMissing",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-leasemissing",
+      "Signature": "const string LeaseMissing",
+      "Summary": "The current runtime does not currently expose an active retry lease."
     },
     {
       "DisplayName": "Legacy",
@@ -52047,6 +52668,17 @@
       "Summary": "Gets the operator-facing managed-connector governance posture for the execution runtime."
     },
     {
+      "DisplayName": "ManagedConnectorMultiNodeLeaseExecution",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectormultinodeleaseexecution",
+      "Signature": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus ManagedConnectorMultiNodeLeaseExecution { get; set; }",
+      "Summary": "Gets the operator-facing managed-connector broader multi-node lease-execution posture derived from coordination, lease, cross-node hardening, and distributed retry orchestration truth."
+    },
+    {
       "DisplayName": "ManagedConnectorPreflight",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeDescriptor",
@@ -52296,6 +52928,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-managementmode",
+      "Signature": "string ManagementMode { get; set; }",
+      "Summary": "Gets the declared managed-connector management mode when one is known."
+    },
+    {
+      "DisplayName": "ManagementMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-managementmode",
       "Signature": "string ManagementMode { get; set; }",
       "Summary": "Gets the declared managed-connector management mode when one is known."
     },
@@ -56742,6 +57385,17 @@
       "Summary": "No further automatic retry scheduling is currently needed for the runtime."
     },
     {
+      "DisplayName": "NoFurtherRetryNeeded",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-nofurtherretryneeded",
+      "Signature": "const string NoFurtherRetryNeeded",
+      "Summary": "The current shared runtime truth does not currently need another automatic retry attempt."
+    },
+    {
       "DisplayName": "NoMatchingCommandHistory",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandRetryCategories",
@@ -57213,6 +57867,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestates-notapplicable",
       "Signature": "const string NotApplicable",
       "Summary": "The execution runtime does not currently represent a managed connector."
+    },
+    {
+      "DisplayName": "NotApplicable",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstates-notapplicable",
+      "Signature": "const string NotApplicable",
+      "Summary": "Multi-node lease execution does not currently apply to the execution runtime."
     },
     {
       "DisplayName": "NotApplicable",
@@ -58438,6 +59103,17 @@
     {
       "DisplayName": "OperationId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-operationid",
+      "Signature": "string OperationId { get; set; }",
+      "Summary": "Gets the stable management-operation identifier currently associated with broader multi-node lease execution."
+    },
+    {
+      "DisplayName": "OperationId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -58698,6 +59374,28 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionintentcategories-operatoronly",
       "Signature": "const string OperatorOnly",
       "Summary": "The next intended follow-through currently remains operator-owned rather than engine-executable."
+    },
+    {
+      "DisplayName": "OperatorOnly",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-operatoronly",
+      "Signature": "const string OperatorOnly",
+      "Summary": "Multi-node lease execution still remains operator-owned outside Cephalon."
+    },
+    {
+      "DisplayName": "OperatorOnly",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstates-operatoronly",
+      "Signature": "const string OperatorOnly",
+      "Summary": "Multi-node lease execution still remains operator-owned outside Cephalon."
     },
     {
       "DisplayName": "OperatorOnly",
@@ -59534,6 +60232,17 @@
       "Summary": "The current host coordination owner matches the active reporter lease."
     },
     {
+      "DisplayName": "OwnerMatch",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-ownermatch",
+      "Signature": "const string OwnerMatch",
+      "Summary": "The current host coordination owner matches the active reporter lease."
+    },
+    {
       "DisplayName": "OwnerMismatch",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories",
@@ -59574,6 +60283,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-ownermismatch",
+      "Signature": "const string OwnerMismatch",
+      "Summary": "The current host coordination owner does not match the active reporter lease."
+    },
+    {
+      "DisplayName": "OwnerMismatch",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-ownermismatch",
       "Signature": "const string OwnerMismatch",
       "Summary": "The current host coordination owner does not match the active reporter lease."
     },
@@ -61202,6 +61922,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-pollingintervalseconds",
+      "Signature": "int PollingIntervalSeconds { get; set; }",
+      "Summary": "Gets the bounded retry scheduler polling interval, in seconds, when one is configured."
+    },
+    {
+      "DisplayName": "PollingIntervalSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-pollingintervalseconds",
       "Signature": "int PollingIntervalSeconds { get; set; }",
       "Summary": "Gets the bounded retry scheduler polling interval, in seconds, when one is configured."
     },
@@ -68961,6 +69692,17 @@
     {
       "DisplayName": "RetryFingerprint",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-retryfingerprint",
+      "Signature": "string RetryFingerprint { get; set; }",
+      "Summary": "Gets the deterministic retry fingerprint currently associated with broader multi-node lease execution."
+    },
+    {
+      "DisplayName": "RetryFingerprint",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -70686,6 +71428,17 @@
       "Summary": "The shared bounded distributed retry scheduler is disabled for the current runtime."
     },
     {
+      "DisplayName": "SchedulerDisabled",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-schedulerdisabled",
+      "Signature": "const string SchedulerDisabled",
+      "Summary": "The shared bounded retry scheduler is currently disabled for the runtime."
+    },
+    {
       "DisplayName": "SchedulerEnabled",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationCategories",
@@ -70708,6 +71461,17 @@
       "Summary": "Gets the stable shared scheduler identifier currently associated with distributed retry orchestration."
     },
     {
+      "DisplayName": "SchedulerId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-schedulerid",
+      "Signature": "string SchedulerId { get; set; }",
+      "Summary": "Gets the stable shared scheduler identifier currently associated with broader multi-node lease execution."
+    },
+    {
       "DisplayName": "SchedulerKind",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus",
@@ -70717,6 +71481,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-schedulerkind",
       "Signature": "string SchedulerKind { get; set; }",
       "Summary": "Gets the stable shared scheduler kind currently associated with distributed retry orchestration."
+    },
+    {
+      "DisplayName": "SchedulerKind",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-schedulerkind",
+      "Signature": "string SchedulerKind { get; set; }",
+      "Summary": "Gets the stable shared scheduler kind currently associated with broader multi-node lease execution."
     },
     {
       "DisplayName": "Schema",
@@ -71841,6 +72616,17 @@
       "Summary": "Automatic retry can run on the current node without cross-node coordination."
     },
     {
+      "DisplayName": "SingleNode",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstates-singlenode",
+      "Signature": "const string SingleNode",
+      "Summary": "The runtime currently executes automatic retry on a single node without cross-node lease ownership."
+    },
+    {
       "DisplayName": "SingleNodeRuntime",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories",
@@ -71883,6 +72669,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationcategories-singlenoderuntime",
       "Signature": "const string SingleNodeRuntime",
       "Summary": "The runtime can evaluate automatic retry on a single node without lease coordination."
+    },
+    {
+      "DisplayName": "SingleNodeRuntime",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-singlenoderuntime",
+      "Signature": "const string SingleNodeRuntime",
+      "Summary": "The runtime currently executes automatic retry on a single node without cross-node lease ownership."
     },
     {
       "DisplayName": "Skipped",
@@ -72477,6 +73274,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-sourceid",
       "Signature": "string SourceId { get; set; }",
       "Summary": "Gets the primary source identifier Cephalon used to derive execution approval."
+    },
+    {
+      "DisplayName": "SourceId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-sourceid",
+      "Signature": "string SourceId { get; set; }",
+      "Summary": "Gets the primary source identifier Cephalon used to derive broader multi-node lease execution."
     },
     {
       "DisplayName": "SourceId",
@@ -73588,6 +74396,28 @@
       "Summary": "Gets the CDC capture identifiers whose latest reported runtime observation is stale."
     },
     {
+      "DisplayName": "StaleLeaseRisk",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-staleleaserisk",
+      "Signature": "const string StaleLeaseRisk",
+      "Summary": "The current multi-node lease posture still looks stale."
+    },
+    {
+      "DisplayName": "StaleLeaseRisk",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstates-staleleaserisk",
+      "Signature": "const string StaleLeaseRisk",
+      "Summary": "The current multi-node lease posture remains risky because ownership truth still looks stale."
+    },
+    {
       "DisplayName": "StaleObservation",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeCategories",
@@ -74191,6 +75021,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestatus-state",
       "Signature": "string State { get; }",
       "Summary": "Gets the stable managed-connector governance state."
+    },
+    {
+      "DisplayName": "State",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-state",
+      "Signature": "string State { get; }",
+      "Summary": "Gets the stable managed-connector broader multi-node lease-execution state."
     },
     {
       "DisplayName": "State",
@@ -79097,6 +79938,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernancestates-unknown",
       "Signature": "const string Unknown",
       "Summary": "The execution runtime cannot currently determine its managed-connector governance posture."
+    },
+    {
+      "DisplayName": "Unknown",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionSources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionsources-unknown",
+      "Signature": "const string Unknown",
+      "Summary": "The multi-node lease-execution answer does not currently resolve to one specific source."
     },
     {
       "DisplayName": "Unknown",

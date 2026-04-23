@@ -358,6 +358,12 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     public CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStatus ManagedConnectorDistributedRetryOrchestration { get; init; } =
         new(CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates.NotApplicable);
 
+    /// <summary>
+    /// Gets the operator-facing managed-connector broader multi-node lease-execution posture derived from coordination, lease, cross-node hardening, and distributed retry orchestration truth.
+    /// </summary>
+    public CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus ManagedConnectorMultiNodeLeaseExecution { get; init; } =
+        new(CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStates.NotApplicable);
+
     private static string[] Normalize(IReadOnlyList<string>? values)
     {
         return values?

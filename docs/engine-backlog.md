@@ -3027,6 +3027,96 @@ Delivered:
 - targeted coverage now proves the operator-story drill-down baseline through composition tests
   `1/1`, hosting tests `1/1`, tooling tests `185/185`, and the reference docs publish script
 
+### ENG-190 Phase 13 managed-connector broader multi-node lease execution baseline
+
+Status: done
+Estimate: 5
+Completed: April 24, 2026
+
+Why:
+
+- `ENG-168`, `ENG-169`, `ENG-170`, `ENG-171`, `ENG-172`, `ENG-173`, `ENG-174`, `ENG-175`,
+  `ENG-176`, `ENG-177`, `ENG-178`, `ENG-179`, `ENG-180`, `ENG-181`, `ENG-182`, `ENG-183`,
+  `ENG-184`, `ENG-185`, `ENG-186`, `ENG-187`, `ENG-188`, and `ENG-189` already shipped shared
+  coverage, remediation, governance, desired-versus-observed drift, action-planning, write-path
+  readiness, preflight, dry-run, execution-intent, execution-approval, command-envelope,
+  command-issuance, provider execution-adapter, execution outcome/history, retry/idempotency,
+  retry-execution-policy, bounded command-journal, automatic background retry execution,
+  automatic background retry coordination, durable command-journal, distributed retry lease,
+  distributed retry orchestration, and richer cross-node idempotency hardening truth, but
+  operators still lacked one shared answer for whether the current node should actually execute the
+  next bounded retry step once those earlier lease, hardening, and orchestration answers were all
+  merged together
+- the next follow-through needed to keep broader multi-node lease-execution posture additive on the
+  existing `/engine/cdc-capture-runtimes*`, `/engine/runtime-story`, and
+  `snapshot.CdcCaptureExecutionRuntimes` surfaces instead of inventing a Debezium-only
+  lease-execution registry, second coordinator, or second scheduler lane
+- teams also needed one shared lease-execution answer that joined coordination-owner truth,
+  active-reporter identity, scheduler metadata, retry fingerprint, and latest automatic-attempt
+  evidence so later durable shared scheduler orchestration can build on truthful multi-node
+  execution posture instead of re-deriving those rules in another layer
+
+Acceptance:
+
+- `Cephalon.Abstractions` ships a stable managed-connector broader multi-node lease-execution
+  contract on `CdcCaptureExecutionRuntimeDescriptor` that can publish `not-applicable`,
+  `operator-only`, `single-node`, `lease-executable`, `lease-blocked`, `lease-conflicted`, and
+  `stale-lease-risk` posture together with lease-execution categories, source truth,
+  coordination-owner and active-reporter identity, scheduler identity, polling cadence, retry
+  fingerprint, latest automatic-attempt evidence, and `CanExecuteAutomaticRetryOnCurrentNode`
+- the shared execution-runtime catalog now exposes additive broader multi-node lease-execution
+  state, category, and owner filters while deriving that posture from the same shared
+  automatic-retry coordination, distributed-retry lease, cross-node-idempotency-hardening, and
+  distributed-retry orchestration truth instead of forcing hosts or providers to invent another
+  lease-execution planner
+- the shared data pack now feeds `ManagedConnectorAutomaticRetryHostedService` and automatic
+  `ManagedConnectorCommandExecutor` invocations through that broader shared lease-execution answer
+  so execution no longer trusts distributed retry orchestration alone when the merged lease or
+  cross-node hardening evidence still says the current node should remain blocked
+- ASP.NET Core publishes those same broader multi-node lease-execution filters on the existing
+  `/engine/cdc-capture-runtimes*` route family, including per-runtime drill-down, and the
+  lease-execution answer stays additive beside the existing coordination, lease, hardening, and
+  orchestration surfaces instead of branching into a Debezium-only endpoint set
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice while later durable shared scheduler orchestration or broader Kafka Connect
+  control-plane ownership remain separate follow-through
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships
+  `CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStates`,
+  `CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionCategories`,
+  `CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionSources`, and
+  `CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus`, and
+  `CdcCaptureExecutionRuntimeDescriptor` now carries additive
+  `ManagedConnectorMultiNodeLeaseExecution`
+- `Cephalon.Data` now derives managed-connector broader multi-node lease-execution posture from
+  merged automatic-retry coordination, distributed retry lease, cross-node idempotency hardening,
+  and distributed retry orchestration truth, including `operator-only`, `single-node`,
+  `lease-executable`, `lease-blocked`, `lease-conflicted`, and `stale-lease-risk` answers, and
+  `ICdcCaptureExecutionRuntimeCatalog` now exposes
+  `GetByManagedConnectorMultiNodeLeaseExecutionState(...)`,
+  `GetByManagedConnectorMultiNodeLeaseExecutionCategory(...)`, and
+  `GetByManagedConnectorMultiNodeLeaseExecutionOwnerId(...)`
+- `Cephalon.Data` now also feeds `ManagedConnectorAutomaticRetryHostedService` and automatic
+  invocations in `ManagedConnectorCommandExecutor` through that broader shared lease-execution
+  answer so bounded background retry execution no longer depends on distributed retry orchestration
+  alone when the merged lease-execution answer still blocks the current node
+- `Cephalon.AspNetCore` now maps
+  `/engine/cdc-capture-runtimes/multi-node-lease-executions/{leaseExecutionState}`,
+  `/engine/cdc-capture-runtimes/multi-node-lease-executions/categories/{leaseExecutionCategory}`,
+  `/engine/cdc-capture-runtimes/multi-node-lease-executions/owners/{ownerId}`, and
+  `/engine/cdc-capture-runtimes/{executionRuntimeId}/multi-node-lease-execution` so host routes
+  stay aligned with the same shared coordination, lease, hardening, orchestration, and
+  lease-execution story
+- `Cephalon.Data.Debezium` now participates in that broader shared lease-execution lane through
+  the existing managed-connector runtime and command surface while targeted coverage proves
+  `lease-executable`, `lease-blocked`, and `stale-lease-risk` posture without claiming a
+  Debezium-only lease-execution subsystem
+- targeted coverage now proves the broader multi-node lease-execution baseline through composition
+  tests `42/42`, hosting tests `20/20`, tooling tests `207/207`, and the reference docs publish
+  script
+
 ### ENG-189 Phase 13 managed-connector richer cross-node idempotency hardening baseline
 
 Status: done
