@@ -332,6 +332,21 @@ together with stable preflight categories, the intended operation id, source
 coverage/remediation/governance/drift/action-plan/write-path-readiness state, and the current
 primary action id instead of inventing a Debezium-only preflight contract.
 
+That same host-agnostic CDC runtime surface now also carries
+`CdcCaptureExecutionRuntimeManagedConnectorDryRunStates`,
+`CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories`,
+`CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds`,
+`CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus`,
+`CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorDryRun`, and additive
+`ICdcCaptureExecutionRuntimeCatalog.GetByManagedConnectorDryRunState(...)` /
+`GetByManagedConnectorDryRunCategory(...)` /
+`GetByManagedConnectorDryRunOperationId(...)` filters. That keeps managed connectors queryable
+as shared `not-applicable`, `deferred`, `blocked`, `no-op`, or `would-change` dry-run answers
+together with stable dry-run categories, the intended operation id, source
+coverage/remediation/governance/drift/action-plan/write-path-readiness/preflight state, the
+current primary action id, and additive potential-change detail instead of inventing a
+Debezium-only dry-run contract.
+
 The app-model contract now also carries a contract-first resilience family through
 `ResilienceSelection`, `RetrySelection`, `TimeoutSelection`, `CircuitBreakerSelection`,
 `BulkheadSelection`, and `RateLimitingSelection`. `RateLimitingSelection` now also carries additive

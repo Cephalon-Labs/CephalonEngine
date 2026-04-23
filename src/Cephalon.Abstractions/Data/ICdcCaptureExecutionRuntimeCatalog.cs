@@ -135,4 +135,25 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     /// <param name="operationId">The stable managed-connector operation identifier to filter by.</param>
     /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.</returns>
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorPreflightOperationId(string operationId);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector dry-run answer matches the requested state.
+    /// </summary>
+    /// <param name="dryRunState">The stable managed-connector dry-run state identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that dry-run state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDryRunState(string dryRunState);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector dry-run answer includes the requested category.
+    /// </summary>
+    /// <param name="dryRunCategory">The stable managed-connector dry-run category identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that dry-run category.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDryRunCategory(string dryRunCategory);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector dry-run answer currently targets the requested operation.
+    /// </summary>
+    /// <param name="operationId">The stable managed-connector dry-run operation identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDryRunOperationId(string operationId);
 }

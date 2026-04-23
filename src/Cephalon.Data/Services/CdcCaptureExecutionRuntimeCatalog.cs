@@ -243,6 +243,38 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             StringComparison.OrdinalIgnoreCase));
     }
 
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDryRunState(string dryRunState)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(dryRunState);
+        var normalizedDryRunState = dryRunState.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorDryRun.State,
+            normalizedDryRunState,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDryRunCategory(string dryRunCategory)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(dryRunCategory);
+        var normalizedDryRunCategory = dryRunCategory.Trim();
+
+        return FilterRuntimes(runtime => runtime.ManagedConnectorDryRun.CategoryIds.Contains(
+            normalizedDryRunCategory,
+            StringComparer.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDryRunOperationId(string operationId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(operationId);
+        var normalizedOperationId = operationId.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorDryRun.OperationId,
+            normalizedOperationId,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
     private CdcCaptureExecutionRuntimeDescriptor[] FilterRuntimes(
         Func<CdcCaptureExecutionRuntimeDescriptor, bool> predicate)
     {
@@ -285,6 +317,15 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             managedConnectorDrift,
             managedConnectorActionPlan,
             managedConnectorWritePathReadiness);
+        var managedConnectorDryRun = CreateManagedConnectorDryRun(
+            runtime.ExecutionTopology,
+            summary.ReportingCoverage,
+            summary.Remediation,
+            managedConnectorGovernance,
+            managedConnectorDrift,
+            managedConnectorActionPlan,
+            managedConnectorWritePathReadiness,
+            managedConnectorPreflight);
         return new CdcCaptureExecutionRuntimeDescriptor(
             id: runtime.Id,
             displayName: runtime.DisplayName,
@@ -297,7 +338,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             ManagedConnectorDrift = managedConnectorDrift,
             ManagedConnectorActionPlan = managedConnectorActionPlan,
             ManagedConnectorWritePathReadiness = managedConnectorWritePathReadiness,
-            ManagedConnectorPreflight = managedConnectorPreflight
+            ManagedConnectorPreflight = managedConnectorPreflight,
+            ManagedConnectorDryRun = managedConnectorDryRun
         };
     }
 
@@ -1381,6 +1423,136 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             writePathReadiness);
     }
 
+    private static CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus CreateManagedConnectorDryRun(
+        string executionTopology,
+        CdcCaptureExecutionRuntimeReportingCoverageStatus reportingCoverage,
+        CdcCaptureExecutionRuntimeRemediationStatus remediation,
+        CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus governance,
+        CdcCaptureExecutionRuntimeManagedConnectorDriftStatus drift,
+        CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus actionPlan,
+        CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus writePathReadiness,
+        CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus preflight)
+    {
+        ArgumentNullException.ThrowIfNull(reportingCoverage);
+        ArgumentNullException.ThrowIfNull(remediation);
+        ArgumentNullException.ThrowIfNull(governance);
+        ArgumentNullException.ThrowIfNull(drift);
+        ArgumentNullException.ThrowIfNull(actionPlan);
+        ArgumentNullException.ThrowIfNull(writePathReadiness);
+        ArgumentNullException.ThrowIfNull(preflight);
+
+        var operationId = ResolveManagedConnectorDryRunOperationId(governance.ManagementMode);
+        var wouldApplyChanges = WouldManagedConnectorDryRunApplyChanges(operationId, drift, reportingCoverage);
+        var potentialChangeCount = CountManagedConnectorDryRunPotentialChanges(operationId, drift, reportingCoverage, wouldApplyChanges);
+        var categories = CreateManagedConnectorDryRunCategories(
+            reportingCoverage,
+            remediation,
+            governance,
+            drift,
+            actionPlan,
+            preflight,
+            operationId,
+            wouldApplyChanges);
+
+        if (!string.Equals(executionTopology, "managed-connector", StringComparison.OrdinalIgnoreCase))
+        {
+            return CreateManagedConnectorDryRunStatus(
+                CdcCaptureExecutionRuntimeManagedConnectorDryRunStates.NotApplicable,
+                "The execution runtime does not currently represent a managed connector.",
+                categories,
+                CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.None,
+                governance,
+                reportingCoverage,
+                remediation,
+                drift,
+                actionPlan,
+                writePathReadiness,
+                preflight,
+                0,
+                wouldApplyChanges: false);
+        }
+
+        if (preflight.IsDeferred)
+        {
+            return CreateManagedConnectorDryRunStatus(
+                CdcCaptureExecutionRuntimeManagedConnectorDryRunStates.Deferred,
+                CreateManagedConnectorDeferredDryRunDescription(governance.Description),
+                categories,
+                operationId,
+                governance,
+                reportingCoverage,
+                remediation,
+                drift,
+                actionPlan,
+                writePathReadiness,
+                preflight,
+                0,
+                wouldApplyChanges: false);
+        }
+
+        if (preflight.RequiresAttention)
+        {
+            return CreateManagedConnectorDryRunStatus(
+                CdcCaptureExecutionRuntimeManagedConnectorDryRunStates.Blocked,
+                CreateManagedConnectorBlockedDryRunDescription(
+                    preflight.Description,
+                    operationId,
+                    wouldApplyChanges,
+                    drift,
+                    reportingCoverage),
+                categories,
+                operationId,
+                governance,
+                reportingCoverage,
+                remediation,
+                drift,
+                actionPlan,
+                writePathReadiness,
+                preflight,
+                potentialChangeCount,
+                wouldApplyChanges);
+        }
+
+        if (wouldApplyChanges)
+        {
+            return CreateManagedConnectorDryRunStatus(
+                CdcCaptureExecutionRuntimeManagedConnectorDryRunStates.WouldChange,
+                CreateManagedConnectorWouldChangeDryRunDescription(
+                    operationId,
+                    drift,
+                    reportingCoverage),
+                categories,
+                operationId,
+                governance,
+                reportingCoverage,
+                remediation,
+                drift,
+                actionPlan,
+                writePathReadiness,
+                preflight,
+                potentialChangeCount,
+                wouldApplyChanges: true);
+        }
+
+        return CreateManagedConnectorDryRunStatus(
+            CdcCaptureExecutionRuntimeManagedConnectorDryRunStates.NoOp,
+            CreateManagedConnectorNoOpDryRunDescription(
+                operationId,
+                drift,
+                reportingCoverage),
+            categories,
+            operationId,
+            governance,
+            reportingCoverage,
+            remediation,
+            drift,
+            actionPlan,
+            writePathReadiness,
+            preflight,
+            0,
+            wouldApplyChanges: false);
+    }
+
     private static ManagedConnectorMetadataSnapshot ResolveManagedConnectorMetadata(
         IReadOnlyDictionary<string, string> metadata)
     {
@@ -2010,6 +2182,463 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         }
 
         return "future managed-connector follow-through";
+    }
+
+    private static CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus CreateManagedConnectorDryRunStatus(
+        string state,
+        string description,
+        IReadOnlyList<string> categoryIds,
+        string operationId,
+        CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus governance,
+        CdcCaptureExecutionRuntimeReportingCoverageStatus reportingCoverage,
+        CdcCaptureExecutionRuntimeRemediationStatus remediation,
+        CdcCaptureExecutionRuntimeManagedConnectorDriftStatus drift,
+        CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus actionPlan,
+        CdcCaptureExecutionRuntimeManagedConnectorWritePathReadinessStatus writePathReadiness,
+        CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus preflight,
+        int potentialChangeCount,
+        bool wouldApplyChanges)
+    {
+        return new CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus(state, description)
+        {
+            CategoryIds = categoryIds,
+            OperationId = operationId,
+            ManagementMode = governance.ManagementMode,
+            ReportingCoverageState = reportingCoverage.State,
+            RemediationState = remediation.State,
+            GovernanceState = governance.State,
+            DriftState = drift.State,
+            ActionPlanState = actionPlan.State,
+            WritePathReadinessState = writePathReadiness.State,
+            PreflightState = preflight.State,
+            PrimaryActionId = actionPlan.PrimaryActionId,
+            ConnectorLifecycleState = drift.ConnectorLifecycleState,
+            ReconciliationState = drift.ReconciliationState,
+            MissingDeclaredTaskIds = drift.MissingDeclaredTaskIds,
+            UnexpectedReportedTaskIds = drift.UnexpectedReportedTaskIds,
+            PotentialChangeCount = potentialChangeCount,
+            WouldApplyChanges = wouldApplyChanges
+        };
+    }
+
+    private static string[] CreateManagedConnectorDryRunCategories(
+        CdcCaptureExecutionRuntimeReportingCoverageStatus reportingCoverage,
+        CdcCaptureExecutionRuntimeRemediationStatus remediation,
+        CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus governance,
+        CdcCaptureExecutionRuntimeManagedConnectorDriftStatus drift,
+        CdcCaptureExecutionRuntimeManagedConnectorActionPlanStatus actionPlan,
+        CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus preflight,
+        string operationId,
+        bool wouldApplyChanges)
+    {
+        ArgumentNullException.ThrowIfNull(reportingCoverage);
+        ArgumentNullException.ThrowIfNull(remediation);
+        ArgumentNullException.ThrowIfNull(governance);
+        ArgumentNullException.ThrowIfNull(drift);
+        ArgumentNullException.ThrowIfNull(actionPlan);
+        ArgumentNullException.ThrowIfNull(preflight);
+
+        var categories = new List<string>(capacity: 10);
+        static void AddCategory(List<string> values, string category)
+        {
+            if (!values.Contains(category, StringComparer.OrdinalIgnoreCase))
+            {
+                values.Add(category);
+            }
+        }
+
+        var hasRuntimeRemediationAttention =
+            remediation.CategoryIds.Contains(CdcCaptureExecutionRuntimeRemediationCategories.StaleObservations, StringComparer.OrdinalIgnoreCase) ||
+            remediation.CategoryIds.Contains(CdcCaptureExecutionRuntimeRemediationCategories.ReporterCoordinationIssues, StringComparer.OrdinalIgnoreCase);
+        var isRuntimeTruthIncomplete =
+            actionPlan.IsWaiting ||
+            string.Equals(drift.State, CdcCaptureExecutionRuntimeManagedConnectorDriftStates.Unknown, StringComparison.OrdinalIgnoreCase);
+
+        if (remediation.IsBlocked)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories.BlockingRemediation);
+        }
+        else if (hasRuntimeRemediationAttention)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories.RuntimeRemediation);
+        }
+
+        if (!reportingCoverage.HasFullCoverage)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories.IncompleteReportingCoverage);
+        }
+
+        if (governance.IsOutOfPolicy)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories.GovernanceOutOfPolicy);
+        }
+
+        if (isRuntimeTruthIncomplete)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories.RuntimeTruthIncomplete);
+        }
+
+        if (preflight.IsDeferred)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories.ObserveOnlyMode);
+        }
+
+        if (wouldApplyChanges)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories.ChangePlanned);
+        }
+        else if (!preflight.IsDeferred && !preflight.RequiresAttention)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories.NoChangesRequired);
+        }
+
+        if (WouldManagedConnectorDryRunRequireLifecycleChange(operationId, wouldApplyChanges))
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories.LifecycleChange);
+        }
+
+        if (string.Equals(operationId, CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Reconcile, StringComparison.OrdinalIgnoreCase))
+        {
+            if (drift.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.ConnectClusterMismatch, StringComparer.OrdinalIgnoreCase))
+            {
+                AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories.ConnectClusterChange);
+            }
+
+            if (drift.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.ConnectorClassMismatch, StringComparer.OrdinalIgnoreCase))
+            {
+                AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories.ConnectorClassChange);
+            }
+
+            if (drift.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.SourceProviderMismatch, StringComparer.OrdinalIgnoreCase))
+            {
+                AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories.SourceProviderChange);
+            }
+
+            if (HasManagedConnectorTaskTopologyDrift(drift))
+            {
+                AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories.TaskTopologyChange);
+            }
+        }
+
+        return [.. categories];
+    }
+
+    private static string ResolveManagedConnectorDryRunOperationId(string? managementMode)
+    {
+        if (string.IsNullOrWhiteSpace(managementMode))
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.None;
+        }
+
+        var normalizedManagementMode = managementMode.Trim();
+        if (string.Equals(normalizedManagementMode, "observe-only", StringComparison.OrdinalIgnoreCase))
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.None;
+        }
+
+        if (string.Equals(normalizedManagementMode, CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Pause, StringComparison.OrdinalIgnoreCase))
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Pause;
+        }
+
+        if (string.Equals(normalizedManagementMode, CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Resume, StringComparison.OrdinalIgnoreCase))
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Resume;
+        }
+
+        if (string.Equals(normalizedManagementMode, CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Restart, StringComparison.OrdinalIgnoreCase))
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Restart;
+        }
+
+        if (string.Equals(normalizedManagementMode, CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Delete, StringComparison.OrdinalIgnoreCase))
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Delete;
+        }
+
+        return CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Reconcile;
+    }
+
+    private static bool WouldManagedConnectorDryRunApplyChanges(
+        string operationId,
+        CdcCaptureExecutionRuntimeManagedConnectorDriftStatus drift,
+        CdcCaptureExecutionRuntimeReportingCoverageStatus reportingCoverage)
+    {
+        ArgumentNullException.ThrowIfNull(drift);
+        ArgumentNullException.ThrowIfNull(reportingCoverage);
+
+        if (string.Equals(operationId, CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.None, StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        if (string.Equals(operationId, CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Reconcile, StringComparison.OrdinalIgnoreCase))
+        {
+            return drift.IsDrifted;
+        }
+
+        if (string.Equals(operationId, CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Pause, StringComparison.OrdinalIgnoreCase))
+        {
+            return !string.Equals(drift.ConnectorLifecycleState, "paused", StringComparison.OrdinalIgnoreCase);
+        }
+
+        if (string.Equals(operationId, CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Resume, StringComparison.OrdinalIgnoreCase))
+        {
+            return string.Equals(drift.ConnectorLifecycleState, "paused", StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(drift.ConnectorLifecycleState, "inactive", StringComparison.OrdinalIgnoreCase);
+        }
+
+        if (string.Equals(operationId, CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Restart, StringComparison.OrdinalIgnoreCase))
+        {
+            return !string.Equals(drift.ConnectorLifecycleState, "restarting", StringComparison.OrdinalIgnoreCase);
+        }
+
+        if (string.Equals(operationId, CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Delete, StringComparison.OrdinalIgnoreCase))
+        {
+            return !string.IsNullOrWhiteSpace(drift.ConnectorLifecycleState) || reportingCoverage.ReportedCaptureCount > 0;
+        }
+
+        return true;
+    }
+
+    private static bool WouldManagedConnectorDryRunRequireLifecycleChange(string operationId, bool wouldApplyChanges)
+    {
+        if (!wouldApplyChanges)
+        {
+            return false;
+        }
+
+        return !string.Equals(operationId, CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.None, StringComparison.OrdinalIgnoreCase) &&
+               !string.Equals(operationId, CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Reconcile, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool HasManagedConnectorTaskTopologyDrift(CdcCaptureExecutionRuntimeManagedConnectorDriftStatus drift)
+    {
+        ArgumentNullException.ThrowIfNull(drift);
+
+        return drift.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.MissingDeclaredTaskReports, StringComparer.OrdinalIgnoreCase) ||
+               drift.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.UnexpectedReportedTasks, StringComparer.OrdinalIgnoreCase) ||
+               drift.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.TaskCountMismatch, StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static int CountManagedConnectorDryRunPotentialChanges(
+        string operationId,
+        CdcCaptureExecutionRuntimeManagedConnectorDriftStatus drift,
+        CdcCaptureExecutionRuntimeReportingCoverageStatus reportingCoverage,
+        bool wouldApplyChanges)
+    {
+        ArgumentNullException.ThrowIfNull(drift);
+        ArgumentNullException.ThrowIfNull(reportingCoverage);
+
+        if (!wouldApplyChanges)
+        {
+            return 0;
+        }
+
+        if (!string.Equals(operationId, CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Reconcile, StringComparison.OrdinalIgnoreCase))
+        {
+            return 1;
+        }
+
+        var count = 0;
+        if (drift.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.ConnectClusterMismatch, StringComparer.OrdinalIgnoreCase))
+        {
+            count++;
+        }
+
+        if (drift.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.ConnectorClassMismatch, StringComparer.OrdinalIgnoreCase))
+        {
+            count++;
+        }
+
+        if (drift.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorDriftCategories.SourceProviderMismatch, StringComparer.OrdinalIgnoreCase))
+        {
+            count++;
+        }
+
+        if (HasManagedConnectorTaskTopologyDrift(drift))
+        {
+            count++;
+        }
+
+        return Math.Max(count, 1);
+    }
+
+    private static string CreateManagedConnectorDeferredDryRunDescription(string? governanceDescription)
+    {
+        return AppendManagedConnectorDryRunDetail(
+            "The managed connector remains healthy on the shared runtime surface, but dry-run write-path previews stay deferred while it remains observe-only.",
+            governanceDescription);
+    }
+
+    private static string CreateManagedConnectorBlockedDryRunDescription(
+        string? preflightDescription,
+        string operationId,
+        bool wouldApplyChanges,
+        CdcCaptureExecutionRuntimeManagedConnectorDriftStatus drift,
+        CdcCaptureExecutionRuntimeReportingCoverageStatus reportingCoverage)
+    {
+        string? changeDetail = null;
+        var summary = wouldApplyChanges
+            ? $"Cephalon cannot trust a dry-run answer for {CreateManagedConnectorDryRunOperationLabel(operationId)} yet, but current runtime truth still suggests that operation would change the managed connector once blockers clear."
+            : $"Cephalon cannot trust a dry-run answer for {CreateManagedConnectorDryRunOperationLabel(operationId)} yet because the managed connector has not satisfied shared preflight requirements.";
+        var detail = wouldApplyChanges
+            ? changeDetail = CreateManagedConnectorDryRunChangeDetail(operationId, drift, reportingCoverage)
+            : preflightDescription;
+
+        if (wouldApplyChanges && !string.IsNullOrWhiteSpace(preflightDescription))
+        {
+            detail = $"{preflightDescription.Trim()} {changeDetail!.Trim()}";
+        }
+
+        return AppendManagedConnectorDryRunDetail(summary, detail);
+    }
+
+    private static string CreateManagedConnectorWouldChangeDryRunDescription(
+        string operationId,
+        CdcCaptureExecutionRuntimeManagedConnectorDriftStatus drift,
+        CdcCaptureExecutionRuntimeReportingCoverageStatus reportingCoverage)
+    {
+        return AppendManagedConnectorDryRunDetail(
+            $"If Cephalon executed {CreateManagedConnectorDryRunOperationLabel(operationId)} now, the shared runtime truth suggests it would change the managed connector.",
+            CreateManagedConnectorDryRunChangeDetail(operationId, drift, reportingCoverage));
+    }
+
+    private static string CreateManagedConnectorNoOpDryRunDescription(
+        string operationId,
+        CdcCaptureExecutionRuntimeManagedConnectorDriftStatus drift,
+        CdcCaptureExecutionRuntimeReportingCoverageStatus reportingCoverage)
+    {
+        return AppendManagedConnectorDryRunDetail(
+            $"If Cephalon executed {CreateManagedConnectorDryRunOperationLabel(operationId)} now, the shared runtime truth suggests no managed-connector changes would be required.",
+            CreateManagedConnectorDryRunNoOpDetail(operationId, drift, reportingCoverage));
+    }
+
+    private static string CreateManagedConnectorDryRunChangeDetail(
+        string operationId,
+        CdcCaptureExecutionRuntimeManagedConnectorDriftStatus drift,
+        CdcCaptureExecutionRuntimeReportingCoverageStatus reportingCoverage)
+    {
+        ArgumentNullException.ThrowIfNull(drift);
+        ArgumentNullException.ThrowIfNull(reportingCoverage);
+
+        if (string.Equals(operationId, CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Reconcile, StringComparison.OrdinalIgnoreCase))
+        {
+            return string.IsNullOrWhiteSpace(drift.Description)
+                ? "The managed connector currently reports declared-versus-observed drift against its shared baseline."
+                : drift.Description.Trim();
+        }
+
+        if (string.Equals(operationId, CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Pause, StringComparison.OrdinalIgnoreCase))
+        {
+            return string.IsNullOrWhiteSpace(drift.ConnectorLifecycleState)
+                ? "The managed connector does not currently report a paused lifecycle posture."
+                : $"The managed connector currently reports lifecycle state '{drift.ConnectorLifecycleState}', so a pause operation would still change runtime posture.";
+        }
+
+        if (string.Equals(operationId, CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Resume, StringComparison.OrdinalIgnoreCase))
+        {
+            return string.IsNullOrWhiteSpace(drift.ConnectorLifecycleState)
+                ? "The managed connector currently does not report an active lifecycle posture."
+                : $"The managed connector currently reports lifecycle state '{drift.ConnectorLifecycleState}', so a resume operation would still change runtime posture.";
+        }
+
+        if (string.Equals(operationId, CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Restart, StringComparison.OrdinalIgnoreCase))
+        {
+            return string.IsNullOrWhiteSpace(drift.ConnectorLifecycleState)
+                ? "The managed connector currently does not report a restarting lifecycle posture."
+                : $"The managed connector currently reports lifecycle state '{drift.ConnectorLifecycleState}', so a restart operation would still change runtime posture.";
+        }
+
+        if (string.Equals(operationId, CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Delete, StringComparison.OrdinalIgnoreCase))
+        {
+            return reportingCoverage.ReportedCaptureCount > 0 || !string.IsNullOrWhiteSpace(drift.ConnectorLifecycleState)
+                ? "The managed connector currently reports live runtime presence on the shared surface, so a delete operation would still change runtime posture."
+                : "The managed connector would still be treated as a live managed-connector declaration until delete follow-through completes.";
+        }
+
+        return "The managed connector currently reports potential write-path changes on the shared surface.";
+    }
+
+    private static string CreateManagedConnectorDryRunNoOpDetail(
+        string operationId,
+        CdcCaptureExecutionRuntimeManagedConnectorDriftStatus drift,
+        CdcCaptureExecutionRuntimeReportingCoverageStatus reportingCoverage)
+    {
+        ArgumentNullException.ThrowIfNull(drift);
+        ArgumentNullException.ThrowIfNull(reportingCoverage);
+
+        if (string.Equals(operationId, CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Reconcile, StringComparison.OrdinalIgnoreCase))
+        {
+            return string.IsNullOrWhiteSpace(drift.Description)
+                ? "The managed connector currently reports no declared-versus-observed drift."
+                : drift.Description.Trim();
+        }
+
+        if (string.Equals(operationId, CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Pause, StringComparison.OrdinalIgnoreCase))
+        {
+            return "The managed connector already reports a paused lifecycle posture.";
+        }
+
+        if (string.Equals(operationId, CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Resume, StringComparison.OrdinalIgnoreCase))
+        {
+            return "The managed connector already reports an active lifecycle posture.";
+        }
+
+        if (string.Equals(operationId, CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Restart, StringComparison.OrdinalIgnoreCase))
+        {
+            return "The managed connector already reports a restarting lifecycle posture.";
+        }
+
+        if (string.Equals(operationId, CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Delete, StringComparison.OrdinalIgnoreCase))
+        {
+            return reportingCoverage.ReportedCaptureCount == 0 && string.IsNullOrWhiteSpace(drift.ConnectorLifecycleState)
+                ? "The shared runtime surface does not currently report live connector presence."
+                : "The shared runtime surface already reflects the requested delete posture.";
+        }
+
+        return "The managed connector currently reports no shared write-path changes for the intended operation.";
+    }
+
+    private static string AppendManagedConnectorDryRunDetail(
+        string summary,
+        string? detail)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(summary);
+
+        return string.IsNullOrWhiteSpace(detail)
+            ? summary.Trim()
+            : $"{summary.Trim()} {detail.Trim()}";
+    }
+
+    private static string CreateManagedConnectorDryRunOperationLabel(string operationId)
+    {
+        if (string.Equals(operationId, CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Reconcile, StringComparison.OrdinalIgnoreCase))
+        {
+            return "reconcile the managed connector";
+        }
+
+        if (string.Equals(operationId, CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Pause, StringComparison.OrdinalIgnoreCase))
+        {
+            return "pause the managed connector";
+        }
+
+        if (string.Equals(operationId, CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Resume, StringComparison.OrdinalIgnoreCase))
+        {
+            return "resume the managed connector";
+        }
+
+        if (string.Equals(operationId, CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Restart, StringComparison.OrdinalIgnoreCase))
+        {
+            return "restart the managed connector";
+        }
+
+        if (string.Equals(operationId, CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Delete, StringComparison.OrdinalIgnoreCase))
+        {
+            return "delete the managed connector";
+        }
+
+        return "change the managed connector";
     }
 
     private static string CreateManagedConnectorInSyncDescription(string? reconciliationState)

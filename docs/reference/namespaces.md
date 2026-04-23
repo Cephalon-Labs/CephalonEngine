@@ -30,7 +30,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Abstractions.Data`
 
-- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-data): 113 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data)
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-data): 117 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data)
 
 ## `Cephalon.Abstractions.EventSourcing`
 

@@ -262,6 +262,12 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     public CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus ManagedConnectorPreflight { get; init; } =
         new(CdcCaptureExecutionRuntimeManagedConnectorPreflightStates.NotApplicable);
 
+    /// <summary>
+    /// Gets the operator-facing managed-connector dry-run posture derived from coverage, remediation, governance, drift, action planning, write-path readiness, and preflight truth.
+    /// </summary>
+    public CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus ManagedConnectorDryRun { get; init; } =
+        new(CdcCaptureExecutionRuntimeManagedConnectorDryRunStates.NotApplicable);
+
     private static string[] Normalize(IReadOnlyList<string>? values)
     {
         return values?

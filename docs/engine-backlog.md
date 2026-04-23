@@ -3027,6 +3027,70 @@ Delivered:
 - targeted coverage now proves the operator-story drill-down baseline through composition tests
   `1/1`, hosting tests `1/1`, tooling tests `185/185`, and the reference docs publish script
 
+### ENG-174 Phase 13 managed-connector dry-run baseline
+
+Status: done
+Estimate: 5
+Completed: April 23, 2026
+
+Why:
+
+- `ENG-168`, `ENG-169`, `ENG-170`, `ENG-171`, `ENG-172`, and `ENG-173` shipped shared coverage,
+  remediation, governance, desired-versus-observed drift, action-planning, write-path readiness,
+  and preflight truth, but operators still lacked one typed answer for what Cephalon believes
+  would happen if it attempted the intended managed-connector operation right now on the same
+  shared runtime surface
+- that next follow-through needed to keep connector-management dry-run additive on the existing
+  `/engine/cdc-capture-runtimes*`, `/engine/runtime-story`, and
+  `snapshot.CdcCaptureExecutionRuntimes` surfaces instead of inventing a Debezium-only dry-run
+  planner or prematurely claiming Kafka Connect write-path ownership
+- teams also needed route-level drill-downs for dry-run state, dry-run category, and intended
+  operation without losing the underlying coverage, remediation, governance, drift, action-plan,
+  write-path-readiness, and preflight truth that already shipped
+
+Acceptance:
+
+- `Cephalon.Abstractions` ships a stable managed-connector dry-run contract on
+  `CdcCaptureExecutionRuntimeDescriptor` that can publish `not-applicable`, `deferred`,
+  `blocked`, `no-op`, and `would-change` posture together with dry-run categories, the intended
+  operation id, source coverage/remediation/governance/drift/action-plan/write-path-readiness/
+  preflight state, the current primary action id, and additive potential-change detail
+- the shared execution-runtime catalog now derives that dry-run answer from merged coverage,
+  remediation, governance, drift, action-planning, write-path-readiness, and preflight truth
+  instead of forcing hosts or providers to rebuild a second dry-run planner
+- `ICdcCaptureExecutionRuntimeCatalog` exposes additive dry-run-state, dry-run-category, and
+  dry-run-operation drill-down methods, and ASP.NET Core publishes those same filters on the
+  existing `/engine/cdc-capture-runtimes*` route family
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice while later Debezium connector-management execution-intent or broader
+  write-path execution work remains separate follow-through
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships `CdcCaptureExecutionRuntimeManagedConnectorDryRunStates`,
+  `CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories`,
+  `CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds`, and
+  `CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus`, while
+  `CdcCaptureExecutionRuntimeDescriptor` now carries additive `ManagedConnectorDryRun`
+- `Cephalon.Data` now derives runtime-level `not-applicable`, `deferred`, `blocked`, `no-op`,
+  and `would-change` posture plus stable category ids such as `blocking-remediation`,
+  `runtime-remediation`, `incomplete-reporting-coverage`, `governance-out-of-policy`,
+  `runtime-truth-incomplete`, `observe-only-mode`, `no-changes-required`, `change-planned`,
+  `lifecycle-change`, `connect-cluster-change`, `connector-class-change`,
+  `source-provider-change`, and `task-topology-change`, together with intended operation ids such
+  as `none`, `reconcile`, and `pause`, from merged coverage, remediation, governance, drift,
+  action-planning, write-path-readiness, and preflight truth instead of materializing a second
+  dry-run registry
+- `ICdcCaptureExecutionRuntimeCatalog` now exposes `GetByManagedConnectorDryRunState(...)`,
+  `GetByManagedConnectorDryRunCategory(...)`, and
+  `GetByManagedConnectorDryRunOperationId(...)`, while `Cephalon.AspNetCore` now maps
+  `/engine/cdc-capture-runtimes/dry-runs/{dryRunState}`,
+  `/engine/cdc-capture-runtimes/dry-runs/categories/{dryRunCategory}`, and
+  `/engine/cdc-capture-runtimes/dry-runs/operations/{operationId}` so host routes stay aligned
+  with the same shared runtime story
+- targeted coverage now proves the dry-run baseline through composition tests `37/37`, hosting
+  tests `15/15`, tooling tests `207/207`, and the reference docs publish script
+
 ### ENG-173 Phase 13 managed-connector preflight baseline
 
 Status: done

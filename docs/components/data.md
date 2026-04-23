@@ -208,13 +208,26 @@ write-path-readiness truth, so future connector-management preflight can stay on
 `/engine/cdc-*`, `/engine/runtime-story`, and `snapshot` surfaces instead of inventing a
 Debezium-only preflight registry.
 
+That same shared execution-runtime story now also keeps managed-connector dry-run explicit.
+`CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorDryRun` publishes stable
+`not-applicable` / `deferred` / `blocked` / `no-op` / `would-change` posture together with
+dry-run categories, the intended operation id, source
+coverage/remediation/governance/drift/action-plan/write-path-readiness/preflight state, the
+current primary action id, and additive potential-change detail. The shared execution-runtime
+catalog derives that answer from the already shipped coverage, remediation, governance,
+desired-versus-observed drift, action-planning, write-path-readiness, and preflight truth, so
+future connector-management dry-run can stay on the existing `/engine/cdc-*`,
+`/engine/runtime-story`, and `snapshot` surfaces instead of inventing a Debezium-only dry-run
+registry.
+
 That same shared operator story is now directly queryable by reporter, edge node, coordination
 state, degraded reason, remediation state, remediation category, managed-connector governance
 state, managed-connector governance category, managed-connector drift state,
 managed-connector drift category, managed-connector action-plan state, managed-connector action
 id, managed-connector write-path-readiness state, managed-connector write-path-readiness
-category, managed-connector preflight state, managed-connector preflight category, and
-managed-connector preflight operation as well.
+category, managed-connector preflight state, managed-connector preflight category,
+managed-connector preflight operation, managed-connector dry-run state, managed-connector
+dry-run category, and managed-connector dry-run operation as well.
 `ICdcCaptureRuntimeStateCatalog` plus `ICdcCaptureExecutionRuntimeCatalog` now expose
 `GetByReporterId(...)`, `GetByEdgeNodeId(...)`, `GetByReporterCoordinationState(...)`,
 `GetByReporterCoordinationIssueReason(...)`, `GetByRemediationState(...)`, and
@@ -224,11 +237,13 @@ managed-connector preflight operation as well.
 `GetByManagedConnectorActionId(...)`, `GetByManagedConnectorWritePathReadinessState(...)`, and
 `GetByManagedConnectorWritePathReadinessCategory(...)`,
 `GetByManagedConnectorPreflightState(...)`, `GetByManagedConnectorPreflightCategory(...)`, and
-`GetByManagedConnectorPreflightOperationId(...)`, so host code, provider packs, and tooling can
+`GetByManagedConnectorPreflightOperationId(...)`,
+`GetByManagedConnectorDryRunState(...)`, `GetByManagedConnectorDryRunCategory(...)`, and
+`GetByManagedConnectorDryRunOperationId(...)`, so host code, provider packs, and tooling can
 narrow the shared CDC runtime story without rebuilding a second coordination, remediation,
 managed-connector governance, managed-connector drift, managed-connector action-planning,
-managed-connector readiness, or managed-connector preflight index. ASP.NET Core maps those same
-filters through
+managed-connector readiness, managed-connector preflight, or managed-connector dry-run index.
+ASP.NET Core maps those same filters through
 `/engine/cdc-captures/runtime/reporters/{reporterId}`,
 `/engine/cdc-captures/runtime/edge-nodes/{edgeNodeId}`,
 `/engine/cdc-captures/runtime/reporter-coordination/{coordinationState}`,
@@ -246,8 +261,14 @@ filters through
 `/engine/cdc-capture-runtimes/action-plans/{actionPlanState}` and
 `/engine/cdc-capture-runtimes/actions/{actionId}` plus
 `/engine/cdc-capture-runtimes/write-path-readiness/{readinessState}` and
-`/engine/cdc-capture-runtimes/write-path-readiness/categories/{readinessCategory}` so the live
-host surface stays aligned with the same shared runtime-state and execution-runtime catalogs.
+`/engine/cdc-capture-runtimes/write-path-readiness/categories/{readinessCategory}` plus
+`/engine/cdc-capture-runtimes/preflight/{preflightState}`,
+`/engine/cdc-capture-runtimes/preflight/categories/{preflightCategory}`,
+`/engine/cdc-capture-runtimes/preflight/operations/{operationId}` plus
+`/engine/cdc-capture-runtimes/dry-runs/{dryRunState}`,
+`/engine/cdc-capture-runtimes/dry-runs/categories/{dryRunCategory}`, and
+`/engine/cdc-capture-runtimes/dry-runs/operations/{operationId}` so the live host surface stays
+aligned with the same shared runtime-state and execution-runtime catalogs.
 
 `Cephalon.Data.MongoDB` first proved that contract with a document-oriented provider-native runner.
 Its `mongodb-change-stream-capture-pump` contributor publishes host-managed, provider-native,

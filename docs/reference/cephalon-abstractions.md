@@ -8428,6 +8428,16 @@ CdcCaptureExecutionRuntimeManagedConnectorDriftStatus ManagedConnectorDrift { ge
 
 Gets the operator-facing desired-versus-observed managed-connector drift posture for the execution runtime.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectordryrun"></a>
+
+##### `ManagedConnectorDryRun`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus ManagedConnectorDryRun { get; set; }
+```
+
+Gets the operator-facing managed-connector dry-run posture derived from coverage, remediation, governance, drift, action planning, write-path readiness, and preflight truth.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorgovernance"></a>
 
 ##### `ManagedConnectorGovernance`
@@ -9463,6 +9473,574 @@ IReadOnlyList<string> UnexpectedReportedTaskIds { get; set; }
 ```
 
 Gets the reported task ids that were not part of the declared task baseline.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories`
+
+Defines the stable managed-connector dry-run category identifiers used by CDC execution runtimes.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories-blockingremediation"></a>
+
+##### `BlockingRemediation`
+
+```csharp
+const string BlockingRemediation
+```
+
+The managed connector is blocked by failed or otherwise blocking runtime remediation work.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories-changeplanned"></a>
+
+##### `ChangePlanned`
+
+```csharp
+const string ChangePlanned
+```
+
+The managed connector currently reports at least one potential shared write-path change for the intended management operation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories-connectclusterchange"></a>
+
+##### `ConnectClusterChange`
+
+```csharp
+const string ConnectClusterChange
+```
+
+The managed connector would change the reported connector-cluster identifier to match the declared baseline.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories-connectorclasschange"></a>
+
+##### `ConnectorClassChange`
+
+```csharp
+const string ConnectorClassChange
+```
+
+The managed connector would change the reported connector class to match the declared baseline.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories-governanceoutofpolicy"></a>
+
+##### `GovernanceOutOfPolicy`
+
+```csharp
+const string GovernanceOutOfPolicy
+```
+
+The managed connector is currently out of policy for future write-path follow-through.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories-incompletereportingcoverage"></a>
+
+##### `IncompleteReportingCoverage`
+
+```csharp
+const string IncompleteReportingCoverage
+```
+
+The managed connector does not yet have full declared-versus-reported coverage on the shared runtime surface.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories-lifecyclechange"></a>
+
+##### `LifecycleChange`
+
+```csharp
+const string LifecycleChange
+```
+
+The managed connector would require a lifecycle operation such as pause, resume, restart, or delete.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories-nochangesrequired"></a>
+
+##### `NoChangesRequired`
+
+```csharp
+const string NoChangesRequired
+```
+
+The managed connector currently reports no shared write-path changes for the intended management operation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories-observeonlymode"></a>
+
+##### `ObserveOnlyMode`
+
+```csharp
+const string ObserveOnlyMode
+```
+
+The managed connector currently stays in observe-only mode.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories-runtimeremediation"></a>
+
+##### `RuntimeRemediation`
+
+```csharp
+const string RuntimeRemediation
+```
+
+The managed connector still needs runtime remediation attention before a dry-run answer can be trusted.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories-runtimetruthincomplete"></a>
+
+##### `RuntimeTruthIncomplete`
+
+```csharp
+const string RuntimeTruthIncomplete
+```
+
+The managed connector does not yet report enough runtime truth to trust a dry-run answer.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories-sourceproviderchange"></a>
+
+##### `SourceProviderChange`
+
+```csharp
+const string SourceProviderChange
+```
+
+The managed connector would change the reported source-provider identifier to match the declared baseline.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories-tasktopologychange"></a>
+
+##### `TaskTopologyChange`
+
+```csharp
+const string TaskTopologyChange
+```
+
+The managed connector would change the reported task topology to match the declared baseline.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunoperationids"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds`
+
+Defines the stable managed-connector operation identifiers used by connector-management dry-run answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunoperationids-delete"></a>
+
+##### `Delete`
+
+```csharp
+const string Delete
+```
+
+Cephalon would delete the managed connector.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunoperationids-none"></a>
+
+##### `None`
+
+```csharp
+const string None
+```
+
+No management operation is currently intended for the execution runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunoperationids-pause"></a>
+
+##### `Pause`
+
+```csharp
+const string Pause
+```
+
+Cephalon would pause the managed connector.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunoperationids-reconcile"></a>
+
+##### `Reconcile`
+
+```csharp
+const string Reconcile
+```
+
+Cephalon would reconcile the managed connector toward its declared baseline.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunoperationids-restart"></a>
+
+##### `Restart`
+
+```csharp
+const string Restart
+```
+
+Cephalon would restart the managed connector.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunoperationids-resume"></a>
+
+##### `Resume`
+
+```csharp
+const string Resume
+```
+
+Cephalon would resume the managed connector.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstates"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorDryRunStates`
+
+Defines the stable managed-connector dry-run state identifiers used by CDC execution runtimes.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorDryRunStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstates-blocked"></a>
+
+##### `Blocked`
+
+```csharp
+const string Blocked
+```
+
+The managed connector cannot currently progress to a dry-run answer because prerequisite runtime truth is incomplete or blocked.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstates-deferred"></a>
+
+##### `Deferred`
+
+```csharp
+const string Deferred
+```
+
+The managed connector currently stays in observe-only mode, so dry-run write-path previews remain deferred.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstates-noop"></a>
+
+##### `NoOp`
+
+```csharp
+const string NoOp
+```
+
+The managed connector currently reports no shared write-path changes for the intended management operation.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstates-notapplicable"></a>
+
+##### `NotApplicable`
+
+```csharp
+const string NotApplicable
+```
+
+The execution runtime does not currently represent a managed connector.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstates-wouldchange"></a>
+
+##### `WouldChange`
+
+```csharp
+const string WouldChange
+```
+
+The managed connector currently reports one or more shared write-path changes for the intended management operation.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus`
+
+Describes the current operator-facing managed-connector dry-run posture for one CDC execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-ctor-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus(string state, string description)
+```
+
+Creates a new managed-connector dry-run answer.
+
+Parameters:
+- `state`: The stable dry-run state, such as `deferred`, `blocked`, `no-op`, `would-change`, or `not-applicable`.
+- `description`: An optional operator-facing dry-run summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-actionplanstate"></a>
+
+##### `ActionPlanState`
+
+```csharp
+string ActionPlanState { get; set; }
+```
+
+Gets the current managed-connector action-plan state that informed the dry-run answer.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-appliestomanagedconnector"></a>
+
+##### `AppliesToManagedConnector`
+
+```csharp
+bool AppliesToManagedConnector { get; }
+```
+
+Gets a value indicating whether the execution runtime currently represents a managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-categorycount"></a>
+
+##### `CategoryCount`
+
+```csharp
+int CategoryCount { get; }
+```
+
+Gets the number of active dry-run categories currently visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-categoryids"></a>
+
+##### `CategoryIds`
+
+```csharp
+IReadOnlyList<string> CategoryIds { get; set; }
+```
+
+Gets the stable dry-run categories currently active for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-connectorlifecyclestate"></a>
+
+##### `ConnectorLifecycleState`
+
+```csharp
+string ConnectorLifecycleState { get; set; }
+```
+
+Gets the latest reported connector lifecycle state when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing dry-run summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-driftstate"></a>
+
+##### `DriftState`
+
+```csharp
+string DriftState { get; set; }
+```
+
+Gets the current managed-connector drift state that informed the dry-run answer.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-governancestate"></a>
+
+##### `GovernanceState`
+
+```csharp
+string GovernanceState { get; set; }
+```
+
+Gets the current managed-connector governance state that informed the dry-run answer.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-isblocked"></a>
+
+##### `IsBlocked`
+
+```csharp
+bool IsBlocked { get; }
+```
+
+Gets a value indicating whether the managed connector is currently blocked before a dry-run answer can be trusted.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-isdeferred"></a>
+
+##### `IsDeferred`
+
+```csharp
+bool IsDeferred { get; }
+```
+
+Gets a value indicating whether dry-run follow-through is currently deferred because the runtime remains observe-only.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-isnoop"></a>
+
+##### `IsNoOp`
+
+```csharp
+bool IsNoOp { get; }
+```
+
+Gets a value indicating whether the intended management operation would currently produce no shared write-path changes.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-iswouldchange"></a>
+
+##### `IsWouldChange`
+
+```csharp
+bool IsWouldChange { get; }
+```
+
+Gets a value indicating whether the intended management operation would currently produce one or more shared write-path changes.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-managementmode"></a>
+
+##### `ManagementMode`
+
+```csharp
+string ManagementMode { get; set; }
+```
+
+Gets the declared managed-connector management mode when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-missingdeclaredtaskids"></a>
+
+##### `MissingDeclaredTaskIds`
+
+```csharp
+IReadOnlyList<string> MissingDeclaredTaskIds { get; set; }
+```
+
+Gets the declared task ids that are currently missing from the latest reported task set.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-operationid"></a>
+
+##### `OperationId`
+
+```csharp
+string OperationId { get; set; }
+```
+
+Gets the stable management-operation identifier Cephalon would currently preview.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-potentialchangecount"></a>
+
+##### `PotentialChangeCount`
+
+```csharp
+int PotentialChangeCount { get; set; }
+```
+
+Gets the number of visible potential shared write-path changes in the current dry-run answer.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-preflightstate"></a>
+
+##### `PreflightState`
+
+```csharp
+string PreflightState { get; set; }
+```
+
+Gets the current managed-connector preflight state that informed the dry-run answer.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-primaryactionid"></a>
+
+##### `PrimaryActionId`
+
+```csharp
+string PrimaryActionId { get; set; }
+```
+
+Gets the primary action identifier currently associated with the runtime's managed-connector action plan.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-reconciliationstate"></a>
+
+##### `ReconciliationState`
+
+```csharp
+string ReconciliationState { get; set; }
+```
+
+Gets the latest reported overall reconciliation state when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-remediationstate"></a>
+
+##### `RemediationState`
+
+```csharp
+string RemediationState { get; set; }
+```
+
+Gets the current runtime-level remediation state that informed the dry-run answer.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-reportingcoveragestate"></a>
+
+##### `ReportingCoverageState`
+
+```csharp
+string ReportingCoverageState { get; set; }
+```
+
+Gets the current runtime-level reporting-coverage state that informed the dry-run answer.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-requiresattention"></a>
+
+##### `RequiresAttention`
+
+```csharp
+bool RequiresAttention { get; }
+```
+
+Gets a value indicating whether the managed connector currently requires additional dry-run attention.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable managed-connector dry-run state.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-unexpectedreportedtaskids"></a>
+
+##### `UnexpectedReportedTaskIds`
+
+```csharp
+IReadOnlyList<string> UnexpectedReportedTaskIds { get; set; }
+```
+
+Gets the reported task ids that were not part of the declared task baseline.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-wouldapplychanges"></a>
+
+##### `WouldApplyChanges`
+
+```csharp
+bool WouldApplyChanges { get; set; }
+```
+
+Gets a value indicating whether the current dry-run answer includes one or more shared write-path changes.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-writepathreadinessstate"></a>
+
+##### `WritePathReadinessState`
+
+```csharp
+string WritePathReadinessState { get; set; }
+```
+
+Gets the current managed-connector write-path readiness state that informed the dry-run answer.
 
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorgovernanceactionids"></a>
 
@@ -16771,6 +17349,51 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 
 Parameters:
 - `driftState`: The stable drift-state identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectordryruncategory-system-string"></a>
+
+##### `GetByManagedConnectorDryRunCategory`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDryRunCategory(string dryRunCategory)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector dry-run answer includes the requested category.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that dry-run category.
+
+Parameters:
+- `dryRunCategory`: The stable managed-connector dry-run category identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectordryrunoperationid-system-string"></a>
+
+##### `GetByManagedConnectorDryRunOperationId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDryRunOperationId(string operationId)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector dry-run answer currently targets the requested operation.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.
+
+Parameters:
+- `operationId`: The stable managed-connector dry-run operation identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectordryrunstate-system-string"></a>
+
+##### `GetByManagedConnectorDryRunState`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDryRunState(string dryRunState)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector dry-run answer matches the requested state.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that dry-run state.
+
+Parameters:
+- `dryRunState`: The stable managed-connector dry-run state identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorgovernancecategory-system-string"></a>
 

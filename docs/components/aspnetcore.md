@@ -186,12 +186,15 @@ now also maps `/engine/cdc-capture-runtimes/remediation/{remediationState}` and
 `/engine/cdc-capture-runtimes/write-path-readiness/categories/{readinessCategory}` plus
 `/engine/cdc-capture-runtimes/preflight/{preflightState}`,
 `/engine/cdc-capture-runtimes/preflight/categories/{preflightCategory}`, and
-`/engine/cdc-capture-runtimes/preflight/operations/{operationId}` so operator flows can query the
+`/engine/cdc-capture-runtimes/preflight/operations/{operationId}` plus
+`/engine/cdc-capture-runtimes/dry-runs/{dryRunState}`,
+`/engine/cdc-capture-runtimes/dry-runs/categories/{dryRunCategory}`, and
+`/engine/cdc-capture-runtimes/dry-runs/operations/{operationId}` so operator flows can query the
 shared execution-runtime remediation summary, managed-connector governance posture,
 desired-versus-observed managed-connector drift posture, managed-connector action-planning
-posture, managed-connector write-path readiness posture, and managed-connector preflight posture
-directly instead of rebuilding a second HTTP-local remediation, governance, drift,
-action-planning, readiness, or preflight index.
+posture, managed-connector write-path readiness posture, managed-connector preflight posture, and
+managed-connector dry-run posture directly instead of rebuilding a second HTTP-local remediation,
+governance, drift, action-planning, readiness, preflight, or dry-run index.
 
 When `ICdcCaptureExecutionRuntimeReportSink` is active, the same host also maps
 `POST /engine/cdc-capture-runtimes/{executionRuntimeId}/reports`. That route is intentionally

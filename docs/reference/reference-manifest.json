@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-23T10:08:17.604185+00:00",
+  "GeneratedAtUtc": "2026-04-23T10:41:40.2315548+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 393
+      "TypeCount": 397
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -571,7 +571,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
-      "TypeCount": 113
+      "TypeCount": 117
     },
     {
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
@@ -3210,7 +3210,7 @@
       "MemberCounts": {
         "Constructors": 2,
         "Fields": 0,
-        "Properties": 21,
+        "Properties": 22,
         "Methods": 0
       }
     },
@@ -3331,6 +3331,66 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 28,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories",
+      "Summary": "Defines the stable managed-connector dry-run category identifiers used by CDC execution runtimes.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 13,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunoperationids",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds",
+      "Summary": "Defines the stable managed-connector operation identifiers used by connector-management dry-run answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 6,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstates",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorDryRunStates",
+      "Summary": "Defines the stable managed-connector dry-run state identifiers used by CDC execution runtimes.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 5,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus",
+      "Declaration": "public sealed class CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
+      "Summary": "Describes the current operator-facing managed-connector dry-run posture for one CDC execution runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 26,
         "Methods": 0
       }
     },
@@ -6976,7 +7036,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 18
+        "Methods": 21
       }
     },
     {
@@ -13354,6 +13414,17 @@
     {
       "DisplayName": "ActionPlanState",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-actionplanstate",
+      "Signature": "string ActionPlanState { get; set; }",
+      "Summary": "Gets the current managed-connector action-plan state that informed the dry-run answer."
+    },
+    {
+      "DisplayName": "ActionPlanState",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -16302,6 +16373,17 @@
     {
       "DisplayName": "AppliesToManagedConnector",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-appliestomanagedconnector",
+      "Signature": "bool AppliesToManagedConnector { get; }",
+      "Summary": "Gets a value indicating whether the execution runtime currently represents a managed connector."
+    },
+    {
+      "DisplayName": "AppliesToManagedConnector",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -18755,6 +18837,17 @@
     {
       "DisplayName": "Blocked",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstates-blocked",
+      "Signature": "const string Blocked",
+      "Summary": "The managed connector cannot currently progress to a dry-run answer because prerequisite runtime truth is incomplete or blocked."
+    },
+    {
+      "DisplayName": "Blocked",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorPreflightStates",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -18806,6 +18899,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplancategories-blockingremediation",
       "Signature": "const string BlockingRemediation",
       "Summary": "The managed connector is currently blocked by active runtime remediation work."
+    },
+    {
+      "DisplayName": "BlockingRemediation",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories-blockingremediation",
+      "Signature": "const string BlockingRemediation",
+      "Summary": "The managed connector is blocked by failed or otherwise blocking runtime remediation work."
     },
     {
       "DisplayName": "BlockingRemediation",
@@ -19756,6 +19860,17 @@
     {
       "DisplayName": "CategoryCount",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-categorycount",
+      "Signature": "int CategoryCount { get; }",
+      "Summary": "Gets the number of active dry-run categories currently visible for the execution runtime."
+    },
+    {
+      "DisplayName": "CategoryCount",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -19818,6 +19933,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-categoryids",
       "Signature": "IReadOnlyList\u003Cstring\u003E CategoryIds { get; set; }",
       "Summary": "Gets the stable managed-connector drift categories currently active for the execution runtime."
+    },
+    {
+      "DisplayName": "CategoryIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-categoryids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E CategoryIds { get; set; }",
+      "Summary": "Gets the stable dry-run categories currently active for the execution runtime."
     },
     {
       "DisplayName": "CategoryIds",
@@ -19983,6 +20109,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-ctor-system-string-system-string",
       "Signature": "CdcCaptureExecutionRuntimeManagedConnectorDriftStatus(string state, string description)",
       "Summary": "Creates a new managed-connector drift answer."
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-ctor-system-string-system-string",
+      "Signature": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus(string state, string description)",
+      "Summary": "Creates a new managed-connector dry-run answer."
     },
     {
       "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus",
@@ -20687,6 +20824,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-changeid",
       "Signature": "string ChangeId { get; }",
       "Summary": "Gets the latest provider-facing change identifier when one was reported."
+    },
+    {
+      "DisplayName": "ChangePlanned",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories-changeplanned",
+      "Signature": "const string ChangePlanned",
+      "Summary": "The managed connector currently reports at least one potential shared write-path change for the intended management operation."
     },
     {
       "DisplayName": "Changes",
@@ -22317,6 +22465,17 @@
       "Summary": "Gets the technology identifiers that conflict with the technology."
     },
     {
+      "DisplayName": "ConnectClusterChange",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories-connectclusterchange",
+      "Signature": "const string ConnectClusterChange",
+      "Summary": "The managed connector would change the reported connector-cluster identifier to match the declared baseline."
+    },
+    {
       "DisplayName": "ConnectClusterId",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus",
@@ -22636,6 +22795,17 @@
       "Summary": "Gets or sets the Debezium connector-class identifier when the runtime should publish it on shared operator surfaces."
     },
     {
+      "DisplayName": "ConnectorClassChange",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories-connectorclasschange",
+      "Signature": "const string ConnectorClassChange",
+      "Summary": "The managed connector would change the reported connector class to match the declared baseline."
+    },
+    {
       "DisplayName": "ConnectorClassMismatch",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDriftCategories",
@@ -22654,6 +22824,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-connectorlifecyclestate",
+      "Signature": "string ConnectorLifecycleState { get; set; }",
+      "Summary": "Gets the latest reported connector lifecycle state when one is known."
+    },
+    {
+      "DisplayName": "ConnectorLifecycleState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-connectorlifecyclestate",
       "Signature": "string ConnectorLifecycleState { get; set; }",
       "Summary": "Gets the latest reported connector lifecycle state when one is known."
     },
@@ -24835,6 +25016,17 @@
     {
       "DisplayName": "Deferred",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstates-deferred",
+      "Signature": "const string Deferred",
+      "Summary": "The managed connector currently stays in observe-only mode, so dry-run write-path previews remain deferred."
+    },
+    {
+      "DisplayName": "Deferred",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorPreflightStates",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -24930,6 +25122,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databasetopologyoperationalsummary-degradedrolecount",
       "Signature": "int DegradedRoleCount { get; }",
       "Summary": "Gets the number of roles currently reporting degraded runtime state."
+    },
+    {
+      "DisplayName": "Delete",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunoperationids-delete",
+      "Signature": "const string Delete",
+      "Summary": "Cephalon would delete the managed connector."
     },
     {
       "DisplayName": "Delete",
@@ -25348,6 +25551,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-description",
       "Signature": "string Description { get; }",
       "Summary": "Gets an optional operator-facing drift summary."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets an optional operator-facing dry-run summary."
     },
     {
       "DisplayName": "Description",
@@ -27537,6 +27751,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-driftstate",
       "Signature": "string DriftState { get; set; }",
       "Summary": "Gets the current managed-connector drift state that informed the action plan."
+    },
+    {
+      "DisplayName": "DriftState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-driftstate",
+      "Signature": "string DriftState { get; set; }",
+      "Summary": "Gets the current managed-connector drift state that informed the dry-run answer."
     },
     {
       "DisplayName": "DriftState",
@@ -33842,6 +34067,39 @@
       "Summary": "Gets the CDC capture execution runtimes whose current managed-connector drift answer matches the requested state."
     },
     {
+      "DisplayName": "GetByManagedConnectorDryRunCategory",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectordryruncategory-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorDryRunCategory(string dryRunCategory)",
+      "Summary": "Gets the CDC capture execution runtimes whose current managed-connector dry-run answer includes the requested category."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorDryRunOperationId",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectordryrunoperationid-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorDryRunOperationId(string operationId)",
+      "Summary": "Gets the CDC capture execution runtimes whose current managed-connector dry-run answer currently targets the requested operation."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorDryRunState",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectordryrunstate-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorDryRunState(string dryRunState)",
+      "Summary": "Gets the CDC capture execution runtimes whose current managed-connector dry-run answer matches the requested state."
+    },
+    {
       "DisplayName": "GetByManagedConnectorGovernanceCategory",
       "Category": "Methods",
       "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
@@ -34988,6 +35246,17 @@
     {
       "DisplayName": "GovernanceOutOfPolicy",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories-governanceoutofpolicy",
+      "Signature": "const string GovernanceOutOfPolicy",
+      "Summary": "The managed connector is currently out of policy for future write-path follow-through."
+    },
+    {
+      "DisplayName": "GovernanceOutOfPolicy",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -35061,6 +35330,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-governancestate",
       "Signature": "string GovernanceState { get; set; }",
       "Summary": "Gets the current managed-connector governance state that informed the action plan."
+    },
+    {
+      "DisplayName": "GovernanceState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-governancestate",
+      "Signature": "string GovernanceState { get; set; }",
+      "Summary": "Gets the current managed-connector governance state that informed the dry-run answer."
     },
     {
       "DisplayName": "GovernanceState",
@@ -39047,6 +39327,17 @@
     {
       "DisplayName": "IncompleteReportingCoverage",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories-incompletereportingcoverage",
+      "Signature": "const string IncompleteReportingCoverage",
+      "Summary": "The managed connector does not yet have full declared-versus-reported coverage on the shared runtime surface."
+    },
+    {
+      "DisplayName": "IncompleteReportingCoverage",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -39542,6 +39833,17 @@
     {
       "DisplayName": "IsBlocked",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-isblocked",
+      "Signature": "bool IsBlocked { get; }",
+      "Summary": "Gets a value indicating whether the managed connector is currently blocked before a dry-run answer can be trusted."
+    },
+    {
+      "DisplayName": "IsBlocked",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -39648,6 +39950,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimehostedexecutionstate-isdeactivated",
       "Signature": "bool IsDeactivated { get; }",
       "Summary": "Gets a value indicating whether the hosted execution most recently observed a deactivation event."
+    },
+    {
+      "DisplayName": "IsDeferred",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-isdeferred",
+      "Signature": "bool IsDeferred { get; }",
+      "Summary": "Gets a value indicating whether dry-run follow-through is currently deferred because the runtime remains observe-only."
     },
     {
       "DisplayName": "IsDeferred",
@@ -39879,6 +40192,17 @@
       "AnchorId": "member-m-cephalon-engine-configuration-engineoptions-ismoduleenabled-system-string",
       "Signature": "bool IsModuleEnabled(string moduleId)",
       "Summary": "Determines whether a module is enabled under the current option set."
+    },
+    {
+      "DisplayName": "IsNoOp",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-isnoop",
+      "Signature": "bool IsNoOp { get; }",
+      "Summary": "Gets a value indicating whether the intended management operation would currently produce no shared write-path changes."
     },
     {
       "DisplayName": "IsObservationStale",
@@ -40121,6 +40445,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-iswaiting",
       "Signature": "bool IsWaiting { get; }",
       "Summary": "Gets a value indicating whether the managed connector is currently waiting for more runtime truth."
+    },
+    {
+      "DisplayName": "IsWouldChange",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-iswouldchange",
+      "Signature": "bool IsWouldChange { get; }",
+      "Summary": "Gets a value indicating whether the intended management operation would currently produce one or more shared write-path changes."
     },
     {
       "DisplayName": "JsonRpc",
@@ -41432,6 +41767,17 @@
       "Summary": "A condition that describes the active lifecycle or reconciliation action for the materialized resource."
     },
     {
+      "DisplayName": "LifecycleChange",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories-lifecyclechange",
+      "Signature": "const string LifecycleChange",
+      "Summary": "The managed connector would require a lifecycle operation such as pause, resume, restart, or delete."
+    },
+    {
       "DisplayName": "Limit",
       "Category": "Properties",
       "DeclaringTypeName": "AuditHistoryQuery",
@@ -41718,6 +42064,17 @@
       "Summary": "Gets the operator-facing desired-versus-observed managed-connector drift posture for the execution runtime."
     },
     {
+      "DisplayName": "ManagedConnectorDryRun",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectordryrun",
+      "Signature": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus ManagedConnectorDryRun { get; set; }",
+      "Summary": "Gets the operator-facing managed-connector dry-run posture derived from coverage, remediation, governance, drift, action planning, write-path readiness, and preflight truth."
+    },
+    {
       "DisplayName": "ManagedConnectorGovernance",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeDescriptor",
@@ -41791,6 +42148,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-managementmode",
+      "Signature": "string ManagementMode { get; set; }",
+      "Summary": "Gets the declared managed-connector management mode when one is known."
+    },
+    {
+      "DisplayName": "ManagementMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-managementmode",
       "Signature": "string ManagementMode { get; set; }",
       "Summary": "Gets the declared managed-connector management mode when one is known."
     },
@@ -44743,6 +45111,17 @@
       "Summary": "Gets the declared task ids that are missing from the latest reported task set."
     },
     {
+      "DisplayName": "MissingDeclaredTaskIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-missingdeclaredtaskids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E MissingDeclaredTaskIds { get; set; }",
+      "Summary": "Gets the declared task ids that are currently missing from the latest reported task set."
+    },
+    {
       "DisplayName": "MissingDeclaredTaskReports",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDriftCategories",
@@ -45808,6 +46187,17 @@
       "Summary": "Gets the earliest UTC due timestamp across the currently pending timers when one exists."
     },
     {
+      "DisplayName": "NoChangesRequired",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories-nochangesrequired",
+      "Signature": "const string NoChangesRequired",
+      "Summary": "The managed connector currently reports no shared write-path changes for the intended management operation."
+    },
+    {
       "DisplayName": "NoContent",
       "Category": "Methods",
       "DeclaringTypeName": "BehaviorResult",
@@ -45931,6 +46321,17 @@
     {
       "DisplayName": "None",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunoperationids-none",
+      "Signature": "const string None",
+      "Summary": "No management operation is currently intended for the execution runtime."
+    },
+    {
+      "DisplayName": "None",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorGovernanceActionIds",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -45984,6 +46385,17 @@
       "Summary": "Replaying the same logical behavior execution is not expected to be safe."
     },
     {
+      "DisplayName": "NoOp",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstates-noop",
+      "Signature": "const string NoOp",
+      "Summary": "The managed connector currently reports no shared write-path changes for the intended management operation."
+    },
+    {
       "DisplayName": "NotAllowedAuthoringStyle",
       "Category": "Fields",
       "DeclaringTypeName": "RestEndpointAuthoringPolicySuppressionKind",
@@ -46013,6 +46425,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstates-notapplicable",
+      "Signature": "const string NotApplicable",
+      "Summary": "The execution runtime does not currently represent a managed connector."
+    },
+    {
+      "DisplayName": "NotApplicable",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstates-notapplicable",
       "Signature": "const string NotApplicable",
       "Summary": "The execution runtime does not currently represent a managed connector."
     },
@@ -46455,6 +46878,17 @@
       "AnchorId": "member-f-cephalon-edge-traefik-configuration-traefiktrafficobservationmodes-observeonly",
       "Signature": "const string ObserveOnly",
       "Summary": "Reads live Traefik Kubernetes CRD resources and projects the observed posture back into the shared runtime catalog."
+    },
+    {
+      "DisplayName": "ObserveOnlyMode",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories-observeonlymode",
+      "Signature": "const string ObserveOnlyMode",
+      "Summary": "The managed connector currently stays in observe-only mode."
     },
     {
       "DisplayName": "ObserveOnlyMode",
@@ -46950,6 +47384,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-operationalstory",
       "Signature": "RuntimeOperationalStory OperationalStory { get; set; }",
       "Summary": "The richer operator-facing lifecycle story that combines loaded packages, execution-graph state, hosted-execution state, module state, and the ordered runtime timeline."
+    },
+    {
+      "DisplayName": "OperationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-operationid",
+      "Signature": "string OperationId { get; set; }",
+      "Summary": "Gets the stable management-operation identifier Cephalon would currently preview."
     },
     {
       "DisplayName": "OperationId",
@@ -48514,6 +48959,17 @@
     {
       "DisplayName": "Pause",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunoperationids-pause",
+      "Signature": "const string Pause",
+      "Summary": "Cephalon would pause the managed connector."
+    },
+    {
+      "DisplayName": "Pause",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorPreflightOperationIds",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -49313,6 +49769,17 @@
       "Signature": "PostgresLogicalReplicationCaptureOptions()"
     },
     {
+      "DisplayName": "PotentialChangeCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-potentialchangecount",
+      "Signature": "int PotentialChangeCount { get; set; }",
+      "Summary": "Gets the number of visible potential shared write-path changes in the current dry-run answer."
+    },
+    {
       "DisplayName": "PrecedenceRank",
       "Category": "Properties",
       "DeclaringTypeName": "RestEndpointCandidateRuntimeDescriptor",
@@ -49434,6 +49901,17 @@
       "Summary": "The managed connector currently satisfies the shared baseline Cephalon would use to preflight the intended management operation."
     },
     {
+      "DisplayName": "PreflightState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-preflightstate",
+      "Signature": "string PreflightState { get; set; }",
+      "Summary": "Gets the current managed-connector preflight state that informed the dry-run answer."
+    },
+    {
       "DisplayName": "PreserveImplicitQueryFallback",
       "Category": "Fields",
       "DeclaringTypeName": "RestEndpointOverrideActionKind",
@@ -49509,6 +49987,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-primaryactionid",
       "Signature": "string PrimaryActionId { get; }",
       "Summary": "Gets the primary action identifier for the current action plan."
+    },
+    {
+      "DisplayName": "PrimaryActionId",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-primaryactionid",
+      "Signature": "string PrimaryActionId { get; set; }",
+      "Summary": "Gets the primary action identifier currently associated with the runtime\u0027s managed-connector action plan."
     },
     {
       "DisplayName": "PrimaryActionId",
@@ -51361,6 +51850,17 @@
     {
       "DisplayName": "Reconcile",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunoperationids-reconcile",
+      "Signature": "const string Reconcile",
+      "Summary": "Cephalon would reconcile the managed connector toward its declared baseline."
+    },
+    {
+      "DisplayName": "Reconcile",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorPreflightOperationIds",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -51421,6 +51921,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-reconciliationstate",
+      "Signature": "string ReconciliationState { get; set; }",
+      "Summary": "Gets the latest reported overall reconciliation state when one is known."
+    },
+    {
+      "DisplayName": "ReconciliationState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-reconciliationstate",
       "Signature": "string ReconciliationState { get; set; }",
       "Summary": "Gets the latest reported overall reconciliation state when one is known."
     },
@@ -52296,6 +52807,17 @@
     {
       "DisplayName": "RemediationState",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-remediationstate",
+      "Signature": "string RemediationState { get; set; }",
+      "Summary": "Gets the current runtime-level remediation state that informed the dry-run answer."
+    },
+    {
+      "DisplayName": "RemediationState",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorPreflightStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -52842,6 +53364,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-reportingcoverage",
       "Signature": "CdcCaptureExecutionRuntimeReportingCoverageStatus ReportingCoverage { get; set; }",
       "Summary": "Gets the declared-versus-reported coverage currently visible for the execution runtime."
+    },
+    {
+      "DisplayName": "ReportingCoverageState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-reportingcoveragestate",
+      "Signature": "string ReportingCoverageState { get; set; }",
+      "Summary": "Gets the current runtime-level reporting-coverage state that informed the dry-run answer."
     },
     {
       "DisplayName": "ReportingCoverageState",
@@ -53535,6 +54068,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-requiresattention",
       "Signature": "bool RequiresAttention { get; }",
       "Summary": "Gets a value indicating whether the managed connector currently requires operator drift attention."
+    },
+    {
+      "DisplayName": "RequiresAttention",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-requiresattention",
+      "Signature": "bool RequiresAttention { get; }",
+      "Summary": "Gets a value indicating whether the managed connector currently requires additional dry-run attention."
     },
     {
       "DisplayName": "RequiresAttention",
@@ -54386,6 +54930,17 @@
     {
       "DisplayName": "Restart",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunoperationids-restart",
+      "Signature": "const string Restart",
+      "Summary": "Cephalon would restart the managed connector."
+    },
+    {
+      "DisplayName": "Restart",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorPreflightOperationIds",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -54943,6 +55498,17 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-resulttype",
       "Signature": "string ResultType { get; }",
       "Summary": "Gets the behavior result-contract type name."
+    },
+    {
+      "DisplayName": "Resume",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunoperationids-resume",
+      "Signature": "const string Resume",
+      "Summary": "Cephalon would resume the managed connector."
     },
     {
       "DisplayName": "Resume",
@@ -56256,6 +56822,17 @@
     {
       "DisplayName": "RuntimeRemediation",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories-runtimeremediation",
+      "Signature": "const string RuntimeRemediation",
+      "Summary": "The managed connector still needs runtime remediation attention before a dry-run answer can be trusted."
+    },
+    {
+      "DisplayName": "RuntimeRemediation",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorPreflightCategories",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -56351,6 +56928,17 @@
       "AnchorId": "member-f-cephalon-engine-diagnostics-enginediagnostics-runtimetransitioncountername",
       "Signature": "const string RuntimeTransitionCounterName",
       "Summary": "Gets the counter name for runtime lifecycle transitions."
+    },
+    {
+      "DisplayName": "RuntimeTruthIncomplete",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories-runtimetruthincomplete",
+      "Signature": "const string RuntimeTruthIncomplete",
+      "Summary": "The managed connector does not yet report enough runtime truth to trust a dry-run answer."
     },
     {
       "DisplayName": "RuntimeTruthIncomplete",
@@ -58949,6 +59537,17 @@
       "Summary": "Gets the source scaffold project identifier that produced this instance."
     },
     {
+      "DisplayName": "SourceProviderChange",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories-sourceproviderchange",
+      "Signature": "const string SourceProviderChange",
+      "Summary": "The managed connector would change the reported source-provider identifier to match the declared baseline."
+    },
+    {
       "DisplayName": "SourceProviderId",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus",
@@ -59528,6 +60127,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-state",
       "Signature": "string State { get; }",
       "Summary": "Gets the stable managed-connector drift state."
+    },
+    {
+      "DisplayName": "State",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-state",
+      "Signature": "string State { get; }",
+      "Summary": "Gets the stable managed-connector dry-run state."
     },
     {
       "DisplayName": "State",
@@ -62027,6 +62637,17 @@
       "Summary": "Gets the latest reported task-reconciliation state when one is known."
     },
     {
+      "DisplayName": "TaskTopologyChange",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryruncategories-tasktopologychange",
+      "Signature": "const string TaskTopologyChange",
+      "Summary": "The managed connector would change the reported task topology to match the declared baseline."
+    },
+    {
       "DisplayName": "Technologies",
       "Category": "Properties",
       "DeclaringTypeName": "AppProfile",
@@ -64084,6 +64705,17 @@
       "Summary": "Gets the reported task ids that were not part of the declared task baseline."
     },
     {
+      "DisplayName": "UnexpectedReportedTaskIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-unexpectedreportedtaskids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E UnexpectedReportedTaskIds { get; set; }",
+      "Summary": "Gets the reported task ids that were not part of the declared task baseline."
+    },
+    {
       "DisplayName": "UnexpectedReportedTasks",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDriftCategories",
@@ -65668,6 +66300,28 @@
       "Summary": "Gets the working-directory hints represented in this batch, in encounter order."
     },
     {
+      "DisplayName": "WouldApplyChanges",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-wouldapplychanges",
+      "Signature": "bool WouldApplyChanges { get; set; }",
+      "Summary": "Gets a value indicating whether the current dry-run answer includes one or more shared write-path changes."
+    },
+    {
+      "DisplayName": "WouldChange",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstates-wouldchange",
+      "Signature": "const string WouldChange",
+      "Summary": "The managed connector currently reports one or more shared write-path changes for the intended management operation."
+    },
+    {
       "DisplayName": "Write",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseTopologySelection",
@@ -65743,6 +66397,17 @@
       "AnchorId": "member-p-cephalon-data-entityframework-configuration-entityframeworkdataoptions-writedbcontexttype",
       "Signature": "Type WriteDbContextType { get; }",
       "Summary": "Gets the write-side \u0060DbContext\u0060 type."
+    },
+    {
+      "DisplayName": "WritePathReadinessState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordryrunstatus-writepathreadinessstate",
+      "Signature": "string WritePathReadinessState { get; set; }",
+      "Summary": "Gets the current managed-connector write-path readiness state that informed the dry-run answer."
     },
     {
       "DisplayName": "WritePathReadinessState",
