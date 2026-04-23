@@ -56,4 +56,9 @@ public sealed class DataRuntimeOptions
     /// Gets or sets the host-owned local coordination owner identifier used to decide whether the current node can run automatic managed-connector retries.
     /// </summary>
     public string? ManagedConnectorAutomaticRetryCoordinationOwnerId { get; set; }
+
+    /// <summary>
+    /// Gets or sets the optional durable file path used to persist the shared managed-connector command journal across process restarts.
+    /// </summary>
+    public string? ManagedConnectorCommandJournalPersistencePath { get; set; }
 }

@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-23T19:07:08.8289874+00:00",
+  "GeneratedAtUtc": "2026-04-23T19:37:05.0877+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -111,7 +111,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 19,
-      "TypeCount": 453
+      "TypeCount": 457
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -674,7 +674,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
-      "TypeCount": 173
+      "TypeCount": 177
     },
     {
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
@@ -3313,7 +3313,7 @@
       "MemberCounts": {
         "Constructors": 2,
         "Fields": 0,
-        "Properties": 33,
+        "Properties": 34,
         "Methods": 0
       }
     },
@@ -3734,6 +3734,66 @@
         "Constructors": 0,
         "Fields": 19,
         "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitycategories",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories",
+      "Summary": "Defines the stable category identifiers used by managed-connector command-journal durability answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 12,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilitySources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitysources",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilitySources",
+      "Summary": "Defines the stable source identifiers used by managed-connector command-journal durability answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 6,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystates",
+      "Declaration": "public static class CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates",
+      "Summary": "Defines the stable state identifiers used by managed-connector command-journal durability answers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 6,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus",
+      "Declaration": "public sealed class CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "Summary": "Describes the current operator-facing managed-connector command-journal durability posture for one CDC execution runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 34,
         "Methods": 0
       }
     },
@@ -5758,7 +5818,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 9,
+        "Properties": 10,
         "Methods": 0
       }
     },
@@ -7949,7 +8009,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 53
+        "Methods": 55
       }
     },
     {
@@ -17646,6 +17706,17 @@
     {
       "DisplayName": "AppliesToManagedConnector",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-appliestomanagedconnector",
+      "Signature": "bool AppliesToManagedConnector { get; }",
+      "Summary": "Gets a value indicating whether the current runtime currently represents a managed connector."
+    },
+    {
+      "DisplayName": "AppliesToManagedConnector",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -19118,6 +19189,17 @@
       "Summary": "The command-execution result was recorded from the shared automatic background retry lane."
     },
     {
+      "DisplayName": "AutomaticRetryCoordinationState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-automaticretrycoordinationstate",
+      "Signature": "string AutomaticRetryCoordinationState { get; set; }",
+      "Summary": "Gets the current managed-connector automatic background retry coordination state that informed durability."
+    },
+    {
       "DisplayName": "AutomaticRetryDisabled",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalCategories",
@@ -19140,6 +19222,17 @@
       "Summary": "Automatic background retry remains disabled for the current retry candidate."
     },
     {
+      "DisplayName": "AutomaticRetryEligible",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitycategories-automaticretryeligible",
+      "Signature": "const string AutomaticRetryEligible",
+      "Summary": "Automatic background retry is currently eligible on the shared runtime surface."
+    },
+    {
       "DisplayName": "AutomaticRetryExecution",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationSources",
@@ -19160,6 +19253,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-automaticretryexecutionstate",
       "Signature": "string AutomaticRetryExecutionState { get; set; }",
       "Summary": "Gets the current managed-connector automatic background retry execution state that informed coordination."
+    },
+    {
+      "DisplayName": "AutomaticRetryExecutionState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-automaticretryexecutionstate",
+      "Signature": "string AutomaticRetryExecutionState { get; set; }",
+      "Summary": "Gets the current managed-connector automatic background retry execution state that informed durability."
     },
     {
       "DisplayName": "AutomaticRetryHistory",
@@ -22134,6 +22238,17 @@
     {
       "DisplayName": "CategoryIds",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-categoryids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E CategoryIds { get; set; }",
+      "Summary": "Gets the stable command-journal durability categories currently active for the execution runtime."
+    },
+    {
+      "DisplayName": "CategoryIds",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -22438,6 +22553,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancestatus-ctor-system-string-system-string",
       "Signature": "CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus(string state, string description)",
       "Summary": "Creates a new managed-connector command-issuance answer."
+    },
+    {
+      "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "Category": "Constructors",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-ctor-system-string-system-string",
+      "Signature": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus(string state, string description)",
+      "Summary": "Creates a new managed-connector command-journal durability answer."
     },
     {
       "DisplayName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus",
@@ -22757,6 +22883,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancestatus-cdccaptureids",
       "Signature": "IReadOnlyList\u003Cstring\u003E CdcCaptureIds { get; set; }",
       "Summary": "Gets the CDC capture identifiers currently associated with command issuance."
+    },
+    {
+      "DisplayName": "CdcCaptureIds",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-cdccaptureids",
+      "Signature": "IReadOnlyList\u003Cstring\u003E CdcCaptureIds { get; set; }",
+      "Summary": "Gets the CDC capture identifiers currently associated with command-journal durability."
     },
     {
       "DisplayName": "CdcCaptureIds",
@@ -24871,6 +25008,17 @@
       "Summary": "Gets the current managed-connector command-journal state that informed automatic background retry execution."
     },
     {
+      "DisplayName": "CommandJournalState",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-commandjournalstate",
+      "Signature": "string CommandJournalState { get; set; }",
+      "Summary": "Gets the current bounded managed-connector command-journal state that informed durability."
+    },
+    {
       "DisplayName": "CommandRetry",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalSources",
@@ -26717,6 +26865,17 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-coordinationpending",
       "Signature": "bool CoordinationPending { get; }",
       "Summary": "Gets a value indicating whether the latest runtime state still has pending continuation, timer, or signal work."
+    },
+    {
+      "DisplayName": "CoordinationReady",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitycategories-coordinationready",
+      "Signature": "const string CoordinationReady",
+      "Summary": "Automatic background retry can currently execute on the active node."
     },
     {
       "DisplayName": "CoordinationRequiredGroupCount",
@@ -29200,6 +29359,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancestatus-description",
       "Signature": "string Description { get; }",
       "Summary": "Gets an optional operator-facing command-issuance summary."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets an optional operator-facing command-journal durability summary."
     },
     {
       "DisplayName": "Description",
@@ -32027,6 +32197,28 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-durableexecutionstates",
       "Signature": "IReadOnlyList\u003CDurableExecutionRuntimeState\u003E DurableExecutionStates { get; set; }",
       "Summary": "Gets the latest reported durable-execution runtime state entries visible to the runtime at the time the snapshot was created."
+    },
+    {
+      "DisplayName": "DurableJournalStore",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilitySources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitysources-durablejournalstore",
+      "Signature": "const string DurableJournalStore",
+      "Summary": "The durability answer was derived primarily from a healthy durable journal store."
+    },
+    {
+      "DisplayName": "DurableStoreConfigured",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitycategories-durablestoreconfigured",
+      "Signature": "const string DurableStoreConfigured",
+      "Summary": "A durable journal store is configured for the current host."
     },
     {
       "DisplayName": "Edge",
@@ -35859,6 +36051,17 @@
     {
       "DisplayName": "ExecutionRuntimeId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-executionruntimeid",
+      "Signature": "string ExecutionRuntimeId { get; set; }",
+      "Summary": "Gets the stable execution-runtime identifier currently associated with command-journal durability."
+    },
+    {
+      "DisplayName": "ExecutionRuntimeId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -35932,6 +36135,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationstatus-executiontopology",
       "Signature": "string ExecutionTopology { get; set; }",
       "Summary": "Gets the operator-facing execution-topology classification that informed automatic background retry coordination."
+    },
+    {
+      "DisplayName": "ExecutionTopology",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-executiontopology",
+      "Signature": "string ExecutionTopology { get; set; }",
+      "Summary": "Gets the operator-facing execution-topology classification that informed command-journal durability."
     },
     {
       "DisplayName": "ExecutionTopology",
@@ -39025,6 +39239,28 @@
       "Summary": "Gets the CDC capture execution runtimes whose current bounded managed-connector command-journal answer includes the requested category."
     },
     {
+      "DisplayName": "GetByManagedConnectorCommandJournalDurabilityCategory",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcommandjournaldurabilitycategory-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorCommandJournalDurabilityCategory(string durabilityCategory)",
+      "Summary": "Gets the CDC capture execution runtimes whose current managed-connector command-journal durability answer includes the requested category."
+    },
+    {
+      "DisplayName": "GetByManagedConnectorCommandJournalDurabilityState",
+      "Category": "Methods",
+      "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcommandjournaldurabilitystate-system-string",
+      "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorCommandJournalDurabilityState(string durabilityState)",
+      "Summary": "Gets the CDC capture execution runtimes whose current managed-connector command-journal durability answer matches the requested state."
+    },
+    {
       "DisplayName": "GetByManagedConnectorCommandJournalState",
       "Category": "Methods",
       "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
@@ -41214,6 +41450,17 @@
       "Summary": "Gets a value indicating whether the bounded command journal contains evidence that replaying the command would be duplicative."
     },
     {
+      "DisplayName": "HasDurableStoreConfigured",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-hasdurablestoreconfigured",
+      "Signature": "bool HasDurableStoreConfigured { get; set; }",
+      "Summary": "Gets a value indicating whether a durable journal store is currently configured."
+    },
+    {
       "DisplayName": "HasFreshnessWindow",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureRuntimeState",
@@ -41489,6 +41736,39 @@
       "Summary": "Gets a value indicating whether one or more durable timers are currently pending for the stream."
     },
     {
+      "DisplayName": "HasPersistedRecordedHistory",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-haspersistedrecordedhistory",
+      "Signature": "bool HasPersistedRecordedHistory { get; set; }",
+      "Summary": "Gets a value indicating whether the current runtime has recorded command history in the persisted snapshot."
+    },
+    {
+      "DisplayName": "HasPersistedSnapshot",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-haspersistedsnapshot",
+      "Signature": "bool HasPersistedSnapshot { get; set; }",
+      "Summary": "Gets a value indicating whether the durable journal store currently has a persisted snapshot."
+    },
+    {
+      "DisplayName": "HasPersistenceError",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-haspersistenceerror",
+      "Signature": "bool HasPersistenceError { get; }",
+      "Summary": "Gets a value indicating whether the durable journal store currently reports a persistence error."
+    },
+    {
       "DisplayName": "HasProcessedAsync",
       "Category": "Methods",
       "DeclaringTypeName": "IInbox",
@@ -41535,6 +41815,17 @@
     {
       "DisplayName": "HasRecordedCommandHistory",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-hasrecordedcommandhistory",
+      "Signature": "bool HasRecordedCommandHistory { get; }",
+      "Summary": "Gets a value indicating whether the current runtime currently retains recorded command history."
+    },
+    {
+      "DisplayName": "HasRecordedCommandHistory",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -41575,6 +41866,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-hasrecordedoutcome",
       "Signature": "bool HasRecordedOutcome { get; }",
       "Summary": "Gets a value indicating whether Cephalon has recorded one concrete command-execution outcome."
+    },
+    {
+      "DisplayName": "HasRecoveredPersistedHistory",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-hasrecoveredpersistedhistory",
+      "Signature": "bool HasRecoveredPersistedHistory { get; set; }",
+      "Summary": "Gets a value indicating whether the current process recovered command history for this runtime from durable storage."
+    },
+    {
+      "DisplayName": "HasRecoveryError",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-hasrecoveryerror",
+      "Signature": "bool HasRecoveryError { get; }",
+      "Summary": "Gets a value indicating whether the durable journal store currently reports a recovery error."
     },
     {
       "DisplayName": "HasRejectedReporters",
@@ -41740,6 +42053,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-behaviorexecutionresilienceoverridesettings-hasstrategyvalues",
       "Signature": "bool HasStrategyValues { get; }",
       "Summary": "Gets a value indicating whether any strategy-level override settings were explicitly supplied."
+    },
+    {
+      "DisplayName": "HasTruncatedHistory",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-hastruncatedhistory",
+      "Signature": "bool HasTruncatedHistory { get; }",
+      "Summary": "Gets a value indicating whether the retained history currently represents bounded truncation."
     },
     {
       "DisplayName": "HasTruncatedHistory",
@@ -45361,6 +45685,39 @@
       "Summary": "Gets or sets the maximum number of audit entries retained by the default in-memory writer."
     },
     {
+      "DisplayName": "InMemoryHistoryStore",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilitySources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitysources-inmemoryhistorystore",
+      "Signature": "const string InMemoryHistoryStore",
+      "Summary": "The durability answer was derived primarily from the in-memory shared command history store."
+    },
+    {
+      "DisplayName": "InMemoryOnly",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitycategories-inmemoryonly",
+      "Signature": "const string InMemoryOnly",
+      "Summary": "The command journal currently remains in memory only."
+    },
+    {
+      "DisplayName": "InMemoryOnly",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystates-inmemoryonly",
+      "Signature": "const string InMemoryOnly",
+      "Summary": "The command journal currently remains in memory only and would not survive process restart."
+    },
+    {
       "DisplayName": "InnerFaults",
       "Category": "Properties",
       "DeclaringTypeName": "BehaviorFault",
@@ -46230,6 +46587,17 @@
       "Summary": "Gets a value indicating whether replaying the current command would be duplicative."
     },
     {
+      "DisplayName": "IsDurable",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-isdurable",
+      "Signature": "bool IsDurable { get; }",
+      "Summary": "Gets a value indicating whether the current durability answer already provides restart-safe retained history."
+    },
+    {
       "DisplayName": "IsEligible",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus",
@@ -46371,6 +46739,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimemodulelifecyclestate-isinitialized",
       "Signature": "bool IsInitialized { get; }",
       "Summary": "Gets a value indicating whether the module completed initialization successfully."
+    },
+    {
+      "DisplayName": "IsInMemoryOnly",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-isinmemoryonly",
+      "Signature": "bool IsInMemoryOnly { get; }",
+      "Summary": "Gets a value indicating whether the current durability answer remains in memory only."
     },
     {
       "DisplayName": "IsInsufficientForAutomation",
@@ -46681,6 +47060,28 @@
       "Summary": "Gets a value indicating whether the execution runtime is currently out of policy."
     },
     {
+      "DisplayName": "IsPersisted",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-ispersisted",
+      "Signature": "bool IsPersisted { get; }",
+      "Summary": "Gets a value indicating whether the current durability answer reports healthy persisted storage."
+    },
+    {
+      "DisplayName": "IsPersistenceFailed",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-ispersistencefailed",
+      "Signature": "bool IsPersistenceFailed { get; }",
+      "Summary": "Gets a value indicating whether the durable journal store currently failed while persisting the latest snapshot."
+    },
+    {
       "DisplayName": "IsPolicyBlocked",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus",
@@ -46745,6 +47146,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionintentstatus-isreadytoexecute",
       "Signature": "bool IsReadyToExecute { get; }",
       "Summary": "Gets a value indicating whether the current execution intent is ready for a future engine-execution lane."
+    },
+    {
+      "DisplayName": "IsRecovered",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-isrecovered",
+      "Signature": "bool IsRecovered { get; }",
+      "Summary": "Gets a value indicating whether the current durability answer reports recovered persisted history."
+    },
+    {
+      "DisplayName": "IsRecoveryFailed",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-isrecoveryfailed",
+      "Signature": "bool IsRecoveryFailed { get; }",
+      "Summary": "Gets a value indicating whether the durable journal store currently failed while recovering persisted history."
     },
     {
       "DisplayName": "IsRejected",
@@ -48199,6 +48622,28 @@
       "Summary": "The last reported publication outcome identifier when one exists."
     },
     {
+      "DisplayName": "LastPersistedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-lastpersistedatutc",
+      "Signature": "DateTimeOffset? LastPersistedAtUtc { get; set; }",
+      "Summary": "Gets the UTC timestamp when the durable journal snapshot was last persisted successfully."
+    },
+    {
+      "DisplayName": "LastPersistenceError",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-lastpersistenceerror",
+      "Signature": "string LastPersistenceError { get; set; }",
+      "Summary": "Gets the latest durable journal persistence error when one exists."
+    },
+    {
       "DisplayName": "LastProducedMessageCount",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureRuntimeState",
@@ -48219,6 +48664,28 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-lastpublishertype",
       "Signature": "string LastPublisherType { get; set; }",
       "Summary": "The last concrete publisher implementation type that accepted or rejected the publication when one was reported."
+    },
+    {
+      "DisplayName": "LastRecoveredAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-lastrecoveredatutc",
+      "Signature": "DateTimeOffset? LastRecoveredAtUtc { get; set; }",
+      "Summary": "Gets the UTC timestamp when the current process last recovered the durable journal snapshot, when recovery happened."
+    },
+    {
+      "DisplayName": "LastRecoveryError",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-lastrecoveryerror",
+      "Signature": "string LastRecoveryError { get; set; }",
+      "Summary": "Gets the latest durable journal recovery error when one exists."
     },
     {
       "DisplayName": "LastReplayedVersion",
@@ -49376,6 +49843,28 @@
       "Summary": "Gets the operator-facing bounded managed-connector command journal derived from shared command history, command retry, and retry-execution policy truth."
     },
     {
+      "DisplayName": "ManagedConnectorCommandJournalDurability",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorcommandjournaldurability",
+      "Signature": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus ManagedConnectorCommandJournalDurability { get; set; }",
+      "Summary": "Gets the operator-facing managed-connector command-journal durability posture derived from the shared command journal, automatic retry, and durable journal-store truth."
+    },
+    {
+      "DisplayName": "ManagedConnectorCommandJournalPersistencePath",
+      "Category": "Properties",
+      "DeclaringTypeName": "DataRuntimeOptions",
+      "NamespaceName": "Cephalon.Data.Configuration",
+      "AssemblyName": "Cephalon.Data",
+      "FileName": "cephalon-data.md",
+      "AnchorId": "member-p-cephalon-data-configuration-dataruntimeoptions-managedconnectorcommandjournalpersistencepath",
+      "Signature": "string ManagedConnectorCommandJournalPersistencePath { get; set; }",
+      "Summary": "Gets or sets the optional durable file path used to persist the shared managed-connector command journal across process restarts."
+    },
+    {
       "DisplayName": "ManagedConnectorCommandRetry",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeDescriptor",
@@ -49570,6 +50059,17 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancestatus-managementmode",
+      "Signature": "string ManagementMode { get; set; }",
+      "Summary": "Gets the declared managed-connector management mode when one is known."
+    },
+    {
+      "DisplayName": "ManagementMode",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-managementmode",
       "Signature": "string ManagementMode { get; set; }",
       "Summary": "Gets the declared managed-connector management mode when one is known."
     },
@@ -50639,6 +51139,17 @@
       "AnchorId": "member-p-cephalon-engine-diagnostics-diagnosticsconvention-maximumeventid",
       "Signature": "int? MaximumEventId { get; }",
       "Summary": "Gets the largest event id published by this convention."
+    },
+    {
+      "DisplayName": "MaximumRetainedEntryCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-maximumretainedentrycount",
+      "Signature": "int MaximumRetainedEntryCount { get; set; }",
+      "Summary": "Gets the maximum number of bounded journal entries retained for one execution runtime."
     },
     {
       "DisplayName": "MaximumRetainedEntryCount",
@@ -54359,6 +54870,17 @@
     {
       "DisplayName": "NotApplicable",
       "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystates-notapplicable",
+      "Signature": "const string NotApplicable",
+      "Summary": "Command-journal durability does not currently apply to the execution runtime."
+    },
+    {
+      "DisplayName": "NotApplicable",
+      "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -57787,6 +58309,17 @@
       "Summary": "Gets the maximum permits available per limiter window or bucket."
     },
     {
+      "DisplayName": "Persisted",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystates-persisted",
+      "Signature": "const string Persisted",
+      "Summary": "The command journal currently has a healthy durable persistence store."
+    },
+    {
       "DisplayName": "PersistedAtUtc",
       "Category": "Properties",
       "DeclaringTypeName": "AuditHistoryEntry",
@@ -57796,6 +58329,83 @@
       "AnchorId": "member-p-cephalon-abstractions-audit-audithistoryentry-persistedatutc",
       "Signature": "DateTimeOffset PersistedAtUtc { get; }",
       "Summary": "Gets the time at which the audit entry was durably persisted."
+    },
+    {
+      "DisplayName": "PersistedRecordedHistory",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitycategories-persistedrecordedhistory",
+      "Signature": "const string PersistedRecordedHistory",
+      "Summary": "The current runtime has recorded command history inside the durable journal store."
+    },
+    {
+      "DisplayName": "PersistedSnapshotAvailable",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitycategories-persistedsnapshotavailable",
+      "Signature": "const string PersistedSnapshotAvailable",
+      "Summary": "The durable journal store currently has a healthy persisted snapshot."
+    },
+    {
+      "DisplayName": "PersistenceError",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitycategories-persistenceerror",
+      "Signature": "const string PersistenceError",
+      "Summary": "The durable journal store currently reports a persistence error."
+    },
+    {
+      "DisplayName": "PersistenceError",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilitySources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitysources-persistenceerror",
+      "Signature": "const string PersistenceError",
+      "Summary": "The durability answer was derived primarily from a durable journal persistence failure."
+    },
+    {
+      "DisplayName": "PersistenceFailed",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystates-persistencefailed",
+      "Signature": "const string PersistenceFailed",
+      "Summary": "The durable command-journal store could not persist the latest snapshot."
+    },
+    {
+      "DisplayName": "PersistenceHealthy",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitycategories-persistencehealthy",
+      "Signature": "const string PersistenceHealthy",
+      "Summary": "The durable journal store currently reports healthy persistence posture."
+    },
+    {
+      "DisplayName": "PersistencePath",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-persistencepath",
+      "Signature": "string PersistencePath { get; set; }",
+      "Summary": "Gets the configured durable persistence path when one exists."
     },
     {
       "DisplayName": "Phase",
@@ -61083,6 +61693,83 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-recordedatutc",
       "Signature": "DateTimeOffset? RecordedAtUtc { get; set; }",
       "Summary": "Gets the timestamp when Cephalon recorded this command-execution outcome."
+    },
+    {
+      "DisplayName": "RecordedCommandHistory",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitycategories-recordedcommandhistory",
+      "Signature": "const string RecordedCommandHistory",
+      "Summary": "The command journal currently exposes recorded command history for the runtime."
+    },
+    {
+      "DisplayName": "Recovered",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystates-recovered",
+      "Signature": "const string Recovered",
+      "Summary": "The command journal was recovered from a durable persistence store after startup."
+    },
+    {
+      "DisplayName": "RecoveredDurableJournalStore",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilitySources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitysources-recovereddurablejournalstore",
+      "Signature": "const string RecoveredDurableJournalStore",
+      "Summary": "The durability answer was derived primarily from recovered durable journal history."
+    },
+    {
+      "DisplayName": "RecoveredHistory",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitycategories-recoveredhistory",
+      "Signature": "const string RecoveredHistory",
+      "Summary": "The current runtime recovered command history from the durable journal store after startup."
+    },
+    {
+      "DisplayName": "RecoveryError",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitycategories-recoveryerror",
+      "Signature": "const string RecoveryError",
+      "Summary": "The durable journal store currently reports a recovery error."
+    },
+    {
+      "DisplayName": "RecoveryError",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilitySources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitysources-recoveryerror",
+      "Signature": "const string RecoveryError",
+      "Summary": "The durability answer was derived primarily from a durable journal recovery failure."
+    },
+    {
+      "DisplayName": "RecoveryFailed",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystates-recoveryfailed",
+      "Signature": "const string RecoveryFailed",
+      "Summary": "The durable command-journal store could not recover the persisted snapshot."
     },
     {
       "DisplayName": "RecreateSlotIfInvalidated",
@@ -65366,6 +66053,17 @@
     {
       "DisplayName": "RetainedEntryCount",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-retainedentrycount",
+      "Signature": "int RetainedEntryCount { get; set; }",
+      "Summary": "Gets the number of bounded journal entries currently retained for the execution runtime."
+    },
+    {
+      "DisplayName": "RetainedEntryCount",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -68963,6 +69661,17 @@
     {
       "DisplayName": "SourceId",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-sourceid",
+      "Signature": "string SourceId { get; set; }",
+      "Summary": "Gets the primary source identifier Cephalon used to derive command-journal durability."
+    },
+    {
+      "DisplayName": "SourceId",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -70563,6 +71272,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancestatus-state",
       "Signature": "string State { get; }",
       "Summary": "Gets the stable managed-connector command-issuance state."
+    },
+    {
+      "DisplayName": "State",
+      "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-state",
+      "Signature": "string State { get; }",
+      "Summary": "Gets the stable managed-connector command-journal durability state."
     },
     {
       "DisplayName": "State",
@@ -74087,6 +74807,17 @@
     {
       "DisplayName": "TotalRecordedEntryCount",
       "Category": "Properties",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-totalrecordedentrycount",
+      "Signature": "int TotalRecordedEntryCount { get; set; }",
+      "Summary": "Gets the total number of command-execution outcomes currently visible to the durability answer."
+    },
+    {
+      "DisplayName": "TotalRecordedEntryCount",
+      "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -74644,6 +75375,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstates-truncated",
       "Signature": "const string Truncated",
       "Summary": "The command journal currently retains only the newest bounded command history because older entries were truncated."
+    },
+    {
+      "DisplayName": "TruncatedHistory",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitycategories-truncatedhistory",
+      "Signature": "const string TruncatedHistory",
+      "Summary": "The command journal currently exposes truncated retained history."
     },
     {
       "DisplayName": "TrustedAssemblies",
@@ -75403,6 +76145,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancesources-unknown",
       "Signature": "const string Unknown",
       "Summary": "The command issuance does not currently have a more specific primary source."
+    },
+    {
+      "DisplayName": "Unknown",
+      "Category": "Fields",
+      "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilitySources",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitysources-unknown",
+      "Signature": "const string Unknown",
+      "Summary": "The durability answer does not currently resolve to one specific source."
     },
     {
       "DisplayName": "Unknown",

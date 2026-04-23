@@ -8478,6 +8478,16 @@ CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus ManagedConnectorC
 
 Gets the operator-facing bounded managed-connector command journal derived from shared command history, command retry, and retry-execution policy truth.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorcommandjournaldurability"></a>
+
+##### `ManagedConnectorCommandJournalDurability`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus ManagedConnectorCommandJournalDurability { get; set; }
+```
+
+Gets the operator-facing managed-connector command-journal durability posture derived from the shared command journal, automatic retry, and durable journal-store truth.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorcommandretry"></a>
 
 ##### `ManagedConnectorCommandRetry`
@@ -13109,6 +13119,654 @@ const string RuntimeTruthIncomplete
 ```
 
 The current command journal remains constrained by incomplete shared runtime truth.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitycategories"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories`
+
+Defines the stable category identifiers used by managed-connector command-journal durability answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitycategories-automaticretryeligible"></a>
+
+##### `AutomaticRetryEligible`
+
+```csharp
+const string AutomaticRetryEligible
+```
+
+Automatic background retry is currently eligible on the shared runtime surface.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitycategories-coordinationready"></a>
+
+##### `CoordinationReady`
+
+```csharp
+const string CoordinationReady
+```
+
+Automatic background retry can currently execute on the active node.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitycategories-durablestoreconfigured"></a>
+
+##### `DurableStoreConfigured`
+
+```csharp
+const string DurableStoreConfigured
+```
+
+A durable journal store is configured for the current host.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitycategories-inmemoryonly"></a>
+
+##### `InMemoryOnly`
+
+```csharp
+const string InMemoryOnly
+```
+
+The command journal currently remains in memory only.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitycategories-persistedrecordedhistory"></a>
+
+##### `PersistedRecordedHistory`
+
+```csharp
+const string PersistedRecordedHistory
+```
+
+The current runtime has recorded command history inside the durable journal store.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitycategories-persistedsnapshotavailable"></a>
+
+##### `PersistedSnapshotAvailable`
+
+```csharp
+const string PersistedSnapshotAvailable
+```
+
+The durable journal store currently has a healthy persisted snapshot.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitycategories-persistenceerror"></a>
+
+##### `PersistenceError`
+
+```csharp
+const string PersistenceError
+```
+
+The durable journal store currently reports a persistence error.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitycategories-persistencehealthy"></a>
+
+##### `PersistenceHealthy`
+
+```csharp
+const string PersistenceHealthy
+```
+
+The durable journal store currently reports healthy persistence posture.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitycategories-recordedcommandhistory"></a>
+
+##### `RecordedCommandHistory`
+
+```csharp
+const string RecordedCommandHistory
+```
+
+The command journal currently exposes recorded command history for the runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitycategories-recoveredhistory"></a>
+
+##### `RecoveredHistory`
+
+```csharp
+const string RecoveredHistory
+```
+
+The current runtime recovered command history from the durable journal store after startup.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitycategories-recoveryerror"></a>
+
+##### `RecoveryError`
+
+```csharp
+const string RecoveryError
+```
+
+The durable journal store currently reports a recovery error.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitycategories-truncatedhistory"></a>
+
+##### `TruncatedHistory`
+
+```csharp
+const string TruncatedHistory
+```
+
+The command journal currently exposes truncated retained history.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitysources"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilitySources`
+
+Defines the stable source identifiers used by managed-connector command-journal durability answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilitySources
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitysources-durablejournalstore"></a>
+
+##### `DurableJournalStore`
+
+```csharp
+const string DurableJournalStore
+```
+
+The durability answer was derived primarily from a healthy durable journal store.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitysources-inmemoryhistorystore"></a>
+
+##### `InMemoryHistoryStore`
+
+```csharp
+const string InMemoryHistoryStore
+```
+
+The durability answer was derived primarily from the in-memory shared command history store.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitysources-persistenceerror"></a>
+
+##### `PersistenceError`
+
+```csharp
+const string PersistenceError
+```
+
+The durability answer was derived primarily from a durable journal persistence failure.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitysources-recovereddurablejournalstore"></a>
+
+##### `RecoveredDurableJournalStore`
+
+```csharp
+const string RecoveredDurableJournalStore
+```
+
+The durability answer was derived primarily from recovered durable journal history.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitysources-recoveryerror"></a>
+
+##### `RecoveryError`
+
+```csharp
+const string RecoveryError
+```
+
+The durability answer was derived primarily from a durable journal recovery failure.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitysources-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+The durability answer does not currently resolve to one specific source.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystates"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates`
+
+Defines the stable state identifiers used by managed-connector command-journal durability answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystates-inmemoryonly"></a>
+
+##### `InMemoryOnly`
+
+```csharp
+const string InMemoryOnly
+```
+
+The command journal currently remains in memory only and would not survive process restart.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystates-notapplicable"></a>
+
+##### `NotApplicable`
+
+```csharp
+const string NotApplicable
+```
+
+Command-journal durability does not currently apply to the execution runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystates-persisted"></a>
+
+##### `Persisted`
+
+```csharp
+const string Persisted
+```
+
+The command journal currently has a healthy durable persistence store.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystates-persistencefailed"></a>
+
+##### `PersistenceFailed`
+
+```csharp
+const string PersistenceFailed
+```
+
+The durable command-journal store could not persist the latest snapshot.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystates-recovered"></a>
+
+##### `Recovered`
+
+```csharp
+const string Recovered
+```
+
+The command journal was recovered from a durable persistence store after startup.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystates-recoveryfailed"></a>
+
+##### `RecoveryFailed`
+
+```csharp
+const string RecoveryFailed
+```
+
+The durable command-journal store could not recover the persisted snapshot.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus`
+
+Describes the current operator-facing managed-connector command-journal durability posture for one CDC execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-ctor-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus(string state, string description)
+```
+
+Creates a new managed-connector command-journal durability answer.
+
+Parameters:
+- `state`: The stable command-journal durability state, such as `not-applicable`, `in-memory-only`, `persisted`, `recovered`, `recovery-failed`, or `persistence-failed`.
+- `description`: An optional operator-facing command-journal durability summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-appliestomanagedconnector"></a>
+
+##### `AppliesToManagedConnector`
+
+```csharp
+bool AppliesToManagedConnector { get; }
+```
+
+Gets a value indicating whether the current runtime currently represents a managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-automaticretrycoordinationstate"></a>
+
+##### `AutomaticRetryCoordinationState`
+
+```csharp
+string AutomaticRetryCoordinationState { get; set; }
+```
+
+Gets the current managed-connector automatic background retry coordination state that informed durability.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-automaticretryexecutionstate"></a>
+
+##### `AutomaticRetryExecutionState`
+
+```csharp
+string AutomaticRetryExecutionState { get; set; }
+```
+
+Gets the current managed-connector automatic background retry execution state that informed durability.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-categoryids"></a>
+
+##### `CategoryIds`
+
+```csharp
+IReadOnlyList<string> CategoryIds { get; set; }
+```
+
+Gets the stable command-journal durability categories currently active for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-cdccaptureids"></a>
+
+##### `CdcCaptureIds`
+
+```csharp
+IReadOnlyList<string> CdcCaptureIds { get; set; }
+```
+
+Gets the CDC capture identifiers currently associated with command-journal durability.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-commandjournalstate"></a>
+
+##### `CommandJournalState`
+
+```csharp
+string CommandJournalState { get; set; }
+```
+
+Gets the current bounded managed-connector command-journal state that informed durability.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing command-journal durability summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-executionruntimeid"></a>
+
+##### `ExecutionRuntimeId`
+
+```csharp
+string ExecutionRuntimeId { get; set; }
+```
+
+Gets the stable execution-runtime identifier currently associated with command-journal durability.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-executiontopology"></a>
+
+##### `ExecutionTopology`
+
+```csharp
+string ExecutionTopology { get; set; }
+```
+
+Gets the operator-facing execution-topology classification that informed command-journal durability.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-hasdurablestoreconfigured"></a>
+
+##### `HasDurableStoreConfigured`
+
+```csharp
+bool HasDurableStoreConfigured { get; set; }
+```
+
+Gets a value indicating whether a durable journal store is currently configured.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-haspersistedrecordedhistory"></a>
+
+##### `HasPersistedRecordedHistory`
+
+```csharp
+bool HasPersistedRecordedHistory { get; set; }
+```
+
+Gets a value indicating whether the current runtime has recorded command history in the persisted snapshot.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-haspersistedsnapshot"></a>
+
+##### `HasPersistedSnapshot`
+
+```csharp
+bool HasPersistedSnapshot { get; set; }
+```
+
+Gets a value indicating whether the durable journal store currently has a persisted snapshot.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-haspersistenceerror"></a>
+
+##### `HasPersistenceError`
+
+```csharp
+bool HasPersistenceError { get; }
+```
+
+Gets a value indicating whether the durable journal store currently reports a persistence error.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-hasrecordedcommandhistory"></a>
+
+##### `HasRecordedCommandHistory`
+
+```csharp
+bool HasRecordedCommandHistory { get; }
+```
+
+Gets a value indicating whether the current runtime currently retains recorded command history.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-hasrecoveredpersistedhistory"></a>
+
+##### `HasRecoveredPersistedHistory`
+
+```csharp
+bool HasRecoveredPersistedHistory { get; set; }
+```
+
+Gets a value indicating whether the current process recovered command history for this runtime from durable storage.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-hasrecoveryerror"></a>
+
+##### `HasRecoveryError`
+
+```csharp
+bool HasRecoveryError { get; }
+```
+
+Gets a value indicating whether the durable journal store currently reports a recovery error.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-hastruncatedhistory"></a>
+
+##### `HasTruncatedHistory`
+
+```csharp
+bool HasTruncatedHistory { get; }
+```
+
+Gets a value indicating whether the retained history currently represents bounded truncation.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-isdurable"></a>
+
+##### `IsDurable`
+
+```csharp
+bool IsDurable { get; }
+```
+
+Gets a value indicating whether the current durability answer already provides restart-safe retained history.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-isinmemoryonly"></a>
+
+##### `IsInMemoryOnly`
+
+```csharp
+bool IsInMemoryOnly { get; }
+```
+
+Gets a value indicating whether the current durability answer remains in memory only.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-ispersisted"></a>
+
+##### `IsPersisted`
+
+```csharp
+bool IsPersisted { get; }
+```
+
+Gets a value indicating whether the current durability answer reports healthy persisted storage.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-ispersistencefailed"></a>
+
+##### `IsPersistenceFailed`
+
+```csharp
+bool IsPersistenceFailed { get; }
+```
+
+Gets a value indicating whether the durable journal store currently failed while persisting the latest snapshot.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-isrecovered"></a>
+
+##### `IsRecovered`
+
+```csharp
+bool IsRecovered { get; }
+```
+
+Gets a value indicating whether the current durability answer reports recovered persisted history.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-isrecoveryfailed"></a>
+
+##### `IsRecoveryFailed`
+
+```csharp
+bool IsRecoveryFailed { get; }
+```
+
+Gets a value indicating whether the durable journal store currently failed while recovering persisted history.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-lastpersistedatutc"></a>
+
+##### `LastPersistedAtUtc`
+
+```csharp
+DateTimeOffset? LastPersistedAtUtc { get; set; }
+```
+
+Gets the UTC timestamp when the durable journal snapshot was last persisted successfully.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-lastpersistenceerror"></a>
+
+##### `LastPersistenceError`
+
+```csharp
+string LastPersistenceError { get; set; }
+```
+
+Gets the latest durable journal persistence error when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-lastrecoveredatutc"></a>
+
+##### `LastRecoveredAtUtc`
+
+```csharp
+DateTimeOffset? LastRecoveredAtUtc { get; set; }
+```
+
+Gets the UTC timestamp when the current process last recovered the durable journal snapshot, when recovery happened.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-lastrecoveryerror"></a>
+
+##### `LastRecoveryError`
+
+```csharp
+string LastRecoveryError { get; set; }
+```
+
+Gets the latest durable journal recovery error when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-managementmode"></a>
+
+##### `ManagementMode`
+
+```csharp
+string ManagementMode { get; set; }
+```
+
+Gets the declared managed-connector management mode when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-maximumretainedentrycount"></a>
+
+##### `MaximumRetainedEntryCount`
+
+```csharp
+int MaximumRetainedEntryCount { get; set; }
+```
+
+Gets the maximum number of bounded journal entries retained for one execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-persistencepath"></a>
+
+##### `PersistencePath`
+
+```csharp
+string PersistencePath { get; set; }
+```
+
+Gets the configured durable persistence path when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-retainedentrycount"></a>
+
+##### `RetainedEntryCount`
+
+```csharp
+int RetainedEntryCount { get; set; }
+```
+
+Gets the number of bounded journal entries currently retained for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-sourceid"></a>
+
+##### `SourceId`
+
+```csharp
+string SourceId { get; set; }
+```
+
+Gets the primary source identifier Cephalon used to derive command-journal durability.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable managed-connector command-journal durability state.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-totalrecordedentrycount"></a>
+
+##### `TotalRecordedEntryCount`
+
+```csharp
+int TotalRecordedEntryCount { get; set; }
+```
+
+Gets the total number of command-execution outcomes currently visible to the durability answer.
 
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaloperationids"></a>
 
@@ -26994,6 +27652,36 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 
 Parameters:
 - `journalCategory`: The stable managed-connector command-journal category identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcommandjournaldurabilitycategory-system-string"></a>
+
+##### `GetByManagedConnectorCommandJournalDurabilityCategory`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandJournalDurabilityCategory(string durabilityCategory)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector command-journal durability answer includes the requested category.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that durability category.
+
+Parameters:
+- `durabilityCategory`: The stable managed-connector command-journal durability category identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcommandjournaldurabilitystate-system-string"></a>
+
+##### `GetByManagedConnectorCommandJournalDurabilityState`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandJournalDurabilityState(string durabilityState)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector command-journal durability answer matches the requested state.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that durability state.
+
+Parameters:
+- `durabilityState`: The stable managed-connector command-journal durability state identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorcommandjournalstate-system-string"></a>
 

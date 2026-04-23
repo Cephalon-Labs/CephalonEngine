@@ -365,6 +365,18 @@ that bounded retry lane to one host through `DataRuntimeOptions.ManagedConnector
 so the hosted retry service and automatic command invocations do not invent a second
 cross-node coordination registry.
 
+That same shared execution-runtime story now also keeps managed-connector command-journal
+durability explicit. `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorCommandJournalDurability`
+publishes stable `not-applicable` / `in-memory-only` / `persisted` / `recovered` /
+`recovery-failed` / `persistence-failed` posture together with durability categories, persistence
+path, persisted-versus-recovered timestamps, retained-versus-recorded history counts, and additive
+persisted or recovered history flags. The shared execution-runtime catalog derives that answer from
+the existing command-journal, automatic-retry, and coordination truth plus the bounded history
+store, and the shared data pack can optionally persist that same bounded retry evidence through
+`DataRuntimeOptions.ManagedConnectorCommandJournalPersistencePath` so hosts can recover durable
+command history after restart without inventing a Debezium-only persistence registry or second
+command journal.
+
 That same shared operator story is now directly queryable by reporter, edge node, coordination
 state, degraded reason, remediation state, remediation category, managed-connector governance
 state, managed-connector governance category, managed-connector drift state,
@@ -385,10 +397,11 @@ managed-connector command-retry state, managed-connector command-retry category,
 managed-connector command-retry operation, managed-connector retry-execution-policy state,
 managed-connector retry-execution-policy category, managed-connector retry-execution-policy
 operation, managed-connector command-journal state, managed-connector command-journal
-category, managed-connector automatic-retry state, managed-connector automatic-retry category,
-managed-connector automatic-retry operation, managed-connector automatic-retry-coordination state,
-managed-connector automatic-retry-coordination category, and managed-connector automatic-retry-coordination
-owner id as well.
+category, managed-connector command-journal-durability state,
+managed-connector command-journal-durability category, managed-connector automatic-retry state,
+managed-connector automatic-retry category, managed-connector automatic-retry operation,
+managed-connector automatic-retry-coordination state, managed-connector automatic-retry-coordination
+category, and managed-connector automatic-retry-coordination owner id as well.
 `ICdcCaptureRuntimeStateCatalog` plus `ICdcCaptureExecutionRuntimeCatalog` now expose
 `GetByReporterId(...)`, `GetByEdgeNodeId(...)`, `GetByReporterCoordinationState(...)`,
 `GetByReporterCoordinationIssueReason(...)`, `GetByRemediationState(...)`, and
@@ -426,6 +439,8 @@ owner id as well.
 `GetByManagedConnectorRetryExecutionPolicyOperationId(...)`,
 `GetByManagedConnectorCommandJournalState(...)`, and
 `GetByManagedConnectorCommandJournalCategory(...)`,
+`GetByManagedConnectorCommandJournalDurabilityState(...)`, and
+`GetByManagedConnectorCommandJournalDurabilityCategory(...)`,
 `GetByManagedConnectorAutomaticRetryExecutionState(...)`,
 `GetByManagedConnectorAutomaticRetryExecutionCategory(...)`, and
 `GetByManagedConnectorAutomaticRetryExecutionOperationId(...)`,
@@ -440,7 +455,8 @@ managed-connector execution-intent, managed-connector execution-approval, manage
 command-envelope, managed-connector command-issuance, managed-connector execution-adapter,
 managed-connector command-execution, managed-connector command-retry,
 managed-connector retry-execution-policy,
-managed-connector command-journal, or
+managed-connector command-journal,
+managed-connector command-journal durability, or
 managed-connector automatic background retry execution,
 managed-connector automatic background retry coordination, or
 managed-connector command-execution-history
@@ -494,6 +510,9 @@ ASP.NET Core maps those same filters through
 `/engine/cdc-capture-runtimes/command-journals/{journalState}`,
 `/engine/cdc-capture-runtimes/command-journals/categories/{journalCategory}`, and
 `/engine/cdc-capture-runtimes/{executionRuntimeId}/command-journal` plus
+`/engine/cdc-capture-runtimes/command-journal-durability/{durabilityState}`,
+`/engine/cdc-capture-runtimes/command-journal-durability/categories/{durabilityCategory}`, and
+`/engine/cdc-capture-runtimes/{executionRuntimeId}/command-journal-durability` plus
 `/engine/cdc-capture-runtimes/automatic-retries/{automaticRetryState}`,
 `/engine/cdc-capture-runtimes/automatic-retries/categories/{automaticRetryCategory}`, and
 `/engine/cdc-capture-runtimes/automatic-retries/operations/{operationId}` plus

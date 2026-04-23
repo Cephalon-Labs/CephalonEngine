@@ -333,6 +333,20 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandJournalCategory(string journalCategory);
 
     /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector command-journal durability answer matches the requested state.
+    /// </summary>
+    /// <param name="durabilityState">The stable managed-connector command-journal durability state identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that durability state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandJournalDurabilityState(string durabilityState);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector command-journal durability answer includes the requested category.
+    /// </summary>
+    /// <param name="durabilityCategory">The stable managed-connector command-journal durability category identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that durability category.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandJournalDurabilityCategory(string durabilityCategory);
+
+    /// <summary>
     /// Gets the CDC capture execution runtimes whose current managed-connector automatic background retry execution answer matches the requested state.
     /// </summary>
     /// <param name="automaticRetryState">The stable managed-connector automatic background retry execution state identifier to filter by.</param>

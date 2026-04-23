@@ -562,6 +562,27 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             StringComparer.OrdinalIgnoreCase));
     }
 
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandJournalDurabilityState(string durabilityState)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(durabilityState);
+        var normalizedDurabilityState = durabilityState.Trim();
+
+        return FilterRuntimes(runtime => string.Equals(
+            runtime.ManagedConnectorCommandJournalDurability.State,
+            normalizedDurabilityState,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandJournalDurabilityCategory(string durabilityCategory)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(durabilityCategory);
+        var normalizedDurabilityCategory = durabilityCategory.Trim();
+
+        return FilterRuntimes(runtime => runtime.ManagedConnectorCommandJournalDurability.CategoryIds.Contains(
+            normalizedDurabilityCategory,
+            StringComparer.OrdinalIgnoreCase));
+    }
+
     public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorAutomaticRetryExecutionState(string automaticRetryState)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(automaticRetryState);
@@ -771,6 +792,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             managedConnectorCommandIssuance,
             managedConnectorMetadata);
         var commandExecutionJournal = commandExecutionHistoryStore?.GetJournal(runtime.Id) ?? ManagedConnectorCommandExecutionJournal.Empty(runtime.Id);
+        var commandJournalDurability = commandExecutionHistoryStore?.GetDurabilitySnapshot(runtime.Id) ??
+                                       ManagedConnectorCommandExecutionJournalDurabilitySnapshot.Empty(runtime.Id);
         var commandExecutionHistory = commandExecutionJournal.Entries;
         var managedConnectorCommandExecution = CreateManagedConnectorCommandExecution(
             provisionalRuntime,
@@ -871,6 +894,15 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             managedConnectorRetryExecutionPolicy,
             managedConnectorCommandJournal,
             managedConnectorAutomaticRetryCoordinationOwnerId);
+        var managedConnectorCommandJournalDurability = CreateManagedConnectorCommandJournalDurability(
+            runtime.Id,
+            captureIds,
+            runtime.ExecutionTopology,
+            managedConnectorRetryExecutionPolicy.ManagementMode ?? managedConnectorAutomaticRetryExecution.ManagementMode,
+            managedConnectorCommandJournal,
+            managedConnectorAutomaticRetryExecution,
+            managedConnectorAutomaticRetryCoordination,
+            commandJournalDurability);
 
         return new CdcCaptureExecutionRuntimeDescriptor(
             id: runtime.Id,
@@ -895,6 +927,7 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             ManagedConnectorCommandRetry = managedConnectorCommandRetry,
             ManagedConnectorRetryExecutionPolicy = managedConnectorRetryExecutionPolicy,
             ManagedConnectorCommandJournal = managedConnectorCommandJournal,
+            ManagedConnectorCommandJournalDurability = managedConnectorCommandJournalDurability,
             ManagedConnectorAutomaticRetryExecution = managedConnectorAutomaticRetryExecution,
             ManagedConnectorAutomaticRetryCoordination = managedConnectorAutomaticRetryCoordination
         };
@@ -7192,6 +7225,277 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         }
 
         return CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationSources.Unknown;
+    }
+
+    private static CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus CreateManagedConnectorCommandJournalDurability(
+        string executionRuntimeId,
+        IReadOnlyList<string> cdcCaptureIds,
+        string executionTopology,
+        string? managementMode,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus commandJournal,
+        CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus automaticRetryExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus automaticRetryCoordination,
+        ManagedConnectorCommandExecutionJournalDurabilitySnapshot durabilitySnapshot)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(executionRuntimeId);
+        ArgumentNullException.ThrowIfNull(cdcCaptureIds);
+        ArgumentNullException.ThrowIfNull(commandJournal);
+        ArgumentNullException.ThrowIfNull(automaticRetryExecution);
+        ArgumentNullException.ThrowIfNull(automaticRetryCoordination);
+
+        var normalizedExecutionTopology = string.IsNullOrWhiteSpace(executionTopology)
+            ? "not-configured"
+            : executionTopology.Trim();
+        var state = ResolveManagedConnectorCommandJournalDurabilityState(
+            normalizedExecutionTopology,
+            commandJournal,
+            durabilitySnapshot);
+        var categories = CreateManagedConnectorCommandJournalDurabilityCategories(
+            state,
+            commandJournal,
+            automaticRetryExecution,
+            automaticRetryCoordination,
+            durabilitySnapshot);
+        var description = CreateManagedConnectorCommandJournalDurabilityDescription(
+            state,
+            commandJournal,
+            automaticRetryExecution,
+            automaticRetryCoordination,
+            durabilitySnapshot);
+        var sourceId = ResolveManagedConnectorCommandJournalDurabilitySourceId(
+            state,
+            durabilitySnapshot);
+
+        return new CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus(state, description)
+        {
+            CategoryIds = categories,
+            ExecutionRuntimeId = executionRuntimeId,
+            CdcCaptureIds = cdcCaptureIds,
+            ExecutionTopology = normalizedExecutionTopology,
+            ManagementMode = managementMode,
+            CommandJournalState = commandJournal.State,
+            AutomaticRetryExecutionState = automaticRetryExecution.State,
+            AutomaticRetryCoordinationState = automaticRetryCoordination.State,
+            SourceId = sourceId,
+            PersistencePath = durabilitySnapshot.PersistencePath,
+            LastRecoveredAtUtc = durabilitySnapshot.LastRecoveredAtUtc,
+            LastPersistedAtUtc = durabilitySnapshot.LastPersistedAtUtc,
+            LastRecoveryError = durabilitySnapshot.LastRecoveryError,
+            LastPersistenceError = durabilitySnapshot.LastPersistenceError,
+            TotalRecordedEntryCount = commandJournal.TotalRecordedEntryCount,
+            RetainedEntryCount = commandJournal.RetainedEntryCount,
+            MaximumRetainedEntryCount = commandJournal.MaximumRetainedEntryCount,
+            HasDurableStoreConfigured = durabilitySnapshot.HasDurableStoreConfigured,
+            HasPersistedSnapshot = durabilitySnapshot.HasPersistedSnapshot,
+            HasPersistedRecordedHistory = durabilitySnapshot.HasPersistedRecordedHistory,
+            HasRecoveredPersistedHistory = durabilitySnapshot.HasRecoveredPersistedHistory
+        };
+    }
+
+    private static string ResolveManagedConnectorCommandJournalDurabilityState(
+        string executionTopology,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus commandJournal,
+        ManagedConnectorCommandExecutionJournalDurabilitySnapshot durabilitySnapshot)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(executionTopology);
+        ArgumentNullException.ThrowIfNull(commandJournal);
+
+        if (!string.Equals(executionTopology, "managed-connector", StringComparison.OrdinalIgnoreCase) ||
+            !commandJournal.AppliesToManagedConnector)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates.NotApplicable;
+        }
+
+        if (durabilitySnapshot.HasRecoveryError)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates.RecoveryFailed;
+        }
+
+        if (durabilitySnapshot.HasPersistenceError)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates.PersistenceFailed;
+        }
+
+        if (!durabilitySnapshot.HasDurableStoreConfigured)
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates.InMemoryOnly;
+        }
+
+        return durabilitySnapshot.HasRecoveredPersistedHistory
+            ? CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates.Recovered
+            : CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates.Persisted;
+    }
+
+    private static string[] CreateManagedConnectorCommandJournalDurabilityCategories(
+        string state,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus commandJournal,
+        CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus automaticRetryExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus automaticRetryCoordination,
+        ManagedConnectorCommandExecutionJournalDurabilitySnapshot durabilitySnapshot)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(state);
+        ArgumentNullException.ThrowIfNull(commandJournal);
+        ArgumentNullException.ThrowIfNull(automaticRetryExecution);
+        ArgumentNullException.ThrowIfNull(automaticRetryCoordination);
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates.NotApplicable, StringComparison.OrdinalIgnoreCase))
+        {
+            return [];
+        }
+
+        var categories = new List<string>();
+
+        static void AddCategory(List<string> values, string category)
+        {
+            if (!values.Contains(category, StringComparer.OrdinalIgnoreCase))
+            {
+                values.Add(category);
+            }
+        }
+
+        if (durabilitySnapshot.HasDurableStoreConfigured)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories.DurableStoreConfigured);
+        }
+        else
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories.InMemoryOnly);
+        }
+
+        if (durabilitySnapshot.HasPersistedSnapshot)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories.PersistedSnapshotAvailable);
+        }
+
+        if (durabilitySnapshot.HasPersistedRecordedHistory)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories.PersistedRecordedHistory);
+        }
+
+        if (durabilitySnapshot.HasRecoveredPersistedHistory)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories.RecoveredHistory);
+        }
+
+        if (durabilitySnapshot.HasRecoveryError)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories.RecoveryError);
+        }
+
+        if (durabilitySnapshot.HasPersistenceError)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories.PersistenceError);
+        }
+
+        if (durabilitySnapshot.HasDurableStoreConfigured &&
+            !durabilitySnapshot.HasRecoveryError &&
+            !durabilitySnapshot.HasPersistenceError)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories.PersistenceHealthy);
+        }
+
+        if (commandJournal.HasRecordedCommandHistory)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories.RecordedCommandHistory);
+        }
+
+        if (commandJournal.HasTruncatedHistory)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories.TruncatedHistory);
+        }
+
+        if (automaticRetryExecution.IsEligible)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories.AutomaticRetryEligible);
+        }
+
+        if (automaticRetryCoordination.CanExecuteOnCurrentNode)
+        {
+            AddCategory(categories, CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories.CoordinationReady);
+        }
+
+        return [.. categories];
+    }
+
+    private static string CreateManagedConnectorCommandJournalDurabilityDescription(
+        string state,
+        CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus commandJournal,
+        CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus automaticRetryExecution,
+        CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus automaticRetryCoordination,
+        ManagedConnectorCommandExecutionJournalDurabilitySnapshot durabilitySnapshot)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(state);
+        ArgumentNullException.ThrowIfNull(commandJournal);
+        ArgumentNullException.ThrowIfNull(automaticRetryExecution);
+        ArgumentNullException.ThrowIfNull(automaticRetryCoordination);
+
+        var detail = CombineManagedConnectorCommandEnvelopeDetail(
+            commandJournal.Description,
+            automaticRetryCoordination.CanExecuteOnCurrentNode
+                ? automaticRetryCoordination.Description
+                : automaticRetryExecution.Description);
+
+        return state switch
+        {
+            CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates.NotApplicable =>
+                AppendManagedConnectorCommandEnvelopeDetail(
+                    "Cephalon does not currently expose durable managed-connector command-journal posture for this execution runtime.",
+                    detail),
+            CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates.InMemoryOnly =>
+                AppendManagedConnectorCommandEnvelopeDetail(
+                    "Cephalon currently keeps the bounded managed-connector command journal in memory only, so retry evidence would not survive process restart on this host.",
+                    detail),
+            CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates.Recovered =>
+                AppendManagedConnectorCommandEnvelopeDetail(
+                    "Cephalon recovered the bounded managed-connector command journal from the configured durable store after startup, so retained retry evidence now survives host restart.",
+                    detail),
+            CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates.RecoveryFailed =>
+                AppendManagedConnectorCommandEnvelopeDetail(
+                    $"Cephalon could not recover the configured durable managed-connector command journal after startup: {NormalizeManagedConnectorFingerprintSegment(durabilitySnapshot.LastRecoveryError)}.",
+                    detail),
+            CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates.PersistenceFailed =>
+                AppendManagedConnectorCommandEnvelopeDetail(
+                    $"Cephalon could not persist the latest bounded managed-connector command journal snapshot: {NormalizeManagedConnectorFingerprintSegment(durabilitySnapshot.LastPersistenceError)}.",
+                    detail),
+            _ => durabilitySnapshot.HasPersistedRecordedHistory
+                ? AppendManagedConnectorCommandEnvelopeDetail(
+                    "Cephalon now persists bounded managed-connector command-journal history for this execution runtime, so retained retry evidence survives process restart on the current host.",
+                    detail)
+                : AppendManagedConnectorCommandEnvelopeDetail(
+                    "Cephalon configured a durable managed-connector command-journal store for this execution runtime and is ready to persist retained retry evidence as soon as command history is recorded.",
+                    detail)
+        };
+    }
+
+    private static string ResolveManagedConnectorCommandJournalDurabilitySourceId(
+        string state,
+        ManagedConnectorCommandExecutionJournalDurabilitySnapshot durabilitySnapshot)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(state);
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates.NotApplicable, StringComparison.OrdinalIgnoreCase))
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilitySources.Unknown;
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates.InMemoryOnly, StringComparison.OrdinalIgnoreCase))
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilitySources.InMemoryHistoryStore;
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates.RecoveryFailed, StringComparison.OrdinalIgnoreCase))
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilitySources.RecoveryError;
+        }
+
+        if (string.Equals(state, CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates.PersistenceFailed, StringComparison.OrdinalIgnoreCase))
+        {
+            return CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilitySources.PersistenceError;
+        }
+
+        return durabilitySnapshot.HasRecoveredPersistedHistory
+            ? CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilitySources.RecoveredDurableJournalStore
+            : CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilitySources.DurableJournalStore;
     }
 
     private static string CreateManagedConnectorBlockedAutomaticRetryExecutionDescription(

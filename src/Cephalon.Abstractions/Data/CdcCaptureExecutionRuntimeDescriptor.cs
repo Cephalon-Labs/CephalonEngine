@@ -323,6 +323,12 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
         new(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates.NotApplicable);
 
     /// <summary>
+    /// Gets the operator-facing managed-connector command-journal durability posture derived from the shared command journal, automatic retry, and durable journal-store truth.
+    /// </summary>
+    public CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus ManagedConnectorCommandJournalDurability { get; init; } =
+        new(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates.NotApplicable);
+
+    /// <summary>
     /// Gets the operator-facing managed-connector automatic background retry execution posture derived from retry policy, bounded command history, and the latest command-execution outcomes.
     /// </summary>
     public CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus ManagedConnectorAutomaticRetryExecution { get; init; } =

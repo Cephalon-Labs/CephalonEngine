@@ -3027,6 +3027,86 @@ Delivered:
 - targeted coverage now proves the operator-story drill-down baseline through composition tests
   `1/1`, hosting tests `1/1`, tooling tests `185/185`, and the reference docs publish script
 
+### ENG-186 Phase 13 managed-connector durable retry journal baseline
+
+Status: done
+Estimate: 5
+Completed: April 24, 2026
+
+Why:
+
+- `ENG-168`, `ENG-169`, `ENG-170`, `ENG-171`, `ENG-172`, `ENG-173`, `ENG-174`, `ENG-175`,
+  `ENG-176`, `ENG-177`, `ENG-178`, `ENG-179`, `ENG-180`, `ENG-181`, `ENG-182`, `ENG-183`,
+  `ENG-184`, and `ENG-185` already shipped shared coverage, remediation, governance,
+  desired-versus-observed drift, action-planning, write-path readiness, preflight, dry-run,
+  execution-intent, execution-approval, command-envelope, command-issuance, provider
+  execution-adapter, execution outcome/history, retry/idempotency, retry-execution-policy,
+  bounded command-journal, automatic background retry execution, and automatic background retry
+  coordination truth, but operators still lacked one shared answer for whether retained retry
+  evidence would survive host restart
+- the next follow-through needed to keep durable journal posture additive on the existing
+  `/engine/cdc-capture-runtimes*`, `/engine/runtime-story`, and
+  `snapshot.CdcCaptureExecutionRuntimes` surfaces instead of inventing a Debezium-only persistence
+  subsystem, second journal registry, or durable distributed scheduler
+- teams also needed one host-level persistence policy plus truthful recovered-versus-in-memory-only
+  posture so later distributed retry or cross-node idempotency work can build on persisted shared
+  evidence instead of assuming bounded in-memory history is restart-safe
+
+Acceptance:
+
+- `Cephalon.Abstractions` ships a stable managed-connector command-journal durability contract on
+  `CdcCaptureExecutionRuntimeDescriptor` that can publish `not-applicable`, `in-memory-only`,
+  `persisted`, `recovered`, `recovery-failed`, and `persistence-failed` posture together with
+  durability categories, source truth, persistence path, persisted-versus-recovered timestamps,
+  retained-versus-recorded history counts, and persisted or recovered history flags
+- the shared execution-runtime catalog now exposes additive command-journal-durability-state and
+  command-journal-durability-category methods while deriving durability posture from the same
+  shared command-journal, automatic-retry, and coordination lane plus bounded history-store truth
+  instead of forcing hosts or providers to invent a second journal index
+- the shared data pack now exposes host-level persistence through
+  `ManagedConnectorCommandJournalPersistencePath`, and `ManagedConnectorCommandExecutionHistoryStore`
+  persists plus recovers bounded retry evidence without changing the existing bounded journal
+  contract or inventing a durable distributed scheduler
+- ASP.NET Core publishes those same command-journal-durability filters on the existing
+  `/engine/cdc-capture-runtimes*` route family, and the durability answer stays additive beside
+  the existing command-journal, automatic-retry, coordination, and command-execution-history
+  surfaces instead of branching into a Debezium-only endpoint set
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice while later distributed retry lease execution, cross-node idempotency
+  hardening, or durable shared scheduler orchestration remain separate follow-through
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships
+  `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates`,
+  `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories`,
+  `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilitySources`, and
+  `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus`, and
+  `CdcCaptureExecutionRuntimeDescriptor` now carries additive
+  `ManagedConnectorCommandJournalDurability`
+- `Cephalon.Data` now derives managed-connector command-journal durability from merged
+  command-journal, automatic-retry execution, automatic-retry coordination, and bounded
+  history-store truth, including `in-memory-only`, `persisted`, `recovered`, `recovery-failed`,
+  and `persistence-failed` answers, and `ICdcCaptureExecutionRuntimeCatalog` now exposes
+  `GetByManagedConnectorCommandJournalDurabilityState(...)` and
+  `GetByManagedConnectorCommandJournalDurabilityCategory(...)`
+- `Cephalon.Data` now also exposes the host-level
+  `ManagedConnectorCommandJournalPersistencePath` option, and
+  `ManagedConnectorCommandExecutionHistoryStore` now persists bounded retry evidence to a shared
+  file-backed journal and recovers that evidence across host restart so later retry flows can
+  distinguish in-memory-only versus recovered truth
+- `Cephalon.AspNetCore` now maps
+  `/engine/cdc-capture-runtimes/command-journal-durability/{durabilityState}`,
+  `/engine/cdc-capture-runtimes/command-journal-durability/categories/{durabilityCategory}`, and
+  `/engine/cdc-capture-runtimes/{executionRuntimeId}/command-journal-durability` so host routes
+  stay aligned with the same shared command-journal, automatic-retry, and coordination story
+- `Cephalon.Data.Debezium` now participates in that shared durable journal lane through the
+  existing managed-connector runtime and command surface while targeted coverage proves persisted
+  and recovered bounded history posture without claiming a Debezium-only persistence subsystem or
+  durable distributed retry scheduler
+- targeted coverage now proves the durable retry-journal baseline through composition tests
+  `41/41`, hosting tests `20/20`, tooling tests `207/207`, and the reference docs publish script
+
 ### ENG-185 Phase 13 managed-connector automatic background retry coordination baseline
 
 Status: done

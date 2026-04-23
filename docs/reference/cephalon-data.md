@@ -285,6 +285,16 @@ int ManagedConnectorAutomaticRetryPollingIntervalSeconds { get; set; }
 
 Gets or sets the polling interval, in seconds, used by the shared automatic managed-connector background retry lane.
 
+<a id="member-p-cephalon-data-configuration-dataruntimeoptions-managedconnectorcommandjournalpersistencepath"></a>
+
+##### `ManagedConnectorCommandJournalPersistencePath`
+
+```csharp
+string ManagedConnectorCommandJournalPersistencePath { get; set; }
+```
+
+Gets or sets the optional durable file path used to persist the shared managed-connector command journal across process restarts.
+
 <a id="member-p-cephalon-data-configuration-dataruntimeoptions-registerreadstore"></a>
 
 ##### `RegisterReadStore`

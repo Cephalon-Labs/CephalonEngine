@@ -3280,6 +3280,164 @@ public sealed class DebeziumDataCdcPackTests
     }
 
     [Fact]
+    public async Task AddDebeziumData_ManagedConnectorCommandJournalDurabilityCatalogRecoversPersistedHistoryAcrossProviderRestart()
+    {
+        const string persistedRuntimeId = "inventory-journal-durable-connector";
+        const string persistedCaptureId = "inventory-journal-durable-cdc";
+        var baseRecordedAtUtc = DateTimeOffset.Parse("2026-04-24T04:00:00Z", CultureInfo.InvariantCulture);
+        var timeProvider = new MutableTimeProvider(baseRecordedAtUtc);
+        var persistenceDirectory = Path.Combine(Path.GetTempPath(), $"cephalon-eng-186-{Guid.NewGuid():N}");
+        var persistencePath = Path.Combine(persistenceDirectory, "managed-connector-command-journal.json");
+
+        ServiceProvider CreateProvider()
+        {
+            var services = new ServiceCollection();
+            services.AddSingleton<TimeProvider>(timeProvider);
+            services.AddCephalon(engine =>
+            {
+                engine.UseSettings(new EngineSettings(
+                    blueprint: "ModularVerticalSlice",
+                    patterns: ["CQRS"]));
+                engine.AddModule(new PlatformTestModule());
+                engine.AddModule(new Phase8CatalogModule());
+                engine.AddData(options =>
+                {
+                    options.ManagedConnectorCommandJournalPersistencePath = persistencePath;
+                });
+                engine.AddDebeziumData(options =>
+                {
+                    options.Connectors.Add(CreateConnector(
+                        runtimeId: persistedRuntimeId,
+                        captureId: persistedCaptureId,
+                        displayName: "Inventory Durable Journal Connector",
+                        captureDisplayName: "Inventory Durable Journal CDC",
+                        captureDescription: "Persists bounded managed-connector command history so retry evidence can survive provider restart.",
+                        connectClusterId: "connect-cluster-durable",
+                        connectorClass: "io.debezium.connector.postgresql.PostgresConnector",
+                        sourceProviderId: "postgresql",
+                        topicPrefix: "inventory-journal-durable",
+                        managementMode: "apply-and-reconcile",
+                        expectedTaskCount: 1,
+                        taskIds: ["0"]));
+                });
+            });
+
+            return services.BuildServiceProvider();
+        }
+
+        CdcCaptureRuntimeObservation CreateObservation(string reportId) =>
+            new(
+                cdcCaptureId: persistedCaptureId,
+                outcome: CdcCaptureRuntimeOutcomes.Captured,
+                observedAtUtc: baseRecordedAtUtc.AddSeconds(-15),
+                reportId: reportId,
+                metadata: new Dictionary<string, string>
+                {
+                    ["connectorState"] = "RUNNING",
+                    ["connectClusterId"] = "connect-cluster-durable",
+                    ["connectorClass"] = "io.debezium.connector.postgresql.PostgresConnector",
+                    ["sourceProviderId"] = "postgresql",
+                    ["reportedTaskIds"] = "0",
+                    ["activeTaskIds"] = "0"
+                },
+                reporterId: "connect-worker-durable");
+
+        try
+        {
+            string initialAttemptId;
+
+            using (var initialProvider = CreateProvider())
+            {
+                var reportSink = initialProvider.GetRequiredService<ICdcCaptureExecutionRuntimeReportSink>();
+                var runtimeCatalog = initialProvider.GetRequiredService<ICdcCaptureExecutionRuntimeCatalog>();
+                var commandExecutor = initialProvider.GetRequiredService<ICdcCaptureExecutionRuntimeManagedConnectorCommandExecutor>();
+
+                await reportSink.ReportAsync(
+                    persistedRuntimeId,
+                    [CreateObservation("debezium-report-journal-durable-001")]);
+
+                timeProvider.SetUtcNow(baseRecordedAtUtc.AddSeconds(1));
+                var execution = await commandExecutor.ExecuteAsync(
+                    persistedRuntimeId,
+                    CdcCaptureExecutionRuntimeManagedConnectorExecutionAdapterOperationIds.Reconcile);
+
+                Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.NoOp, execution.State);
+
+                var persistedRuntime = runtimeCatalog.GetById(persistedRuntimeId);
+
+                Assert.NotNull(persistedRuntime);
+                Assert.Equal(
+                    CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates.Persisted,
+                    persistedRuntime.ManagedConnectorCommandJournalDurability.State);
+                Assert.True(persistedRuntime.ManagedConnectorCommandJournalDurability.HasDurableStoreConfigured);
+                Assert.True(persistedRuntime.ManagedConnectorCommandJournalDurability.HasPersistedSnapshot);
+                Assert.True(persistedRuntime.ManagedConnectorCommandJournalDurability.HasPersistedRecordedHistory);
+                Assert.False(persistedRuntime.ManagedConnectorCommandJournalDurability.HasRecoveredPersistedHistory);
+                Assert.Contains(
+                    CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories.PersistenceHealthy,
+                    persistedRuntime.ManagedConnectorCommandJournalDurability.CategoryIds);
+                Assert.Contains(
+                    CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories.PersistedRecordedHistory,
+                    persistedRuntime.ManagedConnectorCommandJournalDurability.CategoryIds);
+                Assert.False(string.IsNullOrWhiteSpace(persistedRuntime.ManagedConnectorCommandJournalDurability.PersistencePath));
+                Assert.False(string.IsNullOrWhiteSpace(persistedRuntime.ManagedConnectorCommandJournal.LatestAttemptId));
+
+                initialAttemptId = persistedRuntime.ManagedConnectorCommandJournal.LatestAttemptId;
+            }
+
+            timeProvider.SetUtcNow(baseRecordedAtUtc.AddMinutes(1));
+
+            using var recoveredProvider = CreateProvider();
+            var recoveredReportSink = recoveredProvider.GetRequiredService<ICdcCaptureExecutionRuntimeReportSink>();
+            var recoveredRuntimeCatalog = recoveredProvider.GetRequiredService<ICdcCaptureExecutionRuntimeCatalog>();
+
+            await recoveredReportSink.ReportAsync(
+                persistedRuntimeId,
+                [CreateObservation("debezium-report-journal-durable-002")]);
+
+            var recoveredRuntime = recoveredRuntimeCatalog.GetById(persistedRuntimeId);
+            var recoveredHistory = recoveredRuntimeCatalog.GetManagedConnectorCommandExecutionHistory(persistedRuntimeId);
+
+            Assert.NotNull(recoveredRuntime);
+            Assert.Equal(
+                CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates.Recovered,
+                recoveredRuntime.ManagedConnectorCommandJournalDurability.State);
+            Assert.True(recoveredRuntime.ManagedConnectorCommandJournalDurability.HasDurableStoreConfigured);
+            Assert.True(recoveredRuntime.ManagedConnectorCommandJournalDurability.HasPersistedSnapshot);
+            Assert.True(recoveredRuntime.ManagedConnectorCommandJournalDurability.HasPersistedRecordedHistory);
+            Assert.True(recoveredRuntime.ManagedConnectorCommandJournalDurability.HasRecoveredPersistedHistory);
+            Assert.Contains(
+                CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories.RecoveredHistory,
+                recoveredRuntime.ManagedConnectorCommandJournalDurability.CategoryIds);
+            Assert.Contains(
+                CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories.PersistenceHealthy,
+                recoveredRuntime.ManagedConnectorCommandJournalDurability.CategoryIds);
+            Assert.Equal(initialAttemptId, recoveredRuntime.ManagedConnectorCommandJournal.LatestAttemptId);
+            Assert.Single(recoveredHistory);
+            Assert.Equal(initialAttemptId, recoveredHistory[0].AttemptId);
+            Assert.Equal(
+                [persistedRuntimeId],
+                recoveredRuntimeCatalog
+                    .GetByManagedConnectorCommandJournalDurabilityState(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStates.Recovered)
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+            Assert.Equal(
+                [persistedRuntimeId],
+                recoveredRuntimeCatalog
+                    .GetByManagedConnectorCommandJournalDurabilityCategory(CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories.RecoveredHistory)
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+        }
+        finally
+        {
+            if (Directory.Exists(persistenceDirectory))
+            {
+                Directory.Delete(persistenceDirectory, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
     public async Task AddDebeziumData_ManagedConnectorAutomaticRetryExecutionCatalogRunsBoundedBackgroundRetryOnEligibleRuntime()
     {
         const string automaticRetryRuntimeId = "inventory-automatic-retry-connector";
