@@ -3027,6 +3027,75 @@ Delivered:
 - targeted coverage now proves the operator-story drill-down baseline through composition tests
   `1/1`, hosting tests `1/1`, tooling tests `185/185`, and the reference docs publish script
 
+### ENG-175 Phase 13 managed-connector execution-intent baseline
+
+Status: done
+Estimate: 5
+Completed: April 23, 2026
+
+Why:
+
+- `ENG-168`, `ENG-169`, `ENG-170`, `ENG-171`, `ENG-172`, `ENG-173`, and `ENG-174` shipped shared
+  coverage, remediation, governance, desired-versus-observed drift, action-planning,
+  write-path readiness, preflight, and dry-run truth, but operators still lacked one typed
+  answer for what Cephalon currently intends to execute next on the same shared runtime surface
+  and whether that next step remains deferred, blocked, operator-owned, approval-gated, or ready
+  for a future engine-execution lane
+- that next follow-through needed to keep connector-management execution intent additive on the
+  existing `/engine/cdc-capture-runtimes*`, `/engine/runtime-story`, and
+  `snapshot.CdcCaptureExecutionRuntimes` surfaces instead of inventing a Debezium-only execution
+  planner or prematurely claiming Kafka Connect write-path ownership
+- teams also needed route-level drill-downs for execution-intent state, execution-intent
+  category, and intended operation without losing the underlying coverage, remediation,
+  governance, drift, action-plan, write-path-readiness, preflight, and dry-run truth that
+  already shipped
+
+Acceptance:
+
+- `Cephalon.Abstractions` ships a stable managed-connector execution-intent contract on
+  `CdcCaptureExecutionRuntimeDescriptor` that can publish `not-applicable`, `deferred`,
+  `blocked`, `operator-action`, `requires-approval`, and `ready-to-execute` posture together with
+  execution-intent categories, the intended operation id, source
+  coverage/remediation/governance/drift/action-plan/write-path-readiness/preflight/dry-run state,
+  the current primary action id, the confidence-source id, and additive potential-change detail
+- the shared execution-runtime catalog now derives that execution-intent answer from merged
+  coverage, remediation, governance, drift, action-planning, write-path-readiness, preflight,
+  and dry-run truth instead of forcing hosts or providers to rebuild a second execution planner
+- `ICdcCaptureExecutionRuntimeCatalog` exposes additive execution-intent-state,
+  execution-intent-category, and execution-intent-operation drill-down methods, and ASP.NET Core
+  publishes those same filters on the existing `/engine/cdc-capture-runtimes*` route family
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice while later managed-connector execution-approval, safety-gating, or
+  write-path command-envelope work remains separate follow-through
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships `CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStates`,
+  `CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentCategories`,
+  `CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentOperationIds`,
+  `CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentSources`, and
+  `CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStatus`, while
+  `CdcCaptureExecutionRuntimeDescriptor` now carries additive `ManagedConnectorExecutionIntent`
+- `Cephalon.Data` now derives runtime-level `not-applicable`, `deferred`, `blocked`,
+  `operator-action`, `requires-approval`, and `ready-to-execute` posture plus stable category ids
+  such as `observe-only-mode`, `incomplete-reporting-coverage`, `governance-out-of-policy`,
+  `runtime-truth-incomplete`, `future-control-plane`, `operator-only`,
+  `engine-execution-candidate`, `approval-required`, `no-execution-needed`, `change-planned`,
+  and `lifecycle-change`, together with intended operation ids such as `none`, `reconcile`, and
+  `pause`, from merged dry-run, preflight, write-path-readiness, action-plan, drift, governance,
+  remediation, and coverage truth; reconcile paths that would still apply control-plane changes
+  remain operator-owned while lifecycle operations such as `pause` can now surface approval-gated
+  or ready-to-execute future engine lanes without materializing a second execution planner
+- `ICdcCaptureExecutionRuntimeCatalog` now exposes `GetByManagedConnectorExecutionIntentState(...)`,
+  `GetByManagedConnectorExecutionIntentCategory(...)`, and
+  `GetByManagedConnectorExecutionIntentOperationId(...)`, while `Cephalon.AspNetCore` now maps
+  `/engine/cdc-capture-runtimes/execution-intents/{executionIntentState}`,
+  `/engine/cdc-capture-runtimes/execution-intents/categories/{executionIntentCategory}`, and
+  `/engine/cdc-capture-runtimes/execution-intents/operations/{operationId}` so host routes stay
+  aligned with the same shared runtime story
+- targeted coverage now proves the execution-intent baseline through composition tests `37/37`,
+  hosting tests `15/15`, tooling tests `207/207`, and the reference docs publish script
+
 ### ENG-174 Phase 13 managed-connector dry-run baseline
 
 Status: done

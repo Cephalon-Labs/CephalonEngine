@@ -156,4 +156,25 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     /// <param name="operationId">The stable managed-connector dry-run operation identifier to filter by.</param>
     /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.</returns>
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDryRunOperationId(string operationId);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector execution intent matches the requested state.
+    /// </summary>
+    /// <param name="executionIntentState">The stable managed-connector execution-intent state identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that execution-intent state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorExecutionIntentState(string executionIntentState);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector execution intent includes the requested category.
+    /// </summary>
+    /// <param name="executionIntentCategory">The stable managed-connector execution-intent category identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that execution-intent category.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorExecutionIntentCategory(string executionIntentCategory);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector execution intent currently targets the requested operation.
+    /// </summary>
+    /// <param name="operationId">The stable managed-connector execution-intent operation identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorExecutionIntentOperationId(string operationId);
 }

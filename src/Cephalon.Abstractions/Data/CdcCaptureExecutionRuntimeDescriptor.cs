@@ -268,6 +268,12 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     public CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus ManagedConnectorDryRun { get; init; } =
         new(CdcCaptureExecutionRuntimeManagedConnectorDryRunStates.NotApplicable);
 
+    /// <summary>
+    /// Gets the operator-facing managed-connector execution intent derived from dry-run, preflight, write-path readiness, action planning, governance, remediation, and runtime coverage truth.
+    /// </summary>
+    public CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStatus ManagedConnectorExecutionIntent { get; init; } =
+        new(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStates.NotApplicable);
+
     private static string[] Normalize(IReadOnlyList<string>? values)
     {
         return values?

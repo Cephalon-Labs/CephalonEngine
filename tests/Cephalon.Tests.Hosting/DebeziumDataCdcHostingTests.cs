@@ -1253,7 +1253,7 @@ public sealed class DebeziumDataCdcHostingTests
     }
 
     [Fact]
-    public async Task MapCephalonExposesManagedConnectorDryRunRoutesOnSharedCdcRuntimeSurface()
+    public async Task MapCephalonExposesManagedConnectorDryRunAndExecutionIntentRoutesOnSharedCdcRuntimeSurface()
     {
         var builder = CreateBuilder(
             options =>
@@ -1512,6 +1512,17 @@ public sealed class DebeziumDataCdcHostingTests
             var taskTopologyChange = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/dry-runs/categories/task-topology-change");
             var pauseOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/dry-runs/operations/pause");
             var reconcileOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/dry-runs/operations/reconcile");
+            var deferredIntent = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/execution-intents/deferred");
+            var blockedIntent = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/execution-intents/blocked");
+            var operatorActionIntent = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/execution-intents/operator-action");
+            var approvalRequiredIntent = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/execution-intents/requires-approval");
+            var readyToExecuteIntent = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/execution-intents/ready-to-execute");
+            var approvalRequiredCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/execution-intents/categories/approval-required");
+            var operatorOnlyCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/execution-intents/categories/operator-only");
+            var engineExecutionCandidateCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/execution-intents/categories/engine-execution-candidate");
+            var noExecutionNeededCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/execution-intents/categories/no-execution-needed");
+            var executionIntentPauseOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/execution-intents/operations/pause");
+            var executionIntentReconcileOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/execution-intents/operations/reconcile");
             var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
 
             Assert.NotNull(deferred);
@@ -1561,6 +1572,59 @@ public sealed class DebeziumDataCdcHostingTests
                 [FutureControlPlaneRuntimeId, ReadyRuntimeId],
                 reconcileOperation.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
 
+            Assert.NotNull(deferredIntent);
+            Assert.Equal([ObserveOnlyRuntimeId], deferredIntent.Select(static runtime => runtime.Id).ToArray());
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStates.Deferred, deferredIntent[0].ManagedConnectorExecutionIntent.State);
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentOperationIds.None, deferredIntent[0].ManagedConnectorExecutionIntent.OperationId);
+
+            Assert.NotNull(blockedIntent);
+            Assert.Equal(
+                [BlockedRuntimeId, OutOfPolicyRuntimeId, WaitingRuntimeId],
+                blockedIntent.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            Assert.NotNull(operatorActionIntent);
+            Assert.Equal([FutureControlPlaneRuntimeId], operatorActionIntent.Select(static runtime => runtime.Id).ToArray());
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentOperationIds.Reconcile, operatorActionIntent[0].ManagedConnectorExecutionIntent.OperationId);
+
+            Assert.NotNull(approvalRequiredIntent);
+            Assert.Equal([PauseRequiredRuntimeId], approvalRequiredIntent.Select(static runtime => runtime.Id).ToArray());
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentOperationIds.Pause, approvalRequiredIntent[0].ManagedConnectorExecutionIntent.OperationId);
+
+            Assert.NotNull(readyToExecuteIntent);
+            Assert.Equal(
+                [PauseSatisfiedRuntimeId, ReadyRuntimeId],
+                readyToExecuteIntent.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+            Assert.Contains(readyToExecuteIntent, runtime => runtime.Id == ReadyRuntimeId &&
+                runtime.ManagedConnectorExecutionIntent.OperationId == CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentOperationIds.Reconcile);
+            Assert.Contains(readyToExecuteIntent, runtime => runtime.Id == PauseSatisfiedRuntimeId &&
+                runtime.ManagedConnectorExecutionIntent.OperationId == CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentOperationIds.Pause);
+
+            Assert.NotNull(approvalRequiredCategory);
+            Assert.Equal([PauseRequiredRuntimeId], approvalRequiredCategory.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(operatorOnlyCategory);
+            Assert.Equal([FutureControlPlaneRuntimeId], operatorOnlyCategory.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(engineExecutionCandidateCategory);
+            Assert.Equal(
+                [PauseRequiredRuntimeId, PauseSatisfiedRuntimeId, ReadyRuntimeId],
+                engineExecutionCandidateCategory.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            Assert.NotNull(noExecutionNeededCategory);
+            Assert.Equal(
+                [PauseSatisfiedRuntimeId, ReadyRuntimeId],
+                noExecutionNeededCategory.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            Assert.NotNull(executionIntentPauseOperation);
+            Assert.Equal(
+                [PauseRequiredRuntimeId, PauseSatisfiedRuntimeId],
+                executionIntentPauseOperation.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            Assert.NotNull(executionIntentReconcileOperation);
+            Assert.Equal(
+                [FutureControlPlaneRuntimeId, ReadyRuntimeId],
+                executionIntentReconcileOperation.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
             Assert.NotNull(snapshot);
             Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == ObserveOnlyRuntimeId &&
                 item.ManagedConnectorDryRun.State == CdcCaptureExecutionRuntimeManagedConnectorDryRunStates.Deferred &&
@@ -1578,6 +1642,22 @@ public sealed class DebeziumDataCdcHostingTests
             Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == PauseSatisfiedRuntimeId &&
                 item.ManagedConnectorDryRun.State == CdcCaptureExecutionRuntimeManagedConnectorDryRunStates.NoOp &&
                 item.ManagedConnectorDryRun.OperationId == CdcCaptureExecutionRuntimeManagedConnectorDryRunOperationIds.Pause);
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == ObserveOnlyRuntimeId &&
+                item.ManagedConnectorExecutionIntent.State == CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStates.Deferred &&
+                item.ManagedConnectorExecutionIntent.IsDeferred);
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == FutureControlPlaneRuntimeId &&
+                item.ManagedConnectorExecutionIntent.State == CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStates.OperatorAction &&
+                item.ManagedConnectorExecutionIntent.IsOperatorAction &&
+                item.ManagedConnectorExecutionIntent.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentCategories.OperatorOnly, StringComparer.OrdinalIgnoreCase));
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == ReadyRuntimeId &&
+                item.ManagedConnectorExecutionIntent.State == CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStates.ReadyToExecute &&
+                item.ManagedConnectorExecutionIntent.OperationId == CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentOperationIds.Reconcile);
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == PauseRequiredRuntimeId &&
+                item.ManagedConnectorExecutionIntent.State == CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStates.RequiresApproval &&
+                item.ManagedConnectorExecutionIntent.OperationId == CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentOperationIds.Pause);
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == PauseSatisfiedRuntimeId &&
+                item.ManagedConnectorExecutionIntent.State == CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStates.ReadyToExecute &&
+                item.ManagedConnectorExecutionIntent.OperationId == CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentOperationIds.Pause);
         }
         finally
         {

@@ -220,6 +220,18 @@ future connector-management dry-run can stay on the existing `/engine/cdc-*`,
 `/engine/runtime-story`, and `snapshot` surfaces instead of inventing a Debezium-only dry-run
 registry.
 
+That same shared execution-runtime story now also keeps managed-connector execution intent
+explicit. `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorExecutionIntent` publishes stable
+`not-applicable` / `deferred` / `blocked` / `operator-action` / `requires-approval` /
+`ready-to-execute` posture together with execution-intent categories, the intended operation id,
+source coverage/remediation/governance/drift/action-plan/write-path-readiness/preflight/dry-run
+state, the current primary action id, the confidence-source id, and additive potential-change
+detail. The shared execution-runtime catalog derives that answer from the already shipped
+coverage, remediation, governance, desired-versus-observed drift, action-planning,
+write-path-readiness, preflight, and dry-run truth, so future connector-management follow-through
+can stay on the existing `/engine/cdc-*`, `/engine/runtime-story`, and `snapshot` surfaces
+instead of inventing a Debezium-only execution planner.
+
 That same shared operator story is now directly queryable by reporter, edge node, coordination
 state, degraded reason, remediation state, remediation category, managed-connector governance
 state, managed-connector governance category, managed-connector drift state,
@@ -227,7 +239,9 @@ managed-connector drift category, managed-connector action-plan state, managed-c
 id, managed-connector write-path-readiness state, managed-connector write-path-readiness
 category, managed-connector preflight state, managed-connector preflight category,
 managed-connector preflight operation, managed-connector dry-run state, managed-connector
-dry-run category, and managed-connector dry-run operation as well.
+dry-run category, managed-connector dry-run operation, managed-connector execution-intent state,
+managed-connector execution-intent category, and managed-connector execution-intent operation as
+well.
 `ICdcCaptureRuntimeStateCatalog` plus `ICdcCaptureExecutionRuntimeCatalog` now expose
 `GetByReporterId(...)`, `GetByEdgeNodeId(...)`, `GetByReporterCoordinationState(...)`,
 `GetByReporterCoordinationIssueReason(...)`, `GetByRemediationState(...)`, and
@@ -239,10 +253,15 @@ dry-run category, and managed-connector dry-run operation as well.
 `GetByManagedConnectorPreflightState(...)`, `GetByManagedConnectorPreflightCategory(...)`, and
 `GetByManagedConnectorPreflightOperationId(...)`,
 `GetByManagedConnectorDryRunState(...)`, `GetByManagedConnectorDryRunCategory(...)`, and
-`GetByManagedConnectorDryRunOperationId(...)`, so host code, provider packs, and tooling can
+`GetByManagedConnectorDryRunOperationId(...)`,
+`GetByManagedConnectorExecutionIntentState(...)`,
+`GetByManagedConnectorExecutionIntentCategory(...)`, and
+`GetByManagedConnectorExecutionIntentOperationId(...)`, so host code, provider packs, and
+tooling can
 narrow the shared CDC runtime story without rebuilding a second coordination, remediation,
 managed-connector governance, managed-connector drift, managed-connector action-planning,
-managed-connector readiness, managed-connector preflight, or managed-connector dry-run index.
+managed-connector readiness, managed-connector preflight, managed-connector dry-run, or
+managed-connector execution-intent index.
 ASP.NET Core maps those same filters through
 `/engine/cdc-captures/runtime/reporters/{reporterId}`,
 `/engine/cdc-captures/runtime/edge-nodes/{edgeNodeId}`,

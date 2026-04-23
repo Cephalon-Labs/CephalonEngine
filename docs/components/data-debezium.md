@@ -307,6 +307,35 @@ runtime surface instead of introducing a Debezium-only dry-run planner.
   Kafka Connect write-path execution, automatic connector mutation, or managed-connector
   control-plane orchestration
 
+## Managed-connector execution-intent baseline
+
+The `ENG-175` follow-through keeps managed-connector execution intent additive over that same
+shared runtime surface instead of introducing a Debezium-only execution planner.
+
+- `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorExecutionIntent` now publishes stable
+  `not-applicable`, `deferred`, `blocked`, `operator-action`, `requires-approval`, and
+  `ready-to-execute` posture for Debezium-managed runtimes together with execution-intent
+  categories, the intended operation id, source
+  coverage/remediation/governance/drift/action-plan/write-path-readiness/preflight/dry-run state,
+  the current primary action id, the confidence-source id, and additive potential-change detail
+- the shared execution-runtime catalog now derives that execution-intent answer from the
+  already-shipped coverage, remediation, governance, drift, action-planning, write-path
+  readiness, preflight, and dry-run truth, so observe-only, out-of-policy,
+  incomplete-reporting, blocking-remediation, reconcile-drift, and lifecycle-specific
+  declarations can surface one consistent connector-management execution-intent answer without
+  claiming Kafka Connect write paths or automatic connector mutation
+- reconcile paths that would still apply future control-plane changes remain operator-owned on the
+  shared surface, while lifecycle operations such as `pause` can now surface approval-gated or
+  ready-to-execute future engine lanes when shared preflight truth is satisfied
+- ASP.NET Core now maps `/engine/cdc-capture-runtimes/execution-intents/{executionIntentState}`,
+  `/engine/cdc-capture-runtimes/execution-intents/categories/{executionIntentCategory}`, and
+  `/engine/cdc-capture-runtimes/execution-intents/operations/{operationId}` on the same shared
+  runtime route family, so operator drill-down stays aligned with the engine-owned catalog
+  instead of a Debezium-only endpoint family
+- execution intent currently remains read-only operator truth; it does not mean Cephalon already
+  owns Kafka Connect write-path execution, automatic connector mutation, or managed-connector
+  control-plane orchestration
+
 ## Not shipped in this slice
 
 This pack intentionally still does not claim:
