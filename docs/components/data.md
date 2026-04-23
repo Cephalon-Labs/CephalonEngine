@@ -378,7 +378,8 @@ command history after restart without inventing a Debezium-only persistence regi
 command journal.
 
 That same shared execution-runtime story now also keeps managed-connector distributed retry lease,
-cross-node idempotency, and broader multi-node lease-execution posture explicit.
+cross-node idempotency, broader multi-node lease-execution, and durable shared scheduler
+orchestration posture explicit.
 `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorDistributedRetryLease` publishes stable
 `not-applicable` / `single-node` / `lease-held` / `lease-missing` / `lease-conflicted` /
 `idempotent-safe` / `idempotency-risk` / `operator-only` posture together with lease categories,
@@ -400,6 +401,18 @@ shipped coordination, distributed-retry-lease, cross-node-idempotency-hardening,
 distributed-retry-orchestration truth so both `ManagedConnectorAutomaticRetryHostedService` and
 automatic command invocations can ask one shared question about whether the current node should
 actually execute the next bounded retry step.
+
+`CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorDurableSharedSchedulerOrchestration` now also
+publishes stable `not-applicable` / `disabled` / `operator-only` / `unscheduled` / `scheduled` /
+`lease-blocked` / `recovery-needed` / `scheduler-conflicted` posture together with scheduler
+categories, execution-runtime and capture identity, ownership/topology, coordination-owner and
+active-reporter identity, scheduler identity and kind, polling cadence, retry fingerprint, latest
+automatic-attempt evidence, durable-history truth, and `CanScheduleAutomaticRetryOnCurrentNode`.
+The shared execution-runtime catalog derives that broader scheduler answer from the already shipped
+automatic-retry coordination, command-journal durability, distributed-retry-orchestration, and
+broader multi-node lease-execution truth so both `ManagedConnectorAutomaticRetryHostedService` and
+automatic command invocations can ask one shared question about whether the current node should
+keep the bounded retry lane durably scheduled.
 
 That same shared execution-runtime story now also keeps managed-connector distributed retry
 orchestration explicit.
@@ -507,7 +520,8 @@ managed-connector automatic background retry execution,
 managed-connector automatic background retry coordination,
 managed-connector distributed retry orchestration,
 managed-connector cross-node idempotency hardening, or
-managed-connector broader multi-node lease execution, or
+managed-connector broader multi-node lease execution,
+managed-connector durable shared scheduler orchestration, or
 managed-connector command-execution-history
 index.
 ASP.NET Core maps those same filters through
@@ -624,7 +638,8 @@ managed-connector command-execution outcome/history, additive command-retry/idem
 additive retry-execution-policy truth, additive bounded command-journal truth, and additive
 automatic background retry plus automatic-retry-coordination plus distributed retry lease plus
 distributed retry orchestration plus richer cross-node idempotency hardening plus broader
-multi-node lease execution truth instead of inventing a Debezium-only status registry.
+multi-node lease execution plus durable shared scheduler orchestration truth instead of inventing a
+Debezium-only status registry.
 
 When the outbox path already reports downstream runtime truth, the same catalog can conservatively
 merge that dispatch posture into `OutboxDispatchState` and the typed CDC publication answer. That

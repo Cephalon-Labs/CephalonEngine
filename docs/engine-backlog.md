@@ -3027,6 +3027,100 @@ Delivered:
 - targeted coverage now proves the operator-story drill-down baseline through composition tests
   `1/1`, hosting tests `1/1`, tooling tests `185/185`, and the reference docs publish script
 
+### ENG-191 Phase 13 managed-connector durable shared scheduler orchestration baseline
+
+Status: done
+Estimate: 5
+Completed: April 24, 2026
+
+Why:
+
+- `ENG-168`, `ENG-169`, `ENG-170`, `ENG-171`, `ENG-172`, `ENG-173`, `ENG-174`, `ENG-175`,
+  `ENG-176`, `ENG-177`, `ENG-178`, `ENG-179`, `ENG-180`, `ENG-181`, `ENG-182`, `ENG-183`,
+  `ENG-184`, `ENG-185`, `ENG-186`, `ENG-187`, `ENG-188`, `ENG-189`, and `ENG-190` already
+  shipped shared coverage, remediation, governance, desired-versus-observed drift,
+  action-planning, write-path readiness, preflight, dry-run, execution-intent,
+  execution-approval, command-envelope, command-issuance, provider execution-adapter, execution
+  outcome/history, retry/idempotency, retry-execution-policy, bounded command-journal,
+  automatic background retry execution, automatic background retry coordination, durable
+  command-journal, distributed retry lease, distributed retry orchestration, richer cross-node
+  idempotency hardening, and broader multi-node lease-execution truth, but operators still lacked
+  one shared answer for whether the bounded retry lane should remain durably scheduled on the
+  current node once those earlier lease, hardening, orchestration, and durability answers were
+  all merged together
+- the next follow-through needed to keep durable shared scheduler orchestration additive on the
+  existing `/engine/cdc-capture-runtimes*`, `/engine/runtime-story`, and
+  `snapshot.CdcCaptureExecutionRuntimes` surfaces instead of inventing a Debezium-only scheduler
+  registry, second coordinator, or second scheduler lane
+- later scheduler recovery/execution hardening and broader provider-owned write-path execution
+  also needed one truthful shared scheduler answer grounded in coordination-owner, active-reporter,
+  lease-execution, and durable-history truth instead of forcing hosts or provider packs to
+  re-derive scheduling posture outside the shared runtime catalog
+
+Acceptance:
+
+- `Cephalon.Abstractions` ships a stable managed-connector durable shared scheduler-orchestration
+  contract on `CdcCaptureExecutionRuntimeDescriptor` that can publish `not-applicable`,
+  `disabled`, `operator-only`, `unscheduled`, `scheduled`, `lease-blocked`, `recovery-needed`,
+  and `scheduler-conflicted` posture together with scheduler categories, execution-runtime and
+  capture identity, ownership/topology, operation, coordination-owner and active-reporter
+  identity, scheduler identity/kind, polling cadence, retry fingerprint, latest automatic-attempt
+  evidence, durable-history truth, and `CanScheduleAutomaticRetryOnCurrentNode`
+- the shared execution-runtime catalog now exposes additive durable shared scheduler state,
+  category, and owner filters while deriving that posture from the same shared automatic-retry
+  coordination, command-journal durability, distributed retry orchestration, and broader
+  multi-node lease-execution truth instead of forcing hosts or providers to invent another
+  scheduler planner
+- the shared data pack now feeds `ManagedConnectorAutomaticRetryHostedService` and automatic
+  `ManagedConnectorCommandExecutor` invocations through that durable shared scheduler answer so
+  scheduling no longer trusts broader multi-node lease-execution truth alone when merged recovery
+  or scheduler-conflict evidence still says the current node should remain blocked
+- ASP.NET Core publishes those same durable shared scheduler filters on the existing
+  `/engine/cdc-capture-runtimes*` route family, including per-runtime drill-down, and the
+  scheduler answer stays additive beside the existing coordination, lease, hardening,
+  orchestration, and lease-execution surfaces instead of branching into a Debezium-only endpoint
+  set
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with
+  the shipped slice while later scheduler recovery/execution hardening or broader provider-owned
+  write-path execution remain separate follow-through
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships
+  `CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationStates`,
+  `CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationCategories`,
+  `CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationSources`, and
+  `CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationStatus`, and
+  `CdcCaptureExecutionRuntimeDescriptor` now carries additive
+  `ManagedConnectorDurableSharedSchedulerOrchestration`
+- `Cephalon.Data` now derives managed-connector durable shared scheduler-orchestration posture
+  from merged automatic-retry coordination, command-journal durability, distributed retry
+  orchestration, and broader multi-node lease-execution truth, including `disabled`,
+  `unscheduled`, `scheduled`, `lease-blocked`, `recovery-needed`, and `scheduler-conflicted`
+  answers, and `ICdcCaptureExecutionRuntimeCatalog` now exposes
+  `GetByManagedConnectorDurableSharedSchedulerOrchestrationState(...)`,
+  `GetByManagedConnectorDurableSharedSchedulerOrchestrationCategory(...)`, and
+  `GetByManagedConnectorDurableSharedSchedulerOrchestrationOwnerId(...)`
+- `Cephalon.Data` now also feeds `ManagedConnectorAutomaticRetryHostedService` and automatic
+  invocations in `ManagedConnectorCommandExecutor` through that durable shared scheduler answer so
+  bounded background retry execution no longer depends on broader multi-node lease-execution truth
+  alone when the merged scheduler answer still reports `recovery-needed` or
+  `scheduler-conflicted`
+- `Cephalon.AspNetCore` now maps
+  `/engine/cdc-capture-runtimes/durable-shared-scheduler-orchestrations/{schedulerState}`,
+  `/engine/cdc-capture-runtimes/durable-shared-scheduler-orchestrations/categories/{schedulerCategory}`,
+  `/engine/cdc-capture-runtimes/durable-shared-scheduler-orchestrations/owners/{ownerId}`, and
+  `/engine/cdc-capture-runtimes/{executionRuntimeId}/durable-shared-scheduler-orchestration` so
+  host routes stay aligned with the same shared coordination, durability, orchestration,
+  lease-execution, and scheduler story
+- `Cephalon.Data.Debezium` now participates in that broader shared scheduler lane through the
+  existing managed-connector runtime and command surface while targeted coverage proves
+  `scheduled`, `unscheduled`, `recovery-needed`, and `scheduler-conflicted` posture without
+  claiming a Debezium-only scheduler subsystem
+- targeted coverage now proves the durable shared scheduler-orchestration baseline through
+  composition tests `42/42`, hosting tests `20/20`, tooling tests `207/207`, and the reference
+  docs publish script
+
 ### ENG-190 Phase 13 managed-connector broader multi-node lease execution baseline
 
 Status: done

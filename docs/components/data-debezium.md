@@ -671,6 +671,15 @@ distributed scheduler, or second coordinator.
   execution-runtime catalog can gate both `ManagedConnectorAutomaticRetryHostedService` and
   automatic command execution through one broader lease-execution answer instead of trusting
   distributed retry orchestration alone
+- the `ENG-191` follow-through keeps that same bounded retry lane durable shared
+  scheduler-orchestration-aware: `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorDurableSharedSchedulerOrchestration`
+  now publishes stable `not-applicable`, `disabled`, `operator-only`, `unscheduled`, `scheduled`,
+  `lease-blocked`, `recovery-needed`, and `scheduler-conflicted` posture together with
+  coordination owner, active reporter, scheduler identity and kind, polling cadence, retry
+  fingerprint, latest automatic-attempt evidence, durable-history truth, and
+  `CanScheduleAutomaticRetryOnCurrentNode`, so the shared execution-runtime catalog can gate both
+  `ManagedConnectorAutomaticRetryHostedService` and automatic command execution through one
+  scheduler answer instead of trusting broader multi-node lease-execution truth alone
 - automatic background retry execution currently remains bounded shared in-process truth; it does
   not mean Cephalon already owns durable distributed command journals, durable distributed
   schedulers, or full provider-owned control-plane execution orchestration
@@ -684,7 +693,7 @@ This pack intentionally still does not claim:
 - managed-connector apply-and-reconcile ownership beyond the shared `future-control-plane` governance signal
 - automatic managed-connector drift correction or write-path remediation
 - per-task execution graphs or hosted executions inside Cephalon
-- durable distributed command journals, durable distributed retry schedulers, or full idempotency orchestration beyond the shipped shared bounded command-journal plus durable journal posture plus bounded automatic background retry plus coordination posture plus distributed retry lease truth plus distributed retry orchestration truth plus richer cross-node idempotency hardening plus broader multi-node lease execution
+- durable distributed command journals, durable distributed retry schedulers, or full idempotency orchestration beyond the shipped shared bounded command-journal plus durable journal posture plus bounded automatic background retry plus coordination posture plus distributed retry lease truth plus distributed retry orchestration truth plus richer cross-node idempotency hardening plus broader multi-node lease execution plus durable shared scheduler orchestration
 - schema-registry management or event serialization policy outside the shared CDC runtime metadata
 - provider-native read/write storage or outbox implementation
 

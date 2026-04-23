@@ -91,17 +91,19 @@ internal sealed class ManagedConnectorCommandExecutor(
                 normalizedInvocationSourceId,
                 CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionInvocationSources.AutomaticRetry,
                 StringComparison.OrdinalIgnoreCase) &&
-            !runtime.ManagedConnectorMultiNodeLeaseExecution.CanExecuteAutomaticRetryOnCurrentNode)
+            !runtime.ManagedConnectorDurableSharedSchedulerOrchestration.CanScheduleAutomaticRetryOnCurrentNode)
         {
-            var multiNodeLeaseExecution = runtime.ManagedConnectorMultiNodeLeaseExecution;
-            var coordinationState = multiNodeLeaseExecution.IsOperatorOnly
+            var durableSharedSchedulerOrchestration = runtime.ManagedConnectorDurableSharedSchedulerOrchestration;
+            var coordinationState = durableSharedSchedulerOrchestration.IsOperatorOnly
                 ? CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.OperatorOnly
                 : CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionStates.Blocked;
-            var coordinationDescription = string.IsNullOrWhiteSpace(multiNodeLeaseExecution.Description)
-                ? string.IsNullOrWhiteSpace(runtime.ManagedConnectorDistributedRetryOrchestration.Description)
-                    ? "Automatic background retry is not currently allowed to execute on this node."
-                    : runtime.ManagedConnectorDistributedRetryOrchestration.Description
-                : multiNodeLeaseExecution.Description;
+            var coordinationDescription = string.IsNullOrWhiteSpace(durableSharedSchedulerOrchestration.Description)
+                ? string.IsNullOrWhiteSpace(runtime.ManagedConnectorMultiNodeLeaseExecution.Description)
+                    ? string.IsNullOrWhiteSpace(runtime.ManagedConnectorDistributedRetryOrchestration.Description)
+                        ? "Automatic background retry is not currently allowed to execute on this node."
+                        : runtime.ManagedConnectorDistributedRetryOrchestration.Description
+                    : runtime.ManagedConnectorMultiNodeLeaseExecution.Description
+                : durableSharedSchedulerOrchestration.Description;
 
             return CreateResult(
                 runtime,

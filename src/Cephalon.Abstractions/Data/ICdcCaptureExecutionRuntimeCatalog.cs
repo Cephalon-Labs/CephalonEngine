@@ -480,6 +480,27 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorMultiNodeLeaseExecutionOwnerId(string ownerId);
 
     /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector durable shared scheduler-orchestration answer matches the requested state identifier.
+    /// </summary>
+    /// <param name="schedulerState">The stable durable shared scheduler-orchestration state identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that durable shared scheduler-orchestration state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDurableSharedSchedulerOrchestrationState(string schedulerState);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector durable shared scheduler-orchestration answer reports the requested category identifier.
+    /// </summary>
+    /// <param name="schedulerCategory">The stable durable shared scheduler-orchestration category identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that durable shared scheduler-orchestration category.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDurableSharedSchedulerOrchestrationCategory(string schedulerCategory);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector durable shared scheduler-orchestration answer references the requested local coordination owner identifier.
+    /// </summary>
+    /// <param name="ownerId">The stable local coordination owner identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that owner identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDurableSharedSchedulerOrchestrationOwnerId(string ownerId);
+
+    /// <summary>
     /// Gets the bounded managed-connector command-execution history currently recorded for one execution runtime.
     /// </summary>
     /// <param name="executionRuntimeId">The stable execution-runtime identifier to resolve.</param>

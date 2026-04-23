@@ -8548,6 +8548,16 @@ CdcCaptureExecutionRuntimeManagedConnectorDryRunStatus ManagedConnectorDryRun { 
 
 Gets the operator-facing managed-connector dry-run posture derived from coverage, remediation, governance, drift, action planning, write-path readiness, and preflight truth.
 
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectordurablesharedschedulerorchestration"></a>
+
+##### `ManagedConnectorDurableSharedSchedulerOrchestration`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationStatus ManagedConnectorDurableSharedSchedulerOrchestration { get; set; }
+```
+
+Gets the operator-facing managed-connector durable shared scheduler-orchestration posture derived from coordination, durable journal, distributed retry orchestration, and broader lease-execution truth.
+
 <a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimedescriptor-managedconnectorexecutionadapter"></a>
 
 ##### `ManagedConnectorExecutionAdapter`
@@ -19328,6 +19338,814 @@ string WritePathReadinessState { get; set; }
 ```
 
 Gets the current managed-connector write-path readiness state that informed the dry-run answer.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationcategories"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationCategories`
+
+Defines the stable category identifiers used by managed-connector durable shared scheduler-orchestration answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationCategories
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationcategories-activeleasevisible"></a>
+
+##### `ActiveLeaseVisible`
+
+```csharp
+const string ActiveLeaseVisible
+```
+
+The runtime still exposes one active reporter lease.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationcategories-activereportervisible"></a>
+
+##### `ActiveReporterVisible`
+
+```csharp
+const string ActiveReporterVisible
+```
+
+The runtime still exposes one active reporter identifier.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationcategories-cooldownwindow"></a>
+
+##### `CooldownWindow`
+
+```csharp
+const string CooldownWindow
+```
+
+The current retry policy is still waiting for a cooldown window to elapse.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationcategories-currentnodeblocked"></a>
+
+##### `CurrentNodeBlocked`
+
+```csharp
+const string CurrentNodeBlocked
+```
+
+The current node cannot yet keep the runtime scheduled.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationcategories-currentnodeschedulable"></a>
+
+##### `CurrentNodeSchedulable`
+
+```csharp
+const string CurrentNodeSchedulable
+```
+
+The current node can keep one bounded automatic retry scheduled.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationcategories-durablejournalconfigured"></a>
+
+##### `DurableJournalConfigured`
+
+```csharp
+const string DurableJournalConfigured
+```
+
+A durable command-journal store is configured for the runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationcategories-durablejournalhealthy"></a>
+
+##### `DurableJournalHealthy`
+
+```csharp
+const string DurableJournalHealthy
+```
+
+The durable command journal currently looks healthy for shared scheduler decisions.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationcategories-durablesharedscheduler"></a>
+
+##### `DurableSharedScheduler`
+
+```csharp
+const string DurableSharedScheduler
+```
+
+The runtime participates in the durable shared scheduler-orchestration lane.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationcategories-inmemoryjournalonly"></a>
+
+##### `InMemoryJournalOnly`
+
+```csharp
+const string InMemoryJournalOnly
+```
+
+Automatic retry currently depends on in-memory command history only.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationcategories-leaseblocked"></a>
+
+##### `LeaseBlocked`
+
+```csharp
+const string LeaseBlocked
+```
+
+Durable shared scheduler orchestration currently remains blocked by broader lease-execution truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationcategories-leasecoordinatedruntime"></a>
+
+##### `LeaseCoordinatedRuntime`
+
+```csharp
+const string LeaseCoordinatedRuntime
+```
+
+The runtime depends on cross-node lease ownership before automatic retry should execute.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationcategories-nofurtherretryneeded"></a>
+
+##### `NoFurtherRetryNeeded`
+
+```csharp
+const string NoFurtherRetryNeeded
+```
+
+The current shared runtime truth does not currently need another automatic retry attempt.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationcategories-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+Durable shared scheduler orchestration still remains operator-owned outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationcategories-ownermatch"></a>
+
+##### `OwnerMatch`
+
+```csharp
+const string OwnerMatch
+```
+
+The current host coordination owner matches the active reporter lease.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationcategories-ownermismatch"></a>
+
+##### `OwnerMismatch`
+
+```csharp
+const string OwnerMismatch
+```
+
+The current host coordination owner does not match the active reporter lease.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationcategories-persistedhistory"></a>
+
+##### `PersistedHistory`
+
+```csharp
+const string PersistedHistory
+```
+
+The durable command journal currently exposes persisted recorded history.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationcategories-recoveredhistory"></a>
+
+##### `RecoveredHistory`
+
+```csharp
+const string RecoveredHistory
+```
+
+The durable command journal currently exposes recovered recorded history.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationcategories-recoveryneeded"></a>
+
+##### `RecoveryNeeded`
+
+```csharp
+const string RecoveryNeeded
+```
+
+Durable shared scheduler orchestration currently still needs durable journal recovery or persistence hardening.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationcategories-scheduled"></a>
+
+##### `Scheduled`
+
+```csharp
+const string Scheduled
+```
+
+Durable shared scheduler orchestration currently keeps one bounded retry scheduled on the current node.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationcategories-schedulerconflicted"></a>
+
+##### `SchedulerConflicted`
+
+```csharp
+const string SchedulerConflicted
+```
+
+Durable shared scheduler orchestration currently remains conflicted across coordination or lease ownership truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationcategories-schedulerdisabled"></a>
+
+##### `SchedulerDisabled`
+
+```csharp
+const string SchedulerDisabled
+```
+
+The shared bounded retry scheduler is currently disabled for the runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationcategories-singlenoderuntime"></a>
+
+##### `SingleNodeRuntime`
+
+```csharp
+const string SingleNodeRuntime
+```
+
+The runtime currently executes automatic retry on a single node without cross-node lease ownership.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationcategories-unscheduled"></a>
+
+##### `Unscheduled`
+
+```csharp
+const string Unscheduled
+```
+
+Durable shared scheduler orchestration currently does not need to keep the runtime scheduled.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationsources"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationSources`
+
+Defines the stable source identifiers used by managed-connector durable shared scheduler-orchestration answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationSources
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationsources-automaticretrycoordination"></a>
+
+##### `AutomaticRetryCoordination`
+
+```csharp
+const string AutomaticRetryCoordination
+```
+
+The durable shared scheduler-orchestration answer was derived primarily from automatic-retry coordination truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationsources-commandjournaldurability"></a>
+
+##### `CommandJournalDurability`
+
+```csharp
+const string CommandJournalDurability
+```
+
+The durable shared scheduler-orchestration answer was derived primarily from durable command-journal truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationsources-distributedretryorchestration"></a>
+
+##### `DistributedRetryOrchestration`
+
+```csharp
+const string DistributedRetryOrchestration
+```
+
+The durable shared scheduler-orchestration answer was derived primarily from distributed retry orchestration truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationsources-multinodeleaseexecution"></a>
+
+##### `MultiNodeLeaseExecution`
+
+```csharp
+const string MultiNodeLeaseExecution
+```
+
+The durable shared scheduler-orchestration answer was derived primarily from broader multi-node lease-execution truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationsources-unknown"></a>
+
+##### `Unknown`
+
+```csharp
+const string Unknown
+```
+
+The durable shared scheduler-orchestration answer does not currently resolve to one specific source.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstates"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationStates`
+
+Defines the stable state identifiers used by managed-connector durable shared scheduler-orchestration answers.
+
+#### Declaration
+```csharp
+public static class CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationStates
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstates-disabled"></a>
+
+##### `Disabled`
+
+```csharp
+const string Disabled
+```
+
+Durable shared scheduler orchestration is currently disabled for the runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstates-leaseblocked"></a>
+
+##### `LeaseBlocked`
+
+```csharp
+const string LeaseBlocked
+```
+
+Durable shared scheduler orchestration remains blocked by broader lease-execution truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstates-notapplicable"></a>
+
+##### `NotApplicable`
+
+```csharp
+const string NotApplicable
+```
+
+Durable shared scheduler orchestration does not currently apply to the execution runtime.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstates-operatoronly"></a>
+
+##### `OperatorOnly`
+
+```csharp
+const string OperatorOnly
+```
+
+Durable shared scheduler orchestration still remains operator-owned outside Cephalon.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstates-recoveryneeded"></a>
+
+##### `RecoveryNeeded`
+
+```csharp
+const string RecoveryNeeded
+```
+
+Durable shared scheduler orchestration still needs durable journal recovery or persistence hardening.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstates-scheduled"></a>
+
+##### `Scheduled`
+
+```csharp
+const string Scheduled
+```
+
+Durable shared scheduler orchestration can currently keep one bounded automatic retry scheduled on the current node.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstates-schedulerconflicted"></a>
+
+##### `SchedulerConflicted`
+
+```csharp
+const string SchedulerConflicted
+```
+
+Durable shared scheduler orchestration remains conflicted across coordination or lease ownership truth.
+
+<a id="member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstates-unscheduled"></a>
+
+##### `Unscheduled`
+
+```csharp
+const string Unscheduled
+```
+
+Durable shared scheduler orchestration currently does not need to keep the runtime scheduled.
+
+<a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus"></a>
+
+### `CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationStatus`
+
+Describes the current operator-facing managed-connector durable shared scheduler-orchestration posture for one CDC execution runtime.
+
+#### Declaration
+```csharp
+public sealed class CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationStatus
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-ctor-system-string-system-string"></a>
+
+##### `CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationStatus`
+
+```csharp
+CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationStatus(string state, string description)
+```
+
+Creates a new managed-connector durable shared scheduler-orchestration answer.
+
+Parameters:
+- `state`: The stable durable shared scheduler-orchestration state, such as `not-applicable`, `disabled`, `operator-only`, `unscheduled`, `scheduled`, `lease-blocked`, `recovery-needed`, or `scheduler-conflicted`.
+- `description`: An optional operator-facing durable shared scheduler-orchestration summary.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-activereporterid"></a>
+
+##### `ActiveReporterId`
+
+```csharp
+string ActiveReporterId { get; set; }
+```
+
+Gets the active reporter identifier currently visible for the execution runtime when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-activereporterleaseexpiresatutc"></a>
+
+##### `ActiveReporterLeaseExpiresAtUtc`
+
+```csharp
+DateTimeOffset? ActiveReporterLeaseExpiresAtUtc { get; set; }
+```
+
+Gets the UTC timestamp when the active reporter lease expires when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-appliestomanagedconnector"></a>
+
+##### `AppliesToManagedConnector`
+
+```csharp
+bool AppliesToManagedConnector { get; }
+```
+
+Gets a value indicating whether the execution runtime currently represents a managed connector.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-automaticretrycoordinationstate"></a>
+
+##### `AutomaticRetryCoordinationState`
+
+```csharp
+string AutomaticRetryCoordinationState { get; set; }
+```
+
+Gets the current managed-connector automatic background retry coordination state that informed durable shared scheduler orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-canscheduleautomaticretryoncurrentnode"></a>
+
+##### `CanScheduleAutomaticRetryOnCurrentNode`
+
+```csharp
+bool CanScheduleAutomaticRetryOnCurrentNode { get; set; }
+```
+
+Gets a value indicating whether the current node can currently keep one bounded automatic retry scheduled.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-categorycount"></a>
+
+##### `CategoryCount`
+
+```csharp
+int CategoryCount { get; }
+```
+
+Gets the number of active durable shared scheduler-orchestration categories currently visible for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-categoryids"></a>
+
+##### `CategoryIds`
+
+```csharp
+IReadOnlyList<string> CategoryIds { get; set; }
+```
+
+Gets the stable durable shared scheduler-orchestration categories currently active for the execution runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-cdccaptureids"></a>
+
+##### `CdcCaptureIds`
+
+```csharp
+IReadOnlyList<string> CdcCaptureIds { get; set; }
+```
+
+Gets the CDC capture identifiers currently associated with durable shared scheduler orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-commandjournaldurabilitystate"></a>
+
+##### `CommandJournalDurabilityState`
+
+```csharp
+string CommandJournalDurabilityState { get; set; }
+```
+
+Gets the current managed-connector command-journal durability state that informed durable shared scheduler orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-cooldownuntilutc"></a>
+
+##### `CooldownUntilUtc`
+
+```csharp
+DateTimeOffset? CooldownUntilUtc { get; set; }
+```
+
+Gets the timestamp when the active retry cooldown window ends, when one applies.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-coordinationownerid"></a>
+
+##### `CoordinationOwnerId`
+
+```csharp
+string CoordinationOwnerId { get; set; }
+```
+
+Gets the host-owned coordination owner identifier when one was configured for automatic retry.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets an optional operator-facing durable shared scheduler-orchestration summary.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-distributedretryorchestrationstate"></a>
+
+##### `DistributedRetryOrchestrationState`
+
+```csharp
+string DistributedRetryOrchestrationState { get; set; }
+```
+
+Gets the current managed-connector distributed retry orchestration state that informed durable shared scheduler orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-executionownership"></a>
+
+##### `ExecutionOwnership`
+
+```csharp
+string ExecutionOwnership { get; set; }
+```
+
+Gets the operator-facing execution-ownership mode that informed durable shared scheduler orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-executionruntimeid"></a>
+
+##### `ExecutionRuntimeId`
+
+```csharp
+string ExecutionRuntimeId { get; set; }
+```
+
+Gets the stable execution-runtime identifier currently associated with durable shared scheduler orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-executiontopology"></a>
+
+##### `ExecutionTopology`
+
+```csharp
+string ExecutionTopology { get; set; }
+```
+
+Gets the operator-facing execution-topology classification that informed durable shared scheduler orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-hasactivereporterlease"></a>
+
+##### `HasActiveReporterLease`
+
+```csharp
+bool HasActiveReporterLease { get; }
+```
+
+Gets a value indicating whether the runtime currently exposes one active reporter lease.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-hasdurablestoreconfigured"></a>
+
+##### `HasDurableStoreConfigured`
+
+```csharp
+bool HasDurableStoreConfigured { get; set; }
+```
+
+Gets a value indicating whether a durable command-journal store is currently configured.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-haspersistedrecordedhistory"></a>
+
+##### `HasPersistedRecordedHistory`
+
+```csharp
+bool HasPersistedRecordedHistory { get; set; }
+```
+
+Gets a value indicating whether the durable command-journal store currently exposes persisted recorded history.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-hasrecoveredpersistedhistory"></a>
+
+##### `HasRecoveredPersistedHistory`
+
+```csharp
+bool HasRecoveredPersistedHistory { get; set; }
+```
+
+Gets a value indicating whether the current process recovered persisted command history for this runtime.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-isdisabled"></a>
+
+##### `IsDisabled`
+
+```csharp
+bool IsDisabled { get; }
+```
+
+Gets a value indicating whether durable shared scheduler orchestration is currently disabled.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-isleaseblocked"></a>
+
+##### `IsLeaseBlocked`
+
+```csharp
+bool IsLeaseBlocked { get; }
+```
+
+Gets a value indicating whether durable shared scheduler orchestration remains blocked by broader lease-execution truth.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-isoperatoronly"></a>
+
+##### `IsOperatorOnly`
+
+```csharp
+bool IsOperatorOnly { get; }
+```
+
+Gets a value indicating whether durable shared scheduler orchestration still remains operator-owned outside Cephalon.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-isrecoveryneeded"></a>
+
+##### `IsRecoveryNeeded`
+
+```csharp
+bool IsRecoveryNeeded { get; }
+```
+
+Gets a value indicating whether durable shared scheduler orchestration still needs durable journal recovery or persistence hardening.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-isscheduled"></a>
+
+##### `IsScheduled`
+
+```csharp
+bool IsScheduled { get; }
+```
+
+Gets a value indicating whether durable shared scheduler orchestration can currently keep one bounded retry scheduled on the current node.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-isschedulerconflicted"></a>
+
+##### `IsSchedulerConflicted`
+
+```csharp
+bool IsSchedulerConflicted { get; }
+```
+
+Gets a value indicating whether durable shared scheduler orchestration remains conflicted across coordination or lease ownership truth.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-isunscheduled"></a>
+
+##### `IsUnscheduled`
+
+```csharp
+bool IsUnscheduled { get; }
+```
+
+Gets a value indicating whether durable shared scheduler orchestration currently does not need to keep the runtime scheduled.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-latestautomaticretryattemptid"></a>
+
+##### `LatestAutomaticRetryAttemptId`
+
+```csharp
+string LatestAutomaticRetryAttemptId { get; set; }
+```
+
+Gets the latest automatic retry attempt identifier currently associated with durable shared scheduler orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-latestautomaticretryrecordedatutc"></a>
+
+##### `LatestAutomaticRetryRecordedAtUtc`
+
+```csharp
+DateTimeOffset? LatestAutomaticRetryRecordedAtUtc { get; set; }
+```
+
+Gets the timestamp when Cephalon recorded the latest automatic retry attempt when one exists.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-managementmode"></a>
+
+##### `ManagementMode`
+
+```csharp
+string ManagementMode { get; set; }
+```
+
+Gets the declared managed-connector management mode when one is known.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-multinodeleaseexecutionstate"></a>
+
+##### `MultiNodeLeaseExecutionState`
+
+```csharp
+string MultiNodeLeaseExecutionState { get; set; }
+```
+
+Gets the current managed-connector broader multi-node lease-execution state that informed durable shared scheduler orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-operationid"></a>
+
+##### `OperationId`
+
+```csharp
+string OperationId { get; set; }
+```
+
+Gets the stable management-operation identifier currently associated with durable shared scheduler orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-pollingintervalseconds"></a>
+
+##### `PollingIntervalSeconds`
+
+```csharp
+int PollingIntervalSeconds { get; set; }
+```
+
+Gets the bounded retry scheduler polling interval, in seconds, when one is configured.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-retryfingerprint"></a>
+
+##### `RetryFingerprint`
+
+```csharp
+string RetryFingerprint { get; set; }
+```
+
+Gets the deterministic retry fingerprint currently associated with durable shared scheduler orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-schedulerid"></a>
+
+##### `SchedulerId`
+
+```csharp
+string SchedulerId { get; set; }
+```
+
+Gets the stable shared scheduler identifier currently associated with durable shared scheduler orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-schedulerkind"></a>
+
+##### `SchedulerKind`
+
+```csharp
+string SchedulerKind { get; set; }
+```
+
+Gets the stable shared scheduler kind currently associated with durable shared scheduler orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-sourceid"></a>
+
+##### `SourceId`
+
+```csharp
+string SourceId { get; set; }
+```
+
+Gets the primary source identifier Cephalon used to derive durable shared scheduler orchestration.
+
+<a id="member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-state"></a>
+
+##### `State`
+
+```csharp
+string State { get; }
+```
+
+Gets the stable managed-connector durable shared scheduler-orchestration state.
 
 <a id="type-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionadaptercategories"></a>
 
@@ -31231,6 +32049,51 @@ Returns: The matching execution-runtime descriptors, or an empty list when no ru
 
 Parameters:
 - `dryRunState`: The stable managed-connector dry-run state identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectordurablesharedschedulerorchestrationcategory-system-string"></a>
+
+##### `GetByManagedConnectorDurableSharedSchedulerOrchestrationCategory`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDurableSharedSchedulerOrchestrationCategory(string schedulerCategory)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector durable shared scheduler-orchestration answer reports the requested category identifier.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that durable shared scheduler-orchestration category.
+
+Parameters:
+- `schedulerCategory`: The stable durable shared scheduler-orchestration category identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectordurablesharedschedulerorchestrationownerid-system-string"></a>
+
+##### `GetByManagedConnectorDurableSharedSchedulerOrchestrationOwnerId`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDurableSharedSchedulerOrchestrationOwnerId(string ownerId)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector durable shared scheduler-orchestration answer references the requested local coordination owner identifier.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that owner identifier.
+
+Parameters:
+- `ownerId`: The stable local coordination owner identifier to filter by.
+
+<a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectordurablesharedschedulerorchestrationstate-system-string"></a>
+
+##### `GetByManagedConnectorDurableSharedSchedulerOrchestrationState`
+
+```csharp
+IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorDurableSharedSchedulerOrchestrationState(string schedulerState)
+```
+
+Gets the CDC capture execution runtimes whose current managed-connector durable shared scheduler-orchestration answer matches the requested state identifier.
+
+Returns: The matching execution-runtime descriptors, or an empty list when no runtime currently reports that durable shared scheduler-orchestration state.
+
+Parameters:
+- `schedulerState`: The stable durable shared scheduler-orchestration state identifier to filter by.
 
 <a id="member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorexecutionadaptercategory-system-string"></a>
 

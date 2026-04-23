@@ -1036,6 +1036,33 @@ public static class EngineWebApplicationExtensions
                 return Results.Ok(runtimes);
             })
             .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorMultiNodeLeaseExecutionOwner");
+        engineGroup.MapGet("/cdc-capture-runtimes/durable-shared-scheduler-orchestrations/{schedulerState}", (string schedulerState, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorDurableSharedSchedulerOrchestrationState(schedulerState) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorDurableSharedSchedulerOrchestrationState");
+        engineGroup.MapGet("/cdc-capture-runtimes/durable-shared-scheduler-orchestrations/categories/{schedulerCategory}", (string schedulerCategory, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorDurableSharedSchedulerOrchestrationCategory(schedulerCategory) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorDurableSharedSchedulerOrchestrationCategory");
+        engineGroup.MapGet("/cdc-capture-runtimes/durable-shared-scheduler-orchestrations/owners/{ownerId}", (string ownerId, HttpContext httpContext) =>
+            {
+                var runtimes = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetByManagedConnectorDurableSharedSchedulerOrchestrationOwnerId(ownerId) ?? [];
+
+                return Results.Ok(runtimes);
+            })
+            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorDurableSharedSchedulerOrchestrationOwner");
         engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/command-executions", (string executionRuntimeId, HttpContext httpContext) =>
             {
                 var runtimeCatalog = httpContext.RequestServices.GetService<ICdcCaptureExecutionRuntimeCatalog>();
@@ -1114,6 +1141,17 @@ public static class EngineWebApplicationExtensions
                     : Results.Ok(runtimeDescriptor.ManagedConnectorMultiNodeLeaseExecution);
             })
             .WithName("GetCephalonManagedConnectorMultiNodeLeaseExecution");
+        engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/durable-shared-scheduler-orchestration", (string executionRuntimeId, HttpContext httpContext) =>
+            {
+                var runtimeDescriptor = httpContext.RequestServices
+                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                    .GetById(executionRuntimeId);
+
+                return runtimeDescriptor is null
+                    ? Results.NotFound()
+                    : Results.Ok(runtimeDescriptor.ManagedConnectorDurableSharedSchedulerOrchestration);
+            })
+            .WithName("GetCephalonManagedConnectorDurableSharedSchedulerOrchestration");
         engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}", (string executionRuntimeId, HttpContext httpContext) =>
             {
                 var runtimeDescriptor = httpContext.RequestServices

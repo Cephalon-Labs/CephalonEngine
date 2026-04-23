@@ -364,6 +364,12 @@ public sealed class CdcCaptureExecutionRuntimeDescriptor
     public CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus ManagedConnectorMultiNodeLeaseExecution { get; init; } =
         new(CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStates.NotApplicable);
 
+    /// <summary>
+    /// Gets the operator-facing managed-connector durable shared scheduler-orchestration posture derived from coordination, durable journal, distributed retry orchestration, and broader lease-execution truth.
+    /// </summary>
+    public CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationStatus ManagedConnectorDurableSharedSchedulerOrchestration { get; init; } =
+        new(CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationStates.NotApplicable);
+
     private static string[] Normalize(IReadOnlyList<string>? values)
     {
         return values?

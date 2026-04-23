@@ -83,7 +83,7 @@ internal sealed class ManagedConnectorAutomaticRetryHostedService(
         var commandExecutor = scope.ServiceProvider.GetRequiredService<ManagedConnectorCommandExecutor>();
         var eligibleRuntimes = runtimeCatalog.Runtimes
             .Where(static runtime =>
-                runtime.ManagedConnectorMultiNodeLeaseExecution.CanExecuteAutomaticRetryOnCurrentNode)
+                runtime.ManagedConnectorDurableSharedSchedulerOrchestration.CanScheduleAutomaticRetryOnCurrentNode)
             .OrderBy(static runtime => runtime.Id, StringComparer.OrdinalIgnoreCase)
             .ToArray();
 
@@ -91,7 +91,7 @@ internal sealed class ManagedConnectorAutomaticRetryHostedService(
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var operationId = runtime.ManagedConnectorMultiNodeLeaseExecution.OperationId;
+            var operationId = runtime.ManagedConnectorDurableSharedSchedulerOrchestration.OperationId;
             if (string.IsNullOrWhiteSpace(operationId) ||
                 string.Equals(
                     operationId,
