@@ -1345,7 +1345,7 @@ public sealed class DebeziumDataCdcPackTests
     }
 
     [Fact]
-    public async Task AddDebeziumData_ManagedConnectorDryRunAndExecutionIntentCatalogsExposeSharedStateCategoryAndOperationFilters()
+    public async Task AddDebeziumData_ManagedConnectorDryRunExecutionIntentApprovalCommandEnvelopeAndCommandIssuanceCatalogsExposeSharedStateCategoryAndOperationFilters()
     {
         var timeProvider = new MutableTimeProvider(DateTimeOffset.Parse("2026-04-23T06:10:30Z", CultureInfo.InvariantCulture));
         var services = new ServiceCollection();
@@ -1861,6 +1861,78 @@ public sealed class DebeziumDataCdcPackTests
         Assert.True(deleteRequired.ManagedConnectorCommandEnvelope.IsApprovalGated);
         Assert.True(deleteRequired.ManagedConnectorCommandEnvelope.RequiresExplicitApproval);
         Assert.True(deleteRequired.ManagedConnectorCommandEnvelope.IsDestructiveOperation);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates.NotApplicable, observeOnly.ManagedConnectorCommandIssuance.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceOperationIds.None, observeOnly.ManagedConnectorCommandIssuance.OperationId);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.ObserveOnlyMode, observeOnly.ManagedConnectorCommandIssuance.CategoryIds);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceSources.CommandEnvelope, observeOnly.ManagedConnectorCommandIssuance.SourceId);
+        Assert.False(observeOnly.ManagedConnectorCommandIssuance.HasIssuableCommand);
+
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates.OperatorOnly, futureControlPlane.ManagedConnectorCommandIssuance.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceOperationIds.Reconcile, futureControlPlane.ManagedConnectorCommandIssuance.OperationId);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.ControlPlaneOwnershipGap, futureControlPlane.ManagedConnectorCommandIssuance.CategoryIds);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.OperatorOnly, futureControlPlane.ManagedConnectorCommandIssuance.CategoryIds);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceSources.CommandEnvelope, futureControlPlane.ManagedConnectorCommandIssuance.SourceId);
+        Assert.True(futureControlPlane.ManagedConnectorCommandIssuance.IsOperatorOnly);
+        Assert.True(futureControlPlane.ManagedConnectorCommandIssuance.HasIssuableCommand);
+
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates.Blocked, outOfPolicy.ManagedConnectorCommandIssuance.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceOperationIds.None, outOfPolicy.ManagedConnectorCommandIssuance.OperationId);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.GovernanceOutOfPolicy, outOfPolicy.ManagedConnectorCommandIssuance.CategoryIds);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceSources.CommandEnvelope, outOfPolicy.ManagedConnectorCommandIssuance.SourceId);
+        Assert.False(outOfPolicy.ManagedConnectorCommandIssuance.HasIssuableCommand);
+
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates.Blocked, waiting.ManagedConnectorCommandIssuance.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceOperationIds.None, waiting.ManagedConnectorCommandIssuance.OperationId);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.IncompleteReportingCoverage, waiting.ManagedConnectorCommandIssuance.CategoryIds);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.RuntimeTruthIncomplete, waiting.ManagedConnectorCommandIssuance.CategoryIds);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceSources.CommandEnvelope, waiting.ManagedConnectorCommandIssuance.SourceId);
+
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates.Blocked, blocked.ManagedConnectorCommandIssuance.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceOperationIds.None, blocked.ManagedConnectorCommandIssuance.OperationId);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.BlockingRemediation, blocked.ManagedConnectorCommandIssuance.CategoryIds);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceSources.CommandEnvelope, blocked.ManagedConnectorCommandIssuance.SourceId);
+        Assert.True(blocked.ManagedConnectorCommandIssuance.IsBlocked);
+
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates.Rejected, ready.ManagedConnectorCommandIssuance.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceOperationIds.Reconcile, ready.ManagedConnectorCommandIssuance.OperationId);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.Rejected, ready.ManagedConnectorCommandIssuance.CategoryIds);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.NoExecutionNeeded, ready.ManagedConnectorCommandIssuance.CategoryIds);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceSources.CommandEnvelope, ready.ManagedConnectorCommandIssuance.SourceId);
+        Assert.Equal("connect-cluster-e", ready.ManagedConnectorCommandIssuance.ConnectClusterId);
+        Assert.Equal("io.debezium.connector.postgresql.PostgresConnector", ready.ManagedConnectorCommandIssuance.ConnectorClass);
+        Assert.Equal("postgresql", ready.ManagedConnectorCommandIssuance.SourceProviderId);
+        Assert.True(ready.ManagedConnectorCommandIssuance.IsRejected);
+        Assert.True(ready.ManagedConnectorCommandIssuance.HasIssuableCommand);
+        Assert.False(string.IsNullOrWhiteSpace(ready.ManagedConnectorCommandIssuance.CommandFingerprint));
+        Assert.False(string.IsNullOrWhiteSpace(ready.ManagedConnectorCommandIssuance.IssuanceFingerprint));
+
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates.Accepted, pauseRequired.ManagedConnectorCommandIssuance.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceOperationIds.Pause, pauseRequired.ManagedConnectorCommandIssuance.OperationId);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.Accepted, pauseRequired.ManagedConnectorCommandIssuance.CategoryIds);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.ApprovalGated, pauseRequired.ManagedConnectorCommandIssuance.CategoryIds);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.ApprovalReady, pauseRequired.ManagedConnectorCommandIssuance.CategoryIds);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.LifecycleChange, pauseRequired.ManagedConnectorCommandIssuance.CategoryIds);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceSources.CommandEnvelope, pauseRequired.ManagedConnectorCommandIssuance.SourceId);
+        Assert.True(pauseRequired.ManagedConnectorCommandIssuance.IsAccepted);
+        Assert.True(pauseRequired.ManagedConnectorCommandIssuance.RequiresExplicitApproval);
+        Assert.True(pauseRequired.ManagedConnectorCommandIssuance.CanEnterFutureIssuanceLane);
+
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates.Rejected, pauseSatisfied.ManagedConnectorCommandIssuance.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceOperationIds.Pause, pauseSatisfied.ManagedConnectorCommandIssuance.OperationId);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.Rejected, pauseSatisfied.ManagedConnectorCommandIssuance.CategoryIds);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.NoExecutionNeeded, pauseSatisfied.ManagedConnectorCommandIssuance.CategoryIds);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceSources.CommandEnvelope, pauseSatisfied.ManagedConnectorCommandIssuance.SourceId);
+        Assert.True(pauseSatisfied.ManagedConnectorCommandIssuance.IsRejected);
+
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates.Accepted, deleteRequired.ManagedConnectorCommandIssuance.State);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceOperationIds.Delete, deleteRequired.ManagedConnectorCommandIssuance.OperationId);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.Accepted, deleteRequired.ManagedConnectorCommandIssuance.CategoryIds);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.ApprovalRequired, deleteRequired.ManagedConnectorCommandIssuance.CategoryIds);
+        Assert.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.DestructiveOperation, deleteRequired.ManagedConnectorCommandIssuance.CategoryIds);
+        Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceSources.CommandEnvelope, deleteRequired.ManagedConnectorCommandIssuance.SourceId);
+        Assert.True(deleteRequired.ManagedConnectorCommandIssuance.IsAccepted);
+        Assert.True(deleteRequired.ManagedConnectorCommandIssuance.RequiresExplicitApproval);
+        Assert.True(deleteRequired.ManagedConnectorCommandIssuance.IsDestructiveOperation);
 
         Assert.Equal([ObserveOnlyRuntimeId], runtimeCatalog
             .GetByManagedConnectorDryRunState(CdcCaptureExecutionRuntimeManagedConnectorDryRunStates.Deferred)
@@ -2191,6 +2263,124 @@ public sealed class DebeziumDataCdcPackTests
             [FutureControlPlaneRuntimeId, ReadyRuntimeId],
             runtimeCatalog
                 .GetByManagedConnectorCommandEnvelopeOperationId(CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeOperationIds.Reconcile)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Equal([ObserveOnlyRuntimeId], runtimeCatalog
+            .GetByManagedConnectorCommandIssuanceState(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates.NotApplicable)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal(
+            [BlockedRuntimeId, OutOfPolicyRuntimeId, WaitingRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorCommandIssuanceState(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates.Blocked)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Equal([FutureControlPlaneRuntimeId], runtimeCatalog
+            .GetByManagedConnectorCommandIssuanceState(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates.OperatorOnly)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal(
+            [DeleteRequiredRuntimeId, PauseRequiredRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorCommandIssuanceState(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates.Accepted)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Equal(
+            [PauseSatisfiedRuntimeId, ReadyRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorCommandIssuanceState(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates.Rejected)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Empty(runtimeCatalog
+            .GetByManagedConnectorCommandIssuanceState(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates.Issued));
+        Assert.Equal([ObserveOnlyRuntimeId], runtimeCatalog
+            .GetByManagedConnectorCommandIssuanceCategory(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.ObserveOnlyMode)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal([FutureControlPlaneRuntimeId], runtimeCatalog
+            .GetByManagedConnectorCommandIssuanceCategory(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.ControlPlaneOwnershipGap)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal([FutureControlPlaneRuntimeId], runtimeCatalog
+            .GetByManagedConnectorCommandIssuanceCategory(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.OperatorOnly)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal([OutOfPolicyRuntimeId], runtimeCatalog
+            .GetByManagedConnectorCommandIssuanceCategory(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.GovernanceOutOfPolicy)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal([BlockedRuntimeId], runtimeCatalog
+            .GetByManagedConnectorCommandIssuanceCategory(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.BlockingRemediation)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal(
+            [DeleteRequiredRuntimeId, FutureControlPlaneRuntimeId, PauseRequiredRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorCommandIssuanceCategory(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.ChangePlanned)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Equal(
+            [DeleteRequiredRuntimeId, PauseRequiredRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorCommandIssuanceCategory(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.ApprovalGated)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Equal([PauseRequiredRuntimeId], runtimeCatalog
+            .GetByManagedConnectorCommandIssuanceCategory(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.ApprovalReady)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal([DeleteRequiredRuntimeId], runtimeCatalog
+            .GetByManagedConnectorCommandIssuanceCategory(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.ApprovalRequired)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal(
+            [DeleteRequiredRuntimeId, PauseRequiredRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorCommandIssuanceCategory(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.Accepted)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Equal(
+            [PauseSatisfiedRuntimeId, ReadyRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorCommandIssuanceCategory(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.Rejected)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Equal(
+            [PauseSatisfiedRuntimeId, ReadyRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorCommandIssuanceCategory(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.NoExecutionNeeded)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Empty(runtimeCatalog
+            .GetByManagedConnectorCommandIssuanceCategory(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.Issued));
+        Assert.Equal([DeleteRequiredRuntimeId], runtimeCatalog
+            .GetByManagedConnectorCommandIssuanceCategory(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.DestructiveOperation)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal(
+            [PauseRequiredRuntimeId, PauseSatisfiedRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorCommandIssuanceOperationId(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceOperationIds.Pause)
+                .Select(static runtime => runtime.Id)
+                .OrderBy(static id => id, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Equal([DeleteRequiredRuntimeId], runtimeCatalog
+            .GetByManagedConnectorCommandIssuanceOperationId(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceOperationIds.Delete)
+            .Select(static runtime => runtime.Id)
+            .ToArray());
+        Assert.Equal(
+            [FutureControlPlaneRuntimeId, ReadyRuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorCommandIssuanceOperationId(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceOperationIds.Reconcile)
                 .Select(static runtime => runtime.Id)
                 .OrderBy(static id => id, StringComparer.Ordinal)
                 .ToArray());

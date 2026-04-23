@@ -3027,6 +3027,78 @@ Delivered:
 - targeted coverage now proves the operator-story drill-down baseline through composition tests
   `1/1`, hosting tests `1/1`, tooling tests `185/185`, and the reference docs publish script
 
+### ENG-178 Phase 13 managed-connector command-issuance baseline
+
+Status: done
+Estimate: 5
+Completed: April 23, 2026
+
+Why:
+
+- `ENG-168`, `ENG-169`, `ENG-170`, `ENG-171`, `ENG-172`, `ENG-173`, `ENG-174`, `ENG-175`,
+  `ENG-176`, and `ENG-177` shipped shared coverage, remediation, governance,
+  desired-versus-observed drift, action-planning, write-path readiness, preflight, dry-run,
+  execution-intent, execution-approval, and command-envelope truth, but operators still lacked one
+  typed answer for whether Cephalon could accept, reject, or later issue the shared command on the
+  same runtime surface
+- that next follow-through needed to keep connector-management command-issuance truth additive on
+  the existing `/engine/cdc-capture-runtimes*`, `/engine/runtime-story`, and
+  `snapshot.CdcCaptureExecutionRuntimes` surfaces instead of inventing a Debezium-only issuance
+  registry or prematurely claiming Kafka Connect control-plane ownership
+- teams also needed route-level drill-downs for command-issuance state, command-issuance category,
+  and intended operation without losing the underlying coverage, remediation, governance, drift,
+  action-plan, write-path-readiness, preflight, dry-run, execution-intent, execution-approval, and
+  command-envelope truth that already shipped
+
+Acceptance:
+
+- `Cephalon.Abstractions` ships a stable managed-connector command-issuance contract on
+  `CdcCaptureExecutionRuntimeDescriptor` that can publish `not-applicable`, `blocked`,
+  `operator-only`, `accepted`, `rejected`, and `issued` posture together with command-issuance
+  categories, the intended operation id, source coverage/remediation/governance/drift/action-plan/
+  write-path-readiness/preflight/dry-run/execution-intent/execution-approval/command-envelope
+  state, source truth, deterministic issuance fingerprints, and safety flags
+- the shared execution-runtime catalog now derives that command-issuance answer from merged
+  command-envelope, execution-approval, execution-intent, dry-run, preflight, write-path-readiness,
+  action-planning, drift, governance, remediation, and coverage truth instead of forcing hosts or
+  providers to rebuild a second issuance registry
+- `ICdcCaptureExecutionRuntimeCatalog` exposes additive command-issuance-state,
+  command-issuance-category, and command-issuance-operation drill-down methods, and ASP.NET Core
+  publishes those same filters on the existing `/engine/cdc-capture-runtimes*` route family
+- docs, reference docs, backlog, roadmap, project memory, and GitHub tracking stay aligned with the
+  shipped slice while later managed-connector execution work or broader provider write-path
+  transport or execution adapter work remains separate follow-through
+
+Delivered:
+
+- `Cephalon.Abstractions` now ships
+  `CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates`,
+  `CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories`,
+  `CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceOperationIds`,
+  `CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceSources`, and
+  `CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus`, while
+  `CdcCaptureExecutionRuntimeDescriptor` now carries additive `ManagedConnectorCommandIssuance`
+- `Cephalon.Data` now derives runtime-level `not-applicable`, `blocked`, `operator-only`,
+  `accepted`, `rejected`, and `issued` posture plus stable category ids such as
+  `observe-only-mode`, `blocking-remediation`, `runtime-truth-incomplete`,
+  `governance-out-of-policy`, `control-plane-ownership-gap`, `change-planned`,
+  `destructive-operation`, `approval-required`, `approval-ready`, `approval-gated`, `accepted`,
+  `rejected`, `issued`, and `no-execution-needed`, together with intended operation ids such as
+  `none`, `reconcile`, `pause`, and `delete`, issuance source truth, target connector identity,
+  deterministic command fingerprints, deterministic issuance fingerprints, and safety flags from
+  merged command-envelope, execution-approval, execution-intent, dry-run, preflight,
+  write-path-readiness, action-plan, drift, governance, remediation, and coverage truth
+- `ICdcCaptureExecutionRuntimeCatalog` now exposes
+  `GetByManagedConnectorCommandIssuanceState(...)`,
+  `GetByManagedConnectorCommandIssuanceCategory(...)`, and
+  `GetByManagedConnectorCommandIssuanceOperationId(...)`, while `Cephalon.AspNetCore` now maps
+  `/engine/cdc-capture-runtimes/command-issuances/{issuanceState}`,
+  `/engine/cdc-capture-runtimes/command-issuances/categories/{issuanceCategory}`, and
+  `/engine/cdc-capture-runtimes/command-issuances/operations/{operationId}` so host routes stay
+  aligned with the same shared runtime story
+- targeted coverage now proves the command-issuance baseline through composition tests `37/37`,
+  hosting tests `15/15`, tooling tests `207/207`, and the reference docs publish script
+
 ### ENG-177 Phase 13 managed-connector write-path command-envelope baseline
 
 Status: done

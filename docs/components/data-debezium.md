@@ -1,6 +1,6 @@
 # Cephalon.Data.Debezium
 
-`Cephalon.Data.Debezium` is the Debezium-managed external CDC companion pack for Cephalon. It proves that the shared `Cephalon.Data` CDC runtime story also fits managed Kafka Connect or Debezium-style connector topologies where Cephalon does not own the runner, does not fake a hosted execution, and still publishes truthful capture ownership, external runtime reporting, reporter-lease posture, connector or task lifecycle posture, managed-connector governance posture, desired-versus-observed managed-connector drift posture, managed-connector action-planning posture, managed-connector write-path readiness posture, managed-connector preflight posture, managed-connector dry-run posture, managed-connector execution-intent posture, managed-connector execution-approval posture, managed-connector command-envelope posture, and operator drill-downs on the existing shared `/engine/cdc-*`, `/engine/runtime-story`, and `snapshot` surfaces.
+`Cephalon.Data.Debezium` is the Debezium-managed external CDC companion pack for Cephalon. It proves that the shared `Cephalon.Data` CDC runtime story also fits managed Kafka Connect or Debezium-style connector topologies where Cephalon does not own the runner, does not fake a hosted execution, and still publishes truthful capture ownership, external runtime reporting, reporter-lease posture, connector or task lifecycle posture, managed-connector governance posture, desired-versus-observed managed-connector drift posture, managed-connector action-planning posture, managed-connector write-path readiness posture, managed-connector preflight posture, managed-connector dry-run posture, managed-connector execution-intent posture, managed-connector execution-approval posture, managed-connector command-envelope posture, managed-connector command-issuance posture, and operator drill-downs on the existing shared `/engine/cdc-*`, `/engine/runtime-story`, and `snapshot` surfaces.
 
 ## What it owns
 
@@ -396,6 +396,37 @@ that same shared runtime surface instead of introducing a Debezium-only executio
 - command envelopes currently remain read-only operator truth; they do not mean Cephalon already
   owns Kafka Connect write-path execution, automatic connector mutation, or managed-connector
   control-plane orchestration
+
+## Managed-connector command-issuance baseline
+
+The `ENG-178` follow-through keeps managed-connector command issuance additive over that same
+shared runtime surface instead of introducing a Debezium-only issuance registry.
+
+- `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorCommandIssuance` now publishes stable
+  `not-applicable`, `blocked`, `operator-only`, `accepted`, `rejected`, and `issued` posture for
+  Debezium-managed runtimes together with command-issuance categories, the intended operation id,
+  source coverage/remediation/governance/drift/action-plan/write-path-readiness/preflight/dry-run/
+  execution-intent/execution-approval/command-envelope state, issuance source truth, target
+  connector identity, deterministic command fingerprints, deterministic issuance fingerprints, and
+  safety flags
+- the shared execution-runtime catalog now derives that command-issuance answer from the already
+  shipped command-envelope, execution-approval, execution-intent, dry-run, preflight,
+  write-path-readiness, governance, drift, remediation, and coverage truth, so observe-only,
+  out-of-policy, blocking-remediation, future-control-plane, approval-gated, and no-op
+  declarations can surface one consistent connector-management command-issuance answer without
+  claiming Kafka Connect write paths or automatic connector mutation
+- future-control-plane reconcile paths now surface `operator-only` command-issuance truth,
+  approval-gated lifecycle operations such as `pause` or `delete` surface `accepted` issuance
+  posture, and no-op engine-ready answers can surface `rejected` issuance truth before any future
+  provider execution lane is added
+- ASP.NET Core now maps `/engine/cdc-capture-runtimes/command-issuances/{issuanceState}`,
+  `/engine/cdc-capture-runtimes/command-issuances/categories/{issuanceCategory}`, and
+  `/engine/cdc-capture-runtimes/command-issuances/operations/{operationId}` on the same shared
+  runtime route family, so operator drill-down stays aligned with the engine-owned catalog instead
+  of a Debezium-only endpoint family
+- command issuance currently remains shared read-only operator truth; it does not mean Cephalon
+  already owns Kafka Connect write-path execution, automatic connector mutation, or
+  managed-connector control-plane orchestration
 
 ## Not shipped in this slice
 

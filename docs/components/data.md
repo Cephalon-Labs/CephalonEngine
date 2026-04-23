@@ -258,6 +258,19 @@ governance, remediation, and coverage truth, so future connector-management exec
 stay on the existing `/engine/cdc-*`, `/engine/runtime-story`, and `snapshot` surfaces instead of
 inventing a Debezium-only execution registry.
 
+That same shared execution-runtime story now also keeps managed-connector command issuance
+explicit. `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorCommandIssuance` publishes stable
+`not-applicable` / `blocked` / `operator-only` / `accepted` / `rejected` / `issued` posture
+together with command-issuance categories, the intended operation id,
+source coverage/remediation/governance/drift/action-plan/write-path-readiness/preflight/dry-run/
+execution-intent/execution-approval/command-envelope state, issuance source truth, target
+connector identity, deterministic command fingerprints, deterministic issuance fingerprints, and
+safety flags. The shared execution-runtime catalog derives that answer from the already shipped
+command-envelope, execution-approval, execution-intent, dry-run, preflight, write-path-readiness,
+desired-versus-observed drift, governance, remediation, and coverage truth, so later provider
+transport or execution-adapter work can stay on the existing `/engine/cdc-*`, `/engine/runtime-story`,
+and `snapshot` surfaces instead of inventing a Debezium-only issuance registry.
+
 That same shared operator story is now directly queryable by reporter, edge node, coordination
 state, degraded reason, remediation state, remediation category, managed-connector governance
 state, managed-connector governance category, managed-connector drift state,
@@ -269,8 +282,9 @@ dry-run category, managed-connector dry-run operation, managed-connector executi
 managed-connector execution-intent category, managed-connector execution-intent operation,
 managed-connector execution-approval state, managed-connector execution-approval category,
 managed-connector execution-approval operation, managed-connector command-envelope state,
-managed-connector command-envelope category, and managed-connector command-envelope operation as
-well.
+managed-connector command-envelope category, managed-connector command-envelope operation,
+managed-connector command-issuance state, managed-connector command-issuance category, and
+managed-connector command-issuance operation as well.
 `ICdcCaptureRuntimeStateCatalog` plus `ICdcCaptureExecutionRuntimeCatalog` now expose
 `GetByReporterId(...)`, `GetByEdgeNodeId(...)`, `GetByReporterCoordinationState(...)`,
 `GetByReporterCoordinationIssueReason(...)`, `GetByRemediationState(...)`, and
@@ -291,13 +305,16 @@ well.
 `GetByManagedConnectorExecutionApprovalOperationId(...)`,
 `GetByManagedConnectorCommandEnvelopeState(...)`,
 `GetByManagedConnectorCommandEnvelopeCategory(...)`, and
-`GetByManagedConnectorCommandEnvelopeOperationId(...)`, so host code, provider packs, and
+`GetByManagedConnectorCommandEnvelopeOperationId(...)`,
+`GetByManagedConnectorCommandIssuanceState(...)`,
+`GetByManagedConnectorCommandIssuanceCategory(...)`, and
+`GetByManagedConnectorCommandIssuanceOperationId(...)`, so host code, provider packs, and
 tooling can
 narrow the shared CDC runtime story without rebuilding a second coordination, remediation,
 managed-connector governance, managed-connector drift, managed-connector action-planning,
 managed-connector readiness, managed-connector preflight, managed-connector dry-run,
 managed-connector execution-intent, managed-connector execution-approval, or managed-connector
-command-envelope index.
+command-envelope or command-issuance index.
 ASP.NET Core maps those same filters through
 `/engine/cdc-captures/runtime/reporters/{reporterId}`,
 `/engine/cdc-captures/runtime/edge-nodes/{edgeNodeId}`,
@@ -331,7 +348,10 @@ ASP.NET Core maps those same filters through
 `/engine/cdc-capture-runtimes/execution-approvals/operations/{operationId}` plus
 `/engine/cdc-capture-runtimes/command-envelopes/{commandState}`,
 `/engine/cdc-capture-runtimes/command-envelopes/categories/{commandCategory}`, and
-`/engine/cdc-capture-runtimes/command-envelopes/operations/{operationId}` so the live host
+`/engine/cdc-capture-runtimes/command-envelopes/operations/{operationId}` plus
+`/engine/cdc-capture-runtimes/command-issuances/{issuanceState}`,
+`/engine/cdc-capture-runtimes/command-issuances/categories/{issuanceCategory}`, and
+`/engine/cdc-capture-runtimes/command-issuances/operations/{operationId}` so the live host
 surface stays aligned with the same shared runtime-state and execution-runtime catalogs.
 
 `Cephalon.Data.MongoDB` first proved that contract with a document-oriented provider-native runner.

@@ -398,6 +398,22 @@ dry-run/execution-intent/execution-approval state, the current primary action id
 connector identity, deterministic command fingerprints, and safety flags instead of inventing a
 Debezium-only execution registry.
 
+That same abstractions surface now also carries
+`CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates`,
+`CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories`,
+`CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceOperationIds`,
+`CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceSources`,
+`CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStatus`,
+`CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorCommandIssuance`, and additive
+`ICdcCaptureExecutionRuntimeCatalog.GetByManagedConnectorCommandIssuanceState(...)` /
+`GetByManagedConnectorCommandIssuanceCategory(...)` /
+`GetByManagedConnectorCommandIssuanceOperationId(...)` filters. That keeps managed connectors
+queryable as shared `not-applicable`, `blocked`, `operator-only`, `accepted`, `rejected`, or
+`issued` answers together with stable command-issuance categories, the intended operation id,
+source coverage/remediation/governance/drift/action-plan/write-path-readiness/preflight/dry-run/
+execution-intent/execution-approval/command-envelope state, issuance source truth, deterministic
+issuance fingerprints, and safety flags instead of inventing a Debezium-only issuance registry.
+
 The app-model contract now also carries a contract-first resilience family through
 `ResilienceSelection`, `RetrySelection`, `TimeoutSelection`, `CircuitBreakerSelection`,
 `BulkheadSelection`, and `RateLimitingSelection`. `RateLimitingSelection` now also carries additive

@@ -219,4 +219,25 @@ public interface ICdcCaptureExecutionRuntimeCatalog
     /// <param name="operationId">The stable managed-connector command-envelope operation identifier to filter by.</param>
     /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.</returns>
     IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandEnvelopeOperationId(string operationId);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector command issuance matches the requested state.
+    /// </summary>
+    /// <param name="issuanceState">The stable managed-connector command-issuance state identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that command-issuance state.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandIssuanceState(string issuanceState);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector command issuance includes the requested category.
+    /// </summary>
+    /// <param name="issuanceCategory">The stable managed-connector command-issuance category identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that command-issuance category.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandIssuanceCategory(string issuanceCategory);
+
+    /// <summary>
+    /// Gets the CDC capture execution runtimes whose current managed-connector command issuance currently targets the requested operation.
+    /// </summary>
+    /// <param name="operationId">The stable managed-connector command-issuance operation identifier to filter by.</param>
+    /// <returns>The matching execution-runtime descriptors, or an empty list when no runtime currently reports that operation identifier.</returns>
+    IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorCommandIssuanceOperationId(string operationId);
 }

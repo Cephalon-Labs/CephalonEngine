@@ -1255,7 +1255,7 @@ public sealed class DebeziumDataCdcHostingTests
     }
 
     [Fact]
-    public async Task MapCephalonExposesManagedConnectorDryRunAndExecutionIntentRoutesOnSharedCdcRuntimeSurface()
+    public async Task MapCephalonExposesManagedConnectorDryRunExecutionIntentApprovalCommandEnvelopeAndCommandIssuanceRoutesOnSharedCdcRuntimeSurface()
     {
         var builder = CreateBuilder(
             options =>
@@ -1598,6 +1598,29 @@ public sealed class DebeziumDataCdcHostingTests
             var commandEnvelopePauseOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-envelopes/operations/pause");
             var commandEnvelopeDeleteOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-envelopes/operations/delete");
             var commandEnvelopeReconcileOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-envelopes/operations/reconcile");
+            var notApplicableCommandIssuance = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-issuances/not-applicable");
+            var blockedCommandIssuance = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-issuances/blocked");
+            var operatorOnlyCommandIssuance = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-issuances/operator-only");
+            var acceptedCommandIssuance = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-issuances/accepted");
+            var rejectedCommandIssuance = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-issuances/rejected");
+            var issuedCommandIssuance = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-issuances/issued");
+            var observeOnlyCommandIssuanceCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-issuances/categories/observe-only-mode");
+            var controlPlaneCommandIssuanceCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-issuances/categories/control-plane-ownership-gap");
+            var operatorOnlyCommandIssuanceCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-issuances/categories/operator-only");
+            var governanceCommandIssuanceCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-issuances/categories/governance-out-of-policy");
+            var blockingRemediationCommandIssuanceCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-issuances/categories/blocking-remediation");
+            var changePlannedCommandIssuanceCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-issuances/categories/change-planned");
+            var approvalGatedCommandIssuanceCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-issuances/categories/approval-gated");
+            var approvalReadyCommandIssuanceCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-issuances/categories/approval-ready");
+            var approvalRequiredCommandIssuanceCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-issuances/categories/approval-required");
+            var acceptedCommandIssuanceCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-issuances/categories/accepted");
+            var rejectedCommandIssuanceCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-issuances/categories/rejected");
+            var noExecutionNeededCommandIssuanceCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-issuances/categories/no-execution-needed");
+            var issuedCommandIssuanceCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-issuances/categories/issued");
+            var destructiveCommandIssuanceCategory = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-issuances/categories/destructive-operation");
+            var commandIssuancePauseOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-issuances/operations/pause");
+            var commandIssuanceDeleteOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-issuances/operations/delete");
+            var commandIssuanceReconcileOperation = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/command-issuances/operations/reconcile");
             var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
 
             Assert.NotNull(deferred);
@@ -1862,6 +1885,97 @@ public sealed class DebeziumDataCdcHostingTests
                 [FutureControlPlaneRuntimeId, ReadyRuntimeId],
                 commandEnvelopeReconcileOperation.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
 
+            Assert.NotNull(notApplicableCommandIssuance);
+            Assert.Equal([ObserveOnlyRuntimeId], notApplicableCommandIssuance.Select(static runtime => runtime.Id).ToArray());
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates.NotApplicable, notApplicableCommandIssuance[0].ManagedConnectorCommandIssuance.State);
+
+            Assert.NotNull(blockedCommandIssuance);
+            Assert.Equal(
+                [BlockedRuntimeId, OutOfPolicyRuntimeId, WaitingRuntimeId],
+                blockedCommandIssuance.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            Assert.NotNull(operatorOnlyCommandIssuance);
+            Assert.Equal([FutureControlPlaneRuntimeId], operatorOnlyCommandIssuance.Select(static runtime => runtime.Id).ToArray());
+            Assert.Equal(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceOperationIds.Reconcile, operatorOnlyCommandIssuance[0].ManagedConnectorCommandIssuance.OperationId);
+
+            Assert.NotNull(acceptedCommandIssuance);
+            Assert.Equal(
+                [DeleteRequiredRuntimeId, PauseRequiredRuntimeId],
+                acceptedCommandIssuance.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            Assert.NotNull(rejectedCommandIssuance);
+            Assert.Equal(
+                [PauseSatisfiedRuntimeId, ReadyRuntimeId],
+                rejectedCommandIssuance.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            Assert.NotNull(issuedCommandIssuance);
+            Assert.Empty(issuedCommandIssuance);
+
+            Assert.NotNull(observeOnlyCommandIssuanceCategory);
+            Assert.Equal([ObserveOnlyRuntimeId], observeOnlyCommandIssuanceCategory.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(controlPlaneCommandIssuanceCategory);
+            Assert.Equal([FutureControlPlaneRuntimeId], controlPlaneCommandIssuanceCategory.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(operatorOnlyCommandIssuanceCategory);
+            Assert.Equal([FutureControlPlaneRuntimeId], operatorOnlyCommandIssuanceCategory.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(governanceCommandIssuanceCategory);
+            Assert.Equal([OutOfPolicyRuntimeId], governanceCommandIssuanceCategory.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(blockingRemediationCommandIssuanceCategory);
+            Assert.Equal([BlockedRuntimeId], blockingRemediationCommandIssuanceCategory.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(changePlannedCommandIssuanceCategory);
+            Assert.Equal(
+                [DeleteRequiredRuntimeId, FutureControlPlaneRuntimeId, PauseRequiredRuntimeId],
+                changePlannedCommandIssuanceCategory.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            Assert.NotNull(approvalGatedCommandIssuanceCategory);
+            Assert.Equal(
+                [DeleteRequiredRuntimeId, PauseRequiredRuntimeId],
+                approvalGatedCommandIssuanceCategory.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            Assert.NotNull(approvalReadyCommandIssuanceCategory);
+            Assert.Equal([PauseRequiredRuntimeId], approvalReadyCommandIssuanceCategory.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(approvalRequiredCommandIssuanceCategory);
+            Assert.Equal([DeleteRequiredRuntimeId], approvalRequiredCommandIssuanceCategory.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(acceptedCommandIssuanceCategory);
+            Assert.Equal(
+                [DeleteRequiredRuntimeId, PauseRequiredRuntimeId],
+                acceptedCommandIssuanceCategory.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            Assert.NotNull(rejectedCommandIssuanceCategory);
+            Assert.Equal(
+                [PauseSatisfiedRuntimeId, ReadyRuntimeId],
+                rejectedCommandIssuanceCategory.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            Assert.NotNull(noExecutionNeededCommandIssuanceCategory);
+            Assert.Equal(
+                [PauseSatisfiedRuntimeId, ReadyRuntimeId],
+                noExecutionNeededCommandIssuanceCategory.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            Assert.NotNull(issuedCommandIssuanceCategory);
+            Assert.Empty(issuedCommandIssuanceCategory);
+
+            Assert.NotNull(destructiveCommandIssuanceCategory);
+            Assert.Equal([DeleteRequiredRuntimeId], destructiveCommandIssuanceCategory.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(commandIssuancePauseOperation);
+            Assert.Equal(
+                [PauseRequiredRuntimeId, PauseSatisfiedRuntimeId],
+                commandIssuancePauseOperation.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
+            Assert.NotNull(commandIssuanceDeleteOperation);
+            Assert.Equal([DeleteRequiredRuntimeId], commandIssuanceDeleteOperation.Select(static runtime => runtime.Id).ToArray());
+
+            Assert.NotNull(commandIssuanceReconcileOperation);
+            Assert.Equal(
+                [FutureControlPlaneRuntimeId, ReadyRuntimeId],
+                commandIssuanceReconcileOperation.Select(static runtime => runtime.Id).OrderBy(static id => id, StringComparer.Ordinal).ToArray());
+
             Assert.NotNull(snapshot);
             Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == ObserveOnlyRuntimeId &&
                 item.ManagedConnectorDryRun.State == CdcCaptureExecutionRuntimeManagedConnectorDryRunStates.Deferred &&
@@ -1945,6 +2059,32 @@ public sealed class DebeziumDataCdcHostingTests
             Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == PauseSatisfiedRuntimeId &&
                 item.ManagedConnectorCommandEnvelope.State == CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStates.EngineReady &&
                 item.ManagedConnectorCommandEnvelope.OperationId == CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeOperationIds.Pause);
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == ObserveOnlyRuntimeId &&
+                item.ManagedConnectorCommandIssuance.State == CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates.NotApplicable &&
+                item.ManagedConnectorCommandIssuance.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.ObserveOnlyMode, StringComparer.OrdinalIgnoreCase));
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == FutureControlPlaneRuntimeId &&
+                item.ManagedConnectorCommandIssuance.State == CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates.OperatorOnly &&
+                item.ManagedConnectorCommandIssuance.OperationId == CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceOperationIds.Reconcile);
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == OutOfPolicyRuntimeId &&
+                item.ManagedConnectorCommandIssuance.State == CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates.Blocked &&
+                item.ManagedConnectorCommandIssuance.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.GovernanceOutOfPolicy, StringComparer.OrdinalIgnoreCase));
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == BlockedRuntimeId &&
+                item.ManagedConnectorCommandIssuance.State == CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates.Blocked &&
+                item.ManagedConnectorCommandIssuance.CategoryIds.Contains(CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceCategories.BlockingRemediation, StringComparer.OrdinalIgnoreCase));
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == ReadyRuntimeId &&
+                item.ManagedConnectorCommandIssuance.State == CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates.Rejected &&
+                item.ManagedConnectorCommandIssuance.OperationId == CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceOperationIds.Reconcile &&
+                item.ManagedConnectorCommandIssuance.ConnectClusterId == "connect-cluster-e");
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == PauseRequiredRuntimeId &&
+                item.ManagedConnectorCommandIssuance.State == CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates.Accepted &&
+                item.ManagedConnectorCommandIssuance.OperationId == CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceOperationIds.Pause);
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == DeleteRequiredRuntimeId &&
+                item.ManagedConnectorCommandIssuance.State == CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates.Accepted &&
+                item.ManagedConnectorCommandIssuance.OperationId == CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceOperationIds.Delete &&
+                item.ManagedConnectorCommandIssuance.IsDestructiveOperation);
+            Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == PauseSatisfiedRuntimeId &&
+                item.ManagedConnectorCommandIssuance.State == CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates.Rejected &&
+                item.ManagedConnectorCommandIssuance.OperationId == CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceOperationIds.Pause);
         }
         finally
         {

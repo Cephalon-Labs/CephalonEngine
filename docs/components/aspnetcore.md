@@ -198,14 +198,19 @@ now also maps `/engine/cdc-capture-runtimes/remediation/{remediationState}` and
 `/engine/cdc-capture-runtimes/execution-approvals/operations/{operationId}` plus
 `/engine/cdc-capture-runtimes/command-envelopes/{commandState}`,
 `/engine/cdc-capture-runtimes/command-envelopes/categories/{commandCategory}`, and
-`/engine/cdc-capture-runtimes/command-envelopes/operations/{operationId}` so operator flows can query the
+`/engine/cdc-capture-runtimes/command-envelopes/operations/{operationId}` plus
+`/engine/cdc-capture-runtimes/command-issuances/{issuanceState}`,
+`/engine/cdc-capture-runtimes/command-issuances/categories/{issuanceCategory}`, and
+`/engine/cdc-capture-runtimes/command-issuances/operations/{operationId}` so operator flows can query the
 shared execution-runtime remediation summary, managed-connector governance posture,
 desired-versus-observed managed-connector drift posture, managed-connector action-planning
 posture, managed-connector write-path readiness posture, managed-connector preflight posture,
 managed-connector dry-run posture, managed-connector execution-intent posture, and
-managed-connector execution-approval posture plus managed-connector command-envelope posture directly
+managed-connector execution-approval posture plus managed-connector command-envelope posture and
+managed-connector command-issuance posture directly
 instead of rebuilding a second HTTP-local remediation, governance, drift, action-planning,
-readiness, preflight, dry-run, execution-intent, execution-approval, or command-envelope index.
+readiness, preflight, dry-run, execution-intent, execution-approval, command-envelope, or
+command-issuance index.
 
 When `ICdcCaptureExecutionRuntimeReportSink` is active, the same host also maps
 `POST /engine/cdc-capture-runtimes/{executionRuntimeId}/reports`. That route is intentionally
